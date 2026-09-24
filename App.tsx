@@ -622,8 +622,9 @@ const styles = StyleSheet.create({
   },
   businessLabelBox: {
     height: 25,
-    paddingLeft: 175,
     justifyContent: 'center',
+    alignItems: 'center',
+    paddingLeft: '50%',
   },
   businessLabelText: {
     fontSize: 13,
