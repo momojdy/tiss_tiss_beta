@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Image,
   SafeAreaView,
@@ -7,11 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
 
 const LOGO_URL =
-  'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
+  "https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG";
 
 export default function App() {
   const [isRegister, setIsRegister] = React.useState(false);
@@ -23,16 +23,25 @@ export default function App() {
       <StatusBar style="dark" />
       <View style={styles.container}>
         <View style={styles.topSection}>
-          <Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" />
+          <Image
+            source={{ uri: LOGO_URL }}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </View>
 
         <View style={styles.card}>
           <View style={styles.roleToggle}>
             <TouchableOpacity
-              style={[styles.roleButton, !isBusiness && styles.roleButtonActive]}
+              style={[
+                styles.roleButton,
+                !isBusiness && styles.roleButtonActive,
+              ]}
               onPress={() => setIsBusiness(false)}
             >
-              <Text style={[styles.roleText, !isBusiness && styles.roleTextActive]}>
+              <Text
+                style={[styles.roleText, !isBusiness && styles.roleTextActive]}
+              >
                 Buyer
               </Text>
             </TouchableOpacity>
@@ -41,13 +50,17 @@ export default function App() {
               style={[styles.roleButton, isBusiness && styles.roleButtonActive]}
               onPress={() => setIsBusiness(true)}
             >
-              <Text style={[styles.roleText, isBusiness && styles.roleTextActive]}>
+              <Text
+                style={[styles.roleText, isBusiness && styles.roleTextActive]}
+              >
                 B&P 2P
               </Text>
             </TouchableOpacity>
           </View>
 
-          {isBusiness && <Text style={styles.businessLabel}>Business Space</Text>}
+          {isBusiness && (
+            <Text style={styles.businessLabel}>Business Space</Text>
+          )}
 
           {isRegister && isBusiness && (
             <>
@@ -79,8 +92,10 @@ export default function App() {
               secureTextEntry={!showPassword}
               style={styles.passwordInput}
             />
-            <TouchableOpacity onPress={() => setShowPassword((value) => !value)}>
-              <Text style={styles.eye}>{showPassword ? '◉' : '○'}</Text>
+            <TouchableOpacity
+              onPress={() => setShowPassword((value) => !value)}
+            >
+              <Text style={styles.eye}>{showPassword ? "◉" : "○"}</Text>
             </TouchableOpacity>
           </View>
 
@@ -90,7 +105,7 @@ export default function App() {
 
           <TouchableOpacity style={styles.submitButton}>
             <Text style={styles.submitText}>
-              {isRegister ? 'Sign Up' : 'Sign In'}
+              {isRegister ? "Sign Up" : "Sign In"}
             </Text>
           </TouchableOpacity>
 
@@ -106,11 +121,11 @@ export default function App() {
 
         <View style={styles.switchRow}>
           <Text style={styles.switchText}>
-            {isRegister ? 'Already have an account?' : "Don't have an account?"}
+            {isRegister ? "Already have an account?" : "Don't have an account?"}
           </Text>
           <TouchableOpacity onPress={() => setIsRegister((value) => !value)}>
             <Text style={styles.switchAction}>
-              {isRegister ? ' Sign in' : ' Register'}
+              {isRegister ? " Sign in" : " Register"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -122,7 +137,7 @@ export default function App() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#F1F4F8',
+    backgroundColor: "#F1F4F8",
   },
   container: {
     flex: 1,
@@ -131,10 +146,6 @@ const styles = StyleSheet.create({
     height: 356,
     paddingTop: 50,
     paddingLeft: 20,
-    paddingRight: 30,
-    paddingBottom: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: '#FBEAF3',
   },
   logo: {
@@ -145,7 +156,7 @@ const styles = StyleSheet.create({
   card: {
     marginHorizontal: 15,
     marginTop: -56,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
     borderRadius: 20,
     minHeight: 485,
     paddingHorizontal: 15,
@@ -155,89 +166,89 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#E0E3E7',
+    borderColor: "#E0E3E7",
     padding: 2,
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   roleButton: {
     flex: 1,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   roleButtonActive: {
-    backgroundColor: '#BF008E',
+    backgroundColor: "#BF008E",
   },
   roleText: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#949090',
+    fontWeight: "600",
+    color: "#949090",
   },
   roleTextActive: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   },
   businessLabel: {
-    color: '#D52F4F',
+    color: "#D52F4F",
     fontSize: 13,
-    fontWeight: '500',
+    fontWeight: "500",
     marginTop: 7,
     marginBottom: 3,
     marginLeft: 160,
   },
   input: {
     height: 60,
-    backgroundColor: '#FBE8EF',
+    backgroundColor: "#FBE8EF",
     borderRadius: 15,
     paddingHorizontal: 18,
     marginTop: 10,
     fontSize: 18,
-    color: '#9A4B68',
+    color: "#9A4B68",
   },
   passwordContainer: {
     height: 60,
-    backgroundColor: '#FBE8EF',
+    backgroundColor: "#FBE8EF",
     borderRadius: 15,
     marginTop: 10,
     paddingLeft: 18,
     paddingRight: 15,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   passwordInput: {
     flex: 1,
     fontSize: 18,
-    color: '#9A4B68',
+    color: "#9A4B68",
   },
   eye: {
     fontSize: 22,
-    color: '#9A4B68',
+    color: "#9A4B68",
   },
   forgotButton: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginTop: 9,
   },
   forgotText: {
-    color: '#9D315B',
+    color: "#9D315B",
     fontSize: 14,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   submitButton: {
     height: 60,
     borderRadius: 15,
-    backgroundColor: '#BF008E',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#BF008E",
+    alignItems: "center",
+    justifyContent: "center",
     marginTop: 20,
     marginHorizontal: 15,
   },
   submitText: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   socialRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
     gap: 90,
     marginTop: 30,
   },
@@ -246,34 +257,34 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 10,
     borderWidth: 0.5,
-    borderColor: '#9A4B68',
-    backgroundColor: '#FFFFFF',
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderColor: "#9A4B68",
+    backgroundColor: "#FFFFFF",
+    alignItems: "center",
+    justifyContent: "center",
   },
   socialGoogle: {
     fontSize: 22,
-    fontWeight: '700',
-    color: '#4285F4',
+    fontWeight: "700",
+    color: "#4285F4",
   },
   socialApple: {
     fontSize: 24,
-    color: '#000000',
+    color: "#000000",
   },
   switchRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 12,
     paddingBottom: 10,
   },
   switchText: {
     fontSize: 15,
-    color: '#14181B',
+    color: "#14181B",
   },
   switchAction: {
     fontSize: 14.5,
-    fontWeight: '600',
-    color: '#9D315B',
+    fontWeight: "600",
+    color: "#9D315B",
   },
 });
