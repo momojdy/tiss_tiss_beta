@@ -144,13 +144,17 @@ const styles = StyleSheet.create({
   },
   topSection: {
     height: 356,
+    width: "100%",
     paddingTop: 50,
     paddingLeft: 20,
-    backgroundColor: '#FBEAF3',
+    paddingRight: 30,
+    paddingBottom: 25,
+    backgroundColor: "#FBEAF3",
   },
   logo: {
-    width: 60,
-    height: 60,
+    flex: 1,
+    width: "100%",
+    height: "100%",
     borderRadius: 8,
   },
   card: {
