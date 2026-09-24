@@ -25,8 +25,7 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const [expanded,setExpanded]=useState(false),[featuredIndex,setFeaturedIndex]=useState(0),[flashIndex]=useState(()=>Math.floor(Math.random()*3));
  useEffect(()=>{const id=setInterval(()=>setFeaturedIndex(i=>(i+1)%3),2500);return()=>clearInterval(id)},[]);
  const settle=(velocity:number)=>{'worklet';const target=velocity<-FLING_VELOCITY?1:velocity>FLING_VELOCITY?0:progress.value>=.5?1:0;progress.value=withTiming(target,{duration:ANIM_MS,easing:Easing.out(Easing.cubic)});};
- const pan=Gesture.Pan().activeOffsetX([-10,10]).failOffsetY([-12,12]).onStart(()=>cancelAnimation(progress)).onUpdate(e=>{progress.value=clamp01(progress.value-e.changeX/DRAG_SENSITIVITY)}).onEnd(e=>settle(e.velocityX));
- useEffect(()=>{const id=setTimeout(()=>setExpanded(progress.value>.5),ANIM_MS+20);return()=>clearTimeout(id)},[progress.value]);
+ const pan=Gesture.Pan().activeOffsetX([-10,10]).failOffsetY([-12,12]).onStart(()=>cancelAnimation(progress)).onUpdate(e=>{progress.value=clamp01(progress.value-e.changeX/DRAG_SENSITIVITY)}).onEnd(e=>{const target=e.velocityX<-FLING_VELOCITY?1:e.velocityX>FLING_VELOCITY?0:progress.value>=.5?1:0;runOnJS(setExpanded)(target===1);settle(e.velocityX);});
  const root=useAnimatedStyle(()=>({height:lerp(COLLAPSED_HEIGHT,EXPANDED_HEIGHT,progress.value)}));
  const collapsedLayer=useAnimatedStyle(()=>({opacity:1-progress.value,transform:[{translateX:-width*progress.value}]}));
  const expandedLayer=useAnimatedStyle(()=>({opacity:progress.value,transform:[{translateX:width*(1-progress.value)}]}));
