@@ -10,7 +10,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   useWindowDimensions,
-  LayoutChangeEvent,
   NativeSyntheticEvent,
   NativeScrollEvent,
   KeyboardTypeOptions,
@@ -133,8 +132,7 @@ function WantissAuthCard({
 
   const pagerRef = useRef<ScrollView>(null);
   const { width: screenWidth } = useWindowDimensions();
-  const [contentWidth, setContentWidth] = useState(screenWidth - 60);
-  const pageWidth = contentWidth;
+  const pageWidth = Math.max(0, screenWidth - 60);
 
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -444,7 +442,7 @@ function WantissAuthCard({
   );
 
   const renderBusinessRegistrationPages = () => (
-    <View style={{ width: contentWidth, height: 365, overflow: 'hidden' }}>
+    <View style={{ width: '100%', height: 365, overflow: 'hidden' }}>
       <ScrollView
         ref={pagerRef}
         horizontal
@@ -453,7 +451,7 @@ function WantissAuthCard({
         showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         onMomentumScrollEnd={onPagerScrollEnd}
-        style={{ width: contentWidth, height: 365 }}
+        style={{ width: '100%', height: 365 }}
       >
         <View style={{ width: pageWidth, height: 365 }}>
           {renderFullNameField()}
@@ -491,13 +489,8 @@ function WantissAuthCard({
     <View style={{ width: '100%' }}>
       <View
         style={styles.card}
-        onLayout={(e: LayoutChangeEvent) => {
-          const w = e.nativeEvent.layout.width - 30;
-          if (w > 0 && Math.abs(w - contentWidth) > 0.5) setContentWidth(w);
-        }}
       >
         <ScrollView
-          contentContainerStyle={{ width: contentWidth }}
           bounces={false}
           overScrollMode="never"
           showsVerticalScrollIndicator={false}
