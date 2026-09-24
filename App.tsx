@@ -568,7 +568,7 @@ const styles = StyleSheet.create({
   },
   logoBox: {
     flex: 1,
-    paddingLeft: 20,
+    paddingLeft: 10,
     paddingTop: 50,
     paddingRight: 30,
     paddingBottom: 25,
