@@ -114,8 +114,6 @@ function WantissAuthCard({
   onGooglePressed,
   onApplePressed,
 }: AuthCardProps) {
-  const { width: screenWidth } = useWindowDimensions();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -134,7 +132,10 @@ function WantissAuthCard({
   const [googleFailed, setGoogleFailed] = useState(false);
 
   const pagerRef = useRef<ScrollView>(null);
-  const [pageWidth, setPageWidth] = useState(screenWidth - 60);
+  const { width: screenWidth } = useWindowDimensions();
+  const [contentWidth, setContentWidth] = useState(screenWidth - 60);
+  const pageWidth = contentWidth;
+  const toggleWidth = Math.min(350, contentWidth);
 
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -252,7 +253,7 @@ function WantissAuthCard({
   };
 
   const renderToggle = () => (
-    <View style={styles.toggleOuter}>
+    <View style={[styles.toggleOuter, { width: toggleWidth }]}>
       <View style={styles.toggleInner}>
         <Pressable
           style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]}
@@ -291,7 +292,7 @@ function WantissAuthCard({
   const renderBusinessSpaceLabel = () => {
     if (!isVendor) return null;
     return (
-      <View style={styles.businessLabelBox}>
+      <View style={[styles.businessLabelBox, { paddingLeft: contentWidth / 2 }]}>
         <Text style={styles.businessLabelText}>Business Space</Text>
       </View>
     );
@@ -444,13 +445,7 @@ function WantissAuthCard({
   );
 
   const renderBusinessRegistrationPages = () => (
-    <View
-      style={{ height: 365 }}
-      onLayout={(e: LayoutChangeEvent) => {
-        const w = e.nativeEvent.layout.width;
-        if (w > 0 && w !== pageWidth) setPageWidth(w);
-      }}
-    >
+    <View style={{ width: contentWidth, height: 365, overflow: 'hidden' }}>
       <ScrollView
         ref={pagerRef}
         horizontal
@@ -459,7 +454,7 @@ function WantissAuthCard({
         showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         onMomentumScrollEnd={onPagerScrollEnd}
-        style={{ height: 365 }}
+        style={{ width: contentWidth, height: 365 }}
       >
         <View style={{ width: pageWidth, height: 365 }}>
           {renderFullNameField()}
@@ -495,8 +490,15 @@ function WantissAuthCard({
 
   return (
     <View style={{ width: '100%' }}>
-      <View style={styles.card}>
+      <View
+        style={styles.card}
+        onLayout={(e: LayoutChangeEvent) => {
+          const w = e.nativeEvent.layout.width - 30;
+          if (w > 0 && Math.abs(w - contentWidth) > 0.5) setContentWidth(w);
+        }}
+      >
         <ScrollView
+          contentContainerStyle={{ width: contentWidth }}
           bounces={false}
           overScrollMode="never"
           showsVerticalScrollIndicator={false}
@@ -597,7 +599,6 @@ const styles = StyleSheet.create({
   },
   toggleOuter: {
     width: '100%',
-    maxWidth: 350,
     height: 50,
     alignSelf: 'center',
   },
