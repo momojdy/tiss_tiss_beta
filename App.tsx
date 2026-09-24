@@ -586,7 +586,7 @@ const styles = StyleSheet.create({
   },
   card: {
     width: '100%',
-    height: 485,
+    height: 470,
     backgroundColor: '#FFFFFF',
     borderRadius: 20,
     paddingLeft: 15,
@@ -742,7 +742,7 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
   },
   bottomSwitch: {
-    paddingTop: 12,
+    paddingTop: 5,
     paddingBottom: 10,
     alignItems: 'center',
   },
