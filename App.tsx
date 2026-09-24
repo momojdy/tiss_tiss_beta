@@ -402,7 +402,7 @@ function WantissAuthCard({
   const renderSubmitButton = (text: string) => (
     <View style={styles.submitWrap}>
       <Pressable style={styles.submitButton} onPress={handleSubmit}>
-        <Text style={styles.submitText}>{text}</Text>
+        <Text style={styles.submitText}>{text}</Text>{text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" style={styles.nextArrow} /> : null}
       </Pressable>
     </View>
   );
@@ -705,6 +705,9 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#FFFFFF',
+  },
+  nextArrow: {
+    marginLeft: 8,
   },
   socialRow: {
     paddingTop: 30,
