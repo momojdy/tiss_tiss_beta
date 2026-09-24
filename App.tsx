@@ -30,7 +30,6 @@ const LINK = '#9D315B';
 const DARK = '#14181B';
 const PAGE_BG = '#F1F4F8';
 const RED = '#FF0000';
-const MANROPE = 'Manrope';
 
 const LOGO_URL =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
@@ -498,19 +497,19 @@ const styles = StyleSheet.create({
   toggleRow:{width:'100%',paddingLeft:8,paddingRight:8},toggleOuter:{width:'100%',height:50},
   toggleInner:{flex:1,flexDirection:'row',backgroundColor:TOGGLE_BG,borderWidth:1,borderColor:TOGGLE_BG,borderRadius:12,padding:2},
   toggleHalf:{flex:1,height:44,borderRadius:10,alignItems:'center',justifyContent:'center'},
-  toggleText:{fontFamily:MANROPE,fontSize:16,fontWeight:'600'},
-  businessLabelBox:{height:25,justifyContent:'center',alignItems:'center',paddingLeft:'50%'},businessLabelText:{fontFamily:MANROPE,fontSize:13,color:RED},
+  toggleText:{fontSize:16,fontWeight:'600'},
+  businessLabelBox:{height:25,justifyContent:'center',alignItems:'center',paddingLeft:'50%'},businessLabelText:{fontSize:13,color:RED},
   stepIndicator:{paddingTop:5,flexDirection:'row',justifyContent:'center',alignItems:'center'},stepDot:{width:7,height:7,borderRadius:3.5},
   fieldBox:{height:60,backgroundColor:FIELD_BG,borderRadius:15},fieldInner:{flex:1,marginTop:11,marginLeft:2,flexDirection:'row',alignItems:'center'},
   prefixIcon:{width:48,alignItems:'center',justifyContent:'center'},suffixButton:{width:48,height:48,alignItems:'center',justifyContent:'center'},
-  textInput:{flex:1,height:'100%',padding:0,fontFamily:MANROPE,fontSize:18,fontWeight:'400',color:FIELD_TEXT},
-  fieldError:{fontFamily:MANROPE,fontSize:13,fontWeight:'500',color:RED},forgotRow:{paddingTop:8,paddingLeft:15,paddingRight:15,alignItems:'flex-end'},
-  forgotText:{fontFamily:MANROPE,fontSize:14,fontWeight:'600',color:LINK},submitWrap:{paddingLeft:15,paddingRight:15,paddingTop:20},
+  textInput:{flex:1,height:'100%',padding:0,fontSize:18,fontWeight:'400',color:FIELD_TEXT},
+  fieldError:{fontSize:13,fontWeight:'500',color:RED},forgotRow:{paddingTop:8,paddingLeft:15,paddingRight:15,alignItems:'flex-end'},
+  forgotText:{fontSize:14,fontWeight:'600',color:LINK},submitWrap:{paddingLeft:15,paddingRight:15,paddingTop:20},
   submitButton:{width:'100%',height:60,backgroundColor:PINK,borderRadius:15,alignItems:'center',justifyContent:'center'},
-  submitText:{fontFamily:MANROPE,fontSize:18,fontWeight:'600',color:'#FFFFFF'},submitContent:{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:8},
+  submitText:{fontSize:18,fontWeight:'600',color:'#FFFFFF'},submitContent:{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:8},
   socialRow:{paddingTop:30,flexDirection:'row',justifyContent:'center'},socialButton:{width:100,height:50,backgroundColor:'#FFFFFF',borderWidth:.5,borderColor:FIELD_TEXT,borderRadius:10,alignItems:'center',justifyContent:'center'},
   googleFallback:{fontSize:22,fontWeight:'600',color:'#4B39EF'},errorMessageWrap:{paddingTop:5,paddingLeft:15,paddingRight:15,alignItems:'flex-start'},
-  bottomSwitch:{paddingTop:5,paddingBottom:10,alignItems:'center'},bottomSwitchText:{fontFamily:MANROPE,textAlign:'center',fontSize:15,fontWeight:'400',color:DARK},bottomSwitchLink:{fontFamily:MANROPE,fontSize:14.5,fontWeight:'600',color:LINK},
+  bottomSwitch:{paddingTop:5,paddingBottom:10,alignItems:'center'},bottomSwitchText:{textAlign:'center',fontSize:15,fontWeight:'400',color:DARK},bottomSwitchLink:{fontSize:14.5,fontWeight:'600',color:LINK},
 
   homePage:{flex:1,backgroundColor:'#FFFFFF'},
   tabBar:{height:100,backgroundColor:'#FBE8EF',flexDirection:'row',alignItems:'flex-end'},
