@@ -14,9 +14,9 @@ export const colors = {
   navRing: '#D593B0',
 };
 export const fonts = {
-  regular: 'Manrope_400Regular',
-  medium: 'Manrope_500Medium',
-  semibold: 'Manrope_600SemiBold',
-  bold: 'Manrope_700Bold',
+  regular: 'Montserrat_400Regular',
+  medium: 'Montserrat_500Medium',
+  semibold: 'Montserrat_600SemiBold',
+  bold: 'Montserrat_700Bold',
   slogan: 'Montserrat_400Regular_Italic',
 };
