@@ -114,8 +114,6 @@ function WantissAuthCard({
   onGooglePressed,
   onApplePressed,
 }: AuthCardProps) {
-  const { width: screenWidth } = useWindowDimensions();
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -134,7 +132,7 @@ function WantissAuthCard({
   const [googleFailed, setGoogleFailed] = useState(false);
 
   const pagerRef = useRef<ScrollView>(null);
-  const [pageWidth, setPageWidth] = useState(screenWidth - 60);
+  const [pageWidth, setPageWidth] = useState(0);
 
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -445,7 +443,7 @@ function WantissAuthCard({
 
   const renderBusinessRegistrationPages = () => (
     <View
-      style={{ height: 365 }}
+      style={{ width: '100%', height: 365 }}
       onLayout={(e: LayoutChangeEvent) => {
         const w = e.nativeEvent.layout.width;
         if (w > 0 && w !== pageWidth) setPageWidth(w);
@@ -459,14 +457,14 @@ function WantissAuthCard({
         showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         onMomentumScrollEnd={onPagerScrollEnd}
-        style={{ height: 365 }}
+        style={{ width: '100%', height: 365 }}
       >
-        <View style={{ width: pageWidth, height: 365 }}>
+        <View style={{ width: pageWidth || 1, height: 365 }}>
           {renderFullNameField()}
           {renderBusinessNameField()}
           {renderSubmitButton('Next')}
         </View>
-        <View style={{ width: pageWidth, height: 365 }}>
+        <View style={{ width: pageWidth || 1, height: 365 }}>
           {renderCredentialsBlock('Sign Up')}
         </View>
       </ScrollView>
