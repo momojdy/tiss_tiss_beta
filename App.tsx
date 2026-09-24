@@ -132,7 +132,9 @@ function WantissAuthCard({
   const [googleFailed, setGoogleFailed] = useState(false);
 
   const pagerRef = useRef<ScrollView>(null);
-  const [pageWidth, setPageWidth] = useState(0);
+  const [contentWidth, setContentWidth] = useState(screenWidth - 60);
+  const pageWidth = contentWidth;
+  const toggleWidth = Math.min(350, contentWidth);
 
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -250,7 +252,7 @@ function WantissAuthCard({
   };
 
   const renderToggle = () => (
-    <View style={styles.toggleOuter}>
+    <View style={[styles.toggleOuter, { width: toggleWidth }]}>
       <View style={styles.toggleInner}>
         <Pressable
           style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]}
@@ -289,7 +291,7 @@ function WantissAuthCard({
   const renderBusinessSpaceLabel = () => {
     if (!isVendor) return null;
     return (
-      <View style={styles.businessLabelBox}>
+      <View style={[styles.businessLabelBox, { paddingLeft: contentWidth / 2 }]}>
         <Text style={styles.businessLabelText}>Business Space</Text>
       </View>
     );
@@ -493,8 +495,15 @@ function WantissAuthCard({
 
   return (
     <View style={{ width: '100%' }}>
-      <View style={styles.card}>
+      <View
+        style={styles.card}
+        onLayout={(e: LayoutChangeEvent) => {
+          const w = e.nativeEvent.layout.width - 30;
+          if (w > 0 && Math.abs(w - contentWidth) > 0.5) setContentWidth(w);
+        }}
+      >
         <ScrollView
+          contentContainerStyle={{ width: contentWidth }}
           bounces={false}
           overScrollMode="never"
           showsVerticalScrollIndicator={false}
