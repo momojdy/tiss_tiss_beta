@@ -289,7 +289,7 @@ function WantissAuthCard({
   const renderBusinessSpaceLabel = () => {
     if (!isVendor) return null;
     return (
-      <View style={[styles.businessLabelBox, { paddingLeft: contentWidth / 2 }]}>
+      <View style={styles.businessLabelBox}>
         <Text style={styles.businessLabelText}>Business Space</Text>
       </View>
     );
