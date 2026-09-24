@@ -132,6 +132,7 @@ function WantissAuthCard({
   const [googleFailed, setGoogleFailed] = useState(false);
 
   const pagerRef = useRef<ScrollView>(null);
+  const { width: screenWidth } = useWindowDimensions();
   const [contentWidth, setContentWidth] = useState(screenWidth - 60);
   const pageWidth = contentWidth;
   const toggleWidth = Math.min(350, contentWidth);
@@ -444,13 +445,7 @@ function WantissAuthCard({
   );
 
   const renderBusinessRegistrationPages = () => (
-    <View
-      style={{ width: '100%', height: 365 }}
-      onLayout={(e: LayoutChangeEvent) => {
-        const w = e.nativeEvent.layout.width;
-        if (w > 0 && w !== pageWidth) setPageWidth(w);
-      }}
-    >
+    <View style={{ width: contentWidth, height: 365, overflow: 'hidden' }}>
       <ScrollView
         ref={pagerRef}
         horizontal
@@ -459,14 +454,14 @@ function WantissAuthCard({
         showsHorizontalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
         onMomentumScrollEnd={onPagerScrollEnd}
-        style={{ width: '100%', height: 365 }}
+        style={{ width: contentWidth, height: 365 }}
       >
-        <View style={{ width: pageWidth || 1, height: 365 }}>
+        <View style={{ width: pageWidth, height: 365 }}>
           {renderFullNameField()}
           {renderBusinessNameField()}
           {renderSubmitButton('Next')}
         </View>
-        <View style={{ width: pageWidth || 1, height: 365 }}>
+        <View style={{ width: pageWidth, height: 365 }}>
           {renderCredentialsBlock('Sign Up')}
         </View>
       </ScrollView>
