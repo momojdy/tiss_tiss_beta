@@ -58,7 +58,7 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const teaser=useAnimatedStyle(()=>({opacity:clamp01(1-progress.value),transform:[{translateY:70*easeInOutCubic(progress.value)}]}));
  const indicator=useAnimatedStyle(()=>({
   opacity:progress.value<=.75?lerp(1,.25,progress.value/.75):lerp(.25,1,(progress.value-.75)/.25),
-  transform:[{translateY:lerp(ROW_HEIGHT,ROW_HEIGHT*3,easeInOutCubic(progress.value))]
+  transform:[{translateY:lerp(ROW_HEIGHT,ROW_HEIGHT*3,easeInOutCubic(progress.value))}]
  }));
  const line=useAnimatedStyle(()=>({backgroundColor:interpolateColor(easeInOutCubic(progress.value),[0,1],[colors.primary,colors.grey300])}));
  const circle=useAnimatedStyle(()=>({backgroundColor:interpolateColor(easeInOutCubic(progress.value),[0,1],[colors.grey300,colors.primary])}));
@@ -70,18 +70,11 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
   </Animated.View>
   <GestureDetector gesture={pan}>
    <Animated.View style={[styles.gestureArea,gestureArea]}>
-    {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress}
-      fromX={i*itemW} toX={(i-COLUMNS)*itemW} fromY={0} toY={0}
-      opacityFrom={1} opacityTo={0} interactive={!expanded} onPress={onCategoryPress}/>)}
-    <Cell key="e-stays" category={expandedCategories[0]} progress={progress}
-      fromX={width} toX={0} fromY={0} toY={0}
-      opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>
+    {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress} fromX={i*itemW} toX={(i-COLUMNS)*itemW} fromY={0} toY={0} opacityFrom={1} opacityTo={0} interactive={!expanded} onPress={onCategoryPress}/>)} 
+    <Cell key="e-stays" category={expandedCategories[0]} progress={progress} fromX={width} toX={0} fromY={0} toY={0} opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>
     {expandedCategories.slice(1).map((c,k)=>{
       const index=k+1,row=Math.floor(index/COLUMNS),col=index%COLUMNS;
-      return <Cell key={'e-'+c.label} category={c} progress={progress}
-       fromX={(COLUMNS+col)*itemW} toX={col*itemW}
-       fromY={0} toY={row*ROW_HEIGHT}
-       opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>;
+      return <Cell key={'e-'+c.label} category={c} progress={progress} fromX={(COLUMNS+col)*itemW} toX={col*itemW} fromY={0} toY={row*ROW_HEIGHT} opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>;
     })}
    </Animated.View>
   </GestureDetector>
