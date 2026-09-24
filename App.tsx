@@ -597,7 +597,6 @@ const styles = StyleSheet.create({
   },
   toggleOuter: {
     width: '100%',
-    maxWidth: 350,
     height: 50,
     alignSelf: 'center',
   },
