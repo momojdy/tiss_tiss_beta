@@ -135,7 +135,6 @@ function WantissAuthCard({
   const { width: screenWidth } = useWindowDimensions();
   const [contentWidth, setContentWidth] = useState(screenWidth - 60);
   const pageWidth = contentWidth;
-  const toggleWidth = Math.min(350, contentWidth);
 
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
 
@@ -253,7 +252,7 @@ function WantissAuthCard({
   };
 
   const renderToggle = () => (
-    <View style={[styles.toggleOuter, { width: toggleWidth }]}>
+    <View style={styles.toggleOuter}>
       <View style={styles.toggleInner}>
         <Pressable
           style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]}
