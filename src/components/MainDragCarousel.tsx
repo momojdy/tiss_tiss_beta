@@ -6,7 +6,7 @@ import CategoryIcon from './CategoryIcon';
 import TeaserCard from './TeaserCard';
 import {Category,collapsedCategories,expandedCategories} from '../data/categories';
 import {colors} from '../theme';
-import {clamp01,easeInOutCubic,easeOut,lerp} from '../theme/motion';
+import {clamp01,easeInOutCubic,lerp} from '../theme/motion';
 
 const COLUMNS=5,DRAG_SENSITIVITY=850,FLING_VELOCITY=200,ANIM_MS=450,ROW_HEIGHT=78,INDICATOR_HEIGHT=10;
 const TEASER_TOP=84,TEASER_HEIGHT=128;
@@ -21,7 +21,7 @@ type CellProps={category:Category;progress:SharedValue<number>;fromX:number;toX:
 
 function Cell({category,progress,fromX,toX,fromY,toY,opacityFrom,opacityTo,interactive,onPress}:CellProps){
  const style=useAnimatedStyle(()=>({
-  opacity:lerp(opacityFrom,opacityTo,opacityFrom===opacityTo?progress.value:easeOut(progress.value)),
+  opacity:lerp(opacityFrom,opacityTo,progress.value),
   transform:[
    {translateX:lerp(fromX,toX,progress.value)},
    {translateY:lerp(fromY,toY,progress.value)}
@@ -35,7 +35,6 @@ function Cell({category,progress,fromX,toX,fromY,toY,opacityFrom,opacityTo,inter
 export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlashPress}:{onCategoryPress?:(s:string)=>void;onFeaturedPress?:()=>void;onFlashPress?:()=>void}){
  const {width}=useWindowDimensions();
  const itemW=width/COLUMNS;
- const collapsedW=width/5.59;
  const progress=useSharedValue(0);
  const [expanded,setExpanded]=useState(false);
  const [featuredIndex,setFeaturedIndex]=useState(0);
@@ -69,30 +68,25 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
    <TeaserCard label="featured picks" icon="auto-awesome" background="#FBEAF0" swatchColor={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPress={onFeaturedPress}/>
    <TeaserCard label="flash deals" icon="access-time-filled" background={colors.gridCream} swatchColor={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPress={onFlashPress}/>
   </Animated.View>
-
   <GestureDetector gesture={pan}>
    <Animated.View style={[styles.gestureArea,gestureArea]}>
     {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress}
-      fromX={i*collapsedW} toX={(i+1)*itemW} fromY={0} toY={0}
+      fromX={i*itemW} toX={(i-COLUMNS)*itemW} fromY={0} toY={0}
       opacityFrom={1} opacityTo={0} interactive={!expanded} onPress={onCategoryPress}/>)}
-
     <Cell key="e-stays" category={expandedCategories[0]} progress={progress}
-      fromX={5*collapsedW} toX={0} fromY={0} toY={0}
-      opacityFrom={1} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>
-
+      fromX={width} toX={0} fromY={0} toY={0}
+      opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>
     {expandedCategories.slice(1).map((c,k)=>{
       const index=k+1,row=Math.floor(index/COLUMNS),col=index%COLUMNS;
       return <Cell key={'e-'+c.label} category={c} progress={progress}
-       fromX=((index-1)%COLUMNS)*collapsedW toX={col*itemW}
+       fromX={(COLUMNS+col)*itemW} toX={col*itemW}
        fromY={0} toY={row*ROW_HEIGHT}
        opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>;
     })}
    </Animated.View>
   </GestureDetector>
-
   <Animated.View pointerEvents="none" style={[styles.indicator,indicator]}>
-   <Animated.View style={[styles.line,line]}/>
-   <Animated.View style={[styles.circle,circle]}/>
+   <Animated.View style={[styles.line,line]}/><Animated.View style={[styles.circle,circle]}/>
   </Animated.View>
  </Animated.View>;
 }
