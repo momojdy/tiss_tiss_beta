@@ -250,8 +250,9 @@ function WantissAuthCard({
   };
 
   const renderToggle = () => (
-    <View style={styles.toggleOuter}>
-      <View style={styles.toggleInner}>
+    <View style={styles.toggleRow}>
+      <View style={styles.toggleOuter}>
+        <View style={styles.toggleInner}>
         <Pressable
           style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]}
           onPress={() => {
@@ -282,6 +283,7 @@ function WantissAuthCard({
             B&P 2P
           </Text>
         </Pressable>
+        </View>
       </View>
     </View>
   );
@@ -589,11 +591,14 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     overflow: 'hidden',
   },
+  toggleRow: {
+    width: '100%',
+    paddingLeft: 8,
+    paddingRight: 8,
+  },
   toggleOuter: {
-    width: 350,
+    width: '100%',
     height: 50,
-    alignSelf: 'center',
-    flexShrink: 0,
   },
   toggleInner: {
     flex: 1,
