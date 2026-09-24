@@ -131,6 +131,10 @@ const styles = StyleSheet.create({
     height: 356,
     paddingTop: 50,
     paddingLeft: 20,
+    paddingRight: 30,
+    paddingBottom: 25,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FBEAF3',
   },
   logo: {
