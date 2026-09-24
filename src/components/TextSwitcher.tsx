@@ -8,7 +8,7 @@ export function TextSwitcher({text,lineHeight,duration,offsetFraction,textStyle,
  const{enter,exit}=useMemo(()=>{
   const d=lineHeight*offsetFraction;
   return {
-   enter:new Keyframe({from:{opacity:0,transform:[{translateY:d}],easing:Easing.linear},to:{opacity:1,transform:[{translateY:0}]}}).duration(duration),
+   enter:new Keyframe({from:{opacity:0,transform:[{translateY:d}]},to:{opacity:1,transform:[{translateY:0}]}}).duration(duration),
    exit:new Keyframe({from:{opacity:1,transform:[{translateY:0}],easing:Easing.linear},to:{opacity:0,transform:[{translateY:d}]}}).duration(duration)
   };
  },[lineHeight,duration,offsetFraction]);
