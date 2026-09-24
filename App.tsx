@@ -463,7 +463,7 @@ function HomePage() {
 }
 
 export default function App() {
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState(true);
   const { height: screenHeight } = useWindowDimensions();
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
 
