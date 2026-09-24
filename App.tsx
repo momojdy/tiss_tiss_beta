@@ -30,6 +30,7 @@ const LINK = '#9D315B';
 const DARK = '#14181B';
 const PAGE_BG = '#F1F4F8';
 const RED = '#FF0000';
+const MANROPE = 'Manrope';
 
 const LOGO_URL =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
