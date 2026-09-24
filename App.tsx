@@ -1,294 +1,751 @@
-import React from "react";
+import React, { useRef, useState } from 'react';
 import {
-  Image,
-  SafeAreaView,
-  StyleSheet,
+  View,
   Text,
   TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import { StatusBar } from "expo-status-bar";
+  Pressable,
+  ScrollView,
+  Image,
+  StyleSheet,
+  Keyboard,
+  TouchableWithoutFeedback,
+  useWindowDimensions,
+  LayoutChangeEvent,
+  NativeSyntheticEvent,
+  NativeScrollEvent,
+  KeyboardTypeOptions,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { LinearGradient } from 'expo-linear-gradient';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+const PINK = '#BF008E';
+const TOGGLE_BG = '#E0E3E7';
+const TOGGLE_TEXT_OFF = '#949090';
+const FIELD_BG = '#FBE8EF';
+const FIELD_TEXT = '#9A4B68';
+const LINK = '#9D315B';
+const DARK = '#14181B';
+const PAGE_BG = '#F1F4F8';
+const RED = '#FF0000';
 
 const LOGO_URL =
-  "https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG";
+  'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
 
-export default function App() {
-  const [isRegister, setIsRegister] = React.useState(false);
-  const [isBusiness, setIsBusiness] = React.useState(false);
-  const [showPassword, setShowPassword] = React.useState(false);
+const GOOGLE_PNG =
+  'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.png';
 
+type AuthCardProps = {
+  onSignInPressed?: (email: string, password: string) => Promise<unknown>;
+  onSignUpPressed?: (
+    email: string,
+    password: string,
+    role: string,
+    fullName: string,
+    businessName: string,
+  ) => Promise<unknown>;
+  onGooglePressed?: () => Promise<unknown>;
+  onApplePressed?: () => Promise<unknown>;
+};
+
+type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+type AuthFieldProps = {
+  top: number;
+  value: string;
+  onChangeText: (t: string) => void;
+  placeholder: string;
+  icon: IconName;
+  error?: string | null;
+  keyboardType?: KeyboardTypeOptions;
+  autoCapitalize?: 'none' | 'words';
+  secureTextEntry?: boolean;
+  suffix?: React.ReactNode;
+};
+
+function AuthField({
+  top,
+  value,
+  onChangeText,
+  placeholder,
+  icon,
+  error,
+  keyboardType,
+  autoCapitalize,
+  secureTextEntry,
+  suffix,
+}: AuthFieldProps) {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar style="dark" />
-      <View style={styles.container}>
-        <View style={styles.topSection}>
-          <Image
-            source={{ uri: LOGO_URL }}
-            style={styles.logo}
-            resizeMode="contain"
-          />
-        </View>
-
-        <View style={styles.card}>
-          <View style={styles.roleToggle}>
-            <TouchableOpacity
-              style={[
-                styles.roleButton,
-                !isBusiness && styles.roleButtonActive,
-              ]}
-              onPress={() => setIsBusiness(false)}
-            >
-              <Text
-                style={[styles.roleText, !isBusiness && styles.roleTextActive]}
-              >
-                Buyer
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[styles.roleButton, isBusiness && styles.roleButtonActive]}
-              onPress={() => setIsBusiness(true)}
-            >
-              <Text
-                style={[styles.roleText, isBusiness && styles.roleTextActive]}
-              >
-                B&P 2P
-              </Text>
-            </TouchableOpacity>
+    <View style={{ paddingTop: top, paddingBottom: 8, paddingHorizontal: 8 }}>
+      <View
+        style={[
+          styles.fieldBox,
+          error ? { borderWidth: 1, borderColor: RED } : null,
+        ]}
+      >
+        <View style={styles.fieldInner}>
+          <View style={styles.prefixIcon}>
+            <MaterialCommunityIcons name={icon} size={24} color={FIELD_TEXT} />
           </View>
-
-          {isBusiness && (
-            <Text style={styles.businessLabel}>Business Space</Text>
-          )}
-
-          {isRegister && isBusiness && (
-            <>
-              <TextInput
-                placeholder="Full name"
-                placeholderTextColor="#9A4B68"
-                style={styles.input}
-              />
-              <TextInput
-                placeholder="Business name"
-                placeholderTextColor="#9A4B68"
-                style={styles.input}
-              />
-            </>
-          )}
-
           <TextInput
-            placeholder="Email"
-            placeholderTextColor="#9A4B68"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            style={styles.input}
+            value={value}
+            onChangeText={onChangeText}
+            placeholder={placeholder}
+            placeholderTextColor={FIELD_TEXT}
+            keyboardType={keyboardType}
+            autoCapitalize={autoCapitalize ?? 'none'}
+            autoCorrect={false}
+            secureTextEntry={secureTextEntry}
+            style={styles.textInput}
           />
-
-          <View style={styles.passwordContainer}>
-            <TextInput
-              placeholder="Password"
-              placeholderTextColor="#9A4B68"
-              secureTextEntry={!showPassword}
-              style={styles.passwordInput}
-            />
-            <TouchableOpacity
-              onPress={() => setShowPassword((value) => !value)}
-            >
-              <Text style={styles.eye}>{showPassword ? "◉" : "○"}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={styles.forgotButton}>
-            <Text style={styles.forgotText}>Forgot password?</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.submitButton}>
-            <Text style={styles.submitText}>
-              {isRegister ? "Sign Up" : "Sign In"}
-            </Text>
-          </TouchableOpacity>
-
-          <View style={styles.socialRow}>
-            <TouchableOpacity style={styles.socialButton}>
-              <Text style={styles.socialGoogle}>G</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.socialButton}>
-              <Text style={styles.socialApple}>●</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        <View style={styles.switchRow}>
-          <Text style={styles.switchText}>
-            {isRegister ? "Already have an account?" : "Don't have an account?"}
-          </Text>
-          <TouchableOpacity onPress={() => setIsRegister((value) => !value)}>
-            <Text style={styles.switchAction}>
-              {isRegister ? " Sign in" : " Register"}
-            </Text>
-          </TouchableOpacity>
+          {suffix}
         </View>
       </View>
-    </SafeAreaView>
+      {error ? (
+        <Text style={[styles.fieldError, { marginTop: 5 }]}>{error}</Text>
+      ) : null}
+    </View>
+  );
+}
+
+function WantissAuthCard({
+  onSignInPressed,
+  onSignUpPressed,
+  onGooglePressed,
+  onApplePressed,
+}: AuthCardProps) {
+  const { width: screenWidth } = useWindowDimensions();
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [businessName, setBusinessName] = useState('');
+
+  const [isVendor, setIsVendor] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
+  const [obscurePassword, setObscurePassword] = useState(true);
+  const [registerStep, setRegisterStep] = useState(0);
+
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [fullNameError, setFullNameError] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const [googleFailed, setGoogleFailed] = useState(false);
+
+  const pagerRef = useRef<ScrollView>(null);
+  const [pageWidth, setPageWidth] = useState(screenWidth - 60);
+
+  const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+
+  const clearErrors = () => {
+    setEmailError(null);
+    setPasswordError(null);
+    setFullNameError(null);
+    setErrorMessage(null);
+  };
+
+  const toggleRegisterMode = () => {
+    setIsRegisterMode((v) => !v);
+    setRegisterStep(0);
+    clearErrors();
+    pagerRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  };
+
+  const toggleRole = () => {
+    setIsVendor((v) => !v);
+    setRegisterStep(0);
+    clearErrors();
+    pagerRef.current?.scrollTo({ x: 0, y: 0, animated: false });
+  };
+
+  const goToRegisterStep = (step: number) => {
+    setRegisterStep(step);
+    clearErrors();
+    pagerRef.current?.scrollTo({ x: step * pageWidth, y: 0, animated: true });
+  };
+
+  const onPagerScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const index = Math.round(e.nativeEvent.contentOffset.x / pageWidth);
+    if (index !== registerStep) {
+      setRegisterStep(index);
+      clearErrors();
+    }
+  };
+
+  const handleRegisterNext = () => {
+    if (fullName.trim().length === 0) {
+      setFullNameError('Full Name is required.');
+      return;
+    }
+    setFullNameError(null);
+    setErrorMessage(null);
+    goToRegisterStep(1);
+  };
+
+  const handleSubmit = async () => {
+    clearErrors();
+
+    if (isRegisterMode && isVendor && registerStep === 0) {
+      handleRegisterNext();
+      return;
+    }
+
+    const trimmedEmail = email.trim();
+    let hasError = false;
+
+    if (trimmedEmail.length === 0 || !isValidEmail(trimmedEmail)) {
+      setEmailError('Enter a valid email address.');
+      hasError = true;
+    }
+
+    if (password.length === 0) {
+      setPasswordError('Password is required.');
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    if (!isRegisterMode) {
+      if (!onSignInPressed) return;
+      try {
+        await onSignInPressed(trimmedEmail, password);
+      } catch {
+        setErrorMessage('Unable to sign in. Please try again.');
+      }
+      return;
+    }
+
+    if (!isVendor) {
+      if (!onSignUpPressed) return;
+      try {
+        await onSignUpPressed(trimmedEmail, password, 'buyer', '', '');
+      } catch {
+        setErrorMessage('Unable to create your account. Please try again.');
+      }
+      return;
+    }
+
+    const trimmedFullName = fullName.trim();
+    const trimmedBusinessName = businessName.trim();
+
+    if (trimmedFullName.length === 0) {
+      setFullNameError('Full Name is required.');
+      setRegisterStep(0);
+      pagerRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      return;
+    }
+
+    if (!onSignUpPressed) return;
+
+    try {
+      await onSignUpPressed(
+        trimmedEmail,
+        password,
+        'business',
+        trimmedFullName,
+        trimmedBusinessName,
+      );
+    } catch {
+      setErrorMessage('Unable to create your account. Please try again.');
+    }
+  };
+
+  const renderToggle = () => (
+    <View style={styles.toggleOuter}>
+      <View style={styles.toggleInner}>
+        <Pressable
+          style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]}
+          onPress={() => {
+            if (isVendor) toggleRole();
+          }}
+        >
+          <Text
+            style={[
+              styles.toggleText,
+              { color: !isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF },
+            ]}
+          >
+            Buyer
+          </Text>
+        </Pressable>
+        <Pressable
+          style={[styles.toggleHalf, isVendor && { backgroundColor: PINK }]}
+          onPress={() => {
+            if (!isVendor) toggleRole();
+          }}
+        >
+          <Text
+            style={[
+              styles.toggleText,
+              { color: isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF },
+            ]}
+          >
+            B&P 2P
+          </Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+
+  const renderBusinessSpaceLabel = () => {
+    if (!isVendor) return null;
+    return (
+      <View style={styles.businessLabelBox}>
+        <Text style={styles.businessLabelText}>Business Space</Text>
+      </View>
+    );
+  };
+
+  const renderRegisterStepIndicator = () => (
+    <View style={styles.stepIndicator}>
+      <View
+        style={[
+          styles.stepDot,
+          { backgroundColor: registerStep === 0 ? PINK : TOGGLE_BG },
+        ]}
+      />
+      <View style={{ width: 7 }} />
+      <View
+        style={[
+          styles.stepDot,
+          { backgroundColor: registerStep === 1 ? PINK : TOGGLE_BG },
+        ]}
+      />
+    </View>
+  );
+
+  const renderEmailField = () => (
+    <AuthField
+      top={15}
+      value={email}
+      onChangeText={(t) => {
+        setEmail(t);
+        if (emailError) setEmailError(null);
+      }}
+      placeholder="Email"
+      icon="email-outline"
+      error={emailError}
+      keyboardType="email-address"
+    />
+  );
+
+  const renderPasswordField = () => (
+    <AuthField
+      top={12}
+      value={password}
+      onChangeText={(t) => {
+        setPassword(t);
+        if (passwordError) setPasswordError(null);
+      }}
+      placeholder="Password"
+      icon="lock-outline"
+      error={passwordError}
+      secureTextEntry={obscurePassword}
+      suffix={
+        <Pressable
+          style={styles.suffixButton}
+          onPress={() => setObscurePassword((v) => !v)}
+        >
+          <MaterialCommunityIcons
+            name={obscurePassword ? 'eye-off-outline' : 'eye-outline'}
+            size={24}
+            color={FIELD_TEXT}
+          />
+        </Pressable>
+      }
+    />
+  );
+
+  const renderForgotPassword = () => (
+    <View style={styles.forgotRow}>
+      <Pressable
+        onPress={() => {
+          const trimmed = email.trim();
+          if (trimmed.length === 0 || !isValidEmail(trimmed)) {
+            setErrorMessage('Enter a valid email address first.');
+            return;
+          }
+        }}
+      >
+        <Text style={styles.forgotText}>Forgot password?</Text>
+      </Pressable>
+    </View>
+  );
+
+  const renderFullNameField = () => (
+    <AuthField
+      top={15}
+      value={fullName}
+      onChangeText={(t) => {
+        setFullName(t);
+        if (fullNameError) setFullNameError(null);
+      }}
+      placeholder="Full Name"
+      icon="account-outline"
+      error={fullNameError}
+      autoCapitalize="words"
+    />
+  );
+
+  const renderBusinessNameField = () => (
+    <AuthField
+      top={12}
+      value={businessName}
+      onChangeText={setBusinessName}
+      placeholder="Business Name (optional)"
+      icon="office-building-outline"
+      autoCapitalize="words"
+    />
+  );
+
+  const renderSubmitButton = (text: string) => (
+    <View style={styles.submitWrap}>
+      <Pressable style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitText}>{text}</Text>
+      </Pressable>
+    </View>
+  );
+
+  const renderSocialButtons = () => (
+    <View style={styles.socialRow}>
+      <Pressable
+        style={styles.socialButton}
+        onPress={() => onGooglePressed?.()}
+      >
+        {googleFailed ? (
+          <Text style={styles.googleFallback}>G</Text>
+        ) : (
+          <Image
+            source={{ uri: GOOGLE_PNG }}
+            style={{ width: 22, height: 22 }}
+            onError={() => setGoogleFailed(true)}
+          />
+        )}
+      </Pressable>
+      <View style={{ width: 90 }} />
+      <Pressable
+        style={styles.socialButton}
+        onPress={() => onApplePressed?.()}
+      >
+        <MaterialCommunityIcons name="apple" size={25} color="#000000" />
+      </Pressable>
+    </View>
+  );
+
+  const renderCredentialsBlock = (submitText: string) => (
+    <View>
+      {renderEmailField()}
+      {renderPasswordField()}
+      {renderForgotPassword()}
+      {renderSocialButtons()}
+      {renderSubmitButton(submitText)}
+    </View>
+  );
+
+  const renderBusinessRegistrationPages = () => (
+    <View
+      style={{ height: 365 }}
+      onLayout={(e: LayoutChangeEvent) => {
+        const w = e.nativeEvent.layout.width;
+        if (w > 0 && w !== pageWidth) setPageWidth(w);
+      }}
+    >
+      <ScrollView
+        ref={pagerRef}
+        horizontal
+        pagingEnabled
+        bounces={false}
+        showsHorizontalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        onMomentumScrollEnd={onPagerScrollEnd}
+        style={{ height: 365 }}
+      >
+        <View style={{ width: pageWidth, height: 365 }}>
+          {renderFullNameField()}
+          {renderBusinessNameField()}
+          {renderSubmitButton('Next')}
+        </View>
+        <View style={{ width: pageWidth, height: 365 }}>
+          {renderCredentialsBlock('Sign Up')}
+        </View>
+      </ScrollView>
+    </View>
+  );
+
+  const renderErrorMessage = () => {
+    if (!errorMessage) return null;
+    return (
+      <View style={styles.errorMessageWrap}>
+        <Text style={styles.fieldError}>{errorMessage}</Text>
+      </View>
+    );
+  };
+
+  const renderBottomAccountSwitch = () => (
+    <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
+      <Text style={styles.bottomSwitchText}>
+        {isRegisterMode ? 'Already have an account? ' : "Don't have an account? "}
+        <Text style={styles.bottomSwitchLink}>
+          {isRegisterMode ? 'Sign in' : 'Register'}
+        </Text>
+      </Text>
+    </Pressable>
+  );
+
+  return (
+    <View style={{ width: '100%' }}>
+      <View style={styles.card}>
+        <ScrollView
+          bounces={false}
+          overScrollMode="never"
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
+          {renderToggle()}
+          {renderBusinessSpaceLabel()}
+          {isRegisterMode && isVendor ? renderRegisterStepIndicator() : null}
+          {isRegisterMode && isVendor
+            ? renderBusinessRegistrationPages()
+            : isRegisterMode
+            ? renderCredentialsBlock('Sign Up')
+            : renderCredentialsBlock('Sign in')}
+          {renderErrorMessage()}
+        </ScrollView>
+      </View>
+      {renderBottomAccountSwitch()}
+    </View>
+  );
+}
+
+export default function App() {
+  const { height: screenHeight } = useWindowDimensions();
+  const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
+
+  return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <View style={styles.page}>
+        <StatusBar style="dark" />
+
+        <LinearGradient
+          colors={['#F7DDEB', '#FBEAF3', '#FFF5E9']}
+          locations={[0.0, 0.85, 0.925]}
+          start={{ x: 1, y: 1 }}
+          end={{ x: 0, y: 0 }}
+          style={[styles.header, { top: headerTop }]}
+        >
+          <View style={styles.logoBox}>
+            <Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" />
+          </View>
+        </LinearGradient>
+
+        <View style={styles.cardPosition}>
+          <WantissAuthCard
+            onSignInPressed={async (email, password) => {
+              console.log('Sign in', email, password.length);
+            }}
+            onSignUpPressed={async (email, password, role, fullName, businessName) => {
+              console.log('Sign up', email, password.length, role, fullName, businessName);
+            }}
+            onGooglePressed={async () => {}}
+            onApplePressed={async () => {}}
+          />
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
-  safeArea: {
+  page: {
     flex: 1,
-    backgroundColor: "#F1F4F8",
+    backgroundColor: PAGE_BG,
   },
-  container: {
-    flex: 1,
-  },
-  topSection: {
+  header: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
     height: 356,
-    width: "100%",
-    paddingTop: 50,
+  },
+  logoBox: {
+    flex: 1,
     paddingLeft: 20,
+    paddingTop: 50,
     paddingRight: 30,
     paddingBottom: 25,
-    backgroundColor: "#FBEAF3",
   },
   logo: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
+    width: '100%',
+    height: '100%',
     borderRadius: 8,
   },
+  cardPosition: {
+    position: 'absolute',
+    top: 300,
+    left: 15,
+    right: 15,
+  },
   card: {
-    marginHorizontal: 15,
-    marginTop: -56,
-    backgroundColor: "#FFFFFF",
+    width: '100%',
+    height: 485,
+    backgroundColor: '#FFFFFF',
     borderRadius: 20,
-    minHeight: 485,
-    paddingHorizontal: 15,
-    paddingTop: 24,
-  },
-  roleToggle: {
-    height: 50,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#E0E3E7",
-    padding: 2,
-    flexDirection: "row",
-  },
-  roleButton: {
-    flex: 1,
-    borderRadius: 10,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  roleButtonActive: {
-    backgroundColor: "#BF008E",
-  },
-  roleText: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: "#949090",
-  },
-  roleTextActive: {
-    color: "#FFFFFF",
-  },
-  businessLabel: {
-    color: "#D52F4F",
-    fontSize: 13,
-    fontWeight: "500",
-    marginTop: 7,
-    marginBottom: 3,
-    marginLeft: 160,
-  },
-  input: {
-    height: 60,
-    backgroundColor: "#FBE8EF",
-    borderRadius: 15,
-    paddingHorizontal: 18,
-    marginTop: 10,
-    fontSize: 18,
-    color: "#9A4B68",
-  },
-  passwordContainer: {
-    height: 60,
-    backgroundColor: "#FBE8EF",
-    borderRadius: 15,
-    marginTop: 10,
-    paddingLeft: 18,
+    paddingLeft: 15,
     paddingRight: 15,
-    flexDirection: "row",
-    alignItems: "center",
+    paddingTop: 24,
+    overflow: 'hidden',
   },
-  passwordInput: {
+  toggleOuter: {
+    width: '100%',
+    maxWidth: 350,
+    height: 50,
+    alignSelf: 'center',
+  },
+  toggleInner: {
     flex: 1,
+    flexDirection: 'row',
+    backgroundColor: TOGGLE_BG,
+    borderWidth: 1,
+    borderColor: TOGGLE_BG,
+    borderRadius: 12,
+    padding: 2,
+  },
+  toggleHalf: {
+    flex: 1,
+    height: 44,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  toggleText: {
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  businessLabelBox: {
+    height: 25,
+    paddingLeft: 175,
+    justifyContent: 'center',
+  },
+  businessLabelText: {
+    fontSize: 13,
+    color: RED,
+  },
+  stepIndicator: {
+    paddingTop: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  stepDot: {
+    width: 7,
+    height: 7,
+    borderRadius: 3.5,
+  },
+  fieldBox: {
+    height: 60,
+    backgroundColor: FIELD_BG,
+    borderRadius: 15,
+  },
+  fieldInner: {
+    flex: 1,
+    marginTop: 11,
+    marginLeft: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  prefixIcon: {
+    width: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  suffixButton: {
+    width: 48,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  textInput: {
+    flex: 1,
+    height: '100%',
+    padding: 0,
     fontSize: 18,
-    color: "#9A4B68",
+    fontWeight: '400',
+    color: FIELD_TEXT,
   },
-  eye: {
-    fontSize: 22,
-    color: "#9A4B68",
+  fieldError: {
+    fontSize: 13,
+    fontWeight: '500',
+    color: RED,
   },
-  forgotButton: {
-    alignSelf: "flex-end",
-    marginTop: 9,
+  forgotRow: {
+    paddingTop: 8,
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'flex-end',
   },
   forgotText: {
-    color: "#9D315B",
     fontSize: 14,
-    fontWeight: "600",
+    fontWeight: '600',
+    color: LINK,
+  },
+  submitWrap: {
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingTop: 20,
   },
   submitButton: {
+    width: '100%',
     height: 60,
+    backgroundColor: PINK,
     borderRadius: 15,
-    backgroundColor: "#BF008E",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 20,
-    marginHorizontal: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   submitText: {
-    color: "#FFFFFF",
     fontSize: 18,
-    fontWeight: "600",
+    fontWeight: '600',
+    color: '#FFFFFF',
   },
   socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 90,
-    marginTop: 30,
+    paddingTop: 30,
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   socialButton: {
     width: 100,
     height: 50,
-    borderRadius: 10,
+    backgroundColor: '#FFFFFF',
     borderWidth: 0.5,
-    borderColor: "#9A4B68",
-    backgroundColor: "#FFFFFF",
-    alignItems: "center",
-    justifyContent: "center",
+    borderColor: FIELD_TEXT,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  socialGoogle: {
+  googleFallback: {
     fontSize: 22,
-    fontWeight: "700",
-    color: "#4285F4",
+    fontWeight: '600',
+    color: '#4B39EF',
   },
-  socialApple: {
-    fontSize: 24,
-    color: "#000000",
+  errorMessageWrap: {
+    paddingTop: 5,
+    paddingLeft: 15,
+    paddingRight: 15,
+    alignItems: 'flex-start',
   },
-  switchRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 12,
+  bottomSwitch: {
+    paddingTop: 12,
     paddingBottom: 10,
+    alignItems: 'center',
   },
-  switchText: {
+  bottomSwitchText: {
+    textAlign: 'center',
     fontSize: 15,
-    color: "#14181B",
+    fontWeight: '400',
+    color: DARK,
   },
-  switchAction: {
+  bottomSwitchLink: {
     fontSize: 14.5,
-    fontWeight: "600",
-    color: "#9D315B",
+    fontWeight: '600',
+    color: LINK,
   },
 });
