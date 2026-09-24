@@ -36,6 +36,7 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const {width}=useWindowDimensions();
  const itemW=width/COLUMNS;
  const progress=useSharedValue(0);
+ const dragStart=useSharedValue(0);
  const [expanded,setExpanded]=useState(false);
  const [featuredIndex,setFeaturedIndex]=useState(0);
  const [flashIndex]=useState(()=>Math.floor(Math.random()*3));
@@ -45,8 +46,8 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const pan=Gesture.Pan()
   .activeOffsetX([-10,10])
   .failOffsetY([-12,12])
-  .onStart(()=>cancelAnimation(progress))
-  .onUpdate(e=>{progress.value=clamp01(progress.value-e.changeX/DRAG_SENSITIVITY)})
+  .onStart(()=>{cancelAnimation(progress);dragStart.value=progress.value})
+  .onUpdate(e=>{progress.value=clamp01(dragStart.value-e.translationX/DRAG_SENSITIVITY)})
   .onEnd(e=>{
    const target=e.velocityX<-FLING_VELOCITY?1:e.velocityX>FLING_VELOCITY?0:progress.value>=.5?1:0;
    progress.value=withTiming(target,{duration:ANIM_MS,easing:Easing.out(Easing.cubic)});
