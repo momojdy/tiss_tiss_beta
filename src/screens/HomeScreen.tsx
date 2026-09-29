@@ -42,10 +42,6 @@ import { Montserrat_400Regular_Italic } from '@expo-google-fonts/montserrat';
 import { Inter_500Medium } from '@expo-google-fonts/inter';
 import { InterTight_500Medium } from '@expo-google-fonts/inter-tight';
 
-// ============================================================
-// THEME
-// ============================================================
-
 const MAGENTA = '#BF008E';
 const PINK_BG = '#FBE8EF';
 const GOLD = '#DAAE67';
@@ -66,17 +62,11 @@ const EASE_IN_CUBIC = Easing.bezier(0.55, 0.055, 0.675, 0.19);
 
 const pick = <T,>(arr: T[]) => Math.floor(Math.random() * arr.length);
 
-// ============================================================
-// CYCLING TEXT
-// ============================================================
-
 function CyclingText({text,lineHeight,offset,duration,style}:{text:string;lineHeight:number;offset:number;duration:number;style:TextStyle}) {
   const [state,setState]=useState<{cur:string;prev:string|null}>({cur:text,prev:null});
   const t=useRef(new Animated.Value(1)).current;
   const first=useRef(true);
-
   useEffect(()=>{ if(first.current){first.current=false;return;} setState(s=>({cur:text,prev:s.cur})); t.setValue(0); Animated.timing(t,{toValue:1,duration,easing:EASE_OUT_CUBIC,useNativeDriver:true}).start(()=>setState(s=>({cur:s.cur,prev:null}))); },[text]);
-
   const dist=lineHeight*offset;
   return <View style={{height:lineHeight,overflow:'hidden'}}>
     {state.prev!==null&&<Animated.Text numberOfLines={1} style={[style,{position:'absolute',left:0,right:0,lineHeight,opacity:t.interpolate({inputRange:[0,1],outputRange:[1,0]}),transform:[{translateY:t.interpolate({inputRange:[0,1],outputRange:[0,dist]})}]}]}>{state.prev}</Animated.Text>}
@@ -84,12 +74,7 @@ function CyclingText({text,lineHeight,offset,duration,style}:{text:string;lineHe
   </View>;
 }
 
-// ============================================================
-// MAIN TAB SELECTOR
-// ============================================================
-
 const TABS=[{label:'Favs',width:60},{label:'For you',width:65},{label:'Flash',width:70},{label:'Locals',width:60},{label:'New Arrivals',width:80},{label:'Live',width:70}];
-
 function MainTabSelector(){
   const[selected,setSelected]=useState('For you');
   return <View style={s.tabBar}>
@@ -103,46 +88,31 @@ function MainTabSelector(){
   </View>;
 }
 
-// ============================================================
-// SEARCH SLOGAN CAROUSEL
-// ============================================================
-
 const SLOGANS=['Buy Happiness','Wantiss','Sell Joy'];
 const SLOGAN_PAD=[3,0,0];
 const SLOGAN_W=211.6;
 const SLOGAN_H=47;
-const PAGE_H=SLOGAN_H*0.5;
-const SLOTS=[-2,-1,0,1,2];
-
-function scaleFor(offset:number){const ratio=Math.min(Math.abs(offset)*0.3,1);return EASE_OUT(1-ratio);}
+const PAGE_H=SLOGAN_H;
+const SLOTS=[0,1];
 
 function SloganCarousel(){
   const[base,setBase]=useState(0);
   const a=useRef(new Animated.Value(0)).current;
   useEffect(()=>{const id=setInterval(()=>{Animated.timing(a,{toValue:1,duration:800,easing:Easing.linear,useNativeDriver:true}).start(({finished})=>{if(finished){a.setValue(0);setBase(b=>b+1);}})},3800);return()=>clearInterval(id)},[a]);
-  const samples=useMemo(()=>Array.from({length:11},(_,i)=>i/10),[]);
-  return <View style={{width:SLOGAN_W,height:SLOGAN_H,overflow:'hidden'}}>{SLOTS.map(d=>{const idx=(((1+base+d)%3)+3)%3;return <Animated.View key={`${base}-${d}`} style={{position:'absolute',left:0,right:0,top:SLOGAN_H/2-PAGE_H/2,height:PAGE_H,justifyContent:'center',paddingLeft:SLOGAN_PAD[idx],transform:[{translateY:a.interpolate({inputRange:[0,1],outputRange:[d*PAGE_H,(d-1)*PAGE_H]})},{scale:a.interpolate({inputRange:samples,outputRange:samples.map(x=>scaleFor(d-x))})}]}}><Text numberOfLines={1} style={{fontFamily:F_MONT_ITALIC,fontSize:14,color:'#000',letterSpacing:0}}>{SLOGANS[idx]}</Text></Animated.View>})}</View>;
+  return <View style={{width:SLOGAN_W,height:SLOGAN_H,overflow:'hidden'}}>{SLOTS.map(d=>{const idx=(base+d)%3;return <Animated.View key={`${base}-${d}`} style={{position:'absolute',left:0,right:0,top:0,height:PAGE_H,justifyContent:'center',paddingLeft:SLOGAN_PAD[idx],transform:[{translateY:a.interpolate({inputRange:[0,1],outputRange:[d*PAGE_H,(d-1)*PAGE_H]})}]}}><Text numberOfLines={1} style={{fontFamily:F_MONT_ITALIC,fontSize:14,color:'#000',letterSpacing:0}}>{SLOGANS[idx]}</Text></Animated.View>})}</View>;
 }
-
-// ============================================================
-// SEARCH BAR
-// ============================================================
 
 function SearchBar(){
   const[query,setQuery]=useState('');
   const showCarousel=query.length===0;
   return <View style={s.search}>
-    <View style={{paddingLeft:3}}><MaterialIcons name="center-focus-weak" size={30} color={MAGENTA}/></View>
+    <View style={{paddingLeft:3}}><MaterialIcons name="document-scanner" size={30} color={MAGENTA}/></View>
     <View style={{paddingHorizontal:5}}><View style={{width:1.8,height:30,backgroundColor:'rgba(204,204,204,0.8)'}}/></View>
     <View style={{width:SLOGAN_W,height:SLOGAN_H,position:'relative'}}>{showCarousel&&<View style={StyleSheet.absoluteFill} pointerEvents="none"><SloganCarousel/></View>}<TextInput value={query} onChangeText={setQuery} style={s.searchInput} selectionColor={MAGENTA} underlineColorAndroid="transparent" autoCorrect={false}/></View>
     <View style={{paddingTop:4,paddingRight:4}}><MaterialCommunityIcons name="camera-outline" size={25} color="rgba(136,136,142,0.635)"/></View>
     <Pressable style={s.searchBtn}><Text numberOfLines={1} style={s.searchBtnText}>search</Text></Pressable>
   </View>;
 }
-
-// ============================================================
-// MAIN DRAG CAROUSEL
-// ============================================================
 
 const COLUMNS=5,DRAG_SENSITIVITY=850,ROW_H=78,INDICATOR_H=10,TEASER_H=140;
 const COLLAPSED_H=ROW_H+INDICATOR_H;
@@ -202,28 +172,18 @@ function TeaserRow({p}:{p:Animated.Value}){
   return <Animated.View pointerEvents={on?'auto':'none'} style={{height,opacity,overflow:'hidden'}}><View style={{height:TEASER_H,flexDirection:'row'}}><View style={{flex:1}}><TeaserCard label="featured picks" icon={<MaterialIcons name="auto-awesome" size={14} color={BLACK87}/>} background="#FBEAF0" color={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPressInner={()=>console.log('Tapped featured picks')}/></View><View style={{flex:1}}><TeaserCard label="flash deals" icon={<MaterialCommunityIcons name="clock" size={14} color={BLACK87}/>} background="#FCEFD9" color={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPressInner={()=>console.log('Tapped flash deals')}/></View></View></Animated.View>;
 }
 
-// ============================================================
-// PROMO BANNER
-// ============================================================
-
 const CARD_COLORS=['#D8CFC0','#C9CEDD','#D9D9D9'];
 const CARD_CAPTIONS=['$51.9 off','$10.5 off','$43.9 off'];
 const NOTIFICATIONS=['new season styles, up to 20% off','free shipping on orders over $50','limited time: buy 1 get 1 half off'];
-
 function MainPromoBanner(){
   const indices=useRef(CARD_CAPTIONS.map(()=>pick(CARD_COLORS))).current; const[msg,setMsg]=useState(0);
   useEffect(()=>{const id=setInterval(()=>setMsg(m=>(m+1)%NOTIFICATIONS.length),3000);return()=>clearInterval(id)},[]);
-  return <View style={s.banner}><View style={{flexDirection:'row'}}><Pressable style={[s.voucher,{marginRight:6}]}><Text style={{fontSize:18,fontWeight:'bold',color:LAVENDER}}>$7</Text><Text style={{fontSize:10,textAlign:'center',marginTop:2,color:BLACK87}}>{'grocery\nvoucher'}</Text></Pressable>{CARD_CAPTIONS.map((cap,i)=><Pressable key={cap} style={[s.imgCard,{marginRight:i<CARD_CAPTIONS.length-1?6:0}]}><View style={{flex:1,backgroundColor:CARD_COLORS[indices[i]]}}/><Text style={{fontSize:10,fontWeight:'600',paddingHorizontal:6,paddingVertical:4,color:BLACK87}}>{cap}</Text></Pressable>)}</View><Pressable style={s.notif}><MaterialIcons name="volume-up" size={16} color="#fff"/><View style={{flex:1,marginLeft:8,marginRight:6}}><CyclingText text={NOTIFICATIONS[msg]} lineHeight={16} offset={1} duration={500} style={{color:'#fff',fontSize:12}}/></View><MaterialIcons name="chevron-right" size={16} color="#fff"/></Pressable></View>;
+  return <View style={s.banner}><View style={{flexDirection:'row'}}><Pressable style={[s.voucher,{marginRight:6}]}><Text style={{fontSize:18,fontWeight:'bold',color:LAVENDER}}>$7</Text><Text style={{fontSize:10,textAlign:'center',marginTop:2,color:BLACK87}}>{'grocery\\nvoucher'}</Text></Pressable>{CARD_CAPTIONS.map((cap,i)=><Pressable key={cap} style={[s.imgCard,{marginRight:i<CARD_CAPTIONS.length-1?6:0}]}><View style={{flex:1,backgroundColor:CARD_COLORS[indices[i]]}}/><Text style={{fontSize:10,fontWeight:'600',paddingHorizontal:6,paddingVertical:4,color:BLACK87}}>{cap}</Text></Pressable>)}</View><Pressable style={s.notif}><MaterialIcons name="volume-up" size={16} color="#fff"/><View style={{flex:1,marginLeft:8,marginRight:6}}><CyclingText text={NOTIFICATIONS[msg]} lineHeight={16} offset={1} duration={500} style={{color:'#fff',fontSize:12}}/></View><MaterialIcons name="chevron-right" size={16} color="#fff"/></Pressable></View>;
 }
-
-// ============================================================
-// PROMO POPUP
-// ============================================================
 
 const POPUP_MESSAGES=['spend $80, save $10 — claim now','free delivery on your next order','new members get 15% off today'];
 const SUPPRESS_MS=8*60*60*1000;
 const DISMISS_KEY='promoPopupDismissedAt';
-
 function MainPromoPopup(){
   const[visible,setVisible]=useState(false); const[msg,setMsg]=useState(0); const anim=useRef(new Animated.Value(0)).current;
   useEffect(()=>{let timer:ReturnType<typeof setTimeout>|undefined;let alive=true;(async()=>{let show=true;try{const raw=await AsyncStorage.getItem(DISMISS_KEY);if(raw&&Date.now()-Number(raw)<SUPPRESS_MS)show=false}catch{}if(show&&alive){timer=setTimeout(()=>{if(!alive)return;setVisible(true);Animated.timing(anim,{toValue:1,duration:500,easing:EASE_OUT_CUBIC,useNativeDriver:true}).start()},600)}})();const id=setInterval(()=>setMsg(m=>(m+1)%POPUP_MESSAGES.length),3000);return()=>{alive=false;if(timer)clearTimeout(timer);clearInterval(id)}},[anim]);
@@ -232,14 +192,8 @@ function MainPromoPopup(){
   return <Animated.View style={[s.popup,{opacity:anim.interpolate({inputRange:[0,1],outputRange:[0,1],easing:EASE_OUT}),transform:[{translateY:anim.interpolate({inputRange:[0,1],outputRange:[40,0]})}]}]}><View style={s.promoBadge}><Text style={{color:'#fff',fontSize:11,fontWeight:'600'}}>promo</Text></View><Pressable style={{flex:1,marginLeft:4,justifyContent:'center'}}><CyclingText text={POPUP_MESSAGES[msg]} lineHeight={16} offset={.5} duration={400} style={{color:LAVENDER,fontSize:12,fontWeight:'500'}}/></Pressable><Pressable onPress={dismiss} style={{marginLeft:8}} hitSlop={10}><MaterialIcons name="close" size={16} color={MAGENTA}/></Pressable></Animated.View>;
 }
 
-// ============================================================
-// BOTTOM NAV
-// ============================================================
-
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
-
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
-
 function BottomNav(){
   return <View style={{padding:2}}><View style={s.nav}>
     <View style={{width:70,height:65,alignItems:'center'}}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={{width:58,height:58,borderRadius:29}} resizeMode="contain"/></View></View>
@@ -249,10 +203,6 @@ function BottomNav(){
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'flex-end'}}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Me</NavLabel></Pressable>
   </View></View>;
 }
-
-// ============================================================
-// HOME PAGE
-// ============================================================
 
 export default function HomeScreen(){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
