@@ -9,9 +9,11 @@ import {colors} from '../theme';
 import {clamp01,easeInOutCubic,easeOut,lerp} from '../theme/motion';
 
 const COLUMNS=5,DRAG_SENSITIVITY=850,FLING_VELOCITY=200,ANIM_MS=450,ROW_HEIGHT=78,INDICATOR_HEIGHT=10;
-const TEASER_TOP=84,TEASER_HEIGHT=128;
-const COLLAPSED_HEIGHT=TEASER_TOP+TEASER_HEIGHT;
-const EXPANDED_HEIGHT=ROW_HEIGHT*3+INDICATOR_HEIGHT;
+const TEASER_HEIGHT=128;
+const CATEGORY_COLLAPSED_HEIGHT=ROW_HEIGHT+INDICATOR_HEIGHT;
+const CATEGORY_EXPANDED_HEIGHT=ROW_HEIGHT*3+INDICATOR_HEIGHT;
+const COLLAPSED_TOTAL_HEIGHT=CATEGORY_COLLAPSED_HEIGHT+TEASER_HEIGHT;
+const EXPANDED_TOTAL_HEIGHT=CATEGORY_EXPANDED_HEIGHT;
 const FEATURED_COLORS=['#E8C7D8','#D8B7E0','#C9A8DE'];
 const FEATURED_CAPTIONS=['from $9','from $15','from $6'];
 const FLASH_COLORS=['#F0D9A0','#E8C888','#F2E2B8'];
@@ -54,9 +56,10 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
    runOnJS(setExpanded)(target===1);
   });
 
- const root=useAnimatedStyle(()=>({height:lerp(COLLAPSED_HEIGHT,EXPANDED_HEIGHT,progress.value)}));
- const gestureArea=useAnimatedStyle(()=>({height:lerp(ROW_HEIGHT,EXPANDED_HEIGHT,progress.value)}));
- const teaser=useAnimatedStyle(()=>({opacity:clamp01(1-progress.value),transform:[{translateY:70*easeInOutCubic(progress.value)}]}));
+ const root=useAnimatedStyle(()=>({height:lerp(COLLAPSED_TOTAL_HEIGHT,EXPANDED_TOTAL_HEIGHT,progress.value)}));
+ const categoryRoot=useAnimatedStyle(()=>({height:lerp(CATEGORY_COLLAPSED_HEIGHT,CATEGORY_EXPANDED_HEIGHT,progress.value)}));
+ const gestureArea=useAnimatedStyle(()=>({height:lerp(ROW_HEIGHT,ROW_HEIGHT*3,progress.value)}));
+ const teaser=useAnimatedStyle(()=>({height:lerp(TEASER_HEIGHT,0,progress.value),opacity:clamp01(1-progress.value),transform:[{translateY:70*easeInOutCubic(progress.value)}]}));
  const indicator=useAnimatedStyle(()=>({
   opacity:progress.value<=.75?lerp(1,.25,progress.value/.75):lerp(.25,1,(progress.value-.75)/.25),
   transform:[{translateY:lerp(ROW_HEIGHT,ROW_HEIGHT*3,easeInOutCubic(progress.value))]
@@ -65,13 +68,15 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const circle=useAnimatedStyle(()=>({backgroundColor:interpolateColor(easeInOutCubic(progress.value),[0,1],[colors.grey300,colors.primary])}));
 
  return <Animated.View style={[styles.root,{width},root]}>
-  <Animated.View pointerEvents={expanded?'none':'auto'} style={[styles.teaser,teaser]}>
+  <Animated.View style={categoryRoot}>
+  <GestureDetector gesture={pan}>
+   <Animated.View style={[styles.gestureArea,gestureArea]}>
    <TeaserCard label="featured picks" icon="auto-awesome" background="#FBEAF0" swatchColor={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPress={onFeaturedPress}/>
    <TeaserCard label="flash deals" icon="access-time-filled" background={colors.gridCream} swatchColor={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPress={onFlashPress}/>
   </Animated.View>
+  </GestureDetector>
 
-  <GestureDetector gesture={pan}>
-   <Animated.View style={[styles.gestureArea,gestureArea]}>
+  <Animated.View pointerEvents={expanded?'none':'auto'} style={[styles.teaser,teaser]}>
     {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress}
       fromX={i*collapsedW} toX={(i+1)*itemW} fromY={0} toY={0}
       opacityFrom={1} opacityTo={0} interactive={!expanded} onPress={onCategoryPress}/>)}
@@ -102,7 +107,7 @@ const styles=StyleSheet.create({
  gestureArea:{position:'absolute',left:0,right:0,top:0},
  fill:{flex:1},
  cell:{position:'absolute',left:0,top:0,width:'20%',height:ROW_HEIGHT},
- teaser:{position:'absolute',left:0,right:0,top:TEASER_TOP,height:TEASER_HEIGHT,flexDirection:'row'},
+ teaser:{height:TEASER_HEIGHT,flexDirection:'row',overflow:'hidden'},
  indicator:{position:'absolute',left:0,right:0,top:0,height:INDICATOR_HEIGHT,flexDirection:'row',alignItems:'center',justifyContent:'center'},
  line:{width:14,height:4,borderRadius:2,marginHorizontal:2},
  circle:{width:6,height:6,borderRadius:3,marginHorizontal:2}
