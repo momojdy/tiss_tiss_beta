@@ -50,7 +50,12 @@ export default function App() {
           },
         });
 
-        if (error) throw error;
+        if (error) {
+          if (error.message.toLowerCase().includes('already registered')) {
+            throw new Error('This email is already registered. Please sign in instead.');
+          }
+          throw error;
+        }
 
         if (data.session) {
           if (role === 'buyer') {
@@ -62,7 +67,11 @@ export default function App() {
           return;
         }
 
-        throw new Error('Check your email to confirm your account, then sign in.');
+        if (data.user && !data.session) {
+          throw new Error('This email is already registered. Please sign in instead.');
+        }
+
+        throw new Error('Unable to create your account. Please try again.');
       }}
     />
   );
