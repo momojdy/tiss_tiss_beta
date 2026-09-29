@@ -198,7 +198,7 @@ function BottomNav(){
   return <View style={{padding:2}}><View style={s.nav}>
     <View style={{width:70,height:65,alignItems:'center'}}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={{width:58,height:58,borderRadius:29}} resizeMode="contain"/></View></View>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="television-play" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Showcase</NavLabel></Pressable>
-    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-evenly'}}><MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA}/><NavLabel style={{paddingTop:4}}>Messages</NavLabel></Pressable>
+    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA}/><NavLabel style={{paddingTop:4}}>Messages</NavLabel></Pressable>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'center',paddingLeft:4}}><MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:3}}>Cart</NavLabel></Pressable>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'flex-end'}}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Me</NavLabel></Pressable>
   </View></View>;
