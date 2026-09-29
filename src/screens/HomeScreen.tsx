@@ -35,7 +35,6 @@ import { StatusBar } from 'expo-status-bar';
 import {
   MaterialIcons,
   MaterialCommunityIcons,
-  Ionicons,
 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
@@ -107,7 +106,7 @@ function SearchBar(){
   const[query,setQuery]=useState('');
   const showCarousel=query.length===0;
   return <View style={s.search}>
-    <View style={{paddingLeft:3}}><Ionicons name="scan-outline" size={30} color={MAGENTA}/></View>
+    <View style={{paddingLeft:3}}><MaterialCommunityIcons name="line-scan" size={30} color={MAGENTA}/></View>
     <View style={{paddingHorizontal:5}}><View style={{width:1.8,height:30,backgroundColor:'rgba(204,204,204,0.8)'}}/></View>
     <View style={{width:SLOGAN_W,height:SLOGAN_H,position:'relative'}}>{showCarousel&&<View style={StyleSheet.absoluteFill} pointerEvents="none"><SloganCarousel/></View>}<TextInput value={query} onChangeText={setQuery} style={s.searchInput} selectionColor={MAGENTA} underlineColorAndroid="transparent" autoCorrect={false}/></View>
     <View style={{paddingTop:4,paddingRight:4}}><MaterialCommunityIcons name="camera-outline" size={25} color="rgba(136,136,142,0.635)"/></View>
@@ -190,7 +189,7 @@ function MainPromoPopup(){
   useEffect(()=>{let timer:ReturnType<typeof setTimeout>|undefined;let alive=true;(async()=>{let show=true;try{const raw=await AsyncStorage.getItem(DISMISS_KEY);if(raw&&Date.now()-Number(raw)<SUPPRESS_MS)show=false}catch{}if(show&&alive){timer=setTimeout(()=>{if(!alive)return;setVisible(true);Animated.timing(anim,{toValue:1,duration:500,easing:EASE_OUT_CUBIC,useNativeDriver:true}).start()},600)}})();const id=setInterval(()=>setMsg(m=>(m+1)%POPUP_MESSAGES.length),3000);return()=>{alive=false;if(timer)clearTimeout(timer);clearInterval(id)}},[anim]);
   const dismiss=()=>{Animated.timing(anim,{toValue:0,duration:500,easing:EASE_OUT_CUBIC,useNativeDriver:true}).start(async()=>{setVisible(false);try{await AsyncStorage.setItem(DISMISS_KEY,String(Date.now()))}catch{}})};
   if(!visible)return null;
-  return <Animated.View style={[s.popup,{opacity:anim.interpolate({inputRange:[0,1],outputRange:[0,1],easing:EASE_OUT}),transform:[{translateY:anim.interpolate({inputRange:[0,1],outputRange:[40,0]})}]}]}><View style={s.promoBadge}><Text style={{color:'#fff',fontSize:11,fontWeight:'600'}}>promo</Text></View><Pressable style={{flex:1,marginLeft:4,justifyContent:'center'}}><CyclingText text={POPUP_MESSAGES[msg]} lineHeight={16} offset={.5} duration={400} style={{color:LAVENDER,fontSize:12,fontWeight:'500'}}/></Pressable><Pressable onPress={dismiss} style={{marginLeft:8}} hitSlop={10}><MaterialIcons name="close" size={16} color={MAGENTA}/></Pressable></Animated.View>;
+  return <Animated.View style={[s.popup,{opacity:anim.interpolate({inputRange:[0,1],outputRange:[0,1]),transform:[{translateY:anim.interpolate({inputRange:[0,1],outputRange:[40,0]})}]}]}><View style={s.promoBadge}><Text style={{color:'#fff',fontSize:11,fontWeight:'600'}}>promo</Text></View><Pressable style={{flex:1,marginLeft:4,justifyContent:'center'}}><CyclingText text={POPUP_MESSAGES[msg]} lineHeight={16} offset={.5} duration={400} style={{color:LAVENDER,fontSize:12,fontWeight:'500'}}/></Pressable><Pressable onPress={dismiss} style={{marginLeft:8}} hitSlop={10}><MaterialIcons name="close" size={16} color={MAGENTA}/></Pressable></Animated.View>;
 }
 
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
