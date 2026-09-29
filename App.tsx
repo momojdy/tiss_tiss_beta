@@ -37,6 +37,10 @@ export default function App() {
 
         setAuthenticated(true);
       }}
+      onForgotPasswordPressed={async (email) => {
+        const { error } = await supabase.auth.resetPasswordForEmail(email);
+        if (error) throw error;
+      }}
       onSignUpPressed={async (email, password, role, fullName, businessName) => {
         const { data, error } = await supabase.auth.signUp({
           email,
