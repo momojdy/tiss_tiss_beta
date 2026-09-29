@@ -46,6 +46,7 @@ type AuthCardProps = {
   onGooglePressed?: () => Promise<unknown>;
   onApplePressed?: () => Promise<unknown>;
   onForgotPasswordPressed?: (email: string) => Promise<unknown>;
+  onForgotPasswordScreenPressed?: () => void;
 };
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -94,7 +95,8 @@ function AuthField({
 }
 
 function WantissAuthCard({
-  onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed,
+  onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed,
+  onForgotPasswordPressed, onForgotPasswordScreenPressed,
 }: AuthCardProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -328,26 +330,10 @@ function WantissAuthCard({
   const renderForgotPassword = () => (
     <View style={styles.forgotRow}>
       <Pressable
-        onPress={async () => {
-          const trimmed = email.trim();
-          if (!trimmed || !isValidEmail(trimmed)) {
-            setEmailError('Enter a valid email address.');
-            return;
-          }
-
-          setEmailError(null);
+        onPress={() => {
           setErrorMessage(null);
-
-          if (!onForgotPasswordPressed) return;
-
-          try {
-            await onForgotPasswordPressed(trimmed);
-            setErrorMessage('Password reset email sent. Check your inbox.');
-          } catch (error) {
-            setErrorMessage(
-              error instanceof Error ? error.message : 'Unable to send password reset email. Please try again.',
-            );
-          }
+          setEmailError(null);
+          onForgotPasswordScreenPressed?.();
         }}
       >
         <Text style={styles.forgotText}>Forgot password?</Text>
@@ -471,6 +457,7 @@ type AuthScreenProps = {
   onGooglePressed?: () => Promise<unknown>;
   onApplePressed?: () => Promise<unknown>;
   onForgotPasswordPressed?: (email: string) => Promise<unknown>;
+  onForgotPasswordScreenPressed?: () => void;
 };
 
 export default function AuthScreen({
@@ -479,6 +466,7 @@ export default function AuthScreen({
   onGooglePressed,
   onApplePressed,
   onForgotPasswordPressed,
+  onForgotPasswordScreenPressed,
 }: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
@@ -506,6 +494,7 @@ export default function AuthScreen({
             onGooglePressed={onGooglePressed}
             onApplePressed={onApplePressed}
             onForgotPasswordPressed={onForgotPasswordPressed}
+            onForgotPasswordScreenPressed={onForgotPasswordScreenPressed}
           />
         </View>
       </View>
