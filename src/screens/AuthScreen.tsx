@@ -470,6 +470,7 @@ type AuthScreenProps = {
   ) => Promise<unknown>;
   onGooglePressed?: () => Promise<unknown>;
   onApplePressed?: () => Promise<unknown>;
+  onForgotPasswordPressed?: (email: string) => Promise<unknown>;
 };
 
 export default function AuthScreen({
