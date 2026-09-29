@@ -197,7 +197,7 @@ function MainDragCarousel({p,onDragActive}:{p:Animated.Value;onDragActive:(v:boo
 
 function TeaserRow({p}:{p:Animated.Value}){
   const[featuredIndex,setFeaturedIndex]=useState(0); const flashIndex=useRef(pick(FLASH_COLORS)).current; const[on,setOn]=useState(true);
-  useEffect(()=>{const id=setInterval(()=>setFeaturedIndex(i=>(i+1)%FEATURED_COLORS.length),2500);const l=p.addListener(({value})=>setOn(value<=0.85);return()=>{clearInterval(id);p.removeListener(l)}},[p]);
+  useEffect(()=>{const id=setInterval(()=>setFeaturedIndex(i=>(i+1)%FEATURED_COLORS.length),2500);const l=p.addListener(({value})=>setOn(value<=0.85));return()=>{clearInterval(id);p.removeListener(l)}},[p]);
   const height=p.interpolate({inputRange:[0,1],outputRange:[TEASER_H,0]}); const opacity=p.interpolate({inputRange:[0,1],outputRange:[1,0],easing:EASE_IN_CUBIC});
   return <Animated.View pointerEvents={on?'auto':'none'} style={{height,opacity,overflow:'hidden'}}><View style={{height:TEASER_H,flexDirection:'row'}}><View style={{flex:1}}><TeaserCard label="featured picks" icon={<MaterialIcons name="auto-awesome" size={14} color={BLACK87}/>} background="#FBEAF0" color={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPressInner={()=>console.log('Tapped featured picks')}/></View><View style={{flex:1}}><TeaserCard label="flash deals" icon={<MaterialCommunityIcons name="clock" size={14} color={BLACK87}/>} background="#FCEFD9" color={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPressInner={()=>console.log('Tapped flash deals')}/></View></View></Animated.View>;
 }
