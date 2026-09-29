@@ -24,10 +24,7 @@ type CellProps={category:Category;progress:SharedValue<number>;fromX:number;toX:
 function Cell({category,progress,fromX,toX,fromY,toY,opacityFrom,opacityTo,interactive,onPress}:CellProps){
  const style=useAnimatedStyle(()=>({
   opacity:lerp(opacityFrom,opacityTo,opacityFrom===opacityTo?progress.value:easeOut(progress.value)),
-  transform:[
-   {translateX:lerp(fromX,toX,progress.value)},
-   {translateY:lerp(fromY,toY,progress.value)}
-  ]
+  transform:[{translateX:lerp(fromX,toX,progress.value)},{translateY:lerp(fromY,toY,progress.value)}]
  }));
  return <Animated.View pointerEvents={interactive?'auto':'none'} style={[styles.cell,style]}>
   <Pressable style={styles.fill} onPress={()=>onPress?.(category.label)}><CategoryIcon category={category}/></Pressable>
@@ -62,42 +59,39 @@ export default function MainDragCarousel({onCategoryPress,onFeaturedPress,onFlas
  const teaser=useAnimatedStyle(()=>({height:lerp(TEASER_HEIGHT,0,progress.value),opacity:clamp01(1-progress.value),transform:[{translateY:70*easeInOutCubic(progress.value)}]}));
  const indicator=useAnimatedStyle(()=>({
   opacity:progress.value<=.75?lerp(1,.25,progress.value/.75):lerp(.25,1,(progress.value-.75)/.25),
-  transform:[{translateY:lerp(ROW_HEIGHT,ROW_HEIGHT*3,easeInOutCubic(progress.value))]
+  transform:[{translateY:lerp(ROW_HEIGHT,ROW_HEIGHT*3,easeInOutCubic(progress.value))}]
  }));
  const line=useAnimatedStyle(()=>({backgroundColor:interpolateColor(easeInOutCubic(progress.value),[0,1],[colors.primary,colors.grey300])}));
  const circle=useAnimatedStyle(()=>({backgroundColor:interpolateColor(easeInOutCubic(progress.value),[0,1],[colors.grey300,colors.primary])}));
 
  return <Animated.View style={[styles.root,{width},root]}>
   <Animated.View style={categoryRoot}>
-  <GestureDetector gesture={pan}>
-   <Animated.View style={[styles.gestureArea,gestureArea]}>
-   <TeaserCard label="featured picks" icon="auto-awesome" background="#FBEAF0" swatchColor={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPress={onFeaturedPress}/>
-   <TeaserCard label="flash deals" icon="access-time-filled" background={colors.gridCream} swatchColor={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPress={onFlashPress}/>
-  </Animated.View>
-  </GestureDetector>
-
-  <Animated.View pointerEvents={expanded?'none':'auto'} style={[styles.teaser,teaser]}>
-    {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress}
+   <GestureDetector gesture={pan}>
+    <Animated.View style={[styles.gestureArea,gestureArea]}>
+     {collapsedCategories.map((c,i)=><Cell key={'c-'+c.label} category={c} progress={progress}
       fromX={i*collapsedW} toX={(i+1)*itemW} fromY={0} toY={0}
       opacityFrom={1} opacityTo={0} interactive={!expanded} onPress={onCategoryPress}/>)}
-
-    <Cell key="e-stays" category={expandedCategories[0]} progress={progress}
+     <Cell key="e-stays" category={expandedCategories[0]} progress={progress}
       fromX={5*collapsedW} toX={0} fromY={0} toY={0}
       opacityFrom={1} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>
-
-    {expandedCategories.slice(1).map((c,k)=>{
+     {expandedCategories.slice(1).map((c,k)=>{
       const index=k+1,row=Math.floor(index/COLUMNS),col=index%COLUMNS;
       return <Cell key={'e-'+c.label} category={c} progress={progress}
        fromX=((index-1)%COLUMNS)*collapsedW toX={col*itemW}
        fromY={0} toY={row*ROW_HEIGHT}
        opacityFrom={0} opacityTo={1} interactive={expanded} onPress={onCategoryPress}/>;
-    })}
+     })}
+    </Animated.View>
+   </GestureDetector>
+   <Animated.View pointerEvents="none" style={[styles.indicator,indicator]}>
+    <Animated.View style={[styles.line,line]}/>
+    <Animated.View style={[styles.circle,circle]}/>
    </Animated.View>
-  </GestureDetector>
+  </Animated.View>
 
-  <Animated.View pointerEvents="none" style={[styles.indicator,indicator]}>
-   <Animated.View style={[styles.line,line]}/>
-   <Animated.View style={[styles.circle,circle]}/>
+  <Animated.View pointerEvents={expanded?'none':'auto'} style={[styles.teaser,teaser]}>
+   <TeaserCard label="featured picks" icon="auto-awesome" background="#FBEAF0" swatchColor={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPress={onFeaturedPress}/>
+   <TeaserCard label="flash deals" icon="access-time-filled" background={colors.gridCream} swatchColor={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPress={onFlashPress}/>
   </Animated.View>
  </Animated.View>;
 }
