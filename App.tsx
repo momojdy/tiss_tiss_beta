@@ -1,12 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import * as Linking from 'expo-linking';
 import HomeScreen from './src/screens/HomeScreen';
 import AuthScreen from './src/screens/AuthScreen';
+import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
+import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import { supabase } from './src/lib/supabase';
 
+type Screen = 'auth' | 'forgot' | 'reset';
+
 export default function App() {
+  const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
 
+  useEffect(() => {
+    let mounted = true;
+
+    const handleUrl = async (url: string | null) => {
+      if (!url || !mounted) return;
+
+      const parsed = Linking.parse(url);
+      const path = parsed.path ?? '';
+      const code =
+        typeof parsed.queryParams?.code === 'string'
+          ? parsed.queryParams.code
+          : null;
+
+      if (!path.includes('reset-password') && !code) return;
+
+      try {
+        if (code) {
+          const { error } = await supabase.auth.exchangeCodeForSession(code);
+          if (error) throw error;
+        }
+
+        if (mounted) setScreen('reset');
+      } catch (error) {
+        if (mounted) {
+          setScreen('auth');
+          console.error('Password reset link error:', error);
+        }
+      }
+    };
+
+    Linking.getInitialURL().then(handleUrl);
+
+    const subscription = Linking.addEventListener('url', ({ url }) => {
+      handleUrl(url);
+    });
+
+    return () => {
+      mounted = false;
+      subscription.remove();
+    };
+  }, []);
+
   if (authenticated) return <HomeScreen />;
+
+  if (screen === 'forgot') {
+    return (
+      <ForgotPasswordScreen
+        onBack={() => setScreen('auth')}
+        onSignIn={() => setScreen('auth')}
+        onSendResetLink={async email => {
+          const redirectTo = Linking.createURL('reset-password');
+          const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo,
+          });
+          if (error) throw error;
+        }}
+      />
+    );
+  }
+
+  if (screen === 'reset') {
+    return (
+      <ResetPasswordScreen
+        onBack={() => setScreen('auth')}
+        onSignIn={() => setScreen('auth')}
+        onUpdatePassword={async password => {
+          const { error } = await supabase.auth.updateUser({ password });
+          if (error) throw error;
+
+          await supabase.auth.signOut();
+          setScreen('auth');
+        }}
+      />
+    );
+  }
 
   return (
     <AuthScreen
@@ -37,10 +117,14 @@ export default function App() {
 
         setAuthenticated(true);
       }}
-      onForgotPasswordPressed={async (email) => {
-        const { error } = await supabase.auth.resetPasswordForEmail(email);
+      onForgotPasswordPressed={async email => {
+        const redirectTo = Linking.createURL('reset-password');
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo,
+        });
         if (error) throw error;
       }}
+      onForgotPasswordScreenPressed={() => setScreen('forgot')}
       onSignUpPressed={async (email, password, role, fullName, businessName) => {
         const { data, error } = await supabase.auth.signUp({
           email,
