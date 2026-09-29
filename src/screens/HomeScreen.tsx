@@ -233,7 +233,7 @@ const s=StyleSheet.create({
   tabInner:{flex:1,paddingHorizontal:6,paddingVertical:6,justifyContent:'space-between'},
   tabText:{fontSize:16,fontWeight:'500',color:BLACK87},
   liveBadge:{width:45,height:18,borderRadius:4,backgroundColor:GOLD,alignItems:'center',justifyContent:'center',alignSelf:'flex-end'},
-  search:{width:'100%',height:47,borderRadius:10,borderWidth:1.75,borderColor:GOLD,backgroundColor:'rgba(255,255,255,0)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',paddingLeft:2,paddingRight:4,overflow:'hidden'},
+  search:{width:'100%',height:47,borderRadius:10,borderWidth:1.75,borderColor:GOLD,backgroundColor:'rgba(255,255,255,0)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',paddingLeft:2,paddingRight:6,overflow:'hidden'},
   searchInput:{position:'absolute',left:0,right:0,top:0,bottom:0,paddingHorizontal:3,paddingVertical:0,fontFamily:F_MONT_ITALIC,fontSize:14,color:'#000'},
   searchBtn:{height:30,width:64,flexShrink:0,paddingHorizontal:0,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},
   searchBtnText:{color:'#fff',fontSize:12,fontFamily:F_INTER_TIGHT,letterSpacing:0},
