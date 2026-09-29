@@ -45,6 +45,7 @@ type AuthCardProps = {
   ) => Promise<unknown>;
   onGooglePressed?: () => Promise<unknown>;
   onApplePressed?: () => Promise<unknown>;
+  onForgotPasswordPressed?: (email: string) => Promise<unknown>;
 };
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -93,7 +94,7 @@ function AuthField({
 }
 
 function WantissAuthCard({
-  onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed,
+  onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed,
 }: AuthCardProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -327,10 +328,25 @@ function WantissAuthCard({
   const renderForgotPassword = () => (
     <View style={styles.forgotRow}>
       <Pressable
-        onPress={() => {
+        onPress={async () => {
           const trimmed = email.trim();
           if (!trimmed || !isValidEmail(trimmed)) {
-            setErrorMessage('Enter a valid email address first.');
+            setEmailError('Enter a valid email address.');
+            return;
+          }
+
+          setEmailError(null);
+          setErrorMessage(null);
+
+          if (!onForgotPasswordPressed) return;
+
+          try {
+            await onForgotPasswordPressed(trimmed);
+            setErrorMessage('Password reset email sent. Check your inbox.');
+          } catch (error) {
+            setErrorMessage(
+              error instanceof Error ? error.message : 'Unable to send password reset email. Please try again.',
+            );
           }
         }}
       >
@@ -461,6 +477,7 @@ export default function AuthScreen({
   onSignUpPressed,
   onGooglePressed,
   onApplePressed,
+  onForgotPasswordPressed,
 }: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
@@ -487,6 +504,7 @@ export default function AuthScreen({
             onSignUpPressed={onSignUpPressed}
             onGooglePressed={onGooglePressed}
             onApplePressed={onApplePressed}
+            onForgotPasswordPressed={onForgotPasswordPressed}
           />
         </View>
       </View>
