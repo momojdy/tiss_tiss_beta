@@ -114,7 +114,7 @@ function SearchBar(){
   </View>;
 }
 
-const COLUMNS=5,DRAG_SENSITIVITY=850,ROW_H=78,INDICATOR_H=10,TEASER_H=140;
+const COLUMNS=5,DRAG_SENSITIVITY=850,ROW_H=78,INDICATOR_H=10,TEASER_H=156;
 const COLLAPSED_H=ROW_H+INDICATOR_H;
 const EXPANDED_CONTENT_H=ROW_H*3;
 const EXPANDED_H=EXPANDED_CONTENT_H+INDICATOR_H;
@@ -236,10 +236,10 @@ const s=StyleSheet.create({
   search:{width:'100%',height:47,borderRadius:10,borderWidth:1.75,borderColor:GOLD,backgroundColor:'rgba(255,255,255,0)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',paddingLeft:2,paddingRight:4,overflow:'hidden'},
   searchInput:{position:'absolute',left:0,right:0,top:0,bottom:0,paddingHorizontal:3,paddingVertical:0,fontFamily:F_MONT_ITALIC,fontSize:14,color:'#000'},
   searchBtn:{height:30,flexShrink:1,minWidth:0,paddingHorizontal:13,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},
-  searchBtnText:{color:'#fff',fontSize:16,fontFamily:F_INTER_TIGHT,letterSpacing:0},
+  searchBtnText:{color:'#fff',fontSize:12,fontFamily:F_INTER_TIGHT,letterSpacing:0},
   catCircle:{width:52,height:52,borderRadius:26,alignItems:'center',justifyContent:'center',overflow:'hidden'},
   catLabel:{marginTop:5,fontSize:11,fontWeight:'600',color:'#3A3A3A',textAlign:'center',width:'100%'},
-  teaserCard:{flex:1,marginLeft:8,marginRight:4,marginTop:8,marginBottom:8,padding:8,paddingBottom:6,borderRadius:12},
+  teaserCard:{flex:1,marginLeft:8,marginRight:4,marginTop:8,marginBottom:8,padding:8,borderRadius:12},
   banner:{height:150,padding:10,paddingTop:16,borderRadius:16,backgroundColor:LAVENDER},
   voucher:{flex:1,height:90,padding:8,borderRadius:10,backgroundColor:'#fff',alignItems:'center',justifyContent:'center'},
   imgCard:{flex:1,height:90,borderRadius:10,backgroundColor:'#fff',overflow:'hidden'},
