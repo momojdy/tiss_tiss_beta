@@ -35,6 +35,7 @@ import { StatusBar } from 'expo-status-bar';
 import {
   MaterialIcons,
   MaterialCommunityIcons,
+  Ionicons,
 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
