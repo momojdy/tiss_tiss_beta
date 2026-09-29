@@ -106,7 +106,7 @@ function SearchBar(){
   const[query,setQuery]=useState('');
   const showCarousel=query.length===0;
   return <View style={s.search}>
-    <View style={{paddingLeft:3}}><MaterialIcons name="document-scanner" size={30} color={MAGENTA}/></View>
+    <View style={{paddingLeft:3}}><Ionicons name="scan-outline" size={30} color={MAGENTA}/></View>
     <View style={{paddingHorizontal:5}}><View style={{width:1.8,height:30,backgroundColor:'rgba(204,204,204,0.8)'}}/></View>
     <View style={{width:SLOGAN_W,height:SLOGAN_H,position:'relative'}}>{showCarousel&&<View style={StyleSheet.absoluteFill} pointerEvents="none"><SloganCarousel/></View>}<TextInput value={query} onChangeText={setQuery} style={s.searchInput} selectionColor={MAGENTA} underlineColorAndroid="transparent" autoCorrect={false}/></View>
     <View style={{paddingTop:4,paddingRight:4}}><MaterialCommunityIcons name="camera-outline" size={25} color="rgba(136,136,142,0.635)"/></View>
@@ -153,7 +153,7 @@ function MainDragCarousel({p,onDragActive}:{p:Animated.Value;onDragActive:(v:boo
   const pan=useMemo(()=>PanResponder.create({onStartShouldSetPanResponder:()=>false,onMoveShouldSetPanResponder:(_e,g)=>Math.abs(g.dx)>6&&Math.abs(g.dx)>Math.abs(g.dy)*1.2,onPanResponderTerminationRequest:()=>false,onPanResponderGrant:()=>{p.stopAnimation();lastDx.current=0;dragCb.current(true)},onPanResponderMove:(_e,g)=>{const d=g.dx-lastDx.current;lastDx.current=g.dx;const next=Math.min(1,Math.max(0,pv.current-d/DRAG_SENSITIVITY));p.setValue(next)},onPanResponderRelease:(_e,g)=>{dragCb.current(false);const v=g.vx*1000;let target:number;if(v<-200)target=1;else if(v>200)target=0;else target=pv.current>=0.5?1:0;settle(target)},onPanResponderTerminate:()=>{dragCb.current(false);settle(pv.current>=0.5?1:0)} }),[]);
   const entries=useMemo<Entry[]>(()=>{const list:Entry[]=[];COLLAPSED.forEach((c,i)=>list.push({key:c.label,label:c.label,icon:c.icon,kind:'collapsed',x0:i*cw,x1:(i-5)*ew,y0:0,y1:0}));EXPANDED.forEach((e,index)=>{const row=Math.floor(index/COLUMNS),col=index%COLUMNS;if(index===0)list.push({key:e.label,label:e.label,icon:e.icon,kind:'stays',x0:5*cw,x1:0,y0:0,y1:0});else if(row===0)list.push({key:e.label,label:e.label,icon:e.icon,kind:'row1',x0:(5+col)*cw,x1:col*ew,y0:0,y1:0});else list.push({key:e.label,label:e.label,icon:e.icon,kind:'grid',x0:(6+col)*cw,x1:col*ew,y0:0,y1:row*ROW_H})});return list},[cw,ew]);
   const height=p.interpolate({inputRange:[0,1],outputRange:[COLLAPSED_H,EXPANDED_H]});
-  const indY=p.interpolate({inputRange:[0,1],outputRange:[ROW_H,EXPANDED_CONTENT_H],easing:EASE_IN_OUT_CUBIC});
+  const indY=p.interpolate({inputRange:[0,1],outputRange:[ROW_H,EXPANDED_CONTENT_H]});
   const indOpacity=p.interpolate({inputRange:[0,.75,1],outputRange:[1,.25,1]});
   const lineColor=p.interpolate({inputRange:[0,1],outputRange:[MAGENTA,'#E0E0E0'],easing:EASE_IN_OUT_CUBIC});
   const dotColor=p.interpolate({inputRange:[0,1],outputRange:['#E0E0E0',MAGENTA],easing:EASE_IN_OUT_CUBIC});
@@ -168,7 +168,7 @@ function MainDragCarousel({p,onDragActive}:{p:Animated.Value;onDragActive:(v:boo
 function TeaserRow({p}:{p:Animated.Value}){
   const[featuredIndex,setFeaturedIndex]=useState(0); const flashIndex=useRef(pick(FLASH_COLORS)).current; const[on,setOn]=useState(true);
   useEffect(()=>{const id=setInterval(()=>setFeaturedIndex(i=>(i+1)%FEATURED_COLORS.length),2500);const l=p.addListener(({value})=>setOn(value<=0.85));return()=>{clearInterval(id);p.removeListener(l)}},[p]);
-  const height=p.interpolate({inputRange:[0,1],outputRange:[TEASER_H,0]}); const opacity=p.interpolate({inputRange:[0,1],outputRange:[1,0],easing:EASE_IN_CUBIC});
+  const height=p.interpolate({inputRange:[0,1],outputRange:[TEASER_H,0]}); const opacity=p.interpolate({inputRange:[0,1],outputRange:[1,0]});
   return <Animated.View pointerEvents={on?'auto':'none'} style={{height,opacity,overflow:'hidden'}}><View style={{height:TEASER_H,flexDirection:'row'}}><View style={{flex:1}}><TeaserCard label="featured picks" icon={<MaterialIcons name="auto-awesome" size={14} color={BLACK87}/>} background="#FBEAF0" color={FEATURED_COLORS[featuredIndex]} caption={FEATURED_CAPTIONS[featuredIndex]} onPressInner={()=>console.log('Tapped featured picks')}/></View><View style={{flex:1}}><TeaserCard label="flash deals" icon={<MaterialCommunityIcons name="clock" size={14} color={BLACK87}/>} background="#FCEFD9" color={FLASH_COLORS[flashIndex]} caption={FLASH_CAPTIONS[flashIndex]} onPressInner={()=>console.log('Tapped flash deals')}/></View></View></Animated.View>;
 }
 
@@ -239,8 +239,8 @@ const s=StyleSheet.create({
   searchBtnText:{color:'#fff',fontSize:16,fontFamily:F_INTER_TIGHT,letterSpacing:0},
   catCircle:{width:52,height:52,borderRadius:26,alignItems:'center',justifyContent:'center',overflow:'hidden'},
   catLabel:{marginTop:5,fontSize:11,fontWeight:'600',color:'#3A3A3A',textAlign:'center',width:'100%'},
-  teaserCard:{flex:1,marginLeft:8,marginRight:4,marginTop:8,marginBottom:8,padding:8,borderRadius:12},
-  banner:{height:150,padding:10,borderRadius:16,backgroundColor:LAVENDER},
+  teaserCard:{flex:1,marginLeft:8,marginRight:4,marginTop:8,marginBottom:8,padding:8,paddingBottom:6,borderRadius:12},
+  banner:{height:150,padding:10,paddingTop:16,borderRadius:16,backgroundColor:LAVENDER},
   voucher:{flex:1,height:90,padding:8,borderRadius:10,backgroundColor:'#fff',alignItems:'center',justifyContent:'center'},
   imgCard:{flex:1,height:90,borderRadius:10,backgroundColor:'#fff',overflow:'hidden'},
   notif:{marginTop:8,paddingHorizontal:10,paddingVertical:8,borderRadius:8,backgroundColor:'rgba(0,0,0,0.12)',flexDirection:'row',alignItems:'center'},
