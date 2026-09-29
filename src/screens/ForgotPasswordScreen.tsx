@@ -43,7 +43,7 @@ export default function ForgotPasswordScreen({
       return;
     }
 
-    if (!/^\\S+@\\S+\\.\\S+$/.test(trimmed)) {
+    if (!trimmed.includes('@') || !trimmed.includes('.')) {
       setErrorMessage('Enter a valid email address.');
       setSuccessMessage(null);
       return;
