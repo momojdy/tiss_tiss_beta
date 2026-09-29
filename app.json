@@ -3,6 +3,7 @@
     "name": "tiss_tiss_beta",
     "slug": "tiss_tiss_beta",
     "version": "1.0.0",
+    "scheme": "wantiss",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
