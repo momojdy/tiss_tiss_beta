@@ -439,7 +439,25 @@ function WantissAuthCard({
   );
 }
 
-export default function AuthScreen() {
+type AuthScreenProps = {
+  onSignInPressed?: (email: string, password: string) => Promise<unknown>;
+  onSignUpPressed?: (
+    email: string,
+    password: string,
+    role: string,
+    fullName: string,
+    businessName: string,
+  ) => Promise<unknown>;
+  onGooglePressed?: () => Promise<unknown>;
+  onApplePressed?: () => Promise<unknown>;
+};
+
+export default function AuthScreen({
+  onSignInPressed,
+  onSignUpPressed,
+  onGooglePressed,
+  onApplePressed,
+}: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
 
@@ -460,7 +478,12 @@ export default function AuthScreen() {
         </LinearGradient>
 
         <View style={styles.cardPosition}>
-          <WantissAuthCard />
+          <WantissAuthCard
+            onSignInPressed={onSignInPressed}
+            onSignUpPressed={onSignUpPressed}
+            onGooglePressed={onGooglePressed}
+            onApplePressed={onApplePressed}
+          />
         </View>
       </View>
     </TouchableWithoutFeedback>
