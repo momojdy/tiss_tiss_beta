@@ -192,8 +192,10 @@ function WantissAuthCard({
       if (!onSignUpPressed) return;
       try {
         await onSignUpPressed(trimmedEmail, password, 'buyer', '', '');
-      } catch {
-        setErrorMessage('Unable to create your account. Please try again.');
+      } catch (error) {
+        setErrorMessage(
+          error instanceof Error ? error.message : 'Unable to create your account. Please try again.',
+        );
       }
       return;
     }
@@ -207,8 +209,10 @@ function WantissAuthCard({
         fullName.trim(),
         businessName.trim(),
       );
-    } catch {
-      setErrorMessage('Unable to create your account. Please try again.');
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : 'Unable to create your account. Please try again.',
+      );
     }
   };
 
