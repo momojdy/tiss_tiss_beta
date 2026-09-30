@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     fontVariant: ['tabular-nums'],
   },
   button: {
-    width: 58,
+    width: 60,
     height: 22,
     marginLeft: 10,
     borderRadius: 11,
