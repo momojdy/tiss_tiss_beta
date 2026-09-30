@@ -3,14 +3,10 @@ import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-const PINK = '#D4117F';
-
 const PIGGY_ASSET =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainMePiggybank.PNG';
-
 const MEMBER_CENTER_ASSET =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainMeMemberCenter.PNG';
-
 const REDEEM_CARD_ASSET =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainMeReedemCard.PNG';
 
@@ -48,23 +44,27 @@ export default function MeSavingsCard({
       <View style={styles.divider} />
 
       <Pressable style={styles.mid} onPress={onPressMemberCenter}>
-        <Text style={styles.title}>Member Center</Text>
-        <View style={styles.subRow}>
-          <Text style={styles.sub} numberOfLines={1}>Exclusive Benefits & Rewards</Text>
-          <Ionicons name="chevron-forward" size={9} color="#555" />
-        </View>
         <Image source={{ uri: MEMBER_CENTER_ASSET }} style={styles.memberAsset} resizeMode="contain" />
+        <View style={styles.textOverlay}>
+          <Text style={styles.title}>Member Center</Text>
+          <View style={styles.subRow}>
+            <Text style={styles.sub} numberOfLines={1}>Exclusive Benefits & Rewards</Text>
+            <Ionicons name="chevron-forward" size={9} color="#555" />
+          </View>
+        </View>
       </Pressable>
 
       <View style={styles.divider} />
 
       <Pressable style={styles.right} onPress={onPressRedeemCard}>
-        <Text style={styles.title}>Redeem Card</Text>
-        <View style={styles.subRow}>
-          <Text style={styles.sub} numberOfLines={1}>Get Your Rewards</Text>
-          <Ionicons name="chevron-forward" size={9} color="#555" style={styles.rightChevron} />
-        </View>
         <Image source={{ uri: REDEEM_CARD_ASSET }} style={styles.redeemAsset} resizeMode="contain" />
+        <View style={styles.textOverlay}>
+          <Text style={styles.title}>Redeem Card</Text>
+          <View style={styles.subRow}>
+            <Text style={styles.sub} numberOfLines={1}>Get Your Rewards</Text>
+            <Ionicons name="chevron-forward" size={9} color="#555" style={styles.rightChevron} />
+          </View>
+        </View>
       </Pressable>
     </LinearGradient>
   );
@@ -76,8 +76,6 @@ const styles = StyleSheet.create({
     height: 68,
     marginHorizontal: 11,
     borderRadius: 14,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.9)',
     overflow: 'hidden',
     shadowColor: '#E91E8C',
     shadowOpacity: 0.12,
@@ -89,7 +87,7 @@ const styles = StyleSheet.create({
     width: 155,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 18,
+    paddingLeft: 8,
   },
   piggy: {
     width: 52,
@@ -125,14 +123,20 @@ const styles = StyleSheet.create({
   },
   mid: {
     width: 115,
+    position: 'relative',
     paddingLeft: 12,
     paddingTop: 10,
   },
   right: {
     flex: 1,
+    position: 'relative',
     paddingLeft: 12,
     paddingRight: 10,
     paddingTop: 10,
+  },
+  textOverlay: {
+    position: 'relative',
+    zIndex: 2,
   },
   title: {
     fontSize: 13,
@@ -151,17 +155,19 @@ const styles = StyleSheet.create({
   },
   memberAsset: {
     position: 'absolute',
-    width: 42,
-    height: 42,
-    bottom: -1,
-    left: 48,
+    width: 48,
+    height: 48,
+    bottom: -2,
+    left: 40,
+    zIndex: 1,
   },
   redeemAsset: {
     position: 'absolute',
-    width: 42,
-    height: 42,
-    bottom: -1,
-    left: 37,
+    width: 48,
+    height: 48,
+    bottom: -2,
+    left: 32,
+    zIndex: 1,
   },
   rightChevron: {
     marginLeft: 'auto',
