@@ -44,38 +44,22 @@ function BottomNav({ onHomePress }: Props) {
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons
-            name="television-play"
-            size={32}
-            color={MAGENTA}
-          />
+          <MaterialCommunityIcons name="television-play" size={32} color={MAGENTA} />
           <NavLabel>Showcase</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons
-            name="message-text-outline"
-            size={30}
-            color={MAGENTA}
-          />
+          <MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA} />
           <NavLabel>Messages</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons
-            name="cart-arrow-right"
-            size={32}
-            color={MAGENTA}
-          />
+          <MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA} />
           <NavLabel>Cart</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons
-            name="emoticon-happy-outline"
-            size={32}
-            color={MAGENTA}
-          />
+          <MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA} />
           <NavLabel>Me</NavLabel>
         </Pressable>
       </View>
@@ -93,8 +77,8 @@ export default function MeScreen({ onHomePress }: Props) {
         contentContainerStyle={styles.content}
       >
         <LinearGradient
-          colors={['#FCE4F1', '#FDF0F6', '#FFFFFF']}
-          locations={[0, 0.55, 1]}
+          colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
+          locations={[0, 0.28, 0.62, 1]}
           style={styles.header}
         >
           <Text style={styles.title}>Me</Text>
