@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   left: {
-    width: 134,
+    width: 150,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 8,
@@ -122,13 +122,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
   },
   mid: {
-    width: 100,
+    width: 110,
     position: 'relative',
     paddingLeft: 12,
     paddingTop: 10,
   },
   right: {
-    width: 100,
+    width: 110,
     position: 'relative',
     paddingLeft: 12,
     paddingRight: 10,
