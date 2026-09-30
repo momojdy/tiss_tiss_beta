@@ -148,8 +148,8 @@ function MeContent({
   const [fullName, setFullName] = useState('');
   const [profileRole, setProfileRole] = useState<string | null>(null);
 
-  // Membership rules are not defined yet, so no fake tier/badge is shown.
-  const membershipTier: string | null = null;
+  // New customers start as Basic; this can be changed later by membership data.
+  const membershipTier = 'Basic';
 
   useEffect(() => {
     let active = true;
@@ -189,8 +189,8 @@ function MeContent({
       <StatusBar style="dark" />
 
       <LinearGradient
-        colors={['#FCE4F1', '#FDF0F6', '#FFFFFF']}
-        locations={[0, 0.58, 1]}
+        colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
+        locations={[0, 0.42, 0.7, 1]}
         style={styles.gradient}
         pointerEvents="none"
       />
@@ -309,7 +309,7 @@ function MeContent({
               icon={
                 <Ionicons
                   name="location-outline"
-                  size={25}
+                  size={21}
                   color={INK}
                 />
               }
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 390,
+    height: 320,
   },
 
   scrollContent: {
@@ -487,29 +487,29 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginLeft: 4,
+    marginLeft: 8,
     flexShrink: 0,
   },
 
   action: {
-    width: 47,
+    width: 41,
     alignItems: 'center',
     justifyContent: 'flex-start',
     flexShrink: 0,
   },
 
   actionIcon: {
-    width: 30,
-    height: 30,
+    width: 26,
+    height: 26,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   actionLabel: {
-    marginTop: 4,
+    marginTop: 2,
     color: INK,
-    fontSize: 11.5,
-    lineHeight: 15,
+    fontSize: 10,
+    lineHeight: 13,
     fontWeight: '500',
     textAlign: 'center',
   },
