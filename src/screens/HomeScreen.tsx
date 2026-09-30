@@ -194,17 +194,17 @@ function MainPromoPopup(){
 
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
-function BottomNav(){
+function BottomNav({onMePress}:{onMePress?:()=>void}){
   return <View style={{padding:2}}><View style={s.nav}>
     <View style={{width:70,height:65,alignItems:'center'}}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={{width:58,height:58,borderRadius:29}} resizeMode="contain"/></View></View>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="television-play" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Showcase</NavLabel></Pressable>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA}/><NavLabel style={{paddingTop:4}}>Messages</NavLabel></Pressable>
     <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'center',paddingLeft:4}}><MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:3}}>Cart</NavLabel></Pressable>
-    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'flex-end'}}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Me</NavLabel></Pressable>
+    <Pressable onPress={onMePress} style={{width:70,height:50,alignItems:'center',justifyContent:'flex-end'}}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Me</NavLabel></Pressable>
   </View></View>;
 }
 
-export default function HomeScreen(){
+export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const[fontsLoaded]=useFonts({Montserrat_400Regular_Italic,Inter_500Medium,InterTight_500Medium});
   if(!fontsLoaded)return null;
@@ -223,7 +223,7 @@ export default function HomeScreen(){
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
     </ScrollView>
     <View pointerEvents="box-none" style={{position:'absolute',left:8,right:23,bottom:102,height:40}}><MainPromoPopup/></View>
-    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav/></View>
+    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress}/></View>
   </View>;
 }
 
