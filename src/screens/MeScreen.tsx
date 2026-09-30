@@ -444,6 +444,7 @@ const styles = StyleSheet.create({
   },
 
   membershipBadge: {
+    width: 60,
     height: 22,
     flexDirection: 'row',
     alignItems: 'center',
