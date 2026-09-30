@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
   },
   title: {
     marginLeft: 15,
+    marginRight: 7,
     fontSize: 11,
     lineHeight: 15,
     fontWeight: '500',
@@ -81,7 +82,7 @@ const styles = StyleSheet.create({
     width: 1,
     height: 15,
     backgroundColor: '#F2C2DA',
-    marginLeft: 8,
+    marginLeft: 15,
   },
   offer: {
     flex: 1,
