@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingLeft: 20,
+    paddingLeft: 30,
     flexShrink: 0,
   },
 
