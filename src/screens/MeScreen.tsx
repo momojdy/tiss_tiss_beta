@@ -272,11 +272,11 @@ function MeContent({
                 hitSlop={6}
                 style={styles.memberCenter}
                 accessibilityRole="button"
-                accessibilityLabel="Member Center"
+                accessibilityLabel="Member"
               >
                 <MaterialCommunityIcons
                   name="card-account-details-outline"
-                  size={17}
+                  size={14}
                   color={MAGENTA}
                 />
 
@@ -284,7 +284,7 @@ function MeContent({
                   style={styles.memberCenterText}
                   numberOfLines={1}
                 >
-                  Member Center
+                  Member
                 </Text>
 
                 <Ionicons
@@ -441,7 +441,8 @@ const styles = StyleSheet.create({
     height: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 6,
+    paddingLeft: 6,
+    paddingRight: 3,
     borderRadius: 11,
     backgroundColor: MAGENTA,
   },
@@ -469,10 +470,10 @@ const styles = StyleSheet.create({
   },
 
   memberCenterText: {
-    marginLeft: 4,
+    marginLeft: 2.5,
     marginRight: 2,
     color: INK,
-    fontSize: 12,
+    fontSize: 10,
     lineHeight: 15,
     fontWeight: '500',
     flexShrink: 1,
