@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking';
 import HomeScreen from './src/screens/HomeScreen';
+import MeScreen from './src/screens/MeScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
@@ -11,6 +12,7 @@ type Screen = 'auth' | 'forgot' | 'reset';
 export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
+  const [buyerScreen, setBuyerScreen] = useState<'home' | 'me'>('home');
 
   useEffect(() => {
     let mounted = true;
@@ -54,7 +56,12 @@ export default function App() {
     };
   }, []);
 
-  if (authenticated) return <HomeScreen />;
+  if (authenticated) {
+    if (buyerScreen === 'me') {
+      return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
+    }
+    return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
+  }
 
   if (screen === 'forgot') {
     return (
