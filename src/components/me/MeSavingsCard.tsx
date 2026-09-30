@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   left: {
-    width: 155,
+    width: 134,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 8,
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   label: {
-    fontSize: 13,
+    fontSize: 11,
     fontWeight: '600',
     color: '#2A2A2A',
   },
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   amount: {
-    fontSize: 26,
+    fontSize: 22,
     fontWeight: '800',
     color: '#111',
     letterSpacing: -0.5,
@@ -122,13 +122,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
   },
   mid: {
-    width: 115,
+    width: 100,
     position: 'relative',
     paddingLeft: 12,
     paddingTop: 10,
   },
   right: {
-    flex: 1,
+    width: 100,
     position: 'relative',
     paddingLeft: 12,
     paddingRight: 10,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   title: {
-    fontSize: 13,
+    fontSize: 10,
     fontWeight: '700',
     color: '#1C1C1C',
   },
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   sub: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#8A6F7D',
     flexShrink: 1,
   },
