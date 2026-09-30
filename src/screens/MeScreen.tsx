@@ -78,7 +78,7 @@ export default function MeScreen({ onHomePress }: Props) {
       >
         <LinearGradient
           colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
-          locations={[0, 0.28, 0.62, 1]}
+          locations={[0, 0.52, 0.78, 1]}
           style={styles.header}
         >
           <Text style={styles.title}>Me</Text>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    height: 190,
+    height: 250,
     paddingHorizontal: 16,
     paddingTop: 12,
   },
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   foundationSpace: {
     flex: 1,
-    minHeight: 710,
+    minHeight: 650,
     backgroundColor: '#FFFFFF',
   },
   navOuter: {
