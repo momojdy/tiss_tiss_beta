@@ -1,117 +1,126 @@
 import React from 'react';
+
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+
+import { LinearGradient } from 'expo-linear-gradient';
+
 import { Ionicons } from '@expo/vector-icons';
 
-type Props = { onPress?: () => void };
+type Props = {
+  onPressCouponCenter?: () => void;
+  onPressClaim?: () => void;
+};
 
-export default function MeCouponCenter({ onPress }: Props) {
+export default function MeCouponCenterBanner({
+  onPressCouponCenter,
+  onPressClaim,
+}: Props) {
   return (
-    <Pressable style={styles.container} onPress={onPress} hitSlop={4}>
-      <View style={styles.left}>
-        <View style={styles.iconWrap}>
-          <Ionicons name="ticket-outline" size={25} color="#C31382" />
+    <LinearGradient
+      colors={['#FCE8F2', '#FDF0F6']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.banner}
+    >
+      <Pressable style={styles.left} onPress={onPressCouponCenter}>
+        <View style={styles.iconCircle}>
+          <Ionicons name="ticket-outline" size={15} color="#E0358F" />
         </View>
-        <Text style={styles.title}>Coupon Center</Text>
-      </View>
+        <Text style={styles.title} numberOfLines={1}>Coupon Center</Text>
+      </Pressable>
 
       <View style={styles.divider} />
 
       <View style={styles.offer}>
         <Text style={styles.amount}>$10</Text>
-        <View style={styles.offerCopy}>
-          <Text style={styles.offerTitle}>Extra Coupon</Text>
-          <Text style={styles.offerSub}>For Digital Products</Text>
+        <View style={styles.offerText}>
+          <Text style={styles.offerTitle} numberOfLines={1}>Extra Coupon</Text>
+          <Text style={styles.offerSub} numberOfLines={1}>For Digital Products</Text>
         </View>
       </View>
 
-      <View style={styles.claimButton}>
-        <Text style={styles.claimText}>Claim Now</Text>
-        <Ionicons name="chevron-forward" size={15} color="#FFFFFF" />
-      </View>
-    </Pressable>
+      <Pressable style={styles.button} onPress={onPressClaim}>
+        <Text style={styles.buttonText}>Claim Now</Text>
+        <Ionicons name="chevron-forward" size={9} color="#FFFFFF" />
+      </Pressable>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    marginHorizontal: 28,
-    marginTop: 15,
-    height: 80,
-    borderRadius: 14,
-    backgroundColor: '#FFF0F8',
+  banner: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingLeft: 13,
-    paddingRight: 8,
+    height: 45,
+    marginHorizontal: 13,
+    marginTop: 14,
+    paddingLeft: 9,
+    paddingRight: 10,
+    borderRadius: 12,
   },
   left: {
+    width: 106,
     flexDirection: 'row',
     alignItems: 'center',
-    flexShrink: 0,
   },
-  iconWrap: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
-    backgroundColor: '#FFE1F1',
+  iconCircle: {
+    width: 25,
+    height: 25,
+    borderRadius: 12.5,
+    backgroundColor: '#FBD3E6',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
   },
   title: {
-    color: '#201A38',
-    fontSize: 14,
-    fontWeight: '600',
+    marginLeft: 8,
+    fontSize: 12,
+    lineHeight: 15,
+    fontWeight: '700',
+    color: '#1C1C1C',
   },
   divider: {
     width: 1,
-    height: 34,
-    backgroundColor: '#E8CADC',
-    marginHorizontal: 14,
+    height: 15,
+    backgroundColor: '#F2C2DA',
   },
   offer: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    minWidth: 0,
+    paddingLeft: 15,
   },
   amount: {
-    color: '#C31382',
-    fontSize: 25,
-    lineHeight: 29,
+    fontSize: 19,
+    lineHeight: 24,
     fontWeight: '700',
-    marginRight: 10,
+    color: '#C2007A',
   },
-  offerCopy: {
-    minWidth: 0,
-  },
+  offerText: { marginLeft: 9, flexShrink: 1 },
   offerTitle: {
-    color: '#302A42',
-    fontSize: 13,
-    lineHeight: 17,
-    fontWeight: '600',
+    fontSize: 10,
+    lineHeight: 13,
+    fontWeight: '500',
+    color: '#1C1C1C',
   },
   offerSub: {
-    color: '#777184',
-    fontSize: 9,
-    lineHeight: 12,
+    fontSize: 8,
+    lineHeight: 10,
+    color: '#8A6F7D',
     marginTop: 1,
   },
-  claimButton: {
-    height: 40,
-    minWidth: 122,
-    paddingHorizontal: 14,
-    borderRadius: 20,
-    backgroundColor: '#C31382',
+  button: {
+    width: 69,
+    height: 22,
+    borderRadius: 11,
+    backgroundColor: '#C2007A',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
   },
-  claimText: {
+  buttonText: {
+    fontSize: 10,
+    fontWeight: '700',
     color: '#FFFFFF',
-    fontSize: 12,
-    fontWeight: '600',
-    marginRight: 5,
+    marginRight: 2,
   },
 });
