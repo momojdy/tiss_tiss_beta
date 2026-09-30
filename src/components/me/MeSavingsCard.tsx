@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   left: {
-    width: 155,
+    width: 136,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 8,
@@ -122,15 +122,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.95)',
   },
   mid: {
-    width: 115,
+    width: 62,
     position: 'relative',
-    paddingLeft: 12,
+    paddingLeft: 10,
     paddingTop: 10,
   },
   right: {
-    flex: 1,
+    width: 62,
     position: 'relative',
-    paddingLeft: 12,
+    paddingLeft: 10,
     paddingRight: 10,
     paddingTop: 10,
   },
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   sub: {
-    fontSize: 9,
+    fontSize: 8,
     color: '#8A6F7D',
     flexShrink: 1,
   },
