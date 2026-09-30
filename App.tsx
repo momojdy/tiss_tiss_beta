@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import * as Linking from 'expo-linking';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import HomeScreen from './src/screens/HomeScreen';
 import MeScreen from './src/screens/MeScreen';
 import AuthScreen from './src/screens/AuthScreen';
