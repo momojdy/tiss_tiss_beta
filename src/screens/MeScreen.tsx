@@ -326,7 +326,7 @@ function MeContent({
               icon={
                 <Ionicons
                   name="settings-outline"
-                  size={25}
+                  size={18}
                   color={INK}
                 />
               }
