@@ -204,7 +204,7 @@ function MeContent({
             styles.header,
             {
               // Keep the approved vertical header position.
-              paddingTop: insets.top + 50,
+              paddingTop: insets.top + 20,
             },
           ]}
         >
