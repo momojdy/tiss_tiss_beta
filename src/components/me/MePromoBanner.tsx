@@ -32,7 +32,7 @@ export default function MePromoBanner({ onPressClaim }: Props) {
 
   return (
     <LinearGradient
-      colors={['#FCE8F2', '#FDF0F6']}
+      colors={['#F9D5E8', '#FCE3F0']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 0 }}
       style={styles.banner}
@@ -41,7 +41,7 @@ export default function MePromoBanner({ onPressClaim }: Props) {
 
       <View style={styles.textWrap}>
         <Text style={styles.text} numberOfLines={1}>
-          Tap to claim today's red packet, limited time only!
+          Tap to claim today's deals, limited time only!
         </Text>
         <Text style={styles.timer}>
           Ends in <Text style={styles.timerValue}>{format(remaining)}</Text>
@@ -77,6 +77,7 @@ const styles = StyleSheet.create({
   button: {
     width: 58,
     height: 22,
+    marginLeft: 10,
     borderRadius: 11,
     backgroundColor: '#C2007A',
     alignItems: 'center',
