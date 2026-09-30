@@ -92,7 +92,12 @@ export default function MeScreen({ onHomePress }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-        <Text style={styles.title}>Me</Text>
+        <View style={styles.header}>
+          <View style={[styles.headerBand, styles.headerBandTop]} />
+          <View style={[styles.headerBand, styles.headerBandMid]} />
+          <View style={[styles.headerBand, styles.headerBandBottom]} />
+          <Text style={styles.title}>Me</Text>
+        </View>
 
         <View style={styles.foundationSpace} />
       </ScrollView>
@@ -105,13 +110,40 @@ export default function MeScreen({ onHomePress }: Props) {
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
-    backgroundColor: SOFT_PINK,
+    backgroundColor: '#FFFFFF',
   },
   content: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
     paddingBottom: 130,
     minHeight: 900,
+    backgroundColor: '#FFFFFF',
+  },
+  header: {
+    height: 190,
+    paddingHorizontal: 16,
+    paddingTop: 12,
+    overflow: 'hidden',
+    position: 'relative',
+    backgroundColor: '#FBE8EF',
+  },
+  headerBand: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+  },
+  headerBandTop: {
+    top: 0,
+    height: 70,
+    backgroundColor: '#F6D5E2',
+  },
+  headerBandMid: {
+    top: 70,
+    height: 65,
+    backgroundColor: '#F9E0E9',
+  },
+  headerBandBottom: {
+    top: 135,
+    height: 55,
+    backgroundColor: '#FBE8EF',
   },
   title: {
     fontSize: 26,
@@ -120,7 +152,8 @@ const styles = StyleSheet.create({
   },
   foundationSpace: {
     flex: 1,
-    minHeight: 760,
+    minHeight: 710,
+    backgroundColor: '#FFFFFF',
   },
   navOuter: {
     position: 'absolute',
