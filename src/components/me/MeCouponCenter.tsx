@@ -41,7 +41,6 @@ export default function MeCouponCenterBanner({
 
       <Pressable style={styles.button} onPress={onPressClaim}>
         <Text style={styles.buttonText}>Claim Now</Text>
-        <Ionicons name="chevron-forward" size={9} color="#FFFFFF" />
       </Pressable>
     </LinearGradient>
   );
@@ -73,9 +72,9 @@ const styles = StyleSheet.create({
   },
   title: {
     marginLeft: 8,
-    fontSize: 12,
+    fontSize: 11,
     lineHeight: 15,
-    fontWeight: '700',
+    fontWeight: '500',
     color: '#1C1C1C',
   },
   divider: {
@@ -109,7 +108,7 @@ const styles = StyleSheet.create({
     marginTop: 1,
   },
   button: {
-    width: 69,
+    width: 60,
     height: 22,
     borderRadius: 11,
     backgroundColor: '#C2007A',
@@ -121,6 +120,6 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontWeight: '700',
     color: '#FFFFFF',
-    marginRight: 2,
+    marginRight: 0,
   },
 });
