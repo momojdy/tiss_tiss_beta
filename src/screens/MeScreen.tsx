@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   Pressable,
@@ -11,20 +11,33 @@ import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { supabase } from '../lib/supabase';
 
 const MAGENTA = '#BF008E';
 const WANTISS_LOGO =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
+const DEFAULT_AVATAR =
+  'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainDefaultAvatar.PNG';
 
 type Props = {
   onHomePress?: () => void;
+  onMemberCenterPress?: () => void;
+  onAddressPress?: () => void;
+  onWalletPress?: () => void;
+  onSettingsPress?: () => void;
+  onQrPress?: () => void;
+};
+
+type Profile = {
+  full_name: string | null;
+  role: string | null;
 };
 
 function NavLabel({ children }: { children: string }) {
   return <Text style={styles.navLabel}>{children}</Text>;
 }
 
-function BottomNav({ onHomePress }: Props) {
+function BottomNav({ onHomePress }: Pick<Props, 'onHomePress'>) {
   return (
     <View style={styles.navOuter}>
       <View style={styles.nav}>
@@ -67,7 +80,71 @@ function BottomNav({ onHomePress }: Props) {
   );
 }
 
-export default function MeScreen({ onHomePress }: Props) {
+function TopAction({
+  icon,
+  label,
+  onPress,
+}: {
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  label: string;
+  onPress?: () => void;
+}) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [styles.topAction, pressed && styles.topActionPressed]}
+      accessibilityRole="button"
+      accessibilityLabel={label}
+    >
+      <View style={styles.topIconCircle}>
+        <MaterialCommunityIcons name={icon} size={25} color={MAGENTA} />
+      </View>
+      <Text style={styles.topActionLabel}>{label}</Text>
+    </Pressable>
+  );
+}
+
+export default function MeScreen({
+  onHomePress,
+  onMemberCenterPress,
+  onAddressPress,
+  onWalletPress,
+  onSettingsPress,
+  onQrPress,
+}: Props) {
+  const [profile, setProfile] = useState<Profile | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const loadProfile = async () => {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user || !mounted) return;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('full_name, role')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      if (!error && mounted) {
+        setProfile(data);
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const displayName = profile?.full_name?.trim() || null;
+  const isBuyer = profile?.role === 'buyer';
+
   return (
     <SafeAreaView style={styles.safe}>
       <StatusBar style="dark" />
@@ -82,6 +159,68 @@ export default function MeScreen({ onHomePress }: Props) {
           style={styles.header}
         >
           <Text style={styles.title}>Me</Text>
+
+          <View style={styles.profileRow}>
+            <Image
+              source={{ uri: DEFAULT_AVATAR }}
+              style={styles.avatar}
+              resizeMode="cover"
+            />
+
+            <View style={styles.profileInfo}>
+              {displayName ? (
+                <Text style={styles.customerName} numberOfLines={1}>
+                  {displayName}
+                </Text>
+              ) : null}
+
+              {isBuyer ? (
+                <View style={styles.memberBadge}>
+                  <MaterialCommunityIcons
+                    name="crown-outline"
+                    size={14}
+                    color={MAGENTA}
+                  />
+                  <Text style={styles.memberBadgeText}>Member</Text>
+                </View>
+              ) : null}
+            </View>
+
+            <Pressable
+              onPress={onQrPress}
+              style={({ pressed }) => [
+                styles.qrButton,
+                pressed && styles.qrButtonPressed,
+              ]}
+              accessibilityRole="button"
+              accessibilityLabel="My QR code"
+            >
+              <MaterialCommunityIcons name="qrcode" size={29} color="#16181B" />
+            </Pressable>
+          </View>
+
+          <View style={styles.topNav}>
+            <TopAction
+              icon="account-star-outline"
+              label="Member Center"
+              onPress={onMemberCenterPress}
+            />
+            <TopAction
+              icon="map-marker-outline"
+              label="Address"
+              onPress={onAddressPress}
+            />
+            <TopAction
+              icon="wallet-outline"
+              label="Wallet"
+              onPress={onWalletPress}
+            />
+            <TopAction
+              icon="cog-outline"
+              label="Settings"
+              onPress={onSettingsPress}
+            />
+          </View>
         </LinearGradient>
 
         <View style={styles.foundationSpace} />
@@ -111,6 +250,92 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: '700',
     color: '#16181B',
+  },
+  profileRow: {
+    minHeight: 88,
+    marginTop: 15,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 1,
+    borderColor: '#D9A4BF',
+    backgroundColor: '#FFFFFF',
+  },
+  profileInfo: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 14,
+    justifyContent: 'center',
+  },
+  customerName: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#16181B',
+  },
+  memberBadge: {
+    alignSelf: 'flex-start',
+    marginTop: 7,
+    paddingHorizontal: 9,
+    height: 25,
+    borderRadius: 13,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: '#E6B4D0',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  memberBadgeText: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: MAGENTA,
+  },
+  qrButton: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  qrButtonPressed: {
+    backgroundColor: 'rgba(255,255,255,0.55)',
+  },
+  topNav: {
+    marginTop: 13,
+    height: 72,
+    borderRadius: 18,
+    paddingHorizontal: 4,
+    backgroundColor: 'rgba(255,255,255,0.72)',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+  },
+  topAction: {
+    flex: 1,
+    height: 68,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 14,
+  },
+  topActionPressed: {
+    backgroundColor: 'rgba(255,255,255,0.8)',
+  },
+  topIconCircle: {
+    width: 35,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  topActionLabel: {
+    marginTop: 2,
+    fontSize: 10,
+    color: '#252326',
+    fontFamily: 'Inter_500Medium',
+    textAlign: 'center',
   },
   foundationSpace: {
     flex: 1,
