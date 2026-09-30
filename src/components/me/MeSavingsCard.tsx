@@ -14,26 +14,17 @@ export default function MeSavingsCard({ totalSavings = 0, onPressSavings, onPres
     <LinearGradient colors={['#FFDDEC', '#FCE8F2', '#FFF3F9']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.card}>
       <Pressable style={styles.left} onPress={onPressSavings}>
         <Image source={{ uri: PIGGY_ASSET }} style={styles.piggy} resizeMode="contain" />
-        <View style={styles.leftText}>
-          <Text style={styles.label}>Total Savings</Text>
-          <View style={styles.amountRow}><Text style={styles.amount}>${totalSavings.toFixed(2)}</Text><Ionicons name="chevron-forward" size={13} color="#222" style={styles.amountChevron} /></View>
-        </View>
+        <View style={styles.leftText}><Text style={styles.label}>Total Savings</Text><View style={styles.amountRow}><Text style={styles.amount}>${totalSavings.toFixed(2)}</Text><Ionicons name="chevron-forward" size={13} color="#222" style={styles.amountChevron} /></View></View>
       </Pressable>
       <View style={styles.divider} />
       <Pressable style={styles.mid} onPress={onPressMemberCenter}>
         <Image source={{ uri: MEMBER_CENTER_ASSET }} style={styles.memberAsset} resizeMode="contain" />
-        <View style={styles.textOverlay}>
-          <Text style={styles.title}>Member Center</Text>
-          <View style={styles.subRow}><Text style={styles.sub} numberOfLines={1}>Exclusive Benefits & Rewards</Text><Ionicons name="chevron-forward" size={9} color="#555" /></View>
-        </View>
+        <View style={styles.textOverlay}><Text style={styles.title}>Member Center</Text><View style={styles.subRow}><Text style={styles.sub} numberOfLines={1}>Exclusive Benefits & Rewards</Text><Ionicons name="chevron-forward" size={9} color="#555" /></View></View>
       </Pressable>
       <View style={styles.divider} />
       <Pressable style={styles.right} onPress={onPressRedeemCard}>
         <Image source={{ uri: REDEEM_CARD_ASSET }} style={styles.redeemAsset} resizeMode="contain" />
-        <View style={styles.textOverlay}>
-          <Text style={styles.title}>Redeem Card</Text>
-          <View style={styles.subRow}><Text style={styles.sub} numberOfLines={1}>Get Your Rewards</Text><Ionicons name="chevron-forward" size={9} color="#555" style={styles.rightChevron} /></View>
-        </View>
+        <View style={styles.textOverlay}><Text style={styles.title}>Redeem Card</Text><View style={styles.subRow}><Text style={styles.sub} numberOfLines={1}>Get Your Rewards</Text><Ionicons name="chevron-forward" size={9} color="#555" style={styles.rightChevron} /></View></View>
       </Pressable>
     </LinearGradient>
   );
@@ -54,7 +45,7 @@ const styles = StyleSheet.create({
   textOverlay: { position: 'relative', zIndex: 2 },
   title: { fontSize: 10, fontWeight: '700', color: '#1C1C1C' },
   subRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
-  sub: { fontSize: 8, color: '#765B69', flexShrink: 1 },
+  sub: { fontSize: 8, color: '#2F2930', flexShrink: 1 },
   memberAsset: { position: 'absolute', width: 48, height: 48, bottom: -2, left: 40, zIndex: 1 },
   redeemAsset: { position: 'absolute', width: 48, height: 48, bottom: -2, left: 32, zIndex: 1 },
   rightChevron: { marginLeft: 'auto' },
