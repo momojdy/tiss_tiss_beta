@@ -260,14 +260,7 @@ function MeContent({
                     onPress={onMembershipPress}
                     style={styles.membershipBadge}
                   >
-                    <MaterialCommunityIcons
-                      name="crown"
-                      size={12}
-                      color="#FFFFFF"
-                    />
-                    <Text style={styles.membershipText}>
-                      {membershipTier} Member
-                    </Text>
+                    <Text style={styles.membershipText}>{membershipTier}</Text>
                   </Pressable>
 
                   <View style={styles.memberDivider} />
