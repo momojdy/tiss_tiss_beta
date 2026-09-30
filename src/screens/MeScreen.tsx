@@ -447,7 +447,7 @@ const styles = StyleSheet.create({
     height: 22,
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 8,
+    paddingHorizontal: 6,
     borderRadius: 11,
     backgroundColor: MAGENTA,
   },
@@ -516,7 +516,6 @@ const styles = StyleSheet.create({
 
   foundationSpace: {
     minHeight: 650,
-    backgroundColor: '#FFFFFF',
   },
 
   navOuter: {
