@@ -8,24 +8,32 @@ import {
   View,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
 import { supabase } from '../lib/supabase';
 
-const MAGENTA = '#BF008E';
+const MAGENTA = '#B8107F';
+const INK = '#1E1B3A';
+const MUTED = '#73728A';
+
 const WANTISS_LOGO =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
+
 const DEFAULT_AVATAR =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainDefaultAvatar.PNG';
 
 type Props = {
   onHomePress?: () => void;
+  onAvatarPress?: () => void;
+  onNamePress?: () => void;
+  onQRPress?: () => void;
+  onMembershipPress?: () => void;
   onMemberCenterPress?: () => void;
   onAddressPress?: () => void;
   onWalletPress?: () => void;
   onSettingsPress?: () => void;
-  onQrPress?: () => void;
 };
 
 type Profile = {
@@ -57,22 +65,38 @@ function BottomNav({ onHomePress }: Pick<Props, 'onHomePress'>) {
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="television-play" size={32} color={MAGENTA} />
+          <MaterialCommunityIcons
+            name="television-play"
+            size={32}
+            color={MAGENTA}
+          />
           <NavLabel>Showcase</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA} />
+          <MaterialCommunityIcons
+            name="message-text-outline"
+            size={30}
+            color={MAGENTA}
+          />
           <NavLabel>Messages</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA} />
+          <MaterialCommunityIcons
+            name="cart-arrow-right"
+            size={32}
+            color={MAGENTA}
+          />
           <NavLabel>Cart</NavLabel>
         </Pressable>
 
         <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA} />
+          <MaterialCommunityIcons
+            name="emoticon-happy-outline"
+            size={32}
+            color={MAGENTA}
+          />
           <NavLabel>Me</NavLabel>
         </Pressable>
       </View>
@@ -80,265 +104,410 @@ function BottomNav({ onHomePress }: Pick<Props, 'onHomePress'>) {
   );
 }
 
-function TopAction({
-  icon,
+function ActionItem({
   label,
+  icon,
   onPress,
 }: {
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   label: string;
+  icon: React.ReactNode;
   onPress?: () => void;
 }) {
   return (
     <Pressable
       onPress={onPress}
-      style={({ pressed }) => [styles.topAction, pressed && styles.topActionPressed]}
+      hitSlop={8}
+      style={styles.action}
       accessibilityRole="button"
       accessibilityLabel={label}
     >
-      <View style={styles.topIconCircle}>
-        <MaterialCommunityIcons name={icon} size={25} color={MAGENTA} />
-      </View>
-      <Text style={styles.topActionLabel}>{label}</Text>
+      <View style={styles.actionIcon}>{icon}</View>
+
+      <Text style={styles.actionLabel} numberOfLines={1}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
 
 export default function MeScreen({
   onHomePress,
+  onAvatarPress,
+  onNamePress,
+  onQRPress,
+  onMembershipPress,
   onMemberCenterPress,
   onAddressPress,
   onWalletPress,
   onSettingsPress,
-  onQrPress,
 }: Props) {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const insets = useSafeAreaInsets();
+  const [fullName, setFullName] = useState('');
+  const [profileRole, setProfileRole] = useState<string | null>(null);
+
+  // Membership rules are not defined yet, so no fake tier/badge is shown.
+  const membershipTier: string | null = null;
 
   useEffect(() => {
-    let mounted = true;
+    let active = true;
 
     const loadProfile = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      try {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-      if (!user || !mounted) return;
+        if (!user?.id) return;
 
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('full_name, role')
-        .eq('id', user.id)
-        .maybeSingle();
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('full_name, role')
+          .eq('id', user.id)
+          .maybeSingle();
 
-      if (!error && mounted) setProfile(data);
+        if (error || !active) return;
+
+        setFullName((data?.full_name ?? '').trim());
+        setProfileRole(data?.role ?? null);
+      } catch {
+        // Keep profile fields empty on failure.
+      }
     };
 
     loadProfile();
 
     return () => {
-      mounted = false;
+      active = false;
     };
   }, []);
 
-  const displayName = profile?.full_name?.trim() || null;
-  const isBuyer = profile?.role === 'buyer';
-
   return (
-    <SafeAreaView style={styles.safe}>
+    <View style={styles.page}>
       <StatusBar style="dark" />
+
+      <LinearGradient
+        colors={['#FCE4F1', '#FDF0F6', '#FFFFFF']}
+        locations={[0, 0.58, 1]}
+        style={styles.gradient}
+        pointerEvents="none"
+      />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={styles.scrollContent}
       >
-        <LinearGradient
-          colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
-          locations={[0, 0.58, 0.82, 1]}
-          style={styles.header}
+        <View
+          style={[
+            styles.header,
+            {
+              // Keep the approved vertical header position.
+              paddingTop: insets.top + 50,
+            },
+          ]}
         >
-          <View style={styles.pageTitleRow}>
-            <Text style={styles.title}>Me</Text>
-          </View>
-
-          <View style={styles.profileRow}>
+          <Pressable
+            onPress={onAvatarPress}
+            hitSlop={8}
+            style={styles.avatarButton}
+            accessibilityRole="button"
+            accessibilityLabel="Profile"
+          >
             <Image
               source={{ uri: DEFAULT_AVATAR }}
               style={styles.avatar}
               resizeMode="cover"
             />
+          </Pressable>
 
-            <View style={styles.profileInfo}>
-              {displayName ? (
-                <Text style={styles.customerName} numberOfLines={1}>
-                  {displayName}
+          <View style={styles.profileInfo}>
+            <View style={styles.nameRow}>
+              <Pressable
+                onPress={onNamePress}
+                style={styles.namePressable}
+                hitSlop={4}
+              >
+                <Text
+                  style={styles.name}
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {fullName}
                 </Text>
-              ) : null}
+              </Pressable>
 
-              {isBuyer ? (
-                <View style={styles.memberBadge}>
-                  <MaterialCommunityIcons
-                    name="crown"
-                    size={13}
-                    color={MAGENTA}
-                  />
-                  <Text style={styles.memberBadgeText}>Member</Text>
-                </View>
-              ) : null}
+              <Pressable
+                onPress={onQRPress}
+                hitSlop={10}
+                style={styles.qrButton}
+                accessibilityRole="button"
+                accessibilityLabel="My QR code"
+              >
+                <Ionicons
+                  name="qr-code-outline"
+                  size={18}
+                  color={MUTED}
+                />
+              </Pressable>
             </View>
 
-            <Pressable
-              onPress={onQrPress}
-              hitSlop={10}
-              style={({ pressed }) => [
-                styles.qrButton,
-                pressed && styles.qrButtonPressed,
-              ]}
-              accessibilityRole="button"
-              accessibilityLabel="My QR code"
-            >
-              <MaterialCommunityIcons name="qrcode" size={30} color="#16181B" />
-            </Pressable>
+            <View style={styles.memberRow}>
+              {membershipTier ? (
+                <>
+                  <Pressable
+                    onPress={onMembershipPress}
+                    style={styles.membershipBadge}
+                  >
+                    <MaterialCommunityIcons
+                      name="crown"
+                      size={12}
+                      color="#FFFFFF"
+                    />
+                    <Text style={styles.membershipText}>
+                      {membershipTier} Member
+                    </Text>
+                  </Pressable>
+
+                  <View style={styles.memberDivider} />
+                </>
+              ) : null}
+
+              <Pressable
+                onPress={onMemberCenterPress}
+                hitSlop={6}
+                style={styles.memberCenter}
+                accessibilityRole="button"
+                accessibilityLabel="Member Center"
+              >
+                <MaterialCommunityIcons
+                  name="card-account-details-outline"
+                  size={17}
+                  color={MAGENTA}
+                />
+
+                <Text
+                  style={styles.memberCenterText}
+                  numberOfLines={1}
+                >
+                  Member Center
+                </Text>
+
+                <Ionicons
+                  name="chevron-forward"
+                  size={12}
+                  color={INK}
+                />
+              </Pressable>
+            </View>
           </View>
 
-          <View style={styles.topNav}>
-            <TopAction
-              icon="account-star-outline"
-              label="Member Center"
-              onPress={onMemberCenterPress}
-            />
-            <TopAction
-              icon="map-marker-outline"
+          <View style={styles.actions}>
+            <ActionItem
               label="Address"
+              icon={
+                <Ionicons
+                  name="location-outline"
+                  size={25}
+                  color={INK}
+                />
+              }
               onPress={onAddressPress}
             />
-            <TopAction
-              icon="wallet-outline"
+
+            <ActionItem
               label="Wallet"
+              icon={
+                <Ionicons
+                  name="wallet-outline"
+                  size={25}
+                  color={INK}
+                />
+              }
               onPress={onWalletPress}
             />
-            <TopAction
-              icon="cog-outline"
+
+            <ActionItem
               label="Settings"
+              icon={
+                <Ionicons
+                  name="settings-outline"
+                  size={25}
+                  color={INK}
+                />
+              }
               onPress={onSettingsPress}
             />
           </View>
-        </LinearGradient>
+        </View>
 
+        {/* Step 4 starts here. Savings / Rewards is intentionally not added yet. */}
         <View style={styles.foundationSpace} />
       </ScrollView>
 
       <BottomNav onHomePress={onHomePress} />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  safe: {
+  page: {
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  content: {
+
+  gradient: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 390,
+  },
+
+  scrollContent: {
     paddingBottom: 130,
-    minHeight: 900,
-    backgroundColor: '#FFFFFF',
   },
+
   header: {
-    height: 300,
-    paddingHorizontal: 20,
-    paddingTop: 10,
-  },
-  pageTitleRow: {
-    height: 34,
-    justifyContent: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#16181B',
-  },
-  profileRow: {
-    marginTop: 20,
-    minHeight: 82,
     flexDirection: 'row',
     alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 17,
   },
+
+  avatarButton: {
+    width: 52,
+    height: 52,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+
   avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#FFFFFF',
+    width: 52,
+    height: 52,
+    borderRadius: 26,
+    backgroundColor: '#F8D7EA',
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
+
   profileInfo: {
     flex: 1,
     minWidth: 0,
-    marginLeft: 14,
+    marginLeft: 10,
     justifyContent: 'center',
   },
-  customerName: {
-    fontSize: 19,
-    lineHeight: 24,
-    fontWeight: '700',
-    color: '#16181B',
-  },
-  memberBadge: {
-    alignSelf: 'flex-start',
-    marginTop: 6,
-    paddingHorizontal: 9,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#FFFFFF',
+
+  nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    minHeight: 25,
   },
-  memberBadgeText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: MAGENTA,
+
+  namePressable: {
+    flexShrink: 1,
+    minWidth: 0,
   },
+
+  name: {
+    color: INK,
+    fontSize: 19,
+    lineHeight: 23,
+    fontWeight: '700',
+    letterSpacing: -0.25,
+  },
+
   qrButton: {
-    width: 44,
-    height: 44,
+    width: 20,
+    height: 20,
+    marginLeft: 7,
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
-  qrButtonPressed: {
-    opacity: 0.55,
+
+  memberRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    minHeight: 21,
   },
-  topNav: {
-    marginTop: 28,
-    marginHorizontal: -4,
+
+  membershipBadge: {
+    height: 22,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    borderRadius: 11,
+    backgroundColor: MAGENTA,
+  },
+
+  membershipText: {
+    marginLeft: 4,
+    color: '#FFFFFF',
+    fontSize: 11,
+    lineHeight: 13,
+    fontWeight: '600',
+  },
+
+  memberDivider: {
+    width: 1,
+    height: 13,
+    marginHorizontal: 8,
+    backgroundColor: '#C9C4D4',
+  },
+
+  memberCenter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexShrink: 1,
+    minWidth: 0,
+  },
+
+  memberCenterText: {
+    marginLeft: 4,
+    marginRight: 2,
+    color: INK,
+    fontSize: 12,
+    lineHeight: 15,
+    fontWeight: '500',
+    flexShrink: 1,
+  },
+
+  actions: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    marginLeft: 4,
+    flexShrink: 0,
   },
-  topAction: {
-    width: '25%',
-    height: 66,
+
+  action: {
+    width: 47,
     alignItems: 'center',
     justifyContent: 'flex-start',
+    flexShrink: 0,
   },
-  topActionPressed: {
-    opacity: 0.55,
-  },
-  topIconCircle: {
-    width: 38,
-    height: 38,
+
+  actionIcon: {
+    width: 30,
+    height: 30,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  topActionLabel: {
-    marginTop: 6,
-    fontSize: 11,
-    lineHeight: 14,
-    color: '#252326',
-    fontFamily: 'Inter_500Medium',
+
+  actionLabel: {
+    marginTop: 4,
+    color: INK,
+    fontSize: 11.5,
+    lineHeight: 15,
+    fontWeight: '500',
     textAlign: 'center',
   },
+
   foundationSpace: {
     minHeight: 650,
     backgroundColor: '#FFFFFF',
   },
+
   navOuter: {
     position: 'absolute',
     left: 0,
@@ -346,6 +515,7 @@ const styles = StyleSheet.create({
     bottom: 18,
     paddingHorizontal: 2,
   },
+
   nav: {
     height: 80,
     borderRadius: 20,
@@ -359,11 +529,13 @@ const styles = StyleSheet.create({
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
   },
+
   homeButton: {
     width: 70,
     height: 65,
     alignItems: 'center',
   },
+
   homeCircle: {
     marginTop: 4.5,
     width: 60,
@@ -375,17 +547,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     overflow: 'hidden',
   },
+
   homeLogo: {
     width: 58,
     height: 58,
     borderRadius: 29,
   },
+
   navButton: {
     width: 70,
     height: 50,
     alignItems: 'center',
     justifyContent: 'flex-end',
   },
+
   navLabel: {
     paddingTop: 5,
     fontSize: 11,
