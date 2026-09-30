@@ -10,9 +10,9 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const MAGENTA = '#BF008E';
-const SOFT_PINK = '#FBE8EF';
 const WANTISS_LOGO =
   'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
 
@@ -92,12 +92,13 @@ export default function MeScreen({ onHomePress }: Props) {
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.content}
       >
-        <View style={styles.header}>
-          <View style={[styles.headerBand, styles.headerBandTop]} />
-          <View style={[styles.headerBand, styles.headerBandMid]} />
-          <View style={[styles.headerBand, styles.headerBandBottom]} />
+        <LinearGradient
+          colors={['#FCE4F1', '#FDF0F6', '#FFFFFF']}
+          locations={[0, 0.55, 1]}
+          style={styles.header}
+        >
           <Text style={styles.title}>Me</Text>
-        </View>
+        </LinearGradient>
 
         <View style={styles.foundationSpace} />
       </ScrollView>
@@ -121,29 +122,6 @@ const styles = StyleSheet.create({
     height: 190,
     paddingHorizontal: 16,
     paddingTop: 12,
-    overflow: 'hidden',
-    position: 'relative',
-    backgroundColor: '#FBE8EF',
-  },
-  headerBand: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-  },
-  headerBandTop: {
-    top: 0,
-    height: 70,
-    backgroundColor: '#F6D5E2',
-  },
-  headerBandMid: {
-    top: 70,
-    height: 65,
-    backgroundColor: '#F9E0E9',
-  },
-  headerBandBottom: {
-    top: 135,
-    height: 55,
-    backgroundColor: '#FBE8EF',
   },
   title: {
     fontSize: 26,
