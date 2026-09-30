@@ -10,7 +10,10 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 
 import { supabase } from '../lib/supabase';
 
@@ -130,7 +133,7 @@ function ActionItem({
   );
 }
 
-export default function MeScreen({
+function MeContent({
   onHomePress,
   onAvatarPress,
   onNamePress,
@@ -345,6 +348,14 @@ export default function MeScreen({
 
       <BottomNav onHomePress={onHomePress} />
     </View>
+  );
+}
+
+export default function MeScreen(props: Props) {
+  return (
+    <SafeAreaProvider>
+      <MeContent {...props} />
+    </SafeAreaProvider>
   );
 }
 
