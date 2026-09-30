@@ -130,9 +130,7 @@ export default function MeScreen({
         .eq('id', user.id)
         .maybeSingle();
 
-      if (!error && mounted) {
-        setProfile(data);
-      }
+      if (!error && mounted) setProfile(data);
     };
 
     loadProfile();
@@ -155,10 +153,12 @@ export default function MeScreen({
       >
         <LinearGradient
           colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
-          locations={[0, 0.52, 0.78, 1]}
+          locations={[0, 0.58, 0.82, 1]}
           style={styles.header}
         >
-          <Text style={styles.title}>Me</Text>
+          <View style={styles.pageTitleRow}>
+            <Text style={styles.title}>Me</Text>
+          </View>
 
           <View style={styles.profileRow}>
             <Image
@@ -177,8 +177,8 @@ export default function MeScreen({
               {isBuyer ? (
                 <View style={styles.memberBadge}>
                   <MaterialCommunityIcons
-                    name="crown-outline"
-                    size={14}
+                    name="crown"
+                    size={13}
                     color={MAGENTA}
                   />
                   <Text style={styles.memberBadgeText}>Member</Text>
@@ -188,6 +188,7 @@ export default function MeScreen({
 
             <Pressable
               onPress={onQrPress}
+              hitSlop={10}
               style={({ pressed }) => [
                 styles.qrButton,
                 pressed && styles.qrButtonPressed,
@@ -195,7 +196,7 @@ export default function MeScreen({
               accessibilityRole="button"
               accessibilityLabel="My QR code"
             >
-              <MaterialCommunityIcons name="qrcode" size={29} color="#16181B" />
+              <MaterialCommunityIcons name="qrcode" size={30} color="#16181B" />
             </Pressable>
           </View>
 
@@ -242,27 +243,29 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   header: {
-    height: 250,
-    paddingHorizontal: 16,
-    paddingTop: 12,
+    height: 300,
+    paddingHorizontal: 20,
+    paddingTop: 10,
+  },
+  pageTitleRow: {
+    height: 34,
+    justifyContent: 'center',
   },
   title: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '700',
     color: '#16181B',
   },
   profileRow: {
-    minHeight: 88,
-    marginTop: 15,
+    marginTop: 20,
+    minHeight: 82,
     flexDirection: 'row',
     alignItems: 'center',
   },
   avatar: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    borderWidth: 1,
-    borderColor: '#D9A4BF',
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     backgroundColor: '#FFFFFF',
   },
   profileInfo: {
@@ -272,19 +275,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   customerName: {
-    fontSize: 20,
+    fontSize: 19,
+    lineHeight: 24,
     fontWeight: '700',
     color: '#16181B',
   },
   memberBadge: {
     alignSelf: 'flex-start',
-    marginTop: 7,
+    marginTop: 6,
     paddingHorizontal: 9,
-    height: 25,
-    borderRadius: 13,
+    height: 24,
+    borderRadius: 12,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#E6B4D0',
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
@@ -295,50 +297,45 @@ const styles = StyleSheet.create({
     color: MAGENTA,
   },
   qrButton: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: 44,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
   },
   qrButtonPressed: {
-    backgroundColor: 'rgba(255,255,255,0.55)',
+    opacity: 0.55,
   },
   topNav: {
-    marginTop: 13,
-    height: 72,
-    borderRadius: 18,
-    paddingHorizontal: 4,
-    backgroundColor: 'rgba(255,255,255,0.72)',
+    marginTop: 28,
+    marginHorizontal: -4,
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
   },
   topAction: {
-    flex: 1,
-    height: 68,
+    width: '25%',
+    height: 66,
     alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 14,
+    justifyContent: 'flex-start',
   },
   topActionPressed: {
-    backgroundColor: 'rgba(255,255,255,0.8)',
+    opacity: 0.55,
   },
   topIconCircle: {
-    width: 35,
-    height: 35,
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },
   topActionLabel: {
-    marginTop: 2,
-    fontSize: 10,
+    marginTop: 6,
+    fontSize: 11,
+    lineHeight: 14,
     color: '#252326',
     fontFamily: 'Inter_500Medium',
     textAlign: 'center',
   },
   foundationSpace: {
-    flex: 1,
     minHeight: 650,
     backgroundColor: '#FFFFFF',
   },
