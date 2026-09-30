@@ -6,7 +6,7 @@ type Props={onPressViewAll?:()=>void;onPressToPay?:()=>void;onPressToShip?:()=>v
 export default function MeOrdersCard({onPressViewAll,onPressToPay,onPressToShip,onPressToReceive,onPressToReview,onPressRefund}:Props){const items=[
 {icon:'wallet-outline' as const,label:'To Pay',onPress:onPressToPay},
 {icon:'cube-outline' as const,label:'To Ship',onPress:onPressToShip},
-{icon:'car-outline' as const,label:'To Receive',onPress:onPressToReceive},
+{icon:'bus-outline' as const,label:'To Receive',onPress:onPressToReceive},
 {icon:'chatbubble-ellipses-outline' as const,label:'To Review',onPress:onPressToReview},
 {icon:'refresh-circle-outline' as const,label:'Refund / Support',onPress:onPressRefund},
 ];return <View style={styles.card}><View style={styles.header}><Text style={styles.title}>My Orders</Text><Pressable style={styles.viewAll} onPress={onPressViewAll} hitSlop={6}><Text style={styles.viewAllText}>View All</Text><Ionicons name="chevron-forward" size={11} color="#8A8A8A"/></Pressable></View><View style={styles.itemsRow}>{items.map(i=><Pressable key={i.label} style={styles.item} onPress={i.onPress} hitSlop={5}><Ionicons name={i.icon} size={22} color="#25232A"/><Text style={styles.itemLabel} numberOfLines={1}>{i.label}</Text></Pressable>)}</View></View>}
