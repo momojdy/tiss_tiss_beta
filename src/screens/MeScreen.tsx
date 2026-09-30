@@ -190,7 +190,7 @@ function MeContent({
 
       <LinearGradient
         colors={['#FCE4F1', '#FCE4F1', '#FDF0F6', '#FFFFFF']}
-        locations={[0, 0.42, 0.7, 1]}
+        locations={[0, 0.48, 0.76, 1]}
         style={styles.gradient}
         pointerEvents="none"
       />
@@ -370,7 +370,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: 320,
+    height: 350,
   },
 
   scrollContent: {
