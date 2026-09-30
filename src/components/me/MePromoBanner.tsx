@@ -41,7 +41,7 @@ export default function MePromoBanner({ onPressClaim }: Props) {
 
       <View style={styles.textWrap}>
         <Text style={styles.text} numberOfLines={1}>
-          Tap to claim today's deals, limited time only!
+          Tap to claim today's deals, limited time!
         </Text>
         <Text style={styles.timer}>
           Ends in <Text style={styles.timerValue}>{format(remaining)}</Text>
