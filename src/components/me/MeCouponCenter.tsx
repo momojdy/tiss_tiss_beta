@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
     width: 1,
     height: 15,
     backgroundColor: '#F2C2DA',
+    marginLeft: 8,
   },
   offer: {
     flex: 1,
