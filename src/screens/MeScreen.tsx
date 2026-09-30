@@ -302,7 +302,7 @@ function MeContent({
               icon={
                 <Ionicons
                   name="location-outline"
-                  size={21}
+                  size={18}
                   color={INK}
                 />
               }
@@ -314,7 +314,7 @@ function MeContent({
               icon={
                 <Ionicons
                   name="wallet-outline"
-                  size={25}
+                  size={18}
                   color={INK}
                 />
               }
@@ -437,8 +437,8 @@ const styles = StyleSheet.create({
   },
 
   membershipBadge: {
-    width: 50,
-    height: 16,
+    width: 45,
+    height: 15,
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 6,
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   actions: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    marginLeft: 8,
+    paddingLeft: 20,
     flexShrink: 0,
   },
 
@@ -503,8 +503,8 @@ const styles = StyleSheet.create({
   actionLabel: {
     marginTop: 2,
     color: INK,
-    fontSize: 10,
-    lineHeight: 13,
+    fontSize: 9,
+    lineHeight: 12,
     fontWeight: '500',
     textAlign: 'center',
   },
