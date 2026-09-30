@@ -7,6 +7,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { supabase } from '../lib/supabase';
 import MeSavingsCard from '../components/me/MeSavingsCard';
 import MePromoBanner from '../components/me/MePromoBanner';
+import MeRewardsGrid from '../components/me/MeRewardsGrid';
 
 const MAGENTA = '#B8107F';
 const INK = '#1E1B3A';
@@ -15,7 +16,6 @@ const WANTISS_LOGO = 'https://raw.githubusercontent.com/momojdy/tiss_icons_asset
 const DEFAULT_AVATAR = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainDefaultAvatar.PNG';
 
 type Props = { onHomePress?:()=>void; onAvatarPress?:()=>void; onNamePress?:()=>void; onQRPress?:()=>void; onMembershipPress?:()=>void; onMemberCenterPress?:()=>void; onAddressPress?:()=>void; onWalletPress?:()=>void; onSettingsPress?:()=>void; onPromoPress?:()=>void };
-
 function NavLabel({children}:{children:string}){return <Text style={styles.navLabel}>{children}</Text>}
 function BottomNav({onHomePress}:Pick<Props,'onHomePress'>){return <View style={styles.navOuter}><View style={styles.nav}>
 <Pressable onPress={onHomePress} style={styles.homeButton}><View style={styles.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={styles.homeLogo} resizeMode="contain"/></View></Pressable>
@@ -24,9 +24,7 @@ function BottomNav({onHomePress}:Pick<Props,'onHomePress'>){return <View style={
 <Pressable style={styles.navButton}><MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA}/><NavLabel>Cart</NavLabel></Pressable>
 <Pressable style={styles.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel>Me</NavLabel></Pressable>
 </View></View>}
-
 function ActionItem({label,icon,onPress}:{label:string;icon:React.ReactNode;onPress?:()=>void}){return <Pressable onPress={onPress} hitSlop={8} style={styles.action}><View style={styles.actionIcon}>{icon}</View><Text style={styles.actionLabel} numberOfLines={1}>{label}</Text></Pressable>}
-
 function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembershipPress,onMemberCenterPress,onAddressPress,onWalletPress,onSettingsPress,onPromoPress}:Props){
 const insets=useSafeAreaInsets(); const [fullName,setFullName]=useState(''); const membershipTier='Basic';
 useEffect(()=>{let active=true;(async()=>{try{const {data:{user}}=await supabase.auth.getUser();if(!user?.id)return;const {data,error}=await supabase.from('profiles').select('full_name, role').eq('id',user.id).maybeSingle();if(error||!active)return;setFullName((data?.full_name??'').trim());}catch{}})();return()=>{active=false}},[]);
@@ -39,8 +37,7 @@ return <View style={styles.page}><StatusBar style="dark"/><LinearGradient colors
 </View>
 <MeSavingsCard totalSavings={0} onPressSavings={()=>{}} onPressMemberCenter={onMemberCenterPress} onPressRedeemCard={()=>{}}/>
 <MePromoBanner onPressClaim={onPromoPress}/>
+<MeRewardsGrid />
 <View style={styles.foundationSpace}/></ScrollView><BottomNav onHomePress={onHomePress}/></View>}
-
 export default function MeScreen(props:Props){return <SafeAreaProvider><MeContent {...props}/></SafeAreaProvider>}
-
 const styles=StyleSheet.create({page:{flex:1,backgroundColor:'#FFFFFF'},gradient:{position:'absolute',top:0,left:0,right:0,height:350},scrollContent:{paddingBottom:130},header:{flexDirection:'row',alignItems:'center',paddingHorizontal:16,paddingBottom:17},avatarButton:{width:52,height:52,alignItems:'center',justifyContent:'center',flexShrink:0},avatar:{width:52,height:52,borderRadius:26,backgroundColor:'#F8D7EA',borderWidth:1.5,borderColor:'#FFFFFF'},profileInfo:{flex:1,minWidth:0,marginLeft:10,justifyContent:'center'},nameRow:{flexDirection:'row',alignItems:'center',minHeight:25},namePressable:{flexShrink:1,minWidth:0},name:{color:INK,fontSize:19,lineHeight:23,fontWeight:'700',letterSpacing:-.25},qrButton:{width:20,height:20,marginLeft:7,alignItems:'center',justifyContent:'center',flexShrink:0},memberRow:{flexDirection:'row',alignItems:'center',marginTop:5,minHeight:21},membershipBadge:{width:45,height:15,alignItems:'center',justifyContent:'center',paddingLeft:6,paddingRight:3,borderRadius:11,backgroundColor:MAGENTA},membershipText:{color:'#FFFFFF',fontSize:11,lineHeight:13,fontWeight:'600'},memberDivider:{width:1,height:13,marginHorizontal:8,backgroundColor:'#C9C4D4'},memberCenter:{flexDirection:'row',alignItems:'center',flexShrink:1,minWidth:0},memberCenterText:{marginLeft:2.5,marginRight:2,color:INK,fontSize:10,lineHeight:15,fontWeight:'500',flexShrink:1},actions:{flexDirection:'row',alignItems:'flex-start',paddingLeft:20,flexShrink:0},action:{width:41,alignItems:'center',justifyContent:'flex-start',flexShrink:0},actionIcon:{width:26,height:26,alignItems:'center',justifyContent:'center'},actionLabel:{marginTop:2,color:INK,fontSize:9,lineHeight:12,fontWeight:'500',textAlign:'center'},foundationSpace:{minHeight:650},navOuter:{position:'absolute',left:0,right:0,bottom:18,paddingHorizontal:2},nav:{height:80,borderRadius:20,backgroundColor:'#FFFFFF',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:6,shadowColor:'#000',shadowOpacity:.15,shadowRadius:6,shadowOffset:{width:0,height:3}},homeButton:{width:70,height:65,alignItems:'center'},homeCircle:{marginTop:4.5,width:60,height:60,borderRadius:30,borderWidth:1,borderColor:'#D593B0',alignItems:'center',justifyContent:'center',overflow:'hidden'},homeLogo:{width:58,height:58,borderRadius:29},navButton:{width:70,height:50,alignItems:'center',justifyContent:'flex-end'},navLabel:{paddingTop:5,fontSize:11,color:'#1F1E1E',fontFamily:'Inter_500Medium',textAlign:'center'}});
