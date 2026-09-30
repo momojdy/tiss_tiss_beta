@@ -11,8 +11,8 @@ export default function MeQuickLinksRow({ onPressExpress, onPressFavorites, onPr
   const items = [
     { icon: 'star-outline' as const, label: 'Favorites', onPress: onPressFavorites },
     { icon: 'storefront-outline' as const, label: 'Followed Shops', onPress: onPressFollowedShops },
-    { icon: 'time-outline' as const, label: 'Browsing History', onPress: onPressBrowsingHistory },
+    { icon: 'time-outline' as const, label: 'History', onPress: onPressBrowsingHistory },
   ];
   return <View style={styles.container}><Pressable style={styles.item} onPress={onPressExpress} hitSlop={6}><ExpressIcon size={22} color="#25232A"/><Text style={styles.label} numberOfLines={1}>Express</Text></Pressable>{items.map(item => <Pressable key={item.label} style={styles.item} onPress={item.onPress} hitSlop={6}><Ionicons name={item.icon} size={22} color="#25232A"/><Text style={styles.label} numberOfLines={1}>{item.label}</Text></Pressable>)}</View>;
 }
-const styles=StyleSheet.create({container:{flexDirection:'row',marginTop:13,paddingHorizontal:8},item:{flex:1,alignItems:'center',justifyContent:'center'},label:{marginTop:6,fontSize:10.5,lineHeight:13,color:'#1C1C1C',fontWeight:'500',textAlign:'center'}});
+const styles=StyleSheet.create({container:{flexDirection:'row',marginTop:16,paddingHorizontal:8},item:{flex:1,alignItems:'center',justifyContent:'center'},label:{marginTop:6,fontSize:10.5,lineHeight:13,color:'#1C1C1C',fontWeight:'500',textAlign:'center'}});
