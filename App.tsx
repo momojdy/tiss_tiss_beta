@@ -17,6 +17,59 @@ export default function App() {
   useEffect(() => {
     let mounted = true;
 
+    const restoreBuyerSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const user = data.session?.user;
+
+      if (!user || !mounted) return;
+
+      const { data: profile, error } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+      if (!error && profile?.role === 'buyer' && mounted) {
+        setAuthenticated(true);
+        setBuyerScreen('home');
+      }
+    };
+
+    restoreBuyerSession();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!mounted) return;
+
+      if (!session) {
+        setAuthenticated(false);
+        setBuyerScreen('home');
+        return;
+      }
+
+      if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
+        void (async () => {
+          const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', session.user.id)
+            .single();
+
+          if (!error && profile?.role === 'buyer' && mounted) {
+            setAuthenticated(true);
+          }
+        })();
+      }
+    });
+
+    return () => {
+      mounted = false;
+      authListener.subscription.unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
     const handleUrl = async (url: string | null) => {
       if (!url || !mounted) return;
 
