@@ -75,7 +75,7 @@ function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembership
 
     {isFeedMode ? (
       <View style={styles.feedMode}>
-        <LinearGradient colors={['#F8D5E8','#F7D8EA','#FBE8F2','#FFFFFF']} locations={[0,.55,.90,1]} style={[styles.compactHeader,{paddingTop:insets.top+14}]}><Pressable onPress={()=>setIsFeedMode(false)} style={styles.compactHeaderPressable}>
+        <LinearGradient colors={['#F8D5E8','#F7D8EA','#FBE8F2','#FFFFFF']} locations={[0,.55,.80,1]} style={[styles.compactHeader,{paddingTop:insets.top+14}]}><Pressable onPress={()=>setIsFeedMode(false)} style={styles.compactHeaderPressable}>
           <Text style={styles.compactName} numberOfLines={1}>{fullName}</Text>
           <Ionicons name="chevron-down" size={18} color={INK}/>
           <View style={styles.compactActions}>
