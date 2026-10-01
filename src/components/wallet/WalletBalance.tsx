@@ -498,6 +498,7 @@ const styles = StyleSheet.create({
   },
   bottomRow: {
     marginTop: 18,
+    paddingTop: 8,
   },
   footerRow: {
     justifyContent: 'space-between',
