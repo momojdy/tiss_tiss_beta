@@ -93,9 +93,11 @@ export default function App() {
       return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
     }
     return (
-      <HomeErrorBoundary>
-        <HomeScreen onMePress={() => setBuyerScreen('me')} />
-      </HomeErrorBoundary>
+      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
+        <HomeErrorBoundary>
+          <HomeScreen onMePress={() => setBuyerScreen('me')} />
+        </HomeErrorBoundary>
+      </View>
     );
   }
 
@@ -158,6 +160,10 @@ export default function App() {
           throw new Error('B&P 2P home is not connected yet.');
         }
 
+        console.log('SIGN_IN_SUCCESS', {
+          userId: data.user.id,
+          role: profile?.role,
+        });
         setAuthenticated(true);
       }}
       onForgotPasswordPressed={async email => {
