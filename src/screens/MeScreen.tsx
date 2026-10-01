@@ -141,7 +141,7 @@ function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembership
       </ScrollView>
     )}
 
-    <BottomNav onHomePress={onHomePress} activeNav="me"/>
+    <BottomNav onHomePress={onHomePress} activeNav={activeNav ?? 'me'}/>
   </View>
 }
 export default function MeScreen(props:Props){return <SafeAreaProvider><MeContent {...props}/></SafeAreaProvider>}
