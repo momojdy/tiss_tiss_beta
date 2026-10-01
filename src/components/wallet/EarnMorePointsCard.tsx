@@ -77,6 +77,8 @@ export default function EarnMorePointsCard({ onExplore }: Props) {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
+    marginHorizontal: 15,
+    marginTop: 13,
     height: CARD_HEIGHT,
     backgroundColor: SAGE_TINT,
     borderRadius: 20,
