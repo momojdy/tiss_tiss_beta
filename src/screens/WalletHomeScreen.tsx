@@ -50,7 +50,9 @@ export default function WalletHomeScreen({
         </View>
         <WalletRecentActivity />
         <EarnMorePointsCard />
-        <InviteFriendRow />
+        <View style={styles.inviteFriendSpacing}>
+          <InviteFriendRow />
+        </View>
       </ScrollView>
     </View>
   );
@@ -63,6 +65,9 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingBottom: 24,
+  },
+  inviteFriendSpacing: {
+    paddingTop: 15,
   },
   actionsRow: {
     paddingTop: 18,
