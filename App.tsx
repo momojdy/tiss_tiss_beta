@@ -38,8 +38,6 @@ export default function App() {
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [authError, setAuthError] = useState<string | null>(null);
 
-  if (!fontsLoaded) return null;
-
   useEffect(() => {
     let mounted = true;
 
@@ -81,6 +79,8 @@ export default function App() {
       subscription.remove();
     };
   }, []);
+
+  if (!fontsLoaded) return null;
 
   if (authenticated) {
     try {
