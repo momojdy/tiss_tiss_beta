@@ -393,6 +393,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
 const styles = StyleSheet.create({
   card: {
     width: '100%',
+    marginHorizontal: 20,
     backgroundColor: OLIVE,
     borderRadius: 20,
     paddingTop: 20,
@@ -417,6 +418,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 16,
     fontFamily: 'Manrope_600SemiBold',
+    flexShrink: 0,
   },
   manropeSemi: {
     fontFamily: 'Manrope_600SemiBold',
