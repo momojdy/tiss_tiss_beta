@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
   left: { width: 150, flexDirection: 'row', alignItems: 'center', paddingLeft: 8 },
   piggy: { width: 52, height: 50, flexShrink: 0 },
   leftText: { marginLeft: 10 },
-  label: { fontSize: 11, fontWeight: '600', color: '#2A2A2A', paddingBottom: 5 },
+  label: { fontSize: 11, fontWeight: '600', color: '#2A2A2A', transform: [{ translateY: -5 }] },
   amountRow: { flexDirection: 'row', alignItems: 'center', marginTop: 1 },
   amount: { fontSize: 18, fontWeight: '800', color: '#111', letterSpacing: -0.5, paddingBottom: 5 },
   amountChevron: { marginTop: 3, paddingBottom: 5 },
