@@ -492,16 +492,15 @@ export default function WalletNotificationsScreen({
             </View>
           </View>
 
+          {expanded && (
+            <View style={s.panel}>
+              {renderDetails(n)}
+              {isActionable(n)
+                ? renderActions(n)
+                : renderViewDetails(n)}
+            </View>
+          )}
         </Pressable>
-
-        {expanded && (
-          <View style={s.panel}>
-            {renderDetails(n)}
-            {isActionable(n)
-              ? renderActions(n)
-              : renderViewDetails(n)}
-          </View>
-        )}
       </View>
     );
   };
