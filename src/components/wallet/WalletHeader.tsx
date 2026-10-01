@@ -171,6 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     color: OLIVE,
     lineHeight: 19,
+    transform: [{ translateY: 1 }],
   },
   badge: {
     position: 'absolute',
