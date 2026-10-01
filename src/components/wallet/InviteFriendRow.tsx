@@ -7,6 +7,7 @@ const IMAGE: number | { uri: string } = {
 
 const OLIVE = '#1A2517';
 const GREY = '#6C7280';
+const SAGE_TINT = '#DCE8D2';
 
 const ROW_HEIGHT = 120;
 const IMG_TOP = 35;
@@ -82,6 +83,8 @@ const styles = StyleSheet.create({
   row: {
     width: '100%',
     height: ROW_HEIGHT,
+    backgroundColor: SAGE_TINT,
+    borderRadius: 20,
     flexDirection: 'row',
     alignItems: 'center',
   },
