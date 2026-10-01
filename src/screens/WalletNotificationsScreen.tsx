@@ -168,8 +168,6 @@ function iconFor(type: string) {
       return 'close-circle-outline';
     case 'payment_success':
     case 'payment_failed':
-    case 'deposit':
-    case 'withdrawal':
       return 'wallet-outline';
     case 'points_earned':
     case 'milestone_reached':
@@ -584,11 +582,11 @@ const s = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
 
   header: {
+    height: 100,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     paddingHorizontal: 22,
-    paddingTop: 8,
-    paddingBottom: 4,
+    paddingBottom: 8,
   },
   headerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   backBtn: {
@@ -637,7 +635,7 @@ const s = StyleSheet.create({
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
   title: { flex: 1, fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: C.olive, lineHeight: 15 },
-  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8 },
+  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 6 },
   bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
   indicator: { marginLeft: 4 },
@@ -648,6 +646,7 @@ const s = StyleSheet.create({
   detailValue: {
     flexShrink: 1,
     marginLeft: 12,
+    marginRight: 6,
     textAlign: 'right',
     fontFamily: 'Inter',
     fontWeight: '700',
