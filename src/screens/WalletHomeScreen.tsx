@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     paddingTop: 14,
     flexDirection: 'row',
     justifyContent: 'center',
-    gap: 13,
+    gap: 26,
     paddingHorizontal: 13,
   },
   actionItem: {
