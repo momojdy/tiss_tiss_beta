@@ -29,8 +29,6 @@ export default function App() {
     Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
     Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'),
     Inter_700Bold: require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf'),
-    MaterialIconsOutlined: require('@material-design-icons/font/MaterialIconsOutlined-Regular.otf'),
-    MaterialIconsRound: require('@material-design-icons/font/MaterialIconsRound-Regular.otf'),
   });
 
   const [screen, setScreen] = useState<Screen>('auth');
