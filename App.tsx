@@ -24,6 +24,7 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
   const [buyerScreen, setBuyerScreen] = useState<'home' | 'me'>('home');
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
@@ -115,17 +116,23 @@ export default function App() {
   return (
     <AuthScreen
       onSignInPressed={async (email, password) => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
+        setAuthError(null);
 
-        if (error) throw error;
-        if (!data.user) throw new Error('No user returned.');
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password,
+          });
 
-        // Authentication succeeded. Do not block navigation on a
-        // separate profiles-row lookup; Home is the next screen.
-        setAuthenticated(true);
+          if (error) throw error;
+          if (!data.user) throw new Error('No user returned from Supabase.');
+
+          setAuthenticated(true);
+        } catch (error) {
+          const message = error instanceof Error ? error.message : String(error);
+          console.error('SIGN IN ERROR:', error);
+          setAuthError(message);
+        }
       }}
       onForgotPasswordPressed={async email => {
         const redirectTo = Linking.createURL('reset-password');
