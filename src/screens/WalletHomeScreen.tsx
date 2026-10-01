@@ -8,58 +8,40 @@ import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
 import InviteFriendRow from '../components/wallet/InviteFriendRow';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const MAGENTA = '#BF008E';
-const NAV_MUTED = '#9A96A3';
-const WANTISS_LOGO = 'https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/refs/heads/main/WantisslogoOuterless.PNG';
-const MESSAGE_UNREAD_COUNT = 1;
+const NAV_DARK = '#14181B';
+const NAV_GREEN = '#81C56C';
 
-function NavLabel({ children, active }: { children: string; active?: boolean }) {
-  return <Text style={[styles.navLabel, active && styles.navLabelActive]}>{children}</Text>;
+function WalletNavLabel({ children }: { children: string }) {
+  return <Text style={styles.walletNavLabel}>{children}</Text>;
 }
 
-function MessageBadge({ count }: { count: number }) {
-  if (count <= 0) return null;
-  const label = count > 99 ? '99+' : String(count);
-  return (
-    <View style={styles.messageBadge}>
-      <Text style={styles.messageBadgeText}>{label}</Text>
-    </View>
-  );
-}
-
-function BottomNav({ onHomePress, onMePress }: { onHomePress?: () => void; onMePress?: () => void }) {
+function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void; onMePress?: () => void }) {
   return (
     <View style={styles.navOuter}>
-      <View style={styles.nav}>
-        <Pressable onPress={onHomePress} style={styles.homeButton}>
-          <View style={styles.homeCircle}>
-            <Image source={{ uri: WANTISS_LOGO }} style={styles.homeLogo} resizeMode="contain" />
-          </View>
+      <View style={styles.walletNav}>
+        <Pressable onPress={onHomePress} style={styles.walletNavItem}>
+          <MaterialCommunityIcons name="home-outline" size={32} color={NAV_DARK} />
+          <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
-        <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED} />
-          <NavLabel>Showcase</NavLabel>
+        <Pressable style={styles.walletNavItem}>
+          <MaterialCommunityIcons name="account-group-outline" size={32} color={NAV_DARK} />
+          <WalletNavLabel>Contacts</WalletNavLabel>
         </Pressable>
-        <Pressable style={styles.navButton}>
-          <View style={styles.messageIconWrap}>
-            <MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED} />
-            <MessageBadge count={MESSAGE_UNREAD_COUNT} />
-          </View>
-          <NavLabel>Messages</NavLabel>
+        <Pressable style={styles.walletNavItem}>
+          <MaterialCommunityIcons name="qrcode-scan" size={56} color={NAV_GREEN} />
         </Pressable>
-        <Pressable style={styles.navButton}>
-          <MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED} />
-          <NavLabel>Cart</NavLabel>
+        <Pressable style={styles.walletNavItem}>
+          <MaterialCommunityIcons name="chart-line-variant" size={32} color={NAV_DARK} />
+          <WalletNavLabel>Insights</WalletNavLabel>
         </Pressable>
-        <Pressable onPress={onMePress} style={styles.navButton}>
-          <MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={MAGENTA} />
-          <NavLabel active>Me</NavLabel>
+        <Pressable onPress={onMePress} style={styles.walletNavItem}>
+          <MaterialCommunityIcons name="cog-outline" size={32} color={NAV_DARK} />
+          <WalletNavLabel>Settings</WalletNavLabel>
         </Pressable>
       </View>
     </View>
   );
 }
-
 type Props = {
   onBack?: () => void;
   onHomePress?: () => void;
@@ -112,7 +94,7 @@ export default function WalletHomeScreen({
           <InviteFriendRow />
         </View>
       </ScrollView>
-      <BottomNav onHomePress={onHomePress} onMePress={onMePress} />
+      <WalletBottomNav onHomePress={onHomePress} onMePress={onMePress} />
     </View>
   );
 }
@@ -129,7 +111,7 @@ const styles = StyleSheet.create({
     bottom: 18,
     paddingHorizontal: 2,
   },
-  nav: {
+  walletNav: {
     height: 70,
     borderRadius: 18,
     backgroundColor: '#FFFFFF',
@@ -142,75 +124,19 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
   },
-  homeButton: {
-    width: 64,
-    height: 60,
-    alignItems: 'center',
-  },
-  homeCircle: {
-    marginTop: 2,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    borderWidth: 1,
-    borderColor: '#E8CFE0',
-    alignItems: 'center',
-    justifyContent: 'center',
-    overflow: 'hidden',
-  },
-  homeLogo: {
-    width: 54,
-    height: 54,
-    borderRadius: 27,
-  },
-  navButton: {
-    width: 68,
-    height: 46,
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-  },
-  messageIconWrap: {
-    width: 30,
-    height: 29,
+  walletNavItem: {
+    width: 70,
+    height: 50,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  messageBadge: {
-    position: 'absolute',
-    top: -5,
-    right: -9,
-    minWidth: 16,
-    height: 16,
-    paddingHorizontal: 4,
-    borderRadius: 8,
-    backgroundColor: MAGENTA,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  messageBadgeText: {
-    color: '#FFFFFF',
-    fontSize: 9,
-    lineHeight: 11,
-    fontWeight: '700',
-  },
-  navLabel: {
-    paddingTop: 4,
-    fontSize: 10.5,
-    color: '#1F1E1E',
+  walletNavLabel: {
+    paddingTop: 6,
+    fontSize: 10,
+    lineHeight: 12,
     fontFamily: 'Inter_500Medium',
+    color: NAV_DARK,
     textAlign: 'center',
-  },
-  navLabelActive: {
-    color: MAGENTA,
-  },
-  content: {
-    paddingBottom: 24,
-  },
-  inviteFriendSpacing: {
-    paddingTop: 15,
-  },
-  earnMorePointsSpacing: {
-    paddingTop: 8,
   },
   actionsRow: {
     paddingTop: 18,
