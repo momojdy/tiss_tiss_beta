@@ -219,7 +219,7 @@ export default function HomeScreen({onMePress,activeNav}:{onMePress?:()=>void;ac
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
     </ScrollView>
     <View pointerEvents="box-none" style={{position:'absolute',left:8,right:23,bottom:102,height:40}}><MainPromoPopup/></View>
-    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress} activeNav="home"/></View>
+    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress} activeNav={activeNav}/></View>
   </View>;
 }
 
