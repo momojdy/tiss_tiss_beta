@@ -30,7 +30,6 @@ export default function WalletHomeScreen({
       >
         <WalletBalance />
         <WalletPoints />
-        <WalletRecentActivity />
         <View style={styles.actionsRow}>
           {[
             { label: 'Top up', icon: 'arrow-collapse-up' as const },
@@ -47,6 +46,7 @@ export default function WalletHomeScreen({
             </Pressable>
           ))}
         </View>
+        <WalletRecentActivity />
       </ScrollView>
     </View>
   );
