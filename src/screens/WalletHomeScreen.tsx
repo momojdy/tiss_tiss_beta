@@ -6,7 +6,7 @@ import WalletPoints from '../components/wallet/WalletPoints';
 import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
 import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
 import InviteFriendRow from '../components/wallet/InviteFriendRow';
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { Feather, MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
@@ -20,18 +20,18 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <Ionicons name="home-outline" size={29} color={NAV_DARK} />
+          <Feather name="home" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <Ionicons name="people-outline" size={29} color={NAV_DARK} />
+          <Feather name="users" size={29} color={NAV_DARK} />
           <WalletNavLabel>Contacts</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
           <MaterialCommunityIcons name="qrcode-scan" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="chart-line" size={29} color={NAV_DARK} />
+          <MaterialIcons name="query-stats" size={29} color={NAV_DARK} />
           <WalletNavLabel>Insights</WalletNavLabel>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
