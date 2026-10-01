@@ -192,13 +192,13 @@ const NAV_MUTED = '#9A96A3';
 const MESSAGE_UNREAD_COUNT = 1;
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
-function BottomNav({onMePress}:{onMePress?:()=>void}){
+function BottomNav({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'me'}){
   return <View style={{paddingHorizontal:2}}><View style={s.nav}>
     <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
     <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
-    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={MAGENTA}/><NavLabel>Me</NavLabel></Pressable>
+    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={activeNav==='me'?MAGENTA:NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
   </View></View>;
 }
 
@@ -219,7 +219,7 @@ export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
     </ScrollView>
     <View pointerEvents="box-none" style={{position:'absolute',left:8,right:23,bottom:102,height:40}}><MainPromoPopup/></View>
-    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress}/></View>
+    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress} activeNav="home"/></View>
   </View>;
 }
 
