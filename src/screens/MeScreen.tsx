@@ -71,7 +71,7 @@ function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembership
 
   return <View style={styles.page}>
     <StatusBar style="dark"/>
-    <LinearGradient colors={['#F8D5E8','#F7D8EA','#FBE8F2','#FFFFFF']} locations={[0,.50,.90,1]} style={styles.gradient} pointerEvents="none"/>
+    <LinearGradient colors={['#FCE4F1','#FCE4F1','#FDF0F6','#FFFFFF']} locations={[0,.48,.76,1]} style={styles.gradient} pointerEvents="none"/>
 
     {isFeedMode ? (
       <View style={styles.feedMode}>
