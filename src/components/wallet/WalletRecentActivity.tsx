@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 
 const OLIVE = '#1A2517';
@@ -84,13 +85,10 @@ function fromRpcRow(row: Record<string, unknown>): ActivityItem {
   };
 }
 
-type IconSpec = {
-  family: 'outlined' | 'round';
-  name: string;
-};
+type IconSpec = { name: string };
 
-const out = (name: string): IconSpec => ({ family: 'outlined', name });
-const rnd = (name: string): IconSpec => ({ family: 'round', name });
+const out = (name: string): IconSpec => ({ name });
+const rnd = (name: string): IconSpec => ({ name });
 
 function iconForActivity(a: ActivityItem): IconSpec {
   const type = a.transactionType.toLowerCase();
@@ -167,26 +165,7 @@ function MaterialGlyph({
   size: number;
   color: string;
 }) {
-  return (
-    <Text
-      allowFontScaling={false}
-      style={{
-        width: size,
-        height: size,
-        fontSize: size,
-        lineHeight: size,
-        color,
-        textAlign: 'center',
-        fontFamily:
-          spec.family === 'round'
-            ? 'MaterialIconsRound'
-            : 'MaterialIconsOutlined',
-        includeFontPadding: false,
-      }}
-    >
-      {spec.name}
-    </Text>
-  );
+  return <MaterialIcons name={spec.name as any} size={size} color={color} />;
 }
 
 const MONTHS = [
