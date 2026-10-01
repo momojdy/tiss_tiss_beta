@@ -192,7 +192,7 @@ const NAV_MUTED = '#9A96A3';
 const MESSAGE_UNREAD_COUNT = 1;
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
-function BottomNav({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'me'}){
+function BottomNav({onMePress}:{onMePress?:()=>void}){
   return <View style={{paddingHorizontal:2}}><View style={s.nav}>
     <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
@@ -202,7 +202,7 @@ function BottomNav({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'
   </View></View>;
 }
 
-export default function HomeScreen({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'me'}){
+export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
@@ -219,7 +219,7 @@ export default function HomeScreen({onMePress,activeNav}:{onMePress?:()=>void;ac
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
     </ScrollView>
     <View pointerEvents="box-none" style={{position:'absolute',left:8,right:23,bottom:102,height:40}}><MainPromoPopup/></View>
-    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress} activeNav={activeNav}/></View>
+    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress}/></View>
   </View>;
 }
 
