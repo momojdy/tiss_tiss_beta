@@ -132,7 +132,7 @@ export default function WalletHeader({
 const styles = StyleSheet.create({
   header: {
     width: '100%',
-    height: 60,
+    height: 100,
     backgroundColor: BACKGROUND,
     paddingTop: 8,
     paddingRight: 10,
