@@ -84,6 +84,8 @@ export default function App() {
         return (
           <WalletHomeScreen
             onBack={() => setBuyerScreen('me')}
+            onHomePress={() => setBuyerScreen('home')}
+            onMePress={() => setBuyerScreen('me')}
             onNotificationsPress={() => setBuyerScreen('walletNotifications')}
           />
         );
