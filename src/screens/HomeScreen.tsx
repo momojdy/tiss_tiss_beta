@@ -39,8 +39,6 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFonts } from 'expo-font';
 import { Montserrat_400Regular_Italic } from '@expo-google-fonts/montserrat';
-import { Inter_500Medium } from '@expo-google-fonts/inter';
-import { InterTight_500Medium } from '@expo-google-fonts/inter-tight';
 
 const MAGENTA = '#BF008E';
 const PINK_BG = '#FBE8EF';
@@ -50,8 +48,8 @@ const BLACK87 = 'rgba(0,0,0,0.87)';
 const ALTERNATE = '#F6E4E8';
 
 const F_MONT_ITALIC = 'Montserrat_400Regular_Italic';
-const F_INTER = 'Inter_500Medium';
-const F_INTER_TIGHT = 'InterTight_500Medium';
+const F_INTER = F_MONT_ITALIC;
+const F_INTER_TIGHT = F_MONT_ITALIC;
 
 type MI = React.ComponentProps<typeof MaterialIcons>['name'];
 
@@ -206,8 +204,7 @@ function BottomNav({onMePress}:{onMePress?:()=>void}){
 
 export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
-  const[fontsLoaded]=useFonts({Montserrat_400Regular_Italic,Inter_500Medium,InterTight_500Medium});
-  if(!fontsLoaded)return null;
+  useFonts({Montserrat_400Regular_Italic});
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
     {h:190,c:'#FCEFD9'},{h:250,c:ALTERNATE},{h:200,c:'#F3F3F3'}],[
