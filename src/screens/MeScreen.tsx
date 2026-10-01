@@ -37,7 +37,7 @@ function FeedTabs({activeTab,onChange}:{activeTab:'forYou'|'favorites'|'reviews'
 
 function feedTitle(tab:'forYou'|'favorites'|'reviews'){if(tab==='favorites')return 'My Favorites';if(tab==='reviews')return 'My Reviews';return 'For You'}
 
-function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembershipPress,onMemberCenterPress,onAddressPress,onWalletPress,onSettingsPress,onPromoPress}:Props){
+function MeContent({activeNav,onHomePress,onAvatarPress,onNamePress,onQRPress,onMembershipPress,onMemberCenterPress,onAddressPress,onWalletPress,onSettingsPress,onPromoPress}:Props){
   const insets=useSafeAreaInsets();
   const [fullName,setFullName]=useState('');
   const [isFeedMode,setIsFeedMode]=useState(false);
