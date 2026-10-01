@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useFonts } from 'expo-font';
 import { Text, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/AuthScreen';
@@ -23,10 +24,21 @@ function AppError({ title, error }: AppErrorProps) {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'),
+    Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
+    Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'),
+    Inter_700Bold: require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf'),
+    MaterialIconsOutlined: require('@material-design-icons/font/MaterialIconsOutlined-Regular.otf'),
+    MaterialIconsRound: require('@material-design-icons/font/MaterialIconsRound-Regular.otf'),
+  });
+
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [authError, setAuthError] = useState<string | null>(null);
+
+  if (!fontsLoaded) return null;
 
   useEffect(() => {
     let mounted = true;
