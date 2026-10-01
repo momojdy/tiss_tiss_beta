@@ -20,22 +20,22 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="home-outline" size={32} color={NAV_DARK} />
+          <MaterialCommunityIcons name="home-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="account-group-outline" size={32} color={NAV_DARK} />
+          <MaterialCommunityIcons name="account-multiple-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Contacts</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="qrcode-scan" size={56} color={NAV_GREEN} />
+          <MaterialCommunityIcons name="qrcode-scan" size={36} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="chart-line-variant" size={32} color={NAV_DARK} />
+          <MaterialCommunityIcons name="chart-line-variant" size={29} color={NAV_DARK} />
           <WalletNavLabel>Insights</WalletNavLabel>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="cog-outline" size={32} color={NAV_DARK} />
+          <MaterialCommunityIcons name="cog-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Settings</WalletNavLabel>
         </Pressable>
       </View>
@@ -131,9 +131,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   walletNavLabel: {
-    paddingTop: 6,
-    fontSize: 10,
-    lineHeight: 12,
+    paddingTop: 4,
+    fontSize: 10.5,
+    lineHeight: 13,
     fontFamily: 'Inter_500Medium',
     color: NAV_DARK,
     textAlign: 'center',
