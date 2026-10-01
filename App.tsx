@@ -72,10 +72,10 @@ export default function App() {
     try {
       if (buyerScreen === 'me') {
         const MeScreen = require('./src/screens/MeScreen').default;
-        return <MeScreen activeNav={buyerScreen} onHomePress={() => setBuyerScreen('home')} />;
+        return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
       }
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen activeNav={buyerScreen} onMePress={() => setBuyerScreen('me')} />;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
