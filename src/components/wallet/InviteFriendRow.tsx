@@ -84,7 +84,6 @@ const styles = StyleSheet.create({
     width: 'auto',
     alignSelf: 'stretch',
     marginHorizontal: 15,
-    marginTop: 13,
     paddingTop: 15,
     height: ROW_HEIGHT,
     backgroundColor: SAGE_TINT,
