@@ -219,13 +219,6 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
       <Pressable accessibilityRole="button" style={styles.forgotButton} onPress={() => onForgotPasswordScreenPressed?.()}>
         <Text style={styles.forgotText}>Forgot password?</Text>
       </Pressable>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => console.log('RED TAP')}
-        style={styles.redTouchTest}
-      >
-        <Text style={styles.redTouchTestText}>TEST</Text>
-      </Pressable>
     </View>
   );
 
@@ -336,9 +329,7 @@ const styles = StyleSheet.create({
   suffixButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   textInput: { flex: 1, height: '100%', padding: 0, fontSize: 18, fontWeight: '400', color: FIELD_TEXT },
   fieldError: { fontSize: 13, fontWeight: '500', color: RED },
-  forgotRow: { paddingTop: 8, paddingLeft: 15, paddingRight: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 10 },
-  redTouchTest: { height: 34, minWidth: 70, paddingHorizontal: 12, backgroundColor: RED, borderRadius: 8, alignItems: 'center', justifyContent: 'center' },
-  redTouchTestText: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
+  forgotRow: { paddingTop: 8, paddingLeft: 15, paddingRight: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   forgotButton: { padding: 8 },
   forgotText: { fontSize: 14, fontWeight: '600', color: LINK },
   submitWrap: { paddingLeft: 15, paddingRight: 15, paddingTop: 20 },
