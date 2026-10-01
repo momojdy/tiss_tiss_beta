@@ -1,13 +1,24 @@
 import React, { useEffect, useState } from 'react';
+import { Text, View } from 'react-native';
 import * as Linking from 'expo-linking';
-import HomeScreen from './src/screens/HomeScreen';
-import MeScreen from './src/screens/MeScreen';
 import AuthScreen from './src/screens/AuthScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
+
+type AppErrorProps = { title: string; error: unknown };
+
+function AppError({ title, error }: AppErrorProps) {
+  const message = error instanceof Error ? error.message : String(error);
+  return (
+    <View style={{ flex: 1, backgroundColor: '#F3F1F2', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+      <Text style={{ fontSize: 22, fontWeight: '700', color: '#16181B', marginBottom: 12, textAlign: 'center' }}>{title}</Text>
+      <Text style={{ fontSize: 14, color: '#77747A', textAlign: 'center' }}>{message}</Text>
+    </View>
+  );
+}
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
@@ -57,10 +68,16 @@ export default function App() {
   }, []);
 
   if (authenticated) {
-    if (buyerScreen === 'me') {
-      return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
+    try {
+      if (buyerScreen === 'me') {
+        const MeScreen = require('./src/screens/MeScreen').default;
+        return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
+      }
+      const HomeScreen = require('./src/screens/HomeScreen').default;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
+    } catch (error) {
+      return <AppError title="Home could not load" error={error} />;
     }
-    return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
   }
 
   if (screen === 'forgot') {
