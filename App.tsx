@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
 import * as Linking from 'expo-linking';
 import HomeScreen from './src/screens/HomeScreen';
 import MeScreen from './src/screens/MeScreen';
@@ -9,37 +8,6 @@ import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-
-class HomeErrorBoundary extends React.Component<
-  { children: React.ReactNode },
-  { error: Error | null }
-> {
-  state: { error: Error | null } = { error: null };
-
-  static getDerivedStateFromError(error: Error) {
-    return { error };
-  }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error('HomeScreen render error:', error, info);
-  }
-
-  render() {
-    if (this.state.error) {
-      return (
-        <View style={{ flex: 1, backgroundColor: '#FFFFFF', padding: 24, justifyContent: 'center' }}>
-          <Text style={{ fontSize: 18, fontWeight: '600', color: '#14181B', marginBottom: 12 }}>
-            Home screen error
-          </Text>
-          <Text style={{ fontSize: 14, color: '#14181B' }}>
-            {this.state.error.message || String(this.state.error)}
-          </Text>
-        </View>
-      );
-    }
-    return this.props.children;
-  }
-}
 
 export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
@@ -92,13 +60,7 @@ export default function App() {
     if (buyerScreen === 'me') {
       return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
     }
-    return (
-      <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-        <HomeErrorBoundary>
-          <HomeScreen onMePress={() => setBuyerScreen('me')} />
-        </HomeErrorBoundary>
-      </View>
-    );
+    return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
   }
 
   if (screen === 'forgot') {
@@ -160,10 +122,6 @@ export default function App() {
           throw new Error('B&P 2P home is not connected yet.');
         }
 
-        console.log('SIGN_IN_SUCCESS', {
-          userId: data.user.id,
-          role: profile?.role,
-        });
         setAuthenticated(true);
       }}
       onForgotPasswordPressed={async email => {
