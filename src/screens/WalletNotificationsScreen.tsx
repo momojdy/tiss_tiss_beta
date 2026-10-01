@@ -530,7 +530,7 @@ export default function WalletNotificationsScreen({
   } else {
     body = (
       <ScrollView
-        contentContainerStyle={{ paddingBottom: 24 }}
+        contentContainerStyle={{ paddingTop: 20, paddingBottom: 24 }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -644,7 +644,7 @@ const s = StyleSheet.create({
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
   title: { flex: 1, fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: C.olive, lineHeight: 15 },
-  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 12 },
+  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 15 },
   bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
   indicator: { marginLeft: 4 },
@@ -655,7 +655,7 @@ const s = StyleSheet.create({
   detailValue: {
     flexShrink: 1,
     marginLeft: 12,
-    marginRight: 6,
+    marginRight: 15,
     textAlign: 'right',
     fontFamily: 'Inter',
     fontWeight: '700',
