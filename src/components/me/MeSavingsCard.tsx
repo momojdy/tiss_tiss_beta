@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
   label: { fontSize: 11, fontWeight: '600', color: '#2A2A2A' },
   amountRow: { flexDirection: 'row', alignItems: 'center', marginTop: 1 },
   amount: { fontSize: 18, fontWeight: '800', color: '#111', letterSpacing: -0.5, paddingBottom: 5 },
-  amountChevron: { marginTop: 6, paddingBottom: 5 },
+  amountChevron: { marginTop: 3, paddingBottom: 5 },
   divider: { width: 1, marginVertical: 8, backgroundColor: 'rgba(255,255,255,0.95)' },
   mid: { width: 110, position: 'relative', paddingLeft: 12, paddingTop: 5 },
   right: { width: 110, position: 'relative', paddingLeft: 12, paddingRight: 10, paddingTop: 5 },
