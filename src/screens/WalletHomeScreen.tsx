@@ -23,7 +23,6 @@ function MessageBadge({ count }: { count: number }) {
   return (
     <View style={styles.messageBadge}>
       <Text style={styles.messageBadgeText}>{label}</Text>
-      <BottomNav onHomePress={onHomePress} onMePress={onMePress} />
     </View>
   );
 }
@@ -113,6 +112,7 @@ export default function WalletHomeScreen({
           <InviteFriendRow />
         </View>
       </ScrollView>
+      <BottomNav onHomePress={onHomePress} onMePress={onMePress} />
     </View>
   );
 }
