@@ -1,138 +1,225 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
+  Dimensions,
   Modal,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
 } from 'react-native';
 import { useFonts, Manrope_600SemiBold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
 import { LinearGradient } from 'expo-linear-gradient';
-import { supabase } from '../../lib/supabase';
 import Svg, { Circle, Path } from 'react-native-svg';
+import { supabase } from '../../lib/supabase';
 
 const OLIVE = '#1A2517';
 const SAGE = '#ACC8A2';
 const SAGE_DARK = '#8FAF84';
 
-const SYMBOLS: Record<string, string> = {
-  USD: '$',
-  HTG: 'HTG',
-  DOP: 'RD$',
-};
+const SYMBOLS: Record<string, string> = { USD: '$', HTG: 'HTG', DOP: 'RD$' };
 
-type RateRow = {
-  to_currency: unknown;
-  market_rate: unknown;
-  created_at: unknown;
-  expires_at: unknown;
-};
+const ITEM_HEIGHT = 48;
+
+const ARROW_DOWN =
+  'M8.12 9.29 12 13.17l3.88-3.88c.39-.39 1.02-.39 1.41 0 .39.39.39 1.02 0 1.41l-4.59 4.59c-.39.39-1.02.39-1.41 0L6.7 10.7c-.39-.39-.39-1.02 0-1.41.39-.38 1.03-.39 1.42 0z';
+const INFO_OUTLINE =
+  'M11 7h2v2h-2zm0 4h2v6h-2zm1-9C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z';
+
+function MaterialIcon({ d, size, opacity = 1 }: { d: string; size: number; opacity?: number }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" opacity={opacity}>
+      <Path d={d} fill={SAGE} />
+    </Svg>
+  );
+}
 
 function WalletEye({ open }: { open: boolean }) {
+  const p = {
+    stroke: SAGE,
+    strokeWidth: 1.8,
+    strokeLinecap: 'round' as const,
+    strokeLinejoin: 'round' as const,
+    fill: 'none',
+  };
+
   return (
-    <Svg width={15} height={15} viewBox="0 0 24 24" fill="none">
+    <Svg width={15} height={15} viewBox="0 0 24 24">
       {open ? (
         <>
-          <Path
-            d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12Z"
-            stroke={SAGE}
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <Circle cx="12" cy="12" r="3" stroke={SAGE} strokeWidth={1.8} />
+          <Path d="M1 12C1 12 5 5 12 5C19 5 23 12 23 12C23 12 19 19 12 19C5 19 1 12 1 12" {...p} />
+          <Circle cx={12} cy={12} r={3} {...p} />
         </>
       ) : (
         <>
-          <Path
-            d="M3 3l18 18"
-            stroke={SAGE}
-            strokeWidth={1.8}
-            strokeLinecap="round"
-          />
-          <Path
-            d="M10.6 10.6c-.5.4-.8.9-.8 1.4 0 1.7 1.3 3 2.9 3 .8 0 1.6-.3 2.1-.9"
-            stroke={SAGE}
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-          <Path
-            d="M6.5 6.7C4 8.3 2 12 2 12s4 7 11 7c1.9 0 3.6-.5 5.1-1.3M17.6 17.6C19.9 16 22 12 22 12s-1.4-2.5-3.9-4.4"
-            stroke={SAGE}
-            strokeWidth={1.8}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+          <Path d="M3 3L21 21" {...p} />
+          <Path d="M10.6 10.6C10.1 11 9.8 11.5 9.8 12C9.8 13.7 11.1 15 12.7 15C13.5 15 14.3 14.7 14.8 14.1" {...p} />
+          <Path d="M6.5 6.7C4 8.3 2 12 2 12C2 12 6 19 13 19C14.9 19 16.6 18.5 18.1 17.7" {...p} />
+          <Path d="M17.6 17.6C19.9 16 22 12 22 12C22 12 20.6 9.5 18.1 7.6" {...p} />
         </>
       )}
     </Svg>
   );
 }
 
-export default function WalletBalance() {
+function CurrencyDropdown({
+  value,
+  options,
+  onChange,
+}: {
+  value: string;
+  options: string[];
+  onChange: (currency: string) => void;
+}) {
+  const buttonRef = useRef<View>(null);
+  const [menu, setMenu] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    maxHeight: number;
+  } | null>(null);
+
+  const openMenu = () => {
+    buttonRef.current?.measureInWindow((x, y, width, height) => {
+      const screenHeight = Dimensions.get('window').height;
+      const maxHeight = screenHeight - 16;
+      const menuHeight = Math.min(options.length * ITEM_HEIGHT, maxHeight);
+      const index = Math.max(0, options.indexOf(value));
+
+      let top = y + height / 2 - (index * ITEM_HEIGHT + ITEM_HEIGHT / 2);
+      top = Math.max(8, Math.min(top, screenHeight - menuHeight - 8));
+
+      setMenu({
+        top,
+        left: x - 16,
+        width: width + 32,
+        maxHeight,
+      });
+    });
+  };
+
+  return (
+    <View style={styles.pill}>
+      <View ref={buttonRef} collapsable={false}>
+        <Pressable onPress={openMenu} style={styles.pillButton}>
+          <Text style={styles.pillText}>{value}</Text>
+          <MaterialIcon d={ARROW_DOWN} size={16} />
+        </Pressable>
+      </View>
+
+      <Modal
+        visible={!!menu}
+        transparent
+        statusBarTranslucent
+        animationType="none"
+        onRequestClose={() => setMenu(null)}
+      >
+        <Pressable style={StyleSheet.absoluteFill} onPress={() => setMenu(null)} />
+        {menu && (
+          <View
+            style={[
+              styles.menu,
+              {
+                top: menu.top,
+                left: menu.left,
+                width: menu.width,
+                maxHeight: menu.maxHeight,
+              },
+            ]}
+          >
+            <ScrollView bounces={false}>
+              {options.map(currency => (
+                <Pressable
+                  key={currency}
+                  onPress={() => {
+                    onChange(currency);
+                    setMenu(null);
+                  }}
+                  style={styles.menuItem}
+                >
+                  <Text style={styles.menuText}>{currency}</Text>
+                </Pressable>
+              ))}
+            </ScrollView>
+          </View>
+        )}
+      </Modal>
+    </View>
+  );
+}
+
+export default function WalletBalance({ height = 170 }: { height?: number }) {
+  const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [showBalance, setShowBalance] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [wantissNumber, setWantissNumber] = useState<string | null>(null);
   const [usdBalance, setUsdBalance] = useState(0);
   const [rates, setRates] = useState<Record<string, number>>({ USD: 1 });
-  const [selectedCurrency, setSelectedCurrency] = useState('USD');
-  const [pickerOpen, setPickerOpen] = useState(false);
+
+  const mounted = useRef(false);
+  const isFetching = useRef(false);
   const [manropeSemiLoaded] = useFonts({ Manrope_600SemiBold });
   const [manropeExtraLoaded] = useFonts({ Manrope_800ExtraBold });
 
-  const loadWalletData = async (showLoading = true) => {
+  const loadWalletData = useCallback(async (showLoading = true) => {
+    if (!mounted.current || isFetching.current) return;
+    isFetching.current = true;
+
     if (showLoading) {
       setIsLoading(true);
       setErrorMessage(null);
     }
 
     try {
-      const user = (await supabase.auth.getUser()).data.user;
+      const { data: sessionData } = await supabase.auth.getSession();
+      const user = sessionData?.session?.user;
 
       if (!user) {
+        if (!mounted.current) return;
         setIsLoading(false);
         setErrorMessage('Sign in to view your wallet.');
         return;
       }
 
-      const [{ data: walletRow, error: walletError }, { data: profileRow }, { data: rateRows, error: ratesError }] =
-        await Promise.all([
-          supabase.from('wallets').select('balance').eq('user_id', user.id).maybeSingle(),
-          supabase.from('profiles').select('wantiss_number').eq('id', user.id).maybeSingle(),
-          supabase
-            .from('exchange_rates')
-            .select('to_currency, market_rate, created_at, expires_at')
-            .eq('from_currency', 'USD')
-            .eq('is_active', true)
-            .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
-            .order('created_at', { ascending: false }),
-        ]);
-
-      if (walletError) throw walletError;
-      if (ratesError) throw ratesError;
+      const { data: walletRow, error: walletErr } = await supabase
+        .from('wallets')
+        .select('balance')
+        .eq('user_id', user.id)
+        .maybeSingle();
+      if (walletErr) throw walletErr;
 
       if (!walletRow) {
+        if (!mounted.current) return;
         setIsLoading(false);
         setErrorMessage('No wallet found for this account.');
         return;
       }
 
-      const balanceValue = walletRow.balance;
-      if (typeof balanceValue !== 'number' && typeof balanceValue !== 'string') {
-        throw new Error('Wallet balance is not numeric.');
-      }
+      const { data: profileRow, error: profileErr } = await supabase
+        .from('profiles')
+        .select('wantiss_number')
+        .eq('id', user.id)
+        .maybeSingle();
+      if (profileErr) throw profileErr;
+
+      const { data: rateRows, error: rateErr } = await supabase
+        .from('exchange_rates')
+        .select('to_currency, market_rate, created_at, expires_at')
+        .eq('from_currency', 'USD')
+        .eq('is_active', true)
+        .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
+        .order('created_at', { ascending: false });
+      if (rateErr) throw rateErr;
 
       const fetchedRates: Record<string, number> = { USD: 1 };
-      for (const row of ((rateRows ?? []) as RateRow[])) {
+      for (const row of rateRows ?? []) {
         const currency = row.to_currency;
-        const marketRate = row.market_rate;
+        const marketRate = Number(row.market_rate);
 
         if (
           typeof currency === 'string' &&
-          typeof marketRate === 'number' &&
+          Number.isFinite(marketRate) &&
           marketRate > 0 &&
           fetchedRates[currency] === undefined
         ) {
@@ -140,7 +227,15 @@ export default function WalletBalance() {
         }
       }
 
-      setUsdBalance(Number(balanceValue));
+      const rawBalance = walletRow.balance;
+      const balanceValue = typeof rawBalance === 'string' ? Number(rawBalance) : rawBalance;
+      if (typeof balanceValue !== 'number' || !Number.isFinite(balanceValue)) {
+        throw new Error('Wallet balance is not numeric.');
+      }
+
+      if (!mounted.current) return;
+
+      setUsdBalance(balanceValue);
       setWantissNumber(
         typeof profileRow?.wantiss_number === 'string'
           ? profileRow.wantiss_number
@@ -150,42 +245,53 @@ export default function WalletBalance() {
       setSelectedCurrency(current => (fetchedRates[current] ? current : 'USD'));
       setIsLoading(false);
       setErrorMessage(null);
-    } catch {
+    } catch (error) {
+      console.warn('WalletBalance error:', error);
+      if (!mounted.current) return;
       setIsLoading(false);
       setErrorMessage('Could not load wallet. Tap to retry.');
+    } finally {
+      isFetching.current = false;
     }
-  };
+  }, []);
 
   useEffect(() => {
+    mounted.current = true;
+    let cancelled = false;
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+
     loadWalletData();
 
-    const userId = supabase.auth.getUser().then(({ data }) => data.user?.id);
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-    let active = true;
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getSession();
+        const userId = data?.session?.user?.id;
+        if (!userId || cancelled) return;
 
-    userId.then(id => {
-      if (!id || !active) return;
-
-      channel = supabase
-        .channel(`wallet-balance-${id}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'wallets',
-            filter: `user_id=eq.${id}`,
-          },
-          () => loadWalletData(false),
-        )
-        .subscribe();
-    });
+        channel = supabase
+          .channel(`wallet-balance-${userId}`)
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'wallets',
+              filter: `user_id=eq.${userId}`,
+            },
+            () => loadWalletData(false),
+          )
+          .subscribe();
+      } catch (error) {
+        console.warn('WalletBalance realtime error:', error);
+      }
+    })();
 
     return () => {
-      active = false;
+      mounted.current = false;
+      cancelled = true;
       if (channel) supabase.removeChannel(channel);
     };
-  }, []);
+  }, [loadWalletData]);
 
   const currencies = useMemo(
     () =>
@@ -195,68 +301,64 @@ export default function WalletBalance() {
     [rates],
   );
 
-  const displayedBalance = usdBalance * (rates[selectedCurrency] ?? 1);
+  const activeCurrency = currencies.includes(selectedCurrency) ? selectedCurrency : 'USD';
+  const displayedBalance = usdBalance * (rates[activeCurrency] ?? 1);
   const formattedBalance = displayedBalance.toFixed(2);
-  const symbol = SYMBOLS[selectedCurrency];
+  const symbol = SYMBOLS[activeCurrency];
   const formattedWithSymbol = symbol
     ? `${symbol}${formattedBalance}`
-    : `${formattedBalance} ${selectedCurrency}`;
+    : `${formattedBalance} ${activeCurrency}`;
 
-  const maskedWantissNumber = (() => {
-    const digits = wantissNumber?.replace(/\\D/g, '');
-    if (!digits || digits.length < 4) return '•••• •••• •••• ••••';
-    return `•••• •••• •••• ${digits.slice(-4)}`;
-  })();
+  const digits = wantissNumber?.replace(/\\D/g, '');
+  const masked =
+    !digits || digits.length < 4
+      ? '•••• •••• •••• ••••'
+      : `•••• •••• •••• ${digits.slice(-4)}`;
+
+  const balanceText = isLoading
+    ? '···'
+    : errorMessage
+      ? '—'
+      : showBalance
+        ? formattedWithSymbol
+        : '••••••';
 
   return (
     <Pressable
       disabled={!errorMessage}
       onPress={() => loadWalletData()}
-      style={styles.card}
+      style={[styles.card, { height }]}
     >
       <View style={styles.topRow}>
-        <View style={styles.balanceColumn}>
-          <View style={styles.labelRow}>
+        <View style={styles.leftCol}>
+          <View style={styles.centerRow}>
             <Text style={[styles.label, manropeSemiLoaded && styles.manropeSemi]}>
               Wantiss Crédité
             </Text>
             <Pressable
-              hitSlop={8}
+              hitSlop={6}
               onPress={() => setShowBalance(value => !value)}
+              style={styles.eye}
             >
-              <View style={styles.eye}>
-                <WalletEye open={showBalance} />
-              </View>
+              <WalletEye open={showBalance} />
             </Pressable>
           </View>
 
-          <View style={styles.amountRow}>
-            <View style={styles.amountWrap}>
-              {isLoading ? (
-                <Text style={[styles.balanceText, manropeExtraLoaded && styles.manropeExtra]}>
-                  ···
-                </Text>
-              ) : errorMessage ? (
-                <Text style={[styles.balanceText, manropeExtraLoaded && styles.manropeExtra]}>
-                  —
-                </Text>
-              ) : (
-                <Text style={[styles.balanceText, manropeExtraLoaded && styles.manropeExtra]}>
-                  {showBalance ? formattedWithSymbol : '••••••'}
-                </Text>
-              )}
+          <View style={[styles.centerRow, { marginTop: 16 }]}>
+            <View style={styles.balanceWrap}>
+              <Text style={[styles.balance, manropeExtraLoaded && styles.manropeExtra]}>
+                {balanceText}
+              </Text>
             </View>
 
             {!errorMessage && currencies.length > 0 && (
-              <Pressable
-                onPress={() => setPickerOpen(true)}
-                style={styles.currencyPill}
-              >
-                <Text style={[styles.currencyText, manropeSemiLoaded && styles.manropeSemi]}>
-                  {selectedCurrency}
-                </Text>
-                <Text style={styles.chevron}>⌄</Text>
-              </Pressable>
+              <View style={styles.currencyWrap}>
+                <CurrencyDropdown
+                  value={activeCurrency}
+                  options={currencies}
+                  onChange={setSelectedCurrency}
+                />
+              </View>
             )}
           </View>
         </View>
@@ -271,80 +373,50 @@ export default function WalletBalance() {
         </LinearGradient>
       </View>
 
-      {errorMessage ? (
-        <View style={styles.errorRow}>
-          <Text style={styles.infoIcon}>ⓘ</Text>
-          <Text style={[styles.errorText, manropeSemiLoaded && styles.manropeSemi]}>
-            {errorMessage}
-          </Text>
-        </View>
-      ) : (
-        <View style={styles.footerRow}>
-          <Text style={[styles.footerText, manropeSemiLoaded && styles.manropeSemi]}>
-            {maskedWantissNumber}
-          </Text>
-          <Text style={[styles.footerText, manropeSemiLoaded && styles.manropeSemi]}>
-            WANTISS
-          </Text>
-        </View>
-      )}
-
-      <Modal
-        visible={pickerOpen}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setPickerOpen(false)}
-      >
-        <Pressable style={styles.modalBackdrop} onPress={() => setPickerOpen(false)}>
-          <View style={styles.dropdown}>
-            {currencies.map(currency => (
-              <Pressable
-                key={currency}
-                onPress={() => {
-                  setSelectedCurrency(currency);
-                  setPickerOpen(false);
-                }}
-                style={[
-                  styles.dropdownItem,
-                  currency === selectedCurrency && styles.dropdownItemSelected,
-                ]}
-              >
-                <Text style={[styles.dropdownText, manropeSemiLoaded && styles.manropeSemi]}>
-                  {currency}
-                </Text>
-              </Pressable>
-            ))}
+      <View style={styles.bottomRow}>
+        {errorMessage ? (
+          <View style={styles.centerRow}>
+            <MaterialIcon d={INFO_OUTLINE} size={13} opacity={0.8} />
+            <Text style={styles.error}>{errorMessage}</Text>
           </View>
-        </Pressable>
-      </Modal>
+        ) : (
+          <View style={[styles.centerRow, styles.footerRow]}>
+            <Text style={styles.footer}>{masked}</Text>
+            <Text style={styles.footer}>WANTISS</Text>
+          </View>
+        )}
+      </View>
     </Pressable>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    marginHorizontal: 20,
+    width: '100%',
     backgroundColor: OLIVE,
     borderRadius: 20,
     paddingTop: 20,
     paddingHorizontal: 20,
     paddingBottom: 18,
+    overflow: 'hidden',
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
   },
-  balanceColumn: {
+  leftCol: {
     flex: 1,
+    minWidth: 0,
   },
-  labelRow: {
+  centerRow: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   label: {
     color: SAGE,
     fontSize: 12,
-    fontWeight: '600',
+    lineHeight: 16,
+    fontFamily: 'Manrope_600SemiBold',
   },
   manropeSemi: {
     fontFamily: 'Manrope_600SemiBold',
@@ -358,40 +430,58 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     opacity: 0.85,
   },
-  amountRow: {
-    marginTop: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  amountWrap: {
+  balanceWrap: {
     flexShrink: 1,
   },
-  balanceText: {
+  balance: {
     color: '#FFFFFF',
     fontSize: 30,
-    fontWeight: '800',
+    lineHeight: 41,
     letterSpacing: -0.3,
-    lineHeight: 34,
+    fontFamily: 'Manrope_800ExtraBold',
+    includeFontPadding: false,
   },
-  currencyPill: {
+  currencyWrap: {
     marginLeft: 8,
+    flexShrink: 0,
+  },
+  pill: {
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 20,
     backgroundColor: 'rgba(172, 200, 162, 0.18)',
+  },
+  pillButton: {
+    height: 24,
     flexDirection: 'row',
     alignItems: 'center',
   },
-  currencyText: {
+  pillText: {
     color: '#FFFFFF',
     fontSize: 12,
-    fontWeight: '600',
+    lineHeight: 16,
+    fontFamily: 'Manrope_600SemiBold',
   },
-  chevron: {
-    marginLeft: 4,
-    color: SAGE,
-    fontSize: 16,
-    lineHeight: 14,
+  menu: {
+    position: 'absolute',
+    backgroundColor: OLIVE,
+    borderRadius: 2,
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOpacity: 0.25,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 5 },
+  },
+  menuItem: {
+    height: ITEM_HEIGHT,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  menuText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    lineHeight: 16,
+    fontFamily: 'Manrope_600SemiBold',
   },
   chip: {
     width: 34,
@@ -404,54 +494,26 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     backgroundColor: 'rgba(26, 37, 23, 0.12)',
   },
-  footerRow: {
+  bottomRow: {
     marginTop: 18,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
-  footerText: {
+  footerRow: {
+    justifyContent: 'space-between',
+  },
+  footer: {
     color: SAGE,
     fontSize: 12,
-    fontWeight: '600',
+    lineHeight: 16,
     letterSpacing: 1,
+    fontFamily: 'Manrope_600SemiBold',
   },
-  errorRow: {
-    marginTop: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  infoIcon: {
-    color: 'rgba(172, 200, 162, 0.8)',
-    fontSize: 13,
-    marginRight: 5,
-  },
-  errorText: {
+  error: {
     flex: 1,
-    color: 'rgba(172, 200, 162, 0.85)',
+    marginLeft: 5,
+    color: SAGE,
+    opacity: 0.85,
     fontSize: 11,
-  },
-  modalBackdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
-    justifyContent: 'flex-end',
-    padding: 20,
-  },
-  dropdown: {
-    backgroundColor: OLIVE,
-    borderRadius: 16,
-    paddingVertical: 8,
-    marginBottom: 10,
-  },
-  dropdownItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  dropdownItemSelected: {
-    backgroundColor: 'rgba(172, 200, 162, 0.18)',
-  },
-  dropdownText: {
-    color: '#FFFFFF',
-    fontSize: 14,
+    lineHeight: 15,
+    fontFamily: 'Manrope_600SemiBold',
   },
 });
