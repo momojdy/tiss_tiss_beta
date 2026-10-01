@@ -556,7 +556,7 @@ export default function WalletNotificationsScreen({
       <View style={s.header}>
         <View style={s.headerLeft}>
           <Pressable onPress={onBack} style={s.backBtn} hitSlop={8}>
-            <MaterialCommunityIcons name="arrow-left" size={15} color={C.olive} />
+            <MaterialCommunityIcons name="arrow-left" size={20} color={C.olive} />
           </Pressable>
           <Text style={s.headerTitle}>Notifications</Text>
         </View>
@@ -582,11 +582,12 @@ const s = StyleSheet.create({
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
 
   header: {
+    width: '100%',
     height: 100,
     flexDirection: 'row',
     alignItems: 'flex-end',
-    paddingHorizontal: 22,
-    paddingBottom: 8,
+    paddingHorizontal: 10,
+    paddingBottom: 4,
   },
   headerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   backBtn: {
@@ -596,9 +597,17 @@ const s = StyleSheet.create({
     backgroundColor: C.sageTint,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    flexShrink: 0,
   },
-  headerTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 19, color: C.olive },
+  headerTitle: {
+    marginLeft: 12,
+    fontFamily: 'Manrope_800ExtraBold',
+    fontWeight: '800',
+    fontSize: 19,
+    lineHeight: 19,
+    color: C.olive,
+    transform: [{ translateY: 1 }],
+  },
   markAll: {
     minWidth: 100,
     alignItems: 'center',
@@ -635,7 +644,7 @@ const s = StyleSheet.create({
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
   title: { flex: 1, fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: C.olive, lineHeight: 15 },
-  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 6 },
+  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 12 },
   bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
   indicator: { marginLeft: 4 },
