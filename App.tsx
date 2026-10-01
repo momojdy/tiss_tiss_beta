@@ -73,7 +73,7 @@ export default function App() {
   if (authenticated) {
     try {
       if (buyerScreen === 'wallet') {
-        return <WalletHomeScreen onBack={() => setBuyerScreen('home')} />;
+        return <WalletHomeScreen onBack={() => setBuyerScreen('me')} />;
       }
 
       if (buyerScreen === 'me') {
