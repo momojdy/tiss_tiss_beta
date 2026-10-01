@@ -406,6 +406,7 @@ export default function WalletNotificationsScreen({
 
   const renderViewDetails = (n: NotificationItem) => (
     <Pressable onPress={() => openDestination(n)} style={s.viewDetails}>
+
       <Text style={s.viewDetailsText}>View full details</Text>
       <Text style={s.viewDetailsChevron}>›</Text>
     </Pressable>
@@ -496,7 +497,9 @@ export default function WalletNotificationsScreen({
               {renderDetails(n)}
               {isActionable(n)
                 ? renderActions(n)
-                : hasFullDetails(n) && renderViewDetails(n)}
+                : isTransactionType(n.notificationType)
+                  ? renderViewDetails(n)
+                  : hasFullDetails(n) && renderViewDetails(n)}
             </View>
           )}
         </Pressable>
