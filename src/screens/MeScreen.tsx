@@ -79,9 +79,9 @@ function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembership
           <Text style={styles.compactName} numberOfLines={1}>{fullName}</Text>
           <Ionicons name="chevron-down" size={18} color={INK}/>
           <View style={styles.compactActions}>
-            <ActionItem label="Address" icon={<Ionicons name="location-outline" size={17} color={INK}/>} onPress={onAddressPress}/>
-            <ActionItem label="Wallet" icon={<Ionicons name="wallet-outline" size={17} color={INK}/>} onPress={onWalletPress}/>
-            <ActionItem label="Settings" icon={<Ionicons name="settings-outline" size={17} color={INK}/>} onPress={onSettingsPress}/>
+            <ActionItem label="Address" icon={<Ionicons name="location-outline" size={18} color={INK}/>} onPress={onAddressPress}/>
+            <ActionItem label="Wallet" icon={<Ionicons name="wallet-outline" size={18} color={INK}/>} onPress={onWalletPress}/>
+            <ActionItem label="Settings" icon={<Ionicons name="settings-outline" size={18} color={INK}/>} onPress={onSettingsPress}/>
           </View>
         </Pressable></LinearGradient>
 
