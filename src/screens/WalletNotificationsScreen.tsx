@@ -1,43 +1,72 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
+  LayoutAnimation,
+  Platform,
   Pressable,
   RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
+  UIManager,
   View,
 } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
-const SAGE = '#ACC8A2';
-const SAGE_TINT = '#DCE8D2';
-const OLIVE = '#1A2517';
-const OLIVE_SOFT = '#5C6B57';
-const OLIVE_FAINT = '#9AA595';
-const PAPER = '#FFFFFF';
-const BACKGROUND = '#F5F8F3';
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
-type NotificationRow = {
+// ============================================================
+// COLORS — matched to Wantiss Wallet HTML
+// ============================================================
+const C = {
+  sage: '#ACC8A2',
+  sageTint: '#DCE8D2',
+  sageWash: 'rgba(220,232,210,0.55)',
+  olive: '#1A2517',
+  oliveBorder: 'rgba(26,37,23,0.35)',
+  oliveSoft: '#5C6B57',
+  oliveFaint: '#9AA595',
+  paper: '#FFFFFF',
+  background: '#F5F8F3',
+};
+
+// ============================================================
+// TYPES
+// ============================================================
+type NotificationItem = {
   id: string;
-  notification_type: string;
+  notificationType: string;
   title: string;
   body: string;
   read: boolean;
-  reference_id: string | null;
-  metadata: Record<string, unknown>;
-  created_at: string;
+  referenceId: string | null;
+  metadata: Record<string, any>;
+  createdAt: Date;
 };
 
-type Props = {
+export type WalletNotificationsProps = {
   onBack: () => void;
-  onPayMoneyRequest: (requestId: string) => void;
+  /** Navigate to Pay Money Request with the request id. */
+  onAcceptRequest: (requestId: string) => void;
+  /** Navigate to the order tracking page. Omit to hide order chevrons. */
+  onOpenOrder?: (orderId: string) => void;
+  /** Navigate to a money request detail page. Omit to hide the link. */
+  onOpenRequestDetails?: (requestId: string) => void;
+  /** Bump this number (e.g. on screen focus) to silently refresh. */
+  refreshSignal?: number;
+  showMessage?: (message: string) => void;
 };
 
 const EXPANDABLE = new Set([
   'money_request',
+  'money_request_accepted',
+  'money_request_accepted_by_you',
+  'money_request_declined',
+  'money_request_declined_by_you',
   'payment_success',
   'payment_failed',
   'money_received',
@@ -45,487 +74,610 @@ const EXPANDABLE = new Set([
   'points_earned',
   'milestone_reached',
   'referral_reward',
-  'money_request_accepted',
-  'money_request_declined',
-  'money_request_declined_by_you',
   'refund',
   'deposit',
   'withdrawal',
 ]);
 
-function asString(value: unknown): string | null {
-  if (value === null || value === undefined) return null;
-  const valueString = String(value).trim();
-  return valueString.length ? valueString : null;
+const isOrderType = (t: string) => t.startsWith('order_');
+const isActionable = (n: NotificationItem) => n.notificationType === 'money_request';
+const isExpandable = (n: NotificationItem) => EXPANDABLE.has(n.notificationType);
+
+function parseRow(row: any): NotificationItem {
+  const d = row?.created_at ? new Date(row.created_at) : new Date();
+  return {
+    id: String(row?.id ?? ''),
+    notificationType: String(row?.notification_type ?? ''),
+    title: String(row?.title ?? ''),
+    body: String(row?.body ?? ''),
+    read: row?.read === true,
+    referenceId: row?.reference_id != null ? String(row.reference_id) : null,
+    metadata: row?.metadata && typeof row.metadata === 'object' ? row.metadata : {},
+    createdAt: isNaN(d.getTime()) ? new Date() : d,
+  };
 }
 
-function moneyDetail(metadata: Record<string, unknown>) {
-  const amount = asString(metadata.amount ?? metadata.money_amount);
-  if (!amount) return '—';
-  const parsed = Number(amount);
-  const formatted = Number.isFinite(parsed) ? parsed.toFixed(2) : amount;
-  const currency = asString(metadata.currency ?? metadata.money_currency) ?? 'USD';
-  return `$${formatted} ${currency}`;
+// ============================================================
+// DATE HELPERS
+// ============================================================
+const sameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() &&
+  a.getMonth() === b.getMonth() &&
+  a.getDate() === b.getDate();
+
+const isToday = (d: Date) => sameDay(d, new Date());
+const isYesterday = (d: Date) => {
+  const n = new Date();
+  return sameDay(d, new Date(n.getFullYear(), n.getMonth(), n.getDate() - 1));
+};
+
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const shortDate = (d: Date) => `${MONTHS[d.getMonth()]} ${d.getDate()}`;
+
+function formatTime(d: Date): string {
+  const diff = Date.now() - d.getTime();
+  if (diff < 60_000) return 'Now';
+  const mins = Math.floor(diff / 60_000);
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(diff / 3_600_000);
+  if (hrs < 24 && isToday(d)) return `${hrs}h ago`;
+  if (isYesterday(d)) return 'Yesterday';
+  return shortDate(d);
 }
 
-function dateFor(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? new Date() : date;
+function formatDateTime(d: Date): string {
+  const h = d.getHours();
+  const hour = h === 0 ? 12 : h > 12 ? h - 12 : h;
+  const min = String(d.getMinutes()).padStart(2, '0');
+  const suffix = h >= 12 ? 'PM' : 'AM';
+  return isToday(d) ? `Today, ${hour}:${min} ${suffix}` : `${shortDate(d)}, ${hour}:${min} ${suffix}`;
 }
 
-function isToday(date: Date) {
-  const now = new Date();
-  return date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate();
+function metaString(meta: Record<string, any>, keys: string[]): string | null {
+  for (const k of keys) {
+    const v = meta[k];
+    if (v == null) continue;
+    const s = String(v).trim();
+    if (s) return s;
+  }
+  return null;
 }
 
-function isYesterday(date: Date) {
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  return date.getFullYear() === yesterday.getFullYear() &&
-    date.getMonth() === yesterday.getMonth() &&
-    date.getDate() === yesterday.getDate();
-}
-
-function relativeTime(date: Date) {
-  const difference = Date.now() - date.getTime();
-  if (difference < 0 || difference < 60_000) return 'Now';
-  const minutes = Math.floor(difference / 60_000);
-  if (minutes < 60) return `${minutes}m ago`;
-  if (minutes < 24 * 60 && isToday(date)) return `${Math.floor(minutes / 60)}h ago`;
-  if (isYesterday(date)) return 'Yesterday';
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-}
-
-function longDate(date: Date) {
-  const time = date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  if (isToday(date)) return `Today, ${time}`;
-  return `${date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}, ${time}`;
+function formatMoney(amount: string | null, currency: string | null): string {
+  if (amount == null) return '—';
+  const n = parseFloat(amount);
+  const formatted = isNaN(n) ? amount : n.toFixed(2);
+  return `$${formatted} ${currency || 'USD'}`;
 }
 
 function iconFor(type: string) {
   switch (type) {
-    case 'money_request': return 'account-arrow-left-outline';
-    case 'money_received': return 'arrow-bottom-left';
-    case 'money_sent': return 'arrow-top-right';
-    case 'money_request_accepted': return 'check-circle-outline';
+    case 'money_request':
+      return 'account-arrow-left-outline';
+    case 'money_received':
+    case 'deposit':
+      return 'arrow-bottom-left';
+    case 'money_sent':
+    case 'withdrawal':
+      return 'arrow-top-right';
+    case 'money_request_accepted':
+    case 'money_request_accepted_by_you':
+      return 'check-circle-outline';
     case 'money_request_declined':
-    case 'money_request_declined_by_you': return 'close-circle-outline';
+    case 'money_request_declined_by_you':
+      return 'close-circle-outline';
     case 'payment_success':
     case 'payment_failed':
     case 'deposit':
-    case 'withdrawal': return 'wallet-outline';
+    case 'withdrawal':
+      return 'wallet-outline';
     case 'points_earned':
     case 'milestone_reached':
-    case 'referral_reward': return 'star-outline';
-    case 'refund': return 'backup-restore';
-    default: return 'bell-outline';
+    case 'referral_reward':
+      return 'star-outline';
+    case 'refund':
+      return 'backup-restore';
+    default:
+      return isOrderType(type) ? 'cube-outline' : 'bell-outline';
   }
 }
 
-export default function WalletNotificationsScreen({ onBack, onPayMoneyRequest }: Props) {
-  const [notifications, setNotifications] = useState<NotificationRow[]>([]);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+// ============================================================
+// COMPONENT
+// ============================================================
+export default function WalletNotificationsScreen({
+  onBack,
+  onAcceptRequest,
+  onOpenOrder,
+  onOpenRequestDetails,
+  refreshSignal,
+  showMessage,
+}: WalletNotificationsProps) {
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [markingAll, setMarkingAll] = useState(false);
-  const [processingRequestId, setProcessingRequestId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [items, setItems] = useState<NotificationItem[]>([]);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [markingAll, setMarkingAll] = useState(false);
+  const [processingId, setProcessingId] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+  const busyRef = useRef(false);
+  const mounted = useRef(true);
 
-  const load = useCallback(async (refresh = false) => {
-    if (refresh) setRefreshing(true);
-    else setLoading(true);
-    setError(null);
+  const toast = useCallback(
+    (m: string) => (showMessage ? showMessage(m) : Alert.alert('', m)),
+    [showMessage],
+  );
 
+  useEffect(() => {
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  const load = useCallback(async (silent = false) => {
+    if (!silent) {
+      setLoading(true);
+      setError(null);
+    }
     try {
-      const { data, error: rpcError } = await supabase.rpc('get_my_wallet_notifications');
-      if (rpcError) throw rpcError;
-
-      const rows = Array.isArray(data) ? data : [];
-      setNotifications(rows.map((row: any) => ({
-        id: String(row.id ?? ''),
-        notification_type: String(row.notification_type ?? ''),
-        title: String(row.title ?? ''),
-        body: String(row.body ?? ''),
-        read: row.read === true,
-        reference_id: row.reference_id ? String(row.reference_id) : null,
-        metadata: row.metadata && typeof row.metadata === 'object' ? row.metadata : {},
-        created_at: String(row.created_at ?? new Date().toISOString()),
-      })));
-    } catch (e) {
-      setError('Unable to load notifications.');
-    } finally {
+      const { data, error: err } = await supabase.rpc('get_my_wallet_notifications');
+      if (err) throw err;
+      const next = (Array.isArray(data) ? data : []).map(parseRow);
+      if (!mounted.current) return;
+      setItems(next);
       setLoading(false);
-      setRefreshing(false);
+      setError(null);
+      setExpandedId((cur) =>
+        cur && next.some((n) => n.id === cur && isExpandable(n)) ? cur : null,
+      );
+    } catch {
+      if (!mounted.current) return;
+      if (silent) return;
+      setLoading(false);
+      setError('Unable to load notifications.');
     }
   }, []);
 
   useEffect(() => {
-    load();
+    load(false);
   }, [load]);
 
-  const markRead = useCallback(async (notification: NotificationRow) => {
-    if (notification.read) return;
+  useEffect(() => {
+    if (refreshSignal !== undefined) load(true);
+  }, [refreshSignal, load]);
 
-    setNotifications(current =>
-      current.map(item => item.id === notification.id ? { ...item, read: true } : item),
-    );
+  const onPullRefresh = async () => {
+    setRefreshing(true);
+    await load(true);
+    if (mounted.current) setRefreshing(false);
+  };
 
+  const markAsRead = useCallback(async (n: NotificationItem) => {
+    if (n.read || isActionable(n)) return;
+
+    setItems((cur) => cur.map((i) => (i.id === n.id ? { ...i, read: true } : i)));
+
+    let ok = false;
     try {
-      const { data, error: rpcError } = await supabase.rpc('mark_wallet_notification_read', {
-        p_notification_id: notification.id,
+      const { data, error: err } = await supabase.rpc('mark_wallet_notification_read', {
+        p_notification_id: n.id,
       });
-      if (rpcError || data !== true) {
-        setNotifications(current =>
-          current.map(item => item.id === notification.id ? { ...item, read: false } : item),
-        );
-      }
+      ok = !err && data === true;
     } catch {
-      setNotifications(current =>
-        current.map(item => item.id === notification.id ? { ...item, read: false } : item),
-      );
+      ok = false;
+    }
+
+    if (!ok && mounted.current) {
+      setItems((cur) => cur.map((i) => (i.id === n.id ? { ...i, read: false } : i)));
     }
   }, []);
 
-  const markAllRead = useCallback(async () => {
-    if (markingAll || !notifications.some(item => !item.read)) return;
+  const hasMarkableUnread = items.some((n) => !n.read && !isActionable(n));
+
+  const markAll = async () => {
+    if (markingAll || !hasMarkableUnread) return;
     setMarkingAll(true);
-
     try {
-      const { error: rpcError } = await supabase.rpc('mark_all_wallet_notifications_read');
-      if (rpcError) throw rpcError;
-      setNotifications(current => current.map(item => ({ ...item, read: true })));
+      const { error: err } = await supabase.rpc('mark_all_wallet_notifications_read');
+      if (err) throw err;
+      if (!mounted.current) return;
+      setItems((cur) => cur.map((n) => (isActionable(n) ? n : { ...n, read: true })));
     } catch {
-      Alert.alert('Could not update notifications', 'Please try again.');
+      // Don't claim success if the RPC failed.
     } finally {
-      setMarkingAll(false);
+      if (mounted.current) setMarkingAll(false);
     }
-  }, [markingAll, notifications]);
+  };
 
-  const decline = useCallback(async (notification: NotificationRow) => {
-    const requestId = notification.reference_id;
-    if (!requestId || processingRequestId) return;
+  const hasDestination = (n: NotificationItem) =>
+    !!n.referenceId && isOrderType(n.notificationType) && !!onOpenOrder;
 
-    setProcessingRequestId(requestId);
+  const hasFullDetails = (n: NotificationItem) => {
+    if (!n.referenceId) return false;
+    if (n.notificationType === 'money_request') return !!onOpenRequestDetails;
+    return hasDestination(n);
+  };
+
+  const openDestination = (n: NotificationItem) => {
+    if (!n.referenceId) return;
+    if (n.notificationType === 'money_request') onOpenRequestDetails?.(n.referenceId);
+    else if (isOrderType(n.notificationType)) onOpenOrder?.(n.referenceId);
+  };
+
+  const onTap = (n: NotificationItem) => {
+    markAsRead(n);
+    if (isExpandable(n)) {
+      LayoutAnimation.configureNext(LayoutAnimation.create(180, 'easeOut', 'opacity'));
+      setExpandedId((cur) => (cur === n.id ? null : n.id));
+      return;
+    }
+    openDestination(n);
+  };
+
+  const accept = (n: NotificationItem) => {
+    if (!n.referenceId) {
+      toast('This money request is missing its request ID.');
+      return;
+    }
+    if (busyRef.current) return;
+    busyRef.current = true;
+    onAcceptRequest(n.referenceId);
+    setTimeout(() => {
+      busyRef.current = false;
+    }, 800);
+  };
+
+  const decline = async (n: NotificationItem) => {
+    const requestId = n.referenceId;
+    if (!requestId) {
+      toast('This money request is missing its request ID.');
+      return;
+    }
+    if (busyRef.current) return;
+    busyRef.current = true;
+    setProcessingId(requestId);
+
     try {
-      const { data, error: rpcError } = await supabase.rpc('decline_money_request', {
+      const { data, error: err } = await supabase.rpc('decline_money_request', {
         p_request_id: requestId,
       });
-      if (rpcError) throw rpcError;
-
+      if (err) throw err;
+      if (!mounted.current) return;
       if (data !== true) {
-        Alert.alert('Request already handled', 'This money request is no longer pending.');
-        await load(true);
-        return;
+        toast('This money request is no longer pending.');
+      } else {
+        toast('Money request declined.');
       }
-
       await load(true);
-      Alert.alert('Money request declined', 'The request has been declined.');
-      setExpandedId(null);
     } catch {
-      Alert.alert('Unable to decline request', 'Please try again.');
+      toast('Unable to decline this money request.');
     } finally {
-      setProcessingRequestId(null);
+      busyRef.current = false;
+      if (mounted.current) setProcessingId(null);
     }
-  }, [load, processingRequestId]);
+  };
 
-  const grouped = useMemo(() => ({
-    today: notifications.filter(n => isToday(dateFor(n.created_at))),
-    yesterday: notifications.filter(n => isYesterday(dateFor(n.created_at))),
-    earlier: notifications.filter(n => !isToday(dateFor(n.created_at)) && !isYesterday(dateFor(n.created_at))),
-  }), [notifications]);
+  const groups = useMemo(
+    () => ({
+      today: items.filter((i) => isToday(i.createdAt)),
+      yesterday: items.filter((i) => isYesterday(i.createdAt)),
+      earlier: items.filter((i) => !isToday(i.createdAt) && !isYesterday(i.createdAt)),
+    }),
+    [items],
+  );
 
-  const unreadExists = notifications.some(item => !item.read);
+  const renderDetails = (n: NotificationItem) => {
+    const m = n.metadata;
+    const from = metaString(m, ['from', 'sender_name', 'requester_name']);
+    const amount = metaString(m, ['amount', 'money_amount']);
+    const currency = metaString(m, ['currency', 'money_currency']);
+    const points = metaString(m, ['points', 'points_amount']);
+    const requested = metaString(m, ['requested_at']);
+    const feature = metaString(m, ['feature_name', 'source_feature']);
 
-  const renderSection = (label: string, rows: NotificationRow[]) => {
-    if (!rows.length) return null;
+    const lines: [string, string][] = [];
+    if (n.notificationType === 'money_request') {
+      lines.push(['From', from ?? 'Wantiss user']);
+      lines.push(['Amount', formatMoney(amount, currency)]);
+      lines.push(['Requested', requested ?? formatDateTime(n.createdAt)]);
+    } else {
+      if (points != null) lines.push(['Points', `${points} pts`]);
+      if (amount != null) lines.push(['Amount', formatMoney(amount, currency)]);
+      if (feature != null) lines.push(['Feature', feature]);
+      if (lines.length === 0) lines.push(['Date', formatDateTime(n.createdAt)]);
+    }
+
+    return lines.map(([label, value]) => (
+      <View key={label} style={s.detailLine}>
+        <Text style={s.detailLabel}>{label}</Text>
+        <Text style={s.detailValue} numberOfLines={1}>{value}</Text>
+      </View>
+    ));
+  };
+
+  const renderViewDetails = (n: NotificationItem) => (
+    <Pressable onPress={() => openDestination(n)} style={s.viewDetails}>
+      <Text style={s.viewDetailsText}>View full details</Text>
+      <Text style={s.viewDetailsChevron}>›</Text>
+    </Pressable>
+  );
+
+  const renderActions = (n: NotificationItem) => {
+    const isProcessing = processingId === n.referenceId;
+    const disabled = processingId !== null;
     return (
       <View>
-        <Text style={styles.sectionLabel}>{label}</Text>
-        {rows.map(renderNotification)}
+        <View style={s.actionsRow}>
+          <Pressable
+            disabled={disabled}
+            onPress={() => decline(n)}
+            style={[s.actionBtn, { backgroundColor: C.paper }]}
+          >
+            {isProcessing ? (
+              <ActivityIndicator size="small" color={C.olive} />
+            ) : (
+              <Text style={[s.actionText, { color: C.olive }]}>Decline</Text>
+            )}
+          </Pressable>
+          <View style={{ width: 10 }} />
+          <Pressable
+            disabled={disabled}
+            onPress={() => accept(n)}
+            style={[s.actionBtn, { backgroundColor: C.olive }]}
+          >
+            <Text style={[s.actionText, { color: C.sage }]}>Accept</Text>
+          </Pressable>
+        </View>
+        {hasFullDetails(n) && renderViewDetails(n)}
       </View>
     );
   };
 
-  const renderNotification = (notification: NotificationRow) => {
-    const expandable = EXPANDABLE.has(notification.notification_type);
-    const expanded = expandedId === notification.id && expandable;
-    const pendingRequest = notification.notification_type === 'money_request';
-    const visuallyUnread = !notification.read || pendingRequest;
-    const processing = processingRequestId === notification.reference_id;
+  const renderRow = (n: NotificationItem) => {
+    const expandable = isExpandable(n);
+    const expanded = expandedId === n.id && expandable;
+    const unread = !n.read;
 
     return (
-      <View key={notification.id} style={styles.rowOuter}>
+      <View key={n.id} style={s.rowOuter}>
         <Pressable
-          onPress={async () => {
-            await markRead(notification);
-            if (expandable) {
-              setExpandedId(current => current === notification.id ? null : notification.id);
-            }
-          }}
+          onPress={() => onTap(n)}
           style={[
-            styles.row,
-            visuallyUnread && styles.unreadRow,
-            expanded && styles.expandedRow,
+            s.row,
+            { backgroundColor: expanded ? C.sageTint : n.read ? 'transparent' : C.sageWash },
           ]}
         >
-          <View style={[styles.iconCircle, visuallyUnread ? styles.unreadIcon : styles.readIcon]}>
-            <MaterialCommunityIcons
-              name={iconFor(notification.notification_type) as any}
-              size={19}
-              color={visuallyUnread ? SAGE : OLIVE}
-            />
-          </View>
-
-          <View style={styles.content}>
-            <View style={styles.titleLine}>
-              <Text style={styles.title} numberOfLines={2}>{notification.title}</Text>
-              <Text style={styles.time}>{relativeTime(dateFor(notification.created_at))}</Text>
+          <View style={s.rowTop}>
+            <View style={[s.iconCircle, { backgroundColor: unread ? C.olive : C.sageTint }]}>
+              <MaterialCommunityIcons
+                name={iconFor(n.notificationType) as any}
+                size={19}
+                color={unread ? C.sage : C.olive}
+              />
             </View>
 
-            <View style={styles.bodyLine}>
-              <Text style={styles.body} numberOfLines={expanded ? 3 : 2}>{notification.body}</Text>
-              {expandable ? (
-                <MaterialCommunityIcons
-                  name={expanded ? 'chevron-up' : 'chevron-down'}
-                  size={18}
-                  color={OLIVE_FAINT}
-                />
-              ) : notification.reference_id ? (
-                <MaterialCommunityIcons name="chevron-right" size={18} color={OLIVE_FAINT} />
-              ) : null}
-            </View>
-
-            {expanded && (
-              <View style={styles.expandedPanel}>
-                {notification.notification_type === 'money_request' ? (
-                  <>
-                    <Detail label="From" value={asString(notification.metadata.from ?? notification.metadata.sender_name ?? notification.metadata.requester_name) ?? 'Wantiss user'} />
-                    <Detail label="Amount" value={moneyDetail(notification.metadata)} />
-                    <Detail label="Requested" value={asString(notification.metadata.requested_at) ?? longDate(dateFor(notification.created_at))} />
-                    <View style={styles.actionRow}>
-                      <Pressable
-                        disabled={processing}
-                        onPress={() => decline(notification)}
-                        style={({ pressed }) => [styles.declineButton, pressed && styles.pressed, processing && styles.disabled]}
-                      >
-                        {processing ? <ActivityIndicator size="small" color={OLIVE} /> : <Text style={styles.declineText}>Decline</Text>}
-                      </Pressable>
-                      <Pressable
-                        disabled={processing}
-                        onPress={() => {
-                          if (notification.reference_id) onPayMoneyRequest(notification.reference_id);
-                        }}
-                        style={({ pressed }) => [styles.acceptButton, pressed && styles.pressed, processing && styles.disabled]}
-                      >
-                        <Text style={styles.acceptText}>Accept</Text>
-                      </Pressable>
-                    </View>
-                    <ViewDetails />
-                  </>
-                ) : (
-                  <>
-                    {notification.metadata.points || notification.metadata.points_amount ? (
-                      <Detail label="Points" value={`${asString(notification.metadata.points ?? notification.metadata.points_amount)} pts`} />
-                    ) : null}
-                    {notification.metadata.amount || notification.metadata.money_amount ? (
-                      <Detail label="Amount" value={moneyDetail(notification.metadata)} />
-                    ) : null}
-                    {notification.metadata.feature_name || notification.metadata.source_feature ? (
-                      <Detail label="Feature" value={asString(notification.metadata.feature_name ?? notification.metadata.source_feature) ?? '—'} />
-                    ) : null}
-                    <Detail label="Date" value={longDate(dateFor(notification.created_at))} />
-                    {notification.reference_id ? <ViewDetails /> : null}
-                  </>
-                )}
+            <View style={s.content}>
+              <View style={s.titleRow}>
+                <Text style={s.title} numberOfLines={2}>{n.title}</Text>
+                <Text style={s.time}>{formatTime(n.createdAt)}</Text>
               </View>
-            )}
+              <View style={s.bodyRow}>
+                <Text style={s.body} numberOfLines={expanded ? 3 : 2}>{n.body}</Text>
+                {expandable ? (
+                  <MaterialCommunityIcons
+                    name={expanded ? 'chevron-up' : 'chevron-down'}
+                    size={16}
+                    color={C.oliveFaint}
+                    style={s.indicator}
+                  />
+                ) : hasDestination(n) ? (
+                  <MaterialCommunityIcons
+                    name="chevron-right"
+                    size={16}
+                    color={C.oliveFaint}
+                    style={s.indicator}
+                  />
+                ) : null}
+              </View>
+            </View>
           </View>
-        </Pressable>
-      </View>
-    );
-  };
 
-  return (
-    <View style={styles.page}>
-      <View style={styles.header}>
-        <View style={styles.headerLeft}>
-          <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back" style={styles.backButton}>
-            <MaterialCommunityIcons name="arrow-left" size={19} color={OLIVE} />
-          </Pressable>
-          <Text style={styles.headerTitle}>Notifications</Text>
-        </View>
-
-        <Pressable
-          onPress={markAllRead}
-          disabled={!unreadExists || markingAll}
-          style={({ pressed }) => [
-            styles.markAllButton,
-            (!unreadExists || markingAll) && styles.markAllDisabled,
-            pressed && styles.pressed,
-          ]}
-        >
-          {markingAll ? (
-            <ActivityIndicator size="small" color={OLIVE} />
-          ) : (
-            <Text style={styles.markAllText}>Mark all as read</Text>
+          {expanded && (
+            <View style={s.panel}>
+              {renderDetails(n)}
+              {isActionable(n)
+                ? renderActions(n)
+                : hasFullDetails(n) && renderViewDetails(n)}
+            </View>
           )}
         </Pressable>
       </View>
+    );
+  };
 
-      {loading ? (
-        <View style={styles.center}>
-          <ActivityIndicator size="small" color={OLIVE} />
-        </View>
-      ) : error ? (
-        <View style={styles.center}>
-          <MaterialCommunityIcons name="bell-off-outline" size={34} color={OLIVE_FAINT} />
-          <Text style={styles.errorTitle}>Unable to load notifications</Text>
-          <Pressable onPress={() => load()} style={styles.tryAgain}>
-            <Text style={styles.tryAgainText}>Try again</Text>
+  const renderSection = (label: string, list: NotificationItem[]) =>
+    list.length === 0 ? null : (
+      <View key={label}>
+        <Text style={s.sectionLabel}>{label}</Text>
+        {list.map(renderRow)}
+      </View>
+    );
+
+  const footer = (
+    <View style={s.footer}>
+      <MaterialCommunityIcons name="bell-outline" size={34} color={C.olive} />
+      <Text style={s.footerTitle}>You're all caught up!</Text>
+      <Text style={s.footerBody}>No new notifications at the moment.</Text>
+    </View>
+  );
+
+  let body: React.ReactNode;
+  if (loading) {
+    body = (
+      <View style={s.center}>
+        <ActivityIndicator size="small" color={C.olive} />
+      </View>
+    );
+  } else if (error) {
+    body = (
+      <View style={s.center}>
+        <MaterialCommunityIcons name="bell-off-outline" size={34} color={C.oliveFaint} />
+        <Text style={s.errorTitle}>Unable to load notifications</Text>
+        <Pressable onPress={() => load(false)} style={s.retry}>
+          <Text style={s.retryText}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  } else {
+    body = (
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 24 }}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onPullRefresh}
+            tintColor={C.olive}
+          />
+        }
+      >
+        {items.length > 0 && (
+          <>
+            {renderSection('Today', groups.today)}
+            {renderSection('Yesterday', groups.yesterday)}
+            {renderSection('Earlier', groups.earlier)}
+          </>
+        )}
+        {footer}
+      </ScrollView>
+    );
+  }
+
+  return (
+    <View style={s.root}>
+      <View style={s.header}>
+        <View style={s.headerLeft}>
+          <Pressable onPress={onBack} style={s.backBtn} hitSlop={8}>
+            <MaterialCommunityIcons name="arrow-left" size={15} color={C.olive} />
           </Pressable>
+          <Text style={s.headerTitle}>Notifications</Text>
         </View>
-      ) : notifications.length === 0 ? (
-        <ScrollView contentContainerStyle={styles.emptyScroll}>
-          <EmptyState />
-        </ScrollView>
-      ) : (
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor={OLIVE} />}
-          contentContainerStyle={styles.list}
+        <Pressable
+          onPress={markAll}
+          disabled={!hasMarkableUnread}
+          style={[s.markAll, { opacity: hasMarkableUnread ? 1 : 0.45 }]}
         >
-          {renderSection('Today', grouped.today)}
-          {renderSection('Yesterday', grouped.yesterday)}
-          {renderSection('Earlier', grouped.earlier)}
-          <EmptyState />
-        </ScrollView>
-      )}
+          {markingAll ? (
+            <ActivityIndicator size="small" color={C.olive} />
+          ) : (
+            <Text style={s.markAllText}>Mark all as read</Text>
+          )}
+        </Pressable>
+      </View>
+      {body}
     </View>
   );
 }
 
-function Detail({ label, value }: { label: string; value: string }) {
-  return (
-    <View style={styles.detailLine}>
-      <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue} numberOfLines={1}>{value}</Text>
-    </View>
-  );
-}
-
-function ViewDetails() {
-  return (
-    <Pressable style={styles.viewDetails}>
-      <Text style={styles.viewDetailsText}>View full details</Text>
-      <Text style={styles.viewDetailsArrow}>›</Text>
-    </Pressable>
-  );
-}
-
-function EmptyState() {
-  return (
-    <View style={styles.emptyCard}>
-      <MaterialCommunityIcons name="bell-outline" size={34} color={OLIVE} />
-      <Text style={styles.emptyTitle}>You're all caught up!</Text>
-      <Text style={styles.emptyBody}>No new notifications at the moment.</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: BACKGROUND },
-  header: {
-    height: 100,
-    paddingHorizontal: 22,
-    paddingBottom: 8,
-    flexDirection: 'row',
-    alignItems: 'flex-end',
-    justifyContent: 'space-between',
-  },
-  headerLeft: { flexDirection: 'row', alignItems: 'center' },
-  backButton: {
-    width: 36, height: 36, borderRadius: 12,
-    backgroundColor: SAGE_TINT, alignItems: 'center', justifyContent: 'center',
-  },
-  headerTitle: {
-    marginLeft: 12, color: OLIVE, fontFamily: 'Manrope_800ExtraBold',
-    fontSize: 19, lineHeight: 19,
-  },
-  markAllButton: {
-    minHeight: 34, paddingHorizontal: 14, borderRadius: 20,
-    borderWidth: 1, borderColor: 'rgba(26,37,23,0.35)',
-    alignItems: 'center', justifyContent: 'center',
-  },
-  markAllDisabled: { opacity: 0.45 },
-  markAllText: { color: OLIVE, fontFamily: 'Manrope_800ExtraBold', fontSize: 12 },
-  list: { paddingTop: 0, paddingBottom: 24 },
-  sectionLabel: {
-    marginTop: 16, marginBottom: 8, marginHorizontal: 22,
-    color: OLIVE_FAINT, fontFamily: 'Inter_600SemiBold', fontSize: 13,
-  },
-  rowOuter: { marginHorizontal: 12, marginBottom: 6 },
-  row: {
-    minHeight: 72, paddingHorizontal: 10, paddingVertical: 14,
-    borderRadius: 16, flexDirection: 'row', alignItems: 'flex-start',
-  },
-  unreadRow: { backgroundColor: 'rgba(220,232,210,0.55)' },
-  expandedRow: { backgroundColor: SAGE_TINT },
-  iconCircle: {
-    width: 42, height: 42, borderRadius: 21,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  unreadIcon: { backgroundColor: OLIVE },
-  readIcon: { backgroundColor: SAGE_TINT },
-  content: { flex: 1, marginLeft: 13 },
-  titleLine: { flexDirection: 'row', alignItems: 'flex-start' },
-  title: {
-    flex: 1, color: OLIVE, fontFamily: 'Manrope_800ExtraBold',
-    fontSize: 14, lineHeight: 15,
-  },
-  time: {
-    marginLeft: 8, color: OLIVE_FAINT, fontFamily: 'Inter_400Regular',
-    fontSize: 11, lineHeight: 12,
-  },
-  bodyLine: { marginTop: 3, flexDirection: 'row', alignItems: 'center' },
-  body: {
-    flex: 1, color: OLIVE_SOFT, fontFamily: 'Inter_400Regular',
-    fontSize: 12.5, lineHeight: 17.5,
-  },
-  expandedPanel: { marginTop: 14, paddingTop: 14, marginLeft: 55 },
-  detailLine: {
-    flexDirection: 'row', justifyContent: 'space-between',
-    paddingBottom: 7, gap: 12,
-  },
-  detailLabel: { flex: 1, color: OLIVE_SOFT, fontFamily: 'Inter_400Regular', fontSize: 12 },
-  detailValue: { flex: 1, textAlign: 'right', color: OLIVE, fontFamily: 'Inter_700Bold', fontSize: 12 },
-  actionRow: { flexDirection: 'row', gap: 10, marginTop: 3 },
-  declineButton: {
-    flex: 1, paddingVertical: 11, borderRadius: 14,
-    backgroundColor: PAPER, alignItems: 'center', justifyContent: 'center',
-  },
-  acceptButton: {
-    flex: 1, paddingVertical: 11, borderRadius: 14,
-    backgroundColor: OLIVE, alignItems: 'center', justifyContent: 'center',
-  },
-  declineText: { color: OLIVE, fontFamily: 'Manrope_800ExtraBold', fontSize: 13 },
-  acceptText: { color: SAGE, fontFamily: 'Manrope_800ExtraBold', fontSize: 13 },
-  disabled: { opacity: 0.65 },
-  pressed: { opacity: 0.82 },
-  viewDetails: { marginTop: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' },
-  viewDetailsText: { color: OLIVE, fontFamily: 'Manrope_800ExtraBold', fontSize: 12 },
-  viewDetailsArrow: { marginLeft: 4, color: OLIVE, fontFamily: 'Inter_600SemiBold', fontSize: 17 },
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: C.background },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
-  errorTitle: { marginTop: 10, color: OLIVE, fontFamily: 'Manrope_800ExtraBold', fontSize: 14 },
-  tryAgain: { marginTop: 12, paddingHorizontal: 16, paddingVertical: 9, borderRadius: 20, backgroundColor: OLIVE },
-  tryAgainText: { color: SAGE, fontFamily: 'Manrope_800ExtraBold', fontSize: 12 },
-  emptyScroll: { flexGrow: 1, paddingTop: 16, paddingBottom: 24 },
-  emptyCard: {
-    marginHorizontal: 22, marginTop: 18, paddingHorizontal: 20,
-    paddingTop: 26, paddingBottom: 22, borderRadius: 20,
-    backgroundColor: SAGE_TINT, alignItems: 'center',
+
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 22,
+    paddingTop: 8,
+    paddingBottom: 4,
   },
-  emptyTitle: { marginTop: 10, color: OLIVE, fontFamily: 'Manrope_800ExtraBold', fontSize: 14 },
-  emptyBody: { marginTop: 4, color: OLIVE_SOFT, fontFamily: 'Inter_400Regular', fontSize: 12 },
+  headerLeft: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  backBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: C.sageTint,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 12,
+  },
+  headerTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 19, color: C.olive },
+  markAll: {
+    minWidth: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderWidth: 1,
+    borderColor: C.oliveBorder,
+    borderRadius: 20,
+  },
+  markAllText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.olive },
+
+  sectionLabel: {
+    fontFamily: 'Manrope',
+    fontWeight: '700',
+    fontSize: 13,
+    color: C.oliveFaint,
+    paddingHorizontal: 22,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+
+  rowOuter: { paddingHorizontal: 12, marginBottom: 6 },
+  row: { borderRadius: 16, paddingHorizontal: 10, paddingVertical: 14 },
+  rowTop: { flexDirection: 'row', alignItems: 'flex-start' },
+  iconCircle: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 13,
+  },
+  content: { flex: 1 },
+  titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  title: { flex: 1, fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: C.olive, lineHeight: 15 },
+  time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8 },
+  bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
+  body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
+  indicator: { marginLeft: 4 },
+
+  panel: { marginTop: 14, marginLeft: 55, paddingTop: 14 },
+  detailLine: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 7 },
+  detailLabel: { flexShrink: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12, color: C.oliveSoft },
+  detailValue: {
+    flexShrink: 1,
+    marginLeft: 12,
+    textAlign: 'right',
+    fontFamily: 'Inter',
+    fontWeight: '700',
+    fontSize: 12,
+    color: C.olive,
+  },
+
+  actionsRow: { flexDirection: 'row', marginTop: 3 },
+  actionBtn: { flex: 1, paddingVertical: 11, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  actionText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 13 },
+
+  viewDetails: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 12 },
+  viewDetailsText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.olive },
+  viewDetailsChevron: { fontFamily: 'Inter', fontWeight: '600', fontSize: 17, color: C.olive, marginLeft: 4 },
+
+  footer: {
+    marginHorizontal: 22,
+    marginTop: 18,
+    marginBottom: 24,
+    paddingTop: 26,
+    paddingBottom: 22,
+    paddingHorizontal: 20,
+    backgroundColor: C.sageTint,
+    borderRadius: 20,
+    alignItems: 'center',
+  },
+  footerTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 14, color: C.olive, marginTop: 10 },
+  footerBody: { fontFamily: 'Inter', fontWeight: '400', fontSize: 12, color: C.oliveSoft, marginTop: 4, textAlign: 'center' },
+
+  errorTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 14, color: C.olive, marginTop: 10, textAlign: 'center' },
+  retry: { marginTop: 12, backgroundColor: C.olive, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 9 },
+  retryText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.sage },
 });
