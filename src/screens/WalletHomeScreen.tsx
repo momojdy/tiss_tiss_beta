@@ -3,6 +3,7 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import WalletHeader from '../components/wallet/WalletHeader';
 import WalletBalance from '../components/wallet/WalletBalance';
 import WalletPoints from '../components/wallet/WalletPoints';
+import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -29,6 +30,7 @@ export default function WalletHomeScreen({
       >
         <WalletBalance />
         <WalletPoints />
+        <WalletRecentActivity />
         <View style={styles.actionsRow}>
           {[
             { label: 'Top up', icon: 'arrow-collapse-up' as const },
