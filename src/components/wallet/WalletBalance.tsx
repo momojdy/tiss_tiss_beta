@@ -392,7 +392,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
 
 const styles = StyleSheet.create({
   card: {
-    width: '100%',
+    marginHorizontal: 20,
     backgroundColor: OLIVE,
     borderRadius: 20,
     paddingTop: 20,
