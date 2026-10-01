@@ -5,6 +5,7 @@ import WalletBalance from '../components/wallet/WalletBalance';
 import WalletPoints from '../components/wallet/WalletPoints';
 import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
 import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
+import InviteFriendRow from '../components/wallet/InviteFriendRow';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -49,6 +50,7 @@ export default function WalletHomeScreen({
         </View>
         <WalletRecentActivity />
         <EarnMorePointsCard />
+        <InviteFriendRow />
       </ScrollView>
     </View>
   );
