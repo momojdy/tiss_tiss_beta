@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   imageBox: {
     position: 'absolute',
     top: 0,
-    marginLeft: 13.5,
+    marginLeft: 16,
     width: IMG_W,
     height: IMG_H,
     borderRadius: 8,
