@@ -198,7 +198,7 @@ function BottomNav({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'
     <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
     <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
-    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={activeNav==='me'?MAGENTA:NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
+    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
   </View></View>;
 }
 
