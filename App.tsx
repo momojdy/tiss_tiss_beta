@@ -6,10 +6,11 @@ import AuthScreen from './src/screens/AuthScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import WalletHomeScreen from './src/screens/WalletHomeScreen';
+import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet';
+type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -34,29 +35,20 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
-  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     let mounted = true;
-
     const handleUrl = async (url: string | null) => {
       if (!url || !mounted) return;
-
       const parsed = Linking.parse(url);
       const path = parsed.path ?? '';
-      const code =
-        typeof parsed.queryParams?.code === 'string'
-          ? parsed.queryParams.code
-          : null;
-
+      const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null;
       if (!path.includes('reset-password') && !code) return;
-
       try {
         if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code);
           if (error) throw error;
         }
-
         if (mounted) setScreen('reset');
       } catch (error) {
         if (mounted) {
@@ -65,31 +57,43 @@ export default function App() {
         }
       }
     };
-
     Linking.getInitialURL().then(handleUrl);
-
-    const subscription = Linking.addEventListener('url', ({ url }) => {
-      handleUrl(url);
-    });
-
-    return () => {
-      mounted = false;
-      subscription.remove();
-    };
+    const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url));
+    return () => { mounted = false; subscription.remove(); };
   }, []);
 
   if (!fontsLoaded) return null;
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'walletNotifications') {
+        return (
+          <WalletNotificationsScreen
+            onBack={() => setBuyerScreen('wallet')}
+            onPayMoneyRequest={(requestId) => {
+              // Payment screen is not implemented in this branch yet.
+              // Keep the request id in the navigation boundary so the payment flow can be connected without
+              // falsely marking the request accepted before a successful payment.
+              console.info('Pay money request:', requestId);
+            }}
+          />
+        );
+      }
+
       if (buyerScreen === 'wallet') {
-        return <WalletHomeScreen onBack={() => setBuyerScreen('me')} />;
+        return (
+          <WalletHomeScreen
+            onBack={() => setBuyerScreen('me')}
+            onNotificationsPress={() => setBuyerScreen('walletNotifications')}
+          />
+        );
       }
 
       if (buyerScreen === 'me') {
         const MeScreen = require('./src/screens/MeScreen').default;
         return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} />;
       }
+
       const HomeScreen = require('./src/screens/HomeScreen').default;
       return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
     } catch (error) {
@@ -104,9 +108,7 @@ export default function App() {
         onSignIn={() => setScreen('auth')}
         onSendResetLink={async email => {
           const redirectTo = Linking.createURL('reset-password');
-          const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo,
-          });
+          const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
           if (error) throw error;
         }}
       />
@@ -121,7 +123,6 @@ export default function App() {
         onUpdatePassword={async password => {
           const { error } = await supabase.auth.updateUser({ password });
           if (error) throw error;
-
           await supabase.auth.signOut();
           setScreen('auth');
         }}
@@ -132,29 +133,18 @@ export default function App() {
   return (
     <AuthScreen
       onSignInPressed={async (email, password) => {
-        setAuthError(null);
-
         try {
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-          });
-
+          const { data, error } = await supabase.auth.signInWithPassword({ email, password });
           if (error) throw error;
           if (!data.user) throw new Error('No user returned from Supabase.');
-
           setAuthenticated(true);
         } catch (error) {
-          const message = error instanceof Error ? error.message : String(error);
           console.error('SIGN IN ERROR:', error);
-          setAuthError(message);
         }
       }}
       onForgotPasswordPressed={async email => {
         const redirectTo = Linking.createURL('reset-password');
-        const { error } = await supabase.auth.resetPasswordForEmail(email, {
-          redirectTo,
-        });
+        const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
         if (error) throw error;
       }}
       onForgotPasswordScreenPressed={() => setScreen('forgot')}
@@ -162,36 +152,23 @@ export default function App() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: {
-              role,
-              full_name: fullName || null,
-              business_name: businessName || null,
-            },
-          },
+          options: { data: { role, full_name: fullName || null, business_name: businessName || null } },
         });
-
         if (error) {
           if (error.message.toLowerCase().includes('already registered')) {
             throw new Error('This email is already registered. Please sign in instead.');
           }
           throw error;
         }
-
         if (data.session) {
-          if (role === 'buyer') {
-            setAuthenticated(true);
-          } else {
+          if (role === 'buyer') setAuthenticated(true);
+          else {
             await supabase.auth.signOut();
             throw new Error('B&P 2P home is not connected yet.');
           }
           return;
         }
-
-        if (data.user && !data.session) {
-          throw new Error('This email is already registered. Please sign in instead.');
-        }
-
+        if (data.user && !data.session) throw new Error('This email is already registered. Please sign in instead.');
         throw new Error('Unable to create your account. Please try again.');
       }}
     />
