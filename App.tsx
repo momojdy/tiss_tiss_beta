@@ -4,9 +4,11 @@ import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/AuthScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+import WalletHomeScreen from './src/screens/WalletHomeScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
+type BuyerScreen = 'home' | 'me' | 'wallet';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -23,7 +25,7 @@ function AppError({ title, error }: AppErrorProps) {
 export default function App() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
-  const [buyerScreen, setBuyerScreen] = useState<'home' | 'me'>('home');
+  const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -70,9 +72,13 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'wallet') {
+        return <WalletHomeScreen onBack={() => setBuyerScreen('home')} />;
+      }
+
       if (buyerScreen === 'me') {
         const MeScreen = require('./src/screens/MeScreen').default;
-        return <MeScreen onHomePress={() => setBuyerScreen('home')} />;
+        return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} />;
       }
       const HomeScreen = require('./src/screens/HomeScreen').default;
       return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
