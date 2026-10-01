@@ -332,7 +332,12 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
       <View style={styles.topRow}>
         <View style={styles.leftCol}>
           <View style={styles.centerRow}>
-            <Text style={[styles.label, manropeSemiLoaded && styles.manropeSemi]}>
+            <Text
+              style={[styles.label, manropeSemiLoaded && styles.manropeSemi]}
+              numberOfLines={1}
+              ellipsizeMode="clip"
+              allowFontScaling={false}
+            >
               Wantiss Crédité
             </Text>
             <Pressable
@@ -416,9 +421,11 @@ const styles = StyleSheet.create({
   label: {
     color: SAGE,
     fontSize: 12,
-    lineHeight: 16,
+    lineHeight: 18,
     fontFamily: 'Manrope_600SemiBold',
     flexShrink: 0,
+    includeFontPadding: false,
+    paddingRight: 1,
   },
   manropeSemi: {
     fontFamily: 'Manrope_600SemiBold',
@@ -429,7 +436,7 @@ const styles = StyleSheet.create({
   eye: {
     width: 15,
     height: 15,
-    marginLeft: 8,
+    marginLeft: 9,
     opacity: 0.85,
   },
   balanceWrap: {
