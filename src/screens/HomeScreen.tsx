@@ -202,7 +202,7 @@ function BottomNav({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'
   </View></View>;
 }
 
-export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
+export default function HomeScreen({onMePress,activeNav}:{onMePress?:()=>void;activeNav:'home'|'me'}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
