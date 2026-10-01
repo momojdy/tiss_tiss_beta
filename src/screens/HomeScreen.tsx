@@ -124,7 +124,7 @@ const FLASH_CAPTIONS=['up to $10 off','up to $20 off','up to $5 off'];
 
 function CategoryItem({label,icon,width,onPress}:{label:string;icon:MI;width:number;onPress?:()=>void}){
   const uri=ASSETS[label]; const[loaded,setLoaded]=useState(false); const[failed,setFailed]=useState(false);
-  return <Pressable onPress={onPress} style={{width,height:ROW_H,alignItems:'center',paddingTop:5}}><View style={s.catCircle}>{(!loaded||failed||!uri)&&<MaterialIcons name={icon} size={28} color={BLACK87}/>} {!!uri&&!failed&&<Image source={{uri}} style={[StyleSheet.absoluteFill,{borderRadius:26,opacity:loaded?1:0}]} resizeMode="cover" onLoad={()=>setLoaded(true)} onError={()=>setFailed(true)}/>}</View><Text numberOfLines={1} style={s.catLabel}>{label}</Text></Pressable>;
+  return <Pressable onPress={onPress} style={{width,height:ROW_H,alignItems:'center',paddingTop:5}}><View style={s.catCircle}>{(!loaded||failed||!uri)&&<MaterialIcons name={icon} size={28} color={BLACK87}/>}{{!!uri&&!failed&&<Image source={{uri}} style={[StyleSheet.absoluteFill,{borderRadius:26,opacity:loaded?1:0}]} resizeMode="cover" onLoad={()=>setLoaded(true)} onError={()=>setFailed(true)}/>}</View><Text numberOfLines={1} style={s.catLabel}>{label}</Text></Pressable>;
 }
 
 function FadeSwap({color}:{color:string}){
