@@ -82,6 +82,16 @@ const EXPANDABLE = new Set([
 const isOrderType = (t: string) => t.startsWith('order_');
 const isActionable = (n: NotificationItem) => n.notificationType === 'money_request';
 const isExpandable = (n: NotificationItem) => EXPANDABLE.has(n.notificationType);
+const hasTransactionDetails = (n: NotificationItem) =>
+  !!n.referenceId && [
+    'payment_success',
+    'payment_failed',
+    'money_received',
+    'money_sent',
+    'refund',
+    'deposit',
+    'withdrawal',
+  ].includes(n.notificationType);
 
 function parseRow(row: any): NotificationItem {
   const d = row?.created_at ? new Date(row.created_at) : new Date();
@@ -294,6 +304,7 @@ export default function WalletNotificationsScreen({
   const hasFullDetails = (n: NotificationItem) => {
     if (!n.referenceId) return false;
     if (n.notificationType === 'money_request') return !!onOpenRequestDetails;
+    if (hasTransactionDetails(n)) return true;
     return hasDestination(n);
   };
 
