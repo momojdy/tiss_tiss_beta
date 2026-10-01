@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
   },
   actionsRow: {
-    paddingTop: 14,
+    paddingTop: 18,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 26,
