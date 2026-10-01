@@ -31,7 +31,7 @@ export default function MeSavingsCard({ totalSavings = 0, onPressSavings, onPres
 }
 
 const styles = StyleSheet.create({
-  card: { flexDirection: 'row', height: 68, marginHorizontal: 11, borderRadius: 14, overflow: 'hidden', shadowColor: '#E91E8C', shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
+  card: { flexDirection: 'row', height: 74, marginHorizontal: 12, paddingTop: 10, borderRadius: 14, overflow: 'hidden', shadowColor: '#E91E8C', shadowOpacity: 0.12, shadowRadius: 8, shadowOffset: { width: 0, height: 3 }, elevation: 2 },
   left: { width: 150, flexDirection: 'row', alignItems: 'center', paddingLeft: 8 },
   piggy: { width: 52, height: 50, flexShrink: 0 },
   leftText: { marginLeft: 10 },
