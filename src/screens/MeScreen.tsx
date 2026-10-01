@@ -18,12 +18,12 @@ const MUTED = '#73728A';
 const WANTISS_LOGO = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
 const DEFAULT_AVATAR = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainDefaultAvatar.PNG';
 
-type Props = { activeNav?:'home'|'me'; onHomePress?:()=>void; onAvatarPress?:()=>void; onNamePress?:()=>void; onQRPress?:()=>void; onMembershipPress?:()=>void; onMemberCenterPress?:()=>void; onAddressPress?:()=>void; onWalletPress?:()=>void; onSettingsPress?:()=>void; onPromoPress?:()=>void };
+type Props = { onHomePress?:()=>void; onAvatarPress?:()=>void; onNamePress?:()=>void; onQRPress?:()=>void; onMembershipPress?:()=>void; onMemberCenterPress?:()=>void; onAddressPress?:()=>void; onWalletPress?:()=>void; onSettingsPress?:()=>void; onPromoPress?:()=>void };
 function NavLabel({children}:{children:string}){return <Text style={styles.navLabel}>{children}</Text>}
 const NAV_MUTED = '#9A96A3';
 const MESSAGE_UNREAD_COUNT = 1;
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={styles.messageBadge}><Text style={styles.messageBadgeText}>{label}</Text></View>}
-function BottomNav({onHomePress,activeNav}:Pick<Props,'onHomePress'|'activeNav'>){return <View style={styles.navOuter}><View style={styles.nav}><Pressable onPress={onHomePress} style={styles.homeButton}><View style={styles.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={styles.homeLogo} resizeMode="contain"/></View></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable><Pressable style={styles.navButton}><View style={styles.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={activeNav==='me'?MAGENTA:NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable></View></View>}
+function BottomNav({onHomePress}:Pick<Props,'onHomePress'>){return <View style={styles.navOuter}><View style={styles.nav}><Pressable onPress={onHomePress} style={styles.homeButton}><View style={styles.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={styles.homeLogo} resizeMode="contain"/></View></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable><Pressable style={styles.navButton}><View style={styles.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable><Pressable style={styles.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={MAGENTA}/><NavLabel>Me</NavLabel></Pressable></View></View>}
 function ActionItem({label,icon,onPress}:{label:string;icon:React.ReactNode;onPress?:()=>void}){return <Pressable onPress={onPress} hitSlop={8} style={styles.action}><View style={styles.actionIcon}>{icon}</View><Text style={styles.actionLabel} numberOfLines={1}>{label}</Text></Pressable>}
 function FeedTab({label,active,onPress}:{label:string;active:boolean;onPress:()=>void}){return <Pressable onPress={onPress} style={styles.feedTabPressable}><Text style={[styles.feedTab,active&&styles.feedTabActive]}>{label}</Text><View style={[styles.feedTabDivider,active&&styles.feedTabDividerActive]}/></Pressable>}
 
@@ -37,7 +37,7 @@ function FeedTabs({activeTab,onChange}:{activeTab:'forYou'|'favorites'|'reviews'
 
 function feedTitle(tab:'forYou'|'favorites'|'reviews'){if(tab==='favorites')return 'My Favorites';if(tab==='reviews')return 'My Reviews';return 'For You'}
 
-function MeContent({activeNav,onHomePress,onAvatarPress,onNamePress,onQRPress,onMembershipPress,onMemberCenterPress,onAddressPress,onWalletPress,onSettingsPress,onPromoPress}:Props){
+function MeContent({onHomePress,onAvatarPress,onNamePress,onQRPress,onMembershipPress,onMemberCenterPress,onAddressPress,onWalletPress,onSettingsPress,onPromoPress}:Props){
   const insets=useSafeAreaInsets();
   const [fullName,setFullName]=useState('');
   const [isFeedMode,setIsFeedMode]=useState(false);
@@ -141,7 +141,7 @@ function MeContent({activeNav,onHomePress,onAvatarPress,onNamePress,onQRPress,on
       </ScrollView>
     )}
 
-    <BottomNav onHomePress={onHomePress} activeNav={activeNav ?? 'me'}/>
+    <BottomNav onHomePress={onHomePress}/>
   </View>
 }
 export default function MeScreen(props:Props){return <SafeAreaProvider><MeContent {...props}/></SafeAreaProvider>}
