@@ -188,14 +188,17 @@ function MainPromoPopup(){
 }
 
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
+const NAV_MUTED = '#9A96A3';
+const MESSAGE_UNREAD_COUNT = 1;
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
+function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
 function BottomNav({onMePress}:{onMePress?:()=>void}){
-  return <View style={{padding:2}}><View style={s.nav}>
-    <View style={{width:70,height:65,alignItems:'center'}}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={{width:58,height:58,borderRadius:29}} resizeMode="contain"/></View></View>
-    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="television-play" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Showcase</NavLabel></Pressable>
-    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'space-between'}}><MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA}/><NavLabel style={{paddingTop:4}}>Messages</NavLabel></Pressable>
-    <Pressable style={{width:70,height:50,alignItems:'center',justifyContent:'center',paddingLeft:4}}><MaterialCommunityIcons name="cart-arrow-right" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:3}}>Cart</NavLabel></Pressable>
-    <Pressable onPress={onMePress} style={{width:70,height:50,alignItems:'center',justifyContent:'flex-end'}}><MaterialCommunityIcons name="emoticon-happy-outline" size={32} color={MAGENTA}/><NavLabel style={{paddingTop:6}}>Me</NavLabel></Pressable>
+  return <View style={{paddingHorizontal:2}}><View style={s.nav}>
+    <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
+    <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={29} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
+    <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={27} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
+    <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={29} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
+    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={29} color={MAGENTA}/><NavLabel>Me</NavLabel></Pressable>
   </View></View>;
 }
 
@@ -239,7 +242,7 @@ const s=StyleSheet.create({
   notif:{marginTop:8,paddingHorizontal:10,paddingVertical:8,borderRadius:8,backgroundColor:'rgba(0,0,0,0.12)',flexDirection:'row',alignItems:'center'},
   popup:{paddingHorizontal:10,paddingVertical:8,borderRadius:30,backgroundColor:PINK_BG,flexDirection:'row',alignItems:'center'},
   promoBadge:{paddingHorizontal:10,paddingVertical:4,borderRadius:20,backgroundColor:MAGENTA},
-  nav:{height:80,borderRadius:20,backgroundColor:'#fff',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:6,shadowColor:'#000',shadowOpacity:.15,shadowRadius:6,shadowOffset:{width:0,height:3}},
-  homeCircle:{marginTop:4.5,width:60,height:60,borderRadius:30,borderWidth:1,borderColor:'#D593B0',alignItems:'center',justifyContent:'center',overflow:'hidden'},
-  navLabel:{fontSize:11,color:'#1F1E1E',fontFamily:F_INTER,textAlign:'center'},
+  nav:{height:70,borderRadius:18,backgroundColor:'#fff',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}},
+  homeButton:{width:64,height:60,alignItems:'center'},homeCircle:{marginTop:2,width:56,height:56,borderRadius:28,borderWidth:1,borderColor:'#E8CFE0',alignItems:'center',justifyContent:'center',overflow:'hidden'},homeLogo:{width:54,height:54,borderRadius:27},
+  navButton:{width:68,height:46,alignItems:'center',justifyContent:'flex-end'},messageIconWrap:{width:30,height:29,alignItems:'center',justifyContent:'center'},messageBadge:{position:'absolute',top:-5,right:-9,minWidth:16,height:16,paddingHorizontal:4,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},messageBadgeText:{color:'#FFFFFF',fontSize:9,lineHeight:11,fontWeight:'700'},navLabel:{paddingTop:4,fontSize:10.5,color:'#1F1E1E',fontFamily:F_INTER,textAlign:'center'},
 });
