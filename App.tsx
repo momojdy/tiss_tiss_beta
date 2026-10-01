@@ -123,22 +123,8 @@ export default function App() {
         if (error) throw error;
         if (!data.user) throw new Error('No user returned.');
 
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', data.user.id)
-          .single();
-
-        if (profileError) {
-          await supabase.auth.signOut();
-          throw profileError;
-        }
-
-        if (profile?.role !== 'buyer') {
-          await supabase.auth.signOut();
-          throw new Error('B&P 2P home is not connected yet.');
-        }
-
+        // Authentication succeeded. Do not block navigation on a
+        // separate profiles-row lookup; Home is the next screen.
         setAuthenticated(true);
       }}
       onForgotPasswordPressed={async email => {
