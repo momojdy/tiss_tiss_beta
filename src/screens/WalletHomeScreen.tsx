@@ -31,11 +31,11 @@ export default function WalletHomeScreen({
         <WalletPoints />
         <View style={styles.actionsRow}>
           {[
-            { label: 'Top up', icon: 'wallet-plus-outline' as const },
+            { label: 'Top up', icon: 'arrow-collapse-up' as const },
             { label: 'Send', icon: 'send-outline' as const },
-            { label: 'Request', icon: 'hand-coin-outline' as const },
-            { label: 'Withdraw', icon: 'cash-minus' as const },
-            { label: 'Utility', icon: 'receipt-text-outline' as const },
+            { label: 'Request', icon: 'inbox-arrow-down-outline' as const },
+            { label: 'Withdraw', icon: 'arrow-collapse-down' as const },
+            { label: 'Utility', icon: 'water-outline' as const },
           ].map(action => (
             <Pressable key={action.label} style={styles.actionItem}>
               <View style={styles.actionIcon}>
