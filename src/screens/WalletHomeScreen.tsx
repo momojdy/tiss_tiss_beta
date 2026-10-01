@@ -2,6 +2,7 @@ import React from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import WalletHeader from '../components/wallet/WalletHeader';
 import WalletBalance from '../components/wallet/WalletBalance';
+import WalletPoints from '../components/wallet/WalletPoints';
 
 type Props = {
   onBack?: () => void;
@@ -26,6 +27,7 @@ export default function WalletHomeScreen({
         contentContainerStyle={styles.content}
       >
         <WalletBalance />
+        <WalletPoints />
       </ScrollView>
     </View>
   );
