@@ -4,6 +4,7 @@ import WalletHeader from '../components/wallet/WalletHeader';
 import WalletBalance from '../components/wallet/WalletBalance';
 import WalletPoints from '../components/wallet/WalletPoints';
 import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
+import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 type Props = {
@@ -46,22 +47,7 @@ export default function WalletHomeScreen({
             </Pressable>
           ))}
         </View>
-        <View style={styles.earnMoreRow}>
-          <View style={styles.earnMoreIconWrap}>
-            <MaterialCommunityIcons name="star-circle" size={40} color="#1A2517" />
-          </View>
-          <View style={styles.earnMoreColumn}>
-            <Text style={styles.earnMoreTitle}>Earn More Points</Text>
-            <Text style={styles.earnMoreDescription}>Complete activities and{'
-'}get rewarded.</Text>
-            <View style={styles.earnMoreButtonWrap}>
-              <Pressable style={styles.earnMoreButton}>
-                <Text style={styles.earnMoreButtonText}>Explore Now</Text>
-                <MaterialCommunityIcons name="arrow-right" size={18} color="#FFFFFF" />
-              </Pressable>
-            </View>
-          </View>
-        </View>
+        <EarnMorePointsCard />
         <WalletRecentActivity />
       </ScrollView>
     </View>
@@ -105,61 +91,5 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     width: 72,
     textAlign: 'center',
-  },
-  earnMoreRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  earnMoreIconWrap: {
-    marginLeft: 10,
-    marginBottom: 80,
-    paddingTop: 0,
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  earnMoreColumn: {
-    marginLeft: 8,
-    flex: 1,
-    justifyContent: 'space-evenly',
-    alignItems: 'flex-start',
-  },
-  earnMoreTitle: {
-    marginTop: 10,
-    color: '#1A2517',
-    fontSize: 16,
-    lineHeight: 20,
-    fontFamily: 'Inter_600SemiBold',
-    includeFontPadding: false,
-  },
-  earnMoreDescription: {
-    marginBottom: 10,
-    color: '#6C7280',
-    fontSize: 13,
-    lineHeight: 17,
-    fontFamily: 'Inter_400Regular',
-    includeFontPadding: false,
-  },
-  earnMoreButtonWrap: {
-    alignSelf: 'center',
-    marginBottom: 8,
-  },
-  earnMoreButton: {
-    height: 40,
-    paddingHorizontal: 16,
-    borderRadius: 30,
-    backgroundColor: '#1A2517',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  earnMoreButtonText: {
-    color: '#FFFFFF',
-    fontSize: 14,
-    lineHeight: 18,
-    fontFamily: 'InterTight_400Regular',
-    includeFontPadding: false,
-    marginRight: 6,
   },
 });
