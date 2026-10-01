@@ -200,7 +200,7 @@ export default function WalletPoints({ onUsePointsPress }: Props) {
     <Pressable
       disabled={!errorMessage}
       onPress={loadPointsSummary}
-      style={styles.card}
+      style={[styles.card, { height: 170 }]}
     >
       <View style={styles.topSection}>
         <View style={styles.copy}>
@@ -264,6 +264,7 @@ export default function WalletPoints({ onUsePointsPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
+    width: '100%',
     marginHorizontal: 15,
     marginTop: 13,
     backgroundColor: SAGE_TINT,
@@ -285,6 +286,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     lineHeight: 12,
     fontFamily: 'Manrope_600SemiBold',
+    includeFontPadding: false,
   },
   manropeSemi: {
     fontFamily: 'Manrope_600SemiBold',
@@ -294,6 +296,7 @@ const styles = StyleSheet.create({
   },
   manropeExtra: {
     fontFamily: 'Manrope_800ExtraBold',
+    includeFontPadding: false,
   },
   pointsRow: {
     flexDirection: 'row',
