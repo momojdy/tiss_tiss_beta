@@ -206,8 +206,7 @@ function BottomNav({onMePress}:{onMePress?:()=>void}){
 
 export default function HomeScreen({onMePress}:{onMePress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
-  const[fontsLoaded]=useFonts({Montserrat_400Regular_Italic,Inter_500Medium,InterTight_500Medium});
-  if(!fontsLoaded)return null;
+  useFonts({Montserrat_400Regular_Italic,Inter_500Medium,InterTight_500Medium});
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
     {h:190,c:'#FCEFD9'},{h:250,c:ALTERNATE},{h:200,c:'#F3F3F3'}],[
