@@ -47,8 +47,8 @@ export default function WalletHomeScreen({
             </Pressable>
           ))}
         </View>
-        <EarnMorePointsCard />
         <WalletRecentActivity />
+        <EarnMorePointsCard />
       </ScrollView>
     </View>
   );
