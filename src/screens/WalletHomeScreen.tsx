@@ -68,9 +68,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 13,
   },
   actionItem: {
+    width: 44,
     alignItems: 'center',
-    justifyContent: 'center',
-    flex: 1,
+    justifyContent: 'flex-start',
   },
   actionIcon: {
     width: 44,
@@ -87,5 +87,7 @@ const styles = StyleSheet.create({
     lineHeight: 13,
     fontFamily: 'Inter_600SemiBold',
     includeFontPadding: false,
+    width: 72,
+    textAlign: 'center',
   },
 });
