@@ -35,7 +35,7 @@ function HeaderIconButton({
 
         {badgeCount > 0 && (
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>
+            <Text style={[styles.badgeText, interLoadedStyle]}>
               {badgeCount >= 100 ? '99+' : String(badgeCount)}
             </Text>
           </View>
@@ -44,6 +44,8 @@ function HeaderIconButton({
     </Pressable>
   );
 }
+
+const interLoadedStyle = { fontFamily: 'Inter_700Bold' as const };
 
 export default function WalletHeader({
   onBack,
@@ -56,7 +58,7 @@ export default function WalletHeader({
 }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [manropeLoaded] = useFonts({ Manrope_800ExtraBold });
-  const [interLoaded] = useInterFonts({ Inter_700Bold });
+  useInterFonts({ Inter_700Bold });
 
   useEffect(() => {
     let active = true;
@@ -90,32 +92,34 @@ export default function WalletHeader({
 
   return (
     <View style={styles.header}>
-      <View style={styles.leftSide}>
-        <HeaderIconButton icon="arrow-left" label="Back" onPress={onBack} />
+      <View style={styles.row}>
+        <View style={styles.leftSide}>
+          <HeaderIconButton icon="arrow-left" label="Back" onPress={onBack} />
 
-        <Text
-          style={[
-            styles.title,
-            manropeLoaded && { fontFamily: 'Manrope_800ExtraBold' },
-          ]}
-        >
-          Wallet
-        </Text>
-      </View>
+          <Text
+            style={[
+              styles.title,
+              manropeLoaded && { fontFamily: 'Manrope_800ExtraBold' },
+            ]}
+          >
+            Wallet
+          </Text>
+        </View>
 
-      <View style={styles.rightSide}>
-        <HeaderIconButton
-          icon="bell-outline"
-          label="Notifications"
-          badgeCount={unreadCount}
-          onPress={onNotificationsPress ?? (() => {})}
-        />
+        <View style={styles.rightSide}>
+          <HeaderIconButton
+            icon="bell-outline"
+            label="Notifications"
+            badgeCount={unreadCount}
+            onPress={onNotificationsPress ?? (() => {})}
+          />
 
-        <HeaderIconButton
-          icon="help-circle-outline"
-          label="Help"
-          onPress={onHelpPress ?? (() => {})}
-        />
+          <HeaderIconButton
+            icon="help-circle-outline"
+            label="Help"
+            onPress={onHelpPress ?? (() => {})}
+          />
+        </View>
       </View>
     </View>
   );
@@ -124,12 +128,14 @@ export default function WalletHeader({
 const styles = StyleSheet.create({
   header: {
     width: '100%',
-    height: 144,
+    height: 100,
     backgroundColor: BACKGROUND,
-    paddingTop: 8,
-    paddingRight: 10,
+    paddingHorizontal: 10,
     paddingBottom: 4,
-    paddingLeft: 10,
+    justifyContent: 'flex-end',
+  },
+  row: {
+    width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
