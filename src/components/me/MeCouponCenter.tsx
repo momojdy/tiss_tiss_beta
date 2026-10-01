@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    marginLeft: 15,
+    marginLeft: 4,
     marginRight: 7,
     fontSize: 11,
     lineHeight: 15,
@@ -81,6 +81,7 @@ const styles = StyleSheet.create({
   divider: {
     width: 1,
     height: 15,
+    marginLeft: 10,
     backgroundColor: '#F2C2DA',
   },
   offer: {
@@ -90,8 +91,8 @@ const styles = StyleSheet.create({
     paddingLeft: 7,
   },
   amount: {
-    fontSize: 19,
-    lineHeight: 24,
+    fontSize: 16,
+    lineHeight: 21,
     fontWeight: '700',
     color: '#C2007A',
   },
