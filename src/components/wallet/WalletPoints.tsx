@@ -254,7 +254,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   useRow: {
-    marginTop: 18,
+    marginTop: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
