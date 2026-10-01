@@ -6,7 +6,7 @@ import WalletPoints from '../components/wallet/WalletPoints';
 import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
 import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
 import InviteFriendRow from '../components/wallet/InviteFriendRow';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
 const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
@@ -20,22 +20,22 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="home-outline" size={29} color={NAV_DARK} />
+          <MaterialIcons name="home" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="account-multiple-outline" size={29} color={NAV_DARK} />
+          <MaterialIcons name="group" size={29} color={NAV_DARK} />
           <WalletNavLabel>Contacts</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="qrcode-scan" size={36} color={NAV_GREEN} />
+          <MaterialIcons name="qr-code-scanner" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="chart-line-variant" size={29} color={NAV_DARK} />
+          <MaterialIcons name="query-stats" size={29} color={NAV_DARK} />
           <WalletNavLabel>Insights</WalletNavLabel>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="cog-outline" size={29} color={NAV_DARK} />
+          <MaterialIcons name="settings" size={29} color={NAV_DARK} />
           <WalletNavLabel>Settings</WalletNavLabel>
         </Pressable>
       </View>
