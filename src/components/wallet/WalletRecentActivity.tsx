@@ -1,9 +1,23 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { supabase } from '../../lib/supabase';
 
-type Filter = 'All' | 'Money' | 'Points' | 'Transfers';
+const OLIVE = '#1A2517';
+const GREEN = '#3F6B37';
+const SAGE_TINT = '#DCE8D2';
+const MUTED = '#9AA595';
+const DIVIDER = '#E4EAE1';
+const ERROR_RED = '#D32F2F';
+
+const FILTERS = ['All', 'Money', 'Points', 'Transfers'] as const;
+type Filter = (typeof FILTERS)[number];
 
 type ActivityItem = {
   id: string;
@@ -12,186 +26,565 @@ type ActivityItem = {
   transactionType: string;
   direction: string;
   moneyAmount: number;
-  moneyCurrency?: string;
+  moneyCurrency: string | null;
   pointsAmount: number;
+  status: string;
   title: string;
-  subtitle?: string;
+  subtitle: string | null;
+  referenceId: string | null;
+  metadata: Record<string, unknown>;
   createdAt: Date;
 };
 
-const FILTERS: Filter[] = ['All', 'Money', 'Points', 'Transfers'];
+const str = (v: unknown): string | null =>
+  v === null || v === undefined ? null : String(v);
 
-function iconForActivity(a: ActivityItem): keyof typeof MaterialCommunityIcons.glyphMap {
-  switch (a.transactionType.toLowerCase()) {
-    case 'send': return 'arrow-top-right';
-    case 'receive':
-    case 'request': return 'arrow-bottom-left';
-    case 'transfer': return 'swap-horizontal';
-    case 'topup': return 'credit-card-plus-outline';
-    case 'withdraw': return 'bank-outline';
-    case 'airtime': return 'cellphone';
-  }
-  switch (a.sourceFeature.toLowerCase()) {
-    case 'goodies': return 'shopping-bag-outline';
-    case 'konsoliss': return 'package-variant-closed';
-    case 'woulib':
-    case 'rideza': return 'car-outline';
-    case 'stayz': return 'hotel';
-    case 'flyz': return 'airplane-takeoff';
-    case 'habita': return 'home-city-outline';
-    case 'services': return 'hammer-wrench';
-    case 'arts_litts': return 'palette-outline';
-    case 'streamz': return 'play-circle-outline';
-    case 'gatherz': return 'calendar-star';
-    case 'eventiss':
-    case 'lutz': return 'ticket-confirmation-outline';
-    case 'glowz': return 'spa-outline';
-    case 'dealz': return 'tag-outline';
-    case 'prezo':
-    case 'rewards': return 'gift-outline';
-    case 'globiz': return 'earth';
-    case 'bidz': return 'gavel';
-    case 'frenzies': return 'gamepad-variant-outline';
-    case 'points': return 'star-four-points-outline';
-    default: return 'wallet-outline';
-  }
-}
+const parseDouble = (v: unknown): number => {
+  const s = str(v) ?? '0';
+  if (s.trim() === '') return 0;
+  const n = Number(s);
+  return Number.isFinite(n) ? n : 0;
+};
 
-function parseRow(row: Record<string, unknown>): ActivityItem {
+const parseInt0 = (v: unknown): number => {
+  const s = (str(v) ?? '0').trim();
+  return /^[+-]?\d+$/.test(s) ? parseInt(s, 10) : 0;
+};
+
+const categoryName = (a: ActivityItem) =>
+  a.activityCategory === 'points' ? 'points' : 'money';
+
+function fromRpcRow(row: Record<string, unknown>): ActivityItem {
+  if (row.id === null || row.id === undefined) {
+    throw new Error('Activity row has no id.');
+  }
+
+  const created = new Date(str(row.created_at) ?? '');
+
   return {
-    id: String(row.id ?? ''),
-    activityCategory: String(row.activity_category ?? 'money'),
-    sourceFeature: String(row.source_feature ?? 'wallet'),
-    transactionType: String(row.transaction_type ?? 'transaction'),
-    direction: String(row.direction ?? 'credit'),
-    moneyAmount: Number(row.money_amount ?? 0),
-    moneyCurrency: row.money_currency ? String(row.money_currency) : undefined,
-    pointsAmount: Number(row.points_amount ?? 0),
-    title: String(row.title ?? 'Wallet transaction'),
-    subtitle: row.subtitle ? String(row.subtitle) : undefined,
-    createdAt: new Date(String(row.created_at ?? new Date().toISOString())),
+    id: String(row.id),
+    activityCategory: str(row.activity_category) ?? 'money',
+    sourceFeature: str(row.source_feature) ?? 'wallet',
+    transactionType: str(row.transaction_type) ?? 'transaction',
+    direction: str(row.direction) ?? 'credit',
+    moneyAmount: parseDouble(row.money_amount),
+    moneyCurrency: str(row.money_currency),
+    pointsAmount: parseInt0(row.points_amount),
+    status: str(row.status) ?? 'completed',
+    title: str(row.title) ?? 'Wallet transaction',
+    subtitle: str(row.subtitle),
+    referenceId: str(row.reference_id),
+    metadata:
+      row.metadata &&
+      typeof row.metadata === 'object' &&
+      !Array.isArray(row.metadata)
+        ? (row.metadata as Record<string, unknown>)
+        : {},
+    createdAt: Number.isNaN(created.getTime()) ? new Date() : created,
   };
 }
 
-function formatDate(date: Date) {
-  return date.toLocaleString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  }).replace(',', ' ·');
+type IconSpec = {
+  family: 'outlined' | 'round';
+  name: string;
+};
+
+const out = (name: string): IconSpec => ({ family: 'outlined', name });
+const rnd = (name: string): IconSpec => ({ family: 'round', name });
+
+function iconForActivity(a: ActivityItem): IconSpec {
+  const type = a.transactionType.toLowerCase();
+  const feature = a.sourceFeature.toLowerCase();
+
+  switch (type) {
+    case 'send':
+      return rnd('call_made');
+    case 'receive':
+    case 'request':
+      return rnd('call_received');
+    case 'transfer':
+      return rnd('swap_horiz');
+    case 'topup':
+      return out('add_card');
+    case 'withdraw':
+      return out('account_balance');
+    case 'airtime':
+      return out('phone_android');
+  }
+
+  switch (feature) {
+    case 'goodies':
+      return out('shopping_bag');
+    case 'konsoliss':
+      return out('inventory_2');
+    case 'woulib':
+    case 'rideza':
+      return out('directions_car');
+    case 'stayz':
+      return out('hotel');
+    case 'flyz':
+      return out('flight_takeoff');
+    case 'habita':
+      return out('home_work');
+    case 'services':
+      return out('handyman');
+    case 'arts_litts':
+      return out('palette');
+    case 'streamz':
+      return out('play_circle_outline');
+    case 'gatherz':
+      return out('event');
+    case 'eventiss':
+    case 'lutz':
+      return out('confirmation_number');
+    case 'glowz':
+      return out('spa');
+    case 'dealz':
+      return out('local_offer');
+    case 'prezo':
+    case 'rewards':
+      return out('redeem');
+    case 'globiz':
+      return out('public');
+    case 'bidz':
+      return out('gavel');
+    case 'frenzies':
+      return out('sports_esports');
+    case 'points':
+      return rnd('stars');
+    case 'wallet':
+    default:
+      return out('account_balance_wallet');
+  }
 }
 
-export default function WalletRecentActivity() {
-  const [selectedFilter, setSelectedFilter] = useState<Filter>('All');
-  const [activities, setActivities] = useState<ActivityItem[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+function MaterialGlyph({
+  spec,
+  size,
+  color,
+}: {
+  spec: IconSpec;
+  size: number;
+  color: string;
+}) {
+  return (
+    <Text
+      allowFontScaling={false}
+      style={{
+        width: size,
+        height: size,
+        fontSize: size,
+        lineHeight: size,
+        color,
+        textAlign: 'center',
+        fontFamily:
+          spec.family === 'round'
+            ? 'MaterialIconsRound'
+            : 'MaterialIconsOutlined',
+        includeFontPadding: false,
+      }}
+    >
+      {spec.name}
+    </Text>
+  );
+}
 
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      setLoading(true);
-      setError(false);
-      const { data, error: rpcError } = await supabase.rpc('get_my_wallet_activity', {
-        p_filter: 'all',
-        p_limit: 7,
-        p_offset: 0,
-      });
-      if (!active) return;
-      if (rpcError) {
-        setError(true);
-        setActivities([]);
-      } else {
-        setActivities(Array.isArray(data) ? data.map(row => parseRow(row as Record<string, unknown>)) : []);
+const MONTHS = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
+
+const isDebit = (a: ActivityItem) =>
+  a.direction.toLowerCase() === 'debit';
+
+const formatMoney = (a: ActivityItem) =>
+  `${isDebit(a) ? '-' : '+'}${Math.abs(a.moneyAmount).toFixed(2)} ${a.moneyCurrency ?? 'USD'}`;
+
+const formatPoints = (a: ActivityItem) =>
+  `${isDebit(a) ? '-' : '+'}${Math.abs(a.pointsAmount)} pts`;
+
+function formatDate(d: Date) {
+  const h = d.getHours();
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  const minute = String(d.getMinutes()).padStart(2, '0');
+
+  return `${MONTHS[d.getMonth()]} ${d.getDate()} · ${hour}:${minute} ${h >= 12 ? 'PM' : 'AM'}`;
+}
+
+type Props = {
+  onOpenActivity?: (params: {
+    activityId: string;
+    activityCategory: string;
+  }) => void;
+  onSeeAll?: () => void;
+};
+
+export default function WalletRecentActivity({
+  onOpenActivity,
+  onSeeAll,
+}: Props) {
+  const [selectedFilter, setSelectedFilter] = useState<Filter>('All');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activities, setActivities] = useState<ActivityItem[]>([]);
+  const mounted = useRef(false);
+
+  const loadActivities = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { data, error: rpcError } = await supabase.rpc(
+        'get_my_wallet_activity',
+        {
+          p_filter: 'all',
+          p_limit: 7,
+          p_offset: 0,
+        },
+      );
+
+      if (rpcError) throw rpcError;
+      if (!Array.isArray(data)) {
+        throw new Error('Invalid activity response.');
       }
+
+      const items = data.map(row =>
+        fromRpcRow(row as Record<string, unknown>),
+      );
+
+      if (!mounted.current) return;
+
+      setActivities(items);
       setLoading(false);
-    })();
-    return () => { active = false; };
+    } catch (e) {
+      if (!mounted.current) return;
+
+      setLoading(false);
+      setError(e instanceof Error ? e.message : String(e));
+    }
   }, []);
 
+  useEffect(() => {
+    mounted.current = true;
+    void loadActivities();
+
+    return () => {
+      mounted.current = false;
+    };
+  }, [loadActivities]);
+
   const filtered = useMemo(() => {
-    return activities.filter(a => {
-      if (selectedFilter === 'Money') return a.activityCategory === 'money' || a.transactionType === 'transfer';
-      if (selectedFilter === 'Points') return a.activityCategory === 'points';
-      if (selectedFilter === 'Transfers') return ['send', 'receive', 'transfer', 'request', 'money_request'].includes(a.transactionType);
-      return true;
-    });
+    switch (selectedFilter) {
+      case 'Money':
+        return activities.filter(
+          a =>
+            a.activityCategory === 'money' ||
+            a.transactionType === 'transfer',
+        );
+      case 'Points':
+        return activities.filter(
+          a => a.activityCategory === 'points',
+        );
+      case 'Transfers':
+        return activities.filter(a =>
+          [
+            'send',
+            'receive',
+            'transfer',
+            'request',
+            'money_request',
+          ].includes(a.transactionType),
+        );
+      default:
+        return activities;
+    }
   }, [activities, selectedFilter]);
 
   return (
-    <View style={styles.section}>
-      <View style={styles.header}>
+    <View style={styles.root}>
+      <View style={styles.headerRow}>
         <Text style={styles.heading}>Recent Activity</Text>
-        <Pressable><Text style={styles.seeAll}>See all</Text></Pressable>
+        <Pressable onPress={onSeeAll} style={styles.seeAll}>
+          <Text style={styles.seeAllText}>See all</Text>
+        </Pressable>
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.filters}>
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.chipScroll}
+        contentContainerStyle={styles.chipRow}
+      >
         {FILTERS.map(filter => {
           const selected = selectedFilter === filter;
+
           return (
-            <Pressable key={filter} onPress={() => setSelectedFilter(filter)} style={[styles.filter, selected && styles.filterSelected]}>
-              <Text style={[styles.filterText, selected && styles.filterTextSelected]}>{filter}</Text>
+            <Pressable
+              key={filter}
+              onPress={() => setSelectedFilter(filter)}
+              style={[
+                styles.chip,
+                selected && styles.chipSelected,
+              ]}
+            >
+              <Text
+                style={[
+                  styles.chipText,
+                  selected && styles.chipTextSelected,
+                ]}
+              >
+                {filter}
+              </Text>
             </Pressable>
           );
         })}
       </ScrollView>
 
-      <View style={styles.list}>
-        {loading ? (
-          <View style={styles.state}><ActivityIndicator size="small" color="#3F6B37" /></View>
-        ) : error ? (
-          <View style={styles.state}><Text style={styles.error}>Unable to load activity.</Text></View>
-        ) : filtered.length === 0 ? (
-          <View style={styles.state}><Text style={styles.empty}>No recent activity yet.</Text></View>
-        ) : (
-          filtered.map((activity, index) => {
-            const debit = activity.direction.toLowerCase() === 'debit';
-            const amount = activity.activityCategory === 'points'
-              ? `${debit ? '-' : '+'}${Math.abs(activity.pointsAmount)} pts`
-              : `${debit ? '-' : '+'}${Math.abs(activity.moneyAmount).toFixed(2)} ${activity.moneyCurrency ?? 'USD'}`;
+      {loading ? (
+        <View style={styles.stateBox28}>
+          <ActivityIndicator
+            size="small"
+            color={GREEN}
+            style={{ transform: [{ scale: 1.1 }] }}
+          />
+        </View>
+      ) : error !== null ? (
+        <View style={styles.stateBox20}>
+          <Text style={[styles.stateText, styles.errorText]}>
+            Unable to load activity.
+          </Text>
+        </View>
+      ) : filtered.length === 0 ? (
+        <View style={styles.stateBox24}>
+          <Text style={[styles.stateText, styles.emptyText]}>
+            No recent activity yet.
+          </Text>
+        </View>
+      ) : (
+        <View>
+          {filtered.map((activity, index) => {
+            const even = index % 2 === 0;
+            const isLast = index === filtered.length - 1;
+            const isPoints = activity.activityCategory === 'points';
+
             return (
-              <Pressable key={activity.id} style={[styles.row, index < filtered.length - 1 && styles.rowDivider]}>
-                <View style={[styles.activityIcon, index % 2 === 0 ? styles.circle : styles.rounded, index % 2 === 0 ? styles.iconLight : styles.iconDark]}>
-                  <MaterialCommunityIcons name={iconForActivity(activity)} size={20} color={index % 2 === 0 ? '#3F6B37' : '#DCE8D2'} />
+              <Pressable
+                key={activity.id}
+                onPress={() =>
+                  onOpenActivity?.({
+                    activityId: activity.id,
+                    activityCategory: categoryName(activity),
+                  })
+                }
+                style={({ pressed }) => [
+                  styles.row,
+                  !isLast && styles.rowDivider,
+                  pressed && styles.rowPressed,
+                ]}
+              >
+                <View
+                  style={[
+                    styles.iconBox,
+                    even ? styles.iconLight : styles.iconDark,
+                    even ? styles.circle : styles.rounded,
+                  ]}
+                >
+                  <MaterialGlyph
+                    spec={iconForActivity(activity)}
+                    size={20}
+                    color={even ? GREEN : SAGE_TINT}
+                  />
                 </View>
-                <View style={styles.details}>
-                  <Text numberOfLines={1} style={styles.title}>{activity.title}</Text>
-                  <Text numberOfLines={1} style={styles.subtitle}>{activity.subtitle ?? formatDate(activity.createdAt)}</Text>
+
+                <View style={styles.rowText}>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={styles.title}
+                  >
+                    {activity.title}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                    style={styles.subtitle}
+                  >
+                    {activity.subtitle ?? formatDate(activity.createdAt)}
+                  </Text>
                 </View>
-                <Text style={[styles.amount, { color: debit ? '#1A2517' : '#3F6B37' }]}>{amount}</Text>
+
+                <Text
+                  style={[
+                    styles.amount,
+                    {
+                      color: isDebit(activity) ? OLIVE : GREEN,
+                    },
+                  ]}
+                >
+                  {isPoints
+                    ? formatPoints(activity)
+                    : formatMoney(activity)}
+                </Text>
               </Pressable>
             );
-          })
-        )}
-      </View>
+          })}
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  section: { marginHorizontal: 15, marginTop: 18 },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  heading: { fontFamily: 'Manrope_800ExtraBold', fontSize: 18, lineHeight: 22, color: '#1A2517' },
-  seeAll: { fontFamily: 'Inter_700Bold', fontSize: 13, lineHeight: 16, color: '#3F6B37' },
-  filters: { paddingTop: 10, paddingBottom: 12, gap: 8 },
-  filter: { paddingHorizontal: 14, paddingVertical: 8, borderRadius: 20, backgroundColor: '#DCE8D2' },
-  filterSelected: { backgroundColor: '#1A2517' },
-  filterText: { fontFamily: 'Inter_700Bold', fontSize: 12, lineHeight: 14, color: '#3F6B37' },
-  filterTextSelected: { color: '#FFFFFF' },
-  list: { width: '100%' },
-  row: { minHeight: 66, paddingVertical: 12, flexDirection: 'row', alignItems: 'center' },
-  rowDivider: { borderBottomWidth: 1, borderBottomColor: '#E4EAE1' },
-  activityIcon: { width: 42, height: 42, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  circle: { borderRadius: 21 },
-  rounded: { borderRadius: 12 },
-  iconLight: { backgroundColor: '#DCE8D2' },
-  iconDark: { backgroundColor: '#3F6B37' },
-  details: { flex: 1, marginLeft: 12, minWidth: 0 },
-  title: { fontFamily: 'Inter_700Bold', fontSize: 13, lineHeight: 16, color: '#1A2517' },
-  subtitle: { marginTop: 4, fontFamily: 'Inter', fontSize: 11.5, lineHeight: 14, color: '#9AA595' },
-  amount: { marginLeft: 10, fontFamily: 'Inter_700Bold', fontSize: 13, lineHeight: 16 },
-  state: { paddingVertical: 24, alignItems: 'center', justifyContent: 'center' },
-  empty: { fontFamily: 'Inter', fontSize: 13, lineHeight: 16, color: '#9AA595' },
-  error: { fontFamily: 'Inter', fontSize: 13, lineHeight: 16, color: '#B42318' },
+  root: {
+    width: '100%',
+    marginTop: 18,
+    paddingHorizontal: 15,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  heading: {
+    color: OLIVE,
+    fontSize: 18,
+    lineHeight: 24.6,
+    fontFamily: 'Manrope_800ExtraBold',
+    includeFontPadding: false,
+  },
+  seeAll: {
+    minWidth: 64,
+    minHeight: 40,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  seeAllText: {
+    color: GREEN,
+    fontSize: 13,
+    lineHeight: 15.7,
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
+  },
+  chipScroll: {
+    flexGrow: 0,
+    marginTop: 10,
+  },
+  chipRow: {
+    flexDirection: 'row',
+  },
+  chip: {
+    marginRight: 8,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: SAGE_TINT,
+  },
+  chipSelected: {
+    backgroundColor: OLIVE,
+  },
+  chipText: {
+    fontSize: 12,
+    lineHeight: 14.5,
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
+    color: GREEN,
+  },
+  chipTextSelected: {
+    color: '#FFFFFF',
+  },
+  stateBox28: {
+    marginTop: 12,
+    paddingVertical: 28,
+    alignItems: 'center',
+  },
+  stateBox24: {
+    marginTop: 12,
+    paddingVertical: 24,
+    alignItems: 'center',
+  },
+  stateBox20: {
+    marginTop: 12,
+    paddingVertical: 20,
+    alignItems: 'center',
+  },
+  stateText: {
+    fontSize: 13,
+    lineHeight: 15.7,
+    fontFamily: 'Inter_400Regular',
+    includeFontPadding: false,
+  },
+  emptyText: {
+    color: MUTED,
+  },
+  errorText: {
+    color: ERROR_RED,
+  },
+  row: {
+    paddingVertical: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  rowPressed: {
+    backgroundColor: 'rgba(26, 37, 23, 0.05)',
+  },
+  rowDivider: {
+    borderBottomWidth: 1,
+    borderBottomColor: DIVIDER,
+  },
+  iconBox: {
+    width: 42,
+    height: 42,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  circle: {
+    borderRadius: 21,
+  },
+  rounded: {
+    borderRadius: 12,
+  },
+  iconLight: {
+    backgroundColor: SAGE_TINT,
+  },
+  iconDark: {
+    backgroundColor: GREEN,
+  },
+  rowText: {
+    flex: 1,
+    minWidth: 0,
+    marginLeft: 12,
+  },
+  title: {
+    color: OLIVE,
+    fontSize: 13,
+    lineHeight: 15.7,
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
+  },
+  subtitle: {
+    marginTop: 4,
+    color: MUTED,
+    fontSize: 11.5,
+    lineHeight: 13.9,
+    fontFamily: 'Inter_400Regular',
+    includeFontPadding: false,
+  },
+  amount: {
+    marginLeft: 10,
+    fontSize: 13,
+    lineHeight: 15.7,
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
+  },
 });
