@@ -15,6 +15,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import ForgotPasswordScreen from './ForgotPasswordScreen';
 
 const PINK = '#BF008E';
 const TOGGLE_BG = '#E0E3E7';
@@ -59,17 +60,7 @@ function AuthField({ top, value, onChangeText, placeholder, icon, error, keyboar
       <View style={[styles.fieldBox, error ? { borderWidth: 1, borderColor: RED } : null]}>
         <View style={styles.fieldInner}>
           <View style={styles.prefixIcon}><MaterialCommunityIcons name={icon} size={24} color={FIELD_TEXT} /></View>
-          <TextInput
-            value={value}
-            onChangeText={onChangeText}
-            placeholder={placeholder}
-            placeholderTextColor={FIELD_TEXT}
-            keyboardType={keyboardType}
-            autoCapitalize={autoCapitalize ?? 'none'}
-            autoCorrect={false}
-            secureTextEntry={secureTextEntry}
-            style={styles.textInput}
-          />
+          <TextInput value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={FIELD_TEXT} keyboardType={keyboardType} autoCapitalize={autoCapitalize ?? 'none'} autoCorrect={false} secureTextEntry={secureTextEntry} style={styles.textInput} />
           {suffix}
         </View>
       </View>
@@ -175,25 +166,13 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
       return;
     }
 
-    if (!isVendor) {
-      if (!onSignUpPressed) {
-        setErrorMessage('Sign up action is not connected.');
-        return;
-      }
-      try {
-        await onSignUpPressed(trimmedEmail, password, 'buyer', '', '');
-      } catch (error) {
-        setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account. Please try again.');
-      }
-      return;
-    }
-
     if (!onSignUpPressed) {
       setErrorMessage('Sign up action is not connected.');
       return;
     }
+
     try {
-      await onSignUpPressed(trimmedEmail, password, 'business', fullName.trim(), businessName.trim());
+      await onSignUpPressed(trimmedEmail, password, isVendor ? 'business' : 'buyer', isVendor ? fullName.trim() : '', isVendor ? businessName.trim() : '');
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account. Please try again.');
     }
@@ -214,9 +193,7 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
     </View>
   );
 
-  const renderBusinessSpaceLabel = () => isVendor ? (
-    <View style={styles.businessLabelBox}><Text style={styles.businessLabelText}>Business Space</Text></View>
-  ) : null;
+  const renderBusinessSpaceLabel = () => isVendor ? <View style={styles.businessLabelBox}><Text style={styles.businessLabelText}>Business Space</Text></View> : null;
 
   const renderRegisterStepIndicator = () => (
     <View style={styles.stepIndicator}>
@@ -226,24 +203,11 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
     </View>
   );
 
-  const renderEmailField = () => (
-    <AuthField top={15} value={email} onChangeText={t => { setEmail(t); if (emailError) setEmailError(null); }} placeholder="Email" icon="email-outline" error={emailError} keyboardType="email-address" />
-  );
+  const renderEmailField = () => <AuthField top={15} value={email} onChangeText={t => { setEmail(t); if (emailError) setEmailError(null); }} placeholder="Email" icon="email-outline" error={emailError} keyboardType="email-address" />;
 
   const renderPasswordField = () => (
-    <AuthField
-      top={12}
-      value={password}
-      onChangeText={t => { setPassword(t); if (passwordError) setPasswordError(null); }}
-      placeholder="Password"
-      icon="lock-outline"
-      error={passwordError}
-      secureTextEntry={obscurePassword}
-      suffix={
-        <Pressable style={styles.suffixButton} onPress={() => setObscurePassword(v => !v)}>
-          <MaterialCommunityIcons name={obscurePassword ? 'eye-off-outline' : 'eye-outline'} size={24} color={FIELD_TEXT} />
-        </Pressable>
-      }
+    <AuthField top={12} value={password} onChangeText={t => { setPassword(t); if (passwordError) setPasswordError(null); }} placeholder="Password" icon="lock-outline" error={passwordError} secureTextEntry={obscurePassword}
+      suffix={<Pressable style={styles.suffixButton} onPress={() => setObscurePassword(v => !v)}><MaterialCommunityIcons name={obscurePassword ? 'eye-off-outline' : 'eye-outline'} size={24} color={FIELD_TEXT} /></Pressable>}
     />
   );
 
@@ -252,18 +216,7 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
 
   const renderForgotPassword = () => (
     <View style={styles.forgotRow}>
-      <Pressable
-        accessibilityRole="button"
-        onPress={() => {
-          setErrorMessage(null);
-          setEmailError(null);
-          if (onForgotPasswordScreenPressed) {
-            onForgotPasswordScreenPressed();
-          } else {
-            setErrorMessage('Forgot password action is not connected.');
-          }
-        }}
-      >
+      <Pressable accessibilityRole="button" style={styles.forgotButton} onPress={() => onForgotPasswordScreenPressed?.()}>
         <Text style={styles.forgotText}>Forgot password?</Text>
       </Pressable>
     </View>
@@ -272,35 +225,20 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
   const renderSubmitButton = (text: string) => (
     <View style={styles.submitWrap}>
       <Pressable accessibilityRole="button" style={styles.submitButton} onPress={handleSubmit}>
-        <View style={styles.submitContent}>
-          <Text style={styles.submitText}>{text}</Text>
-          {text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" /> : null}
-        </View>
+        <View style={styles.submitContent}><Text style={styles.submitText}>{text}</Text>{text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" /> : null}</View>
       </Pressable>
     </View>
   );
 
   const renderSocialButtons = () => (
     <View style={styles.socialRow}>
-      <Pressable style={styles.socialButton} onPress={() => onGooglePressed?.()}>
-        {googleFailed ? <Text style={styles.googleFallback}>G</Text> : <Image source={{ uri: GOOGLE_PNG }} style={{ width: 22, height: 22 }} onError={() => setGoogleFailed(true)} />}
-      </Pressable>
+      <Pressable style={styles.socialButton} onPress={() => onGooglePressed?.()}>{googleFailed ? <Text style={styles.googleFallback}>G</Text> : <Image source={{ uri: GOOGLE_PNG }} style={{ width: 22, height: 22 }} onError={() => setGoogleFailed(true)} />}</Pressable>
       <View style={{ width: 90 }} />
-      <Pressable style={styles.socialButton} onPress={() => onApplePressed?.()}>
-        <MaterialCommunityIcons name="apple" size={25} color="#000000" />
-      </Pressable>
+      <Pressable style={styles.socialButton} onPress={() => onApplePressed?.()}><MaterialCommunityIcons name="apple" size={25} color="#000000" /></Pressable>
     </View>
   );
 
-  const renderCredentialsBlock = (submitText: string) => (
-    <View>
-      {renderEmailField()}
-      {renderPasswordField()}
-      {renderForgotPassword()}
-      {renderSocialButtons()}
-      {renderSubmitButton(submitText)}
-    </View>
-  );
+  const renderCredentialsBlock = (submitText: string) => <View>{renderEmailField()}{renderPasswordField()}{renderForgotPassword()}{renderSocialButtons()}{renderSubmitButton(submitText)}</View>;
 
   const renderBusinessRegistrationPages = () => (
     <View style={{ width: '100%', height: 365, overflow: 'hidden' }}>
@@ -322,12 +260,8 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
           {errorMessage ? <View style={styles.errorMessageWrap}><Text style={styles.fieldError}>{errorMessage}</Text></View> : null}
         </ScrollView>
       </View>
-
       <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
-        <Text style={styles.bottomSwitchText}>
-          {isRegisterMode ? 'Already have an account? ' : "Don't have an account? "}
-          <Text style={styles.bottomSwitchLink}>{isRegisterMode ? 'Sign in' : 'Register'}</Text>
-        </Text>
+        <Text style={styles.bottomSwitchText}>{isRegisterMode ? 'Already have an account? ' : "Don't have an account? "}<Text style={styles.bottomSwitchLink}>{isRegisterMode ? 'Sign in' : 'Register'}</Text></Text>
       </Pressable>
     </View>
   );
@@ -337,17 +271,25 @@ type AuthScreenProps = AuthCardProps;
 
 export default function AuthScreen({ onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
+  const [showForgot, setShowForgot] = useState(false);
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
+
+  if (showForgot) {
+    return (
+      <ForgotPasswordScreen
+        onBack={() => setShowForgot(false)}
+        onSignIn={() => setShowForgot(false)}
+        onSendResetLink={onForgotPasswordPressed}
+      />
+    );
+  }
 
   return (
     <View style={styles.page}>
       <StatusBar style="dark" />
-      <LinearGradient colors={['#F7DDEB', '#FBEAF3', '#FFF5E9']} locations={[0, 0.85, 0.925]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={[styles.header, { top: headerTop }]}>
-        <View style={styles.logoBox}>
-          <Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" />
-        </View>
+      <LinearGradient colors={['#F7DDEB', '#FBEAF3', '#FFF5E9']} locations={[0, 0.85, 0.925]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={[styles.header, { top: headerTop }]} pointerEvents="none">
+        <View style={styles.logoBox}><Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" /></View>
       </LinearGradient>
-
       <View style={styles.cardPosition}>
         <WantissAuthCard
           onSignInPressed={onSignInPressed}
@@ -355,7 +297,10 @@ export default function AuthScreen({ onSignInPressed, onSignUpPressed, onGoogleP
           onGooglePressed={onGooglePressed}
           onApplePressed={onApplePressed}
           onForgotPasswordPressed={onForgotPasswordPressed}
-          onForgotPasswordScreenPressed={onForgotPasswordScreenPressed}
+          onForgotPasswordScreenPressed={() => {
+            setShowForgot(true);
+            onForgotPasswordScreenPressed?.();
+          }}
         />
       </View>
     </View>
@@ -367,7 +312,7 @@ const styles = StyleSheet.create({
   header: { position: 'absolute', left: 0, right: 0, height: 356 },
   logoBox: { flex: 1, paddingLeft: 10, paddingTop: 50, paddingRight: 30, paddingBottom: 25 },
   logo: { width: '100%', height: '100%', borderRadius: 8 },
-  cardPosition: { position: 'absolute', top: 300, left: 15, right: 15 },
+  cardPosition: { position: 'absolute', top: 300, left: 15, right: 15, zIndex: 10 },
   card: { width: '100%', height: 470, backgroundColor: '#FFFFFF', borderRadius: 20, paddingLeft: 15, paddingRight: 15, paddingTop: 24, overflow: 'hidden' },
   toggleRow: { width: '100%', paddingLeft: 8, paddingRight: 8 },
   toggleOuter: { width: '100%', height: 50 },
@@ -385,6 +330,7 @@ const styles = StyleSheet.create({
   textInput: { flex: 1, height: '100%', padding: 0, fontSize: 18, fontWeight: '400', color: FIELD_TEXT },
   fieldError: { fontSize: 13, fontWeight: '500', color: RED },
   forgotRow: { paddingTop: 8, paddingLeft: 15, paddingRight: 15, alignItems: 'flex-end' },
+  forgotButton: { padding: 8 },
   forgotText: { fontSize: 14, fontWeight: '600', color: LINK },
   submitWrap: { paddingLeft: 15, paddingRight: 15, paddingTop: 20 },
   submitButton: { width: '100%', height: 60, backgroundColor: PINK, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
