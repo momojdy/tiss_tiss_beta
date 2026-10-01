@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
   amount: {
     color: OLIVE,
     fontSize: 26,
-    lineHeight: 26,
+    lineHeight: 41,
     letterSpacing: -0.3,
     fontFamily: 'Manrope_800ExtraBold',
     includeFontPadding: false,
