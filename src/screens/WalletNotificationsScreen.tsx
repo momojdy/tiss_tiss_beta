@@ -81,17 +81,17 @@ const EXPANDABLE = new Set([
 
 const isOrderType = (t: string) => t.startsWith('order_');
 const isActionable = (n: NotificationItem) => n.notificationType === 'money_request';
-const isExpandable = (n: NotificationItem) => EXPANDABLE.has(n.notificationType);
-const hasTransactionDetails = (n: NotificationItem) =>
-  !!n.referenceId && [
-    'payment_success',
-    'payment_failed',
-    'money_received',
-    'money_sent',
-    'refund',
-    'deposit',
-    'withdrawal',
-  ].includes(n.notificationType);
+const isTransactionType = (t: string) =>
+  t === 'payment_success' ||
+  t === 'payment_failed' ||
+  t === 'money_received' ||
+  t === 'money_sent' ||
+  t === 'refund' ||
+  t === 'deposit' ||
+  t === 'withdrawal' ||
+  t.startsWith('payment_');
+const isExpandable = (n: NotificationItem) => EXPANDABLE.has(n.notificationType) || isTransactionType(n.notificationType);
+const hasTransactionDetails = (n: NotificationItem) => isTransactionType(n.notificationType);
 
 function parseRow(row: any): NotificationItem {
   const d = row?.created_at ? new Date(row.created_at) : new Date();
@@ -302,10 +302,9 @@ export default function WalletNotificationsScreen({
     !!n.referenceId && isOrderType(n.notificationType) && !!onOpenOrder;
 
   const hasFullDetails = (n: NotificationItem) => {
-    if (!n.referenceId) return false;
-    if (n.notificationType === 'money_request') return !!onOpenRequestDetails;
+    if (n.notificationType === 'money_request') return !!n.referenceId && !!onOpenRequestDetails;
     if (hasTransactionDetails(n)) return true;
-    return hasDestination(n);
+    return !!n.referenceId && hasDestination(n);
   };
 
   const openDestination = (n: NotificationItem) => {
