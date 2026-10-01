@@ -1,60 +1,67 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { useFonts, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
 import { supabase } from '../../lib/supabase';
 
+const SAGE = '#ACC8A2';
 const SAGE_TINT = '#DCE8D2';
 const OLIVE = '#1A2517';
 const OLIVE_SOFT = '#5C6B57';
+const TRACK = 'rgba(26, 37, 23, 0.12)';
 const MINIMUM_PROGRESS = 0.01;
-const DEFAULT_MILESTONE_TARGET = 15000;
-const DEFAULT_POINTS_PER_DOLLAR = 87;
-const DEFAULT_MILESTONE_BONUS = 50;
+const MILESTONE_TARGET = 15000;
 
-type Props = {
-  onUsePointsPress?: () => void;
+type Summary = {
+  pointsBalance: number;
+  pointsEarnedToday: number;
+  pointsEarnedThisMonth: number;
+  lifetimeQualifyingPoints: number;
+  milestoneProgress: number;
+  nextMilestone: number;
+  completedMilestones: number;
+  milestoneBonus: number;
+  pointsPerDollar: number;
+  wantissValue: number;
 };
 
-type WalletSummary = {
-  points_balance: number;
-  points_earned_today: number;
-  points_earned_month: number;
-  lifetime_qualifying_points: number;
-  milestone_progress: number;
-  milestone_target: number;
-  next_milestone: number;
-  completed_milestones: number;
-  milestone_bonus: number;
-  points_per_dollar: number;
-  wantiss_value: number;
+const INITIAL: Summary = {
+  pointsBalance: 0,
+  pointsEarnedToday: 0,
+  pointsEarnedThisMonth: 0,
+  lifetimeQualifyingPoints: 0,
+  milestoneProgress: 0,
+  nextMilestone: MILESTONE_TARGET,
+  completedMilestones: 0,
+  milestoneBonus: 50,
+  pointsPerDollar: 87,
+  wantissValue: 0,
 };
 
-function numberValue(value: unknown, fallback = 0) {
-  const n = typeof value === 'number' ? value : Number(value);
-  return Number.isFinite(n) ? n : fallback;
-}
+const num = (v: unknown, fallback: number): number => {
+  if (typeof v === 'number' && Number.isFinite(v)) return v;
+  if (typeof v === 'string' && v.trim() !== '' && Number.isFinite(Number(v))) return Number(v);
+  return fallback;
+};
 
-function formatPoints(value: number) {
-  return Math.max(0, Math.round(value)).toLocaleString('en-US');
-}
+const withCommas = (s: string) => s.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+const roundHalfAway = (v: number) => Math.sign(v) * Math.round(Math.abs(v));
+const formatPoints = (v: number) => withCommas(String(roundHalfAway(v)));
+const formatMoney = (v: number) => {
+  const [int, dec] = v.toFixed(2).split('.');
+  return `${withCommas(int)}.${dec}`;
+};
 
-function formatMoney(value: number) {
-  return Math.max(0, value).toLocaleString('en-US', {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  });
-}
-
-export default function WalletPoints({ onUsePointsPress }: Props) {
-  const [summary, setSummary] = useState<WalletSummary | null>(null);
+export default function WantissPoints({
+  height = 170,
+  onUsePoints,
+}: {
+  height?: number;
+  onUsePoints?: () => void;
+}) {
   const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [s, setS] = useState<Summary>(INITIAL);
   const mounted = useRef(false);
   const isFetching = useRef(false);
-
-  const [manropeSemiLoaded] = useFonts({ Manrope_600SemiBold });
-  const [manropeBoldLoaded] = useFonts({ Manrope_700Bold });
-  const [manropeExtraLoaded] = useFonts({ Manrope_800ExtraBold });
 
   const loadPointsSummary = useCallback(async () => {
     if (!mounted.current || isFetching.current) return;
@@ -67,52 +74,44 @@ export default function WalletPoints({ onUsePointsPress }: Props) {
       const user = sessionData?.session?.user;
 
       if (!user) {
-        throw new Error('Authentication required');
+        if (!mounted.current) return;
+        setIsLoading(false);
+        setErrorMessage('Sign in to view your points.');
+        return;
       }
 
       const { data, error } = await supabase.rpc('get_my_wallet_summary');
       if (error) throw error;
+
       if (!data || typeof data !== 'object' || Array.isArray(data)) {
         throw new Error('Invalid points summary response.');
       }
 
-      const raw = data as Record<string, unknown>;
-      const pointsBalance = numberValue(raw.points_balance);
-      const pointsPerDollar = numberValue(raw.points_per_dollar, DEFAULT_POINTS_PER_DOLLAR);
-      const wantissValue = numberValue(
-        raw.wantiss_value,
-        pointsPerDollar > 0 ? pointsBalance / pointsPerDollar : 0,
-      );
+      const d = data as Record<string, unknown>;
+      const pointsBalance = num(d.points_balance, 0);
+      const pointsPerDollar = num(d.points_per_dollar, 87);
 
-      const nextMilestone = Math.max(
-        0,
-        numberValue(raw.next_milestone, DEFAULT_MILESTONE_TARGET),
-      );
-      const milestoneTarget = Math.max(
-        1,
-        numberValue(raw.milestone_target, DEFAULT_MILESTONE_TARGET),
-      );
-
-      const nextSummary: WalletSummary = {
-        points_balance: pointsBalance,
-        points_earned_today: numberValue(raw.points_earned_today),
-        points_earned_month: numberValue(raw.points_earned_month),
-        lifetime_qualifying_points: numberValue(raw.lifetime_qualifying_points),
-        milestone_progress: Math.max(0, numberValue(raw.milestone_progress)),
-        milestone_target: milestoneTarget,
-        next_milestone: nextMilestone,
-        completed_milestones: Math.max(0, numberValue(raw.completed_milestones)),
-        milestone_bonus: Math.max(0, numberValue(raw.milestone_bonus, DEFAULT_MILESTONE_BONUS)),
-        points_per_dollar: pointsPerDollar > 0 ? pointsPerDollar : DEFAULT_POINTS_PER_DOLLAR,
-        wantiss_value: Math.max(0, wantissValue),
+      const next: Summary = {
+        pointsBalance,
+        pointsEarnedToday: num(d.points_earned_today, 0),
+        pointsEarnedThisMonth: num(d.points_earned_month, 0),
+        lifetimeQualifyingPoints: num(d.lifetime_qualifying_points, 0),
+        milestoneProgress: num(d.milestone_progress, 0),
+        nextMilestone: num(d.next_milestone, MILESTONE_TARGET),
+        completedMilestones: num(d.completed_milestones, 0),
+        milestoneBonus: num(d.milestone_bonus, 50),
+        pointsPerDollar,
+        wantissValue: num(
+          d.wantiss_value,
+          pointsPerDollar > 0 ? pointsBalance / pointsPerDollar : 0,
+        ),
       };
 
       if (!mounted.current) return;
-      setSummary(nextSummary);
-      setErrorMessage(null);
+      setS(next);
       setIsLoading(false);
     } catch (error) {
-      console.warn('WalletPoints error:', error);
+      console.warn('WantissPoints error:', error);
       if (!mounted.current) return;
       setIsLoading(false);
       setErrorMessage('Could not load points. Tap to retry.');
@@ -123,139 +122,57 @@ export default function WalletPoints({ onUsePointsPress }: Props) {
 
   useEffect(() => {
     mounted.current = true;
-    let cancelled = false;
-    let channel: ReturnType<typeof supabase.channel> | null = null;
-
     loadPointsSummary();
-
-    (async () => {
-      try {
-        const { data } = await supabase.auth.getSession();
-        const userId = data?.session?.user?.id;
-        if (!userId || cancelled) return;
-
-        channel = supabase
-          .channel(`wallet-points-${userId}`)
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'wallet_points',
-              filter: `user_id=eq.${userId}`,
-            },
-            () => loadPointsSummary(),
-          )
-          .on(
-            'postgres_changes',
-            {
-              event: '*',
-              schema: 'public',
-              table: 'wallet_points_transactions',
-              filter: `user_id=eq.${userId}`,
-            },
-            () => loadPointsSummary(),
-          )
-          .subscribe();
-      } catch (error) {
-        console.warn('WalletPoints realtime error:', error);
-      }
-    })();
-
     return () => {
       mounted.current = false;
-      cancelled = true;
-      if (channel) supabase.removeChannel(channel);
     };
   }, [loadPointsSummary]);
 
-  const values = summary ?? {
-    points_balance: 0,
-    points_earned_today: 0,
-    points_earned_month: 0,
-    lifetime_qualifying_points: 0,
-    milestone_progress: 0,
-    milestone_target: DEFAULT_MILESTONE_TARGET,
-    next_milestone: DEFAULT_MILESTONE_TARGET,
-    completed_milestones: 0,
-    milestone_bonus: DEFAULT_MILESTONE_BONUS,
-    points_per_dollar: DEFAULT_POINTS_PER_DOLLAR,
-    wantiss_value: 0,
-  };
-
-  const progressRatio = useMemo(() => {
-    const target = values.milestone_target > 0 ? values.milestone_target : DEFAULT_MILESTONE_TARGET;
-    return Math.min(1, Math.max(0, values.milestone_progress / target));
-  }, [values.milestone_progress, values.milestone_target]);
-
+  const progressRatio = Math.min(1, Math.max(0, s.milestoneProgress / MILESTONE_TARGET));
   const barValue = progressRatio < MINIMUM_PROGRESS ? MINIMUM_PROGRESS : progressRatio;
-  const pointsToNextMilestone = Math.max(
-    0,
-    values.next_milestone - values.lifetime_qualifying_points,
-  );
-  const showData = !isLoading && !errorMessage;
-  const showTodayBadge = showData && values.points_earned_today > 0;
+  const pointsToNextMilestone = Math.max(0, s.nextMilestone - s.lifetimeQualifyingPoints);
+  const showData = !isLoading && errorMessage === null;
+  const showTodayBadge = showData && s.pointsEarnedToday > 0;
 
   return (
     <Pressable
       disabled={!errorMessage}
       onPress={loadPointsSummary}
-      style={[styles.card, { height: 170 }]}
+      style={[styles.card, { height }]}
     >
-      <View style={styles.topSection}>
-        <View style={styles.copy}>
-          <Text style={[styles.label, manropeSemiLoaded && styles.manropeSemi]}>
-            Wantiss Points
-          </Text>
-
-          <View style={styles.pointsRow}>
-            <Text style={[styles.points, manropeExtraLoaded && styles.manropeExtra]}>
-              {isLoading ? '···' : formatPoints(values.points_balance)}
+      <View style={styles.topRow}>
+        <View style={styles.leftCol}>
+          <Text style={styles.title}>Wantiss Points</Text>
+          <View style={styles.amountRow}>
+            <Text style={styles.amount}>
+              {isLoading ? '···' : formatPoints(s.pointsBalance)}
             </Text>
-            <Text style={[styles.pts, manropeSemiLoaded && styles.manropeSemi]}>PTS</Text>
+            <Text style={styles.pts}>PTS</Text>
           </View>
-
-          <Text style={styles.value}>
-            {isLoading
-              ? '≈ $0.00 in Wantiss Value'
-              : `≈ $${formatMoney(values.wantiss_value)} in Wantiss Value`}
+          <Text style={styles.small}>
+            {isLoading ? '≈ $0.00 in Wantiss Value' : `≈ $${formatMoney(s.wantissValue)} in Wantiss Value`}
           </Text>
         </View>
 
         {showTodayBadge && (
-          <View style={styles.todayBadge}>
-            <Text style={[styles.todayText, manropeBoldLoaded && styles.manropeBold]}>
-              +{formatPoints(values.points_earned_today)} today
-            </Text>
+          <View style={styles.badge}>
+            <Text style={styles.badgeText}>{`+${formatPoints(s.pointsEarnedToday)} today`}</Text>
           </View>
         )}
       </View>
 
-      <View style={styles.progressTrack}>
-        <View
-          style={[
-            styles.progressFill,
-            { width: `${barValue * 100}%` },
-          ]}
-        />
+      <View style={styles.track}>
+        <View style={[styles.fill, { width: `${(showData ? barValue : MINIMUM_PROGRESS) * 100}%` }]} />
       </View>
 
       <Text style={styles.progressText}>
         {isLoading
           ? 'Loading…'
-          : errorMessage
-            ? errorMessage
-            : `${formatPoints(pointsToNextMilestone)} pts away from ${formatPoints(values.next_milestone)} pts`}
+          : `${formatPoints(pointsToNextMilestone)} pts away from ${formatPoints(s.nextMilestone)} pts`}
       </Text>
 
-      <Pressable
-        disabled={!onUsePointsPress}
-        onPress={onUsePointsPress}
-        style={styles.usePoints}
-      >
-        <Text style={[styles.usePointsText, manropeBoldLoaded && styles.manropeBold]}>
-          Use points
-        </Text>
+      <Pressable onPress={onUsePoints} style={styles.useRow}>
+        <Text style={styles.useText}>Use points</Text>
         <Text style={styles.arrow}>→</Text>
       </Pressable>
     </Pressable>
@@ -264,7 +181,6 @@ export default function WalletPoints({ onUsePointsPress }: Props) {
 
 const styles = StyleSheet.create({
   card: {
-    width: '100%',
     marginHorizontal: 15,
     marginTop: 13,
     backgroundColor: SAGE_TINT,
@@ -272,108 +188,89 @@ const styles = StyleSheet.create({
     paddingTop: 18,
     paddingHorizontal: 20,
     paddingBottom: 16,
+    overflow: 'hidden',
   },
-  topSection: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-  },
-  copy: {
-    flex: 1,
-    minWidth: 0,
-  },
-  label: {
+  topRow: { flexDirection: 'row', alignItems: 'flex-start' },
+  leftCol: { flex: 1, minWidth: 0 },
+  title: {
     color: OLIVE_SOFT,
     fontSize: 12,
     lineHeight: 12,
     fontFamily: 'Manrope_600SemiBold',
     includeFontPadding: false,
   },
-  manropeSemi: {
-    fontFamily: 'Manrope_600SemiBold',
-  },
-  manropeBold: {
-    fontFamily: 'Manrope_700Bold',
-  },
-  manropeExtra: {
-    fontFamily: 'Manrope_800ExtraBold',
-    includeFontPadding: false,
-  },
-  pointsRow: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    marginTop: 6,
-  },
-  points: {
+  amountRow: { flexDirection: 'row', alignItems: 'baseline', marginTop: 6 },
+  amount: {
     color: OLIVE,
     fontSize: 26,
     lineHeight: 26,
     letterSpacing: -0.3,
     fontFamily: 'Manrope_800ExtraBold',
+    includeFontPadding: false,
   },
   pts: {
+    marginLeft: 4,
     color: OLIVE_SOFT,
     fontSize: 12,
     lineHeight: 12,
-    marginLeft: 4,
-    fontFamily: 'Manrope_600SemiBold',
+    fontFamily: 'Inter_600SemiBold',
+    includeFontPadding: false,
   },
-  value: {
+  small: {
+    marginTop: 3,
     color: OLIVE_SOFT,
     fontSize: 11.5,
     lineHeight: 11.5,
-    fontFamily: 'Inter',
-    marginTop: 3,
+    fontFamily: 'Inter_400Regular',
+    includeFontPadding: false,
   },
-  todayBadge: {
+  badge: {
     paddingHorizontal: 11,
     paddingVertical: 6,
-    backgroundColor: OLIVE,
     borderRadius: 20,
-    flexShrink: 0,
+    backgroundColor: OLIVE,
   },
-  todayText: {
-    color: '#ACC8A2',
+  badgeText: {
+    color: SAGE,
     fontSize: 11,
     lineHeight: 11,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
   },
-  progressTrack: {
-    height: 6,
+  track: {
     marginTop: 16,
+    height: 6,
     borderRadius: 6,
     overflow: 'hidden',
-    backgroundColor: 'rgba(26,37,23,0.12)',
+    backgroundColor: TRACK,
   },
-  progressFill: {
-    height: 6,
-    minWidth: 1,
-    borderRadius: 6,
-    backgroundColor: OLIVE,
-  },
+  fill: { height: 6, backgroundColor: OLIVE },
   progressText: {
+    marginTop: 8,
     color: OLIVE_SOFT,
     fontSize: 11.5,
     lineHeight: 11.5,
-    fontFamily: 'Inter',
-    marginTop: 8,
+    fontFamily: 'Inter_400Regular',
+    includeFontPadding: false,
   },
-  usePoints: {
+  useRow: {
     marginTop: 18,
-    minHeight: 16,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  usePointsText: {
+  useText: {
     color: OLIVE,
     fontSize: 13,
     lineHeight: 13,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter_700Bold',
+    includeFontPadding: false,
   },
   arrow: {
     color: OLIVE,
     fontSize: 16,
     lineHeight: 16,
-    fontFamily: 'Inter',
+    fontFamily: 'Inter_600SemiBold',
+    includeFontPadding: false,
   },
 });
