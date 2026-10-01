@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
   leftText: { marginLeft: 10 },
   label: { fontSize: 11, fontWeight: '600', color: '#2A2A2A' },
   amountRow: { flexDirection: 'row', alignItems: 'center', marginTop: 1 },
-  amount: { fontSize: 18, fontWeight: '800', color: '#111', letterSpacing: -0.5 },
+  amount: { fontSize: 18, fontWeight: '800', color: '#111', letterSpacing: -0.5, paddingBottom: 5 },
   amountChevron: { marginTop: 6 },
   divider: { width: 1, marginVertical: 8, backgroundColor: 'rgba(255,255,255,0.95)' },
   mid: { width: 110, position: 'relative', paddingLeft: 12, paddingTop: 5 },
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   title: { fontSize: 10, fontWeight: '700', color: '#1C1C1C' },
   subRow: { flexDirection: 'row', alignItems: 'center', marginTop: 2 },
   sub: { fontSize: 8, color: '#2F2930', flexShrink: 1 },
-  memberAsset: { position: 'absolute', width: 48, height: 48, bottom: -2, left: 40, zIndex: 1 },
+  memberAsset: { position: 'absolute', width: 48, height: 48, bottom: -2, left: 40, paddingBottom: 4, paddingRight: 6, zIndex: 1 },
   redeemAsset: { position: 'absolute', width: 48, height: 48, bottom: -2, left: 32, zIndex: 1 },
   rightChevron: { marginLeft: 'auto' },
 });
