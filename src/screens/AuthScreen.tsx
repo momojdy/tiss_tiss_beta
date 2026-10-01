@@ -303,6 +303,26 @@ export default function AuthScreen({ onSignInPressed, onSignUpPressed, onGoogleP
           }}
         />
       </View>
+      <Pressable
+        accessibilityRole="button"
+        onPress={() => console.log('RED TAP')}
+        style={{
+          position: 'absolute',
+          bottom: 60,
+          left: 20,
+          right: 20,
+          height: 50,
+          backgroundColor: 'red',
+          zIndex: 999,
+          elevation: 999,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Text style={{ color: 'white', fontSize: 16, fontWeight: '700' }}>
+          RED TOUCH TEST
+        </Text>
+      </Pressable>
     </View>
   );
 }
