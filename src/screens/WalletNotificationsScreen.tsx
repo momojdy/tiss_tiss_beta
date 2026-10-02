@@ -612,8 +612,8 @@ const s = StyleSheet.create({
   },
   headerTitle: {
     marginLeft: 12,
-    fontFamily: 'Manrope_800ExtraBold',
-    fontWeight: '800',
+    fontFamily: 'Inter_700Bold',
+    fontWeight: '700',
     fontSize: 19,
     lineHeight: 19,
     color: C.olive,
