@@ -35,7 +35,7 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
           <WalletNavLabel>Insights</WalletNavLabel>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
-          <Ionicons name="settings-outline" size={29} color={NAV_DARK} />
+          <MaterialCommunityIcons name="cog-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Settings</WalletNavLabel>
         </Pressable>
       </View>
