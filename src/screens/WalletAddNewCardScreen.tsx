@@ -14,10 +14,11 @@ function makeStripeHtml(clientSecret: string, publishableKey: string) {
   const secret = JSON.stringify(clientSecret);
   const key = JSON.stringify(publishableKey);
   return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><script src="https://js.stripe.com/v3/"></script><style>
-  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{height:54px;margin-bottom:9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.row{display:flex;gap:9px}.row .field{flex:1}.stripe{width:100%}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
+  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{width:100%;height:54px;margin:0 0 9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.field:last-child{margin-bottom:0}.stripe{width:100%;height:24px}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
   </style></head><body>
   <div class="field"><div class="stripe" id="number"></div></div>
-  <div class="row"><div class="field"><div class="stripe" id="expiry"></div></div><div class="field"><div class="stripe" id="cvc"></div></div></div>
+  <div class="field"><div class="stripe" id="expiry"></div></div>
+  <div class="field"><div class="stripe" id="cvc"></div></div>
   <script>
   const stripe=Stripe(${key});const elements=stripe.elements({fonts:[{cssSrc:'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600'}]});
   const style={base:{fontFamily:'Manrope, sans-serif',fontSize:'16px',fontWeight:'600',color:'#1A2517',letterSpacing:'.02em','::placeholder':{color:'#9AA595',fontWeight:'500'}},invalid:{color:'#1A2517'}};
@@ -303,8 +304,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
           <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Card Details</Text>
-              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
-                <View style={{ height: 176, backgroundColor: 'transparent' }}>
+              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 180, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
+                <View style={{ height: 180, backgroundColor: 'transparent' }}>
                 <WebView
                   ref={webRef}
                   originWhitelist={['https://*', 'about:blank']}
