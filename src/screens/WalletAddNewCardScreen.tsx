@@ -347,7 +347,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
-                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }] }}>
+                  <Animated.View style={{ width: sceneW, height: sceneH, transform: settled ? [] : [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
                     {/* FRONT */}
                     <Animated.View pointerEvents={isBack ? 'none' : 'auto'} style={[StyleSheet.absoluteFill, { opacity: frontOpacity, transform: [{ rotateY }] }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
@@ -400,7 +400,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                     </Animated.View>
 
                     {/* BACK */}
-                    <Animated.View pointerEvents={isBack ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, { opacity: backOpacity, transform: [{ rotateY: angle.interpolate({ inputRange: [0, 180], outputRange: ['180deg', '360deg'] }) }] }]}>
+                    <Animated.View pointerEvents={isBack ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, { opacity: backOpacity, transform: settled ? [] : [{ rotateY: angle.interpolate({ inputRange: [0, 180], outputRange: ['180deg', '360deg'] }) }] }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u }]}>
                       <View style={{ position: 'absolute', left: 0, right: 0, top: '12%', height: '17%', backgroundColor: C.oliveDk }} />
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
