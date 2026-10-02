@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
     flex: 1, borderRadius: 22, overflow: 'hidden', padding: 23,
     shadowColor: '#12190F', shadowOpacity: 0.22, shadowRadius: 18,
     shadowOffset: { width: 0, height: 11 }, elevation: 8,
+    borderWidth: 0,
   },
   cardFront: { backgroundColor: C.olive },
   cardBack: { backgroundColor: C.oliveDk },
