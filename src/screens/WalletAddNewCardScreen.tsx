@@ -176,6 +176,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
   const [isBack, setIsBack] = useState(false);
+  const [settled, setSettled] = useState(true);
   const isBackRef = useRef(false);
 
   const webRef = useRef<WebView>(null);
@@ -209,8 +210,14 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const flipTo = useCallback((to: number) => {
     angle.stopAnimation();
     const d = Math.abs(to - angleNow.current);
-    if (!d) return;
-    Animated.timing(angle, { toValue: to, duration: Math.max(260, (720 * d) / 180), easing: Easing.inOut(Easing.cubic), useNativeDriver: false }).start();
+    if (!d) { setSettled(true); return; }
+    setSettled(false);
+    Animated.timing(angle, {
+      toValue: to,
+      duration: Math.max(260, (720 * d) / 180),
+      easing: Easing.inOut(Easing.cubic),
+      useNativeDriver: false,
+    }).start(({ finished }) => { if (finished) setSettled(true); });
   }, [angle]);
   const rotateY = angle.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
   const frontOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [1, 1, 0, 0] });
@@ -220,7 +227,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const drag = useRef({ start: 0 });
   const pan = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy),
-    onPanResponderGrant: () => { angle.stopAnimation(); drag.current.start = angleNow.current; },
+    onPanResponderGrant: () => { setSettled(false); angle.stopAnimation(); drag.current.start = angleNow.current; },
     onPanResponderMove: (_, g) => angle.setValue(Math.min(180, Math.max(0, drag.current.start + (g.dx / sceneWRef.current) * 220))),
     onPanResponderRelease: () => {
       const t = angleNow.current >= 90 ? 180 : 0;
@@ -428,7 +435,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : C.sageTint, justifyContent: 'center' }}>
                 <TextInput
                   ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595"
-                  autoComplete="cc-name" textContentType="name" maxLength={26} returnKeyType="done"
+                  autoComplete="off" textContentType="none" importantForAutofill="no" spellCheck={false} maxLength={26} returnKeyType="done"
                   autoCapitalize="characters" autoCorrect={false}
                   onChangeText={t => { setName(t.replace(/[^p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
                   onFocus={() => { setFocused('name'); flipTo(0); }}
