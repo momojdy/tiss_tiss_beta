@@ -176,14 +176,22 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
     else if (field === 'name') cvcRef.current?.focus();
   };
 
+  const dragStart = useRef(0);
   const pan = useMemo(() => PanResponder.create({
-    onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 8 && Math.abs(g.dx) > Math.abs(g.dy),
-    onPanResponderGrant: () => flip.stopAnimation(),
+    onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy),
+    onPanResponderGrant: () => {
+      flip.stopAnimation(value => { dragStart.current = Number(value); });
+    },
     onPanResponderMove: (_, g) => {
-      if (!reduceMotion) flip.setValue(Math.max(0, Math.min(180, flip.__getValue() + g.dx * 0.65)));
+      if (!reduceMotion) {
+        const next = Math.max(0, Math.min(180, dragStart.current - g.dx * 0.9));
+        flip.setValue(next);
+      }
     },
     onPanResponderRelease: (_, g) => {
-      const target = flip.__getValue() >= 90 || g.dx < -35 ? 180 : 0;
+      const current = dragStart.current - g.dx * 0.9;
+      const target = current >= 90 || g.dx < -35 ? 180 : 0;
       Animated.spring(flip, {
         toValue: target, useNativeDriver: true, damping: 18, stiffness: 180, mass: 0.7,
       }).start();
@@ -417,18 +425,18 @@ const styles = StyleSheet.create({
   signature: { flex: 1, height: 35, backgroundColor: '#E8EAE5', justifyContent: 'flex-end', padding: 5 },
   signatureLabel: { fontSize: 6, color: '#687265', letterSpacing: 0.7, fontFamily: 'Manrope_600SemiBold' },
   cvcBox: { width: 50, height: 35, borderRadius: 4, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' },
-  cvcActive: { borderWidth: 2, borderColor: C.sage },
+  cvcActive: { borderWidth: 0, borderColor: 'transparent' },
   cvcText: { color: C.ink, fontSize: 13, fontFamily: 'Manrope_700Bold' },
   backLegal: { color: '#9AA595', fontSize: 8, lineHeight: 12, marginTop: 19, maxWidth: 270, fontFamily: 'Manrope_500Medium' },
   helper: { textAlign: 'center', color: '#84917F', fontSize: 11, fontFamily: 'Manrope_500Medium', marginBottom: 22 },
   form: { width: '100%', maxWidth: 430, alignSelf: 'center' },
   label: { color: C.ink, fontSize: 13, fontFamily: 'Manrope_600SemiBold', marginBottom: 7, marginTop: 3 },
   inputWrap: {
-    minHeight: 52, borderWidth: 1, borderColor: C.line, borderRadius: 14,
+    minHeight: 52, borderWidth: 0, borderColor: 'transparent', borderRadius: 14,
     backgroundColor: C.white, flexDirection: 'row', alignItems: 'center',
     paddingHorizontal: 15, marginBottom: 14,
   },
-  inputFocus: { borderColor: C.sage, shadowColor: C.sage, shadowOpacity: 0.2, shadowRadius: 7, elevation: 2 },
+  inputFocus: { borderWidth: 0, borderColor: 'transparent', shadowColor: C.sage, shadowOpacity: 0.2, shadowRadius: 7, elevation: 2 },
   inputError: { borderColor: C.danger, backgroundColor: '#FBE2E3' },
   input: {
     flex: 1, color: C.ink, fontSize: 16, fontFamily: 'Manrope_600SemiBold',
