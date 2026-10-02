@@ -273,8 +273,8 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
-          icon="brightness-3"
-          outlineIcon="weather-night"
+          icon="dark-mode"
+          outlineIcon={undefined}
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
@@ -289,8 +289,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="insert-drive-file" outlineIcon="file-outline" label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="dns" outlineIcon="database-outline" label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="policy" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="database-saver-on" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
