@@ -11,7 +11,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 const BACKGROUND = '#F5F8F3';
@@ -26,12 +26,12 @@ const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
 
 const COUNTRIES = [
-  { code: 'HT', flag: '🇭🇹' },
-  { code: 'US', flag: '🇺🇸' },
-  { code: 'DO', flag: '🇩🇴' },
-  { code: 'CA', flag: '🇨🇦' },
-  { code: 'FR', flag: '🇫🇷' },
-  { code: 'PH', flag: '🇵🇭' },
+  { code: 'HT', name: 'Haiti', flag: '🇭🇹' },
+  { code: 'US', name: 'United States', flag: '🇺🇸' },
+  { code: 'DO', name: 'Dominican Republic', flag: '🇩🇴' },
+  { code: 'CA', name: 'Canada', flag: '🇨🇦' },
+  { code: 'FR', name: 'France', flag: '🇫🇷' },
+  { code: 'PH', name: 'Philippines', flag: '🇵🇭' },
 ];
 
 type Props = {
@@ -69,7 +69,7 @@ function SettingsRow({
   danger,
   right,
 }: {
-  icon: React.ComponentProps<typeof MaterialIcons>['name'];
+  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -77,7 +77,7 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} />
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -106,22 +106,22 @@ function BottomNav({ onHomePress }: { onHomePress?: () => void }) {
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <MaterialIcons name="home" size={26} color={NAV_DARK} />
-          <Text style={styles.walletNavLabel}>Home</Text>
+          <MaterialCommunityIcons name="home-outline" size={29} color={MUTED} />
+          <Text style={styles.walletNavLabelMuted}>Home</Text>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="people-outline" size={26} color={MUTED} />
+          <MaterialCommunityIcons name="account-group-outline" size={29} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Contacts</Text>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="qr-code-scanner" size={36} color={NAV_GREEN} />
+          <MaterialCommunityIcons name="qrcode-scan" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="insights" size={26} color={MUTED} />
+          <MaterialIcons name="query-stats" size={29} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Insights</Text>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="settings" size={26} color={TEXT} />
+          <MaterialCommunityIcons name="cog-outline" size={29} color={TEXT} />
           <Text style={styles.walletNavLabel}>Settings</Text>
         </Pressable>
       </View>
@@ -216,11 +216,11 @@ export default function WalletSettingsScreen({
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
 
       <View style={styles.header}>
-        <Pressable onPress={onBack} style={styles.backButton} accessibilityLabel="Back">
-          <MaterialIcons name="keyboard-backspace" size={26} color={TEXT} />
+        <Pressable onPress={onBack} style={styles.headerIconButton} accessibilityLabel="Back">
+          <MaterialCommunityIcons name="arrow-left" size={20} color={TEXT} />
         </Pressable>
         <Text style={styles.headerTitle}>Settings</Text>
-        <Pressable onPress={() => setCountryPickerOpen(true)} style={styles.flagButton} accessibilityLabel="Select country">
+        <Pressable onPress={() => setCountryPickerOpen(true)} style={styles.countryHeaderButton} accessibilityLabel="Select country">
           <Text style={styles.flag}>{countryFlag}</Text>
         </Pressable>
       </View>
@@ -229,12 +229,10 @@ export default function WalletSettingsScreen({
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.profile}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {(profile.full_name ?? profile.email ?? 'W').trim().slice(0, 2).toUpperCase()}
-            </Text>
+            {profile.full_name ? <Text style={styles.avatarText}>{profile.full_name.trim().slice(0, 2).toUpperCase()}</Text> : null}
           </View>
           <View style={styles.profileCopy}>
-            <Text style={styles.profileName} numberOfLines={1}>{profile.full_name || 'Your name'}</Text>
+            {profile.full_name ? <Text style={styles.profileName} numberOfLines={1}>{profile.full_name}</Text> : null}
             <Text style={styles.profileEmail} numberOfLines={1}>{profile.email || 'Email not available'}</Text>
           </View>
           <MaterialIcons name="qr-code-2" size={42} color={TEXT} />
@@ -265,7 +263,7 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="add-card" label="Payment methods" onPress={onPaymentMethodsPress} />}
         <SettingsRow icon="notifications-none" label="Notifications" onPress={onNotificationsSettingsPress} />
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
-        <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
+        <SettingsRow icon="shield-outline" label="Security" onPress={onSecurityPress} />
         <SettingsRow
           icon="dark-mode"
           label="Dark mode"
@@ -282,8 +280,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="policy" label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="data-saver-on" label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="shield-lock-outline" label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="database-outline" label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
@@ -330,6 +328,7 @@ export default function WalletSettingsScreen({
             {COUNTRIES.map(country => (
               <Pressable key={country.code} style={styles.countryOption} onPress={() => changeCountry(country.code)}>
                 <Text style={styles.optionFlag}>{country.flag}</Text>
+                <Text style={styles.countryName}>{country.name}</Text>
                 {country.code === countryCode && <MaterialIcons name="check" size={22} color={TEXT} />}
               </Pressable>
             ))}
@@ -342,11 +341,11 @@ export default function WalletSettingsScreen({
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: BACKGROUND },
-  header: { height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 14, paddingBottom: 10, flexDirection: 'row', alignItems: 'flex-end' },
-  backButton: { width: 30, height: 30, justifyContent: 'center', alignItems: 'flex-start' },
-  headerTitle: { flex: 1, marginLeft: 10, color: TEXT, fontSize: 18, fontFamily: 'Manrope_700Bold' },
-  flagButton: { width: 30, height: 30, borderRadius: 15, overflow: 'hidden', marginBottom: 0 },
-  flag: { fontSize: 28, lineHeight: 30, textAlign: 'center' },
+  header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end', flexDirection: 'row', alignItems: 'flex-end' },
+  headerIconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  headerTitle: { flex: 1, marginLeft: 12, color: TEXT, fontSize: 19, fontWeight: '800', lineHeight: 19, fontFamily: 'Manrope_800ExtraBold', transform: [{ translateY: 1 }] },
+  countryHeaderButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
+  flag: { fontSize: 22, lineHeight: 24, textAlign: 'center' },
   strip: { height: 20, backgroundColor: STRIP },
   content: { paddingBottom: 100 },
   profile: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 15, paddingTop: 15 },
@@ -367,8 +366,10 @@ const styles = StyleSheet.create({
   sectionLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: LINE },
   generalTop: { height: 20 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginTop: 4, paddingHorizontal: 16 },
+  rowIcon: { width: 40, height: 40, borderRadius: 13, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
   dangerLabel: { color: DANGER },
+  rowIconDanger: { backgroundColor: '#FCE8E7' },
   empty: { alignItems: 'center', paddingHorizontal: 28, paddingTop: 36, paddingBottom: 4 },
   emptyRing: { width: 104, height: 104, borderRadius: 52, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', marginBottom: 18 },
   emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Manrope_800ExtraBold', marginBottom: 6 },
@@ -393,6 +394,7 @@ const styles = StyleSheet.create({
   deleteButtonText: { color: '#FFFFFF', fontFamily: 'Inter_600SemiBold' },
   countryScrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
   countrySheet: { backgroundColor: BACKGROUND, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 28 },
-  countryOption: { minHeight: 54, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  optionFlag: { fontSize: 28 },
+  countryOption: { minHeight: 54, flexDirection: 'row', alignItems: 'center' },
+  optionFlag: { fontSize: 28, width: 44 },
+  countryName: { flex: 1, color: TEXT, fontSize: 15, fontFamily: 'Inter_500Medium' },
 });
