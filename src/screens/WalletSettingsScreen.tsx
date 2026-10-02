@@ -11,7 +11,7 @@ import {
   View,
   useColorScheme,
 } from 'react-native';
-import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 const BACKGROUND = '#F5F8F3';
@@ -272,7 +272,7 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
-          icon="dark-mode" communityIcon="weather-night"
+          icon="dark-mode" ionIcon="moon-outline"
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
