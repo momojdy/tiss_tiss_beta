@@ -19,24 +19,24 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
   return (
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
-        <Pressable onPress={onHomePress} style={styles.walletNavItem}>
+        <Pressable onPress={onHomePress} style={[styles.walletNavItem, styles.walletNavItemSelected]}>
           <MaterialCommunityIcons name="home-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="account-group-outline" size={29} color={NAV_DARK} />
-          <WalletNavLabel>Contacts</WalletNavLabel>
+          <MaterialCommunityIcons name="account-group-outline" size={29} color={MUTED} />
+          <Text style={styles.walletNavLabelMuted}>Contacts</Text>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
           <MaterialCommunityIcons name="qrcode-scan" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="query-stats" size={29} color={NAV_DARK} />
-          <WalletNavLabel>Insights</WalletNavLabel>
+          <MaterialIcons name="query-stats" size={29} color={MUTED} />
+          <Text style={styles.walletNavLabelMuted}>Insights</Text>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="cog-outline" size={29} color={NAV_DARK} />
-          <WalletNavLabel>Settings</WalletNavLabel>
+          <MaterialCommunityIcons name="cog-outline" size={29} color={MUTED} />
+          <Text style={styles.walletNavLabelMuted}>Settings</Text>
         </Pressable>
       </View>
     </View>
@@ -130,12 +130,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  walletNavItemSelected: {
+    backgroundColor: '#DCE8D2',
+    borderRadius: 14,
+  },
   walletNavLabel: {
     paddingTop: 4,
     fontSize: 10.5,
     lineHeight: 13,
     fontFamily: 'Inter_500Medium',
     color: NAV_DARK,
+    textAlign: 'center',
+  },
+  walletNavLabelMuted: {
+    paddingTop: 4,
+    fontSize: 10.5,
+    lineHeight: 13,
+    fontFamily: 'Inter_400Regular',
+    color: '#5F6B5A',
     textAlign: 'center',
   },
   actionsRow: {
