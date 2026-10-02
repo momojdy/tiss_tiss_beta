@@ -12,8 +12,8 @@ const SAGE_TINT = '#DCE8D2';
 const ROW_HEIGHT = 120;
 const IMG_TOP = 35;
 const IMG_H = ROW_HEIGHT - IMG_TOP;
-
 const IMAGE_RATIO = 600 / 363;
+
 type Props = {
   onPress?: () => void;
 };
@@ -27,23 +27,18 @@ export default function InviteFriendRow({ onPress }: Props) {
       onPress={onPress}
       style={styles.row}
     >
-      {ratio !== null && (
-        <>
-          {imageWidth > 0 && (
-            <View style={styles.imagePad}>
-              <View style={[styles.imageClip, { width: imageWidth }]}>
-                <Image source={IMAGE} style={styles.image} resizeMode="contain" />
-              </View>
-            </View>
-          )}
-
-          <View style={styles.column}>
-            <Text style={styles.title}>Invite a friend</Text>
-            <Text style={styles.body}>
-              {'Get 1,000 Wantiss Points for\nevery friend who joins and \ncompletes their first transaction.'}
-            </Text>
+      <View style={styles.imagePad}>
+        <View style={[styles.imageClip, { width: imageWidth }]}>
+          <Image source={IMAGE} style={styles.image} resizeMode="contain" />
         </View>
-      </>
+      </View>
+
+      <View style={styles.column}>
+        <Text style={styles.title}>Invite a friend</Text>
+        <Text style={styles.body}>
+          {'Get 1,000 Wantiss Points for\nevery friend who joins and \ncompletes their first transaction.'}
+        </Text>
+      </View>
     </Pressable>
   );
 }
