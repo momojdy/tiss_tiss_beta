@@ -16,13 +16,18 @@ function WalletNavLabel({ children }: { children: string }) {
   return <Text style={styles.walletNavLabel}>{children}</Text>;
 }
 
+function WalletNavIndicator() {
+  return <View style={styles.walletNavIndicator} />;
+}
+
 function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void; onMePress?: () => void }) {
   return (
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
-        <Pressable onPress={onHomePress} style={[styles.walletNavItem, styles.walletNavItemSelected]}>
+        <Pressable onPress={onHomePress} style={styles.walletNavItem}>
           <MaterialCommunityIcons name="home-outline" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
+          <WalletNavIndicator />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
           <MaterialCommunityIcons name="account-group-outline" size={29} color={MUTED} />
@@ -131,11 +136,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  walletNavItemSelected: {
-    width: 60,
-    height: 44,
-    backgroundColor: '#DCE8D2',
-    borderRadius: 14,
+  walletNavIndicator: {
+    width: 3,
+    height: 3,
+    borderRadius: 1.5,
+    backgroundColor: NAV_GREEN,
+    marginTop: 3,
   },
   walletNavLabel: {
     paddingTop: 4,
