@@ -1266,8 +1266,8 @@ const COUNTRIES = [
     "code": "ZW",
     "name": "Zimbabwe",
     "flag": "🇿🇼"
-  }
-
+  },
+];
 
 type Props = {
   onBack?: () => void;
