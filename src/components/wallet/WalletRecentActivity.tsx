@@ -18,8 +18,6 @@ const DIVIDER = '#E4EAE1';
 const ERROR_RED = '#D32F2F';
 
 const FILTERS = ['All', 'Money', 'Points', 'Transfers'] as const;
-const ACTIVITY_ROW_HEIGHT = 67;
-const ACTIVITY_RESERVED_ROWS = 7;
 type Filter = (typeof FILTERS)[number];
 
 type ActivityItem = {
@@ -488,10 +486,10 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
   activityArea: {
-    minHeight: ACTIVITY_ROW_HEIGHT * ACTIVITY_RESERVED_ROWS,
+    minHeight: 0,
   },
   loadingArea: {
-    minHeight: ACTIVITY_ROW_HEIGHT * ACTIVITY_RESERVED_ROWS,
+    minHeight: 0,
     alignItems: 'center',
     justifyContent: 'flex-start',
     paddingTop: 28,
