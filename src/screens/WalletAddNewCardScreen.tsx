@@ -4,7 +4,6 @@ import {
   Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   useFonts, Manrope_500Medium, Manrope_600SemiBold,
   Manrope_700Bold, Manrope_800ExtraBold,
@@ -119,7 +118,6 @@ function CardBack({ cvc, brand, active }: { cvc: string; brand: string; active: 
 }
 
 export default function WalletAddNewCardScreen({ onBack }: Props) {
-  const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({
     Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
   });
@@ -218,9 +216,9 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
     <KeyboardAvoidingView
       style={styles.page}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? insets.top : 0}
+      keyboardVerticalOffset={0}
     >
-      <View style={[styles.header, { paddingTop: insets.top }]}>
+      <View style={styles.header}>
         <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
           <MaterialIcons name="arrow-back" size={20} color={C.ink} />
         </Pressable>
