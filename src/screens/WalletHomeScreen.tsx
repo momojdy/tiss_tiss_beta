@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionLabel: {
-    marginTop: 4,
+    marginTop: 6,
     color: '#1A2517',
     fontSize: 13,
     lineHeight: 13,
