@@ -245,7 +245,7 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
     <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <View style={styles.header}>
         <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
-          <MaterialIcons name="arrow-back" size={20} color={C.text} />
+          <MaterialIcons name="arrow-back" size={20} color={C.ink} />
         </Pressable>
         <Text style={styles.headerTitle}>Add New Card</Text>
       </View>
