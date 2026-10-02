@@ -77,7 +77,7 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={danger ? [styles.rowIcon, styles.rowIconDanger] : undefined}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -341,9 +341,9 @@ export default function WalletSettingsScreen({
 
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: BACKGROUND },
-  header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end', flexDirection: 'row', alignItems: 'flex-end' },
+  header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end', flexDirection: 'row', alignItems: 'flex-end', zIndex: 10, elevation: 10 },
   headerIconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  headerTitle: { flex: 1, marginLeft: 12, color: TEXT, fontSize: 19, fontWeight: '800', lineHeight: 19, fontFamily: 'Manrope_800ExtraBold', transform: [{ translateY: 1 }] },
+  headerTitle: { flex: 1, marginLeft: 12, color: TEXT, fontSize: 19, fontWeight: '800', lineHeight: 23, fontFamily: 'Manrope_800ExtraBold', paddingBottom: 1 },
   countryHeaderButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   flag: { fontSize: 22, lineHeight: 24, textAlign: 'center' },
   strip: { height: 20, backgroundColor: STRIP },
@@ -366,10 +366,10 @@ const styles = StyleSheet.create({
   sectionLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: LINE },
   generalTop: { height: 20 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginTop: 4, paddingHorizontal: 16 },
-  rowIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  rowIcon: { width: 30, height: 40, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
   dangerLabel: { color: DANGER },
-  rowIconDanger: { backgroundColor: '#FCE8E7' },
+  rowIconDanger: { width: 40, borderRadius: 13, backgroundColor: '#FCE8E7' },
   empty: { alignItems: 'center', paddingHorizontal: 28, paddingTop: 36, paddingBottom: 4 },
   emptyRing: { width: 104, height: 104, borderRadius: 52, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', marginBottom: 18 },
   emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Manrope_800ExtraBold', marginBottom: 6 },
