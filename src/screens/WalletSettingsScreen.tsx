@@ -1624,7 +1624,7 @@ const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: BACKGROUND },
   header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end', flexDirection: 'row', alignItems: 'flex-end', zIndex: 10, elevation: 10 },
   headerIconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
-  headerTitle: { flex: 1, marginLeft: 12, color: TEXT, fontSize: 19, fontWeight: '800', lineHeight: 23, fontFamily: 'Inter_700Bold', paddingBottom: 1 },
+  headerTitle: { flex: 1, marginLeft: 12, color: TEXT, fontSize: 19, fontWeight: '800', lineHeight: 23, fontFamily: 'Inter_600SemiBold', paddingBottom: 1 },
   countryHeaderButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   flag: { fontSize: 22, lineHeight: 24, textAlign: 'center' },
   strip: { height: 20, backgroundColor: STRIP },
