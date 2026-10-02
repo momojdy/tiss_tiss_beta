@@ -8,10 +8,12 @@ import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import WalletHomeScreen from './src/screens/WalletHomeScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
+import WalletPaymentMethodsScreen from './src/screens/WalletPaymentMethodsScreen';
+import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletSettings';
+type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletSettings' | 'walletPaymentMethods' | 'walletBankCards';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -67,12 +69,26 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'walletBankCards') {
+        return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} />;
+      }
+
+      if (buyerScreen === 'walletPaymentMethods') {
+        return (
+          <WalletPaymentMethodsScreen
+            onBack={() => setBuyerScreen('walletSettings')}
+            onBankCardPress={() => setBuyerScreen('walletBankCards')}
+          />
+        );
+      }
+
       if (buyerScreen === 'walletSettings') {
         return (
           <WalletSettingsScreen
             onBack={() => setBuyerScreen('wallet')}
             onHomePress={() => setBuyerScreen('wallet')}
             onNotificationsPress={() => setBuyerScreen('walletNotifications')}
+            onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')}
           />
         );
       }
