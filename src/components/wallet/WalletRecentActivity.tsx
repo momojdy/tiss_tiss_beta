@@ -329,9 +329,8 @@ export default function WalletRecentActivity({
         })}
       </ScrollView>
 
-      <View style={styles.activityArea}>
       {loading ? (
-        <View style={styles.loadingArea}>
+        <View style={styles.stateBox28}>
           <ActivityIndicator
             size="small"
             color={GREEN}
@@ -420,7 +419,6 @@ export default function WalletRecentActivity({
           })}
         </View>
       )}
-      </View>
     </View>
   );
 }
@@ -485,14 +483,10 @@ const styles = StyleSheet.create({
   chipTextSelected: {
     color: '#FFFFFF',
   },
-  activityArea: {
-    minHeight: 0,
-  },
-  loadingArea: {
-    minHeight: 0,
+  stateBox28: {
+    marginTop: 12,
+    paddingVertical: 28,
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    paddingTop: 28,
   },
   stateBox24: {
     marginTop: 12,
