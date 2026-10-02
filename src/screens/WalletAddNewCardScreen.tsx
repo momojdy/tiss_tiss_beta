@@ -339,7 +339,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
           {/* ── Hero (sticky) ── */}
           <View style={{ backgroundColor: C.bg, paddingBottom: micro ? 8 : compact ? 16 : 22, zIndex: 5 }}>
             <Animated.View style={[{ height: 100, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end' }, barStyle]}>
-              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <Pressable onPress={onBack} accessibilityLabel="Back" style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' }}>
                     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
