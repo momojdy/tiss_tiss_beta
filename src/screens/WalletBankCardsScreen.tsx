@@ -55,5 +55,5 @@ const styles = StyleSheet.create({
   emptyBody: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', textAlign: 'center', maxWidth: 330, marginBottom: 22 },
   addButton: { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 999, paddingVertical: 13, paddingHorizontal: 22, backgroundColor: TEXT },
   addButtonPressed: { opacity: 0.72 },
-  addButtonText: { color: '#FFFFFF', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
+  addButtonText: { color: '#FFFFFF', fontSize: 14, fontFamily: 'Inter_500Medium' },
 });
