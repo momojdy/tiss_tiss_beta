@@ -6,7 +6,7 @@ import WalletPoints from '../components/wallet/WalletPoints';
 import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
 import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
 import InviteFriendRow from '../components/wallet/InviteFriendRow';
-import { Feather, MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Octicons, MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
@@ -20,11 +20,11 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <Feather name="home" size={29} color={NAV_DARK} />
+          <Octicons name="home" size={29} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <Feather name="users" size={29} color={NAV_DARK} />
+          <Octicons name="people" size={29} color={NAV_DARK} />
           <WalletNavLabel>Contacts</WalletNavLabel>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
