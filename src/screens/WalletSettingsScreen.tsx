@@ -5,6 +5,7 @@ import {
   Pressable,
   ScrollView,
   StatusBar,
+  TextInput,
   StyleSheet,
   Switch,
   Text,
@@ -1389,6 +1390,7 @@ export default function WalletSettingsScreen({
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -1567,6 +1569,24 @@ export default function WalletSettingsScreen({
       <Modal transparent animationType="slide" visible={countryPickerOpen} onRequestClose={() => setCountryPickerOpen(false)}>
         <View style={styles.countryScrim}>
           <View style={styles.countrySheet}>
+            <View style={styles.countrySearchBox}>
+              <MaterialIcons name="search" size={22} color={MUTED} />
+              <TextInput
+                value={countrySearch}
+                onChangeText={setCountrySearch}
+                placeholder="Search country"
+                placeholderTextColor={MUTED}
+                style={styles.countrySearchInput}
+                autoCapitalize="none"
+                autoCorrect={false}
+                returnKeyType="search"
+              />
+              {countrySearch.length > 0 && (
+                <Pressable onPress={() => setCountrySearch('')} hitSlop={8}>
+                  <MaterialIcons name="close" size={20} color={MUTED} />
+                </Pressable>
+              )}
+            </View>
             <ScrollView
               style={styles.countryList}
               contentContainerStyle={styles.countryListContent}
@@ -1574,7 +1594,7 @@ export default function WalletSettingsScreen({
               nestedScrollEnabled
               keyboardShouldPersistTaps="handled"
             >
-              {COUNTRIES.map(country => (
+              {COUNTRIES.filter(country => country.name.toLowerCase().includes(countrySearch.trim().toLowerCase())).map(country => (
                 <Pressable key={country.code} style={styles.countryOption} onPress={() => changeCountry(country.code)}>
                   <Text style={styles.optionFlag}>{country.flag}</Text>
                   <Text style={styles.countryName}>{country.name}</Text>
@@ -1647,6 +1667,8 @@ const styles = StyleSheet.create({
   countrySheet: { height: '78%', backgroundColor: BACKGROUND, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12 },
   countryList: { flex: 1 },
   countryListContent: { paddingBottom: 16 },
+  countrySearchBox: { height: 46, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, marginBottom: 10, borderRadius: 12, backgroundColor: TINT },
+  countrySearchInput: { flex: 1, marginLeft: 8, paddingVertical: 0, color: TEXT, fontSize: 15, fontFamily: 'Inter_400Regular' },
   countryOption: { minHeight: 54, flexDirection: 'row', alignItems: 'center' },
   optionFlag: { fontSize: 28, width: 44 },
   countryName: { flex: 1, color: TEXT, fontSize: 15, fontFamily: 'Inter_500Medium' },
