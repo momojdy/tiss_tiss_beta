@@ -18,6 +18,8 @@ const DIVIDER = '#E4EAE1';
 const ERROR_RED = '#D32F2F';
 
 const FILTERS = ['All', 'Money', 'Points', 'Transfers'] as const;
+const ACTIVITY_ROW_HEIGHT = 67;
+const ACTIVITY_RESERVED_ROWS = 7;
 type Filter = (typeof FILTERS)[number];
 
 type ActivityItem = {
@@ -329,8 +331,9 @@ export default function WalletRecentActivity({
         })}
       </ScrollView>
 
+      <View style={styles.activityArea}>
       {loading ? (
-        <View style={styles.stateBox28}>
+        <View style={styles.loadingArea}>
           <ActivityIndicator
             size="small"
             color={GREEN}
@@ -419,6 +422,7 @@ export default function WalletRecentActivity({
           })}
         </View>
       )}
+      </View>
     </View>
   );
 }
@@ -483,10 +487,14 @@ const styles = StyleSheet.create({
   chipTextSelected: {
     color: '#FFFFFF',
   },
-  stateBox28: {
-    marginTop: 12,
-    paddingVertical: 28,
+  activityArea: {
+    minHeight: ACTIVITY_ROW_HEIGHT * ACTIVITY_RESERVED_ROWS,
+  },
+  loadingArea: {
+    minHeight: ACTIVITY_ROW_HEIGHT * ACTIVITY_RESERVED_ROWS,
     alignItems: 'center',
+    justifyContent: 'flex-start',
+    paddingTop: 28,
   },
   stateBox24: {
     marginTop: 12,
