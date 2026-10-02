@@ -25,14 +25,15 @@ const DANGER = '#B3261E';
 const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
 
-const COUNTRIES = [
-  { code: 'HT', name: 'Haiti', flag: '🇭🇹' },
-  { code: 'US', name: 'United States', flag: '🇺🇸' },
-  { code: 'DO', name: 'Dominican Republic', flag: '🇩🇴' },
-  { code: 'CA', name: 'Canada', flag: '🇨🇦' },
-  { code: 'FR', name: 'France', flag: '🇫🇷' },
-  { code: 'PH', name: 'Philippines', flag: '🇵🇭' },
-];
+const COUNTRY_CODES = [
+  'AF','AX','AL','DZ','AS','AD','AO','AI','AQ','AG','AR','AM','AW','AU','AT','AZ','BS','BH','BD','BB','BY','BE','BZ','BJ','BM','BT','BO','BQ','BA','BW','BV','BR','IO','BN','BG','BF','BI','CV','KH','CM','CA','KY','CF','TD','CL','CN','CX','CC','CO','KM','CG','CD','CK','CR','CI','HR','CU','CW','CY','CZ','DK','DJ','DM','DO','EC','EG','SV','GQ','ER','EE','SZ','ET','FK','FO','FJ','FI','FR','GF','PF','TF','GA','GM','GE','DE','GH','GI','GR','GL','GD','GP','GU','GT','GG','GN','GW','GY','HT','HM','VA','HN','HK','HU','IS','IN','ID','IR','IQ','IE','IM','IL','IT','JM','JP','JE','JO','KZ','KE','KI','KP','KR','KW','KG','LA','LV','LB','LS','LR','LY','LI','LT','LU','MO','MG','MW','MY','MV','ML','MT','MH','MQ','MR','MU','YT','MX','FM','MD','MC','MN','ME','MS','MA','MZ','MM','NA','NR','NP','NL','NC','NZ','NI','NE','NG','NU','NF','MK','MP','NO','OM','PK','PW','PS','PA','PG','PY','PE','PH','PN','PL','PT','PR','QA','RE','RO','RU','RW','BL','SH','KN','LC','MF','PM','VC','WS','SM','ST','SA','SN','RS','SC','SL','SG','SX','SK','SI','SB','SO','ZA','GS','SS','ES','LK','SD','SR','SJ','SE','CH','SY','TW','TJ','TZ','TH','TL','TG','TK','TO','TT','TN','TR','TM','TC','TV','UG','UA','AE','GB','US','UM','UY','UZ','VU','VE','VN','VG','VI','WF','EH','YE','ZM','ZW'
+] as const;
+
+const COUNTRIES = COUNTRY_CODES.map(code => {
+  const name = new Intl.DisplayNames(['en'], { type: 'region' }).of(code) ?? code;
+  const flag = code.replace(/./g, char => String.fromCodePoint(127397 + char.charCodeAt(0)));
+  return { code, name, flag };
+}).sort((a, b) => a.name.localeCompare(b.name));
 
 type Props = {
   onBack?: () => void;
@@ -285,6 +286,7 @@ export default function WalletSettingsScreen({
           }
         />
 
+        <View style={styles.aboutTop} />
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
         <SettingsRow icon="policy" communityIcon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
@@ -292,7 +294,7 @@ export default function WalletSettingsScreen({
 
         {wallet && (
           <>
-            <SectionTitle title="Wallet" />
+            <SectionTitle title="" />
             <SettingsRow
               icon="delete-outline"
               label={deleting ? 'Deleting wallet…' : 'Delete wallet'}
@@ -372,6 +374,7 @@ const styles = StyleSheet.create({
   sectionTitle: { color: MUTED, fontSize: 14, fontFamily: 'Inter_400Regular' },
   sectionLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: LINE },
   generalTop: { height: 20 },
+  aboutTop: { height: 10 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginTop: 4, paddingHorizontal: 16 },
   rowIcon: { width: 30, height: 40, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
