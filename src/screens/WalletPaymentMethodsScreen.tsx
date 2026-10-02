@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons } from '@expo/vector-icons';
 
 const BACKGROUND = '#F5F8F3';
 const TEXT = '#1A2517';
@@ -31,16 +31,12 @@ function Option({
   body,
   onPress,
 }: {
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   title: string;
   body: string;
   onPress?: () => void;
 }) {
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [styles.option, pressed && styles.optionPressed]}>
-      <View style={styles.optionIcon}>
-        <MaterialCommunityIcons name={icon} size={28} color={TEXT} />
-      </View>
       <View style={styles.optionCopy}>
         <Text style={styles.optionTitle}>{title}</Text>
         <Text style={styles.optionBody}>{body}</Text>
@@ -57,13 +53,11 @@ export default function WalletPaymentMethodsScreen({ onBack, onBankCardPress, on
       <View style={styles.content}>
         <Text style={styles.intro}>Choose a payment method to manage.</Text>
         <Option
-          icon="credit-card-outline"
           title="Bank card"
           body="Add and manage your debit or credit cards."
           onPress={onBankCardPress}
         />
         <Option
-          icon="wallet-outline"
           title="Digital wallet"
           body="Manage your connected digital wallets."
           onPress={onDigitalWalletPress}
@@ -82,7 +76,6 @@ const styles = StyleSheet.create({
   intro: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', marginBottom: 14 },
   option: { minHeight: 82, flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: LINE },
   optionPressed: { opacity: 0.7 },
-  optionIcon: { width: 44, height: 44, borderRadius: 13, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', marginRight: 12 },
   optionCopy: { flex: 1 },
   optionTitle: { color: TEXT, fontSize: 16, fontFamily: 'Inter_600SemiBold' },
   optionBody: { color: MUTED, fontSize: 13, lineHeight: 18, fontFamily: 'Inter_400Regular', marginTop: 4 },
