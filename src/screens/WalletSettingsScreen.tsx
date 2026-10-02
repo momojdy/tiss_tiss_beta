@@ -1362,7 +1362,7 @@ function BottomNav({ onHomePress }: { onHomePress?: () => void }) {
           <MaterialIcons name="query-stats" size={29} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Insights</Text>
         </Pressable>
-        <Pressable style={styles.walletNavItem}>
+        <Pressable style={[styles.walletNavItem, styles.walletNavItemSelected]}>
           <MaterialCommunityIcons name="cog-outline" size={29} color={TEXT} />
           <Text style={styles.walletNavLabel}>Settings</Text>
         </Pressable>
@@ -1650,6 +1650,7 @@ const styles = StyleSheet.create({
   navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 2 },
   walletNav: { height: 70, borderRadius: 18, backgroundColor: '#FFFFFF', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   walletNavItem: { width: 70, height: 50, alignItems: 'center', justifyContent: 'center' },
+  walletNavItemSelected: { backgroundColor: TINT, borderRadius: 14 },
   walletNavLabel: { paddingTop: 4, fontSize: 10.5, lineHeight: 13, fontFamily: 'Inter_500Medium', color: NAV_DARK, textAlign: 'center' },
   walletNavLabelMuted: { paddingTop: 4, fontSize: 10.5, lineHeight: 13, fontFamily: 'Inter_400Regular', color: MUTED, textAlign: 'center' },
   scrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
