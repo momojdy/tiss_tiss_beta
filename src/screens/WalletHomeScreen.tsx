@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   walletNav: {
-    height: 70,
+    height: 65,
     borderRadius: 18,
     backgroundColor: '#FFFFFF',
     flexDirection: 'row',
@@ -132,6 +132,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   walletNavItemSelected: {
+    width: 60,
+    height: 44,
     backgroundColor: '#DCE8D2',
     borderRadius: 14,
   },
