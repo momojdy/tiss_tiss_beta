@@ -436,7 +436,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
           </View>
 
-            <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176 }}>
+            <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176 }} pointerEvents="auto">
               <WebView
                 ref={webRef}
                 source={webSource}
@@ -446,7 +446,9 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                 javaScriptEnabled
                 domStorageEnabled
                 scrollEnabled={false}
+                nestedScrollEnabled
                 keyboardDisplayRequiresUserAction={false}
+                pointerEvents="auto"
                 automaticallyAdjustContentInsets={false}
                 bounces={false}
                 style={{ flex: 1, backgroundColor: 'transparent' }}
