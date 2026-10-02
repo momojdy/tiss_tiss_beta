@@ -264,7 +264,7 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
-          icon="dark-mode"
+          icon="weather-night"
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
@@ -279,8 +279,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="policy" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="database-saver-on" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
