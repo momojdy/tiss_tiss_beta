@@ -1487,7 +1487,11 @@ export default function WalletSettingsScreen({
           <MaterialIcons name="qr-code-2" size={42} color={TEXT} />
         </View>
 
-        {walletLoading ? null : wallet ? (
+        {walletLoading ? (
+          <View style={styles.bannerSpacing}>
+            <PromoBanner />
+          </View>
+        ) : wallet ? (
           <View style={styles.bannerSpacing}>
             <PromoBanner />
           </View>
