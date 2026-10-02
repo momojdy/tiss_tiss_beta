@@ -612,8 +612,8 @@ const s = StyleSheet.create({
   },
   headerTitle: {
     marginLeft: 12,
-    fontFamily: 'Inter_700Bold',
-    fontWeight: '700',
+    fontFamily: 'Inter_600SemiBold',
+    fontWeight: '600',
     fontSize: 19,
     lineHeight: 19,
     color: C.olive,
@@ -629,11 +629,11 @@ const s = StyleSheet.create({
     borderColor: C.oliveBorder,
     borderRadius: 20,
   },
-  markAllText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.olive },
+  markAllText: { fontFamily: 'Manrope', fontWeight: '600', fontSize: 12, color: C.olive },
 
   sectionLabel: {
     fontFamily: 'Manrope',
-    fontWeight: '700',
+    fontWeight: '600',
     fontSize: 13,
     color: C.oliveFaint,
     paddingHorizontal: 22,
@@ -654,7 +654,7 @@ const s = StyleSheet.create({
   },
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  title: { flex: 1, fontFamily: 'Manrope', fontWeight: '700', fontSize: 14, color: C.olive, lineHeight: 15 },
+  title: { flex: 1, fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: C.olive, lineHeight: 15 },
   time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 15 },
   bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
@@ -669,17 +669,17 @@ const s = StyleSheet.create({
     marginRight: 15,
     textAlign: 'right',
     fontFamily: 'Inter',
-    fontWeight: '700',
+    fontWeight: '600',
     fontSize: 12,
     color: C.olive,
   },
 
   actionsRow: { flexDirection: 'row', marginTop: 3 },
   actionBtn: { flex: 1, paddingVertical: 11, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
-  actionText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 13 },
+  actionText: { fontFamily: 'Manrope', fontWeight: '600', fontSize: 13 },
 
   viewDetails: { flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingTop: 12 },
-  viewDetailsText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.olive },
+  viewDetailsText: { fontFamily: 'Manrope', fontWeight: '600', fontSize: 12, color: C.olive },
   viewDetailsChevron: { fontFamily: 'Inter', fontWeight: '600', fontSize: 17, color: C.olive, marginLeft: 4 },
 
   footer: {
@@ -698,5 +698,5 @@ const s = StyleSheet.create({
 
   errorTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 14, color: C.olive, marginTop: 10, textAlign: 'center' },
   retry: { marginTop: 12, backgroundColor: C.olive, borderRadius: 20, paddingHorizontal: 16, paddingVertical: 9 },
-  retryText: { fontFamily: 'Manrope', fontWeight: '700', fontSize: 12, color: C.sage },
+  retryText: { fontFamily: 'Manrope', fontWeight: '600', fontSize: 12, color: C.sage },
 });
