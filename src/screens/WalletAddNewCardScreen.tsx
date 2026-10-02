@@ -5,8 +5,34 @@ import {
 } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
-import { CardField, CardFieldInput, StripeProvider, useStripe } from '@stripe/stripe-react-native';
+import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { supabase } from '../lib/supabase';
+
+
+function makeStripeHtml(clientSecret: string, publishableKey: string) {
+  const secret = JSON.stringify(clientSecret);
+  const key = JSON.stringify(publishableKey);
+  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><script src="https://js.stripe.com/v3/"></script><style>
+  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{height:54px;margin-bottom:9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.field:last-child{margin-bottom:0}.stripe{width:100%}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
+  </style></head><body>
+  <div id="number" class="field"><div class="stripe"></div></div>
+  <div id="expiry" class="field"><div class="stripe"></div></div>
+  <div id="cvc" class="field"><div class="stripe"></div></div>
+  <script>
+  const stripe=Stripe(${key});const elements=stripe.elements();const style={base:{color:'#1A2517',fontSize:'16px',fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',fontWeight:'600',lineHeight:'24px',':-webkit-autofill':{color:'#1A2517'},'::placeholder':{color:'#9AA595'}},invalid:{color:'#e5484d'}};
+  const number=elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'});const expiry=elements.create('cardExpiry',{style,placeholder:'MM / YY'});const cvc=elements.create('cardCvc',{style,placeholder:'CVC'});
+  number.mount('#number .stripe');expiry.mount('#expiry .stripe');cvc.mount('#cvc .stripe');
+  const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
+  const state={number:false,expiry:false,cvc:false,brand:'none'};
+  const changed=(kind,e)=>{state[kind]=!!e.complete;if(kind==='number')state.brand=e.brand||'none';send({type:'change',data:{complete:state.number&&state.expiry&&state.cvc,validNumber:state.number?'Valid':'Incomplete',validExpiryDate:state.expiry?'Valid':'Incomplete',validCVC:state.cvc?'Valid':'Incomplete',brand:state.brand,error:e.error?e.error.message:null}})};
+  number.on('change',e=>changed('number',e));expiry.on('change',e=>changed('expiry',e));cvc.on('change',e=>changed('cvc',e));
+  number.on('focus',()=>send({type:'focus',field:'num'}));expiry.on('focus',()=>send({type:'focus',field:'exp'}));cvc.on('focus',()=>send({type:'focus',field:'cvv'}));
+  number.on('blur',()=>send({type:'blur'}));expiry.on('blur',()=>send({type:'blur'}));cvc.on('blur',()=>send({type:'blur'}));
+  window.focusCard=f=>({num:number,exp:expiry,cvv:cvc}[f]||number).focus();window.blurCard=()=>{number.blur();expiry.blur();cvc.blur()};
+  const receive=e=>{try{const m=JSON.parse(e.data);if(m.type==='save'){if(!(state.number&&state.expiry&&state.cvc)){send({type:'result',error:'Please complete all card details.'});return}stripe.confirmCardSetup(${secret},{payment_method:{card:number,billing_details:{name:m.name}}}).then(r=>send({type:'result',error:r.error?r.error.message:null}))}}catch(err){send({type:'result',error:String(err.message||err)})}};
+  document.addEventListener('message',receive);window.addEventListener('message',receive);
+  </script></body></html>`;
+}
 
 const C = {
   olive: '#1A2517', oliveDk: '#12190F', sage: '#ACC8A2', sageTint: '#DCE8D2',
@@ -65,13 +91,12 @@ async function getSetupIntent(): Promise<{ client_secret: string; publishable_ke
   return { client_secret: data.client_secret, publishable_key: data.publishable_key };
 }
 
-function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; onDone?: () => void; clientSecret: string }) {
+function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBack?: () => void; onDone?: () => void; clientSecret: string; publishableKey: string }) {
   const insets = useSafeAreaInsets();
-  const { confirmSetupIntent } = useStripe();
   const [box, setBox] = useState({ w: 390, h: 800 });
   const [kb, setKb] = useState(0);
   const [brand, setBrand] = useState<Brand>('none');
-  const [det, setDet] = useState<any>({});
+  const [det, setDet] = useState<any>({ complete: false });
   const [seen, setSeen] = useState({ num: false, exp: false, cvv: false });
   const [focused, setFocused] = useState<'' | 'num' | 'exp' | 'cvv' | 'name'>('');
   const [name, setName] = useState('');
@@ -79,7 +104,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
   const [bad, setBad] = useState({ card: false, name: false });
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
-  const cardRef = useRef<CardFieldInput.Methods>(null);
+  const webRef = useRef<WebView>(null);
   const nameRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
   const pulse = useRef(new Animated.Value(0)).current;
@@ -131,14 +156,14 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy),
     onPanResponderGrant: () => { angle.stopAnimation(); drag.current.start = angleNow.current; },
     onPanResponderMove: (_, g) => angle.setValue(Math.min(180, Math.max(0, drag.current.start + (g.dx / Math.max(sceneWRef.current, 1)) * 220))),
-    onPanResponderRelease: () => { const t = angleNow.current >= 90 ? 180 : 0; flipTo(t); if (t === 0) cardRef.current?.blur(); },
+    onPanResponderRelease: () => { const t = angleNow.current >= 90 ? 180 : 0; flipTo(t); if (t === 0) webRef.current?.injectJavaScript("window.blurCard && window.blurCard(); true;"); },
     onPanResponderTerminate: () => flipTo(angleNow.current >= 90 ? 180 : 0),
   })).current;
 
-  const onFocus = (f: any) => {
-    if (f === 'CvvField' || f === 'Cvc') { setFocused('cvv'); setSeen(s => ({ ...s, cvv: true })); flipTo(180); }
-    else if (f === 'ExpiryDate') { setFocused('exp'); setSeen(s => ({ ...s, exp: true })); flipTo(0); }
-    else if (f === 'CardNumber') { setFocused('num'); setSeen(s => ({ ...s, num: true })); flipTo(0); }
+  const onFocus = (f: string) => {
+    if (f === 'cvv') { setFocused('cvv'); setSeen(s => ({ ...s, cvv: true })); flipTo(180); }
+    else if (f === 'exp') { setFocused('exp'); setSeen(s => ({ ...s, exp: true })); flipTo(0); }
+    else if (f === 'num') { setFocused('num'); setSeen(s => ({ ...s, num: true })); flipTo(0); }
   };
   const shake = (v: Animated.Value) => {
     v.setValue(0);
@@ -146,11 +171,27 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
   };
   const onCardChange = (d: any) => {
     setDet(d); setBrand(mapBrand(d.brand)); setErr('');
-    const invalidCard = d.validNumber === 'Invalid' || d.validExpiryDate === 'Invalid' || d.validCVC === 'Invalid';
+    const invalidCard = !!d.error;
     setBad(b => ({ ...b, card: invalidCard }));
     if (invalidCard) shake(shakeCard);
   };
   const onBlurCard = () => setFocused(f => (f === 'name' ? f : ''));
+  const onWebMessage = (event: WebViewMessageEvent) => {
+    try {
+      const message = JSON.parse(event.nativeEvent.data);
+      if (message.type === 'focus') onFocus(message.field);
+      else if (message.type === 'blur') onBlurCard();
+      else if (message.type === 'change') onCardChange(message.data);
+      else if (message.type === 'result') {
+        if (message.error) {
+          Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
+          glow.setValue(0); setErr(message.error); return;
+        }
+        setSuccess(true);
+        Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
+      }
+    } catch {}
+  };
   const numPhase: Phase = det.validNumber === 'Valid' ? 'complete' : seen.num ? 'typing' : 'empty';
   const expPhase: Phase = det.validExpiryDate === 'Valid' ? 'complete' : seen.exp ? 'typing' : 'empty';
   const cvvPhase: Phase = det.validCVC === 'Valid' ? 'complete' : seen.cvv ? 'typing' : 'empty';
@@ -165,16 +206,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
     setProcessing(true);
     Animated.timing(proc, { toValue: 1, duration: 800, easing: Easing.bezier(0.22, 0.8, 0.24, 1), useNativeDriver: true }).start();
     Animated.timing(glow, { toValue: 1, duration: 500, useNativeDriver: true }).start();
-    const { error } = await confirmSetupIntent(clientSecret, {
-      paymentMethodType: 'Card',
-      paymentMethodData: { billingDetails: { name: name.trim() } },
-    });
-    if (error) {
-      Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
-      glow.setValue(0); setErr(error.message || 'Something went wrong. Please try again.'); return;
-    }
-    setSuccess(true);
-    Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
+    webRef.current?.postMessage(JSON.stringify({ type: 'save', name: name.trim() }));
   };
 
   const targetCenter = box.h * 0.4;
@@ -187,6 +219,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
   const payStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 100] }) }] };
   const statusOpacity = proc.interpolate({ inputRange: [0.6, 1], outputRange: [0, 1], extrapolate: 'clamp' });
   const groups = brand === 'amex' ? [4, 6, 5] : [4, 4, 4, 4];
+  const stripeHtml = makeStripeHtml(clientSecret, publishableKey);
   const cvvLen = brand === 'amex' ? 4 : 3;
   const ring = (on: boolean) => on ? { borderColor: 'rgba(255,255,255,.6)', backgroundColor: 'rgba(255,255,255,.07)' } : null;
   const slotRing = { position: 'absolute' as const, top: -1.6 * u, bottom: -1.6 * u, left: -2.2 * u, right: -2.2 * u, borderRadius: 2.4 * u, borderWidth: 0.35 * u, borderColor: 'transparent' };
@@ -230,14 +263,14 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
                         <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Card holder</Text>
                         <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 4.8 * u }}>{nameVal || 'FULL NAME'}</Text>
                       </Pressable>
-                      <Pressable onPress={() => cardRef.current?.focus()} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
+                      <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
                         <View pointerEvents="none" style={[slotRing, ring(focused === 'num')]} />
                         <Dotted phase={numPhase} pulse={pulse} style={{ flexDirection: 'row', alignItems: 'center', minHeight: 6.3 * u }}>
                           {numPhase !== 'empty' && groups.map((g, gi) => <View key={gi} style={{ flexDirection: 'row', marginLeft: gi ? 0.5 * 6.3 * u : 0 }}>{Array.from({ length: g }).map((_, i) => <Text key={i} style={{ width: 0.68 * 6.3 * u, textAlign: 'center', fontFamily: FW[600], fontSize: 6.3 * u, lineHeight: 7.6 * u, includeFontPadding: false, color: C.sage }}>•</Text>)}</View>)}
                         </Dotted>
                       </Pressable>
                       <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                        <Pressable onPress={() => cardRef.current?.focus()}>
+                        <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")}>
                           <View pointerEvents="none" style={[slotRing, ring(focused === 'exp')]} />
                           <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Expires</Text>
                           {expPhase === 'empty' ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text> : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage }}>••/••</Text></Dotted>}
@@ -249,7 +282,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
                         <View style={{ flex: 1 }}><View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} /><Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text></View>
                         <View style={{ width: 22 * u }}>
-                          <Pressable onPress={() => cardRef.current?.focus()} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
+                          <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
                             <Dotted phase={cvvPhase} pulse={pulse} style={{ flexDirection: 'row' }}>{cvvPhase !== 'empty' && Array.from({ length: cvvLen }).map((_, i) => <Text key={i} style={{ fontFamily: FW[800], fontSize: 5.4 * u, lineHeight: 6.5 * u, includeFontPadding: false, color: C.olive, marginHorizontal: 0.3 * u }}>•</Text>)}</Dotted>
                           </Pressable>
                           <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>CVV</Text>
@@ -267,9 +300,22 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Card Details</Text>
               <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 54, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
-                <CardField ref={cardRef} postalCodeEnabled={false} placeholders={{ number: '1234 5678 9012 3456', expiration: 'MM/YY', cvc: 'CVC' }}
-                  cardStyle={{ backgroundColor: 'transparent', textColor: C.ink, placeholderColor: '#9AA595', fontSize: 16, borderRadius: 15, textErrorColor: C.danger }}
-                  style={{ width: '100%', height: 54 }} onCardChange={onCardChange} onFocus={onFocus} onBlur={onBlurCard} />
+                <View style={{ height: 180, backgroundColor: 'transparent' }}>
+                <WebView
+                  ref={webRef}
+                  originWhitelist={['*']}
+                  source={{ html: stripeHtml }}
+                  javaScriptEnabled
+                  domStorageEnabled
+                  keyboardDisplayRequiresUserAction={false}
+                  scrollEnabled={false}
+                  bounces={false}
+                  showsVerticalScrollIndicator={false}
+                  automaticallyAdjustContentInsets={false}
+                  onMessage={onWebMessage}
+                  style={{ flex: 1, backgroundColor: 'transparent' }}
+                />
+              </View>
               </Animated.View>
             </View>
             <View style={{ marginBottom: 16 }}>
@@ -322,9 +368,9 @@ export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: (
   useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(String(e?.message || e))); }, []);
   return (
     <SafeAreaProvider>
-      {si ? <StripeProvider publishableKey={si.publishable_key}>
+      {si ? <View style={{ flex: 1 }}>
         <AddCardScreen clientSecret={si.client_secret} onBack={onBack} onDone={() => { onSaved?.(); onBack?.(); }} />
-      </StripeProvider> : <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
+      </View> : <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
         <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
         {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
       </View>}
@@ -335,7 +381,7 @@ export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: (
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: C.bg },
   back: { borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' },
-  face: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', backgroundColor: C.olive, backfaceVisibility: 'hidden' },
+  face: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', backgroundColor: C.olive },
   lbl: { fontFamily: FW[600], color: C.sage, opacity: 0.62, letterSpacing: 0.4 },
   label: { fontFamily: FW[600], fontSize: 13, color: C.muted, marginBottom: 7, marginLeft: 2 },
   paybar: { backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: C.line, paddingTop: 12, paddingHorizontal: 20 },
