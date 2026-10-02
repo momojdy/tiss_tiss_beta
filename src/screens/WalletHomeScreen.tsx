@@ -168,4 +168,13 @@ const styles = StyleSheet.create({
     width: 72,
     textAlign: 'center',
   },
+  content: {
+    paddingBottom: 110,
+  },
+  earnMorePointsSpacing: {
+    paddingTop: 8,
+  },
+  inviteFriendSpacing: {
+    paddingTop: 15,
+  },
 });
