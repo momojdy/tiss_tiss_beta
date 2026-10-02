@@ -1,460 +1,348 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  AccessibilityInfo, Animated, Easing, KeyboardAvoidingView, PanResponder,
-  Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions,
+  Animated, Easing, Keyboard, PanResponder, Platform, Pressable, ScrollView,
+  StatusBar, StyleSheet, Text, TextInput, View, LayoutChangeEvent,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
+import { CardField, CardFieldInput, StripeProvider, useStripe } from '@stripe/stripe-react-native';
 import {
-  useFonts, Manrope_500Medium, Manrope_600SemiBold,
-  Manrope_700Bold, Manrope_800ExtraBold,
+  useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
 } from '@expo-google-fonts/manrope';
+import { supabase } from '../lib/supabase';
 
 const C = {
-  olive: '#1A2517', oliveDk: '#12190F', sage: '#ACC8A2',
-  sageTint: '#DCE8D2', ink: '#1A2517', muted: '#5C6B57',
-  line: '#E4EAE1', bg: '#F5F8F3', white: '#FFFFFF',
-  danger: '#E5484D', ok: '#3F6B37',
+  olive: '#1A2517', oliveDk: '#12190F', sage: '#ACC8A2', sageTint: '#DCE8D2',
+  ink: '#1A2517', muted: '#5C6B57', line: '#E4EAE1', bg: '#F5F8F3',
+  danger: '#e5484d', ok: '#3F6B37', focus: '#CFE0C7', invalid: '#FBE2E3',
 };
-type Props = { onBack?: () => void };
-type Field = 'number' | 'expiry' | 'name' | 'cvc';
+const FW = { 500: 'Manrope_500Medium', 600: 'Manrope_600SemiBold', 700: 'Manrope_700Bold', 800: 'Manrope_800ExtraBold' } as const;
+type Brand = 'none' | 'visa' | 'mc' | 'amex' | 'discover';
+type Phase = 'empty' | 'typing' | 'complete';
 
-const digitsOnly = (v: string) => v.replace(/\D/g, '');
-const luhn = (v: string) => {
-  const d = digitsOnly(v);
-  if (d.length < 12) return false;
-  let sum = 0;
-  const parity = d.length % 2;
-  for (let i = 0; i < d.length; i += 1) {
-    let n = Number(d[i]);
-    if (i % 2 === parity) { n *= 2; if (n > 9) n -= 9; }
-    sum += n;
-  }
-  return sum % 10 === 0;
-};
-const getBrand = (v: string) => {
-  const d = digitsOnly(v);
-  if (/^4/.test(d)) return 'VISA';
-  if (/^(5[1-5]|2[2-7])/.test(d)) return 'MASTERCARD';
-  if (/^3[47]/.test(d)) return 'AMEX';
-  if (/^6(?:011|5)/.test(d)) return 'DISCOVER';
-  return 'CARD';
-};
-const formatNumber = (v: string) => digitsOnly(v).slice(0, 19).replace(/(.{4})/g, '$1 ').trim();
-const formatExpiry = (v: string) => {
-  const d = digitsOnly(v).slice(0, 4);
-  return d.length > 2 ? d.slice(0, 2) + '/' + d.slice(2) : d;
+const mapBrand = (b?: string): Brand => {
+  const s = (b || '').toLowerCase();
+  if (s === 'visa') return 'visa';
+  if (s === 'mastercard') return 'mc';
+  if (s === 'americanexpress' || s === 'amex') return 'amex';
+  if (s === 'discover') return 'discover';
+  return 'none';
 };
 
-function CardDots({ value, amex }: { value: string; amex: boolean }) {
-  const lengths = amex ? [4, 6, 5] : [4, 4, 4, 4];
-  let cursor = 0;
+const LOGO_SIZE: Record<Exclude<Brand, 'none'>, [number, number]> = { visa: [64, 24], mc: [48, 30], amex: [48, 30], discover: [84, 24] };
+function Logo({ brand, h, color }: { brand: Exclude<Brand, 'none'>; h: number; color: string }) {
+  const [vw, vh] = LOGO_SIZE[brand];
+  const w = (h * vw) / vh;
+  const F = FW[800];
   return (
-    <View style={styles.dots}>
-      {lengths.map((len, gi) => {
-        const group = value.slice(cursor, cursor + len);
-        cursor += len;
-        return (
-          <View key={gi} style={styles.dotGroup}>
-            {Array.from({ length: len }).map((_, i) => (
-              <View key={i} style={[styles.dot, i < group.length && styles.dotFilled]} />
-            ))}
-          </View>
-        );
-      })}
-    </View>
+    <Svg width={w} height={h} viewBox={`0 0 ${vw} ${vh}`} preserveAspectRatio="xMaxYMid meet">
+      {brand === 'visa' && <SvgText x="62" y="20" textAnchor="end" fontFamily={F} fontStyle="italic" fontSize="24" letterSpacing="-1" fill={color}>VISA</SvgText>}
+      {brand === 'mc' && <><Circle cx="17" cy="15" r="13" fill="#eb001b" /><Circle cx="31" cy="15" r="13" fill="#f79e1b" /><Path d="M24 4.6a13 13 0 0 1 0 20.8 13 13 0 0 1 0-20.8z" fill="#ff5f00" /></>}
+      {brand === 'amex' && <><Rect x="2" y="2" width="44" height="26" rx="5" fill="none" stroke={color} strokeWidth="2" /><SvgText x="24" y="20" textAnchor="middle" fontFamily={F} fontSize="11" letterSpacing=".6" fill={color}>AMEX</SvgText></>}
+      {brand === 'discover' && <><SvgText x="84" y="19" textAnchor="end" fontFamily={F} fontSize="15" letterSpacing="-.2" fill={color}>Discover</SvgText><Circle cx="10" cy="12" r="5.5" fill="#ff6000" /></>}
+    </Svg>
   );
 }
+const BRAND_COLOR: Record<string, string> = { visa: '#1a1f71', amex: '#2e77bc', discover: '#e57a1f', mc: '#000' };
 
-function CardFront({ number, expiry, name, brand, active }: {
-  number: string; expiry: string; name: string; brand: string; active: Field | null;
-}) {
-  return (
-    <View style={[styles.face, styles.front]}>
-      <View style={styles.orbOne} />
-      <View style={styles.orbTwo} />
-      <View style={styles.top}>
-        <Text style={styles.wantiss}>wantiss</Text>
-        <MaterialIcons name="contactless" size={23} color={C.white} />
-      </View>
-      <View style={styles.chip}>
-        <View style={styles.chipV1} /><View style={styles.chipV2} /><View style={styles.chipH} />
-      </View>
-      <View style={styles.numberArea}>
-        <CardDots value={digitsOnly(number)} amex={brand === 'AMEX'} />
-        <Text style={[styles.numberText, active === 'number' && styles.activeText]}>
-          {number ? formatNumber(number).replace(/\d/g, '•') : '•••• •••• •••• ••••'}
-        </Text>
-      </View>
-      <View style={styles.bottom}>
-        <View style={{ flex: 1 }}>
-          <Text style={styles.caption}>CARDHOLDER</Text>
-          <Text numberOfLines={1} style={styles.nameText}>{name || 'YOUR NAME'}</Text>
-        </View>
-        <View>
-          <Text style={styles.caption}>EXPIRES</Text>
-          <Text style={[styles.expiryText, active === 'expiry' && styles.activeText]}>{expiry || '••/••'}</Text>
-        </View>
-      </View>
-      <Text style={styles.network}>{brand}</Text>
-    </View>
-  );
+function Dotted({ phase, pulse, children, style }: { phase: Phase; pulse: Animated.Value; children: React.ReactNode; style?: any }) {
+  const pop = useRef(new Animated.Value(1)).current;
+  const prev = useRef<Phase>(phase);
+  useEffect(() => {
+    if (phase === 'complete' && prev.current !== 'complete') {
+      pop.setValue(0.94);
+      Animated.spring(pop, { toValue: 1, friction: 4, tension: 160, useNativeDriver: true }).start();
+    }
+    prev.current = phase;
+  }, [phase, pop]);
+  const typing = phase === 'typing';
+  const opacity = typing ? pulse.interpolate({ inputRange: [0, 1], outputRange: [0.72, 1] }) : 1;
+  const scale = typing ? pulse.interpolate({ inputRange: [0, 1], outputRange: [1, 1.012] }) : pop;
+  return <Animated.View style={[style, { opacity, transform: [{ scale }] }]}>{children}</Animated.View>;
 }
 
-function CardBack({ cvc, brand, active }: { cvc: string; brand: string; active: boolean }) {
-  return (
-    <View style={[styles.face, styles.back]}>
-      <Text style={styles.backBrand}>wantiss</Text>
-      <View style={styles.stripe} />
-      <View style={styles.signatureRow}>
-        <View style={styles.signature}><Text style={styles.signatureLabel}>AUTHORIZED SIGNATURE</Text></View>
-        <View style={[styles.cvcBox, active && styles.cvcActive]}>
-          <Text style={styles.cvcText}>{cvc || '•••'}</Text>
-        </View>
-      </View>
-      <Text style={styles.backLegal}>This card is issued for use with Wantiss. If found, please return to the cardholder.</Text>
-      <Text style={styles.network}>{brand}</Text>
-    </View>
-  );
+async function getSetupIntent(): Promise<{ client_secret: string; publishable_key: string }> {
+  const { data, error } = await supabase.functions.invoke('create-card-setup-intent', { body: {} });
+  if (error) throw error;
+  if (!data?.client_secret || !data?.publishable_key) throw new Error(data?.error || 'Unable to create card setup session');
+  return { client_secret: data.client_secret, publishable_key: data.publishable_key };
 }
 
-export default function WalletAddNewCardScreen({ onBack }: Props) {
-  const [fontsLoaded] = useFonts({
-    Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
-  });
-  const { width: windowWidth } = useWindowDimensions();
-  const [number, setNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
+function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; onDone?: () => void; clientSecret: string }) {
+  const insets = useSafeAreaInsets();
+  const { confirmSetupIntent } = useStripe();
+  const [fontsLoaded] = useFonts({ Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
+  const [box, setBox] = useState({ w: 390, h: 800 });
+  const [kb, setKb] = useState(0);
+  const [brand, setBrand] = useState<Brand>('none');
+  const [det, setDet] = useState<any>({});
+  const [seen, setSeen] = useState({ num: false, exp: false, cvv: false });
+  const [focused, setFocused] = useState<'' | 'num' | 'exp' | 'cvv' | 'name'>('');
   const [name, setName] = useState('');
-  const [cvc, setCvc] = useState('');
-  const [focused, setFocused] = useState<Field | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const flip = useRef(new Animated.Value(0)).current;
-  const shake = useRef(new Animated.Value(0)).current;
-  const numberRef = useRef<TextInput>(null);
-  const expiryRef = useRef<TextInput>(null);
+  const [err, setErr] = useState('');
+  const [bad, setBad] = useState({ card: false, name: false });
+  const [processing, setProcessing] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const cardRef = useRef<CardFieldInput.Methods>(null);
   const nameRef = useRef<TextInput>(null);
-  const cvcRef = useRef<TextInput>(null);
+  const scrollRef = useRef<ScrollView>(null);
+  const pulse = useRef(new Animated.Value(0)).current;
+  const angle = useRef(new Animated.Value(0)).current;
+  const angleNow = useRef(0);
+  const sceneWRef = useRef(348);
+  const shakeCard = useRef(new Animated.Value(0)).current;
+  const shakeName = useRef(new Animated.Value(0)).current;
+  const proc = useRef(new Animated.Value(0)).current;
+  const glow = useRef(new Animated.Value(0)).current;
+  const spin = useRef(new Animated.Value(0)).current;
+  const okAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    AccessibilityInfo.isReduceMotionEnabled().then(setReduceMotion);
-    const sub = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduceMotion);
-    return () => sub.remove();
+    const s = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => setKb(e.endCoordinates.height));
+    const h = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKb(0));
+    return () => { s.remove(); h.remove(); };
   }, []);
+  useEffect(() => {
+    Animated.loop(Animated.sequence([
+      Animated.timing(pulse, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+      Animated.timing(pulse, { toValue: 0, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
+    ])).start();
+    Animated.loop(Animated.timing(spin, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true })).start();
+  }, [pulse, spin]);
+  useEffect(() => {
+    const id = angle.addListener(({ value }) => { angleNow.current = value; });
+    return () => angle.removeListener(id);
+  }, [angle]);
 
-  const brand = useMemo(() => getBrand(number), [number]);
-  const numberValid = useMemo(() => {
-    const d = digitsOnly(number);
-    return d.length >= 12 && d.length <= 19 && luhn(d);
-  }, [number]);
-  const expiryValid = useMemo(() => {
-    const d = digitsOnly(expiry);
-    if (d.length !== 4) return false;
-    const month = Number(d.slice(0, 2));
-    if (month < 1 || month > 12) return false;
-    const year = 2000 + Number(d.slice(2));
-    const now = new Date();
-    return year > now.getFullYear() || (year === now.getFullYear() && month >= now.getMonth() + 1);
-  }, [expiry]);
-  const cvcValid = cvc.length === (brand === 'AMEX' ? 4 : 3);
-  const nameValid = name.trim().length >= 2;
-  const valid = numberValid && expiryValid && cvcValid && nameValid;
+  const availH = box.h - (Platform.OS === 'ios' ? kb : 0);
+  const compact = availH < 620, micro = availH < 420;
+  const sceneW = Math.min(box.w - 40, micro ? 128 : compact ? 212 : 348);
+  const sceneH = sceneW / 1.586;
+  const u = sceneW / 100;
+  const barH = insets.top + (micro ? 30 : compact ? 44 : 58);
+  sceneWRef.current = sceneW;
 
-  const flipTo = (to: number) => {
-    Animated.timing(flip, {
-      toValue: to, duration: reduceMotion ? 0 : 360,
-      easing: Easing.inOut(Easing.cubic), useNativeDriver: true,
-    }).start();
-  };
-  const focusField = (field: Field) => {
-    setFocused(field);
-    flipTo(field === 'cvc' ? 180 : 0);
-  };
-  const next = (field: Field) => {
-    if (field === 'number') expiryRef.current?.focus();
-    else if (field === 'expiry') nameRef.current?.focus();
-    else if (field === 'name') cvcRef.current?.focus();
-  };
-
-  const dragStart = useRef(0);
-  const pan = useMemo(() => PanResponder.create({
-    onStartShouldSetPanResponder: () => true,
+  const flipTo = useCallback((to: number) => {
+    angle.stopAnimation();
+    const d = Math.abs(to - angleNow.current);
+    if (!d) return;
+    Animated.timing(angle, { toValue: to, duration: Math.max(260, (720 * d) / 180), easing: Easing.inOut(Easing.cubic), useNativeDriver: false }).start();
+  }, [angle]);
+  const rotateY = angle.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
+  const flipScale = angle.interpolate({ inputRange: [0, 90, 180], outputRange: [1, 0.94, 1] });
+  const drag = useRef({ start: 0 });
+  const pan = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy),
-    onPanResponderGrant: () => {
-      flip.stopAnimation(value => { dragStart.current = Number(value); });
-    },
-    onPanResponderMove: (_, g) => {
-      if (!reduceMotion) {
-        const next = Math.max(0, Math.min(180, dragStart.current - g.dx * 0.9));
-        flip.setValue(next);
-      }
-    },
-    onPanResponderRelease: (_, g) => {
-      const current = dragStart.current - g.dx * 0.9;
-      const target = current >= 90 || g.dx < -35 ? 180 : 0;
-      Animated.spring(flip, {
-        toValue: target, useNativeDriver: true, damping: 18, stiffness: 180, mass: 0.7,
-      }).start();
-      setFocused(target === 180 ? 'cvc' : null);
-      if (target === 180) cvcRef.current?.focus();
-      else cvcRef.current?.blur();
-    },
-  }), [reduceMotion, flip]);
+    onPanResponderGrant: () => { angle.stopAnimation(); drag.current.start = angleNow.current; },
+    onPanResponderMove: (_, g) => angle.setValue(Math.min(180, Math.max(0, drag.current.start + (g.dx / Math.max(sceneWRef.current, 1)) * 220))),
+    onPanResponderRelease: () => { const t = angleNow.current >= 90 ? 180 : 0; flipTo(t); if (t === 0) cardRef.current?.blur(); },
+    onPanResponderTerminate: () => flipTo(angleNow.current >= 90 ? 180 : 0),
+  })).current;
 
-  const submit = () => {
-    setSubmitted(true);
-    if (valid) {
-      // Stripe SetupIntent wiring is intentionally left out until the Stripe RN
-      // dependency and Wantiss setup-intent Edge Function are present.
-      return;
+  const onFocus = (f: any) => {
+    if (f === 'CvvField' || f === 'Cvc') { setFocused('cvv'); setSeen(s => ({ ...s, cvv: true })); flipTo(180); }
+    else if (f === 'ExpiryDate') { setFocused('exp'); setSeen(s => ({ ...s, exp: true })); flipTo(0); }
+    else if (f === 'CardNumber') { setFocused('num'); setSeen(s => ({ ...s, num: true })); flipTo(0); }
+  };
+  const shake = (v: Animated.Value) => {
+    v.setValue(0);
+    Animated.sequence([-5, 5, -3, 3, 0].map(x => Animated.timing(v, { toValue: x, duration: 80, useNativeDriver: true }))).start();
+  };
+  const onCardChange = (d: any) => {
+    setDet(d); setBrand(mapBrand(d.brand)); setErr('');
+    const invalidCard = d.validNumber === 'Invalid' || d.validExpiryDate === 'Invalid' || d.validCVC === 'Invalid';
+    setBad(b => ({ ...b, card: invalidCard }));
+    if (invalidCard) shake(shakeCard);
+  };
+  const onBlurCard = () => setFocused(f => (f === 'name' ? f : ''));
+  const numPhase: Phase = det.validNumber === 'Valid' ? 'complete' : seen.num ? 'typing' : 'empty';
+  const expPhase: Phase = det.validExpiryDate === 'Valid' ? 'complete' : seen.exp ? 'typing' : 'empty';
+  const cvvPhase: Phase = det.validCVC === 'Valid' ? 'complete' : seen.cvv ? 'typing' : 'empty';
+
+  const onSave = async () => {
+    const problems = { card: !det.complete, name: name.trim().length < 2 };
+    if (problems.card || problems.name) {
+      setBad(problems); if (problems.card) shake(shakeCard); if (problems.name) shake(shakeName);
+      setErr('Please complete all fields.'); return;
     }
-    Animated.sequence([
-      Animated.timing(shake, { toValue: 7, duration: 55, useNativeDriver: true }),
-      Animated.timing(shake, { toValue: -7, duration: 55, useNativeDriver: true }),
-      Animated.timing(shake, { toValue: 4, duration: 55, useNativeDriver: true }),
-      Animated.timing(shake, { toValue: 0, duration: 55, useNativeDriver: true }),
-    ]).start();
+    Keyboard.dismiss(); setErr(''); flipTo(0); scrollRef.current?.scrollTo({ y: 0, animated: false });
+    setProcessing(true);
+    Animated.timing(proc, { toValue: 1, duration: 800, easing: Easing.bezier(0.22, 0.8, 0.24, 1), useNativeDriver: true }).start();
+    Animated.timing(glow, { toValue: 1, duration: 500, useNativeDriver: true }).start();
+    const { error } = await confirmSetupIntent(clientSecret, {
+      paymentMethodType: 'Card',
+      paymentMethodData: { billingDetails: { name: name.trim() } },
+    });
+    if (error) {
+      Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
+      glow.setValue(0); setErr(error.message || 'Something went wrong. Please try again.'); return;
+    }
+    setSuccess(true);
+    Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
   };
 
   if (!fontsLoaded) return null;
-  const frontRotate = flip.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
-  const backRotate = flip.interpolate({ inputRange: [0, 180], outputRange: ['180deg', '360deg'] });
-  const invalid = submitted && !valid;
-  // Keep a stable 348pt design canvas and uniformly scale it to the available
-  // width. This makes every internal card dimension scale together instead of
-  // mixing a responsive outer card with fixed inner typography/padding.
-  const cardWidth = Math.min(Math.max(windowWidth - 40, 260), 348);
-  const cardHeight = cardWidth / 1.586;
-  const cardScale = cardWidth / 348;
-  const cardBaseHeight = 348 / 1.586;
+  const targetCenter = box.h * 0.4;
+  const naturalCenter = barH + 6 + sceneH / 2;
+  const cardY = proc.interpolate({ inputRange: [0, 1], outputRange: [0, targetCenter - naturalCenter] });
+  const cardS = proc.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] });
+  const glowColor = success ? 'rgba(63,107,55,.6)' : 'rgba(172,200,162,.55)';
+  const formStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 24] }) }] };
+  const barStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }) };
+  const payStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 100] }) }] };
+  const statusOpacity = proc.interpolate({ inputRange: [0.6, 1], outputRange: [0, 1], extrapolate: 'clamp' });
+  const groups = brand === 'amex' ? [4, 6, 5] : [4, 4, 4, 4];
+  const cvvLen = brand === 'amex' ? 4 : 3;
+  const ring = (on: boolean) => on ? { borderColor: 'rgba(255,255,255,.6)', backgroundColor: 'rgba(255,255,255,.07)' } : null;
+  const slotRing = { position: 'absolute' as const, top: -1.6 * u, bottom: -1.6 * u, left: -2.2 * u, right: -2.2 * u, borderRadius: 2.4 * u, borderWidth: 0.35 * u, borderColor: 'transparent' };
+  const nameVal = name.trim() ? name.toUpperCase() : '';
 
   return (
-    <KeyboardAvoidingView
-      style={styles.page}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={0}
-    >
-      <View style={styles.header}>
-        <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
-          <MaterialIcons name="arrow-back" size={20} color={C.ink} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Add New Card</Text>
+    <View style={s.root} onLayout={(e: LayoutChangeEvent) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
+      <StatusBar barStyle="dark-content" />
+      <View style={{ flex: 1, paddingBottom: Platform.OS === 'ios' ? kb : 0 }}>
+        <ScrollView ref={scrollRef} stickyHeaderIndices={[0]} keyboardShouldPersistTaps="handled" scrollEnabled={!processing} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
+          <View style={{ backgroundColor: C.bg, paddingBottom: micro ? 8 : compact ? 16 : 22, zIndex: 5 }}>
+            <Animated.View style={[{ height: barH, paddingTop: insets.top, paddingHorizontal: 22, justifyContent: 'center' }, barStyle]}>
+              <Pressable onPress={onBack} accessibilityLabel="Back" style={[s.back, { width: micro ? 28 : compact ? 34 : 36, height: micro ? 28 : compact ? 34 : 36 }]}>
+                <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
+              </Pressable>
+              <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: insets.top, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontFamily: FW[800], fontSize: micro ? 13 : compact ? 15 : 19, color: C.olive, letterSpacing: 0.1 }}>Add New Card</Text>
+              </View>
+            </Animated.View>
+            <View style={{ marginTop: compact ? 2 : 6, alignItems: 'center' }}>
+              <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
+                <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
+                  <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
+                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
+                    <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
+                      <View pointerEvents="none" style={{ position: 'absolute', right: 0, bottom: 0, width: '82%', aspectRatio: 1, overflow: 'hidden' }}>
+                        <View style={{ position: 'absolute', width: '96%', height: '96%', right: '-38%', bottom: '-44%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.08)' }} />
+                        <View style={{ position: 'absolute', width: '68%', height: '68%', right: '-10%', bottom: '-26%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.14)' }} />
+                        <View style={{ position: 'absolute', width: '40%', height: '40%', right: '8%', bottom: '-10%', borderRadius: 999, backgroundColor: 'rgba(220,232,210,.22)' }} />
+                      </View>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <View style={{ width: 13 * u, height: 9.6 * u, borderRadius: 2 * u, backgroundColor: '#C7CDBE' }}>
+                          <View style={{ position: 'absolute', left: 0, right: 0, top: '50%', height: 0.3 * u, backgroundColor: 'rgba(26,37,23,.28)' }} />
+                          <View style={{ position: 'absolute', top: 0, bottom: 0, left: '38%', width: 0.3 * u, backgroundColor: 'rgba(26,37,23,.28)' }} />
+                          <View style={{ position: 'absolute', top: 0, bottom: 0, left: '38%', marginLeft: 4.2 * u, width: 0.3 * u, backgroundColor: 'rgba(26,37,23,.28)' }} />
+                        </View>
+                        <View style={{ width: 17 * u, height: 9 * u, alignItems: 'flex-end', justifyContent: 'center' }}>{brand !== 'none' && <Logo brand={brand} h={9 * u} color="#fff" />}</View>
+                      </View>
+                      <Pressable onPress={() => nameRef.current?.focus()} style={{ marginTop: 5 * u }}>
+                        <View pointerEvents="none" style={[slotRing, ring(focused === 'name')]} />
+                        <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Card holder</Text>
+                        <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 4.8 * u }}>{nameVal || 'FULL NAME'}</Text>
+                      </Pressable>
+                      <Pressable onPress={() => cardRef.current?.focus()} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
+                        <View pointerEvents="none" style={[slotRing, ring(focused === 'num')]} />
+                        <Dotted phase={numPhase} pulse={pulse} style={{ flexDirection: 'row', alignItems: 'center', minHeight: 6.3 * u }}>
+                          {numPhase !== 'empty' && groups.map((g, gi) => <View key={gi} style={{ flexDirection: 'row', marginLeft: gi ? 0.5 * 6.3 * u : 0 }}>{Array.from({ length: g }).map((_, i) => <Text key={i} style={{ width: 0.68 * 6.3 * u, textAlign: 'center', fontFamily: FW[600], fontSize: 6.3 * u, lineHeight: 7.6 * u, includeFontPadding: false, color: C.sage }}>•</Text>)}</View>)}
+                        </Dotted>
+                      </Pressable>
+                      <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
+                        <Pressable onPress={() => cardRef.current?.focus()}>
+                          <View pointerEvents="none" style={[slotRing, ring(focused === 'exp')]} />
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Expires</Text>
+                          {expPhase === 'empty' ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text> : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage }}>••/••</Text></Dotted>}
+                        </Pressable>
+                      </View>
+                    </View>
+                    <View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }] }]}>
+                      <View style={{ position: 'absolute', left: 0, right: 0, top: '12%', height: '17%', backgroundColor: C.oliveDk }} />
+                      <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
+                        <View style={{ flex: 1 }}><View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} /><Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text></View>
+                        <View style={{ width: 22 * u }}>
+                          <Pressable onPress={() => cardRef.current?.focus()} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
+                            <Dotted phase={cvvPhase} pulse={pulse} style={{ flexDirection: 'row' }}>{cvvPhase !== 'empty' && Array.from({ length: cvvLen }).map((_, i) => <Text key={i} style={{ fontFamily: FW[800], fontSize: 5.4 * u, lineHeight: 6.5 * u, includeFontPadding: false, color: C.olive, marginHorizontal: 0.3 * u }}>•</Text>)}</Dotted>
+                          </Pressable>
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>CVV</Text>
+                        </View>
+                      </View>
+                      <View style={{ position: 'absolute', right: 7 * u, bottom: 5 * u, width: 11 * u, height: 6 * u, alignItems: 'flex-end', justifyContent: 'center' }}>{brand !== 'none' && <Logo brand={brand} h={6 * u} color="#fff" />}</View>
+                    </View>
+                  </Animated.View>
+                </View>
+              </Animated.View>
+            </View>
+          </View>
+
+          <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
+            <View style={{ marginBottom: 16 }}>
+              <Text style={s.label}>Card Details</Text>
+              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 54, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : '#FFFFFF' }}>
+                <CardField ref={cardRef} postalCodeEnabled={false} placeholders={{ number: '1234 5678 9012 3456', expiration: 'MM/YY', cvc: 'CVC' }}
+                  cardStyle={{ backgroundColor: 'transparent', textColor: C.ink, placeholderColor: '#9AA595', fontSize: 16, borderRadius: 15, textErrorColor: C.danger }}
+                  style={{ width: '100%', height: 54 }} onCardChange={onCardChange} onFocus={onFocus} onBlur={onBlurCard} />
+              </Animated.View>
+            </View>
+            <View style={{ marginBottom: 16 }}>
+              <Text style={s.label}>Name on Card</Text>
+              <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : '#FFFFFF', justifyContent: 'center' }}>
+                <TextInput ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595" autoComplete="cc-name" textContentType="name" maxLength={26} returnKeyType="done" autoCapitalize="characters" autoCorrect={false}
+                  onChangeText={t => { setName(t.replace(/[^\\p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
+                  onFocus={() => { setFocused('name'); flipTo(0); }} onBlur={() => setFocused(f => (f === 'name' ? '' : f))} onSubmitEditing={onSave}
+                  style={{ height: '100%', paddingHorizontal: 16, fontSize: 16, fontFamily: FW[600], letterSpacing: 0.32, color: C.ink, textTransform: 'uppercase' }} />
+              </Animated.View>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8, marginHorizontal: 2 }}>
+              <Text style={{ fontFamily: FW[600], fontSize: 13, color: C.muted }}>We accept</Text>
+              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>{(['visa', 'mc', 'amex', 'discover'] as const).map(b => <View key={b} style={{ opacity: brand === b ? 1 : 0.4 }}><Logo brand={b} h={22} color={brand === b || b === 'mc' ? BRAND_COLOR[b] : '#6b7280'} /></View>)}</View>
+            </View>
+            <Text style={{ marginTop: 14, marginHorizontal: 2, color: C.danger, fontFamily: FW[600], fontSize: 13, minHeight: 16 }}>{err}</Text>
+          </Animated.View>
+        </ScrollView>
+
+        {!compact && <Animated.View style={[s.paybar, { paddingBottom: 12 + insets.bottom }, payStyle]} pointerEvents={processing ? 'none' : 'auto'}>
+          <Pressable onPress={onSave} disabled={processing} style={({ pressed }) => [s.pay, pressed && { transform: [{ scale: 0.97 }] }]}>
+            <Text style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}>Save Card</Text>
+            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M5 12h14M13 6l6 6-6 6" /></Svg>
+          </Pressable>
+        </Animated.View>}
       </View>
 
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scroll}
-      >
-        <Text style={styles.subtitle}>Add a debit or credit card for faster payments.</Text>
-
-        <Animated.View
-          style={[styles.cardScene, { width: cardWidth, height: cardHeight, transform: [{ translateX: shake }] }]}
-          {...pan.panHandlers}
-        >
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              styles.cardLayer,
-              {
-                width: 348,
-                height: cardBaseHeight,
-                left: (cardWidth - 348) / 2,
-                top: (cardHeight - cardBaseHeight) / 2,
-                transform: [{ perspective: 1100 }, { scale: cardScale }, { rotateY: frontRotate }],
-              },
-            ]}
-          >
-            <CardFront number={number} expiry={expiry} name={name} brand={brand} active={focused} />
+      <Animated.View pointerEvents={processing ? 'auto' : 'none'} style={{ position: 'absolute', left: 0, right: 0, top: targetCenter + (sceneH * 1.06) / 2 + 34, paddingHorizontal: 32, alignItems: 'center', opacity: statusOpacity, zIndex: 6 }}>
+        <View style={{ width: 54, height: 54 }}>
+          <Animated.View style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, borderWidth: 4, borderColor: 'rgba(26,37,23,.14)', borderTopColor: C.olive, opacity: success ? 0 : 1, transform: [{ rotate: spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) }] }} />
+          <Animated.View style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, backgroundColor: C.ok, alignItems: 'center', justifyContent: 'center', opacity: okAnim, transform: [{ scale: okAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] }) }] }}>
+            <Svg width={28} height={28} viewBox="0 0 28 28" fill="none" stroke="#fff" strokeWidth={3.2} strokeLinecap="round" strokeLinejoin="round"><Path d="M6 14.5l5.5 5.5L22 9" /></Svg>
           </Animated.View>
-          <Animated.View
-            pointerEvents="none"
-            style={[
-              styles.cardLayer,
-              {
-                width: 348,
-                height: cardBaseHeight,
-                left: (cardWidth - 348) / 2,
-                top: (cardHeight - cardBaseHeight) / 2,
-                transform: [{ perspective: 1100 }, { scale: cardScale }, { rotateY: backRotate }],
-              },
-            ]}
-          >
-            <CardBack cvc={cvc} brand={brand} active={focused === 'cvc'} />
-          </Animated.View>
-        </Animated.View>
-
-        <Text style={styles.helper}>Swipe the card to view the security code.</Text>
-
-        <View style={styles.form}>
-          <Text style={styles.label}>Card number</Text>
-          <View style={[styles.inputWrap, focused === 'number' && styles.inputFocus, submitted && !numberValid && styles.inputError]}>
-            <TextInput
-              ref={numberRef} value={formatNumber(number)}
-              onChangeText={v => setNumber(digitsOnly(v))}
-              onFocus={() => focusField('number')} onSubmitEditing={() => next('number')}
-              keyboardType="number-pad" returnKeyType="next"
-              placeholder="1234 5678 9012 3456" placeholderTextColor="#9AA595"
-              maxLength={23} style={styles.input}
-            />
-            <Text style={styles.brandMini}>{brand}</Text>
-          </View>
-
-          <View style={styles.row}>
-            <View style={styles.half}>
-              <Text style={styles.label}>Expiry date</Text>
-              <View style={[styles.inputWrap, focused === 'expiry' && styles.inputFocus, submitted && !expiryValid && styles.inputError]}>
-                <TextInput
-                  ref={expiryRef} value={formatExpiry(expiry)}
-                  onChangeText={v => setExpiry(digitsOnly(v))}
-                  onFocus={() => focusField('expiry')} onSubmitEditing={() => next('expiry')}
-                  keyboardType="number-pad" returnKeyType="next"
-                  placeholder="MM/YY" placeholderTextColor="#9AA595"
-                  maxLength={5} style={styles.input}
-                />
-              </View>
-            </View>
-            <View style={styles.half}>
-              <Text style={styles.label}>CVV</Text>
-              <View style={[styles.inputWrap, focused === 'cvc' && styles.inputFocus, submitted && !cvcValid && styles.inputError]}>
-                <TextInput
-                  ref={cvcRef} value={cvc}
-                  onChangeText={v => setCvc(digitsOnly(v).slice(0, 4))}
-                  onFocus={() => focusField('cvc')}
-                  keyboardType="number-pad" returnKeyType="done"
-                  placeholder={brand === 'AMEX' ? '1234' : '123'}
-                  placeholderTextColor="#9AA595" maxLength={4} secureTextEntry
-                  style={styles.input}
-                />
-              </View>
-            </View>
-          </View>
-
-          <Text style={styles.label}>Cardholder name</Text>
-          <View style={[styles.inputWrap, focused === 'name' && styles.inputFocus, submitted && !nameValid && styles.inputError]}>
-            <TextInput
-              ref={nameRef} value={name}
-              onChangeText={v => setName(v.toUpperCase())}
-              onFocus={() => focusField('name')} onSubmitEditing={() => next('name')}
-              autoCapitalize="characters" autoCorrect={false} returnKeyType="next"
-              placeholder="YOUR NAME" placeholderTextColor="#9AA595" maxLength={26}
-              style={styles.input}
-            />
-          </View>
-
-          {invalid && <Text style={styles.errorText}>Please complete all fields correctly.</Text>}
-
-          <Pressable
-            onPress={submit}
-            style={({ pressed }) => [styles.saveButton, pressed && styles.savePressed]}
-          >
-            <Text style={styles.saveText}>Save Card</Text>
-            <MaterialIcons name="arrow-forward" size={20} color={C.white} />
-          </Pressable>
-
-          <Text style={styles.secureNote}>
-            Your card details are protected and used only to set up this payment method.
-          </Text>
         </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <View style={{ marginTop: 22, alignItems: 'center' }}>
+          <Text style={{ fontFamily: FW[800], fontSize: 20, color: C.ink, letterSpacing: -0.2, marginBottom: 6 }}>{success ? 'Card Saved' : 'Saving Card…'}</Text>
+          <Text style={{ fontFamily: FW[500], fontSize: 14.5, lineHeight: 21.75, color: C.muted, textAlign: 'center' }}>{success ? 'Your card has been saved for future payments.' : 'This only takes a moment.'}</Text>
+        </View>
+        <Pressable onPress={onDone} disabled={!success} style={{ marginTop: 26, height: 48, paddingHorizontal: 30, borderRadius: 14, backgroundColor: C.sageTint, justifyContent: 'center', opacity: success ? 1 : 0 }}>
+          <Text style={{ fontFamily: FW[700], fontSize: 15, color: C.ink }}>Done</Text>
+        </Pressable>
+      </Animated.View>
+    </View>
   );
 }
 
-const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: C.bg },
-  header: {
-    minHeight: 100, paddingHorizontal: 22, paddingBottom: 4,
-    flexDirection: 'row', alignItems: 'flex-end', backgroundColor: C.bg,
-  },
-  headerButton: {
-    width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint,
-    alignItems: 'center', justifyContent: 'center',
-  },
-  headerTitle: {
-    marginLeft: 12, paddingBottom: 1, color: C.ink, fontSize: 19, lineHeight: 23,
-    fontFamily: 'Manrope_800ExtraBold',
-  },
-  scroll: { paddingHorizontal: 20, paddingTop: 14, paddingBottom: 42 },
-  subtitle: {
-    color: C.muted, fontSize: 14, lineHeight: 20, textAlign: 'center',
-    fontFamily: 'Manrope_500Medium', marginBottom: 20,
-  },
-  cardScene: {
-    alignSelf: 'center', marginBottom: 13, overflow: 'visible',
-  },
-  cardLayer: {
-    position: 'absolute', overflow: 'visible', backfaceVisibility: 'hidden',
-  },
-  face: {
-    flex: 1, borderRadius: 22, overflow: 'hidden', padding: 23,
-    shadowColor: '#12190F', shadowOpacity: 0.22, shadowRadius: 18,
-    shadowOffset: { width: 0, height: 11 }, elevation: 8, borderWidth: 0,
-  },
-  front: { backgroundColor: C.olive },
-  back: { backgroundColor: C.oliveDk },
-  orbOne: {
-    position: 'absolute', width: 180, height: 180, borderRadius: 90,
-    right: -75, top: -85, backgroundColor: '#31442B', opacity: 0.72,
-  },
-  orbTwo: {
-    position: 'absolute', width: 120, height: 120, borderRadius: 60,
-    left: -55, bottom: -50, backgroundColor: '#263621', opacity: 0.9,
-  },
-  top: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  wantiss: { color: C.white, fontSize: 18, fontFamily: 'Manrope_800ExtraBold', letterSpacing: 0.5 },
-  chip: { width: 48, height: 36, borderRadius: 7, backgroundColor: '#D8C98D', marginTop: 18, overflow: 'hidden' },
-  chipV1: { position: 'absolute', left: 16, top: 0, bottom: 0, width: 1, backgroundColor: '#9E935F' },
-  chipV2: { position: 'absolute', left: 29, top: 0, bottom: 0, width: 1, backgroundColor: '#9E935F' },
-  chipH: { position: 'absolute', left: 0, right: 0, top: 17, height: 1, backgroundColor: '#9E935F' },
-  numberArea: { marginTop: 20 },
-  dots: { flexDirection: 'row', gap: 9, marginBottom: 7 },
-  dotGroup: { flexDirection: 'row', gap: 3 },
-  dot: { width: 5, height: 5, borderRadius: 2.5, backgroundColor: '#61745A', opacity: 0.8 },
-  dotFilled: { backgroundColor: C.white, opacity: 1 },
-  numberText: { color: C.white, fontSize: 17, letterSpacing: 2.2, fontFamily: 'Manrope_600SemiBold' },
-  activeText: { textShadowColor: '#FFFFFF', textShadowRadius: 7 },
-  bottom: { marginTop: 'auto', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end' },
-  caption: { color: '#A9B7A2', fontSize: 8, letterSpacing: 1.1, fontFamily: 'Manrope_600SemiBold', marginBottom: 4 },
-  nameText: { color: C.white, fontSize: 11, letterSpacing: 1.1, fontFamily: 'Manrope_600SemiBold', maxWidth: 190 },
-  expiryText: { color: C.white, fontSize: 12, fontFamily: 'Manrope_600SemiBold' },
-  network: { position: 'absolute', right: 23, bottom: 18, color: C.white, fontSize: 11, fontFamily: 'Manrope_800ExtraBold' },
-  backBrand: { color: C.white, fontSize: 16, fontFamily: 'Manrope_800ExtraBold', marginBottom: 15 },
-  stripe: { height: 47, backgroundColor: '#080C07', marginHorizontal: -23 },
-  signatureRow: { flexDirection: 'row', alignItems: 'center', marginTop: 22, gap: 10 },
-  signature: { flex: 1, height: 35, backgroundColor: '#E8EAE5', justifyContent: 'flex-end', padding: 5 },
-  signatureLabel: { fontSize: 6, color: '#687265', letterSpacing: 0.7, fontFamily: 'Manrope_600SemiBold' },
-  cvcBox: { width: 50, height: 35, borderRadius: 4, backgroundColor: C.white, alignItems: 'center', justifyContent: 'center' },
-  cvcActive: { borderWidth: 0, borderColor: 'transparent' },
-  cvcText: { color: C.ink, fontSize: 13, fontFamily: 'Manrope_700Bold' },
-  backLegal: { color: '#9AA595', fontSize: 8, lineHeight: 12, marginTop: 19, maxWidth: 270, fontFamily: 'Manrope_500Medium' },
-  helper: { textAlign: 'center', color: '#84917F', fontSize: 11, fontFamily: 'Manrope_500Medium', marginBottom: 22 },
-  form: { width: '100%', maxWidth: 430, alignSelf: 'center' },
-  label: { color: C.ink, fontSize: 13, fontFamily: 'Manrope_600SemiBold', marginBottom: 7, marginTop: 3 },
-  inputWrap: {
-    minHeight: 52, borderWidth: 0, borderColor: 'transparent', borderRadius: 14,
-    backgroundColor: C.white, flexDirection: 'row', alignItems: 'center',
-    paddingHorizontal: 15, marginBottom: 14,
-  },
-  inputFocus: { borderWidth: 0, borderColor: 'transparent', shadowColor: C.sage, shadowOpacity: 0.2, shadowRadius: 7, elevation: 2 },
-  inputError: { borderColor: C.danger, backgroundColor: '#FBE2E3' },
-  input: {
-    flex: 1, color: C.ink, fontSize: 16, fontFamily: 'Manrope_600SemiBold',
-    letterSpacing: 0.3, paddingVertical: Platform.OS === 'ios' ? 14 : 10,
-  },
-  brandMini: { color: C.muted, fontSize: 10, fontFamily: 'Manrope_800ExtraBold', letterSpacing: 0.4 },
-  row: { flexDirection: 'row', gap: 12 },
-  half: { flex: 1 },
-  errorText: { color: C.danger, fontSize: 13, fontFamily: 'Manrope_600SemiBold', marginTop: -3, marginBottom: 13 },
-  saveButton: {
-    minHeight: 54, borderRadius: 17, backgroundColor: C.olive,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    gap: 9, marginTop: 3,
-  },
-  savePressed: { transform: [{ scale: 0.985 }] },
-  saveText: { color: C.white, fontSize: 15, fontFamily: 'Manrope_700Bold' },
-  secureNote: {
-    color: '#84917F', fontSize: 10.5, lineHeight: 15, textAlign: 'center',
-    fontFamily: 'Manrope_500Medium', marginTop: 12, paddingHorizontal: 22,
-  },
+export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: () => void; onSaved?: () => void }) {
+  const [si, setSi] = useState<{ client_secret: string; publishable_key: string } | null>(null);
+  const [fail, setFail] = useState('');
+  useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(String(e?.message || e))); }, []);
+  return (
+    <SafeAreaProvider>
+      {si ? <StripeProvider publishableKey={si.publishable_key}>
+        <AddCardScreen clientSecret={si.client_secret} onBack={onBack} onDone={() => { onSaved?.(); onBack?.(); }} />
+      </StripeProvider> : <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
+        <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
+        {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
+      </View>}
+    </SafeAreaProvider>
+  );
+}
+
+const s = StyleSheet.create({
+  root: { flex: 1, backgroundColor: C.bg },
+  back: { borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' },
+  face: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', backgroundColor: C.olive, backfaceVisibility: 'hidden' },
+  lbl: { fontFamily: FW[600], color: C.sage, opacity: 0.62, letterSpacing: 0.4 },
+  label: { fontFamily: FW[600], fontSize: 13, color: C.muted, marginBottom: 7, marginLeft: 2 },
+  paybar: { backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: C.line, paddingTop: 12, paddingHorizontal: 20 },
+  pay: { height: 52, borderRadius: 15, backgroundColor: C.olive, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
 });
