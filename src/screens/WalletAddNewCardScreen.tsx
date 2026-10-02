@@ -266,7 +266,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
           <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Card Details</Text>
-              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 54, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : '#FFFFFF' }}>
+              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 54, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
                 <CardField ref={cardRef} postalCodeEnabled={false} placeholders={{ number: '1234 5678 9012 3456', expiration: 'MM/YY', cvc: 'CVC' }}
                   cardStyle={{ backgroundColor: 'transparent', textColor: C.ink, placeholderColor: '#9AA595', fontSize: 16, borderRadius: 15, textErrorColor: C.danger }}
                   style={{ width: '100%', height: 54 }} onCardChange={onCardChange} onFocus={onFocus} onBlur={onBlurCard} />
@@ -274,7 +274,7 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
             </View>
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Name on Card</Text>
-              <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : '#FFFFFF', justifyContent: 'center' }}>
+              <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : C.sageTint, justifyContent: 'center' }}>
                 <TextInput ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595" autoComplete="cc-name" textContentType="name" maxLength={26} returnKeyType="done" autoCapitalize="characters" autoCorrect={false}
                   onChangeText={t => { setName(t.replace(/[^\\p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
                   onFocus={() => { setFocused('name'); flipTo(0); }} onBlur={() => setFocused(f => (f === 'name' ? '' : f))} onSubmitEditing={onSave}
