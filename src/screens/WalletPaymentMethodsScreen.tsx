@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: BACKGROUND },
   header: { height: 100, paddingHorizontal: 10, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: BACKGROUND },
   headerButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Manrope_800ExtraBold' },
+  headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Inter_700Bold' },
   content: { paddingHorizontal: 16, paddingTop: 28 },
   intro: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', marginBottom: 14 },
   option: { minHeight: 82, flexDirection: 'row', alignItems: 'center', paddingVertical: 14, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: LINE },
