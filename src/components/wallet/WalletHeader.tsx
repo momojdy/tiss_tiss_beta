@@ -70,7 +70,7 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
 
 const styles = StyleSheet.create({
   header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end' },
-  row: { width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  row: { width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   leftSide: { flexDirection: 'row', alignItems: 'center' },
   rightSide: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   iconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: SAGE_TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
