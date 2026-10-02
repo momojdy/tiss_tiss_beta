@@ -7,10 +7,11 @@ import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import WalletHomeScreen from './src/screens/WalletHomeScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
+import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications';
+type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletSettings';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -66,6 +67,16 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'walletSettings') {
+        return (
+          <WalletSettingsScreen
+            onBack={() => setBuyerScreen('wallet')}
+            onHomePress={() => setBuyerScreen('wallet')}
+            onNotificationsPress={() => setBuyerScreen('walletNotifications')}
+          />
+        );
+      }
+
       if (buyerScreen === 'walletNotifications') {
         return (
           <WalletNotificationsScreen
@@ -85,7 +96,7 @@ export default function App() {
           <WalletHomeScreen
             onBack={() => setBuyerScreen('me')}
             onHomePress={() => setBuyerScreen('home')}
-            onMePress={() => setBuyerScreen('me')}
+            onMePress={() => setBuyerScreen('walletSettings')}
             onNotificationsPress={() => setBuyerScreen('walletNotifications')}
           />
         );
