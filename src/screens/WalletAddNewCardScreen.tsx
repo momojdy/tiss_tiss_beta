@@ -457,7 +457,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                   ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595"
                   autoComplete="off" textContentType="none" importantForAutofill="no" spellCheck={false} maxLength={26} returnKeyType="done"
                   autoCapitalize="characters" autoCorrect={false}
-                  onChangeText={t => { setName(t.replace(/[^p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
+                  onChangeText={t => { setName(t.replace(/[^\p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
                   onFocus={() => { setFocused('name'); flipTo(0); }}
                   onBlur={() => setFocused(f => (f === 'name' ? '' : f))}
                   onSubmitEditing={onSave}
