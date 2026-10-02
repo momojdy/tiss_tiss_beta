@@ -432,6 +432,23 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
           </View>
 
+            <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176 }}>
+              <WebView
+                ref={webRef}
+                source={webSource}
+                onMessage={onWebMessage}
+                onLoadEnd={() => webRef.current?.injectJavaScript("window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:'ready'}));true;")}
+                originWhitelist={['*']}
+                javaScriptEnabled
+                domStorageEnabled
+                scrollEnabled={false}
+                keyboardDisplayRequiresUserAction={false}
+                automaticallyAdjustContentInsets={false}
+                bounces={false}
+                style={{ flex: 1, backgroundColor: 'transparent' }}
+              />
+            </Animated.View>
+
             <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
               <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Name on Card</Text>
