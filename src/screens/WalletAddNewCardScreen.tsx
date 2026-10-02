@@ -68,7 +68,6 @@ async function getSetupIntent(): Promise<{ client_secret: string; publishable_ke
 function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; onDone?: () => void; clientSecret: string }) {
   const insets = useSafeAreaInsets();
   const { confirmSetupIntent } = useStripe();
-  const [fontsLoaded] = useFonts({ Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
   const [box, setBox] = useState({ w: 390, h: 800 });
   const [kb, setKb] = useState(0);
   const [brand, setBrand] = useState<Brand>('none');
@@ -178,7 +177,6 @@ function AddCardScreen({ onBack, onDone, clientSecret }: { onBack?: () => void; 
     Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
   };
 
-  if (!fontsLoaded) return null;
   const targetCenter = box.h * 0.4;
   const naturalCenter = barH + 6 + sceneH / 2;
   const cardY = proc.interpolate({ inputRange: [0, 1], outputRange: [0, targetCenter - naturalCenter] });
