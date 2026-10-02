@@ -9,6 +9,7 @@ import InviteFriendRow from '../components/wallet/InviteFriendRow';
 import { MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const NAV_DARK = '#14181B';
+const MUTED = '#5F6B5A';
 const NAV_GREEN = '#81C56C';
 
 function WalletNavLabel({ children }: { children: string }) {
