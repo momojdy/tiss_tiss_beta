@@ -1565,17 +1565,25 @@ export default function WalletSettingsScreen({
       </Modal>
 
       <Modal transparent animationType="slide" visible={countryPickerOpen} onRequestClose={() => setCountryPickerOpen(false)}>
-        <Pressable style={styles.countryScrim} onPress={() => setCountryPickerOpen(false)}>
+        <View style={styles.countryScrim}>
           <View style={styles.countrySheet}>
-            {COUNTRIES.map(country => (
-              <Pressable key={country.code} style={styles.countryOption} onPress={() => changeCountry(country.code)}>
-                <Text style={styles.optionFlag}>{country.flag}</Text>
-                <Text style={styles.countryName}>{country.name}</Text>
-                {country.code === countryCode && <MaterialIcons name="check" size={22} color={TEXT} />}
-              </Pressable>
-            ))}
+            <ScrollView
+              style={styles.countryList}
+              contentContainerStyle={styles.countryListContent}
+              showsVerticalScrollIndicator
+              nestedScrollEnabled
+              keyboardShouldPersistTaps="handled"
+            >
+              {COUNTRIES.map(country => (
+                <Pressable key={country.code} style={styles.countryOption} onPress={() => changeCountry(country.code)}>
+                  <Text style={styles.optionFlag}>{country.flag}</Text>
+                  <Text style={styles.countryName}>{country.name}</Text>
+                  {country.code === countryCode && <MaterialIcons name="check" size={22} color={TEXT} />}
+                </Pressable>
+              ))}
+            </ScrollView>
           </View>
-        </Pressable>
+        </View>
       </Modal>
     </View>
   );
@@ -1636,7 +1644,9 @@ const styles = StyleSheet.create({
   deleteButton: { flex: 1, borderRadius: 999, paddingVertical: 13, alignItems: 'center', backgroundColor: DANGER },
   deleteButtonText: { color: '#FFFFFF', fontFamily: 'Inter_600SemiBold' },
   countryScrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
-  countrySheet: { backgroundColor: BACKGROUND, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 28 },
+  countrySheet: { height: '78%', backgroundColor: BACKGROUND, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12 },
+  countryList: { flex: 1 },
+  countryListContent: { paddingBottom: 16 },
   countryOption: { minHeight: 54, flexDirection: 'row', alignItems: 'center' },
   optionFlag: { fontSize: 28, width: 44 },
   countryName: { flex: 1, color: TEXT, fontSize: 15, fontFamily: 'Inter_500Medium' },
