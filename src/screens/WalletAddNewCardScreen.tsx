@@ -340,7 +340,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
-                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
+                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }], renderToHardwareTextureAndroid: true, shouldRasterizeIOS: false }}>
                     {/* FRONT */}
                     <Animated.View pointerEvents={isBack ? 'none' : 'auto'} style={[StyleSheet.absoluteFill, { opacity: frontOpacity }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
