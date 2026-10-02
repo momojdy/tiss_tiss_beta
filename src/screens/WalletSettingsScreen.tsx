@@ -1266,7 +1266,9 @@ const COUNTRIES = [
     "name": "Zimbabwe",
     "flag": "🇿🇼"
   }
-];\n\ntype Props = {
+];
+
+type Props = {
   onBack?: () => void;
   onHomePress?: () => void;
   onNotificationsPress?: () => void;
