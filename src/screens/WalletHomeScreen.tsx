@@ -81,7 +81,7 @@ export default function WalletHomeScreen({
           ].map(action => (
             <Pressable key={action.label} style={styles.actionItem}>
               <View style={styles.actionIcon}>
-                <MaterialCommunityIcons name={action.icon} size={20} color="#1A2517" />
+                <MaterialCommunityIcons name={action.icon} size={18} color="#1A2517" />
               </View>
               <Text style={styles.actionLabel}>{action.label}</Text>
             </Pressable>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   actionsRow: {
-    paddingTop: 18,
+    paddingTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: 26,
@@ -176,7 +176,7 @@ const styles = StyleSheet.create({
     color: '#1A2517',
     fontSize: 13,
     lineHeight: 13,
-    fontFamily: 'Inter_600SemiBold',
+    fontFamily: 'Inter_500Medium',
     includeFontPadding: false,
     width: 72,
     textAlign: 'center',
