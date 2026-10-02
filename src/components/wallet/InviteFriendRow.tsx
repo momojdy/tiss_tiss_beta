@@ -1,9 +1,7 @@
 import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const IMAGE: number | { uri: string } = {
-  uri: 'https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/refs/heads/main/inviteFriends.png',
-};
+const IMAGE = require('../../../inviteFriends.png');
 
 const OLIVE = '#1A2517';
 const GREY = '#6C7280';
