@@ -70,6 +70,8 @@ function SettingsRow({
   right,
 }: {
   icon: React.ComponentProps<typeof MaterialIcons>['name'];
+  outlineIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  outlineIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -77,7 +79,13 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} /></View>
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}>
+        {outlineIcon ? (
+          <MaterialCommunityIcons name={outlineIcon} size={26} color={danger ? DANGER : TEXT} />
+        ) : (
+          <MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} />
+        )}
+      </View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -266,6 +274,7 @@ export default function WalletSettingsScreen({
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
           icon="brightness-3"
+          outlineIcon="moon-outline"
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
@@ -280,8 +289,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="insert-drive-file" label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="dns" label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="insert-drive-file" outlineIcon="file-document-outline" label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="dns" outlineIcon="database-outline" label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
