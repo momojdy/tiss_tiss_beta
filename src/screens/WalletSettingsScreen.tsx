@@ -77,7 +77,7 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
+      <View style={danger ? [styles.rowIcon, styles.rowIconDanger] : undefined}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -366,7 +366,7 @@ const styles = StyleSheet.create({
   sectionLine: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: LINE },
   generalTop: { height: 20 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 10, minHeight: 44, marginTop: 4, paddingHorizontal: 16 },
-  rowIcon: { width: 40, height: 40, borderRadius: 13, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
+  rowIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   rowLabel: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
   dangerLabel: { color: DANGER },
   rowIconDanger: { backgroundColor: '#FCE8E7' },
