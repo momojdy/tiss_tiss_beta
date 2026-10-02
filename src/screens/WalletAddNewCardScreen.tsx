@@ -334,12 +334,14 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
         >
           {/* ── Hero (sticky) ── */}
           <View style={{ backgroundColor: C.bg, paddingBottom: micro ? 8 : compact ? 16 : 22, zIndex: 5 }}>
-            <Animated.View style={[{ height: barH, paddingTop: insets.top, paddingHorizontal: 22, justifyContent: 'center' }, barStyle]}>
-              <Pressable onPress={onBack} accessibilityLabel="Back" style={[s.back, { width: micro ? 28 : compact ? 34 : 36, height: micro ? 28 : compact ? 34 : 36 }]}>
-                <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
-              </Pressable>
-              <View pointerEvents="none" style={{ position: 'absolute', left: 0, right: 0, top: insets.top, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-                <Text style={{ fontFamily: FW[800], fontSize: micro ? 13 : compact ? 15 : 19, color: C.olive, letterSpacing: 0.1 }}>Add New Card</Text>
+            <Animated.View style={[{ height: 100, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end' }, barStyle]}>
+              <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Pressable onPress={onBack} accessibilityLabel="Back" style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' }}>
+                    <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
+                  </Pressable>
+                  <Text style={{ marginLeft: 12, fontFamily: FW[800], fontSize: 19, lineHeight: 19, color: C.olive, transform: [{ translateY: 1 }] }}>Add New Card</Text>
+                </View>
               </View>
             </Animated.View>
 
@@ -436,7 +438,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
           </View>
 
-            <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176 }} pointerEvents="auto">
+            <Animated.View style={{ transform: [{ translateX: shakeCard }], marginTop: 16 }} pointerEvents="auto">
               <WebView
                 ref={webRef}
                 source={webSource}
@@ -451,7 +453,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                 pointerEvents="auto"
                 automaticallyAdjustContentInsets={false}
                 bounces={false}
-                style={{ flex: 1, backgroundColor: 'transparent' }}
+                style={{ height: 176, backgroundColor: 'transparent' }}
               />
             </Animated.View>
 
@@ -554,6 +556,6 @@ const s = StyleSheet.create({
   face: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, overflow: 'hidden', backgroundColor: C.olive },
   lbl: { fontFamily: FW[600], color: C.sage, opacity: 0.62, letterSpacing: 0.4 },
   label: { fontFamily: FW[600], fontSize: 13, color: C.muted, marginBottom: 7, marginLeft: 2 },
-  paybar: { backgroundColor: '#fff', borderTopWidth: 1, borderTopColor: C.line, paddingTop: 12, paddingHorizontal: 20 },
+  paybar: { backgroundColor: '#fff', paddingTop: 12, paddingHorizontal: 20 },
   pay: { height: 52, borderRadius: 15, backgroundColor: C.olive, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 },
 });
