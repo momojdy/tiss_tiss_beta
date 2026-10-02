@@ -1,3 +1,12 @@
+// @refresh reset
+/**
+ * src/screens/WalletAddNewCardScreen.tsx – Wantiss Add New Card (React Native / Expo dev build)
+ *
+ * npx expo install react-native-webview react-native-svg \
+ *   react-native-safe-area-context expo-font @expo-google-fonts/manrope
+ * Card entry = real Stripe.js Elements (3 separate fields) inside a WebView, so card data never touches React state.
+ */
+console.log('[AddCard] WebView version loaded');
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated, Easing, Keyboard, PanResponder, Platform, Pressable, ScrollView,
@@ -6,43 +15,90 @@ import {
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
+import {
+  useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
+} from '@expo-google-fonts/manrope';
 import { supabase } from '../lib/supabase';
-import { useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
+// import { supabase } from './supabase';   // <- your client
 
-
+/* ───────────── Backend hook: replace with your create-card-setup-intent call ───────────── */
 function makeStripeHtml(clientSecret: string, publishableKey: string) {
   const secret = JSON.stringify(clientSecret);
   const key = JSON.stringify(publishableKey);
-  return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><script src="https://js.stripe.com/v3/"></script><style>
-  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{width:100%;height:54px;margin:0 0 9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.field:last-child{margin-bottom:0}.stripe{width:100%;height:24px}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
-  </style></head><body>
-  <div class="field"><div class="stripe" id="number"></div></div>
-  <div class="field"><div class="stripe" id="expiry"></div></div>
-  <div class="field"><div class="stripe" id="cvc"></div></div>
-  <script>
-  const stripe=Stripe(${key});const elements=stripe.elements({fonts:[{cssSrc:'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600'}]});
-  const style={base:{fontFamily:'Manrope, sans-serif',fontSize:'16px',fontWeight:'600',color:'#1A2517',letterSpacing:'.02em','::placeholder':{color:'#9AA595',fontWeight:'500'}},invalid:{color:'#1A2517'}};
-  const map={num:elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'}),exp:elements.create('cardExpiry',{style,placeholder:'MM/YY'}),cvv:elements.create('cardCvc',{style,placeholder:'CVC'})};
-  map.num.mount('#number');map.exp.mount('#expiry');map.cvv.mount('#cvc');
-  const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
-  const state={num:false,exp:false,cvv:false,brand:'none'};
-  const changed=(kind,e)=>{state[kind]=!!e.complete;if(kind==='num')state.brand=e.brand||'none';send({type:'change',data:{complete:state.num&&state.exp&&state.cvv,validNumber:state.num?'Valid':'Incomplete',validExpiryDate:state.exp?'Valid':'Incomplete',validCVC:state.cvv?'Valid':'Incomplete',brand:state.brand,error:e.error?e.error.message:null}})};
-  map.num.on('change',e=>changed('num',e));map.exp.on('change',e=>changed('exp',e));map.cvv.on('change',e=>changed('cvv',e));
-  map.num.on('focus',()=>send({type:'focus',field:'num'}));map.exp.on('focus',()=>send({type:'focus',field:'exp'}));map.cvv.on('focus',()=>send({type:'focus',field:'cvv'}));
-  map.num.on('blur',()=>send({type:'blur'}));map.exp.on('blur',()=>send({type:'blur'}));map.cvv.on('blur',()=>send({type:'blur'}));
-  window.focusCard=f=>(map[f]||map.num).focus();window.blurCard=()=>Object.values(map).forEach(x=>x.blur());
-  let saving=false;
-  const receive=e=>{try{const m=JSON.parse(e.data);if(m.type==='save'&&!saving){saving=true;if(!(state.num&&state.exp&&state.cvv)){saving=false;send({type:'result',error:'Please complete all card details.'});return}stripe.confirmCardSetup(${secret},{payment_method:{card:map.num,billing_details:{name:m.name}}}).then(r=>{saving=false;send({type:'result',error:r.error?r.error.message:null})}).catch(err=>{saving=false;send({type:'result',error:String(err.message||err)})})}}catch(err){saving=false;send({type:'result',error:String(err.message||err)})}};
-  window.addEventListener('message',receive);document.addEventListener('message',receive);
-  </script></body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://js.stripe.com/v3/"></script>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:transparent;font-family:Manrope,-apple-system,sans-serif}
+.field{margin-bottom:16px}.row .field{margin:0}
+label{display:block;font-size:13px;font-weight:600;color:#5C6B57;margin:0 0 7px 2px}
+.box{height:54px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 16px;transition:background .2s}
+.box.focus{background:#CFE0C7}.box.invalid{background:#FBE2E3}
+.box>div{width:100%}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+</style></head><body>
+<div class="field"><label>Card Number</label><div class="box" id="b-num"><div id="num"></div></div></div>
+<div class="row">
+  <div class="field"><label>Expiry Date</label><div class="box" id="b-exp"><div id="exp"></div></div></div>
+  <div class="field"><label>CVV</label><div class="box" id="b-cvv"><div id="cvv"></div></div></div>
+</div>
+<script>
+const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
+const stripe=Stripe(${key});
+const elements=stripe.elements({fonts:[{cssSrc:'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600'}]});
+const style={base:{fontFamily:'Manrope, sans-serif',fontSize:'16px',fontWeight:'600',color:'#1A2517',letterSpacing:'.02em','::placeholder':{color:'#9AA595',fontWeight:'500'}},invalid:{color:'#1A2517'}};
+const map={
+  num:elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'}),
+  exp:elements.create('cardExpiry',{style,placeholder:'MM/YY'}),
+  cvv:elements.create('cardCvc',{style,placeholder:'CVC'})
+};
+const st={num:{empty:true,complete:false,error:null},exp:{empty:true,complete:false,error:null},cvv:{empty:true,complete:false,error:null},brand:'unknown'};
+function push(){
+  const error=['num','exp','cvv'].map(k=>st[k].error).find(Boolean)||null;
+  send({type:'change',data:{complete:st.num.complete&&st.exp.complete&&st.cvv.complete,
+    numEmpty:st.num.empty,numComplete:st.num.complete,expEmpty:st.exp.empty,expComplete:st.exp.complete,
+    cvvEmpty:st.cvv.empty,cvvComplete:st.cvv.complete,brand:st.brand,error}});
+}
+Object.keys(map).forEach(k=>{
+  const el=map[k],box=document.getElementById('b-'+k);
+  el.mount('#'+k);
+  el.on('change',e=>{st[k]={empty:e.empty,complete:e.complete,error:e.error?e.error.message:null};if(k==='num')st.brand=e.brand||'unknown';box.classList.toggle('invalid',!!e.error);push()});
+  el.on('focus',()=>{box.classList.add('focus');send({type:'focus',field:k})});
+  el.on('blur',()=>{box.classList.remove('focus');send({type:'blur',field:k})});
+});
+window.focusCard=k=>{(map[k]||map.num).focus()};
+window.blurCard=()=>{Object.keys(map).forEach(k=>map[k].blur())};
+let saving=false;
+function onMsg(e){
+  let m;try{m=JSON.parse(e.data)}catch(_){return}
+  if(m.type!=='save'||saving)return;
+  if(!(st.num.complete&&st.exp.complete&&st.cvv.complete)){send({type:'result',error:'Please complete all card details.'});return}
+  saving=true;
+  stripe.confirmCardSetup(${secret},{payment_method:{card:map.num,billing_details:{name:m.name}}})
+    .then(r=>{saving=false;send({type:'result',error:r.error?r.error.message:null})})
+    .catch(err=>{saving=false;send({type:'result',error:String((err&&err.message)||err)})});
+}
+window.addEventListener('message',onMsg);document.addEventListener('message',onMsg);
+</script></body></html>`;
 }
 
+async function getSetupIntent(): Promise<{ client_secret: string; publishable_key: string }> {
+  const { data, error } = await supabase.functions.invoke('create-card-setup-intent', { body: {} });
+  if (error) throw error;
+  if (!data?.client_secret || !data?.publishable_key) throw new Error(data?.error || 'Unable to create card setup session');
+  return { client_secret: data.client_secret, publishable_key: data.publishable_key };
+}
+
+/* ───────────── Tokens ───────────── */
 const C = {
   olive: '#1A2517', oliveDk: '#12190F', sage: '#ACC8A2', sageTint: '#DCE8D2',
   ink: '#1A2517', muted: '#5C6B57', line: '#E4EAE1', bg: '#F5F8F3',
   danger: '#e5484d', ok: '#3F6B37', focus: '#CFE0C7', invalid: '#FBE2E3',
 };
 const FW = { 500: 'Manrope_500Medium', 600: 'Manrope_600SemiBold', 700: 'Manrope_700Bold', 800: 'Manrope_800ExtraBold' } as const;
+
 type Brand = 'none' | 'visa' | 'mc' | 'amex' | 'discover';
 type Phase = 'empty' | 'typing' | 'complete';
 
@@ -55,6 +111,7 @@ const mapBrand = (b?: string): Brand => {
   return 'none';
 };
 
+/* ───────────── Logos ───────────── */
 const LOGO_SIZE: Record<Exclude<Brand, 'none'>, [number, number]> = { visa: [64, 24], mc: [48, 30], amex: [48, 30], discover: [84, 24] };
 function Logo({ brand, h, color }: { brand: Exclude<Brand, 'none'>; h: number; color: string }) {
   const [vw, vh] = LOGO_SIZE[brand];
@@ -63,14 +120,24 @@ function Logo({ brand, h, color }: { brand: Exclude<Brand, 'none'>; h: number; c
   return (
     <Svg width={w} height={h} viewBox={`0 0 ${vw} ${vh}`} preserveAspectRatio="xMaxYMid meet">
       {brand === 'visa' && <SvgText x="62" y="20" textAnchor="end" fontFamily={F} fontStyle="italic" fontSize="24" letterSpacing="-1" fill={color}>VISA</SvgText>}
-      {brand === 'mc' && <><Circle cx="17" cy="15" r="13" fill="#eb001b" /><Circle cx="31" cy="15" r="13" fill="#f79e1b" /><Path d="M24 4.6a13 13 0 0 1 0 20.8 13 13 0 0 1 0-20.8z" fill="#ff5f00" /></>}
-      {brand === 'amex' && <><Rect x="2" y="2" width="44" height="26" rx="5" fill="none" stroke={color} strokeWidth="2" /><SvgText x="24" y="20" textAnchor="middle" fontFamily={F} fontSize="11" letterSpacing=".6" fill={color}>AMEX</SvgText></>}
-      {brand === 'discover' && <><SvgText x="84" y="19" textAnchor="end" fontFamily={F} fontSize="15" letterSpacing="-.2" fill={color}>Discover</SvgText><Circle cx="10" cy="12" r="5.5" fill="#ff6000" /></>}
+      {brand === 'mc' && (<>
+        <Circle cx="17" cy="15" r="13" fill="#eb001b" /><Circle cx="31" cy="15" r="13" fill="#f79e1b" />
+        <Path d="M24 4.6a13 13 0 0 1 0 20.8 13 13 0 0 1 0-20.8z" fill="#ff5f00" />
+      </>)}
+      {brand === 'amex' && (<>
+        <Rect x="2" y="2" width="44" height="26" rx="5" fill="none" stroke={color} strokeWidth="2" />
+        <SvgText x="24" y="20" textAnchor="middle" fontFamily={F} fontSize="11" letterSpacing=".6" fill={color}>AMEX</SvgText>
+      </>)}
+      {brand === 'discover' && (<>
+        <SvgText x="84" y="19" textAnchor="end" fontFamily={F} fontSize="15" letterSpacing="-.2" fill={color}>Discover</SvgText>
+        <Circle cx="10" cy="12" r="5.5" fill="#ff6000" />
+      </>)}
     </Svg>
   );
 }
 const BRAND_COLOR: Record<string, string> = { visa: '#1a1f71', amex: '#2e77bc', discover: '#e57a1f', mc: '#000' };
 
+/* ───────────── Pulsing / settling wrapper ───────────── */
 function Dotted({ phase, pulse, children, style }: { phase: Phase; pulse: Animated.Value; children: React.ReactNode; style?: any }) {
   const pop = useRef(new Animated.Value(1)).current;
   const prev = useRef<Phase>(phase);
@@ -87,65 +154,58 @@ function Dotted({ phase, pulse, children, style }: { phase: Phase; pulse: Animat
   return <Animated.View style={[style, { opacity, transform: [{ scale }] }]}>{children}</Animated.View>;
 }
 
-async function getSetupIntent(): Promise<{ client_secret: string; publishable_key: string }> {
-  const { data, error } = await supabase.functions.invoke('create-card-setup-intent', { body: {} });
-  if (error) throw error;
-  if (!data?.client_secret || !data?.publishable_key) throw new Error(data?.error || 'Unable to create card setup session');
-  return { client_secret: data.client_secret, publishable_key: data.publishable_key };
-}
-
+/* ───────────── Screen ───────────── */
 function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBack?: () => void; onDone?: () => void; clientSecret: string; publishableKey: string }) {
   const insets = useSafeAreaInsets();
+  const [fontsLoaded] = useFonts({ Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
+
   const [box, setBox] = useState({ w: 390, h: 800 });
   const [kb, setKb] = useState(0);
+  useEffect(() => {
+    const s = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => setKb(e.endCoordinates.height));
+    const h = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => { setKb(0); flipTo(0); });
+    return () => { s.remove(); h.remove(); };
+  }, []);
+
   const [brand, setBrand] = useState<Brand>('none');
-  const [det, setDet] = useState<any>({ complete: false });
-  const [seen, setSeen] = useState({ num: false, exp: false, cvv: false });
+  const [det, setDet] = useState<any>({});
   const [focused, setFocused] = useState<'' | 'num' | 'exp' | 'cvv' | 'name'>('');
   const [name, setName] = useState('');
   const [err, setErr] = useState('');
   const [bad, setBad] = useState({ card: false, name: false });
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [isBack, setIsBack] = useState(false);
+  const isBackRef = useRef(false);
+
   const webRef = useRef<WebView>(null);
+  const webSource = useMemo(() => ({ html: makeStripeHtml(clientSecret, publishableKey), baseUrl: 'https://wantiss.app' }), [clientSecret, publishableKey]);
+  const focusCard = (f: 'num' | 'exp' | 'cvv') => webRef.current?.injectJavaScript("window.focusCard&&window.focusCard('" + f + "');true;");
+  const blurCard = () => webRef.current?.injectJavaScript('window.blurCard&&window.blurCard();true;');
   const nameRef = useRef<TextInput>(null);
   const scrollRef = useRef<ScrollView>(null);
-  const pulse = useRef(new Animated.Value(0)).current;
-  const angle = useRef(new Animated.Value(0)).current;
-  const angleNow = useRef(0);
-  const sceneWRef = useRef(348);
-  const shakeCard = useRef(new Animated.Value(0)).current;
-  const shakeName = useRef(new Animated.Value(0)).current;
-  const proc = useRef(new Animated.Value(0)).current;
-  const glow = useRef(new Animated.Value(0)).current;
-  const spin = useRef(new Animated.Value(0)).current;
-  const okAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    const s = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => setKb(e.endCoordinates.height));
-    const h = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => { setKb(0); flipTo(0); webRef.current?.injectJavaScript("window.blurCard && window.blurCard(); true;"); });
-    return () => { s.remove(); h.remove(); };
-  }, [flipTo]);
+  /* shared pulse loop */
+  const pulse = useRef(new Animated.Value(0)).current;
   useEffect(() => {
     Animated.loop(Animated.sequence([
       Animated.timing(pulse, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
       Animated.timing(pulse, { toValue: 0, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
     ])).start();
-    Animated.loop(Animated.timing(spin, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true })).start();
-  }, [pulse, spin]);
-  useEffect(() => {
-    const id = angle.addListener(({ value }) => { angleNow.current = value; });
-    return () => angle.removeListener(id);
-  }, [angle]);
+  }, [pulse]);
 
+  /* sizing (cqw units) */
   const availH = box.h - (Platform.OS === 'ios' ? kb : 0);
   const compact = availH < 620, micro = availH < 420;
   const sceneW = Math.min(box.w - 40, micro ? 128 : compact ? 212 : 348);
   const sceneH = sceneW / 1.586;
   const u = sceneW / 100;
   const barH = insets.top + (micro ? 30 : compact ? 44 : 58);
-  sceneWRef.current = sceneW;
 
+  /* flip */
+  const angle = useRef(new Animated.Value(0)).current;
+  const angleNow = useRef(0);
+  useEffect(() => { const id = angle.addListener(({ value }) => { angleNow.current = value; const b = value >= 90; if (b !== isBackRef.current) { isBackRef.current = b; setIsBack(b); } }); return () => angle.removeListener(id); }, [angle]);
   const flipTo = useCallback((to: number) => {
     angle.stopAnimation();
     const d = Math.abs(to - angleNow.current);
@@ -156,77 +216,103 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const frontOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [1, 1, 0, 0] });
   const backOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [0, 0, 1, 1] });
   const flipScale = angle.interpolate({ inputRange: [0, 90, 180], outputRange: [1, 0.94, 1] });
+
   const drag = useRef({ start: 0 });
   const pan = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) > 6 && Math.abs(g.dx) > Math.abs(g.dy),
     onPanResponderGrant: () => { angle.stopAnimation(); drag.current.start = angleNow.current; },
-    onPanResponderMove: (_, g) => angle.setValue(Math.min(180, Math.max(0, drag.current.start + (g.dx / Math.max(sceneWRef.current, 1)) * 220))),
-    onPanResponderRelease: () => { const t = angleNow.current >= 90 ? 180 : 0; flipTo(t); if (t === 0) webRef.current?.injectJavaScript("window.blurCard && window.blurCard(); true;"); },
+    onPanResponderMove: (_, g) => angle.setValue(Math.min(180, Math.max(0, drag.current.start + (g.dx / sceneWRef.current) * 220))),
+    onPanResponderRelease: () => {
+      const t = angleNow.current >= 90 ? 180 : 0;
+      flipTo(t);
+      if (t === 0) blurCard();
+    },
     onPanResponderTerminate: () => flipTo(angleNow.current >= 90 ? 180 : 0),
   })).current;
+  const sceneWRef = useRef(sceneW); sceneWRef.current = sceneW;
 
+  /* Events from the Stripe page */
   const onFocus = (f: string) => {
-    if (f === 'cvv') { setFocused('cvv'); setSeen(s => ({ ...s, cvv: true })); flipTo(180); }
-    else if (f === 'exp') { setFocused('exp'); setSeen(s => ({ ...s, exp: true })); flipTo(0); }
-    else if (f === 'num') { setFocused('num'); setSeen(s => ({ ...s, num: true })); flipTo(0); }
+    if (f === 'cvv') { setFocused('cvv'); flipTo(180); }
+    else if (f === 'exp') { setFocused('exp'); flipTo(0); }
+    else if (f === 'num') { setFocused('num'); flipTo(0); }
   };
+  const onCardChange = (d: any) => {
+    setDet(d); setBrand(mapBrand(d.brand)); setErr('');
+    setBad(b => ({ ...b, card: !!d.error }));
+    if (d.error) shake(shakeCard);
+  };
+  const onBlurCard = () => setFocused(f => (f === 'name' ? f : ''));
+  const onWebMessage = (ev: WebViewMessageEvent) => {
+    let m: any;
+    try { m = JSON.parse(ev.nativeEvent.data); } catch { return; }
+    if (m.type === 'focus') onFocus(m.field);
+    else if (m.type === 'blur') onBlurCard();
+    else if (m.type === 'change') onCardChange(m.data);
+    else if (m.type === 'result') {
+      if (m.error) {
+        Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
+        glow.setValue(0); setErr(m.error); return;
+      }
+      // setup_intent.succeeded webhook writes user_payment_methods server-side.
+      setSuccess(true);
+      Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
+    }
+  };
+
+  const phaseOf = (empty: boolean | undefined, complete: boolean | undefined): Phase => (complete ? 'complete' : empty === false ? 'typing' : 'empty');
+  const numPhase: Phase = phaseOf(det.numEmpty, det.numComplete);
+  const expPhase: Phase = phaseOf(det.expEmpty, det.expComplete);
+  const cvvPhase: Phase = phaseOf(det.cvvEmpty, det.cvvComplete);
+
+  /* shake */
+  const shakeCard = useRef(new Animated.Value(0)).current;
+  const shakeName = useRef(new Animated.Value(0)).current;
   const shake = (v: Animated.Value) => {
     v.setValue(0);
     Animated.sequence([-5, 5, -3, 3, 0].map(x => Animated.timing(v, { toValue: x, duration: 80, useNativeDriver: true }))).start();
   };
-  const onCardChange = (d: any) => {
-    setDet(d); setBrand(mapBrand(d.brand)); setErr('');
-    const invalidCard = !!d.error;
-    setBad(b => ({ ...b, card: invalidCard }));
-    if (invalidCard) shake(shakeCard);
-  };
-  const onBlurCard = () => setFocused(f => (f === 'name' ? f : ''));
-  const onWebMessage = (event: WebViewMessageEvent) => {
-    try {
-      const message = JSON.parse(event.nativeEvent.data);
-      if (message.type === 'focus') onFocus(message.field);
-      else if (message.type === 'blur') onBlurCard();
-      else if (message.type === 'change') onCardChange(message.data);
-      else if (message.type === 'result') {
-        if (message.error) {
-          Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
-          glow.setValue(0); setErr(message.error); return;
-        }
-        setSuccess(true);
-        Animated.spring(okAnim, { toValue: 1, friction: 5, tension: 120, useNativeDriver: true }).start();
-      }
-    } catch {}
-  };
-  const numPhase: Phase = det.validNumber === 'Valid' ? 'complete' : seen.num ? 'typing' : 'empty';
-  const expPhase: Phase = det.validExpiryDate === 'Valid' ? 'complete' : seen.exp ? 'typing' : 'empty';
-  const cvvPhase: Phase = det.validCVC === 'Valid' ? 'complete' : seen.cvv ? 'typing' : 'empty';
 
-  const onSave = async () => {
-    const problems = { card: !det.complete, name: name.trim().length < 2 };
-    if (problems.card || problems.name) {
-      setBad(problems); if (problems.card) shake(shakeCard); if (problems.name) shake(shakeName);
-      setErr('Please complete all fields.'); return;
-    }
-    Keyboard.dismiss(); setErr(''); flipTo(0); scrollRef.current?.scrollTo({ y: 0, animated: false });
-    setProcessing(true);
-    Animated.timing(proc, { toValue: 1, duration: 800, easing: Easing.bezier(0.22, 0.8, 0.24, 1), useNativeDriver: true }).start();
-    Animated.timing(glow, { toValue: 1, duration: 500, useNativeDriver: true }).start();
-    webRef.current?.postMessage(JSON.stringify({ type: 'save', name: name.trim() }));
-  };
+  /* processing animation */
+  const proc = useRef(new Animated.Value(0)).current;       // 0 → 1
+  const glow = useRef(new Animated.Value(0)).current;
+  const spin = useRef(new Animated.Value(0)).current;
+  const okAnim = useRef(new Animated.Value(0)).current;
+  useEffect(() => {
+    Animated.loop(Animated.timing(spin, { toValue: 1, duration: 900, easing: Easing.linear, useNativeDriver: true })).start();
+  }, [spin]);
 
   const targetCenter = box.h * 0.4;
   const naturalCenter = barH + 6 + sceneH / 2;
   const cardY = proc.interpolate({ inputRange: [0, 1], outputRange: [0, targetCenter - naturalCenter] });
   const cardS = proc.interpolate({ inputRange: [0, 1], outputRange: [1, 1.06] });
+
+  const onSave = async () => {
+    const problems = { card: !(det.complete), name: name.trim().length < 2 };
+    if (problems.card || problems.name) {
+      setBad(problems); if (problems.card) shake(shakeCard); if (problems.name) shake(shakeName);
+      setErr('Please complete all fields.'); return;
+    }
+    Keyboard.dismiss(); setErr(''); flipTo(0);
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+    setProcessing(true);
+    Animated.timing(proc, { toValue: 1, duration: 800, easing: Easing.bezier(0.22, 0.8, 0.24, 1), useNativeDriver: true }).start();
+    Animated.timing(glow, { toValue: 1, duration: 500, useNativeDriver: true }).start();
+
+    webRef.current?.postMessage(JSON.stringify({ type: 'save', name: name.trim() }));
+  };
+
+  if (!fontsLoaded) return <View style={s.root} />;
+
   const glowColor = success ? 'rgba(63,107,55,.6)' : 'rgba(172,200,162,.55)';
   const formStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 24] }) }] };
   const barStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }) };
   const payStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 100] }) }] };
   const statusOpacity = proc.interpolate({ inputRange: [0.6, 1], outputRange: [0, 1], extrapolate: 'clamp' });
+
   const groups = brand === 'amex' ? [4, 6, 5] : [4, 4, 4, 4];
-  const stripeHtml = useMemo(() => makeStripeHtml(clientSecret, publishableKey), [clientSecret, publishableKey]);
   const cvvLen = brand === 'amex' ? 4 : 3;
-  const ring = (on: boolean) => on ? { borderColor: 'rgba(255,255,255,.6)', backgroundColor: 'rgba(255,255,255,.07)' } : null;
+  const ring = (on: boolean) => (on ? { borderColor: 'rgba(255,255,255,.6)', backgroundColor: 'rgba(255,255,255,.07)' } : null);
   const slotRing = { position: 'absolute' as const, top: -1.6 * u, bottom: -1.6 * u, left: -2.2 * u, right: -2.2 * u, borderRadius: 2.4 * u, borderWidth: 0.35 * u, borderColor: 'transparent' };
   const nameVal = name.trim() ? name.toUpperCase() : '';
 
@@ -234,7 +320,12 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
     <View style={s.root} onLayout={(e: LayoutChangeEvent) => setBox({ w: e.nativeEvent.layout.width, h: e.nativeEvent.layout.height })}>
       <StatusBar barStyle="dark-content" />
       <View style={{ flex: 1, paddingBottom: Platform.OS === 'ios' ? kb : 0 }}>
-        <ScrollView ref={scrollRef} stickyHeaderIndices={[0]} keyboardShouldPersistTaps="handled" scrollEnabled={!processing} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 16 }}>
+        <ScrollView
+          ref={scrollRef} stickyHeaderIndices={[0]} keyboardShouldPersistTaps="handled"
+          scrollEnabled={!processing} showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ paddingBottom: 16 }}
+        >
+          {/* ── Hero (sticky) ── */}
           <View style={{ backgroundColor: C.bg, paddingBottom: micro ? 8 : compact ? 16 : 22, zIndex: 5 }}>
             <Animated.View style={[{ height: barH, paddingTop: insets.top, paddingHorizontal: 22, justifyContent: 'center' }, barStyle]}>
               <Pressable onPress={onBack} accessibilityLabel="Back" style={[s.back, { width: micro ? 28 : compact ? 34 : 36, height: micro ? 28 : compact ? 34 : 36 }]}>
@@ -244,12 +335,15 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                 <Text style={{ fontFamily: FW[800], fontSize: micro ? 13 : compact ? 15 : 19, color: C.olive, letterSpacing: 0.1 }}>Add New Card</Text>
               </View>
             </Animated.View>
+
             <View style={{ marginTop: compact ? 2 : 6, alignItems: 'center' }}>
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
                   <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
-                    <Animated.View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between', opacity: frontOpacity }]}>
+                    {/* FRONT */}
+                    <Animated.View pointerEvents={isBack ? 'none' : 'auto'} style={[StyleSheet.absoluteFill, { opacity: frontOpacity }]}>
+                    <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
                       <View pointerEvents="none" style={{ position: 'absolute', right: 0, bottom: 0, width: '82%', aspectRatio: 1, overflow: 'hidden' }}>
                         <View style={{ position: 'absolute', width: '96%', height: '96%', right: '-38%', bottom: '-44%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.08)' }} />
                         <View style={{ position: 'absolute', width: '68%', height: '68%', right: '-10%', bottom: '-26%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.14)' }} />
@@ -261,98 +355,119 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                           <View style={{ position: 'absolute', top: 0, bottom: 0, left: '38%', width: 0.3 * u, backgroundColor: 'rgba(26,37,23,.28)' }} />
                           <View style={{ position: 'absolute', top: 0, bottom: 0, left: '38%', marginLeft: 4.2 * u, width: 0.3 * u, backgroundColor: 'rgba(26,37,23,.28)' }} />
                         </View>
-                        <View style={{ width: 17 * u, height: 9 * u, alignItems: 'flex-end', justifyContent: 'center' }}>{brand !== 'none' && <Logo brand={brand} h={9 * u} color="#fff" />}</View>
+                        <View style={{ width: 17 * u, height: 9 * u, alignItems: 'flex-end', justifyContent: 'center' }}>
+                          {brand !== 'none' && <Logo brand={brand} h={9 * u} color="#fff" />}
+                        </View>
                       </View>
+
                       <Pressable onPress={() => nameRef.current?.focus()} style={{ marginTop: 5 * u }}>
                         <View pointerEvents="none" style={[slotRing, ring(focused === 'name')]} />
                         <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Card holder</Text>
-                        <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 4.8 * u }}>{nameVal || 'FULL NAME'}</Text>
+                        <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 1.2 * 4 * u }}>{nameVal || 'FULL NAME'}</Text>
                       </Pressable>
-                      <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('exp'); true;")} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
+
+                      <Pressable onPress={() => focusCard('num')} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
                         <View pointerEvents="none" style={[slotRing, ring(focused === 'num')]} />
                         <Dotted phase={numPhase} pulse={pulse} style={{ flexDirection: 'row', alignItems: 'center', minHeight: 6.3 * u }}>
-                          {numPhase !== 'empty' && groups.map((g, gi) => <View key={gi} style={{ flexDirection: 'row', marginLeft: gi ? 0.5 * 6.3 * u : 0 }}>{Array.from({ length: g }).map((_, i) => <Text key={i} style={{ width: 0.68 * 6.3 * u, textAlign: 'center', fontFamily: FW[600], fontSize: 6.3 * u, lineHeight: 7.6 * u, includeFontPadding: false, color: C.sage }}>•</Text>)}</View>)}
+                          {numPhase !== 'empty' && groups.map((g, gi) => (
+                            <View key={gi} style={{ flexDirection: 'row', marginLeft: gi ? 0.5 * 6.3 * u : 0 }}>
+                              {Array.from({ length: g }).map((_, i) => (
+                                <Text key={i} style={{ width: 0.68 * 6.3 * u, textAlign: 'center', fontFamily: FW[600], fontSize: 6.3 * u, lineHeight: 6.3 * u * 1.2, includeFontPadding: false, color: C.sage }}>•</Text>
+                              ))}
+                            </View>
+                          ))}
                         </Dotted>
                       </Pressable>
+
                       <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
-                        <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")}>
+                        <Pressable onPress={() => focusCard('exp')}>
                           <View pointerEvents="none" style={[slotRing, ring(focused === 'exp')]} />
                           <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Expires</Text>
-                          {expPhase === 'empty' ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text> : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage }}>••/••</Text></Dotted>}
+                          {expPhase === 'empty'
+                            ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text>
+                            : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage }}>••/••</Text></Dotted>}
                         </Pressable>
                       </View>
+                    </View>
+
                     </Animated.View>
-                    <Animated.View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }], opacity: backOpacity }]}>
+
+                    {/* BACK */}
+                    <Animated.View pointerEvents={isBack ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, { opacity: backOpacity }]}>
+                    <View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }] }]}>
                       <View style={{ position: 'absolute', left: 0, right: 0, top: '12%', height: '17%', backgroundColor: C.oliveDk }} />
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
-                        <View style={{ flex: 1 }}><View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} /><Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text></View>
+                        <View style={{ flex: 1 }}>
+                          <View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} />
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text>
+                        </View>
                         <View style={{ width: 22 * u }}>
-                          <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('cvv'); true;")} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
-                            <Dotted phase={cvvPhase} pulse={pulse} style={{ flexDirection: 'row' }}>{cvvPhase !== 'empty' && Array.from({ length: cvvLen }).map((_, i) => <Text key={i} style={{ fontFamily: FW[800], fontSize: 5.4 * u, lineHeight: 6.5 * u, includeFontPadding: false, color: C.olive, marginHorizontal: 0.3 * u }}>•</Text>)}</Dotted>
+                          <Pressable onPress={() => focusCard('cvv')}
+                            style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
+                            <Dotted phase={cvvPhase} pulse={pulse} style={{ flexDirection: 'row' }}>
+                              {cvvPhase !== 'empty' && Array.from({ length: cvvLen }).map((_, i) => (
+                                <Text key={i} style={{ fontFamily: FW[800], fontSize: 5.4 * u, lineHeight: 6.5 * u, includeFontPadding: false, color: C.olive, marginHorizontal: 0.06 * 5.4 * u }}>•</Text>
+                              ))}
+                            </Dotted>
                           </Pressable>
                           <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>CVV</Text>
                         </View>
                       </View>
-                      <View style={{ position: 'absolute', right: 7 * u, bottom: 5 * u, width: 11 * u, height: 6 * u, alignItems: 'flex-end', justifyContent: 'center' }}>{brand !== 'none' && <Logo brand={brand} h={6 * u} color="#fff" />}</View>
+                      <View style={{ position: 'absolute', right: 7 * u, bottom: 5 * u, width: 11 * u, height: 6 * u, alignItems: 'flex-end', justifyContent: 'center' }}>
+                        {brand !== 'none' && <Logo brand={brand} h={6 * u} color="#fff" />}
+                      </View>
+                    </View>
                     </Animated.View>
                   </Animated.View>
                 </View>
               </Animated.View>
             </View>
-          </View>
 
-          <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
-            <View style={{ marginBottom: 16 }}>
-              <Text style={s.label}>Card Details</Text>
-              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 180, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
-                <View style={{ height: 180, backgroundColor: 'transparent' }}>
-                <WebView
-                  ref={webRef}
-                  originWhitelist={['https://*', 'about:blank']}
-                  source={{ html: stripeHtml, baseUrl: 'https://wantiss.app' }}
-                  onShouldStartLoadWithRequest={r =>
-                    r.isTopFrame === false ||
-                    /^(about:|https:\/\/([a-z0-9-]+\.)*(stripe\.com|stripe\.network|wantiss\.app|googleapis\.com|gstatic\.com)(\/|$))/i.test(r.url)
-                  }
-                  javaScriptEnabled
-                  domStorageEnabled
-                  keyboardDisplayRequiresUserAction={false}
-                  scrollEnabled={false}
-                  bounces={false}
-                  showsVerticalScrollIndicator={false}
-                  automaticallyAdjustContentInsets={false}
-                  onMessage={onWebMessage}
-                  style={{ flex: 1, backgroundColor: 'transparent' }}
-                />
-              </View>
-              </Animated.View>
-            </View>
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Name on Card</Text>
               <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : C.sageTint, justifyContent: 'center' }}>
-                <TextInput ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595" autoComplete="cc-name" textContentType="name" maxLength={26} returnKeyType="done" autoCapitalize="characters" autoCorrect={false}
-                  onChangeText={t => { setName(t.replace(/[^\\p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
-                  onFocus={() => { setFocused('name'); flipTo(0); }} onBlur={() => setFocused(f => (f === 'name' ? '' : f))} onSubmitEditing={onSave}
-                  style={{ height: '100%', paddingHorizontal: 16, fontSize: 16, fontFamily: FW[600], letterSpacing: 0.32, color: C.ink, textTransform: 'uppercase' }} />
+                <TextInput
+                  ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595"
+                  autoComplete="cc-name" textContentType="name" maxLength={26} returnKeyType="done"
+                  autoCapitalize="characters" autoCorrect={false}
+                  onChangeText={t => { setName(t.replace(/[^p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
+                  onFocus={() => { setFocused('name'); flipTo(0); }}
+                  onBlur={() => setFocused(f => (f === 'name' ? '' : f))}
+                  onSubmitEditing={onSave}
+                  style={{ height: '100%', paddingHorizontal: 16, fontSize: 16, fontFamily: FW[600], letterSpacing: 0.32, color: C.ink, textTransform: 'uppercase' }}
+                />
               </Animated.View>
             </View>
+
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8, marginHorizontal: 2 }}>
               <Text style={{ fontFamily: FW[600], fontSize: 13, color: C.muted }}>We accept</Text>
-              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>{(['visa', 'mc', 'amex', 'discover'] as const).map(b => <View key={b} style={{ opacity: brand === b ? 1 : 0.4 }}><Logo brand={b} h={22} color={brand === b || b === 'mc' ? BRAND_COLOR[b] : '#6b7280'} /></View>)}</View>
+              <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                {(['visa', 'mc', 'amex', 'discover'] as const).map(b => (
+                  <View key={b} style={{ opacity: brand === b ? 1 : 0.4 }}>
+                    <Logo brand={b} h={22} color={brand === b || b === 'mc' ? BRAND_COLOR[b] : '#6b7280'} />
+                  </View>
+                ))}
+              </View>
             </View>
+
             <Text style={{ marginTop: 14, marginHorizontal: 2, color: C.danger, fontFamily: FW[600], fontSize: 13, minHeight: 16 }}>{err}</Text>
           </Animated.View>
         </ScrollView>
 
-        {!compact && <Animated.View style={[s.paybar, { paddingBottom: 12 + insets.bottom }, payStyle]} pointerEvents={processing ? 'none' : 'auto'}>
-          <Pressable onPress={onSave} disabled={processing} style={({ pressed }) => [s.pay, pressed && { transform: [{ scale: 0.97 }] }]}>
-            <Text style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}>Save Card</Text>
-            <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M5 12h14M13 6l6 6-6 6" /></Svg>
-          </Pressable>
-        </Animated.View>}
+        {/* ── Pay bar ── */}
+        {!compact && (
+          <Animated.View style={[s.paybar, { paddingBottom: 12 + insets.bottom }, payStyle]} pointerEvents={processing ? 'none' : 'auto'}>
+            <Pressable onPress={onSave} disabled={processing} style={({ pressed }) => [s.pay, pressed && { transform: [{ scale: 0.97 }] }]}>
+              <Text style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}>Save Card</Text>
+              <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M5 12h14M13 6l6 6-6 6" /></Svg>
+            </Pressable>
+          </Animated.View>
+        )}
       </View>
 
-      <Animated.View pointerEvents={processing ? 'auto' : 'none'} style={{ position: 'absolute', left: 0, right: 0, top: targetCenter + (sceneH * 1.06) / 2 + 34, paddingHorizontal: 32, alignItems: 'center', opacity: statusOpacity, zIndex: 6 }}>
+      {/* ── Status overlay ── */}
+      <Animated.View pointerEvents={processing ? 'auto' : 'none'}
+        style={{ position: 'absolute', left: 0, right: 0, top: targetCenter + (sceneH * 1.06) / 2 + 34, paddingHorizontal: 32, alignItems: 'center', opacity: statusOpacity, zIndex: 6 }}>
         <View style={{ width: 54, height: 54 }}>
           <Animated.View style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, borderWidth: 4, borderColor: 'rgba(26,37,23,.14)', borderTopColor: C.olive, opacity: success ? 0 : 1, transform: [{ rotate: spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) }] }} />
           <Animated.View style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, backgroundColor: C.ok, alignItems: 'center', justifyContent: 'center', opacity: okAnim, transform: [{ scale: okAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] }) }] }}>
@@ -361,9 +476,12 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
         </View>
         <View style={{ marginTop: 22, alignItems: 'center' }}>
           <Text style={{ fontFamily: FW[800], fontSize: 20, color: C.ink, letterSpacing: -0.2, marginBottom: 6 }}>{success ? 'Card Saved' : 'Saving Card…'}</Text>
-          <Text style={{ fontFamily: FW[500], fontSize: 14.5, lineHeight: 21.75, color: C.muted, textAlign: 'center' }}>{success ? 'Your card has been saved for future payments.' : 'This only takes a moment.'}</Text>
+          <Text style={{ fontFamily: FW[500], fontSize: 14.5, lineHeight: 21.75, color: C.muted, textAlign: 'center' }}>
+            {success ? 'Your card has been saved for future payments.' : 'This only takes a moment.'}
+          </Text>
         </View>
-        <Pressable onPress={onDone} disabled={!success} style={{ marginTop: 26, height: 48, paddingHorizontal: 30, borderRadius: 14, backgroundColor: C.sageTint, justifyContent: 'center', opacity: success ? 1 : 0 }}>
+        <Pressable onPress={onDone} disabled={!success}
+          style={{ marginTop: 26, height: 48, paddingHorizontal: 30, borderRadius: 14, backgroundColor: C.sageTint, justifyContent: 'center', opacity: success ? 1 : 0 }}>
           <Text style={{ fontFamily: FW[700], fontSize: 15, color: C.ink }}>Done</Text>
         </Pressable>
       </Animated.View>
@@ -371,18 +489,28 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   );
 }
 
+/* ───────────── Exported screen (matches your router: <WalletAddNewCardScreen onBack=... />) ───────────── */
 export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: () => void; onSaved?: () => void }) {
   const [si, setSi] = useState<{ client_secret: string; publishable_key: string } | null>(null);
   const [fail, setFail] = useState('');
   useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(String(e?.message || e))); }, []);
+
   return (
+    // Own provider so this screen works even if App.tsx has none. Moving one provider to the app root is still cleaner.
     <SafeAreaProvider>
-      {si ? <View style={{ flex: 1 }}>
-        <AddCardScreen clientSecret={si.client_secret} publishableKey={si.publishable_key} onBack={onBack} onDone={() => { onSaved?.(); onBack?.(); }} />
-      </View> : <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
-        <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
-        {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
-      </View>}
+      {si ? (
+        <AddCardScreen
+          clientSecret={si.client_secret}
+          publishableKey={si.publishable_key}
+          onBack={onBack}
+          onDone={() => { onSaved?.(); onBack?.(); }}
+        />
+      ) : (
+        <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
+          <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
+          {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
+        </View>
+      )}
     </SafeAreaProvider>
   );
 }
