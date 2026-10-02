@@ -344,7 +344,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                   <Pressable onPress={onBack} accessibilityLabel="Back" style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' }}>
                     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
                   </Pressable>
-                  <Text style={{ marginLeft: 12, fontFamily: FW[800], fontSize: 19, lineHeight: 23, color: C.olive, transform: [{ translateY: 1 }] }}>Add New Card</Text>
+                  <Text style={{ marginLeft: 12, fontFamily: 'Inter_700Bold', fontSize: 19, lineHeight: 23, color: C.olive, transform: [{ translateY: 1 }] }}>Add New Card</Text>
                 </View>
               </View>
             </Animated.View>
