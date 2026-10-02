@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
   chipText: {
     fontSize: 12,
     lineHeight: 14.5,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_600SemiBold',
     includeFontPadding: false,
     color: GREEN,
   },
@@ -549,7 +549,7 @@ const styles = StyleSheet.create({
     color: OLIVE,
     fontSize: 13,
     lineHeight: 15.7,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_600SemiBold',
     includeFontPadding: false,
   },
   subtitle: {
