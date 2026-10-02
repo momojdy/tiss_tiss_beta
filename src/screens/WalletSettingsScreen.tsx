@@ -1513,9 +1513,9 @@ export default function WalletSettingsScreen({
         <View style={styles.generalTop} />
         <SectionTitle title="General" />
         <SettingsRow icon="person-outline" label="Personal info" onPress={onPersonalInfoPress} />
-        {wallet && <SettingsRow icon="add-card" label="Payment methods" onPress={onPaymentMethodsPress} />}
+        <SettingsRow icon="add-card" label="Payment methods" onPress={onPaymentMethodsPress} />
         <SettingsRow icon="notifications-none" label="Notifications" onPress={onNotificationsSettingsPress} />
-        {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
+        <SettingsRow icon="history" label="History" onPress={onHistoryPress} />
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
           icon="dark-mode" ionIcon="moon-outline"
