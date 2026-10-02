@@ -69,7 +69,7 @@ function SettingsRow({
   danger,
   right,
 }: {
-  icon: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  icon: React.ComponentProps<typeof MaterialIcons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -77,7 +77,7 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialCommunityIcons name={icon} size={23} color={danger ? DANGER : TEXT} /></View>
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} /></View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -263,7 +263,7 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="add-card" label="Payment methods" onPress={onPaymentMethodsPress} />}
         <SettingsRow icon="notifications-none" label="Notifications" onPress={onNotificationsSettingsPress} />
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
-        <SettingsRow icon="shield-outline" label="Security" onPress={onSecurityPress} />
+        <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
           icon="dark-mode"
           label="Dark mode"
@@ -280,8 +280,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="shield-lock-outline" label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="database-outline" label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="policy" label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="database-saver-on" label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
