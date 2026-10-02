@@ -564,7 +564,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontSize: 13,
     lineHeight: 15.7,
-    fontFamily: 'Inter_700Bold',
+    fontFamily: 'Inter_600SemiBold',
     includeFontPadding: false,
   },
 });
