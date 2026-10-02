@@ -64,12 +64,14 @@ function SectionTitle({ title }: { title: string }) {
 
 function SettingsRow({
   icon,
+  communityIcon,
   label,
   onPress,
   danger,
   right,
 }: {
   icon: React.ComponentProps<typeof MaterialIcons>['name'];
+  communityIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -77,7 +79,13 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} /></View>
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}>
+        {communityIcon ? (
+          <MaterialCommunityIcons name={communityIcon} size={26} color={danger ? DANGER : TEXT} />
+        ) : (
+          <MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} />
+        )}
+      </View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
@@ -264,7 +272,7 @@ export default function WalletSettingsScreen({
         {wallet && <SettingsRow icon="history" label="History" onPress={onHistoryPress} />}
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
-          icon="weather-night"
+          icon="dark-mode" communityIcon="weather-night"
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
@@ -279,8 +287,8 @@ export default function WalletSettingsScreen({
 
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="policy" communityIcon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="database-saver-on" communityIcon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
 
         {wallet && (
           <>
