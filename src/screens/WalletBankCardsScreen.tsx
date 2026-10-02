@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
   headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Manrope_800ExtraBold' },
   content: { alignItems: 'center', paddingHorizontal: 28, paddingTop: 64 },
   emptyIcon: { width: 92, height: 92, borderRadius: 46, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
-  emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Manrope_800ExtraBold', marginBottom: 8 },
+  emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
   emptyBody: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', textAlign: 'center', maxWidth: 330, marginBottom: 22 },
   addButton: { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 999, paddingVertical: 13, paddingHorizontal: 22, backgroundColor: TEXT },
   addButtonPressed: { opacity: 0.72 },
