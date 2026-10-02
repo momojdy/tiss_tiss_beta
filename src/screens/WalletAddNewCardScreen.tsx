@@ -430,6 +430,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               </Animated.View>
             </View>
 
+          </View>
+
             <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
               <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Name on Card</Text>
