@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Animated, Easing, Keyboard, PanResponder, Platform, Pressable, ScrollView,
   StatusBar, StyleSheet, Text, TextInput, View, LayoutChangeEvent,
@@ -7,30 +7,32 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import { supabase } from '../lib/supabase';
+import { useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
 
 
 function makeStripeHtml(clientSecret: string, publishableKey: string) {
   const secret = JSON.stringify(clientSecret);
   const key = JSON.stringify(publishableKey);
   return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><script src="https://js.stripe.com/v3/"></script><style>
-  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{height:54px;margin-bottom:9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.field:last-child{margin-bottom:0}.stripe{width:100%}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
+  *{box-sizing:border-box}html,body{margin:0;padding:0;background:transparent}body{font-family:Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.field{height:54px;margin-bottom:9px;border-radius:15px;background:#DCE8D2;display:flex;align-items:center;padding:0 15px}.row{display:flex;gap:9px}.row .field{flex:1}.stripe{width:100%}.StripeElement{width:100%;padding:0}.StripeElement--focus{outline:none}.StripeElement--invalid{color:#e5484d}
   </style></head><body>
-  <div id="number" class="field"><div class="stripe"></div></div>
-  <div id="expiry" class="field"><div class="stripe"></div></div>
-  <div id="cvc" class="field"><div class="stripe"></div></div>
+  <div class="field"><div class="stripe" id="number"></div></div>
+  <div class="row"><div class="field"><div class="stripe" id="expiry"></div></div><div class="field"><div class="stripe" id="cvc"></div></div></div>
   <script>
-  const stripe=Stripe(${key});const elements=stripe.elements();const style={base:{color:'#1A2517',fontSize:'16px',fontFamily:'-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif',fontWeight:'600',lineHeight:'24px',':-webkit-autofill':{color:'#1A2517'},'::placeholder':{color:'#9AA595'}},invalid:{color:'#e5484d'}};
-  const number=elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'});const expiry=elements.create('cardExpiry',{style,placeholder:'MM / YY'});const cvc=elements.create('cardCvc',{style,placeholder:'CVC'});
-  number.mount('#number .stripe');expiry.mount('#expiry .stripe');cvc.mount('#cvc .stripe');
+  const stripe=Stripe(${key});const elements=stripe.elements({fonts:[{cssSrc:'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600'}]});
+  const style={base:{fontFamily:'Manrope, sans-serif',fontSize:'16px',fontWeight:'600',color:'#1A2517',letterSpacing:'.02em','::placeholder':{color:'#9AA595',fontWeight:'500'}},invalid:{color:'#1A2517'}};
+  const map={num:elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'}),exp:elements.create('cardExpiry',{style,placeholder:'MM/YY'}),cvv:elements.create('cardCvc',{style,placeholder:'CVC'})};
+  map.num.mount('#number');map.exp.mount('#expiry');map.cvv.mount('#cvc');
   const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
-  const state={number:false,expiry:false,cvc:false,brand:'none'};
-  const changed=(kind,e)=>{state[kind]=!!e.complete;if(kind==='number')state.brand=e.brand||'none';send({type:'change',data:{complete:state.number&&state.expiry&&state.cvc,validNumber:state.number?'Valid':'Incomplete',validExpiryDate:state.expiry?'Valid':'Incomplete',validCVC:state.cvc?'Valid':'Incomplete',brand:state.brand,error:e.error?e.error.message:null}})};
-  number.on('change',e=>changed('number',e));expiry.on('change',e=>changed('expiry',e));cvc.on('change',e=>changed('cvc',e));
-  number.on('focus',()=>send({type:'focus',field:'num'}));expiry.on('focus',()=>send({type:'focus',field:'exp'}));cvc.on('focus',()=>send({type:'focus',field:'cvv'}));
-  number.on('blur',()=>send({type:'blur'}));expiry.on('blur',()=>send({type:'blur'}));cvc.on('blur',()=>send({type:'blur'}));
-  window.focusCard=f=>({num:number,exp:expiry,cvv:cvc}[f]||number).focus();window.blurCard=()=>{number.blur();expiry.blur();cvc.blur()};
-  const receive=e=>{try{const m=JSON.parse(e.data);if(m.type==='save'){if(!(state.number&&state.expiry&&state.cvc)){send({type:'result',error:'Please complete all card details.'});return}stripe.confirmCardSetup(${secret},{payment_method:{card:number,billing_details:{name:m.name}}}).then(r=>send({type:'result',error:r.error?r.error.message:null}))}}catch(err){send({type:'result',error:String(err.message||err)})}};
-  document.addEventListener('message',receive);window.addEventListener('message',receive);
+  const state={num:false,exp:false,cvv:false,brand:'none'};
+  const changed=(kind,e)=>{state[kind]=!!e.complete;if(kind==='num')state.brand=e.brand||'none';send({type:'change',data:{complete:state.num&&state.exp&&state.cvv,validNumber:state.num?'Valid':'Incomplete',validExpiryDate:state.exp?'Valid':'Incomplete',validCVC:state.cvv?'Valid':'Incomplete',brand:state.brand,error:e.error?e.error.message:null}})};
+  map.num.on('change',e=>changed('num',e));map.exp.on('change',e=>changed('exp',e));map.cvv.on('change',e=>changed('cvv',e));
+  map.num.on('focus',()=>send({type:'focus',field:'num'}));map.exp.on('focus',()=>send({type:'focus',field:'exp'}));map.cvv.on('focus',()=>send({type:'focus',field:'cvv'}));
+  map.num.on('blur',()=>send({type:'blur'}));map.exp.on('blur',()=>send({type:'blur'}));map.cvv.on('blur',()=>send({type:'blur'}));
+  window.focusCard=f=>(map[f]||map.num).focus();window.blurCard=()=>Object.values(map).forEach(x=>x.blur());
+  let saving=false;
+  const receive=e=>{try{const m=JSON.parse(e.data);if(m.type==='save'&&!saving){saving=true;if(!(state.num&&state.exp&&state.cvv)){saving=false;send({type:'result',error:'Please complete all card details.'});return}stripe.confirmCardSetup(${secret},{payment_method:{card:map.num,billing_details:{name:m.name}}}).then(r=>{saving=false;send({type:'result',error:r.error?r.error.message:null})}).catch(err=>{saving=false;send({type:'result',error:String(err.message||err)})})}}catch(err){saving=false;send({type:'result',error:String(err.message||err)})}};
+  window.addEventListener('message',receive);document.addEventListener('message',receive);
   </script></body></html>`;
 }
 
@@ -120,9 +122,9 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
   useEffect(() => {
     const s = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', e => setKb(e.endCoordinates.height));
-    const h = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKb(0));
+    const h = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => { setKb(0); flipTo(0); webRef.current?.injectJavaScript("window.blurCard && window.blurCard(); true;"); });
     return () => { s.remove(); h.remove(); };
-  }, []);
+  }, [flipTo]);
   useEffect(() => {
     Animated.loop(Animated.sequence([
       Animated.timing(pulse, { toValue: 1, duration: 800, easing: Easing.inOut(Easing.ease), useNativeDriver: true }),
@@ -150,6 +152,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
     Animated.timing(angle, { toValue: to, duration: Math.max(260, (720 * d) / 180), easing: Easing.inOut(Easing.cubic), useNativeDriver: false }).start();
   }, [angle]);
   const rotateY = angle.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
+  const frontOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [1, 1, 0, 0] });
+  const backOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [0, 0, 1, 1] });
   const flipScale = angle.interpolate({ inputRange: [0, 90, 180], outputRange: [1, 0.94, 1] });
   const drag = useRef({ start: 0 });
   const pan = useRef(PanResponder.create({
@@ -219,7 +223,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const payStyle = { opacity: proc.interpolate({ inputRange: [0, 0.6], outputRange: [1, 0], extrapolate: 'clamp' }), transform: [{ translateY: proc.interpolate({ inputRange: [0, 1], outputRange: [0, 100] }) }] };
   const statusOpacity = proc.interpolate({ inputRange: [0.6, 1], outputRange: [0, 1], extrapolate: 'clamp' });
   const groups = brand === 'amex' ? [4, 6, 5] : [4, 4, 4, 4];
-  const stripeHtml = makeStripeHtml(clientSecret, publishableKey);
+  const stripeHtml = useMemo(() => makeStripeHtml(clientSecret, publishableKey), [clientSecret, publishableKey]);
   const cvvLen = brand === 'amex' ? 4 : 3;
   const ring = (on: boolean) => on ? { borderColor: 'rgba(255,255,255,.6)', backgroundColor: 'rgba(255,255,255,.07)' } : null;
   const slotRing = { position: 'absolute' as const, top: -1.6 * u, bottom: -1.6 * u, left: -2.2 * u, right: -2.2 * u, borderRadius: 2.4 * u, borderWidth: 0.35 * u, borderColor: 'transparent' };
@@ -244,7 +248,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
                   <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
-                    <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
+                    <Animated.View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between', opacity: frontOpacity }]}>
                       <View pointerEvents="none" style={{ position: 'absolute', right: 0, bottom: 0, width: '82%', aspectRatio: 1, overflow: 'hidden' }}>
                         <View style={{ position: 'absolute', width: '96%', height: '96%', right: '-38%', bottom: '-44%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.08)' }} />
                         <View style={{ position: 'absolute', width: '68%', height: '68%', right: '-10%', bottom: '-26%', borderRadius: 999, backgroundColor: 'rgba(172,200,162,.14)' }} />
@@ -263,7 +267,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                         <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Card holder</Text>
                         <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 4.8 * u }}>{nameVal || 'FULL NAME'}</Text>
                       </Pressable>
-                      <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
+                      <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('exp'); true;")} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
                         <View pointerEvents="none" style={[slotRing, ring(focused === 'num')]} />
                         <Dotted phase={numPhase} pulse={pulse} style={{ flexDirection: 'row', alignItems: 'center', minHeight: 6.3 * u }}>
                           {numPhase !== 'empty' && groups.map((g, gi) => <View key={gi} style={{ flexDirection: 'row', marginLeft: gi ? 0.5 * 6.3 * u : 0 }}>{Array.from({ length: g }).map((_, i) => <Text key={i} style={{ width: 0.68 * 6.3 * u, textAlign: 'center', fontFamily: FW[600], fontSize: 6.3 * u, lineHeight: 7.6 * u, includeFontPadding: false, color: C.sage }}>•</Text>)}</View>)}
@@ -276,20 +280,20 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                           {expPhase === 'empty' ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text> : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.2 * u, color: C.sage }}>••/••</Text></Dotted>}
                         </Pressable>
                       </View>
-                    </View>
-                    <View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }] }]}>
+                    </Animated.View>
+                    <Animated.View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }], opacity: backOpacity }]}>
                       <View style={{ position: 'absolute', left: 0, right: 0, top: '12%', height: '17%', backgroundColor: C.oliveDk }} />
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
                         <View style={{ flex: 1 }}><View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} /><Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text></View>
                         <View style={{ width: 22 * u }}>
-                          <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('num'); true;")} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
+                          <Pressable onPress={() => webRef.current?.injectJavaScript("window.focusCard && window.focusCard('cvv'); true;")} style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center', borderWidth: focused === 'cvv' ? 0.6 * u : 0, borderColor: 'rgba(172,200,162,.9)' }}>
                             <Dotted phase={cvvPhase} pulse={pulse} style={{ flexDirection: 'row' }}>{cvvPhase !== 'empty' && Array.from({ length: cvvLen }).map((_, i) => <Text key={i} style={{ fontFamily: FW[800], fontSize: 5.4 * u, lineHeight: 6.5 * u, includeFontPadding: false, color: C.olive, marginHorizontal: 0.3 * u }}>•</Text>)}</Dotted>
                           </Pressable>
                           <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>CVV</Text>
                         </View>
                       </View>
                       <View style={{ position: 'absolute', right: 7 * u, bottom: 5 * u, width: 11 * u, height: 6 * u, alignItems: 'flex-end', justifyContent: 'center' }}>{brand !== 'none' && <Logo brand={brand} h={6 * u} color="#fff" />}</View>
-                    </View>
+                    </Animated.View>
                   </Animated.View>
                 </View>
               </Animated.View>
@@ -299,12 +303,16 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
           <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
             <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Card Details</Text>
-              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 54, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
-                <View style={{ height: 180, backgroundColor: 'transparent' }}>
+              <Animated.View style={{ transform: [{ translateX: shakeCard }], height: 176, borderRadius: 15, overflow: 'hidden', backgroundColor: bad.card ? C.invalid : focused === 'num' || focused === 'exp' || focused === 'cvv' ? C.focus : C.sageTint }}>
+                <View style={{ height: 176, backgroundColor: 'transparent' }}>
                 <WebView
                   ref={webRef}
-                  originWhitelist={['*']}
-                  source={{ html: stripeHtml }}
+                  originWhitelist={['https://*', 'about:blank']}
+                  source={{ html: stripeHtml, baseUrl: 'https://wantiss.app' }}
+                  onShouldStartLoadWithRequest={r =>
+                    r.isTopFrame === false ||
+                    /^(about:|https:\/\/([a-z0-9-]+\.)*(stripe\.com|stripe\.network|wantiss\.app|googleapis\.com|gstatic\.com)(\/|$))/i.test(r.url)
+                  }
                   javaScriptEnabled
                   domStorageEnabled
                   keyboardDisplayRequiresUserAction={false}
@@ -369,7 +377,7 @@ export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: (
   return (
     <SafeAreaProvider>
       {si ? <View style={{ flex: 1 }}>
-        <AddCardScreen clientSecret={si.client_secret} onBack={onBack} onDone={() => { onSaved?.(); onBack?.(); }} />
+        <AddCardScreen clientSecret={si.client_secret} publishableKey={si.publishable_key} onBack={onBack} onDone={() => { onSaved?.(); onBack?.(); }} />
       </View> : <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
         <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
         {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
