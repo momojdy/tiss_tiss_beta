@@ -302,6 +302,10 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
     }
     Keyboard.dismiss(); setErr(''); flipTo(0);
     scrollRef.current?.scrollTo({ y: 0, animated: false });
+    if (!clientSecret || !publishableKey) {
+      setErr('Preparing the secure card form…');
+      return;
+    }
     setProcessing(true);
     Animated.timing(proc, { toValue: 1, duration: 800, easing: Easing.bezier(0.22, 0.8, 0.24, 1), useNativeDriver: true }).start();
     Animated.timing(glow, { toValue: 1, duration: 500, useNativeDriver: true }).start();
@@ -439,22 +443,41 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
           </View>
 
             <Animated.View style={{ transform: [{ translateX: shakeCard }], marginTop: 16, marginHorizontal: 20 }} pointerEvents="auto">
-              <WebView
-                ref={webRef}
-                source={webSource}
-                onMessage={onWebMessage}
-                onLoadEnd={() => webRef.current?.injectJavaScript("window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:'ready'}));true;")}
-                originWhitelist={['*']}
-                javaScriptEnabled
-                domStorageEnabled
-                scrollEnabled={false}
-                nestedScrollEnabled
-                keyboardDisplayRequiresUserAction={false}
-                pointerEvents="auto"
-                automaticallyAdjustContentInsets={false}
-                bounces={false}
-                style={{ height: 176, backgroundColor: 'transparent' }}
-              />
+              {clientSecret && publishableKey ? (
+                <WebView
+                  ref={webRef}
+                  source={webSource}
+                  onMessage={onWebMessage}
+                  onLoadEnd={() => webRef.current?.injectJavaScript("window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:'ready'}));true;")}
+                  originWhitelist={['*']}
+                  javaScriptEnabled
+                  domStorageEnabled
+                  scrollEnabled={false}
+                  nestedScrollEnabled
+                  keyboardDisplayRequiresUserAction={false}
+                  pointerEvents="auto"
+                  automaticallyAdjustContentInsets={false}
+                  bounces={false}
+                  style={{ height: 176, backgroundColor: 'transparent' }}
+                />
+              ) : (
+                <View style={{ height: 176, justifyContent: 'center', alignItems: 'center' }}>
+                  <Animated.View
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: 14,
+                      borderWidth: 3,
+                      borderColor: 'rgba(26,37,23,.14)',
+                      borderTopColor: C.olive,
+                      transform: [{ rotate: spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) }],
+                    }}
+                  />
+                  <Text style={{ marginTop: 12, color: C.muted, fontFamily: FW[500], fontSize: 13 }}>
+                    Preparing secure card form…
+                  </Text>
+                </View>
+              )}
             </Animated.View>
 
             <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
@@ -531,19 +554,17 @@ export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: (
   useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(String(e?.message || e))); }, []);
 
   return (
-    // Own provider so this screen works even if App.tsx has none. Moving one provider to the app root is still cleaner.
+    // Render the Add Card UI immediately. Stripe setup happens in the background so navigation never waits on the network.
     <SafeAreaProvider>
-      {si ? (
-        <AddCardScreen
-          clientSecret={si.client_secret}
-          publishableKey={si.publishable_key}
-          onBack={onBack}
-          onDone={() => { onSaved?.(); onBack?.(); }}
-        />
-      ) : (
-        <View style={[s.root, { alignItems: 'center', justifyContent: 'center', padding: 24 }]}>
-          <Text style={{ color: C.muted, textAlign: 'center' }}>{fail || 'Loading…'}</Text>
-          {!!fail && <Pressable onPress={onBack} style={{ marginTop: 16 }}><Text style={{ color: C.olive, fontFamily: FW[700] }}>Go back</Text></Pressable>}
+      <AddCardScreen
+        clientSecret={si?.client_secret ?? ''}
+        publishableKey={si?.publishable_key ?? ''}
+        onBack={onBack}
+        onDone={() => { onSaved?.(); onBack?.(); }}
+      />
+      {!!fail && (
+        <View pointerEvents="box-none" style={{ position: 'absolute', left: 20, right: 20, bottom: 24, alignItems: 'center' }}>
+          <Text style={{ color: C.danger, textAlign: 'center', fontFamily: FW[600], fontSize: 13 }}>{fail}</Text>
         </View>
       )}
     </SafeAreaProvider>
