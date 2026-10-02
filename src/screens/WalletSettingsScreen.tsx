@@ -1388,6 +1388,7 @@ export default function WalletSettingsScreen({
   const [isDark, setIsDark] = useState(system === 'dark');
   const [profile, setProfile] = useState<Profile>({ full_name: null, email: null });
   const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [walletLoading, setWalletLoading] = useState(true);
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
@@ -1395,28 +1396,33 @@ export default function WalletSettingsScreen({
   const [deleting, setDeleting] = useState(false);
 
   const loadData = useCallback(async () => {
-    const { data: userData } = await supabase.auth.getUser();
-    const user = userData.user;
-    if (!user) return;
+    setWalletLoading(true);
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+      if (!user) return;
 
-    const [{ data: profileRow }, { data: walletRow }] = await Promise.all([
-      supabase.from('profiles').select('full_name, email').eq('id', user.id).maybeSingle(),
-      supabase.from('wallets').select('id, balance').eq('user_id', user.id).maybeSingle(),
-    ]);
+      const [{ data: profileRow }, { data: walletRow }] = await Promise.all([
+        supabase.from('profiles').select('full_name, email').eq('id', user.id).maybeSingle(),
+        supabase.from('wallets').select('id, balance').eq('user_id', user.id).maybeSingle(),
+      ]);
 
-    setProfile({
-      full_name: profileRow?.full_name ?? user.user_metadata?.full_name ?? null,
-      email: profileRow?.email ?? user.email ?? null,
-    });
+      setProfile({
+        full_name: profileRow?.full_name ?? user.user_metadata?.full_name ?? null,
+        email: profileRow?.email ?? user.email ?? null,
+      });
 
-    setWallet(walletRow ? { id: String(walletRow.id), balance: Number(walletRow.balance ?? 0) } : null);
+      setWallet(walletRow ? { id: String(walletRow.id), balance: Number(walletRow.balance ?? 0) } : null);
 
-    const metadataCountry =
-      user.user_metadata?.country_code ??
-      user.user_metadata?.nationality_country_code ??
-      user.user_metadata?.country ??
-      null;
-    setCountryCode(typeof metadataCountry === 'string' ? metadataCountry.toUpperCase() : null);
+      const metadataCountry =
+        user.user_metadata?.country_code ??
+        user.user_metadata?.nationality_country_code ??
+        user.user_metadata?.country ??
+        null;
+      setCountryCode(typeof metadataCountry === 'string' ? metadataCountry.toUpperCase() : null);
+    } finally {
+      setWalletLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -1481,7 +1487,7 @@ export default function WalletSettingsScreen({
           <MaterialIcons name="qr-code-2" size={42} color={TEXT} />
         </View>
 
-        {wallet ? (
+        {walletLoading ? null : wallet ? (
           <View style={styles.bannerSpacing}>
             <PromoBanner />
           </View>
