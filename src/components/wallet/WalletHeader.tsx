@@ -29,7 +29,7 @@ function HeaderIconButton({ icon, onPress, badgeCount = 0, label }: {
   );
 }
 
-const interLoadedStyle = { fontFamily: 'Inter_700Bold' as const };
+const interLoadedStyle = { fontFamily: 'Inter_600SemiBold' as const };
 
 export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress }: {
   onBack: () => void; onNotificationsPress?: () => void; onHelpPress?: () => void;
@@ -57,7 +57,7 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
       <View style={styles.row}>
         <View style={styles.leftSide}>
           <HeaderIconButton icon="arrow-left" label="Back" onPress={onBack} />
-          <Text style={[styles.title, manropeLoaded && { fontFamily: 'Manrope_800ExtraBold' }]}>Wallet</Text>
+          <Text style={styles.title}>Wallet</Text>
         </View>
         <View style={styles.rightSide}>
           <HeaderIconButton icon="bell-outline" label="Notifications" badgeCount={unreadCount} onPress={onNotificationsPress ?? (() => {})} />
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   rightSide: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   iconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: SAGE_TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   iconStack: { position: 'relative', width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
-  title: { marginLeft: 12, fontSize: 19, fontWeight: '800', color: OLIVE, lineHeight: 19, transform: [{ translateY: 1 }] },
+  title: { marginLeft: 12, fontSize: 19, fontWeight: '600', color: OLIVE, lineHeight: 19, transform: [{ translateY: 1 }] },
   badge: { position: 'absolute', top: -5, right: -5, minWidth: 15, minHeight: 15, paddingHorizontal: 3, paddingVertical: 1, borderRadius: 8, backgroundColor: BADGE, alignItems: 'center', justifyContent: 'center' },
   badgeText: { color: '#FFFFFF', fontSize: 8, fontWeight: '700', lineHeight: 8, textAlign: 'center' },
 });
