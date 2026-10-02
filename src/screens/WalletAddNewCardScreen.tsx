@@ -50,7 +50,7 @@ const stripe=Stripe(${key});
 const elements=stripe.elements({fonts:[{cssSrc:'https://fonts.googleapis.com/css2?family=Manrope:wght@500;600'}]});
 const style={base:{fontFamily:'Manrope, sans-serif',fontSize:'16px',fontWeight:'600',color:'#1A2517',letterSpacing:'.02em','::placeholder':{color:'#9AA595',fontWeight:'500'}},invalid:{color:'#1A2517'}};
 const map={
-  num:elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456'}),
+  num:elements.create('cardNumber',{style,placeholder:'1234 5678 9012 3456',disableLink:true}),
   exp:elements.create('cardExpiry',{style,placeholder:'MM/YY'}),
   cvv:elements.create('cardCvc',{style,placeholder:'CVC'})
 };
@@ -216,13 +216,13 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
       toValue: to,
       duration: Math.max(260, (720 * d) / 180),
       easing: Easing.inOut(Easing.cubic),
-      useNativeDriver: false,
+      useNativeDriver: true,
     }).start(({ finished }) => { if (finished) setSettled(true); });
   }, [angle]);
   const rotateY = angle.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
   const frontOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [1, 1, 0, 0] });
   const backOpacity = angle.interpolate({ inputRange: [0, 89.9, 90, 180], outputRange: [0, 0, 1, 1] });
-  const flipScale = angle.interpolate({ inputRange: [0, 90, 180], outputRange: [1, 0.94, 1] });
+  const flipScale = 1;
 
   const drag = useRef({ start: 0 });
   const pan = useRef(PanResponder.create({
@@ -347,7 +347,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
-                  <Animated.View style={{ width: sceneW, height: sceneH, transform: settled ? [] : [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
+                  <Animated.View style={{ width: sceneW, height: sceneH, transform: settled ? [] : [{ perspective: 1400 }, { rotateY }] }}>
                     {/* FRONT */}
                     <Animated.View pointerEvents={isBack ? 'none' : 'auto'} style={[StyleSheet.absoluteFill, { opacity: frontOpacity, transform: [{ rotateY }] }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
