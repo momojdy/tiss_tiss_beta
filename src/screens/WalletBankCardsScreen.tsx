@@ -7,7 +7,7 @@ const TEXT = '#1A2517';
 const MUTED = '#5F6B5A';
 const TINT = '#DCE8D2';
 
-type Props = { onBack?: () => void };
+type Props = { onBack?: () => void; onAddCardPress?: () => void };
 
 function Header({ onBack }: { onBack?: () => void }) {
   return (
@@ -20,7 +20,7 @@ function Header({ onBack }: { onBack?: () => void }) {
   );
 }
 
-export default function WalletBankCardsScreen({ onBack }: Props) {
+export default function WalletBankCardsScreen({ onBack, onAddCardPress }: Props) {
   return (
     <View style={styles.page}>
       <Header onBack={onBack} />
@@ -32,7 +32,10 @@ export default function WalletBankCardsScreen({ onBack }: Props) {
         <Text style={styles.emptyBody}>
           Add a debit or credit card to make payments faster and easier.
         </Text>
-        <Pressable style={styles.addButton}>
+        <Pressable
+          onPress={onAddCardPress}
+          style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
+        >
           <MaterialIcons name="add" size={20} color="#FFFFFF" />
           <Text style={styles.addButtonText}>Add bank card</Text>
         </Pressable>
@@ -51,5 +54,6 @@ const styles = StyleSheet.create({
   emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Manrope_800ExtraBold', marginBottom: 8 },
   emptyBody: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', textAlign: 'center', maxWidth: 330, marginBottom: 22 },
   addButton: { flexDirection: 'row', alignItems: 'center', gap: 7, borderRadius: 999, paddingVertical: 13, paddingHorizontal: 22, backgroundColor: TEXT },
+  addButtonPressed: { opacity: 0.72 },
   addButtonText: { color: '#FFFFFF', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
 });
