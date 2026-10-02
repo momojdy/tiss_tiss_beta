@@ -430,7 +430,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               </Animated.View>
             </View>
 
-            <View style={{ marginBottom: 16 }}>
+            <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
+              <View style={{ marginBottom: 16 }}>
               <Text style={s.label}>Name on Card</Text>
               <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : C.sageTint, justifyContent: 'center' }}>
                 <TextInput
