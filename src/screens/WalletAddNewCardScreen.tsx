@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   AccessibilityInfo, Animated, Easing, KeyboardAvoidingView, PanResponder,
-  Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View,
+  Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions,
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import {
@@ -121,6 +121,7 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
   const [fontsLoaded] = useFonts({
     Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
   });
+  const { width: windowWidth } = useWindowDimensions();
   const [number, setNumber] = useState('');
   const [expiry, setExpiry] = useState('');
   const [name, setName] = useState('');
@@ -211,6 +212,13 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
   const frontRotate = flip.interpolate({ inputRange: [0, 180], outputRange: ['0deg', '180deg'] });
   const backRotate = flip.interpolate({ inputRange: [0, 180], outputRange: ['180deg', '360deg'] });
   const invalid = submitted && !valid;
+  // Keep a stable 348pt design canvas and uniformly scale it to the available
+  // width. This makes every internal card dimension scale together instead of
+  // mixing a responsive outer card with fixed inner typography/padding.
+  const cardWidth = Math.min(Math.max(windowWidth - 40, 260), 348);
+  const cardHeight = cardWidth / 1.586;
+  const cardScale = cardWidth / 348;
+  const cardBaseHeight = 348 / 1.586;
 
   return (
     <KeyboardAvoidingView
@@ -232,11 +240,38 @@ export default function WalletAddNewCardScreen({ onBack }: Props) {
       >
         <Text style={styles.subtitle}>Add a debit or credit card for faster payments.</Text>
 
-        <Animated.View style={[styles.cardScene, { transform: [{ translateX: shake }] }]} {...pan.panHandlers}>
-          <Animated.View pointerEvents="none" style={[styles.cardLayer, { transform: [{ perspective: 1100 }, { rotateY: frontRotate }] }]}>
+        <Animated.View
+          style={[styles.cardScene, { width: cardWidth, height: cardHeight, transform: [{ translateX: shake }] }]}
+          {...pan.panHandlers}
+        >
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.cardLayer,
+              {
+                width: 348,
+                height: cardBaseHeight,
+                left: (cardWidth - 348) / 2,
+                top: (cardHeight - cardBaseHeight) / 2,
+                transform: [{ perspective: 1100 }, { scale: cardScale }, { rotateY: frontRotate }],
+              },
+            ]}
+          >
             <CardFront number={number} expiry={expiry} name={name} brand={brand} active={focused} />
           </Animated.View>
-          <Animated.View pointerEvents="none" style={[styles.cardLayer, { transform: [{ perspective: 1100 }, { rotateY: backRotate }] }]}>
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              styles.cardLayer,
+              {
+                width: 348,
+                height: cardBaseHeight,
+                left: (cardWidth - 348) / 2,
+                top: (cardHeight - cardBaseHeight) / 2,
+                transform: [{ perspective: 1100 }, { scale: cardScale }, { rotateY: backRotate }],
+              },
+            ]}
+          >
             <CardBack cvc={cvc} brand={brand} active={focused === 'cvc'} />
           </Animated.View>
         </Animated.View>
@@ -338,10 +373,11 @@ const styles = StyleSheet.create({
     fontFamily: 'Manrope_500Medium', marginBottom: 20,
   },
   cardScene: {
-    width: '100%', maxWidth: 348, aspectRatio: 1.586,
     alignSelf: 'center', marginBottom: 13, overflow: 'visible',
   },
-  cardLayer: { ...StyleSheet.absoluteFillObject, backfaceVisibility: 'hidden' },
+  cardLayer: {
+    position: 'absolute', overflow: 'visible', backfaceVisibility: 'hidden',
+  },
   face: {
     flex: 1, borderRadius: 22, overflow: 'hidden', padding: 23,
     shadowColor: '#12190F', shadowOpacity: 0.22, shadowRadius: 18,
