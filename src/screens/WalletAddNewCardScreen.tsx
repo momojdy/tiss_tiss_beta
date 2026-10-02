@@ -438,7 +438,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
           </View>
 
-            <Animated.View style={{ transform: [{ translateX: shakeCard }], marginTop: 16 }} pointerEvents="auto">
+            <Animated.View style={{ transform: [{ translateX: shakeCard }], marginTop: 16, marginHorizontal: 20 }} pointerEvents="auto">
               <WebView
                 ref={webRef}
                 source={webSource}
