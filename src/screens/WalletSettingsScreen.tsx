@@ -70,8 +70,6 @@ function SettingsRow({
   right,
 }: {
   icon: React.ComponentProps<typeof MaterialIcons>['name'];
-  outlineIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
-  outlineIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -79,19 +77,12 @@ function SettingsRow({
 }) {
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
-      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}>
-        {outlineIcon ? (
-          <MaterialCommunityIcons name={outlineIcon} size={26} color={danger ? DANGER : TEXT} />
-        ) : (
-          <MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} />
-        )}
-      </View>
+      <View style={[styles.rowIcon, danger && styles.rowIconDanger]}><MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} /></View>
       <Text style={[styles.rowLabel, danger && styles.dangerLabel]}>{label}</Text>
       {right ?? <MaterialIcons name="keyboard-arrow-right" size={26} color={TEXT} />}
     </Pressable>
   );
 }
-
 function PromoBanner() {
   return (
     <View style={styles.banner}>
@@ -274,7 +265,6 @@ export default function WalletSettingsScreen({
         <SettingsRow icon="lock-reset" label="Security" onPress={onSecurityPress} />
         <SettingsRow
           icon="dark-mode"
-          outlineIcon={undefined}
           label="Dark mode"
           onPress={() => setIsDark(value => !value)}
           right={
