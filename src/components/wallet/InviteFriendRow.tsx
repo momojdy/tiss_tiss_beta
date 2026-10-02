@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
 const IMAGE: number | { uri: string } = {
@@ -13,43 +13,13 @@ const ROW_HEIGHT = 120;
 const IMG_TOP = 35;
 const IMG_H = ROW_HEIGHT - IMG_TOP;
 
-function useAspectRatio(source: number | { uri: string }) {
-  const [ratio, setRatio] = useState<number | null>(null);
-
-  useEffect(() => {
-    let active = true;
-
-    if (typeof source === 'number') {
-      const { width, height } = Image.resolveAssetSource(source);
-      setRatio(width && height ? width / height : 0);
-      return;
-    }
-
-    Image.getSize(
-      source.uri,
-      (width, height) => {
-        if (active) setRatio(width && height ? width / height : 0);
-      },
-      () => {
-        if (active) setRatio(0);
-      },
-    );
-
-    return () => {
-      active = false;
-    };
-  }, [source]);
-
-  return ratio;
-}
-
+const IMAGE_RATIO = 600 / 363;
 type Props = {
   onPress?: () => void;
 };
 
 export default function InviteFriendRow({ onPress }: Props) {
-  const ratio = useAspectRatio(IMAGE);
-  const imageWidth = ratio ? IMG_H * ratio : 0;
+  const imageWidth = IMG_H * IMAGE_RATIO;
 
   return (
     <Pressable
@@ -72,9 +42,8 @@ export default function InviteFriendRow({ onPress }: Props) {
             <Text style={styles.body}>
               {'Get 1,000 Wantiss Points for\nevery friend who joins and \ncompletes their first transaction.'}
             </Text>
-          </View>
-        </>
-      )}
+        </View>
+      </>
     </Pressable>
   );
 }
