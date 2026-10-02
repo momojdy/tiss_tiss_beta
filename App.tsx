@@ -10,10 +10,11 @@ import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/WalletPaymentMethodsScreen';
 import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
+import WalletAddNewCardScreen from './src/screens/WalletAddNewCardScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletSettings' | 'walletPaymentMethods' | 'walletBankCards';
+type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletSettings' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -69,8 +70,17 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'walletAddNewCard') {
+        return <WalletAddNewCardScreen onBack={() => setBuyerScreen('walletBankCards')} />;
+      }
+
       if (buyerScreen === 'walletBankCards') {
-        return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} />;
+        return (
+          <WalletBankCardsScreen
+            onBack={() => setBuyerScreen('walletPaymentMethods')}
+            onAddCardPress={() => setBuyerScreen('walletAddNewCard')}
+          />
+        );
       }
 
       if (buyerScreen === 'walletPaymentMethods') {
@@ -98,9 +108,6 @@ export default function App() {
           <WalletNotificationsScreen
             onBack={() => setBuyerScreen('wallet')}
             onPayMoneyRequest={(requestId) => {
-              // Payment screen is not implemented in this branch yet.
-              // Keep the request id in the navigation boundary so the payment flow can be connected without
-              // falsely marking the request accepted before a successful payment.
               console.info('Pay money request:', requestId);
             }}
           />
