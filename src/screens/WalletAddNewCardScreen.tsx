@@ -6,9 +6,6 @@ import {
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 import { CardField, CardFieldInput, StripeProvider, useStripe } from '@stripe/stripe-react-native';
-import {
-  useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
-} from '@expo-google-fonts/manrope';
 import { supabase } from '../lib/supabase';
 
 const C = {
