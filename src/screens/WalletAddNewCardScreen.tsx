@@ -340,7 +340,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
                 <View style={{ width: sceneW, height: sceneH }} {...pan.panHandlers}>
                   <Animated.View pointerEvents="none" style={{ position: 'absolute', top: -8, left: -8, right: -8, bottom: -8, borderRadius: 5.6 * u + 8, borderWidth: 3, borderColor: glowColor, opacity: glow }} />
-                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }], renderToHardwareTextureAndroid: true, shouldRasterizeIOS: false }}>
+                  <Animated.View style={{ width: sceneW, height: sceneH, transform: [{ perspective: 1100 }, { scale: flipScale }, { rotateY }] }}>
                     {/* FRONT */}
                     <Animated.View pointerEvents={isBack ? 'none' : 'auto'} style={[StyleSheet.absoluteFill, { opacity: frontOpacity }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u, paddingHorizontal: 7 * u, paddingTop: 7 * u, paddingBottom: 6.4 * u, justifyContent: 'space-between' }]}>
@@ -393,7 +393,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                     </Animated.View>
 
                     {/* BACK */}
-                    <Animated.View pointerEvents={isBack ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, { opacity: backOpacity }]}>
+                    <Animated.View pointerEvents={isBack ? 'auto' : 'none'} style={[StyleSheet.absoluteFill, { opacity: backOpacity, backfaceVisibility: 'hidden' }]}>
                     <View style={[s.face, { borderRadius: 5.6 * u, transform: [{ rotateY: '180deg' }] }]}>
                       <View style={{ position: 'absolute', left: 0, right: 0, top: '12%', height: '17%', backgroundColor: C.oliveDk }} />
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
