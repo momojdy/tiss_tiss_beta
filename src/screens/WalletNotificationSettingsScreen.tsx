@@ -10,6 +10,8 @@ const LINE = '#D3DECB';
 const TINT = '#DCE8D2';
 const NAV_GREEN = '#81C56C';
 const TOGGLE_BG = '#E0E3E7';
+const TOGGLE_ON = '#8FAF84';
+const TOGGLE_OFF = '#C9D4C2';
 
 type Props = { onBack?: () => void };
 type ChannelPreferences = { security:boolean; transactions:boolean; walletStatus?:boolean; paymentMethods?:boolean; rewards:boolean; support:boolean };
@@ -23,7 +25,7 @@ const DEFAULTS: Preferences = {
 };
 
 function SettingRow({label,value,onValueChange}:{label:string;value:boolean;onValueChange:(value:boolean)=>void}) {
-  return <View style={styles.row}><Text style={styles.rowLabel}>{label}</Text><Switch value={value} onValueChange={onValueChange} trackColor={{false:'#C9D4C2',true:NAV_GREEN}} thumbColor="#FFFFFF" ios_backgroundColor="#C9D4C2" /></View>;
+  return <View style={styles.row}><Text style={styles.rowLabel}>{label}</Text><Switch value={value} onValueChange={onValueChange} trackColor={{false:TOGGLE_OFF,true:TOGGLE_ON}} thumbColor="#FFFFFF" ios_backgroundColor={TOGGLE_OFF} /></View>;
 }
 
 export default function WalletNotificationSettingsScreen({onBack}:Props) {
