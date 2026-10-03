@@ -7,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 
 const OLIVE = '#1A2517';
@@ -96,63 +96,63 @@ function iconForActivity(a: ActivityItem): IconSpec {
 
   switch (type) {
     case 'send':
-      return rnd('call_made');
+      return rnd('arrow-top-right');
     case 'receive':
     case 'request':
-      return rnd('call_received');
+      return rnd('arrow-bottom-left');
     case 'transfer':
-      return rnd('swap_horiz');
+      return rnd('swap-horizontal');
     case 'topup':
-      return out('credit-card');
+      return out('credit-card-outline');
     case 'withdraw':
-      return out('account_balance');
+      return out('bank-outline');
     case 'airtime':
-      return out('phone_android');
+      return out('cellphone');
   }
 
   switch (feature) {
     case 'goodies':
-      return out('shopping_bag');
+      return out('shopping-outline');
     case 'konsoliss':
-      return out('shopping-bag');
+      return out('shopping-outline');
     case 'woulib':
     case 'rideza':
-      return out('directions_car');
+      return out('car-outline');
     case 'stayz':
-      return out('hotel');
+      return out('bed-outline');
     case 'flyz':
-      return out('flight_takeoff');
+      return out('airplane-takeoff');
     case 'habita':
-      return out('home');
+      return out('home-outline');
     case 'services':
-      return out('build');
+      return out('hammer-wrench');
     case 'arts_litts':
-      return out('palette');
+      return out('palette-outline');
     case 'streamz':
-      return out('play_circle_outline');
+      return out('play-circle-outline');
     case 'gatherz':
-      return out('event');
+      return out('calendar-outline');
     case 'eventiss':
     case 'lutz':
-      return out('confirmation_number');
+      return out('ticket-outline');
     case 'glowz':
-      return out('spa');
+      return out('spa-outline');
     case 'dealz':
-      return out('local_offer');
+      return out('tag-outline');
     case 'prezo':
     case 'rewards':
-      return out('redeem');
+      return out('gift-outline');
     case 'globiz':
-      return out('public');
+      return out('earth');
     case 'bidz':
       return out('gavel');
     case 'frenzies':
-      return out('sports_esports');
+      return out('gamepad-variant-outline');
     case 'points':
-      return rnd('stars');
+      return rnd('star-four-points-outline');
     case 'wallet':
     default:
-      return out('account-balance-wallet');
+      return out('wallet-outline');
   }
 }
 
@@ -165,7 +165,7 @@ function MaterialGlyph({
   size: number;
   color: string;
 }) {
-  return <MaterialIcons name={spec.name as any} size={size} color={color} />;
+  return <MaterialCommunityIcons name={spec.name as any} size={size} color={color} />;
 }
 
 const MONTHS = [
