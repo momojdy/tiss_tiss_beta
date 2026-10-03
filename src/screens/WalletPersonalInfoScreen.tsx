@@ -148,7 +148,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         <Text style={styles.headerTitle}>Personal info</Text>
       </View>
 
-      <Pressable style={styles.content} onPress={Keyboard.dismiss}>
+      <View style={styles.content} onTouchStart={() => Keyboard.dismiss()}>
         <Pressable onPress={choosePhoto} disabled={loading || saving} style={styles.avatarWrap} accessibilityRole="button" accessibilityLabel="Change profile photo">
           {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatarImage} /> : (
             <View style={styles.avatarPlaceholder}>
@@ -189,10 +189,10 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         <Pressable onPress={save} disabled={!dirty || saving || loading} style={[styles.saveButton, (!dirty || saving || loading) && styles.saveButtonDisabled]}>
           <Text style={styles.saveText}>{saving ? 'Saving…' : 'Save changes'}</Text>
         </Pressable>
-      </Pressable>
+      </View>
       <Modal visible={countryPickerOpen} transparent animationType="slide" onRequestClose={() => setCountryPickerOpen(false)}>
-        <View style={styles.countryScrim}>
-          <View style={styles.countrySheet}>
+        <Pressable style={styles.countryScrim} onPress={() => { Keyboard.dismiss(); setCountryPickerOpen(false); }}>
+          <Pressable style={styles.countrySheet} onPress={() => {}}>
             <View style={styles.countrySearchBox}>
               <MaterialIcons name="search" size={22} color={MUTED} />
               <TextInput value={countrySearch} onChangeText={setCountrySearch} placeholder="Search country" placeholderTextColor={MUTED} style={styles.countrySearchInput} autoCapitalize="none" autoCorrect={false} />
@@ -205,8 +205,8 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
                 </Pressable>
               ))}
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );
