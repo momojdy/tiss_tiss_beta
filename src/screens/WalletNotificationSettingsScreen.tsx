@@ -16,7 +16,8 @@ const TEXT = '#1A2517';
 const MUTED = '#5F6B5A';
 const LINE = '#D3DECB';
 const TINT = '#DCE8D2';
-const ART = '#8FAF84';
+const NAV_GREEN = '#81C56C';
+const TOGGLE_BG = '#E0E3E7';
 
 type Props = { onBack?: () => void };
 
@@ -77,7 +78,7 @@ function SettingRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#C9D4C2', true: ART }}
+        trackColor={{ false: '#C9D4C2', true: NAV_GREEN }}
         thumbColor="#FFFFFF"
         ios_backgroundColor="#C9D4C2"
       />
@@ -87,7 +88,6 @@ function SettingRow({
 
 export default function WalletNotificationSettingsScreen({ onBack }: Props) {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULTS);
-  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -131,13 +131,10 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
 
   const updatePreferences = async (next: Preferences) => {
     setPreferences(next);
-    setSaving(true);
 
     const { error } = await supabase.auth.updateUser({
       data: { wallet_notification_preferences: next },
     });
-
-    setSaving(false);
 
     if (error) {
       console.error('Notification preference update failed:', error);
@@ -217,8 +214,6 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
             </>
           )}
         </View>
-
-        {saving && <Text style={styles.saving}>Saving…</Text>}
       </ScrollView>
     </View>
   );
@@ -255,24 +250,27 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 16, paddingTop: 20, paddingBottom: 40 },
   channelControl: {
     height: 50,
-    padding: 4,
+    padding: 2,
     flexDirection: 'row',
-    backgroundColor: '#E0E3E7',
+    backgroundColor: TOGGLE_BG,
+    borderWidth: 1,
+    borderColor: TOGGLE_BG,
     borderRadius: 12,
   },
   channelOption: {
     flex: 1,
+    height: 44,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 10,
   },
-  channelOptionSelected: { backgroundColor: '#A7DE96' },
+  channelOptionSelected: { backgroundColor: NAV_GREEN },
   channelText: {
     color: MUTED,
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
   },
-  channelTextSelected: { color: TEXT },
+  channelTextSelected: { color: '#FFFFFF' },
   rows: { marginTop: 18 },
   row: {
     minHeight: 56,
@@ -288,11 +286,5 @@ const styles = StyleSheet.create({
     color: TEXT,
     fontSize: 14,
     fontFamily: 'Inter_600SemiBold',
-  },
-  saving: {
-    marginTop: 12,
-    color: MUTED,
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
   },
 });
