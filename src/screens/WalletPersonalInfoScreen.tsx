@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Image, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, Image, Keyboard, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
@@ -148,7 +148,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         <Text style={styles.headerTitle}>Personal info</Text>
       </View>
 
-      <View style={styles.content}>
+      <Pressable style={styles.content} onPress={Keyboard.dismiss}>
         <Pressable onPress={choosePhoto} disabled={loading || saving} style={styles.avatarWrap} accessibilityRole="button" accessibilityLabel="Change profile photo">
           {avatarUrl ? <Image source={{ uri: avatarUrl }} style={styles.avatarImage} /> : (
             <View style={styles.avatarPlaceholder}>
@@ -189,7 +189,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         <Pressable onPress={save} disabled={!dirty || saving || loading} style={[styles.saveButton, (!dirty || saving || loading) && styles.saveButtonDisabled]}>
           <Text style={styles.saveText}>{saving ? 'Saving…' : 'Save changes'}</Text>
         </Pressable>
-      </View>
+      </Pressable>
       <Modal visible={countryPickerOpen} transparent animationType="slide" onRequestClose={() => setCountryPickerOpen(false)}>
         <View style={styles.countryScrim}>
           <View style={styles.countrySheet}>
@@ -205,8 +205,8 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
                 </Pressable>
               ))}
             </ScrollView>
-          </View>
-        </View>
+          </Pressable>
+        </Pressable>
       </Modal>
     </View>
   );
