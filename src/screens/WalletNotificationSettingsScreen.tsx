@@ -12,6 +12,7 @@ const NAV_GREEN = '#81C56C';
 const TOGGLE_BG = '#E0E3E7';
 const TOGGLE_ON = '#8FAF84';
 const TOGGLE_OFF = '#C9D4C2';
+const CHANNEL_SELECTED = '#8FAF84';
 
 type Props = { onBack?: () => void };
 type ChannelPreferences = { security:boolean; transactions:boolean; walletStatus?:boolean; paymentMethods?:boolean; rewards:boolean; support:boolean };
@@ -63,9 +64,9 @@ const styles=StyleSheet.create({
   content:{paddingHorizontal:16,paddingTop:20,paddingBottom:40},
   channelControl:{height:50,padding:2,flexDirection:'row',backgroundColor:TOGGLE_BG,borderWidth:1,borderColor:TOGGLE_BG,borderRadius:12},
   channelOption:{flex:1,height:44,alignItems:'center',justifyContent:'center',borderRadius:10},
-  channelOptionSelected:{backgroundColor:NAV_GREEN},
+  channelOptionSelected:{backgroundColor:CHANNEL_SELECTED},
   channelText:{color:MUTED,fontSize:14,fontFamily:'Inter_500Medium'},
-  channelTextSelected:{color:'#FFFFFF'},
+  channelTextSelected:{color:TEXT},
   rows:{marginTop:18},
   row:{minHeight:56,flexDirection:'row',alignItems:'center',paddingVertical:6,paddingHorizontal:2,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE},
   rowLabel:{flex:1,color:TEXT,fontSize:14,fontFamily:'Inter_600SemiBold'},
