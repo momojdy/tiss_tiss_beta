@@ -11,13 +11,15 @@ type Props = { onBack?: () => void; onAddCardPress?: () => void };
 
 function Header({ onBack }: { onBack?: () => void }) {
   return (
-    <View style={styles.header}>
-      <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
-        <MaterialIcons name="arrow-back" size={20} color={TEXT} />
-      </Pressable>
-      <Text style={styles.headerTitle}>Bank cards</Text>
-    </View>
-    <View style={styles.strip} />
+    <>
+      <View style={styles.header}>
+        <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
+          <MaterialIcons name="arrow-back" size={20} color={TEXT} />
+        </Pressable>
+        <Text style={styles.headerTitle}>Bank cards</Text>
+      </View>
+      <View style={styles.strip} />
+    </>
   );
 }
 
