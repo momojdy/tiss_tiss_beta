@@ -656,7 +656,7 @@ const s = StyleSheet.create({
   },
   content: { flex: 1 },
   titleRow: { flexDirection: 'row', alignItems: 'flex-start' },
-  title: { flex: 1, fontFamily: 'Manrope', fontWeight: '600', fontSize: 14, color: C.olive, lineHeight: 15 },
+  title: { flex: 1, fontFamily: 'Inter_600SemiBold', fontWeight: '600', fontSize: 14, color: C.olive, lineHeight: 15 },
   time: { fontFamily: 'Inter', fontWeight: '400', fontSize: 11, color: C.oliveFaint, marginLeft: 8, marginRight: 15 },
   bodyRow: { flexDirection: 'row', alignItems: 'center', marginTop: 3 },
   body: { flex: 1, fontFamily: 'Inter', fontWeight: '400', fontSize: 12.5, color: C.oliveSoft, lineHeight: 17.5 },
@@ -695,7 +695,7 @@ const s = StyleSheet.create({
     borderRadius: 20,
     alignItems: 'center',
   },
-  footerTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 14, color: C.olive, marginTop: 10 },
+  footerTitle: { fontFamily: 'Inter_700Bold', fontWeight: '700', fontSize: 14, color: C.olive, marginTop: 10 },
   footerBody: { fontFamily: 'Inter', fontWeight: '400', fontSize: 12, color: C.oliveSoft, marginTop: 4, textAlign: 'center' },
 
   errorTitle: { fontFamily: 'Manrope', fontWeight: '800', fontSize: 14, color: C.olive, marginTop: 10, textAlign: 'center' },
