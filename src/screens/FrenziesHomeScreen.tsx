@@ -13,7 +13,8 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import AnimatedBattleNetIcon from '../components/AnimatedBattleNetIcon';
 import {
   useFonts,
   Inter_400Regular,
@@ -396,45 +397,6 @@ function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: {
 
 function BottomNav() {
   const inactive = colors.nav.inactive;
-  const battleMotion = useRef(new Animated.Value(0)).current;
-  const glareMotion = useRef(new Animated.Value(0)).current;
-
-  useEffect(() => {
-    const motion = Animated.loop(
-      Animated.sequence([
-        Animated.delay(1600),
-        Animated.timing(battleMotion, { toValue: 1, duration: 700, useNativeDriver: true }),
-        Animated.delay(900),
-      ])
-    );
-
-    const glare = Animated.loop(
-      Animated.sequence([
-        Animated.delay(1800),
-        Animated.timing(glareMotion, { toValue: 1, duration: 650, useNativeDriver: true }),
-        Animated.delay(900),
-        Animated.timing(glareMotion, { toValue: 0, duration: 0, useNativeDriver: true }),
-      ])
-    );
-
-    motion.start();
-    glare.start();
-
-    return () => {
-      motion.stop();
-      glare.stop();
-    };
-  }, [battleMotion, glareMotion]);
-
-  const battleRotate = battleMotion.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
-
-  const glareTranslate = glareMotion.interpolate({
-    inputRange: [0, 1],
-    outputRange: [-58, 58],
-  });
 
   return (
     <View style={styles.navOuter}>
@@ -446,20 +408,7 @@ function BottomNav() {
           height={80}
           justify="flex-end"
           padBottom={15}
-          icon={
-            <View style={styles.battleIconWrap}>
-              <Animated.View style={{ transform: [{ rotate: battleRotate }] }}>
-                <FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />
-              </Animated.View>
-              <Animated.View
-                pointerEvents="none"
-                style={[
-                  styles.battleGlare,
-                  { transform: [{ translateX: glareTranslate }, { rotate: '-20deg' }] },
-                ]}
-              />
-            </View>
-          }
+          icon={<AnimatedBattleNetIcon size={52} />}
         />
         <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
         <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={32} color={inactive} />} />
