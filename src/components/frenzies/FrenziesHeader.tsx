@@ -6,11 +6,11 @@ import { colors } from '../../theme/frenziesTheme';
 import { fonts } from '../../theme/frenziesFonts';
 
 type Props = {
-  points?: number;
+  points?: number | null;
   onBack?: () => void;
 };
 
-export default function FrenziesHeader({ points = 0, onBack }: Props) {
+export default function FrenziesHeader({ points, onBack }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -23,14 +23,12 @@ export default function FrenziesHeader({ points = 0, onBack }: Props) {
       >
         <MaterialIcons name="arrow-back-ios-new" size={21} color={colors.textPrimary} />
       </Pressable>
-
       <View style={styles.center}>
         <Text style={styles.title}>Frenzies</Text>
       </View>
-
       <View style={styles.pointsPill}>
         <MaterialCommunityIcons name="lightning-bolt" size={17} color={colors.header.bolt} />
-        <Text style={styles.points}>{points}</Text>
+        <Text style={styles.points}>{points == null ? '—' : points.toLocaleString()}</Text>
       </View>
     </View>
   );
@@ -54,6 +52,8 @@ const styles = StyleSheet.create({
   center: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
+    height: 40,
   },
   title: {
     fontFamily: fonts.bold,
@@ -65,13 +65,13 @@ const styles = StyleSheet.create({
   pointsPill: {
     minWidth: 58,
     height: 32,
+    marginBottom: 4,
     paddingHorizontal: 10,
-    borderRadius: 18,
+    borderRadius: 16,
     backgroundColor: colors.header.pillBg,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
   },
   points: {
     marginLeft: 3,
