@@ -367,7 +367,6 @@ export default function WalletRecentActivity({
                 }
                 style={({ pressed }) => [
                   styles.row,
-                  index === 0 && styles.firstRow,
                   !isLast && styles.rowDivider,
                   pressed && styles.rowPressed,
                 ]}
@@ -512,7 +511,8 @@ const styles = StyleSheet.create({
     color: ERROR_RED,
   },
   row: {
-    paddingVertical: 12,
+    paddingTop: 20,
+    paddingBottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
   },
