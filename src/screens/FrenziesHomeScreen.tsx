@@ -224,7 +224,7 @@ function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive 
     : shieldOwned
       ? 'Streak Shield ready — use anytime'
       : shieldAvailable
-        ? <>Streak Shield available{\n}<Text>Get and protect your wins</Text>{\n}<Text>Use anytime</Text></>
+        ? 'Streak Shield available'
         : 'Streak Shield unavailable';
 
   return (
@@ -248,7 +248,15 @@ function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive 
           <View style={styles.shieldCopy}>
             <MaterialCommunityIcons name="shield-check-outline" size={19} color={colors.textPrimary} />
             <Text style={[tx(11, fonts.regular, colors.streak.subtext), { marginLeft: 7, flexShrink: 1 }]}>
-              {shieldText}
+              {shieldAvailable && !shieldOwned && !shieldActive ? (
+                <>
+                  <Text>Streak Shield available</Text>{'\n'}
+                  <Text>Get and protect your wins</Text>{'\n'}
+                  <Text>Use anytime</Text>
+                </>
+              ) : (
+                shieldText
+              )}
             </Text>
           </View>
           <View style={[styles.shieldPill, !shieldAvailable && !shieldOwned && !shieldActive && { opacity: 0.55 }]}>
