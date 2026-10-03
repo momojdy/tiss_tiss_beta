@@ -15,10 +15,11 @@ import WalletPersonalInfoScreen from './src/screens/WalletPersonalInfoScreen';
 import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSettingsScreen';
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
+import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -74,6 +75,10 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'frenzies') {
+        return <FrenziesHomeScreen onBack={() => setBuyerScreen('home')} />;
+      }
+
       if (buyerScreen === 'walletAddNewCard') {
         return <WalletAddNewCardScreen onBack={() => setBuyerScreen('walletBankCards')} />;
       }
@@ -155,7 +160,7 @@ export default function App() {
       }
 
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} />;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />;
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
