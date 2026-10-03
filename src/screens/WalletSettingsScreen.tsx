@@ -1390,12 +1390,9 @@ export default function WalletSettingsScreen({
   const [isDark, setIsDark] = useState(system === 'dark');
   const [profile, setProfile] = useState<Profile>({ full_name: null, email: null, avatar_url: null });
   const [wallet, setWallet] = useState<Wallet | null>(null);
-  const [walletLoading, setWalletLoading] = useState(true);
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
-  const [confirmOpen, setConfirmOpen] = useState(false);
-  const [deleting, setDeleting] = useState(false);
 
   const loadData = useCallback(async () => {
     setWalletLoading(true);
@@ -1444,24 +1441,7 @@ export default function WalletSettingsScreen({
     }
   };
 
-  const deleteWallet = async () => {
-    if (!wallet) return;
-    if (wallet.balance !== 0) {
-      Alert.alert('Wallet cannot be deleted', 'Move your remaining wallet balance before deleting this wallet.');
-      return;
-    }
 
-    setDeleting(true);
-    const { error } = await supabase.from('wallets').delete().eq('id', wallet.id);
-    setDeleting(false);
-
-    if (error) {
-      Alert.alert('Could not delete wallet', error.message);
-      return;
-    }
-    setWallet(null);
-    setConfirmOpen(false);
-  };
 
   return (
     <View style={styles.page}>
@@ -1544,44 +1524,9 @@ export default function WalletSettingsScreen({
         <SettingsRow icon="policy" communityIcon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
         <SettingsRow icon="database-saver-on" communityIcon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
 
-        {wallet && (
-          <>
-            <SectionTitle title="" />
-            <SettingsRow
-              icon="delete-outline"
-              label={deleting ? 'Deleting wallet…' : 'Delete wallet'}
-              danger
-              onPress={() => !deleting && setConfirmOpen(true)}
-            />
-          </>
-        )}
       </ScrollView>
 
       <BottomNav onHomePress={onHomePress} />
-
-      <Modal transparent animationType="slide" visible={confirmOpen} onRequestClose={() => setConfirmOpen(false)}>
-        <View style={styles.scrim}>
-          <View style={styles.sheet}>
-            <Text style={styles.sheetTitle}>Delete your wallet?</Text>
-            <Text style={styles.sheetBody}>
-              Your Wantiss account, profile and settings stay. Only the wallet is removed.
-            </Text>
-            <View style={styles.note}>
-              <Text style={styles.noteText}>
-                Balance: {wallet?.balance ?? 0}. A wallet can only be deleted when its balance is empty.
-              </Text>
-            </View>
-            <View style={styles.sheetButtons}>
-              <Pressable style={styles.keepButton} onPress={() => setConfirmOpen(false)}>
-                <Text style={styles.keepButtonText}>Keep wallet</Text>
-              </Pressable>
-              <Pressable style={styles.deleteButton} onPress={deleteWallet}>
-                <Text style={styles.deleteButtonText}>Delete wallet</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
       <Modal transparent animationType="slide" visible={countryPickerOpen} onRequestClose={() => setCountryPickerOpen(false)}>
         <View style={styles.countryScrim}>
