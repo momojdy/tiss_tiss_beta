@@ -1,117 +1,134 @@
-import React, { useEffect } from "react";
-import Svg, { Defs, Mask, Path, G, Rect } from "react-native-svg";
+import React, { useEffect } from 'react';
+import { StyleSheet, View } from 'react-native';
+import Svg, { G, Path } from 'react-native-svg';
 import Animated, {
   Easing,
-  cancelAnimation,
   useAnimatedProps,
   useSharedValue,
   withRepeat,
   withTiming,
-} from "react-native-reanimated";
-
-/**
- * Battle.net icon using the real Font Awesome geometry.
- *
- * The glyph is a single silhouette with holes cut out of it. The visible
- * "strands" are the material left between those holes. Instead of splitting
- * the artwork into invented pieces, the outer silhouette stays fixed while
- * the large central cutout gently drifts/rotates. This makes the existing
- * strands deform around the moving cutout without adding new artwork.
- */
-
-const SILHOUETTE =
-  "M448.8 225.6c26.9 .2 35.6-7.4 38.9-12.4 12.5-16.3-7.1-47.6-52.8-71.3 17.8-33.6 30.1-63.7 36.3-85.3 3.4-11.8 1.1-19 .5-20.3-1.7 10.5-15.8 48.5-48.2 100-25-11.2-56.5-20.1-93.8-23.8-8.9-16.9-34.9-63.9-60.5-88.9-16.8-16.5-30.3-22.6-40.8-23.5l0 0c-13.8-1.6-22.7 5.8-27.4 11-17.2 18.5-24.3 48.9-25 84.1-7.2-12.3-17.2-24.6-28.5-25.9l-.2 0c-20.7-3.5-38.4 29.2-36 81.3-38.4 1.4-71 5.8-93 11.2-9.9 2.4-16.2 7.3-17.8 9.7 1-.4 22.4-9.2 111.6-9.2 5.2 53 29.8 101.8 26 93.2-9.7 15.4-38.2 62.4-47.3 97.7-5.9 22.9-4.4 37.6 .2 47.1 5.6 12.8 16.4 16.7 23.2 18.3 25 5.7 55.4-3.6 86.7-21.1-7.5 12.8-13.9 28.5-9.1 39.3 7.3 19.6 44.5 18.7 88.4-9.4 20.2 32.2 40.1 57.9 55.7 74.1 2.6 2.8 5.5 5.2 8.8 7.1 5.1 3.2 8.6 3.4 8.6 3.4-8.2-6.7-34-38-62.5-91.8 22.2-16 45.7-38.9 67.5-69.3 122.8 4.6 143.3-24.8 148-31.6 14.7-19.9 3.4-57.4-57.3-93.7z";
-
-const CENTER_HOLE =
-  "M279.4 398.0c-5.5-11.4-11-23.5-16.5-36.4 43.2 1.3 62.4-18.7 63.3-20.4 0 .1-25 15.6-62.5 12.2 30.6-25.6 59.1-53.7 85.1-84 8.7-10.2 17-20.6 24.9-31.1-.4-.3-1.5-3-16.5-12-51.7 60.3-102.3 98-132.8 115.9-20.6-11.2-40.8-31.8-55.7-61.5-20-39.9-30-82.4-31.6-116.1 12.3 .9 25.3 2.2 38.8 3.9-22.3 36.8-14.4 63-13.5 64.2 0-.1-1-29.2 20.1-59.6 9 52.5 24 103.8 44.7 152.8 .9-.4 1.8 .9 18.7-8.2-26.3-74.5-33.8-138.2-34-173.4 20-12.4 48.2-19.8 81.6-17.8 44.6 2.7 86.4 15.2 116.3 30.7-7.1 10.4-14.9 21.3-23.3 32.5-20.7-37.7-47.3-43.9-48.9-43.7 .1 0 25.9 14.1 41.5 47.2-37.5-13.8-76.1-24.4-115.3-31.7-13.1-2.4-26.2-4.4-39.4-6-.1 .4-1.8 1.8-2.2 20.3 77.9 14.5 136.6 39.9 167.2 57.2 .7 23.6-7 51.6-25.4 79.6-24.6 37.3-56.4 67.2-84.8 85.4z";
-
-const TIP_HOLES =
-  "M371.0 331.8c23.8-37.7 30.3-67.8 29.4-92.3 27.9 17.6 47.2 37.6 49.1 58.8 1.1 12.9-8.1 29.1-78.5 33.5zM217.1 387.7c9.8-6.2 19.5-13.1 29.2-20.5 6.7 13.3 13.6 26.1 20.6 38.2-40.6 21.9-68.8 12.8-49.8-17.7zM432.1 216.4c-10.3-5.3-21.2-10.3-32.4-15 7.9-12.1 15.5-24.4 22.7-36.9 39.1 24.1 45.9 53.2 9.6 51.9zM306.8 111.0c-44.6-1.7-73.6 7.4-94.7 20.7 2-52.3 21.3-76.4 38.2-75.3 16.9-4.2 54.9 52.2 56.5 54.6zM176.1 114.1c.5 12.1 1.6 24.6 3.2 37.3-14.6-.9-28.7-1.3-42.4-1.3-.1 3.2-.1-51 24.7-49.6l.1 0c5.8 1.1 10.6 6.9 14.4 13.6zM148.0 276.1c20.8 39.7 43.3 60.6 65.3 72.3-46.8 24.8-77.5 20-84.9 4.5-.2-.2-11.1-15.3 19.7-76.8l0 0z";
-
-const PIVOT_X = 277.6;
-const PIVOT_Y = 242.1;
+} from 'react-native-reanimated';
 
 const AnimatedG = Animated.createAnimatedComponent(G);
 
-type Props = {
-  size?: number;
-  color?: string;
-  duration?: number;
-  drift?: number;
-  swing?: number;
-  animate?: boolean;
+const ORANGE = '#EE6B2E';
+
+/*
+ * Custom Battle.net-inspired three-strand animation.
+ *
+ * Each strand is an individual curved ribbon. The ribbons are arranged
+ * 120 degrees apart and each follows its own small circular orbit.
+ * They never rotate as one complete logo.
+ *
+ * The motion is deliberately continuous:
+ * strand 1 -> phase 0
+ * strand 2 -> phase 120deg
+ * strand 3 -> phase 240deg
+ */
+
+const STRAND =
+  'M 256 128 C 294 143 337 169 374 203 C 387 215 398 226 407 238 L 369 259 C 352 238 331 218 307 201 C 286 187 269 179 256 174 C 249 172 243 165 243 155 C 243 144 248 134 256 128 Z';
+
+const CENTER = 256;
+
+type StrandProps = {
+  phase: number;
+  duration: number;
+  radius: number;
+  rotation: number;
 };
 
-export default function BattleNetIcon({
-  size = 52,
-  color = "#EE6B2E",
-  duration = 7000,
-  drift = 7,
-  swing = 3,
-  animate = true,
-}: Props) {
-  const p = useSharedValue(0);
+function AnimatedStrand({
+  phase,
+  duration,
+  radius,
+  rotation,
+}: StrandProps) {
+  const progress = useSharedValue(0);
 
   useEffect(() => {
-    if (!animate) {
-      cancelAnimation(p);
-      p.value = 0;
-      return;
-    }
-
-    p.value = withRepeat(
-      withTiming(1, { duration, easing: Easing.linear }),
+    progress.value = withRepeat(
+      withTiming(1, {
+        duration,
+        easing: Easing.linear,
+      }),
       -1,
-      false
+      false,
     );
+  }, [duration, progress]);
 
-    return () => cancelAnimation(p);
-  }, [animate, duration]);
+  const animatedProps = useAnimatedProps(() => {
+    const angle = progress.value * Math.PI * 2 + phase;
 
-  const holeProps = useAnimatedProps(() => {
-    const th = p.value * Math.PI * 2;
-    const dx = drift * Math.cos(th);
-    const dy = drift * Math.sin(th);
-    const ang = swing * Math.sin(th + 1.0);
+    // Small circular orbit: this is the actual flowing motion.
+    const x = Math.cos(angle) * radius;
+    const y = Math.sin(angle) * radius;
+
+    // A tiny amount of counter-rotation makes the ribbon feel like
+    // it is following the circular flow instead of simply sliding.
+    const localRotation =
+      Math.sin(angle + Math.PI / 2) * rotation;
 
     return {
       transform: [
-        { translateX: PIVOT_X + dx },
-        { translateY: PIVOT_Y + dy },
-        { rotate: `${ang}deg` },
-        { translateX: -PIVOT_X },
-        { translateY: -PIVOT_Y },
+        { translateX: x },
+        { translateY: y },
+        { rotate: `${localRotation}deg` },
       ],
     };
   });
 
   return (
-    <Svg width={size} height={size} viewBox="0 0 512 512">
-      <Defs>
-        <Mask
-          id="bn-mask"
-          x="0"
-          y="0"
-          width="512"
-          height="512"
-          maskUnits="userSpaceOnUse"
-        >
-          <Path d={SILHOUETTE} fill="#fff" />
-          <Path d={TIP_HOLES} fill="#000" />
-          <AnimatedG animatedProps={holeProps}>
-            <Path d={CENTER_HOLE} fill="#000" />
-          </AnimatedG>
-        </Mask>
-      </Defs>
-
-      <Rect
-        x="0"
-        y="0"
-        width="512"
-        height="512"
-        fill={color}
-        mask="url(#bn-mask)"
-      />
-    </Svg>
+    <AnimatedG
+      animatedProps={animatedProps}
+      originX={CENTER}
+      originY={CENTER}
+    >
+      <Path d={STRAND} fill={ORANGE} />
+    </AnimatedG>
   );
 }
+
+export default function AnimatedBattleNetIcon({
+  size = 52,
+}: {
+  size?: number;
+}) {
+  return (
+    <View style={[styles.container, { width: size, height: size }]}>
+      <Svg
+        width={size}
+        height={size}
+        viewBox="0 0 512 512"
+      >
+        <AnimatedStrand
+          phase={0}
+          duration={5600}
+          radius={8}
+          rotation={2.5}
+        />
+
+        <AnimatedStrand
+          phase={(Math.PI * 2) / 3}
+          duration={6200}
+          radius={9}
+          rotation={2.8}
+        />
+
+        <AnimatedStrand
+          phase={(Math.PI * 4) / 3}
+          duration={5900}
+          radius={8.5}
+          rotation={2.6}
+        />
+      </Svg>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
