@@ -211,35 +211,39 @@ function GameCard({ g, onPlay }: { g: GameCfg; onPlay?: (gameId: string) => void
   );
 }
 
-function StreakCard({ streak = 4 }: { streak?: number }) {
-  const s = colors.streak;
-  const remaining = Math.max(STREAK_TARGET - streak, 0);
-  const progress = Math.min(streak / STREAK_TARGET, 1);
-  const subtitle =
-    remaining === 0
-      ? `Reward unlocked: ${STREAK_REWARD_POINTS} Frenzies Points`
-      : `${remaining === 1 ? 'One more win' : `${remaining} more wins`} to earn ${STREAK_REWARD_POINTS} Frenzies Points`;
+function StreakCard() {
   return (
     <View style={{ paddingHorizontal: 18, paddingTop: 20 }}>
-      <GradientBox gradient={s.gradient} style={styles.streakCard}>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={styles.flameBadge}><FontAwesome5 name="fire" size={20} color={s.flameIcon} /></View>
-          <View style={{ flex: 1 }}>
-            <Text style={[tx(17, fonts.bold), { marginLeft: 8, marginTop: 16 }]}>{streak} win streak</Text>
-            <Text style={[tx(14, fonts.regular, s.subtext), { marginLeft: 8, marginTop: 2 }]}>{subtitle}</Text>
+      <GradientBox gradient={colors.streak.gradient} style={styles.streakCard}>
+        <View style={styles.streakTop}>
+          <View style={styles.flameBadge}>
+            <MaterialCommunityIcons name="fire" size={20} color={colors.streak.flameIcon} />
+          </View>
+          <View style={styles.streakCopy}>
+            <Text style={[tx(16, fonts.bold), { marginLeft: 11, marginTop: 0 }]}>4 win streak</Text>
+            <Text style={[tx(12, fonts.regular, colors.streak.subtext), { marginLeft: 11, marginTop: 3 }]}>
+              One more win to earn 100 Frenzies Points
+            </Text>
           </View>
         </View>
-        <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} /></View>
+        <View style={styles.progressTrack}>
+          <View style={[styles.progressFill, { width: '80%' }]} />
+        </View>
         <View style={styles.shieldRow}>
-          <MaterialCommunityIcons name="shield-outline" size={18} color={colors.textPrimary} style={{ marginLeft: 15 }} />
-          <Text style={[tx(14, fonts.regular, s.subtext), { marginLeft: 4, flexShrink: 1 }]}>Protect streak before match 5</Text>
-          <View style={styles.shieldPill}><Text style={tx(14, fonts.semibold)}>Streak Shield</Text></View>
+          <View style={styles.shieldCopy}>
+            <MaterialCommunityIcons name="shield-check-outline" size={19} color={colors.textPrimary} />
+            <Text style={[tx(11, fonts.regular, colors.streak.subtext), { marginLeft: 7, flexShrink: 1 }]}>
+              Protect streak before match 5
+            </Text>
+          </View>
+          <View style={styles.shieldPill}>
+            <Text style={tx(10, fonts.bold, colors.textPrimary)}>Streak Shield</Text>
+          </View>
         </View>
       </GradientBox>
     </View>
   );
 }
-
 type RankEntry = {
   rank: number;
   name: string;
@@ -443,11 +447,14 @@ const styles = StyleSheet.create({
   durBadge: { flexDirection: 'row', justifyContent: 'flex-start' },
   gameBtn: { position: 'absolute', width: 125, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center', opacity: 0.9 },
   streakCard: { height: sizes.streakHeight, borderRadius: sizes.streakRadius, overflow: 'hidden' },
-  flameBadge: { width: 35, height: 35, marginLeft: 15, marginTop: 15, borderRadius: 8, backgroundColor: colors.streak.flameBadgeBg, alignItems: 'center', justifyContent: 'center' },
-  progressTrack: { marginHorizontal: 15, marginTop: 15, height: 10, borderRadius: 3, overflow: 'hidden', backgroundColor: colors.streak.progressTrack, opacity: 0.9 },
-  progressFill: { height: 10, borderRadius: 3, backgroundColor: colors.streak.progressFill },
-  shieldRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
-  shieldPill: { width: 100, height: 30, marginLeft: 16, borderRadius: 18, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
+  flameBadge: { width: 34, height: 34, borderRadius: 11, backgroundColor: colors.streak.flameBadgeBg, alignItems: 'center', justifyContent: 'center' },
+  streakTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, paddingTop: 15 },
+  streakCopy: { flex: 1 },
+  progressTrack: { height: 10, borderRadius: 4, marginHorizontal: 15, marginTop: 15, backgroundColor: colors.streak.progressTrack, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: 4, backgroundColor: colors.streak.progressFill },
+  shieldRow: { marginTop: 13, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  shieldCopy: { flex: 1, flexDirection: 'row', alignItems: 'center' },
+  shieldPill: { marginLeft: 8, width: 100, height: 30, borderRadius: 18, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
   rankCard: { flex: 1, backgroundColor: r.cardBg, borderRadius: sizes.rankingsRadius, borderWidth: 1, borderColor: r.cardBorder, overflow: 'hidden' },
   rankRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
   avatar: { width: 30, height: 30, borderRadius: 15, backgroundColor: r.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
