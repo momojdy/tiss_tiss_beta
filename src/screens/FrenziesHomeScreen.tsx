@@ -399,7 +399,7 @@ function BottomNav() {
   return (
     <View style={styles.navOuter}>
       <View style={styles.navBar}>
-        <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color={colors.nav.active} />} />
+        <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color="#B3DF4B" />} />
         <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={32} color={inactive} />} />
         <NavItem label="Battle" height={80} justify="flex-end" padBottom={15} icon={<FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />} />
         <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
