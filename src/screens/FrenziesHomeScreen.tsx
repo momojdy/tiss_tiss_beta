@@ -28,6 +28,7 @@ import { assets, gameImageFit } from '../theme/frenziesAssets';
 import GradientBox from '../components/frenzies/GradientBox';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 import HeroBanner from '../components/frenzies/HeroBanner';
+import { supabase } from '../lib/supabase';
 
 const STREAK_TARGET = 5;
 const STREAK_REWARD_POINTS = 100;
@@ -483,7 +484,7 @@ function BottomNav() {
 export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
   const [points, setPoints] = useState<number | null>(null);
   const [currentStreak, setCurrentStreak] = useState(0);
-  const [shieldAvailable, setShieldAvailable] = useState(false);
+  const [shieldAvailable, setShieldAvailable] = useState(true);
   const [shieldOwned, setShieldOwned] = useState(false);
   const [shieldActive, setShieldActive] = useState(false);
   useEffect(() => {
@@ -491,14 +492,29 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data, error } = await supabase.from('frenzies_player_stats').select('lifetime_points, current_win_streak, streak_shield_available, streak_shield_owned, streak_shield_active').eq('user_id', user.id).maybeSingle();
-      if (!error && mounted) {
-        setPoints(data?.lifetime_points ?? 0);
-        setCurrentStreak(data?.current_win_streak ?? 0);
-        setShieldAvailable(data?.streak_shield_available ?? false);
-        setShieldOwned(data?.streak_shield_owned ?? false);
-        setShieldActive(data?.streak_shield_active ?? false);
+      const { data, error } = await supabase
+        .from('frenzies_player_stats')
+        .select('lifetime_points, current_win_streak, streak_shield_available, streak_shield_owned, streak_shield_active')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error('[FrenziesHomeScreen] Failed to load Frenzies stats:', error);
+        return;
       }
+
+      if (!mounted) return;
+
+      setPoints(data?.lifetime_points ?? 0);
+      setCurrentStreak(data?.current_win_streak ?? 0);
+      setShieldOwned(data?.streak_shield_owned ?? false);
+      setShieldActive(data?.streak_shield_active ?? false);
+
+      // A shield can be purchased even before the first win. If no stats row
+      // is returned yet, keep the purchase option available for the 0-win state.
+      const owned = data?.streak_shield_owned ?? false;
+      const active = data?.streak_shield_active ?? false;
+      setShieldAvailable(data ? Boolean(data.streak_shield_available) : !owned && !active);
     };
     load();
     return () => { mounted = false; };
