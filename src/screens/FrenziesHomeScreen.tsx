@@ -211,7 +211,17 @@ function GameCard({ g, onPlay }: { g: GameCfg; onPlay?: (gameId: string) => void
   );
 }
 
-function StreakCard() {
+function StreakCard({ currentStreak, shieldAvailable }: { currentStreak: number; shieldAvailable: boolean }) {
+  const streak = Math.max(0, currentStreak);
+  const progress = Math.min(streak / STREAK_TARGET, 1);
+  const winsNeeded = Math.max(STREAK_TARGET - streak, 0);
+  const streakText = streak >= STREAK_TARGET
+    ? `Streak target reached`
+    : `${winsNeeded} more ${winsNeeded === 1 ? 'win' : 'wins'} to earn ${STREAK_REWARD_POINTS} Frenzies Points`;
+  const shieldText = shieldAvailable
+    ? `Protect streak before match ${streak + 1}`
+    : 'Streak Shield unavailable';
+
   return (
     <View style={{ paddingHorizontal: 18, paddingTop: 20 }}>
       <GradientBox gradient={colors.streak.gradient} style={styles.streakCard}>
@@ -220,23 +230,23 @@ function StreakCard() {
             <MaterialCommunityIcons name="fire" size={20} color={colors.streak.flameIcon} />
           </View>
           <View style={styles.streakCopy}>
-            <Text style={[tx(16, fonts.bold), { marginLeft: 11, marginTop: 0 }]}>4 win streak</Text>
+            <Text style={[tx(16, fonts.bold), { marginLeft: 11, marginTop: 0 }]}>{streak} win streak</Text>
             <Text style={[tx(12, fonts.regular, colors.streak.subtext), { marginLeft: 11, marginTop: 3 }]}>
-              One more win to earn 100 Frenzies Points
+              {streakText}
             </Text>
           </View>
         </View>
         <View style={styles.progressTrack}>
-          <View style={[styles.progressFill, { width: '80%' }]} />
+          <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
         </View>
         <View style={styles.shieldRow}>
           <View style={styles.shieldCopy}>
             <MaterialCommunityIcons name="shield-check-outline" size={19} color={colors.textPrimary} />
             <Text style={[tx(11, fonts.regular, colors.streak.subtext), { marginLeft: 7, flexShrink: 1 }]}>
-              Protect streak before match 5
+              {shieldText}
             </Text>
           </View>
-          <View style={styles.shieldPill}>
+          <View style={[styles.shieldPill, !shieldAvailable && { opacity: 0.55 }]}>
             <Text style={tx(10, fonts.bold, colors.textPrimary)}>Streak Shield</Text>
           </View>
         </View>
@@ -468,13 +478,19 @@ function BottomNav() {
 
 export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
   const [points, setPoints] = useState<number | null>(null);
+  const [currentStreak, setCurrentStreak] = useState(0);
+  const [shieldAvailable, setShieldAvailable] = useState(false);
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      const { data, error } = await supabase.from('frenzies_player_stats').select('lifetime_points').eq('user_id', user.id).maybeSingle();
-      if (!error && mounted) setPoints(data?.lifetime_points ?? 0);
+      const { data, error } = await supabase.from('frenzies_player_stats').select('lifetime_points, current_win_streak, streak_shield_available').eq('user_id', user.id).maybeSingle();
+      if (!error && mounted) {
+        setPoints(data?.lifetime_points ?? 0);
+        setCurrentStreak(data?.current_win_streak ?? 0);
+        setShieldAvailable(data?.streak_shield_available ?? false);
+      }
     };
     load();
     return () => { mounted = false; };
@@ -487,7 +503,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <HeroBanner />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Play now " link="View all" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
-        <StreakCard />
+        <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" /></View>
         <View style={{ marginHorizontal: 10, marginTop: 8, height: RANK_H }}><RankingsCard /></View>
         <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
