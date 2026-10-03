@@ -141,7 +141,9 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
             <MaterialCommunityIcons name="camera-outline" size={16} color={TEXT} />
           </View>
         </Pressable>
-        <Text style={styles.photoAction}>Add profile photo</Text>
+        <Text style={styles.photoAction}>{avatarUrl ? 'Change profile photo' : 'Add profile photo'}</Text>
+        <Text style={styles.pageIntro}>Personal details</Text>
+        <Text style={styles.pageHint}>Keep your information up to date for your Wantiss wallet.</Text>
 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Full name</Text>
@@ -175,17 +177,19 @@ const styles = StyleSheet.create({
   headerButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Manrope_800ExtraBold' },
   content: { paddingHorizontal: 16, paddingTop: 24 },
-  avatarWrap: { width: 88, height: 88, marginBottom: 7 },
-  avatarImage: { width: 88, height: 88, borderRadius: 44 },
-  avatarPlaceholder: { width: 88, height: 88, borderRadius: 44, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
-  camera: { position: 'absolute', right: -2, bottom: -2, width: 28, height: 28, borderRadius: 14, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
-  photoAction: { color: TEXT, fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 24 },
-  fieldGroup: { marginBottom: 18 },
-  label: { color: MUTED, fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 6 },
-  input: { height: 50, paddingHorizontal: 0, color: TEXT, backgroundColor: 'transparent', fontSize: 16, fontFamily: 'Inter_400Regular' },
-  readOnlyInput: { height: 50, paddingHorizontal: 0, flexDirection: 'row', alignItems: 'center', backgroundColor: 'transparent' },
+  avatarWrap: { width: 92, height: 92, marginBottom: 7 },
+  avatarImage: { width: 92, height: 92, borderRadius: 46 },
+  avatarPlaceholder: { width: 92, height: 92, borderRadius: 46, backgroundColor: SOFT, alignItems: 'center', justifyContent: 'center' },
+  camera: { position: 'absolute', right: -2, bottom: -2, width: 30, height: 30, borderRadius: 15, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
+  photoAction: { color: TEXT, fontSize: 13, fontFamily: 'Inter_500Medium', marginBottom: 22 },
+  pageIntro: { color: TEXT, fontSize: 18, fontFamily: 'Manrope_800ExtraBold', marginBottom: 4 },
+  pageHint: { color: MUTED, fontSize: 13, lineHeight: 19, fontFamily: 'Inter_400Regular', marginBottom: 22 },
+  fieldGroup: { marginBottom: 16 },
+  label: { color: MUTED, fontSize: 12, fontFamily: 'Inter_500Medium', marginBottom: 5 },
+  input: { height: 50, paddingHorizontal: 14, borderRadius: 14, color: TEXT, backgroundColor: SOFT, fontSize: 15, fontFamily: 'Inter_400Regular' },
+  readOnlyInput: { height: 50, paddingHorizontal: 14, borderRadius: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: SOFT },
   readOnlyText: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_400Regular' },
-  saveButton: { height: 50, borderRadius: 999, backgroundColor: TEXT, alignItems: 'center', justifyContent: 'center', marginTop: 6 },
+  saveButton: { height: 50, borderRadius: 999, backgroundColor: TEXT, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
   saveButtonDisabled: { opacity: 0.45 },
   saveText: { color: '#FFFFFF', fontSize: 15, fontFamily: 'Inter_600SemiBold' },
 });
