@@ -53,20 +53,21 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
   }, []);
 
   return (
-    <View style={styles.header}>
-      <View style={styles.row}>
-        <View style={styles.leftSide}>
-          <HeaderIconButton icon="arrow-left" label="Back" onPress={onBack} />
-          <Text style={styles.title}>Wallet</Text>
-        </View>
-        <View style={styles.rightSide}>
-          <HeaderIconButton icon="bell-outline" label="Notifications" badgeCount={unreadCount} onPress={onNotificationsPress ?? (() => {})} />
-          <HeaderIconButton icon="help-circle-outline" label="Help" onPress={onHelpPress ?? (() => {})} />
+    <>
+      <View style={styles.header}>
+        <View style={styles.row}>
+          <View style={styles.leftSide}>
+            <HeaderIconButton icon="arrow-left" label="Back" onPress={onBack} />
+            <Text style={styles.title}>Wallet</Text>
+          </View>
+          <View style={styles.rightSide}>
+            <HeaderIconButton icon="bell-outline" label="Notifications" badgeCount={unreadCount} onPress={onNotificationsPress ?? (() => {})} />
+            <HeaderIconButton icon="help-circle-outline" label="Help" onPress={onHelpPress ?? (() => {})} />
+          </View>
         </View>
       </View>
-    </View>
-    <View style={styles.strip} />
-  </View>
+      <View style={styles.strip} />
+    </>
   );
 }
 
