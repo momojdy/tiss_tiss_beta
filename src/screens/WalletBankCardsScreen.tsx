@@ -17,6 +17,7 @@ function Header({ onBack }: { onBack?: () => void }) {
       </Pressable>
       <Text style={styles.headerTitle}>Bank cards</Text>
     </View>
+    <View style={styles.strip} />
   );
 }
 
@@ -49,6 +50,7 @@ const styles = StyleSheet.create({
   header: { height: 100, paddingHorizontal: 10, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: BACKGROUND },
   headerButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Inter_600SemiBold', transform: [{ translateY: -4.5 }] },
+  strip: { height: 20, backgroundColor: '#E6EDE1' },
   content: { alignItems: 'center', paddingHorizontal: 28, paddingTop: 64 },
   emptyIcon: { width: 92, height: 92, borderRadius: 46, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', marginBottom: 20 },
   emptyTitle: { color: TEXT, fontSize: 20, fontFamily: 'Inter_600SemiBold', marginBottom: 8 },
