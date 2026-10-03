@@ -224,7 +224,7 @@ function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive 
     : shieldOwned
       ? 'Streak Shield ready — use anytime'
       : shieldAvailable
-        ? 'Streak Shield available\\nGet to protect your wins\\nUse anytime'
+        ? <>Streak Shield available{\n}<Text>Get and protect your wins</Text>{\n}<Text>Use anytime</Text></>
         : 'Streak Shield unavailable';
 
   return (
