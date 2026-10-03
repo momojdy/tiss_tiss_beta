@@ -28,7 +28,7 @@ export default function FrenziesHeader({ points, onBack }: Props) {
       </View>
       <View style={styles.pointsPill}>
         <MaterialCommunityIcons name="lightning-bolt" size={17} color={colors.header.bolt} />
-        <Text style={styles.points}>{points == null ? '—' : points.toLocaleString()}</Text>
+        <Text style={styles.points}>{(points ?? 0).toLocaleString()}</Text>
       </View>
     </View>
   );
