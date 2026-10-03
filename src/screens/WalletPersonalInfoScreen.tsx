@@ -191,22 +191,22 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         </Pressable>
       </View>
       <Modal visible={countryPickerOpen} transparent animationType="slide" onRequestClose={() => setCountryPickerOpen(false)}>
-        <Pressable style={styles.modalBackdrop} onPress={() => setCountryPickerOpen(false)}>
-          <Pressable style={styles.countrySheet} onPress={() => {}}>
+        <View style={styles.countryScrim}>
+          <View style={styles.countrySheet}>
             <View style={styles.countrySearchBox}>
               <MaterialIcons name="search" size={22} color={MUTED} />
               <TextInput value={countrySearch} onChangeText={setCountrySearch} placeholder="Search country" placeholderTextColor={MUTED} style={styles.countrySearchInput} autoCapitalize="none" autoCorrect={false} />
               {countrySearch.length > 0 && <Pressable onPress={() => setCountrySearch('')} hitSlop={8}><MaterialIcons name="close" size={20} color={MUTED} /></Pressable>}
             </View>
-            <ScrollView style={styles.countryList} nestedScrollEnabled>
+            <ScrollView style={styles.countryList} contentContainerStyle={styles.countryListContent} showsVerticalScrollIndicator nestedScrollEnabled keyboardShouldPersistTaps="handled">
               {COUNTRIES.filter(country => country.name.toLowerCase().includes(countrySearch.trim().toLowerCase())).map(country => (
                 <Pressable key={country.code} style={styles.countryOption} onPress={() => { setCountryIso(country.code); setCountryPickerOpen(false); setCountrySearch(''); }}>
                   <Text style={styles.optionFlag}>{country.flag}</Text><Text style={styles.countryName}>{country.name}</Text><Text style={styles.countryCode}>{getDialCode(country.code)}</Text>
                 </Pressable>
               ))}
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </View>
   );
@@ -233,8 +233,8 @@ const styles = StyleSheet.create({
   phoneInput: { flex: 1, height: 50, paddingHorizontal: 14, borderRadius: 14, color: TEXT, backgroundColor: TINT, fontSize: 15, fontFamily: 'Inter_400Regular' },
   countryFlag: { fontSize: 20 },
   countryCode: { color: TEXT, fontSize: 14, fontFamily: 'Inter_500Medium' },
-  modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.22)' },
-  countrySheet: { maxHeight: '72%', backgroundColor: BACKGROUND, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 20, paddingHorizontal: 16, paddingBottom: 28 },
+  countryScrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.35)', justifyContent: 'flex-end' },
+  countrySheet: { height: '78%', backgroundColor: BACKGROUND, borderTopLeftRadius: 22, borderTopRightRadius: 22, paddingHorizontal: 18, paddingTop: 12, paddingBottom: 12 },
   countryTitle: { color: TEXT, fontSize: 18, fontFamily: 'Manrope_800ExtraBold', marginBottom: 12 },
   countryList: { flex: 1 },
   countryListContent: { paddingBottom: 16 },
