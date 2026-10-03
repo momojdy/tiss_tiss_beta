@@ -63,15 +63,12 @@ function MovingLayer({
     const wave = Math.sin(progress.value * Math.PI * 2);
 
     return {
-      transform: [
-        { translateX: -256 },
-        { translateY: -256 },
-        { rotate: `${rotation * wave}deg` },
-        { scaleX: 1 + (scaleX - 1) * wave },
-        { scaleY: 1 + (scaleY - 1) * wave },
-        { translateX: 256 + translateX * wave },
-        { translateY: 256 + translateY * wave },
-      ],
+      rotation: rotation * wave,
+      originX: 256,
+      originY: 256,
+      x: translateX * wave,
+      y: translateY * wave,
+      scale: 1 + ((scaleX + scaleY) / 2 - 1) * wave,
     };
   });
 
@@ -92,21 +89,21 @@ export default function AnimatedBattleNetIcon({ size = 52 }: { size?: number }) 
           paths={OUTER_LAYER}
           duration={3200}
           delay={0}
-          rotation={1.5}
-          translateX={1.1}
-          translateY={-0.6}
-          scaleX={1.008}
-          scaleY={0.996}
+          rotation={4.5}
+          translateX={2.4}
+          translateY={-1.4}
+          scaleX={1.018}
+          scaleY={0.985}
         />
         <MovingLayer
           paths={INNER_LAYER}
           duration={4100}
           delay={700}
-          rotation={-1.8}
-          translateX={-0.9}
-          translateY={0.7}
-          scaleX={0.995}
-          scaleY={1.008}
+          rotation={-5}
+          translateX={-2.1}
+          translateY={1.2}
+          scaleX={0.982}
+          scaleY={1.016}
         />
       </Svg>
     </View>
