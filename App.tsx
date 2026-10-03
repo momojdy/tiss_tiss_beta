@@ -14,6 +14,7 @@ import WalletAddNewCardScreen from './src/screens/WalletAddNewCardScreen';
 import WalletPersonalInfoScreen from './src/screens/WalletPersonalInfoScreen';
 import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSettingsScreen';
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
+import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
@@ -99,6 +100,10 @@ export default function App() {
         );
       }
 
+      if (buyerScreen === 'walletRecentActivity') {
+        return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
+      }
+
       if (buyerScreen === 'walletHistory') {
         return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
       }
@@ -135,6 +140,7 @@ export default function App() {
       if (buyerScreen === 'wallet') {
         return (
           <WalletHomeScreen
+            onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')}
             onBack={() => setBuyerScreen('me')}
             onHomePress={() => setBuyerScreen('home')}
             onMePress={() => setBuyerScreen('walletSettings')}
