@@ -13,10 +13,11 @@ import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
 import WalletAddNewCardScreen from './src/screens/WalletAddNewCardScreen';
 import WalletPersonalInfoScreen from './src/screens/WalletPersonalInfoScreen';
 import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSettingsScreen';
+import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard';
+type BuyerScreen = 'home' | 'me' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -98,6 +99,10 @@ export default function App() {
         );
       }
 
+      if (buyerScreen === 'walletHistory') {
+        return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
+      }
+
       if (buyerScreen === 'walletSettings') {
         return (
           <WalletSettingsScreen
@@ -107,6 +112,7 @@ export default function App() {
             onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')}
             onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')}
             onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')}
+            onHistoryPress={() => setBuyerScreen('walletHistory')}
           />
         );
       }
