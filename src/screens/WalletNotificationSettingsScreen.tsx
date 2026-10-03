@@ -16,8 +16,9 @@ const TEXT = '#1A2517';
 const MUTED = '#5F6B5A';
 const LINE = '#D3DECB';
 const TINT = '#DCE8D2';
-const NAV_GREEN = '#81C56C';
-const TOGGLE_BG = '#E0E3E7';
+const OLIVE = '#8FAF84';
+const TOGGLE_OFF = '#C9D4C2';
+const SEGMENT_BG = '#E0E3E7';
 
 type Props = { onBack?: () => void };
 
@@ -78,9 +79,9 @@ function SettingRow({
       <Switch
         value={value}
         onValueChange={onValueChange}
-        trackColor={{ false: '#C9D4C2', true: NAV_GREEN }}
+        trackColor={{ false: TOGGLE_OFF, true: OLIVE }}
         thumbColor="#FFFFFF"
-        ios_backgroundColor="#C9D4C2"
+        ios_backgroundColor={TOGGLE_OFF}
       />
     </View>
   );
@@ -98,7 +99,6 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
 
       if (!mounted || !stored || typeof stored !== 'object') return;
 
-      // Keep compatibility with the previous single-list preference shape.
       const legacy = stored as Record<string, any>;
 
       setPreferences({
@@ -252,9 +252,9 @@ const styles = StyleSheet.create({
     height: 50,
     padding: 2,
     flexDirection: 'row',
-    backgroundColor: TOGGLE_BG,
+    backgroundColor: SEGMENT_BG,
     borderWidth: 1,
-    borderColor: TOGGLE_BG,
+    borderColor: SEGMENT_BG,
     borderRadius: 12,
   },
   channelOption: {
@@ -264,13 +264,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 10,
   },
-  channelOptionSelected: { backgroundColor: NAV_GREEN },
+  channelOptionSelected: { backgroundColor: TINT },
   channelText: {
     color: MUTED,
     fontSize: 14,
     fontFamily: 'Inter_500Medium',
   },
-  channelTextSelected: { color: '#FFFFFF' },
+  channelTextSelected: { color: TEXT },
   rows: { marginTop: 18 },
   row: {
     minHeight: 56,
