@@ -10,9 +10,10 @@ export default function HeroBanner() {
     <View style={styles.outer}>
       <GradientBox gradient={colors.hero.gradient} style={styles.card}>
         <View style={styles.copy}>
-          <Text style={styles.title}>Play. Challenge. Win.</Text>
+          <Text style={styles.title}>Fast PvP. Big fun.</Text>
           <Text style={styles.subtitle}>
-            Compete in quick games and climb the rankings.
+            Challenge players. Build your streak.{'
+'}Earn Frenzies Points.
           </Text>
         </View>
         <Image source={assets.trophy} style={styles.trophy} resizeMode="contain" />
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
   },
   copy: {
     position: 'absolute',
-    left: 14,
+    left: 10,
     top: 19,
     right: 112,
   },
@@ -45,7 +46,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
   },
   subtitle: {
-    marginTop: 5,
+    marginTop: 6,
     fontFamily: fonts.regular,
     fontSize: 12,
     lineHeight: 15,
