@@ -3,6 +3,7 @@ import { Alert, Image, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
+import { COUNTRIES } from './WalletSettingsScreen';
 
 const BACKGROUND = '#F5F8F3';
 const TEXT = '#1A2517';
@@ -10,16 +11,1253 @@ const MUTED = '#5F6B5A';
 const TINT = '#DCE8D2';
 const SOFT = '#E6EDE1';
 
-const COUNTRY_CODES = [
-  ['🇵🇭', 'Philippines', '+63'], ['🇺🇸', 'United States', '+1'], ['🇨🇦', 'Canada', '+1'], ['🇬🇧', 'United Kingdom', '+44'],
-  ['🇦🇺', 'Australia', '+61'], ['🇳🇿', 'New Zealand', '+64'], ['🇸🇬', 'Singapore', '+65'], ['🇯🇵', 'Japan', '+81'],
-  ['🇰🇷', 'South Korea', '+82'], ['🇨🇳', 'China', '+86'], ['🇭🇰', 'Hong Kong', '+852'], ['🇮🇳', 'India', '+91'],
-  ['🇩🇪', 'Germany', '+49'], ['🇫🇷', 'France', '+33'], ['🇮🇹', 'Italy', '+39'], ['🇪🇸', 'Spain', '+34'],
-  ['🇦🇪', 'United Arab Emirates', '+971'], ['🇸🇦', 'Saudi Arabia', '+966'], ['🇹🇭', 'Thailand', '+66'], ['🇲🇾', 'Malaysia', '+60'],
-  ['🇮🇩', 'Indonesia', '+62'], ['🇻🇳', 'Vietnam', '+84'], ['🇧🇷', 'Brazil', '+55'], ['🇲🇽', 'Mexico', '+52'],
-  ['🇿🇦', 'South Africa', '+27'], ['🇳🇬', 'Nigeria', '+234'], ['🇪🇬', 'Egypt', '+20'], ['🇹🇷', 'Türkiye', '+90'],
-  ['🇳🇱', 'Netherlands', '+31'], ['🇸🇪', 'Sweden', '+46'], ['🇨🇭', 'Switzerland', '+41'], ['🇵🇱', 'Poland', '+48'],
-] as const;
+const DIAL_CODES: Record<string, string> = {
+AF:'+93', AX:'+358', AL:'+355', DZ:'+213', AS:'+1684', AD:'+376', AO:'+244', AI:'+1264', AQ:'+672', AG:'+1268', AR:'+54', AM:'+374', AW:'+297', AU:'+61', AT:'+43', AZ:'+994', BS:'+1242', BH:'+973', BD:'+880', BB:'+1246', BY:'+375', BE:'+32', BZ:'+501', BJ:'+229', BM:'+1441', BT:'+975', BO:'+591', BA:'+387', BW:'+267', BV:'+47', BR:'+55', IO:'+246', VG:'+1284', BN:'+673', BG:'+359', BF:'+226', BI:'+257', KH:'+855', CM:'+237', CA:'+1', CV:'+238', BQ:'+599', KY:'+1345', CF:'+236', TD:'+235', CL:'+56', CN:'+86', CX:'+61', CC:'+61', CO:'+57', KM:'+269', CK:'+682', CR:'+506', CI:'+225', HR:'+385', CU:'+53', CW:'+599', CY:'+357', CZ:'+420', DK:'+45', DJ:'+253', DM:'+1767', DO:'+1809', CD:'+243', EC:'+593', EG:'+20', SV:'+503', GQ:'+240', ER:'+291', EE:'+372', SZ:'+268', ET:'+251', FK:'+500', FO:'+298', FJ:'+679', FI:'+358', FR:'+33', GF:'+594', PF:'+689', TF:'+262', GA:'+241', GM:'+220', GE:'+995', DE:'+49', GH:'+233', GI:'+350', GR:'+30', GL:'+299', GD:'+1473', GP:'+590', GU:'+1671', GT:'+502', GG:'+44', GN:'+224', GW:'+245', GY:'+592', HT:'+509', HM:'+672', HN:'+504', HK:'+852', HU:'+36', IS:'+354', IN:'+91', ID:'+62', IR:'+98', IQ:'+964', IE:'+353', IM:'+44', IL:'+972', IT:'+39', JM:'+1876', JP:'+81', JE:'+44', JO:'+962', KZ:'+7', KE:'+254', KI:'+686', KW:'+965', KG:'+996', LA:'+856', LV:'+371', LB:'+961', LS:'+266', LR:'+231', LY:'+218', LI:'+423', LT:'+370', LU:'+352', MO:'+853', MG:'+261', MW:'+265', MY:'+60', MV:'+960', ML:'+223', MT:'+356', MH:'+692', MQ:'+596', MR:'+222', MU:'+230', YT:'+262', MX:'+52', FM:'+691', MD:'+373', MC:'+377', MN:'+976', ME:'+382', MS:'+1664', MA:'+212', MZ:'+258', MM:'+95', NA:'+264', NR:'+674', NP:'+977', NL:'+31', NC:'+687', NZ:'+64', NI:'+505', NE:'+227', NG:'+234', NU:'+683', NF:'+672', KP:'+850', MK:'+389', MP:'+1670', NO:'+47', OM:'+968', PK:'+92', PW:'+680', PS:'+970', PA:'+507', PG:'+675', PY:'+595', PE:'+51', PH:'+63', PN:'+64', PL:'+48', PT:'+351', PR:'+1787', QA:'+974', CG:'+242', RE:'+262', RO:'+40', RU:'+7', RW:'+250', BL:'+590', SH:'+290', KN:'+1869', LC:'+1758', MF:'+590', PM:'+508', VC:'+1784', WS:'+685', SM:'+378', ST:'+239', SA:'+966', SN:'+221', RS:'+381', SC:'+248', SL:'+232', SG:'+65', SX:'+1721', SK:'+421', SI:'+386', SB:'+677', SO:'+252', ZA:'+27', GS:'+500', KR:'+82', SS:'+211', ES:'+34', LK:'+94', SD:'+249', SR:'+597', SJ:'+47', SE:'+46', CH:'+41', SY:'+963', TW:'+886', TJ:'+992', TZ:'+255', TH:'+66', TL:'+670', TG:'+228', TK:'+690', TO:'+676', TT:'+1868', TN:'+216', TR:'+90', TM:'+993', TC:'+1649', TV:'+688', UM:'+1', VI:'+1340', UG:'+256', UA:'+380', AE:'+971', GB:'+44', US:'+1', UY:'+598', UZ:'+998', VU:'+678', VA:'+379', VE:'+58', VN:'+84', WF:'+681', EH:'+212', YE:'+967', ZM:'+260', ZW:'+263'
+};
+const getDialCode = (iso: string) => DIAL_CODES[iso] ?? '';
+
+export const COUNTRIES = [
+  {
+    "code": "AF",
+    "name": "Afghanistan",
+    "flag": "🇦🇫"
+  },
+  {
+    "code": "AX",
+    "name": "Åland Islands",
+    "flag": "🇦🇽"
+  },
+  {
+    "code": "AL",
+    "name": "Albania",
+    "flag": "🇦🇱"
+  },
+  {
+    "code": "DZ",
+    "name": "Algeria",
+    "flag": "🇩🇿"
+  },
+  {
+    "code": "AS",
+    "name": "American Samoa",
+    "flag": "🇦🇸"
+  },
+  {
+    "code": "AD",
+    "name": "Andorra",
+    "flag": "🇦🇩"
+  },
+  {
+    "code": "AO",
+    "name": "Angola",
+    "flag": "🇦🇴"
+  },
+  {
+    "code": "AI",
+    "name": "Anguilla",
+    "flag": "🇦🇮"
+  },
+  {
+    "code": "AQ",
+    "name": "Antarctica",
+    "flag": "🇦🇶"
+  },
+  {
+    "code": "AG",
+    "name": "Antigua and Barbuda",
+    "flag": "🇦🇬"
+  },
+  {
+    "code": "AR",
+    "name": "Argentina",
+    "flag": "🇦🇷"
+  },
+  {
+    "code": "AM",
+    "name": "Armenia",
+    "flag": "🇦🇲"
+  },
+  {
+    "code": "AW",
+    "name": "Aruba",
+    "flag": "🇦🇼"
+  },
+  {
+    "code": "AU",
+    "name": "Australia",
+    "flag": "🇦🇺"
+  },
+  {
+    "code": "AT",
+    "name": "Austria",
+    "flag": "🇦🇹"
+  },
+  {
+    "code": "AZ",
+    "name": "Azerbaijan",
+    "flag": "🇦🇿"
+  },
+  {
+    "code": "BS",
+    "name": "Bahamas",
+    "flag": "🇧🇸"
+  },
+  {
+    "code": "BH",
+    "name": "Bahrain",
+    "flag": "🇧🇭"
+  },
+  {
+    "code": "BD",
+    "name": "Bangladesh",
+    "flag": "🇧🇩"
+  },
+  {
+    "code": "BB",
+    "name": "Barbados",
+    "flag": "🇧🇧"
+  },
+  {
+    "code": "BY",
+    "name": "Belarus",
+    "flag": "🇧🇾"
+  },
+  {
+    "code": "BE",
+    "name": "Belgium",
+    "flag": "🇧🇪"
+  },
+  {
+    "code": "BZ",
+    "name": "Belize",
+    "flag": "🇧🇿"
+  },
+  {
+    "code": "BJ",
+    "name": "Benin",
+    "flag": "🇧🇯"
+  },
+  {
+    "code": "BM",
+    "name": "Bermuda",
+    "flag": "🇧🇲"
+  },
+  {
+    "code": "BT",
+    "name": "Bhutan",
+    "flag": "🇧🇹"
+  },
+  {
+    "code": "BO",
+    "name": "Bolivia",
+    "flag": "🇧🇴"
+  },
+  {
+    "code": "BA",
+    "name": "Bosnia and Herzegovina",
+    "flag": "🇧🇦"
+  },
+  {
+    "code": "BW",
+    "name": "Botswana",
+    "flag": "🇧🇼"
+  },
+  {
+    "code": "BV",
+    "name": "Bouvet Island",
+    "flag": "🇧🇻"
+  },
+  {
+    "code": "BR",
+    "name": "Brazil",
+    "flag": "🇧🇷"
+  },
+  {
+    "code": "IO",
+    "name": "British Indian Ocean Territory",
+    "flag": "🇮🇴"
+  },
+  {
+    "code": "VG",
+    "name": "British Virgin Islands",
+    "flag": "🇻🇬"
+  },
+  {
+    "code": "BN",
+    "name": "Brunei",
+    "flag": "🇧🇳"
+  },
+  {
+    "code": "BG",
+    "name": "Bulgaria",
+    "flag": "🇧🇬"
+  },
+  {
+    "code": "BF",
+    "name": "Burkina Faso",
+    "flag": "🇧🇫"
+  },
+  {
+    "code": "BI",
+    "name": "Burundi",
+    "flag": "🇧🇮"
+  },
+  {
+    "code": "KH",
+    "name": "Cambodia",
+    "flag": "🇰🇭"
+  },
+  {
+    "code": "CM",
+    "name": "Cameroon",
+    "flag": "🇨🇲"
+  },
+  {
+    "code": "CA",
+    "name": "Canada",
+    "flag": "🇨🇦"
+  },
+  {
+    "code": "CV",
+    "name": "Cape Verde",
+    "flag": "🇨🇻"
+  },
+  {
+    "code": "BQ",
+    "name": "Caribbean Netherlands",
+    "flag": "🇧🇶"
+  },
+  {
+    "code": "KY",
+    "name": "Cayman Islands",
+    "flag": "🇰🇾"
+  },
+  {
+    "code": "CF",
+    "name": "Central African Republic",
+    "flag": "🇨🇫"
+  },
+  {
+    "code": "TD",
+    "name": "Chad",
+    "flag": "🇹🇩"
+  },
+  {
+    "code": "CL",
+    "name": "Chile",
+    "flag": "🇨🇱"
+  },
+  {
+    "code": "CN",
+    "name": "China",
+    "flag": "🇨🇳"
+  },
+  {
+    "code": "CX",
+    "name": "Christmas Island",
+    "flag": "🇨🇽"
+  },
+  {
+    "code": "CC",
+    "name": "Cocos (Keeling) Islands",
+    "flag": "🇨🇨"
+  },
+  {
+    "code": "CO",
+    "name": "Colombia",
+    "flag": "🇨🇴"
+  },
+  {
+    "code": "KM",
+    "name": "Comoros",
+    "flag": "🇰🇲"
+  },
+  {
+    "code": "CK",
+    "name": "Cook Islands",
+    "flag": "🇨🇰"
+  },
+  {
+    "code": "CR",
+    "name": "Costa Rica",
+    "flag": "🇨🇷"
+  },
+  {
+    "code": "CI",
+    "name": "Côte d’Ivoire",
+    "flag": "🇨🇮"
+  },
+  {
+    "code": "HR",
+    "name": "Croatia",
+    "flag": "🇭🇷"
+  },
+  {
+    "code": "CW",
+    "name": "Curaçao",
+    "flag": "🇨🇼"
+  },
+  {
+    "code": "CY",
+    "name": "Cyprus",
+    "flag": "🇨🇾"
+  },
+  {
+    "code": "CZ",
+    "name": "Czechia",
+    "flag": "🇨🇿"
+  },
+  {
+    "code": "DK",
+    "name": "Denmark",
+    "flag": "🇩🇰"
+  },
+  {
+    "code": "DJ",
+    "name": "Djibouti",
+    "flag": "🇩🇯"
+  },
+  {
+    "code": "DM",
+    "name": "Dominica",
+    "flag": "🇩🇲"
+  },
+  {
+    "code": "DO",
+    "name": "Dominican Republic",
+    "flag": "🇩🇴"
+  },
+  {
+    "code": "CD",
+    "name": "DR Congo",
+    "flag": "🇨🇩"
+  },
+  {
+    "code": "EC",
+    "name": "Ecuador",
+    "flag": "🇪🇨"
+  },
+  {
+    "code": "EG",
+    "name": "Egypt",
+    "flag": "🇪🇬"
+  },
+  {
+    "code": "SV",
+    "name": "El Salvador",
+    "flag": "🇸🇻"
+  },
+  {
+    "code": "GQ",
+    "name": "Equatorial Guinea",
+    "flag": "🇬🇶"
+  },
+  {
+    "code": "ER",
+    "name": "Eritrea",
+    "flag": "🇪🇷"
+  },
+  {
+    "code": "EE",
+    "name": "Estonia",
+    "flag": "🇪🇪"
+  },
+  {
+    "code": "SZ",
+    "name": "Eswatini",
+    "flag": "🇸🇿"
+  },
+  {
+    "code": "ET",
+    "name": "Ethiopia",
+    "flag": "🇪🇹"
+  },
+  {
+    "code": "FK",
+    "name": "Falkland Islands",
+    "flag": "🇫🇰"
+  },
+  {
+    "code": "FO",
+    "name": "Faroe Islands",
+    "flag": "🇫🇴"
+  },
+  {
+    "code": "FJ",
+    "name": "Fiji",
+    "flag": "🇫🇯"
+  },
+  {
+    "code": "FI",
+    "name": "Finland",
+    "flag": "🇫🇮"
+  },
+  {
+    "code": "FR",
+    "name": "France",
+    "flag": "🇫🇷"
+  },
+  {
+    "code": "GF",
+    "name": "French Guiana",
+    "flag": "🇬🇫"
+  },
+  {
+    "code": "PF",
+    "name": "French Polynesia",
+    "flag": "🇵🇫"
+  },
+  {
+    "code": "TF",
+    "name": "French Southern Territories",
+    "flag": "🇹🇫"
+  },
+  {
+    "code": "GA",
+    "name": "Gabon",
+    "flag": "🇬🇦"
+  },
+  {
+    "code": "GM",
+    "name": "Gambia",
+    "flag": "🇬🇲"
+  },
+  {
+    "code": "GE",
+    "name": "Georgia",
+    "flag": "🇬🇪"
+  },
+  {
+    "code": "DE",
+    "name": "Germany",
+    "flag": "🇩🇪"
+  },
+  {
+    "code": "GH",
+    "name": "Ghana",
+    "flag": "🇬🇭"
+  },
+  {
+    "code": "GI",
+    "name": "Gibraltar",
+    "flag": "🇬🇮"
+  },
+  {
+    "code": "GR",
+    "name": "Greece",
+    "flag": "🇬🇷"
+  },
+  {
+    "code": "GL",
+    "name": "Greenland",
+    "flag": "🇬🇱"
+  },
+  {
+    "code": "GD",
+    "name": "Grenada",
+    "flag": "🇬🇩"
+  },
+  {
+    "code": "GP",
+    "name": "Guadeloupe",
+    "flag": "🇬🇵"
+  },
+  {
+    "code": "GU",
+    "name": "Guam",
+    "flag": "🇬🇺"
+  },
+  {
+    "code": "GT",
+    "name": "Guatemala",
+    "flag": "🇬🇹"
+  },
+  {
+    "code": "GG",
+    "name": "Guernsey",
+    "flag": "🇬🇬"
+  },
+  {
+    "code": "GN",
+    "name": "Guinea",
+    "flag": "🇬🇳"
+  },
+  {
+    "code": "GW",
+    "name": "Guinea-Bissau",
+    "flag": "🇬🇼"
+  },
+  {
+    "code": "GY",
+    "name": "Guyana",
+    "flag": "🇬🇾"
+  },
+  {
+    "code": "HT",
+    "name": "Haiti",
+    "flag": "🇭🇹"
+  },
+  {
+    "code": "HM",
+    "name": "Heard Island and McDonald Islands",
+    "flag": "🇭🇲"
+  },
+  {
+    "code": "HN",
+    "name": "Honduras",
+    "flag": "🇭🇳"
+  },
+  {
+    "code": "HK",
+    "name": "Hong Kong",
+    "flag": "🇭🇰"
+  },
+  {
+    "code": "HU",
+    "name": "Hungary",
+    "flag": "🇭🇺"
+  },
+  {
+    "code": "IS",
+    "name": "Iceland",
+    "flag": "🇮🇸"
+  },
+  {
+    "code": "IN",
+    "name": "India",
+    "flag": "🇮🇳"
+  },
+  {
+    "code": "ID",
+    "name": "Indonesia",
+    "flag": "🇮🇩"
+  },
+  {
+    "code": "IR",
+    "name": "Iran",
+    "flag": "🇮🇷"
+  },
+  {
+    "code": "IQ",
+    "name": "Iraq",
+    "flag": "🇮🇶"
+  },
+  {
+    "code": "IE",
+    "name": "Ireland",
+    "flag": "🇮🇪"
+  },
+  {
+    "code": "IM",
+    "name": "Isle of Man",
+    "flag": "🇮🇲"
+  },
+  {
+    "code": "IL",
+    "name": "Israel",
+    "flag": "🇮🇱"
+  },
+  {
+    "code": "IT",
+    "name": "Italy",
+    "flag": "🇮🇹"
+  },
+  {
+    "code": "JM",
+    "name": "Jamaica",
+    "flag": "🇯🇲"
+  },
+  {
+    "code": "JP",
+    "name": "Japan",
+    "flag": "🇯🇵"
+  },
+  {
+    "code": "JE",
+    "name": "Jersey",
+    "flag": "🇯🇪"
+  },
+  {
+    "code": "JO",
+    "name": "Jordan",
+    "flag": "🇯🇴"
+  },
+  {
+    "code": "KZ",
+    "name": "Kazakhstan",
+    "flag": "🇰🇿"
+  },
+  {
+    "code": "KE",
+    "name": "Kenya",
+    "flag": "🇰🇪"
+  },
+  {
+    "code": "KI",
+    "name": "Kiribati",
+    "flag": "🇰🇮"
+  },
+  {
+    "code": "KW",
+    "name": "Kuwait",
+    "flag": "🇰🇼"
+  },
+  {
+    "code": "KG",
+    "name": "Kyrgyzstan",
+    "flag": "🇰🇬"
+  },
+  {
+    "code": "LA",
+    "name": "Laos",
+    "flag": "🇱🇦"
+  },
+  {
+    "code": "LV",
+    "name": "Latvia",
+    "flag": "🇱🇻"
+  },
+  {
+    "code": "LB",
+    "name": "Lebanon",
+    "flag": "🇱🇧"
+  },
+  {
+    "code": "LS",
+    "name": "Lesotho",
+    "flag": "🇱🇸"
+  },
+  {
+    "code": "LR",
+    "name": "Liberia",
+    "flag": "🇱🇷"
+  },
+  {
+    "code": "LY",
+    "name": "Libya",
+    "flag": "🇱🇾"
+  },
+  {
+    "code": "LI",
+    "name": "Liechtenstein",
+    "flag": "🇱🇮"
+  },
+  {
+    "code": "LT",
+    "name": "Lithuania",
+    "flag": "🇱🇹"
+  },
+  {
+    "code": "LU",
+    "name": "Luxembourg",
+    "flag": "🇱🇺"
+  },
+  {
+    "code": "MO",
+    "name": "Macao",
+    "flag": "🇲🇴"
+  },
+  {
+    "code": "MG",
+    "name": "Madagascar",
+    "flag": "🇲🇬"
+  },
+  {
+    "code": "MW",
+    "name": "Malawi",
+    "flag": "🇲🇼"
+  },
+  {
+    "code": "MY",
+    "name": "Malaysia",
+    "flag": "🇲🇾"
+  },
+  {
+    "code": "MV",
+    "name": "Maldives",
+    "flag": "🇲🇻"
+  },
+  {
+    "code": "ML",
+    "name": "Mali",
+    "flag": "🇲🇱"
+  },
+  {
+    "code": "MT",
+    "name": "Malta",
+    "flag": "🇲🇹"
+  },
+  {
+    "code": "MH",
+    "name": "Marshall Islands",
+    "flag": "🇲🇭"
+  },
+  {
+    "code": "MQ",
+    "name": "Martinique",
+    "flag": "🇲🇶"
+  },
+  {
+    "code": "MR",
+    "name": "Mauritania",
+    "flag": "🇲🇷"
+  },
+  {
+    "code": "MU",
+    "name": "Mauritius",
+    "flag": "🇲🇺"
+  },
+  {
+    "code": "YT",
+    "name": "Mayotte",
+    "flag": "🇾🇹"
+  },
+  {
+    "code": "MX",
+    "name": "Mexico",
+    "flag": "🇲🇽"
+  },
+  {
+    "code": "FM",
+    "name": "Micronesia",
+    "flag": "🇫🇲"
+  },
+  {
+    "code": "MD",
+    "name": "Moldova",
+    "flag": "🇲🇩"
+  },
+  {
+    "code": "MC",
+    "name": "Monaco",
+    "flag": "🇲🇨"
+  },
+  {
+    "code": "MN",
+    "name": "Mongolia",
+    "flag": "🇲🇳"
+  },
+  {
+    "code": "ME",
+    "name": "Montenegro",
+    "flag": "🇲🇪"
+  },
+  {
+    "code": "MS",
+    "name": "Montserrat",
+    "flag": "🇲🇸"
+  },
+  {
+    "code": "MA",
+    "name": "Morocco",
+    "flag": "🇲🇦"
+  },
+  {
+    "code": "MZ",
+    "name": "Mozambique",
+    "flag": "🇲🇿"
+  },
+  {
+    "code": "MM",
+    "name": "Myanmar",
+    "flag": "🇲🇲"
+  },
+  {
+    "code": "NA",
+    "name": "Namibia",
+    "flag": "🇳🇦"
+  },
+  {
+    "code": "NR",
+    "name": "Nauru",
+    "flag": "🇳🇷"
+  },
+  {
+    "code": "NP",
+    "name": "Nepal",
+    "flag": "🇳🇵"
+  },
+  {
+    "code": "NL",
+    "name": "Netherlands",
+    "flag": "🇳🇱"
+  },
+  {
+    "code": "NC",
+    "name": "New Caledonia",
+    "flag": "🇳🇨"
+  },
+  {
+    "code": "NZ",
+    "name": "New Zealand",
+    "flag": "🇳🇿"
+  },
+  {
+    "code": "NI",
+    "name": "Nicaragua",
+    "flag": "🇳🇮"
+  },
+  {
+    "code": "NE",
+    "name": "Niger",
+    "flag": "🇳🇪"
+  },
+  {
+    "code": "NG",
+    "name": "Nigeria",
+    "flag": "🇳🇬"
+  },
+  {
+    "code": "NU",
+    "name": "Niue",
+    "flag": "🇳🇺"
+  },
+  {
+    "code": "NF",
+    "name": "Norfolk Island",
+    "flag": "🇳🇫"
+  },
+  {
+    "code": "KP",
+    "name": "North Korea",
+    "flag": "🇰🇵"
+  },
+  {
+    "code": "MK",
+    "name": "North Macedonia",
+    "flag": "🇲🇰"
+  },
+  {
+    "code": "MP",
+    "name": "Northern Mariana Islands",
+    "flag": "🇲🇵"
+  },
+  {
+    "code": "NO",
+    "name": "Norway",
+    "flag": "🇳🇴"
+  },
+  {
+    "code": "OM",
+    "name": "Oman",
+    "flag": "🇴🇲"
+  },
+  {
+    "code": "PK",
+    "name": "Pakistan",
+    "flag": "🇵🇰"
+  },
+  {
+    "code": "PW",
+    "name": "Palau",
+    "flag": "🇵🇼"
+  },
+  {
+    "code": "PS",
+    "name": "Palestine",
+    "flag": "🇵🇸"
+  },
+  {
+    "code": "PA",
+    "name": "Panama",
+    "flag": "🇵🇦"
+  },
+  {
+    "code": "PG",
+    "name": "Papua New Guinea",
+    "flag": "🇵🇬"
+  },
+  {
+    "code": "PY",
+    "name": "Paraguay",
+    "flag": "🇵🇾"
+  },
+  {
+    "code": "PE",
+    "name": "Peru",
+    "flag": "🇵🇪"
+  },
+  {
+    "code": "PH",
+    "name": "Philippines",
+    "flag": "🇵🇭"
+  },
+  {
+    "code": "PN",
+    "name": "Pitcairn",
+    "flag": "🇵🇳"
+  },
+  {
+    "code": "PL",
+    "name": "Poland",
+    "flag": "🇵🇱"
+  },
+  {
+    "code": "PT",
+    "name": "Portugal",
+    "flag": "🇵🇹"
+  },
+  {
+    "code": "PR",
+    "name": "Puerto Rico",
+    "flag": "🇵🇷"
+  },
+  {
+    "code": "QA",
+    "name": "Qatar",
+    "flag": "🇶🇦"
+  },
+  {
+    "code": "CG",
+    "name": "Republic of the Congo",
+    "flag": "🇨🇬"
+  },
+  {
+    "code": "RE",
+    "name": "Réunion",
+    "flag": "🇷🇪"
+  },
+  {
+    "code": "RO",
+    "name": "Romania",
+    "flag": "🇷🇴"
+  },
+  {
+    "code": "RU",
+    "name": "Russia",
+    "flag": "🇷🇺"
+  },
+  {
+    "code": "RW",
+    "name": "Rwanda",
+    "flag": "🇷🇼"
+  },
+  {
+    "code": "BL",
+    "name": "Saint Barthélemy",
+    "flag": "🇧🇱"
+  },
+  {
+    "code": "SH",
+    "name": "Saint Helena",
+    "flag": "🇸🇭"
+  },
+  {
+    "code": "KN",
+    "name": "Saint Kitts and Nevis",
+    "flag": "🇰🇳"
+  },
+  {
+    "code": "LC",
+    "name": "Saint Lucia",
+    "flag": "🇱🇨"
+  },
+  {
+    "code": "MF",
+    "name": "Saint Martin",
+    "flag": "🇲🇫"
+  },
+  {
+    "code": "PM",
+    "name": "Saint Pierre and Miquelon",
+    "flag": "🇵🇲"
+  },
+  {
+    "code": "VC",
+    "name": "Saint Vincent and the Grenadines",
+    "flag": "🇻🇨"
+  },
+  {
+    "code": "WS",
+    "name": "Samoa",
+    "flag": "🇼🇸"
+  },
+  {
+    "code": "SM",
+    "name": "San Marino",
+    "flag": "🇸🇲"
+  },
+  {
+    "code": "ST",
+    "name": "São Tomé and Príncipe",
+    "flag": "🇸🇹"
+  },
+  {
+    "code": "SA",
+    "name": "Saudi Arabia",
+    "flag": "🇸🇦"
+  },
+  {
+    "code": "SN",
+    "name": "Senegal",
+    "flag": "🇸🇳"
+  },
+  {
+    "code": "RS",
+    "name": "Serbia",
+    "flag": "🇷🇸"
+  },
+  {
+    "code": "SC",
+    "name": "Seychelles",
+    "flag": "🇸🇨"
+  },
+  {
+    "code": "SL",
+    "name": "Sierra Leone",
+    "flag": "🇸🇱"
+  },
+  {
+    "code": "SG",
+    "name": "Singapore",
+    "flag": "🇸🇬"
+  },
+  {
+    "code": "SX",
+    "name": "Sint Maarten",
+    "flag": "🇸🇽"
+  },
+  {
+    "code": "SK",
+    "name": "Slovakia",
+    "flag": "🇸🇰"
+  },
+  {
+    "code": "SI",
+    "name": "Slovenia",
+    "flag": "🇸🇮"
+  },
+  {
+    "code": "SB",
+    "name": "Solomon Islands",
+    "flag": "🇸🇧"
+  },
+  {
+    "code": "SO",
+    "name": "Somalia",
+    "flag": "🇸🇴"
+  },
+  {
+    "code": "ZA",
+    "name": "South Africa",
+    "flag": "🇿🇦"
+  },
+  {
+    "code": "GS",
+    "name": "South Georgia and the South Sandwich Islands",
+    "flag": "🇬🇸"
+  },
+  {
+    "code": "KR",
+    "name": "South Korea",
+    "flag": "🇰🇷"
+  },
+  {
+    "code": "SS",
+    "name": "South Sudan",
+    "flag": "🇸🇸"
+  },
+  {
+    "code": "ES",
+    "name": "Spain",
+    "flag": "🇪🇸"
+  },
+  {
+    "code": "LK",
+    "name": "Sri Lanka",
+    "flag": "🇱🇰"
+  },
+  {
+    "code": "SD",
+    "name": "Sudan",
+    "flag": "🇸🇩"
+  },
+  {
+    "code": "SR",
+    "name": "Suriname",
+    "flag": "🇸🇷"
+  },
+  {
+    "code": "SJ",
+    "name": "Svalbard and Jan Mayen",
+    "flag": "🇸🇯"
+  },
+  {
+    "code": "SE",
+    "name": "Sweden",
+    "flag": "🇸🇪"
+  },
+  {
+    "code": "CH",
+    "name": "Switzerland",
+    "flag": "🇨🇭"
+  },
+  {
+    "code": "SY",
+    "name": "Syria",
+    "flag": "🇸🇾"
+  },
+  {
+    "code": "TW",
+    "name": "Taiwan",
+    "flag": "🇹🇼"
+  },
+  {
+    "code": "TJ",
+    "name": "Tajikistan",
+    "flag": "🇹🇯"
+  },
+  {
+    "code": "TZ",
+    "name": "Tanzania",
+    "flag": "🇹🇿"
+  },
+  {
+    "code": "TH",
+    "name": "Thailand",
+    "flag": "🇹🇭"
+  },
+  {
+    "code": "TL",
+    "name": "Timor-Leste",
+    "flag": "🇹🇱"
+  },
+  {
+    "code": "TG",
+    "name": "Togo",
+    "flag": "🇹🇬"
+  },
+  {
+    "code": "TK",
+    "name": "Tokelau",
+    "flag": "🇹🇰"
+  },
+  {
+    "code": "TO",
+    "name": "Tonga",
+    "flag": "🇹🇴"
+  },
+  {
+    "code": "TT",
+    "name": "Trinidad and Tobago",
+    "flag": "🇹🇹"
+  },
+  {
+    "code": "TN",
+    "name": "Tunisia",
+    "flag": "🇹🇳"
+  },
+  {
+    "code": "TR",
+    "name": "Türkiye",
+    "flag": "🇹🇷"
+  },
+  {
+    "code": "TM",
+    "name": "Turkmenistan",
+    "flag": "🇹🇲"
+  },
+  {
+    "code": "TC",
+    "name": "Turks and Caicos Islands",
+    "flag": "🇹🇨"
+  },
+  {
+    "code": "TV",
+    "name": "Tuvalu",
+    "flag": "🇹🇻"
+  },
+  {
+    "code": "UM",
+    "name": "U.S. Outlying Islands",
+    "flag": "🇺🇲"
+  },
+  {
+    "code": "VI",
+    "name": "U.S. Virgin Islands",
+    "flag": "🇻🇮"
+  },
+  {
+    "code": "UG",
+    "name": "Uganda",
+    "flag": "🇺🇬"
+  },
+  {
+    "code": "UA",
+    "name": "Ukraine",
+    "flag": "🇺🇦"
+  },
+  {
+    "code": "AE",
+    "name": "United Arab Emirates",
+    "flag": "🇦🇪"
+  },
+  {
+    "code": "GB",
+    "name": "United Kingdom",
+    "flag": "🇬🇧"
+  },
+  {
+    "code": "US",
+    "name": "United States",
+    "flag": "🇺🇸"
+  },
+  {
+    "code": "UY",
+    "name": "Uruguay",
+    "flag": "🇺🇾"
+  },
+  {
+    "code": "UZ",
+    "name": "Uzbekistan",
+    "flag": "🇺🇿"
+  },
+  {
+    "code": "VU",
+    "name": "Vanuatu",
+    "flag": "🇻🇺"
+  },
+  {
+    "code": "VA",
+    "name": "Vatican City",
+    "flag": "🇻🇦"
+  },
+  {
+    "code": "VE",
+    "name": "Venezuela",
+    "flag": "🇻🇪"
+  },
+  {
+    "code": "VN",
+    "name": "Vietnam",
+    "flag": "🇻🇳"
+  },
+  {
+    "code": "WF",
+    "name": "Wallis and Futuna",
+    "flag": "🇼🇫"
+  },
+  {
+    "code": "EH",
+    "name": "Western Sahara",
+    "flag": "🇪🇭"
+  },
+  {
+    "code": "YE",
+    "name": "Yemen",
+    "flag": "🇾🇪"
+  },
+  {
+    "code": "ZM",
+    "name": "Zambia",
+    "flag": "🇿🇲"
+  },
+  {
+    "code": "ZW",
+    "name": "Zimbabwe",
+    "flag": "🇿🇼"
+  },
+];
 
 type Props = { onBack?: () => void };
 
@@ -27,12 +1265,13 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  const [countryCode, setCountryCode] = useState('+63');
+  const [countryIso, setCountryIso] = useState('PH');
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [initialName, setInitialName] = useState('');
   const [initialPhone, setInitialPhone] = useState('');
-  const [initialCountryCode, setInitialCountryCode] = useState('+63');
+  const [initialCountryIso, setInitialCountryIso] = useState('PH');
   const [initialAvatar, setInitialAvatar] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -50,12 +1289,13 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         const name = profile?.full_name ?? user.user_metadata?.full_name ?? '';
         const phone = profile?.phone_number ?? user.user_metadata?.phone_number ?? '';
         const storedCode = user.user_metadata?.phone_country_code ?? '+63';
+        const storedIso = user.user_metadata?.phone_country_iso ?? 'PH';
         const avatar = profile?.avatar_url ?? user.user_metadata?.avatar_url ?? null;
         const userEmail = profile?.email ?? user.email ?? '';
         if (active) {
           setFullName(name); setInitialName(name);
           setPhoneNumber(phone); setInitialPhone(phone);
-          setCountryCode(storedCode); setInitialCountryCode(storedCode);
+          setCountryIso(storedIso); setInitialCountryIso(storedIso);
           setAvatarUrl(avatar); setInitialAvatar(avatar);
           setEmail(userEmail);
         }
@@ -121,11 +1361,12 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
       const { data } = await supabase.auth.getUser();
       const user = data.user;
       if (!user) return;
-      const { error } = await supabase.from('profiles').update({ full_name: name, phone_number: phone ? countryCode + ' ' + phone : '' }).eq('id', user.id);
+      const dialCode = getDialCode(countryIso);
+      const { error } = await supabase.from('profiles').update({ full_name: name, phone_number: phone ? dialCode + ' ' + phone : '' }).eq('id', user.id);
       if (error) throw error;
-      const { error: authError } = await supabase.auth.updateUser({ data: { full_name: name, phone_number: phone ? countryCode + ' ' + phone : '', phone_country_code: countryCode } });
+      const { error: authError } = await supabase.auth.updateUser({ data: { full_name: name, phone_number: phone ? dialCode + ' ' + phone : '', phone_country_code: dialCode, phone_country_iso: countryIso } });
       if (authError) throw authError;
-      setInitialName(name); setInitialPhone(phone); setInitialCountryCode(countryCode);
+      setInitialName(name); setInitialPhone(phone); setInitialCountryIso(countryIso);
       Alert.alert('Saved', 'Your personal information has been updated.');
     } catch (error) {
       Alert.alert('Could not save', error instanceof Error ? error.message : 'Please try again.');
@@ -134,8 +1375,9 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
     }
   };
 
-  const dirty = fullName.trim() !== initialName.trim() || phoneNumber.trim() !== initialPhone.trim() || countryCode !== initialCountryCode || avatarUrl !== initialAvatar;
-  const selectedCountry = COUNTRY_CODES.find(([, , code]) => code === countryCode) ?? COUNTRY_CODES[0];
+  const dirty = fullName.trim() !== initialName.trim() || phoneNumber.trim() !== initialPhone.trim() || countryIso !== initialCountryIso || avatarUrl !== initialAvatar;
+  const selectedCountry = COUNTRIES.find(country => country.code === countryIso) ?? COUNTRIES.find(country => country.code === 'PH')!;
+  const selectedDialCode = getDialCode(countryIso);
 
   return (
     <View style={styles.page}>
@@ -171,7 +1413,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
           <Text style={styles.label}>Phone number</Text>
           <View style={styles.phoneRow}>
             <Pressable onPress={() => setCountryPickerOpen(true)} disabled={loading || saving} style={styles.countryCodeButton}>
-              <Text style={styles.countryFlag}>{selectedCountry[0]}</Text><Text style={styles.countryCode}>{countryCode}</Text><MaterialCommunityIcons name="chevron-down" size={18} color={MUTED} />
+              <Text style={styles.countryFlag}>{selectedCountry.flag}</Text><Text style={styles.countryCode}>{selectedDialCode}</Text><MaterialCommunityIcons name="chevron-down" size={18} color={MUTED} />
             </Pressable>
             <TextInput value={phoneNumber} onChangeText={setPhoneNumber} placeholder="Phone number" placeholderTextColor={MUTED} style={styles.phoneInput} editable={!loading && !saving} keyboardType="phone-pad" />
           </View>
@@ -192,11 +1434,15 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
       <Modal visible={countryPickerOpen} transparent animationType="slide" onRequestClose={() => setCountryPickerOpen(false)}>
         <Pressable style={styles.modalBackdrop} onPress={() => setCountryPickerOpen(false)}>
           <Pressable style={styles.countrySheet} onPress={() => {}}>
-            <Text style={styles.countryTitle}>Country code</Text>
+            <View style={styles.countrySearchBox}>
+              <MaterialIcons name="search" size={22} color={MUTED} />
+              <TextInput value={countrySearch} onChangeText={setCountrySearch} placeholder="Search country" placeholderTextColor={MUTED} style={styles.countrySearchInput} autoCapitalize="none" autoCorrect={false} />
+              {countrySearch.length > 0 && <Pressable onPress={() => setCountrySearch('')} hitSlop={8}><MaterialIcons name="close" size={20} color={MUTED} /></Pressable>}
+            </View>
             <ScrollView style={styles.countryList} nestedScrollEnabled>
-              {COUNTRY_CODES.map(([flag, name, code]) => (
-                <Pressable key={name} style={styles.countryRow} onPress={() => { setCountryCode(code); setCountryPickerOpen(false); }}>
-                  <Text style={styles.countryFlag}>{flag}</Text><Text style={styles.countryName}>{name}</Text><Text style={styles.countryCode}>{code}</Text>
+              {COUNTRIES.filter(country => country.name.toLowerCase().includes(countrySearch.trim().toLowerCase())).map(country => (
+                <Pressable key={country.code} style={styles.countryOption} onPress={() => { setCountryIso(country.code); setCountryPickerOpen(false); setCountrySearch(''); }}>
+                  <Text style={styles.optionFlag}>{country.flag}</Text><Text style={styles.countryName}>{country.name}</Text><Text style={styles.countryCode}>{getDialCode(country.code)}</Text>
                 </Pressable>
               ))}
             </ScrollView>
@@ -231,9 +1477,13 @@ const styles = StyleSheet.create({
   modalBackdrop: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(0,0,0,0.22)' },
   countrySheet: { maxHeight: '72%', backgroundColor: BACKGROUND, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingTop: 20, paddingHorizontal: 16, paddingBottom: 28 },
   countryTitle: { color: TEXT, fontSize: 18, fontFamily: 'Manrope_800ExtraBold', marginBottom: 12 },
-  countryList: { backgroundColor: TINT, borderRadius: 16 },
-  countryRow: { minHeight: 52, paddingHorizontal: 14, flexDirection: 'row', alignItems: 'center', gap: 10 },
-  countryName: { flex: 1, color: TEXT, fontSize: 15, fontFamily: 'Inter_400Regular' },
+  countryList: { flex: 1 },
+  countryListContent: { paddingBottom: 16 },
+  countrySearchBox: { height: 46, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, marginBottom: 10, borderRadius: 12, backgroundColor: TINT },
+  countrySearchInput: { flex: 1, marginLeft: 8, paddingVertical: 0, color: TEXT, fontSize: 15, fontFamily: 'Inter_400Regular' },
+  countryOption: { minHeight: 54, flexDirection: 'row', alignItems: 'center' },
+  optionFlag: { fontSize: 28, width: 44 },
+  countryName: { flex: 1, color: TEXT, fontSize: 15, fontFamily: 'Inter_500Medium' },
   readOnlyInput: { height: 50, paddingHorizontal: 14, borderRadius: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: SOFT },
   readOnlyText: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_400Regular' },
   saveButton: { height: 50, borderRadius: 999, backgroundColor: TEXT, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
