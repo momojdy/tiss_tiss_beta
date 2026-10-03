@@ -348,6 +348,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                 </View>
               </View>
             </Animated.View>
+            <View style={{ height: 20, backgroundColor: '#E6EDE1' }} />
 
             <View style={{ marginTop: compact ? 2 : 6, alignItems: 'center' }}>
               <Animated.View style={{ transform: [{ translateY: cardY }, { scale: cardS }] }}>
