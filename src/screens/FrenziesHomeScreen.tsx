@@ -1,295 +1,464 @@
-import React from 'react';
-import { Image, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Animated,
+  Image,
+  ImageSourcePropType,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { StatusBar } from 'expo-status-bar';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import {
+  useFonts,
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+} from '@expo-google-fonts/inter';
 
-const ASSET_BASE = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/';
-const ASSETS = {
-  korido: ASSET_BASE + 'Korido.PNG',
-  trophy: ASSET_BASE + 'Trophy.png',
-  rps: ASSET_BASE + 'RPS_thumbnail.jpg',
-  lls: ASSET_BASE + 'LLS_thumbnail.jpg',
+import { colors, sizes, tournamentTiers, TournamentTierKey } from './src/theme/frenziesTheme';
+import { fonts } from './src/theme/frenziesFonts';
+import { assets, gameImageFit } from './src/theme/frenziesAssets';
+import GradientBox from './src/components/frenzies/GradientBox';
+import FrenziesHeader from './src/components/frenzies/FrenziesHeader';
+import HeroBanner from './src/components/frenzies/HeroBanner';
+
+const STREAK_TARGET = 5;
+const STREAK_REWARD_POINTS = 100;
+
+const PASS = {
+  name: 'Frenzies Pass',
+  price: '$3.99',
+  period: ' /mo',
+  cta: 'Get Frenzies Pass',
+  benefits: [
+    '1 free $1 tournament ticket',
+    '1 tournament discount',
+    '1 Streak Shield',
+    '20 Frenzies Points',
+  ],
 };
 
-const COLORS = {
-  background: '#FFFFFF',
-  text: '#15161B',
-  secondary: '#6C7280',
-  muted: '#9CA1AC',
-  border: '#EEF0F3',
-  heroStart: '#F7E9C1',
-  heroEnd: '#F3DEA7',
-  green: '#C9F24B',
-  orange: '#EE6B2E',
-  orangeDark: '#DD3E2A',
+const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
+  fontFamily: family,
+  fontSize: size,
+  lineHeight: size * 1.21,
+  color,
+  includeFontPadding: false,
+});
+
+export function getInitials(name?: string | null): string | null {
+  const words = (name ?? '').trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) return null;
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return words[0].slice(0, 2).toUpperCase();
+}
+
+type ScreenHandlers = {
+  onBack?: () => void;
+  onPlayGame?: (gameId: string) => void;
+  onOpenTier?: (tier: TournamentTierKey) => void;
+  onGetPass?: () => void;
 };
 
-const GAMES = [
-{ key: 'rps-1', title: 'Rock Paper\nScissors', subtitle: 'Familiar player', image: ASSETS.rps, fit: 'cover' as const, duration: '3min' },
-  { key: 'lls', title: 'Load Lock Ship', subtitle: 'Race to load your cargo and ship it', image: ASSETS.lls, fit: 'cover' as const, duration: '4min', challenge: true },
-  { key: 'korido', title: 'Koridò', subtitle: 'Avoid the barricades', image: ASSETS.korido, fit: 'contain' as const, duration: '7min' },
-  { key: 'rps-2', title: 'Rock Paper\nScissors', subtitle: 'Familiar player', image: ASSETS.rps, fit: 'cover' as const, duration: '3min' },
-];
-
-const RANKINGS = [
-  ['1', 'Mika', '18'],
-  ['2', 'Dany', '16'],
-  ['3', 'Jojo', '15'],
-  ['4', 'Steeve', '13'],
-  ['5', 'Nadia', '12'],
-  ['6', 'Rico', '11'],
-  ['7', 'Luna', '10'],
-  ['8', 'Ken', '9'],
-  ['9', 'Maya', '8'],
-  ['10', 'Tina', '7'],
-];
-
-const TOURNAMENTS = [
-  { fee: '$1', prize: '$50', colors: ['#DBF1CB', '#A9DE8C'], text: '#2E6A1D', joined: 17 },
-  { fee: '$5', prize: '$250', colors: ['#D6EAFC', '#9DC8F0'], text: '#1F5FA0', joined: 12 },
-  { fee: '$20', prize: '$1,000', colors: ['#FBEACB', '#EFC873'], text: '#8A5E10', joined: 21 },
-  { fee: '$50', prize: '$2,500', colors: ['#E9DDF7', '#C1A3E8'], text: '#5B2E8C', joined: 9 },
-  { fee: '$100', prize: '$5,000', colors: ['#FBD9D2', '#EE9C87'], text: '#A3311A', joined: 18 },
-  { fee: 'ULTIMATE', prize: '$25,000', colors: ['#2C2A22', '#15140F'], text: '#F0C864', joined: 6, ultimate: true },
-];
-
-function SectionHeader({ title, action }: { title: string; action: string }) {
+function SectionHeader({ title, link }: { title: string; link: string }) {
   return (
-    <View style={styles.sectionHeader}>
+    <View style={styles.sectionRow}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      <Pressable hitSlop={8}>
-        <Text style={styles.sectionAction}>{action}</Text>
+      <View style={styles.sectionLink}>
+        <Text style={styles.sectionLinkText}>{link}</Text>
+        <MaterialIcons name="chevron-right" size={24} color={colors.textSecondary} />
+      </View>
+    </View>
+  );
+}
+
+type GameCfg = {
+  id: string;
+  gameKey: string;
+  image: ImageSourcePropType;
+  fit: { width: number; height: number; resizeMode: 'cover' | 'contain'; radius: number };
+  title: string;
+  subtitle: string;
+  duration: string;
+  badgeBg: string;
+  durBg: string;
+  badgeLeft: number;
+  durRight: number;
+  titleTop: number;
+  titleColor: string;
+  subTop: number;
+  subColor: string;
+  textOpacity: number;
+  btnLabel: string;
+  btnTop: number;
+  btnLeft: number;
+  btnBg: string;
+  btnText: string;
+};
+
+const rps = (id: string, edge: number, duration: string): GameCfg => ({
+  id,
+  gameKey: 'rps',
+  image: assets.rps,
+  fit: gameImageFit.rps,
+  title: 'Rock Paper\nScissors',
+  subtitle: 'Familiar player',
+  duration,
+  badgeBg: colors.gameCard.badgeRps,
+  durBg: colors.gameCard.badgeRpsTime,
+  badgeLeft: edge,
+  durRight: edge,
+  titleTop: 101.85,
+  titleColor: colors.textDark,
+  subTop: 138.05,
+  subColor: colors.white,
+  textOpacity: 0.85,
+  btnLabel: 'Play',
+  btnTop: 159,
+  btnLeft: 12.5,
+  btnBg: colors.gameCard.playBg,
+  btnText: colors.gameCard.playText,
+});
+
+const GAMES: GameCfg[] = [
+  rps('rps-1', 6, '2min'),
+  {
+    id: 'lls',
+    gameKey: 'lls',
+    image: assets.lls,
+    fit: gameImageFit.lls,
+    title: 'Load Lock Ship',
+    subtitle: 'Race to load your cargo\nand ship it',
+    duration: '4min',
+    badgeBg: colors.gameCard.badgeRps,
+    durBg: colors.gameCard.badgeRpsTime,
+    badgeLeft: 6,
+    durRight: 6,
+    titleTop: 103.4,
+    titleColor: colors.white,
+    subTop: 123.6,
+    subColor: colors.white,
+    textOpacity: 1,
+    btnLabel: 'Challenge',
+    btnTop: 157,
+    btnLeft: 12.375,
+    btnBg: colors.gameCard.challengeBg,
+    btnText: colors.gameCard.challengeText,
+  },
+  {
+    id: 'korido',
+    gameKey: 'korido',
+    image: assets.korido,
+    fit: gameImageFit.korido,
+    title: 'Koridò',
+    subtitle: 'Avoid the barricades',
+    duration: '7min',
+    badgeBg: colors.gameCard.badgeKorido,
+    durBg: colors.gameCard.badgeKoridoTime,
+    badgeLeft: 4,
+    durRight: 4,
+    titleTop: 113.4,
+    titleColor: colors.black,
+    subTop: 135.55,
+    subColor: colors.black,
+    textOpacity: 0.85,
+    btnLabel: 'Play',
+    btnTop: 159,
+    btnLeft: 12.5,
+    btnBg: colors.gameCard.playBg,
+    btnText: colors.gameCard.playText,
+  },
+  rps('rps-2', 4, '2min'),
+  rps('rps-3', 4, '2min'),
+];
+
+function GameCard({ g, onPlay }: { g: GameCfg; onPlay?: (gameId: string) => void }) {
+  return (
+    <View style={styles.gameCard}>
+      <View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: g.fit.width,
+          height: g.fit.height,
+          borderRadius: g.fit.radius,
+          overflow: 'hidden',
+        }}
+      >
+        <Image source={g.image} style={{ width: '100%', height: '100%' }} resizeMode={g.fit.resizeMode} />
+      </View>
+      <View style={[styles.badge, { left: g.badgeLeft, backgroundColor: g.badgeBg }]}>
+        <Text style={tx(10, fonts.medium)}>PvP</Text>
+      </View>
+      <View style={[styles.badge, styles.durBadge, { right: g.durRight, backgroundColor: g.durBg }]}>
+        <MaterialCommunityIcons name="timer-outline" size={11} color={colors.textPrimary} />
+        <Text style={[tx(8, fonts.regular), { paddingTop: 2, paddingRight: 2, paddingBottom: 1 }]}>{g.duration}</Text>
+      </View>
+      <Text style={[tx(15, fonts.bold, g.titleColor), { position: 'absolute', left: 4, top: g.titleTop, opacity: g.textOpacity }]}>{g.title}</Text>
+      <Text style={[tx(11.5, fonts.regular, g.subColor), { position: 'absolute', left: 4, top: g.subTop, opacity: g.textOpacity }]}>{g.subtitle}</Text>
+      <Pressable onPress={() => onPlay?.(g.gameKey)} style={[styles.gameBtn, { top: g.btnTop, left: g.btnLeft, backgroundColor: g.btnBg }]}>
+        <Text style={tx(16, fonts.semibold, g.btnText)}>{g.btnLabel}</Text>
       </Pressable>
     </View>
   );
 }
 
-function GameCard({ game }: { game: (typeof GAMES)[number] & { duration?: string; challenge?: boolean } }) {
+function StreakCard({ streak = 4 }: { streak?: number }) {
+  const s = colors.streak;
+  const remaining = Math.max(STREAK_TARGET - streak, 0);
+  const progress = Math.min(streak / STREAK_TARGET, 1);
+  const subtitle =
+    remaining === 0
+      ? `Reward unlocked: ${STREAK_REWARD_POINTS} Frenzies Points`
+      : `${remaining === 1 ? 'One more win' : `${remaining} more wins`} to earn ${STREAK_REWARD_POINTS} Frenzies Points`;
   return (
-    <Pressable style={styles.gameCard}>
-      <View style={styles.gameArt}>
-        <Image source={{ uri: game.image }} style={styles.gameImage} resizeMode={game.fit} />
-        <View style={styles.gameBadgeLeft}><Text style={styles.badgeText}>PvP</Text></View>
-        <View style={styles.gameBadgeRight}><MaterialCommunityIcons name="timer-outline" size={11} color="#180C0C" /><Text style={styles.badgeText}>{game.duration}</Text></View>
-      </View>
-      <View style={styles.gameBody}>
-        <Text numberOfLines={2} style={styles.gameTitle}>{game.title}</Text>
-        <Text numberOfLines={2} style={styles.gameSubtitle}>{game.subtitle}</Text>
-        <Pressable style={[styles.playButton, game.challenge && styles.challengeButton]}>
-          <Text style={[styles.playButtonText, game.challenge && styles.challengeButtonText]}>{game.challenge ? 'Challenge' : 'Play'}</Text>
-        </Pressable>
-      </View>
-    </Pressable>
-  );
-}
-
-function StreakCard() {
-  return (
-    <LinearGradient colors={['#FBDEC4', '#F6B68C']} start={{ x: 1, y: 1 }} end={{ x: -1, y: -1 }} style={styles.streakCard}>
-      <View style={styles.streakTop}>
-        <View style={styles.flameBadge}>
-          <MaterialCommunityIcons name="fire" size={20} color="#180C0C" />
+    <View style={{ paddingHorizontal: 18, paddingTop: 20 }}>
+      <GradientBox gradient={s.gradient} style={styles.streakCard}>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={styles.flameBadge}><FontAwesome5 name="fire" size={20} color={s.flameIcon} /></View>
+          <View style={{ flex: 1 }}>
+            <Text style={[tx(17, fonts.bold), { marginLeft: 8, marginTop: 16 }]}>{streak} win streak</Text>
+            <Text style={[tx(14, fonts.regular, s.subtext), { marginLeft: 8, marginTop: 2 }]}>{subtitle}</Text>
+          </View>
         </View>
-        <View style={styles.streakCopy}>
-          <Text style={styles.streakTitle}>4 win streak</Text>
-          <Text style={styles.streakSubtitle}>One more win to earn 100 Frenzies Points</Text>
+        <View style={styles.progressTrack}><View style={[styles.progressFill, { width: `${Math.round(progress * 100)}%` }]} /></View>
+        <View style={styles.shieldRow}>
+          <MaterialCommunityIcons name="shield-outline" size={18} color={colors.textPrimary} style={{ marginLeft: 15 }} />
+          <Text style={[tx(14, fonts.regular, s.subtext), { marginLeft: 4, flexShrink: 1 }]}>Protect streak before match 5</Text>
+          <View style={styles.shieldPill}><Text style={tx(14, fonts.semibold)}>Streak Shield</Text></View>
         </View>
-      </View>
-      <View style={styles.progressTrack}><View style={[styles.progressFill, { width: '80%' }]} /></View>
-      <View style={styles.shieldRow}>
-        <View style={styles.shieldCopy}>
-          <MaterialCommunityIcons name="shield-check-outline" size={19} color={COLORS.text} />
-          <Text style={styles.shieldLabel}>Protect streak before match 5</Text>
-        </View>
-        <View style={styles.shieldPill}><Text style={styles.shieldPillText}>Streak Shield</Text></View>
-      </View>
-    </LinearGradient>
-  );
-}
-
-function Avatar({ name, own }: { name: string; own?: boolean }) {
-  const initials = name.length > 1 ? name.slice(0, 2).toUpperCase() : name.toUpperCase();
-  return (
-    <View style={[styles.avatarRing, own && styles.ownAvatarRing]}>
-      <View style={styles.avatar}><Text style={styles.avatarText}>{initials}</Text></View>
+      </GradientBox>
     </View>
+  );
+}
+
+type RankEntry = {
+  rank: number;
+  name: string;
+  wins: number;
+  photoUrl?: string;
+  isTop?: boolean;
+  isYou?: boolean;
+};
+
+const ENTRIES: RankEntry[] = [
+  { rank: 1, name: 'Claire D.', wins: 19, isTop: true },
+  { rank: 2, name: 'Joyce B.', wins: 15 },
+  { rank: 3, name: 'Aitor M.', wins: 12, isTop: true },
+  { rank: 4, name: 'Yumi M.', wins: 10 },
+  { rank: 5, name: 'Daniel P.', wins: 9 },
+  { rank: 6, name: 'You', wins: 4, isYou: true },
+  { rank: 7, name: 'Nora F.', wins: 3 },
+  { rank: 8, name: 'Theo W.', wins: 3 },
+  { rank: 9, name: 'Priya S.', wins: 2 },
+  { rank: 10, name: 'Cole J.', wins: 2 },
+];
+
+const RANK_H = sizes.rankingsHeight;
+const RANK_VIEWPORT = RANK_H - 2;
+const r = colors.rankings;
+
+function Avatar({ e }: { e: RankEntry }) {
+  const initials = e.isYou ? null : getInitials(e.name);
+  const circle = (
+    <View style={styles.avatar}>
+      {e.photoUrl ? <Image source={{ uri: e.photoUrl }} style={{ width: 30, height: 30 }} /> : initials ? <Text style={tx(11, fonts.bold, r.avatarText)}>{initials}</Text> : <MaterialIcons name="person" size={15} color={r.avatarText} />}
+    </View>
+  );
+  if (!e.isYou) return circle;
+  return <View style={styles.avatarRing}>{circle}</View>;
+}
+
+function RankRowContent({ e }: { e: RankEntry }) {
+  return (
+    <>
+      <View style={{ width: 16 }}><Text style={[tx(13, fonts.bold, e.isTop ? r.rankTop : r.rankMuted), { textAlign: 'center' }]}>{e.rank}</Text></View>
+      <View style={{ width: 11 }} />
+      <Avatar e={e} />
+      <View style={{ width: 11 }} />
+      <Text numberOfLines={1} style={[tx(13, fonts.semibold, r.text), { flex: 1 }]}>{e.name}</Text>
+      <View style={styles.flamePill}><MaterialIcons name="local-fire-department" size={12} color={r.flamePillText} /><Text style={[tx(11.5, fonts.bold, r.flamePillText), { marginLeft: 4 }]}>{e.wins}</Text></View>
+    </>
   );
 }
 
 function RankingsCard() {
+  const scrollY = useRef(0);
+  const youLayout = useRef<{ y: number; h: number } | null>(null);
+  const [showPinned, setShowPinned] = useState(false);
+  const anim = useRef(new Animated.Value(0)).current;
+  const check = useCallback(() => {
+    const l = youLayout.current;
+    if (!l) return;
+    const top = l.y - scrollY.current;
+    const bottom = top + l.h;
+    const visible = bottom > 0 && top < RANK_VIEWPORT;
+    setShowPinned(!visible);
+  }, []);
+  useEffect(() => {
+    Animated.timing(anim, { toValue: showPinned ? 1 : 0, duration: 200, useNativeDriver: true }).start();
+  }, [showPinned, anim]);
+  const onScroll = (ev: NativeSyntheticEvent<NativeScrollEvent>) => {
+    scrollY.current = ev.nativeEvent.contentOffset.y;
+    check();
+  };
+  const you = ENTRIES.find((x) => x.isYou)!;
   return (
-    <View style={styles.rankingsCard}>
-      <ScrollView nestedScrollEnabled showsVerticalScrollIndicator={false} style={styles.rankingsScroll}>
-        {RANKINGS.map(([rank, name, wins]) => {
-          const own = name === 'Maya';
-          const rankNumber = Number(rank);
-          return (
-            <View key={rank} style={[styles.rankRow, own && styles.ownRankRow]}>
-              <Text style={[styles.rankNumber, (rankNumber === 1 || rankNumber === 3) && styles.accentRank]}>{rank}</Text>
-              <Avatar name={name} own={own} />
-              <Text numberOfLines={1} style={styles.rankName}>{name}</Text>
-              <View style={styles.winPill}>
-                <MaterialCommunityIcons name="fire" size={13} color="#DE5A2A" />
-                <Text style={styles.winText}>{wins}</Text>
-              </View>
-            </View>
-          );
-        })}
+    <View style={styles.rankCard}>
+      <ScrollView style={{ height: RANK_VIEWPORT }} contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 4 }} onScroll={onScroll} scrollEventThrottle={16} nestedScrollEnabled showsVerticalScrollIndicator={false}>
+        {ENTRIES.map((e, i) => (
+          <View key={e.rank} onLayout={e.isYou ? (ev) => { youLayout.current = { y: ev.nativeEvent.layout.y, h: ev.nativeEvent.layout.height }; check(); } : undefined} style={[styles.rankRow, e.isYou && { marginHorizontal: -14, paddingHorizontal: 14, backgroundColor: r.youTint }, i !== ENTRIES.length - 1 && { borderBottomWidth: 1, borderBottomColor: r.rowBorder }]}>
+            <RankRowContent e={e} />
+          </View>
+        ))}
       </ScrollView>
+      <Animated.View pointerEvents={showPinned ? 'auto' : 'none'} style={[styles.pinned, { opacity: anim, transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [60, 0] }) }] }]}>
+        <RankRowContent e={{ ...you, isTop: false }} />
+      </Animated.View>
     </View>
   );
 }
 
-function TournamentCard({ tier }: { tier: (typeof TOURNAMENTS)[number] }) {
-  const percent = Math.min(100, (tier.joined / 24) * 100);
+type TierCfg = {
+  key: TournamentTierKey;
+  label: string;
+  labelSize: number;
+  fee: string;
+  pool: string;
+  active: number;
+  joined: number;
+  capacity: number;
+  width: number;
+};
+
+const TIERS: TierCfg[] = [
+  { key: 't1', label: 'Entry fee', labelSize: 15, fee: '$1', pool: '$50', active: 0, joined: 0, capacity: 24, width: 185 },
+  { key: 't5', label: 'Entry fee', labelSize: 15, fee: '$5', pool: '$250', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't20', label: 'Entry fee', labelSize: 14, fee: '$20', pool: '$1,000', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't50', label: 'Entry fee', labelSize: 15, fee: '$50', pool: '$2,500', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't100', label: 'Entry fee', labelSize: 15, fee: '$100', pool: '$5,000', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 'ultimate', label: 'ULTIMATE', labelSize: 15, fee: '$500', pool: '$25,000', active: 3, joined: 18, capacity: 24, width: 200 },
+];
+
+function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOpen?: (tier: TournamentTierKey) => void }) {
+  const th = tournamentTiers[t.key];
+  const progress = t.capacity > 0 ? Math.min(t.joined / t.capacity, 1) : 0;
+  const isUlt = t.key === 'ultimate';
   return (
-    <Pressable style={styles.tournamentCard}>
-      <LinearGradient colors={tier.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={StyleSheet.absoluteFill} />
-      <View style={styles.tournamentDecoration} />
-      <View style={styles.tournamentContent}>
-        <Text style={[styles.tournamentFee, { color: tier.text }]}>{tier.fee}</Text>
-        <Text style={[styles.tournamentEntry, { color: tier.text }]}>entry fee</Text>
-        <View style={styles.tournamentSpacer} />
-        <Text style={[styles.tournamentPrizeLabel, { color: tier.text }]}>Prize pool</Text>
-        <Text style={[styles.tournamentPrize, { color: tier.text }]}>{tier.prize}</Text>
-        <View style={styles.joinedRow}>
-          <Text style={[styles.joinedText, { color: tier.text }]}>{tier.joined}/24 joined</Text>
+    <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
+      <GradientBox gradient={th.gradient} style={{ width: t.width, height: sizes.tournamentCard.height, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
+        <View style={{ paddingLeft: 10, paddingTop: 10 }}>
+          <Text style={tx(t.labelSize, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
+          <Text style={[tx(20, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
+          <Text style={[tx(15, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
+          <Text style={[tx(16, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
+          {t.active > 0 && <Text style={[tx(14, fonts.regular, th.text), { marginTop: 8 }]}>{'\u2022'} {t.active} matches in progress</Text>}
+          <Text style={[tx(14, fonts.medium, th.text), { marginTop: 18 }]}>{t.joined}/{t.capacity} joined</Text>
+          <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: 170 * progress, height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
         </View>
-        <View style={[styles.joinTrack, tier.ultimate && styles.ultimateTrack]}>
-          <View style={[styles.joinFill, { width: `${percent}%` }, tier.ultimate && styles.ultimateFill]} />
-        </View>
-      </View>
+        <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, width: 60, height: 60, borderBottomLeftRadius: 32, backgroundColor: colors.white, opacity: th.shapeOpacity }} />
+      </GradientBox>
     </Pressable>
   );
 }
 
-export default function FrenziesHomeScreen({ onBack }: { onBack?: () => void }) {
-  const { width } = useWindowDimensions();
-  const gameWidth = 150;
-
+function PassCard({ onGetPass }: { onGetPass?: () => void }) {
+  const p = colors.pass;
   return (
-    <View style={styles.page}>
-      <StatusBar style="dark" />
-      <View style={styles.header}>
-        <Pressable onPress={onBack} hitSlop={12} style={styles.backButton}>
-          <MaterialIcons name="arrow-back" size={25} color={COLORS.text} />
-        </Pressable>
-        <Text style={styles.headerTitle}>Frenzies</Text>
-        <View style={styles.pointsPill}>
-          <MaterialIcons name="bolt" size={17} color="#8B6A12" />
-          <Text style={styles.pointsText}>0</Text>
+    <View style={{ paddingHorizontal: 18, paddingTop: 20 }}>
+      <View style={[styles.passCard, { backgroundColor: p.bg, borderColor: p.border }]}>
+        <View style={styles.passTop}>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}><MaterialCommunityIcons name="diamond-outline" size={16} color={colors.textPrimary} /><Text style={[tx(14.5, fonts.bold), { marginLeft: 8 }]}>{PASS.name}</Text></View>
+          <Text style={tx(14, fonts.bold)}>{PASS.price}<Text style={tx(11, fonts.medium, p.muted)}>{PASS.period}</Text></Text>
         </View>
+        <View style={styles.passGrid}>{PASS.benefits.map((b) => <Text key={b} style={[tx(11.5, fonts.regular, colors.textSecondary), styles.passBenefit]}>{b}</Text>)}</View>
+        <Pressable onPress={onGetPass} style={[styles.passCta, { backgroundColor: p.cta }]}><Text style={tx(13, fonts.bold, p.ctaText)}>{PASS.cta}</Text></Pressable>
       </View>
-
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
-        <LinearGradient colors={[COLORS.heroStart, COLORS.heroEnd]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.hero}>
-          <View style={styles.sparkleOne}><Text>✦</Text></View>
-          <View style={styles.sparkleTwo}><Text>✧</Text></View>
-          <View style={styles.heroCopy}>
-            <Text style={styles.heroTitle}>Fast PvP. Big fun.</Text>
-            <Text style={styles.heroSubtitle}>Challenge players. Build your streak. Earn Frenzies Points.</Text>
-          </View>
-          <Image source={{ uri: ASSETS.trophy }} style={styles.trophy} resizeMode="contain" />
-        </LinearGradient>
-
-        <SectionHeader title="Play now" action="View all →" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.gameRow}>
-          {GAMES.map(game => <View key={game.key} style={{ width: gameWidth }}><GameCard game={game} /></View>)}
-        </ScrollView>
-
-        <View style={styles.sectionSpacing} />
-        <SectionHeader title="Your streak" action="" />
-        <StreakCard />
-
-        <View style={styles.sectionSpacing} />
-        <SectionHeader title="Rankings" action="See more →" />
-        <RankingsCard />
-
-        <View style={styles.sectionSpacing} />
-        <SectionHeader title="Tournaments" action="Compete →" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.tournamentRow}>
-          {TOURNAMENTS.map(tier => <TournamentCard key={tier.fee} tier={tier} />)}
-        </ScrollView>
-
-        <View style={{ height: 30 }} />
-      </ScrollView>
     </View>
   );
 }
 
+function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: { icon: React.ReactNode; label: string; height: number; justify: 'space-between' | 'center' | 'flex-end'; padBottom?: number; padLeft?: number }) {
+  return <View style={{ width: 70, height, alignItems: 'center', justifyContent: justify, paddingLeft: padLeft }}>{icon}<Text style={[tx(11, fonts.medium), { marginTop: 6, marginBottom: padBottom }]}>{label}</Text></View>;
+}
+
+function BottomNav() {
+  const insets = useSafeAreaInsets();
+  const inactive = colors.nav.inactive;
+  return (
+    <View style={{ padding: 2, paddingBottom: Math.max(2, insets.bottom), backgroundColor: colors.pageBg }}>
+      <View style={styles.navBar}>
+        <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color={colors.nav.active} />} />
+        <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={32} color={inactive} />} />
+        <NavItem label="Battle" height={80} justify="flex-end" padBottom={15} icon={<FontAwesome5 name="battle-net" brand size={52} color={inactive} />} />
+        <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
+        <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={32} color={inactive} />} />
+      </View>
+    </View>
+  );
+}
+
+export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.pageBg }}>
+      <StatusBar style="dark" />
+      <FrenziesHeader points={128} onBack={onBack} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+        <HeroBanner />
+        <View style={{ paddingTop: 18 }}><SectionHeader title="Play now " link="View all" /></View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
+        <StreakCard />
+        <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" /></View>
+        <View style={{ marginHorizontal: 10, marginTop: 8, height: RANK_H }}><RankingsCard /></View>
+        <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{TIERS.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
+        <PassCard onGetPass={onGetPass} />
+      </ScrollView>
+      <BottomNav />
+    </View>
+  );
+}
+
+export default function App() {
+  const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
+  if (!loaded) return null;
+  return <SafeAreaProvider><FrenziesHomeScreen /></SafeAreaProvider>;
+}
+
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: COLORS.background },
-  header: { height: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: COLORS.border },
-  backButton: { width: 36, height: 36, alignItems: 'flex-start', justifyContent: 'center' },
-  headerTitle: { flex: 1, fontSize: 20, fontWeight: '700', color: COLORS.text, letterSpacing: -0.3 },
-  pointsPill: { height: 32, minWidth: 55, paddingHorizontal: 10, borderRadius: 16, backgroundColor: '#FFF4CF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 },
-  pointsText: { fontSize: 13, fontWeight: '700', color: COLORS.text },
-  content: { paddingBottom: 24 },
-  hero: { marginHorizontal: 18, marginTop: 12, minHeight: 100, borderRadius: 22, overflow: 'hidden', padding: 10, flexDirection: 'row', alignItems: 'center' },
-  heroCopy: { width: '64%', zIndex: 2 },
-  heroTitle: { fontSize: 19, lineHeight: 23, fontWeight: '800', color: COLORS.text, letterSpacing: -0.8 },
-  heroSubtitle: { marginTop: 6, fontSize: 12, lineHeight: 16, color: '#6B6252', maxWidth: 220 },
-  trophy: { position: 'absolute', right: 5, bottom: -2, width: 115, height: 100 },
-  sparkleOne: { position: 'absolute', right: 126, top: 22, opacity: 0.7 },
-  sparkleTwo: { position: 'absolute', right: 52, top: 18, opacity: 0.55 },
-  sectionHeader: { marginTop: 18, paddingHorizontal: 16, minHeight: 27, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontSize: 17, lineHeight: 22, fontWeight: '700', color: COLORS.text, letterSpacing: -0.25 },
-  sectionAction: { fontSize: 13, fontWeight: '600', color: '#7D838E' },
-  gameRow: { paddingLeft: 13, paddingTop: 16, paddingRight: 13, gap: 10 },
-  gameCard: { backgroundColor: '#F4F4F4', borderRadius: 8, overflow: 'hidden', height: 200 },
-  gameArt: { height: 200, backgroundColor: '#F2F4F7', position: 'relative' },
-  gameImage: { width: '100%', height: '100%' },
-  gameBadgeLeft: { position: 'absolute', left: 6, top: 6, paddingHorizontal: 7, height: 15, borderRadius: 3, backgroundColor: 'rgba(244,241,234,0.38)', alignItems: 'center', justifyContent: 'center' },
-  gameBadgeRight: { position: 'absolute', right: 6, top: 6, paddingHorizontal: 5, height: 15, borderRadius: 3, backgroundColor: 'rgba(244,241,234,0.38)', flexDirection: 'row', gap: 2, alignItems: 'center', justifyContent: 'center' },
-  badgeText: { fontSize: 8, fontWeight: '500', color: '#180C0C' },
-  gameBody: { position: 'absolute', left: 4, right: 4, top: 40, bottom: 0 },
-  gameTitle: { fontSize: 15, lineHeight: 18, fontWeight: '700', color: '#180C0C', opacity: 0.85 },
-  gameSubtitle: { marginTop: 7, fontSize: 11.5, lineHeight: 15, color: '#FFFFFF', opacity: 0.85 },
-  playButton: { marginTop: 10, height: 30, borderRadius: 8, backgroundColor: '#173A12', alignItems: 'center', justifyContent: 'center' },
-  playButtonText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF' },
-  challengeButton: { backgroundColor: '#FFFFFF' },
-  challengeButtonText: { color: '#173A12' },
-  sectionSpacing: { height: 2 },
-  streakCard: { marginHorizontal: 18, marginTop: 2, height: 150, borderRadius: 20, padding: 15 },
-  streakTop: { flexDirection: 'row', alignItems: 'center' },
-  flameBadge: { width: 34, height: 34, borderRadius: 11, backgroundColor: COLORS.orange, alignItems: 'center', justifyContent: 'center' },
-  streakCopy: { flex: 1, marginLeft: 11 },
-  streakTitle: { fontSize: 16, fontWeight: '750', color: COLORS.text },
-  streakSubtitle: { marginTop: 3, fontSize: 12, lineHeight: 17, color: COLORS.secondary },
-  progressTrack: { height: 10, borderRadius: 4, marginTop: 15, backgroundColor: '#F2D6BC', overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 4, backgroundColor: COLORS.orange },
-  shieldRow: { marginTop: 13, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  shieldCopy: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 7 },
-  shieldLabel: { fontSize: 11, color: COLORS.secondary, flexShrink: 1 },
-  shieldPill: { marginLeft: 8, paddingHorizontal: 10, height: 30, borderRadius: 18, backgroundColor: '#B3DF4B', alignItems: 'center', justifyContent: 'center' },
-  shieldPillText: { fontSize: 10, fontWeight: '800', color: COLORS.text },
-  rankingsCard: { marginHorizontal: 10, marginTop: 0, height: 200, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FFFFFF', overflow: 'hidden' },
-  rankingsScroll: { flex: 1 },
-  rankRow: { height: 56, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#F4F5F7' },
-  ownRankRow: { backgroundColor: 'rgba(201,242,75,0.06)' },
-  rankNumber: { width: 24, fontSize: 16, fontWeight: '700', color: '#B7BBC4' },
-  accentRank: { color: '#E0862E' },
-  avatarRing: { width: 37, height: 37, borderRadius: 18.5, alignItems: 'center', justifyContent: 'center' },
-  ownAvatarRing: { borderWidth: 1.75, borderColor: COLORS.green },
-  avatar: { width: 30, height: 30, borderRadius: 15, backgroundColor: '#E7E9ED', alignItems: 'center', justifyContent: 'center' },
-  avatarText: { fontSize: 10, fontWeight: '700', color: '#8A8F99' },
-  rankName: { flex: 1, marginLeft: 9, fontSize: 13, fontWeight: '600', color: COLORS.text },
-  winPill: { minWidth: 47, height: 25, paddingHorizontal: 7, borderRadius: 13, backgroundColor: '#FBE1D2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 },
-  winText: { fontSize: 11, fontWeight: '700', color: '#DE5A2A' },
-  tournamentRow: { paddingLeft: 18, paddingRight: 12, gap: 10 },
-  tournamentCard: { width: 185, height: 200, borderRadius: 18, overflow: 'hidden', position: 'relative' },
-  tournamentDecoration: { position: 'absolute', right: -8, top: -8, width: 60, height: 60, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.32)' },
-  tournamentContent: { flex: 1, paddingHorizontal: 10, paddingVertical: 10 },
-  tournamentFee: { fontSize: 20, lineHeight: 24, fontWeight: '700' },
-  tournamentEntry: { marginTop: 1, fontSize: 15, fontWeight: '500', opacity: 0.9 },
-  tournamentSpacer: { flex: 1 },
-  tournamentPrizeLabel: { fontSize: 15, fontWeight: '500', opacity: 0.9 },
-  tournamentPrize: { marginTop: 1, fontSize: 16, fontWeight: '600' },
-  joinedRow: { marginTop: 8 },
-  joinedText: { fontSize: 15, fontWeight: '600' },
-  joinTrack: { height: 6, marginTop: 5, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', overflow: 'hidden' },
-  joinFill: { height: '100%', borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.24)' },
-  ultimateTrack: { backgroundColor: 'rgba(240,200,100,0.18)', borderWidth: 1, borderColor: 'rgba(240,200,100,0.35)' },
-  ultimateFill: { backgroundColor: '#F0C864' },
+  sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  sectionTitle: { ...tx(17, fonts.bold), marginLeft: 18 },
+  sectionLink: { flexDirection: 'row', alignItems: 'center', marginRight: 10 },
+  sectionLinkText: tx(14, fonts.regular, colors.textSecondary),
+  gameCard: { width: sizes.gameCard.width, height: sizes.gameCard.height, marginLeft: sizes.gameCard.gap, marginTop: 16, backgroundColor: colors.white },
+  badge: { position: 'absolute', top: 6, width: 30, height: 15, borderRadius: 5, alignItems: 'center', justifyContent: 'center' },
+  durBadge: { flexDirection: 'row', justifyContent: 'flex-start' },
+  gameBtn: { position: 'absolute', width: 125, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center', opacity: 0.9 },
+  streakCard: { height: sizes.streakHeight, borderRadius: sizes.streakRadius, overflow: 'hidden' },
+  flameBadge: { width: 35, height: 35, marginLeft: 15, marginTop: 15, borderRadius: 8, backgroundColor: colors.streak.flameBadgeBg, alignItems: 'center', justifyContent: 'center' },
+  progressTrack: { marginHorizontal: 15, marginTop: 15, height: 10, borderRadius: 3, overflow: 'hidden', backgroundColor: colors.streak.progressTrack, opacity: 0.9 },
+  progressFill: { height: 10, borderRadius: 3, backgroundColor: colors.streak.progressFill },
+  shieldRow: { flexDirection: 'row', alignItems: 'center', marginTop: 12 },
+  shieldPill: { width: 100, height: 30, marginLeft: 16, borderRadius: 18, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
+  rankCard: { flex: 1, backgroundColor: r.cardBg, borderRadius: sizes.rankingsRadius, borderWidth: 1, borderColor: r.cardBorder, overflow: 'hidden' },
+  rankRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
+  avatar: { width: 30, height: 30, borderRadius: 15, backgroundColor: r.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  avatarRing: { width: 37, height: 37, borderRadius: 18.5, borderWidth: 1.75, borderColor: r.youRing, alignItems: 'center', justifyContent: 'center' },
+  flamePill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, backgroundColor: r.flamePillBg },
+  pinned: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, backgroundColor: r.cardBg, borderTopWidth: 1, borderTopColor: r.cardBorder, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 20, shadowOffset: { width: 0, height: -8 } },
+  tBarTrack: { marginTop: 8, width: 170, height: 6, borderRadius: 5, overflow: 'hidden' },
+  passCard: { borderRadius: 20, borderWidth: 1, padding: 16 },
+  passTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
+  passBenefit: { width: '50%', paddingRight: 10, marginBottom: 8 },
+  passCta: { borderRadius: 12, paddingVertical: 11, alignItems: 'center', justifyContent: 'center' },
+  navBar: { width: '100%', height: sizes.navHeight, borderRadius: 20, backgroundColor: colors.nav.bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
 });
