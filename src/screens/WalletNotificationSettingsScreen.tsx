@@ -65,9 +65,9 @@ const styles=StyleSheet.create({
   channelControl:{height:50,padding:2,flexDirection:'row',backgroundColor:TOGGLE_BG,borderWidth:1,borderColor:TOGGLE_BG,borderRadius:12},
   channelOption:{flex:1,height:44,alignItems:'center',justifyContent:'center',borderRadius:10},
   channelOptionSelected:{backgroundColor:CHANNEL_SELECTED},
-  channelText:{color:MUTED,fontSize:14,fontFamily:'Inter_500Medium'},
+  channelText:{color:MUTED,fontSize:14,fontFamily:'Inter_600SemiBold'},
   channelTextSelected:{color:TEXT},
   rows:{marginTop:18},
   row:{minHeight:56,flexDirection:'row',alignItems:'center',paddingVertical:6,paddingHorizontal:2,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE},
-  rowLabel:{flex:1,color:TEXT,fontSize:14,fontFamily:'Inter_600SemiBold'},
+  rowLabel:{flex:1,color:TEXT,fontSize:14,fontFamily:'Inter_500Medium'},
 });
