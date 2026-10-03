@@ -103,7 +103,7 @@ function iconForActivity(a: ActivityItem): IconSpec {
     case 'transfer':
       return rnd('swap_horiz');
     case 'topup':
-      return out('add_card');
+      return out('credit-card');
     case 'withdraw':
       return out('account_balance');
     case 'airtime':
@@ -114,7 +114,7 @@ function iconForActivity(a: ActivityItem): IconSpec {
     case 'goodies':
       return out('shopping_bag');
     case 'konsoliss':
-      return out('inventory_2');
+      return out('shopping-bag');
     case 'woulib':
     case 'rideza':
       return out('directions_car');
@@ -123,9 +123,9 @@ function iconForActivity(a: ActivityItem): IconSpec {
     case 'flyz':
       return out('flight_takeoff');
     case 'habita':
-      return out('home_work');
+      return out('home');
     case 'services':
-      return out('handyman');
+      return out('build');
     case 'arts_litts':
       return out('palette');
     case 'streamz':
@@ -152,7 +152,7 @@ function iconForActivity(a: ActivityItem): IconSpec {
       return rnd('stars');
     case 'wallet':
     default:
-      return out('account_balance_wallet');
+      return out('account-balance-wallet');
   }
 }
 
