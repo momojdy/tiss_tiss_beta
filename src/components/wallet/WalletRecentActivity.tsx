@@ -366,7 +366,7 @@ export default function WalletRecentActivity({
                   })
                 }
                 style={({ pressed }) => [
-                  styles.row,
+                  styles.row,\n                  index === 0 && styles.firstRow,
                   !isLast && styles.rowDivider,
                   pressed && styles.rowPressed,
                 ]}
