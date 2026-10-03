@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const BACKGROUND = '#F5F8F3';
 const TEXT = '#1A2517';
@@ -26,7 +26,7 @@ export default function WalletBankCardsScreen({ onBack, onAddCardPress }: Props)
       <Header onBack={onBack} />
       <View style={styles.content}>
         <View style={styles.emptyIcon}>
-          <MaterialIcons name="credit-card" size={34} color={MUTED} />
+          <MaterialCommunityIcons name="credit-card-outline" size={34} color={MUTED} />
         </View>
         <Text style={styles.emptyTitle}>No bank cards yet</Text>
         <Text style={styles.emptyBody}>
@@ -36,7 +36,7 @@ export default function WalletBankCardsScreen({ onBack, onAddCardPress }: Props)
           onPress={onAddCardPress}
           style={({ pressed }) => [styles.addButton, pressed && styles.addButtonPressed]}
         >
-          <MaterialIcons name="add" size={20} color="#FFFFFF" />
+          <MaterialCommunityIcons name="plus" size={20} color="#FFFFFF" />
           <Text style={styles.addButtonText}>Add bank card</Text>
         </Pressable>
       </View>
