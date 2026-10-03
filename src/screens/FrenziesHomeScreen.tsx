@@ -396,12 +396,73 @@ function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: {
 
 function BottomNav() {
   const inactive = colors.nav.inactive;
+  const battleMotion = useRef(new Animated.Value(0)).current;
+  const glareMotion = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    const motion = Animated.loop(
+      Animated.sequence([
+        Animated.delay(1600),
+        Animated.timing(battleMotion, { toValue: 1, duration: 180, useNativeDriver: true }),
+        Animated.timing(battleMotion, { toValue: -1, duration: 220, useNativeDriver: true }),
+        Animated.timing(battleMotion, { toValue: 0, duration: 180, useNativeDriver: true }),
+        Animated.delay(900),
+      ])
+    );
+
+    const glare = Animated.loop(
+      Animated.sequence([
+        Animated.delay(1800),
+        Animated.timing(glareMotion, { toValue: 1, duration: 650, useNativeDriver: true }),
+        Animated.delay(900),
+        Animated.timing(glareMotion, { toValue: 0, duration: 0, useNativeDriver: true }),
+      ])
+    );
+
+    motion.start();
+    glare.start();
+
+    return () => {
+      motion.stop();
+      glare.stop();
+    };
+  }, [battleMotion, glareMotion]);
+
+  const battleRotate = battleMotion.interpolate({
+    inputRange: [-1, 0, 1],
+    outputRange: ['6deg', '0deg', '-6deg'],
+  });
+
+  const glareTranslate = glareMotion.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-58, 58],
+  });
+
   return (
     <View style={styles.navOuter}>
       <View style={styles.navBar}>
         <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color="#B3DF4B" />} />
         <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={32} color={inactive} />} />
-        <NavItem label="Battle" height={80} justify="flex-end" padBottom={15} icon={<FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />} />
+        <NavItem
+          label="Battle"
+          height={80}
+          justify="flex-end"
+          padBottom={15}
+          icon={
+            <View style={styles.battleIconWrap}>
+              <Animated.View style={{ transform: [{ rotate: battleRotate }] }}>
+                <FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />
+              </Animated.View>
+              <Animated.View
+                pointerEvents="none"
+                style={[
+                  styles.battleGlare,
+                  { transform: [{ translateX: glareTranslate }, { rotate: '-20deg' }] },
+                ]}
+              />
+            </View>
+          }
+        />
         <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
         <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={32} color={inactive} />} />
       </View>
@@ -489,4 +550,6 @@ const styles = StyleSheet.create({
   passCta: { borderRadius: 12, paddingVertical: 11, alignItems: 'center', justifyContent: 'center' },
   navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
   navBar: { width: '100%', height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } },
+  battleIconWrap: { width: 58, height: 55, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  battleGlare: { position: 'absolute', top: -12, left: 0, width: 10, height: 80, backgroundColor: 'rgba(255,255,255,0.55)' },
 });
