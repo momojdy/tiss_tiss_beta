@@ -147,6 +147,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
         </Pressable>
         <Text style={styles.headerTitle}>Personal info</Text>
       </View>
+      <View style={styles.strip} />
 
       <View style={styles.content} onTouchStart={() => Keyboard.dismiss()}>
         <Pressable onPress={choosePhoto} disabled={loading || saving} style={styles.avatarWrap} accessibilityRole="button" accessibilityLabel="Change profile photo">
@@ -217,6 +218,7 @@ const styles = StyleSheet.create({
   header: { height: 100, paddingHorizontal: 10, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: BACKGROUND },
   headerButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { marginLeft: 12, paddingBottom: 1, color: TEXT, fontSize: 19, lineHeight: 23, fontFamily: 'Manrope_800ExtraBold' },
+  strip: { height: 20, backgroundColor: '#E6EDE1' },
   content: { paddingHorizontal: 16, paddingTop: 24 },
   avatarWrap: { width: 92, height: 92, marginBottom: 7 },
   avatarImage: { width: 92, height: 92, borderRadius: 46 },
