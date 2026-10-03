@@ -4,9 +4,9 @@ import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 const C = { bg: '#F5F8F3', text: '#1A2517', muted: '#9AA595', green: '#3F6B37', tint: '#DCE8D2', strip: '#E6EDE1', pending: '#A56A12', declined: '#A33D3D' };
-const FILTERS = ['All', 'Money', 'Points', 'Transfers'] as const;
+const FILTERS = ['All', 'Payments', 'Top ups', 'Rewards'] as const;
 type Filter = typeof FILTERS[number];
-type Item = { id: string; createdAt: string; title: string; subtitle: string; amount: number; currency: string; direction: 'credit'|'debit'; status: string; category: Exclude<Filter,'All'>; points?: boolean; transactionType?: string; activityCategory?: string };
+type Item = { id: string; createdAt: string; title: string; subtitle: string; amount: number; currency: string; direction: 'credit'|'debit'; status: string; category: 'Money'|'Points'|'Transfers'; points?: boolean; transactionType?: string; activityCategory?: string };
 
 const dateText = (v:string) => { const d=new Date(v); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); };
 const statusText = (v:string) => ({succeeded:'Completed',failed:'Declined',cancelled:'Cancelled',processing:'Processing',pending:'Pending'} as Record<string,string>)[v.toLowerCase()] ?? (v ? v.charAt(0).toUpperCase()+v.slice(1) : 'Completed');
@@ -60,9 +60,9 @@ export default function WalletHistoryScreen({onBack}:{onBack?:()=>void}) {
 
   const filtered=useMemo(()=>{
     if(filter==='All') return items;
-    if(filter==='Money') return items.filter(x=>x.category==='Money');
-    if(filter==='Points') return items.filter(x=>x.category==='Points');
-    return items.filter(x=>x.category==='Transfers');
+    if(filter==='Payments') return items.filter(x=>x.category==='Money');
+    if(filter==='Top ups') return items.filter(x=>x.transactionType?.toLowerCase()==='topup');
+    return items.filter(x=>x.category==='Points');
   },[filter,items]);
 
   return <View style={s.page}><Header onBack={onBack}/>
