@@ -544,7 +544,7 @@ const styles = StyleSheet.create({
   passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
   passBenefit: { width: '50%', paddingRight: 10, marginBottom: 8 },
   passCta: { borderRadius: 12, paddingVertical: 11, alignItems: 'center', justifyContent: 'center' },
-  navBar: { width: '100%', height: sizes.navHeight, borderRadius: 20, backgroundColor: colors.nav.bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
+  navBar: { width: '100%', height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
   battleIconWrap: { width: 58, height: 55, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   battleGlare: { position: 'absolute', top: -12, left: 0, width: 10, height: 80, backgroundColor: 'rgba(255,255,255,0.55)' },
