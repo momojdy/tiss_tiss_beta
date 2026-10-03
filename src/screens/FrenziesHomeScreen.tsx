@@ -413,8 +413,8 @@ function BottomNav() {
       Animated.sequence([
         Animated.delay(1800),
         Animated.timing(glareMotion, { toValue: 1, duration: 650, useNativeDriver: true }),
-        Animated.delay(900),
         Animated.timing(glareMotion, { toValue: 0, duration: 0, useNativeDriver: true }),
+        Animated.delay(1800),
       ])
     );
     motion.start();
