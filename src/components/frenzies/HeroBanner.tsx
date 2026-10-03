@@ -12,8 +12,7 @@ export default function HeroBanner() {
         <View style={styles.copy}>
           <Text style={styles.title}>Fast PvP. Big fun.</Text>
           <Text style={styles.subtitle}>
-            Challenge players. Build your streak.{'
-'}Earn Frenzies Points.
+            {'Challenge players. Build your streak.\nEarn Frenzies Points.'}
           </Text>
         </View>
         <Image source={assets.trophy} style={styles.trophy} resizeMode="contain" />
