@@ -26,7 +26,7 @@ export default function WalletBankCardsScreen({ onBack, onAddCardPress }: Props)
       <Header onBack={onBack} />
       <View style={styles.content}>
         <View style={styles.emptyIcon}>
-          <MaterialCommunityIcons name="card-account-details-outline" size={34} color={MUTED} />
+          <MaterialCommunityIcons name="credit-card-outline" size={34} color={MUTED} />
         </View>
         <Text style={styles.emptyTitle}>No bank cards yet</Text>
         <Text style={styles.emptyBody}>
