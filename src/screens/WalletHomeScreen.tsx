@@ -122,7 +122,9 @@ const styles = StyleSheet.create({
   walletNav: {
     height: 65,
     borderRadius: 18,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(255,255,255,0.88)',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.55)',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-evenly',
