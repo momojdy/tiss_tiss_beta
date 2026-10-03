@@ -403,9 +403,7 @@ function BottomNav() {
     const motion = Animated.loop(
       Animated.sequence([
         Animated.delay(1600),
-        Animated.timing(battleMotion, { toValue: 1, duration: 180, useNativeDriver: true }),
-        Animated.timing(battleMotion, { toValue: -1, duration: 220, useNativeDriver: true }),
-        Animated.timing(battleMotion, { toValue: 0, duration: 180, useNativeDriver: true }),
+        Animated.timing(battleMotion, { toValue: 1, duration: 700, useNativeDriver: true }),
         Animated.delay(900),
       ])
     );
@@ -429,8 +427,8 @@ function BottomNav() {
   }, [battleMotion, glareMotion]);
 
   const battleRotate = battleMotion.interpolate({
-    inputRange: [-1, 0, 1],
-    outputRange: ['6deg', '0deg', '-6deg'],
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
   });
 
   const glareTranslate = glareMotion.interpolate({
