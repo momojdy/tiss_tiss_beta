@@ -20,24 +20,46 @@ const ART = '#8FAF84';
 
 type Props = { onBack?: () => void };
 
-type Preferences = {
-  channel: 'push' | 'email';
+type ChannelPreferences = {
   security: boolean;
   transactions: boolean;
-  walletStatus: boolean;
-  paymentMethods: boolean;
+  walletStatus?: boolean;
+  paymentMethods?: boolean;
   rewards: boolean;
   support: boolean;
 };
 
+type EmailPreferences = {
+  accountSecurity: boolean;
+  transactionsBilling: boolean;
+  serviceOrderUpdates: boolean;
+  rewardsPromotions: boolean;
+  supportFollowUps: boolean;
+};
+
+type Preferences = {
+  channel: 'push' | 'email';
+  push: ChannelPreferences;
+  email: EmailPreferences;
+};
+
 const DEFAULTS: Preferences = {
   channel: 'push',
-  security: true,
-  transactions: true,
-  walletStatus: true,
-  paymentMethods: true,
-  rewards: true,
-  support: true,
+  push: {
+    security: true,
+    transactions: true,
+    walletStatus: true,
+    paymentMethods: true,
+    rewards: true,
+    support: true,
+  },
+  email: {
+    accountSecurity: true,
+    transactionsBilling: true,
+    serviceOrderUpdates: true,
+    rewardsPromotions: true,
+    supportFollowUps: true,
+  },
 };
 
 function SettingRow({
@@ -73,12 +95,32 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
     (async () => {
       const { data } = await supabase.auth.getUser();
       const stored = data.user?.user_metadata?.wallet_notification_preferences;
+
       if (!mounted || !stored || typeof stored !== 'object') return;
 
+      // Keep compatibility with the previous single-list preference shape.
+      const legacy = stored as Record<string, any>;
+
       setPreferences({
-        ...DEFAULTS,
-        ...stored,
-        channel: stored.channel === 'email' ? 'email' : 'push',
+        channel: legacy.channel === 'email' ? 'email' : 'push',
+        push: {
+          ...DEFAULTS.push,
+          ...(legacy.push && typeof legacy.push === 'object' ? legacy.push : {}),
+          ...(legacy.push
+            ? {}
+            : {
+                security: legacy.security ?? DEFAULTS.push.security,
+                transactions: legacy.transactions ?? DEFAULTS.push.transactions,
+                walletStatus: legacy.walletStatus ?? DEFAULTS.push.walletStatus,
+                paymentMethods: legacy.paymentMethods ?? DEFAULTS.push.paymentMethods,
+                rewards: legacy.rewards ?? DEFAULTS.push.rewards,
+                support: legacy.support ?? DEFAULTS.push.support,
+              }),
+        },
+        email: {
+          ...DEFAULTS.email,
+          ...(legacy.email && typeof legacy.email === 'object' ? legacy.email : {}),
+        },
       });
     })();
 
@@ -90,9 +132,11 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
   const updatePreferences = async (next: Preferences) => {
     setPreferences(next);
     setSaving(true);
+
     const { error } = await supabase.auth.updateUser({
       data: { wallet_notification_preferences: next },
     });
+
     setSaving(false);
 
     if (error) {
@@ -104,8 +148,18 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
     updatePreferences({ ...preferences, channel });
   };
 
-  const setToggle = (key: keyof Omit<Preferences, 'channel'>, value: boolean) => {
-    updatePreferences({ ...preferences, [key]: value });
+  const setPushToggle = (key: keyof ChannelPreferences, value: boolean) => {
+    updatePreferences({
+      ...preferences,
+      push: { ...preferences.push, [key]: value },
+    });
+  };
+
+  const setEmailToggle = (key: keyof EmailPreferences, value: boolean) => {
+    updatePreferences({
+      ...preferences,
+      email: { ...preferences.email, [key]: value },
+    });
   };
 
   return (
@@ -144,12 +198,24 @@ export default function WalletNotificationSettingsScreen({ onBack }: Props) {
         </View>
 
         <View style={styles.rows}>
-          <SettingRow label="Security Alerts" value={preferences.security} onValueChange={value => setToggle('security', value)} />
-          <SettingRow label="Transactions" value={preferences.transactions} onValueChange={value => setToggle('transactions', value)} />
-          <SettingRow label="Wallet Status Updates" value={preferences.walletStatus} onValueChange={value => setToggle('walletStatus', value)} />
-          <SettingRow label="Payment Method Updates" value={preferences.paymentMethods} onValueChange={value => setToggle('paymentMethods', value)} />
-          <SettingRow label="Rewards & Points" value={preferences.rewards} onValueChange={value => setToggle('rewards', value)} />
-          <SettingRow label="Support & Feedback" value={preferences.support} onValueChange={value => setToggle('support', value)} />
+          {preferences.channel === 'push' ? (
+            <>
+              <SettingRow label="Security Alerts" value={preferences.push.security} onValueChange={value => setPushToggle('security', value)} />
+              <SettingRow label="Transactions" value={preferences.push.transactions} onValueChange={value => setPushToggle('transactions', value)} />
+              <SettingRow label="Wallet Status Updates" value={preferences.push.walletStatus ?? true} onValueChange={value => setPushToggle('walletStatus', value)} />
+              <SettingRow label="Payment Method Updates" value={preferences.push.paymentMethods ?? true} onValueChange={value => setPushToggle('paymentMethods', value)} />
+              <SettingRow label="Rewards & Points" value={preferences.push.rewards} onValueChange={value => setPushToggle('rewards', value)} />
+              <SettingRow label="Support & Feedback" value={preferences.push.support} onValueChange={value => setPushToggle('support', value)} />
+            </>
+          ) : (
+            <>
+              <SettingRow label="Account & Security" value={preferences.email.accountSecurity} onValueChange={value => setEmailToggle('accountSecurity', value)} />
+              <SettingRow label="Transactions & Billing" value={preferences.email.transactionsBilling} onValueChange={value => setEmailToggle('transactionsBilling', value)} />
+              <SettingRow label="Service & Order Updates" value={preferences.email.serviceOrderUpdates} onValueChange={value => setEmailToggle('serviceOrderUpdates', value)} />
+              <SettingRow label="Rewards & Promotions" value={preferences.email.rewardsPromotions} onValueChange={value => setEmailToggle('rewardsPromotions', value)} />
+              <SettingRow label="Support Follow-ups" value={preferences.email.supportFollowUps} onValueChange={value => setEmailToggle('supportFollowUps', value)} />
+            </>
+          )}
         </View>
 
         {saving && <Text style={styles.saving}>Saving…</Text>}
