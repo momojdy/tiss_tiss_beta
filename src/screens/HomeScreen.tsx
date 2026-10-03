@@ -140,7 +140,7 @@ function TeaserCard({label,icon,background,color,caption,onPressInner}:{label:st
 
 type Entry={key:string;label:string;icon:MI;kind:'collapsed'|'stays'|'row1'|'grid';x0:number;x1:number;y0:number;y1:number};
 
-function MainDragCarousel({p,onDragActive}:{p:Animated.Value;onDragActive:(v:boolean)=>void}){
+function MainDragCarousel({p,onDragActive,onCategoryPress}:{p:Animated.Value;onDragActive:(v:boolean)=>void;onCategoryPress?:(label:string)=>void}){
   const{width}=useWindowDimensions(); const ew=width/COLUMNS; const cw=width/5.59; const pv=useRef(0); const lastDx=useRef(0); const dragCb=useRef(onDragActive); dragCb.current=onDragActive;
   const[flags,setFlags]=useState({zoneFull:false,collapsedOn:true,expandedOn:false});
   useEffect(()=>{const id=p.addListener(({value})=>{pv.current=value;const f={zoneFull:value>0.5,collapsedOn:value<=0.3,expandedOn:value>=0.15};setFlags(prev=>prev.zoneFull===f.zoneFull&&prev.collapsedOn===f.collapsedOn&&prev.expandedOn===f.expandedOn?prev:f)});return()=>p.removeListener(id)},[p]);
@@ -154,7 +154,7 @@ function MainDragCarousel({p,onDragActive}:{p:Animated.Value;onDragActive:(v:boo
   const dotColor=p.interpolate({inputRange:[0,1],outputRange:['#E0E0E0',MAGENTA]});
   return <Animated.View style={{width,height,overflow:'hidden'}}>
     <View {...pan.panHandlers} style={{position:'absolute',left:0,top:0,width,height:flags.zoneFull?EXPANDED_CONTENT_H:ROW_H}}>
-      {entries.map(e=>{const translateX=p.interpolate({inputRange:[0,1],outputRange:[e.x0,e.x1]});const translateY=p.interpolate({inputRange:[0,1],outputRange:[e.y0,e.y1]});let opacity:Animated.AnimatedInterpolation<number>|number;let active=true;if(e.kind==='collapsed'){opacity=p.interpolate({inputRange:[0,.5],outputRange:[1,0],extrapolate:'clamp'});active=flags.collapsedOn}else if(e.kind==='stays')opacity=1;else{opacity=p.interpolate({inputRange:[0,1],outputRange:[0,1],extrapolate:'clamp'});active=flags.expandedOn}return <Animated.View key={e.key} pointerEvents={active?'box-none':'none'} style={{position:'absolute',left:0,top:0,width:ew,height:ROW_H,opacity,transform:[{translateX},{translateY}]}}><CategoryItem label={e.label} icon={e.icon} width={ew} onPress={()=>console.log('Tapped',e.label)}/></Animated.View>})}
+      {entries.map(e=>{const translateX=p.interpolate({inputRange:[0,1],outputRange:[e.x0,e.x1]});const translateY=p.interpolate({inputRange:[0,1],outputRange:[e.y0,e.y1]});let opacity:Animated.AnimatedInterpolation<number>|number;let active=true;if(e.kind==='collapsed'){opacity=p.interpolate({inputRange:[0,.5],outputRange:[1,0],extrapolate:'clamp'});active=flags.collapsedOn}else if(e.kind==='stays')opacity=1;else{opacity=p.interpolate({inputRange:[0,1],outputRange:[0,1],extrapolate:'clamp'});active=flags.expandedOn}return <Animated.View key={e.key} pointerEvents={active?'box-none':'none'} style={{position:'absolute',left:0,top:0,width:ew,height:ROW_H,opacity,transform:[{translateX},{translateY}]}}><CategoryItem label={e.label} icon={e.icon} width={ew} onPress={()=>onCategoryPress?.(e.label)}/></Animated.View>})}
     </View>
     <Animated.View pointerEvents="none" style={{position:'absolute',left:0,right:0,top:0,height:INDICATOR_H,alignItems:'center',justifyContent:'center',flexDirection:'row',opacity:indOpacity,transform:[{translateY:indY}]}}><Animated.View style={{width:14,height:4,marginHorizontal:2,borderRadius:2,backgroundColor:lineColor}}/><Animated.View style={{width:6,height:6,marginHorizontal:2,borderRadius:3,backgroundColor:dotColor}}/></Animated.View>
   </Animated.View>;
