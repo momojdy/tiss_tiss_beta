@@ -14,7 +14,7 @@ export default function FrenziesHeader({ points = 0, onBack }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.wrapper, { paddingTop: insets.top + 8 }]}>
+    <View style={[styles.wrapper, { paddingTop: insets.top }]}>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Go back"
@@ -38,11 +38,11 @@ export default function FrenziesHeader({ points = 0, onBack }: Props) {
 
 const styles = StyleSheet.create({
   wrapper: {
-    minHeight: 58,
+    height: 100,
     paddingHorizontal: 18,
-    paddingBottom: 8,
+    paddingBottom: 12,
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-end',
     backgroundColor: colors.pageBg,
   },
   back: {
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 4,
   },
   points: {
     marginLeft: 3,
