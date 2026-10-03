@@ -53,6 +53,7 @@ type Props = {
   onHomePress?: () => void;
   onMePress?: () => void;
   onNotificationsPress?: () => void;
+  onRecentActivityPress?: () => void;
   onHelpPress?: () => void;
 };
 
@@ -62,6 +63,7 @@ export default function WalletHomeScreen({
   onMePress,
   onNotificationsPress,
   onHelpPress,
+  onRecentActivityPress,
 }: Props) {
   return (
     <View style={styles.page}>
@@ -92,7 +94,7 @@ export default function WalletHomeScreen({
             </Pressable>
           ))}
         </View>
-        <WalletRecentActivity />
+        <WalletRecentActivity onSeeAll={onRecentActivityPress} />
         <View style={styles.earnMorePointsSpacing}>
           <EarnMorePointsCard />
         </View>
