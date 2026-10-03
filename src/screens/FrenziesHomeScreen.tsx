@@ -166,7 +166,7 @@ function TournamentCard({ tier }: { tier: (typeof TOURNAMENTS)[number] }) {
 
 export default function FrenziesHomeScreen({ onBack }: { onBack?: () => void }) {
   const { width } = useWindowDimensions();
-  const gameWidth = Math.max(220, Math.min(270, width * 0.64));
+  const gameWidth = 150;
 
   return (
     <View style={styles.page}>
@@ -226,18 +226,18 @@ const styles = StyleSheet.create({
   pointsPill: { height: 32, minWidth: 55, paddingHorizontal: 10, borderRadius: 16, backgroundColor: '#FFF4CF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 },
   pointsText: { fontSize: 13, fontWeight: '700', color: COLORS.text },
   content: { paddingBottom: 24 },
-  hero: { marginHorizontal: 12, marginTop: 12, minHeight: 158, borderRadius: 22, overflow: 'hidden', padding: 20, flexDirection: 'row', alignItems: 'center' },
+  hero: { marginHorizontal: 18, marginTop: 12, minHeight: 100, borderRadius: 22, overflow: 'hidden', padding: 10, flexDirection: 'row', alignItems: 'center' },
   heroCopy: { width: '64%', zIndex: 2 },
-  heroTitle: { fontSize: 29, lineHeight: 34, fontWeight: '800', color: COLORS.text, letterSpacing: -0.8 },
-  heroSubtitle: { marginTop: 8, fontSize: 13, lineHeight: 19, color: '#6B6252', maxWidth: 220 },
-  trophy: { position: 'absolute', right: 8, bottom: 7, width: 128, height: 128 },
+  heroTitle: { fontSize: 19, lineHeight: 23, fontWeight: '800', color: COLORS.text, letterSpacing: -0.8 },
+  heroSubtitle: { marginTop: 6, fontSize: 12, lineHeight: 16, color: '#6B6252', maxWidth: 220 },
+  trophy: { position: 'absolute', right: 5, bottom: -2, width: 115, height: 100 },
   sparkleOne: { position: 'absolute', right: 126, top: 22, opacity: 0.7 },
   sparkleTwo: { position: 'absolute', right: 52, top: 18, opacity: 0.55 },
   sectionHeader: { marginTop: 18, paddingHorizontal: 16, minHeight: 27, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   sectionTitle: { fontSize: 17, lineHeight: 22, fontWeight: '700', color: COLORS.text, letterSpacing: -0.25 },
   sectionAction: { fontSize: 13, fontWeight: '600', color: '#7D838E' },
-  gameRow: { paddingLeft: 13, paddingRight: 13, gap: 10 },
-  gameCard: { backgroundColor: '#F4F4F4', borderRadius: 0, overflow: 'hidden', height: 200 },
+  gameRow: { paddingLeft: 13, paddingTop: 16, paddingRight: 13, gap: 10 },
+  gameCard: { backgroundColor: '#F4F4F4', borderRadius: 8, overflow: 'hidden', height: 200 },
   gameArt: { height: 200, backgroundColor: '#F2F4F7', position: 'relative' },
   gameImage: { width: '100%', height: '100%' },
   gameBadgeLeft: { position: 'absolute', left: 6, top: 6, paddingHorizontal: 7, height: 15, borderRadius: 3, backgroundColor: 'rgba(244,241,234,0.38)', alignItems: 'center', justifyContent: 'center' },
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   gameBody: { position: 'absolute', left: 4, right: 4, top: 40, bottom: 0 },
   gameTitle: { fontSize: 15, lineHeight: 18, fontWeight: '700', color: '#180C0C', opacity: 0.85 },
   gameSubtitle: { marginTop: 7, fontSize: 11.5, lineHeight: 15, color: '#FFFFFF', opacity: 0.85 },
-  playButton: { marginTop: 10, height: 34, borderRadius: 17, backgroundColor: '#B3DF4B', alignItems: 'center', justifyContent: 'center' },
+  playButton: { marginTop: 10, height: 30, borderRadius: 8, backgroundColor: '#173A12', alignItems: 'center', justifyContent: 'center' },
   playButtonText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF' },
   challengeButton: { backgroundColor: '#FFFFFF' },
   challengeButtonText: { color: '#173A12' },
