@@ -65,8 +65,8 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
         </View>
       </View>
     </View>
-      <View style={styles.strip} />
-    </View>
+    <View style={styles.strip} />
+  </View>
   );
 }
 
