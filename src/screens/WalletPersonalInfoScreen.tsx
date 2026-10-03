@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
   pageHint: { color: MUTED, fontSize: 13, lineHeight: 19, fontFamily: 'Inter_400Regular', marginBottom: 22 },
   fieldGroup: { marginBottom: 16 },
   label: { color: MUTED, fontSize: 12, fontFamily: 'Inter_500Medium', marginBottom: 5 },
-  input: { height: 50, paddingHorizontal: 14, borderRadius: 14, color: TEXT, backgroundColor: SOFT, fontSize: 15, fontFamily: 'Inter_400Regular' },
+  input: { height: 50, paddingHorizontal: 14, borderRadius: 14, color: TEXT, backgroundColor: TINT, fontSize: 15, fontFamily: 'Inter_400Regular' },
   readOnlyInput: { height: 50, paddingHorizontal: 14, borderRadius: 14, flexDirection: 'row', alignItems: 'center', backgroundColor: SOFT },
   readOnlyText: { flex: 1, color: TEXT, fontSize: 16, fontFamily: 'Inter_400Regular' },
   saveButton: { height: 50, borderRadius: 999, backgroundColor: TEXT, alignItems: 'center', justifyContent: 'center', marginTop: 8 },
