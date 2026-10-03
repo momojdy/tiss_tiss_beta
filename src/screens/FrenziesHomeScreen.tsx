@@ -18,18 +18,18 @@ const COLORS = {
   secondary: '#6C7280',
   muted: '#9CA1AC',
   border: '#EEF0F3',
-  heroStart: '#F8ECC9',
-  heroEnd: '#F2DA9E',
+  heroStart: '#F7E9C1',
+  heroEnd: '#F3DEA7',
   green: '#C9F24B',
   orange: '#EE6B2E',
   orangeDark: '#DD3E2A',
 };
 
 const GAMES = [
-  { key: 'rps-1', title: 'Rock Paper Scissors', subtitle: 'Quick hand battle', image: ASSETS.rps, fit: 'cover' as const },
-  { key: 'lls', title: 'Load Lock Ship', subtitle: 'Pick. Match. Win.', image: ASSETS.lls, fit: 'cover' as const },
-  { key: 'korido', title: 'Korido', subtitle: 'Race across the board', image: ASSETS.korido, fit: 'cover' as const },
-  { key: 'rps-2', title: 'Rock Paper Scissors', subtitle: 'Quick hand battle', image: ASSETS.rps, fit: 'cover' as const },
+{ key: 'rps-1', title: 'Rock Paper\nScissors', subtitle: 'Familiar player', image: ASSETS.rps, fit: 'cover' as const, duration: '3min' },
+  { key: 'lls', title: 'Load Lock Ship', subtitle: 'Race to load your cargo and ship it', image: ASSETS.lls, fit: 'cover' as const, duration: '4min', challenge: true },
+  { key: 'korido', title: 'Koridò', subtitle: 'Avoid the barricades', image: ASSETS.korido, fit: 'contain' as const, duration: '7min' },
+  { key: 'rps-2', title: 'Rock Paper\nScissors', subtitle: 'Familiar player', image: ASSETS.rps, fit: 'cover' as const, duration: '3min' },
 ];
 
 const RANKINGS = [
@@ -65,19 +65,19 @@ function SectionHeader({ title, action }: { title: string; action: string }) {
   );
 }
 
-function GameCard({ game }: { game: (typeof GAMES)[number] }) {
+function GameCard({ game }: { game: (typeof GAMES)[number] & { duration?: string; challenge?: boolean } }) {
   return (
     <Pressable style={styles.gameCard}>
       <View style={styles.gameArt}>
         <Image source={{ uri: game.image }} style={styles.gameImage} resizeMode={game.fit} />
         <View style={styles.gameBadgeLeft}><Text style={styles.badgeText}>PvP</Text></View>
-        <View style={styles.gameBadgeRight}><Text style={styles.badgeText}>2–3 min</Text></View>
+        <View style={styles.gameBadgeRight}><MaterialCommunityIcons name="timer-outline" size={11} color="#180C0C" /><Text style={styles.badgeText}>{game.duration}</Text></View>
       </View>
       <View style={styles.gameBody}>
-        <Text numberOfLines={1} style={styles.gameTitle}>{game.title}</Text>
-        <Text numberOfLines={1} style={styles.gameSubtitle}>{game.subtitle}</Text>
-        <Pressable style={styles.playButton}>
-          <Text style={styles.playButtonText}>Play</Text>
+        <Text numberOfLines={2} style={styles.gameTitle}>{game.title}</Text>
+        <Text numberOfLines={2} style={styles.gameSubtitle}>{game.subtitle}</Text>
+        <Pressable style={[styles.playButton, game.challenge && styles.challengeButton]}>
+          <Text style={[styles.playButtonText, game.challenge && styles.challengeButtonText]}>{game.challenge ? 'Challenge' : 'Play'}</Text>
         </Pressable>
       </View>
     </Pressable>
@@ -86,10 +86,10 @@ function GameCard({ game }: { game: (typeof GAMES)[number] }) {
 
 function StreakCard() {
   return (
-    <LinearGradient colors={['#FCE0C7', '#F6B489']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.streakCard}>
+    <LinearGradient colors={['#FBDEC4', '#F6B68C']} start={{ x: 1, y: 1 }} end={{ x: -1, y: -1 }} style={styles.streakCard}>
       <View style={styles.streakTop}>
         <View style={styles.flameBadge}>
-          <MaterialCommunityIcons name="fire" size={20} color="#FFF3EA" />
+          <MaterialCommunityIcons name="fire" size={20} color="#180C0C" />
         </View>
         <View style={styles.streakCopy}>
           <Text style={styles.streakTitle}>4 win streak</Text>
@@ -233,36 +233,38 @@ const styles = StyleSheet.create({
   trophy: { position: 'absolute', right: 8, bottom: 7, width: 128, height: 128 },
   sparkleOne: { position: 'absolute', right: 126, top: 22, opacity: 0.7 },
   sparkleTwo: { position: 'absolute', right: 52, top: 18, opacity: 0.55 },
-  sectionHeader: { marginTop: 22, paddingHorizontal: 16, minHeight: 27, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  sectionTitle: { fontSize: 19, lineHeight: 24, fontWeight: '750', color: COLORS.text, letterSpacing: -0.25 },
+  sectionHeader: { marginTop: 18, paddingHorizontal: 16, minHeight: 27, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  sectionTitle: { fontSize: 17, lineHeight: 22, fontWeight: '700', color: COLORS.text, letterSpacing: -0.25 },
   sectionAction: { fontSize: 13, fontWeight: '600', color: '#7D838E' },
-  gameRow: { paddingHorizontal: 12, gap: 10 },
-  gameCard: { backgroundColor: '#FFFFFF', borderRadius: 18, borderWidth: 1, borderColor: COLORS.border, overflow: 'hidden' },
-  gameArt: { height: 150, backgroundColor: '#F2F4F7', position: 'relative' },
+  gameRow: { paddingLeft: 13, paddingRight: 13, gap: 10 },
+  gameCard: { backgroundColor: '#F4F4F4', borderRadius: 0, overflow: 'hidden', height: 200 },
+  gameArt: { height: 200, backgroundColor: '#F2F4F7', position: 'relative' },
   gameImage: { width: '100%', height: '100%' },
-  gameBadgeLeft: { position: 'absolute', left: 10, top: 10, paddingHorizontal: 9, height: 24, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.90)', alignItems: 'center', justifyContent: 'center' },
-  gameBadgeRight: { position: 'absolute', right: 10, top: 10, paddingHorizontal: 9, height: 24, borderRadius: 12, backgroundColor: 'rgba(21,22,27,0.78)', alignItems: 'center', justifyContent: 'center' },
-  badgeText: { fontSize: 10, fontWeight: '700', color: COLORS.text },
-  gameBody: { padding: 12 },
-  gameTitle: { fontSize: 15, lineHeight: 19, fontWeight: '700', color: COLORS.text },
-  gameSubtitle: { marginTop: 3, fontSize: 11, lineHeight: 16, color: COLORS.secondary },
-  playButton: { marginTop: 10, height: 34, borderRadius: 17, backgroundColor: COLORS.green, alignItems: 'center', justifyContent: 'center' },
-  playButtonText: { fontSize: 12, fontWeight: '800', color: COLORS.text },
+  gameBadgeLeft: { position: 'absolute', left: 6, top: 6, paddingHorizontal: 7, height: 15, borderRadius: 3, backgroundColor: 'rgba(244,241,234,0.38)', alignItems: 'center', justifyContent: 'center' },
+  gameBadgeRight: { position: 'absolute', right: 6, top: 6, paddingHorizontal: 5, height: 15, borderRadius: 3, backgroundColor: 'rgba(244,241,234,0.38)', flexDirection: 'row', gap: 2, alignItems: 'center', justifyContent: 'center' },
+  badgeText: { fontSize: 8, fontWeight: '500', color: '#180C0C' },
+  gameBody: { position: 'absolute', left: 4, right: 4, top: 40, bottom: 0 },
+  gameTitle: { fontSize: 15, lineHeight: 18, fontWeight: '700', color: '#180C0C', opacity: 0.85 },
+  gameSubtitle: { marginTop: 7, fontSize: 11.5, lineHeight: 15, color: '#FFFFFF', opacity: 0.85 },
+  playButton: { marginTop: 10, height: 34, borderRadius: 17, backgroundColor: '#B3DF4B', alignItems: 'center', justifyContent: 'center' },
+  playButtonText: { fontSize: 11, fontWeight: '700', color: '#FFFFFF' },
+  challengeButton: { backgroundColor: '#FFFFFF' },
+  challengeButtonText: { color: '#173A12' },
   sectionSpacing: { height: 2 },
-  streakCard: { marginHorizontal: 12, marginTop: 8, borderRadius: 20, padding: 16 },
+  streakCard: { marginHorizontal: 18, marginTop: 2, height: 150, borderRadius: 20, padding: 15 },
   streakTop: { flexDirection: 'row', alignItems: 'center' },
   flameBadge: { width: 34, height: 34, borderRadius: 11, backgroundColor: COLORS.orange, alignItems: 'center', justifyContent: 'center' },
   streakCopy: { flex: 1, marginLeft: 11 },
   streakTitle: { fontSize: 16, fontWeight: '750', color: COLORS.text },
   streakSubtitle: { marginTop: 3, fontSize: 12, lineHeight: 17, color: COLORS.secondary },
-  progressTrack: { height: 8, borderRadius: 4, marginTop: 15, backgroundColor: '#F2D6BC', overflow: 'hidden' },
+  progressTrack: { height: 10, borderRadius: 4, marginTop: 15, backgroundColor: '#F2D6BC', overflow: 'hidden' },
   progressFill: { height: '100%', borderRadius: 4, backgroundColor: COLORS.orange },
   shieldRow: { marginTop: 13, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   shieldCopy: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 7 },
   shieldLabel: { fontSize: 11, color: COLORS.secondary, flexShrink: 1 },
-  shieldPill: { marginLeft: 8, paddingHorizontal: 10, height: 26, borderRadius: 13, backgroundColor: COLORS.green, alignItems: 'center', justifyContent: 'center' },
+  shieldPill: { marginLeft: 8, paddingHorizontal: 10, height: 30, borderRadius: 18, backgroundColor: '#B3DF4B', alignItems: 'center', justifyContent: 'center' },
   shieldPillText: { fontSize: 10, fontWeight: '800', color: COLORS.text },
-  rankingsCard: { marginHorizontal: 12, marginTop: 8, height: 370, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FFFFFF', overflow: 'hidden' },
+  rankingsCard: { marginHorizontal: 10, marginTop: 0, height: 200, borderRadius: 20, borderWidth: 1, borderColor: COLORS.border, backgroundColor: '#FFFFFF', overflow: 'hidden' },
   rankingsScroll: { flex: 1 },
   rankRow: { height: 56, paddingHorizontal: 13, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#F4F5F7' },
   ownRankRow: { backgroundColor: 'rgba(201,242,75,0.06)' },
@@ -275,18 +277,18 @@ const styles = StyleSheet.create({
   rankName: { flex: 1, marginLeft: 9, fontSize: 13, fontWeight: '600', color: COLORS.text },
   winPill: { minWidth: 47, height: 25, paddingHorizontal: 7, borderRadius: 13, backgroundColor: '#FBE1D2', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 3 },
   winText: { fontSize: 11, fontWeight: '700', color: '#DE5A2A' },
-  tournamentRow: { paddingHorizontal: 12, gap: 10 },
-  tournamentCard: { width: 150, height: 198, borderRadius: 18, overflow: 'hidden', position: 'relative' },
+  tournamentRow: { paddingLeft: 18, paddingRight: 12, gap: 10 },
+  tournamentCard: { width: 185, height: 200, borderRadius: 18, overflow: 'hidden', position: 'relative' },
   tournamentDecoration: { position: 'absolute', right: -8, top: -8, width: 60, height: 60, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.32)' },
-  tournamentContent: { flex: 1, paddingHorizontal: 14, paddingVertical: 13 },
-  tournamentFee: { fontSize: 21, lineHeight: 25, fontWeight: '800' },
-  tournamentEntry: { marginTop: 1, fontSize: 9, fontWeight: '700', textTransform: 'uppercase', opacity: 0.8 },
+  tournamentContent: { flex: 1, paddingHorizontal: 10, paddingVertical: 10 },
+  tournamentFee: { fontSize: 20, lineHeight: 24, fontWeight: '700' },
+  tournamentEntry: { marginTop: 1, fontSize: 15, fontWeight: '500', opacity: 0.9 },
   tournamentSpacer: { flex: 1 },
-  tournamentPrizeLabel: { fontSize: 10, fontWeight: '700', opacity: 0.8 },
-  tournamentPrize: { marginTop: 1, fontSize: 17, fontWeight: '800' },
-  joinedRow: { marginTop: 10 },
-  joinedText: { fontSize: 10, fontWeight: '700' },
-  joinTrack: { height: 8, marginTop: 5, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', overflow: 'hidden' },
+  tournamentPrizeLabel: { fontSize: 15, fontWeight: '500', opacity: 0.9 },
+  tournamentPrize: { marginTop: 1, fontSize: 16, fontWeight: '600' },
+  joinedRow: { marginTop: 8 },
+  joinedText: { fontSize: 15, fontWeight: '600' },
+  joinTrack: { height: 6, marginTop: 5, borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.08)', overflow: 'hidden' },
   joinFill: { height: '100%', borderRadius: 4, backgroundColor: 'rgba(0,0,0,0.24)' },
   ultimateTrack: { backgroundColor: 'rgba(240,200,100,0.18)', borderWidth: 1, borderColor: 'rgba(240,200,100,0.35)' },
   ultimateFill: { backgroundColor: '#F0C864' },
