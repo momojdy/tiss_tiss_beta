@@ -14,7 +14,6 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import AnimatedBattleNetIcon from '../components/AnimatedBattleNetIcon';
 import {
   useFonts,
   Inter_400Regular,
@@ -408,7 +407,7 @@ function BottomNav() {
           height={80}
           justify="flex-end"
           padBottom={15}
-          icon={<AnimatedBattleNetIcon size={52} />}
+          icon={<FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />}
         />
         <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
         <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={32} color={inactive} />} />
