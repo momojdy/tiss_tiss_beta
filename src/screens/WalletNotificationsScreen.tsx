@@ -583,6 +583,7 @@ export default function WalletNotificationsScreen({
           )}
         </Pressable>
       </View>
+      <View style={s.strip} />
       {body}
     </View>
   );
@@ -590,6 +591,7 @@ export default function WalletNotificationsScreen({
 
 const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: C.background },
+  strip: { height: 20, backgroundColor: '#E6EDE1' },
   center: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 30 },
 
   header: {
