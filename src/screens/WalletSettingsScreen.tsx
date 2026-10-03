@@ -1301,6 +1301,7 @@ function SectionTitle({ title }: { title: string }) {
 function SettingsRow({
   icon,
   communityIcon,
+  ionIcon,
   label,
   onPress,
   danger,
@@ -1308,6 +1309,7 @@ function SettingsRow({
 }: {
   icon: React.ComponentProps<typeof MaterialIcons>['name'];
   communityIcon?: React.ComponentProps<typeof MaterialCommunityIcons>['name'];
+  ionIcon?: React.ComponentProps<typeof Ionicons>['name'];
   label: string;
   onPress?: () => void;
   danger?: boolean;
@@ -1316,7 +1318,9 @@ function SettingsRow({
   return (
     <Pressable onPress={onPress} style={styles.row} accessibilityRole="button">
       <View style={[styles.rowIcon, danger && styles.rowIconDanger]}>
-        {communityIcon ? (
+        {ionIcon ? (
+          <Ionicons name={ionIcon} size={26} color={danger ? DANGER : TEXT} />
+        ) : communityIcon ? (
           <MaterialCommunityIcons name={communityIcon} size={26} color={danger ? DANGER : TEXT} />
         ) : (
           <MaterialIcons name={icon} size={26} color={danger ? DANGER : TEXT} />
