@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome6, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import {
   useFonts,
   Inter_400Regular,
@@ -451,7 +451,7 @@ function BottomNav() {
           icon={
             <View style={styles.battleIconWrap}>
               <Animated.View style={{ transform: [{ rotate: battleRotate }] }}>
-                <FontAwesome5 name="battle-net" brand size={52} color="#EE6B2E" />
+                <FontAwesome6 name="battle-net" brand size={52} color="#EE6B2E" />
               </Animated.View>
               <Animated.View
                 pointerEvents="none"
@@ -498,58 +498,3 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{TIERS.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
         <PassCard onGetPass={onGetPass} />
       </ScrollView>
-      <BottomNav />
-    </View>
-  );
-}
-
-export default function App({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
-  const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
-  if (!loaded) return null;
-  return (
-    <SafeAreaProvider>
-      <FrenziesHomeScreen
-        onBack={onBack}
-        onPlayGame={onPlayGame}
-        onOpenTier={onOpenTier}
-        onGetPass={onGetPass}
-      />
-    </SafeAreaProvider>
-  );
-}
-
-const styles = StyleSheet.create({
-  sectionRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  sectionTitle: { ...tx(17, fonts.bold), marginLeft: 18 },
-  sectionLink: { flexDirection: 'row', alignItems: 'center', marginRight: 10 },
-  sectionLinkText: tx(14, fonts.regular, colors.textSecondary),
-  gameCard: { width: sizes.gameCard.width, height: sizes.gameCard.height, marginLeft: sizes.gameCard.gap, marginTop: 16, backgroundColor: colors.white },
-  badge: { position: 'absolute', top: 6, width: 30, height: 15, borderRadius: 5, alignItems: 'center', justifyContent: 'center' },
-  durBadge: { flexDirection: 'row', justifyContent: 'flex-start' },
-  gameBtn: { position: 'absolute', width: 125, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center', opacity: 0.9 },
-  streakCard: { height: sizes.streakHeight, borderRadius: sizes.streakRadius, overflow: 'hidden' },
-  flameBadge: { width: 34, height: 34, borderRadius: 11, backgroundColor: colors.streak.flameBadgeBg, alignItems: 'center', justifyContent: 'center' },
-  streakTop: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 15, paddingTop: 15 },
-  streakCopy: { flex: 1 },
-  progressTrack: { height: 10, borderRadius: 4, marginHorizontal: 15, marginTop: 15, backgroundColor: colors.streak.progressTrack, overflow: 'hidden' },
-  progressFill: { height: '100%', borderRadius: 4, backgroundColor: colors.streak.progressFill },
-  shieldRow: { marginTop: 13, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  shieldCopy: { flex: 1, flexDirection: 'row', alignItems: 'center' },
-  shieldPill: { marginLeft: 8, width: 100, height: 30, borderRadius: 18, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
-  rankCard: { flex: 1, backgroundColor: r.cardBg, borderRadius: sizes.rankingsRadius, borderWidth: 1, borderColor: r.cardBorder, overflow: 'hidden' },
-  rankRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
-  avatar: { width: 30, height: 30, borderRadius: 15, backgroundColor: r.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  avatarRing: { width: 37, height: 37, borderRadius: 18.5, borderWidth: 1.75, borderColor: r.youRing, alignItems: 'center', justifyContent: 'center' },
-  flamePill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, backgroundColor: r.flamePillBg },
-  pinned: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, backgroundColor: r.cardBg, borderTopWidth: 1, borderTopColor: r.cardBorder, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 20, shadowOffset: { width: 0, height: -8 } },
-  tBarTrack: { marginTop: 8, width: 170, height: 6, borderRadius: 5, overflow: 'hidden' },
-  passCard: { borderRadius: 20, borderWidth: 1, padding: 16 },
-  passTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
-  passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
-  passBenefit: { width: '50%', paddingRight: 10, marginBottom: 8 },
-  passCta: { borderRadius: 12, paddingVertical: 11, alignItems: 'center', justifyContent: 'center' },
-  navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
-  navBar: { width: '100%', height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 8, shadowOffset: { width: 0, height: 2 } },
-  battleIconWrap: { width: 58, height: 55, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
-  battleGlare: { position: 'absolute', top: -12, left: 0, width: 10, height: 80, backgroundColor: 'rgba(255,255,255,0.55)' },
-});
