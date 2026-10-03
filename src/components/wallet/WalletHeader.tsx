@@ -66,7 +66,6 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
           </View>
         </View>
       </View>
-      <View style={styles.strip} />
     </>
   );
 }
@@ -76,7 +75,6 @@ const styles = StyleSheet.create({
   row: { width: '100%', height: 36, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   leftSide: { flexDirection: 'row', alignItems: 'center' },
   rightSide: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  strip: { width: '100%', height: 20, backgroundColor: '#E6EDE1' },
   iconButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: SAGE_TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   iconStack: { position: 'relative', width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
   title: { marginLeft: 12, fontSize: 19, fontWeight: '600', color: OLIVE, lineHeight: 19, transform: [{ translateY: 1 }] },
