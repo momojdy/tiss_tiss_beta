@@ -498,3 +498,23 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{TIERS.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
         <PassCard onGetPass={onGetPass} />
       </ScrollView>
+      </ScrollView>
+      <BottomNav />
+    </View>
+  );
+}
+
+export default function App({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
+  const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
+  if (!loaded) return null;
+  return (
+    <SafeAreaProvider>
+      <FrenziesHomeScreen
+        onBack={onBack}
+        onPlayGame={onPlayGame}
+        onOpenTier={onOpenTier}
+        onGetPass={onGetPass}
+      />
+    </SafeAreaProvider>
+  );
+}
