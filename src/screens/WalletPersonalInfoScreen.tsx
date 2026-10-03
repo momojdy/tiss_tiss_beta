@@ -205,8 +205,8 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
                 </Pressable>
               ))}
             </ScrollView>
-          </Pressable>
-        </Pressable>
+          </View>
+        </View>
       </Modal>
     </View>
   );
