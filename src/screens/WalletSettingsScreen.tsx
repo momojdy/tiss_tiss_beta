@@ -26,7 +26,7 @@ const DANGER = '#B3261E';
 const NAV_DARK = '#14181B';
 const NAV_GREEN = '#81C56C';
 
-const COUNTRIES = [
+export const COUNTRIES = [
   {
     "code": "AF",
     "name": "Afghanistan",
