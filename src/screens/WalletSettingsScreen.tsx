@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
+  Image,
   Modal,
   Pressable,
   ScrollView,
@@ -1285,7 +1286,7 @@ type Props = {
   onCreateWalletPress?: () => void;
 };
 
-type Profile = { full_name: string | null; email: string | null };
+type Profile = { full_name: string | null; email: string | null; avatar_url: string | null };
 type Wallet = { id: string; balance: number };
 
 function SectionTitle({ title }: { title: string }) {
@@ -1387,7 +1388,7 @@ export default function WalletSettingsScreen({
 }: Props) {
   const system = useColorScheme();
   const [isDark, setIsDark] = useState(system === 'dark');
-  const [profile, setProfile] = useState<Profile>({ full_name: null, email: null });
+  const [profile, setProfile] = useState<Profile>({ full_name: null, email: null, avatar_url: null });
   const [wallet, setWallet] = useState<Wallet | null>(null);
   const [walletLoading, setWalletLoading] = useState(true);
   const [countryCode, setCountryCode] = useState<string | null>(null);
@@ -1404,13 +1405,14 @@ export default function WalletSettingsScreen({
       if (!user) return;
 
       const [{ data: profileRow }, { data: walletRow }] = await Promise.all([
-        supabase.from('profiles').select('full_name, email').eq('id', user.id).maybeSingle(),
+        supabase.from('profiles').select('full_name, email, avatar_url').eq('id', user.id).maybeSingle(),
         supabase.from('wallets').select('id, balance').eq('user_id', user.id).maybeSingle(),
       ]);
 
       setProfile({
         full_name: profileRow?.full_name ?? user.user_metadata?.full_name ?? null,
         email: profileRow?.email ?? user.email ?? null,
+        avatar_url: profileRow?.avatar_url ?? user.user_metadata?.avatar_url ?? null,
       });
 
       setWallet(walletRow ? { id: String(walletRow.id), balance: Number(walletRow.balance ?? 0) } : null);
@@ -1479,7 +1481,11 @@ export default function WalletSettingsScreen({
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.profile}>
           <View style={styles.avatar}>
-            {profile.full_name ? <Text style={styles.avatarText}>{profile.full_name.trim().slice(0, 2).toUpperCase()}</Text> : null}
+            {profile.avatar_url ? (
+              <Image source={{ uri: profile.avatar_url }} style={styles.avatarImage} />
+            ) : profile.full_name ? (
+              <Text style={styles.avatarText}>{profile.full_name.trim().slice(0, 2).toUpperCase()}</Text>
+            ) : null}
           </View>
           <View style={styles.profileCopy}>
             {profile.full_name ? <Text style={styles.profileName} numberOfLines={1}>{profile.full_name}</Text> : null}
@@ -1632,6 +1638,7 @@ const styles = StyleSheet.create({
   profile: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 15, paddingTop: 15 },
   avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   avatarText: { color: TEXT, fontSize: 24, fontFamily: 'Manrope_700Bold' },
+  avatarImage: { width: '100%', height: '100%', borderRadius: 40 },
   profileCopy: { flex: 1, minWidth: 0 },
   profileName: { color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
   profileEmail: { color: MUTED, fontSize: 14, fontFamily: 'Inter_400Regular', marginTop: 8 },
