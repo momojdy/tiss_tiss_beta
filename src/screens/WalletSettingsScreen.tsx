@@ -1390,6 +1390,7 @@ export default function WalletSettingsScreen({
   const [isDark, setIsDark] = useState(system === 'dark');
   const [profile, setProfile] = useState<Profile>({ full_name: null, email: null, avatar_url: null });
   const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [walletLoading, setWalletLoading] = useState(true);
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
