@@ -242,7 +242,7 @@ const s=StyleSheet.create({
   notif:{marginTop:8,paddingHorizontal:10,paddingVertical:8,borderRadius:8,backgroundColor:'rgba(0,0,0,0.12)',flexDirection:'row',alignItems:'center'},
   popup:{paddingHorizontal:10,paddingVertical:8,borderRadius:30,backgroundColor:PINK_BG,flexDirection:'row',alignItems:'center'},
   promoBadge:{paddingHorizontal:10,paddingVertical:4,borderRadius:20,backgroundColor:MAGENTA},
-  nav:{height:65,borderRadius:18,backgroundColor:'#fff',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}},
+  nav:{height:65,borderRadius:18,backgroundColor:'rgba(255,255,255,0.88)',borderWidth:1,borderColor:'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}},
   homeButton:{width:64,height:60,alignItems:'center'},homeCircle:{marginTop:2,width:56,height:56,borderRadius:28,borderWidth:1,borderColor:'#E8CFE0',alignItems:'center',justifyContent:'center',overflow:'hidden'},homeLogo:{width:54,height:54,borderRadius:27},
   navButton:{width:68,height:46,alignItems:'center',justifyContent:'flex-end'},messageIconWrap:{width:30,height:29,alignItems:'center',justifyContent:'center'},messageBadge:{position:'absolute',top:-5,right:-9,minWidth:16,height:16,paddingHorizontal:4,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},messageBadgeText:{color:'#FFFFFF',fontSize:9,lineHeight:11,fontWeight:'700'},navLabel:{paddingTop:4,fontSize:10.5,color:'#1F1E1E',fontFamily:F_INTER,textAlign:'center'},
 });
