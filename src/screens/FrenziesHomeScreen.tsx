@@ -395,10 +395,9 @@ function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: {
 }
 
 function BottomNav() {
-  const insets = useSafeAreaInsets();
   const inactive = colors.nav.inactive;
   return (
-    <View style={{ padding: 2, paddingBottom: Math.max(2, insets.bottom), backgroundColor: colors.pageBg }}>
+    <View style={styles.navOuter}>
       <View style={styles.navBar}>
         <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color={colors.nav.active} />} />
         <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={32} color={inactive} />} />
@@ -488,5 +487,6 @@ const styles = StyleSheet.create({
   passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
   passBenefit: { width: '50%', paddingRight: 10, marginBottom: 8 },
   passCta: { borderRadius: 12, paddingVertical: 11, alignItems: 'center', justifyContent: 'center' },
-  navBar: { width: '100%', height: sizes.navHeight, borderRadius: 20, backgroundColor: colors.nav.bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 4, shadowColor: '#000', shadowOpacity: 0.2, shadowRadius: 4, shadowOffset: { width: 0, height: 2 } },
+  navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
+  navBar: { width: '100%', height: 65, borderRadius: 18, backgroundColor: colors.nav.bg, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
 });
