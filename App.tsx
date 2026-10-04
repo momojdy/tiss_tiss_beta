@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/AuthScreen';
@@ -33,6 +33,24 @@ function AppError({ title, error }: AppErrorProps) {
     <View style={{ flex: 1, backgroundColor: '#F3F1F2', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       <Text style={{ fontSize: 22, fontWeight: '700', color: '#16181B', marginBottom: 12, textAlign: 'center' }}>{title}</Text>
       <Text style={{ fontSize: 14, color: '#77747A', textAlign: 'center' }}>{message}</Text>
+    </View>
+  );
+}
+
+
+function ChallengePlaceholder({ onDismiss }: { onDismiss: () => void }) {
+  return (
+    <View style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, backgroundColor: '#FFFFFF', borderRadius: 16, padding: 13, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}>
+      <Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>New challenge</Text>
+      <Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>Maya challenged you to Rock Paper Scissors.</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10, gap: 8 }}>
+        <Pressable onPress={onDismiss} style={{ height: 30, paddingHorizontal: 12, borderRadius: 9, justifyContent: 'center', backgroundColor: '#EEF0F3' }}>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: '#4D5258' }}>Decline</Text>
+        </Pressable>
+        <Pressable onPress={onDismiss} style={{ height: 30, paddingHorizontal: 12, borderRadius: 9, justifyContent: 'center', backgroundColor: '#ACC8A2' }}>
+          <Text style={{ fontSize: 11, fontWeight: '700', color: '#1A2517' }}>Accept</Text>
+        </Pressable>
+      </View>
     </View>
   );
 }
@@ -256,10 +274,20 @@ function AppContent() {
   );
 }
 
+function AppWithPlaceholderChallenge() {
+  const [showChallenge, setShowChallenge] = React.useState(true);
+  return (
+    <View style={{ flex: 1 }}>
+      <AppContent />
+      {showChallenge && <ChallengePlaceholder onDismiss={() => setShowChallenge(false)} />}
+    </View>
+  );
+}
+
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AppContent />
+      <AppWithPlaceholderChallenge />
     </SafeAreaProvider>
   );
 }
