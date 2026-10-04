@@ -72,10 +72,10 @@ function SectionHeader({ title, link, onPress }: { title: string; link: string; 
   return (
     <View style={styles.sectionRow}>
       <Text style={styles.sectionTitle}>{title}</Text>
-      <View style={styles.sectionLink}>
+      <Pressable onPress={onPress} style={styles.sectionLink}>
         <Text style={styles.sectionLinkText}>{link}</Text>
         <MaterialIcons name="chevron-right" size={24} color={colors.textSecondary} />
-      </View>
+      </Pressable>
     </View>
   );
 }
