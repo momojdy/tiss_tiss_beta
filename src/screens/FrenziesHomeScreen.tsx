@@ -379,6 +379,16 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
   const th = tournamentTiers[t.key];
   const progress = t.capacity > 0 ? Math.min(t.joined / t.capacity, 1) : 0;
   const isUlt = t.key === 'ultimate';
+  const matchBlink = useRef(new Animated.Value(1)).current;
+  useEffect(() => {
+    if (t.active <= 0) return;
+    const loop = Animated.loop(Animated.sequence([
+      Animated.timing(matchBlink, { toValue: 0.25, duration: 550, useNativeDriver: true }),
+      Animated.timing(matchBlink, { toValue: 1, duration: 550, useNativeDriver: true }),
+    ]));
+    loop.start();
+    return () => loop.stop();
+  }, [t.active, matchBlink]);
   return (
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
       <GradientBox gradient={th.gradient} style={{ width: 150, height: 180, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
@@ -387,7 +397,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
           <Text style={[tx(14, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
           <Text style={[tx(15, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
-          {t.active > 0 && <Text style={[tx(13, fonts.regular, th.text), { marginTop: 5 }]}>{'\u2022'} {t.active} matches in progress</Text>}
+          {t.active > 0 && <Animated.Text style={[tx(11.5, fonts.regular, th.text), { marginTop: 5, opacity: matchBlink }]}>{'\u2022'} {t.active} matches in progress</Animated.Text>}
           <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 8 }]}>{t.joined}/{t.capacity} joined</Text>
           <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: (progress * 100) + '%', height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
         </View>
@@ -599,7 +609,7 @@ const styles = StyleSheet.create({
   avatarRing: { width: 37, height: 37, borderRadius: 18.5, borderWidth: 1.75, borderColor: r.youRing, alignItems: 'center', justifyContent: 'center' },
   flamePill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, backgroundColor: r.flamePillBg },
   pinned: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, backgroundColor: r.cardBg, borderTopWidth: 1, borderTopColor: r.cardBorder, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 20, shadowOffset: { width: 0, height: -8 } },
-  tBarTrack: { marginTop: 5, marginHorizontal: 2, width: 'auto', height: 6, borderRadius: 5, overflow: 'hidden' },
+  tBarTrack: { marginTop: 5, marginLeft: 0, marginRight: 6, width: 'auto', height: 6, borderRadius: 5, overflow: 'hidden' },
   passCard: { borderRadius: 20, borderWidth: 0.5, padding: 16 },
   passTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
