@@ -294,7 +294,7 @@ function Avatar({ e }: { e: RankEntry }) {
 function RankRowContent({ e }: { e: RankEntry }) {
   return (
     <>
-      <View style={{ width: 16 }}><Text style={[tx(13, fonts.bold, e.isTop ? r.rankTop : r.rankMuted), { textAlign: 'center' }]}>{e.rank}</Text></View>
+      <View style={{ width: 22 }}><Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={[tx(13, fonts.bold, e.isTop ? r.rankTop : r.rankMuted), { textAlign: 'center' }]}>{e.rank}</Text></View>
       <View style={{ width: 11 }} />
       <Avatar e={e} />
       <View style={{ width: 11 }} />
