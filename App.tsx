@@ -70,7 +70,7 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
   );
 }
 
-function AppContent() {
+function AppContent({ registerChallengePress, registerChallengeDismiss }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void }) {
   const [fontsLoaded] = useFonts({
     Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'),
     Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
@@ -81,6 +81,10 @@ function AppContent() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  useEffect(() => {
+    registerChallengePress(() => setBuyerScreen('frenziesChallenges'));
+    registerChallengeDismiss(() => setShowChallenge(false));
+  }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
 
   useEffect(() => {
@@ -300,9 +304,18 @@ function AppContent() {
 }
 
 export default function App() {
+  const [showChallenge, setShowChallenge] = useState(true);
+  const challengePress = React.useRef<() => void>(() => {});
+  const challengeDismiss = React.useRef<() => void>(() => setShowChallenge(false));
+  const registerChallengePress = React.useCallback((fn: () => void) => { challengePress.current = fn; }, []);
+  const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);
+
   return (
     <SafeAreaProvider>
-      <AppContent />
+      <View style={{ flex: 1 }}>
+        <AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} />
+        {showChallenge && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}
+      </View>
     </SafeAreaProvider>
   );
 }
