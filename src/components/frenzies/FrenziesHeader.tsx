@@ -10,9 +10,10 @@ type Props = {
   onBack?: () => void;
   title?: string;
   demo?: boolean;
+  showPoints?: boolean;
 };
 
-export default function FrenziesHeader({ points, onBack, title = 'Frenzies', demo = false }: Props) {
+export default function FrenziesHeader({ points, onBack, title = 'Frenzies', demo = false, showPoints = true }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -29,10 +30,10 @@ export default function FrenziesHeader({ points, onBack, title = 'Frenzies', dem
         <Text style={styles.title}>{title}</Text>
         {demo && <View style={styles.demoPill}><View style={styles.demoDot} /><Text style={styles.demoText}>DEMO</Text></View>}
       </View>
-      <View style={styles.pointsPill}>
+      {showPoints && <View style={styles.pointsPill}>
         <MaterialCommunityIcons name="lightning-bolt" size={17} color={colors.header.bolt} />
         <Text style={styles.points}>{(points ?? 0).toLocaleString()}</Text>
-      </View>
+      </View>}
     </View>
   );
 }
