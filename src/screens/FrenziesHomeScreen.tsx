@@ -537,7 +537,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
         <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} shieldOwned={shieldOwned} shieldActive={shieldActive} />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" /></View>
-        <View style={{ marginHorizontal: 10, marginTop: 16, height: RANK_H }}><RankingsCard /></View>
+        <View style={{ marginHorizontal: 10, marginTop: 13, height: RANK_H }}><RankingsCard /></View>
         <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{TIERS.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
         <PassCard onGetPass={onGetPass} />
