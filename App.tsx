@@ -318,7 +318,9 @@ export default function App() {
   const challengeDismiss = React.useRef<() => void>(() => setShowChallenge(false));
   const registerAuthenticated = React.useCallback((value: boolean) => { setIsAuthenticated(value); }, []);
   const registerChallengePress = React.useCallback((fn: () => void) => { challengePress.current = fn; }, []);
-  const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);\n  const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');\n  const registerBuyerScreen = React.useCallback((value: BuyerScreen) => { setBuyerScreen(value); }, []);
+  const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);
+  const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const registerBuyerScreen = React.useCallback((value: BuyerScreen) => { setBuyerScreen(value); }, []);
 
   return (
     <SafeAreaProvider>
