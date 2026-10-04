@@ -17,10 +17,11 @@ import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
+import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -76,8 +77,12 @@ export default function App() {
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'frenziesRpsLobby') {
+        return <FrenziesRpsLobbyScreen onBack={() => setBuyerScreen('frenzies')} />;
+      }
+
       if (buyerScreen === 'frenzies') {
-        return <FrenziesHomeScreen onBack={() => setBuyerScreen('home')} />;
+        return <FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} />;
       }
 
       if (buyerScreen === 'walletAddNewCard') {
