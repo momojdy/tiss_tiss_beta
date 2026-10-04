@@ -9,9 +9,10 @@ type Props = {
   points?: number | null;
   onBack?: () => void;
   title?: string;
+  demo?: boolean;
 };
 
-export default function FrenziesHeader({ points, onBack, title = 'Frenzies' }: Props) {
+export default function FrenziesHeader({ points, onBack, title = 'Frenzies', demo = false }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -26,6 +27,7 @@ export default function FrenziesHeader({ points, onBack, title = 'Frenzies' }: P
       </Pressable>
       <View style={styles.center}>
         <Text style={styles.title}>{title}</Text>
+        {demo && <View style={styles.demoPill}><View style={styles.demoDot} /><Text style={styles.demoText}>DEMO</Text></View>}
       </View>
       <View style={styles.pointsPill}>
         <MaterialCommunityIcons name="lightning-bolt" size={17} color={colors.header.bolt} />
@@ -63,6 +65,17 @@ const styles = StyleSheet.create({
     color: colors.textPrimary,
     includeFontPadding: false,
   },
+  demoPill: {
+    marginTop: 4,
+    height: 18,
+    paddingHorizontal: 8,
+    borderRadius: 9,
+    backgroundColor: colors.streak.shieldPill,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  demoDot: { width: 5, height: 5, borderRadius: 3, backgroundColor: colors.gameCard.playBg, marginRight: 4 },
+  demoText: { fontFamily: fonts.bold, fontSize: 9, lineHeight: 11, color: colors.textPrimary, includeFontPadding: false },
   pointsPill: {
     minWidth: 58,
     height: 32,
