@@ -68,7 +68,7 @@ type ScreenHandlers = {
   onGetPass?: () => void;
 };
 
-function SectionHeader({ title, link }: { title: string; link: string }) {
+function SectionHeader({ title, link, onPress }: { title: string; link: string; onPress?: () => void }) {
   return (
     <View style={styles.sectionRow}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -511,7 +511,7 @@ function BottomNav() {
   );
 }
 
-export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
+export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings }: ScreenHandlers) {
   const [points, setPoints] = useState<number | null>(null);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [shieldAvailable, setShieldAvailable] = useState(true);
@@ -592,7 +592,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <View style={{ paddingTop: 18 }}><SectionHeader title="Play now " link="View all" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
         <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} shieldOwned={shieldOwned} shieldActive={shieldActive} />
-        <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" /></View>
+        <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" onPress={onOpenRankings} /></View>
         <View style={{ marginHorizontal: 10, marginTop: 13, height: RANK_H }}><RankingsCard entries={rankingEntries} /></View>
         <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{tournamentData.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
@@ -603,7 +603,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
   );
 }
 
-export default function App({ onBack, onPlayGame, onOpenTier, onGetPass }: ScreenHandlers) {
+export default function App({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings }: ScreenHandlers) {
   const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
   if (!loaded) return null;
   return (
