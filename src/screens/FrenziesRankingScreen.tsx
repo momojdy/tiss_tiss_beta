@@ -25,9 +25,9 @@ function Avatar({ entry }: { entry: Entry }) {
   );
 }
 
-function RankRow({ entry }: { entry: Entry }) {
+function RankRow({ entry, showDivider = true }: { entry: Entry; showDivider?: boolean }) {
   return (
-    <View style={[styles.row, entry.isYou && styles.youRow]}>
+    <View style={[styles.row, entry.isYou && styles.youRow, showDivider && styles.rowDivider]}>
       <View style={styles.rank}><Text style={tx(13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
       <Avatar entry={entry} />
       <Text numberOfLines={1} style={[tx(14, fonts.semibold, colors.rankings.text), { flex: 1, marginLeft: 12 }]}>{entry.name}</Text>
@@ -108,14 +108,14 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
                 {displayEntries.map((entry) => (
                   <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined}>
                     <Pressable onPress={entry.isYou ? () => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true }) : undefined}>
-                      <RankRow entry={entry} />
+                      <RankRow entry={entry} showDivider={entry.rank !== 200} />
                     </Pressable>
                   </View>
                 ))}
               </ScrollView>
               {showPinnedYou && you && (
                 <Pressable style={styles.pinnedYou} onPress={() => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true })}>
-                  <RankRow entry={you} />
+                  <RankRow entry={you} showDivider={false} />
                 </Pressable>
               )}
             </View>
@@ -134,7 +134,8 @@ const styles = StyleSheet.create({
   leaderboardScroll: { maxHeight: 560 },
   cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
-  row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
+  rowDivider: { borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   youRow: { backgroundColor: colors.rankings.youTint },
   rank: { width: 28, alignItems: 'center' },
   avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.rankings.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
@@ -142,5 +143,5 @@ const styles = StyleSheet.create({
   avatarImage: { width: 34, height: 34 },
   wins: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
   emptyHint: { minHeight: 120, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
-  pinnedYou: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.rankings.youTint },
+  pinnedYou: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.rankings.youTint, borderTopWidth: 1, borderTopColor: colors.rankings.rowBorder },
 });
