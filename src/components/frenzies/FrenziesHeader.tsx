@@ -55,7 +55,6 @@ const styles = StyleSheet.create({
   },
   center: {
     flex: 1,
-    paddingRight: 15,
     alignItems: 'center',
     justifyContent: 'center',
     height: 40,
@@ -71,7 +70,6 @@ const styles = StyleSheet.create({
     marginTop: 4,
     height: 18,
     paddingHorizontal: 8,
-    marginRight: 15,
     borderRadius: 9,
     backgroundColor: colors.streak.shieldPill,
     flexDirection: 'row',
