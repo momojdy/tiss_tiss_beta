@@ -38,7 +38,7 @@ function ModeCard({ icon, title, subtitle, button, onPress, highlighted }: { ico
   return <View style={[s.modeCard, highlighted && s.modeCardHighlight]}>
     <View style={s.modeIcon}>{icon}</View>
     <Text style={tx(16, fonts.bold)}>{title}</Text>
-    <Text style={[tx(11.5, fonts.regular, colors.textSecondary), { marginTop: 5, lineHeight: 16, paddingRight: 10 }]}>{subtitle}</Text>
+    <Text style={[tx(11.5, fonts.regular, colors.textSecondary), { marginTop: 5, lineHeight: 16, paddingRight: 92 }]}>{subtitle}</Text>
     <Pressable onPress={onPress} style={[s.modeButton, highlighted && s.modeButtonHighlight]}>
       <Text style={tx(13, fonts.bold, highlighted ? colors.white : colors.textPrimary)}>{button}</Text>
       <MaterialIcons name="chevron-right" size={18} color={highlighted ? colors.white : colors.textPrimary} />
@@ -114,7 +114,7 @@ const s = StyleSheet.create({
   demoCoin: { width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,.45)', alignItems: 'center', justifyContent: 'center' },
   balanceBottom: { flexDirection: 'row', alignItems: 'center', marginTop: 16 },
   addFunds: { paddingHorizontal: 11, height: 30, borderRadius: 9, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
-  modeCard: { minHeight: 142, padding: 14, borderRadius: 18, backgroundColor: '#F7F8FA', borderWidth: 1, borderColor: '#EEF0F3' },
+  modeCard: { minHeight: 118, padding: 14, borderRadius: 18, backgroundColor: '#F7F8FA', borderWidth: 1, borderColor: '#EEF0F3' },
   modeCardHighlight: { backgroundColor: '#F4F8F0', borderColor: '#DCE8D2' },
   modeIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
   modeButton: { position: 'absolute', right: 14, bottom: 14, height: 32, paddingHorizontal: 13, borderRadius: 9, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'center' },
