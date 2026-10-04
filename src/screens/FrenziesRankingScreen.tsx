@@ -80,12 +80,15 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
           {loading ? (
             <View style={styles.empty}><Text style={tx(13, fonts.regular, colors.textSecondary)}>Loading rankings…</Text></View>
           ) : !hasPlayers ? (
-            <View style={styles.empty}>
-              <Text style={tx(14, fonts.semibold)}>Be the first to climb the leaderboard</Text>
-              <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 5, textAlign: 'center' }]}>Play Frenzies games to earn wins and move up.</Text>
-            </View>
+            <>
+              <RankRow entry={{ rank: 1, name: 'You', wins: 0, isYou: true }} />
+              <View style={styles.emptyHint}>
+                <Text style={tx(14, fonts.semibold)}>Be the first to climb the leaderboard</Text>
+                <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 5, textAlign: 'center' }]}>Play Frenzies games to earn wins and move up.</Text>
+              </View>
+            </>
           ) : (
-            entries.map((entry, index) => <RankRow key={entry.isYou ? 'you' : String(entry.rank)} entry={entry} />)
+            entries.map((entry) => <RankRow key={entry.isYou ? 'you' : String(entry.rank)} entry={entry} />)
           )}
         </View>
       </ScrollView>
@@ -107,5 +110,5 @@ const styles = StyleSheet.create({
   youAvatar: { borderWidth: 2, borderColor: colors.rankings.youRing },
   avatarImage: { width: 34, height: 34 },
   wins: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
-  empty: { minHeight: 180, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
+  emptyHint: { minHeight: 120, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
 });
