@@ -391,11 +391,11 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
   }, [t.active, matchBlink]);
   return (
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
-      <GradientBox gradient={th.gradient} style={{ width: 150, height: 170, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
+      <GradientBox gradient={th.gradient} style={{ width: 150, height: 170, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden', opacity: isUlt ? 1 : 0.9 }}>
         {!isUlt && (
           <View pointerEvents="none" style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.10)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)', borderRadius: sizes.tournamentCard.radius }} />
         )}
-        <View style={{ paddingLeft: 10, paddingTop: 10, opacity: 0.9 }}>
+        <View style={{ paddingLeft: 10, paddingTop: 10, opacity: isUlt ? 0.9 : 1 }}>
           <Text style={tx(14, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
           <Text style={[tx(14, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
