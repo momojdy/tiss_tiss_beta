@@ -213,7 +213,7 @@ function GameCard({ g, onPlay }: { g: GameCfg; onPlay?: (gameId: string) => void
   );
 }
 
-function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive }: { currentStreak: number; shieldAvailable: boolean; shieldOwned: boolean; shieldActive: boolean }) {
+function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive, onOpenStreakShield }: { currentStreak: number; shieldAvailable: boolean; shieldOwned: boolean; shieldActive: boolean; onOpenStreakShield?: () => void }) {
   const streak = Math.max(0, currentStreak);
   const progress = Math.min(streak / STREAK_TARGET, 1);
   const winsNeeded = Math.max(STREAK_TARGET - streak, 0);
@@ -597,7 +597,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, 
         <HeroBanner />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Play now " link="View all" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
-        <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} shieldOwned={shieldOwned} shieldActive={shieldActive} />
+        <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} shieldOwned={shieldOwned} shieldActive={shieldActive} onOpenStreakShield={onOpenStreakShield} />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" onPress={onOpenRankings} /></View>
         <View style={{ marginHorizontal: 10, marginTop: 13, height: RANK_H }}><RankingsCard entries={rankingEntries} /></View>
         <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
