@@ -65,7 +65,7 @@ const s = StyleSheet.create({
   card: { marginTop: 18, borderRadius: 18, backgroundColor: colors.white, borderWidth: 0.5, borderColor: '#EEF0F3', overflow: 'hidden' },
   row: { minHeight: 68, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
   avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#E7E9ED', alignItems: 'center', justifyContent: 'center' },
-  nameRow: { flexDirection: 'row', alignItems: 'center' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', paddingRight: 15 },
   dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#73B54A', marginLeft: 7, marginRight: 5 },
   challenge: { height: 31, paddingHorizontal: 11, borderRadius: 9, backgroundColor: colors.gameCard.playBg, alignItems: 'center', justifyContent: 'center' },
   divider: { height: 1, backgroundColor: '#F1F2F4', marginLeft: 60 },
