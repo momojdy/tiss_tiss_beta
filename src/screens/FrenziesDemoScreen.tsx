@@ -90,7 +90,7 @@ export default function FrenziesDemoScreen({ onBack }: { onBack?: () => void }) 
   return <SafeAreaView style={s.safe}>
     <Header onBack={onBack} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
-      <View style={s.intro}><Text style={tx(25, fonts.bold)}>Practice your game.</Text><Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>Try any Frenzies game with virtual funds before playing for real.</Text></View>
+      <View style={s.intro}><Text style={tx(25, fonts.bold)}>Practice your game.</Text><Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.</Text></View>
       <BalanceCard balance={balance} onAdd={addFunds} />
       <Text style={[tx(17, fonts.bold), { marginTop: 22 }]}>How do you want to play?</Text>
       <View style={{ marginTop: 12, gap: 10 }}>
