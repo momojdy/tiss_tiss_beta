@@ -7,13 +7,13 @@ import { assets } from '../theme/frenziesAssets';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 import { supabase } from '../lib/supabase';
 
-type Props = { onBack?: () => void };
+type Props = { onBack?: () => void; onDemoPress?: () => void };
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
   fontFamily: family, fontSize: size, lineHeight: size * 1.22, color, includeFontPadding: false,
 });
 
-export default function FrenziesRpsLobbyScreen({ onBack }: Props) {
+export default function FrenziesRpsLobbyScreen({ onBack, onDemoPress }: Props) {
   const [mode, setMode] = useState<'demo' | 'live' | 'tournament'>('demo');
   const [points, setPoints] = useState<number | null>(null);
 
@@ -67,9 +67,8 @@ export default function FrenziesRpsLobbyScreen({ onBack }: Props) {
               <View style={s.recommended}><Text style={tx(9, fonts.bold)}>PRACTICE</Text></View>
             </View>
             <Text style={[tx(11.5, fonts.regular, colors.textSecondary), s.modeDescription]}>
-              Use virtual demo funds. Play against the computer or challenge another demo player.
+              Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.
             </Text>
-            <Text style={[tx(11, fonts.semibold, colors.textPrimary), { marginTop: 7 }]}>No real money · replenish anytime</Text>
           </View>
           {mode === 'demo' && <View style={s.check}><MaterialIcons name="check" size={15} color={colors.textPrimary} /></View>}
         </Pressable>
@@ -131,7 +130,7 @@ export default function FrenziesRpsLobbyScreen({ onBack }: Props) {
           </View>
         )}
 
-        <Pressable style={s.continueButton} onPress={() => {}}>
+        <Pressable style={s.continueButton} onPress={mode === 'demo' ? onDemoPress : undefined}>
           <Text style={tx(15, fonts.bold, colors.white)}>
             {mode === 'demo' ? 'Continue to Demo' : mode === 'live' ? 'Find a Challenge' : 'View Tournaments'}
           </Text>
