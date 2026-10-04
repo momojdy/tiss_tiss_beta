@@ -587,7 +587,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
     <View style={{ flex: 1, backgroundColor: colors.pageBg }}>
       <StatusBar style="dark" />
       <FrenziesHeader points={points} onBack={onBack} />
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 20 }}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 105 }}>
         <HeroBanner />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Play now " link="View all" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
