@@ -1,19 +1,47 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
 import { fonts } from '../theme/frenziesFonts';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 
-const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
+const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
+  fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
+});
 
-export default function FrenziesStreakShieldCheckoutScreen({ onBack, onPaymentMethodPress, quantity = 5, total = 1 }: { onBack?: () => void; onPaymentMethodPress?: () => void; quantity?: number; total?: number }) {
+type Method = 'card' | 'wallet' | 'apple' | 'google' | 'paypal';
+
+function MethodRow({ method, title, subtitle, selected, onPress, logo }: {
+  method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo: React.ReactNode;
+}) {
+  return (
+    <Pressable onPress={onPress} style={[styles.methodRow, selected && styles.methodSelected]}>
+      <View style={styles.methodLogo}>{logo}</View>
+      <View style={styles.methodCopy}>
+        <Text style={tx(14, fonts.semibold)}>{title}</Text>
+        {!!subtitle && <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{subtitle}</Text>}
+      </View>
+      <View style={[styles.radio, selected && styles.radioSelected]}>
+        {selected && <View style={styles.radioDot} />}
+      </View>
+    </Pressable>
+  );
+}
+
+export default function FrenziesStreakShieldCheckoutScreen({
+  onBack, quantity = 5, total = 1,
+}: { onBack?: () => void; quantity?: number; total?: number }) {
+  const [selectedMethod, setSelectedMethod] = useState<Method>('wallet');
+  const savedCardLast4: string | null = null;
+
   return (
     <View style={styles.safe}>
       <FrenziesHeader title="Checkout" onBack={onBack} showPoints={false} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Text style={tx(24, fonts.bold)}>Complete your purchase</Text>
-        <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>You're one step away from protecting your streak.</Text>
+        <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>
+          You're one step away from protecting your streak.
+        </Text>
 
         <View style={styles.summary}>
           <View style={styles.icon}><MaterialCommunityIcons name="shield-check" size={25} color={colors.textPrimary} /></View>
@@ -25,14 +53,57 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, onPaymentMe
 
         <View style={styles.section}>
           <Text style={tx(15, fonts.bold)}>Payment method</Text>
-          <Pressable onPress={onPaymentMethodPress} style={styles.payment}>
-            <View style={styles.paymentIcon}><MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} /></View>
-            <View style={{ flex: 1 }}>
-              <Text style={tx(14, fonts.bold)}>Payment card</Text>
-              <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>Choose or add a card at payment</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={21} color={colors.textSecondary} />
-          </Pressable>
+
+          <View style={styles.methods}>
+            <MethodRow
+              method="card"
+              title="Bank card"
+              subtitle={savedCardLast4 ? `•••• ${savedCardLast4}` : 'No card saved'}
+              selected={selectedMethod === 'card'}
+              onPress={() => setSelectedMethod('card')}
+              logo={<MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} />}
+            />
+            <MethodRow
+              method="wallet"
+              title="Wantiss Wallet"
+              subtitle="Use your available Wallet balance"
+              selected={selectedMethod === 'wallet'}
+              onPress={() => setSelectedMethod('wallet')}
+              logo={<MaterialCommunityIcons name="wallet-outline" size={22} color={colors.textPrimary} />}
+            />
+          </View>
+
+          {!savedCardLast4 && (
+            <Pressable style={styles.emptyAction}>
+              <MaterialCommunityIcons name="plus" size={18} color={colors.textPrimary} />
+              <Text style={tx(13, fonts.semibold)}>Add a bank card</Text>
+            </Pressable>
+          )}
+
+          <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Digital wallets</Text>
+          <View style={[styles.methods, { marginTop: 9 }]}>
+            <MethodRow
+              method="apple"
+              title="Apple Pay"
+              selected={selectedMethod === 'apple'}
+              onPress={() => setSelectedMethod('apple')}
+              logo={<Text style={styles.appleLogo}></Text>}
+            />
+            <MethodRow
+              method="google"
+              title="Google Pay"
+              selected={selectedMethod === 'google'}
+              onPress={() => setSelectedMethod('google')}
+              logo={<Text style={styles.gPayLogo}>G</Text>}
+            />
+            <MethodRow
+              method="paypal"
+              title="PayPal"
+              selected={selectedMethod === 'paypal'}
+              onPress={() => setSelectedMethod('paypal')}
+              logo={<Text style={styles.paypalLogo}>P</Text>}
+            />
+          </View>
         </View>
 
         <View style={styles.totalCard}>
@@ -42,10 +113,14 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, onPaymentMe
 
         <View style={styles.notice}>
           <MaterialCommunityIcons name="shield-alert-outline" size={20} color={colors.textPrimary} />
-          <Text style={[tx(12, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 9 }]}>A shield protects one loss. Shields cannot be used in consecutive matches. Purchases are non-refundable.</Text>
+          <Text style={[tx(12, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 9 }]}>
+            A shield protects one loss. Shields cannot be used in consecutive matches. Purchases are non-refundable.
+          </Text>
         </View>
 
-        <Pressable style={styles.pay}><Text style={tx(15, fonts.bold)}>Pay {'$'}{total.toFixed(2)}</Text></Pressable>
+        <Pressable style={styles.pay}>
+          <Text style={tx(15, fonts.bold)}>Pay {'$'}{total.toFixed(2)}</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -58,8 +133,18 @@ const styles = StyleSheet.create({
   icon: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
   summaryCopy: { flex: 1, marginLeft: 12 },
   section: { marginTop: 22 },
-  payment: { marginTop: 10, minHeight: 68, backgroundColor: colors.white, borderRadius: 16, padding: 13, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.cardBorder },
-  paymentIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center', marginRight: 11 },
+  methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
+  methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  methodSelected: { backgroundColor: '#F4F8EF' },
+  methodLogo: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
+  methodCopy: { flex: 1 },
+  radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: '#B8BDB5', alignItems: 'center', justifyContent: 'center' },
+  radioSelected: { borderColor: colors.textPrimary },
+  radioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: colors.textPrimary },
+  emptyAction: { height: 46, marginTop: 8, borderRadius: 13, backgroundColor: '#F3F7EF', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 },
+  appleLogo: { fontSize: 25, color: colors.textPrimary, fontWeight: '500' },
+  gPayLogo: { fontSize: 22, fontWeight: '700', color: '#4285F4' },
+  paypalLogo: { fontSize: 22, fontWeight: '800', color: '#003087' },
   totalCard: { marginTop: 16, backgroundColor: colors.white, borderRadius: 16, padding: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder },
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   notice: { marginTop: 14, padding: 14, borderRadius: 15, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'flex-start' },
