@@ -87,7 +87,7 @@ export default function FrenziesDemoScreen({ onBack }: { onBack?: () => void }) 
       <BalanceCard balance={balance} onAdd={addFunds} />
       <Text style={[tx(17, fonts.bold), { marginTop: 22 }]}>How do you want to play?</Text>
       <View style={{ marginTop: 12, gap: 10 }}>
-        <ModeCard highlighted icon={<MaterialCommunityIcons name="robot-outline" size={24} color={colors.textPrimary} />} title="Play Computer" subtitle="Practice solo against the computer. No other player needed." button="Play" onPress={playComputer} />
+        <ModeCard highlighted icon={<MaterialCommunityIcons name="robot-outline" size={24} color={colors.textPrimary} />} title="Play Computer" subtitle="Practice solo against the AI. No other player needed." button="Play" onPress={playComputer} />
         <ModeCard icon={<MaterialCommunityIcons name="account-group-outline" size={24} color={colors.textPrimary} />} title="Challenge Demo Players" subtitle="Play other people using demo funds. No real money is involved." button="Find players" onPress={() => setNotice('Showing online demo players.')} />
       </View>
       <View style={s.sectionHeader}><Text style={tx(17, fonts.bold)}>Choose a game</Text><Text style={tx(11, fonts.regular, colors.textSecondary)}>Selected: {selected.title}</Text></View>
@@ -114,7 +114,7 @@ const s = StyleSheet.create({
   demoCoin: { width: 48, height: 48, borderRadius: 16, backgroundColor: 'rgba(255,255,255,.45)', alignItems: 'center', justifyContent: 'center' },
   balanceBottom: { flexDirection: 'row', alignItems: 'center', marginTop: 16 },
   addFunds: { paddingHorizontal: 11, height: 30, borderRadius: 9, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
-  modeCard: { minHeight: 118, padding: 14, borderRadius: 18, backgroundColor: '#F7F8FA', borderWidth: 1, borderColor: '#EEF0F3' },
+  modeCard: { minHeight: 142, padding: 14, borderRadius: 18, backgroundColor: '#F7F8FA', borderWidth: 1, borderColor: '#EEF0F3' },
   modeCardHighlight: { backgroundColor: '#F4F8F0', borderColor: '#DCE8D2' },
   modeIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
   modeButton: { position: 'absolute', right: 14, bottom: 14, height: 32, paddingHorizontal: 13, borderRadius: 9, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'center' },
