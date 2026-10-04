@@ -41,7 +41,7 @@ export default function FrenziesOnlinePlayersScreen({ onBack, onChallengesPress 
                   <View style={s.nameRow}>
                     <Text style={tx(13, fonts.semibold)}>{player.name}</Text>
                     <View style={s.dot} />
-                    <Text style={tx(10, fonts.regular, colors.textSecondary)}>Online</Text>
+                    <Text style={[tx(10, fonts.regular, colors.textSecondary), { marginRight: 10 }]}>Online</Text>
                   </View>
                   <Text style={[tx(10.5, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{player.game}</Text>
                 </View>
