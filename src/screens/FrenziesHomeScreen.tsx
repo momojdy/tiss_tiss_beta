@@ -399,8 +399,10 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
           <Text style={[tx(15, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
           {t.active > 0 && (
   <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-    <Text style={tx(11.5, fonts.regular, th.text)}>{'\u2022'} {t.active} </Text>
-    <Animated.Text style={[tx(11.5, fonts.regular, th.text), { opacity: matchBlink }]}>matches in progress</Animated.Text>
+    <Text style={tx(11.5, fonts.regular, th.text)}>{'\u2022'} </Text>
+    <Animated.Text style={[tx(11.5, fonts.regular, th.text), { opacity: matchBlink }]}>
+      {t.active} {t.active === 1 ? 'match' : 'matches'} in progress
+    </Animated.Text>
   </View>
 )}
           <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 8 }]}>{t.joined}/{t.capacity} joined</Text>
