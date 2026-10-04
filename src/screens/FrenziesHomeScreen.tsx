@@ -66,6 +66,7 @@ type ScreenHandlers = {
   onPlayGame?: (gameId: string) => void;
   onOpenTier?: (tier: TournamentTierKey) => void;
   onGetPass?: () => void;
+  onOpenStreakShield?: () => void;
 };
 
 function SectionHeader({ title, link, onPress }: { title: string; link: string; onPress?: () => void }) {
@@ -259,9 +260,9 @@ function StreakCard({ currentStreak, shieldAvailable, shieldOwned, shieldActive 
               )}
             </Text>
           </View>
-          <View style={[styles.shieldPill, !shieldAvailable && !shieldOwned && !shieldActive && { opacity: 0.55 }]}>
+          <Pressable onPress={onOpenStreakShield} style={[styles.shieldPill, !shieldAvailable && !shieldOwned && !shieldActive && { opacity: 0.55 }]}>
             <Text style={tx(10, fonts.bold, colors.textPrimary)}>Streak Shield</Text>
-          </View>
+          </Pressable>
         </View>
       </GradientBox>
     </View>
@@ -511,7 +512,7 @@ function BottomNav() {
   );
 }
 
-export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings }: ScreenHandlers) {
+export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings, onOpenStreakShield }: ScreenHandlers) {
   const [points, setPoints] = useState<number | null>(null);
   const [currentStreak, setCurrentStreak] = useState(0);
   const [shieldAvailable, setShieldAvailable] = useState(true);
@@ -619,6 +620,7 @@ export default function App({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenR
         onOpenTier={onOpenTier}
         onGetPass={onGetPass}
         onOpenRankings={onOpenRankings}
+        onOpenStreakShield={onOpenStreakShield}
       />
     </SafeAreaProvider>
   );
