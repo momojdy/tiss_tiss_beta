@@ -40,6 +40,15 @@ function AppError({ title, error }: AppErrorProps) {
 }
 
 
+function FrenziesChallengeLayer({ children, showChallenge, onPress, onDismiss }: { children: React.ReactNode; showChallenge: boolean; onPress: () => void; onDismiss: () => void }) {
+  return (
+    <View style={{ flex: 1 }}>
+      {children}
+      {showChallenge && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={onPress} onDismiss={onDismiss} />}
+    </View>
+  );
+}
+
 function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; onPress: () => void; onDismiss: () => void }) {
   const { PanResponder, Animated } = require('react-native');
   const pan = React.useRef(new Animated.ValueXY()).current;
@@ -105,28 +114,28 @@ function AppContent() {
   if (authenticated) {
     try {
       if (buyerScreen === 'frenziesRpsLobby') {
-        return <FrenziesRpsLobbyScreen onBack={() => setBuyerScreen('frenzies')} onDemoPress={() => setBuyerScreen('frenziesDemo')} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesRpsLobbyScreen onBack={() => setBuyerScreen('frenzies')} onDemoPress={() => setBuyerScreen('frenziesDemo')} /></FrenziesChallengeLayer>;
       }
 
       if (buyerScreen === 'frenziesDemo') {
-        return <FrenziesDemoScreen onBack={() => setBuyerScreen('frenziesRpsLobby')} onViewOnlinePlayers={() => setBuyerScreen('frenziesOnlinePlayers')} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesDemoScreen onBack={() => setBuyerScreen('frenziesRpsLobby')} onViewOnlinePlayers={() => setBuyerScreen('frenziesOnlinePlayers')} /></FrenziesChallengeLayer>;
       }
 
       if (buyerScreen === 'frenziesOnlinePlayers') {
-        return <FrenziesOnlinePlayersScreen onBack={() => setBuyerScreen('frenziesDemo')} onChallengesPress={() => setBuyerScreen('frenziesChallenges')} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesOnlinePlayersScreen onBack={() => setBuyerScreen('frenziesDemo')} onChallengesPress={() => setBuyerScreen('frenziesChallenges')} /></FrenziesChallengeLayer>;
       }
       if (buyerScreen === 'frenziesChallenges') {
-        return <FrenziesChallengeInboxScreen onBack={() => setBuyerScreen('frenzies')} onAccept={() => setBuyerScreen('frenziesChallengeStatus')} onDecline={() => setShowChallenge(false)} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeInboxScreen onBack={() => setBuyerScreen('frenzies')} onAccept={() => setBuyerScreen('frenziesChallengeStatus')} onDecline={() => setShowChallenge(false)} /></FrenziesChallengeLayer>;
       }
       if (buyerScreen === 'frenziesChallengeStatus') {
-        return <FrenziesChallengeStatusScreen onBack={() => setBuyerScreen('frenzies')} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeStatusScreen onBack={() => setBuyerScreen('frenzies')} /></FrenziesChallengeLayer>;
       }
       if (buyerScreen === 'frenziesChallengeReady') {
-        return <FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} /></FrenziesChallengeLayer>;
       }
 
       if (buyerScreen === 'frenzies') {
-        return <FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} />;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} /></FrenziesChallengeLayer>;
       }
 
       if (buyerScreen === 'walletAddNewCard') {
@@ -210,12 +219,7 @@ function AppContent() {
       }
 
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return (
-        <View style={{ flex: 1 }}>
-          <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />
-          {showChallenge && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)} />}
-        </View>
-      );
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />;
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
