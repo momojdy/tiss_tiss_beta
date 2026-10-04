@@ -7,7 +7,7 @@ import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
-export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 5, total = 1 }: { onBack?: () => void; quantity?: number; total?: number }) {
+export default function FrenziesStreakShieldCheckoutScreen({ onBack, onPaymentMethodPress, quantity = 5, total = 1 }: { onBack?: () => void; onPaymentMethodPress?: () => void; quantity?: number; total?: number }) {
   return (
     <View style={styles.safe}>
       <FrenziesHeader title="Checkout" onBack={onBack} showPoints={false} />
@@ -25,7 +25,7 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 
 
         <View style={styles.section}>
           <Text style={tx(15, fonts.bold)}>Payment method</Text>
-          <Pressable style={styles.payment}>
+          <Pressable onPress={onPaymentMethodPress} style={styles.payment}>
             <View style={styles.paymentIcon}><MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} /></View>
             <View style={{ flex: 1 }}>
               <Text style={tx(14, fonts.bold)}>Payment card</Text>
@@ -46,7 +46,6 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 
         </View>
 
         <Pressable style={styles.pay}><Text style={tx(15, fonts.bold)}>Pay {'$'}{total.toFixed(2)}</Text></Pressable>
-        <Text style={styles.secure}>Secure payment</Text>
       </ScrollView>
     </View>
   );
@@ -65,5 +64,4 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   notice: { marginTop: 14, padding: 14, borderRadius: 15, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'flex-start' },
   pay: { height: 50, marginTop: 18, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
-  secure: { textAlign: 'center', marginTop: 10, fontFamily: fonts.regular, fontSize: 11, color: colors.textSecondary },
 });
