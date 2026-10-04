@@ -63,11 +63,6 @@ export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () 
           <View style={styles.ruleTitleRow}><MaterialCommunityIcons name="alert-circle-outline" size={20} color={colors.streak.flameBadgeBg} /><Text style={[tx(15, fonts.bold), { marginLeft: 8, flex: 1 }]}>Important: shields cannot be used consecutively</Text></View>
           <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 8 }]}>A shield can protect one loss and keep your streak alive. After a shield is used, your next match must be played without a shield. You can use another shield again after that match.</Text>
         </View>
-        <View style={styles.priceCard}>
-          <Text style={tx(13, fonts.regular, colors.textSecondary)}>Base price</Text>
-          <Text style={tx(18, fonts.bold)}>${SHIELD_UNIT_PRICE.toFixed(2)} per shield</Text>
-          <Text style={[tx(11, fonts.regular, colors.textSecondary), { marginTop: 4 }]}>Package prices are configured in one place so they can be changed later.</Text>
-        </View>
 
         <Pressable style={styles.cta}>
           <Text style={tx(15, fonts.bold)}>Get Streak Shield</Text>
@@ -89,7 +84,6 @@ const styles = StyleSheet.create({
   copy: { flex: 1, marginLeft: 12 },
   divider: { height: 1, backgroundColor: colors.rankings.rowBorder, marginVertical: 16 },
   point: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14 },
-  priceCard: { marginTop: 14, backgroundColor: colors.white, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder },
   sectionHeader: { marginTop: 22, marginBottom: 12 },
   packages: { gap: 10 },
   package: { minHeight: 72, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, padding: 13, flexDirection: 'row', alignItems: 'center' },
