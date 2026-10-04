@@ -83,7 +83,7 @@ export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers }: { on
   const challengePlayer = (name: string) => setNotice('Demo challenge sent to ' + name + '.');
 
   return <SafeAreaView style={s.safe}>
-    <FrenziesHeader title="Frenzies" onBack={onBack} demo />
+    <FrenziesHeader title="Frenzies" onBack={onBack} demo showPoints={false} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
       <View style={s.intro}><Text style={tx(25, fonts.bold)}>Practice your game.</Text><Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.</Text></View>
       <BalanceCard balance={balance} onAdd={addFunds} />
