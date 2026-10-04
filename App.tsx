@@ -22,10 +22,11 @@ import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
 import FrenziesOnlinePlayersScreen from './src/screens/FrenziesOnlinePlayersScreen';
 import FrenziesChallengeInboxScreen, { DEMO_CHALLENGES } from './src/screens/FrenziesChallengeInboxScreen';
 import FrenziesChallengeStatusScreen from './src/screens/FrenziesChallengeStatusScreen';
+import FrenziesRankingScreen from './src/screens/FrenziesRankingScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -141,8 +142,12 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
         return <FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} />;
       }
 
+      if (buyerScreen === 'frenziesRankings') {
+        return <FrenziesRankingScreen onBack={() => setBuyerScreen('frenzies')} />;
+      }
+
       if (buyerScreen === 'frenzies') {
-        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} /></FrenziesChallengeLayer>;
+        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} onOpenRankings={() => setBuyerScreen('frenziesRankings')} /></FrenziesChallengeLayer>;
       }
 
       if (buyerScreen === 'walletAddNewCard') {
