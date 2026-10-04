@@ -36,13 +36,15 @@ function BalanceCard({ balance, onAdd }: { balance: number; onAdd: () => void })
 
 function ModeCard({ icon, title, subtitle, button, onPress, highlighted }: { icon: React.ReactNode; title: string; subtitle: string; button: string; onPress: () => void; highlighted?: boolean }) {
   return <View style={[s.modeCard, highlighted && s.modeCardHighlight]}>
-    <View style={s.modeIcon}>{icon}</View>
-    <Text style={tx(16, fonts.bold)}>{title}</Text>
-    <Text style={[tx(11.5, fonts.regular, colors.textSecondary), { marginTop: 5, lineHeight: 16, paddingRight: 92 }]}>{subtitle}</Text>
-    <Pressable onPress={onPress} style={[s.modeButton, highlighted && s.modeButtonHighlight]}>
-      <Text style={tx(13, fonts.bold, highlighted ? colors.white : colors.textPrimary)}>{button}</Text>
-      <MaterialIcons name="chevron-right" size={18} color={highlighted ? colors.white : colors.textPrimary} />
-    </Pressable>
+    <View style={s.modeTopRow}>
+      <View style={s.modeIcon}>{icon}</View>
+      <Text style={[tx(16, fonts.bold), { flex: 1, marginLeft: 10, paddingRight: 8 }]}>{title}</Text>
+      <Pressable onPress={onPress} style={[s.modeButton, highlighted && s.modeButtonHighlight]}>
+        <Text style={tx(13, fonts.bold, highlighted ? colors.white : colors.textPrimary)}>{button}</Text>
+        <MaterialIcons name="chevron-right" size={18} color={highlighted ? colors.white : colors.textPrimary} />
+      </Pressable>
+    </View>
+    <Text style={[tx(11.5, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 16 }]}>{subtitle}</Text>
   </View>;
 }
 
@@ -116,8 +118,9 @@ const s = StyleSheet.create({
   addFunds: { paddingHorizontal: 11, height: 30, borderRadius: 9, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
   modeCard: { minHeight: 118, padding: 14, borderRadius: 18, backgroundColor: '#F7F8FA', borderWidth: 1, borderColor: '#EEF0F3' },
   modeCardHighlight: { backgroundColor: '#F4F8F0', borderColor: '#DCE8D2' },
+  modeTopRow: { flexDirection: 'row', alignItems: 'center' },
   modeIcon: { width: 42, height: 42, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center', marginBottom: 10 },
-  modeButton: { position: 'absolute', right: 14, bottom: 14, height: 32, paddingHorizontal: 13, borderRadius: 9, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'center' },
+  modeButton: { height: 32, paddingHorizontal: 13, borderRadius: 9, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'center' },
   modeButtonHighlight: { backgroundColor: colors.gameCard.playBg },
   gameCard: { width: 155, height: 190, marginRight: 12, marginTop: 13, borderRadius: 20, overflow: 'hidden', backgroundColor: '#E7E9ED' },
   gameCardSelected: { borderWidth: 2, borderColor: colors.streak.shieldPill },
