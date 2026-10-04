@@ -165,7 +165,7 @@ const GAMES: GameCfg[] = [
     durBg: colors.gameCard.badgeKoridoTime,
     badgeLeft: 4,
     durRight: 4,
-    titleTop: 113.4,
+    titleTop: 116.4,
     titleColor: colors.black,
     subTop: 135.55,
     subColor: colors.black,
