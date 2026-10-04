@@ -276,19 +276,6 @@ type RankEntry = {
   isYou?: boolean;
 };
 
-const ENTRIES: RankEntry[] = [
-  { rank: 1, name: 'Claire D.', wins: 19, isTop: true },
-  { rank: 2, name: 'Joyce B.', wins: 15 },
-  { rank: 3, name: 'Aitor M.', wins: 12, isTop: true },
-  { rank: 4, name: 'Yumi M.', wins: 10 },
-  { rank: 5, name: 'Daniel P.', wins: 9 },
-  { rank: 6, name: 'You', wins: 4, isYou: true },
-  { rank: 7, name: 'Nora F.', wins: 3 },
-  { rank: 8, name: 'Theo W.', wins: 3 },
-  { rank: 9, name: 'Priya S.', wins: 2 },
-  { rank: 10, name: 'Cole J.', wins: 2 },
-];
-
 const RANK_H = sizes.rankingsHeight;
 const RANK_VIEWPORT = RANK_H - 2;
 const r = colors.rankings;
