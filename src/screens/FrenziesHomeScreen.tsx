@@ -624,7 +624,7 @@ const styles = StyleSheet.create({
   sectionLink: { flexDirection: 'row', alignItems: 'center', marginRight: 10 },
   sectionLinkText: tx(14, fonts.regular, colors.textSecondary),
   gameCard: { width: sizes.gameCard.width, height: sizes.gameCard.height, marginLeft: sizes.gameCard.gap, marginTop: 16, backgroundColor: colors.white },
-  koridoGameCard: { borderWidth: 0.5, borderColor: '#D9DDE2' },
+  koridoGameCard: { borderWidth: 0.5, borderColor: '#D9DDE2', borderRadius: 20 },
   badge: { position: 'absolute', top: 6, width: 30, height: 15, borderRadius: 5, alignItems: 'center', justifyContent: 'center' },
   durBadge: { flexDirection: 'row', justifyContent: 'flex-start' },
   gameBtn: { position: 'absolute', width: 125, height: 30, borderRadius: 8, alignItems: 'center', justifyContent: 'center', opacity: 0.9 },
