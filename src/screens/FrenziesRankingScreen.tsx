@@ -64,7 +64,7 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
     return () => { mounted = false; };
   }, []);
 
-  const hasPlayers = entries.some((e) => e.wins > 0);
+  const hasPlayers = true;
   const testEntries: Entry[] = Array.from({ length: 200 }, (_, i) => i === 189
     ? { rank: 190, name: 'You', wins: 11, isYou: true }
     : { rank: i + 1, name: `Player ${i + 1}`, wins: Math.max(1, 210 - i), isYou: false });
