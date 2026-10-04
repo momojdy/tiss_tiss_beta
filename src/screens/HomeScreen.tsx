@@ -212,7 +212,7 @@ export default function HomeScreen({onMePress,onFrenziesPress}:{onMePress?:()=>v
     <StatusBar style="dark"/>
     <MainTabSelector/>
     <View style={{paddingHorizontal:12,marginTop:8}}><SearchBar/></View>
-    <ScrollView scrollEnabled={!scrollLocked} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:170}}>
+    <ScrollView scrollEnabled={!scrollLocked} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:105}}>
       <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Frenzies') onFrenziesPress?.();}}/></View>
       <TeaserRow p={p}/>
       <View style={{marginHorizontal:6,marginTop:6}}><MainPromoBanner/></View>
