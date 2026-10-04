@@ -87,7 +87,7 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
           <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6 }]}>Track the players leading the Frenzies leaderboard.</Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={styles.card} onLayout={(e) => { /* constrain leaderboard to screen */ }}>
           <View style={styles.cardHeader}>
             <Text style={tx(14, fonts.bold)}>Leaderboard</Text>
             <View style={styles.fireLabel}><MaterialIcons name="local-fire-department" size={14} color={colors.rankings.flamePillText} /><Text style={[tx(11, fonts.semibold, colors.rankings.flamePillText), { marginLeft: 4 }]}>Wins</Text></View>
@@ -104,7 +104,7 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
             </>
           ) : (
             <View>
-              <ScrollView ref={listRef} onScroll={onListScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 0 }}>
+              <ScrollView ref={listRef} style={styles.leaderboardScroll} onScroll={onListScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 0 }}>
                 {displayEntries.map((entry) => (
                   <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined}>
                     <Pressable onPress={entry.isYou ? () => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true }) : undefined}>
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
   content: { paddingHorizontal: 18, paddingBottom: 40 },
   intro: { paddingTop: 14, paddingBottom: 18 },
   card: { backgroundColor: colors.rankings.cardBg, borderRadius: colors.rankings.cardRadius ?? 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
+  leaderboardScroll: { maxHeight: 560 },
   cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
   row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
