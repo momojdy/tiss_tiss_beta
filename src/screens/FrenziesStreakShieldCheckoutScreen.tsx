@@ -9,18 +9,18 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
   fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
 });
 
-type Method = 'card' | 'wallet' | 'apple' | 'google' | 'paypal';
+type Method = 'card' | 'wallet' | 'moncash' | 'natcash' | 'apple' | 'google' | 'paypal';
 
-function MethodRow({ method, title, subtitle, selected, onPress, logo, compact }: {
-  method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo?: React.ReactNode; compact?: boolean;
+function MethodRow({ method, title, subtitle, selected, onPress, logo, compact, logoOnly }: {
+  method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo?: React.ReactNode; compact?: boolean; logoOnly?: boolean;
 }) {
   return (
     <Pressable onPress={onPress} style={[styles.methodRow, selected && styles.methodSelected]}>
       {!compact && <View style={styles.methodLogo}>{logo}</View>}
-      <View style={styles.methodCopy}>
+      {!logoOnly && <View style={styles.methodCopy}>
         <Text style={tx(14, fonts.semibold)}>{title}</Text>
         {!!subtitle && <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{subtitle}</Text>}
-      </View>
+      </View>}
       <View style={[styles.radio, selected && styles.radioSelected]}>
         {selected && <View style={styles.radioDot} />}
       </View>
@@ -57,17 +57,11 @@ export default function FrenziesStreakShieldCheckoutScreen({
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 12 }]}>Bank card</Text>
           <View style={[styles.methods, { marginTop: 9 }]}>
-            {savedCards.map((last4) => (
-              <MethodRow
-                key={last4}
-                method="card"
-                title={`•••• ${last4}`}
-                subtitle="Saved card"
-                selected={selectedMethod === 'card' && selectedCard === last4}
-                onPress={() => { setSelectedMethod('card'); setSelectedCard(last4); }}
-                compact
-              />
-            ))}
+            <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled contentContainerStyle={styles.verticalMethods}>
+              {savedCards.map((last4) => (
+                <MethodRow key={last4} method="card" title={`•••• ${last4}`} subtitle="Saved card" selected={selectedMethod === 'card' && selectedCard === last4} onPress={() => { setSelectedMethod('card'); setSelectedCard(last4); }} compact />
+              ))}
+            </ScrollView>
           </View>
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Wantiss Wallet</Text>
@@ -85,27 +79,11 @@ export default function FrenziesStreakShieldCheckoutScreen({
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Digital wallets</Text>
           <View style={[styles.methods, { marginTop: 9 }]}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalMethods}>
-            <MethodRow
-              method="apple"
-              title="Apple Pay"
-              selected={selectedMethod === 'apple'}
-              onPress={() => setSelectedMethod('apple')}
-              logo={<Text style={styles.appleLogo}></Text>}
-            />
-            <MethodRow
-              method="google"
-              title="Google Pay"
-              selected={selectedMethod === 'google'}
-              onPress={() => setSelectedMethod('google')}
-              logo={<Text style={styles.gPayLogo}>G</Text>}
-            />
-            <MethodRow
-              method="paypal"
-              title="PayPal"
-              selected={selectedMethod === 'paypal'}
-              onPress={() => setSelectedMethod('paypal')}
-              logo={<Text style={styles.paypalLogo}>P</Text>}
-            />
+              <MethodRow method="moncash" title="MonCash" selected={selectedMethod === 'moncash'} onPress={() => setSelectedMethod('moncash')} logo={<Text style={styles.walletLogo}>MC</Text>} logoOnly />
+              <MethodRow method="natcash" title="NatCash" selected={selectedMethod === 'natcash'} onPress={() => setSelectedMethod('natcash')} logo={<Text style={styles.walletLogo}>NC</Text>} logoOnly />
+              <MethodRow method="apple" title="Apple Pay" selected={selectedMethod === 'apple'} onPress={() => setSelectedMethod('apple')} logo={<Text style={styles.walletLogo}></Text>} logoOnly />
+              <MethodRow method="google" title="Google Pay" selected={selectedMethod === 'google'} onPress={() => setSelectedMethod('google')} logo={<Text style={styles.walletLogo}>G</Text>} logoOnly />
+              <MethodRow method="paypal" title="PayPal" selected={selectedMethod === 'paypal'} onPress={() => setSelectedMethod('paypal')} logo={<Text style={styles.walletLogo}>P</Text>} logoOnly />
             </ScrollView>
           </View>
         </View>
@@ -139,8 +117,11 @@ const styles = StyleSheet.create({
   section: { marginTop: 22 },
   methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   horizontalMethods: { padding: 6, gap: 8 },
-  methodRow: { width: 118, minHeight: 68, paddingHorizontal: 10, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.rowBorder, borderRadius: 12 },
+  verticalMethods: { padding: 6, gap: 8 },
+  horizontalMethods: { padding: 6, gap: 8 },
+  methodRow: { minHeight: 68, paddingHorizontal: 10, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.rowBorder, borderRadius: 12 },
   methodSelected: { backgroundColor: '#F4F8EF', borderColor: colors.streak.shieldPill },
+  walletLogo: { fontSize: 20, fontWeight: '800', color: colors.textPrimary },
   methodLogo: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
   methodCopy: { flex: 1 },
   radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: '#B8BDB5', alignItems: 'center', justifyContent: 'center' },
