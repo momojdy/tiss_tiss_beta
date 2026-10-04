@@ -575,7 +575,8 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, 
       }
       if (!mounted) return;
       const rows = (data ?? []) as Array<{ rank: number; name: string; wins: number; lifetime_points: number; avatar_url: string | null; is_you: boolean }>;
-      const testRows = Array.from({ length: 200 }, (_, i) => i === 189
+      const testRows = [...Array.from({ length: 10 }, (_, i) => ({ rank: i + 1, name: `Player ${i + 1}`, wins: Math.max(1, 210 - i), avatar_url: null, is_you: false })), { rank: 190, name: 'You', wins: 11, avatar_url: null, is_you: true }];
+      const legacyTestRows = Array.from({ length: 200 }, (_, i) => i === 189
         ? { rank: 190, name: 'You', wins: 11, avatar_url: null, is_you: true }
         : { rank: i + 1, name: `Player ${i + 1}`, wins: Math.max(1, 210 - i), avatar_url: null, is_you: false });
       const leaderboardRows = testRows;
