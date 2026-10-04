@@ -142,16 +142,28 @@ export default function FrenziesRpsGameScreen({ onBack }: { onBack?: () => void 
   const makeComputerChoice = () => {
     if (phase !== 'choosing') return;
     const cpu = computerMove();
-    const playerMove = selected ?? MOVES[Math.floor(Math.random() * MOVES.length)].id;
-    setSelected(playerMove);
     setOpponent(cpu);
+    if (!selected) {
+      setPhase('revealing');
+      setMessage('Time expired');
+      Animated.sequence([
+        Animated.timing(reveal, { toValue: 1, duration: 300, useNativeDriver: true }),
+        Animated.delay(650),
+      ]).start(() => {
+        setResult('loss');
+        setPhase('finished');
+        setMessage('You lost');
+        setShowOutcome(true);
+      });
+      return;
+    }
     setPhase('revealing');
     setMessage('Both moves locked');
     Animated.sequence([
       Animated.timing(reveal, { toValue: 1, duration: 300, useNativeDriver: true }),
       Animated.delay(650),
     ]).start(() => {
-      const r = resultFor(playerMove, cpu);
+      const r = resultFor(selected, cpu);
       setResult(r);
       setPhase('finished');
       setMessage(r === 'win' ? 'You win' : r === 'loss' ? 'You lost' : 'Tie');
@@ -276,7 +288,7 @@ export default function FrenziesRpsGameScreen({ onBack }: { onBack?: () => void 
         <View style={s.ruleNote}>
           <MaterialCommunityIcons name="clock-outline" size={16} color={colors.textSecondary} />
           <Text style={[tx(10.5, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 8, lineHeight: 15 }]}>
-            You have 90 seconds to choose. The computer always makes a move, so there is no computer forfeit.
+            You have 90 seconds to choose. The computer always makes a move; if you time out, you lose by forfeit.
           </Text>
         </View>
       </View>
