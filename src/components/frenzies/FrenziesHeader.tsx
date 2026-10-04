@@ -70,6 +70,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     height: 18,
     paddingHorizontal: 8,
+    marginRight: 15,
     borderRadius: 9,
     backgroundColor: colors.streak.shieldPill,
     flexDirection: 'row',
