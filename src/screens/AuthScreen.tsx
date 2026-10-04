@@ -84,6 +84,26 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
   const [fullNameError, setFullNameError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [googleFailed, setGoogleFailed] = useState(false);
+  const emailChangedAtRef = useRef(0);
+  const passwordChangedAtRef = useRef(0);
+  const autofillDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleCredentialChange = (field: 'email' | 'password', value: string, setter: (value: string) => void) => {
+    setter(value);
+    const now = Date.now();
+    if (field === 'email') emailChangedAtRef.current = now;
+    else passwordChangedAtRef.current = now;
+
+    if (autofillDismissTimerRef.current) clearTimeout(autofillDismissTimerRef.current);
+    if (!value) return;
+
+    autofillDismissTimerRef.current = setTimeout(() => {
+      const emailFilled = email.trim().length > 0 || (field === 'email' && value.trim().length > 0);
+      const passwordFilled = password.length > 0 || (field === 'password' && value.length > 0);
+      const changedTogether = Math.abs(emailChangedAtRef.current - passwordChangedAtRef.current) <= 300;
+      if (emailFilled && passwordFilled && changedTogether) Keyboard.dismiss();
+    }, 80);
+  };
 
   const pagerRef = useRef<ScrollView>(null);
   const { width: screenWidth } = useWindowDimensions();
@@ -206,10 +226,10 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
     </View>
   );
 
-  const renderEmailField = () => <AuthField top={15} value={email} onChangeText={t => { setEmail(t); if (emailError) setEmailError(null); }} placeholder="Email" icon="email-outline" error={emailError} keyboardType="email-address" />;
+  const renderEmailField = () => <AuthField top={15} value={email} onChangeText={t => { handleCredentialChange('email', t, setEmail); if (emailError) setEmailError(null); }} placeholder="Email" icon="email-outline" error={emailError} keyboardType="email-address" />;
 
   const renderPasswordField = () => (
-    <AuthField top={12} value={password} onChangeText={t => { setPassword(t); if (passwordError) setPasswordError(null); }} placeholder="Password" icon="lock-outline" error={passwordError} secureTextEntry={obscurePassword}
+    <AuthField top={12} value={password} onChangeText={t => { handleCredentialChange('password', t, setPassword); if (passwordError) setPasswordError(null); }} placeholder="Password" icon="lock-outline" error={passwordError} secureTextEntry={obscurePassword}
       suffix={<Pressable style={styles.suffixButton} onPress={() => setObscurePassword(v => !v)}><MaterialCommunityIcons name={obscurePassword ? 'eye-off-outline' : 'eye-outline'} size={24} color={FIELD_TEXT} /></Pressable>}
     />
   );
@@ -254,15 +274,15 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
 
   return (
     <View style={{ width: '100%' }}>
-      <View style={styles.card}>
-        <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" onTouchStart={dismissKeyboard}>
+      <Pressable style={styles.card} onPress={dismissKeyboard}>
+        <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
           {renderToggle()}
           {renderBusinessSpaceLabel()}
           {isRegisterMode && isVendor ? renderRegisterStepIndicator() : null}
           {isRegisterMode && isVendor ? renderBusinessRegistrationPages() : isRegisterMode ? renderCredentialsBlock('Sign Up') : renderCredentialsBlock('Sign in')}
           {errorMessage ? <View style={styles.errorMessageWrap}><Text style={styles.fieldError}>{errorMessage}</Text></View> : null}
         </ScrollView>
-      </View>
+      </Pressable>
       <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
         <Text style={styles.bottomSwitchText}>{isRegisterMode ? 'Already have an account? ' : "Don't have an account? "}<Text style={styles.bottomSwitchLink}>{isRegisterMode ? 'Sign in' : 'Register'}</Text></Text>
       </Pressable>
