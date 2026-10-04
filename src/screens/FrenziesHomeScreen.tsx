@@ -407,7 +407,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
               </View>
             )}
           </View>
-          <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 0 }]}>{t.joined}/{t.capacity} joined</Text>
+          <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 0, paddingTop: 6 }]}>{t.joined}/{t.capacity} joined</Text>
           <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: (progress * 100) + '%', height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
         </View>
         <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, width: 60, height: 60, borderBottomLeftRadius: 32, backgroundColor: colors.white, opacity: th.shapeOpacity }} />
