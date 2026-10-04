@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
@@ -82,7 +82,7 @@ export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers }: { on
   const playComputer = () => setNotice('Starting ' + selected.title + ' against the computer.');
   const challengePlayer = (name: string) => setNotice('Demo challenge sent to ' + name + '.');
 
-  return <SafeAreaView style={s.safe}>
+  return <View style={s.safe}>
     <FrenziesHeader title="Frenzies" onBack={onBack} demo showPoints={false} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
       <View style={s.intro}><Text style={tx(25, fonts.bold)}>Practice your game.</Text><Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.</Text></View>
@@ -99,7 +99,7 @@ export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers }: { on
       {notice && <Pressable onPress={() => setNotice(null)} style={s.notice}><MaterialCommunityIcons name="information-outline" size={17} color={colors.textPrimary} /><Text style={[tx(11, fonts.medium), { flex: 1, marginLeft: 7 }]}>{notice}</Text><MaterialIcons name="close" size={16} color={colors.textSecondary} /></Pressable>}
       <View style={s.disclaimer}><MaterialCommunityIcons name="shield-check-outline" size={18} color={colors.textSecondary} /><Text style={[tx(10.5, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 8, lineHeight: 15 }]}>Demo funds are virtual only. They are separate from your Wantiss Wallet, cannot be withdrawn, and can never be converted into real funds.</Text></View>
     </ScrollView>
-  </SafeAreaView>;
+  </View>;
 }
 
 const s = StyleSheet.create({
