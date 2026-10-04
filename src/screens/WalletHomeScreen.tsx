@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   content: {
-    paddingBottom: 110,
+    paddingBottom: 105,
   },
   earnMorePointsSpacing: {
     paddingTop: 8,
