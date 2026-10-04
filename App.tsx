@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 import { Text, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/AuthScreen';
 import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
@@ -35,7 +36,7 @@ function AppError({ title, error }: AppErrorProps) {
   );
 }
 
-export default function App() {
+function AppContent() {
   const [fontsLoaded] = useFonts({
     Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'),
     Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
@@ -243,5 +244,13 @@ export default function App() {
         throw new Error('Unable to create your account. Please try again.');
       }}
     />
+  );
+}
+
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <AppContent />
+    </SafeAreaProvider>
   );
 }
