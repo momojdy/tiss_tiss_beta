@@ -390,7 +390,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
     return () => loop.stop();
   }, [t.active, matchBlink]);
   return (
-    <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
+    <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15, opacity: 0.82 }}>
       <GradientBox gradient={th.gradient} style={{ width: 150, height: 170, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
         <View pointerEvents="none" style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(255,255,255,0.10)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.30)', borderRadius: sizes.tournamentCard.radius }} />
         <View style={{ paddingLeft: 10, paddingTop: 10 }}>
