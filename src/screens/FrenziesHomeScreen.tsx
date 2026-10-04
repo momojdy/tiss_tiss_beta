@@ -381,7 +381,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
   const isUlt = t.key === 'ultimate';
   return (
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
-      <GradientBox gradient={th.gradient} style={{ width: 150, height: 150, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
+      <GradientBox gradient={th.gradient} style={{ width: 150, height: 180, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
         <View style={{ paddingLeft: 10, paddingTop: 10 }}>
           <Text style={tx(14, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
