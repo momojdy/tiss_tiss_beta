@@ -5,6 +5,14 @@ import { colors } from '../theme/frenziesTheme';
 import { fonts } from '../theme/frenziesFonts';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 
+const SHIELD_UNIT_PRICE = 0.25;
+const PACKAGES = [
+  { quantity: 1, label: '1 Shield', sub: '$0.25 total', badge: '' },
+  { quantity: 5, label: '5 Shields', sub: '$1.00 total', badge: 'Best value' },
+  { quantity: 10, label: '10 Shields', sub: '$1.75 total', badge: 'Save 30%' },
+  { quantity: 25, label: '25 Shields', sub: '$4.00 total', badge: 'Save 36%' },
+];
+
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
 export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () => void }) {
@@ -35,10 +43,30 @@ export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () 
           ))}
         </View>
 
+        <View style={styles.sectionHeader}>
+          <Text style={tx(18, fonts.bold)}>Choose a package</Text>
+          <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 4 }]}>1 shield is $0.25. Buy more and get a better price.</Text>
+        </View>
+        <View style={styles.packages}>
+          {PACKAGES.map((pkg) => (
+            <Pressable key={pkg.quantity} style={[styles.package, pkg.quantity === 5 && styles.packageFeatured]}>
+              <View style={styles.packageIcon}><MaterialCommunityIcons name="shield-check" size={21} color={colors.textPrimary} /></View>
+              <View style={styles.packageCopy}>
+                <Text style={tx(16, fonts.bold)}>{pkg.label}</Text>
+                <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{pkg.sub}</Text>
+              </View>
+              {pkg.badge ? <View style={styles.badge}><Text style={tx(10, fonts.bold, colors.textPrimary)}>{pkg.badge}</Text></View> : null}
+            </Pressable>
+          ))}
+        </View>
+        <View style={styles.ruleCard}>
+          <View style={styles.ruleTitleRow}><MaterialCommunityIcons name="alert-circle-outline" size={20} color={colors.streak.flameBadgeBg} /><Text style={[tx(15, fonts.bold), { marginLeft: 8, flex: 1 }]}>Important: shields cannot be used consecutively</Text></View>
+          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 8 }]}>A shield can protect one loss and keep your streak alive. After a shield is used, your next match must be played without a shield. You can use another shield again after that match.</Text>
+        </View>
         <View style={styles.priceCard}>
-          <Text style={tx(13, fonts.regular, colors.textSecondary)}>Streak Shield</Text>
-          <Text style={tx(22, fonts.bold)}>1 shield</Text>
-          <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 4 }]}>Available to use on your next match.</Text>
+          <Text style={tx(13, fonts.regular, colors.textSecondary)}>Base price</Text>
+          <Text style={tx(18, fonts.bold)}>${SHIELD_UNIT_PRICE.toFixed(2)} per shield</Text>
+          <Text style={[tx(11, fonts.regular, colors.textSecondary), { marginTop: 4 }]}>Package prices are configured in one place so they can be changed later.</Text>
         </View>
 
         <Pressable style={styles.cta}>
@@ -62,5 +90,14 @@ const styles = StyleSheet.create({
   divider: { height: 1, backgroundColor: colors.rankings.rowBorder, marginVertical: 16 },
   point: { flexDirection: 'row', alignItems: 'flex-start', marginBottom: 14 },
   priceCard: { marginTop: 14, backgroundColor: colors.white, borderRadius: 18, padding: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder },
+  sectionHeader: { marginTop: 22, marginBottom: 12 },
+  packages: { gap: 10 },
+  package: { minHeight: 72, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, padding: 13, flexDirection: 'row', alignItems: 'center' },
+  packageFeatured: { borderColor: colors.streak.flameBadgeBg },
+  packageIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
+  packageCopy: { flex: 1, marginLeft: 11 },
+  badge: { paddingHorizontal: 8, paddingVertical: 5, borderRadius: 9, backgroundColor: colors.streak.shieldPill },
+  ruleCard: { marginTop: 14, backgroundColor: colors.streak.shieldPill, borderRadius: 16, padding: 15 },
+  ruleTitleRow: { flexDirection: 'row', alignItems: 'flex-start' },
   cta: { height: 50, marginTop: 18, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
 });
