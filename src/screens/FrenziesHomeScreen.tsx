@@ -340,8 +340,8 @@ function RankingsCard({ entries }: { entries: RankEntry[] }) {
           </View>
         ))}
         {!hasOtherPlayers && (
-          <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 18 }}>
-            <Text style={[tx(13, fonts.medium, r.text), { textAlign: 'center' }]}>Be the first to climb the leaderboard</Text>
+          <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 26 }}>
+            <Text style={[tx(14, fonts.regular, r.text), { textAlign: 'center' }]}>Be the first to climb the leaderboard</Text>
           </View>
         )}
       </ScrollView>
