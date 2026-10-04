@@ -28,7 +28,7 @@ function Avatar({ entry }: { entry: Entry }) {
 function RankRow({ entry, showDivider = true }: { entry: Entry; showDivider?: boolean }) {
   return (
     <View style={[styles.row, entry.isYou && styles.youRow, showDivider && styles.rowDivider]}>
-      <View style={styles.rank}><Text style={tx(13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
+      <View style={styles.rank}><Text numberOfLines={1} style={tx(13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
       <Avatar entry={entry} />
       <Text numberOfLines={1} style={[tx(14, fonts.semibold, colors.rankings.text), { flex: 1, marginLeft: 12 }]}>{entry.name}</Text>
       <View style={styles.wins}><MaterialIcons name="local-fire-department" size={13} color={colors.rankings.flamePillText} /><Text style={[tx(11.5, fonts.bold, colors.rankings.flamePillText), { marginLeft: 4 }]}>{entry.wins}</Text></View>
@@ -106,9 +106,9 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
             <View>
               <ScrollView ref={listRef} style={styles.leaderboardScroll} onScroll={onListScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 0 }}>
                 {displayEntries.map((entry) => (
-                  <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined}>
+                  <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined} style={entry.rank !== 200 && !entry.isYou ? styles.insetDivider : undefined}>
                     <Pressable onPress={entry.isYou ? () => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true }) : undefined}>
-                      <RankRow entry={entry} showDivider={entry.rank !== 200} />
+                      <RankRow entry={entry} showDivider={false} />
                     </Pressable>
                   </View>
                 ))}
@@ -136,8 +136,9 @@ const styles = StyleSheet.create({
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
   row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
   rowDivider: { borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  insetDivider: { marginHorizontal: 14, borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   youRow: { backgroundColor: '#E7F3D8' },
-  rank: { minWidth: 28, paddingHorizontal: 2, alignItems: 'center' },
+  rank: { width: 42, flexShrink: 0, paddingHorizontal: 0, alignItems: 'center' },
   avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.rankings.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   youAvatar: { borderWidth: 2, borderColor: colors.rankings.youRing },
   avatarImage: { width: 34, height: 34 },
