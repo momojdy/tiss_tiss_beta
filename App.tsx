@@ -295,20 +295,10 @@ function AppContent() {
   );
 }
 
-function AppWithPlaceholderChallenge() {
-  const [showChallenge, setShowChallenge] = React.useState(true);
-  return (
-    <View style={{ flex: 1 }}>
-      <AppContent />
-      {showChallenge && <ChallengePlaceholder onDismiss={() => setShowChallenge(false)} />}
-    </View>
-  );
-}
-
 export default function App() {
   return (
     <SafeAreaProvider>
-      <AppWithPlaceholderChallenge />
+      <AppContent />
     </SafeAreaProvider>
   );
 }
