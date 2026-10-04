@@ -3,20 +3,17 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
 import { fonts } from '../theme/frenziesFonts';
+import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
 export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 5, total = 1 }: { onBack?: () => void; quantity?: number; total?: number }) {
   return (
     <View style={styles.safe}>
-      <View style={styles.header}>
-        <Pressable onPress={onBack} style={styles.back}><MaterialCommunityIcons name="arrow-left" size={23} color={colors.textPrimary} /></Pressable>
-        <Text style={tx(17, fonts.bold)}>Checkout</Text>
-        <View style={{ width: 42 }} />
-      </View>
+      <FrenziesHeader title="Checkout" onBack={onBack} showPoints={false} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <Text style={tx(24, fonts.bold)}>Complete your purchase</Text>
-        <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>Review your Streak Shield package before paying.</Text>
+        <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>You're one step away from protecting your streak.</Text>
 
         <View style={styles.summary}>
           <View style={styles.icon}><MaterialCommunityIcons name="shield-check" size={25} color={colors.textPrimary} /></View>
@@ -45,7 +42,7 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 
 
         <View style={styles.notice}>
           <MaterialCommunityIcons name="shield-alert-outline" size={20} color={colors.textPrimary} />
-          <Text style={[tx(12, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 9 }]}>A shield protects one loss. Shields cannot be used in consecutive matches.</Text>
+          <Text style={[tx(12, fonts.regular, colors.textSecondary), { flex: 1, marginLeft: 9 }]}>A shield protects one loss. Shields cannot be used in consecutive matches. Purchases are non-refundable.</Text>
         </View>
 
         <Pressable style={styles.pay}><Text style={tx(15, fonts.bold)}>Pay {'$'}{total.toFixed(2)}</Text></Pressable>
@@ -57,8 +54,6 @@ export default function FrenziesStreakShieldCheckoutScreen({ onBack, quantity = 
 
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.pageBg },
-  header: { height: 58, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  back: { width: 42, height: 42, alignItems: 'flex-start', justifyContent: 'center' },
   content: { paddingHorizontal: 18, paddingBottom: 40, paddingTop: 16 },
   summary: { marginTop: 22, backgroundColor: colors.white, borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.cardBorder },
   icon: { width: 46, height: 46, borderRadius: 14, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
