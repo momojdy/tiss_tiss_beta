@@ -15,12 +15,20 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
   fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
 });
 
-export default function FrenziesOnlinePlayersScreen({ onBack }: { onBack?: () => void }) {
+export default function FrenziesOnlinePlayersScreen({ onBack, onChallengesPress }: { onBack?: () => void; onChallengesPress?: () => void }) {
   return (
     <View style={s.safe}>
       <FrenziesHeader title="Online Players" onBack={onBack} showPoints={false} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
-        <Text style={tx(24, fonts.bold)}>Find someone to challenge.</Text>
+        <View style={s.challengeSummary}>
+          <View style={s.challengeSummaryIcon}><MaterialIcons name="sports-esports" size={18} color="#EE6B2E" /></View>
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <Text style={tx(13, fonts.bold)}>2 challenges waiting</Text>
+            <Text style={[tx(10.5, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>Tap to review your pending challenges.</Text>
+          </View>
+          <Pressable onPress={onChallengesPress} style={s.viewChallenges}><Text style={tx(10.5, fonts.bold, colors.white)}>View</Text></Pressable>
+        </View>
+        <Text style={[tx(24, fonts.bold), { marginTop: 22 }]}>Find someone to challenge.</Text>
         <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>
           Pick a player and put your skills to the test.
         </Text>
@@ -51,6 +59,9 @@ export default function FrenziesOnlinePlayersScreen({ onBack }: { onBack?: () =>
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.pageBg },
   content: { paddingHorizontal: 18, paddingTop: 14, paddingBottom: 40 },
+  challengeSummary: { minHeight: 68, padding: 11, borderRadius: 18, backgroundColor: 'rgba(238,107,46,0.22)', borderWidth: 1, borderColor: 'rgba(238,107,46,0.30)', flexDirection: 'row', alignItems: 'center' },
+  challengeSummaryIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: 'rgba(255,255,255,0.58)', alignItems: 'center', justifyContent: 'center' },
+  viewChallenges: { height: 30, paddingHorizontal: 12, borderRadius: 9, backgroundColor: colors.gameCard.playBg, alignItems: 'center', justifyContent: 'center' },
   card: { marginTop: 18, borderRadius: 18, backgroundColor: colors.white, borderWidth: 0.5, borderColor: '#EEF0F3', overflow: 'hidden' },
   row: { minHeight: 68, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
   avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#E7E9ED', alignItems: 'center', justifyContent: 'center' },
