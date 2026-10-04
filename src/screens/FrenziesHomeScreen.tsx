@@ -383,7 +383,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
       <GradientBox gradient={th.gradient} style={{ width: t.width, height: sizes.tournamentCard.height, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
         <View style={{ paddingLeft: 10, paddingTop: 10 }}>
-          <Text style={tx(14, fonts.bold, th.text)}>{t.label}</Text>
+          <Text style={tx(14, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
           <Text style={[tx(14, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
           <Text style={[tx(15, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
