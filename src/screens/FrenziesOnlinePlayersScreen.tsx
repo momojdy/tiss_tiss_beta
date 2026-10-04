@@ -18,11 +18,11 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
 export default function FrenziesOnlinePlayersScreen({ onBack }: { onBack?: () => void }) {
   return (
     <SafeAreaView style={s.safe}>
-      <FrenziesHeader title="Online Players" onBack={onBack} />
+      <FrenziesHeader title="Frenzies" onBack={onBack} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
         <Text style={tx(24, fonts.bold)}>Find someone to challenge.</Text>
         <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>
-          Choose an online player and sharpen your skills with demo funds.
+          Pick a player and put your skills to the test.
         </Text>
         <View style={s.card}>
           {PLAYERS.map((player, i) => (
