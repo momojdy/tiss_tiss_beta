@@ -558,7 +558,16 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         if (!row) return fallback;
         return {
           ...fallback,
-          fee: '
+          fee: '$' + Number(row.entry_fee).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+          pool: '$' + Number(row.prize_pool).toLocaleString('en-US', { maximumFractionDigits: 2 }),
+          capacity: row.capacity,
+          joined: row.joined,
+          active: row.active_matches,
+        };
+      }));
+    };
+
+    const loadLeaderboard = async () => {
       const { data, error } = await supabase.rpc('frenzies_get_leaderboard');
       if (error) {
         console.error('[FrenziesHomeScreen] Failed to load Frenzies leaderboard:', error);
