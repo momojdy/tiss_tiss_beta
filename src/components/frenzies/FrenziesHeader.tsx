@@ -8,9 +8,10 @@ import { fonts } from '../../theme/frenziesFonts';
 type Props = {
   points?: number | null;
   onBack?: () => void;
+  title?: string;
 };
 
-export default function FrenziesHeader({ points, onBack }: Props) {
+export default function FrenziesHeader({ points, onBack, title = 'Frenzies' }: Props) {
   const insets = useSafeAreaInsets();
 
   return (
@@ -24,7 +25,7 @@ export default function FrenziesHeader({ points, onBack }: Props) {
         <MaterialIcons name="arrow-back-ios-new" size={21} color={colors.textPrimary} />
       </Pressable>
       <View style={styles.center}>
-        <Text style={styles.title}>Frenzies</Text>
+        <Text style={styles.title}>{title}</Text>
       </View>
       <View style={styles.pointsPill}>
         <MaterialCommunityIcons name="lightning-bolt" size={17} color={colors.header.bolt} />
