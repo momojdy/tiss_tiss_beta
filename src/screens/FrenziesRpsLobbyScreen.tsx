@@ -67,8 +67,9 @@ export default function FrenziesRpsLobbyScreen({ onBack, onDemoPress }: Props) {
               <View style={s.recommended}><Text style={tx(9, fonts.bold)}>PRACTICE</Text></View>
             </View>
             <Text style={[tx(11.5, fonts.regular, colors.textSecondary), s.modeDescription]}>
-              Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.
+              Practice with virtual demo funds. Challenge the AI or another demo player.
             </Text>
+            <Text style={[tx(11, fonts.semibold, colors.textPrimary), { marginTop: 7 }]}>Replenish your virtual assets anytime.</Text>
           </View>
           {mode === 'demo' && <View style={s.check}><MaterialIcons name="check" size={15} color={colors.textPrimary} /></View>}
         </Pressable>
