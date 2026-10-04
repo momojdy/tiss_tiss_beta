@@ -367,12 +367,12 @@ type TierCfg = {
 };
 
 const TIERS: TierCfg[] = [
-  { key: 't1', label: 'Entry fee', labelSize: 15, fee: '$1', pool: '$50', active: 0, joined: 0, capacity: 24, width: 185 },
-  { key: 't5', label: 'Entry fee', labelSize: 15, fee: '$5', pool: '$250', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't20', label: 'Entry fee', labelSize: 14, fee: '$20', pool: '$1,000', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't50', label: 'Entry fee', labelSize: 15, fee: '$50', pool: '$2,500', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't100', label: 'Entry fee', labelSize: 15, fee: '$100', pool: '$5,000', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 'ultimate', label: 'ULTIMATE', labelSize: 15, fee: '$500', pool: '$25,000', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't1', label: 'Entry fee', labelSize: 15, fee: '$1', pool: '$24', active: 0, joined: 0, capacity: 24, width: 185 },
+  { key: 't5', label: 'Entry fee', labelSize: 15, fee: '$5', pool: '$120', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't20', label: 'Entry fee', labelSize: 14, fee: '$20', pool: '$480', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't50', label: 'Entry fee', labelSize: 15, fee: '$50', pool: '$1,200', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't100', label: 'Entry fee', labelSize: 15, fee: '$100', pool: '$2,400', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 'ultimate', label: 'ULTIMATE', labelSize: 15, fee: '$500', pool: '$12,000', active: 3, joined: 18, capacity: 24, width: 200 },
 ];
 
 function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOpen?: (tier: TournamentTierKey) => void }) {
