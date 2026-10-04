@@ -26,7 +26,7 @@ export default function FrenziesStreakShieldScreen({ onBack, onGetShield }: { on
             </View>
           </View>
           <View style={styles.divider} />
-          {['Your current streak is protected from one loss.','The shield is consumed when it saves your streak.','You can keep playing normally after using it.'].map((item) => (
+          {['Your current streak is protected from one loss.','The shield is consumed when it saves your streak.','Shields cannot protect consecutive losses. After a shield saves your streak, your next match must be played without a shield.'].map((item) => (
             <View key={item} style={styles.point}>
               <MaterialCommunityIcons name="check-circle-outline" size={19} color={colors.streak.flameBadgeBg} />
               <Text style={[tx(13, fonts.regular), { marginLeft: 9, flex: 1 }]}>{item}</Text>
@@ -35,7 +35,7 @@ export default function FrenziesStreakShieldScreen({ onBack, onGetShield }: { on
         </View>
         <View style={styles.info}>
           <Text style={tx(15, fonts.bold)}>How it works</Text>
-          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>Activate your shield before a match. If you lose, the shield protects your current streak instead of resetting it.</Text>
+          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>Activate your shield before a match. If you lose, the shield protects your current streak instead of resetting it. A shield cannot be used on consecutive matches: after one saves your streak, the next match cannot use another shield.</Text>
         </View>
         <Pressable onPress={onGetShield} style={styles.cta}><Text style={tx(15, fonts.bold)}>Get Streak Shield</Text></Pressable>
       </ScrollView>
