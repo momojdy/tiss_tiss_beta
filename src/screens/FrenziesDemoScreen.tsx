@@ -74,8 +74,8 @@ export default function FrenziesDemoScreen({ onBack }: { onBack?: () => void }) 
   const [notice, setNotice] = useState<string | null>(null);
   const selected = useMemo(() => GAMES.find(g => g.id === selectedGame) ?? GAMES[0], [selectedGame]);
   const addFunds = () => {
-    setBalance(v => Math.min(v + 10, 100));
-    setNotice(balance >= 100 ? 'Demo balance is capped at 100.' : 'Demo funds added. These funds have no real value.');
+    setBalance(v => Math.min(v + 10, 1000));
+    setNotice(balance >= 1000 ? 'Demo balance is capped at 1000.' : 'Demo funds added. These funds have no real value.');
   };
   const playComputer = () => setNotice('Starting ' + selected.title + ' against the computer.');
   const challengePlayer = (name: string) => setNotice('Demo challenge sent to ' + name + '.');
