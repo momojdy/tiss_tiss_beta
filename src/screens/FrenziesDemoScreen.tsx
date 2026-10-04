@@ -49,7 +49,7 @@ function ModeCard({ icon, title, subtitle, button, onPress, highlighted }: { ico
 }
 
 function GameCard({ game, selected, onPress }: { game: DemoGame; selected: boolean; onPress: () => void }) {
-  return <Pressable onPress={onPress} style={[s.gameCard, selected && s.gameCardSelected]}>
+  return <Pressable onPress={onPress} style={[s.gameCard, game.id === 'korido' && s.koridoGameCard, selected && s.gameCardSelected]}>
     <Image source={game.image} style={s.gameImage} resizeMode={game.id === 'korido' ? 'contain' : 'cover'} />
     <View style={s.gameOverlay} />
     <View style={s.practiceBadge}><Text style={tx(9, fonts.bold)}>PRACTICE</Text></View>
@@ -123,6 +123,7 @@ const s = StyleSheet.create({
   modeButton: { height: 32, paddingHorizontal: 13, borderRadius: 9, backgroundColor: colors.streak.shieldPill, flexDirection: 'row', alignItems: 'center' },
   modeButtonHighlight: { backgroundColor: colors.gameCard.playBg },
   gameCard: { width: 155, height: 190, marginRight: 12, marginTop: 13, borderRadius: 20, overflow: 'hidden', backgroundColor: '#E7E9ED' },
+  koridoGameCard: { borderWidth: 0.5, borderColor: '#D9DDE2' },
   gameCardSelected: { borderWidth: 2, borderColor: colors.streak.shieldPill },
   gameImage: { position: 'absolute', width: '100%', height: '100%' },
   gameOverlay: { position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,.12)' },
