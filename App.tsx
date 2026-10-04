@@ -24,10 +24,11 @@ import FrenziesChallengeInboxScreen, { DEMO_CHALLENGES } from './src/screens/Fre
 import FrenziesChallengeStatusScreen from './src/screens/FrenziesChallengeStatusScreen';
 import FrenziesRankingScreen from './src/screens/FrenziesRankingScreen';
 import FrenziesStreakShieldScreen from './src/screens/FrenziesStreakShieldScreen';
+import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShieldScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -149,7 +150,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       }
 
       if (buyerScreen === 'frenziesStreakShield') {
-        return <FrenziesStreakShieldScreen onBack={() => setBuyerScreen('frenzies')} />;
+        return <FrenziesStreakShieldScreen onBack={() => setBuyerScreen('frenzies')} onGetShield={() => setBuyerScreen('frenziesGetStreakShield')} />;
       }
 
       if (buyerScreen === 'frenzies') {
