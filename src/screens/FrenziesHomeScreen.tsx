@@ -482,6 +482,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
   const [shieldAvailable, setShieldAvailable] = useState(true);
   const [shieldOwned, setShieldOwned] = useState(false);
   const [shieldActive, setShieldActive] = useState(false);
+  const [rankingEntries, setRankingEntries] = useState<RankEntry[]>([]);
   useEffect(() => {
     let mounted = true;
     const load = async () => {
@@ -511,7 +512,19 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
       const active = data?.streak_shield_active ?? false;
       setShieldAvailable(data ? Boolean(data.streak_shield_available) : !owned && !active);
     };
+    const loadLeaderboard = async () => {
+      const { data, error } = await supabase.rpc('frenzies_get_leaderboard');
+      if (error) {
+        console.error('[FrenziesHomeScreen] Failed to load Frenzies leaderboard:', error);
+        return;
+      }
+      if (!mounted) return;
+      const rows = (data ?? []) as Array<{ rank: number; name: string; wins: number; lifetime_points: number; avatar_url: string | null; is_you: boolean }>;
+      setRankingEntries(rows.map((row) => ({ rank: row.rank, name: row.is_you ? 'You' : row.name, wins: row.wins ?? 0, photoUrl: row.avatar_url ?? undefined, isYou: row.is_you, isTop: row.rank === 1 || row.rank === 3 })));
+    };
+
     load();
+    loadLeaderboard();
     return () => { mounted = false; };
   }, []);
   return (
