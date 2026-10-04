@@ -15,7 +15,7 @@ const PACKAGES = [
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
-export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () => void }) {
+export default function FrenziesGetStreakShieldScreen({ onBack, onCheckout }: { onBack?: () => void; onCheckout?: (quantity: number, total: number) => void }) {
   const [selectedQuantity, setSelectedQuantity] = useState(5);
   const selectedPackage = PACKAGES.find((pkg) => pkg.quantity === selectedQuantity) ?? PACKAGES[1];
   return (
@@ -66,7 +66,7 @@ export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () 
           <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 8 }]}>A shield can protect one loss and keep your streak alive. After a shield is used, your next match must be played without a shield. You can use another shield again after that match.</Text>
         </View>
 
-        <Pressable style={styles.cta}>
+        <Pressable onPress={() => onCheckout?.(selectedPackage.quantity, selectedPackage.price)} style={styles.cta}>
           <Text style={tx(15, fonts.bold)}>Get {selectedPackage.label}</Text>
         </Pressable>
       </ScrollView>
