@@ -377,7 +377,7 @@ const TIERS: TierCfg[] = [
 
 function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOpen?: (tier: TournamentTierKey) => void }) {
   const th = tournamentTiers[t.key];
-  const progress = t.capacity > 0 ? Math.max(0.005, Math.min(t.joined / t.capacity, 1)) : 0;
+  const progress = t.capacity > 0 ? Math.max(0.01, Math.min(t.joined / t.capacity, 1)) : 0;
   const isUlt = t.key === 'ultimate';
   const matchBlink = useRef(new Animated.Value(1)).current;
   useEffect(() => {
