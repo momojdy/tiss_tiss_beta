@@ -72,7 +72,7 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
   );
 }
 
-function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void }) {
+function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated, registerBuyerScreen }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void; registerBuyerScreen: (value: BuyerScreen) => void }) {
   const [fontsLoaded] = useFonts({
     Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'),
     Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'),
@@ -318,13 +318,13 @@ export default function App() {
   const challengeDismiss = React.useRef<() => void>(() => setShowChallenge(false));
   const registerAuthenticated = React.useCallback((value: boolean) => { setIsAuthenticated(value); }, []);
   const registerChallengePress = React.useCallback((fn: () => void) => { challengePress.current = fn; }, []);
-  const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);
+  const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);\n  const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');\n  const registerBuyerScreen = React.useCallback((value: BuyerScreen) => { setBuyerScreen(value); }, []);
 
   return (
     <SafeAreaProvider>
       <View style={{ flex: 1 }}>
-        <AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} />
-        {isAuthenticated && showChallenge && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}
+        <AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} registerBuyerScreen={registerBuyerScreen} />
+        {isAuthenticated && showChallenge && buyerScreen !== 'frenziesChallengeStatus' && buyerScreen !== 'frenziesChallengeReady' && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}
       </View>
     </SafeAreaProvider>
   );
