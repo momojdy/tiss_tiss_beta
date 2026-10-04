@@ -19,10 +19,11 @@ import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
 import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
+import FrenziesOnlinePlayersScreen from './src/screens/FrenziesOnlinePlayersScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -83,7 +84,11 @@ function AppContent() {
       }
 
       if (buyerScreen === 'frenziesDemo') {
-        return <FrenziesDemoScreen onBack={() => setBuyerScreen('frenziesRpsLobby')} />;
+        return <FrenziesDemoScreen onBack={() => setBuyerScreen('frenziesRpsLobby')} onViewOnlinePlayers={() => setBuyerScreen('frenziesOnlinePlayers')} />;
+      }
+
+      if (buyerScreen === 'frenziesOnlinePlayers') {
+        return <FrenziesOnlinePlayersScreen onBack={() => setBuyerScreen('frenziesDemo')} />;
       }
 
       if (buyerScreen === 'frenzies') {
