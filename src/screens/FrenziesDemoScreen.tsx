@@ -70,7 +70,7 @@ function PlayerRow({ player, onChallenge }: { player: typeof DEMO_PLAYERS[number
   </View>;
 }
 
-export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers }: { onBack?: () => void; onViewOnlinePlayers?: () => void }) {
+export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers, onPlayRps }: { onBack?: () => void; onViewOnlinePlayers?: () => void; onPlayRps?: () => void }) {
   const [balance, setBalance] = useState(10);
   const [selectedGame, setSelectedGame] = useState('rps');
   const [notice, setNotice] = useState<string | null>(null);
@@ -79,7 +79,7 @@ export default function FrenziesDemoScreen({ onBack, onViewOnlinePlayers }: { on
     setBalance(v => Math.min(v + 10, 1000));
     setNotice(balance >= 1000 ? 'Demo balance is capped at 1000.' : 'Demo funds added. These funds have no real value.');
   };
-  const playComputer = () => setNotice('Starting ' + selected.title + ' against the computer.');
+  const playComputer = () => { if (selectedGame === 'rps') onPlayRps?.(); else setNotice('Starting ' + selected.title + ' against the computer.'); };
   const challengePlayer = (name: string) => setNotice('Demo challenge sent to ' + name + '.');
 
   return <View style={s.safe}>
