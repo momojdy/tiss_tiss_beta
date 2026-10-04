@@ -11,12 +11,12 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
 
 type Method = 'card' | 'wallet' | 'apple' | 'google' | 'paypal';
 
-function MethodRow({ method, title, subtitle, selected, onPress, logo }: {
-  method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo: React.ReactNode;
+function MethodRow({ method, title, subtitle, selected, onPress, logo, compact }: {
+  method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo?: React.ReactNode; compact?: boolean;
 }) {
   return (
     <Pressable onPress={onPress} style={[styles.methodRow, selected && styles.methodSelected]}>
-      <View style={styles.methodLogo}>{logo}</View>
+      {!compact && <View style={styles.methodLogo}>{logo}</View>}
       <View style={styles.methodCopy}>
         <Text style={tx(14, fonts.semibold)}>{title}</Text>
         {!!subtitle && <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{subtitle}</Text>}
@@ -65,7 +65,7 @@ export default function FrenziesStreakShieldCheckoutScreen({
                 subtitle="Saved card"
                 selected={selectedMethod === 'card' && selectedCard === last4}
                 onPress={() => { setSelectedMethod('card'); setSelectedCard(last4); }}
-                logo={<MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} />}
+                compact
               />
             ))}
           </View>
@@ -78,12 +78,13 @@ export default function FrenziesStreakShieldCheckoutScreen({
               subtitle="Use your available Wallet balance"
               selected={selectedMethod === 'wallet'}
               onPress={() => setSelectedMethod('wallet')}
-              logo={<MaterialCommunityIcons name="wallet-outline" size={22} color={colors.textPrimary} />}
+              compact
             />
           </View>
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Digital wallets</Text>
           <View style={[styles.methods, { marginTop: 9 }]}>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalMethods}>
             <MethodRow
               method="apple"
               title="Apple Pay"
@@ -105,6 +106,7 @@ export default function FrenziesStreakShieldCheckoutScreen({
               onPress={() => setSelectedMethod('paypal')}
               logo={<Text style={styles.paypalLogo}>P</Text>}
             />
+            </ScrollView>
           </View>
         </View>
 
@@ -136,8 +138,9 @@ const styles = StyleSheet.create({
   summaryCopy: { flex: 1, marginLeft: 12 },
   section: { marginTop: 22 },
   methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
-  methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
-  methodSelected: { backgroundColor: '#F4F8EF' },
+  horizontalMethods: { padding: 6, gap: 8 },
+  methodRow: { width: 118, minHeight: 68, paddingHorizontal: 10, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.rowBorder, borderRadius: 12 },
+  methodSelected: { backgroundColor: '#F4F8EF', borderColor: colors.streak.shieldPill },
   methodLogo: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
   methodCopy: { flex: 1 },
   radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: '#B8BDB5', alignItems: 'center', justifyContent: 'center' },
