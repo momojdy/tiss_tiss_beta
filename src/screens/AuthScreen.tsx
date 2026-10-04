@@ -11,6 +11,7 @@ import {
   NativeSyntheticEvent,
   NativeScrollEvent,
   KeyboardTypeOptions,
+  Keyboard,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -60,7 +61,7 @@ function AuthField({ top, value, onChangeText, placeholder, icon, error, keyboar
       <View style={[styles.fieldBox, error ? { borderWidth: 1, borderColor: RED } : null]}>
         <View style={styles.fieldInner}>
           <View style={styles.prefixIcon}><MaterialCommunityIcons name={icon} size={24} color={FIELD_TEXT} /></View>
-          <TextInput value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={FIELD_TEXT} keyboardType={keyboardType} autoCapitalize={autoCapitalize ?? 'none'} autoCorrect={false} secureTextEntry={secureTextEntry} style={styles.textInput} />
+          <TextInput value={value} onChangeText={onChangeText} placeholder={placeholder} placeholderTextColor={FIELD_TEXT} keyboardType={keyboardType} autoCapitalize={autoCapitalize ?? 'none'} autoCorrect={false} secureTextEntry={secureTextEntry} style={styles.textInput} returnKeyType="done" onSubmitEditing={Keyboard.dismiss} blurOnSubmit />
           {suffix}
         </View>
       </View>
@@ -88,6 +89,8 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
   const { width: screenWidth } = useWindowDimensions();
   const pageWidth = Math.max(0, screenWidth - 60);
   const isValidEmail = (value: string) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value);
+
+  const dismissKeyboard = () => Keyboard.dismiss();
 
   const clearErrors = () => {
     setEmailError(null);
@@ -252,7 +255,7 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
   return (
     <View style={{ width: '100%' }}>
       <View style={styles.card}>
-        <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+        <ScrollView bounces={false} overScrollMode="never" showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" onTouchStart={dismissKeyboard}>
           {renderToggle()}
           {renderBusinessSpaceLabel()}
           {isRegisterMode && isVendor ? renderRegisterStepIndicator() : null}
