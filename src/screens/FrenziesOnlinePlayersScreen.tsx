@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 import { colors } from '../theme/frenziesTheme';
@@ -17,7 +17,7 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
 
 export default function FrenziesOnlinePlayersScreen({ onBack }: { onBack?: () => void }) {
   return (
-    <SafeAreaView style={s.safe}>
+    <View style={s.safe}>
       <FrenziesHeader title="Online Players" onBack={onBack} showPoints={false} />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
         <Text style={tx(24, fonts.bold)}>Find someone to challenge.</Text>
@@ -44,7 +44,7 @@ export default function FrenziesOnlinePlayersScreen({ onBack }: { onBack?: () =>
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
