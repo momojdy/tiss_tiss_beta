@@ -599,7 +599,7 @@ const styles = StyleSheet.create({
   avatarRing: { width: 37, height: 37, borderRadius: 18.5, borderWidth: 1.75, borderColor: r.youRing, alignItems: 'center', justifyContent: 'center' },
   flamePill: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999, backgroundColor: r.flamePillBg },
   pinned: { position: 'absolute', left: 0, right: 0, bottom: 0, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, paddingVertical: 10, backgroundColor: r.cardBg, borderTopWidth: 1, borderTopColor: r.cardBorder, borderBottomLeftRadius: 20, borderBottomRightRadius: 20, shadowColor: '#000', shadowOpacity: 0.06, shadowRadius: 20, shadowOffset: { width: 0, height: -8 } },
-  tBarTrack: { marginTop: 8, width: '100%', height: 6, borderRadius: 5, overflow: 'hidden' },
+  tBarTrack: { marginTop: 5, marginHorizontal: 2, width: 'auto', height: 6, borderRadius: 5, overflow: 'hidden' },
   passCard: { borderRadius: 20, borderWidth: 0.5, padding: 16 },
   passTop: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   passGrid: { flexDirection: 'row', flexWrap: 'wrap', marginBottom: 14 },
