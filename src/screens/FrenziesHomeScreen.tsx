@@ -367,12 +367,12 @@ type TierCfg = {
 };
 
 const TIERS: TierCfg[] = [
-  { key: 't1', label: 'Entry fee', labelSize: 15, fee: '$1', pool: '$24', active: 0, joined: 0, capacity: 24, width: 185 },
-  { key: 't5', label: 'Entry fee', labelSize: 15, fee: '$5', pool: '$120', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't20', label: 'Entry fee', labelSize: 14, fee: '$20', pool: '$480', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't50', label: 'Entry fee', labelSize: 15, fee: '$50', pool: '$1,200', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 't100', label: 'Entry fee', labelSize: 15, fee: '$100', pool: '$2,400', active: 3, joined: 18, capacity: 24, width: 200 },
-  { key: 'ultimate', label: 'ULTIMATE', labelSize: 15, fee: '$500', pool: '$12,000', active: 3, joined: 18, capacity: 24, width: 200 },
+  { key: 't1', label: 'Entry fee', labelSize: 15, fee: '$1', pool: '$24', active: 0, joined: 0, capacity: 24, width: 150 },
+  { key: 't5', label: 'Entry fee', labelSize: 15, fee: '$5', pool: '$120', active: 3, joined: 18, capacity: 24, width: 150 },
+  { key: 't20', label: 'Entry fee', labelSize: 14, fee: '$20', pool: '$480', active: 3, joined: 18, capacity: 24, width: 150 },
+  { key: 't50', label: 'Entry fee', labelSize: 15, fee: '$50', pool: '$1,200', active: 3, joined: 18, capacity: 24, width: 150 },
+  { key: 't100', label: 'Entry fee', labelSize: 15, fee: '$100', pool: '$2,400', active: 3, joined: 18, capacity: 24, width: 150 },
+  { key: 'ultimate', label: 'ULTIMATE', labelSize: 15, fee: '$500', pool: '$12,000', active: 3, joined: 18, capacity: 24, width: 150 },
 ];
 
 function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOpen?: (tier: TournamentTierKey) => void }) {
@@ -381,7 +381,7 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
   const isUlt = t.key === 'ultimate';
   return (
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
-      <GradientBox gradient={th.gradient} style={{ width: t.width, height: sizes.tournamentCard.height, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
+      <GradientBox gradient={th.gradient} style={{ width: 150, height: 150, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
         <View style={{ paddingLeft: 10, paddingTop: 10 }}>
           <Text style={tx(14, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
