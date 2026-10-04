@@ -1584,7 +1584,7 @@ const styles = StyleSheet.create({
   countryHeaderButton: { width: 36, height: 36, borderRadius: 12, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   flag: { fontSize: 22, lineHeight: 24, textAlign: 'center' },
   strip: { height: 20, backgroundColor: STRIP },
-  content: { paddingBottom: 100 },
+  content: { paddingBottom: 105 },
   profile: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 15, paddingTop: 15 },
   avatar: { width: 80, height: 80, borderRadius: 40, backgroundColor: TINT, alignItems: 'center', justifyContent: 'center' },
   avatarText: { color: TEXT, fontSize: 24, fontFamily: 'Manrope_700Bold' },
