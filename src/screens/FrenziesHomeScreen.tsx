@@ -324,15 +324,22 @@ function RankingsCard({ entries }: { entries: RankEntry[] }) {
     scrollY.current = ev.nativeEvent.contentOffset.y;
     check();
   };
-  const you = entries.find((x) => x.isYou);
+  const displayEntries = entries.length > 0 ? entries : [{ rank: 1, name: 'You', wins: 0, isYou: true }];
+  const you = displayEntries.find((x) => x.isYou);
+  const hasOtherPlayers = displayEntries.some((x) => !x.isYou);
   return (
     <View style={styles.rankCard}>
       <ScrollView style={{ height: RANK_VIEWPORT }} contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 4 }} onScroll={onScroll} scrollEventThrottle={16} nestedScrollEnabled showsVerticalScrollIndicator={false}>
-        {entries.map((e, i) => (
+        {displayEntries.map((e, i) => (
           <View key={e.rank} onLayout={e.isYou ? (ev) => { youLayout.current = { y: ev.nativeEvent.layout.y, h: ev.nativeEvent.layout.height }; check(); } : undefined} style={[styles.rankRow, e.isYou && { marginHorizontal: -14, paddingHorizontal: 14, backgroundColor: r.youTint }, i !== entries.length - 1 && { borderBottomWidth: 1, borderBottomColor: r.rowBorder }]}>
             <RankRowContent e={e} />
           </View>
         ))}
+        {!hasOtherPlayers && (
+          <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 18 }}>
+            <Text style={[tx(13, fonts.medium, r.text), { textAlign: 'center' }]}>Be the first to climb the leaderboard</Text>
+          </View>
+        )}
       </ScrollView>
       {you && (
         <Animated.View pointerEvents={showPinned ? 'auto' : 'none'} style={[styles.pinned, { opacity: anim, transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [60, 0] }) }] }]}>
@@ -539,7 +546,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass }
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>{GAMES.map((g) => <GameCard key={g.id} g={g} onPlay={onPlayGame} />)}</ScrollView>
         <StreakCard currentStreak={currentStreak} shieldAvailable={shieldAvailable} shieldOwned={shieldOwned} shieldActive={shieldActive} />
         <View style={{ paddingTop: 18 }}><SectionHeader title="Rankings" link="See more" /></View>
-        <View style={{ marginHorizontal: 10, marginTop: 13, height: RANK_H }}><RankingsCard entries={rankingEntries.length > 0 ? rankingEntries : [{ rank: 1, name: 'You', wins: 0, isYou: true }]} /></View>
+        <View style={{ marginHorizontal: 10, marginTop: 13, height: RANK_H }}><RankingsCard entries={rankingEntries} /></View>
         <View style={{ paddingTop: 18 }}><SectionHeader title="Tournaments" link="Compete" /></View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginTop: 8 }}>{TIERS.map((t, i) => <TournamentCard key={t.key} t={t} first={i === 0} onOpen={onOpenTier} />)}</ScrollView>
         <PassCard onGetPass={onGetPass} />
