@@ -609,7 +609,7 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, 
   );
 }
 
-export default function App({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings }: ScreenHandlers) {
+export default function App({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenRankings, onOpenStreakShield }: ScreenHandlers) {
   const [loaded] = useFonts({ Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold });
   if (!loaded) return null;
   return (
