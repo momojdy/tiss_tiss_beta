@@ -28,7 +28,7 @@ function Avatar({ entry }: { entry: Entry }) {
 function RankRow({ entry, showDivider = true }: { entry: Entry; showDivider?: boolean }) {
   return (
     <View style={[styles.row, entry.isYou && styles.youRow, showDivider && styles.rowDivider]}>
-      <View style={styles.rank}><Text numberOfLines={1} style={tx(13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
+      <View style={styles.rank}><Text numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={tx(entry.rank >= 100 ? 11 : 13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
       <Avatar entry={entry} />
       <Text numberOfLines={1} style={[tx(14, fonts.semibold, colors.rankings.text), { flex: 1, marginLeft: 12 }]}>{entry.name}</Text>
       <View style={styles.wins}><MaterialIcons name="local-fire-department" size={13} color={colors.rankings.flamePillText} /><Text style={[tx(11.5, fonts.bold, colors.rankings.flamePillText), { marginLeft: 4 }]}>{entry.wins}</Text></View>
@@ -132,13 +132,13 @@ const styles = StyleSheet.create({
   intro: { paddingTop: 14, paddingBottom: 18 },
   card: { backgroundColor: colors.rankings.cardBg, borderRadius: colors.rankings.cardRadius ?? 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   leaderboardScroll: { maxHeight: 560 },
-  cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
   row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
   rowDivider: { borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   insetDivider: { marginHorizontal: 14, borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   youRow: { backgroundColor: '#E7F3D8' },
-  rank: { width: 42, flexShrink: 0, paddingHorizontal: 0, alignItems: 'center' },
+  rank: { width: 42, flexShrink: 0, paddingHorizontal: 0, alignItems: 'center', justifyContent: 'center' },
   avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.rankings.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   youAvatar: { borderWidth: 2, borderColor: colors.rankings.youRing },
   avatarImage: { width: 34, height: 34 },
