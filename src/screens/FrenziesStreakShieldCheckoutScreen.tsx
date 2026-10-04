@@ -32,7 +32,8 @@ export default function FrenziesStreakShieldCheckoutScreen({
   onBack, quantity = 5, total = 1,
 }: { onBack?: () => void; quantity?: number; total?: number }) {
   const [selectedMethod, setSelectedMethod] = useState<Method>('wallet');
-  const savedCardLast4: string | null = null;
+  const savedCards = ['4242', '1881', '5555', '9012', '7426'];
+  const [selectedCard, setSelectedCard] = useState('4242');
 
   return (
     <View style={styles.safe}>
@@ -54,15 +55,23 @@ export default function FrenziesStreakShieldCheckoutScreen({
         <View style={styles.section}>
           <Text style={tx(15, fonts.bold)}>Payment method</Text>
 
-          <View style={styles.methods}>
-            <MethodRow
-              method="card"
-              title="Bank card"
-              subtitle={savedCardLast4 ? `•••• ${savedCardLast4}` : 'No card saved'}
-              selected={selectedMethod === 'card'}
-              onPress={() => setSelectedMethod('card')}
-              logo={<MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} />}
-            />
+          <Text style={[tx(13, fonts.semibold), { marginTop: 12 }]}>Bank card</Text>
+          <View style={[styles.methods, { marginTop: 9 }]}>
+            {savedCards.map((last4) => (
+              <MethodRow
+                key={last4}
+                method="card"
+                title={`•••• ${last4}`}
+                subtitle="Saved card"
+                selected={selectedMethod === 'card' && selectedCard === last4}
+                onPress={() => { setSelectedMethod('card'); setSelectedCard(last4); }}
+                logo={<MaterialCommunityIcons name="credit-card-outline" size={22} color={colors.textPrimary} />}
+              />
+            ))}
+          </View>
+
+          <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Wantiss Wallet</Text>
+          <View style={[styles.methods, { marginTop: 9 }]}>
             <MethodRow
               method="wallet"
               title="Wantiss Wallet"
@@ -72,13 +81,6 @@ export default function FrenziesStreakShieldCheckoutScreen({
               logo={<MaterialCommunityIcons name="wallet-outline" size={22} color={colors.textPrimary} />}
             />
           </View>
-
-          {!savedCardLast4 && (
-            <Pressable style={styles.emptyAction}>
-              <MaterialCommunityIcons name="plus" size={18} color={colors.textPrimary} />
-              <Text style={tx(13, fonts.semibold)}>Add a bank card</Text>
-            </Pressable>
-          )}
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Digital wallets</Text>
           <View style={[styles.methods, { marginTop: 9 }]}>
