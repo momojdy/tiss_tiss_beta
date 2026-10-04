@@ -134,10 +134,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
         return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeInboxScreen onBack={() => setBuyerScreen('frenzies')} onAccept={() => setBuyerScreen('frenziesChallengeStatus')} onDecline={() => setShowChallenge(false)} /></FrenziesChallengeLayer>;
       }
       if (buyerScreen === 'frenziesChallengeStatus') {
-        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeStatusScreen onBack={() => setBuyerScreen('frenzies')} /></FrenziesChallengeLayer>;
+        return <FrenziesChallengeStatusScreen onBack={() => setBuyerScreen('frenzies')} />;
       }
       if (buyerScreen === 'frenziesChallengeReady') {
-        return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} /></FrenziesChallengeLayer>;
+        return <FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} />;
       }
 
       if (buyerScreen === 'frenzies') {
