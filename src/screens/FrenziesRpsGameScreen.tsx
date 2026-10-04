@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, Easing, Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Pressable, StyleSheet, Text, View } from 'react-native';
+import Svg, { Defs, LinearGradient, Path, Stop } from 'react-native-svg';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 import { colors } from '../theme/frenziesTheme';
@@ -36,45 +37,37 @@ function resultFor(player: Move, opponent: Move): Result {
   return 'loss';
 }
 
-const HAND_ASSETS: Record<Move, string> = {
-  rock: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(rock).png?width=600',
-  paper: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(paper).png?width=600',
-  scissors: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(scissors).png?width=600',
-};
-
-function Hand3D({ move, flip = false, animatedValue }: {
+function Hand3D({ move, flip = false, reveal = false, animatedValue }: {
   move: Move | null;
   flip?: boolean;
   reveal?: boolean;
   animatedValue: Animated.Value;
 }) {
-  const scale = animatedValue.interpolate({ inputRange: [0, 1], outputRange: [0.97, 1.035] });
+  const scale = animatedValue.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1.04] });
   const rotate = animatedValue.interpolate({ inputRange: [0, 1], outputRange: ['-1deg', '1deg'] });
 
-  if (!move) {
-    return (
-      <Animated.View style={[s.realHandPlaceholder, { transform: [{ scale }, { rotate }] }]}>
-        <View style={s.placeholderRing} />
-        <Text style={[tx(10, fonts.semibold, colors.textSecondary)]}>Choose a move</Text>
-      </Animated.View>
-    );
-  }
-
-  const source = { uri: HAND_ASSETS[move] };
-  const transforms = [
-    { scale },
-    { rotate },
-    { rotateX: flip ? '180deg' : '0deg' },
-  ];
+  const handPath = move === 'paper'
+    ? 'M34 92 C28 74 30 48 35 31 C37 25 44 24 47 30 L48 52 L50 19 C51 12 60 12 62 19 L62 51 L64 14 C65 7 74 8 75 15 L75 53 L78 23 C79 16 88 17 88 24 L86 60 C91 48 98 50 99 57 C100 67 94 82 84 94 C70 108 48 109 34 92 Z'
+    : move === 'scissors'
+      ? 'M39 95 C29 84 29 69 34 56 L47 30 L51 12 C53 5 62 6 62 13 L59 37 L65 28 L72 9 C74 2 83 5 81 12 L74 39 L80 29 C84 22 92 25 88 33 L77 54 C89 47 96 52 92 61 C87 75 77 91 64 98 C54 103 45 102 39 95 Z'
+      : 'M39 95 C30 84 29 68 34 54 C38 43 47 36 57 35 L57 18 C58 10 67 10 69 18 L70 36 C75 33 82 35 83 41 L84 57 C88 51 96 54 95 61 C93 77 82 93 67 99 C56 103 46 102 39 95 Z';
 
   return (
-    <Animated.View style={[s.realHand, { transform: transforms }]}>
-      <Image source={source} resizeMode="contain" style={s.realHandImage} />
-      <Image
-        source={source}
-        resizeMode="contain"
-        style={[s.realHandImage, s.realHandTint]}
-      />
+    <Animated.View style={{ transform: [{ scale }, { rotate }, { rotateY: flip ? '180deg' : '0deg' }] }}>
+      <View style={[s.handShadow, flip && { transform: [{ rotate: '180deg' }] }]} />
+      <Svg width={126} height={126} viewBox="0 0 110 110">
+        <Defs>
+          <LinearGradient id={flip ? 'handTop' : 'handBottom'} x1="0" y1="0" x2="1" y2="1">
+            <Stop offset="0" stopColor={reveal ? '#B8754F' : '#C98A63'} />
+            <Stop offset="0.55" stopColor={reveal ? '#8A4F35' : '#A86543'} />
+            <Stop offset="1" stopColor={reveal ? '#5B3021' : '#713D29'} />
+          </LinearGradient>
+        </Defs>
+        <Path d={handPath} fill={flip ? 'url(#handTop)' : 'url(#handBottom)'} stroke="#5A3021" strokeWidth="2" />
+        {!move && (
+          <Path d="M28 78 C38 88 50 92 64 90" fill="none" stroke="#7A432E" strokeWidth="3" strokeLinecap="round" opacity={0.6} />
+        )}
+      </Svg>
     </Animated.View>
   );
 }
@@ -248,7 +241,7 @@ export default function FrenziesRpsGameScreen({ onBack }: { onBack?: () => void 
           </View>
 
           <View style={s.handZoneTop}>
-            <Hand3D move={opponent} flip animatedValue={pulse} />
+            <Hand3D move={opponent} flip reveal={!!opponent} animatedValue={pulse} />
           </View>
 
           <View style={s.battleLine}>
@@ -258,7 +251,7 @@ export default function FrenziesRpsGameScreen({ onBack }: { onBack?: () => void 
           </View>
 
           <View style={s.handZoneBottom}>
-            <Hand3D move={selected} animatedValue={pulse} />
+            <Hand3D move={selected} reveal={!!selected} animatedValue={pulse} />
           </View>
 
           <View style={s.playerFooter}>
@@ -355,11 +348,7 @@ const s = StyleSheet.create({
   liveDotUrgent: { backgroundColor: '#D96A3C' },
   handZoneTop: { height: 125, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   handZoneBottom: { height: 125, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
-  realHand: { width: 178, height: 150, alignItems: 'center', justifyContent: 'center' },
-  realHandImage: { position: 'absolute', width: 178, height: 150 },
-  realHandTint: { tintColor: '#6B3F2A', opacity: 0.18 },
-  realHandPlaceholder: { width: 178, height: 150, alignItems: 'center', justifyContent: 'center' },
-  placeholderRing: { position: 'absolute', width: 92, height: 92, borderRadius: 46, borderWidth: 1, borderColor: '#D9E1D4', backgroundColor: '#FFFFFF' },
+  handShadow: { position: 'absolute', width: 76, height: 14, borderRadius: 40, backgroundColor: 'rgba(35,45,32,0.10)', bottom: 10, alignSelf: 'center', transform: [{ scaleX: 1.35 }] },
   battleLine: { flexDirection: 'row', alignItems: 'center', marginVertical: 2 },
   line: { flex: 1, height: 1, backgroundColor: '#DDE3D9' },
   vsCircle: { width: 30, height: 30, borderRadius: 15, backgroundColor: colors.white, alignItems: 'center', justifyContent: 'center', marginHorizontal: 9 },
