@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
@@ -39,6 +39,9 @@ function RankRow({ entry }: { entry: Entry }) {
 export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void }) {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [loading, setLoading] = useState(true);
+  const listRef = useRef<ScrollView>(null);
+  const youLayout = useRef<{ y: number; h: number } | null>(null);
+  const [showPinnedYou, setShowPinnedYou] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -62,6 +65,18 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
   }, []);
 
   const hasPlayers = entries.some((e) => e.wins > 0);
+  const testEntries: Entry[] = Array.from({ length: 200 }, (_, i) => i === 189
+    ? { rank: 190, name: 'You', wins: 11, isYou: true }
+    : { rank: i + 1, name: `Player ${i + 1}`, wins: Math.max(1, 210 - i), isYou: false });
+  const displayEntries = hasPlayers ? testEntries : [{ rank: 1, name: 'You', wins: 0, isYou: true }];
+  const you = displayEntries.find((e) => e.isYou);
+  const onListScroll = (event: any) => {
+    if (!youLayout.current) return;
+    const offset = event.nativeEvent.contentOffset.y;
+    const top = youLayout.current.y - offset;
+    const bottom = top + youLayout.current.h;
+    setShowPinnedYou(bottom <= 0 || top >= 560);
+  };
 
   return (
     <View style={styles.safe}>
@@ -69,7 +84,7 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.intro}>
           <Text style={tx(22, fonts.bold)}>Frenzies Rankings</Text>
-          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6 }]}>See who is climbing the leaderboard.</Text>
+          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6 }]}>Track the players leading the Frenzies leaderboard.</Text>
         </View>
 
         <View style={styles.card}>
@@ -88,7 +103,22 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
               </View>
             </>
           ) : (
-            entries.map((entry) => <RankRow key={entry.isYou ? 'you' : String(entry.rank)} entry={entry} />)
+            <View>
+              <ScrollView ref={listRef} onScroll={onListScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 0 }}>
+                {displayEntries.map((entry) => (
+                  <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined}>
+                    <Pressable onPress={entry.isYou ? () => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true }) : undefined}>
+                      <RankRow entry={entry} />
+                    </Pressable>
+                  </View>
+                ))}
+              </ScrollView>
+              {showPinnedYou && you && (
+                <Pressable style={styles.pinnedYou} onPress={() => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true })}>
+                  <RankRow entry={you} />
+                </Pressable>
+              )}
+            </View>
           )}
         </View>
       </ScrollView>
@@ -111,4 +141,5 @@ const styles = StyleSheet.create({
   avatarImage: { width: 34, height: 34 },
   wins: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
   emptyHint: { minHeight: 120, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
+  pinnedYou: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: colors.rankings.youTint },
 });
