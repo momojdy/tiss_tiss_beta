@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
+import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 import { fonts } from '../theme/frenziesFonts';
 import { assets } from '../theme/frenziesAssets';
 
@@ -20,17 +21,6 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
   fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
 });
 
-function Header({ onBack }: { onBack?: () => void }) {
-  return <View style={s.header}>
-    <Pressable onPress={onBack} style={s.back}><MaterialIcons name="arrow-back-ios-new" size={21} color={colors.textPrimary} /></Pressable>
-    <View style={s.headerCenter}>
-      <Text style={tx(20, fonts.bold)}>Frenzies</Text>
-      <View style={s.demoPill}><View style={s.demoDot} /><Text style={tx(9, fonts.bold)}>DEMO</Text></View>
-    </View>
-    <View style={{ width: 40 }} />
-  </View>;
-}
-
 function BalanceCard({ balance, onAdd }: { balance: number; onAdd: () => void }) {
   return <View style={s.balanceCard}>
     <View style={s.balanceTop}>
@@ -38,7 +28,7 @@ function BalanceCard({ balance, onAdd }: { balance: number; onAdd: () => void })
       <View style={s.demoCoin}><MaterialCommunityIcons name="gamepad-variant-outline" size={23} color={colors.textPrimary} /></View>
     </View>
     <View style={s.balanceBottom}>
-      <Text style={[tx(11, fonts.regular, colors.textSecondary), { flex: 1, paddingRight: 10 }]}>Virtual funds only · never connected to your Wantiss Wallet</Text>
+      <Text style={[tx(11, fonts.regular, colors.textSecondary), { flex: 1, paddingRight: 10 }]}>Virtual funds only</Text>
       <Pressable onPress={onAdd} style={s.addFunds}><Text style={tx(11, fonts.bold)}>Add demo funds</Text></Pressable>
     </View>
   </View>;
@@ -88,7 +78,7 @@ export default function FrenziesDemoScreen({ onBack }: { onBack?: () => void }) 
   const challengePlayer = (name: string) => setNotice('Demo challenge sent to ' + name + '.');
 
   return <SafeAreaView style={s.safe}>
-    <Header onBack={onBack} />
+    <FrenziesHeader title="Frenzies" onBack={onBack} />
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
       <View style={s.intro}><Text style={tx(25, fonts.bold)}>Practice your game.</Text><Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>Practice with virtual demo funds. Challenge the AI or another demo player. Replenish your virtual assets anytime.</Text></View>
       <BalanceCard balance={balance} onAdd={addFunds} />
