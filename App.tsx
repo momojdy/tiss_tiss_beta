@@ -26,10 +26,11 @@ import FrenziesRankingScreen from './src/screens/FrenziesRankingScreen';
 import FrenziesStreakShieldScreen from './src/screens/FrenziesStreakShieldScreen';
 import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShieldScreen';
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
+import FrenziesPaymentMethodScreen from './src/screens/FrenziesPaymentMethodScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'frenziesPaymentMethod' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -160,7 +161,11 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       }
 
       if (buyerScreen === 'frenziesShieldCheckout') {
-        return <FrenziesStreakShieldCheckoutScreen quantity={shieldCheckout.quantity} total={shieldCheckout.total} onBack={() => setBuyerScreen('frenziesGetStreakShield')} />;
+        return <FrenziesStreakShieldCheckoutScreen quantity={shieldCheckout.quantity} total={shieldCheckout.total} onBack={() => setBuyerScreen('frenziesGetStreakShield')} onPaymentMethodPress={() => setBuyerScreen('frenziesPaymentMethod')} />;
+      }
+
+      if (buyerScreen === 'frenziesPaymentMethod') {
+        return <FrenziesPaymentMethodScreen onBack={() => setBuyerScreen('frenziesShieldCheckout')} />;
       }
 
       if (buyerScreen === 'frenzies') {
