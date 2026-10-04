@@ -341,7 +341,7 @@ function RankingsCard({ entries }: { entries: RankEntry[] }) {
         ))}
         {!hasOtherPlayers && (
           <View style={{ alignItems: 'center', justifyContent: 'center', paddingHorizontal: 20, paddingVertical: 26 }}>
-            <Text style={[tx(14, fonts.regular, r.text), { textAlign: 'center' }]}>Be the first to climb the leaderboard</Text>
+            <Text style={[tx(14, fonts.regular, '#6C7280'), { textAlign: 'center' }]}>Be the first to climb the leaderboard</Text>
           </View>
         )}
       </ScrollView>
@@ -593,7 +593,7 @@ const styles = StyleSheet.create({
   shieldRow: { marginTop: 13, paddingHorizontal: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   shieldCopy: { flex: 1, flexDirection: 'row', alignItems: 'center' },
   shieldPill: { marginLeft: 8, width: 100, height: 30, borderRadius: 18, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
-  rankCard: { flex: 1, backgroundColor: r.cardBg, borderRadius: sizes.rankingsRadius, borderWidth: 1, borderColor: r.cardBorder, overflow: 'hidden' },
+  rankCard: { flex: 1, backgroundColor: r.cardBg, borderRadius: sizes.rankingsRadius, borderWidth: 0.5, borderColor: r.cardBorder, overflow: 'hidden' },
   rankRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 10 },
   avatar: { width: 30, height: 30, borderRadius: 15, backgroundColor: r.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
   avatarRing: { width: 37, height: 37, borderRadius: 18.5, borderWidth: 1.75, borderColor: r.youRing, alignItems: 'center', justifyContent: 'center' },
