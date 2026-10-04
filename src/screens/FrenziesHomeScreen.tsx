@@ -575,7 +575,11 @@ export function FrenziesHomeScreen({ onBack, onPlayGame, onOpenTier, onGetPass, 
       }
       if (!mounted) return;
       const rows = (data ?? []) as Array<{ rank: number; name: string; wins: number; lifetime_points: number; avatar_url: string | null; is_you: boolean }>;
-      setRankingEntries(rows.map((row) => ({ rank: row.rank, name: row.is_you ? 'You' : row.name, wins: row.wins ?? 0, photoUrl: row.avatar_url ?? undefined, isYou: row.is_you, isTop: row.rank === 1 || row.rank === 3 })));
+      const testRows = Array.from({ length: 200 }, (_, i) => i === 189
+        ? { rank: 190, name: 'You', wins: 11, avatar_url: null, is_you: true }
+        : { rank: i + 1, name: `Player ${i + 1}`, wins: Math.max(1, 210 - i), avatar_url: null, is_you: false });
+      const leaderboardRows = testRows;
+      setRankingEntries(leaderboardRows.map((row) => ({ rank: row.rank, name: row.is_you ? 'You' : row.name, wins: row.wins ?? 0, photoUrl: row.avatar_url ?? undefined, isYou: row.is_you, isTop: row.rank === 1 || row.rank === 3 })));
     };
 
     load();
