@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { colors } from '../theme/frenziesTheme';
@@ -16,6 +16,8 @@ const PACKAGES = [
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
 export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () => void }) {
+  const [selectedQuantity, setSelectedQuantity] = useState(5);
+  const selectedPackage = PACKAGES.find((pkg) => pkg.quantity === selectedQuantity) ?? PACKAGES[1];
   return (
     <View style={styles.safe}>
       <FrenziesHeader title="Get Streak Shield" onBack={onBack} showPoints={false} />
@@ -49,7 +51,7 @@ export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () 
         </View>
         <View style={styles.packages}>
           {PACKAGES.map((pkg) => (
-            <Pressable key={pkg.quantity} style={[styles.package, pkg.quantity === 5 && styles.packageFeatured]}>
+            <Pressable key={pkg.quantity} onPress={() => setSelectedQuantity(pkg.quantity)} style={[styles.package, pkg.quantity === 5 && styles.packageFeatured, selectedQuantity === pkg.quantity && styles.packageSelected]}>
               <View style={styles.packageIcon}><MaterialCommunityIcons name="shield-check" size={21} color={colors.textPrimary} /></View>
               <View style={styles.packageCopy}>
                 <Text style={tx(16, fonts.bold)}>{pkg.label}</Text>
@@ -65,7 +67,7 @@ export default function FrenziesGetStreakShieldScreen({ onBack }: { onBack?: () 
         </View>
 
         <Pressable style={styles.cta}>
-          <Text style={tx(15, fonts.bold)}>Get Streak Shield</Text>
+          <Text style={tx(15, fonts.bold)}>Get {selectedPackage.label}</Text>
         </Pressable>
       </ScrollView>
     </View>
@@ -88,6 +90,7 @@ const styles = StyleSheet.create({
   packages: { gap: 10 },
   package: { minHeight: 72, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, padding: 13, flexDirection: 'row', alignItems: 'center' },
   packageFeatured: { borderColor: colors.streak.flameBadgeBg },
+  packageSelected: { borderWidth: 2, borderColor: colors.streak.flameBadgeBg },
   packageIcon: { width: 40, height: 40, borderRadius: 12, backgroundColor: colors.streak.shieldPill, alignItems: 'center', justifyContent: 'center' },
   packageCopy: { flex: 1, marginLeft: 11 },
   badge: { paddingHorizontal: 8, paddingVertical: 5, borderRadius: 9, backgroundColor: colors.streak.shieldPill },
