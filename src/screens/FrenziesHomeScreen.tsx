@@ -317,7 +317,7 @@ function RankRowContent({ e }: { e: RankEntry }) {
   );
 }
 
-function RankingsCard() {
+function RankingsCard({ entries }: { entries: RankEntry[] }) {
   const scrollY = useRef(0);
   const youLayout = useRef<{ y: number; h: number } | null>(null);
   const [showPinned, setShowPinned] = useState(false);
@@ -337,12 +337,12 @@ function RankingsCard() {
     scrollY.current = ev.nativeEvent.contentOffset.y;
     check();
   };
-  const you = ENTRIES.find((x) => x.isYou)!;
+  const you = entries.find((x) => x.isYou);
   return (
     <View style={styles.rankCard}>
       <ScrollView style={{ height: RANK_VIEWPORT }} contentContainerStyle={{ paddingHorizontal: 14, paddingVertical: 4 }} onScroll={onScroll} scrollEventThrottle={16} nestedScrollEnabled showsVerticalScrollIndicator={false}>
-        {ENTRIES.map((e, i) => (
-          <View key={e.rank} onLayout={e.isYou ? (ev) => { youLayout.current = { y: ev.nativeEvent.layout.y, h: ev.nativeEvent.layout.height }; check(); } : undefined} style={[styles.rankRow, e.isYou && { marginHorizontal: -14, paddingHorizontal: 14, backgroundColor: r.youTint }, i !== ENTRIES.length - 1 && { borderBottomWidth: 1, borderBottomColor: r.rowBorder }]}>
+        {entries.map((e, i) => (
+          <View key={e.rank} onLayout={e.isYou ? (ev) => { youLayout.current = { y: ev.nativeEvent.layout.y, h: ev.nativeEvent.layout.height }; check(); } : undefined} style={[styles.rankRow, e.isYou && { marginHorizontal: -14, paddingHorizontal: 14, backgroundColor: r.youTint }, i !== entries.length - 1 && { borderBottomWidth: 1, borderBottomColor: r.rowBorder }]}>
             <RankRowContent e={e} />
           </View>
         ))}
