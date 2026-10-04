@@ -7,7 +7,7 @@ import FrenziesHeader from '../components/frenzies/FrenziesHeader';
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 
-export default function FrenziesStreakShieldScreen({ onBack }: { onBack?: () => void }) {
+export default function FrenziesStreakShieldScreen({ onBack, onGetShield }: { onBack?: () => void; onGetShield?: () => void }) {
   return (
     <View style={styles.safe}>
       <FrenziesHeader title="Streak Shield" onBack={onBack} showPoints={false} />
@@ -37,7 +37,7 @@ export default function FrenziesStreakShieldScreen({ onBack }: { onBack?: () => 
           <Text style={tx(15, fonts.bold)}>How it works</Text>
           <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 7 }]}>Activate your shield before a match. If you lose, the shield protects your current streak instead of resetting it.</Text>
         </View>
-        <Pressable style={styles.cta}><Text style={tx(15, fonts.bold)}>Get Streak Shield</Text></Pressable>
+        <Pressable onPress={onGetShield} style={styles.cta}><Text style={tx(15, fonts.bold)}>Get Streak Shield</Text></Pressable>
       </ScrollView>
     </View>
   );
