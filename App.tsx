@@ -20,10 +20,12 @@ import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
 import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
 import FrenziesOnlinePlayersScreen from './src/screens/FrenziesOnlinePlayersScreen';
+import FrenziesChallengeInboxScreen, { DEMO_CHALLENGES } from './src/screens/FrenziesChallengeInboxScreen';
+import FrenziesChallengeStatusScreen from './src/screens/FrenziesChallengeStatusScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -38,20 +40,24 @@ function AppError({ title, error }: AppErrorProps) {
 }
 
 
-function ChallengePlaceholder({ onDismiss }: { onDismiss: () => void }) {
+function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; onPress: () => void; onDismiss: () => void }) {
+  const { PanResponder, Animated } = require('react-native');
+  const pan = React.useRef(new Animated.ValueXY()).current;
+  const responder = React.useMemo(() => PanResponder.create({
+    onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 8 || Math.abs(g.dx) > 8,
+    onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], { useNativeDriver: false }),
+    onPanResponderRelease: (_, g) => {
+      if (g.dy < -70 || g.dx > 100) { Animated.timing(pan, { toValue: { x: g.dx || 240, y: -180 }, duration: 180, useNativeDriver: false }).start(onDismiss); }
+      else Animated.spring(pan, { toValue: { x: 0, y: 0 }, useNativeDriver: false }).start();
+    },
+  }), [pan, onDismiss]);
   return (
-    <View style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, backgroundColor: '#FFFFFF', borderRadius: 16, padding: 13, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}>
-      <Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>New challenge</Text>
-      <Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>Maya challenged you to Rock Paper Scissors.</Text>
-      <View style={{ flexDirection: 'row', justifyContent: 'flex-end', marginTop: 10, gap: 8 }}>
-        <Pressable onPress={onDismiss} style={{ height: 30, paddingHorizontal: 12, borderRadius: 9, justifyContent: 'center', backgroundColor: '#EEF0F3' }}>
-          <Text style={{ fontSize: 11, fontWeight: '700', color: '#4D5258' }}>Decline</Text>
-        </Pressable>
-        <Pressable onPress={onDismiss} style={{ height: 30, paddingHorizontal: 12, borderRadius: 9, justifyContent: 'center', backgroundColor: '#ACC8A2' }}>
-          <Text style={{ fontSize: 11, fontWeight: '700', color: '#1A2517' }}>Accept</Text>
-        </Pressable>
-      </View>
-    </View>
+    <Animated.View {...responder.panHandlers} style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, transform: [{ translateX: pan.x }, { translateY: pan.y }], backgroundColor: 'rgba(238,107,46,0.18)', borderWidth: 1, borderColor: 'rgba(238,107,46,0.30)', borderRadius: 18, padding: 13, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}>
+      <Pressable onPress={onPress}>
+        <Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text>
+        <Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -66,6 +72,7 @@ function AppContent() {
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const [showChallenge, setShowChallenge] = useState(true);
 
   useEffect(() => {
     let mounted = true;
@@ -107,6 +114,15 @@ function AppContent() {
 
       if (buyerScreen === 'frenziesOnlinePlayers') {
         return <FrenziesOnlinePlayersScreen onBack={() => setBuyerScreen('frenziesDemo')} />;
+      }
+      if (buyerScreen === 'frenziesChallenges') {
+        return <FrenziesChallengeInboxScreen onBack={() => setBuyerScreen('frenzies')} onAccept={() => setBuyerScreen('frenziesChallengeStatus')} onDecline={() => setShowChallenge(false)} />;
+      }
+      if (buyerScreen === 'frenziesChallengeStatus') {
+        return <FrenziesChallengeStatusScreen onBack={() => setBuyerScreen('frenzies')} />;
+      }
+      if (buyerScreen === 'frenziesChallengeReady') {
+        return <FrenziesChallengeStatusScreen ready onBack={() => setBuyerScreen('frenzies')} />;
       }
 
       if (buyerScreen === 'frenzies') {
@@ -194,7 +210,12 @@ function AppContent() {
       }
 
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />;
+      return (
+        <View style={{ flex: 1 }}>
+          <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />
+          {showChallenge && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)} />}
+        </View>
+      );
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
