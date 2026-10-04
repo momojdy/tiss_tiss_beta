@@ -334,9 +334,11 @@ function RankingsCard({ entries }: { entries: RankEntry[] }) {
           </View>
         ))}
       </ScrollView>
-      <Animated.View pointerEvents={showPinned ? 'auto' : 'none'} style={[styles.pinned, { opacity: anim, transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [60, 0] }) }] }]}>
-        <RankRowContent e={{ ...you, isTop: false }} />
-      </Animated.View>
+      {you && (
+        <Animated.View pointerEvents={showPinned ? 'auto' : 'none'} style={[styles.pinned, { opacity: anim, transform: [{ translateY: anim.interpolate({ inputRange: [0, 1], outputRange: [60, 0] }) }] }]}>
+          <RankRowContent e={{ ...you, isTop: false }} />
+        </Animated.View>
+      )}
     </View>
   );
 }
