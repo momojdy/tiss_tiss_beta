@@ -387,9 +387,9 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
           <Text style={[tx(14, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
           <Text style={[tx(15, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
-          {t.active > 0 && <Text style={[tx(13, fonts.regular, th.text), { marginTop: 8 }]}>{'\u2022'} {t.active} matches in progress</Text>}
-          <Text style={[tx(13, fonts.medium, th.text), { marginTop: 18 }]}>{t.joined}/{t.capacity} joined</Text>
-          <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: 170 * progress, height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
+          {t.active > 0 && <Text style={[tx(13, fonts.regular, th.text), { marginTop: 5 }]}>{'\u2022'} {t.active} matches in progress</Text>}
+          <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 8 }]}>{t.joined}/{t.capacity} joined</Text>
+          <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: '100%', height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
         </View>
         <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, width: 60, height: 60, borderBottomLeftRadius: 32, backgroundColor: colors.white, opacity: th.shapeOpacity }} />
       </GradientBox>
