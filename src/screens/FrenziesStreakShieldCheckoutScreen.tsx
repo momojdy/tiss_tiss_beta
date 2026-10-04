@@ -70,7 +70,7 @@ export default function FrenziesStreakShieldCheckoutScreen({
           <Text style={tx(15, fonts.bold)}>Payment method</Text>
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 12 }]}>Bank card</Text>
-          <View style={[styles.methods, styles.bankCardMethods, { marginTop: 9 }]}>
+          <View style={[styles.methods, styles.bankCardMethods, styles.flatMethods, { marginTop: 9 }]}>
             <ScrollView showsVerticalScrollIndicator={false} nestedScrollEnabled contentContainerStyle={styles.verticalMethods}>
               {savedCards.map((last4) => (
                 <MethodRow key={last4} method="card" title={`•••• ${last4}`} subtitle="Saved card" selected={selectedMethod === 'card' && selectedCard === last4} onPress={() => { setSelectedMethod('card'); setSelectedCard(last4); }} compact />
@@ -79,7 +79,7 @@ export default function FrenziesStreakShieldCheckoutScreen({
           </View>
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Wantiss Wallet</Text>
-          <View style={[styles.methods, { marginTop: 9 }]}>
+          <View style={[styles.methods, styles.flatMethods, { marginTop: 9 }]}>
             <MethodRow
               method="wallet"
               title="Wantiss Wallet"
@@ -131,6 +131,7 @@ const styles = StyleSheet.create({
   section: { marginTop: 22 },
   methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   bankCardMethods: { height: 204 },
+  flatMethods: { borderWidth: 0, borderColor: 'transparent' },
   horizontalMethods: { padding: 10, gap: 14 },
   verticalMethods: { padding: 0 },
   methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
