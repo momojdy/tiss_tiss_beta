@@ -65,7 +65,7 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
       <Pressable onPress={onPress}>
         <Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text>
         <Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text>
-        <View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 10, marginHorizontal: 20 }} />
+        <View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 16, marginHorizontal: 20 }} />
       </Pressable>
     </Animated.View>
   );
