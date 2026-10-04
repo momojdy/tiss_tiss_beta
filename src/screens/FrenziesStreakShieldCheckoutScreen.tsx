@@ -14,13 +14,27 @@ type Method = 'card' | 'wallet' | 'moncash' | 'natcash' | 'apple' | 'google' | '
 function MethodRow({ method, title, subtitle, selected, onPress, logo, compact, logoOnly }: {
   method: Method; title: string; subtitle?: string; selected: boolean; onPress: () => void; logo?: React.ReactNode; compact?: boolean; logoOnly?: boolean;
 }) {
+  if (logoOnly) {
+    return (
+      <Pressable onPress={onPress} style={styles.logoOnlyPressable}>
+        <View style={[styles.walletLogoTile, selected && styles.walletLogoSelected]}>
+          {logo}
+          {selected && (
+            <View style={styles.logoCheck}>
+              <MaterialCommunityIcons name="check" size={12} color={colors.white} />
+            </View>
+          )}
+        </View>
+      </Pressable>
+    );
+  }
+
   return (
     <Pressable onPress={onPress} style={[styles.methodRow, selected && styles.methodSelected]}>
-      {!compact && <View style={styles.methodLogo}>{logo}</View>}
-      {!logoOnly && <View style={styles.methodCopy}>
+      <View style={styles.methodCopy}>
         <Text style={tx(14, fonts.semibold)}>{title}</Text>
         {!!subtitle && <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{subtitle}</Text>}
-      </View>}
+      </View>
       <View style={[styles.radio, selected && styles.radioSelected]}>
         {selected && <View style={styles.radioDot} />}
       </View>
@@ -116,13 +130,16 @@ const styles = StyleSheet.create({
   summaryCopy: { flex: 1, marginLeft: 12 },
   section: { marginTop: 22 },
   methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
-  horizontalMethods: { padding: 6, gap: 8 },
-  verticalMethods: { padding: 6, gap: 8 },
-  horizontalMethods: { padding: 6, gap: 8 },
-  methodRow: { minHeight: 68, paddingHorizontal: 10, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: colors.rankings.rowBorder, borderRadius: 12 },
-  methodSelected: { backgroundColor: '#F4F8EF', borderColor: colors.streak.shieldPill },
+  horizontalMethods: { padding: 10, gap: 14 },
+  verticalMethods: { padding: 0 },
+  methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center' },
+  methodSelected: { backgroundColor: '#F4F8EF' },
+  logoOnlyPressable: { width: 62, height: 62, alignItems: 'center', justifyContent: 'center' },
+  walletLogoTile: { width: 52, height: 52, borderRadius: 14, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'transparent' },
+  walletLogoSelected: { borderColor: '#B9C9AE', backgroundColor: '#F4F8EF' },
+  logoCheck: { position: 'absolute', top: -4, right: -4, width: 19, height: 19, borderRadius: 10, backgroundColor: colors.textPrimary, alignItems: 'center', justifyContent: 'center' },
   walletLogo: { fontSize: 20, fontWeight: '800', color: colors.textPrimary },
-  methodLogo: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', marginRight: 11 },
+
   methodCopy: { flex: 1 },
   radio: { width: 20, height: 20, borderRadius: 10, borderWidth: 1.5, borderColor: '#B8BDB5', alignItems: 'center', justifyContent: 'center' },
   radioSelected: { borderColor: colors.textPrimary },
