@@ -84,6 +84,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [authenticated, setAuthenticated] = useState(false);
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => {
     registerChallengePress(() => setBuyerScreen('frenziesChallenges'));
     registerChallengeDismiss(() => setShowChallenge(false));
