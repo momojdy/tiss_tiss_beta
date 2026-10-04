@@ -391,21 +391,23 @@ function TournamentCard({ t, first, onOpen }: { t: TierCfg; first: boolean; onOp
   }, [t.active, matchBlink]);
   return (
     <Pressable onPress={() => onOpen?.(t.key)} style={{ marginLeft: first ? 18 : 15 }}>
-      <GradientBox gradient={th.gradient} style={{ width: 150, height: 180, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
+      <GradientBox gradient={th.gradient} style={{ width: 150, height: 170, borderRadius: sizes.tournamentCard.radius, overflow: 'hidden' }}>
         <View style={{ paddingLeft: 10, paddingTop: 10 }}>
           <Text style={tx(14, isUlt ? fonts.semibold : fonts.medium, th.text)}>{t.label}</Text>
           <Text style={[tx(16, fonts.bold, th.text), { marginTop: 2 }]}>{t.fee}</Text>
           <Text style={[tx(14, fonts.medium, th.text), { marginTop: 12 }]}>Prize pool</Text>
           <Text style={[tx(15, fonts.semibold, th.text), { marginTop: 2 }]}>{t.pool}</Text>
-          {t.active > 0 && (
-  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-    <Text style={tx(11.5, fonts.regular, th.text)}>{'\u2022'} </Text>
-    <Animated.Text style={[tx(11.5, fonts.regular, th.text), { opacity: matchBlink }]}>
-      {t.active} {t.active === 1 ? 'match' : 'matches'} in progress
-    </Animated.Text>
-  </View>
-)}
-          <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 8 }]}>{t.joined}/{t.capacity} joined</Text>
+          <View style={{ height: 15, justifyContent: 'flex-start', marginTop: 8 }}>
+            {t.active > 0 && (
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={tx(11.5, fonts.regular, th.text)}>{'\u2022'} </Text>
+                <Animated.Text style={[tx(11.5, fonts.regular, th.text), { opacity: matchBlink }]}>
+                  {t.active} {t.active === 1 ? 'match' : 'matches'} in progress
+                </Animated.Text>
+              </View>
+            )}
+          </View>
+          <Text style={[tx(11.5, fonts.medium, th.text), { marginTop: 0 }]}>{t.joined}/{t.capacity} joined</Text>
           <View style={[styles.tBarTrack, { backgroundColor: th.track }]}><View style={{ width: (progress * 100) + '%', height: 6, borderRadius: 5, backgroundColor: th.text }} /></View>
         </View>
         <View pointerEvents="none" style={{ position: 'absolute', top: 0, right: 0, width: 60, height: 60, borderBottomLeftRadius: 32, backgroundColor: colors.white, opacity: th.shapeOpacity }} />
