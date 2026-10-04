@@ -91,7 +91,7 @@ export default function FrenziesStreakShieldCheckoutScreen({
           </View>
 
           <Text style={[tx(13, fonts.semibold), { marginTop: 20 }]}>Digital wallets</Text>
-          <View style={[styles.methods, { marginTop: 9 }]}>
+          <View style={{ marginTop: 9 }}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalMethods}>
               <MethodRow method="moncash" title="MonCash" selected={selectedMethod === 'moncash'} onPress={() => setSelectedMethod('moncash')} logo={<Text style={styles.walletLogo}>MC</Text>} logoOnly />
               <MethodRow method="natcash" title="NatCash" selected={selectedMethod === 'natcash'} onPress={() => setSelectedMethod('natcash')} logo={<Text style={styles.walletLogo}>NC</Text>} logoOnly />
@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   methods: { marginTop: 10, backgroundColor: colors.white, borderRadius: 16, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   horizontalMethods: { padding: 10, gap: 14 },
   verticalMethods: { padding: 0 },
-  methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center' },
+  methodRow: { minHeight: 68, paddingHorizontal: 13, paddingVertical: 11, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   methodSelected: { backgroundColor: '#F4F8EF' },
   logoOnlyPressable: { width: 62, height: 62, alignItems: 'center', justifyContent: 'center' },
   walletLogoTile: { width: 52, height: 52, borderRadius: 14, backgroundColor: '#F5F6F3', alignItems: 'center', justifyContent: 'center', borderWidth: 1.5, borderColor: 'transparent' },
