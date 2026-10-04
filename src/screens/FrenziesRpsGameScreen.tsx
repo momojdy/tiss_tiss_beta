@@ -36,10 +36,10 @@ function resultFor(player: Move, opponent: Move): Result {
   return 'loss';
 }
 
-const HAND_ASSETS: Record<Move, any> = {
-  rock: require('../../assets/rps/hand_rock.png'),
-  paper: require('../../assets/rps/hand_paper.png'),
-  scissors: require('../../assets/rps/hand_scissors.png'),
+const HAND_ASSETS: Record<Move, string> = {
+  rock: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(rock).png?width=600',
+  paper: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(paper).png?width=600',
+  scissors: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Rock-paper-scissors_(scissors).png?width=600',
 };
 
 function Hand3D({ move, flip = false, animatedValue }: {
@@ -60,7 +60,7 @@ function Hand3D({ move, flip = false, animatedValue }: {
     );
   }
 
-  const source = HAND_ASSETS[move];
+  const source = { uri: HAND_ASSETS[move] };
   const transforms = [
     { scale },
     { rotate },
@@ -357,7 +357,7 @@ const s = StyleSheet.create({
   handZoneBottom: { height: 125, alignItems: 'center', justifyContent: 'center', marginTop: 2 },
   realHand: { width: 178, height: 150, alignItems: 'center', justifyContent: 'center' },
   realHandImage: { position: 'absolute', width: 178, height: 150 },
-  realHandTint: { opacity: 0.10 },
+  realHandTint: { tintColor: '#6B3F2A', opacity: 0.18 },
   realHandPlaceholder: { width: 178, height: 150, alignItems: 'center', justifyContent: 'center' },
   placeholderRing: { position: 'absolute', width: 92, height: 92, borderRadius: 46, borderWidth: 1, borderColor: '#D9E1D4', backgroundColor: '#FFFFFF' },
   battleLine: { flexDirection: 'row', alignItems: 'center', marginVertical: 2 },
