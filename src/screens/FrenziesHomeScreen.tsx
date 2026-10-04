@@ -613,6 +613,7 @@ export default function App({ onBack, onPlayGame, onOpenTier, onGetPass, onOpenR
         onPlayGame={onPlayGame}
         onOpenTier={onOpenTier}
         onGetPass={onGetPass}
+        onOpenRankings={onOpenRankings}
       />
     </SafeAreaProvider>
   );
