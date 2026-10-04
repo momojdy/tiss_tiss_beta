@@ -16,6 +16,7 @@ import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSe
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
+import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
