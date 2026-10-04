@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
-import { Image, Pressable, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { colors, sizes } from '../theme/frenziesTheme';
 import { fonts } from '../theme/frenziesFonts';
 import { assets } from '../theme/frenziesAssets';
+import FrenziesHeader from '../components/frenzies/FrenziesHeader';
+import { supabase } from '../lib/supabase';
 
 type Props = { onBack?: () => void };
 
@@ -13,16 +15,23 @@ const tx = (size: number, family: string, color: string = colors.textPrimary) =>
 
 export default function FrenziesRpsLobbyScreen({ onBack }: Props) {
   const [mode, setMode] = useState<'demo' | 'live' | 'tournament'>('demo');
+  const [points, setPoints] = useState<number | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    const loadPoints = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data } = await supabase.from('frenzies_player_stats').select('lifetime_points').eq('user_id', user.id).maybeSingle();
+      if (mounted) setPoints(data?.lifetime_points ?? 0);
+    };
+    loadPoints();
+    return () => { mounted = false; };
+  }, []);
 
   return (
-    <SafeAreaView style={s.safe}>
-      <View style={s.header}>
-        <Pressable onPress={onBack} style={s.back} accessibilityRole="button" accessibilityLabel="Go back">
-          <MaterialIcons name="arrow-back-ios-new" size={21} color={colors.textPrimary} />
-        </Pressable>
-        <Text style={tx(20, fonts.bold)}>Rock Paper Scissors</Text>
-        <View style={{ width: 40 }} />
-      </View>
+    <View style={s.safe}>
+      <FrenziesHeader title="Rock Paper Scissors" points={points} onBack={onBack} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
         <View style={s.gameHero}>
@@ -137,14 +146,12 @@ export default function FrenziesRpsLobbyScreen({ onBack }: Props) {
               : 'Tournament entry is paid and the tournament starts when scheduled.'}
         </Text>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const s = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.pageBg },
-  header: { height: 100, paddingHorizontal: 18, paddingBottom: 12, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
-  back: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   content: { paddingHorizontal: 18, paddingBottom: 38 },
   gameHero: { height: 260, borderRadius: 22, overflow: 'hidden', backgroundColor: '#E7E9ED' },
   heroImage: { position: 'absolute', width: '100%', height: '100%' },
