@@ -69,10 +69,10 @@ function QuickAction({ icon, label, onPress }: { icon: React.ComponentProps<type
   );
 }
 
-function BottomNav({ active, onHome, onTrips, onDeals, onMore }: { active: string; onHome: () => void; onTrips: () => void; onDeals: () => void; onMore: () => void }) {
+function BottomNav({ active, onHome, onWallet, onDeals, onMore }: { active: string; onHome: () => void; onWallet: () => void; onDeals: () => void; onMore: () => void }) {
   const items = [
     ['home-outline', 'Home', onHome],
-    ['briefcase-outline', 'My Trips', onTrips],
+    ['wallet-outline', 'Wallet', onWallet],
     ['tag-outline', 'Deals', onDeals],
     ['dots-horizontal-circle-outline', 'More', onMore],
   ] as const;
@@ -92,7 +92,7 @@ function BottomNav({ active, onHome, onTrips, onDeals, onMore }: { active: strin
   );
 }
 
-export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress }: Props) {
+export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress }: Props) {
   const { width } = useWindowDimensions();
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
@@ -120,12 +120,13 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
       <LinearGradient colors={['#CAE8E8', '#D8EEEE', '#ECF6F6', '#FFFFFF']} locations={[0, .25, .48, .72]} style={styles.background}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           <View style={styles.header}>
-            <Text style={styles.logo}>Flyz.</Text>
-            <View style={styles.headerActions}>
-              <Pressable onPress={onWalletPress} style={styles.walletButton}>
-                <MaterialCommunityIcons name="wallet-outline" size={18} color={TEXT} />
-                <Text style={styles.walletText}>Wallet</Text>
+            <View style={styles.headerLeft}>
+              <Pressable onPress={onBack} style={styles.backButton}>
+                <MaterialCommunityIcons name="arrow-left" size={22} color={TEXT} />
               </Pressable>
+              <Text style={styles.logo}>Flyz.</Text>
+            </View>
+            <View style={styles.headerActions}>
               <Pressable onPress={onNotificationsPress} style={styles.roundButton}>
                 <MaterialCommunityIcons name="bell-outline" size={20} color={TEXT} />
               </Pressable>
@@ -137,7 +138,7 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
               <Text style={styles.heroTitle}>Where to next?</Text>
               <Text style={styles.heroSub}>Search, book and manage your flights.</Text>
             </View>
-            <PlaneMark size={42} />
+            <View style={styles.heroPlane}><PlaneMark size={50} /></View>
           </View>
 
           <View style={styles.segment}>
@@ -202,7 +203,7 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
           <Pressable onPress={onMyTripsPress} style={styles.tripCard}>
             <View style={styles.tripLegs}>
               <View><Text style={styles.airport}>PAP</Text><Text style={styles.airportName}>Port-au-Prince</Text></View>
-              <View style={styles.tripLine}><PlaneMark size={23} /><View style={styles.line} /></View>
+              <View style={styles.tripLine}><View style={styles.line} /><View style={styles.tripPlane}><PlaneMark size={23} /></View></View>
               <View style={{ alignItems: 'flex-end' }}><Text style={styles.airport}>MIA</Text><Text style={styles.airportName}>Miami</Text></View>
             </View>
             <View style={styles.tripMeta}>
@@ -216,7 +217,7 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
             {destinationCards}
           </ScrollView>
         </ScrollView>
-        <BottomNav active="Home" onHome={() => {}} onTrips={onMyTripsPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+        <BottomNav active="Home" onHome={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
   );
@@ -227,14 +228,15 @@ const styles = StyleSheet.create({
   background: { flex: 1 },
   scrollContent: { paddingTop: 18, paddingHorizontal: 16, paddingBottom: 110 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
   logo: { fontSize: 26, fontWeight: '800', letterSpacing: -0.6, color: BLUE },
   headerActions: { flexDirection: 'row', gap: 8 },
-  walletButton: { height: 44, paddingHorizontal: 16, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', flexDirection: 'row', alignItems: 'center', gap: 8 },
-  walletText: { fontSize: 14, fontWeight: '700', color: TEXT },
   roundButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
   hero: { marginTop: 30, marginHorizontal: 4, marginBottom: 18, flexDirection: 'row', alignItems: 'flex-start' },
   heroTitle: { fontSize: 31, lineHeight: 34, fontWeight: '800', letterSpacing: -0.8, color: TEXT, marginBottom: 6 },
   heroSub: { fontSize: 14, lineHeight: 20, color: MUTED, maxWidth: 300 },
+  heroPlane: { paddingRight: 20 },
   segment: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,.6)', borderRadius: 999, padding: 4, marginBottom: 12 },
   segmentItem: { flex: 1, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   segmentActive: { backgroundColor: BLUE },
@@ -263,8 +265,9 @@ const styles = StyleSheet.create({
   tripLegs: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   airport: { fontSize: 26, fontWeight: '800', letterSpacing: -.5, color: TEXT },
   airportName: { fontSize: 12, color: MUTED },
-  tripLine: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  line: { position: 'absolute', left: 0, right: 0, top: 11, height: 2, backgroundColor: BORDER },
+  tripLine: { flex: 1, height: 28, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  line: { position: 'absolute', left: 0, right: 0, top: 13, height: 2, backgroundColor: BORDER },
+  tripPlane: { zIndex: 2, backgroundColor: 'rgba(202,232,232,.55)', paddingHorizontal: 4 },
   tripMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 14 },
   tripDate: { fontSize: 13, fontWeight: '700', color: TEXT },
   tripAirline: { fontSize: 12, color: MUTED, marginTop: 3 },
