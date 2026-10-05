@@ -315,7 +315,9 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
-                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField]}>
+              </View>
+              <View style={styles.fieldRow}>
+                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField, { flex: 1 }]}>
                   <Text style={styles.addFlightPlus}>＋</Text>
                   <Text style={styles.addFlightText}>Add flight</Text>
                 </Pressable>
