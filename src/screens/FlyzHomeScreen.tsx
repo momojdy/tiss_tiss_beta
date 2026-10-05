@@ -106,8 +106,10 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const swap = () => { setFrom(to); setTo(from); };
   const closeAirportPicker = () => { setAirportPicker(null); setAirportSearch(''); };
   const sheetPanResponder = PanResponder.create({
-    onMoveShouldSetPanResponder: (_, g) => g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx),
-    onPanResponderRelease: (_, g) => { if (g.dy > 70) closeAirportPicker(); },
+    onStartShouldSetPanResponderCapture: () => true,
+    onMoveShouldSetPanResponderCapture: (_, g) => g.dy > 3 && Math.abs(g.dy) > Math.abs(g.dx),
+    onPanResponderMove: () => {},
+    onPanResponderRelease: (_, g) => { if (g.dy > 50) closeAirportPicker(); },
   });
   useEffect(() => {
     if (airportPicker === null || airports.length) return;
