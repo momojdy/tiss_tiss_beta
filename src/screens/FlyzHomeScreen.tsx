@@ -443,9 +443,21 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                     <View style={[styles.dateCircle, selected && styles.dateSelected, inRange && !selected && styles.dateInRangeCircle, beforeReturn && styles.dateDisabled]}>
                       <Text style={[styles.dateText, selected && styles.dateSelectedText, inRange && !selected && styles.dateInRangeText, beforeReturn && styles.dateDisabledText]}>{date.getDate()}</Text>
                     </View>
-                    {fare !== null && <Text style={styles.fareText}>{'
-        </View>
-      </Modal>
+                    {fare !== null && <Text style={styles.fareText}>{'$'}{fare}</Text>}
+                  </Pressable>
+                );
+              })}
+            </View>
+            {tripType === 'One way' && calendarPicker === 'depart' && (
+              <Text style={styles.fareNote}>Cheapest shown for {from.city} ({from.code}) · final fare confirmed in flight results</Text>
+            )}
+            {tripType === 'Round trip' && calendarPicker === 'return' && (
+              <Pressable onPress={closeCalendar} style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </Pressable>
+            )}
+          </View>
+        </Modal>
       <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
