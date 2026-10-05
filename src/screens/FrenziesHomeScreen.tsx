@@ -483,8 +483,8 @@ function BottomNav() {
   return (
     <View style={styles.navOuter}>
       <View style={styles.navBar}>
-        <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={32} color="#B3DF4B" />} />
-        <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={32} color={inactive} />} />
+        <NavItem label="Home" height={50} justify="space-between" icon={<MaterialCommunityIcons name="home-outline" size={29} color="#B3DF4B" />} />
+        <NavItem label="Contacts" height={50} justify="space-between" icon={<MaterialCommunityIcons name="contacts-outline" size={29} color={inactive} />} />
         <NavItem
           label="Battle"
           height={80}
@@ -505,8 +505,8 @@ function BottomNav() {
             </View>
           }
         />
-        <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={32} color={inactive} />} />
-        <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={32} color={inactive} />} />
+        <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={29} color={inactive} />} />
+        <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={29} color={inactive} />} />
       </View>
     </View>
   );
