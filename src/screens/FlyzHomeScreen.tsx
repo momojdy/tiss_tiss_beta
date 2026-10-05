@@ -305,8 +305,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={[styles.route, styles.multiCityRoute]}>
-                <Field label="From" value={from.city} code={from.code} minHeight={80} valueFontSize={16} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
-                <Field label="To" value={to.city} code={to.code} minHeight={80} valueFontSize={16} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
+                <Field label="From" value={from.city} code={from.code} minHeight={80} valueFontSize={18} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
+                <Field label="To" value={to.city} code={to.code} minHeight={80} valueFontSize={18} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
                 <Pressable onPress={swap} style={[styles.swap, styles.multiCitySwap]}><MaterialCommunityIcons name="swap-horizontal" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
