@@ -304,7 +304,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
 
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
-              <View style={styles.route}>
+              <View style={[styles.route, styles.multiCityRoute]}>
                 <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
                 <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
@@ -316,12 +316,10 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Field label="Passengers" value="1 Adult" onPress={() => setSelector('passengers')} />
                 <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
               </View>
-              <View style={styles.fieldRow}>
-                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField, { flex: 1 }]}>
+              <Pressable onPress={() => {}} style={styles.addFlightField}>
                   <Text style={styles.addFlightPlus}>＋</Text>
                   <Text style={styles.addFlightText}>Add flight</Text>
-                </Pressable>
-              </View>
+              </Pressable>
               <Pressable onPress={() => {}} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
@@ -500,6 +498,7 @@ const styles = StyleSheet.create({
   multiFlightLabel: { fontSize: 13, fontWeight: '800', color: TEXT },
   removeFlightText: { fontSize: 12, fontWeight: '700', color: MUTED },
   route: { gap: 6, position: 'relative' },
+  multiCityRoute: { flexDirection: 'row' },
   fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
   field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
   addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
