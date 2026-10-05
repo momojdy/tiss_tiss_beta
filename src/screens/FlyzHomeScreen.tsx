@@ -112,11 +112,12 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [airportsLoading, setAirportsLoading] = useState(false);
   const [departDate, setDepartDate] = useState(new Date(2026, 11, 18));
   const [returnDate, setReturnDate] = useState(new Date(2026, 11, 28));
-  const [calendarPicker, setCalendarPicker] = useState<'depart' | 'return' | null>(null);
+  const [calendarPicker, setCalendarPicker] = useState<'depart' | 'return' | 'secondDepart' | null>(null);
   const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 11, 1));
   const [multiCitySecondAdded, setMultiCitySecondAdded] = useState(false);
   const [secondFrom, setSecondFrom] = useState({ city: '', code: '' });
   const [secondTo, setSecondTo] = useState({ city: '', code: '' });
+  const [secondDepartDate, setSecondDepartDate] = useState(new Date(2026, 11, 30));
 
   const swap = () => { setFrom(to); setTo(from); };
 
@@ -125,7 +126,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
 
   const openCalendar = (type: 'depart' | 'return') => {
     setCalendarPicker(type);
-    const date = type === 'return' ? returnDate : departDate;
+    const date = type === 'return' ? returnDate : type === 'depart' ? departDate : secondDepartDate;
     setCalendarMonth(new Date(date.getFullYear(), date.getMonth(), 1));
   };
 
@@ -146,6 +147,11 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   };
 
   const selectDate = (date: Date) => {
+    if (calendarPicker === 'secondDepart') {
+      setSecondDepartDate(date);
+      setCalendarPicker(null);
+      return;
+    }
     if (calendarPicker === 'depart') {
       setDepartDate(date);
       if (tripType === 'Round trip') {
@@ -324,10 +330,14 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                     <Field label="From" value={secondFrom.city || 'Select departure'} code={secondFrom.code} onPress={() => { setAirportPicker('secondFrom'); setAirportSearch(''); }} />
                     <Field label="To" value={secondTo.city || 'Select destination'} code={secondTo.code} onPress={() => { setAirportPicker('secondTo'); setAirportSearch(''); }} />
                   </View>
+                  <View style={styles.fieldRow}>
+                    <Field label="Depart" value={formatDate(secondDepartDate)} onPress={() => openCalendar('secondDepart')} />
+                    <Field label="Passengers" value="1 Adult" onPress={() => {}} />
+                  </View>
                 </>
               )}
               <Pressable onPress={() => {
-                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code) {
+                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code || !secondDepartDate) {
                   Alert.alert('Add another flight', 'Add a second departure and destination, or choose Round trip or One way.');
                   return;
                 }
@@ -345,7 +355,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
-                <Field label="Return" value={tripType === 'One way' ? '—' : formatDate(returnDate)} onPress={tripType === 'One way' ? undefined : () => openCalendar('return')} />
+                {tripType === 'Round trip' && <Field label="Return" value={formatDate(returnDate)} onPress={() => openCalendar('return')} />}
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Passengers" value="1 Adult" onPress={() => {}} />
@@ -415,8 +425,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           <View style={styles.calendarSheet}>
             <View style={styles.sheetHeader}>
               <View style={{ flex: 1 }}>
-                <Text style={styles.sheetTitle}>{calendarPicker === 'depart' ? 'Select departure date' : 'Select return date'}</Text>
-                <Text style={styles.sheetSub}>{calendarPicker === 'return' ? 'After ' + formatDate(departDate) : 'Choose when your trip starts'}</Text>
+                <Text style={styles.sheetTitle}>{calendarPicker === 'return' ? 'Select return date' : calendarPicker === 'secondDepart' ? 'Select second departure date' : 'Select departure date'}</Text>
+                <Text style={styles.sheetSub}>{calendarPicker === 'return' ? 'After ' + formatDate(departDate) : calendarPicker === 'secondDepart' ? 'Choose when your second flight starts' : 'Choose when your trip starts'}</Text>
               </View>
               <Pressable onPress={closeCalendar} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
             </View>
@@ -430,7 +440,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               {calendarDays.map((date, index) => {
                 if (!date) return <View key={index} style={styles.calendarCell} />;
                 const key = dateKey(date);
-                const selected = key === dateKey(calendarPicker === 'depart' ? departDate : returnDate);
+                const selectedDate = calendarPicker === 'depart' ? departDate : calendarPicker === 'return' ? returnDate : secondDepartDate;
+                const selected = key === dateKey(selectedDate);
                 const beforeReturn = calendarPicker === 'return' && startOfDay(date) < startOfDay(departDate);
                 const inRange = isDateInRange(date);
                 const isRangeStart = inRange && key === dateKey(departDate);
