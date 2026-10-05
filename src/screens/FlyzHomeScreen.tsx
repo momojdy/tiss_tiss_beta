@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -53,8 +53,8 @@ function PlaneMark({ size = 26, color = BLUE }: { size?: number; color?: string 
 function DestinationArt({ type }: { type: string }) {
   return (
     <LinearGradient colors={['#9CD3EA', '#E6F4F6']} style={styles.destinationArt}>
-      {type === 'tower' ? <MaterialCommunityIcons name="eiffel-tower" size={68} color={BLUE} /> :
-       type === 'coast' ? <MaterialCommunityIcons name="island" size={66} color="#1E7F6B" /> :
+      {type === 'tower' ? <MaterialCommunityIcons name="domain" size={68} color={BLUE} /> :
+       type === 'coast' ? <MaterialCommunityIcons name="beach" size={66} color="#1E7F6B" /> :
        <View style={styles.cityArt}>{[1,2,3,4,5,6].map((n) => <View key={n} style={[styles.building, { height: 24 + (n % 3) * 15, backgroundColor: n % 2 ? BLUE : '#6C86C8' }]} />)}</View>}
     </LinearGradient>
   );
@@ -158,19 +158,19 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
               <Field label="Return" value={tripType === 'One way' ? '—' : 'Dec 28'} />
             </View>
             <View style={styles.fieldRow}>
-              <Field label="Passengers" value="1 Adult" onPress={() => Alert.alert('Passengers', 'Adults, children and infants can be selected here.')} />
-              <Field label="Class" value="Economy" onPress={() => Alert.alert('Class', 'Economy, Premium Economy, Business and First are available.')} />
+              <Field label="Passengers" value="1 Adult" onPress={() => {}} />
+              <Field label="Class" value="Economy" onPress={() => {}} />
             </View>
-            <Pressable onPress={() => Alert.alert('Search flights', `${from.city} (${from.code}) → ${to.city} (${to.code}) · ${tripType}`)} style={styles.searchButton}>
+            <Pressable onPress={() => {}} style={styles.searchButton}>
               <Text style={styles.searchButtonText}>Search flights</Text>
             </Pressable>
           </View>
 
           <View style={styles.quickRow}>
-            <QuickAction icon="cellphone-check" label="Check-in" onPress={() => Alert.alert('Check-in', 'Enter a booking to access airline check-in.')} />
-            <QuickAction icon="clock-outline" label="Flight status" onPress={() => Alert.alert('Flight status', 'Search by flight number or route to see the latest status.')} />
+            <QuickAction icon="cellphone-check" label="Check-in" onPress={() => {}} />
+            <QuickAction icon="clock-outline" label="Flight status" onPress={() => {}} />
             <QuickAction icon="briefcase-outline" label="Manage booking" onPress={onMyTripsPress} />
-            <QuickAction icon="help-circle-outline" label="Help" onPress={() => Alert.alert('Flyz Help', 'Booking, payment and travel support will appear here.')} />
+            <QuickAction icon="help-circle-outline" label="Help" onPress={() => {}} />
           </View>
 
           <SectionHeader title="My Trips" link="View All" onPress={onMyTripsPress} compact />
