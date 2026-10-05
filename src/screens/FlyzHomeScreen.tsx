@@ -113,15 +113,23 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
     sheetTranslateY.setValue(0);
   };
 
+  const sheetDragStartY = useRef(0);
+
   const sheetPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
 
-      onMoveShouldSetPanResponder: (_, g) =>
-        g.dy > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+      onStartShouldSetPanResponderCapture: (evt) => {
+        sheetDragStartY.current = evt.nativeEvent.locationY;
+        return false;
+      },
+
+      onMoveShouldSetPanResponder: () => false,
 
       onMoveShouldSetPanResponderCapture: (_, g) =>
-        g.dy > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+        sheetDragStartY.current <= 145 &&
+        g.dy > 4 &&
+        Math.abs(g.dy) > Math.abs(g.dx),
 
       onPanResponderTerminationRequest: () => false,
 
@@ -322,12 +330,15 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
         <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={closeAirportPicker}>
         <KeyboardAvoidingView style={styles.keyboardAvoid} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.modalBackdrop}>
-          <Animated.View style={[styles.airportSheet, { transform: [{ translateY: sheetTranslateY }] }]}>
-            <View style={styles.sheetHeader} {...sheetPanResponder.panHandlers}>
+          <Animated.View
+            style={[styles.airportSheet, { transform: [{ translateY: sheetTranslateY }] }]}
+            {...sheetPanResponder.panHandlers}
+          >
+            <View style={styles.sheetHeader}>
               <View style={{ flex: 1 }}><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Search any airport worldwide</Text></View>
               <Pressable onPress={closeAirportPicker} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
             </View>
-            <View style={styles.airportSearch} {...sheetPanResponder.panHandlers}>
+            <View style={styles.airportSearch}>
               <MaterialCommunityIcons name="magnify" size={21} color={MUTED} />
               <TextInput value={airportSearch} onChangeText={setAirportSearch} placeholder="Search city, airport or code" placeholderTextColor={MUTED} style={styles.airportSearchInput} autoCapitalize="none" autoCorrect={false} autoFocus />
               {airportSearch.length > 0 && <Pressable onPress={() => setAirportSearch('')}><MaterialCommunityIcons name="close-circle" size={19} color={MUTED} /></Pressable>}
