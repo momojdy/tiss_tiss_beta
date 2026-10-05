@@ -502,7 +502,7 @@ const styles = StyleSheet.create({
   multiCitySwap: { left: '50%', right: undefined, marginLeft: -20 },
   fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
   field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
-  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
+  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center', paddingTop: 8 },
   addFlightPlus: { fontSize: 22, fontWeight: '600', color: BLUE },
   addFlightText: { fontSize: 14, fontWeight: '700', color: BLUE },
   fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
