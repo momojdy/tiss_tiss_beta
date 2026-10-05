@@ -46,9 +46,9 @@ function SectionHeader({ title, link, onPress, compact = false }: { title: strin
   );
 }
 
-function Field({ label, value, code, flex = 1, onPress }: { label: string; value: string; code?: string; flex?: number; onPress?: () => void }) {
+function Field({ label, value, code, flex = 1, minHeight, onPress }: { label: string; value: string; code?: string; flex?: number; minHeight?: number; onPress?: () => void }) {
   return (
-    <Pressable onPress={onPress} style={[styles.field, { flex }]}>
+    <Pressable onPress={onPress} style={[styles.field, { flex }, minHeight ? { minHeight } : null]}>
       <Text style={styles.fieldLabel}>{label}</Text>
       <Text style={styles.fieldValue} numberOfLines={1}>{value}{code ? <Text style={styles.code}> {code}</Text> : null}</Text>
     </Pressable>
@@ -305,9 +305,9 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={[styles.route, styles.multiCityRoute]}>
-                <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
-                <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
-                <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
+                <Field label="From" value={from.city} code={from.code} minHeight={80} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
+                <Field label="To" value={to.city} code={to.code} minHeight={80} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
+                <Pressable onPress={swap} style={[styles.swap, styles.multiCitySwap]}><MaterialCommunityIcons name="swap-horizontal" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
@@ -499,6 +499,7 @@ const styles = StyleSheet.create({
   removeFlightText: { fontSize: 12, fontWeight: '700', color: MUTED },
   route: { gap: 6, position: 'relative' },
   multiCityRoute: { flexDirection: 'row' },
+  multiCitySwap: { left: '50%', right: undefined, marginLeft: -20 },
   fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
   field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
   addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
