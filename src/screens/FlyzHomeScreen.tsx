@@ -39,4 +39,4 @@ option:{paddingVertical:14,borderBottomWidth:1,borderBottomColor:'#E6EEF0',flexD
 month:{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginVertical:14},monthTitle:{fontSize:17,fontWeight:'800',color:T},grid:{flexDirection:'row',flexWrap:'wrap'},day:{width:'14.2857%',height:55,alignItems:'center',justifyContent:'center'},
 circle:{width:38,height:38,borderRadius:19,alignItems:'center',justifyContent:'center'},range:{backgroundColor:A},selected:{backgroundColor:B},fare:{fontSize:8,fontWeight:'800',color:B,position:'absolute',bottom:0},
 fareNote:{padding:5,marginTop:2,fontSize:10.5,lineHeight:15,color:M,textAlign:'center'},done:{height:50,borderRadius:999,backgroundColor:B,alignItems:'center',justifyContent:'center',marginTop:12}
-});
+})
