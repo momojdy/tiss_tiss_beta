@@ -141,8 +141,9 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           <FlyzMyTripsScreen
             onBack={() => setBuyerScreen('flyz')}
             onHomePress={() => setBuyerScreen('flyz')}
+            onWalletPress={() => setBuyerScreen('wallet')}
             onDealsPress={() => setBuyerScreen('flyzDeals')}
-            onMorePress={() => setBuyerScreen('me')}
+            onMorePress={() => {}}
           />
         );
       }
@@ -154,11 +155,12 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyz') {
         return (
           <FlyzHomeScreen
+            onBack={() => setBuyerScreen('home')}
             onWalletPress={() => setBuyerScreen('wallet')}
             onNotificationsPress={() => {}}
             onMyTripsPress={() => setBuyerScreen('flyzMyTrips')}
             onDealsPress={() => setBuyerScreen('flyzDeals')}
-            onMorePress={() => setBuyerScreen('me')}
+            onMorePress={() => {}}
             onDestinationPress={(city, code, price) => { setFlyzDestination({ city, code, price }); setBuyerScreen('flyzDestination'); }}
           />
         );
