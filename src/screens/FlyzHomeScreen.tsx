@@ -457,7 +457,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </Pressable>
             )}
           </View>
-        </Modal>
+        </View>
+      </Modal>
       <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
