@@ -19,6 +19,8 @@ import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import FlyzHomeScreen from './src/screens/FlyzHomeScreen';
 import FlyzMyTripsScreen from './src/screens/FlyzMyTripsScreen';
+import FlyzDealsScreen from './src/screens/FlyzDealsScreen';
+import FlyzDestinationScreen from './src/screens/FlyzDestinationScreen';
 import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
 import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
 import FrenziesRpsGameScreen from './src/screens/FrenziesRpsGameScreen';
@@ -32,7 +34,7 @@ import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShie
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -90,6 +92,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [authenticated, setAuthenticated] = useState(false);
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [shieldCheckout, setShieldCheckout] = useState({ quantity: 5, total: 1 });
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => {
@@ -129,6 +132,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'flyzDestination') {
+        return <FlyzDestinationScreen city={flyzDestination.city} code={flyzDestination.code} price={flyzDestination.price} onBack={() => setBuyerScreen('flyz')} />;
+      }
+
       if (buyerScreen === 'flyzMyTrips') {
         return (
           <FlyzMyTripsScreen
@@ -136,20 +143,13 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
             onHomePress={() => setBuyerScreen('flyz')}
             onDealsPress={() => setBuyerScreen('flyzDeals')}
             onMorePress={() => setBuyerScreen('me')}
+            onDestinationPress={(city, code, price) => { setFlyzDestination({ city, code, price }); setBuyerScreen('flyzDestination'); }}
           />
         );
       }
 
       if (buyerScreen === 'flyzDeals') {
-        return (
-          <FlyzHomeScreen
-            onWalletPress={() => setBuyerScreen('wallet')}
-            onNotificationsPress={() => {}}
-            onMyTripsPress={() => setBuyerScreen('flyzMyTrips')}
-            onDealsPress={() => {}}
-            onMorePress={() => setBuyerScreen('me')}
-          />
-        );
+        return <FlyzDealsScreen onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       }
 
       if (buyerScreen === 'flyz') {
