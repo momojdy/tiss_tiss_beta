@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
   destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
   destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
   bottomWrap: { paddingHorizontal: 8, paddingBottom: 12, paddingTop: 4 },
-  bottomNav: { height: 76, borderRadius: 30, backgroundColor: '#fff', shadowColor: '#142864', shadowOpacity: .14, shadowRadius: 14, elevation: 7, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
+  bottomNav: { height: 76, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.72)', shadowColor: '#142864', shadowOpacity: .14, shadowRadius: 14, elevation: 7, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center' },
   navItem: { width: 80, alignItems: 'center', gap: 4 },
   navIcon: { width: 52, height: 32, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
   navLabel: { fontSize: 11.5, fontWeight: '700', color: MUTED },
