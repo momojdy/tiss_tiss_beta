@@ -6,6 +6,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 
+const pad2 = (n: number) => String(n).padStart(2, '0');
+const formatDate = (date: Date) => `${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][date.getMonth()]} ${date.getDate()}`;
+const dateKey = (date: Date) => `${date.getFullYear()}-${pad2(date.getMonth() + 1)}-${pad2(date.getDate())}`;
+const startOfDay = (date: Date) => new Date(date.getFullYear(), date.getMonth(), date.getDate());
+const addMonths = (date: Date, amount: number) => new Date(date.getFullYear(), date.getMonth() + amount, 1);
+
 const BLUE = '#28469E';
 const TEXT = '#0E1A3A';
 const MUTED = '#5F6E94';
@@ -104,11 +110,49 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [airportSearch, setAirportSearch] = useState('');
   const [airports, setAirports] = useState<Array<{ city: string; code: string; airport: string; country: string }>>([]);
   const [airportsLoading, setAirportsLoading] = useState(false);
+  const [departDate, setDepartDate] = useState(new Date(2026, 11, 18));
+  const [returnDate, setReturnDate] = useState(new Date(2026, 11, 28));
+  const [calendarPicker, setCalendarPicker] = useState<'depart' | 'return' | null>(null);
+  const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 11, 1));
 
   const swap = () => { setFrom(to); setTo(from); };
 
   const sheetTranslateY = useRef(new Animated.Value(0)).current;
   const reanimatedSheetY = useSharedValue(0);
+
+  const openCalendar = (type: 'depart' | 'return') => {
+    setCalendarPicker(type);
+    const date = type === 'return' ? returnDate : departDate;
+    setCalendarMonth(new Date(date.getFullYear(), date.getMonth(), 1));
+  };
+
+  const closeCalendar = () => setCalendarPicker(null);
+
+  const selectDate = (date: Date) => {
+    if (calendarPicker === 'depart') {
+      setDepartDate(date);
+      if (tripType === 'Round trip') {
+        const nextReturn = startOfDay(returnDate) < startOfDay(date) ? new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1) : returnDate;
+        setReturnDate(nextReturn);
+        setCalendarMonth(new Date(nextReturn.getFullYear(), nextReturn.getMonth(), 1));
+        setCalendarPicker('return');
+      } else {
+        setCalendarPicker(null);
+      }
+      return;
+    }
+    if (startOfDay(date) < startOfDay(departDate)) return;
+    setReturnDate(date);
+    setCalendarPicker(null);
+  };
+
+  const calendarDays = useMemo(() => {
+    const first = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), 1);
+    const leading = first.getDay();
+    const daysInMonth = new Date(calendarMonth.getFullYear(), calendarMonth.getMonth() + 1, 0).getDate();
+    const total = Math.ceil((leading + daysInMonth) / 7) * 7;
+    return Array.from({ length: total }, (_, index) => index < leading || index >= leading + daysInMonth ? null : new Date(calendarMonth.getFullYear(), calendarMonth.getMonth(), index - leading + 1));
+  }, [calendarMonth]);
 
   const closeAirportPicker = () => {
     setAirportPicker(null);
@@ -237,7 +281,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
-                <Field label="Depart" value="Dec 18" />
+                <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
                 <Field label="Passengers" value="1 Adult" onPress={() => {}} />
               </View>
               <View style={styles.fieldRow}>
@@ -259,8 +303,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
-                <Field label="Depart" value="Dec 18" />
-                <Field label="Return" value={tripType === 'One way' ? '—' : 'Dec 28'} />
+                <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
+                <Field label="Return" value={tripType === 'One way' ? '—' : formatDate(returnDate)} onPress={tripType === 'One way' ? undefined : () => openCalendar('return')} />
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Passengers" value="1 Adult" onPress={() => {}} />
@@ -324,6 +368,40 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           </GestureDetector>
         </View>
         </KeyboardAvoidingView>
+      </Modal>
+      <Modal visible={calendarPicker !== null} transparent animationType="slide" onRequestClose={closeCalendar}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.calendarSheet}>
+            <View style={styles.sheetHeader}>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.sheetTitle}>{calendarPicker === 'depart' ? 'Select departure date' : 'Select return date'}</Text>
+                <Text style={styles.sheetSub}>{calendarPicker === 'return' ? 'After ' + formatDate(departDate) : 'Choose when your trip starts'}</Text>
+              </View>
+              <Pressable onPress={closeCalendar} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+            </View>
+            <View style={styles.calendarMonthRow}>
+              <Pressable onPress={() => setCalendarMonth(addMonths(calendarMonth, -1))} style={styles.calendarArrow}><MaterialCommunityIcons name="chevron-left" size={24} color={TEXT} /></Pressable>
+              <Text style={styles.calendarMonthTitle}>{calendarMonth.toLocaleString('en-US', { month: 'long', year: 'numeric' })}</Text>
+              <Pressable onPress={() => setCalendarMonth(addMonths(calendarMonth, 1))} style={styles.calendarArrow}><MaterialCommunityIcons name="chevron-right" size={24} color={TEXT} /></Pressable>
+            </View>
+            <View style={styles.weekRow}>{['S','M','T','W','T','F','S'].map((day, i) => <Text key={i} style={styles.weekDay}>{day}</Text>)}</View>
+            <View style={styles.calendarGrid}>
+              {calendarDays.map((date, index) => {
+                if (!date) return <View key={index} style={styles.calendarCell} />;
+                const key = dateKey(date);
+                const selected = key === dateKey(calendarPicker === 'depart' ? departDate : returnDate);
+                const beforeReturn = calendarPicker === 'return' && startOfDay(date) < startOfDay(departDate);
+                return (
+                  <Pressable key={key} disabled={beforeReturn} onPress={() => selectDate(date)} style={styles.calendarCell}>
+                    <View style={[styles.dateCircle, selected && styles.dateSelected, beforeReturn && styles.dateDisabled]}>
+                      <Text style={[styles.dateText, selected && styles.dateSelectedText, beforeReturn && styles.dateDisabledText]}>{date.getDate()}</Text>
+                    </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          </View>
+        </View>
       </Modal>
       <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
@@ -393,6 +471,20 @@ const styles = StyleSheet.create({
   keyboardAvoid: { flex: 1 },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
   airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 },
+  calendarMonthTitle: { fontSize: 17, fontWeight: '800', color: TEXT },
+  calendarArrow: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  weekRow: { flexDirection: 'row', marginBottom: 6 },
+  weekDay: { flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '800', color: MUTED },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calendarCell: { width: '14.2857%', height: 48, alignItems: 'center', justifyContent: 'center' },
+  dateCircle: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
+  dateSelected: { backgroundColor: BLUE },
+  dateText: { fontSize: 14, fontWeight: '700', color: TEXT },
+  dateSelectedText: { color: '#fff' },
+  dateDisabled: { opacity: .3 },
+  dateDisabledText: { color: MUTED },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
   sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
