@@ -17,6 +17,7 @@ type Props = {
   onMyTripsPress?: () => void;
   onDealsPress?: () => void;
   onMorePress?: () => void;
+  onDestinationPress?: (city: string, code: string, price: string) => void;
 };
 
 const destinations = [
@@ -91,7 +92,7 @@ function BottomNav({ active, onHome, onTrips, onDeals, onMore }: { active: strin
   );
 }
 
-export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress }: Props) {
+export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress }: Props) {
   const { width } = useWindowDimensions();
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
@@ -102,7 +103,7 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
   const cardWidth = Math.max(154, Math.min(170, width * 0.405));
 
   const destinationCards = useMemo(() => destinations.map(d => (
-    <Pressable key={d.code} style={[styles.destinationCard, { width: cardWidth }]} onPress={() => Alert.alert(d.city, `Flights to ${d.city} start around ${d.price}. Destination details will include travel information, photos and available fares.`)}>
+    <Pressable key={d.code} style={[styles.destinationCard, { width: cardWidth }]} onPress={() => onDestinationPress?.(d.city, d.code, d.price)}>
       <DestinationArt type={d.type} />
       <View style={styles.destinationArrow}><MaterialIcons name="chevron-right" size={20} color={BLUE} /></View>
       <View style={styles.destinationText}>
