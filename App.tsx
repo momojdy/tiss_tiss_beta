@@ -17,6 +17,8 @@ import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSe
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
+import FlyzHomeScreen from './src/screens/FlyzHomeScreen';
+import FlyzMyTripsScreen from './src/screens/FlyzMyTripsScreen';
 import FrenziesDemoScreen from './src/screens/FrenziesDemoScreen';
 import FrenziesRpsLobbyScreen from './src/screens/FrenziesRpsLobbyScreen';
 import FrenziesRpsGameScreen from './src/screens/FrenziesRpsGameScreen';
@@ -30,7 +32,7 @@ import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShie
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -127,6 +129,41 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 
   if (authenticated) {
     try {
+      if (buyerScreen === 'flyzMyTrips') {
+        return (
+          <FlyzMyTripsScreen
+            onBack={() => setBuyerScreen('flyz')}
+            onHomePress={() => setBuyerScreen('flyz')}
+            onDealsPress={() => setBuyerScreen('flyzDeals')}
+            onMorePress={() => setBuyerScreen('me')}
+          />
+        );
+      }
+
+      if (buyerScreen === 'flyzDeals') {
+        return (
+          <FlyzHomeScreen
+            onWalletPress={() => setBuyerScreen('wallet')}
+            onNotificationsPress={() => {}}
+            onMyTripsPress={() => setBuyerScreen('flyzMyTrips')}
+            onDealsPress={() => {}}
+            onMorePress={() => setBuyerScreen('me')}
+          />
+        );
+      }
+
+      if (buyerScreen === 'flyz') {
+        return (
+          <FlyzHomeScreen
+            onWalletPress={() => setBuyerScreen('wallet')}
+            onNotificationsPress={() => {}}
+            onMyTripsPress={() => setBuyerScreen('flyzMyTrips')}
+            onDealsPress={() => setBuyerScreen('flyzDeals')}
+            onMorePress={() => setBuyerScreen('me')}
+          />
+        );
+      }
+
       if (buyerScreen === 'frenziesRpsLobby') {
         return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesRpsLobbyScreen onBack={() => setBuyerScreen('frenzies')} onDemoPress={() => setBuyerScreen('frenziesDemo')} /></FrenziesChallengeLayer>;
       }
@@ -253,7 +290,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       }
 
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} />;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} />;
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
