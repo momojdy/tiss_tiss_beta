@@ -50,7 +50,7 @@ function Field({ label, value, code, flex = 1, minHeight, valueFontSize, onPress
   return (
     <Pressable onPress={onPress} style={[styles.field, { flex }, minHeight ? { minHeight } : null]}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={[styles.fieldValue, valueFontSize ? { fontSize: valueFontSize } : null]} numberOfLines={1}>{value}{code ? <Text style={styles.code}> {code}</Text> : null}</Text>
+      <View><Text style={[styles.fieldValue, valueFontSize ? { fontSize: valueFontSize } : null]} numberOfLines={1}>{value}</Text>{code ? <Text style={styles.code}>{code}</Text> : null}</View>
     </Pressable>
   );
 }
