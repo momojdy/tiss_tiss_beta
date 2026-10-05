@@ -113,25 +113,53 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
     sheetTranslateY.setValue(0);
   };
 
-  const sheetPanResponder = PanResponder.create({
-    onMoveShouldSetPanResponderCapture: (_, g) =>
-      g.dy > 3 && Math.abs(g.dy) > Math.abs(g.dx),
-    onPanResponderGrant: () => sheetTranslateY.stopAnimation(),
-    onPanResponderMove: (_, g) => {
-      if (g.dy > 0) sheetTranslateY.setValue(g.dy);
-    },
-    onPanResponderRelease: (_, g) => {
-      if (g.dy > 50) {
-        Animated.timing(sheetTranslateY, { toValue: 700, duration: 180, useNativeDriver: true })
-          .start(() => closeAirportPicker());
-      } else {
-        Animated.spring(sheetTranslateY, { toValue: 0, useNativeDriver: true, tension: 70, friction: 10 }).start();
-      }
-    },
-    onPanResponderTerminate: () => {
-      Animated.spring(sheetTranslateY, { toValue: 0, useNativeDriver: true, tension: 70, friction: 10 }).start();
-    },
-  });
+  const sheetPanResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+
+      onMoveShouldSetPanResponder: (_, g) =>
+        g.dy > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+
+      onMoveShouldSetPanResponderCapture: (_, g) =>
+        g.dy > 4 && Math.abs(g.dy) > Math.abs(g.dx),
+
+      onPanResponderTerminationRequest: () => false,
+
+      onPanResponderGrant: () => {
+        sheetTranslateY.stopAnimation();
+      },
+
+      onPanResponderMove: (_, g) => {
+        sheetTranslateY.setValue(Math.max(0, g.dy));
+      },
+
+      onPanResponderRelease: (_, g) => {
+        if (g.dy > 50 || g.vy > 0.8) {
+          Animated.timing(sheetTranslateY, {
+            toValue: 700,
+            duration: 180,
+            useNativeDriver: true,
+          }).start(() => closeAirportPicker());
+        } else {
+          Animated.spring(sheetTranslateY, {
+            toValue: 0,
+            useNativeDriver: true,
+            tension: 70,
+            friction: 10,
+          }).start();
+        }
+      },
+
+      onPanResponderTerminate: () => {
+        Animated.spring(sheetTranslateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 70,
+          friction: 10,
+        }).start();
+      },
+    })
+  ).current;
 
   useEffect(() => {
     if (airportPicker === null || airports.length) return;
