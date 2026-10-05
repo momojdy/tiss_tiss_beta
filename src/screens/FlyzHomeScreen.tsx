@@ -444,7 +444,251 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                       <Text style={[styles.dateText, selected && styles.dateSelectedText, inRange && !selected && styles.dateInRangeText, beforeReturn && styles.dateDisabledText]}>{date.getDate()}</Text>
                     </View>
                     {fare !== null && <Text style={styles.fareText}>{'
+        </View>
+      </Modal>
+      <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+      </LinearGradient>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  page: { flex: 1, backgroundColor: '#DCE6E8' },
+  background: { flex: 1 },
+  scrollContent: { paddingTop: 0, paddingHorizontal: 16, paddingBottom: 110 },
+  header: { width: '100%', height: 100, paddingHorizontal: 0, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  logo: { fontSize: 26, fontWeight: '800', letterSpacing: -0.6, color: BLUE },
+  headerActions: { flexDirection: 'row', gap: 8 },
+  roundButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  hero: { marginTop: 30, marginHorizontal: 4, marginBottom: 18, flexDirection: 'row', alignItems: 'flex-start' },
+  heroTitle: { fontSize: 31, lineHeight: 34, fontWeight: '800', letterSpacing: -0.8, color: TEXT, marginBottom: 6 },
+  heroSub: { fontSize: 14, lineHeight: 20, color: MUTED, maxWidth: 300 },
+  heroPlane: { paddingRight: 20 },
+  segment: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,.6)', borderRadius: 999, padding: 4, marginBottom: 12 },
+  segmentItem: { flex: 1, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  segmentActive: { backgroundColor: BLUE },
+  segmentText: { color: MUTED, fontSize: 13, fontWeight: '700' },
+  multiCityFields: { gap: 6 },
+  multiFlightDivider: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4, paddingTop: 8, paddingBottom: 2 },
+  multiFlightLabel: { fontSize: 13, fontWeight: '800', color: TEXT },
+  removeFlightText: { fontSize: 12, fontWeight: '700', color: MUTED },
+  route: { gap: 6, position: 'relative' },
+  fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
+  field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
+  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
+  addFlightPlus: { fontSize: 22, fontWeight: '600', color: BLUE },
+  addFlightText: { fontSize: 14, fontWeight: '700', color: BLUE },
+  fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
+  fieldValue: { fontSize: 18, fontWeight: '700', color: TEXT },
+  code: { color: BLUE, fontSize: 14, fontWeight: '700' },
+  swap: { position: 'absolute', right: 14, top: '50%', marginTop: -20, width: 40, height: 40, borderRadius: 20, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .35, shadowRadius: 6, elevation: 4 },
+  searchButton: { marginTop: 14, width: '100%', height: 54, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .28, shadowRadius: 11, elevation: 3 },
+  searchButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  quickRow: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 20, paddingBottom: 4 },
+  quickAction: { width: '23%', alignItems: 'center', gap: 8 },
+  quickIcon: { width: 54, height: 54, borderRadius: 27, backgroundColor: AQUA, alignItems: 'center', justifyContent: 'center' },
+  quickLabel: { fontSize: 11.5, lineHeight: 15, fontWeight: '700', color: TEXT, textAlign: 'center' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: 4, paddingTop: 26, paddingBottom: 12 },
+  sectionTitle: { fontSize: 20, fontWeight: '800', letterSpacing: -.4, color: TEXT },
+  sectionLink: { fontSize: 13, fontWeight: '600', color: BLUE },
+  tripCard: { marginHorizontal: 4, backgroundColor: 'rgba(202,232,232,.55)', borderRadius: 20, padding: 16 },
+  tripLegs: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  airport: { fontSize: 26, fontWeight: '800', letterSpacing: -.5, color: TEXT },
+  airportName: { fontSize: 12, color: MUTED },
+  tripLine: { flex: 1, height: 28, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  line: { position: 'absolute', left: 0, right: 0, top: 13, height: 2, backgroundColor: BORDER },
+  tripPlane: { zIndex: 2, backgroundColor: 'transparent', paddingHorizontal: 0 },
+  tripMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 14 },
+  tripDate: { fontSize: 13, fontWeight: '700', color: TEXT },
+  tripAirline: { fontSize: 12, color: MUTED, marginTop: 3 },
+  confirmed: { backgroundColor: BLUE, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999 },
+  confirmedText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  destinationRow: { gap: 12, paddingHorizontal: 4, paddingBottom: 14 },
+  destinationCard: { height: 184, backgroundColor: '#fff', borderRadius: 22, overflow: 'hidden', shadowColor: BLUE, shadowOpacity: .12, shadowRadius: 10, elevation: 3 },
+  destinationArt: { height: 104, alignItems: 'center', justifyContent: 'center' },
+  cityArt: { height: 64, flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
+  building: { width: 17, borderRadius: 1 },
+  destinationArrow: { position: 'absolute', right: 10, top: 88, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: .14, shadowRadius: 5, elevation: 2 },
+  destinationText: { padding: 12 },
+  destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
+  destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
+  keyboardAvoid: { flex: 1 },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
+  airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 },
+  calendarMonthTitle: { fontSize: 17, fontWeight: '800', color: TEXT },
+  calendarArrow: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  weekRow: { flexDirection: 'row', marginBottom: 6 },
+  weekDay: { flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '800', color: MUTED },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calendarCell: { width: '14.2857%', height: 60, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  rangeBand: { position: 'absolute', left: 0, right: 0, top: 11, height: 38, backgroundColor: AQUA },
+  rangeBandStart: { left: '50%', borderTopLeftRadius: 19, borderBottomLeftRadius: 19 },
+  rangeBandEnd: { right: '50%', borderTopRightRadius: 19, borderBottomRightRadius: 19 },
+  dateCircle: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', zIndex: 2 },
+  dateSelected: { backgroundColor: BLUE },
+  dateInRangeCircle: { backgroundColor: AQUA },
+  dateText: { fontSize: 14, fontWeight: '700', color: TEXT },
+  dateInRangeText: { color: TEXT },
+  fareText: { position: 'absolute', bottom: 0, fontSize: 9, lineHeight: 11, fontWeight: '800', color: BLUE, zIndex: 3 },
+  fareNote: { marginTop: 2, fontSize: 10.5, lineHeight: 15, color: MUTED, textAlign: 'center' },
+  doneButton: { marginTop: 14, height: 50, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' },
+  doneButtonText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  dateSelectedText: { color: '#fff' },
+  dateDisabled: { opacity: .3 },
+  dateDisabledText: { color: MUTED },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
+  sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
+  closeButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  airportSearch: { height: 50, borderRadius: 16, backgroundColor: '#F2F7F7', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  airportSearchInput: { flex: 1, marginLeft: 9, fontSize: 14, color: TEXT },
+  airportLoading: { paddingVertical: 30, alignItems: 'center' },
+  airportLoadingText: { fontSize: 13, color: MUTED },
+  airportOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#E6EEF0', gap: 12 },
+  airportIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5F5', alignItems: 'center', justifyContent: 'center' },
+  airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
+  airportCode: { color: BLUE, fontSize: 14 },
+  airportName: { marginTop: 3, fontSize: 12, color: MUTED },
+  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
+  bottomNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: .13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+  navItem: { width: 68, height: 46, alignItems: 'center', justifyContent: 'flex-end' },
+  navIcon: { width: 30, height: 29, alignItems: 'center', justifyContent: 'center' },
+  navLabel: { paddingTop: 4, fontSize: 10.5, lineHeight: 13, fontWeight: '500', color: '#1F1E1E', textAlign: 'center' },
+});}{fare}</Text>}
+                  </Pressable>
+                );
+              })}
+            </View>
+            {tripType === 'One way' && calendarPicker === 'depart' && (
+              <Text style={styles.fareNote}>Cheapest shown for {from.city} ({from.code}) · final fare confirmed in flight results</Text>
+            )}
+            {tripType === 'Round trip' && calendarPicker === 'return' && (
+              <Pressable onPress={closeCalendar} style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </Pressable>
+            )}
           </View>
+        </View>
+      </Modal>
+      <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+      </LinearGradient>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  page: { flex: 1, backgroundColor: '#DCE6E8' },
+  background: { flex: 1 },
+  scrollContent: { paddingTop: 0, paddingHorizontal: 16, paddingBottom: 110 },
+  header: { width: '100%', height: 100, paddingHorizontal: 0, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  logo: { fontSize: 26, fontWeight: '800', letterSpacing: -0.6, color: BLUE },
+  headerActions: { flexDirection: 'row', gap: 8 },
+  roundButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  hero: { marginTop: 30, marginHorizontal: 4, marginBottom: 18, flexDirection: 'row', alignItems: 'flex-start' },
+  heroTitle: { fontSize: 31, lineHeight: 34, fontWeight: '800', letterSpacing: -0.8, color: TEXT, marginBottom: 6 },
+  heroSub: { fontSize: 14, lineHeight: 20, color: MUTED, maxWidth: 300 },
+  heroPlane: { paddingRight: 20 },
+  segment: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,.6)', borderRadius: 999, padding: 4, marginBottom: 12 },
+  segmentItem: { flex: 1, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  segmentActive: { backgroundColor: BLUE },
+  segmentText: { color: MUTED, fontSize: 13, fontWeight: '700' },
+  multiCityFields: { gap: 6 },
+  route: { gap: 6, position: 'relative' },
+  fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
+  field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
+  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
+  addFlightPlus: { fontSize: 22, fontWeight: '600', color: BLUE },
+  addFlightText: { fontSize: 14, fontWeight: '700', color: BLUE },
+  fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
+  fieldValue: { fontSize: 18, fontWeight: '700', color: TEXT },
+  code: { color: BLUE, fontSize: 14, fontWeight: '700' },
+  swap: { position: 'absolute', right: 14, top: '50%', marginTop: -20, width: 40, height: 40, borderRadius: 20, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .35, shadowRadius: 6, elevation: 4 },
+  searchButton: { marginTop: 14, width: '100%', height: 54, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .28, shadowRadius: 11, elevation: 3 },
+  searchButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  quickRow: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 20, paddingBottom: 4 },
+  quickAction: { width: '23%', alignItems: 'center', gap: 8 },
+  quickIcon: { width: 54, height: 54, borderRadius: 27, backgroundColor: AQUA, alignItems: 'center', justifyContent: 'center' },
+  quickLabel: { fontSize: 11.5, lineHeight: 15, fontWeight: '700', color: TEXT, textAlign: 'center' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: 4, paddingTop: 26, paddingBottom: 12 },
+  sectionTitle: { fontSize: 20, fontWeight: '800', letterSpacing: -.4, color: TEXT },
+  sectionLink: { fontSize: 13, fontWeight: '600', color: BLUE },
+  tripCard: { marginHorizontal: 4, backgroundColor: 'rgba(202,232,232,.55)', borderRadius: 20, padding: 16 },
+  tripLegs: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  airport: { fontSize: 26, fontWeight: '800', letterSpacing: -.5, color: TEXT },
+  airportName: { fontSize: 12, color: MUTED },
+  tripLine: { flex: 1, height: 28, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  line: { position: 'absolute', left: 0, right: 0, top: 13, height: 2, backgroundColor: BORDER },
+  tripPlane: { zIndex: 2, backgroundColor: 'transparent', paddingHorizontal: 0 },
+  tripMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 14 },
+  tripDate: { fontSize: 13, fontWeight: '700', color: TEXT },
+  tripAirline: { fontSize: 12, color: MUTED, marginTop: 3 },
+  confirmed: { backgroundColor: BLUE, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999 },
+  confirmedText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  destinationRow: { gap: 12, paddingHorizontal: 4, paddingBottom: 14 },
+  destinationCard: { height: 184, backgroundColor: '#fff', borderRadius: 22, overflow: 'hidden', shadowColor: BLUE, shadowOpacity: .12, shadowRadius: 10, elevation: 3 },
+  destinationArt: { height: 104, alignItems: 'center', justifyContent: 'center' },
+  cityArt: { height: 64, flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
+  building: { width: 17, borderRadius: 1 },
+  destinationArrow: { position: 'absolute', right: 10, top: 88, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: .14, shadowRadius: 5, elevation: 2 },
+  destinationText: { padding: 12 },
+  destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
+  destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
+  keyboardAvoid: { flex: 1 },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
+  airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 },
+  calendarMonthTitle: { fontSize: 17, fontWeight: '800', color: TEXT },
+  calendarArrow: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  weekRow: { flexDirection: 'row', marginBottom: 6 },
+  weekDay: { flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '800', color: MUTED },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calendarCell: { width: '14.2857%', height: 48, alignItems: 'center', justifyContent: 'center' },
+  dateCircle: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center' },
+  dateSelected: { backgroundColor: BLUE },
+  dateText: { fontSize: 14, fontWeight: '700', color: TEXT },
+  dateSelectedText: { color: '#fff' },
+  dateDisabled: { opacity: .3 },
+  dateDisabledText: { color: MUTED },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
+  sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
+  closeButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  airportSearch: { height: 50, borderRadius: 16, backgroundColor: '#F2F7F7', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  airportSearchInput: { flex: 1, marginLeft: 9, fontSize: 14, color: TEXT },
+  airportLoading: { paddingVertical: 30, alignItems: 'center' },
+  airportLoadingText: { fontSize: 13, color: MUTED },
+  airportOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#E6EEF0', gap: 12 },
+  airportIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5F5', alignItems: 'center', justifyContent: 'center' },
+  airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
+  airportCode: { color: BLUE, fontSize: 14 },
+  airportName: { marginTop: 3, fontSize: 12, color: MUTED },
+  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
+  bottomNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: .13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+  navItem: { width: 68, height: 46, alignItems: 'center', justifyContent: 'flex-end' },
+  navIcon: { width: 30, height: 29, alignItems: 'center', justifyContent: 'center' },
+  navLabel: { paddingTop: 4, fontSize: 10.5, lineHeight: 13, fontWeight: '500', color: '#1F1E1E', textAlign: 'center' },
+});}{fare}</Text>}
+                  </Pressable>
+                );
+              })}
+            </View>
+            {tripType === 'One way' && calendarPicker === 'depart' && (
+              <Text style={styles.fareNote}>Cheapest shown for {from.city} ({from.code}) · final fare confirmed in flight results</Text>
+            )}
+            {tripType === 'Round trip' && calendarPicker === 'return' && (
+              <Pressable onPress={closeCalendar} style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </Pressable>
+            )}
+          </View>
+        </Modal>
         </View>
       </Modal>
       <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
