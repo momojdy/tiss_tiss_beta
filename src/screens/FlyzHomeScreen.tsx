@@ -72,9 +72,9 @@ function QuickAction({ icon, label, onPress }: { icon: React.ComponentProps<type
 function BottomNav({ active, onHome, onMoments, onWallet, onDeals, onMore }: { active: string; onHome: () => void; onMoments: () => void; onWallet: () => void; onDeals: () => void; onMore: () => void }) {
   const items = [
     ['home-outline', 'Home', onHome],
+    ['tag-outline', 'Deals', onDeals],
     ['star-four-points-outline', 'Moments', onMoments],
     ['wallet-outline', 'Wallet', onWallet],
-    ['tag-outline', 'Deals', onDeals],
     ['dots-horizontal-circle-outline', 'More', onMore],
   ] as const;
   return (
@@ -82,8 +82,8 @@ function BottomNav({ active, onHome, onMoments, onWallet, onDeals, onMore }: { a
       <View style={styles.bottomNav}>
         {items.map(([icon, label, onPress]) => (
           <Pressable key={label} onPress={onPress} style={styles.navItem}>
-            <View style={[styles.navIcon, active === label && { backgroundColor: AQUA }]}>
-              <MaterialCommunityIcons name={icon} size={22} color={active === label ? BLUE : MUTED} />
+            <View style={[styles.navIcon, active === label && { backgroundColor: AQUA, borderRadius: 999 }]}>
+              <MaterialCommunityIcons name={icon} size={29} color={active === label ? BLUE : MUTED} />
             </View>
             <Text style={[styles.navLabel, active === label && { color: BLUE }]}>{label}</Text>
           </Pressable>
@@ -218,7 +218,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             {destinationCards}
           </ScrollView>
         </ScrollView>
-        <BottomNav active="Home" onHome={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+        <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
   );
