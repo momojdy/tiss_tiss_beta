@@ -113,23 +113,23 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
     sheetTranslateY.setValue(0);
   };
 
-  const sheetDragStartY = useRef(0);
+  const sheetTopY = useRef(0);
 
   const sheetPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
 
-      onStartShouldSetPanResponderCapture: (evt) => {
-        sheetDragStartY.current = evt.nativeEvent.locationY;
-        return false;
-      },
-
       onMoveShouldSetPanResponder: () => false,
 
-      onMoveShouldSetPanResponderCapture: (_, g) =>
-        sheetDragStartY.current <= 145 &&
-        g.dy > 4 &&
-        Math.abs(g.dy) > Math.abs(g.dx),
+      onMoveShouldSetPanResponderCapture: (_, g) => {
+        const startYInSheet = g.y0 - sheetTopY.current;
+        return (
+          startYInSheet >= 0 &&
+          startYInSheet <= 118 &&
+          g.dy > 4 &&
+          Math.abs(g.dy) > Math.abs(g.dx)
+        );
+      },
 
       onPanResponderTerminationRequest: () => false,
 
@@ -332,6 +332,9 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
         <View style={styles.modalBackdrop}>
           <Animated.View
             style={[styles.airportSheet, { transform: [{ translateY: sheetTranslateY }] }]}
+            onLayout={(event) => {
+              sheetTopY.current = event.nativeEvent.layout.y;
+            }}
             {...sheetPanResponder.panHandlers}
           >
             <View style={styles.sheetHeader}>
