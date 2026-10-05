@@ -26,6 +26,7 @@ type Props = {
   onDealsPress?: () => void;
   onMorePress?: () => void;
   onDestinationPress?: (city: string, code: string, price: string) => void;
+  onSearch?: (data: { from: { city: string; code: string }; to: { city: string; code: string }; departDate: Date; returnDate?: Date; passengers: string; cabin: string; tripType: string; secondFrom?: { city: string; code: string }; secondTo?: { city: string; code: string }; secondDepartDate?: Date }) => void;
 };
 
 const destinations = [
@@ -101,7 +102,7 @@ function BottomNav({ active, onHome, onMoments, onWallet, onDeals, onMore }: { a
   );
 }
 
-export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress }: Props) {
+export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress, onSearch }: Props) {
   const { width } = useWindowDimensions();
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
@@ -118,6 +119,9 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [secondFrom, setSecondFrom] = useState({ city: '', code: '' });
   const [secondTo, setSecondTo] = useState({ city: '', code: '' });
   const [secondDepartDate, setSecondDepartDate] = useState(new Date(2026, 11, 30));
+  const [passengers, setPassengers] = useState('1 Adult');
+  const [cabin, setCabin] = useState('Economy');
+  const [selector, setSelector] = useState<'passengers' | 'cabin' | null>(null);
 
   const swap = () => { setFrom(to); setTo(from); };
 
@@ -307,10 +311,10 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
-                <Field label="Passengers" value="1 Adult" onPress={() => {}} />
+                <Field label="Passengers" value={passengers} onPress={() => setSelector('passengers')} />
               </View>
               <View style={styles.fieldRow}>
-                <Field label="Class" value="Economy" onPress={() => {}} />
+                <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
                 {!multiCitySecondAdded && (
                   <Pressable onPress={() => setMultiCitySecondAdded(true)} style={[styles.field, styles.addFlightField]}>
                     <Text style={styles.addFlightPlus}>＋</Text>
@@ -337,11 +341,11 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 </>
               )}
               <Pressable onPress={() => {
-                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code || !secondDepartDate) {
+                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code) {
                   Alert.alert('Add another flight', 'Add a second departure and destination, or choose Round trip or One way.');
                   return;
                 }
-                Alert.alert('Search flights', 'Your multi-city search is ready.');
+                onSearch?.({ from, to, departDate, passengers, cabin, tripType, secondFrom, secondTo, secondDepartDate });
               }} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
@@ -361,7 +365,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Field label="Passengers" value="1 Adult" onPress={() => {}} />
                 <Field label="Class" value="Economy" onPress={() => {}} />
               </View>
-              <Pressable onPress={() => Alert.alert('Search flights', tripType === 'One way' ? 'Your one-way search is ready.' : 'Your round-trip search is ready.')} style={styles.searchButton}>
+              <Pressable onPress={() => onSearch?.({ from, to, departDate, returnDate: tripType === 'Round trip' ? returnDate : undefined, passengers, cabin, tripType })} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
             </>
@@ -441,7 +445,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 if (!date) return <View key={index} style={styles.calendarCell} />;
                 const key = dateKey(date);
                 const selectedDate = calendarPicker === 'depart' ? departDate : calendarPicker === 'return' ? returnDate : secondDepartDate;
-                const selected = key === dateKey(selectedDate);
+                const selected = key === dateKey(selectedDate) || (tripType === 'Round trip' && calendarPicker === 'return' && (key === dateKey(departDate) || key === dateKey(returnDate)));
                 const beforeReturn = calendarPicker === 'return' && startOfDay(date) < startOfDay(departDate);
                 const inRange = isDateInRange(date);
                 const isRangeStart = inRange && key === dateKey(departDate);
@@ -467,6 +471,28 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Text style={styles.doneButtonText}>Done</Text>
               </Pressable>
             )}
+          </View>
+        </View>
+      </Modal>
+      <Modal visible={selector !== null} transparent animationType="slide" onRequestClose={() => setSelector(null)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.selectorSheet}>
+            <View style={styles.sheetHeader}>
+              <Text style={styles.sheetTitle}>{selector === 'passengers' ? 'Passengers' : 'Cabin class'}</Text>
+              <Pressable onPress={() => setSelector(null)} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+            </View>
+            {(selector === 'passengers'
+              ? ['1 Adult', '2 Adults', '2 Adults, 1 Child', '2 Adults, 1 Child, 1 Infant']
+              : ['Economy', 'Premium Economy', 'Business', 'First']
+            ).map((option) => {
+              const selectedOption = selector === 'passengers' ? passengers === option : cabin === option;
+              return (
+                <Pressable key={option} onPress={() => { selector === 'passengers' ? setPassengers(option) : setCabin(option); setSelector(null); }} style={styles.selectorOption}>
+                  <Text style={styles.selectorText}>{option}</Text>
+                  <MaterialCommunityIcons name={selectedOption ? 'check-circle' : 'circle-outline'} size={22} color={selectedOption ? BLUE : MUTED} />
+                </Pressable>
+              );
+            })}
           </View>
         </View>
       </Modal>
@@ -541,6 +567,9 @@ const styles = StyleSheet.create({
   keyboardAvoid: { flex: 1 },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
   airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  selectorSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  selectorOption: { minHeight: 58, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: '#E6EEF0' },
+  selectorText: { fontSize: 16, fontWeight: '700', color: TEXT },
   calendarSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
   calendarMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 },
   calendarMonthTitle: { fontSize: 17, fontWeight: '800', color: TEXT },
