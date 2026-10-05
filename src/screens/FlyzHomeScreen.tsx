@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { KeyboardAvoidingView, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -104,6 +104,11 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [airportsLoading, setAirportsLoading] = useState(false);
 
   const swap = () => { setFrom(to); setTo(from); };
+  const closeAirportPicker = () => { setAirportPicker(null); setAirportSearch(''); };
+  const sheetPanResponder = PanResponder.create({
+    onMoveShouldSetPanResponder: (_, g) => g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx),
+    onPanResponderRelease: (_, g) => { if (g.dy > 70) closeAirportPicker(); },
+  });
   useEffect(() => {
     if (airportPicker === null || airports.length) return;
     let cancelled = false;
@@ -262,13 +267,13 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             {destinationCards}
           </ScrollView>
         </ScrollView>
-        <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={() => setAirportPicker(null)}>
+        <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={closeAirportPicker}>
         <KeyboardAvoidingView style={styles.keyboardAvoid} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.modalBackdrop}>
-          <View style={styles.airportSheet}>
+          <View style={styles.airportSheet} {...sheetPanResponder.panHandlers}>
             <View style={styles.sheetHeader}>
               <View style={{ flex: 1 }}><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Search any airport worldwide</Text></View>
-              <Pressable onPress={() => { setAirportPicker(null); setAirportSearch(''); }} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+              <Pressable onPress={closeAirportPicker} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
             </View>
             <View style={styles.airportSearch}>
               <MaterialCommunityIcons name="magnify" size={21} color={MUTED} />
