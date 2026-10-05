@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -262,6 +262,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           </ScrollView>
         </ScrollView>
         <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={() => setAirportPicker(null)}>
+        <KeyboardAvoidingView style={styles.keyboardAvoid} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.modalBackdrop}>
           <View style={styles.airportSheet}>
             <View style={styles.sheetHeader}>
@@ -270,7 +271,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             </View>
             <View style={styles.airportSearch}>
               <MaterialCommunityIcons name="magnify" size={21} color={MUTED} />
-              <TextInput value={airportSearch} onChangeText={setAirportSearch} placeholder="Search city, airport or code" placeholderTextColor={MUTED} style={styles.airportSearchInput} autoCapitalize="none" autoCorrect={false} />
+              <TextInput value={airportSearch} onChangeText={setAirportSearch} placeholder="Search city, airport or code" placeholderTextColor={MUTED} style={styles.airportSearchInput} autoCapitalize="none" autoCorrect={false} autoFocus />
               {airportSearch.length > 0 && <Pressable onPress={() => setAirportSearch('')}><MaterialCommunityIcons name="close-circle" size={19} color={MUTED} /></Pressable>}
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -282,6 +283,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             </ScrollView>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </Modal>
       <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
@@ -348,8 +350,9 @@ const styles = StyleSheet.create({
   destinationText: { padding: 12 },
   destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
   destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
+  keyboardAvoid: { flex: 1 },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
-  airportSheet: { maxHeight: '78%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
   sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
   sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
   sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
