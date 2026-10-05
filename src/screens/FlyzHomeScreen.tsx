@@ -305,15 +305,15 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={styles.route}>
-                <Field label="From" value={from.city} code={from.code} />
-                <Field label="To" value={to.city} code={to.code} />
+                <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
+                <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
-                <Field label="Depart" value="Dec 18" />
-                <Field label="Passengers" value="1 Adult" onPress={() => setSelector('passengers')} />
+                <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
               </View>
               <View style={styles.fieldRow}>
+                <Field label="Passengers" value="1 Adult" onPress={() => setSelector('passengers')} />
                 <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
               </View>
               <View style={styles.fieldRow}>
