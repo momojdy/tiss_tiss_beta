@@ -46,11 +46,11 @@ function SectionHeader({ title, link, onPress, compact = false }: { title: strin
   );
 }
 
-function Field({ label, value, code, flex = 1, minHeight, onPress }: { label: string; value: string; code?: string; flex?: number; minHeight?: number; onPress?: () => void }) {
+function Field({ label, value, code, flex = 1, minHeight, valueFontSize, onPress }: { label: string; value: string; code?: string; flex?: number; minHeight?: number; valueFontSize?: number; onPress?: () => void }) {
   return (
     <Pressable onPress={onPress} style={[styles.field, { flex }, minHeight ? { minHeight } : null]}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={styles.fieldValue} numberOfLines={1}>{value}{code ? <Text style={styles.code}> {code}</Text> : null}</Text>
+      <Text style={[styles.fieldValue, valueFontSize ? { fontSize: valueFontSize } : null]} numberOfLines={1}>{value}{code ? <Text style={styles.code}> {code}</Text> : null}</Text>
     </Pressable>
   );
 }
@@ -305,8 +305,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={[styles.route, styles.multiCityRoute]}>
-                <Field label="From" value={from.city} code={from.code} minHeight={80} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
-                <Field label="To" value={to.city} code={to.code} minHeight={80} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
+                <Field label="From" value={from.city} code={from.code} minHeight={80} valueFontSize={16} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
+                <Field label="To" value={to.city} code={to.code} minHeight={80} valueFontSize={16} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
                 <Pressable onPress={swap} style={[styles.swap, styles.multiCitySwap]}><MaterialCommunityIcons name="swap-horizontal" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
