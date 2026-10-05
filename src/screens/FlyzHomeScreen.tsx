@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -98,8 +98,24 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
   const [to, setTo] = useState({ city: 'Miami', code: 'MIA' });
+  const [airportPicker, setAirportPicker] = useState<'from' | 'to' | null>(null);
 
   const swap = () => { setFrom(to); setTo(from); };
+  const airports = [
+    { city: 'Port-au-Prince', code: 'PAP', airport: 'Toussaint Louverture International' },
+    { city: 'Miami', code: 'MIA', airport: 'Miami International' },
+    { city: 'New York', code: 'JFK', airport: 'John F. Kennedy International' },
+    { city: 'Montreal', code: 'YUL', airport: 'Montréal–Trudeau International' },
+    { city: 'Santo Domingo', code: 'SDQ', airport: 'Las Américas International' },
+    { city: 'Paris', code: 'CDG', airport: 'Charles de Gaulle' },
+    { city: 'Fort Lauderdale', code: 'FLL', airport: 'Fort Lauderdale–Hollywood International' },
+    { city: 'Atlanta', code: 'ATL', airport: 'Hartsfield–Jackson Atlanta International' },
+  ];
+  const selectAirport = (airport: typeof airports[number]) => {
+    if (airportPicker === 'from') setFrom({ city: airport.city, code: airport.code });
+    if (airportPicker === 'to') setTo({ city: airport.city, code: airport.code });
+    setAirportPicker(null);
+  };
 
   const cardWidth = Math.max(154, Math.min(170, width * 0.405));
   const isMultiCity = tripType === 'Multi-city';
@@ -153,8 +169,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={styles.route}>
-                <Field label="From" value={from.city} code={from.code} />
-                <Field label="To" value={to.city} code={to.code} />
+                <Field label="From" value={from.city} code={from.code} onPress={() => setAirportPicker('from')} />
+                <Field label="To" value={to.city} code={to.code} onPress={() => setAirportPicker('to')} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
@@ -175,8 +191,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           ) : (
             <>
               <View style={styles.route}>
-                <Field label="From" value={from.city} code={from.code} />
-                <Field label="To" value={to.city} code={to.code} />
+                <Field label="From" value={from.city} code={from.code} onPress={() => setAirportPicker('from')} />
+                <Field label="To" value={to.city} code={to.code} onPress={() => setAirportPicker('to')} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
@@ -218,7 +234,23 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             {destinationCards}
           </ScrollView>
         </ScrollView>
-        <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+        <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={() => setAirportPicker(null)}>
+        <View style={styles.modalBackdrop}>
+          <View style={styles.airportSheet}>
+            <View style={styles.sheetHeader}>
+              <View><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Select an airport</Text></View>
+              <Pressable onPress={() => setAirportPicker(null)} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {airports.map((airport) => <Pressable key={airport.code} onPress={() => selectAirport(airport)} style={styles.airportOption}>
+                <View style={styles.airportIcon}><MaterialCommunityIcons name="airplane" size={20} color={BLUE} /></View>
+                <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport}</Text></View>
+              </Pressable>)}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+      <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
   );
@@ -283,6 +315,17 @@ const styles = StyleSheet.create({
   destinationText: { padding: 12 },
   destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
   destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
+  airportSheet: { maxHeight: '78%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
+  sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
+  closeButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  airportOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#E6EEF0', gap: 12 },
+  airportIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5F5', alignItems: 'center', justifyContent: 'center' },
+  airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
+  airportCode: { color: BLUE, fontSize: 14 },
+  airportName: { marginTop: 3, fontSize: 12, color: MUTED },
   bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
   bottomNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: .13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   navItem: { width: 68, height: 46, alignItems: 'center', justifyContent: 'flex-end' },
