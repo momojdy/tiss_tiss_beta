@@ -114,21 +114,30 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   };
 
   const sheetTopY = useRef(0);
+  const sheetDragStartY = useRef(0);
+  const sheetDragEnabled = useRef(false);
 
   const sheetPanResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => false,
 
+      onStartShouldSetPanResponderCapture: (evt) => {
+        sheetDragStartY.current = evt.nativeEvent.pageY;
+        sheetDragEnabled.current = false;
+        return false;
+      },
+
       onMoveShouldSetPanResponder: () => false,
 
       onMoveShouldSetPanResponderCapture: (_, g) => {
-        const startYInSheet = g.y0 - sheetTopY.current;
-        return (
+        const startYInSheet = sheetDragStartY.current - sheetTopY.current;
+        sheetDragEnabled.current =
           startYInSheet >= 0 &&
           startYInSheet <= 118 &&
           g.dy > 4 &&
-          Math.abs(g.dy) > Math.abs(g.dx)
-        );
+          Math.abs(g.dy) > Math.abs(g.dx);
+
+        return sheetDragEnabled.current;
       },
 
       onPanResponderTerminationRequest: () => false,
@@ -138,10 +147,14 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
       },
 
       onPanResponderMove: (_, g) => {
-        sheetTranslateY.setValue(Math.max(0, g.dy));
+        if (sheetDragEnabled.current) {
+          sheetTranslateY.setValue(Math.max(0, g.dy));
+        }
       },
 
       onPanResponderRelease: (_, g) => {
+        if (!sheetDragEnabled.current) return;
+
         if (g.dy > 50 || g.vy > 0.8) {
           Animated.timing(sheetTranslateY, {
             toValue: 700,
@@ -159,6 +172,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
       },
 
       onPanResponderTerminate: () => {
+        if (!sheetDragEnabled.current) return;
+
         Animated.spring(sheetTranslateY, {
           toValue: 0,
           useNativeDriver: true,
