@@ -150,7 +150,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       }
 
       if (buyerScreen === 'flyzDeals') {
-        return <FlyzDealsScreen onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
+        return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       }
 
       if (buyerScreen === 'flyz') {
