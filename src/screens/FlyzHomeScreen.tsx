@@ -101,6 +101,7 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
   const swap = () => { setFrom(to); setTo(from); };
 
   const cardWidth = Math.max(154, Math.min(170, width * 0.405));
+  const isMultiCity = tripType === 'Multi-city';
 
   const destinationCards = useMemo(() => destinations.map(d => (
     <Pressable key={d.code} style={[styles.destinationCard, { width: cardWidth }]} onPress={() => onDestinationPress?.(d.city, d.code, d.price)}>
@@ -147,24 +148,48 @@ export default function FlyzHomeScreen({ onWalletPress, onNotificationsPress, on
             ))}
           </View>
 
-          <View style={styles.searchCard}>
-            <View style={styles.route}>
-              <Field label="From" value={from.city} code={from.code} />
-              <Field label="To" value={to.city} code={to.code} />
-              <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
+          {isMultiCity ? (
+            <View style={styles.multiCityFields}>
+              <View style={styles.route}>
+                <Field label="From" value={from.city} code={from.code} />
+                <Field label="To" value={to.city} code={to.code} />
+                <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
+              </View>
+              <View style={styles.fieldRow}>
+                <Field label="Depart" value="Dec 18" />
+                <Field label="Passengers" value="1 Adult" onPress={() => {}} />
+              </View>
+              <View style={styles.fieldRow}>
+                <Field label="Class" value="Economy" onPress={() => {}} />
+                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField]}>
+                  <Text style={styles.addFlightPlus}>＋</Text>
+                  <Text style={styles.addFlightText}>Add flight</Text>
+                </Pressable>
+              </View>
+              <Pressable onPress={() => {}} style={styles.searchButton}>
+                <Text style={styles.searchButtonText}>Search flights</Text>
+              </Pressable>
             </View>
-            <View style={styles.fieldRow}>
-              <Field label="Depart" value="Dec 18" />
-              <Field label="Return" value={tripType === 'One way' ? '—' : 'Dec 28'} />
-            </View>
-            <View style={styles.fieldRow}>
-              <Field label="Passengers" value="1 Adult" onPress={() => {}} />
-              <Field label="Class" value="Economy" onPress={() => {}} />
-            </View>
-            <Pressable onPress={() => {}} style={styles.searchButton}>
-              <Text style={styles.searchButtonText}>Search flights</Text>
-            </Pressable>
-          </View>
+          ) : (
+            <>
+              <View style={styles.route}>
+                <Field label="From" value={from.city} code={from.code} />
+                <Field label="To" value={to.city} code={to.code} />
+                <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
+              </View>
+              <View style={styles.fieldRow}>
+                <Field label="Depart" value="Dec 18" />
+                <Field label="Return" value={tripType === 'One way' ? '—' : 'Dec 28'} />
+              </View>
+              <View style={styles.fieldRow}>
+                <Field label="Passengers" value="1 Adult" onPress={() => {}} />
+                <Field label="Class" value="Economy" onPress={() => {}} />
+              </View>
+              <Pressable onPress={() => {}} style={styles.searchButton}>
+                <Text style={styles.searchButtonText}>Search flights</Text>
+              </Pressable>
+            </>
+          )}
 
           <View style={styles.quickRow}>
             <QuickAction icon="cellphone-check" label="Check-in" onPress={() => {}} />
@@ -214,10 +239,13 @@ const styles = StyleSheet.create({
   segmentItem: { flex: 1, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
   segmentActive: { backgroundColor: BLUE },
   segmentText: { color: MUTED, fontSize: 13, fontWeight: '700' },
-  searchCard: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, padding: 14, shadowColor: BLUE, shadowOpacity: .09, shadowRadius: 8, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
+  multiCityFields: { gap: 6 },
   route: { gap: 6, position: 'relative' },
   fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
   field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
+  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
+  addFlightPlus: { fontSize: 22, fontWeight: '600', color: BLUE },
+  addFlightText: { fontSize: 14, fontWeight: '700', color: BLUE },
   fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
   fieldValue: { fontSize: 18, fontWeight: '700', color: TEXT },
   code: { color: BLUE, fontSize: 14, fontWeight: '700' },
