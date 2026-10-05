@@ -30,10 +30,10 @@ const trips: Trip[] = [
   { id: '4', from: 'MIA', fromName: 'Miami', to: 'PAP', toName: 'Port-au-Prince', date: 'Aug 21', time: '5:25 PM', airline: 'American Airlines', status: 'Cancelled' },
 ];
 
-type Props = { onBack?: () => void; onHomePress?: () => void; onDealsPress?: () => void; onMorePress?: () => void };
+type Props = { onBack?: () => void; onHomePress?: () => void; onWalletPress?: () => void; onDealsPress?: () => void; onMorePress?: () => void };
 
-function BottomNav({ active, onHome, onTrips, onDeals, onMore }: { active: string; onHome: () => void; onTrips: () => void; onDeals: () => void; onMore: () => void }) {
-  const items = [['home-outline','Home',onHome],['briefcase-outline','My Trips',onTrips],['tag-outline','Deals',onDeals],['dots-horizontal-circle-outline','More',onMore]] as const;
+function BottomNav({ active, onHome, onWallet, onDeals, onMore }: { active: string; onHome: () => void; onWallet: () => void; onDeals: () => void; onMore: () => void }) {
+  const items = [['home-outline','Home',onHome],['wallet-outline','Wallet',onWallet],['tag-outline','Deals',onDeals],['dots-horizontal-circle-outline','More',onMore]] as const;
   return <View style={styles.bottomWrap}><View style={styles.bottomNav}>{items.map(([icon,label,onPress])=><Pressable key={label} onPress={onPress} style={styles.navItem}><View style={[styles.navIcon,active===label&&{backgroundColor:AQUA}]}><MaterialCommunityIcons name={icon} size={22} color={active===label?BLUE:MUTED}/></View><Text style={[styles.navLabel,active===label&&{color:BLUE}]}>{label}</Text></Pressable>)}</View></View>;
 }
 
@@ -45,7 +45,7 @@ function TripCard({ trip, onPress }: { trip: Trip; onPress: () => void }) {
   </Pressable>;
 }
 
-export default function FlyzMyTripsScreen({ onBack, onHomePress, onDealsPress, onMorePress }: Props) {
+export default function FlyzMyTripsScreen({ onBack, onHomePress, onWalletPress, onDealsPress, onMorePress }: Props) {
   const [status, setStatus] = useState<TripStatus>('Upcoming');
   const filtered = useMemo(() => trips.filter(t => t.status === status), [status]);
 
@@ -67,7 +67,7 @@ export default function FlyzMyTripsScreen({ onBack, onHomePress, onDealsPress, o
 
         {filtered.length ? filtered.map(trip => <TripCard key={trip.id} trip={trip} onPress={()=>{}}/>) : <View style={styles.empty}><MaterialCommunityIcons name="airplane-off" size={40} color={BLUE}/><Text style={styles.emptyTitle}>No {status.toLowerCase()} trips</Text><Text style={styles.emptyText}>Your {status.toLowerCase()} flight bookings will appear here.</Text></View>}
       </ScrollView>
-      <BottomNav active="My Trips" onHome={onHomePress ?? (()=>{})} onTrips={()=>{}} onDeals={onDealsPress ?? (()=>{})} onMore={onMorePress ?? (()=>{})}/>
+      <BottomNav active="My Trips" onHome={onHomePress ?? (()=>{})} onWallet={onWalletPress ?? (()=>{})} onDeals={onDealsPress ?? (()=>{})} onMore={onMorePress ?? (()=>{})}/>
     </LinearGradient>
   </View>;
 }
