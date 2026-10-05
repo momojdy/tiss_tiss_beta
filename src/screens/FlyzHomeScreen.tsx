@@ -226,7 +226,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
 const styles = StyleSheet.create({
   page: { flex: 1, backgroundColor: '#DCE6E8' },
   background: { flex: 1 },
-  scrollContent: { paddingTop: 18, paddingHorizontal: 16, paddingBottom: 110 },
+  scrollContent: { paddingTop: 100, paddingHorizontal: 16, paddingBottom: 110 },
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
