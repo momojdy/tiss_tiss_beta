@@ -108,14 +108,6 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const swap = () => { setFrom(to); setTo(from); };
 
   const sheetTranslateY = useRef(new Animated.Value(0)).current;
-
-  const closeAirportPicker = () => {
-    setAirportPicker(null);
-    setAirportSearch('');
-    sheetTranslateY.setValue(0);
-  };
-
-  const sheetTranslateY = useRef(new Animated.Value(0)).current;
   const reanimatedSheetY = useSharedValue(0);
 
   const closeAirportPicker = () => {
