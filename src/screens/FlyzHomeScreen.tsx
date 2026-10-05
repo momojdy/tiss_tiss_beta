@@ -305,8 +305,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={[styles.route, styles.multiCityRoute]}>
-                <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
-                <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
+                <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} flex={1} />
+                <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} flex={1} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
@@ -498,7 +498,7 @@ const styles = StyleSheet.create({
   multiFlightLabel: { fontSize: 13, fontWeight: '800', color: TEXT },
   removeFlightText: { fontSize: 12, fontWeight: '700', color: MUTED },
   route: { gap: 6, position: 'relative' },
-  multiCityRoute: { flexDirection: 'row' },
+  multiCityRoute: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
   field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
   addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
@@ -507,7 +507,7 @@ const styles = StyleSheet.create({
   fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
   fieldValue: { fontSize: 18, fontWeight: '700', color: TEXT },
   code: { color: BLUE, fontSize: 14, fontWeight: '700' },
-  swap: { position: 'absolute', right: 14, top: '50%', marginTop: -20, width: 40, height: 40, borderRadius: 20, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .35, shadowRadius: 6, elevation: 4 },
+  swap: { width: 40, height: 40, borderRadius: 20, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .35, shadowRadius: 6, elevation: 4 },
   searchButton: { marginTop: 14, width: '100%', height: 54, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .28, shadowRadius: 11, elevation: 3 },
   searchButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   quickRow: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 20, paddingBottom: 4 },
