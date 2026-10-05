@@ -112,7 +112,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
       .then((res) => res.text())
       .then((text) => {
         if (cancelled) return;
-        const parsed = text.split(/\\r?\\n/).map((line) => {
+        const parsed = text.split(/\r?\n/).map((line) => {
           const fields = line.split(',');
           const clean = (value: string) => value.replace(/^"|"$/g, '').replace(/""/g, '"');
           return {
