@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import { runOnJS, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -113,76 +115,37 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
     sheetTranslateY.setValue(0);
   };
 
-  const sheetTopY = useRef(0);
-  const sheetDragStartY = useRef(0);
-  const sheetDragEnabled = useRef(false);
+  const sheetTranslateY = useRef(new Animated.Value(0)).current;
+  const reanimatedSheetY = useSharedValue(0);
 
-  const sheetPanResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => false,
+  const closeAirportPicker = () => {
+    setAirportPicker(null);
+    setAirportSearch('');
+    sheetTranslateY.setValue(0);
+    reanimatedSheetY.value = 0;
+  };
 
-      onStartShouldSetPanResponderCapture: (evt) => {
-        sheetDragStartY.current = evt.nativeEvent.pageY;
-        sheetDragEnabled.current = false;
-        return false;
-      },
-
-      onMoveShouldSetPanResponder: () => false,
-
-      onMoveShouldSetPanResponderCapture: (_, g) => {
-        const startYInSheet = sheetDragStartY.current - sheetTopY.current;
-        sheetDragEnabled.current =
-          startYInSheet >= 0 &&
-          startYInSheet <= 118 &&
-          g.dy > 4 &&
-          Math.abs(g.dy) > Math.abs(g.dx);
-
-        return sheetDragEnabled.current;
-      },
-
-      onPanResponderTerminationRequest: () => false,
-
-      onPanResponderGrant: () => {
-        sheetTranslateY.stopAnimation();
-      },
-
-      onPanResponderMove: (_, g) => {
-        if (sheetDragEnabled.current) {
-          sheetTranslateY.setValue(Math.max(0, g.dy));
-        }
-      },
-
-      onPanResponderRelease: (_, g) => {
-        if (!sheetDragEnabled.current) return;
-
-        if (g.dy > 50 || g.vy > 0.8) {
-          Animated.timing(sheetTranslateY, {
-            toValue: 700,
-            duration: 180,
-            useNativeDriver: true,
-          }).start(() => closeAirportPicker());
-        } else {
-          Animated.spring(sheetTranslateY, {
-            toValue: 0,
-            useNativeDriver: true,
-            tension: 70,
-            friction: 10,
-          }).start();
-        }
-      },
-
-      onPanResponderTerminate: () => {
-        if (!sheetDragEnabled.current) return;
-
-        Animated.spring(sheetTranslateY, {
-          toValue: 0,
-          useNativeDriver: true,
-          tension: 70,
-          friction: 10,
-        }).start();
-      },
+  const airportSheetGesture = Gesture.Pan()
+    .activeOffsetY(8)
+    .failOffsetX([-20, 20])
+    .onUpdate((event) => {
+      if (event.translationY > 0) {
+        reanimatedSheetY.value = event.translationY;
+      }
     })
-  ).current;
+    .onEnd((event) => {
+      if (event.translationY > 50 || event.velocityY > 800) {
+        reanimatedSheetY.value = withTiming(700, { duration: 180 }, (finished) => {
+          if (finished) runOnJS(closeAirportPicker)();
+        });
+      } else {
+        reanimatedSheetY.value = withSpring(0, { damping: 18, stiffness: 180 });
+      }
+    });
+
+  const airportSheetAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: reanimatedSheetY.value }],
+  }));
 
   useEffect(() => {
     if (airportPicker === null || airports.length) return;
@@ -345,14 +308,11 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
         <Modal visible={airportPicker !== null} transparent animationType="slide" onRequestClose={closeAirportPicker}>
         <KeyboardAvoidingView style={styles.keyboardAvoid} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.modalBackdrop}>
-          <Animated.View
-            style={[styles.airportSheet, { transform: [{ translateY: sheetTranslateY }] }]}
-            onLayout={(event) => {
-              sheetTopY.current = event.nativeEvent.layout.y;
-            }}
-            {...sheetPanResponder.panHandlers}
-          >
-            <View style={styles.sheetHeader}>
+          <GestureDetector gesture={airportSheetGesture}>
+            <Animated.View
+              style={[styles.airportSheet, airportSheetAnimatedStyle]}
+            >
+              <View style={styles.sheetHeader}>
               <View style={{ flex: 1 }}><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Search any airport worldwide</Text></View>
               <Pressable onPress={closeAirportPicker} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
             </View>
@@ -368,7 +328,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport} · {airport.country}</Text></View>
               </Pressable>)}
             </ScrollView>
-          </Animated.View>
+            </Animated.View>
+          </GestureDetector>
         </View>
         </KeyboardAvoidingView>
       </Modal>
