@@ -311,7 +311,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
-                <Field label="Passengers" value={passengers} onPress={() => setSelector('passengers')} />
+                <Field label="Passengers" value="1 Adult" onPress={() => setSelector('passengers')} />
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
@@ -334,10 +334,6 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                     <Field label="From" value={secondFrom.city || 'Select departure'} code={secondFrom.code} onPress={() => { setAirportPicker('secondFrom'); setAirportSearch(''); }} />
                     <Field label="To" value={secondTo.city || 'Select destination'} code={secondTo.code} onPress={() => { setAirportPicker('secondTo'); setAirportSearch(''); }} />
                   </View>
-                  <View style={styles.fieldRow}>
-                    <Field label="Depart" value={formatDate(secondDepartDate)} onPress={() => openCalendar('secondDepart')} />
-                    <Field label="Passengers" value="1 Adult" onPress={() => {}} />
-                  </View>
                 </>
               )}
               <Pressable onPress={() => {
@@ -345,7 +341,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                   Alert.alert('Add another flight', 'Add a second departure and destination, or choose Round trip or One way.');
                   return;
                 }
-                onSearch?.({ from, to, departDate, passengers, cabin, tripType, secondFrom, secondTo, secondDepartDate });
+                onSearch?.({ from, to, departDate, passengers, cabin, tripType, secondFrom, secondTo });
               }} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
