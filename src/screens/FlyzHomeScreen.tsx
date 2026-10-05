@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Animated, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
+import { Alert, Animated, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { runOnJS, useSharedValue, useAnimatedStyle, withSpring, withTiming } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -106,7 +106,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
   const [to, setTo] = useState({ city: 'Miami', code: 'MIA' });
-  const [airportPicker, setAirportPicker] = useState<'from' | 'to' | null>(null);
+  const [airportPicker, setAirportPicker] = useState<'from' | 'to' | 'secondFrom' | 'secondTo' | null>(null);
   const [airportSearch, setAirportSearch] = useState('');
   const [airports, setAirports] = useState<Array<{ city: string; code: string; airport: string; country: string }>>([]);
   const [airportsLoading, setAirportsLoading] = useState(false);
@@ -114,6 +114,9 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [returnDate, setReturnDate] = useState(new Date(2026, 11, 28));
   const [calendarPicker, setCalendarPicker] = useState<'depart' | 'return' | null>(null);
   const [calendarMonth, setCalendarMonth] = useState(new Date(2026, 11, 1));
+  const [multiCitySecondAdded, setMultiCitySecondAdded] = useState(false);
+  const [secondFrom, setSecondFrom] = useState({ city: '', code: '' });
+  const [secondTo, setSecondTo] = useState({ city: '', code: '' });
 
   const swap = () => { setFrom(to); setTo(from); };
 
@@ -127,6 +130,20 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   };
 
   const closeCalendar = () => setCalendarPicker(null);
+
+  const getDailyFare = (airportCode: string, date: Date) => {
+    const seed = [...airportCode].reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    const daySeed = date.getFullYear() * 37 + (date.getMonth() + 1) * 17 + date.getDate() * 13;
+    const seasonal = date.getMonth() === 11 ? 35 : date.getMonth() === 0 ? 20 : 0;
+    const variation = Math.abs((seed * 31 + daySeed * 7) % 120);
+    return 180 + (seed % 70) + variation + seasonal;
+  };
+
+  const isDateInRange = (date: Date) => {
+    if (tripType !== 'Round trip' || calendarPicker !== 'return') return false;
+    const day = startOfDay(date).getTime();
+    return day >= startOfDay(departDate).getTime() && day <= startOfDay(returnDate).getTime();
+  };
 
   const selectDate = (date: Date) => {
     if (calendarPicker === 'depart') {
@@ -143,7 +160,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
     }
     if (startOfDay(date) < startOfDay(departDate)) return;
     setReturnDate(date);
-    setCalendarPicker(null);
+    setCalendarPicker('return');
   };
 
   const calendarDays = useMemo(() => {
@@ -221,6 +238,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const selectAirport = (airport: typeof airports[number]) => {
     if (airportPicker === 'from') setFrom({ city: airport.city, code: airport.code });
     if (airportPicker === 'to') setTo({ city: airport.city, code: airport.code });
+    if (airportPicker === 'secondFrom') setSecondFrom({ city: airport.city, code: airport.code });
+    if (airportPicker === 'secondTo') setSecondTo({ city: airport.city, code: airport.code });
     setAirportPicker(null);
   };
 
@@ -286,12 +305,34 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Class" value="Economy" onPress={() => {}} />
-                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField]}>
-                  <Text style={styles.addFlightPlus}>＋</Text>
-                  <Text style={styles.addFlightText}>Add flight</Text>
-                </Pressable>
+                {!multiCitySecondAdded && (
+                  <Pressable onPress={() => setMultiCitySecondAdded(true)} style={[styles.field, styles.addFlightField]}>
+                    <Text style={styles.addFlightPlus}>＋</Text>
+                    <Text style={styles.addFlightText}>Add flight</Text>
+                  </Pressable>
+                )}
               </View>
-              <Pressable onPress={() => {}} style={styles.searchButton}>
+              {multiCitySecondAdded && (
+                <>
+                  <View style={styles.multiFlightDivider}>
+                    <Text style={styles.multiFlightLabel}>Flight 2</Text>
+                    <Pressable onPress={() => { setMultiCitySecondAdded(false); setSecondFrom({ city: '', code: '' }); setSecondTo({ city: '', code: '' }); }} hitSlop={8}>
+                      <Text style={styles.removeFlightText}>Remove</Text>
+                    </Pressable>
+                  </View>
+                  <View style={styles.route}>
+                    <Field label="From" value={secondFrom.city || 'Select departure'} code={secondFrom.code} onPress={() => { setAirportPicker('secondFrom'); setAirportSearch(''); }} />
+                    <Field label="To" value={secondTo.city || 'Select destination'} code={secondTo.code} onPress={() => { setAirportPicker('secondTo'); setAirportSearch(''); }} />
+                  </View>
+                </>
+              )}
+              <Pressable onPress={() => {
+                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code) {
+                  Alert.alert('Add another flight', 'Add a second departure and destination, or choose Round trip or One way.');
+                  return;
+                }
+                Alert.alert('Search flights', 'Your multi-city search is ready.');
+              }} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
             </View>
@@ -310,7 +351,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <Field label="Passengers" value="1 Adult" onPress={() => {}} />
                 <Field label="Class" value="Economy" onPress={() => {}} />
               </View>
-              <Pressable onPress={() => {}} style={styles.searchButton}>
+              <Pressable onPress={() => Alert.alert('Search flights', tripType === 'One way' ? 'Your one-way search is ready.' : 'Your round-trip search is ready.')} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
             </>
@@ -391,15 +432,146 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 const key = dateKey(date);
                 const selected = key === dateKey(calendarPicker === 'depart' ? departDate : returnDate);
                 const beforeReturn = calendarPicker === 'return' && startOfDay(date) < startOfDay(departDate);
+                const inRange = isDateInRange(date);
+                const isRangeStart = inRange && key === dateKey(departDate);
+                const isRangeEnd = inRange && key === dateKey(returnDate);
+                const showFare = tripType === 'One way' && calendarPicker === 'depart';
+                const fare = showFare ? getDailyFare(from.code, date) : null;
                 return (
                   <Pressable key={key} disabled={beforeReturn} onPress={() => selectDate(date)} style={styles.calendarCell}>
-                    <View style={[styles.dateCircle, selected && styles.dateSelected, beforeReturn && styles.dateDisabled]}>
-                      <Text style={[styles.dateText, selected && styles.dateSelectedText, beforeReturn && styles.dateDisabledText]}>{date.getDate()}</Text>
+                    {inRange && <View style={[styles.rangeBand, isRangeStart && styles.rangeBandStart, isRangeEnd && styles.rangeBandEnd]} />}
+                    <View style={[styles.dateCircle, selected && styles.dateSelected, inRange && !selected && styles.dateInRangeCircle, beforeReturn && styles.dateDisabled]}>
+                      <Text style={[styles.dateText, selected && styles.dateSelectedText, inRange && !selected && styles.dateInRangeText, beforeReturn && styles.dateDisabledText]}>{date.getDate()}</Text>
                     </View>
+                    {fare !== null && <Text style={styles.fareText}>{'
+          </View>
+        </View>
+      </Modal>
+      <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+      </LinearGradient>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  page: { flex: 1, backgroundColor: '#DCE6E8' },
+  background: { flex: 1 },
+  scrollContent: { paddingTop: 0, paddingHorizontal: 16, paddingBottom: 110 },
+  header: { width: '100%', height: 100, paddingHorizontal: 0, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
+  headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  logo: { fontSize: 26, fontWeight: '800', letterSpacing: -0.6, color: BLUE },
+  headerActions: { flexDirection: 'row', gap: 8 },
+  roundButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  hero: { marginTop: 30, marginHorizontal: 4, marginBottom: 18, flexDirection: 'row', alignItems: 'flex-start' },
+  heroTitle: { fontSize: 31, lineHeight: 34, fontWeight: '800', letterSpacing: -0.8, color: TEXT, marginBottom: 6 },
+  heroSub: { fontSize: 14, lineHeight: 20, color: MUTED, maxWidth: 300 },
+  heroPlane: { paddingRight: 20 },
+  segment: { flexDirection: 'row', backgroundColor: 'rgba(255,255,255,.6)', borderRadius: 999, padding: 4, marginBottom: 12 },
+  segmentItem: { flex: 1, height: 40, borderRadius: 999, alignItems: 'center', justifyContent: 'center' },
+  segmentActive: { backgroundColor: BLUE },
+  segmentText: { color: MUTED, fontSize: 13, fontWeight: '700' },
+  multiCityFields: { gap: 6 },
+  multiFlightDivider: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 4, paddingTop: 8, paddingBottom: 2 },
+  multiFlightLabel: { fontSize: 13, fontWeight: '800', color: TEXT },
+  removeFlightText: { fontSize: 12, fontWeight: '700', color: MUTED },
+  route: { gap: 6, position: 'relative' },
+  fieldRow: { flexDirection: 'row', gap: 6, marginTop: 6 },
+  field: { backgroundColor: 'rgba(255,255,255,.82)', borderRadius: 18, paddingVertical: 13, paddingHorizontal: 18, minHeight: 66 },
+  addFlightField: { flexDirection: 'row', alignItems: 'center', gap: 8, justifyContent: 'center' },
+  addFlightPlus: { fontSize: 22, fontWeight: '600', color: BLUE },
+  addFlightText: { fontSize: 14, fontWeight: '700', color: BLUE },
+  fieldLabel: { fontSize: 11, letterSpacing: .6, textTransform: 'uppercase', color: MUTED, fontWeight: '700', marginBottom: 3 },
+  fieldValue: { fontSize: 18, fontWeight: '700', color: TEXT },
+  code: { color: BLUE, fontSize: 14, fontWeight: '700' },
+  swap: { position: 'absolute', right: 14, top: '50%', marginTop: -20, width: 40, height: 40, borderRadius: 20, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .35, shadowRadius: 6, elevation: 4 },
+  searchButton: { marginTop: 14, width: '100%', height: 54, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', shadowColor: BLUE, shadowOpacity: .28, shadowRadius: 11, elevation: 3 },
+  searchButtonText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  quickRow: { flexDirection: 'row', justifyContent: 'space-around', paddingTop: 20, paddingBottom: 4 },
+  quickAction: { width: '23%', alignItems: 'center', gap: 8 },
+  quickIcon: { width: 54, height: 54, borderRadius: 27, backgroundColor: AQUA, alignItems: 'center', justifyContent: 'center' },
+  quickLabel: { fontSize: 11.5, lineHeight: 15, fontWeight: '700', color: TEXT, textAlign: 'center' },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'baseline', paddingHorizontal: 4, paddingTop: 26, paddingBottom: 12 },
+  sectionTitle: { fontSize: 20, fontWeight: '800', letterSpacing: -.4, color: TEXT },
+  sectionLink: { fontSize: 13, fontWeight: '600', color: BLUE },
+  tripCard: { marginHorizontal: 4, backgroundColor: 'rgba(202,232,232,.55)', borderRadius: 20, padding: 16 },
+  tripLegs: { flexDirection: 'row', alignItems: 'center', gap: 12 },
+  airport: { fontSize: 26, fontWeight: '800', letterSpacing: -.5, color: TEXT },
+  airportName: { fontSize: 12, color: MUTED },
+  tripLine: { flex: 1, height: 28, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  line: { position: 'absolute', left: 0, right: 0, top: 13, height: 2, backgroundColor: BORDER },
+  tripPlane: { zIndex: 2, backgroundColor: 'transparent', paddingHorizontal: 0 },
+  tripMeta: { flexDirection: 'row', alignItems: 'center', marginTop: 14 },
+  tripDate: { fontSize: 13, fontWeight: '700', color: TEXT },
+  tripAirline: { fontSize: 12, color: MUTED, marginTop: 3 },
+  confirmed: { backgroundColor: BLUE, paddingHorizontal: 14, paddingVertical: 7, borderRadius: 999 },
+  confirmedText: { color: '#fff', fontSize: 12, fontWeight: '700' },
+  destinationRow: { gap: 12, paddingHorizontal: 4, paddingBottom: 14 },
+  destinationCard: { height: 184, backgroundColor: '#fff', borderRadius: 22, overflow: 'hidden', shadowColor: BLUE, shadowOpacity: .12, shadowRadius: 10, elevation: 3 },
+  destinationArt: { height: 104, alignItems: 'center', justifyContent: 'center' },
+  cityArt: { height: 64, flexDirection: 'row', alignItems: 'flex-end', gap: 3 },
+  building: { width: 17, borderRadius: 1 },
+  destinationArrow: { position: 'absolute', right: 10, top: 88, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', shadowColor: '#000', shadowOpacity: .14, shadowRadius: 5, elevation: 2 },
+  destinationText: { padding: 12 },
+  destinationName: { fontSize: 16, fontWeight: '700', color: TEXT },
+  destinationMeta: { marginTop: 4, fontSize: 11.5, color: MUTED, fontWeight: '500' },
+  keyboardAvoid: { flex: 1 },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(14,26,58,.35)', justifyContent: 'flex-end' },
+  airportSheet: { maxHeight: '88%', backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarSheet: { backgroundColor: '#fff', borderTopLeftRadius: 28, borderTopRightRadius: 28, paddingHorizontal: 18, paddingTop: 18, paddingBottom: 28 },
+  calendarMonthRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, marginBottom: 14 },
+  calendarMonthTitle: { fontSize: 17, fontWeight: '800', color: TEXT },
+  calendarArrow: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  weekRow: { flexDirection: 'row', marginBottom: 6 },
+  weekDay: { flex: 1, textAlign: 'center', fontSize: 11, fontWeight: '800', color: MUTED },
+  calendarGrid: { flexDirection: 'row', flexWrap: 'wrap' },
+  calendarCell: { width: '14.2857%', height: 60, alignItems: 'center', justifyContent: 'center', position: 'relative' },
+  rangeBand: { position: 'absolute', left: 0, right: 0, top: 11, height: 38, backgroundColor: AQUA },
+  rangeBandStart: { left: '50%', borderTopLeftRadius: 19, borderBottomLeftRadius: 19 },
+  rangeBandEnd: { right: '50%', borderTopRightRadius: 19, borderBottomRightRadius: 19 },
+  dateCircle: { width: 38, height: 38, borderRadius: 19, alignItems: 'center', justifyContent: 'center', zIndex: 2 },
+  dateSelected: { backgroundColor: BLUE },
+  dateInRangeCircle: { backgroundColor: AQUA },
+  dateText: { fontSize: 14, fontWeight: '700', color: TEXT },
+  dateInRangeText: { color: TEXT },
+  fareText: { position: 'absolute', bottom: 0, fontSize: 9, lineHeight: 11, fontWeight: '800', color: BLUE, zIndex: 3 },
+  fareNote: { marginTop: 2, fontSize: 10.5, lineHeight: 15, color: MUTED, textAlign: 'center' },
+  doneButton: { marginTop: 14, height: 50, borderRadius: 999, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center' },
+  doneButtonText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  dateSelectedText: { color: '#fff' },
+  dateDisabled: { opacity: .3 },
+  dateDisabledText: { color: MUTED },
+  sheetHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 },
+  sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
+  sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
+  closeButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  airportSearch: { height: 50, borderRadius: 16, backgroundColor: '#F2F7F7', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  airportSearchInput: { flex: 1, marginLeft: 9, fontSize: 14, color: TEXT },
+  airportLoading: { paddingVertical: 30, alignItems: 'center' },
+  airportLoadingText: { fontSize: 13, color: MUTED },
+  airportOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#E6EEF0', gap: 12 },
+  airportIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5F5', alignItems: 'center', justifyContent: 'center' },
+  airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
+  airportCode: { color: BLUE, fontSize: 14 },
+  airportName: { marginTop: 3, fontSize: 12, color: MUTED },
+  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
+  bottomNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: .13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+  navItem: { width: 68, height: 46, alignItems: 'center', justifyContent: 'flex-end' },
+  navIcon: { width: 30, height: 29, alignItems: 'center', justifyContent: 'center' },
+  navLabel: { paddingTop: 4, fontSize: 10.5, lineHeight: 13, fontWeight: '500', color: '#1F1E1E', textAlign: 'center' },
+});}{fare}</Text>}
                   </Pressable>
                 );
               })}
             </View>
+            {tripType === 'One way' && calendarPicker === 'depart' && (
+              <Text style={styles.fareNote}>Cheapest shown for {from.city} ({from.code}) · final fare confirmed in flight results</Text>
+            )}
+            {tripType === 'Round trip' && calendarPicker === 'return' && (
+              <Pressable onPress={closeCalendar} style={styles.doneButton}>
+                <Text style={styles.doneButtonText}>Done</Text>
+              </Pressable>
+            )}
           </View>
         </View>
       </Modal>
