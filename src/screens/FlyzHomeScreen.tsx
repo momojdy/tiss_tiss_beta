@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, Text, View, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { StatusBar } from 'expo-status-bar';
@@ -99,18 +99,45 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
   const [to, setTo] = useState({ city: 'Miami', code: 'MIA' });
   const [airportPicker, setAirportPicker] = useState<'from' | 'to' | null>(null);
+  const [airportSearch, setAirportSearch] = useState('');
+  const [airports, setAirports] = useState<Array<{ city: string; code: string; airport: string }>>([]);
+  const [airportsLoading, setAirportsLoading] = useState(false);
 
   const swap = () => { setFrom(to); setTo(from); };
-  const airports = [
-    { city: 'Port-au-Prince', code: 'PAP', airport: 'Toussaint Louverture International' },
-    { city: 'Miami', code: 'MIA', airport: 'Miami International' },
-    { city: 'New York', code: 'JFK', airport: 'John F. Kennedy International' },
-    { city: 'Montreal', code: 'YUL', airport: 'Montréal–Trudeau International' },
-    { city: 'Santo Domingo', code: 'SDQ', airport: 'Las Américas International' },
-    { city: 'Paris', code: 'CDG', airport: 'Charles de Gaulle' },
-    { city: 'Fort Lauderdale', code: 'FLL', airport: 'Fort Lauderdale–Hollywood International' },
-    { city: 'Atlanta', code: 'ATL', airport: 'Hartsfield–Jackson Atlanta International' },
-  ];
+  useEffect(() => {
+    if (airportPicker === null || airports.length) return;
+    let cancelled = false;
+    setAirportsLoading(true);
+    fetch('https://raw.githubusercontent.com/jpatokal/openflights/master/data/airports.dat')
+      .then((res) => res.text())
+      .then((text) => {
+        if (cancelled) return;
+        const parsed = text.split(/\\r?\\n/).map((line) => {
+          const fields = line.split(',');
+          const clean = (value: string) => value.replace(/^"|"$/g, '').replace(/""/g, '"');
+          return {
+            city: clean(fields[2] || ''),
+            code: clean(fields[4] || ''),
+            airport: clean(fields[1] || ''),
+          };
+        }).filter((a) => a.code && a.city && a.airport);
+        setAirports(parsed);
+      })
+      .catch(() => {
+        if (!cancelled) setAirports([]);
+      })
+      .finally(() => {
+        if (!cancelled) setAirportsLoading(false);
+      });
+    return () => { cancelled = true; };
+  }, [airportPicker, airports.length]);
+
+  const filteredAirports = useMemo(() => {
+    const query = airportSearch.trim().toLowerCase();
+    if (!query) return airports.slice(0, 100);
+    return airports.filter((a) => `${a.city} ${a.code} ${a.airport}`.toLowerCase().includes(query)).slice(0, 100);
+  }, [airports, airportSearch]);
+
   const selectAirport = (airport: typeof airports[number]) => {
     if (airportPicker === 'from') setFrom({ city: airport.city, code: airport.code });
     if (airportPicker === 'to') setTo({ city: airport.city, code: airport.code });
@@ -169,8 +196,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={styles.route}>
-                <Field label="From" value={from.city} code={from.code} onPress={() => setAirportPicker('from')} />
-                <Field label="To" value={to.city} code={to.code} onPress={() => setAirportPicker('to')} />
+                <Field label="From" value={from.city} code={from.code} onPress={() => setAirportPicker('from'); setAirportSearch('')} />
+                <Field label="To" value={to.city} code={to.code} onPress={() => setAirportPicker('to'); setAirportSearch('')} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
@@ -238,11 +265,17 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
         <View style={styles.modalBackdrop}>
           <View style={styles.airportSheet}>
             <View style={styles.sheetHeader}>
-              <View><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Select an airport</Text></View>
-              <Pressable onPress={() => setAirportPicker(null)} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+              <View style={{ flex: 1 }}><Text style={styles.sheetTitle}>{airportPicker === 'from' ? 'Where are you flying from?' : 'Where are you flying to?'}</Text><Text style={styles.sheetSub}>Search any airport worldwide</Text></View>
+              <Pressable onPress={() => { setAirportPicker(null); setAirportSearch(''); }} style={styles.closeButton}><MaterialCommunityIcons name="close" size={22} color={TEXT} /></Pressable>
+            </View>
+            <View style={styles.airportSearch}>
+              <MaterialCommunityIcons name="magnify" size={21} color={MUTED} />
+              <TextInput value={airportSearch} onChangeText={setAirportSearch} placeholder="Search city, airport or code" placeholderTextColor={MUTED} style={styles.airportSearchInput} autoCapitalize="none" autoCorrect={false} />
+              {airportSearch.length > 0 && <Pressable onPress={() => setAirportSearch('')}><MaterialCommunityIcons name="close-circle" size={19} color={MUTED} /></Pressable>}
             </View>
             <ScrollView showsVerticalScrollIndicator={false}>
-              {airports.map((airport) => <Pressable key={airport.code} onPress={() => selectAirport(airport)} style={styles.airportOption}>
+              {airportsLoading ? <View style={styles.airportLoading}><Text style={styles.airportLoadingText}>Loading airports worldwide…</Text></View> :
+              filteredAirports.map((airport) => <Pressable key={airport.code + airport.airport} onPress={() => selectAirport(airport)} style={styles.airportOption}>
                 <View style={styles.airportIcon}><MaterialCommunityIcons name="airplane" size={20} color={BLUE} /></View>
                 <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport}</Text></View>
               </Pressable>)}
@@ -321,6 +354,10 @@ const styles = StyleSheet.create({
   sheetTitle: { fontSize: 20, fontWeight: '800', color: TEXT },
   sheetSub: { marginTop: 3, fontSize: 13, color: MUTED },
   closeButton: { width: 40, height: 40, borderRadius: 20, backgroundColor: '#EEF4F5', alignItems: 'center', justifyContent: 'center' },
+  airportSearch: { height: 50, borderRadius: 16, backgroundColor: '#F2F7F7', flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, marginBottom: 8 },
+  airportSearchInput: { flex: 1, marginLeft: 9, fontSize: 14, color: TEXT },
+  airportLoading: { paddingVertical: 30, alignItems: 'center' },
+  airportLoadingText: { fontSize: 13, color: MUTED },
   airportOption: { flexDirection: 'row', alignItems: 'center', paddingVertical: 13, borderBottomWidth: 1, borderBottomColor: '#E6EEF0', gap: 12 },
   airportIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: '#EAF5F5', alignItems: 'center', justifyContent: 'center' },
   airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
