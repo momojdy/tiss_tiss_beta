@@ -100,7 +100,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const [to, setTo] = useState({ city: 'Miami', code: 'MIA' });
   const [airportPicker, setAirportPicker] = useState<'from' | 'to' | null>(null);
   const [airportSearch, setAirportSearch] = useState('');
-  const [airports, setAirports] = useState<Array<{ city: string; code: string; airport: string }>>([]);
+  const [airports, setAirports] = useState<Array<{ city: string; code: string; airport: string; country: string }>>([]);
   const [airportsLoading, setAirportsLoading] = useState(false);
 
   const swap = () => { setFrom(to); setTo(from); };
@@ -119,6 +119,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
             city: clean(fields[2] || ''),
             code: clean(fields[4] || ''),
             airport: clean(fields[1] || ''),
+            country: clean(fields[3] || ''),
           };
         }).filter((a) => a.code && a.city && a.airport);
         setAirports(parsed);
@@ -135,7 +136,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
   const filteredAirports = useMemo(() => {
     const query = airportSearch.trim().toLowerCase();
     if (!query) return airports.slice(0, 100);
-    return airports.filter((a) => `${a.city} ${a.code} ${a.airport}`.toLowerCase().includes(query)).slice(0, 100);
+    return airports.filter((a) => `${a.city} ${a.code} ${a.airport} ${a.country}`.toLowerCase().includes(query)).slice(0, 100);
   }, [airports, airportSearch]);
 
   const selectAirport = (airport: typeof airports[number]) => {
@@ -278,7 +279,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
               {airportsLoading ? <View style={styles.airportLoading}><Text style={styles.airportLoadingText}>Loading airports worldwide…</Text></View> :
               filteredAirports.map((airport) => <Pressable key={airport.code + airport.airport} onPress={() => selectAirport(airport)} style={styles.airportOption}>
                 <View style={styles.airportIcon}><MaterialCommunityIcons name="airplane" size={20} color={BLUE} /></View>
-                <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport}</Text></View>
+                <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport} · {airport.country}</Text></View>
               </Pressable>)}
             </ScrollView>
           </View>
