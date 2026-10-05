@@ -69,11 +69,11 @@ function QuickAction({ icon, label, onPress }: { icon: React.ComponentProps<type
   );
 }
 
-function BottomNav({ active, onHome, onWallet, onDeals, onMore }: { active: string; onHome: () => void; onWallet: () => void; onDeals: () => void; onMore: () => void }) {
+function BottomNav({ active, onHome, onMoments, onWallet, onMore }: { active: string; onHome: () => void; onMoments: () => void; onWallet: () => void; onMore: () => void }) {
   const items = [
     ['home-outline', 'Home', onHome],
+    ['star-four-points-outline', 'Moments', onMoments],
     ['wallet-outline', 'Wallet', onWallet],
-    ['tag-outline', 'Deals', onDeals],
     ['dots-horizontal-circle-outline', 'More', onMore],
   ] as const;
   return (
