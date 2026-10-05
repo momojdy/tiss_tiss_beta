@@ -305,48 +305,25 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           {isMultiCity ? (
             <View style={styles.multiCityFields}>
               <View style={styles.route}>
-                <Field label="From" value={from.city} code={from.code} onPress={() => { setAirportPicker('from'); setAirportSearch(''); }} />
-                <Field label="To" value={to.city} code={to.code} onPress={() => { setAirportPicker('to'); setAirportSearch(''); }} />
+                <Field label="From" value={from.city} code={from.code} />
+                <Field label="To" value={to.city} code={to.code} />
                 <Pressable onPress={swap} style={styles.swap}><MaterialCommunityIcons name="swap-vertical" size={20} color="#fff" /></Pressable>
               </View>
               <View style={styles.fieldRow}>
-                <Field label="Depart" value={formatDate(departDate)} onPress={() => openCalendar('depart')} />
+                <Field label="Depart" value="Dec 18" />
                 <Field label="Passengers" value="1 Adult" onPress={() => setSelector('passengers')} />
               </View>
               <View style={styles.fieldRow}>
                 <Field label="Class" value={cabin} onPress={() => setSelector('cabin')} />
-                {!multiCitySecondAdded && (
-                  <Pressable onPress={() => setMultiCitySecondAdded(true)} style={[styles.field, styles.addFlightField]}>
-                    <Text style={styles.addFlightPlus}>＋</Text>
-                    <Text style={styles.addFlightText}>Add flight</Text>
-                  </Pressable>
-                )}
+                <Pressable onPress={() => {}} style={[styles.field, styles.addFlightField]}>
+                  <Text style={styles.addFlightPlus}>＋</Text>
+                  <Text style={styles.addFlightText}>Add flight</Text>
+                </Pressable>
               </View>
-              {multiCitySecondAdded && (
-                <>
-                  <View style={styles.multiFlightDivider}>
-                    <Text style={styles.multiFlightLabel}>Flight 2</Text>
-                    <Pressable onPress={() => { setMultiCitySecondAdded(false); setSecondFrom({ city: '', code: '' }); setSecondTo({ city: '', code: '' }); }} hitSlop={8}>
-                      <Text style={styles.removeFlightText}>Remove</Text>
-                    </Pressable>
-                  </View>
-                  <View style={styles.route}>
-                    <Field label="From" value={secondFrom.city || 'Select departure'} code={secondFrom.code} onPress={() => { setAirportPicker('secondFrom'); setAirportSearch(''); }} />
-                    <Field label="To" value={secondTo.city || 'Select destination'} code={secondTo.code} onPress={() => { setAirportPicker('secondTo'); setAirportSearch(''); }} />
-                  </View>
-                </>
-              )}
-              <Pressable onPress={() => {
-                if (!multiCitySecondAdded || !secondFrom.code || !secondTo.code) {
-                  Alert.alert('Add another flight', 'Add a second departure and destination, or choose Round trip or One way.');
-                  return;
-                }
-                onSearch?.({ from, to, departDate, passengers, cabin, tripType, secondFrom, secondTo });
-              }} style={styles.searchButton}>
+              <Pressable onPress={() => {}} style={styles.searchButton}>
                 <Text style={styles.searchButtonText}>Search flights</Text>
               </Pressable>
-            </View>
-          ) : (
+            </View>          ) : (
             <>
               <View style={styles.route}>
                 <Field label="From" value={from.city} code={from.code} onPress={() => setAirportPicker('from')} />
