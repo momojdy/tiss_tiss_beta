@@ -37,11 +37,11 @@ const ILL: ((t: Th) => React.ReactNode)[] = [
   t => (<><Ctr t={t} x={30} y={18} w={80} h={57} /><Path d="M8 76h124l-14 16H22z" {...Fa(t)} /><Path d="M6 98q8-4 16 0t16 0t16 0t16 0t16 0t16 0t16 0" {...Wl(t)} /></>),
 ];
 const KONSOLISS_HOW_IMAGES = [
-  require('../../assets/konsoliss/how-it-works/step1.PNG'),
-  require('../../assets/konsoliss/how-it-works/step2.PNG'),
-  require('../../assets/konsoliss/how-it-works/step3.PNG'),
-  require('../../assets/konsoliss/how-it-works/step4.PNG'),
-  require('../../assets/konsoliss/how-it-works/step5.PNG'),
+  require('../../assets/konsoliss/how-it-works/step1.png'),
+  require('../../assets/konsoliss/how-it-works/step2.png'),
+  require('../../assets/konsoliss/how-it-works/step3.png'),
+  require('../../assets/konsoliss/how-it-works/step4.png'),
+  require('../../assets/konsoliss/how-it-works/step5.png'),
 ];
 const STEPS = [
   ['Book Space', 'Reserve the CBM you need for your shipment. Starting from 0.02 CBM.'],
