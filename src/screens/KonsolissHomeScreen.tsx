@@ -21,6 +21,9 @@ const P: Record<string, string> = {
   ch: 'M9 6l6 6-6 6',
   back: 'M15 6l-6 6 6 6',
   home: 'M3 10.5L12 3l9 7.5v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z',
+  warehouse: 'M3 9l9-5 9 5v11H3zM3 9h18M7 20v-7h10v7M7 9v4M17 9v4',
+  consolidated: 'M4 7l8-4 8 4-8 4zM4 7v10l8 4 8-4V7M12 11v10M8 9l8-4M16 9l-8-4',
+  hub: 'M12 12m-2.5 0a2.5 2.5 0 105 0 2.5 2.5 0 10-5 0M5 6m-2 0a2 2 0 104 0 2 2 0 10-4 0M19 6m-2 0a2 2 0 104 0 2 2 0 10-4 0M5 18m-2 0a2 2 0 104 0 2 2 0 10-4 0M19 18m-2 0a2 2 0 104 0 2 2 0 10-4 0M7 7.5l3.2 3M17 7.5l-3.2 3M7 16.5l3.2-3M17 16.5l-3.2-3',
 };
 const Ic = ({d, c, s = 22, w = 1.8}: {d: string; c: string; s?: number; w?: number}) => (
   <Svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><Path d={d} /></Svg>
@@ -133,7 +136,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         })}
       </View>
     </ScrollView>
-    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Ic d={k===0?P.home:k===1?P.box:k===2?P.ct:k===3?P.ln:P.gl} c={k===0?t.ac:t.mu} s={29} w={1.8} /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
+    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Ic d={k===0?P.home:k===1?P.warehouse:k===2?P.consolidated:k===3?P.ln:P.hub} c={k===0?t.ac:t.mu} s={29} w={1.8} /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} /> : <Book t={t} onClose={done} />}</Sheet>}
   </View>;
 }
