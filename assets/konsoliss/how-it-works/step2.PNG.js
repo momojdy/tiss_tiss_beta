@@ -1,1 +1,1 @@
-module.exports = { uri: 'https://placehold.co/190x190/png?text=Konsoliss' };
+module.exports = { uri: 'https://placehold.co/190x190/png?text=Konsoliss+Step+2' };
