@@ -137,7 +137,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         })}
       </View>
     </ScrollView>
-    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}>{k === 1 ? <Image source={require('../../assets/konsoliss/icons/warehouseicon.png')} style={{width: 33, height: 33}} resizeMode="contain" /> : <Ic d={k===0?P.home:k===2?P.consolidated:k===3?P.ln:P.hub} c={k===0?t.ac:t.mu} s={29} w={1.8} />}</View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
+    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}>{k === 1 ? <Image source={require('../../assets/konsoliss/icons/warehouseicon.png')} style={{width: 33, height: 33}} resizeMode="contain" /> : <Ic d={k===0?P.home:k===2?P.consolidated:k===3?P.handshake:P.hub} c={k===0?t.ac:t.mu} s={29} w={1.8} />}</View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} /> : <Book t={t} onClose={done} />}</Sheet>}
   </View>;
 }
