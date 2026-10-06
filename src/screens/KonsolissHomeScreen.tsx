@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable, Modal, TextInput, KeyboardAvoidingView, Platform, StatusBar, useColorScheme, useWindowDimensions, StyleSheet, Image} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
-import step1Image from '../assets/konsolissStep1Image';
 import {WebView} from 'react-native-webview';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
@@ -35,6 +34,13 @@ const ILL: ((t: Th) => React.ReactNode)[] = [
   t => (<><Path d="M70 50l36 16-36 16-36-16z" {...Fa(t)} /><Path d="M34 66l36 16v10L34 76zM70 82l36-16v10L70 92z" {...Fa(t)} /><Cube x={60} y={42} c={t.ac} /><Circle cx={104} cy={24} r={14} fill={t.gr} /><Path d="M97 24l5 5 9-10" fill="none" stroke="#fff" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" /></>),
   t => (<><Ctr t={t} /><Cube x={34} y={52} c={t.mu} /><Cube x={54} y={62} c={t.mu} /><Cube x={94} y={48} c={t.mu} /><Cube x={74} y={52} c={t.ac} /></>),
   t => (<><Ctr t={t} x={30} y={18} w={80} h={57} /><Path d="M8 76h124l-14 16H22z" {...Fa(t)} /><Path d="M6 98q8-4 16 0t16 0t16 0t16 0t16 0t16 0t16 0" {...Wl(t)} /></>),
+];
+const KONSOLISS_HOW_IMAGES = [
+  require('../assets/konsoliss/how-it-works/step1.PNG'),
+  require('../assets/konsoliss/how-it-works/step2.PNG'),
+  require('../assets/konsoliss/how-it-works/step3.PNG'),
+  require('../assets/konsoliss/how-it-works/step4.PNG'),
+  require('../assets/konsoliss/how-it-works/step5.PNG'),
 ];
 const STEPS = [
   ['Book Space', 'Reserve the CBM you need for your shipment. Starting from 0.02 CBM.'],
@@ -114,7 +120,7 @@ function Screen({onBack}: {onBack?: () => void}) {
             </View>
           </View>;
           const pic = <View style={[{width: 190, height: 190, overflow: 'hidden'}, last ? {borderTopLeftRadius: 90} : {borderRadius: 8}]}>
-            {i === 0 ? <Image source={{uri: step1Image}} style={{width: '100%', height: '100%'}} resizeMode="contain" /> : <View style={{flex: 1, backgroundColor: t.tint}} />}
+            <Image source={KONSOLISS_HOW_IMAGES[i]} style={{width: '100%', height: '100%'}} resizeMode={last ? 'cover' : 'contain'} />
           </View>;
           return <View key={title} style={{flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 16}}>
             {textFirst ? <>{textBlock}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{pic}</> : <>{pic}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{textBlock}</>}
