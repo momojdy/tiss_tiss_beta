@@ -19,6 +19,7 @@ const P: Record<string, string> = {
   ln: 'M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1',
   gl: 'M12 3a9 9 0 100 18 9 9 0 000-18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18',
   ch: 'M9 6l6 6-6 6',
+  back: 'M15 6l-6 6 6 6',
 };
 const Ic = ({d, c, s = 22, w = 1.8}: {d: string; c: string; s?: number; w?: number}) => (
   <Svg width={s} height={s} viewBox="0 0 24 24" fill="none" stroke={c} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round"><Path d={d} /></Svg>
@@ -96,7 +97,7 @@ function Screen({onBack}: {onBack?: () => void}) {
   const nav = ['Home', 'Warehouse', 'Consolidated', 'Sourcing+', 'Hub'];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBar barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
-      <View style={s.row}><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>KS-2048 · Filling</Tx></View></View>
+      <View style={[s.row, {height: 60, justifyContent: 'flex-start', paddingHorizontal: 24, gap: 10}]}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>KS-2048 · Filling</Tx></View></View>
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>My current load</Tx><Tx style={[s.num, {color: t.ac}]}>51.7<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}}> / 68 CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray="66.85 87.96" rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>76% filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}}>16.3 CBM</Tx> available</Tx></View></View>
       <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={dark ? 'd' : 'l'} originWhitelist={['*']} source={{html: containerHtml(dark)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
