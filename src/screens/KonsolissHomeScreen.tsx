@@ -38,10 +38,10 @@ const ILL: ((t: Th) => React.ReactNode)[] = [
 ];
 const KONSOLISS_HOW_IMAGES = [
   require('../../assets/konsoliss/how-it-works/step1.PNG'),
-  require('../../assets/konsoliss/how-it-works/step2.PNG'),
-  require('../../assets/konsoliss/how-it-works/step3.PNG'),
-  require('../../assets/konsoliss/how-it-works/step4.PNG'),
-  require('../../assets/konsoliss/how-it-works/step5.PNG'),
+  null,
+  null,
+  null,
+  null,
 ];
 const STEPS = [
   ['Book Space', 'Reserve the CBM you need for your shipment. Starting from 0.02 CBM.'],
