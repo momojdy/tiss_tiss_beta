@@ -21,7 +21,7 @@ const P: Record<string, string> = {
   ch: 'M9 6l6 6-6 6',
   back: 'M15 6l-6 6 6 6',
   home: 'M3 10.5L12 3l9 7.5v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z',
-  warehouse: 'M3 20V9l9-6 9 6v11H3zM3 9h18M7 20v-7h10v7M7 13h10',
+  warehouse: 'M3 17h18M5 17v-4h14v4M7 13V9h3v4M14 13V8h3v5M4 20h2M9 20h2M14 20h2M19 20h2',
   consolidated: 'M4 8l4-3 4 3-4 3-4-3zM8 11l4-3 4 3-4 3-4-3zM12 14l4-3 4 3-4 3-4-3zM4 8v4l4 3M12 8v4l4 3M16 11v4',
   handshake: 'M7 11l2-2 3 3 3-3 2 2-3 3a3 3 0 01-4 0zM9 9L7 7a2 2 0 00-3 0l-1 1 4 4M15 9l2-2a2 2 0 013 0l1 1-4 4M7 12l-2 2a2 2 0 003 3l2-2M17 12l2 2a2 2 0 01-3 3l-2-2',
   hub: 'M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM17 13v8M13 17h8',
