@@ -18,6 +18,7 @@ import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSe
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
+import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
 import FlyzHomeScreen from './src/screens/FlyzHomeScreen';
 import FlyzMyTripsScreen from './src/screens/FlyzMyTripsScreen';
 import FlyzDealsScreen from './src/screens/FlyzDealsScreen';
@@ -39,7 +40,7 @@ import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShie
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -170,6 +171,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 
       if (buyerScreen === 'flyzDeals') {
         return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
+      }
+
+      if (buyerScreen === 'konsoliss') {
+        return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
       }
 
       if (buyerScreen === 'flyz') {
@@ -313,7 +318,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       }
 
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} />;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} />;
     } catch (error) {
       return <AppError title="Home could not load" error={error} />;
     }
