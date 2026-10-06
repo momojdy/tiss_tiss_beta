@@ -123,6 +123,15 @@ function Screen({onBack}: {onBack?: () => void}) {
           const pic = <View style={[{width: 190, height: 190, overflow: 'hidden'}, last ? {borderTopLeftRadius: 90} : {borderRadius: 8}]}>
             <Image source={KONSOLISS_HOW_IMAGES[i]} style={{width: '100%', height: '100%'}} resizeMode={last ? 'cover' : 'contain'} />
           </View>;
+          if (i === 1) {
+            return <View key={title} style={{paddingLeft: 1, paddingRight: 3}}>
+              {pic}
+              <View style={{flexDirection: 'row', alignItems: 'flex-start'}}>
+                <KonsolissMarker n={i + 1} top={false} ac={t.ac} />
+                {textBlock}
+              </View>
+            </View>;
+          }
           return <View key={title} style={{flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 1}}>
             {textFirst ? <>{textBlock}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{pic}</> : <>{pic}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{textBlock}</>}
           </View>;
