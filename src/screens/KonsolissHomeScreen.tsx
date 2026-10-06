@@ -3,6 +3,11 @@ import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {WebView} from 'react-native-webview';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
+import KONSOLISS_HOW_STEP1 from '../assets/konsolissHowStep1';
+import KONSOLISS_HOW_STEP2 from '../assets/konsolissHowStep2';
+import KONSOLISS_HOW_STEP3 from '../assets/konsolissHowStep3';
+import KONSOLISS_HOW_STEP4 from '../assets/konsolissHowStep4';
+
 
 const L = {bg: '#FFFBD4', tx: '#2B1210', mu: '#7a5a52', ac: '#A90E02', tint: 'rgba(169,14,2,0.1)', nav: '#FFFBD4', card: 'rgba(255,255,255,0.55)', bd: 'rgba(169,14,2,0.12)', gr: '#1E8E3E', inp: '#fff9c2'};
 const Dk: typeof L = {bg: '#17100F', tx: '#FFFBD4', mu: '#BDB08C', ac: '#FF5B4A', tint: 'rgba(255,251,212,0.09)', nav: '#1E1514', card: 'rgba(255,251,212,0.06)', bd: 'rgba(255,251,212,0.1)', gr: '#5FD38A', inp: '#241a18'};
@@ -35,13 +40,7 @@ const ILL: ((t: Th) => React.ReactNode)[] = [
   t => (<><Ctr t={t} /><Cube x={34} y={52} c={t.mu} /><Cube x={54} y={62} c={t.mu} /><Cube x={94} y={48} c={t.mu} /><Cube x={74} y={52} c={t.ac} /></>),
   t => (<><Ctr t={t} x={30} y={18} w={80} h={57} /><Path d="M8 76h124l-14 16H22z" {...Fa(t)} /><Path d="M6 98q8-4 16 0t16 0t16 0t16 0t16 0t16 0t16 0" {...Wl(t)} /></>),
 ];
-const KONSOLISS_HOW_IMAGES = [
-  require('../../assets/konsoliss/how-it-works/step1.PNG'),
-  require('../../assets/konsoliss/how-it-works/step2.PNG'),
-  require('../../assets/konsoliss/how-it-works/step3.PNG'),
-  require('../../assets/konsoliss/how-it-works/step4.PNG'),
-  require('../../assets/konsoliss/how-it-works/step5.PNG'),
-];
+const KONSOLISS_HOW_IMAGES = [KONSOLISS_HOW_STEP1, KONSOLISS_HOW_STEP2, KONSOLISS_HOW_STEP3, KONSOLISS_HOW_STEP4, KONSOLISS_HOW_STEP4] as const;
 const STEPS = [
   ['Book Space', 'Reserve the CBM you need for your shipment. Starting from 0.02 CBM.'],
   ['Inbound to warehouse', 'Buy on WANTISS, paste a product link for us to purchase, or ship external items to our warehouse.'],
