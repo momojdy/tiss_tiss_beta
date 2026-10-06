@@ -121,6 +121,7 @@ function Screen({onBack}: {onBack?: () => void}) {
           </View>;
         })}
       </View>
+    </ScrollView>
     <View style={[s.nav, {backgroundColor: t.nav, paddingBottom: Math.max(14, insets.bottom)}]}>{nav.map((n, k) => <View key={n} style={{width: 62, alignItems: 'center'}}><Ic d={k===0?P.wh:k===1?P.wh:k===2?P.ct:k===3?P.ln:P.gl} c={k===0?t.ac:t.mu} s={22} /><Tx style={{fontSize: 11, lineHeight: 14, fontWeight: '600', color: k ? t.mu : t.ac}}>{n}</Tx></View>)}</View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} /> : <Book t={t} onClose={done} />}</Sheet>}
   </View>;
