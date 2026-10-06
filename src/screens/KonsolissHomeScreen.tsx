@@ -81,7 +81,7 @@ function KonsolissMarker({n, top, ac}: {n: number; top: boolean; ac: string}) {
 }
 
 const KONSOLISS_STEPS = [
-  ['Book Space', 'Reserve the CBM you need \nfor your shipment.\nStarting from 0.02 CBM'],
+  ['Book Space', 'Reserve the CBM you need for your shipment.\nStarting from 0.02 CBM'],
   ['Inbound to warehouse', 'Buy on WANTISS, \npaste a product link \nfor us to purchase,\nor ship external items \nto our warehouse.'],
   ['Items processing', 'We verify incoming items \nand optimize packaging \nwhen needed'],
   ['Load items', 'Allocate items \nto your reserved space'],
@@ -123,7 +123,7 @@ function Screen({onBack}: {onBack?: () => void}) {
           const pic = <View style={[{width: 190, height: 190, overflow: 'hidden'}, last ? {borderTopLeftRadius: 90} : {borderRadius: 8}]}>
             <Image source={KONSOLISS_HOW_IMAGES[i]} style={{width: '100%', height: '100%'}} resizeMode={last ? 'cover' : 'contain'} />
           </View>;
-          return <View key={title} style={{flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 8}}>
+          return <View key={title} style={{flexDirection: 'row', alignItems: 'flex-start', paddingHorizontal: 1}}>
             {textFirst ? <>{textBlock}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{pic}</> : <>{pic}<KonsolissMarker n={i + 1} top={textFirst} ac={t.ac} />{textBlock}</>}
           </View>;
         })}
