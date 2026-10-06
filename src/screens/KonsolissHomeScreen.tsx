@@ -99,7 +99,7 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
 }
 function Screen({onBack}: {onBack?: () => void}) {
   const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true);
-  const nav = ['Home', 'Warehouse', 'Consolidated', 'Sourcing+', 'Hub'];
+  const nav = ['Home', 'Warehouse', 'Konso', 'Sourcing+', 'Hub'];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBar barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
       <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable></View><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>KS-2048 · Filling</Tx></View></View>
@@ -137,7 +137,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         })}
       </View>
     </ScrollView>
-    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}>{k === 1 ? <Image source={require('../../assets/konsoliss/icons/warehouseicon.png')} style={{width: 37, height: 37}} resizeMode="contain" /> : <Ic d={k===0?P.home:k===2?P.consolidated:k===3?P.handshake:P.hub} c={k===0?t.ac:t.mu} s={29} w={1.8} />}</View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
+    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Image source={k===0?require('../../assets/konsoliss/icons/homeicon.png'):k===1?require('../../assets/konsoliss/icons/warehouseicon.png'):k===2?require('../../assets/konsoliss/icons/consolidation.png'):k===3?require('../../assets/konsoliss/icons/sourcing.png'):require('../../assets/konsoliss/icons/hub.png')} style={{width: 39, height: 39}} resizeMode="contain" /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} /> : <Book t={t} onClose={done} />}</Sheet>}
   </View>;
 }
