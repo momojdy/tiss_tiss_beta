@@ -137,7 +137,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         })}
       </View>
     </ScrollView>
-    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Image source={k===0?require('../../assets/konsoliss/icons/homeicon.png'):k===1?require('../../assets/konsoliss/icons/warehouseicon.png'):k===2?require('../../assets/konsoliss/icons/consolidation.png'):k===3?require('../../assets/konsoliss/icons/sourcing.png'):require('../../assets/konsoliss/icons/hub.png')} style={{width: 39, height: 39}} resizeMode="contain" /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
+    <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Image source={k===0?require('../../assets/konsoliss/icons/homeicon.png'):k===1?require('../../assets/konsoliss/icons/warehouseicon.png'):k===2?require('../../assets/konsoliss/icons/consolidation.png'):k===3?require('../../assets/konsoliss/icons/sourcing.png'):require('../../assets/konsoliss/icons/hub.png')} style={{width: k === 4 ? 37 : 39, height: k === 4 ? 37 : 39}} resizeMode="contain" /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} /> : <Book t={t} onClose={done} />}</Sheet>}
   </View>;
 }
