@@ -44,7 +44,7 @@ const STEPS = [
 ];
 
 function Card({t, i, title, sub, onPress, red, right, style}: {t: Th; i: string; title: string; sub: string; onPress?: () => void; red?: boolean; right?: React.ReactNode; style?: object}) {
-  return <Pressable onPress={onPress} style={[s.card, {backgroundColor: red ? RED : t.card, borderColor: red ? RED : t.bd}, red && s.redSh, style]}><Ic d={P[i]} c={red ? CREAM : t.ac} /><View style={{flex: 1, minWidth: 0}}><Tx numberOfLines={1} style={[{fontSize: 12, lineHeight: 15, fontWeight: '700'}, {color: red ? CREAM : t.tx}]}>{title}</Tx><Tx numberOfLines={1} style={[{fontSize: 9, lineHeight: 12, marginTop: 1}, {color: red ? 'rgba(255,251,212,0.75)' : t.mu}]}>{sub}</Tx></View>{right}<Ic d={P.ch} c={red ? CREAM : t.mu} s={16} w={2} /></Pressable>;
+  return <Pressable onPress={onPress} style={[s.card, {backgroundColor: red ? RED : t.card, borderColor: red ? RED : t.bd}, red && s.redSh, style, {paddingHorizontal: 5}]}><Ic d={P[i]} c={red ? CREAM : t.ac} /><View style={{flex: 1, minWidth: 0}}><Tx numberOfLines={1} ellipsizeMode="tail" style={[s.ct, {color: red ? CREAM : t.tx}]}>{title}</Tx><Tx numberOfLines={1} ellipsizeMode="tail" style={[s.cs, {color: red ? 'rgba(255,251,212,0.75)' : t.mu}]}>{sub}</Tx></View>{right}<Ic d={P.ch} c={red ? CREAM : t.mu} s={16} w={2} /></Pressable>;
 }
 const Head = ({t, i, title}: {t: Th; i: string; title: string}) => <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}><Ic d={P[i]} c={t.ac} s={20} /><Tx style={{flex: 1, fontSize: 14, lineHeight: 18, fontWeight: '700', color: t.tx}}>{title}</Tx><Ic d={P.ch} c={t.mu} s={16} w={2} /></View>;
 
