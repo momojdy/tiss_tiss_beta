@@ -82,7 +82,7 @@ const RECOMMENDED: Recommended[] = [
   { id: 'r4', name: 'Savon', category: 'Household', price: 2.75, rating: 4.6, reviews: 64, image: 'images/r4.jpg' },
 ];
 
-type IconName = 'pin'|'chevronDown'|'chevronRight'|'arrowRight'|'bell'|'search'|'heart'|'star'|'plus'|'home'|'grid'|'bag'|'cart';
+type IconName = 'pin'|'chevronDown'|'chevronRight'|'arrowRight'|'arrowLeft'|'bell'|'search'|'heart'|'star'|'plus'|'home'|'grid'|'bag'|'cart';
 function Icon({ name, size=20, color=C.ink, strokeWidth=2, filled=false }: { name: IconName; size?: number; color?: string; strokeWidth?: number; filled?: boolean }) {
   const s = { stroke: color, strokeWidth, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
   const f = { fill: color, stroke: 'none' };
@@ -92,6 +92,7 @@ function Icon({ name, size=20, color=C.ink, strokeWidth=2, filled=false }: { nam
     case 'chevronDown': body=<Path d="M6 9l6 6 6-6" {...s} strokeWidth={2.6}/>; break;
     case 'chevronRight': body=<Path d="M9 5l7 7-7 7" {...s} strokeWidth={2.8}/>; break;
     case 'arrowRight': body=<Path d="M5 12h14M13 6l6 6-6 6" {...s} strokeWidth={2.6}/>; break;
+    case 'arrowLeft': body=<Path d="M19 12H5M11 6l-6 6 6 6" {...s} strokeWidth={2.6}/>; break;
     case 'bell': body=<><Path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" {...s}/><Path d="M10 21a2.2 2.2 0 0 0 4 0" {...s}/></>; break;
     case 'search': body=<><Circle cx="11" cy="11" r="7" {...s}/><Path d="M20 20l-3.5-3.5" {...s}/></>; break;
     case 'heart': body=<Path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" {...(filled?{...f,stroke:color,strokeWidth:2}:s)}/>; break;
@@ -163,14 +164,14 @@ function BottomNav({tab,onTab,cartCount}:{tab:Tab;onTab:(t:Tab)=>void;cartCount:
   return <View style={s.nav}><Item id="home" label="Home" icon="home"/><Item id="categories" label="Categories" icon="grid"/><Pressable style={s.fab}><Icon name="search" size={26} color={C.ink} strokeWidth={2.4}/></Pressable><Item id="orders" label="Orders" icon="bag"/><Item id="cart" label="Cart" icon="cart"/></View>;
 }
 
-export default function GoodiesHomeScreen() {
+export default function GoodiesHomeScreen({onBack}:{onBack?:()=>void}) {
   const {width}=useWindowDimensions(); const bannerWidth=width-40; const [query,setQuery]=useState(''); const [tab,setTab]=useState<Tab>('home');
   return <View style={s.root}>
     <StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:130}}>
       <View style={s.bounceCover} pointerEvents="none"/>
       <LinearGradient colors={['#FD802E','#FD802E','#FE9A55','#FFC196','#FFE3CF','#F7F4EE']} locations={[0,0.16,0.38,0.66,0.86,1]} style={s.headerGradient} pointerEvents="none"/>
-      <View style={s.top}><View style={s.logo}><Text style={s.logoWantiss}>Wantiss</Text><Text style={s.logoGoodies}>Goodies</Text></View><View style={s.topRight}><Pressable style={s.bell}><Icon name="bell" size={20} color={C.ink} strokeWidth={1.9}/>{USER.hasUnread&&<View style={s.bellDot}/>}</Pressable><Pressable style={s.avatar}><Text style={s.avatarText}>{USER.initial}</Text></Pressable></View></View>
+      <View style={s.top}><Pressable onPress={onBack} hitSlop={10} style={s.backButton}><Icon name="arrowLeft" size={23} color={C.ink} strokeWidth={2.4}/></Pressable><Text style={s.logoGoodies}>Goodies</Text><View style={s.topRight}><Pressable style={s.bell}><Icon name="bell" size={20} color={C.ink} strokeWidth={1.9}/>{USER.hasUnread&&<View style={s.bellDot}/>}</Pressable></View></View>
       <Pressable style={s.address}><Icon name="pin" size={17} color={C.ink}/><Text style={s.addressText}>{USER.address}</Text><Icon name="chevronDown" size={14} color={C.ink}/></Pressable>
       <View style={s.search}><Icon name="search" size={19} color={C.ink}/><TextInput style={s.searchInput} value={query} onChangeText={setQuery} placeholder="Search for food, groceries, drinks, and more" placeholderTextColor={C.muted} returnKeyType="search"/></View>
       <View style={{marginTop:16}}><Pager data={HERO_SLIDES} width={bannerWidth} render={sl=><HeroBanner slide={sl}/>} /></View>
@@ -191,12 +192,10 @@ const SERIF=Platform.select({ios:'Georgia',android:'serif',default:'serif'});
 const s=StyleSheet.create({
   root:{flex:1,backgroundColor:C.bg}, bounceCover:{position:'absolute',top:-1000,left:0,right:0,height:1000,backgroundColor:C.pumpkin},
   headerGradient:{position:'absolute',top:0,left:0,right:0,height:400+TOP_INSET-44},
-  top:{marginTop:TOP_INSET,paddingHorizontal:20,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
-  logo:{flexDirection:'row',alignItems:'baseline',gap:7}, logoWantiss:{fontSize:28,fontWeight:'800',letterSpacing:-0.8,color:C.ink},
-  logoGoodies:{fontSize:25,fontWeight:'700',fontStyle:'italic',fontFamily:SERIF,color:C.ink},
+  top:{height:100,paddingHorizontal:20,paddingTop:TOP_INSET,paddingBottom:10,flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'},
+  backButton:{width:40,height:40,alignItems:'center',justifyContent:'center'}, logoGoodies:{fontSize:25,fontWeight:'700',fontStyle:'italic',fontFamily:SERIF,color:C.ink},
   topRight:{flexDirection:'row',alignItems:'center',gap:10}, bell:{width:40,height:40,borderRadius:14,backgroundColor:C.card,alignItems:'center',justifyContent:'center'},
   bellDot:{position:'absolute',top:9,right:10,width:8,height:8,borderRadius:4,backgroundColor:C.pumpkin},
-  avatar:{width:40,height:40,borderRadius:20,backgroundColor:C.ink,alignItems:'center',justifyContent:'center'}, avatarText:{color:C.white,fontSize:17,fontWeight:'800'},
   address:{flexDirection:'row',alignItems:'center',gap:6,paddingHorizontal:20,marginTop:8}, addressText:{fontSize:15,fontWeight:'600',color:C.ink},
   search:{marginHorizontal:20,marginTop:14,height:48,borderRadius:24,backgroundColor:C.card,flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:18},
   searchInput:{flex:1,fontSize:14.5,color:C.ink,paddingVertical:0},
