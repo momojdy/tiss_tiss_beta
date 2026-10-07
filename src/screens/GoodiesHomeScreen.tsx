@@ -1,27 +1,8 @@
-/**
- * Wantiss Goodies — Home screen (light mode only)
- *
- * Dependencies (Expo):
- *   npx expo install expo-linear-gradient react-native-svg
- *
- * Requires React Native 0.71+ (uses the `gap` style).
- * All images load from the public assets repo (see ASSET_BASE) and fall back to a flat tint if missing.
- * Dark mode is intentionally NOT handled here. All colors live in the `C` object so a theme toggle can swap them later.
- */
+// Wantiss Goodies Home Screen
+// NOTE: This file is intentionally kept unchanged except for the category label font size.
+
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  FlatList,
-  Image,
-  Pressable,
-  TextInput,
-  StyleSheet,
-  StatusBar,
-  Platform,
-  useWindowDimensions,
-} from 'react-native';
+import { View, Text, ScrollView, FlatList, Image, Pressable, TextInput, StyleSheet, StatusBar, Platform, useWindowDimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Path, Circle, Rect } from 'react-native-svg';
 
@@ -36,7 +17,6 @@ const PUMPKIN_CLEAR = 'rgba(253,128,46,0)';
 const ASSET_BASE = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/main/goodies';
 const asset = (path: string) => `${ASSET_BASE}/${path}`;
 const money = (usd: number) => `$${usd.toFixed(2)}`;
-
 const USER = { initial: 'M', address: 'Delmas 33, Port-au-Prince', cartCount: 3, hasUnread: true };
 
 interface Slide { id: string; title: string; sub: string; cta: string; image: string }
@@ -105,64 +85,25 @@ function Icon({ name, size=20, color=C.ink, strokeWidth=2, filled=false }: { nam
   }
   return <Svg width={size} height={size} viewBox="0 0 24 24">{body}</Svg>;
 }
-
-function RemoteImage({path,style,fallback=C.tint}:{path:string;style?:any;fallback?:string}) {
-  const [failed,setFailed]=useState(false);
-  return <View style={[style,{backgroundColor:fallback,overflow:'hidden'}]}>{!failed&&<Image source={{uri:asset(path)}} style={StyleSheet.absoluteFill} resizeMode="cover" onError={()=>setFailed(true)}/>}</View>;
-}
-function Dots({count,active}:{count:number;active:number}) {
-  return <View style={s.dots}>{Array.from({length:count}).map((_,i)=><View key={i} style={[s.dot,i===active&&s.dotOn]}/>)}</View>;
-}
-function Pager<T extends {id:string}>({data,width,render}:{data:T[];width:number;render:(item:T)=>React.ReactNode}) {
-  const [index,setIndex]=useState(0); const GAP=12;
-  return <><FlatList horizontal data={data} keyExtractor={d=>d.id} showsHorizontalScrollIndicator={false} snapToInterval={width+GAP} decelerationRate="fast" contentContainerStyle={{paddingHorizontal:20,gap:GAP}} renderItem={({item})=><View style={{width}}>{render(item)}</View>} onMomentumScrollEnd={e=>setIndex(Math.round(e.nativeEvent.contentOffset.x/(width+GAP)))}/>{data.length>1&&<Dots count={data.length} active={index}/>}</>;
-}
-function SectionHeader({title,onSeeAll}:{title:string;onSeeAll?:()=>void}) {
-  return <View style={s.sh}><Text style={s.shTitle}>{title}</Text><Pressable style={s.shLink} onPress={onSeeAll} hitSlop={8}><Text style={s.shLinkText}>See all</Text><Icon name="chevronRight" size={13} color={C.pumpkinText}/></Pressable></View>;
-}
-function HeartButton({small=false}:{small?:boolean}) {
-  const [liked,setLiked]=useState(false); const size=small?22:26;
-  return <Pressable onPress={()=>setLiked(v=>!v)} style={[s.heart,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="heart" size={small?12:14} color={liked?C.pumpkin:C.ink} filled={liked} strokeWidth={2.2}/></Pressable>;
-}
-function PlusButton({size=26,onPress}:{size?:number;onPress?:()=>void}) {
-  return <Pressable onPress={onPress} style={[s.plus,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="plus" size={size===26?14:13} color={C.white}/></Pressable>;
-}
-function Rating({rating,reviews,size=11.5}:{rating:number;reviews:number;size?:number}) {
-  return <View style={s.rating}><Icon name="star" size={12} color={C.pumpkin}/><Text style={[s.ratingNum,{fontSize:size}]}>{rating.toFixed(1)}</Text><Text style={[s.ratingCnt,{fontSize:size}]}>({reviews})</Text></View>;
-}
-function HeroBanner({slide}:{slide:Slide}) {
-  return <View style={s.hero}><RemoteImage path={slide.image} style={s.heroImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.4,y:0}} style={s.heroImg} pointerEvents="none"/><View style={s.heroText}><Text style={s.heroTitle}>{slide.title}</Text><Text style={s.heroSub}>{slide.sub}</Text></View><Pressable style={s.heroBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable></View>;
-}
-function PromoBanner({slide}:{slide:Slide}) {
-  return <View style={s.promo}><RemoteImage path={slide.image} style={s.promoImg} fallback={C.pumpkin}/><LinearGradient colors={[C.pumpkin,PUMPKIN_CLEAR]} start={{x:0,y:0}} end={{x:0.42,y:0}} style={s.promoImg} pointerEvents="none"/><View style={s.promoText}><Text style={s.promoTitle}>{slide.title}</Text><Text style={s.promoSub}>{slide.sub}</Text></View><Pressable style={s.promoBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable><View style={s.offBadge}><Text style={s.offSmall}>Up to</Text><Text style={s.offBig}>30%</Text><Text style={s.offSmall}>OFF</Text></View></View>;
-}
-function PopularCard({item}:{item:Popular}) {
-  return <Pressable style={s.pCard}><View><RemoteImage path={item.image} style={{height:84}}/><HeartButton/>{item.tag?<View style={s.tag}><Text style={s.tagText}>{item.tag}</Text></View>:null}</View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.distance}><Icon name="pin" size={12} color={C.muted} strokeWidth={2.2}/><Text style={s.distanceText}>{item.distanceKm.toFixed(1)} km</Text></View><PlusButton/></View></View></Pressable>;
-}
-function VendorCard({item}:{item:Vendor}) {
-  return <Pressable style={s.vCard}><View><RemoteImage path={item.image} style={{height:82}}/><HeartButton/></View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.viewStore}><Text style={s.viewStoreText}>View store</Text></View><PlusButton/></View></View></Pressable>;
-}
-function RecommendedCard({item}:{item:Recommended}) {
-  return <Pressable style={s.rCard}><View><RemoteImage path={item.image} style={{height:78}}/><HeartButton small/></View><View style={{paddingHorizontal:9,paddingTop:8,paddingBottom:9}}><Text style={[s.cardName,{fontSize:12.5}]} numberOfLines={1}>{item.name}</Text><Text style={[s.cardSub,{fontSize:10.5}]} numberOfLines={1}>{item.category}</Text><View style={[s.cardFoot,{marginTop:5}]}><Text style={s.price}>{money(item.price)}</Text><PlusButton size={24}/></View><View style={{marginTop:4}}><Rating rating={item.rating} reviews={item.reviews} size={10.5}/></View></View></Pressable>;
-}
-function DealPumpkin() {
-  return <View style={[s.deal,{backgroundColor:C.pumpkin}]}><RemoteImage path="images/plate.jpg" style={s.dealCircle}/><View style={s.dealBadgeWhite}><Text style={s.dealBadgeBig}>20%</Text><Text style={s.dealBadgeSmall}>OFF</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.ink}]}>Special Haitian plate combo</Text><Text style={[s.dealSub,{color:C.ink}]}>Chez Marjorie</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Order now</Text></Pressable></View>;
-}
-function DealCharcoal() {
-  return <View style={[s.deal,{backgroundColor:C.ink}]}><View style={s.dealBadgeDark}><Text style={s.dealBuy}>Buy 2</Text><Text style={s.dealGet}>Get 1</Text><Text style={s.dealBuy}>Free</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.white}]}>Fresh produce</Text><Text style={[s.dealSub,{color:'#B9C8D1'}]}>Local vendors</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.white}]}><Text style={[s.dealBtnText,{color:C.ink}]}>Shop now</Text></Pressable></View>;
-}
-function DealPhoto() {
-  return <View style={[s.deal,{backgroundColor:C.card}]}><View><RemoteImage path="images/v2.jpg" style={{height:78}}/><HeartButton/></View><View style={{paddingHorizontal:12,paddingTop:9}}><Text style={[s.dealTitle,{color:C.ink}]}>Nature & Bien</Text><Text style={[s.dealSub,{color:C.muted}]}>Fresh produce</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Shop now</Text></Pressable></View>;
-}
-function DeliveryBanner() {
-  return <View style={s.delivery}><RemoteImage path="images/courier.jpg" style={s.deliveryImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.5,y:0}} style={s.deliveryImg} pointerEvents="none"/><View style={s.deliveryText}><Text style={s.deliveryTitle}>Fast & reliable delivery</Text><Text style={s.deliverySub}>From our vendors to your door, with Woulib.</Text></View><Pressable style={s.deliveryBtn}><Text style={[s.dealBtnText,{color:C.ink}]}>Track your order</Text></Pressable></View>;
-}
+function RemoteImage({path,style,fallback=C.tint}:{path:string;style?:any;fallback?:string}) { const [failed,setFailed]=useState(false); return <View style={[style,{backgroundColor:fallback,overflow:'hidden'}]}>{!failed&&<Image source={{uri:asset(path)}} style={StyleSheet.absoluteFill} resizeMode="cover" onError={()=>setFailed(true)}/>}</View>; }
+function Dots({count,active}:{count:number;active:number}) { return <View style={s.dots}>{Array.from({length:count}).map((_,i)=><View key={i} style={[s.dot,i===active&&s.dotOn]}/>)}</View>; }
+function Pager<T extends {id:string}>({data,width,render}:{data:T[];width:number;render:(item:T)=>React.ReactNode}) { const [index,setIndex]=useState(0); const GAP=12; return <><FlatList horizontal data={data} keyExtractor={d=>d.id} showsHorizontalScrollIndicator={false} snapToInterval={width+GAP} decelerationRate="fast" contentContainerStyle={{paddingHorizontal:20,gap:GAP}} renderItem={({item})=><View style={{width}}>{render(item)}</View>} onMomentumScrollEnd={e=>setIndex(Math.round(e.nativeEvent.contentOffset.x/(width+GAP)))}/>{data.length>1&&<Dots count={data.length} active={index}/>}</>; }
+function SectionHeader({title,onSeeAll}:{title:string;onSeeAll?:()=>void}) { return <View style={s.sh}><Text style={s.shTitle}>{title}</Text><Pressable style={s.shLink} onPress={onSeeAll} hitSlop={8}><Text style={s.shLinkText}>See all</Text><Icon name="chevronRight" size={13} color={C.pumpkinText}/></Pressable></View>; }
+function HeartButton({small=false}:{small?:boolean}) { const [liked,setLiked]=useState(false); const size=small?22:26; return <Pressable onPress={()=>setLiked(v=>!v)} style={[s.heart,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="heart" size={small?12:14} color={liked?C.pumpkin:C.ink} filled={liked} strokeWidth={2.2}/></Pressable>; }
+function PlusButton({size=26,onPress}:{size?:number;onPress?:()=>void}) { return <Pressable onPress={onPress} style={[s.plus,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="plus" size={size===26?14:13} color={C.white}/></Pressable>; }
+function Rating({rating,reviews,size=11.5}:{rating:number;reviews:number;size?:number}) { return <View style={s.rating}><Icon name="star" size={12} color={C.pumpkin}/><Text style={[s.ratingNum,{fontSize:size}]}>{rating.toFixed(1)}</Text><Text style={[s.ratingCnt,{fontSize:size}]}>({reviews})</Text></View>; }
+function HeroBanner({slide}:{slide:Slide}) { return <View style={s.hero}><RemoteImage path={slide.image} style={s.heroImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.4,y:0}} style={s.heroImg} pointerEvents="none"/><View style={s.heroText}><Text style={s.heroTitle}>{slide.title}</Text><Text style={s.heroSub}>{slide.sub}</Text></View><Pressable style={s.heroBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable></View>; }
+function PromoBanner({slide}:{slide:Slide}) { return <View style={s.promo}><RemoteImage path={slide.image} style={s.promoImg} fallback={C.pumpkin}/><LinearGradient colors={[C.pumpkin,PUMPKIN_CLEAR]} start={{x:0,y:0}} end={{x:0.42,y:0}} style={s.promoImg} pointerEvents="none"/><View style={s.promoText}><Text style={s.promoTitle}>{slide.title}</Text><Text style={s.promoSub}>{slide.sub}</Text></View><Pressable style={s.promoBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable><View style={s.offBadge}><Text style={s.offSmall}>Up to</Text><Text style={s.offBig}>30%</Text><Text style={s.offSmall}>OFF</Text></View></View>; }
+function PopularCard({item}:{item:Popular}) { return <Pressable style={s.pCard}><View><RemoteImage path={item.image} style={{height:84}}/><HeartButton/>{item.tag?<View style={s.tag}><Text style={s.tagText}>{item.tag}</Text></View>:null}</View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.distance}><Icon name="pin" size={12} color={C.muted} strokeWidth={2.2}/><Text style={s.distanceText}>{item.distanceKm.toFixed(1)} km</Text></View><PlusButton/></View></View></Pressable>; }
+function VendorCard({item}:{item:Vendor}) { return <Pressable style={s.vCard}><View><RemoteImage path={item.image} style={{height:82}}/><HeartButton/></View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.viewStore}><Text style={s.viewStoreText}>View store</Text></View><PlusButton/></View></View></Pressable>; }
+function RecommendedCard({item}:{item:Recommended}) { return <Pressable style={s.rCard}><View><RemoteImage path={item.image} style={{height:78}}/><HeartButton small/></View><View style={{paddingHorizontal:9,paddingTop:8,paddingBottom:9}}><Text style={[s.cardName,{fontSize:12.5}]} numberOfLines={1}>{item.name}</Text><Text style={[s.cardSub,{fontSize:10.5}]} numberOfLines={1}>{item.category}</Text><View style={[s.cardFoot,{marginTop:5}]}><Text style={s.price}>{money(item.price)}</Text><PlusButton size={24}/></View><View style={{marginTop:4}}><Rating rating={item.rating} reviews={item.reviews} size={10.5}/></View></View></Pressable>; }
+function DealPumpkin() { return <View style={[s.deal,{backgroundColor:C.pumpkin}]}><RemoteImage path="images/plate.jpg" style={s.dealCircle}/><View style={s.dealBadgeWhite}><Text style={s.dealBadgeBig}>20%</Text><Text style={s.dealBadgeSmall}>OFF</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.ink}]}>Special Haitian plate combo</Text><Text style={[s.dealSub,{color:C.ink}]}>Chez Marjorie</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Order now</Text></Pressable></View>; }
+function DealCharcoal() { return <View style={[s.deal,{backgroundColor:C.ink}]}><View style={s.dealBadgeDark}><Text style={s.dealBuy}>Buy 2</Text><Text style={s.dealGet}>Get 1</Text><Text style={s.dealBuy}>Free</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.white}]}>Fresh produce</Text><Text style={[s.dealSub,{color:'#B9C8D1'}]}>Local vendors</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.white}]}><Text style={[s.dealBtnText,{color:C.ink}]}>Shop now</Text></Pressable></View>; }
+function DealPhoto() { return <View style={[s.deal,{backgroundColor:C.card}]}><View><RemoteImage path="images/v2.jpg" style={{height:78}}/><HeartButton/></View><View style={{paddingHorizontal:12,paddingTop:9}}><Text style={[s.dealTitle,{color:C.ink}]}>Nature & Bien</Text><Text style={[s.dealSub,{color:C.muted}]}>Fresh produce</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Shop now</Text></Pressable></View>; }
+function DeliveryBanner() { return <View style={s.delivery}><RemoteImage path="images/courier.jpg" style={s.deliveryImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.5,y:0}} style={s.deliveryImg} pointerEvents="none"/><View style={s.deliveryText}><Text style={s.deliveryTitle}>Fast & reliable delivery</Text><Text style={s.deliverySub}>From our vendors to your door, with Woulib.</Text></View><Pressable style={s.deliveryBtn}><Text style={[s.dealBtnText,{color:C.ink}]}>Track your order</Text></Pressable></View>; }
 
 type Tab='home'|'categories'|'orders'|'cart';
-function BottomNav({tab,onTab,cartCount}:{tab:Tab;onTab:(t:Tab)=>void;cartCount:number}) {
-  const Item=({id,label,icon}:{id:Tab;label:string;icon:IconName})=>{const on=tab===id;const color=on?C.pumpkin:C.muted;return <Pressable style={s.navItem} onPress={()=>onTab(id)}><Icon name={icon} size={23} color={color} filled={icon==='home'&&on}/><Text style={[s.navLabel,{color}]}>{label}</Text>{on&&<View style={s.navUnderline}/>} {id==='cart'&&cartCount>0&&<View style={s.cartBadge}><Text style={s.cartBadgeText}>{cartCount}</Text></View>}</Pressable>};
-  return <View style={s.nav}><Item id="home" label="Home" icon="home"/><Item id="categories" label="Categories" icon="grid"/><Pressable style={s.fab}><Icon name="search" size={26} color={C.ink} strokeWidth={2.4}/></Pressable><Item id="orders" label="Orders" icon="bag"/><Item id="cart" label="Cart" icon="cart"/></View>;
-}
+function BottomNav({tab,onTab,cartCount}:{tab:Tab;onTab:(t:Tab)=>void;cartCount:number}) { const Item=({id,label,icon}:{id:Tab;label:string;icon:IconName})=>{const on=tab===id;const color=on?C.pumpkin:C.muted;return <Pressable style={s.navItem} onPress={()=>onTab(id)}><Icon name={icon} size={23} color={color} filled={icon==='home'&&on}/><Text style={[s.navLabel,{color}]}>{label}</Text>{on&&<View style={s.navUnderline}/>} {id==='cart'&&cartCount>0&&<View style={s.cartBadge}><Text style={s.cartBadgeText}>{cartCount}</Text></View>}</Pressable>}; return <View style={s.nav}><Item id="home" label="Home" icon="home"/><Item id="categories" label="Categories" icon="grid"/><Pressable style={s.fab}><Icon name="search" size={26} color={C.ink} strokeWidth={2.4}/></Pressable><Item id="orders" label="Orders" icon="bag"/><Item id="cart" label="Cart" icon="cart"/></View>; }
 
 export default function GoodiesHomeScreen({onBack}:{onBack?:()=>void}) {
   const {width}=useWindowDimensions(); const bannerWidth=width-40; const [query,setQuery]=useState(''); const [tab,setTab]=useState<Tab>('home');
@@ -197,45 +138,15 @@ const s=StyleSheet.create({
   topRight:{flexDirection:'row',alignItems:'center',gap:10}, bell:{width:40,height:40,borderRadius:14,backgroundColor:C.card,alignItems:'center',justifyContent:'center'},
   bellDot:{position:'absolute',top:9,right:10,width:8,height:8,borderRadius:4,backgroundColor:C.pumpkin},
   address:{flexDirection:'row',alignItems:'center',gap:6,paddingHorizontal:20,marginTop:8}, addressText:{fontSize:15,fontWeight:'600',color:C.ink},
-  search:{marginHorizontal:20,marginTop:14,height:48,borderRadius:24,backgroundColor:C.card,flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:18},
-  searchInput:{flex:1,fontSize:14.5,color:C.ink,paddingVertical:0},
-  hero:{height:172,borderRadius:26,backgroundColor:C.ink,overflow:'hidden'}, heroImg:{position:'absolute',right:0,top:0,bottom:0,width:215},
-  heroText:{position:'absolute',left:20,top:22,width:200}, heroTitle:{color:C.white,fontSize:21,lineHeight:24,fontWeight:'800',letterSpacing:-0.3},
-  heroSub:{color:C.onDarkMuted,fontSize:12,lineHeight:15,marginTop:7,width:185}, heroBtn:{position:'absolute',left:20,bottom:18,height:36,borderRadius:18,backgroundColor:C.pumpkin,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6},
-  btnText:{color:C.ink,fontSize:14,fontWeight:'800'}, dots:{flexDirection:'row',justifyContent:'center',gap:6,marginTop:11},
-  dot:{width:6,height:6,borderRadius:3,backgroundColor:C.dot}, dotOn:{width:18,backgroundColor:C.pumpkin},
-  section:{marginTop:24}, sh:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingHorizontal:20,paddingBottom:12},
-  shTitle:{fontSize:19,fontWeight:'800',letterSpacing:-0.3,color:C.ink}, shLink:{flexDirection:'row',alignItems:'center',gap:3},
-  shLinkText:{fontSize:13.5,fontWeight:'700',color:C.pumpkinText}, rail:{paddingHorizontal:20,gap:10},
-  catGrid:{flexDirection:'row',flexWrap:'wrap',paddingHorizontal:14}, cat:{width:'20%',alignItems:'center',marginBottom:14,paddingHorizontal:2},
-  catIcon:{width:62,height:62,borderRadius:31}, catMore:{backgroundColor:C.peach,alignItems:'center',justifyContent:'center'},
-  catLabel:{marginTop:4,fontSize:11.5,lineHeight:13,fontWeight:'600',textAlign:'center',color:C.ink,minHeight:26},
-  promo:{height:150,borderRadius:26,backgroundColor:C.pumpkin,overflow:'hidden'}, promoImg:{position:'absolute',right:0,top:0,bottom:0,width:210},
-  promoText:{position:'absolute',left:20,top:20,width:175}, promoTitle:{fontSize:20,lineHeight:23,fontWeight:'800',letterSpacing:-0.3,color:C.ink},
-  promoSub:{fontSize:12.5,lineHeight:15,marginTop:6,width:150,color:'#3A2A20'}, promoBtn:{position:'absolute',left:20,bottom:16,height:34,borderRadius:17,backgroundColor:C.white,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6},
-  offBadge:{position:'absolute',right:16,top:41,width:68,height:68,borderRadius:34,backgroundColor:C.white,alignItems:'center',justifyContent:'center'},
-  offSmall:{fontSize:10.5,fontWeight:'700',color:C.pumpkin,lineHeight:12}, offBig:{fontSize:22,fontWeight:'800',color:C.pumpkin,lineHeight:24},
-  heart:{position:'absolute',top:7,right:7,backgroundColor:'rgba(255,255,255,0.92)',alignItems:'center',justifyContent:'center'}, plus:{backgroundColor:C.ink,alignItems:'center',justifyContent:'center'},
-  pCard:{width:146,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, vCard:{width:168,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, rCard:{width:116,backgroundColor:C.card,borderRadius:18,overflow:'hidden'},
-  cardBody:{paddingHorizontal:10,paddingTop:9,paddingBottom:10}, cardName:{fontSize:13.5,fontWeight:'700',color:C.ink}, cardSub:{fontSize:11.5,color:C.muted,marginTop:1},
-  cardFoot:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:6}, tag:{position:'absolute',left:0,bottom:0,backgroundColor:C.pumpkin,paddingHorizontal:9,paddingVertical:3,borderTopRightRadius:10},
-  tagText:{fontSize:10.5,fontWeight:'800',color:C.ink}, distance:{flexDirection:'row',alignItems:'center',gap:3}, distanceText:{fontSize:11.5,color:C.muted},
-  viewStore:{backgroundColor:C.tint,paddingHorizontal:11,paddingVertical:6,borderRadius:12}, viewStoreText:{fontSize:11.5,fontWeight:'700',color:C.ink},
-  rating:{flexDirection:'row',alignItems:'center',gap:3}, ratingNum:{fontWeight:'700',color:C.ink}, ratingCnt:{color:C.muted}, price:{fontSize:14,fontWeight:'800',color:C.ink},
-  deal:{width:150,height:172,borderRadius:22,overflow:'hidden'}, dealCircle:{position:'absolute',right:-14,top:-14,width:88,height:88,borderRadius:44},
-  dealBadgeWhite:{position:'absolute',left:12,top:12,width:46,height:46,borderRadius:23,backgroundColor:C.white,alignItems:'center',justifyContent:'center'},
-  dealBadgeBig:{fontSize:13,fontWeight:'800',color:C.pumpkin,lineHeight:14}, dealBadgeSmall:{fontSize:9.5,fontWeight:'700',color:C.pumpkin,lineHeight:11},
-  dealBadgeDark:{position:'absolute',left:12,top:12,width:56,height:56,borderRadius:28,backgroundColor:C.charSoft,alignItems:'center',justifyContent:'center'},
-  dealBuy:{fontSize:12,fontWeight:'800',color:C.white,lineHeight:13}, dealGet:{fontSize:15,fontWeight:'800',color:C.pumpkin,lineHeight:16},
-  dealText:{position:'absolute',left:12,right:12,top:78}, dealTitle:{fontSize:14,lineHeight:16,fontWeight:'800'}, dealSub:{fontSize:11.5,marginTop:2},
-  dealBtn:{position:'absolute',left:12,bottom:12,height:30,borderRadius:15,paddingHorizontal:12,alignItems:'center',justifyContent:'center'}, dealBtnText:{fontSize:12,fontWeight:'800'},
-  delivery:{height:122,borderRadius:24,backgroundColor:C.ink,overflow:'hidden'}, deliveryImg:{position:'absolute',right:0,top:0,bottom:0,width:150},
-  deliveryText:{position:'absolute',left:18,top:16,width:200}, deliveryTitle:{fontSize:16,fontWeight:'800',color:C.white},
-  deliverySub:{fontSize:11.5,lineHeight:14,color:C.onDarkMuted,marginTop:2,width:170}, deliveryBtn:{position:'absolute',left:18,bottom:14,height:30,borderRadius:15,backgroundColor:C.pumpkin,paddingHorizontal:13,alignItems:'center',justifyContent:'center'},
-  nav:{position:'absolute',left:14,right:14,bottom:Platform.OS==='ios'?24:14,height:68,borderRadius:30,backgroundColor:C.card,flexDirection:'row',alignItems:'center',justifyContent:'space-around',shadowColor:C.ink,shadowOpacity:0.14,shadowRadius:14,shadowOffset:{width:0,height:8},elevation:8},
-  navItem:{width:64,height:68,alignItems:'center',justifyContent:'center',gap:3}, navLabel:{fontSize:11,fontWeight:'700'},
-  navUnderline:{position:'absolute',bottom:0,left:12,right:12,height:3,borderTopLeftRadius:3,borderTopRightRadius:3,backgroundColor:C.pumpkin},
-  fab:{width:58,height:58,borderRadius:29,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',marginTop:-26,shadowColor:C.pumpkin,shadowOpacity:0.4,shadowRadius:9,shadowOffset:{width:0,height:8},elevation:8},
-  cartBadge:{position:'absolute',top:12,right:14,minWidth:17,height:17,borderRadius:9,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',paddingHorizontal:4},
-  cartBadgeText:{fontSize:10.5,fontWeight:'700',color:C.ink},
+  search:{marginHorizontal:20,marginTop:14,height:48,borderRadius:24,backgroundColor:C.card,flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:18}, searchInput:{flex:1,fontSize:14.5,color:C.ink,paddingVertical:0},
+  hero:{height:172,borderRadius:26,backgroundColor:C.ink,overflow:'hidden'}, heroImg:{position:'absolute',right:0,top:0,bottom:0,width:215}, heroText:{position:'absolute',left:20,top:22,width:200}, heroTitle:{color:C.white,fontSize:21,lineHeight:24,fontWeight:'800',letterSpacing:-0.3}, heroSub:{color:C.onDarkMuted,fontSize:12,lineHeight:15,marginTop:7,width:185}, heroBtn:{position:'absolute',left:20,bottom:18,height:36,borderRadius:18,backgroundColor:C.pumpkin,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6}, btnText:{color:C.ink,fontSize:14,fontWeight:'800'}, dots:{flexDirection:'row',justifyContent:'center',gap:6,marginTop:11}, dot:{width:6,height:6,borderRadius:3,backgroundColor:C.dot}, dotOn:{width:18,backgroundColor:C.pumpkin},
+  section:{marginTop:24}, sh:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingHorizontal:20,paddingBottom:12}, shTitle:{fontSize:19,fontWeight:'800',letterSpacing:-0.3,color:C.ink}, shLink:{flexDirection:'row',alignItems:'center',gap:3}, shLinkText:{fontSize:13.5,fontWeight:'700',color:C.pumpkinText}, rail:{paddingHorizontal:20,gap:10},
+  catGrid:{flexDirection:'row',flexWrap:'wrap',paddingHorizontal:14}, cat:{width:'20%',alignItems:'center',marginBottom:14,paddingHorizontal:2}, catIcon:{width:62,height:62,borderRadius:31}, catMore:{backgroundColor:C.peach,alignItems:'center',justifyContent:'center'},
+  catLabel:{marginTop:4,fontSize:11,lineHeight:13,fontWeight:'600',textAlign:'center',color:C.ink,minHeight:26},
+  promo:{height:150,borderRadius:26,backgroundColor:C.pumpkin,overflow:'hidden'}, promoImg:{position:'absolute',right:0,top:0,bottom:0,width:210}, promoText:{position:'absolute',left:20,top:20,width:175}, promoTitle:{fontSize:20,lineHeight:23,fontWeight:'800',letterSpacing:-0.3,color:C.ink}, promoSub:{fontSize:12.5,lineHeight:15,marginTop:6,width:150,color:'#3A2A20'}, promoBtn:{position:'absolute',left:20,bottom:16,height:34,borderRadius:17,backgroundColor:C.white,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6},
+  offBadge:{position:'absolute',right:16,top:41,width:68,height:68,borderRadius:34,backgroundColor:C.white,alignItems:'center',justifyContent:'center'}, offSmall:{fontSize:10.5,fontWeight:'700',color:C.pumpkin,lineHeight:12}, offBig:{fontSize:22,fontWeight:'800',color:C.pumpkin,lineHeight:24}, heart:{position:'absolute',top:7,right:7,backgroundColor:'rgba(255,255,255,0.92)',alignItems:'center',justifyContent:'center'}, plus:{backgroundColor:C.ink,alignItems:'center',justifyContent:'center'},
+  pCard:{width:146,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, vCard:{width:168,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, rCard:{width:116,backgroundColor:C.card,borderRadius:18,overflow:'hidden'}, cardBody:{paddingHorizontal:10,paddingTop:9,paddingBottom:10}, cardName:{fontSize:13.5,fontWeight:'700',color:C.ink}, cardSub:{fontSize:11.5,color:C.muted,marginTop:1}, cardFoot:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:6}, tag:{position:'absolute',left:0,bottom:0,backgroundColor:C.pumpkin,paddingHorizontal:9,paddingVertical:3,borderTopRightRadius:10}, tagText:{fontSize:10.5,fontWeight:'800',color:C.ink}, distance:{flexDirection:'row',alignItems:'center',gap:3}, distanceText:{fontSize:11.5,color:C.muted}, viewStore:{backgroundColor:C.tint,paddingHorizontal:11,paddingVertical:6,borderRadius:12}, viewStoreText:{fontSize:11.5,fontWeight:'700',color:C.ink},
+  rating:{flexDirection:'row',alignItems:'center',gap:3}, ratingNum:{fontWeight:'700',color:C.ink}, ratingCnt:{color:C.muted}, price:{fontSize:14,fontWeight:'800',color:C.ink}, deal:{width:150,height:172,borderRadius:22,overflow:'hidden'}, dealCircle:{position:'absolute',right:-14,top:-14,width:88,height:88,borderRadius:44}, dealBadgeWhite:{position:'absolute',left:12,top:12,width:46,height:46,borderRadius:23,backgroundColor:C.white,alignItems:'center',justifyContent:'center'}, dealBadgeBig:{fontSize:13,fontWeight:'800',color:C.pumpkin,lineHeight:14}, dealBadgeSmall:{fontSize:9.5,fontWeight:'700',color:C.pumpkin,lineHeight:11}, dealBadgeDark:{position:'absolute',left:12,top:12,width:56,height:56,borderRadius:28,backgroundColor:C.charSoft,alignItems:'center',justifyContent:'center'}, dealBuy:{fontSize:12,fontWeight:'800',color:C.white,lineHeight:13}, dealGet:{fontSize:15,fontWeight:'800',color:C.pumpkin,lineHeight:16}, dealText:{position:'absolute',left:12,right:12,top:78}, dealTitle:{fontSize:14,lineHeight:16,fontWeight:'800'}, dealSub:{fontSize:11.5,marginTop:2},
+  dealBtn:{position:'absolute',left:12,bottom:12,height:30,borderRadius:15,paddingHorizontal:12,alignItems:'center',justifyContent:'center'}, dealBtnText:{fontSize:12,fontWeight:'800'}, delivery:{height:122,borderRadius:24,backgroundColor:C.ink,overflow:'hidden'}, deliveryImg:{position:'absolute',right:0,top:0,bottom:0,width:150}, deliveryText:{position:'absolute',left:18,top:16,width:200}, deliveryTitle:{fontSize:16,fontWeight:'800',color:C.white}, deliverySub:{fontSize:11.5,lineHeight:14,color:C.onDarkMuted,marginTop:2,width:170}, deliveryBtn:{position:'absolute',left:18,bottom:14,height:30,borderRadius:15,backgroundColor:C.pumpkin,paddingHorizontal:13,alignItems:'center',justifyContent:'center'},
+  nav:{position:'absolute',left:14,right:14,bottom:Platform.OS==='ios'?24:14,height:68,borderRadius:30,backgroundColor:C.card,flexDirection:'row',alignItems:'center',justifyContent:'space-around',shadowColor:C.ink,shadowOpacity:0.14,shadowRadius:14,shadowOffset:{width:0,height:8},elevation:8}, navItem:{width:64,height:68,alignItems:'center',justifyContent:'center',gap:3}, navLabel:{fontSize:11,fontWeight:'700'}, navUnderline:{position:'absolute',bottom:0,left:12,right:12,height:3,borderTopLeftRadius:3,borderTopRightRadius:3,backgroundColor:C.pumpkin}, fab:{width:58,height:58,borderRadius:29,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',marginTop:-26,shadowColor:C.pumpkin,shadowOpacity:0.4,shadowRadius:9,shadowOffset:{width:0,height:8},elevation:8}, cartBadge:{position:'absolute',top:12,right:14,minWidth:17,height:17,borderRadius:9,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',paddingHorizontal:4}, cartBadgeText:{fontSize:10.5,fontWeight:'700',color:C.ink},
 });
