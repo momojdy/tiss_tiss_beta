@@ -19,6 +19,7 @@ import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
+import GoodiesHomeScreen from './src/screens/GoodiesHomeScreen';
 import FlyzHomeScreen from './src/screens/FlyzHomeScreen';
 import FlyzMyTripsScreen from './src/screens/FlyzMyTripsScreen';
 import FlyzDealsScreen from './src/screens/FlyzDealsScreen';
@@ -40,7 +41,7 @@ import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShie
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -175,6 +176,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 
       if (buyerScreen === 'konsoliss') {
         return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
+      }
+
+      if (buyerScreen === 'goodies') {
+        return <GoodiesHomeScreen />;
       }
 
       if (buyerScreen === 'flyz') {
