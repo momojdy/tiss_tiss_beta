@@ -1,0 +1,242 @@
+/**
+ * Wantiss Goodies — Home screen (light mode only)
+ *
+ * Dependencies (Expo):
+ *   npx expo install expo-linear-gradient react-native-svg
+ *
+ * Requires React Native 0.71+ (uses the `gap` style).
+ * All images load from the public assets repo (see ASSET_BASE) and fall back to a flat tint if missing.
+ * Dark mode is intentionally NOT handled here. All colors live in the `C` object so a theme toggle can swap them later.
+ */
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  ScrollView,
+  FlatList,
+  Image,
+  Pressable,
+  TextInput,
+  StyleSheet,
+  StatusBar,
+  Platform,
+  useWindowDimensions,
+} from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Svg, { Path, Circle, Rect } from 'react-native-svg';
+
+const C = {
+  bg: '#F7F4EE', card: '#FFFFFF', peach: '#FFE6D3', ink: '#233D4C',
+  muted: '#6A7B86', pumpkin: '#FD802E', pumpkinText: '#C2570F',
+  tint: '#E4EAEE', dot: '#D4D9DC', white: '#FFFFFF',
+  onDarkMuted: '#C9D6DE', charSoft: '#34505F',
+};
+const CHAR_CLEAR = 'rgba(35,61,76,0)';
+const PUMPKIN_CLEAR = 'rgba(253,128,46,0)';
+const ASSET_BASE = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/main/goodies';
+const asset = (path: string) => `${ASSET_BASE}/${path}`;
+const money = (usd: number) => `$${usd.toFixed(2)}`;
+
+const USER = { initial: 'M', address: 'Delmas 33, Port-au-Prince', cartCount: 3, hasUnread: true };
+
+interface Slide { id: string; title: string; sub: string; cta: string; image: string }
+const HERO_SLIDES: Slide[] = [
+  { id: 'h1', title: 'Authentic Haitian Flavors, Delivered', sub: 'From your favorite local restaurants and trusted vendors.', cta: 'Order now', image: 'images/hero.jpg' },
+  { id: 'h2', title: 'Free delivery on your first order', sub: 'Pay with your Wallet and earn Wantiss Points.', cta: 'Order now', image: 'images/hero.jpg' },
+  { id: 'h3', title: 'Support local vendors', sub: 'Shop from trusted businesses near you.', cta: 'Explore', image: 'images/hero.jpg' },
+];
+const PROMO_SLIDES: Slide[] = [
+  { id: 'p1', title: 'Fresh groceries at great prices', sub: 'Quality products from local vendors near you.', cta: 'Shop now', image: 'images/promo.jpg' },
+  { id: 'p2', title: '20% off fresh produce this week', sub: 'Straight from local farms and markets.', cta: 'Shop now', image: 'images/promo.jpg' },
+];
+interface Category { id: string; label: string; icon: string }
+const CATEGORIES: Category[] = [
+  { id: 'restaurants', label: 'Restaurants', icon: 'icons/restaurants.png' },
+  { id: 'groceries', label: 'Groceries', icon: 'icons/groceries.png' },
+  { id: 'produce', label: 'Fresh produce', icon: 'icons/fresh-produce.png' },
+  { id: 'beverages', label: 'Beverages', icon: 'icons/beverages.png' },
+  { id: 'bakery', label: 'Bakery & desserts', icon: 'icons/bakery-desserts.png' },
+  { id: 'meat', label: 'Meat & seafood', icon: 'icons/meat-seafood.png' },
+  { id: 'household', label: 'Household', icon: 'icons/household.png' },
+  { id: 'care', label: 'Personal care', icon: 'icons/personal-care.png' },
+  { id: 'local', label: 'Local products', icon: 'icons/local-products.png' },
+];
+interface Popular { id: string; name: string; category: string; rating: number; reviews: number; distanceKm: number; image: string; tag?: string }
+const POPULAR: Popular[] = [
+  { id: 'pop1', name: 'Chez Marjorie', category: 'Haitian food', rating: 4.8, reviews: 124, distanceKm: 0.8, image: 'images/p1.jpg', tag: 'Popular' },
+  { id: 'pop2', name: 'Fruits & Légumes Lakay', category: 'Groceries', rating: 4.7, reviews: 98, distanceKm: 1.2, image: 'images/p2.jpg' },
+  { id: 'pop3', name: 'Jus Naturel', category: 'Beverages', rating: 4.6, reviews: 76, distanceKm: 1.5, image: 'images/p3.jpg' },
+  { id: 'pop4', name: 'Boulangerie Delmas', category: 'Bakery', rating: 4.6, reviews: 52, distanceKm: 2.0, image: 'images/p4.jpg' },
+];
+interface Vendor { id: string; name: string; category: string; rating: number; reviews: number; image: string }
+const VENDORS: Vendor[] = [
+  { id: 'v1', name: 'Chez Marjorie', category: 'Haitian food', rating: 4.8, reviews: 124, image: 'images/v1.jpg' },
+  { id: 'v2', name: 'Ti Krik', category: 'Seafood', rating: 4.6, reviews: 87, image: 'images/v2.jpg' },
+  { id: 'v3', name: 'Nature & Bien', category: 'Fresh produce', rating: 4.2, reviews: 63, image: 'images/v3.jpg' },
+];
+interface Recommended { id: string; name: string; category: string; price: number; rating: number; reviews: number; image: string }
+const RECOMMENDED: Recommended[] = [
+  { id: 'r1', name: 'Riz local (10 lb)', category: 'Grains & staples', price: 12.99, rating: 4.9, reviews: 210, image: 'images/r1.jpg' },
+  { id: 'r2', name: 'Chicken (whole)', category: 'Meat & poultry', price: 4.5, rating: 4.7, reviews: 98, image: 'images/r2.jpg' },
+  { id: 'r3', name: 'Mangues (lb)', category: 'Fresh produce', price: 1.5, rating: 4.8, reviews: 76, image: 'images/r3.jpg' },
+  { id: 'r4', name: 'Savon', category: 'Household', price: 2.75, rating: 4.6, reviews: 64, image: 'images/r4.jpg' },
+];
+
+type IconName = 'pin'|'chevronDown'|'chevronRight'|'arrowRight'|'bell'|'search'|'heart'|'star'|'plus'|'home'|'grid'|'bag'|'cart';
+function Icon({ name, size=20, color=C.ink, strokeWidth=2, filled=false }: { name: IconName; size?: number; color?: string; strokeWidth?: number; filled?: boolean }) {
+  const s = { stroke: color, strokeWidth, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, fill: 'none' };
+  const f = { fill: color, stroke: 'none' };
+  let body: React.ReactNode = null;
+  switch(name) {
+    case 'pin': body=<><Path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z" {...s}/><Circle cx="12" cy="9.5" r="2.5" {...s}/></>; break;
+    case 'chevronDown': body=<Path d="M6 9l6 6 6-6" {...s} strokeWidth={2.6}/>; break;
+    case 'chevronRight': body=<Path d="M9 5l7 7-7 7" {...s} strokeWidth={2.8}/>; break;
+    case 'arrowRight': body=<Path d="M5 12h14M13 6l6 6-6 6" {...s} strokeWidth={2.6}/>; break;
+    case 'bell': body=<><Path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z" {...s}/><Path d="M10 21a2.2 2.2 0 0 0 4 0" {...s}/></>; break;
+    case 'search': body=<><Circle cx="11" cy="11" r="7" {...s}/><Path d="M20 20l-3.5-3.5" {...s}/></>; break;
+    case 'heart': body=<Path d="M12 20s-7.5-4.6-7.5-10A4.3 4.3 0 0 1 12 7.4 4.3 4.3 0 0 1 19.5 10c0 5.4-7.5 10-7.5 10z" {...(filled?{...f,stroke:color,strokeWidth:2}:s)}/>; break;
+    case 'star': body=<Path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2 6.3 20.3l1.2-6.4L2.8 9.5l6.4-.8z" {...f}/>; break;
+    case 'plus': body=<Path d="M12 5v14M5 12h14" {...s} strokeWidth={3}/>; break;
+    case 'home': body=<Path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z" {...f}/>; break;
+    case 'grid': body=<><Rect x="4" y="4" width="7" height="7" rx="2" {...s}/><Rect x="13" y="4" width="7" height="7" rx="2" {...s}/><Rect x="4" y="13" width="7" height="7" rx="2" {...s}/><Rect x="13" y="13" width="7" height="7" rx="2" {...s}/></>; break;
+    case 'bag': body=<><Path d="M6 8h12l1 12H5z" {...s}/><Path d="M9 8V6a3 3 0 0 1 6 0v2" {...s}/></>; break;
+    case 'cart': body=<><Path d="M3 4h2.5l2.2 11h10.1l1.9-8H6.3" {...s}/><Circle cx="9" cy="19.5" r="1.4" {...s}/><Circle cx="17" cy="19.5" r="1.4" {...s}/></>; break;
+  }
+  return <Svg width={size} height={size} viewBox="0 0 24 24">{body}</Svg>;
+}
+
+function RemoteImage({path,style,fallback=C.tint}:{path:string;style?:any;fallback?:string}) {
+  const [failed,setFailed]=useState(false);
+  return <View style={[style,{backgroundColor:fallback,overflow:'hidden'}]}>{!failed&&<Image source={{uri:asset(path)}} style={StyleSheet.absoluteFill} resizeMode="cover" onError={()=>setFailed(true)}/>}</View>;
+}
+function Dots({count,active}:{count:number;active:number}) {
+  return <View style={s.dots}>{Array.from({length:count}).map((_,i)=><View key={i} style={[s.dot,i===active&&s.dotOn]}/>)}</View>;
+}
+function Pager<T extends {id:string}>({data,width,render}:{data:T[];width:number;render:(item:T)=>React.ReactNode}) {
+  const [index,setIndex]=useState(0); const GAP=12;
+  return <><FlatList horizontal data={data} keyExtractor={d=>d.id} showsHorizontalScrollIndicator={false} snapToInterval={width+GAP} decelerationRate="fast" contentContainerStyle={{paddingHorizontal:20,gap:GAP}} renderItem={({item})=><View style={{width}}>{render(item)}</View>} onMomentumScrollEnd={e=>setIndex(Math.round(e.nativeEvent.contentOffset.x/(width+GAP)))}/>{data.length>1&&<Dots count={data.length} active={index}/>}</>;
+}
+function SectionHeader({title,onSeeAll}:{title:string;onSeeAll?:()=>void}) {
+  return <View style={s.sh}><Text style={s.shTitle}>{title}</Text><Pressable style={s.shLink} onPress={onSeeAll} hitSlop={8}><Text style={s.shLinkText}>See all</Text><Icon name="chevronRight" size={13} color={C.pumpkinText}/></Pressable></View>;
+}
+function HeartButton({small=false}:{small?:boolean}) {
+  const [liked,setLiked]=useState(false); const size=small?22:26;
+  return <Pressable onPress={()=>setLiked(v=>!v)} style={[s.heart,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="heart" size={small?12:14} color={liked?C.pumpkin:C.ink} filled={liked} strokeWidth={2.2}/></Pressable>;
+}
+function PlusButton({size=26,onPress}:{size?:number;onPress?:()=>void}) {
+  return <Pressable onPress={onPress} style={[s.plus,{width:size,height:size,borderRadius:size/2}]} hitSlop={6}><Icon name="plus" size={size===26?14:13} color={C.white}/></Pressable>;
+}
+function Rating({rating,reviews,size=11.5}:{rating:number;reviews:number;size?:number}) {
+  return <View style={s.rating}><Icon name="star" size={12} color={C.pumpkin}/><Text style={[s.ratingNum,{fontSize:size}]}>{rating.toFixed(1)}</Text><Text style={[s.ratingCnt,{fontSize:size}]}>({reviews})</Text></View>;
+}
+function HeroBanner({slide}:{slide:Slide}) {
+  return <View style={s.hero}><RemoteImage path={slide.image} style={s.heroImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.4,y:0}} style={s.heroImg} pointerEvents="none"/><View style={s.heroText}><Text style={s.heroTitle}>{slide.title}</Text><Text style={s.heroSub}>{slide.sub}</Text></View><Pressable style={s.heroBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable></View>;
+}
+function PromoBanner({slide}:{slide:Slide}) {
+  return <View style={s.promo}><RemoteImage path={slide.image} style={s.promoImg} fallback={C.pumpkin}/><LinearGradient colors={[C.pumpkin,PUMPKIN_CLEAR]} start={{x:0,y:0}} end={{x:0.42,y:0}} style={s.promoImg} pointerEvents="none"/><View style={s.promoText}><Text style={s.promoTitle}>{slide.title}</Text><Text style={s.promoSub}>{slide.sub}</Text></View><Pressable style={s.promoBtn}><Text style={s.btnText}>{slide.cta}</Text><Icon name="arrowRight" size={14} color={C.ink}/></Pressable><View style={s.offBadge}><Text style={s.offSmall}>Up to</Text><Text style={s.offBig}>30%</Text><Text style={s.offSmall}>OFF</Text></View></View>;
+}
+function PopularCard({item}:{item:Popular}) {
+  return <Pressable style={s.pCard}><View><RemoteImage path={item.image} style={{height:84}}/><HeartButton/>{item.tag?<View style={s.tag}><Text style={s.tagText}>{item.tag}</Text></View>:null}</View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.distance}><Icon name="pin" size={12} color={C.muted} strokeWidth={2.2}/><Text style={s.distanceText}>{item.distanceKm.toFixed(1)} km</Text></View><PlusButton/></View></View></Pressable>;
+}
+function VendorCard({item}:{item:Vendor}) {
+  return <Pressable style={s.vCard}><View><RemoteImage path={item.image} style={{height:82}}/><HeartButton/></View><View style={s.cardBody}><Text style={s.cardName} numberOfLines={1}>{item.name}</Text><Text style={s.cardSub} numberOfLines={1}>{item.category}</Text><View style={{marginTop:5}}><Rating rating={item.rating} reviews={item.reviews}/></View><View style={s.cardFoot}><View style={s.viewStore}><Text style={s.viewStoreText}>View store</Text></View><PlusButton/></View></View></Pressable>;
+}
+function RecommendedCard({item}:{item:Recommended}) {
+  return <Pressable style={s.rCard}><View><RemoteImage path={item.image} style={{height:78}}/><HeartButton small/></View><View style={{paddingHorizontal:9,paddingTop:8,paddingBottom:9}}><Text style={[s.cardName,{fontSize:12.5}]} numberOfLines={1}>{item.name}</Text><Text style={[s.cardSub,{fontSize:10.5}]} numberOfLines={1}>{item.category}</Text><View style={[s.cardFoot,{marginTop:5}]}><Text style={s.price}>{money(item.price)}</Text><PlusButton size={24}/></View><View style={{marginTop:4}}><Rating rating={item.rating} reviews={item.reviews} size={10.5}/></View></View></Pressable>;
+}
+function DealPumpkin() {
+  return <View style={[s.deal,{backgroundColor:C.pumpkin}]}><RemoteImage path="images/plate.jpg" style={s.dealCircle}/><View style={s.dealBadgeWhite}><Text style={s.dealBadgeBig}>20%</Text><Text style={s.dealBadgeSmall}>OFF</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.ink}]}>Special Haitian plate combo</Text><Text style={[s.dealSub,{color:C.ink}]}>Chez Marjorie</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Order now</Text></Pressable></View>;
+}
+function DealCharcoal() {
+  return <View style={[s.deal,{backgroundColor:C.ink}]}><View style={s.dealBadgeDark}><Text style={s.dealBuy}>Buy 2</Text><Text style={s.dealGet}>Get 1</Text><Text style={s.dealBuy}>Free</Text></View><View style={s.dealText}><Text style={[s.dealTitle,{color:C.white}]}>Fresh produce</Text><Text style={[s.dealSub,{color:'#B9C8D1'}]}>Local vendors</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.white}]}><Text style={[s.dealBtnText,{color:C.ink}]}>Shop now</Text></Pressable></View>;
+}
+function DealPhoto() {
+  return <View style={[s.deal,{backgroundColor:C.card}]}><View><RemoteImage path="images/v2.jpg" style={{height:78}}/><HeartButton/></View><View style={{paddingHorizontal:12,paddingTop:9}}><Text style={[s.dealTitle,{color:C.ink}]}>Nature & Bien</Text><Text style={[s.dealSub,{color:C.muted}]}>Fresh produce</Text></View><Pressable style={[s.dealBtn,{backgroundColor:C.ink}]}><Text style={[s.dealBtnText,{color:C.white}]}>Shop now</Text></Pressable></View>;
+}
+function DeliveryBanner() {
+  return <View style={s.delivery}><RemoteImage path="images/courier.jpg" style={s.deliveryImg} fallback={C.charSoft}/><LinearGradient colors={[C.ink,CHAR_CLEAR]} start={{x:0,y:0}} end={{x:0.5,y:0}} style={s.deliveryImg} pointerEvents="none"/><View style={s.deliveryText}><Text style={s.deliveryTitle}>Fast & reliable delivery</Text><Text style={s.deliverySub}>From our vendors to your door, with Woulib.</Text></View><Pressable style={s.deliveryBtn}><Text style={[s.dealBtnText,{color:C.ink}]}>Track your order</Text></Pressable></View>;
+}
+
+type Tab='home'|'categories'|'orders'|'cart';
+function BottomNav({tab,onTab,cartCount}:{tab:Tab;onTab:(t:Tab)=>void;cartCount:number}) {
+  const Item=({id,label,icon}:{id:Tab;label:string;icon:IconName})=>{const on=tab===id;const color=on?C.pumpkin:C.muted;return <Pressable style={s.navItem} onPress={()=>onTab(id)}><Icon name={icon} size={23} color={color} filled={icon==='home'&&on}/><Text style={[s.navLabel,{color}]}>{label}</Text>{on&&<View style={s.navUnderline}/>} {id==='cart'&&cartCount>0&&<View style={s.cartBadge}><Text style={s.cartBadgeText}>{cartCount}</Text></View>}</Pressable>};
+  return <View style={s.nav}><Item id="home" label="Home" icon="home"/><Item id="categories" label="Categories" icon="grid"/><Pressable style={s.fab}><Icon name="search" size={26} color={C.ink} strokeWidth={2.4}/></Pressable><Item id="orders" label="Orders" icon="bag"/><Item id="cart" label="Cart" icon="cart"/></View>;
+}
+
+export default function GoodiesHomeScreen() {
+  const {width}=useWindowDimensions(); const bannerWidth=width-40; const [query,setQuery]=useState(''); const [tab,setTab]=useState<Tab>('home');
+  return <View style={s.root}>
+    <StatusBar barStyle="dark-content" translucent backgroundColor="transparent"/>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:130}}>
+      <View style={s.bounceCover} pointerEvents="none"/>
+      <LinearGradient colors={['#FD802E','#FD802E','#FE9A55','#FFC196','#FFE3CF','#F7F4EE']} locations={[0,0.16,0.38,0.66,0.86,1]} style={s.headerGradient} pointerEvents="none"/>
+      <View style={s.top}><View style={s.logo}><Text style={s.logoWantiss}>Wantiss</Text><Text style={s.logoGoodies}>Goodies</Text></View><View style={s.topRight}><Pressable style={s.bell}><Icon name="bell" size={20} color={C.ink} strokeWidth={1.9}/>{USER.hasUnread&&<View style={s.bellDot}/>}</Pressable><Pressable style={s.avatar}><Text style={s.avatarText}>{USER.initial}</Text></Pressable></View></View>
+      <Pressable style={s.address}><Icon name="pin" size={17} color={C.ink}/><Text style={s.addressText}>{USER.address}</Text><Icon name="chevronDown" size={14} color={C.ink}/></Pressable>
+      <View style={s.search}><Icon name="search" size={19} color={C.ink}/><TextInput style={s.searchInput} value={query} onChangeText={setQuery} placeholder="Search for food, groceries, drinks, and more" placeholderTextColor={C.muted} returnKeyType="search"/></View>
+      <View style={{marginTop:16}}><Pager data={HERO_SLIDES} width={bannerWidth} render={sl=><HeroBanner slide={sl}/>} /></View>
+      <View style={s.section}><SectionHeader title="Shop by category"/><View style={s.catGrid}>{CATEGORIES.map(c=><Pressable key={c.id} style={s.cat}><RemoteImage path={c.icon} style={s.catIcon} fallback={C.peach}/><Text style={s.catLabel} numberOfLines={2}>{c.label}</Text></Pressable>)}<Pressable style={s.cat}><View style={[s.catIcon,s.catMore]}><Icon name="grid" size={26} color={C.ink}/></View><Text style={s.catLabel}>More</Text></Pressable></View></View>
+      <View style={{marginTop:20}}><Pager data={PROMO_SLIDES} width={bannerWidth} render={sl=><PromoBanner slide={sl}/>} /></View>
+      <View style={s.section}><SectionHeader title="Popular near you"/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rail}>{POPULAR.map(p=><PopularCard key={p.id} item={p}/>)}</ScrollView></View>
+      <View style={s.section}><SectionHeader title="Featured vendors"/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rail}>{VENDORS.map(v=><VendorCard key={v.id} item={v}/>)}</ScrollView></View>
+      <View style={s.section}><SectionHeader title="Deals & offers"/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rail}><DealPumpkin/><DealCharcoal/><DealPhoto/></ScrollView></View>
+      <View style={s.section}><SectionHeader title="Recommended for you"/><ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={s.rail}>{RECOMMENDED.map(r=><RecommendedCard key={r.id} item={r}/>)}</ScrollView></View>
+      <View style={{marginTop:24,paddingHorizontal:20}}><DeliveryBanner/></View>
+    </ScrollView>
+    <BottomNav tab={tab} onTab={setTab} cartCount={USER.cartCount}/>
+  </View>;
+}
+
+const TOP_INSET=Platform.OS==='ios'?58:(StatusBar.currentHeight??24)+10;
+const SERIF=Platform.select({ios:'Georgia',android:'serif',default:'serif'});
+const s=StyleSheet.create({
+  root:{flex:1,backgroundColor:C.bg}, bounceCover:{position:'absolute',top:-1000,left:0,right:0,height:1000,backgroundColor:C.pumpkin},
+  headerGradient:{position:'absolute',top:0,left:0,right:0,height:400+TOP_INSET-44},
+  top:{marginTop:TOP_INSET,paddingHorizontal:20,flexDirection:'row',alignItems:'center',justifyContent:'space-between'},
+  logo:{flexDirection:'row',alignItems:'baseline',gap:7}, logoWantiss:{fontSize:28,fontWeight:'800',letterSpacing:-0.8,color:C.ink},
+  logoGoodies:{fontSize:25,fontWeight:'700',fontStyle:'italic',fontFamily:SERIF,color:C.ink},
+  topRight:{flexDirection:'row',alignItems:'center',gap:10}, bell:{width:40,height:40,borderRadius:14,backgroundColor:C.card,alignItems:'center',justifyContent:'center'},
+  bellDot:{position:'absolute',top:9,right:10,width:8,height:8,borderRadius:4,backgroundColor:C.pumpkin},
+  avatar:{width:40,height:40,borderRadius:20,backgroundColor:C.ink,alignItems:'center',justifyContent:'center'}, avatarText:{color:C.white,fontSize:17,fontWeight:'800'},
+  address:{flexDirection:'row',alignItems:'center',gap:6,paddingHorizontal:20,marginTop:8}, addressText:{fontSize:15,fontWeight:'600',color:C.ink},
+  search:{marginHorizontal:20,marginTop:14,height:48,borderRadius:24,backgroundColor:C.card,flexDirection:'row',alignItems:'center',gap:10,paddingHorizontal:18},
+  searchInput:{flex:1,fontSize:14.5,color:C.ink,paddingVertical:0},
+  hero:{height:172,borderRadius:26,backgroundColor:C.ink,overflow:'hidden'}, heroImg:{position:'absolute',right:0,top:0,bottom:0,width:215},
+  heroText:{position:'absolute',left:20,top:22,width:200}, heroTitle:{color:C.white,fontSize:21,lineHeight:24,fontWeight:'800',letterSpacing:-0.3},
+  heroSub:{color:C.onDarkMuted,fontSize:12,lineHeight:15,marginTop:7,width:185}, heroBtn:{position:'absolute',left:20,bottom:18,height:36,borderRadius:18,backgroundColor:C.pumpkin,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6},
+  btnText:{color:C.ink,fontSize:14,fontWeight:'800'}, dots:{flexDirection:'row',justifyContent:'center',gap:6,marginTop:11},
+  dot:{width:6,height:6,borderRadius:3,backgroundColor:C.dot}, dotOn:{width:18,backgroundColor:C.pumpkin},
+  section:{marginTop:24}, sh:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',paddingHorizontal:20,paddingBottom:12},
+  shTitle:{fontSize:19,fontWeight:'800',letterSpacing:-0.3,color:C.ink}, shLink:{flexDirection:'row',alignItems:'center',gap:3},
+  shLinkText:{fontSize:13.5,fontWeight:'700',color:C.pumpkinText}, rail:{paddingHorizontal:20,gap:10},
+  catGrid:{flexDirection:'row',flexWrap:'wrap',paddingHorizontal:14}, cat:{width:'20%',alignItems:'center',marginBottom:14,paddingHorizontal:2},
+  catIcon:{width:62,height:62,borderRadius:31}, catMore:{backgroundColor:C.peach,alignItems:'center',justifyContent:'center'},
+  catLabel:{marginTop:4,fontSize:11.5,lineHeight:13,fontWeight:'600',textAlign:'center',color:C.ink,minHeight:26},
+  promo:{height:150,borderRadius:26,backgroundColor:C.pumpkin,overflow:'hidden'}, promoImg:{position:'absolute',right:0,top:0,bottom:0,width:210},
+  promoText:{position:'absolute',left:20,top:20,width:175}, promoTitle:{fontSize:20,lineHeight:23,fontWeight:'800',letterSpacing:-0.3,color:C.ink},
+  promoSub:{fontSize:12.5,lineHeight:15,marginTop:6,width:150,color:'#3A2A20'}, promoBtn:{position:'absolute',left:20,bottom:16,height:34,borderRadius:17,backgroundColor:C.white,paddingHorizontal:15,flexDirection:'row',alignItems:'center',gap:6},
+  offBadge:{position:'absolute',right:16,top:41,width:68,height:68,borderRadius:34,backgroundColor:C.white,alignItems:'center',justifyContent:'center'},
+  offSmall:{fontSize:10.5,fontWeight:'700',color:C.pumpkin,lineHeight:12}, offBig:{fontSize:22,fontWeight:'800',color:C.pumpkin,lineHeight:24},
+  heart:{position:'absolute',top:7,right:7,backgroundColor:'rgba(255,255,255,0.92)',alignItems:'center',justifyContent:'center'}, plus:{backgroundColor:C.ink,alignItems:'center',justifyContent:'center'},
+  pCard:{width:146,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, vCard:{width:168,backgroundColor:C.card,borderRadius:20,overflow:'hidden'}, rCard:{width:116,backgroundColor:C.card,borderRadius:18,overflow:'hidden'},
+  cardBody:{paddingHorizontal:10,paddingTop:9,paddingBottom:10}, cardName:{fontSize:13.5,fontWeight:'700',color:C.ink}, cardSub:{fontSize:11.5,color:C.muted,marginTop:1},
+  cardFoot:{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginTop:6}, tag:{position:'absolute',left:0,bottom:0,backgroundColor:C.pumpkin,paddingHorizontal:9,paddingVertical:3,borderTopRightRadius:10},
+  tagText:{fontSize:10.5,fontWeight:'800',color:C.ink}, distance:{flexDirection:'row',alignItems:'center',gap:3}, distanceText:{fontSize:11.5,color:C.muted},
+  viewStore:{backgroundColor:C.tint,paddingHorizontal:11,paddingVertical:6,borderRadius:12}, viewStoreText:{fontSize:11.5,fontWeight:'700',color:C.ink},
+  rating:{flexDirection:'row',alignItems:'center',gap:3}, ratingNum:{fontWeight:'700',color:C.ink}, ratingCnt:{color:C.muted}, price:{fontSize:14,fontWeight:'800',color:C.ink},
+  deal:{width:150,height:172,borderRadius:22,overflow:'hidden'}, dealCircle:{position:'absolute',right:-14,top:-14,width:88,height:88,borderRadius:44},
+  dealBadgeWhite:{position:'absolute',left:12,top:12,width:46,height:46,borderRadius:23,backgroundColor:C.white,alignItems:'center',justifyContent:'center'},
+  dealBadgeBig:{fontSize:13,fontWeight:'800',color:C.pumpkin,lineHeight:14}, dealBadgeSmall:{fontSize:9.5,fontWeight:'700',color:C.pumpkin,lineHeight:11},
+  dealBadgeDark:{position:'absolute',left:12,top:12,width:56,height:56,borderRadius:28,backgroundColor:C.charSoft,alignItems:'center',justifyContent:'center'},
+  dealBuy:{fontSize:12,fontWeight:'800',color:C.white,lineHeight:13}, dealGet:{fontSize:15,fontWeight:'800',color:C.pumpkin,lineHeight:16},
+  dealText:{position:'absolute',left:12,right:12,top:78}, dealTitle:{fontSize:14,lineHeight:16,fontWeight:'800'}, dealSub:{fontSize:11.5,marginTop:2},
+  dealBtn:{position:'absolute',left:12,bottom:12,height:30,borderRadius:15,paddingHorizontal:12,alignItems:'center',justifyContent:'center'}, dealBtnText:{fontSize:12,fontWeight:'800'},
+  delivery:{height:122,borderRadius:24,backgroundColor:C.ink,overflow:'hidden'}, deliveryImg:{position:'absolute',right:0,top:0,bottom:0,width:150},
+  deliveryText:{position:'absolute',left:18,top:16,width:200}, deliveryTitle:{fontSize:16,fontWeight:'800',color:C.white},
+  deliverySub:{fontSize:11.5,lineHeight:14,color:C.onDarkMuted,marginTop:2,width:170}, deliveryBtn:{position:'absolute',left:18,bottom:14,height:30,borderRadius:15,backgroundColor:C.pumpkin,paddingHorizontal:13,alignItems:'center',justifyContent:'center'},
+  nav:{position:'absolute',left:14,right:14,bottom:Platform.OS==='ios'?24:14,height:68,borderRadius:30,backgroundColor:C.card,flexDirection:'row',alignItems:'center',justifyContent:'space-around',shadowColor:C.ink,shadowOpacity:0.14,shadowRadius:14,shadowOffset:{width:0,height:8},elevation:8},
+  navItem:{width:64,height:68,alignItems:'center',justifyContent:'center',gap:3}, navLabel:{fontSize:11,fontWeight:'700'},
+  navUnderline:{position:'absolute',bottom:0,left:12,right:12,height:3,borderTopLeftRadius:3,borderTopRightRadius:3,backgroundColor:C.pumpkin},
+  fab:{width:58,height:58,borderRadius:29,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',marginTop:-26,shadowColor:C.pumpkin,shadowOpacity:0.4,shadowRadius:9,shadowOffset:{width:0,height:8},elevation:8},
+  cartBadge:{position:'absolute',top:12,right:14,minWidth:17,height:17,borderRadius:9,backgroundColor:C.pumpkin,alignItems:'center',justifyContent:'center',paddingHorizontal:4},
+  cartBadgeText:{fontSize:10.5,fontWeight:'700',color:C.ink},
+});
