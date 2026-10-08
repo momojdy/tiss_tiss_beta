@@ -1,6 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import WoulibFlow from '../features/woulib/WoulibFlow';
 
 export default function WoulibHomeScreen({ onBack }: { onBack?: () => void }) {
-  return <View style={{ flex: 1, backgroundColor: '#fff' }} />;
+  return <WoulibFlow onClose={onBack} />;
 }
