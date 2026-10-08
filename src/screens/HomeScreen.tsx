@@ -173,7 +173,7 @@ const NOTIFICATIONS=['new season styles, up to 20% off','free shipping on orders
 function MainPromoBanner(){
   const indices=useRef(CARD_CAPTIONS.map(()=>pick(CARD_COLORS))).current; const[msg,setMsg]=useState(0);
   useEffect(()=>{const id=setInterval(()=>setMsg(m=>(m+1)%NOTIFICATIONS.length),3000);return()=>clearInterval(id)},[]);
-  return <View style={s.banner}><View style={{flexDirection:'row'}}><Pressable style={[s.voucher,{marginRight:6}]}><Text style={{fontSize:18,fontWeight:'bold',color:LAVENDER}}>$7</Text><Text style={{fontSize:10,textAlign:'center',marginTop:2,color:BLACK87}}>{'grocery\\voucher'}</Text></Pressable>{CARD_CAPTIONS.map((cap,i)=><Pressable key={cap} style={[s.imgCard,{marginRight:i<CARD_CAPTIONS.length-1?6:0}]}><View style={{flex:1,backgroundColor:CARD_COLORS[indices[i]]}}/><Text style={{fontSize:10,fontWeight:'600',paddingHorizontal:6,paddingVertical:4,color:BLACK87}}>{cap}</Text></Pressable>)}</View><Pressable style={s.notif}><MaterialIcons name="volume-up" size={16} color="#fff"/><View style={{flex:1,marginLeft:8,marginRight:6}}><CyclingText text={NOTIFICATIONS[msg]} lineHeight={16} offset={1} duration={500} style={{color:'#fff',fontSize:12}}/></View><MaterialIcons name="chevron-right" size={16} color="#fff"/></Pressable></View>;
+  return <View style={s.banner}><View style={{flexDirection:'row'}}><Pressable style={[s.voucher,{marginRight:6}]}><Text style={{fontSize:18,fontWeight:'bold',color:LAVENDER}}>$7</Text><Text style={{fontSize:10,textAlign:'center',marginTop:2,color:BLACK87}}>{'grocery\\\nvoucher'}</Text></Pressable>{CARD_CAPTIONS.map((cap,i)=><Pressable key={cap} style={[s.imgCard,{marginRight:i<CARD_CAPTIONS.length-1?6:0}]}><View style={{flex:1,backgroundColor:CARD_COLORS[indices[i]]}}/><Text style={{fontSize:10,fontWeight:'600',paddingHorizontal:6,paddingVertical:4,color:BLACK87}}>{cap}</Text></Pressable>)}</View><Pressable style={s.notif}><MaterialIcons name="volume-up" size={16} color="#fff"/><View style={{flex:1,marginLeft:8,marginRight:6}}><CyclingText text={NOTIFICATIONS[msg]} lineHeight={16} offset={1} duration={500} style={{color:'#fff',fontSize:12}}/></View><MaterialIcons name="chevron-right" size={16} color="#fff"/></Pressable></View>;
 }
 
 const POPUP_MESSAGES=['spend $80, save $10 — claim now','free delivery on your next order','new members get 15% off today'];
@@ -202,7 +202,7 @@ function BottomNav({onMePress}:{onMePress?:()=>void}){
   </View></View>;
 }
 
-export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,onWoulibPress}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void}){
+export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
@@ -213,7 +213,7 @@ export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKons
     <MainTabSelector/>
     <View style={{paddingHorizontal:12,marginTop:8}}><SearchBar/></View>
     <ScrollView scrollEnabled={!scrollLocked} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:105}}>
-      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Woulib') onWoulibPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.();}}/></View>
+      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.();}}/></View>
       <TeaserRow p={p}/>
       <View style={{marginHorizontal:6,marginTop:6}}><MainPromoBanner/></View>
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
