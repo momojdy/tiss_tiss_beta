@@ -1,7 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import WoulibMap, { WoulibPoint } from '../components/woulib/WoulibMap';
 import { WoulibRideStatus } from '../lib/woulib/rideState';
+import { createDemoWoulibRideService } from '../lib/woulib/rideService';
 
 const YELLOW = '#FEC509';
 const MAGENTA = '#BF008E';
@@ -15,12 +16,15 @@ export default function WoulibHomeScreen({ onBack }: { onBack?: () => void }) {
   const [pickupText, setPickupText] = useState('Current location');
   const [destinationText, setDestinationText] = useState('Where to?');
   const [status, setStatus] = useState<WoulibRideStatus>('REQUESTING');
+  const rideService = useMemo(() => createDemoWoulibRideService(), []);
   const searching = status === 'DRIVER_SEARCHING' || status === 'DRIVER_OFFERED' || status === 'DRIVER_ACCEPTED';
   const headline = useMemo(() => {
     if (status === 'DRIVER_SEARCHING') return 'Finding your driver';
     if (status === 'DRIVER_ACCEPTED') return 'Driver is on the way';
     return 'Where are you going?';
   }, [status]);
+
+  useEffect(() => () => rideService.cancelRide(), [rideService]);
 
   return <View style={styles.root}>
     <View style={styles.mapWrap}>
@@ -45,8 +49,8 @@ export default function WoulibHomeScreen({ onBack }: { onBack?: () => void }) {
         <Pressable style={styles.option}><Text style={styles.optionTitle}>Delivery</Text><Text style={styles.optionSub}>Send a package</Text></Pressable>
       </View>
 
-      <Pressable onPress={() => setStatus('DRIVER_SEARCHING')} style={styles.primary}><Text style={styles.primaryText}>Find a ride</Text></Pressable>
-      {status !== 'REQUESTING' && <Pressable onPress={() => setStatus('REQUESTING')} style={styles.reset}><Text style={styles.resetText}>Reset demo</Text></Pressable>}
+      <Pressable onPress={() => rideService.requestRide(setStatus)} style={styles.primary}><Text style={styles.primaryText}>Find a ride</Text></Pressable>
+      {status !== 'REQUESTING' && <Pressable onPress={() => { rideService.cancelRide(); setStatus('REQUESTING'); }} style={styles.reset}><Text style={styles.resetText}>Reset demo</Text></Pressable>}
     </View>
   </View>;
 }
