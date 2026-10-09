@@ -1,0 +1,264 @@
+name: Polish Woulib home only
+
+on:
+  push:
+    branches:
+      - polish/woulib-home-only
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: polish/woulib-home-only
+
+      - name: Replace only WoulibHome
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path('src/features/woulib/WoulibFlow.tsx')
+          text = path.read_text()
+          start = text.index('function WoulibHome(')
+          end = text.index('\nfunction WoulibOffer(', start)
+
+          new_home = r'''function WoulibHome({upcoming, onFind, onOffer, onExit}: {upcoming: WoulibUpcomingRide[]; onFind: (dest?: string) => void; onOffer: () => void; onExit?: () => void}) {
+  const {t, dark, toggle} = useWoulibTheme();
+
+  useEffect(() => {
+    let id: ReturnType<typeof setTimeout> | undefined;
+    const h = InteractionManager.runAfterInteractions(() => { id = setTimeout(() => { getCity(dark); getTraffic(); }, 300); });
+    return () => { h.cancel(); if (id) clearTimeout(id); };
+  }, [dark]);
+
+  const styles = useMemo(() => StyleSheet.create({
+    screen: {flex: 1, backgroundColor: t.bg},
+    scroll: {paddingHorizontal: 18, paddingTop: Platform.OS === 'ios' ? 8 : 12, paddingBottom: 108},
+    header: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18},
+    headerSide: {width: 42, height: 42, borderRadius: 21, alignItems: 'center', justifyContent: 'center', backgroundColor: t.card, borderWidth: 1, borderColor: t.line},
+    headerCenter: {flex: 1, alignItems: 'center'},
+    brand: {fontSize: 24, fontWeight: '900', letterSpacing: 1.4, color: t.ink},
+    brandSub: {fontSize: 11, fontWeight: '700', color: t.muted, marginTop: 1, letterSpacing: .4},
+    hero: {backgroundColor: t.yellowSoft, borderRadius: 26, padding: 20, borderWidth: 1, borderColor: dark ? '#51440F' : '#F4DF86', overflow: 'hidden'},
+    heroTop: {flexDirection: 'row', alignItems: 'center', marginBottom: 13},
+    heroIcon: {width: 44, height: 44, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: YELLOW, marginRight: 12},
+    eyebrow: {fontSize: 11, fontWeight: '800', color: t.muted, textTransform: 'uppercase', letterSpacing: .8},
+    heroTitle: {fontSize: 25, lineHeight: 30, fontWeight: '900', color: t.ink, marginBottom: 7},
+    heroText: {fontSize: 13, lineHeight: 19, color: t.muted, maxWidth: 300, marginBottom: 17},
+    primary: {height: 48, borderRadius: 16, backgroundColor: YELLOW, alignItems: 'center', justifyContent: 'center', flexDirection: 'row'},
+    primaryText: {fontSize: 15, fontWeight: '900', color: '#111111'},
+    actions: {flexDirection: 'row', marginTop: 12, marginBottom: 22},
+    action: {flex: 1, minHeight: 50, borderRadius: 16, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', borderWidth: 1, borderColor: t.line, backgroundColor: t.card},
+    actionLeft: {marginRight: 8},
+    actionText: {fontSize: 14, fontWeight: '800', color: t.ink, marginLeft: 7},
+    sectionRow: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11},
+    sectionTitle: {fontSize: 19, fontWeight: '900', color: t.ink},
+    sectionLink: {fontSize: 12, fontWeight: '800', color: t.muted},
+    searchCard: {backgroundColor: t.card, borderRadius: 22, borderWidth: 1, borderColor: t.line, padding: 14, marginBottom: 25},
+    field: {minHeight: 54, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 11, borderRadius: 15, backgroundColor: t.soft, marginBottom: 8},
+    fieldIcon: {width: 32, alignItems: 'center'},
+    fieldCopy: {flex: 1},
+    fieldLabel: {fontSize: 10, fontWeight: '800', color: t.muted, textTransform: 'uppercase', letterSpacing: .6, marginBottom: 2},
+    fieldValue: {fontSize: 14, fontWeight: '800', color: t.ink},
+    fieldChevron: {marginLeft: 8},
+    compactRow: {flexDirection: 'row'},
+    compactField: {flex: 1, minHeight: 54, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, borderRadius: 15, backgroundColor: t.soft},
+    compactGap: {width: 8},
+    searchButton: {height: 50, borderRadius: 16, marginTop: 10},
+    rideCard: {backgroundColor: t.card, borderRadius: 20, borderWidth: 1, borderColor: t.line, padding: 15, marginBottom: 10},
+    rideTop: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12},
+    routeDot: {width: 10, height: 10, borderRadius: 5, backgroundColor: YELLOW, marginRight: 9},
+    routeText: {flex: 1, fontSize: 15, fontWeight: '800', color: t.ink},
+    status: {paddingHorizontal: 9, paddingVertical: 5, borderRadius: 10, backgroundColor: t.yellowSoft},
+    statusText: {fontSize: 10, fontWeight: '900', color: t.ink},
+    rideMeta: {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'},
+    metaText: {fontSize: 12, color: t.muted, fontWeight: '700'},
+    empty: {backgroundColor: t.card, borderRadius: 20, borderWidth: 1, borderColor: t.line, padding: 18, flexDirection: 'row', alignItems: 'center'},
+    emptyIcon: {width: 42, height: 42, borderRadius: 14, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', marginRight: 12},
+    emptyTitle: {fontSize: 14, fontWeight: '800', color: t.ink, marginBottom: 3},
+    emptyText: {fontSize: 12, color: t.muted, lineHeight: 17, flex: 1},
+    bottom: {position: 'absolute', left: 12, right: 12, bottom: 12, height: 70, borderRadius: 24, backgroundColor: t.card, borderWidth: 1, borderColor: t.line, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 8, shadowColor: '#000', shadowOpacity: dark ? .22 : .08, shadowRadius: 16, shadowOffset: {width: 0, height: 6}, elevation: 7},
+    tab: {flex: 1, alignItems: 'center', justifyContent: 'center', height: 58, borderRadius: 18},
+    tabActive: {backgroundColor: t.yellowSoft},
+    tabText: {fontSize: 10, fontWeight: '800', color: t.muted, marginTop: 4},
+    tabTextActive: {color: t.ink},
+  }), [t, dark]);
+
+  const firstUpcoming = upcoming[0];
+
+  return (
+    <View style={styles.screen}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll}>
+        <View style={styles.header}>
+          <Pressable onPress={onExit} style={styles.headerSide} hitSlop={8}>
+            <Ionicons name="chevron-back" size={22} color={t.ink} />
+          </Pressable>
+          <View style={styles.headerCenter}>
+            <Text style={styles.brand}>WOULIB</Text>
+            <Text style={styles.brandSub}>RIDE TOGETHER</Text>
+          </View>
+          <Pressable onPress={toggle} style={styles.headerSide} hitSlop={8}>
+            <Ionicons name={dark ? 'moon' : 'sunny-outline'} size={19} color={t.ink} />
+          </Pressable>
+        </View>
+
+        <View style={styles.hero}>
+          <View style={styles.heroTop}>
+            <View style={styles.heroIcon}><Ionicons name="car-sport" size={23} color="#111111" /></View>
+            <View>
+              <Text style={styles.eyebrow}>Share the journey</Text>
+              <Text style={styles.brand}>WOULIB</Text>
+            </View>
+          </View>
+          <Text style={styles.heroTitle}>You're already going there. Why not share the ride?</Text>
+          <Text style={styles.heroText}>Find a seat, meet nearby riders, and make every trip feel easier.</Text>
+          <Pressable onPress={() => onFind()} style={styles.primary}>
+            <Ionicons name="search" size={18} color="#111111" style={{marginRight: 8}} />
+            <Text style={styles.primaryText}>Find a Ride</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.actions}>
+          <Pressable onPress={() => onFind()} style={[styles.action, styles.actionLeft]}>
+            <Ionicons name="search-outline" size={19} color={t.ink} />
+            <Text style={styles.actionText}>Find a Ride</Text>
+          </Pressable>
+          <Pressable onPress={onOffer} style={styles.action}>
+            <Ionicons name="add-circle-outline" size={20} color={t.ink} />
+            <Text style={styles.actionText}>Offer a Ride</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionTitle}>Find your ride</Text>
+          <Text style={styles.sectionLink}>Quick search</Text>
+        </View>
+        <View style={styles.searchCard}>
+          <View style={styles.field}>
+            <View style={styles.fieldIcon}><Ionicons name="radio-button-on" size={17} color={YELLOW} /></View>
+            <View style={styles.fieldCopy}><Text style={styles.fieldLabel}>From</Text><Text style={styles.fieldValue}>Current location</Text></View>
+            <Ionicons name="chevron-forward" size={16} color={t.muted} style={styles.fieldChevron} />
+          </View>
+          <View style={styles.field}>
+            <View style={styles.fieldIcon}><Ionicons name="location" size={18} color={t.ink} /></View>
+            <View style={styles.fieldCopy}><Text style={styles.fieldLabel}>To</Text><Text style={styles.fieldValue}>Choose your destination</Text></View>
+            <Ionicons name="chevron-forward" size={16} color={t.muted} style={styles.fieldChevron} />
+          </View>
+          <View style={styles.compactRow}>
+            <View style={styles.compactField}>
+              <View style={styles.fieldIcon}><Ionicons name="calendar-outline" size={17} color={t.ink} /></View>
+              <View style={styles.fieldCopy}><Text style={styles.fieldLabel}>Date</Text><Text style={styles.fieldValue}>Today</Text></View>
+            </View>
+            <View style={styles.compactGap} />
+            <View style={styles.compactField}>
+              <View style={styles.fieldIcon}><Ionicons name="time-outline" size={17} color={t.ink} /></View>
+              <View style={styles.fieldCopy}><Text style={styles.fieldLabel}>Time</Text><Text style={styles.fieldValue}>Any time</Text></View>
+            </View>
+          </View>
+          <View style={[styles.field, {marginTop: 8, marginBottom: 0}]}>
+            <View style={styles.fieldIcon}><Ionicons name="people-outline" size={18} color={t.ink} /></View>
+            <View style={styles.fieldCopy}><Text style={styles.fieldLabel}>Passengers</Text><Text style={styles.fieldValue}>1 passenger</Text></View>
+          </View>
+          <Pressable onPress={() => onFind()} style={[styles.primary, styles.searchButton]}>
+            <Ionicons name="search" size={18} color="#111111" style={{marginRight: 8}} />
+            <Text style={styles.primaryText}>Find Rides</Text>
+          </Pressable>
+        </View>
+
+        <View style={styles.sectionRow}>
+          <Text style={styles.sectionTitle}>Nearby rides</Text>
+          <Text style={styles.sectionLink}>See all</Text>
+        </View>
+        {upcoming.length ? upcoming.slice(0, 2).map(r => (
+          <Pressable key={r.id} onPress={() => onFind(r.to)} style={styles.rideCard}>
+            <View style={styles.rideTop}>
+              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+                <View style={styles.routeDot} />
+                <Text style={styles.routeText} numberOfLines={1}>{r.from}  →  {r.to}</Text>
+              </View>
+              <View style={styles.status}><Text style={styles.statusText}>{r.status}</Text></View>
+            </View>
+            <View style={styles.rideMeta}>
+              <Text style={styles.metaText}>{r.when}</Text>
+              <Text style={styles.metaText}>{r.driver}</Text>
+            </View>
+          </Pressable>
+        )) : (
+          <View style={styles.empty}>
+            <View style={styles.emptyIcon}><Ionicons name="car-outline" size={21} color={t.ink} /></View>
+            <View style={{flex: 1}}><Text style={styles.emptyTitle}>No nearby rides yet</Text><Text style={styles.emptyText}>Be the first to offer a ride and help someone get where they need to go.</Text></View>
+          </View>
+        )}
+
+        <View style={[styles.sectionRow, {marginTop: 13}]}>
+          <Text style={styles.sectionTitle}>Your upcoming rides</Text>
+          <Text style={styles.sectionLink}>{firstUpcoming ? 'View all' : ''}</Text>
+        </View>
+        {firstUpcoming ? (
+          <Pressable onPress={() => onFind(firstUpcoming.to)} style={styles.rideCard}>
+            <View style={styles.rideTop}>
+              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+                <View style={[styles.routeDot, {backgroundColor: t.ink}]} />
+                <Text style={styles.routeText} numberOfLines={1}>{firstUpcoming.from}  →  {firstUpcoming.to}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color={t.muted} />
+            </View>
+            <View style={styles.rideMeta}>
+              <Text style={styles.metaText}>{firstUpcoming.when}</Text>
+              <Text style={styles.metaText}>{firstUpcoming.driver}</Text>
+            </View>
+          </Pressable>
+        ) : (
+          <View style={styles.empty}>
+            <View style={styles.emptyIcon}><Ionicons name="calendar-outline" size={21} color={t.ink} /></View>
+            <View style={{flex: 1}}><Text style={styles.emptyTitle}>Your next ride will appear here</Text><Text style={styles.emptyText}>Book a ride or offer one to keep your upcoming trips in one place.</Text></View>
+          </View>
+        )}
+      </ScrollView>
+
+      <View style={styles.bottom}>
+        <Pressable onPress={() => {}} style={[styles.tab, styles.tabActive]}>
+          <Ionicons name="home" size={20} color={t.ink} />
+          <Text style={[styles.tabText, styles.tabTextActive]}>Home</Text>
+        </Pressable>
+        <Pressable onPress={() => onFind()} style={styles.tab}>
+          <Ionicons name="search-outline" size={20} color={t.muted} />
+          <Text style={styles.tabText}>Search</Text>
+        </Pressable>
+        <Pressable onPress={onOffer} style={styles.tab}>
+          <Ionicons name="add-circle-outline" size={21} color={t.muted} />
+          <Text style={styles.tabText}>Offer</Text>
+        </Pressable>
+        <Pressable onPress={onExit} style={styles.tab}>
+          <Ionicons name="person-outline" size={20} color={t.muted} />
+          <Text style={styles.tabText}>Profile</Text>
+        </Pressable>
+      </View>
+    </View>
+  );
+}'''
+
+          path.write_text(text[:start] + new_home + text[end:])
+          print('Patched only WoulibHome:', path)
+          PY
+
+      - name: Verify only home function changed
+        run: |
+          git diff --check
+          git diff -- src/features/woulib/WoulibFlow.tsx
+          git status --short
+          test "$(git status --short | wc -l)" -eq 1
+          test "$(git status --short | grep -c '^ M src/features/woulib/WoulibFlow.tsx$')" -eq 1
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/woulib/WoulibFlow.tsx
+          git commit -m "Polish Woulib home page"
+          git push origin HEAD:polish/woulib-home-only
