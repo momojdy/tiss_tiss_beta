@@ -20,7 +20,6 @@ import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
 import GoodiesHomeScreen from './src/screens/GoodiesHomeScreen';
-import WoulibHomeScreen from './src/screens/WoulibHomeScreen';
 import FlyzHomeScreen from './src/screens/FlyzHomeScreen';
 import FlyzMyTripsScreen from './src/screens/FlyzMyTripsScreen';
 import FlyzDealsScreen from './src/screens/FlyzDealsScreen';
@@ -42,7 +41,7 @@ import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShie
 import { supabase } from './src/lib/supabase';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type BuyerScreen = 'home' | 'me' | 'woulib' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies';
+type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies';
 
 type AppErrorProps = { title: string; error: unknown };
 
@@ -101,7 +100,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'woulib') return <WoulibHomeScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'flyz') return <FlyzHomeScreen onBack={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onNotificationsPress={() => {}} onMyTripsPress={() => setBuyerScreen('flyzMyTrips')} onDealsPress={() => setBuyerScreen('flyzDeals')} onMorePress={() => {}} onDestinationPress={(city, code, price) => { setFlyzDestination({ city, code, price }); setBuyerScreen('flyzDestination'); }} onSearch={(data) => { setFlyzSearch({ ...data, departDate: data.departDate.toLocaleDateString(), returnDate: data.returnDate?.toLocaleDateString() }); setBuyerScreen('flyzResults'); }} />;
       if (buyerScreen === 'frenziesRpsLobby') return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesRpsLobbyScreen onBack={() => setBuyerScreen('frenzies')} onDemoPress={() => setBuyerScreen('frenziesDemo')} /></FrenziesChallengeLayer>;
       if (buyerScreen === 'frenziesDemo') return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesDemoScreen onBack={() => setBuyerScreen('frenziesRpsLobby')} onViewOnlinePlayers={() => setBuyerScreen('frenziesOnlinePlayers')} onPlayRps={() => setBuyerScreen('frenziesRpsGame')} /></FrenziesChallengeLayer>;
@@ -127,7 +125,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => setBuyerScreen('me')} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} />;
+      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
