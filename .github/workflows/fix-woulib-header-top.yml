@@ -1,0 +1,36 @@
+name: Fix Woulib header top spacing
+on:
+  push:
+    branches: [fix/woulib-header-top-100-work]
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove Woulib Home top offset only
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path('src/features/woulib/WoulibFlow.tsx')
+          s = p.read_text()
+          old = """        paddingTop: MAP_TOP,\n        paddingHorizontal: 18,"""
+          new = """        paddingTop: 0,\n        paddingHorizontal: 18,"""
+          if s.count(old) != 1:
+              raise SystemExit(f'Expected exactly one WoulibHome paddingTop block, found {s.count(old)}')
+          s = s.replace(old, new, 1)
+          p.write_text(s)
+          PY
+          git diff --check
+          git diff -- src/features/woulib/WoulibFlow.tsx
+          test "$(git diff --name-only)" = "src/features/woulib/WoulibFlow.tsx"
+          git add src/features/woulib/WoulibFlow.tsx
+          git commit -m "Fix Woulib header top spacing"
+          git push origin HEAD
+      - name: Remove temporary workflow
+        run: |
+          git rm .github/workflows/fix-woulib-header-top.yml
+          git commit -m "chore: remove temporary Woulib header workflow"
+          git push origin HEAD
