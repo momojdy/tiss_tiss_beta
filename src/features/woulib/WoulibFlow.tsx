@@ -1517,8 +1517,9 @@ function WoulibHome({
         {/* Header */}
         <View
           style={{
+            height: 100,
             flexDirection: 'row',
-            alignItems: 'center',
+            alignItems: 'flex-end',
             justifyContent: 'space-between',
             marginBottom: 18,
           }}
