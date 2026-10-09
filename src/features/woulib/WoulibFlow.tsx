@@ -1438,7 +1438,7 @@ const UPCOMING: WoulibUpcomingRide[] = [
   {id: 'u3', to: 'Shopping District', from: 'City Center', when: 'Sat · 2:00 PM', driver: 'Priya Nair', status: 'Pending'},
 ];
 
-function WoulibHome({upcoming, onFind, onOffer}: {upcoming: WoulibUpcomingRide[]; onFind: (dest?: string) => void; onOffer: () => void}) {
+function WoulibHome({upcoming, onFind, onOffer, onExit}: {upcoming: WoulibUpcomingRide[]; onFind: (dest?: string) => void; onOffer: () => void; onExit?: () => void}) {
   const {t, dark, toggle} = useWoulibTheme();
   // build the illustrated city in the background while the user is on this light screen, so the next screen opens fast
   useEffect(() => {
@@ -1452,6 +1452,7 @@ function WoulibHome({upcoming, onFind, onOffer}: {upcoming: WoulibUpcomingRide[]
     <View style={{flex: 1, backgroundColor: t.bg}}>
       <ScrollView contentContainerStyle={{paddingTop: MAP_TOP, paddingHorizontal: 18, paddingBottom: 40}} showsVerticalScrollIndicator={false}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {onExit && <Pressable onPress={onExit} style={[styles.circle, {backgroundColor: t.card, marginRight: 10}]}><Ionicons name="arrow-back" size={18} color={t.ink} /></Pressable>}
           <View style={{flex: 1}}>
             <Text style={{color: t.muted, fontSize: 13, fontWeight: '600'}}>Welcome back</Text>
             <Text style={[styles.h1, {color: t.ink, fontSize: 28, marginTop: 2}]}>Woulib<Text style={{color: YELLOW}}>.</Text></Text>
@@ -1827,7 +1828,7 @@ function WoulibOffer({onBack, onPublish}: {onBack: () => void; onPublish: (r: Wo
  * ═══════════════════════════════════════════════════════════════════════ */
 
 /** Home ⇄ Find ⇄ Offer switch (lives inside the providers so Home can preselect a destination). */
-function WoulibRoot({onOfferRide, onPublishRide}: {onOfferRide?: () => void; onPublishRide?: (r: WoulibOfferedRide) => void}) {
+function WoulibRoot({onOfferRide, onPublishRide, onExit}: {onOfferRide?: () => void; onPublishRide?: (r: WoulibOfferedRide) => void; onExit?: () => void}) {
   const ride = useRide();
   const [screen, setScreen] = useState<'home' | 'find' | 'offer'>('home');
   const [upcoming, setUpcoming] = useState<WoulibUpcomingRide[]>(UPCOMING);
@@ -1851,6 +1852,7 @@ function WoulibRoot({onOfferRide, onPublishRide}: {onOfferRide?: () => void; onP
   return (
     <WoulibHome
       upcoming={upcoming}
+      onExit={onExit}
       onOffer={() => { onOfferRide?.(); setScreen('offer'); }}
       onFind={dest => { ride.setMode('ride'); if (dest) ride.setDest(dest); setScreen('find'); }}
     />
@@ -1858,11 +1860,11 @@ function WoulibRoot({onOfferRide, onPublishRide}: {onOfferRide?: () => void; onP
 }
 
 /** Render this anywhere in the app: it brings its own theme + ride providers. Opens on the Home screen. */
-export function WoulibFlow({service, onOfferRide, onPublishRide}: {service?: WoulibRideService; onOfferRide?: () => void; onPublishRide?: (ride: WoulibOfferedRide) => void}) {
+export function WoulibFlow({service, onOfferRide, onPublishRide, onExit}: {service?: WoulibRideService; onOfferRide?: () => void; onPublishRide?: (ride: WoulibOfferedRide) => void; onExit?: () => void}) {
   return (
     <WoulibThemeProvider>
       <RideProvider service={service}>
-        <WoulibRoot onOfferRide={onOfferRide} onPublishRide={onPublishRide} />
+        <WoulibRoot onOfferRide={onOfferRide} onPublishRide={onPublishRide} onExit={onExit} />
       </RideProvider>
     </WoulibThemeProvider>
   );
