@@ -1509,7 +1509,7 @@ function WoulibHome({
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingTop: MAP_TOP,
+          paddingTop: 0,
           paddingHorizontal: 18,
           paddingBottom: 112,
         }}
