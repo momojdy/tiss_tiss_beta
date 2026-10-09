@@ -1438,67 +1438,602 @@ const UPCOMING: WoulibUpcomingRide[] = [
   {id: 'u3', to: 'Shopping District', from: 'City Center', when: 'Sat · 2:00 PM', driver: 'Priya Nair', status: 'Pending'},
 ];
 
-function WoulibHome({upcoming, onFind, onOffer, onExit}: {upcoming: WoulibUpcomingRide[]; onFind: (dest?: string) => void; onOffer: () => void; onExit?: () => void}) {
+function WoulibHome({
+  upcoming,
+  onFind,
+  onOffer,
+  onExit,
+}: {
+  upcoming: WoulibUpcomingRide[];
+  onFind: (dest?: string) => void;
+  onOffer: () => void;
+  onExit?: () => void;
+}) {
   const {t, dark, toggle} = useWoulibTheme();
-  // build the illustrated city in the background while the user is on this light screen, so the next screen opens fast
+
   useEffect(() => {
     let id: ReturnType<typeof setTimeout> | undefined;
-    const h = InteractionManager.runAfterInteractions(() => { id = setTimeout(() => { getCity(dark); getTraffic(); }, 300); });
-    return () => { h.cancel(); if (id) clearTimeout(id); };
+    const h = InteractionManager.runAfterInteractions(() => {
+      id = setTimeout(() => {
+        getCity(dark);
+        getTraffic();
+      }, 300);
+    });
+    return () => {
+      h.cancel();
+      if (id) clearTimeout(id);
+    };
   }, [dark]);
-  const big = {flex: 1, borderRadius: 22, padding: 16, minHeight: 140} as const;
-  const head = (s: string) => <Text style={[styles.label, {color: t.muted, marginTop: 24}]}>{s}</Text>;
+
+  const field = (icon: string, label: string, value: string) => (
+    <View
+      style={{
+        flex: 1,
+        minWidth: '45%',
+        backgroundColor: t.soft,
+        borderRadius: 14,
+        paddingHorizontal: 12,
+        paddingVertical: 10,
+        marginBottom: 10,
+      }}
+    >
+      <View style={{flexDirection: 'row', alignItems: 'center', gap: 7}}>
+        <Ionicons name={icon as any} size={16} color={t.muted} />
+        <Text
+          style={{
+            fontSize: 11,
+            fontWeight: '700',
+            color: t.muted,
+            letterSpacing: 0.2,
+          }}
+        >
+          {label}
+        </Text>
+      </View>
+      <Text
+        numberOfLines={1}
+        style={{
+          marginTop: 5,
+          fontSize: 14,
+          fontWeight: '700',
+          color: t.ink,
+        }}
+      >
+        {value}
+      </Text>
+    </View>
+  );
+
   return (
     <View style={{flex: 1, backgroundColor: t.bg}}>
-      <ScrollView contentContainerStyle={{paddingTop: MAP_TOP, paddingHorizontal: 18, paddingBottom: 40}} showsVerticalScrollIndicator={false}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {onExit && <Pressable onPress={onExit} style={[styles.circle, {backgroundColor: t.card, marginRight: 10}]}><Ionicons name="arrow-back" size={18} color={t.ink} /></Pressable>}
-          <View style={{flex: 1}}>
-            <Text style={{color: t.muted, fontSize: 13, fontWeight: '600'}}>Welcome back</Text>
-            <Text style={[styles.h1, {color: t.ink, fontSize: 28, marginTop: 2}]}>Woulib<Text style={{color: YELLOW}}>.</Text></Text>
-          </View>
-          <Pressable onPress={toggle} style={[styles.circle, {backgroundColor: t.card}]}><Ionicons name={dark ? 'sunny' : 'moon'} size={18} color={t.ink} /></Pressable>
-        </View>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingTop: MAP_TOP,
+          paddingHorizontal: 18,
+          paddingBottom: 112,
+        }}
+      >
+        {/* Header */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginBottom: 18,
+          }}
+        >
+          <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+            {onExit ? (
+              <Pressable
+                onPress={onExit}
+                hitSlop={10}
+                style={{
+                  width: 38,
+                  height: 38,
+                  borderRadius: 19,
+                  backgroundColor: t.card,
+                  borderWidth: 1,
+                  borderColor: t.line,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 10,
+                }}
+              >
+                <Ionicons name="arrow-back" size={19} color={t.ink} />
+              </Pressable>
+            ) : null}
 
-        <View style={{flexDirection: 'row', marginTop: 20}}>
-          <Pressable onPress={() => onFind()} style={({pressed}) => [big, {backgroundColor: YELLOW, marginRight: 10, opacity: pressed ? 0.88 : 1}]}>
-            <View style={{width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(0,0,0,0.12)', alignItems: 'center', justifyContent: 'center'}}><Ionicons name="search" size={22} color="#111" /></View>
-            <Text style={{color: '#111', fontWeight: '800', fontSize: 18, marginTop: 14}}>Find a ride</Text>
-            <Text style={{color: '#3b3000', fontSize: 12.5, marginTop: 2}}>Book a driver near you</Text>
-          </Pressable>
-          <Pressable onPress={onOffer} style={({pressed}) => [big, {backgroundColor: dark ? '#232327' : '#111', opacity: pressed ? 0.88 : 1}]}>
-            <View style={{width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(254,197,9,0.18)', alignItems: 'center', justifyContent: 'center'}}><Ionicons name="car-sport" size={22} color={YELLOW} /></View>
-            <Text style={{color: '#fff', fontWeight: '800', fontSize: 18, marginTop: 14}}>Offer a ride</Text>
-            <Text style={{color: '#b9b6ac', fontSize: 12.5, marginTop: 2}}>Share your trip, earn</Text>
-          </Pressable>
-        </View>
-
-        {head('Nearby rides')}
-        {NEARBY.map(r => (
-          <Pressable key={r.id} onPress={() => onFind(r.to)} style={({pressed}) => [{flexDirection: 'row', alignItems: 'center', backgroundColor: t.card, borderRadius: 18, padding: 12, marginBottom: 10, borderWidth: 1, borderColor: t.line, opacity: pressed ? 0.88 : 1}]}>
-            <View style={[styles.avatar, {backgroundColor: r.color}]}><Text style={styles.avatarTxt}>{r.name[0]}</Text></View>
-            <View style={{flex: 1, marginLeft: 12}}>
-              <Text style={[styles.h2, {color: t.ink}]}>{r.name}</Text>
-              <Text style={{color: t.muted, fontSize: 12.5, marginTop: 2}} numberOfLines={1}>{r.from} → {r.to}</Text>
-              <Text style={{color: t.muted, fontSize: 12, marginTop: 2}}>{r.seats} seat{r.seats === 1 ? '' : 's'} · {r.away} away · {r.when}</Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: 12,
+                  fontWeight: '600',
+                  color: t.muted,
+                  marginBottom: 1,
+                }}
+              >
+                Welcome back
+              </Text>
+              <Text
+                style={{
+                  fontSize: 27,
+                  fontWeight: '900',
+                  color: t.ink,
+                  letterSpacing: -0.8,
+                }}
+              >
+                Woulib
+                <Text style={{color: YELLOW}}>.</Text>
+              </Text>
             </View>
-            <Text style={[styles.h2, {color: t.ink}]}>{fare(r.price)}</Text>
+          </View>
+
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
+            <Pressable
+              onPress={toggle}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 19,
+                backgroundColor: t.card,
+                borderWidth: 1,
+                borderColor: t.line,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons
+                name={dark ? 'sunny-outline' : 'moon-outline'}
+                size={18}
+                color={t.ink}
+              />
+            </Pressable>
+
+            <View
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 19,
+                backgroundColor: t.yellowSoft,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Ionicons name="person-outline" size={18} color={t.ink} />
+            </View>
+          </View>
+        </View>
+
+        {/* Hero */}
+        <View
+          style={{
+            backgroundColor: t.yellowSoft,
+            borderRadius: 24,
+            padding: 20,
+            borderWidth: 1,
+            borderColor: t.line,
+            overflow: 'hidden',
+          }}
+        >
+          <View
+            style={{
+              width: 48,
+              height: 48,
+              borderRadius: 24,
+              backgroundColor: YELLOW,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: 14,
+            }}
+          >
+            <Ionicons name="car-outline" size={25} color="#111111" />
+          </View>
+
+          <Text
+            style={{
+              color: t.ink,
+              fontSize: 25,
+              lineHeight: 30,
+              fontWeight: '900',
+              letterSpacing: -0.6,
+              maxWidth: 300,
+            }}
+          >
+            You’re already going there.{'\n'}Why not share the ride?
+          </Text>
+
+          <Text
+            style={{
+              color: t.muted,
+              fontSize: 13,
+              lineHeight: 19,
+              marginTop: 9,
+              maxWidth: 310,
+            }}
+          >
+            Find a nearby ride, save money, and get where you need to go.
+          </Text>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              marginTop: 18,
+              gap: 9,
+            }}
+          >
+            <Pressable
+              onPress={() => onFind()}
+              style={{
+                flex: 1,
+                minHeight: 46,
+                borderRadius: 14,
+                backgroundColor: YELLOW,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: '#111111',
+                  fontSize: 13,
+                  fontWeight: '900',
+                }}
+              >
+                Find a Ride
+              </Text>
+            </Pressable>
+
+            <Pressable
+              onPress={onOffer}
+              style={{
+                flex: 1,
+                minHeight: 46,
+                borderRadius: 14,
+                borderWidth: 1,
+                borderColor: t.ink,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <Text
+                style={{
+                  color: t.ink,
+                  fontSize: 13,
+                  fontWeight: '900',
+                }}
+              >
+                Offer a Ride
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+
+        {/* Search */}
+        <Text
+          style={{
+            marginTop: 24,
+            marginBottom: 10,
+            color: t.ink,
+            fontSize: 18,
+            fontWeight: '900',
+          }}
+        >
+          Find your ride
+        </Text>
+
+        <View
+          style={{
+            backgroundColor: t.card,
+            borderRadius: 20,
+            borderWidth: 1,
+            borderColor: t.line,
+            padding: 14,
+          }}
+        >
+          <View style={{flexDirection: 'row', gap: 10}}>
+            {field('location-outline', 'FROM', 'Current location')}
+            {field('navigate-outline', 'TO', 'Where to?')}
+          </View>
+
+          <View style={{flexDirection: 'row', gap: 10}}>
+            {field('calendar-outline', 'DATE', 'Today')}
+            {field('time-outline', 'TIME', 'Now')}
+          </View>
+
+          <View style={{flexDirection: 'row', gap: 10}}>
+            {field('people-outline', 'PASSENGERS', '1 passenger')}
+
+            <View style={{flex: 1, minWidth: '45%', marginBottom: 10}} />
+          </View>
+
+          <Pressable
+            onPress={() => onFind()}
+            style={{
+              height: 48,
+              borderRadius: 14,
+              backgroundColor: YELLOW,
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexDirection: 'row',
+              gap: 8,
+            }}
+          >
+            <Ionicons name="search-outline" size={18} color="#111111" />
+            <Text
+              style={{
+                color: '#111111',
+                fontSize: 14,
+                fontWeight: '900',
+              }}
+            >
+              Find Rides
+            </Text>
+          </Pressable>
+        </View>
+
+        {/* Nearby */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: 25,
+            marginBottom: 10,
+          }}
+        >
+          <Text style={{color: t.ink, fontSize: 18, fontWeight: '900'}}>
+            Nearby Rides
+          </Text>
+          <Text style={{color: t.muted, fontSize: 12, fontWeight: '700'}}>
+            See all
+          </Text>
+        </View>
+
+        {NEARBY.slice(0, 3).map((ride) => (
+          <Pressable
+            key={ride.id}
+            onPress={() => onFind(ride.to)}
+            style={{
+              backgroundColor: t.card,
+              borderRadius: 18,
+              borderWidth: 1,
+              borderColor: t.line,
+              padding: 14,
+              marginBottom: 10,
+            }}
+          >
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <View style={{flexDirection: 'row', alignItems: 'center', flex: 1}}>
+                <View
+                  style={{
+                    width: 42,
+                    height: 42,
+                    borderRadius: 21,
+                    backgroundColor: ride.color,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginRight: 11,
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: '#FFFFFF',
+                      fontWeight: '900',
+                      fontSize: 15,
+                    }}
+                  >
+                    {ride.name.charAt(0)}
+                  </Text>
+                </View>
+
+                <View style={{flex: 1}}>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      color: t.ink,
+                      fontSize: 14,
+                      fontWeight: '800',
+                    }}
+                  >
+                    {ride.name}
+                  </Text>
+                  <Text
+                    numberOfLines={1}
+                    style={{
+                      color: t.muted,
+                      fontSize: 12,
+                      marginTop: 3,
+                    }}
+                  >
+                    {ride.from} → {ride.to}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={{alignItems: 'flex-end'}}>
+                <Text
+                  style={{
+                    color: t.ink,
+                    fontSize: 16,
+                    fontWeight: '900',
+                  }}
+                >
+                  ${ride.price.toFixed(2)}
+                </Text>
+                <Text
+                  style={{
+                    color: t.muted,
+                    fontSize: 11,
+                    marginTop: 2,
+                  }}
+                >
+                  {ride.away}
+                </Text>
+              </View>
+            </View>
+
+            <View
+              style={{
+                height: 1,
+                backgroundColor: t.line,
+                marginVertical: 11,
+              }}
+            />
+
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Text style={{color: t.muted, fontSize: 11, fontWeight: '700'}}>
+                {ride.when} · {ride.seats} seats
+              </Text>
+              <Ionicons name="chevron-forward" size={17} color={t.muted} />
+            </View>
           </Pressable>
         ))}
 
-        {head('Upcoming rides')}
-        {upcoming.map(r => (
-          <Animated.View key={r.id} entering={FadeInDown.duration(250)} style={{flexDirection: 'row', alignItems: 'center', backgroundColor: t.card, borderRadius: 18, padding: 12, marginBottom: 10, borderWidth: 1, borderColor: t.line}}>
-            <View style={{width: 46, height: 46, borderRadius: 14, backgroundColor: t.yellowSoft, alignItems: 'center', justifyContent: 'center'}}><Ionicons name="calendar" size={22} color={t.ink} /></View>
-            <View style={{flex: 1, marginLeft: 12}}>
-              <Text style={[styles.h2, {color: t.ink}]}>{r.to}</Text>
-              <Text style={{color: t.muted, fontSize: 12.5, marginTop: 2}}>{r.when}</Text>
-              <Text style={{color: t.muted, fontSize: 12, marginTop: 2}} numberOfLines={1}>From {r.from} · {r.driver}</Text>
+        {/* Upcoming */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            marginTop: 17,
+            marginBottom: 10,
+          }}
+        >
+          <Text style={{color: t.ink, fontSize: 18, fontWeight: '900'}}>
+            Your Upcoming Rides
+          </Text>
+        </View>
+
+        {upcoming.slice(0, 3).map((ride) => (
+          <View
+            key={ride.id}
+            style={{
+              backgroundColor: t.card,
+              borderRadius: 18,
+              borderWidth: 1,
+              borderColor: t.line,
+              padding: 14,
+              marginBottom: 10,
+            }}
+          >
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <View
+                style={{
+                  width: 44,
+                  height: 44,
+                  borderRadius: 13,
+                  backgroundColor: t.yellowSoft,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  marginRight: 11,
+                }}
+              >
+                <Ionicons name="calendar-outline" size={20} color={t.ink} />
+              </View>
+
+              <View style={{flex: 1}}>
+                <Text
+                  style={{
+                    color: t.ink,
+                    fontSize: 14,
+                    fontWeight: '800',
+                  }}
+                >
+                  {ride.from} → {ride.to}
+                </Text>
+                <Text
+                  style={{
+                    color: t.muted,
+                    fontSize: 12,
+                    marginTop: 3,
+                  }}
+                >
+                  {ride.date} · {ride.time}
+                </Text>
+              </View>
+
+              <Ionicons name="chevron-forward" size={17} color={t.muted} />
             </View>
-            <View style={{backgroundColor: r.status === 'Confirmed' ? t.soft : t.yellowSoft, borderRadius: 99, paddingHorizontal: 10, paddingVertical: 5}}><Text style={{color: r.status === 'Confirmed' ? t.green : t.ink, fontSize: 11.5, fontWeight: '800'}}>{r.status}</Text></View>
-          </Animated.View>
+          </View>
         ))}
       </ScrollView>
+
+      {/* Bottom navigation */}
+      <View
+        style={{
+          position: 'absolute',
+          left: 14,
+          right: 14,
+          bottom: 14,
+          height: 68,
+          borderRadius: 22,
+          backgroundColor: t.card,
+          borderWidth: 1,
+          borderColor: t.line,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-around',
+          paddingHorizontal: 5,
+        }}
+      >
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+          <View
+            style={{
+              width: 38,
+              height: 30,
+              borderRadius: 15,
+              backgroundColor: t.yellowSoft,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Ionicons name="home" size={18} color={t.ink} />
+          </View>
+          <Text style={{fontSize: 9, fontWeight: '800', color: t.ink, marginTop: 2}}>
+            Home
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() => onFind()}
+          style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
+        >
+          <Ionicons name="search-outline" size={20} color={t.muted} />
+          <Text style={{fontSize: 9, fontWeight: '700', color: t.muted, marginTop: 3}}>
+            Search
+          </Text>
+        </Pressable>
+
+        <Pressable
+          onPress={onOffer}
+          style={{alignItems: 'center', justifyContent: 'center', flex: 1}}
+        >
+          <Ionicons name="add-circle-outline" size={21} color={t.muted} />
+          <Text style={{fontSize: 9, fontWeight: '700', color: t.muted, marginTop: 2}}>
+            Offer
+          </Text>
+        </Pressable>
+
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+          <Ionicons name="person-outline" size={20} color={t.muted} />
+          <Text style={{fontSize: 9, fontWeight: '700', color: t.muted, marginTop: 3}}>
+            Profile
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }
