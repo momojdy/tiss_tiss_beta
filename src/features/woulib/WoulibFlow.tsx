@@ -607,6 +607,7 @@ function buildCity(dark: boolean): City {
 
   // intersections: zebra crossings, stop lines, double-yellow centre lines, signal poles
   for (let i = 0; i <= NB; i++) for (let j = 0; j <= NB; j++) {
+    if ((i + j) % 3 !== 0) continue;
     const cx = i * 100, cy = j * 100;
     for (let k = 0; k < 5; k++) {
       const o = -13.5 + k * 5.4;
@@ -883,6 +884,7 @@ const circ = (x: number, y: number, r: number) => `M${f1(x - r)} ${f1(y)}a${r} $
 const HEADS = (() => {
   const hs: [number, number][] = [], vs: [number, number][] = [];
   for (let i = 0; i <= NB; i++) for (let j = 0; j <= NB; j++) {
+    if ((i + j) % 3 !== 0) continue;
     const h = P(i * 100 + 19, j * 100 - 19, 25), v = P(i * 100 - 19, j * 100 + 19, 25);
     hs.push([h[0] + OX, h[1] + OY]); vs.push([v[0] + OX, v[1] + OY]);
   }
