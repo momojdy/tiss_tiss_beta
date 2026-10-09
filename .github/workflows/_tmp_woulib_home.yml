@@ -1,0 +1,44 @@
+name: Temporary Woulib Home Carousel Edit
+on:
+  push:
+    branches:
+      - fix/woulib-home-carousel
+permissions:
+  contents: write
+jobs:
+  edit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add Woulib to Home carousel only
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('src/screens/HomeScreen.tsx')
+          s = p.read_text()
+          old = "const ASSETS:Record<string,string>={Goodies:BASE+'Goodies.PNG',Services:BASE+'Services.PNG'"
+          new = "const ASSETS:Record<string,string>={Goodies:BASE+'Goodies.PNG',Woulib:BASE+'Woulib.PNG',Services:BASE+'Services.PNG'"
+          if s.count(old) != 1:
+              raise SystemExit('ASSETS anchor not found exactly once')
+          s = s.replace(old, new)
+          old = "const COLLAPSED:{label:string;icon:MI}[]=[{label:'Goodies',icon:'card-giftcard'},{label:'Services',icon:'miscellaneous-services'},{label:'Globiz',icon:'language'},{label:'Konsoliss',icon:'people-outline'}];"
+          new = "const COLLAPSED:{label:string;icon:MI}[]=[{label:'Goodies',icon:'card-giftcard'},{label:'Woulib',icon:'directions-car'},{label:'Services',icon:'miscellaneous-services'},{label:'Globiz',icon:'language'},{label:'Konsoliss',icon:'people-outline'}];"
+          if s.count(old) != 1:
+              raise SystemExit('COLLAPSED anchor not found exactly once')
+          s = s.replace(old, new)
+          old = "if(label==='Rideza') onWoulibPress?.();"
+          new = "if(label==='Woulib') onWoulibPress?.();"
+          if s.count(old) != 1:
+              raise SystemExit('Woulib handler anchor not found exactly once')
+          s = s.replace(old, new)
+          p.write_text(s)
+          PY
+      - name: Commit HomeScreen-only result and remove temporary workflow
+        run: |
+          rm .github/workflows/_tmp_woulib_home.yml
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add src/screens/HomeScreen.tsx .github/workflows/_tmp_woulib_home.yml
+          git diff --cached --exit-code && { echo 'No changes produced'; exit 1; } || true
+          git commit -m "feat: add Woulib after Goodies on Home carousel"
+          git push
