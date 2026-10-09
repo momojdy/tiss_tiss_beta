@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   dot: {width: 12, height: 12, borderRadius: 6, borderWidth: 2.5, marginRight: 12},
   vRow: {flexDirection: 'row', alignItems: 'center', borderRadius: 16, borderWidth: 2, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 8},
   circle: {width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 6, shadowOffset: {width: 0, height: 2}},
-  topBar: {position: 'absolute', left: 16, flexDirection: 'row'},
+  topBar: {position: 'absolute', left: 16, top: 50, flexDirection: 'row'},
   toast: {position: 'absolute', alignSelf: 'center', backgroundColor: '#111', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10},
   bar: {height: 8, borderRadius: 4, overflow: 'hidden', marginVertical: 12},
 });
