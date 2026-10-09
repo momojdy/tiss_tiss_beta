@@ -52,3 +52,5 @@ jobs:
           git rm .github/workflows/polish-woulib-home-main.yml .github/workflows/apply-woulib-home.yml
           git commit -m "chore: remove temporary Woulib home workflows"
           git push origin HEAD:main
+
+# trigger
