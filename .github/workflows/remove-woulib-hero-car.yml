@@ -1,0 +1,32 @@
+name: Remove Woulib hero car icon
+on:
+  push:
+    branches: [polish/remove-woulib-hero-car-icon]
+
+jobs:
+  edit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Remove only hero car icon
+        shell: python
+        run: |
+          from pathlib import Path
+          p = Path('src/features/woulib/WoulibFlow.tsx')
+          s = p.read_text()
+          old = '''          <View\n            style={{\n              width: 48,\n              height: 48,\n              borderRadius: 24,\n              backgroundColor: YELLOW,\n              alignItems: 'center',\n              justifyContent: 'center',\n              marginBottom: 14,\n            }}\n          >\n            <Ionicons name="car-outline" size={25} color="#111111" />\n          </View>\n\n'''
+          if s.count(old) != 1:
+              raise SystemExit(f'Expected exactly one hero icon block, found {s.count(old)}')
+          p.write_text(s.replace(old, '', 1))
+      - name: Remove temporary workflow and commit only WoulibFlow
+        run: |
+          rm .github/workflows/remove-woulib-hero-car.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/woulib/WoulibFlow.tsx
+          git diff --cached --check
+          test "$(git diff --cached --name-only)" = "src/features/woulib/WoulibFlow.tsx"
+          git commit -m "Remove Woulib home hero car icon"
+          git push origin HEAD:polish/remove-woulib-hero-car-icon
