@@ -202,7 +202,7 @@ function BottomNav({onMePress}:{onMePress?:()=>void}){
   </View></View>;
 }
 
-export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void}){
+export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
@@ -213,7 +213,7 @@ export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKons
     <MainTabSelector/>
     <View style={{paddingHorizontal:12,marginTop:8}}><SearchBar/></View>
     <ScrollView scrollEnabled={!scrollLocked} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:105}}>
-      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.();}}/></View>
+      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.(); if(label==='Rideza') onWoulibPress?.();}}/></View>
       <TeaserRow p={p}/>
       <View style={{marginHorizontal:6,marginTop:6}}><MainPromoBanner/></View>
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
