@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
   dot: {width: 12, height: 12, borderRadius: 6, borderWidth: 2.5, marginRight: 12},
   vRow: {flexDirection: 'row', alignItems: 'center', borderRadius: 16, borderWidth: 2, paddingHorizontal: 12, paddingVertical: 10, marginBottom: 8},
   circle: {width: 40, height: 40, borderRadius: 20, alignItems: 'center', justifyContent: 'center', elevation: 4, shadowColor: '#000', shadowOpacity: 0.15, shadowRadius: 6, shadowOffset: {width: 0, height: 2}},
-  topBar: {position: 'absolute', left: 16, top: 50, flexDirection: 'row'},
+  topBar: {position: 'absolute', left: 16, top: 62, flexDirection: 'row'},
   toast: {position: 'absolute', alignSelf: 'center', backgroundColor: '#111', borderRadius: 14, paddingHorizontal: 14, paddingVertical: 10},
   bar: {height: 8, borderRadius: 4, overflow: 'hidden', marginVertical: 12},
 });
@@ -736,7 +736,7 @@ function buildCity(dark: boolean): City {
   }
 
   ground.push(
-    poly([P(-700, -700), P(1900, -700), P(1900, 1900), P(-700, 1900)], d('#c3c9d8')),
+    poly([P(-700, -700), P(1900, -700), P(1900, 1900), P(-700, 1900)], d('#FFF8D6')),
     {k: 'd', d: asphalt, f: d('#555a69')}, {k: 'd', d: sidewalk, f: d('#d3cebf')}, {k: 'd', d: pave, f: d('#e6e2d5')},
     {k: 'd', d: grass, f: d('#a6d58a')}, {k: 'd', d: sand, f: d('#eadfc2')}, {k: 'd', d: hedge, f: d('#5fae56')}, {k: 'd', d: bed, f: d('#79b45f')},
     ...gShapes,
@@ -747,7 +747,7 @@ function buildCity(dark: boolean): City {
     {k: 'd', d: pole, f: d('#2b2e38')}, {k: 'd', d: lamp, f: dark ? YELLOW : '#f6efc4'},
   );
   if (dark) ground.push({k: 'd', d: glow, f: YELLOW, o: 0.13}, {k: 'd', d: core, f: YELLOW, o: 0.4});
-  return {ground, blocks, bg: d('#c3c9d8')};
+  return {ground, blocks, bg: d('#FFF8D6')};
 }
 
 /* ───────────── traffic + people (deterministic, driven by one shared clock) ───────────── */
@@ -1122,7 +1122,7 @@ export function WoulibMap({dark = false, trip, focus, cardH = 320, showRoute, pi
   );
 
   return (
-    <View style={{flex: 1, overflow: 'hidden', backgroundColor: city.bg}} onLayout={(e: LayoutChangeEvent) => { vw.value = e.nativeEvent.layout.width; vh.value = e.nativeEvent.layout.height; }} {...resp.panHandlers}>
+    <View style={{flex: 1, overflow: 'hidden', backgroundColor: "#FFF8D6"}} onLayout={(e: LayoutChangeEvent) => { vw.value = e.nativeEvent.layout.width; vh.value = e.nativeEvent.layout.height; }} {...resp.panHandlers}>
       <ClockCtx.Provider value={clock}><CamCtx.Provider value={ctx}>
         <Animated.View pointerEvents="none" style={[styles.world, camStyle]}>
           <GroundLayer ground={city.ground} />
@@ -1394,7 +1394,7 @@ function WoulibMapView(props: WoulibMapProps) {
   const live = ride.mapView === 'live';
   const [liveOK, setLiveOK] = useState(false);
   const [note, setNote] = useState('');
-  const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(true);
   useEffect(() => { const h = InteractionManager.runAfterInteractions(() => setMounted(true)); return () => h.cancel(); }, []);
   const center = trip?.fromLL ?? GEO[ride.from.split(',')[0]] ?? GEO['Current location'];
   const hasTrip = !!trip;
@@ -2088,10 +2088,12 @@ function WoulibOffer({onBack, onPublish}: {onBack: () => void; onPublish: (r: Wo
 function WoulibRoot({onOfferRide, onPublishRide, onExit}: {onOfferRide?: () => void; onPublishRide?: (r: WoulibOfferedRide) => void; onExit?: () => void}) {
   const ride = useRide();
   const [screen, setScreen] = useState<'home' | 'find' | 'offer'>('home');
+  const [findLoading, setFindLoading] = useState(false);
   const [upcoming, setUpcoming] = useState<WoulibUpcomingRide[]>(UPCOMING);
 
   const goHome = useCallback(() => { ride.finish(); setScreen('home'); }, [ride]); // leaving Find always resets the ride
 
+  if (findLoading) return <View style={{flex: 1, backgroundColor: '#FBFAF7', alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 28, fontWeight: '900', color: '#111'}}>Woulib</Text><Ionicons name='location-sharp' size={34} color={YELLOW} style={{marginTop: 4}} /><Text style={{marginTop: 18, fontSize: 14, fontWeight: '600', color: '#6D6A62'}}>Loading Find a Ride…</Text></View>;
   if (screen === 'find') return <FlowInner onHome={goHome} />;
   if (screen === 'offer') {
     return (
