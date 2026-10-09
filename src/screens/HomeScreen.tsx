@@ -202,7 +202,7 @@ function BottomNav({onMePress}:{onMePress?:()=>void}){
   </View></View>;
 }
 
-export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void}){
+export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,onWoulibPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
