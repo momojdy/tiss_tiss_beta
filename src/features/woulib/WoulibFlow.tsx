@@ -1547,7 +1547,7 @@ function WoulibHome({
 
             <View style={{flexDirection: 'row', alignItems: 'center'}}>
               <Text style={{fontSize: 27, fontWeight: '900', color: t.ink, letterSpacing: -0.8}}>Woulib</Text>
-              <Ionicons name="location-sharp" size={30} color={YELLOW} style={{marginLeft: 2, marginTop: 1}} />
+              <Ionicons name="location-sharp" size={26} color={YELLOW} style={{marginLeft: 2, marginTop: 5}} />
             </View>
           </View>
 
@@ -1699,7 +1699,7 @@ function WoulibHome({
           right: 14,
           bottom: 14,
           height: 68,
-          borderRadius: 22,
+          borderRadius: 18,
           backgroundColor: t.card,
           borderWidth: 1,
           borderColor: t.line,
