@@ -16,15 +16,18 @@ jobs:
           from pathlib import Path
           p = Path('src/features/woulib/WoulibFlow.tsx')
           s = p.read_text()
-          old = """        paddingTop: MAP_TOP,\n        paddingHorizontal: 18,"""
-          new = """        paddingTop: 0,\n        paddingHorizontal: 18,"""
-          if s.count(old) != 1:
-              raise SystemExit(f'Expected exactly one WoulibHome paddingTop block, found {s.count(old)}')
-          s = s.replace(old, new, 1)
-          p.write_text(s)
+          start = s.find('function WoulibHome(')
+          marker = s.find('/* ═══════════════════════════════════════════════════════════════════════', start)
+          if start < 0 or marker < 0:
+              raise SystemExit('Could not isolate WoulibHome')
+          home = s[start:marker]
+          old = 'paddingTop: MAP_TOP,'
+          if home.count(old) != 1:
+              raise SystemExit(f'Expected exactly one WoulibHome paddingTop, found {home.count(old)}')
+          home = home.replace(old, 'paddingTop: 0,', 1)
+          p.write_text(s[:start] + home + s[marker:])
           PY
           git diff --check
-          git diff -- src/features/woulib/WoulibFlow.tsx
           test "$(git diff --name-only)" = "src/features/woulib/WoulibFlow.tsx"
           git add src/features/woulib/WoulibFlow.tsx
           git commit -m "Fix Woulib header top spacing"
