@@ -1,48 +1,32 @@
-name: Apply Woulib reference UI
+name: Fix Woulib upcoming ride field
 on:
   push:
     branches: [woulib-home-reference-ui]
 
 jobs:
-  edit:
-    if: github.event.head_commit.message != 'Refine Woulib Home reference UI'
+  fix:
+    if: github.event.head_commit.message != 'Fix Woulib upcoming ride field'
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
       - uses: actions/checkout@v4
-      - name: Update Woulib Home reference UI
+      - name: Fix upcoming ride rendering
         shell: python
         run: |
           from pathlib import Path
           p = Path('src/features/woulib/WoulibFlow.tsx')
           s = p.read_text()
-          old_header = '''            <View>\n              <Text\n                style={{\n                  fontSize: 12,\n                  fontWeight: '600',\n                  color: t.muted,\n                  marginBottom: 1,\n                }}\n              >\n                Welcome back\n              </Text>\n              <Text\n                style={{\n                  fontSize: 27,\n                  fontWeight: '900',\n                  color: t.ink,\n                  letterSpacing: -0.8,\n                }}\n              >\n                Woulib\n                <Text style={{color: YELLOW}}>.</Text>\n              </Text>\n            </View>'''
-          new_header = '''            <View style={{flexDirection: 'row', alignItems: 'center'}}>\n              <Text style={{fontSize: 27, fontWeight: '900', color: t.ink, letterSpacing: -0.8}}>Woulib</Text>\n              <Ionicons name="location-sharp" size={30} color={YELLOW} style={{marginLeft: 2, marginTop: 1}} />\n            </View>'''
-          if old_header not in s: raise SystemExit('header block not found')
-          s = s.replace(old_header, new_header, 1)
-          if s.count('Find a Ride') != 1: raise SystemExit('Find a Ride not found exactly once')
-          s = s.replace('Find a Ride', 'Share a ride', 1)
-          heading = '''        <Text\n          style={{\n            marginTop: 24,\n            marginBottom: 10,\n            color: t.ink,\n            fontSize: 18,\n            fontWeight: '900',\n          }}\n        >\n          Find your ride\n        </Text>\n\n'''
-          if heading not in s: raise SystemExit('Find your ride heading not found')
-          s = s.replace(heading, '', 1)
-          start = s.index('        {/* Search */}')
-          end = s.index('      </ScrollView>', start)
-          replacement = '''        {/* Search */}\n        <View style={{backgroundColor: t.card, borderRadius: 20, borderWidth: 1, borderColor: t.line, paddingHorizontal: 14, paddingTop: 5, paddingBottom: 12, marginTop: 18}}>\n          <Pressable onPress={() => onFind()} style={{minHeight: 62, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: t.line}}><Ionicons name="location" size={21} color={YELLOW} style={{marginHorizontal: 7, marginRight: 14}} /><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 13, fontWeight: '700'}}>From</Text><Text style={{color: t.muted, fontSize: 14, marginTop: 3}}>Where are you leaving from?</Text></View><Ionicons name="chevron-forward" size={18} color={t.muted} /></Pressable>\n          <Pressable onPress={() => onFind()} style={{minHeight: 62, flexDirection: 'row', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: t.line}}><Ionicons name="location" size={21} color={t.ink} style={{marginHorizontal: 7, marginRight: 14}} /><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 13, fontWeight: '700'}}>To</Text><Text style={{color: t.muted, fontSize: 14, marginTop: 3}}>Where are you going?</Text></View><Ionicons name="chevron-forward" size={18} color={t.muted} /></Pressable>\n          <View style={{flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: t.line}}><Pressable onPress={() => onFind()} style={{flex: 1, minHeight: 62, flexDirection: 'row', alignItems: 'center', paddingLeft: 7}}><Ionicons name="calendar-outline" size={20} color={t.ink} style={{marginRight: 13}} /><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 13, fontWeight: '700'}}>Date</Text><Text style={{color: t.muted, fontSize: 14, marginTop: 3}}>Today</Text></View><Ionicons name="chevron-down" size={17} color={t.ink} /></Pressable><View style={{width: 1, backgroundColor: t.line, marginVertical: 10}} /><Pressable onPress={() => onFind()} style={{flex: 1, minHeight: 62, flexDirection: 'row', alignItems: 'center', paddingLeft: 15}}><Ionicons name="time-outline" size={20} color={t.ink} style={{marginRight: 13}} /><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 13, fontWeight: '700'}}>Time</Text><Text style={{color: t.muted, fontSize: 14, marginTop: 3}}>Anytime</Text></View><Ionicons name="chevron-down" size={17} color={t.ink} /></Pressable></View>\n          <Pressable onPress={() => onFind()} style={{minHeight: 62, flexDirection: 'row', alignItems: 'center'}}><Ionicons name="person" size={20} color={t.ink} style={{marginHorizontal: 7, marginRight: 14}} /><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 13, fontWeight: '700'}}>Passengers</Text><Text style={{color: t.muted, fontSize: 14, marginTop: 3}}>1 passenger</Text></View><Ionicons name="chevron-forward" size={18} color={t.muted} /></Pressable>\n          <Pressable onPress={() => onFind()} style={{height: 52, borderRadius: 14, backgroundColor: YELLOW, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 8, marginTop: 2}}><Ionicons name="search-outline" size={20} color="#111111" /><Text style={{color: '#111111', fontSize: 15, fontWeight: '900'}}>Find Rides</Text></Pressable>\n        </View>\n        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 27, marginBottom: 11}}><Text style={{color: t.ink, fontSize: 19, fontWeight: '900'}}>Nearby Rides</Text><Text style={{color: YELLOW, fontSize: 12, fontWeight: '800'}}>See All ›</Text></View>\n        {NEARBY.slice(0, 3).map((ride) => (<Pressable key={ride.id} onPress={() => onFind(ride.to)} style={{backgroundColor: t.card, borderRadius: 17, borderWidth: 1, borderColor: t.line, padding: 10, marginBottom: 10}}><View style={{flexDirection: 'row', alignItems: 'center'}}><View style={{width: 82, height: 82, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', marginRight: 11}}><Ionicons name="car-sport" size={43} color={YELLOW} /></View><View style={{flex: 1, minWidth: 0}}><Text numberOfLines={1} style={{color: t.ink, fontSize: 14, fontWeight: '900'}}>{ride.from} → {ride.to}</Text><Text style={{color: t.muted, fontSize: 12, marginTop: 4}}>{ride.when}</Text><View style={{flexDirection: 'row', alignItems: 'center', marginTop: 8}}><Ionicons name="people-outline" size={14} color={t.ink} /><Text style={{color: t.muted, fontSize: 11, marginLeft: 4}}>{ride.seats} seats left</Text><Ionicons name="cash-outline" size={14} color={t.ink} style={{marginLeft: 10}} /><Text style={{color: t.ink, fontSize: 12, fontWeight: '800', marginLeft: 4}}>${ride.price.toFixed(0)}</Text></View></View></View><View style={{flexDirection: 'row', alignItems: 'center', marginTop: 9}}><View style={{width: 31, height: 31, borderRadius: 16, backgroundColor: ride.color, alignItems: 'center', justifyContent: 'center', marginRight: 8}}><Text style={{color: '#FFFFFF', fontSize: 12, fontWeight: '900'}}>{ride.name.charAt(0)}</Text></View><View style={{flex: 1}}><Text numberOfLines={1} style={{color: t.ink, fontSize: 12, fontWeight: '700'}}>{ride.name}</Text><Text style={{color: t.muted, fontSize: 10, marginTop: 1}}>★ 4.8 (124 rides)</Text></View><View style={{backgroundColor: YELLOW, borderRadius: 18, paddingHorizontal: 15, paddingVertical: 8}}><Text style={{color: '#111111', fontSize: 12, fontWeight: '900'}}>Join Ride  ›</Text></View></View></Pressable>))}\n        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 21, marginBottom: 11}}><Text style={{color: t.ink, fontSize: 19, fontWeight: '900'}}>Your Upcoming Rides</Text><Text style={{color: YELLOW, fontSize: 12, fontWeight: '800'}}>See All ›</Text></View>\n        {upcoming.slice(0, 3).map((ride) => (<View key={ride.id} style={{backgroundColor: t.card, borderRadius: 17, borderWidth: 1, borderColor: t.line, padding: 10, marginBottom: 10}}><View style={{flexDirection: 'row', alignItems: 'center'}}><View style={{width: 82, height: 72, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', marginRight: 11}}><Ionicons name="car-sport" size={38} color={YELLOW} /></View><View style={{flex: 1}}><Text style={{color: t.ink, fontSize: 14, fontWeight: '900'}}>{ride.from} → {ride.to}</Text><Text style={{color: t.muted, fontSize: 12, marginTop: 4}}>{ride.date} · {ride.time}</Text></View><Ionicons name="chevron-forward" size={18} color={t.muted} /></View></View>))}\n'''
-          s = s[:start] + replacement + s[end:]
-          p.write_text(s)
-      - name: Verify and commit
-        shell: bash
+          old = "{ride.date} · {ride.time}"
+          new = "{ride.when}"
+          if old not in s:
+              raise SystemExit('outdated upcoming ride expression not found')
+          p.write_text(s.replace(old, new, 1))
+      - name: Commit source fix
         run: |
-          grep -q 'Share a ride' src/features/woulib/WoulibFlow.tsx
-          grep -q 'location-sharp' src/features/woulib/WoulibFlow.tsx
-          ! grep -q 'Welcome back' src/features/woulib/WoulibFlow.tsx
-          ! grep -q 'Find your ride' src/features/woulib/WoulibFlow.tsx
           git diff --check
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add src/features/woulib/WoulibFlow.tsx
-          git diff --cached --check
-          test "$(git diff --cached --name-only)" = "src/features/woulib/WoulibFlow.tsx"
-          git commit -m 'Refine Woulib Home reference UI'
+          git commit -m 'Fix Woulib upcoming ride field'
           git push origin HEAD:woulib-home-reference-ui
