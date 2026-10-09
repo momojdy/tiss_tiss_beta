@@ -362,7 +362,7 @@ const NB = 10, RW = 15, LOT = 70, LANE = 7.5, STOP = 26, LO = -200, LEN = 1400;
 const SW = 2500, SH = 1620, OX = 1250, OY = 360;
 export const CENTER = 500;
 const T0 = Date.now(), CYCLE = 12, MOVE_T = 4.2;
-const MAP_TOP = Platform.OS === 'ios' ? 116 : 90;
+const MAP_TOP = 100;
 const TOP_SAFE = MAP_TOP + 24;
 /** performance knobs */
 const TRAFFIC_DENSITY = 2; // cars per lane (44 lanes)
