@@ -1,0 +1,54 @@
+name: Apply Woulib Home only
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+          ref: main
+
+      - name: Patch only WoulibHome
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          workflow = Path('.github/workflows/polish-woulib-home-main.yml').read_text()
+          marker = "new_home = r'''"
+          start_payload = workflow.index(marker) + len(marker)
+          end_payload = workflow.index("'''", start_payload)
+          new_home = workflow[start_payload:end_payload]
+
+          path = Path('src/features/woulib/WoulibFlow.tsx')
+          text = path.read_text()
+          start = text.index('function WoulibHome(')
+          end = text.index('\nfunction WoulibOffer(', start)
+          path.write_text(text[:start] + new_home + text[end:])
+          PY
+
+      - name: Verify scope
+        run: |
+          git diff --check
+          test "$(git status --short | grep -c '^ M src/features/woulib/WoulibFlow.tsx$')" -eq 1
+          test "$(git status --short | wc -l)" -eq 3
+
+      - name: Commit and remove temporary workflows
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/woulib/WoulibFlow.tsx
+          git commit -m "Polish Woulib home page"
+          git push origin HEAD:main
+          git rm .github/workflows/polish-woulib-home-main.yml .github/workflows/apply-woulib-home.yml
+          git commit -m "chore: remove temporary Woulib home workflows"
+          git push origin HEAD:main
