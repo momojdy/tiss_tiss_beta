@@ -1616,20 +1616,6 @@ function WoulibHome({
             overflow: 'hidden',
           }}
         >
-          <View
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-              backgroundColor: YELLOW,
-              alignItems: 'center',
-              justifyContent: 'center',
-              marginBottom: 14,
-            }}
-          >
-            <Ionicons name="car-outline" size={25} color="#111111" />
-          </View>
-
           <Text
             style={{
               color: t.ink,
