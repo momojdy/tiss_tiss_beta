@@ -138,7 +138,7 @@ $$;
 
 drop trigger if exists business_application_approved_provision on public.business_applications;
 create trigger business_application_approved_provision
-before insert or update of status on public.business_applications
+before insert or update on public.business_applications
 for each row execute function public.provision_approved_business();
 
 create or replace function public.get_my_business_access()
@@ -209,7 +209,8 @@ end;
 $$;
 
 -- Preserve profile read/update for the owner but prevent role escalation and client-created profiles.
-revoke insert, delete on public.profiles from anon, authenticated;
+revoke all on public.profiles from anon;
+revoke insert, delete on public.profiles from authenticated;
 revoke update on public.profiles from anon, authenticated;
 grant update (full_name, business_name, preferred_currency, phone_number, avatar_url)
   on public.profiles to authenticated;
