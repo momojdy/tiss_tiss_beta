@@ -212,11 +212,32 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       options: { data: { role: 'buyer', signup_mode: wantsBusiness ? 'business' : 'buyer', full_name: fullName || null, business_name: businessName || null } },
     });
     if (error) {
-      if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.');
-      throw error;
+      const duplicate = /already registered|already exists|user already registered/i.test(error.message);
+      if (!duplicate) throw error;
+
+      // Same email means the same Wantiss identity. Authenticate the existing identity,
+      // then explicitly activate only the selected mode using a server-checked RPC.
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        throw new Error('This email already has a Wantiss account. Enter its existing password to register the selected mode, or sign in first.');
+      }
+      const { error: modeError } = await supabase.rpc('register_my_account_mode', { p_mode: wantsBusiness ? 'business' : 'buyer' });
+      if (modeError) throw modeError;
+      if (wantsBusiness && businessName.trim()) {
+        const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
+        if (applicationError) throw applicationError;
+      }
+      await routeAuthenticatedUser(wantsBusiness ? 'business' : 'buyer');
+      return wantsBusiness
+        ? 'B&P 2P mode is now registered for your existing Wantiss account. Continue in Business Space to complete the business access steps.'
+        : 'Buyer mode is now registered for your existing Wantiss account.';
     }
     if (!data.user) throw new Error('Supabase did not return an account. Please try again.');
     if (data.session) {
+      if (wantsBusiness && businessName.trim()) {
+        const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
+        if (applicationError) throw applicationError;
+      }
       await routeAuthenticatedUser(wantsBusiness ? 'business' : 'buyer');
       return wantsBusiness
         ? 'Your B&P 2P registration is ready. Continue to Business Space to complete the business access steps.'
