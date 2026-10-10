@@ -45,7 +45,7 @@ function money(value: unknown, currency = 'USD') {
 function errorText(error: unknown) { return error instanceof Error ? error.message : String((error as { message?: string })?.message ?? error ?? 'Something went wrong'); }
 function asObject(value: unknown): Record<string, any> { if (Array.isArray(value)) return value[0] ?? {}; return value && typeof value === 'object' ? value as Record<string, any> : {}; }
 
-export default function BusinessSpaceScreen({ onSignOut }: { onSignOut: () => void }) {
+export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { onSignOut: () => void; onSwitchToBuyer: () => void }) {
   const [tab, setTab] = useState<Tab>('Overview');
   const [business, setBusiness] = useState<Business | null>(null);
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -158,6 +158,9 @@ export default function BusinessSpaceScreen({ onSignOut }: { onSignOut: () => vo
         <Text style={styles.eyebrow}>WANTISS BUSINESS SPACE</Text>
         <Text style={styles.headerTitle} numberOfLines={1}>{business?.name ?? 'Your business'}</Text>
       </View>
+      <Pressable accessibilityRole="button" accessibilityLabel="Switch to Buyer" onPress={onSwitchToBuyer} style={styles.iconButton}>
+        <MaterialCommunityIcons name="swap-horizontal" size={21} color={BLUE} />
+      </Pressable>
       <Pressable accessibilityRole="button" accessibilityLabel="Sign out" onPress={onSignOut} style={styles.iconButton}>
         <MaterialCommunityIcons name="logout" size={21} color={INK} />
       </Pressable>
