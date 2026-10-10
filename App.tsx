@@ -233,6 +233,24 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
         : 'Buyer mode is now registered for your existing Wantiss account.';
     }
     if (!data.user) throw new Error('Supabase did not return an account. Please try again.');
+    // With email-enumeration protection enabled, Supabase may mask a duplicate email
+    // as a user with no identities instead of returning an "already registered" error.
+    if (!data.session && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        throw new Error('This email may already have a Wantiss account. Enter its existing password to register the selected mode, or sign in first.');
+      }
+      const { error: modeError } = await supabase.rpc('register_my_account_mode', { p_mode: wantsBusiness ? 'business' : 'buyer' });
+      if (modeError) throw modeError;
+      if (wantsBusiness && businessName.trim()) {
+        const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
+        if (applicationError) throw applicationError;
+      }
+      await routeAuthenticatedUser(wantsBusiness ? 'business' : 'buyer');
+      return wantsBusiness
+        ? 'B&P 2P mode is now registered for your existing Wantiss account. Continue in Business Space to complete the business access steps.'
+        : 'Buyer mode is now registered for your existing Wantiss account.';
+    }
     if (data.session) {
       if (wantsBusiness && businessName.trim()) {
         const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
