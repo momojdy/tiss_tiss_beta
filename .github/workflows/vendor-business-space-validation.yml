@@ -1,0 +1,32 @@
+name: Vendor Business Space validation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [feature/vendor-business-space-react-native]
+
+jobs:
+  vendor-typecheck:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+      - name: Add Expo environment typing for isolated check
+        run: |
+          printf '%s\n' 'declare const process: { env: Record<string, string | undefined> };' > /tmp/vendor-check-globals.d.ts
+      - name: Type-check Business Space screen
+        run: >-
+          npx tsc --ignoreConfig --noEmit --strict --skipLibCheck --esModuleInterop
+          --jsx react-native --target ES2022 --moduleResolution bundler
+          --module ESNext /tmp/vendor-check-globals.d.ts
+          src/features/businessSpace/BusinessSpaceScreen.tsx
+
+      - name: Export Expo web bundle
+        run: npx expo export --platform web

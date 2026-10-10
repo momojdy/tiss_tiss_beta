@@ -40,8 +40,15 @@ import FrenziesStreakShieldScreen from './src/screens/FrenziesStreakShieldScreen
 import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShieldScreen';
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
+import BusinessSpaceScreen from './src/features/businessSpace/BusinessSpaceScreen';
 
 type Screen = 'auth' | 'forgot' | 'reset';
+type AppMode = 'buyer' | 'vendor';
+
+function resolveAppMode(role: unknown): AppMode {
+  const value = String(role ?? '').trim().toLowerCase();
+  return ['vendor', 'business', 'seller', 'merchant'].includes(value) ? 'vendor' : 'buyer';
+}
 type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 type AppErrorProps = { title: string; error: unknown };
@@ -74,11 +81,13 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
   return <Animated.View {...responder.panHandlers} style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, transform: [{ translateX: pan.x }, { translateY: pan.y }], backgroundColor: 'rgba(255,255,255,0.92)', borderWidth: 0, borderColor: 'transparent', borderRadius: 10, padding: 15, height: 94, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}><Pressable onPress={onPress}><Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text><Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text><View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 16, marginHorizontal: 20 }} /></Pressable></Animated.View>;
 }
 
-function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated, registerBuyerScreen }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void; registerBuyerScreen: (value: BuyerScreen) => void }) {
+function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated, registerVendorMode, registerBuyerScreen }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void; registerVendorMode: (value: boolean) => void; registerBuyerScreen: (value: BuyerScreen) => void }) {
   const [fontsLoaded] = useFonts({ Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'), Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'), Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'), Inter_700Bold: require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf') });
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
+  const [appMode, setAppMode] = useState<AppMode>('buyer');
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
+  useEffect(() => { registerVendorMode(appMode === 'vendor'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
@@ -88,8 +97,12 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isVendorMode, setIsVendorMode] = useState(false);
   useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; if (!path.includes('reset-password') && !code) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
   if (!fontsLoaded) return null;
+  if (authenticated && appMode === 'vendor') {
+    return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+  }
   if (authenticated) {
     try {
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
@@ -132,18 +145,20 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
   if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
-  return <AuthScreen onSignInPressed={async (email, password) => { try { const { data, error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; if (!data.user) throw new Error('No user returned from Supabase.'); setAuthenticated(true); } catch (error) { console.error('SIGN IN ERROR:', error); } }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => { const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role, full_name: fullName || null, business_name: businessName || null } } }); if (error) { if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.'); throw error; } if (data.session) { if (role === 'buyer') setAuthenticated(true); else { await supabase.auth.signOut(); throw new Error('B&P 2P home is not connected yet.'); } return; } if (data.user && !data.session) throw new Error('This email is already registered. Please sign in instead.'); throw new Error('Unable to create your account. Please try again.'); }} />;
+  return <AuthScreen onSignInPressed={async (email, password) => { const { data, error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; if (!data.user) throw new Error('No user returned from Supabase.'); const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle(); const role = profile?.role ?? 'buyer'; setAppMode(resolveAppMode(role)); setAuthenticated(true); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => { const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role, full_name: fullName || null, business_name: businessName || null } } }); if (error) { if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.'); throw error; } if (data.session) { if (['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase())) { await supabase.auth.signOut(); setAppMode('buyer'); setAuthenticated(false); throw new Error('Your account was created. Vendor access is pending approval. You can sign in as a buyer while your application is reviewed.'); } const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle(); setAppMode(resolveAppMode(profile?.role ?? 'buyer')); setAuthenticated(true); return; } if (data.user && !data.session) { throw new Error(['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase()) ? 'Check your email to confirm your account. Vendor access requires approval before Business Space is available.' : 'Check your email to confirm your account before signing in.'); } throw new Error('Unable to create your account. Please try again.'); }} />;
 }
 
 export default function App() {
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isVendorMode, setIsVendorMode] = useState(false);
   const challengePress = React.useRef<() => void>(() => {});
   const challengeDismiss = React.useRef<() => void>(() => setShowChallenge(false));
   const registerAuthenticated = React.useCallback((value: boolean) => { setIsAuthenticated(value); }, []);
+  const registerVendorMode = React.useCallback((value: boolean) => { setIsVendorMode(value); }, []);
   const registerChallengePress = React.useCallback((fn: () => void) => { challengePress.current = fn; }, []);
   const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const registerBuyerScreen = React.useCallback((value: BuyerScreen) => { setBuyerScreen(value); }, []);
-  return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><View style={{ flex: 1 }}><AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} registerBuyerScreen={registerBuyerScreen} />{isAuthenticated && showChallenge && buyerScreen !== 'frenziesChallengeStatus' && buyerScreen !== 'frenziesChallengeReady' && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}</View></SafeAreaProvider></GestureHandlerRootView>;
+  return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><View style={{ flex: 1 }}><AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} registerVendorMode={registerVendorMode} registerBuyerScreen={registerBuyerScreen} />{isAuthenticated && !isVendorMode && showChallenge && buyerScreen !== 'frenziesChallengeStatus' && buyerScreen !== 'frenziesChallengeReady' && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}</View></SafeAreaProvider></GestureHandlerRootView>;
 }
