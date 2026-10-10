@@ -40,8 +40,15 @@ import FrenziesStreakShieldScreen from './src/screens/FrenziesStreakShieldScreen
 import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShieldScreen';
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
+import BusinessSpaceScreen from './src/features/businessSpace/BusinessSpaceScreen';
 
 type Screen = 'auth' | 'forgot' | 'reset';
+type AppMode = 'buyer' | 'vendor';
+
+function resolveAppMode(role: unknown): AppMode {
+  const value = String(role ?? '').trim().toLowerCase();
+  return ['vendor', 'business', 'seller', 'merchant'].includes(value) ? 'vendor' : 'buyer';
+}
 type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 type AppErrorProps = { title: string; error: unknown };
@@ -78,6 +85,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [fontsLoaded] = useFonts({ Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'), Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'), Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'), Inter_700Bold: require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf') });
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
+  const [appMode, setAppMode] = useState<AppMode>('buyer');
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
@@ -90,6 +98,9 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; if (!path.includes('reset-password') && !code) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
   if (!fontsLoaded) return null;
+  if (authenticated && appMode === 'vendor') {
+    return <BusinessSpaceScreen onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+  }
   if (authenticated) {
     try {
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
@@ -132,7 +143,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
   if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
-  return <AuthScreen onSignInPressed={async (email, password) => { try { const { data, error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; if (!data.user) throw new Error('No user returned from Supabase.'); setAuthenticated(true); } catch (error) { console.error('SIGN IN ERROR:', error); } }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => { const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role, full_name: fullName || null, business_name: businessName || null } } }); if (error) { if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.'); throw error; } if (data.session) { if (role === 'buyer') setAuthenticated(true); else { await supabase.auth.signOut(); throw new Error('B&P 2P home is not connected yet.'); } return; } if (data.user && !data.session) throw new Error('This email is already registered. Please sign in instead.'); throw new Error('Unable to create your account. Please try again.'); }} />;
+  return <AuthScreen onSignInPressed={async (email, password) => { const { data, error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; if (!data.user) throw new Error('No user returned from Supabase.'); const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle(); const role = profile?.role ?? data.user.user_metadata?.role; setAppMode(resolveAppMode(role)); setAuthenticated(true); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => { const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role, full_name: fullName || null, business_name: businessName || null } } }); if (error) { if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.'); throw error; } if (data.session) { setAppMode(resolveAppMode(role)); setAuthenticated(true); return; } if (data.user && !data.session) throw new Error('This email is already registered. Please sign in instead.'); throw new Error('Unable to create your account. Please try again.'); }} />;
 }
 
 export default function App() {
