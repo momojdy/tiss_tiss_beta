@@ -239,7 +239,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     return wantsBusiness
       ? 'Account created. Check your email to confirm it, then sign in with B&P 2P selected to submit or continue your business application.'
       : 'Account created. Check your email to confirm it before signing in.';
-  }}} />;
+  }} />;
 }
 
 export default function App() {
