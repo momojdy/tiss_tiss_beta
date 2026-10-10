@@ -12,7 +12,7 @@ const BG = '#F5F7FC';
 type Tab = 'Overview' | 'Features' | 'Orders' | 'Listings' | 'Payouts';
 type Business = { id: string; name: string; verification: string; payout_ready: boolean; is_live: boolean; role: string };
 type Summary = { available?: number; pending?: number; revenue?: number; prev?: number; current?: number; previous?: number; series?: (number | string | { date?: string; amount?: number })[]; mix?: { feature?: string; amount?: number }[]; [key: string]: unknown };
-type Activity = { id: string | number; title: string; kind?: string; at?: string; feature?: string };
+type Activity = { id: string | number; title: string; kind?: string; at?: string; feature?: string; amount?: number };
 type Row = { id: string; title?: string; name?: string; feature?: string; status?: string; amount?: number; price?: number; created_at?: string; stock?: number };
 
 const FEATURES = [
@@ -125,10 +125,21 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
   const featureMap = useMemo(() => new Map(features.map(item => [item.feature, item.status])), [features]);
   const available = Number(summary?.available ?? asObject(summary?.balance).available ?? 0);
   const pending = Number(summary?.pending ?? asObject(summary?.balance).pending ?? 0);
-  const gross = Number(earnings.gross ?? 0);
-  const fee = Math.abs(Number(earnings.fees ?? 0));
-  const refunds = Math.abs(Number(earnings.refunds ?? 0));
-  const series = Array.isArray(summary?.series) ? summary!.series! : [];
+  const hasEarningsData = ['gross', 'fees', 'refunds'].some(key => earnings[key] !== undefined && earnings[key] !== null) || (Array.isArray(summary?.series) && summary.series.length > 0);
+  const demoEarnings = { gross: 4280, fees: 128.4, refunds: 185, net: 3966.6 };
+  const gross = Number(earnings.gross ?? (hasEarningsData ? 0 : demoEarnings.gross));
+  const fee = Math.abs(Number(earnings.fees ?? (hasEarningsData ? 0 : demoEarnings.fees)));
+  const refunds = Math.abs(Number(earnings.refunds ?? (hasEarningsData ? 0 : demoEarnings.refunds)));
+  const demoSeries = [240, 390, 310, 520, 430, 610, 470, 720, 560, 810, 680, 940];
+  const series = Array.isArray(summary?.series) && summary.series.length ? summary.series : (hasEarningsData ? [] : demoSeries);
+  const hasActivityData = activity.length > 0;
+  const displayActivity: Activity[] = hasActivityData ? activity : [
+    { id: 'demo-sale-1', title: 'Order completed', kind: 'Earnings', feature: 'Goodies', at: '2026-10-09T14:20:00Z', amount: 86.50 },
+    { id: 'demo-refund-1', title: 'Refund issued', kind: 'Refund', feature: 'Stayz', at: '2026-10-09T11:05:00Z', amount: -45.00 },
+    { id: 'demo-sale-2', title: 'Payment received', kind: 'Earnings', feature: 'Services', at: '2026-10-08T16:42:00Z', amount: 125.00 },
+    { id: 'demo-refund-2', title: 'Refund requested', kind: 'Refund pending', feature: 'Goodies', at: '2026-10-08T09:30:00Z', amount: -22.50 },
+    { id: 'demo-sale-3', title: 'Booking confirmed', kind: 'Earnings', feature: 'Stayz', at: '2026-10-07T18:10:00Z', amount: 210.00 },
+  ];
   const maxSeries = Math.max(1, ...series.map(point => Math.abs(typeof point === 'object' && point !== null ? Number(point.amount ?? 0) : Number(point ?? 0))));
   const periodLabel = period === 7 ? '7 days' : period === 30 ? '30 days' : period === 90 ? '90 days' : '1 year';
 
@@ -180,7 +191,7 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
         <View style={styles.periodRow}>{[[7,'7D'],[30,'30D'],[90,'90D'],[365,'1Y']].map(([days,label]) => <Pressable key={days} onPress={() => setPeriod(Number(days))} style={[styles.periodButton, period === days && styles.periodActive]}><Text style={[styles.periodText, period === days && styles.periodTextActive]}>{label}</Text></Pressable>)}</View>
 
         <View style={styles.sectionCard}>
-          <View style={styles.sectionHeading}><View><Text style={styles.cardTitle}>Earnings</Text><Text style={styles.muted}>Last {periodLabel}</Text></View><Text style={styles.bigMetric}>{money(gross)}</Text></View>
+          <View style={styles.sectionHeading}><View><Text style={styles.cardTitle}>Earnings</Text><Text style={styles.muted}>Last {periodLabel}</Text></View><View style={{ alignItems: 'flex-end', gap: 5 }}><Text style={styles.bigMetric}>{money(gross)}</Text>{!hasEarningsData && <View style={styles.demoPill}><Text style={styles.demoPillText}>SAMPLE DATA</Text></View>}</View></View>
           <View style={styles.chart}>
             {series.length ? series.map((point, index) => { const value = typeof point === 'object' && point !== null ? Number(point.amount ?? 0) : Number(point ?? 0); const label = typeof point === 'object' && point !== null ? String(point.date ?? index + 1) : String(index + 1); return <View key={label + '-' + index} style={styles.chartColumn}><View style={[styles.chartBar, { height: Math.max(4, Math.round((Math.abs(value) / maxSeries) * 88)) }]} /><Text style={styles.chartLabel}>{label.slice(-2)}</Text></View>; }) : <View style={styles.chartEmpty}><Text style={styles.muted}>Earnings history will appear here when ledger data is available.</Text></View>}
           </View>
@@ -195,7 +206,8 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
 
         <View style={styles.sectionHeadingStandalone}><Text style={styles.sectionTitle}>Recent activity</Text><Text style={styles.muted}>Latest updates</Text></View>
         <View style={styles.sectionCard}>
-          {activity.length ? activity.slice(0, 6).map((item, index) => <View key={String(item.id)} style={[styles.activityRow, index > 0 && styles.withDivider]}><View style={styles.activityDot}><MaterialCommunityIcons name="history" size={17} color={BLUE} /></View><View style={{ flex: 1 }}><Text style={styles.rowTitle}>{item.title}</Text><Text style={styles.rowSub}>{item.feature ?? item.kind ?? 'Business activity'}{item.at ? ' · ' + new Date(item.at).toLocaleDateString() : ''}</Text></View></View>) : <Empty text="Your business activity will show here." />}
+          {!hasActivityData && <View style={styles.demoNotice}><MaterialCommunityIcons name="information-outline" size={15} color="#8A6415" /><Text style={styles.demoNoticeText}>Preview only — these sample transactions are not real.</Text></View>}
+          {displayActivity.slice(0, 6).map((item, index) => <View key={String(item.id)} style={[styles.activityRow, index > 0 && styles.withDivider]}><View style={[styles.activityDot, item.kind?.toLowerCase().includes('refund') && { backgroundColor: '#FFF0E8' }]}><MaterialCommunityIcons name={item.kind?.toLowerCase().includes('refund') ? 'cash-refund' : 'history'} size={17} color={item.kind?.toLowerCase().includes('refund') ? '#C65D2E' : BLUE} /></View><View style={{ flex: 1 }}><Text style={styles.rowTitle}>{item.title}</Text><Text style={styles.rowSub}>{item.feature ?? item.kind ?? 'Business activity'}{item.at ? ' · ' + new Date(item.at).toLocaleDateString() : ''}</Text></View>{item.amount != null && <Text style={[styles.activityAmount, item.amount < 0 && { color: '#C65D2E' }]}>{item.amount < 0 ? '−' : '+'}{money(Math.abs(item.amount))}</Text>}</View>)}
         </View>
       </ScrollView>
       <View style={styles.tabBar}>{(['Overview','Features','Orders','Listings','Payouts'] as Tab[]).map((item) => <Pressable key={item} style={styles.tabItem} onPress={() => setTab(item)}><MaterialCommunityIcons name={({ Overview: 'view-dashboard-outline', Features: 'apps', Orders: 'clipboard-list-outline', Listings: 'format-list-bulleted', Payouts: 'bank-transfer-out' } as const)[item]} size={21} color={tab === item ? BLUE : MUTED} /><Text style={[styles.tabLabel, tab === item && styles.tabLabelActive]}>{item}</Text></Pressable>)}</View>
@@ -261,6 +273,11 @@ const styles = StyleSheet.create({
   chartColumn: { flex: 1, alignItems: 'center', justifyContent: 'flex-end', gap: 5 },
   chartBar: { width: '68%', minHeight: 4, backgroundColor: BLUE, borderTopLeftRadius: 5, borderTopRightRadius: 5 },
   chartLabel: { fontSize: 9, color: MUTED },
+  demoPill: { paddingHorizontal: 7, paddingVertical: 3, borderRadius: 6, backgroundColor: '#FFF2D7' },
+  demoPillText: { fontSize: 9, fontWeight: '800', letterSpacing: 0.4, color: '#8A6415' },
+  demoNotice: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingVertical: 8, paddingHorizontal: 9, borderRadius: 9, backgroundColor: '#FFF8E7', marginBottom: 4 },
+  demoNoticeText: { flex: 1, fontSize: 10, color: '#8A6415' },
+  activityAmount: { fontSize: 11, fontWeight: '800', color: '#16794B', marginLeft: 4 },
   chartEmpty: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 16 },
   metricGrid: { flexDirection: 'row', borderTopWidth: 1, borderTopColor: LINE, paddingTop: 13, marginTop: 8, gap: 8 },
   metric: { flex: 1 },
