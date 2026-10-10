@@ -111,33 +111,13 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 
   useEffect(() => {
     let mounted = true;
-    const applySession = async (session: { user: { id: string } } | null) => {
-      if (!mounted) return;
-      if (!session?.user) {
-        setAuthenticated(false);
-        setAppMode('buyer');
-        setAuthReady(true);
-        return;
-      }
-      try {
-        // A restored session defaults to Buyer mode. Business Space is selected explicitly,
-        // then authorized from the database rather than the editable profile.role field.
-        await routeAuthenticatedUser('buyer');
-      } catch (error) {
-        console.error('Unable to restore Wantiss session:', error);
-        if (mounted) {
-          setAuthenticated(false);
-          setAppMode('buyer');
-        }
-      } finally {
-        if (mounted) setAuthReady(true);
-      }
-    };
-    void supabase.auth.getSession().then(({ data, error }) => {
-      if (error) throw error;
-      return applySession(data.session);
+    // Always show Auth first when Expo starts. Supabase still hydrates its persisted
+    // session internally, but an existing session must not skip the explicit Auth screen.
+    void supabase.auth.getSession().then(({ error }) => {
+      if (error) console.error('Unable to read saved Wantiss session:', error);
     }).catch(error => {
       console.error('Unable to read saved Wantiss session:', error);
+    }).finally(() => {
       if (mounted) setAuthReady(true);
     });
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
