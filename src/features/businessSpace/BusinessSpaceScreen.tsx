@@ -11,7 +11,7 @@ const BG = '#F5F7FC';
 
 type Tab = 'Overview' | 'Features' | 'Orders' | 'Listings' | 'Payouts';
 type Business = { id: string; name: string; verification: string; payout_ready: boolean; is_live: boolean; role: string };
-type Summary = { available?: number; pending?: number; current?: number; previous?: number; series?: { date?: string; amount?: number }[]; mix?: { feature?: string; amount?: number }[]; [key: string]: unknown };
+type Summary = { available?: number; pending?: number; revenue?: number; prev?: number; current?: number; previous?: number; series?: (number | string | { date?: string; amount?: number })[]; mix?: { feature?: string; amount?: number }[]; [key: string]: unknown };
 type Activity = { id: string | number; title: string; kind?: string; at?: string; feature?: string };
 type Row = { id: string; title?: string; name?: string; feature?: string; status?: string; amount?: number; price?: number; created_at?: string; stock?: number };
 
@@ -148,7 +148,7 @@ export default function BusinessSpaceScreen({ onSignOut }: { onSignOut: () => vo
   const fee = Math.abs(Number(earnings.fees ?? 0));
   const refunds = Math.abs(Number(earnings.refunds ?? 0));
   const series = Array.isArray(summary?.series) ? summary!.series! : [];
-  const maxSeries = Math.max(1, ...series.map(point => Math.abs(Number(point.amount ?? 0))));
+  const maxSeries = Math.max(1, ...series.map(point => Math.abs(typeof point === 'object' && point !== null ? Number(point.amount ?? 0) : Number(point ?? 0))));
   const periodLabel = period === 7 ? '7 days' : period === 30 ? '30 days' : period === 90 ? '90 days' : '1 year';
 
   const header = (
@@ -217,7 +217,7 @@ export default function BusinessSpaceScreen({ onSignOut }: { onSignOut: () => vo
         <View style={styles.sectionCard}>
           <View style={styles.sectionHeading}><View><Text style={styles.cardTitle}>Earnings</Text><Text style={styles.muted}>Last {periodLabel}</Text></View><Text style={styles.bigMetric}>{money(gross)}</Text></View>
           <View style={styles.chart}>
-            {series.length ? series.map((point, index) => <View key={String(point.date ?? index)} style={styles.chartColumn}><View style={[styles.chartBar, { height: Math.max(4, Math.round((Math.abs(Number(point.amount ?? 0)) / maxSeries) * 88)) }]} /><Text style={styles.chartLabel}>{String(point.date ?? '').slice(-2)}</Text></View>) : <View style={styles.chartEmpty}><Text style={styles.muted}>Earnings history will appear here when ledger data is available.</Text></View>}
+            {series.length ? series.map((point, index) => { const value = typeof point === 'object' && point !== null ? Number(point.amount ?? 0) : Number(point ?? 0); const label = typeof point === 'object' && point !== null ? String(point.date ?? index + 1) : String(index + 1); return <View key={label + '-' + index} style={styles.chartColumn}><View style={[styles.chartBar, { height: Math.max(4, Math.round((Math.abs(value) / maxSeries) * 88)) }]} /><Text style={styles.chartLabel}>{label.slice(-2)}</Text></View>; }) : <View style={styles.chartEmpty}><Text style={styles.muted}>Earnings history will appear here when ledger data is available.</Text></View>}
           </View>
           <View style={styles.metricGrid}><Metric label="Gross sales" value={money(gross)} /><Metric label="Fees" value={money(fee)} /><Metric label="Refunds" value={money(refunds)} /></View>
         </View>
