@@ -26,3 +26,13 @@ No SQL has been applied to the live Supabase project. The Business Space screen 
 4. Review SECURITY DEFINER functions, storage policies, Stripe transfer/webhook idempotency and payout reconciliation.
 5. Apply the compatibility migration in staging, test against realistic user roles and concurrent financial operations, then review the resulting schema diff.
 6. Only after those checks should a production migration be proposed and explicitly approved.
+
+
+## Follow-up findings — 2026-10-10
+
+- The live `public.handle_new_user()` trigger previously copied `raw_user_meta_data.role` directly into `profiles.role`. Because signup metadata is client-editable, this could elevate a new account to vendor mode without approval.
+- The compatibility migration now changes the trigger function so all new profiles start with `role = 'buyer'`. Vendor intent is recorded in `vendor_applications` as pending. Vendor access must be granted by a trusted administrative process that updates `profiles.role`; client signup metadata alone cannot grant it.
+- The app now uses the trusted `profiles.role` for login routing and no longer falls back to `user_metadata.role`. A vendor registration with an immediate session signs out and displays a pending-approval message.
+- Live schema inspection confirmed `profiles.role` exists and the existing signup trigger is bound to `public.handle_new_user()`. No Business Space tables exist in the live project. No migration was applied to production.
+- A separate Supabase staging project/branch is not currently available through the connected project list. The migration has therefore **not** been applied or executed against a staging database; runtime/RLS/financial validation remains blocked until isolated staging is provisioned.
+- The new `wallet_ledger` is only a reporting ledger and is not reconciled to `wallet_transactions`, `wallet_payments`, Stripe events, refunds, or transfer/payout records. Do not present it as a live spendable balance or enable payout actions until a signed, idempotent, reconciled ledger integration exists.
