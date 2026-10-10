@@ -41,10 +41,9 @@ import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShield
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
 import BusinessSpaceScreen from './src/features/businessSpace/BusinessSpaceScreen';
-import BusinessAccessScreen from './src/features/businessSpace/BusinessAccessScreen';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type AppMode = 'buyer' | 'vendor' | 'businessAccess';
+type AppMode = 'buyer' | 'vendor';
 
 function resolveAppMode(role: unknown): AppMode {
   const value = String(role ?? '').trim().toLowerCase();
@@ -157,9 +156,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [isVendorMode, setIsVendorMode] = useState(false);
   useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; if (!path.includes('reset-password') && !code) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
   if (!fontsLoaded || !authReady) return null;
-  if (authenticated && appMode === 'businessAccess') {
-    return <BusinessAccessScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} onApproved={() => { setAppMode('vendor'); }} />;
-  }
   if (authenticated && appMode === 'vendor') {
     return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
