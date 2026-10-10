@@ -367,7 +367,7 @@ const styles = StyleSheet.create({
   submitButton: { width: '100%', height: 60, backgroundColor: PINK, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   submitText: { fontSize: 18, fontWeight: '600', color: '#FFFFFF' },
   submitContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
-  socialRow: { paddingTop: 30, flexDirection: 'row', justifyContent: 'center' },
+  socialRow: { paddingTop: 15, flexDirection: 'row', justifyContent: 'center' },
   socialButton: { width: 100, height: 50, backgroundColor: '#FFFFFF', borderWidth: 0.5, borderColor: FIELD_TEXT, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
   googleFallback: { fontSize: 22, fontWeight: '600', color: '#4B39EF' },
   errorMessageWrap: { paddingTop: 5, paddingLeft: 15, paddingRight: 15, alignItems: 'flex-start' },
