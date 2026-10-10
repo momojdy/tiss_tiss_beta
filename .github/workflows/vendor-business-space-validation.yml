@@ -7,7 +7,7 @@ on:
     branches: [feature/vendor-business-space-react-native]
 
 jobs:
-  typecheck:
+  vendor-typecheck:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -17,6 +17,9 @@ jobs:
           node-version: 22
           cache: npm
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
-      - name: TypeScript check
-        run: npx tsc --noEmit
+        run: npm ci --no-audit --no-fund
+      - name: Type-check Business Space screen
+        run: >-
+          npx tsc --noEmit --strict --skipLibCheck --esModuleInterop
+          --jsx react-native --target ES2022 --moduleResolution bundler
+          --module ESNext src/features/businessSpace/BusinessSpaceScreen.tsx
