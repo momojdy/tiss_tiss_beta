@@ -20,7 +20,7 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Add Expo environment typing for isolated check
         run: |
-          printf '%s\\n' 'declare const process: { env: Record<string, string | undefined> };' > /tmp/vendor-check-globals.d.ts
+          printf '%s\n' 'declare const process: { env: Record<string, string | undefined> };' > /tmp/vendor-check-globals.d.ts
       - name: Type-check Business Space screen
         run: >-
           npx tsc --ignoreConfig --noEmit --strict --skipLibCheck --esModuleInterop
