@@ -32,7 +32,7 @@ const LOGO_URL = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/re
 const GOOGLE_PNG = 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.png';
 
 type AuthCardProps = {
-  onSignInPressed?: (email: string, password: string) => Promise<unknown>;
+  onSignInPressed?: (email: string, password: string, mode: 'buyer' | 'business') => Promise<unknown>;
   onSignUpPressed?: (email: string, password: string, role: string, fullName: string, businessName: string) => Promise<unknown>;
   onGooglePressed?: () => Promise<unknown>;
   onApplePressed?: () => Promise<unknown>;
@@ -83,7 +83,9 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [fullNameError, setFullNameError] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [googleFailed, setGoogleFailed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
   const emailChangedAtRef = useRef(0);
   const passwordChangedAtRef = useRef(0);
   const autofillDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -117,6 +119,7 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
     setPasswordError(null);
     setFullNameError(null);
     setErrorMessage(null);
+    setSuccessMessage(null);
   };
 
   const toggleRegisterMode = () => {
@@ -181,11 +184,12 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
         setErrorMessage('Sign in action is not connected.');
         return;
       }
+      setSubmitting(true);
       try {
-        await onSignInPressed(trimmedEmail, password);
+        await onSignInPressed(trimmedEmail, password, isVendor ? 'business' : 'buyer');
       } catch (error) {
         setErrorMessage(error instanceof Error ? error.message : 'Unable to sign in. Please try again.');
-      }
+      } finally { setSubmitting(false); }
       return;
     }
 
@@ -194,11 +198,13 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
       return;
     }
 
+    setSubmitting(true);
     try {
-      await onSignUpPressed(trimmedEmail, password, isVendor ? 'business' : 'buyer', isVendor ? fullName.trim() : '', isVendor ? businessName.trim() : '');
+      const result = await onSignUpPressed(trimmedEmail, password, isVendor ? 'business' : 'buyer', isVendor ? fullName.trim() : '', isVendor ? businessName.trim() : '');
+      if (typeof result === 'string' && result) setSuccessMessage(result);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : 'Unable to create your account. Please try again.');
-    }
+    } finally { setSubmitting(false); }
   };
 
   const renderToggle = () => (
@@ -247,8 +253,8 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
 
   const renderSubmitButton = (text: string) => (
     <View style={styles.submitWrap}>
-      <Pressable accessibilityRole="button" style={styles.submitButton} onPress={handleSubmit}>
-        <View style={styles.submitContent}><Text style={styles.submitText}>{text}</Text>{text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" /> : null}</View>
+      <Pressable accessibilityRole="button" disabled={submitting} style={[styles.submitButton, submitting && { opacity: 0.65 }]} onPress={handleSubmit}>
+        <View style={styles.submitContent}>{submitting ? <Text style={styles.submitText}>Please wait…</Text> : <><Text style={styles.submitText}>{text}</Text>{text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" /> : null}</>}</View>
       </Pressable>
     </View>
   );
@@ -280,7 +286,8 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
           {renderBusinessSpaceLabel()}
           {isRegisterMode && isVendor ? renderRegisterStepIndicator() : null}
           {isRegisterMode && isVendor ? renderBusinessRegistrationPages() : isRegisterMode ? renderCredentialsBlock('Sign Up') : renderCredentialsBlock('Sign in')}
-          {errorMessage ? <View style={styles.errorMessageWrap}><Text style={styles.fieldError}>{errorMessage}</Text></View> : null}
+          {errorMessage ? <View style={styles.errorMessageWrap}><Text accessibilityRole="alert" style={styles.fieldError}>{errorMessage}</Text></View> : null}
+          {successMessage ? <View style={styles.errorMessageWrap}><Text accessibilityRole="text" style={styles.successMessage}>{successMessage}</Text></View> : null}
         </ScrollView>
       </Pressable>
       <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
@@ -352,6 +359,7 @@ const styles = StyleSheet.create({
   suffixButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   textInput: { flex: 1, height: '100%', padding: 0, fontSize: 18, fontWeight: '400', color: FIELD_TEXT },
   fieldError: { fontSize: 13, fontWeight: '500', color: RED },
+  successMessage: { fontSize: 13, fontWeight: '500', color: '#16794B' },
   forgotRow: { paddingTop: 8, paddingLeft: 15, paddingRight: 15, flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end' },
   forgotButton: { padding: 8 },
   forgotText: { fontSize: 14, fontWeight: '600', color: LINK },
