@@ -97,6 +97,16 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     const user = userResult.user;
     if (!user) throw new Error('Your session has expired. Please sign in again.');
 
+    const { data: modes, error: modesError } = await supabase.rpc('get_my_account_modes');
+    if (modesError) throw modesError;
+    const hasRequestedMode = requestedMode === 'buyer' ? modes?.buyer === true : modes?.business === true;
+    if (!hasRequestedMode) {
+      await supabase.auth.signOut();
+      throw new Error(requestedMode === 'buyer'
+        ? 'This Wantiss account is not registered in Buyer mode yet. Choose Register with Buyer selected.'
+        : 'This Wantiss account is not registered in B&P 2P mode yet. Choose Register with B&P 2P selected.');
+    }
+
     setBuyerScreen('home');
     if (requestedMode === 'buyer') {
       setAppMode('buyer');
@@ -199,26 +209,22 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { role: 'buyer', full_name: fullName || null, business_name: businessName || null } },
+      options: { data: { role: 'buyer', signup_mode: wantsBusiness ? 'business' : 'buyer', full_name: fullName || null, business_name: businessName || null } },
     });
     if (error) {
       if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.');
       throw error;
     }
     if (!data.user) throw new Error('Supabase did not return an account. Please try again.');
-    if (wantsBusiness && businessName.trim() && data.session) {
-      const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
-      if (applicationError) throw applicationError;
-    }
     if (data.session) {
       await routeAuthenticatedUser(wantsBusiness ? 'business' : 'buyer');
       return wantsBusiness
-        ? 'Your account is ready. Your business application is pending review; you can use Buyer mode while you wait.'
-        : 'Your Wantiss account is ready.';
+        ? 'Your B&P 2P registration is ready. Continue to Business Space to complete the business access steps.'
+        : 'Your Buyer registration is ready.';
     }
     return wantsBusiness
-      ? 'Account created. Check your email to confirm it, then sign in with B&P 2P selected to submit or continue your business application.'
-      : 'Account created. Check your email to confirm it before signing in.';
+      ? 'B&P 2P registration started. Check your email to confirm your account, then sign in with B&P 2P selected.'
+      : 'Buyer registration started. Check your email to confirm your account, then sign in with Buyer selected.';
   }} />;
 }
 
