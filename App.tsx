@@ -111,9 +111,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     if (requestedMode === 'buyer') {
       setAppMode('buyer');
     } else {
-      const { data: access, error: accessError } = await supabase.rpc('get_my_business_access');
-      if (accessError) throw accessError;
-      setAppMode(access?.approved === true ? 'vendor' : 'businessAccess');
+      // Business name/application is optional: authenticated business-mode users
+      // enter Business Space directly. Access verification belongs in feature
+      // actions, not as a mandatory name-entry screen before the dashboard.
+      setAppMode('vendor');
     }
     setAuthenticated(true);
     setScreen('auth');
