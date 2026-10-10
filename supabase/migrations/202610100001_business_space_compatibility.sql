@@ -116,10 +116,32 @@ create policy businesses_member_read on public.businesses for select to authenti
 using (public.is_business_member(id));
 drop policy if exists businesses_owner_insert on public.businesses;
 create policy businesses_owner_insert on public.businesses for insert to authenticated
-with check (owner_user_id = auth.uid());
+with check (
+  owner_user_id = auth.uid()
+  and exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid()
+      and lower(trim(coalesce(p.role, ''))) in ('vendor', 'business', 'seller', 'merchant')
+  )
+);
 drop policy if exists businesses_owner_update on public.businesses;
 create policy businesses_owner_update on public.businesses for update to authenticated
-using (owner_user_id = auth.uid()) with check (owner_user_id = auth.uid());
+using (
+  owner_user_id = auth.uid()
+  and exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid()
+      and lower(trim(coalesce(p.role, ''))) in ('vendor', 'business', 'seller', 'merchant')
+  )
+)
+with check (
+  owner_user_id = auth.uid()
+  and exists (
+    select 1 from public.profiles p
+    where p.id = auth.uid()
+      and lower(trim(coalesce(p.role, ''))) in ('vendor', 'business', 'seller', 'merchant')
+  )
+);
 
 drop policy if exists business_members_member_read on public.business_members;
 create policy business_members_member_read on public.business_members for select to authenticated
@@ -170,6 +192,14 @@ declare
   v_business uuid;
 begin
   if v_user is null then raise exception 'Authentication required'; end if;
+  -- Authorize using the trusted server-managed profile role, not editable Auth user metadata.
+  if not exists (
+    select 1 from public.profiles p
+    where p.id = v_user
+      and lower(trim(coalesce(p.role, ''))) in ('vendor', 'business', 'seller', 'merchant')
+  ) then
+    raise exception 'A vendor account is required to create a business';
+  end if;
   if p_name is null or length(trim(p_name)) not between 1 and 120 then
     raise exception 'Business name must be between 1 and 120 characters';
   end if;
