@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Pressable, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 
@@ -176,7 +176,7 @@ export default function BusinessSpaceScreen({ onSignOut }: { onSignOut: () => vo
           <Text style={styles.heroCopy}>Create your business profile to manage your features, listings, orders, messages and payouts in one place.</Text>
         </View>
         <Text style={styles.label}>Business name</Text>
-        <View style={styles.nameField}><Text style={styles.nameValue}>{businessName || 'Add your business name in your profile to prefill this field'}</Text></View>
+        <View style={styles.nameField}><TextInput value={businessName} onChangeText={setBusinessName} placeholder="Enter your business name" placeholderTextColor={MUTED} autoCapitalize="words" returnKeyType="done" style={styles.nameValue} accessibilityLabel="Business name" /></View>
         <Pressable style={[styles.primaryButton, creating && { opacity: 0.65 }]} disabled={creating} onPress={createBusiness}>
           {creating ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Create business profile</Text>}
         </Pressable>
@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
   heroCopy: { fontSize: 14, lineHeight: 21, textAlign: 'center', color: MUTED, marginTop: 9 },
   label: { fontSize: 13, fontWeight: '700', color: INK, marginBottom: 8 },
   nameField: { minHeight: 50, borderWidth: 1, borderColor: LINE, borderRadius: 14, backgroundColor: '#FFFFFF', padding: 15, justifyContent: 'center' },
-  nameValue: { color: MUTED, fontSize: 14 },
+  nameValue: { color: INK, fontSize: 14, padding: 0 },
   primaryButton: { minHeight: 50, borderRadius: 14, backgroundColor: BLUE, alignItems: 'center', justifyContent: 'center', marginTop: 14 },
   primaryButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: '800' },
   smallNote: { fontSize: 12, lineHeight: 18, color: MUTED, marginTop: 18 },
