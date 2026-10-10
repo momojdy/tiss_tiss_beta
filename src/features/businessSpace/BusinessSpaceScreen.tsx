@@ -166,7 +166,7 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
           </View>
           <View style={[styles.statusPill, business?.verification === 'verified' ? styles.statusGood : styles.statusWait]}>
             <View style={styles.statusDot} />
-            <Text style={[styles.statusText, business.verification === 'verified' && { color: '#16794B' }]}>{business.verification === 'verified' ? 'Verified' : business?.verification === 'pending' ? 'In review' : business?.verification === 'restricted' ? 'Restricted' : 'Setup needed'}</Text>
+            <Text style={[styles.statusText, business?.verification === 'verified' && { color: '#16794B' }]}>{business?.verification === 'verified' ? 'Verified' : business?.verification === 'pending' ? 'In review' : business?.verification === 'restricted' ? 'Restricted' : 'Setup needed'}</Text>
           </View>
         </View>
 
