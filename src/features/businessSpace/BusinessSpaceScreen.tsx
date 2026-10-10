@@ -55,9 +55,7 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
   const [orders, setOrders] = useState<Row[]>([]);
   const [listings, setListings] = useState<Row[]>([]);
   const [payouts, setPayouts] = useState<Row[]>([]);
-  const [businessName, setBusinessName] = useState('');
   const [loading, setLoading] = useState(true);
-  const [creating, setCreating] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [problem, setProblem] = useState('');
   const [period, setPeriod] = useState(30);
@@ -82,7 +80,6 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
         setOrders([]);
         setListings([]);
         setPayouts([]);
-        setBusinessName(String(user.user_metadata?.business_name ?? ''));
         return;
       }
 
@@ -96,7 +93,6 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
       const membership = memberRows.find(row => row.business_id === picked.id);
       const activeBusiness: Business = { ...picked, role: membership?.role ?? 'staff' };
       setBusiness(activeBusiness);
-      setBusinessName(activeBusiness.name);
 
       const [summaryRes, earningsRes, activityRes, featureRes, orderRes, listingRes, payoutRes] = await Promise.all([
         supabase.rpc('dashboard_summary', { p_business: picked.id, p_days: period, p_feature: null }),
@@ -126,21 +122,6 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
 
   useEffect(() => { void load(); }, [load]);
 
-  const createBusiness = async () => {
-    const name = businessName.trim();
-    if (!name) { setProblem('Enter a business name before continuing.'); return; }
-    setCreating(true);
-    setProblem('');
-    try {
-      const { data, error } = await supabase.rpc('create_business', { p_name: name });
-      if (error) throw error;
-      if (!data) throw new Error('Supabase did not return the new business ID.');
-      await load();
-    } catch (error) {
-      setProblem(errorText(error));
-    } finally { setCreating(false); }
-  };
-
   const featureMap = useMemo(() => new Map(features.map(item => [item.feature, item.status])), [features]);
   const available = Number(summary?.available ?? asObject(summary?.balance).available ?? 0);
   const pending = Number(summary?.pending ?? asObject(summary?.balance).pending ?? 0);
@@ -169,26 +150,6 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
 
   if (loading) return <View style={styles.center}><ActivityIndicator size="large" color={BLUE} /><Text style={styles.muted}>Loading your business space…</Text></View>;
 
-  if (!business) return (
-    <View style={styles.page}>
-      {header}
-      <ScrollView contentContainerStyle={styles.onboardingContent} keyboardShouldPersistTaps="handled">
-        <View style={styles.hero}>
-          <View style={styles.heroIcon}><MaterialCommunityIcons name="store-plus-outline" size={34} color={BLUE} /></View>
-          <Text style={styles.heroTitle}>Bring your business to Wantiss</Text>
-          <Text style={styles.heroCopy}>Create your business profile to manage your features, listings, orders, messages and payouts in one place.</Text>
-        </View>
-        <Text style={styles.label}>Business name</Text>
-        <View style={styles.nameField}><TextInput value={businessName} onChangeText={setBusinessName} placeholder="Enter your business name" placeholderTextColor={MUTED} autoCapitalize="words" returnKeyType="done" style={styles.nameValue} accessibilityLabel="Business name" /></View>
-        <Pressable style={[styles.primaryButton, creating && { opacity: 0.65 }]} disabled={creating} onPress={createBusiness}>
-          {creating ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryButtonText}>Create business profile</Text>}
-        </Pressable>
-        {!!problem && <Notice text={problem} />}
-        <Text style={styles.smallNote}>Your profile and membership permissions are enforced by Supabase. If setup is unavailable, the dashboard will show the database error rather than creating mock data.</Text>
-      </ScrollView>
-    </View>
-  );
-
   return (
     <View style={styles.page}>
       {header}
@@ -203,16 +164,16 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
             <Text style={styles.welcomeTitle}>Business overview</Text>
             <Text style={styles.muted}>Your operations, at a glance.</Text>
           </View>
-          <View style={[styles.statusPill, business.verification === 'verified' ? styles.statusGood : styles.statusWait]}>
+          <View style={[styles.statusPill, business?.verification === 'verified' ? styles.statusGood : styles.statusWait]}>
             <View style={styles.statusDot} />
-            <Text style={[styles.statusText, business.verification === 'verified' && { color: '#16794B' }]}>{business.verification === 'verified' ? 'Verified' : business.verification === 'pending' ? 'In review' : business.verification === 'restricted' ? 'Restricted' : 'Setup needed'}</Text>
+            <Text style={[styles.statusText, business.verification === 'verified' && { color: '#16794B' }]}>{business.verification === 'verified' ? 'Verified' : business?.verification === 'pending' ? 'In review' : business?.verification === 'restricted' ? 'Restricted' : 'Setup needed'}</Text>
           </View>
         </View>
 
         <View style={styles.walletCard}>
           <View style={styles.walletTop}><Text style={styles.walletCaption}>AVAILABLE BALANCE</Text><MaterialCommunityIcons name="shield-check-outline" size={20} color="#DDE5FF" /></View>
           <Text style={styles.walletAmount}>{money(available)}</Text>
-          <View style={styles.walletFooter}><View><Text style={styles.walletSubLabel}>Pending</Text><Text style={styles.walletSubAmount}>{money(pending)}</Text></View><View style={styles.walletDivider} /><View><Text style={styles.walletSubLabel}>Payout setup</Text><Text style={styles.walletSubAmount}>{business.payout_ready ? 'Ready' : 'Not ready'}</Text></View></View>
+          <View style={styles.walletFooter}><View><Text style={styles.walletSubLabel}>Pending</Text><Text style={styles.walletSubAmount}>{money(pending)}</Text></View><View style={styles.walletDivider} /><View><Text style={styles.walletSubLabel}>Payout setup</Text><Text style={styles.walletSubAmount}>{business?.payout_ready ? 'Ready' : 'Not ready'}</Text></View></View>
         </View>
         <Text style={styles.smallNote}>Financial figures are provisional reporting data only. They are not connected to your customer wallet balance or a payout provider. Withdrawals and refunds are not enabled here.</Text>
 
