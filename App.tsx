@@ -41,14 +41,18 @@ import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShield
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
 import BusinessSpaceScreen from './src/features/businessSpace/BusinessSpaceScreen';
+import BusinessAccessScreen from './src/features/businessSpace/BusinessAccessScreen';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type AppMode = 'buyer' | 'vendor';
+type AppMode = 'buyer' | 'vendor' | 'businessAccess';
 
 function resolveAppMode(role: unknown): AppMode {
   const value = String(role ?? '').trim().toLowerCase();
   return ['vendor', 'business', 'seller', 'merchant'].includes(value) ? 'vendor' : 'buyer';
 }
+
+type RequestedMode = 'buyer' | 'business';
+
 type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 type AppErrorProps = { title: string; error: unknown };
@@ -85,9 +89,71 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [fontsLoaded] = useFonts({ Manrope_800ExtraBold: require('@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf'), Inter_400Regular: require('@expo-google-fonts/inter/400Regular/Inter_400Regular.ttf'), Inter_600SemiBold: require('@expo-google-fonts/inter/600SemiBold/Inter_600SemiBold.ttf'), Inter_700Bold: require('@expo-google-fonts/inter/700Bold/Inter_700Bold.ttf') });
   const [screen, setScreen] = useState<Screen>('auth');
   const [authenticated, setAuthenticated] = useState(false);
+  const [authReady, setAuthReady] = useState(false);
   const [appMode, setAppMode] = useState<AppMode>('buyer');
+  const routeAuthenticatedUser = async (requestedMode: RequestedMode = 'buyer') => {
+    const { data: userResult, error: userError } = await supabase.auth.getUser();
+    if (userError) throw userError;
+    const user = userResult.user;
+    if (!user) throw new Error('Your session has expired. Please sign in again.');
+
+    setBuyerScreen('home');
+    if (requestedMode === 'buyer') {
+      setAppMode('buyer');
+    } else {
+      const { data: access, error: accessError } = await supabase.rpc('get_my_business_access');
+      if (accessError) throw accessError;
+      setAppMode(access?.approved === true ? 'vendor' : 'businessAccess');
+    }
+    setAuthenticated(true);
+    setScreen('auth');
+  };
+
+  useEffect(() => {
+    let mounted = true;
+    const applySession = async (session: { user: { id: string } } | null) => {
+      if (!mounted) return;
+      if (!session?.user) {
+        setAuthenticated(false);
+        setAppMode('buyer');
+        setAuthReady(true);
+        return;
+      }
+      try {
+        // A restored session defaults to Buyer mode. Business Space is selected explicitly,
+        // then authorized from the database rather than the editable profile.role field.
+        await routeAuthenticatedUser('buyer');
+      } catch (error) {
+        console.error('Unable to restore Wantiss session:', error);
+        if (mounted) {
+          setAuthenticated(false);
+          setAppMode('buyer');
+        }
+      } finally {
+        if (mounted) setAuthReady(true);
+      }
+    };
+    void supabase.auth.getSession().then(({ data, error }) => {
+      if (error) throw error;
+      return applySession(data.session);
+    }).catch(error => {
+      console.error('Unable to read saved Wantiss session:', error);
+      if (mounted) setAuthReady(true);
+    });
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!mounted) return;
+      if (!session) {
+        setAuthenticated(false);
+        setAppMode('buyer');
+      }
+    });
+    return () => {
+      mounted = false;
+      listener.subscription.unsubscribe();
+    };
+  }, []);
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
-  useEffect(() => { registerVendorMode(appMode === 'vendor'); }, [appMode, registerVendorMode]);
+  useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
@@ -99,7 +165,10 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isVendorMode, setIsVendorMode] = useState(false);
   useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; if (!path.includes('reset-password') && !code) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
-  if (!fontsLoaded) return null;
+  if (!fontsLoaded || !authReady) return null;
+  if (authenticated && appMode === 'businessAccess') {
+    return <BusinessAccessScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} onApproved={() => { setAppMode('vendor'); }} />;
+  }
   if (authenticated && appMode === 'vendor') {
     return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
@@ -145,7 +214,32 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
   if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
-  return <AuthScreen onSignInPressed={async (email, password) => { const { data, error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; if (!data.user) throw new Error('No user returned from Supabase.'); const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle(); const role = profile?.role ?? 'buyer'; setAppMode(resolveAppMode(role)); setAuthenticated(true); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => { const { data, error } = await supabase.auth.signUp({ email, password, options: { data: { role, full_name: fullName || null, business_name: businessName || null } } }); if (error) { if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.'); throw error; } if (data.session) { if (['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase())) { await supabase.auth.signOut(); setAppMode('buyer'); setAuthenticated(false); throw new Error('Your account was created. Vendor access is pending approval. You can sign in as a buyer while your application is reviewed.'); } const { data: profile } = await supabase.from('profiles').select('role').eq('id', data.user.id).maybeSingle(); setAppMode(resolveAppMode(profile?.role ?? 'buyer')); setAuthenticated(true); return; } if (data.user && !data.session) { throw new Error(['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase()) ? 'Check your email to confirm your account. Vendor access requires approval before Business Space is available.' : 'Check your email to confirm your account before signing in.'); } throw new Error('Unable to create your account. Please try again.'); }} />;
+  return <AuthScreen onSignInPressed={async (email, password, requestedMode) => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
+    const wantsBusiness = ['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase());
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { role: 'buyer', full_name: fullName || null, business_name: businessName || null } },
+    });
+    if (error) {
+      if (error.message.toLowerCase().includes('already registered')) throw new Error('This email is already registered. Please sign in instead.');
+      throw error;
+    }
+    if (!data.user) throw new Error('Supabase did not return an account. Please try again.');
+    if (wantsBusiness && businessName.trim() && data.session) {
+      const { error: applicationError } = await supabase.rpc('submit_business_application', { p_business_name: businessName.trim() });
+      if (applicationError) throw applicationError;
+    }
+    if (data.session) {
+      await routeAuthenticatedUser(wantsBusiness ? 'business' : 'buyer');
+      return wantsBusiness
+        ? 'Your account is ready. Your business application is pending review; you can use Buyer mode while you wait.'
+        : 'Your Wantiss account is ready.';
+    }
+    return wantsBusiness
+      ? 'Account created. Check your email to confirm it, then sign in with B&P 2P selected to submit or continue your business application.'
+      : 'Account created. Check your email to confirm it before signing in.';
+  }}} />;
 }
 
 export default function App() {
