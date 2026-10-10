@@ -107,15 +107,15 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
         supabase.from('listings').select('id,title,feature,status,price,stock,created_at').eq('business_id', picked.id).order('created_at', { ascending: false }).limit(30),
         supabase.from('wallet_ledger').select('id,label,type,status,amount,created_at').eq('business_id', picked.id).eq('type', 'payout').order('created_at', { ascending: false }).limit(10),
       ]);
-      const failed = [summaryRes, earningsRes, activityRes, featureRes, orderRes, listingRes, payoutRes].find(result => result.error);
-      if (failed?.error) throw failed.error;
-      setSummary(asObject(summaryRes.data) as Summary);
-      setEarnings(asObject(earningsRes.data));
-      setActivity((activityRes.data ?? []) as Activity[]);
-      setFeatures((featureRes.data ?? []) as { feature: string; status: string }[]);
-      setOrders((orderRes.data ?? []) as Row[]);
-      setListings((listingRes.data ?? []) as Row[]);
-      setPayouts((payoutRes.data ?? []) as Row[]);
+      // Membership and business identity are the access gate. Dashboard widgets are optional;
+      // missing feature schemas must not prevent an approved owner from entering Business Space.
+      setSummary(summaryRes.error ? null : asObject(summaryRes.data) as Summary);
+      setEarnings(earningsRes.error ? {} : asObject(earningsRes.data));
+      setActivity((activityRes.error ? [] : activityRes.data ?? []) as Activity[]);
+      setFeatures((featureRes.error ? [] : featureRes.data ?? []) as { feature: string; status: string }[]);
+      setOrders((orderRes.error ? [] : orderRes.data ?? []) as Row[]);
+      setListings((listingRes.error ? [] : listingRes.data ?? []) as Row[]);
+      setPayouts((payoutRes.error ? [] : payoutRes.data ?? []) as Row[]);
     } catch (error) {
       setProblem(errorText(error));
     } finally {
