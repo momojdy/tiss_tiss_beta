@@ -3,6 +3,57 @@
 -- Deliberately does not alter profiles, notifications, wallets, wallet_transactions,
 -- Stripe tables, or existing Edge Functions.
 
+-- Vendor requests are recorded separately; signup metadata never grants privileges.
+create table if not exists public.vendor_applications (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  business_name text,
+  requested_role text not null default 'vendor'
+    check (requested_role in ('vendor','business','seller','merchant')),
+  status text not null default 'pending'
+    check (status in ('pending','approved','rejected')),
+  created_at timestamptz not null default now(),
+  reviewed_at timestamptz,
+  reviewed_by uuid references auth.users(id) on delete set null,
+  unique (user_id)
+);
+alter table public.vendor_applications enable row level security;
+drop policy if exists vendor_applications_owner_read on public.vendor_applications;
+create policy vendor_applications_owner_read on public.vendor_applications
+  for select to authenticated using (user_id = (select auth.uid()));
+grant select on public.vendor_applications to authenticated;
+
+-- Replace the existing signup trigger function without changing its trigger binding.
+-- Every new account starts as a buyer; vendor intent is stored as a pending application.
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $
+declare
+  v_requested_role text := lower(trim(coalesce(new.raw_user_meta_data->>'role', '')));
+  v_business_name text := nullif(trim(coalesce(new.raw_user_meta_data->>'business_name', '')), '');
+begin
+  insert into public.profiles (id, email, role, full_name, business_name)
+  values (
+    new.id,
+    new.email,
+    'buyer',
+    nullif(trim(coalesce(new.raw_user_meta_data->>'full_name', '')), ''),
+    v_business_name
+  );
+
+  if v_requested_role in ('vendor','business','seller','merchant') then
+    insert into public.vendor_applications (user_id, business_name, requested_role)
+    values (new.id, v_business_name, v_requested_role)
+    on conflict (user_id) do nothing;
+  end if;
+
+  return new;
+end;
+$;
+
 create table if not exists public.businesses (
   id uuid primary key default gen_random_uuid(),
   name text not null check (length(trim(name)) between 1 and 120),
