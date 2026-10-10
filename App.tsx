@@ -151,6 +151,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
 export default function App() {
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isVendorMode, setIsVendorMode] = useState(false);
   const challengePress = React.useRef<() => void>(() => {});
   const challengeDismiss = React.useRef<() => void>(() => setShowChallenge(false));
   const registerAuthenticated = React.useCallback((value: boolean) => { setIsAuthenticated(value); }, []);
