@@ -6,14 +6,11 @@ import Svg, { Circle, G, Line, Polyline, Rect, SvgXml, Text as SvgText } from 'r
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
-import * as Device from 'expo-device';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
-import * as Notifications from 'expo-notifications';
-import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 /* =====================================================================
