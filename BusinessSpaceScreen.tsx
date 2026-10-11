@@ -69,24 +69,31 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
   if (!list.length) return <FirstBusiness user={user} onCreated={reloadBiz} onBuyer={onBuyer} />;
   return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} />;
 }
-function FirstBusiness({ user, onCreated, onBuyer }: any) {
-  const t = useTheme(), s = useS(), ins = useSafeAreaInsets(), a = useAct0();
-  const [name, setName] = useState('');
-  return (
-    <View style={{ flex: 1, backgroundColor: t.bg, padding: 22, paddingTop: ins.top + 40, gap: 10 }}>
-      <Text style={s.h1}>Start selling on Wantiss</Text>
-      <Text style={s.mut}>You keep your buyer account. Create a business to open your Business Space.</Text>
-      <Field label="Business name" value={name} onChangeText={setName} placeholder="e.g. Marie's Boutique" />
-      <Btn label="Create business" disabled={name.trim().length < 2} busy={a.busy} onPress={() => a.run(async () => { await rpc('create_business', { p_name: name.trim() }); onCreated(); })} />
-      <Btn kind="soft" label="Back to buyer" onPress={onBuyer} />
-    </View>
-  );
-}
-/** Same as useAct but usable before the app context exists. */
-function useAct0() {
-  const [busy, setBusy] = useState(false);
-  const run = async (fn: () => Promise<unknown>) => { if (busy) return; setBusy(true); try { await fn(); } catch (e) { Alert.alert('Something went wrong', errText(e)); } finally { setBusy(false); } };
-  return { busy, run };
+function FirstBusiness({ user, onCreated }: any) {
+  const t = useTheme(), ins = useSafeAreaInsets();
+  const [error, setError] = useState<unknown>(null), [attempt, setAttempt] = useState(0);
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const name = String(user.name ?? '').trim() || String(user.email ?? '').split('@')[0] || 'My Business';
+        await rpc('create_business', { p_name: name });
+        if (active) onCreated();
+      } catch (e) {
+        if (active) setError(e);
+      }
+    })();
+    return () => { active = false; };
+  }, [user.id, attempt, onCreated]);
+  if (error) {
+    return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}>
+      <ErrBox e={error} retry={() => { setError(null); setAttempt(x => x + 1); }} />
+    </View>;
+  }
+  return <View style={{ flex: 1, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center', padding: 24, gap: 12 }}>
+    <ActivityIndicator size="large" color={t.blue} />
+    <Text style={{ color: t.mute, fontSize: 14 }}>Opening Business Space…</Text>
+  </View>;
 }
 
 /** Everything that needs an active business. */
