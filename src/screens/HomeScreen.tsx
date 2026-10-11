@@ -195,10 +195,10 @@ function MessageBadge({count}:{count:number}){if(count<=0)return null;const labe
 function BottomNav({onMePress}:{onMePress?:()=>void}){
   return <View style={{paddingHorizontal:15}}><View style={s.nav}>
     <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
-    <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={23} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
-    <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={23} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
-    <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={23} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
-    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={23} color={NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
+    <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={25} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
+    <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={25} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
+    <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={25} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
+    <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={25} color={NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
   </View></View>;
 }
 
