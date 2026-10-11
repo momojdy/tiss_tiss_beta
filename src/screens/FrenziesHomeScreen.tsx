@@ -437,7 +437,7 @@ function PassCard({ onGetPass }: { onGetPass?: () => void }) {
 }
 
 function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: { icon: React.ReactNode; label: string; height: number; justify: 'space-between' | 'center' | 'flex-end'; padBottom?: number; padLeft?: number }) {
-  return <View style={{ width: 70, height, alignItems: 'center', justifyContent: justify, paddingLeft: label === 'Wallet' ? 0 : padLeft }}>{React.isValidElement(icon) && label !== 'Battle' ? React.cloneElement(icon as React.ReactElement<any>, { style: [((icon as React.ReactElement<any>).props as any).style, { marginTop: 5 }] }) : icon}<Text style={[tx(11, fonts.medium), { marginTop: 6, marginBottom: padBottom, paddingTop: label === 'Battle' ? 6 : 4 }]}>{label}</Text></View>;
+  return <View style={{ width: 70, height, alignItems: 'center', justifyContent: justify, paddingLeft: label === 'Wallet' ? 0 : padLeft }}>{React.isValidElement(icon) && label !== 'Battle' ? React.cloneElement(icon as React.ReactElement<any>, { style: [((icon as React.ReactElement<any>).props as any).style, { marginTop: 5 }] }) : icon}<Text style={[tx(11, fonts.medium), { marginTop: 6, marginBottom: padBottom, paddingTop: 4 }]}>{label}</Text></View>;
 }
 
 function BottomNav() {
