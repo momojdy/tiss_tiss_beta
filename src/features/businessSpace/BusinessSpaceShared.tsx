@@ -46,17 +46,17 @@ export interface Feature {
 
 
 /* ---------- vendor feature registry: lifecycles and listing forms ---------- */
-export const FX = (() => {
-export const D = { text: 'text', area: 'area', num: 'num', money: 'money', sel: 'sel', chips: 'chips', bool: 'bool', date: 'date', dt: 'dt', time: 'time', photos: 'photos', file: 'file', rows: 'rows', cat: 'cat', cal: 'cal' } as const;
-export const mk = (t: FType) => (k: string, l: string, o: Partial<Fld> = {}): Fld => ({ k, l, t, ...o });
-export const T = mk(D.text), A = mk(D.area), N = mk(D.num), M = mk(D.money), Bo = mk(D.bool), DT = mk(D.dt), TM = mk(D.time), CAL = mk(D.cal), CT = mk(D.cat), PH = mk(D.photos), FL = mk(D.file), R = mk(D.rows);
-export const S = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'sel', opts, ...o });
-export const C = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'chips', opts, ...o });
-export const DESC = (min = 30) => A('desc', 'Description', { req: true, min, max: 4000 });
-export const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-export const after = (a: any, b: any) => a && b && new Date(b).getTime() <= new Date(a).getTime();
+const FX = (() => {
+const D = { text: 'text', area: 'area', num: 'num', money: 'money', sel: 'sel', chips: 'chips', bool: 'bool', date: 'date', dt: 'dt', time: 'time', photos: 'photos', file: 'file', rows: 'rows', cat: 'cat', cal: 'cal' } as const;
+const mk = (t: FType) => (k: string, l: string, o: Partial<Fld> = {}): Fld => ({ k, l, t, ...o });
+const T = mk(D.text), A = mk(D.area), N = mk(D.num), M = mk(D.money), Bo = mk(D.bool), DT = mk(D.dt), TM = mk(D.time), CAL = mk(D.cal), CT = mk(D.cat), PH = mk(D.photos), FL = mk(D.file), R = mk(D.rows);
+const S = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'sel', opts, ...o });
+const C = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'chips', opts, ...o });
+const DESC = (min = 30) => A('desc', 'Description', { req: true, min, max: 4000 });
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const after = (a: any, b: any) => a && b && new Date(b).getTime() <= new Date(a).getTime();
 
-export const GOODS: Record<string, string[]> = {
+const GOODS: Record<string, string[]> = {
   Fashion: ['Men', 'Women', 'Kids', 'Shoes', 'Bags', 'Accessories', 'Jewellery'],
   Electronics: ['Phones', 'Computers', 'Audio', 'Cameras', 'Gaming', 'Accessories'],
   'Home and Garden': ['Furniture', 'Decor', 'Kitchen', 'Bedding', 'Garden', 'Tools'],
@@ -66,12 +66,12 @@ export const GOODS: Record<string, string[]> = {
   'Baby and Kids': ['Toys', 'Clothing', 'Nursery', 'School'],
   Other: ['Other'],
 };
-export const COLLECT: Record<string, string[]> = { Collectibles: ['Coins', 'Stamps', 'Cards', 'Memorabilia', 'Toys'], Antiques: ['Furniture', 'Art', 'Jewellery', 'Watches'], Electronics: ['Phones', 'Computers', 'Cameras'], Fashion: ['Luxury bags', 'Sneakers', 'Watches'], Other: ['Other'] };
-export const GEN: Record<string, string[]> = { Lifestyle: ['Fashion', 'Home', 'Beauty', 'Food'], Business: ['Retail', 'Wholesale', 'Services'], Other: ['Other'] };
-export const SHIP = (): Fld[] => [Bo('delivery', 'Offer delivery', { def: true }), Bo('pickup', 'Offer pickup'), N('weight', 'Weight (kg)', { min: 0 }), N('handling', 'Handling time (days)', { min: 0, max: 30, def: 2 }), S('returns', 'Return policy', ['No returns', '7 days', '14 days', '30 days'], { def: '7 days' })];
-export const AVAIL = (): Fld[] => [C('days', 'Days available', DAYS, { req: true, def: DAYS.slice(0, 5) }), TM('from', 'Available from', { def: '09:00' }), TM('until', 'Available until', { def: '17:00' }), N('lead', 'Notice required (hours)', { min: 0, def: 12 }), CAL('blocked', 'Block dates you are unavailable')];
+const COLLECT: Record<string, string[]> = { Collectibles: ['Coins', 'Stamps', 'Cards', 'Memorabilia', 'Toys'], Antiques: ['Furniture', 'Art', 'Jewellery', 'Watches'], Electronics: ['Phones', 'Computers', 'Cameras'], Fashion: ['Luxury bags', 'Sneakers', 'Watches'], Other: ['Other'] };
+const GEN: Record<string, string[]> = { Lifestyle: ['Fashion', 'Home', 'Beauty', 'Food'], Business: ['Retail', 'Wholesale', 'Services'], Other: ['Other'] };
+const SHIP = (): Fld[] => [Bo('delivery', 'Offer delivery', { def: true }), Bo('pickup', 'Offer pickup'), N('weight', 'Weight (kg)', { min: 0 }), N('handling', 'Handling time (days)', { min: 0, max: 30, def: 2 }), S('returns', 'Return policy', ['No returns', '7 days', '14 days', '30 days'], { def: '7 days' })];
+const AVAIL = (): Fld[] => [C('days', 'Days available', DAYS, { req: true, def: DAYS.slice(0, 5) }), TM('from', 'Available from', { def: '09:00' }), TM('until', 'Available until', { def: '17:00' }), N('lead', 'Notice required (hours)', { min: 0, def: 12 }), CAL('blocked', 'Block dates you are unavailable')];
 
-export const FEATURES: Feature[] = [
+const FEATURES: Feature[] = [
   {
     key: 'goodies', name: 'Goodies', emoji: '🛍️', color: '#2D5BFF', noun: 'order', add: 'Add a product',
     flow: ['New', 'Accepted', 'Processing', 'Ready', 'Completed'],
