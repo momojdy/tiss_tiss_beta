@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg } from "./BusinessSpaceShared";
+import { FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
