@@ -20,7 +20,7 @@ import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Rang
 import { Home } from "./src/features/businessSpace/BusinessSpaceHomeScreen";
 import { ActionsPage, ActivityPage, ExplorePage, ChartsPage } from "./src/features/businessSpace/BusinessSpaceActivityScreens";
 import { FeaturePage, FeaturesPanel, OrdersPanel, ListingsPanel, PayoutsPanel } from "./src/features/businessSpace/BusinessSpaceMarketplaceScreens";
-import { MessagesPage, ConversationPage, NotificationsPage, SearchPage } from "./src/features/businessSpace/BusinessSpaceCommunicationScreens";
+import { MessagesPage, ConversationPage, NotificationsPage, SearchPage, SearchHandle } from "./src/features/businessSpace/BusinessSpaceCommunicationScreens";
 import { PromotionsPage, RegistrationPage, AuditPage, HelpPage, SecurityPage, BusinessInfoPage } from "./src/features/businessSpace/BusinessSpaceAccountScreens";
 import { SheetHost } from "./src/features/businessSpace/BusinessSpaceSheets";
 
