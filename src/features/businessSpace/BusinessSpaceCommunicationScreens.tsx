@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg } from "./BusinessSpaceShared";
+import { FX, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
@@ -57,7 +57,7 @@ export function ConversationPage() {
 }
 
 /* ---------- notifications ---------- */
-function NotificationsPage() {
+export function NotificationsPage() {
   const app = useApp(), s = useS(), t = useTheme();
   const n = useQ(() => q<any[]>(supabase.from('notifications').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
   const open = async (x: any) => {
@@ -74,7 +74,7 @@ function NotificationsPage() {
 }
 
 /* ---------- search ---------- */
-function SearchPage() {
+export function SearchPage() {
   const app = useApp(), s = useS(), t = useTheme();
   const [qs, setQs] = useState(''), [sc, setSc] = useState('All'), [res, setRes] = useState<any[]>([]), [st, setSt] = useState<'idle' | 'load' | 'err'>('idle'), seq = useRef(0);
   useEffect(() => {
