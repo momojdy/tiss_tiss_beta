@@ -32,6 +32,7 @@ const LOGO_URL = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/re
 const GOOGLE_PNG = 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.png';
 
 type AuthCardProps = {
+  initialMode?: 'buyer' | 'business';
   onSignInPressed?: (email: string, password: string, mode: 'buyer' | 'business') => Promise<unknown>;
   onSignUpPressed?: (email: string, password: string, role: string, fullName: string, businessName: string) => Promise<unknown>;
   onGooglePressed?: () => Promise<unknown>;
@@ -70,12 +71,12 @@ function AuthField({ top, value, onChangeText, placeholder, icon, error, keyboar
   );
 }
 
-function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthCardProps) {
+function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthCardProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
   const [businessName, setBusinessName] = useState('');
-  const [isVendor, setIsVendor] = useState(false);
+  const [isVendor, setIsVendor] = useState(initialMode === 'business');
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [obscurePassword, setObscurePassword] = useState(true);
   const [registerStep, setRegisterStep] = useState(0);
@@ -299,7 +300,7 @@ function WantissAuthCard({ onSignInPressed, onSignUpPressed, onGooglePressed, on
 
 type AuthScreenProps = AuthCardProps;
 
-export default function AuthScreen({ onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthScreenProps) {
+export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
   const [showForgot, setShowForgot] = useState(false);
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
@@ -322,6 +323,7 @@ export default function AuthScreen({ onSignInPressed, onSignUpPressed, onGoogleP
       </LinearGradient>
       <View style={styles.cardPosition}>
         <WantissAuthCard
+          initialMode={initialMode}
           onSignInPressed={onSignInPressed}
           onSignUpPressed={onSignUpPressed}
           onGooglePressed={onGooglePressed}
