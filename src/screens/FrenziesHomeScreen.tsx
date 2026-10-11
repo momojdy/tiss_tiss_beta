@@ -437,7 +437,7 @@ function PassCard({ onGetPass }: { onGetPass?: () => void }) {
 }
 
 function NavItem({ icon, label, height, justify, padBottom = 0, padLeft = 0 }: { icon: React.ReactNode; label: string; height: number; justify: 'space-between' | 'center' | 'flex-end'; padBottom?: number; padLeft?: number }) {
-  return <View style={{ width: 70, height, alignItems: 'center', justifyContent: justify, paddingLeft: padLeft }}>{icon}<Text style={[tx(11, fonts.medium), { marginTop: 6, marginBottom: padBottom }]}>{label}</Text></View>;
+  return <View style={{ width: 70, height, alignItems: 'center', justifyContent: justify, paddingLeft: label === 'Wallet' ? 0 : padLeft }}>{React.isValidElement(icon) && label !== 'Battle' ? React.cloneElement(icon as React.ReactElement<any>, { style: [((icon as React.ReactElement<any>).props as any).style, { marginTop: 5 }] }) : icon}<Text style={[tx(11, fonts.medium), { marginTop: 6, marginBottom: padBottom, paddingTop: label === 'Battle' ? 6 : 4 }]}>{label}</Text></View>;
 }
 
 function BottomNav() {
@@ -505,7 +505,7 @@ function BottomNav() {
             </View>
           }
         />
-        <NavItem label="Wallet" height={50} justify="center" padLeft={4} icon={<MaterialCommunityIcons name="wallet-outline" size={24} color={inactive} />} />
+        <NavItem label="Wallet" height={50} justify="center" padLeft={0} icon={<MaterialCommunityIcons name="wallet-outline" size={24} color={inactive} />} />
         <NavItem label="Profile" height={50} justify="flex-end" icon={<MaterialIcons name="tag-faces" size={24} color={inactive} />} />
       </View>
     </View>
