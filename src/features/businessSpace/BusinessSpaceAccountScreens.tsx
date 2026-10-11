@@ -16,9 +16,9 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { useTheme, useS, money, ago, initials, uuid, Status, DAYS, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist } from "./BusinessSpaceShared";
+import { S, DAYS, useTheme, useS, money, ago, initials, uuid, Status, DAYS, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist } from "./BusinessSpaceShared";
 
-export function PromotionsPage() {
+function PromotionsPage() {
   const app = useApp(), s = useS(), a = useAct();
   const p = useQ(() => q<any[]>(supabase.from('promotions').select('*').eq('business_id', app.biz.id).order('id', { ascending: false })), [app.biz.id, app.tick]);
   const tone = (st: string) => (st === 'active' ? 'good' : st === 'ended' ? 'mute' : 'warn');
@@ -33,7 +33,7 @@ export function PromotionsPage() {
 }
 
 /* ---------- registration (optional business verification) ---------- */
-export function RegistrationPage() {
+function RegistrationPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
   const r = useQ(() => rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
   const rows = r.d ?? [], can = b.verification === 'setup' || b.verification === 'action';
@@ -71,7 +71,7 @@ export function RegistrationPage() {
 }
 
 /* ---------- audit log, help, security ---------- */
-export function AuditPage() {
+function AuditPage() {
   const app = useApp(), s = useS();
   const l = useQ(() => q<any[]>(supabase.from('audit_log').select('id,action,meta,at').eq('business_id', app.biz.id).order('at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
   return (
@@ -81,13 +81,13 @@ export function AuditPage() {
   );
 }
 const SUPPORT_EMAIL = (process.env as any).EXPO_PUBLIC_SUPPORT_EMAIL ?? 'support@wantiss.com';
-export function HelpPage() {
+function HelpPage() {
   const app = useApp(), s = useS(), t = useTheme();
   const cats = ['Account and registration', 'Listings and publishing', 'Orders and bookings', 'Payments and payouts', 'Refunds and disputes', 'Promotions and vouchers', 'Technical problems'];
   const mail = (c: string) => Linking.openURL(`mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(`${c} · ${app.biz.name}`)}&body=${encodeURIComponent(`\n\nBusiness reference: ${app.biz.id}`)}`).catch(() => app.toast('No email app found'));
   return <Pg title="Help and support" onBack={app.back}><View style={s.cardFlat}><Divided>{cats.map(c => <Row key={c} title={c} sub="Opens an email with your business reference" onPress={() => mail(c)} right={<Icon name="chevron-right" size={18} color={t.mute} />} />)}</Divided></View></Pg>;
 }
-export function SecurityPage() {
+function SecurityPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct();
   const f = useQ(async () => { const { data, error } = await supabase.auth.mfa.listFactors(); if (error) throw error; return (data?.totp ?? []).filter((x: any) => x.status === 'verified'); }, [app.tick]);
   const factor = (f.d ?? [])[0];
@@ -108,7 +108,7 @@ export function SecurityPage() {
 }
 
 /* ---------- business information ---------- */
-export function BusinessInfoPage() {
+function BusinessInfoPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
   const [f, setF] = useState(() => ({ name: b.name, description: b.description ?? '', phone_country: b.phone_country ?? 'NG', phone: b.phone ?? '', email: b.email ?? '', website: b.website ?? '', address: b.address ?? '', city: b.city ?? '', country: b.country ?? 'NG', delivery_modes: b.delivery_modes ?? [], hours: (b.hours && Object.keys(b.hours).length ? b.hours : defaultHours()) as Record<string, any>, logo_url: b.logo_url }));
   const [picker, setPicker] = useState<null | 'phone' | 'country'>(null), [cq, setCq] = useState('');
