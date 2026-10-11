@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { Feature, FX, after, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow } from "./BusinessSpaceShared";
+import { Feature, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow } from "./BusinessSpaceShared";
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
