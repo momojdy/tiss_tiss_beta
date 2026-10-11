@@ -40,7 +40,7 @@ import FrenziesStreakShieldScreen from './src/screens/FrenziesStreakShieldScreen
 import FrenziesGetStreakShieldScreen from './src/screens/FrenziesGetStreakShieldScreen';
 import FrenziesStreakShieldCheckoutScreen from './src/screens/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
-import BusinessSpaceScreen from './src/features/businessSpace/BusinessSpaceScreen';
+import BusinessSpaceScreen from './BusinessSpaceScreen';
 
 type Screen = 'auth' | 'forgot' | 'reset';
 type AppMode = 'buyer' | 'vendor';
