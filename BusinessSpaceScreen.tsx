@@ -14,7 +14,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
-import { supabase } from '../../lib/supabase';
+import { supabase } from './src/lib/supabase';
 
 import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Range, DEFAULT_RULES, presetRange, rpc, q, useQ, App, AppCtx, ArgCtx, useAct, Btn, Field, Skel, ErrBox, PanelSheet, ListingWizard } from "./src/features/businessSpace/BusinessSpaceShared";
 import { Home } from "./src/features/businessSpace/BusinessSpaceHomeScreen";
