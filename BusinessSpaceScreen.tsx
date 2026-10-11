@@ -33,7 +33,7 @@ function withBusinessRequestTimeout<T>(request: PromiseLike<T>, label: string): 
   });
 }
 
-const BIZ_COLS = 'id,name,logo_url,verification,payout_ready,is_live,description,phone,phone_country,email,address,city,country,website,hours,delivery_modes,deleted_at';
+const BIZ_COLS = 'id,name,verification,payout_ready,is_live,created_at';
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
@@ -63,7 +63,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
       try {
         const { data, error } = await withBusinessRequestTimeout(supabase.auth.getUser(), 'Loading your Business Space session');
         if (error || !data.user) throw error ?? new Error('Your session has expired. Please sign in again.');
-        const p = await withBusinessRequestTimeout(supabase.from('profiles').select('full_name,language').eq('id', data.user.id).maybeSingle(), 'Loading your profile');
+        const p = await withBusinessRequestTimeout(supabase.from('profiles').select('full_name').eq('id', data.user.id).maybeSingle(), 'Loading your profile');
         setUser({ id: data.user.id, email: data.user.email ?? '', name: p.data?.full_name ?? (data.user.user_metadata as any)?.full_name ?? (data.user.email ?? '').split('@')[0] });
       } catch (e) { setUerr(errText(e)); }
     })();
@@ -71,7 +71,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
   const mem = useQ(async () => {
     if (!user) return [] as Biz[];
     const rows = await withBusinessRequestTimeout(q<any[]>(supabase.from('business_members').select(`role,businesses(${BIZ_COLS})`).eq('user_id', user.id)), 'Loading your businesses');
-    return rows.filter(r => r.businesses && !r.businesses.deleted_at).map(r => ({ ...r.businesses, role: r.role })) as Biz[];
+    return rows.filter(r => r.businesses).map(r => ({ ...r.businesses, logo_url: null, description: null, phone: null, phone_country: null, email: null, address: null, city: null, country: null, website: null, hours: null, delivery_modes: null, role: r.role })) as Biz[];
   }, [user?.id, tick]);
   const reloadBiz = useCallback(() => setTick(x => x + 1), []);
   if (uerr) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={uerr} retry={onSignOut} /></View>;
