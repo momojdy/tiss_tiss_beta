@@ -76,7 +76,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
   const reloadBiz = useCallback(() => setTick(x => x + 1), []);
   if (uerr) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={uerr} retry={onSignOut} /></View>;
   if (!user || (mem.l && !mem.d)) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 16, paddingTop: ins.top + 20, gap: 12 }}><Skel h={56} /><Skel h={90} /><Skel h={300} /></View>;
-  if (mem.e && !mem.d) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={mem.e} retry={mem.reload} /></View>;
+  if (mem.e) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={mem.e} retry={mem.reload} /></View>;
   const list = mem.d ?? [];
   if (!list.length) return <FirstBusiness user={user} onCreated={reloadBiz} onBuyer={onBuyer} />;
   return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} />;
