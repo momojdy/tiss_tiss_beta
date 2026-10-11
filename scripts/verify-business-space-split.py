@@ -27,7 +27,9 @@ def normalize_module(text):
     # top-level declarations so the original declarations can be imported.
     result = []
     for line in text.splitlines(keepends=True):
-        if line.startswith("export ") and line[len("export "):].startswith(
+        if line.startswith("export default function "):
+            line = line.replace("export default function ", "function ", 1)
+        elif line.startswith("export ") and line[len("export "):].startswith(
             ("const ", "function ", "type ", "interface ", "enum ", "class ")
         ):
             line = line[len("export "):]
