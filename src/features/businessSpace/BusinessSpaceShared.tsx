@@ -47,16 +47,16 @@ export interface Feature {
 
 /* ---------- vendor feature registry: lifecycles and listing forms ---------- */
 export const FX = (() => {
-export const D = { text: 'text', area: 'area', num: 'num', money: 'money', sel: 'sel', chips: 'chips', bool: 'bool', date: 'date', dt: 'dt', time: 'time', photos: 'photos', file: 'file', rows: 'rows', cat: 'cat', cal: 'cal' } as const;
-export const mk = (t: FType) => (k: string, l: string, o: Partial<Fld> = {}): Fld => ({ k, l, t, ...o });
-export const T = mk(D.text), A = mk(D.area), N = mk(D.num), M = mk(D.money), Bo = mk(D.bool), DT = mk(D.dt), TM = mk(D.time), CAL = mk(D.cal), CT = mk(D.cat), PH = mk(D.photos), FL = mk(D.file), R = mk(D.rows);
-export const S = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'sel', opts, ...o });
-export const C = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'chips', opts, ...o });
-export const DESC = (min = 30) => A('desc', 'Description', { req: true, min, max: 4000 });
-export const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-export const after = (a: any, b: any) => a && b && new Date(b).getTime() <= new Date(a).getTime();
+const D = { text: 'text', area: 'area', num: 'num', money: 'money', sel: 'sel', chips: 'chips', bool: 'bool', date: 'date', dt: 'dt', time: 'time', photos: 'photos', file: 'file', rows: 'rows', cat: 'cat', cal: 'cal' } as const;
+const mk = (t: FType) => (k: string, l: string, o: Partial<Fld> = {}): Fld => ({ k, l, t, ...o });
+const T = mk(D.text), A = mk(D.area), N = mk(D.num), M = mk(D.money), Bo = mk(D.bool), DT = mk(D.dt), TM = mk(D.time), CAL = mk(D.cal), CT = mk(D.cat), PH = mk(D.photos), FL = mk(D.file), R = mk(D.rows);
+const S = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'sel', opts, ...o });
+const C = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'chips', opts, ...o });
+const DESC = (min = 30) => A('desc', 'Description', { req: true, min, max: 4000 });
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const after = (a: any, b: any) => a && b && new Date(b).getTime() <= new Date(a).getTime();
 
-export const GOODS: Record<string, string[]> = {
+const GOODS: Record<string, string[]> = {
   Fashion: ['Men', 'Women', 'Kids', 'Shoes', 'Bags', 'Accessories', 'Jewellery'],
   Electronics: ['Phones', 'Computers', 'Audio', 'Cameras', 'Gaming', 'Accessories'],
   'Home and Garden': ['Furniture', 'Decor', 'Kitchen', 'Bedding', 'Garden', 'Tools'],
@@ -66,12 +66,12 @@ export const GOODS: Record<string, string[]> = {
   'Baby and Kids': ['Toys', 'Clothing', 'Nursery', 'School'],
   Other: ['Other'],
 };
-export const COLLECT: Record<string, string[]> = { Collectibles: ['Coins', 'Stamps', 'Cards', 'Memorabilia', 'Toys'], Antiques: ['Furniture', 'Art', 'Jewellery', 'Watches'], Electronics: ['Phones', 'Computers', 'Cameras'], Fashion: ['Luxury bags', 'Sneakers', 'Watches'], Other: ['Other'] };
-export const GEN: Record<string, string[]> = { Lifestyle: ['Fashion', 'Home', 'Beauty', 'Food'], Business: ['Retail', 'Wholesale', 'Services'], Other: ['Other'] };
-export const SHIP = (): Fld[] => [Bo('delivery', 'Offer delivery', { def: true }), Bo('pickup', 'Offer pickup'), N('weight', 'Weight (kg)', { min: 0 }), N('handling', 'Handling time (days)', { min: 0, max: 30, def: 2 }), S('returns', 'Return policy', ['No returns', '7 days', '14 days', '30 days'], { def: '7 days' })];
-export const AVAIL = (): Fld[] => [C('days', 'Days available', DAYS, { req: true, def: DAYS.slice(0, 5) }), TM('from', 'Available from', { def: '09:00' }), TM('until', 'Available until', { def: '17:00' }), N('lead', 'Notice required (hours)', { min: 0, def: 12 }), CAL('blocked', 'Block dates you are unavailable')];
+const COLLECT: Record<string, string[]> = { Collectibles: ['Coins', 'Stamps', 'Cards', 'Memorabilia', 'Toys'], Antiques: ['Furniture', 'Art', 'Jewellery', 'Watches'], Electronics: ['Phones', 'Computers', 'Cameras'], Fashion: ['Luxury bags', 'Sneakers', 'Watches'], Other: ['Other'] };
+const GEN: Record<string, string[]> = { Lifestyle: ['Fashion', 'Home', 'Beauty', 'Food'], Business: ['Retail', 'Wholesale', 'Services'], Other: ['Other'] };
+const SHIP = (): Fld[] => [Bo('delivery', 'Offer delivery', { def: true }), Bo('pickup', 'Offer pickup'), N('weight', 'Weight (kg)', { min: 0 }), N('handling', 'Handling time (days)', { min: 0, max: 30, def: 2 }), S('returns', 'Return policy', ['No returns', '7 days', '14 days', '30 days'], { def: '7 days' })];
+const AVAIL = (): Fld[] => [C('days', 'Days available', DAYS, { req: true, def: DAYS.slice(0, 5) }), TM('from', 'Available from', { def: '09:00' }), TM('until', 'Available until', { def: '17:00' }), N('lead', 'Notice required (hours)', { min: 0, def: 12 }), CAL('blocked', 'Block dates you are unavailable')];
 
-export const FEATURES: Feature[] = [
+const FEATURES: Feature[] = [
   {
     key: 'goodies', name: 'Goodies', emoji: '🛍️', color: '#2D5BFF', noun: 'order', add: 'Add a product',
     flow: ['New', 'Accepted', 'Processing', 'Ready', 'Completed'],
@@ -239,12 +239,12 @@ export const FEATURES: Feature[] = [
   },
 ];
 
-export const FM: Record<string, Feature> = Object.fromEntries(FEATURES.map(f => [f.key, f]));
-export const TOPUP_NOTE = 'Topup has no vendor dashboard.';
+const FM: Record<string, Feature> = Object.fromEntries(FEATURES.map(f => [f.key, f]));
+const TOPUP_NOTE = 'Topup has no vendor dashboard.';
 /** Managed by Wantiss itself, so they never appear in the vendor tools. */
-export const PLATFORM_MANAGED = ['konsoliss', 'prezo', 'frenzies'];
+const PLATFORM_MANAGED = ['konsoliss', 'prezo', 'frenzies'];
 /** Icon and colour for each vendor feature (Material Community Icons). */
-export const FUI: Record<string, { icon: string; color: string }> = {
+const FUI: Record<string, { icon: string; color: string }> = {
   goodies: { icon: 'shopping-outline', color: '#2D5BFF' }, stayz: { icon: 'bed-outline', color: '#7357E8' }, woulib: { icon: 'car-outline', color: '#16A085' },
   rideza: { icon: 'car-key', color: '#E58A28' }, flyz: { icon: 'airplane', color: '#2388D9' }, habita: { icon: 'home-city-outline', color: '#8B6BD6' },
   services: { icon: 'briefcase-outline', color: '#3B9B7A' }, glowz: { icon: 'spa-outline', color: '#D56BA8' }, gatherz: { icon: 'ticket-confirmation-outline', color: '#E58A28' },
@@ -252,8 +252,8 @@ export const FUI: Record<string, { icon: string; color: string }> = {
   globiz: { icon: 'earth', color: '#3A77B8' }, lutz: { icon: 'ticket-outline', color: '#7B62D6' }, bidz: { icon: 'gavel', color: '#4F6C9E' },
 };
 
-export const visible = (f: Fld, v: V) => !f.when || f.when(v);
-export const defaults = (fe: Feature): V => {
+const visible = (f: Fld, v: V) => !f.when || f.when(v);
+const defaults = (fe: Feature): V => {
   const v: V = {};
   fe.steps.forEach(s => s.f.forEach(f => {
     if (f.def !== undefined) v[f.k] = f.def;
@@ -261,12 +261,12 @@ export const defaults = (fe: Feature): V => {
   }));
   return v;
 };
-export const titleOf = (fe: Feature, v: V) => (fe.autoTitle ? fe.autoTitle(v) : String(v.title || '')).trim();
+const titleOf = (fe: Feature, v: V) => (fe.autoTitle ? fe.autoTitle(v) : String(v.title || '')).trim();
 
-export const empty = (f: Fld, x: any) => (Array.isArray(x) ? x.length === 0 : x === undefined || x === null || String(x).trim() === '');
+const empty = (f: Fld, x: any) => (Array.isArray(x) ? x.length === 0 : x === undefined || x === null || String(x).trim() === '');
 
 /** Returns field errors. mode 'draft' only needs a title; 'publish' validates everything visible. */
-export function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fld[]): Record<string, string> {
+function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fld[]): Record<string, string> {
   const e: Record<string, string> = {};
   if (mode === 'draft') { if (!titleOf(fe, v) && !fe.autoTitle) e.title = 'Add a title to save a draft'; return e; }
   const fields = only ?? fe.steps.flatMap(s => s.f);
@@ -464,25 +464,25 @@ export function Skel({ h = 80, style }: any) {
   return <Animated.View style={[{ height: h, borderRadius: 16, backgroundColor: t.chip, opacity: o }, style]} />;
 }
 export function ErrBox({ e, retry }: any) { const s = useS(); return <View style={[s.card, { alignItems: 'center', gap: 8 }]}><Icon name="alert-circle-outline" size={24} color="#C65D2E" /><Text style={s.title}>Couldn't load this</Text><Text style={[s.mut, { textAlign: 'center' }]}>{e}</Text><Btn small label="Retry" onPress={retry} /></View>; }
-export function Loading({ n = 3, h = 70 }: any) { return <View style={{ gap: 10 }}>{Array.from({ length: n }).map((_, i) => <Skel key={i} h={h} />)}</View>; }
-export function Avatar({ text, size = 44, logo, radius, onPress, bg }: any) {
+function Loading({ n = 3, h = 70 }: any) { return <View style={{ gap: 10 }}>{Array.from({ length: n }).map((_, i) => <Skel key={i} h={h} />)}</View>; }
+function Avatar({ text, size = 44, logo, radius, onPress, bg }: any) {
   const t = useTheme(), r = radius ?? size * 0.3;
   const inner = logo ? <Image source={{ uri: logo }} style={{ width: size, height: size, borderRadius: r }} /> : <View style={{ width: size, height: size, borderRadius: r, backgroundColor: bg ?? t.blue, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: '#fff', fontWeight: '800', fontSize: size * 0.34 }}>{text}</Text></View>;
   return onPress ? <Pressable accessibilityRole="button" onPress={onPress}>{inner}</Pressable> : inner;
 }
-export function FIcon({ k, size = 36 }: any) {
+function FIcon({ k, size = 36 }: any) {
   const ui = FX.FUI[k] ?? { icon: 'shape-outline', color: '#6F7890' };
   return <View style={{ width: size, height: size, borderRadius: size * 0.34, backgroundColor: `${ui.color}18`, alignItems: 'center', justifyContent: 'center' }}><MaterialCommunityIcons name={ui.icon as any} size={size * 0.55} color={ui.color} /></View>;
 }
-export function Row({ left, title, sub, sub2, right, onPress, last }: any) {
+function Row({ left, title, sub, sub2, right, onPress, last }: any) {
   const s = useS();
   const body = <View style={[s.ar, !last && null]}>{left}<View style={s.g}><Text style={s.rt}>{title}</Text>{sub ? <Text style={s.sub}>{sub}</Text> : null}{sub2 ? <Text style={s.sub}>{sub2}</Text> : null}</View>{right}</View>;
   return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
 }
-export const Divided = ({ children }: any) => { const s = useS(); const a = React.Children.toArray(children).filter(Boolean); return <>{a.map((c, i) => <View key={i} style={i ? s.div : undefined}>{c}</View>)}</>; };
+const Divided = ({ children }: any) => { const s = useS(); const a = React.Children.toArray(children).filter(Boolean); return <>{a.map((c, i) => <View key={i} style={i ? s.div : undefined}>{c}</View>)}</>; };
 
 /** Full-screen page that sits above Home. */
-export function Pg({ title, onBack, right, children, scroll = true, refreshing, onRefresh }: any) {
+function Pg({ title, onBack, right, children, scroll = true, refreshing, onRefresh }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   return (
     <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.bg, zIndex: 25, paddingTop: ins.top + 8 }}>
@@ -498,7 +498,7 @@ export function Pg({ title, onBack, right, children, scroll = true, refreshing, 
 }
 
 /** Short bottom sheet used for forms and menus. */
-export function SheetShell({ title, onClose, children, tall }: any) {
+function SheetShell({ title, onClose, children, tall }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets(), { height: H } = useWindowDimensions();
   return (
     <View style={{ ...StyleSheet.absoluteFillObject, zIndex: 30, justifyContent: 'flex-end' }}>
@@ -515,7 +515,7 @@ export function SheetShell({ title, onClose, children, tall }: any) {
 }
 
 /** Bottom-tab panel. Swipe up to expand under the header, swipe down to collapse, swipe down again to close. */
-export function PanelSheet({ title, onClose, children }: any) {
+function PanelSheet({ title, onClose, children }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets(), { height: H } = useWindowDimensions();
   const dH = Math.round(H * 0.6), fH = H - ins.top - 96;
   const h = useRef(new Animated.Value(0)).current, snap = useRef<'d' | 'f'>('d'), start = useRef(0), scrollY = useRef(0);
@@ -553,18 +553,18 @@ export function PanelSheet({ title, onClose, children }: any) {
 }
 
 /* ---------- listing wizard ---------- */
-export const toDate = (type: string, v?: string) => {
+const toDate = (type: string, v?: string) => {
   if (!v) return new Date();
   if (type === 'time') { const [h, m] = v.split(':').map(Number); const d = new Date(); d.setHours(h || 0, m || 0, 0, 0); return d; }
   const d = new Date(v.length <= 10 ? `${v}T00:00:00` : v); return Number.isNaN(d.getTime()) ? new Date() : d;
 };
-export const fmtVal = (type: string, d: Date) => {
+const fmtVal = (type: string, d: Date) => {
   const p = (n: number) => String(n).padStart(2, '0');
   if (type === 'time') return `${p(d.getHours())}:${p(d.getMinutes())}`;
   if (type === 'date') return iso(d);
   return `${iso(d)}T${p(d.getHours())}:${p(d.getMinutes())}`;
 };
-export function DateField({ type, value, onChange }: any) {
+function DateField({ type, value, onChange }: any) {
   const t = useTheme(), s = useS();
   const [show, setShow] = useState<null | 'date' | 'time' | 'datetime'>(null);
   const tmp = useRef<Date | null>(null);
@@ -587,7 +587,7 @@ export function DateField({ type, value, onChange }: any) {
     </View>
   );
 }
-export function BlockCalendar({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
+function BlockCalendar({ value, onChange }: { value: string[]; onChange: (v: string[]) => void }) {
   const t = useTheme(), s = useS();
   const [m, setM] = useState(() => { const d = new Date(); d.setDate(1); return d; });
   const first = (m.getDay() + 6) % 7, days = new Date(m.getFullYear(), m.getMonth() + 1, 0).getDate(), today = iso(new Date());
@@ -618,7 +618,7 @@ async function uploadLarge(uri: string, path: string, bucket: string, mime: stri
   if (r.status >= 300) throw new Error('Upload failed');
 }
 
-export function ListingWizard({ biz, feature, listingId, onClose, onDone, onToast }: any) {
+function ListingWizard({ biz, feature, listingId, onClose, onDone, onToast }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   const fe = FX.FM[feature] as Feature, last = fe.steps.length;
   const [v, setV] = useState<V>(() => FX.defaults(fe));
@@ -860,9 +860,9 @@ export function ListingWizard({ biz, feature, listingId, onClose, onDone, onToas
     </View>
   );
 }
-export const wzErr = (t: Theme) => ({ color: t.badFg, fontSize: 12, fontWeight: '600' as const, marginTop: 4 });
-export function MiniBtn({ icon, onPress }: any) { return <Pressable onPress={onPress} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}><MaterialCommunityIcons name={icon} size={14} color="#182033" /></Pressable>; }
-export function Wrap({ items, value, onChange, multi }: any) {
+const wzErr = (t: Theme) => ({ color: t.badFg, fontSize: 12, fontWeight: '600' as const, marginTop: 4 });
+function MiniBtn({ icon, onPress }: any) { return <Pressable onPress={onPress} style={{ width: 24, height: 24, borderRadius: 12, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}><MaterialCommunityIcons name={icon} size={14} color="#182033" /></Pressable>; }
+function Wrap({ items, value, onChange, multi }: any) {
   const t = useTheme();
   return (
     <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -875,9 +875,9 @@ export function Wrap({ items, value, onChange, multi }: any) {
 }
 
 /* ---------- shared pieces ---------- */
-export const POLICY: Record<string, string> = { goodies: 'Not allowed: weapons, medicines and alcohol.', glowz: 'Not allowed: medical-aesthetic services.', lutz: 'Reviewed by Wantiss before it goes live. Entrants must be 18 or older.' };
-export const RANGES = ['7D', '30D', '90D', '1Y'];
-export function RangeBar() {
+const POLICY: Record<string, string> = { goodies: 'Not allowed: weapons, medicines and alcohol.', glowz: 'Not allowed: medical-aesthetic services.', lutz: 'Reviewed by Wantiss before it goes live. Entrants must be 18 or older.' };
+const RANGES = ['7D', '30D', '90D', '1Y'];
+function RangeBar() {
   const app = useApp(), t = useTheme();
   const items = [...RANGES, 'Custom'];
   return (
@@ -889,7 +889,7 @@ export function RangeBar() {
     </View>
   );
 }
-export function actionTarget(app: App, a: any) {
+function actionTarget(app: App, a: any) {
   const tg: string = a.target ?? '';
   if (tg.startsWith('feature:')) app.go('feature', { k: tg.slice(8) });
   else if (tg.startsWith('requirements:')) app.go('feature', { k: tg.slice(13) });
@@ -898,13 +898,13 @@ export function actionTarget(app: App, a: any) {
   else if (tg === 'registration') app.go('registration');
   else app.go('actions');
 }
-export function ActionRow({ a }: any) {
+function ActionRow({ a }: any) {
   const app = useApp();
   return <Row left={a.feature ? <FIcon k={a.feature} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: app.dark ? '#202B4F' : '#EEF1FF', alignItems: 'center', justifyContent: 'center' }}><Icon name="alert-circle-outline" size={20} color="#2D5BFF" /></View>} title={a.label} sub={a.feature ? FX.FM[a.feature]?.name : a.sub} right={<Btn small label="Action" onPress={() => actionTarget(app, a)} />} />;
 }
 
 /* ---------- header ---------- */
-export function Header() {
+function Header() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
   const badge = (n: number) => n > 0 ? <View style={{ position: 'absolute', top: -5, right: -5, minWidth: 17, height: 17, borderRadius: 9, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4 }}><Text style={{ color: '#fff', fontSize: 10, fontWeight: '800' }}>{n}</Text></View> : null;
   const btn = (icon: string, n: number, onPress: () => void, label: string) => <Pressable accessibilityLabel={label} onPress={onPress} style={{ width: 42, height: 42, borderRadius: 14, backgroundColor: t.chip, alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={21} />{badge(n)}</Pressable>;
@@ -924,7 +924,7 @@ export function Header() {
     </View>
   );
 }
-export function Banner({ icon = 'credit-card-outline', text, onPress, tone = 'soft', onClose, cta }: any) {
+function Banner({ icon = 'credit-card-outline', text, onPress, tone = 'soft', onClose, cta }: any) {
   const t = useTheme(), bad = tone === 'bad';
   return (
     <Pressable onPress={onPress} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: bad ? t.badBg : t.soft }}>
@@ -935,7 +935,7 @@ export function Banner({ icon = 'credit-card-outline', text, onPress, tone = 'so
     </Pressable>
   );
 }
-export function WalletCard({ available, pending }: any) {
+function WalletCard({ available, pending }: any) {
   const app = useApp(), p = app.meta.payout;
   const setup = p?.status === 'verified' ? `•••• ${p.last4 ?? ''}` : p ? 'Verifying' : 'Not ready';
   return (
@@ -950,7 +950,7 @@ export function WalletCard({ available, pending }: any) {
     </Pressable>
   );
 }
-export function Checklist() {
+function Checklist() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz, a = useAct();
   const nF = app.meta.feats.length, first = app.meta.feats[0]?.feature, payOK = app.meta.payout?.status === 'verified';
   const steps: any[] = [
@@ -972,7 +972,7 @@ export function Checklist() {
 }
 
 /* ---------- home ---------- */
-export function ActionCard({ actions }: any) {
+function ActionCard({ actions }: any) {
   const app = useApp(), t = useTheme(), s = useS();
   return (
     <View style={{ gap: 10 }}>
@@ -983,13 +983,13 @@ export function ActionCard({ actions }: any) {
     </View>
   );
 }
-export function ActivityRow({ a }: any) {
+function ActivityRow({ a }: any) {
   const t = useTheme(), refund = a.kind === 'refund', money_ = a.amount != null;
   return <Row left={<View style={{ width: 34, height: 34, borderRadius: 12, backgroundColor: refund ? t.ref : t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name={refund ? 'cash-refund' : 'history'} size={17} color={refund ? t.bad : t.blue} /></View>} title={a.title} sub={`${a.feature ? FX.FM[a.feature]?.name ?? 'Business' : 'Business'} · ${ago(a.at)}`} right={money_ ? <Text style={{ fontSize: 11, fontWeight: '800', color: Number(a.amount) < 0 ? t.bad : t.good }}>{Number(a.amount) < 0 ? '−' : '+'}{money(Math.abs(Number(a.amount)))}</Text> : null} />;
 }
 
 /* ---------- pages ---------- */
-export function OrderRow({ o, hl }: any) {
+function OrderRow({ o, hl }: any) {
   const app = useApp(), t = useTheme(), s = useS(), a = useAct();
   const fl = FX.FM[o.feature]?.flow ?? [], cx = o.status === 'Cancelled', i = fl.indexOf(o.status), nxt = cx ? undefined : fl[i + 1], first = i === 0 || i === 1;
   return (
@@ -1006,7 +1006,7 @@ export function OrderRow({ o, hl }: any) {
     </View>
   );
 }
-export function ListingRow({ l, focus }: any) {
+function ListingRow({ l, focus }: any) {
   const app = useApp(), t = useTheme(), s = useS(), a = useAct();
   const tone = l.status === 'published' ? 'good' : l.status === 'draft' ? 'mute' : 'warn';
   return (
@@ -1024,7 +1024,7 @@ export function ListingRow({ l, focus }: any) {
 }
 
 /* ---------- requirements ---------- */
-export function RequirementsCard({ feature }: { feature: string }) {
+function RequirementsCard({ feature }: { feature: string }) {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct();
   const r = useQ(() => rpc<any[]>('feature_requirements_status', { p_business: app.biz.id, p_feature: feature }), [app.biz.id, feature, app.tick]);
   const rows = r.d ?? [], gap = rows.filter(x => x.required && !x.pay_gate && x.status !== 'approved').length;
