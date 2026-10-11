@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { S, DAYS, useTheme, useS, money, ago, initials, uuid, Status, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist } from "./BusinessSpaceShared";
+import { useTheme, useS, money, ago, initials, uuid, Status, DAYS, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist } from "./BusinessSpaceShared";
 
 export function PromotionsPage() {
   const app = useApp(), s = useS(), a = useAct();
