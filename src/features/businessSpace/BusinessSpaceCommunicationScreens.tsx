@@ -18,7 +18,7 @@ import { supabase } from '../../lib/supabase';
 
 import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg } from "./BusinessSpaceShared";
 
-function MessagesPage() {
+export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
   const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('id', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
   const rows = (c.d ?? []).filter(x => f === 'All' || x.feature === f);
@@ -31,7 +31,7 @@ function MessagesPage() {
     </Pg>
   );
 }
-function ConversationPage() {
+export function ConversationPage() {
   const app = useApp(), s = useS(), t = useTheme(), { id } = useArg() as { id: string };
   const [text, setText] = useState(''), [sending, setSending] = useState(false), ref = useRef<ScrollView>(null);
   const conv = useQ(() => q<any>(supabase.from('conversations').select('*').eq('id', id).single()), [id]);
