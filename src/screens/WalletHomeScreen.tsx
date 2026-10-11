@@ -25,23 +25,23 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
         <Pressable onPress={onHomePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="home-outline" size={29} color={NAV_DARK} />
+          <MaterialCommunityIcons name="home-outline" size={23} color={NAV_DARK} />
           <WalletNavLabel>Home</WalletNavLabel>
           <WalletNavIndicator />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="account-group-outline" size={29} color={MUTED} />
+          <MaterialCommunityIcons name="account-group-outline" size={23} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Contacts</Text>
         </Pressable>
         <Pressable style={styles.walletNavItem}>
           <MaterialCommunityIcons name="qrcode-scan" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
-          <MaterialIcons name="query-stats" size={29} color={MUTED} />
+          <MaterialIcons name="query-stats" size={23} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Insights</Text>
         </Pressable>
         <Pressable onPress={onMePress} style={styles.walletNavItem}>
-          <MaterialCommunityIcons name="cog-outline" size={29} color={MUTED} />
+          <MaterialCommunityIcons name="cog-outline" size={23} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Settings</Text>
         </Pressable>
       </View>
