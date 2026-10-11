@@ -368,10 +368,8 @@ export function presetRange(key: string): Range {
 export function customRange(from: string, to: string): Range { return { key: 'custom', from, to, days: Math.round((parseISO(to).getTime() - parseISO(from).getTime()) / 864e5) + 1, label: rangeLabel(from, to) }; }
 
 /* ---------- data layer ---------- */
-async function q<T = any>(p: PromiseLike<{ data: T | null; error: any }>): Promise<T> { const { data, error } = await p; if (error) throw error; return data as T; }
-export const rpc = <T = any,>(fn: string, args: Record<string, unknown>) => q<T>(supabase.rpc(fn, args) as any);
 export async function q<T = any>(p: PromiseLike<{ data: T | null; error: any }>): Promise<T> { const { data, error } = await p; if (error) throw error; return data as T; }
-
+export const rpc = <T = any,>(fn: string, args: Record<string, unknown>) => q<T>(supabase.rpc(fn, args) as any);
 export function useQ<T>(fn: () => Promise<T>, deps: unknown[]) {
   const [s, set] = useState<{ d: T | null; l: boolean; e: string | null }>({ d: null, l: true, e: null });
   const n = useRef(0);
