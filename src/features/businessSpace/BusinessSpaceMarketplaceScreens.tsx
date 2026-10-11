@@ -18,7 +18,7 @@ import { supabase } from '../../lib/supabase';
 
 import { Feature, FX, FEATURES, FM, LIGHT, useTheme, useS, money, ago, rpc, useQ, useApp, useArg, useAct, Icon, Btn, Pill, Chips, Seg, Section, Empty, Skel, ErrBox, Loading, FIcon, Row, Divided, Pg, OrderRow, ListingRow, RequirementsCard } from "./BusinessSpaceShared";
 
-function FeaturePage() {
+export function FeaturePage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), { k, focus } = useArg() as { k: string; focus?: string };
   const fe = FX.FM[k] as Feature | undefined, on = app.meta.feats.some(f => f.feature === k);
   const [of, setOf] = useState('All'), [lf, setLf] = useState('All');
@@ -60,7 +60,7 @@ function FeaturePage() {
 }
 
 /* ---------- tab panels ---------- */
-function FeaturesPanel() {
+export function FeaturesPanel() {
   const app = useApp(), s = useS(), a = useAct(), on = new Set(app.meta.feats.map(f => f.feature)), restricted = app.biz.verification === 'restricted';
   return (
     <View>
@@ -76,7 +76,7 @@ function FeaturesPanel() {
     </View>
   );
 }
-function OrdersPanel() {
+export function OrdersPanel() {
   const app = useApp(), [f, setF] = useState('Open');
   const o = useQ(() => q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
@@ -87,7 +87,7 @@ function OrdersPanel() {
     </View>
   );
 }
-function ListingsPanel() {
+export function ListingsPanel() {
   const app = useApp(), [f, setF] = useState('All');
   const l = useQ(() => q<any[]>(supabase.from('listings').select('id,title,status,price,stock,photos,feature').eq('business_id', app.biz.id).neq('status', 'archived').order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
   const rows = (l.d ?? []).filter(x => f === 'All' || x.status === f);
@@ -98,7 +98,7 @@ function ListingsPanel() {
     </View>
   );
 }
-function PayoutsPanel() {
+export function PayoutsPanel() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
   const [tab, setTab] = useState('Ledger'), [f, setF] = useState('All'), [pg_, setPg] = useState(1);
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: b.id, p_from: app.range.from, p_to: app.range.to, p_feature: null }), [b.id, app.tick]);
