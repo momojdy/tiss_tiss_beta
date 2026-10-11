@@ -54,6 +54,18 @@ type RequestedMode = 'buyer' | 'business';
 
 type BuyerScreen = 'home' | 'me' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
+const AUTH_REQUEST_TIMEOUT_MS = 15000;
+
+function withAuthRequestTimeout<T>(request: PromiseLike<T>, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error(`${label} timed out. Please check your connection and try again.`)), AUTH_REQUEST_TIMEOUT_MS);
+    Promise.resolve(request).then(
+      value => { clearTimeout(timeout); resolve(value); },
+      error => { clearTimeout(timeout); reject(error); },
+    );
+  });
+}
+
 type AppErrorProps = { title: string; error: unknown };
 
 function AppError({ title, error }: AppErrorProps) {
@@ -92,12 +104,12 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [appMode, setAppMode] = useState<AppMode>('buyer');
   const [authInitialMode, setAuthInitialMode] = useState<RequestedMode>('buyer');
   const routeAuthenticatedUser = async (requestedMode: RequestedMode = 'buyer') => {
-    const { data: userResult, error: userError } = await supabase.auth.getUser();
+    const { data: userResult, error: userError } = await withAuthRequestTimeout(supabase.auth.getUser(), 'Checking your session');
     if (userError) throw userError;
     const user = userResult.user;
     if (!user) throw new Error('Your session has expired. Please sign in again.');
 
-    const { data: modes, error: modesError } = await supabase.rpc('get_my_account_modes');
+    const { data: modes, error: modesError } = await withAuthRequestTimeout(supabase.rpc('get_my_account_modes'), 'Checking your account access');
     if (modesError) throw modesError;
     const hasRequestedMode = requestedMode === 'buyer' ? modes?.buyer === true : modes?.business === true;
     if (!hasRequestedMode) {
@@ -235,7 +247,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
   if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
-  return <AuthScreen initialMode={authInitialMode} onSignInPressed={async (email, password, requestedMode) => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
+  return <AuthScreen initialMode={authInitialMode} onSignInPressed={async (email, password, requestedMode) => { const { error } = await withAuthRequestTimeout(supabase.auth.signInWithPassword({ email, password }), 'Signing in'); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
     const wantsBusiness = ['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase());
     const { data, error } = await supabase.auth.signUp({
       email,
