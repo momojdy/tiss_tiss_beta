@@ -16,9 +16,9 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { FM, FUI, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, dayHead, errText, rpc, useQ, useApp, Btn, Chips, Empty, ErrBox, Loading, FIcon, Row, Divided, Pg, RangeBar, ActionRow, ActivityRow } from "./BusinessSpaceShared";
+import { FX, C, FEATURES, FM, FUI, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, dayHead, errText, rpc, useQ, useApp, Btn, Chips, Empty, ErrBox, Loading, FIcon, Row, Divided, Pg, RangeBar, ActionRow, ActivityRow } from "./BusinessSpaceShared";
 
-export function ActionsPage() {
+function ActionsPage() {
   const app = useApp(), s = useS();
   const a = useQ(() => rpc<any[]>('action_required', { p_business: app.biz.id }), [app.biz.id, app.tick]);
   return (
@@ -27,7 +27,7 @@ export function ActionsPage() {
     </Pg>
   );
 }
-export function ActivityPage() {
+function ActivityPage() {
   const app = useApp(), s = useS();
   const [kind, setKind] = useState('All'), [rows, setRows] = useState<any[]>([]), [more, setMore] = useState(false), [load, setLoad] = useState(true), [err, setErr] = useState<string | null>(null);
   const kinds: Record<string, string | null> = { All: null, Earnings: 'earn', Refunds: 'refund', Orders: 'order', Payouts: 'payout' };
@@ -51,7 +51,7 @@ export function ActivityPage() {
     </Pg>
   );
 }
-export function ExplorePage() {
+function ExplorePage() {
   const app = useApp(), s = useS(), t = useTheme(), on = new Set(app.meta.feats.map(f => f.feature));
   return (
     <Pg title="Explore more ways to sell" onBack={app.back}>
@@ -68,7 +68,7 @@ export function ExplorePage() {
 }
 
 /* ---------- charts ---------- */
-export function ChartsPage() {
+function ChartsPage() {
   const app = useApp(), s = useS(), t = useTheme(), { range } = app;
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: app.biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [app.biz.id, range.from, range.to, app.tick]);
   const [ci, setCi] = useState<number | null>(null);
