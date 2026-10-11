@@ -239,12 +239,12 @@ const FEATURES: Feature[] = [
   },
 ];
 
-export const FM: Record<string, Feature> = Object.fromEntries(FEATURES.map(f => [f.key, f]));
-export const TOPUP_NOTE = 'Topup has no vendor dashboard.';
+const FM: Record<string, Feature> = Object.fromEntries(FEATURES.map(f => [f.key, f]));
+const TOPUP_NOTE = 'Topup has no vendor dashboard.';
 /** Managed by Wantiss itself, so they never appear in the vendor tools. */
-export const PLATFORM_MANAGED = ['konsoliss', 'prezo', 'frenzies'];
+const PLATFORM_MANAGED = ['konsoliss', 'prezo', 'frenzies'];
 /** Icon and colour for each vendor feature (Material Community Icons). */
-export const FUI: Record<string, { icon: string; color: string }> = {
+const FUI: Record<string, { icon: string; color: string }> = {
   goodies: { icon: 'shopping-outline', color: '#2D5BFF' }, stayz: { icon: 'bed-outline', color: '#7357E8' }, woulib: { icon: 'car-outline', color: '#16A085' },
   rideza: { icon: 'car-key', color: '#E58A28' }, flyz: { icon: 'airplane', color: '#2388D9' }, habita: { icon: 'home-city-outline', color: '#8B6BD6' },
   services: { icon: 'briefcase-outline', color: '#3B9B7A' }, glowz: { icon: 'spa-outline', color: '#D56BA8' }, gatherz: { icon: 'ticket-confirmation-outline', color: '#E58A28' },
@@ -252,8 +252,8 @@ export const FUI: Record<string, { icon: string; color: string }> = {
   globiz: { icon: 'earth', color: '#3A77B8' }, lutz: { icon: 'ticket-outline', color: '#7B62D6' }, bidz: { icon: 'gavel', color: '#4F6C9E' },
 };
 
-export const visible = (f: Fld, v: V) => !f.when || f.when(v);
-export const defaults = (fe: Feature): V => {
+const visible = (f: Fld, v: V) => !f.when || f.when(v);
+const defaults = (fe: Feature): V => {
   const v: V = {};
   fe.steps.forEach(s => s.f.forEach(f => {
     if (f.def !== undefined) v[f.k] = f.def;
@@ -261,12 +261,12 @@ export const defaults = (fe: Feature): V => {
   }));
   return v;
 };
-export const titleOf = (fe: Feature, v: V) => (fe.autoTitle ? fe.autoTitle(v) : String(v.title || '')).trim();
+const titleOf = (fe: Feature, v: V) => (fe.autoTitle ? fe.autoTitle(v) : String(v.title || '')).trim();
 
-export const empty = (f: Fld, x: any) => (Array.isArray(x) ? x.length === 0 : x === undefined || x === null || String(x).trim() === '');
+const empty = (f: Fld, x: any) => (Array.isArray(x) ? x.length === 0 : x === undefined || x === null || String(x).trim() === '');
 
 /** Returns field errors. mode 'draft' only needs a title; 'publish' validates everything visible. */
-export function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fld[]): Record<string, string> {
+function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fld[]): Record<string, string> {
   const e: Record<string, string> = {};
   if (mode === 'draft') { if (!titleOf(fe, v) && !fe.autoTitle) e.title = 'Add a title to save a draft'; return e; }
   const fields = only ?? fe.steps.flatMap(s => s.f);
@@ -289,6 +289,16 @@ export function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fl
 
 return { FEATURES, FM, TOPUP_NOTE, PLATFORM_MANAGED, FUI, defaults, titleOf, validate };
 })();
+export const FM = FX.FM;
+export const TOPUP_NOTE = FX.TOPUP_NOTE;
+export const PLATFORM_MANAGED = FX.PLATFORM_MANAGED;
+export const FUI = FX.FUI;
+export const visible = FX.visible;
+export const defaults = FX.defaults;
+export const titleOf = FX.titleOf;
+export const empty = FX.empty;
+export const validate = FX.validate;
+
 
 /* ---------- theme ---------- */
 export const LIGHT = { blue: '#2D5BFF', ink: '#182033', mute: '#6F7890', line: '#E8ECF5', bg: '#F5F7FC', card: '#FFFFFF', soft: '#EEF1FF', chip: '#F3F5FA', good: '#16794B', goodBg: '#E3F7EC', warn: '#96650B', warnBg: '#FFF2D7', bad: '#C65D2E', badBg: '#FDE3E3', badFg: '#B3261E', ref: '#FFF0E8', scrim: 'rgba(15,23,42,0.35)' };
