@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { Feature, FM, LIGHT, useTheme, useS, money, iso, parseISO, addDays, initials, errText, uuid, PayRule, STATUS_UI, MAX_BUSINESSES, LANGUAGES, customRange, rpc, useQ, useApp, ArgCtx, useArg, useAct, Icon, Btn, Chips, Toggle, Field, Skel, ErrBox, Avatar, Row, Divided, SheetShell, DateField, Wrap } from "./BusinessSpaceShared";
+import { Feature, FX, after, FM, LIGHT, useTheme, useS, money, iso, parseISO, addDays, initials, errText, uuid, PayRule, STATUS_UI, MAX_BUSINESSES, LANGUAGES, customRange, rpc, useQ, useApp, ArgCtx, useArg, useAct, Icon, Btn, Chips, Toggle, Field, Skel, ErrBox, Avatar, Row, Divided, SheetShell, DateField, Wrap } from "./BusinessSpaceShared";
 
 function ProfileSheet() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
@@ -226,7 +226,7 @@ function MfaSheet() {
     </SheetShell>
   );
 }
-export function SheetHost({ sheet }: { sheet: { name: string; arg?: any } | null }) {
+function SheetHost({ sheet }: { sheet: { name: string; arg?: any } | null }) {
   if (!sheet) return null;
   const map: Record<string, React.ReactNode> = { profile: <ProfileSheet />, switch: <SwitchSheet />, addBusiness: <AddBusinessSheet />, delete: <DeleteBusinessSheet />, language: <LanguageSheet />, custom: <CustomRangeSheet />, stock: <StockSheet />, refund: <RefundSheet />, promo: <PromoSheet />, payout: <PayoutSetupSheet />, request: <PayoutRequestSheet />, password: <PasswordSheet />, mfa: <MfaSheet /> };
   return <ArgCtx.Provider value={sheet.arg}>{map[sheet.name] ?? null}</ArgCtx.Provider>;
