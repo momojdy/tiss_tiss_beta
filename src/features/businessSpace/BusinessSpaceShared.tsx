@@ -53,7 +53,7 @@ const T = mk(D.text), A = mk(D.area), N = mk(D.num), M = mk(D.money), Bo = mk(D.
 const S = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'sel', opts, ...o });
 const C = (k: string, l: string, opts: string[], o: Partial<Fld> = {}): Fld => ({ k, l, t: 'chips', opts, ...o });
 const DESC = (min = 30) => A('desc', 'Description', { req: true, min, max: 4000 });
-export const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 const after = (a: any, b: any) => a && b && new Date(b).getTime() <= new Date(a).getTime();
 
 const GOODS: Record<string, string[]> = {
@@ -370,6 +370,8 @@ export function customRange(from: string, to: string): Range { return { key: 'cu
 /* ---------- data layer ---------- */
 async function q<T = any>(p: PromiseLike<{ data: T | null; error: any }>): Promise<T> { const { data, error } = await p; if (error) throw error; return data as T; }
 export const rpc = <T = any,>(fn: string, args: Record<string, unknown>) => q<T>(supabase.rpc(fn, args) as any);
+export async function q<T = any>(p: PromiseLike<{ data: T | null; error: any }>): Promise<T> { const { data, error } = await p; if (error) throw error; return data as T; }
+
 export function useQ<T>(fn: () => Promise<T>, deps: unknown[]) {
   const [s, set] = useState<{ d: T | null; l: boolean; e: string | null }>({ d: null, l: true, e: null });
   const n = useRef(0);
