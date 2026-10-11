@@ -4,12 +4,6 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Circle, G, Line, Polyline, Rect, SvgXml, Text as SvgText } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { decode } from 'base64-arraybuffer';
-import * as Device from 'expo-device';
-import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
-import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
@@ -147,7 +141,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => { supabase.from('notification_prefs').select('push,email').eq('user_id', user.id).maybeSingle().then(r => { if (r.data) setPrefS(r.data as any); }); }, [user.id]);
   const nav = { go: (page: string, arg?: any) => { setStack(st => [...st, { page, arg, fromProfile: sheet?.name === 'profile' }]); setPanel(null); setSheet(null); } };
   useEffect(() => {
-    if (!pref.push || !Device.isDevice) return;
+    if (!pref.push || Platform.OS === 'web') return;
     (async () => {
       try {
         let { status } = await Notifications.getPermissionsAsync();
