@@ -341,6 +341,16 @@ export const ago = (v: string) => { const s = (Date.now() - new Date(v).getTime(
 export const dayHead = (v: string) => { const d = new Date(v), n = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(d).setHours(0, 0, 0, 0)) / 864e5); return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }); };
 export const initials = (n: string) => n.split(/\s+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 export const errText = (e: unknown) => (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e ?? 'Something went wrong'));
+export const displayText = (v: unknown): string => {
+  if (v == null) return '';
+  if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);
+  if (typeof v === 'object') {
+    const x = v as { message?: unknown; details?: unknown; hint?: unknown; code?: unknown };
+    if (typeof x.message === 'string' && x.message) return x.message;
+    try { return JSON.stringify(v); } catch { return 'Something went wrong'; }
+  }
+  return String(v);
+};
 export const greeting = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; };
 export const uuid = () => (globalThis as any).crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
@@ -433,14 +443,14 @@ export function Btn({ label, onPress, kind = 'primary', disabled, busy, small, s
   return (
     <Pressable accessibilityRole="button" disabled={disabled || busy} onPress={onPress} style={[{ minHeight: small ? 34 : 50, paddingHorizontal: small ? 14 : 18, borderRadius: small ? 10 : 14, backgroundColor: bg, alignItems: 'center', justifyContent: 'center', opacity: disabled ? 0.45 : 1, flexDirection: 'row', gap: 8 }, style]}>
       {busy ? <ActivityIndicator size="small" color={fg} /> : null}
-      <Text style={{ color: fg, fontWeight: '800', fontSize: small ? 12 : 15 }}>{label}</Text>
+      <Text style={{ color: fg, fontWeight: '800', fontSize: small ? 12 : 15 }}>{displayText(label)}</Text>
     </Pressable>
   );
 }
 export function Pill({ tone = 'warn', children }: any) {
   const t = useTheme();
   const m: any = { good: [t.goodBg, t.good], warn: [t.warnBg, t.warn], bad: [t.badBg, t.badFg], mute: [t.chip, t.mute], blue: [t.soft, t.blue] };
-  return <View style={{ alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 4, borderRadius: 99, backgroundColor: m[tone][0] }}><Text style={{ fontSize: 10, fontWeight: '800', color: m[tone][1] }}>{children}</Text></View>;
+  return <View style={{ alignSelf: 'flex-start', paddingHorizontal: 9, paddingVertical: 4, borderRadius: 99, backgroundColor: m[tone][0] }}><Text style={{ fontSize: 10, fontWeight: '800', color: m[tone][1] }}>{displayText(children)}</Text></View>;
 }
 export function StatusPill({ s }: { s: Status }) { return <Pill tone={STATUS_UI[s].tone}>{STATUS_UI[s].label}</Pill>; }
 export function Chips({ items, value, onChange }: any) {
@@ -459,11 +469,11 @@ export function Seg({ items, value, onChange }: any) {
   return <View style={{ flexDirection: 'row', backgroundColor: t.chip, borderRadius: 12, padding: 3 }}>{items.map((x: string) => <Pressable key={x} onPress={() => onChange(x)} style={{ flex: 1, paddingVertical: 8, borderRadius: 9, alignItems: 'center', backgroundColor: value === x ? t.card : 'transparent' }}><Text style={{ fontSize: 12, fontWeight: '700', color: value === x ? t.ink : t.mute }}>{x}</Text></Pressable>)}</View>;
 }
 export function Toggle({ value, onValueChange }: any) { const t = useTheme(); return <Switch value={value} onValueChange={onValueChange} trackColor={{ false: t.line, true: t.blue }} thumbColor="#fff" />; }
-export function Section({ title, right, onRight }: any) { const s = useS(); return <View style={s.sec}><Text style={s.secT}>{title}</Text>{right ? <Pressable onPress={onRight}><Text style={s.link}>{right}</Text></Pressable> : null}</View>; }
-export function Field({ label, style, ...rest }: any) { const s = useS(), t = useTheme(); return <View>{label ? <Text style={s.label}>{label}</Text> : null}<TextInput placeholderTextColor={t.mute} {...rest} style={[s.fld, style]} /></View>; }
+export function Section({ title, right, onRight }: any) { const s = useS(); return <View style={s.sec}><Text style={s.secT}>{displayText(title)}</Text>{right ? <Pressable onPress={onRight}><Text style={s.link}>{displayText(right)}</Text></Pressable> : null}</View>; }
+export function Field({ label, style, ...rest }: any) { const s = useS(), t = useTheme(); return <View>{label ? <Text style={s.label}>{displayText(label)}</Text> : null}<TextInput placeholderTextColor={t.mute} {...rest} style={[s.fld, style]} /></View>; }
 export function Empty({ icon = 'text-box-search-outline', title, hint, cta, onCta }: any) {
   const t = useTheme();
-  return <View style={{ alignItems: 'center', paddingVertical: 28, paddingHorizontal: 12, gap: 6 }}><Icon name={icon} size={28} color={t.mute} /><Text style={{ fontSize: 14, fontWeight: '800', color: t.ink, textAlign: 'center' }}>{title}</Text>{hint ? <Text style={{ fontSize: 12, color: t.mute, textAlign: 'center', lineHeight: 18 }}>{hint}</Text> : null}{cta ? <Btn small label={cta} onPress={onCta} style={{ marginTop: 8 }} /> : null}</View>;
+  return <View style={{ alignItems: 'center', paddingVertical: 28, paddingHorizontal: 12, gap: 6 }}><Icon name={icon} size={28} color={t.mute} /><Text style={{ fontSize: 14, fontWeight: '800', color: t.ink, textAlign: 'center' }}>{displayText(title)}</Text>{hint ? <Text style={{ fontSize: 12, color: t.mute, textAlign: 'center', lineHeight: 18 }}>{displayText(hint)}</Text> : null}{cta ? <Btn small label={displayText(cta)} onPress={onCta} style={{ marginTop: 8 }} /> : null}</View>;
 }
 export function Skel({ h = 80, style }: any) {
   const t = useTheme(), o = useRef(new Animated.Value(0.5)).current;
@@ -474,7 +484,7 @@ export function ErrBox({ e, retry }: any) { const s = useS(); return <View style
 export function Loading({ n = 3, h = 70 }: any) { return <View style={{ gap: 10 }}>{Array.from({ length: n }).map((_, i) => <Skel key={i} h={h} />)}</View>; }
 export function Avatar({ text, size = 44, logo, radius, onPress, bg }: any) {
   const t = useTheme(), r = radius ?? size * 0.3;
-  const inner = logo ? <Image source={{ uri: logo }} style={{ width: size, height: size, borderRadius: r }} /> : <View style={{ width: size, height: size, borderRadius: r, backgroundColor: bg ?? t.blue, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: '#fff', fontWeight: '800', fontSize: size * 0.34 }}>{text}</Text></View>;
+  const inner = logo ? <Image source={{ uri: logo }} style={{ width: size, height: size, borderRadius: r }} /> : <View style={{ width: size, height: size, borderRadius: r, backgroundColor: bg ?? t.blue, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: '#fff', fontWeight: '800', fontSize: size * 0.34 }}>{displayText(text)}</Text></View>;
   return onPress ? <Pressable accessibilityRole="button" onPress={onPress}>{inner}</Pressable> : inner;
 }
 export function FIcon({ k, size = 36 }: any) {
@@ -483,7 +493,7 @@ export function FIcon({ k, size = 36 }: any) {
 }
 export function Row({ left, title, sub, sub2, right, onPress, last }: any) {
   const s = useS();
-  const body = <View style={[s.ar, !last && null]}>{left}<View style={s.g}><Text style={s.rt}>{title}</Text>{sub ? <Text style={s.sub}>{sub}</Text> : null}{sub2 ? <Text style={s.sub}>{sub2}</Text> : null}</View>{right}</View>;
+  const body = <View style={[s.ar, !last && null]}>{left}<View style={s.g}><Text style={s.rt}>{displayText(title)}</Text>{sub ? <Text style={s.sub}>{displayText(sub)}</Text> : null}{sub2 ? <Text style={s.sub}>{displayText(sub2)}</Text> : null}</View>{right}</View>;
   return onPress ? <Pressable onPress={onPress}>{body}</Pressable> : body;
 }
 export const Divided = ({ children }: any) => { const s = useS(); const a = React.Children.toArray(children).filter(Boolean); return <>{a.map((c, i) => <View key={i} style={i ? s.div : undefined}>{c}</View>)}</>; };
@@ -495,7 +505,7 @@ export function Pg({ title, onBack, right, children, scroll = true, refreshing, 
     <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.bg, zIndex: 25, paddingTop: ins.top + 8 }}>
       <View style={{ paddingHorizontal: 16, gap: 4 }}>
         <Pressable onPress={onBack} accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', height: 30 }}><Icon name="chevron-left" size={22} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800', fontSize: 14 }}>Back</Text></Pressable>
-        <View style={s.row}><Text style={[s.h1, { flex: 1 }]} numberOfLines={1}>{title}</Text>{right}</View>
+        <View style={s.row}><Text style={[s.h1, { flex: 1 }]} numberOfLines={1}>{displayText(title)}</Text>{right}</View>
       </View>
       {scroll ? (
         <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ padding: 16, paddingBottom: ins.bottom + 60, gap: 14 }} refreshControl={onRefresh ? <RefreshControl refreshing={!!refreshing} onRefresh={onRefresh} tintColor={t.blue} /> : undefined}>{children}</ScrollView>
@@ -513,7 +523,7 @@ export function SheetShell({ title, onClose, children, tall }: any) {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={{ backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingTop: 10, paddingBottom: ins.bottom + 16, maxHeight: H * (tall ? 0.9 : 0.8) }}>
           <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
-          <View style={[s.row, { marginBottom: 6 }]}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{title}</Text><Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable></View>
+          <View style={[s.row, { marginBottom: 6 }]}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{displayText(title)}</Text><Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable></View>
           <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
         </View>
       </KeyboardAvoidingView>
@@ -549,7 +559,7 @@ export function PanelSheet({ title, onClose, children }: any) {
       <Animated.View style={{ height: h, backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingBottom: ins.bottom + 8, overflow: 'hidden' }}>
         <View {...head.panHandlers} style={{ paddingTop: 10 }}>
           <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 12 }} />
-          <View style={[s.row, { marginBottom: 10 }]}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{title}</Text><Pressable onPress={() => to(0, onClose)} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable></View>
+          <View style={[s.row, { marginBottom: 10 }]}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{displayText(title)}</Text><Pressable onPress={() => to(0, onClose)} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable></View>
         </View>
         <View style={{ flex: 1 }} {...body.panHandlers}>
           <ScrollView onScroll={(e: any) => { scrollY.current = e.nativeEvent.contentOffset.y; }} scrollEventThrottle={16} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 24 }}>{children}</ScrollView>
@@ -588,7 +598,7 @@ export function DateField({ type, value, onChange }: any) {
   };
   return (
     <View>
-      <Pressable onPress={open} style={[s.fld, { justifyContent: 'center' }]}><Text style={{ color: value ? t.ink : t.mute, fontSize: 14 }}>{label}</Text></Pressable>
+      <Pressable onPress={open} style={[s.fld, { justifyContent: 'center' }]}><Text style={{ color: value ? t.ink : t.mute, fontSize: 14 }}>{displayText(label)}</Text></Pressable>
       {show ? <DateTimePicker value={toDate(type, value)} mode={show} is24Hour onChange={pick} display={Platform.OS === 'ios' ? 'spinner' : 'default'} /> : null}
       {show && Platform.OS === 'ios' ? <Btn small kind="soft" label="Done" onPress={() => setShow(null)} style={{ alignSelf: 'flex-end', marginTop: 6 }} /> : null}
     </View>
@@ -936,8 +946,8 @@ export function Banner({ icon = 'credit-card-outline', text, onPress, tone = 'so
   return (
     <Pressable onPress={onPress} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, backgroundColor: bad ? t.badBg : t.soft }}>
       <View style={{ width: 38, height: 38, borderRadius: 12, backgroundColor: t.card, alignItems: 'center', justifyContent: 'center' }}><Icon name={icon} size={20} color={bad ? t.badFg : t.blue} /></View>
-      <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: bad ? t.badFg : t.blue }}>{text}</Text>
-      {cta ? <Btn small label={cta} onPress={onPress} /> : <Icon name="arrow-right" size={18} color={bad ? t.badFg : t.blue} />}
+      <Text style={{ flex: 1, fontSize: 13, fontWeight: '700', color: bad ? t.badFg : t.blue }}>{displayText(text)}</Text>
+      {cta ? <Btn small label={displayText(cta)} onPress={onPress} /> : <Icon name="arrow-right" size={18} color={bad ? t.badFg : t.blue} />}
       {onClose ? <Pressable onPress={onClose} accessibilityLabel="Dismiss" hitSlop={10}><Icon name="close" size={18} color={t.mute} /></Pressable> : null}
     </Pressable>
   );
