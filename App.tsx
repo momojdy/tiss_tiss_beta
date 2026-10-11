@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
-import { Pressable, Text, View } from 'react-native';
+import { Alert, Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
@@ -90,6 +90,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [authenticated, setAuthenticated] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [appMode, setAppMode] = useState<AppMode>('buyer');
+  const [authInitialMode, setAuthInitialMode] = useState<RequestedMode>('buyer');
   const routeAuthenticatedUser = async (requestedMode: RequestedMode = 'buyer') => {
     const { data: userResult, error: userError } = await supabase.auth.getUser();
     if (userError) throw userError;
@@ -117,6 +118,39 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     }
     setAuthenticated(true);
     setScreen('auth');
+  };
+
+  const handleOpenBusinessSpace = async () => {
+    try {
+      const { data: modes, error } = await supabase.rpc('get_my_account_modes');
+      if (error) throw error;
+      if (modes?.business === true) {
+        setAppMode('vendor');
+        setBuyerScreen('home');
+        return;
+      }
+      Alert.alert(
+        'Register for Business Space',
+        'Your account does not have B&P 2P mode yet. Register separately with B&P 2P selected. Your Buyer account will remain separate.',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Continue to registration',
+            onPress: () => {
+              void (async () => {
+                await supabase.auth.signOut();
+                setAuthenticated(false);
+                setAppMode('buyer');
+                setAuthInitialMode('business');
+                setScreen('auth');
+              })().catch(error => Alert.alert('Unable to continue', error instanceof Error ? error.message : 'Please try again.'));
+            },
+          },
+        ],
+      );
+    } catch (error) {
+      Alert.alert('Business Space unavailable', error instanceof Error ? error.message : 'Please try again.');
+    }
   };
 
   useEffect(() => {
@@ -194,14 +228,14 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletNotificationSettings') return <WalletNotificationSettingsScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletNotifications') return <WalletNotificationsScreen onBack={() => setBuyerScreen('wallet')} onPayMoneyRequest={(requestId) => { console.info('Pay money request:', requestId); }} />;
       if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => setBuyerScreen('me')} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} />;
-      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} />; }
+      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
       return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
   if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
-  return <AuthScreen onSignInPressed={async (email, password, requestedMode) => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
+  return <AuthScreen initialMode={authInitialMode} onSignInPressed={async (email, password, requestedMode) => { const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
     const wantsBusiness = ['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase());
     const { data, error } = await supabase.auth.signUp({
       email,
