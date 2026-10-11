@@ -16,9 +16,9 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { Feature, FX, LIGHT, useTheme, useS, money, iso, parseISO, addDays, initials, errText, uuid, PayRule, STATUS_UI, MAX_BUSINESSES, LANGUAGES, customRange, rpc, useQ, useApp, ArgCtx, useArg, useAct, Icon, Btn, Chips, Toggle, Field, Skel, ErrBox } from "./BusinessSpaceShared";
+import { Feature, FX, FM, LIGHT, useTheme, useS, money, iso, parseISO, addDays, initials, errText, uuid, PayRule, STATUS_UI, MAX_BUSINESSES, LANGUAGES, customRange, rpc, useQ, useApp, ArgCtx, useArg, useAct, Icon, Btn, Chips, Toggle, Field, Skel, ErrBox, Avatar, Row, Divided, SheetShell, DateField, Wrap } from "./BusinessSpaceShared";
 
-function ProfileSheet() {
+export function ProfileSheet() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
   const open = (page: string) => app.go(page);
   const R = (title: string, sub: string | undefined, on: () => void) => <Row title={title} sub={sub} onPress={on} right={<Icon name="chevron-right" size={18} color={t.mute} />} />;
@@ -43,7 +43,7 @@ function ProfileSheet() {
     </SheetShell>
   );
 }
-function SwitchSheet() {
+export function SwitchSheet() {
   const app = useApp(), s = useS(), t = useTheme(), full = app.bizList.length >= MAX_BUSINESSES;
   return (
     <SheetShell title="Switch business" onClose={app.closeSheet}>
@@ -54,7 +54,7 @@ function SwitchSheet() {
     </SheetShell>
   );
 }
-function AddBusinessSheet() {
+export function AddBusinessSheet() {
   const app = useApp(), a = useAct(), [name, setName] = useState('');
   const create = async () => {
     if (app.bizList.length >= MAX_BUSINESSES) { app.toast(`You can have up to ${MAX_BUSINESSES} businesses`); return; }
@@ -63,7 +63,7 @@ function AddBusinessSheet() {
   };
   return <SheetShell title="Add business" onClose={app.closeSheet}><Field label="Business name" value={name} onChangeText={setName} placeholder="e.g. Marie's Kitchen" autoFocus /><Btn style={{ marginTop: 16 }} label="Create business" disabled={name.trim().length < 2} busy={a.busy} onPress={create} /></SheetShell>;
 }
-function DeleteBusinessSheet() {
+export function DeleteBusinessSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz, last = app.bizList.length === 1;
   const chk = useQ(() => rpc<{ blockers: string[] }>('delete_business_check', { p_business: b.id }), [b.id]);
   const [txt, setTxt] = useState('');
@@ -86,11 +86,11 @@ function DeleteBusinessSheet() {
     </SheetShell>
   );
 }
-function LanguageSheet() {
+export function LanguageSheet() {
   const app = useApp(), t = useTheme();
   return <SheetShell title="Language" onClose={() => app.sheet('profile')}><Divided>{LANGUAGES.map(l => <Row key={l} onPress={() => { app.setLang(l); app.sheet('profile'); app.toast(`Language set to ${l}`); }} title={l} right={app.lang === l ? <Icon name="check" size={20} color={t.blue} /> : null} />)}</Divided></SheetShell>;
 }
-function CustomRangeSheet() {
+export function CustomRangeSheet() {
   const app = useApp(), s = useS();
   const [from, setFrom] = useState(app.range.key === 'custom' ? app.range.from : iso(addDays(new Date(), -13))), [to, setTo] = useState(app.range.key === 'custom' ? app.range.to : iso(new Date()));
   const preset = (k: string) => { const t0 = new Date(); if (k === 'm') { setFrom(iso(new Date(t0.getFullYear(), t0.getMonth(), 1))); setTo(iso(t0)); } else if (k === 'lm') { setFrom(iso(new Date(t0.getFullYear(), t0.getMonth() - 1, 1))); setTo(iso(new Date(t0.getFullYear(), t0.getMonth(), 0))); } else if (k === 'y') { setFrom(iso(new Date(t0.getFullYear(), 0, 1))); setTo(iso(t0)); } else { setFrom(iso(addDays(t0, -13))); setTo(iso(t0)); } };
@@ -108,7 +108,7 @@ function CustomRangeSheet() {
     </SheetShell>
   );
 }
-function StockSheet() {
+export function StockSheet() {
   const app = useApp(), s = useS(), a = useAct(), l = useArg() as any;
   const vars = useQ(() => q<any[]>(supabase.from('listing_variants').select('id,name,value,stock').eq('listing_id', l.id)), [l.id]);
   const [target, setTarget] = useState(''), [delta, setDelta] = useState(''), [reason, setReason] = useState('Restock');
@@ -124,7 +124,7 @@ function StockSheet() {
     </SheetShell>
   );
 }
-function RefundSheet() {
+export function RefundSheet() {
   const app = useApp(), s = useS(), a = useAct(), o = useArg() as any, max = Number(o.amount) - Number(o.refunded), key = useRef(uuid()), [amt, setAmt] = useState(max.toFixed(2));
   const v = parseFloat(amt);
   return (
@@ -135,7 +135,7 @@ function RefundSheet() {
     </SheetShell>
   );
 }
-function PromoSheet() {
+export function PromoSheet() {
   const app = useApp(), s = useS(), a = useAct(), fk = app.meta.feats.map(f => f.feature), [title, setTitle] = useState(''), [feat, setFeat] = useState(fk[0] ?? ''), [d, setD] = useState('10');
   return (
     <SheetShell title="Create promotion" onClose={app.closeSheet}>
@@ -146,7 +146,7 @@ function PromoSheet() {
     </SheetShell>
   );
 }
-function PayoutSetupSheet() {
+export function PayoutSetupSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), p = app.meta.payout;
   const start = () => a.run(async () => {
     const { data, error } = await supabase.functions.invoke('payout-onboarding', { body: { business_id: app.biz.id, return_url: `${APP_URL}/business/payouts` } });
@@ -164,7 +164,7 @@ function PayoutSetupSheet() {
     </SheetShell>
   );
 }
-function PayoutRequestSheet() {
+export function PayoutRequestSheet() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz, rules = app.meta.rules, payOK = app.meta.payout?.status === 'verified', min = app.meta.minWithdrawal;
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: b.id, p_from: app.range.from, p_to: app.range.to, p_feature: null }), [b.id]);
   const usage = useQ(() => rpc<Record<string, number>>('payout_usage', { p_business: b.id }), [b.id]);
@@ -192,7 +192,7 @@ function PayoutRequestSheet() {
     </SheetShell>
   );
 }
-function PasswordSheet() {
+export function PasswordSheet() {
   const app = useApp(), a = useAct(), [pw, setPw] = useState(''), [pw2, setPw2] = useState('');
   const bad = pw.length < 8 ? 'Use at least 8 characters' : pw !== pw2 ? 'Passwords do not match' : '';
   return (
@@ -203,7 +203,7 @@ function PasswordSheet() {
     </SheetShell>
   );
 }
-function MfaSheet() {
+export function MfaSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct();
   const [f, setF] = useState<any>(null), [code, setCode] = useState(''), [err, setErr] = useState('');
   useEffect(() => { (async () => { const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' }); if (error) setErr(error.message); else setF(data); })(); }, []);
@@ -226,7 +226,7 @@ function MfaSheet() {
     </SheetShell>
   );
 }
-function SheetHost({ sheet }: { sheet: { name: string; arg?: any } | null }) {
+export function SheetHost({ sheet }: { sheet: { name: string; arg?: any } | null }) {
   if (!sheet) return null;
   const map: Record<string, React.ReactNode> = { profile: <ProfileSheet />, switch: <SwitchSheet />, addBusiness: <AddBusinessSheet />, delete: <DeleteBusinessSheet />, language: <LanguageSheet />, custom: <CustomRangeSheet />, stock: <StockSheet />, refund: <RefundSheet />, promo: <PromoSheet />, payout: <PayoutSetupSheet />, request: <PayoutRequestSheet />, password: <PasswordSheet />, mfa: <MfaSheet /> };
   return <ArgCtx.Provider value={sheet.arg}>{map[sheet.name] ?? null}</ArgCtx.Provider>;
