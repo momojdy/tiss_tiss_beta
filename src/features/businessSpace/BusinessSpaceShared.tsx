@@ -470,7 +470,7 @@ export function Skel({ h = 80, style }: any) {
   useEffect(() => { const a = Animated.loop(Animated.sequence([Animated.timing(o, { toValue: 1, duration: 700, useNativeDriver: true }), Animated.timing(o, { toValue: 0.5, duration: 700, useNativeDriver: true })])); a.start(); return () => a.stop(); }, [o]);
   return <Animated.View style={[{ height: h, borderRadius: 16, backgroundColor: t.chip, opacity: o }, style]} />;
 }
-export function ErrBox({ e, retry }: any) { const s = useS(); return <View style={[s.card, { alignItems: 'center', gap: 8 }]}><Icon name="alert-circle-outline" size={24} color="#C65D2E" /><Text style={s.title}>Couldn't load this</Text><Text style={[s.mut, { textAlign: 'center' }]}>{e}</Text><Btn small label="Retry" onPress={retry} /></View>; }
+export function ErrBox({ e, retry }: any) { const s = useS(); return <View style={[s.card, { alignItems: 'center', gap: 8 }]}><Icon name="alert-circle-outline" size={24} color="#C65D2E" /><Text style={s.title}>Couldn't load this</Text><Text style={[s.mut, { textAlign: 'center' }]}>{errText(e)}</Text><Btn small label="Retry" onPress={retry} /></View>; }
 export function Loading({ n = 3, h = 70 }: any) { return <View style={{ gap: 10 }}>{Array.from({ length: n }).map((_, i) => <Skel key={i} h={h} />)}</View>; }
 export function Avatar({ text, size = 44, logo, radius, onPress, bg }: any) {
   const t = useTheme(), r = radius ?? size * 0.3;
