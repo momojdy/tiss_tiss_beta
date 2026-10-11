@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg } from "./BusinessSpaceShared";
+import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, q } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
@@ -96,7 +96,7 @@ export function SearchPage() {
   );
 }
 /** Edge handle: arrow tab, tap to reveal the search icon, tap again to open search. Drag it; it rests only on the left or right edge. */
-function SearchHandle({ onOpen }: { onOpen: () => void }) {
+export function SearchHandle({ onOpen }: { onOpen: () => void }) {
   const t = useTheme(), ins = useSafeAreaInsets(), { width: W, height: H } = useWindowDimensions();
   const [side, setSide] = useState<'l' | 'r'>('r'), [open, setOpen] = useState(false), [drag, setDrag] = useState(false);
   const pos = useRef(new Animated.ValueXY({ x: 0, y: H * 0.45 })).current, timer = useRef<any>(null), sideRef = useRef<'l' | 'r'>('r'), openRef = useRef(false), y0 = useRef(H * 0.45), x0 = useRef(0);
