@@ -287,7 +287,7 @@ function validate(fe: Feature, v: V, mode: 'draft' | 'publish', only?: Fld[]): R
   return e;
 }
 
-return { FEATURES, FM, TOPUP_NOTE, PLATFORM_MANAGED, FUI, defaults, titleOf, validate };
+return { FEATURES, FM, TOPUP_NOTE, PLATFORM_MANAGED, FUI, visible, defaults, titleOf, empty, validate };
 })();
 export const FM = FX.FM;
 export const TOPUP_NOTE = FX.TOPUP_NOTE;
