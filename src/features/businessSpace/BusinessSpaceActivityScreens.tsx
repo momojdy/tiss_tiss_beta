@@ -16,7 +16,7 @@ import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
-import { FX, C, FEATURES, FM, FUI, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, dayHead, errText, rpc, useQ, useApp, Btn, Chips, Empty, ErrBox, Loading, FIcon, Row, Divided, Pg, RangeBar, ActionRow, ActivityRow } from "./BusinessSpaceShared";
+import { FX, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, dayHead, errText, rpc, useQ, useApp, Btn, Chips, Empty, ErrBox } from "./BusinessSpaceShared";
 
 export function ActionsPage() {
   const app = useApp(), s = useS();
@@ -51,7 +51,7 @@ export function ActivityPage() {
     </Pg>
   );
 }
-function ExplorePage() {
+export function ExplorePage() {
   const app = useApp(), s = useS(), t = useTheme(), on = new Set(app.meta.feats.map(f => f.feature));
   return (
     <Pg title="Explore more ways to sell" onBack={app.back}>
@@ -68,7 +68,7 @@ function ExplorePage() {
 }
 
 /* ---------- charts ---------- */
-function ChartsPage() {
+export function ChartsPage() {
   const app = useApp(), s = useS(), t = useTheme(), { range } = app;
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: app.biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [app.biz.id, range.from, range.to, app.tick]);
   const [ci, setCi] = useState<number | null>(null);
