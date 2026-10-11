@@ -489,7 +489,7 @@ function BottomNav() {
           label="Battle"
           height={80}
           justify="flex-end"
-          padBottom={15}
+          padBottom={13}
           icon={
             <View style={styles.battleIconWrap}>
               <Animated.View style={{ transform: [{ rotate: battleRotate }] }}>
