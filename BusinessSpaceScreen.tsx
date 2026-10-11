@@ -21,6 +21,18 @@ import { SheetHost } from "./src/features/businessSpace/BusinessSpaceSheets";
 /* ---------- notifications handler (foreground) ---------- */
 Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: false, shouldSetBadge: false } as any) });
 
+const BUSINESS_REQUEST_TIMEOUT_MS = 15000;
+
+function withBusinessRequestTimeout<T>(request: PromiseLike<T>, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error(`${label} timed out. Please check your connection and try again.`)), BUSINESS_REQUEST_TIMEOUT_MS);
+    Promise.resolve(request).then(
+      value => { clearTimeout(timeout); resolve(value); },
+      error => { clearTimeout(timeout); reject(error); },
+    );
+  });
+}
+
 const BIZ_COLS = 'id,name,logo_url,verification,payout_ready,is_live,description,phone,phone_country,email,address,city,country,website,hours,delivery_modes,deleted_at';
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
@@ -49,16 +61,16 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
   useEffect(() => {
     (async () => {
       try {
-        const { data, error } = await supabase.auth.getUser();
+        const { data, error } = await withBusinessRequestTimeout(supabase.auth.getUser(), 'Loading your Business Space session');
         if (error || !data.user) throw error ?? new Error('Your session has expired. Please sign in again.');
-        const p = await supabase.from('profiles').select('full_name,language').eq('id', data.user.id).maybeSingle();
+        const p = await withBusinessRequestTimeout(supabase.from('profiles').select('full_name,language').eq('id', data.user.id).maybeSingle(), 'Loading your profile');
         setUser({ id: data.user.id, email: data.user.email ?? '', name: p.data?.full_name ?? (data.user.user_metadata as any)?.full_name ?? (data.user.email ?? '').split('@')[0] });
       } catch (e) { setUerr(errText(e)); }
     })();
   }, []);
   const mem = useQ(async () => {
     if (!user) return [] as Biz[];
-    const rows = await q<any[]>(supabase.from('business_members').select(`role,businesses(${BIZ_COLS})`).eq('user_id', user.id));
+    const rows = await withBusinessRequestTimeout(q<any[]>(supabase.from('business_members').select(`role,businesses(${BIZ_COLS})`).eq('user_id', user.id)), 'Loading your businesses');
     return rows.filter(r => r.businesses && !r.businesses.deleted_at).map(r => ({ ...r.businesses, role: r.role })) as Biz[];
   }, [user?.id, tick]);
   const reloadBiz = useCallback(() => setTick(x => x + 1), []);
@@ -77,7 +89,7 @@ function FirstBusiness({ user, onCreated }: any) {
     (async () => {
       try {
         const name = String(user.name ?? '').trim() || String(user.email ?? '').split('@')[0] || 'My Business';
-        await rpc('create_business', { p_name: name });
+        await withBusinessRequestTimeout(rpc('create_business', { p_name: name }), 'Creating your business workspace');
         if (active) onCreated();
       } catch (e) {
         if (active) setError(e);
