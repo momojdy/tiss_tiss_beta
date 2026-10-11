@@ -24,7 +24,7 @@ import { MessagesPage, ConversationPage, NotificationsPage, SearchPage } from ".
 import { PromotionsPage, RegistrationPage, AuditPage, HelpPage, SecurityPage, BusinessInfoPage } from "./src/features/businessSpace/BusinessSpaceAccountScreens";
 import { SheetHost } from "./src/features/businessSpace/BusinessSpaceSheets";
 
-Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: false, shouldSetBadge: false } as any) });
+
 
 /* ---------- notifications handler (foreground) ---------- */
 Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: false, shouldSetBadge: false } as any) });
