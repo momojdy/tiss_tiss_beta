@@ -264,8 +264,16 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'verification' && <>
-                <Text style={styles.helper}>Email: {email || 'Not set'}\nStatus: {emailVerified ? 'Verified' : 'Not verified'}\nPhone: {phone || 'Not set'}\nStatus: {phoneVerified ? 'Verified' : 'Not verified'}</Text>
-                {!emailVerified && email.length > 0 && <Pressable disabled={saving} onPress={async () => { setSaving(true); try { const { error } = await supabase.auth.resend({ type: 'signup', email }); if (error) throw error; Alert.alert('Verification email sent', 'Check your inbox and spam folder.'); } catch (error) { Alert.alert('Could not send email', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } }} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Sending…' : 'Resend verification email'}</Text></Pressable>}
+                <View style={styles.verificationCard}>
+                  <Text style={styles.rowLabel}>Email address</Text>
+                  <Text style={styles.rowValue}>{email || 'Not added'}</Text>
+                  <Text style={[styles.statusText,{color:emailVerified?'#247A48':'#9A6500'}]}>{emailVerified ? 'Verified' : 'Verification required'}</Text>
+                  <View style={styles.statusDivider}/>
+                  <Text style={styles.rowLabel}>Phone number</Text>
+                  <Text style={styles.rowValue}>{phone || 'Not added'}</Text>
+                  <Text style={[styles.statusText,{color:phoneVerified?'#247A48':'#9A6500'}]}>{phoneVerified ? 'Verified' : 'Verification required'}</Text>
+                </View>
+                {!emailVerified && email.length > 0 && <Pressable disabled={saving} onPress={async () => { setSaving(true); try { const { error } = await supabase.auth.resend({ type: 'signup', email }); if (error) throw error; Alert.alert('Verification email sent', 'Check your inbox for the verification link.'); } catch (error) { Alert.alert('Could not send email', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } }} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Sending…' : 'Resend verification email'}</Text></Pressable>}
                 {!phoneVerified && <Pressable onPress={() => setAction('phone')} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>Verify phone number</Text></Pressable>}
               </>}
 
