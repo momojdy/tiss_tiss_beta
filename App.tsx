@@ -23,6 +23,7 @@ import WalletNotificationSettingsScreen from './src/screens/WalletNotificationSe
 import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import QRIdentityScreen from './src/screens/QRIdentityScreen';
+import VendorShopScreen from './src/screens/VendorShopScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
 import GoodiesHomeScreen from './src/screens/GoodiesHomeScreen';
@@ -58,7 +59,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -203,6 +204,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [shieldCheckout, setShieldCheckout] = useState({ quantity: 5, total: 1 });
   const [settingsDetail, setSettingsDetail] = useState<SettingsDetailKey>('language');
   const [qrKind, setQrKind] = useState<'buyer_identity' | 'wallet_receive' | 'vendor_shop'>('buyer_identity');
+  const [publicShop, setPublicShop] = useState({ vendorId: '', shopName: '' });
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
@@ -238,7 +240,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'frenziesGetStreakShield') return <FrenziesGetStreakShieldScreen onBack={() => setBuyerScreen('frenziesStreakShield')} onCheckout={(quantity, total) => { setShieldCheckout({ quantity, total }); setBuyerScreen('frenziesShieldCheckout'); }} />;
       if (buyerScreen === 'frenziesShieldCheckout') return <FrenziesStreakShieldCheckoutScreen quantity={shieldCheckout.quantity} total={shieldCheckout.total} onBack={() => setBuyerScreen('frenziesGetStreakShield')} />;
       if (buyerScreen === 'frenzies') return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} onOpenRankings={() => setBuyerScreen('frenziesRankings')} onOpenStreakShield={() => setBuyerScreen('frenziesStreakShield')} /></FrenziesChallengeLayer>;
-      if (buyerScreen === 'qrIdentity') return <QRIdentityScreen kind={qrKind} onBack={() => setBuyerScreen(qrKind === 'buyer_identity' ? 'me' : 'wallet')} />;
+      if (buyerScreen === 'vendorShop') return <VendorShopScreen shopName={publicShop.shopName} vendorId={publicShop.vendorId} onBack={() => setBuyerScreen('wallet')} />;
+      if (buyerScreen === 'qrIdentity') return <QRIdentityScreen kind={qrKind} onBack={() => setBuyerScreen(qrKind === 'buyer_identity' ? 'me' : 'wallet')} onOpenBuyer={() => setBuyerScreen('me')} onOpenShop={(vendorId, shopName) => { setPublicShop({ vendorId, shopName }); setBuyerScreen('vendorShop'); }} />;
       if (buyerScreen === 'walletAddNewCard') return <WalletAddNewCardScreen onBack={() => setBuyerScreen('walletBankCards')} />;
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
