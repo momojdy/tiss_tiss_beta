@@ -20,11 +20,16 @@ import { supabase } from '../../lib/supabase';
 import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow, q } from "./BusinessSpaceShared";
 
 
-function VendorShopQr({ businessId }: { businessId: string }) {
+function VendorShopQr({ businessId, isLive, verification }: { businessId: string; isLive: boolean; verification: string }) {
   const [record, setRecord] = useState<any>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const issue = useCallback(async () => {
+    if (!isLive || verification === 'restricted') {
+      setRecord(null);
+      setError(verification === 'restricted' ? 'Shop QR is unavailable while the business is restricted.' : 'Publish your shop to activate its public QR.');
+      return;
+    }
     setBusy(true); setError('');
     try {
       const { data, error: rpcError } = await supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: businessId });
@@ -33,7 +38,7 @@ function VendorShopQr({ businessId }: { businessId: string }) {
       setRecord(data);
     } catch (e) { setError(e instanceof Error ? e.message : 'Could not create shop QR.'); }
     finally { setBusy(false); }
-  }, [businessId]);
+  }, [businessId, isLive, verification]);
   useEffect(() => { void issue(); }, [issue]);
   const revoke = () => {
     if (!record?.id) return;
@@ -53,7 +58,7 @@ function VendorShopQr({ businessId }: { businessId: string }) {
     <Text style={{ alignSelf: 'stretch', color: '#233A58', fontSize: 16, fontWeight: '800' }}>Let customers find your shop</Text>
     {record?.token ? <View style={{ padding: 10, backgroundColor: '#FFFFFF', borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${record.token}`} size={174} color="#397BC6" backgroundColor="#FFFFFF" /></View> : <Text style={{ color: '#64748B', padding: 24 }}>{busy ? 'Preparing shop QR…' : error || 'QR revoked. Create a new one when ready.'}</Text>}
     <Text style={{ color: '#64748B', fontSize: 11, textAlign: 'center' }}>Blue identifies your shop. Refreshing revokes the old QR; your Vendor ID stays the same.</Text>
-    <Pressable disabled={busy} onPress={() => { if (record?.token) Alert.alert('Refresh shop QR?', 'The current QR will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }]); else void issue(); }} style={{ alignSelf: 'stretch', backgroundColor: '#397BC6', borderRadius: 10, paddingVertical: 11, alignItems: 'center' }}>
+    <Pressable disabled={busy || !isLive || verification === 'restricted'} onPress={() => { if (record?.token) Alert.alert('Refresh shop QR?', 'The current QR will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }]); else void issue(); }} style={{ alignSelf: 'stretch', backgroundColor: '#397BC6', borderRadius: 10, paddingVertical: 11, alignItems: 'center' }}>
       <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>{busy ? 'Preparing…' : record?.token ? 'Refresh shop QR' : 'Create shop QR'}</Text>
     </Pressable>
     {record?.token ? <Pressable onPress={revoke} style={{ alignSelf: 'stretch', borderWidth: 1, borderColor: '#C95B69', borderRadius: 10, paddingVertical: 10, alignItems: 'center' }}><Text style={{ color: '#B4455B', fontWeight: '800', fontSize: 12 }}>Revoke shop QR</Text></Pressable> : null}
@@ -84,7 +89,7 @@ export function Home() {
         <Text selectable style={{ color: t.ink, fontSize: 18, fontWeight: '800', letterSpacing: 1.1 }}>{biz.vendor_id ?? 'Assigning Vendor ID…'}</Text>
         <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
       </View>
-      <VendorShopQr businessId={biz.id} />
+      <VendorShopQr businessId={biz.id} isLive={!!biz.is_live} verification={biz.verification} />
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
       {biz.verification === 'restricted' ? <Banner tone="bad" icon="alert-circle-outline" text="Your business is restricted. View details" onPress={() => app.go('registration')} /> : null}
