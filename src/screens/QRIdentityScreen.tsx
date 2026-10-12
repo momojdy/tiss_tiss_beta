@@ -35,6 +35,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
 
   const issue = useCallback(async () => {
     setBusy(true);
+    setRecord(null);
     try {
       let result: any;
       if (kind === 'wallet_receive') {
@@ -152,8 +153,9 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         </> : kind === 'wallet_receive' ? <>
           <Text style={styles.caption}>This green QR is tied to wallet {walletId ? walletId.slice(0, 8).toUpperCase() : '…'}. Replacing the wallet creates a different QR.</Text>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color="#FFF" /><Text style={styles.primaryText}>Refresh wallet QR</Text></Pressable>
+          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked immediately. Your Wantiss number will not change.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color="#FFF" /><Text style={styles.primaryText}>Refresh buyer QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
-        {record?.id && kind !== 'wallet_receive' ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
+        {record?.id ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
       </View>
 
       {kind === 'wallet_receive' ? <View style={styles.scannerCard}>
