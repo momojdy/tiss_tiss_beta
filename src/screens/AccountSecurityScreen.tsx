@@ -275,7 +275,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
             <View style={styles.section}>
               <Text style={styles.sectionTitle}>{section.title}</Text>
               {section.rows.map((row, rowIndex) => (
-                <Pressable key={row.label} onPress={() => row.label === 'Login Devices' ? signOutOtherDevices() : openRow(row.action)} style={[styles.row, rowIndex < section.rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
+                <Pressable key={row.label} onPress={() => openRow(row.action)} style={[styles.row, rowIndex < section.rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
                   <View style={styles.rowCopy}>
                     <Text style={styles.rowLabel}>{row.label}</Text>
                     {row.label !== 'Deactivate or Delete Account' && <Text style={styles.rowValue} numberOfLines={1}>{rowValue(row.label)}</Text>}
