@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -15,7 +15,7 @@ type Props = {
 };
 const THEMES = {
   buyer_identity: { title: 'My Wantiss ID', subtitle: 'Your buyer identity', color: '#E8A0C5', pale: '#FFF0F7' },
-  wallet_receive: { title: 'Wallet QR', subtitle: 'A receiving QR for this specific wallet', color: '#438C53', pale: '#EFF8EF' },
+  wallet_receive: { title: 'Add me', subtitle: 'Share this wallet-specific receiving QR', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
 export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet }: Props) {
@@ -152,7 +152,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Text style={styles.caption}>This pink QR identifies your buyer account, not a wallet.</Text>
         </> : kind === 'wallet_receive' ? <>
           <Text style={styles.caption}>This green QR is tied to wallet {walletId ? walletId.slice(0, 8).toUpperCase() : '…'}. Replacing the wallet creates a different QR.</Text>
-          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color="#FFF" /><Text style={styles.primaryText}>Refresh wallet QR</Text></Pressable>
+          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
+          <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked immediately. Your Wantiss number will not change.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color="#FFF" /><Text style={styles.primaryText}>Refresh buyer QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
         {record?.id ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
