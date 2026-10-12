@@ -2,6 +2,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 import Svg, { Circle, G, Line, Polyline, Rect, SvgXml, Text as SvgText } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -112,6 +113,15 @@ export function BusinessInfoPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
   const [f, setF] = useState(() => ({ name: b.name, description: b.description ?? '', phone_country: b.phone_country ?? 'NG', phone: b.phone ?? '', email: b.email ?? '', website: b.website ?? '', address: b.address ?? '', city: b.city ?? '', country: b.country ?? 'NG', delivery_modes: b.delivery_modes ?? [], hours: (b.hours && Object.keys(b.hours).length ? b.hours : defaultHours()) as Record<string, any>, logo_url: b.logo_url }));
   const [picker, setPicker] = useState<null | 'phone' | 'country'>(null), [cq, setCq] = useState('');
+  const [vendorQr, setVendorQr] = useState<any>(null);
+  useEffect(() => {
+    let active = true;
+    if (!b.is_live || b.verification === 'restricted') { setVendorQr(null); return () => { active = false; }; }
+    void supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: b.id }).then(({ data, error }) => {
+      if (active && !error && data?.token) setVendorQr(data);
+    }).catch(() => undefined);
+    return () => { active = false; };
+  }, [b.id, b.is_live, b.verification]);
   const set = (k: string, v: any) => setF(p => ({ ...p, [k]: v }));
   const logo = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -138,6 +148,20 @@ export function BusinessInfoPage() {
   return (
     <>
       <Pg title="Business information" onBack={app.back}>
+        <View style={[s.card, { gap: 12 }]}>
+          <Text style={s.title}>Shop QR and Vendor ID</Text>
+          <Text style={s.mut}>Keep this permanent ID for your business. Customers can scan the blue QR to open your public shop.</Text>
+          <View style={[s.row, { alignItems: 'center', gap: 14 }]}>
+            <View style={{ width: 104, height: 104, backgroundColor: '#FFFFFF', borderRadius: 12, padding: 7, alignItems: 'center', justifyContent: 'center', borderWidth: 1, borderColor: '#C7DDFB' }}>
+              {vendorQr?.token ? <QRCode value={`wantiss://qr?token=${vendorQr.token}`} size={88} color="#397BC6" backgroundColor="#FFFFFF" /> : <Icon name="qrcode" size={46} color={t.mute} />}
+            </View>
+            <View style={s.g}>
+              <Text style={s.label}>PERMANENT VENDOR ID</Text>
+              <Text selectable style={{ color: t.ink, fontSize: 16, fontWeight: '800', letterSpacing: 0.6 }}>{b.vendor_id ?? 'Assigning Vendor ID…'}</Text>
+              <Text style={[s.mut, { marginTop: 6 }]}>{vendorQr?.token ? 'Your shop QR is ready.' : b.is_live ? 'Shop QR is loading or unavailable.' : 'Publish your shop to activate its QR.'}</Text>
+            </View>
+          </View>
+        </View>
         <View style={[s.card, s.row]}>
           <Pressable onPress={logo}><View><Avatar text={initials(f.name || 'B')} size={64} radius={18} logo={f.logo_url} /><View style={{ position: 'absolute', right: -6, bottom: -6, width: 26, height: 26, borderRadius: 13, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center' }}><Icon name="camera-outline" size={14} color="#fff" /></View></View></Pressable>
           <View style={s.g}><Text style={s.rt}>Business logo</Text><Text style={s.mut}>Square image, shown on your listings and profile.</Text>{f.logo_url ? <Pressable onPress={() => set('logo_url', null)}><Text style={[s.link, { color: t.bad, marginTop: 4 }]}>Remove</Text></Pressable> : null}</View>
