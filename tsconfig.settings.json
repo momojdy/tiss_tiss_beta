@@ -1,0 +1,14 @@
+{
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "noEmit": true
+  },
+  "files": [
+    "src/screens/SettingsScreen.tsx",
+    "src/screens/SettingsDetailScreen.tsx",
+    "src/screens/AddressesScreen.tsx",
+    "src/screens/PersonalInformationScreen.tsx",
+    "src/screens/AccountSecurityScreen.tsx"
+  ]
+}
