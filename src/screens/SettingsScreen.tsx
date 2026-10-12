@@ -3,8 +3,8 @@ import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import type { SettingsDetailKey } from './SettingsDetailScreen';
-type Props = { onBack: () => void; onAccountSecurityPress: () => void; onDetailPress: (key: SettingsDetailKey) => void; onSwitchAccount: () => void; onLogOut: () => void };
+import type { SettingsDetailKind } from './SettingsDetailScreen';
+type Props = { onBack: () => void; onAccountSecurityPress: () => void; onDetailPress: (key: SettingsDetailKind) => void; onSwitchAccount: () => void; onLogOut: () => void };
 
 const INK = '#1E1B3A';
 const MUTED = '#8D8997';
@@ -16,7 +16,7 @@ const SECTIONS = [
   { title: 'PRIVACY & SUPPORT', rows: ['Privacy & Permissions', 'Help Center', 'About Wantiss'] },
 ];
 
-const DETAIL_ROUTES: Record<string, SettingsDetailKey> = { 'Personal Information':'personalInformation', Addresses:'addresses', Language:'language', 'Region & Currency':'regionCurrency', Notifications:'notifications', 'Privacy & Permissions':'privacy', 'Help Center':'help', 'About Wantiss':'about' };
+const DETAIL_ROUTES: Record<string, SettingsDetailKey> = { 'Personal Information':'personalInfo', Addresses:'addresses', Language:'language', 'Region & Currency':'regionCurrency', Notifications:'notifications', 'Privacy & Permissions':'privacy', 'Help Center':'help', 'About Wantiss':'about' };
 function SettingSection({ title, rows, onAccountSecurityPress, onDetailPress }: { title: string; rows: string[]; onAccountSecurityPress?: () => void; onDetailPress: (key: SettingsDetailKey) => void }) {
   return (
     <View style={styles.section}>
