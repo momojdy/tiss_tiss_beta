@@ -164,7 +164,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       if (current.user) {
         const { error: metadataError } = await supabase.auth.updateUser({ data: { phone_country_code: dialCode(phoneCountryIso), phone_country_iso: phoneCountryIso, phone_number: phoneTarget } });
         if (metadataError) throw metadataError;
-        const { data: existingProfile, error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id).select('id').maybeSingle();
+        const { error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id);
         if (profileError) throw profileError;
         // Auth remains the source of truth for the verified phone even if a legacy profile row is missing.
       }
