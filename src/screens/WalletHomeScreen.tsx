@@ -88,7 +88,7 @@ export default function WalletHomeScreen({
             { label: 'Withdraw', icon: 'arrow-collapse-down' as const },
             { label: 'Utility', icon: 'water-outline' as const },
           ].map(action => (
-            <Pressable key={action.label} onPress={action.onPress} style={styles.actionItem}>
+            <Pressable key={action.label} onPress={'onPress' in action ? action.onPress : undefined} style={styles.actionItem}>
               <View style={styles.actionIcon}>
                 <MaterialCommunityIcons name={action.icon} size={18} color="#1A2517" />
               </View>
