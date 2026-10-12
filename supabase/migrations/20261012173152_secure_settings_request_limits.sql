@@ -1,5 +1,8 @@
+drop policy if exists "Users can insert own security requests" on public.account_security_requests;
+revoke insert on public.account_security_requests from authenticated, anon;
+grant select on public.account_security_requests to authenticated;
 create or replace function public.request_account_security_action(p_request_type text)
-returns jsonb language plpgsql security invoker set search_path = '' as $$
+returns jsonb language plpgsql security definer set search_path = '' as $
 declare v_user uuid := auth.uid(); v_limit integer; v_count integer;
 begin
   if v_user is null then raise exception 'Authentication required'; end if;
