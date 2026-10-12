@@ -29,6 +29,12 @@
         {
           "enableGooglePay": false
         }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Wantiss to use your camera to scan QR codes."
+        }
       ]
     ]
   }
