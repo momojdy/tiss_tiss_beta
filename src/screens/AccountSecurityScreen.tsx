@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
 
 type Props = { onBack: () => void };
-type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'linked' | 'account' | null;
+type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'linked' | 'account' | 'delete' | null;
 
 const INK = '#1E1B3A';
 const MUTED = '#8D8997';
@@ -15,7 +15,7 @@ const SECTIONS = [
   { title: 'ACCOUNT INFORMATION', rows: [{ label: 'Account ID', action: 'account' as Action }, { label: 'Phone Number', action: 'phone' as Action }, { label: 'Email Address', action: 'email' as Action }] },
   { title: 'LOGIN & SECURITY', rows: [{ label: 'Login Password', action: 'password' as Action }, { label: 'Account Verification', action: 'verification' as Action }, { label: 'Login Devices', action: 'devices' as Action }] },
   { title: 'CONNECTED ACCOUNTS', rows: [{ label: 'Linked Accounts', action: 'linked' as Action }] },
-  { title: 'ACCOUNT MANAGEMENT', rows: [{ label: 'Deactivate or Delete Account', action: 'account' as Action }] },
+  { title: 'ACCOUNT MANAGEMENT', rows: [{ label: 'Deactivate or Delete Account', action: 'delete' as Action }] },
 ];
 
 export default function AccountSecurityScreen({ onBack }: Props) {
@@ -236,7 +236,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
             <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 18) }]}>
               <View style={styles.sheetHandle} />
               <View style={styles.sheetHeader}>
-                <Text style={styles.sheetTitle}>{action === 'password' ? 'Change password' : action === 'email' ? 'Email address' : action === 'phone' ? 'Phone number' : action === 'verification' ? 'Account verification' : action === 'devices' ? 'Login devices' : action === 'linked' ? 'Linked accounts' : 'Account details'}</Text>
+                <Text style={styles.sheetTitle}>{action === 'password' ? 'Change password' : action === 'email' ? 'Email address' : action === 'phone' ? 'Phone number' : action === 'verification' ? 'Account verification' : action === 'devices' ? 'Login devices' : action === 'linked' ? 'Linked accounts' : action === 'delete' ? 'Account deletion' : 'Account details'}</Text>
                 <Pressable onPress={closeModal} hitSlop={10}><Ionicons name="close" size={22} color={MUTED} /></Pressable>
               </View>
 
@@ -280,7 +280,11 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               {action === 'account' && <>
                 <Text style={styles.helper}>Account ID</Text>
                 <Text selectable style={styles.accountId}>{userId || 'Unavailable'}</Text>
-                <Text style={styles.smallNote}>Account deletion is not offered from this screen because it requires a secure server-side deletion flow. Your account data has not been changed.</Text>
+              </>}
+
+              {action === 'delete' && <>
+                <Text style={styles.helper}>Account deactivation and deletion need a secure server-side process to remove or disable your account safely.</Text>
+                <Text style={styles.smallNote}>This action is not enabled yet. Your account and data have not been changed.</Text>
               </>}
             </View>
           </KeyboardAvoidingView>
