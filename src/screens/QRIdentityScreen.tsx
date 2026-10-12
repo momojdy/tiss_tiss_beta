@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import { CameraView, useCameraPermissions } from 'expo-camera';
@@ -13,13 +13,14 @@ type Props = {
   onOpenShop?: (vendorId: string, shopName: string) => void;
   onOpenWallet?: (token: string, recipient: any) => void;
   onOpenBuyer?: () => void;
+  initialToken?: string | null;
 };
 const THEMES = {
   buyer_identity: { title: 'My Wantiss ID', subtitle: 'Your buyer identity', color: '#E8A0C5', pale: '#FFF0F7' },
   wallet_receive: { title: 'Add me', subtitle: 'Share this wallet-specific receiving QR', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
-export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer }: Props) {
+export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer, initialToken }: Props) {
   const theme = THEMES[kind];
   const [record, setRecord] = useState<any>(null);
   const [busy, setBusy] = useState(true);
@@ -33,6 +34,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [requestId, setRequestId] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const resolveLock = useRef(false);
 
   const issue = useCallback(async () => {
     setBusy(true);
@@ -91,7 +93,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   };
 
   const resolve = async (scannedValue?: string) => {
-    if (resolving) return;
+    if (resolveLock.current || resolving) return;
+    resolveLock.current = true;
     const raw = (scannedValue ?? tokenInput).trim();
     const match = raw.match(/[?&]token=([^&]+)/i);
     const token = match ? decodeURIComponent(match[1]) : raw.replace(/^wantiss:\/\//i, '');
@@ -110,8 +113,12 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       if (data.destination === 'wallet-receive') onOpenWallet?.(token, data);
       if (data.destination === 'buyer-profile') onOpenBuyer?.();
     } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'Please try another QR.'); }
-    finally { setResolving(false); }
+    finally { setResolving(false); resolveLock.current = false; }
   };
+
+  useEffect(() => {
+    if (initialToken && !resolved) void resolve(initialToken);
+  }, [initialToken]);
 
   const pay = () => {
     const value = Number(amount);
@@ -150,6 +157,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           {busy ? <ActivityIndicator color={theme.color} /> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
         </View>
         {kind === 'buyer_identity' ? <>
+          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { if (!record?.token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
+          <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked. Your Wantiss number will stay the same.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh buyer QR</Text></Pressable>
           <Text style={styles.idLabel}>PERMANENT WANTISS NUMBER</Text>
           <Text selectable style={styles.idValue}>{wantissNumber || 'Loading your Wantiss number…'}</Text>
           <Text style={styles.caption}>This pink QR identifies your buyer account, not a wallet.</Text>
@@ -157,7 +166,6 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Text style={styles.caption}>This green QR is tied to wallet {walletId ? walletId.slice(0, 8).toUpperCase() : '…'}. Replacing the wallet creates a different QR.</Text>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
-          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked immediately. Your Wantiss number will not change.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color="#FFF" /><Text style={styles.primaryText}>Refresh buyer QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
         {record?.id ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
       </View>
