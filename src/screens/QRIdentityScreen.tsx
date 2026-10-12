@@ -28,6 +28,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [resolving, setResolving] = useState(false);
   const [paying, setPaying] = useState(false);
   const [walletId, setWalletId] = useState<string | null>(null);
+  const [wantissNumber, setWantissNumber] = useState('');
   const [wantissNumber, setWantissNumber] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -60,6 +61,17 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   }, [kind, businessId]);
 
   useEffect(() => { void issue(); }, [issue]);
+  useEffect(() => {
+    if (kind !== 'buyer_identity') return;
+    let active = true;
+    void (async () => {
+      const { data: userResult } = await supabase.auth.getUser();
+      if (!userResult.user) return;
+      const { data } = await supabase.from('profiles').select('wantiss_number').eq('id', userResult.user.id).maybeSingle();
+      if (active) setWantissNumber(data?.wantiss_number ?? '');
+    })();
+    return () => { active = false; };
+  }, [kind]);
   useEffect(() => { if (kind !== 'buyer_identity') return; void (async () => { const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; const { data } = await supabase.from('profiles').select('wantiss_number').eq('id', auth.user.id).maybeSingle(); setWantissNumber(data?.wantiss_number ?? null); })().catch(() => undefined); }, [kind]);
 
   const revoke = async () => {
@@ -162,5 +174,5 @@ function makeRequestId() {
   });
 }
 const styles=StyleSheet.create({
-  page:{flex:1,backgroundColor:'#F7F8FA'},header:{height:58,flexDirection:'row',alignItems:'center',paddingHorizontal:14,borderBottomWidth:1,borderBottomColor:'#ECEEF2',backgroundColor:'#FFF'},back:{width:38,height:38,alignItems:'center',justifyContent:'center'},headerTitle:{fontSize:17,fontWeight:'700',color:'#202735',marginLeft:6},content:{padding:16,paddingBottom:38,gap:14},hero:{borderRadius:22,borderWidth:1,padding:18,alignItems:'center'},eyebrow:{fontSize:10,fontWeight:'800',letterSpacing:1.3,alignSelf:'flex-start'},title:{fontSize:24,fontWeight:'800',color:'#202735',marginTop:8},subtitle:{fontSize:13,color:'#707887',textAlign:'center',marginTop:5,lineHeight:19},qrFrame:{backgroundColor:'#FFF',padding:14,borderRadius:18,marginTop:20,minHeight:236,minWidth:236,alignItems:'center',justifyContent:'center'},caption:{fontSize:12,color:'#6D7582',textAlign:'center',marginTop:14,lineHeight:18},primary:{minHeight:46,borderRadius:13,paddingHorizontal:18,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9,marginTop:18,width:'100%'},primaryText:{fontSize:14,fontWeight:'700',color:'#FFF'},security:{fontSize:11,color:'#858B96',textAlign:'center',lineHeight:17,paddingHorizontal:12},infoCard:{padding:16,borderRadius:16,backgroundColor:'#FFF'},infoTitle:{fontSize:14,fontWeight:'700',color:'#222B39'},infoBody:{fontSize:12,color:'#707887',lineHeight:18,marginTop:5},scannerCard:{padding:16,borderRadius:18,backgroundColor:'#FFF',gap:10},sectionTitle:{fontSize:16,fontWeight:'800',color:'#202735'},muted:{fontSize:12,color:'#747C8B',lineHeight:18},input:{minHeight:46,borderWidth:1,borderColor:'#E1E5EB',borderRadius:12,paddingHorizontal:13,fontSize:14,color:'#202735',backgroundColor:'#FFF'},outline:{minHeight:44,borderWidth:1.3,borderRadius:12,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:8},outlineText:{fontSize:13,fontWeight:'700'},recipient:{borderTopWidth:1,borderTopColor:'#ECEEF2',paddingTop:14,marginTop:4,gap:8},recipientName:{fontSize:18,fontWeight:'800',color:'#202735'}
+  page:{flex:1,backgroundColor:'#F7F8FA'},header:{height:58,flexDirection:'row',alignItems:'center',paddingHorizontal:14,borderBottomWidth:1,borderBottomColor:'#ECEEF2',backgroundColor:'#FFF'},back:{width:38,height:38,alignItems:'center',justifyContent:'center'},headerTitle:{fontSize:17,fontWeight:'700',color:'#202735',marginLeft:6},content:{padding:16,paddingBottom:38,gap:14},hero:{borderRadius:22,borderWidth:1,padding:18,alignItems:'center'},eyebrow:{fontSize:10,fontWeight:'800',letterSpacing:1.3,alignSelf:'flex-start'},title:{fontSize:24,fontWeight:'800',color:'#202735',marginTop:8},subtitle:{fontSize:13,color:'#707887',textAlign:'center',marginTop:5,lineHeight:19},qrFrame:{backgroundColor:'#FFF',padding:14,borderRadius:18,marginTop:20,minHeight:236,minWidth:236,alignItems:'center',justifyContent:'center'},caption:{fontSize:12,color:'#6D7582',textAlign:'center',marginTop:14,lineHeight:18},primary:{minHeight:46,borderRadius:13,paddingHorizontal:18,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9,marginTop:18,width:'100%'},primaryText:{fontSize:14,fontWeight:'700',color:'#FFF'},security:{fontSize:11,color:'#858B96',textAlign:'center',lineHeight:17,paddingHorizontal:12},infoCard:{padding:16,borderRadius:16,backgroundColor:'#FFF'},infoTitle:{fontSize:14,fontWeight:'700',color:'#222B39'},readableId:{fontSize:20,fontWeight:'800',color:'#BF008E',letterSpacing:1.2,marginTop:7},infoBody:{fontSize:12,color:'#707887',lineHeight:18,marginTop:5},scannerCard:{padding:16,borderRadius:18,backgroundColor:'#FFF',gap:10},sectionTitle:{fontSize:16,fontWeight:'800',color:'#202735'},muted:{fontSize:12,color:'#747C8B',lineHeight:18},input:{minHeight:46,borderWidth:1,borderColor:'#E1E5EB',borderRadius:12,paddingHorizontal:13,fontSize:14,color:'#202735',backgroundColor:'#FFF'},outline:{minHeight:44,borderWidth:1.3,borderRadius:12,flexDirection:'row',alignItems:'center',justifyContent:'center',gap:8},outlineText:{fontSize:13,fontWeight:'700'},recipient:{borderTopWidth:1,borderTopColor:'#ECEEF2',paddingTop:14,marginTop:4,gap:8},recipientName:{fontSize:18,fontWeight:'800',color:'#202735'}
 });
