@@ -16,6 +16,7 @@ export default function SettingsDetailScreen({screen,onBack}:Props) {
  const insets=useSafeAreaInsets();
  const [loading,setLoading]=useState(true);
  const [saving,setSaving]=useState(false);
+ const [saved,setSaved]=useState(false);
  const [language,setLanguage]=useState('English');
  const [region,setRegion]=useState('Haiti');
  const [currency,setCurrency]=useState('USD');
@@ -40,13 +41,13 @@ export default function SettingsDetailScreen({screen,onBack}:Props) {
  },[]);
  useEffect(()=>{void load()},[load]);
  const persist=async(next?:{language?:string;region?:string;currency?:string;notifications?:typeof notifications;privacy?:typeof privacy})=>{
-  setSaving(true);
+  setSaving(true);setSaved(false);
   try {
    const {data:{user},error:userError}=await supabase.auth.getUser();if(userError)throw userError;if(!user)throw new Error('Please sign in again.');
    const row={user_id:user.id,language:next?.language??language,region:next?.region??region,currency:next?.currency??currency,notification_preferences:next?.notifications??notifications,privacy_preferences:next?.privacy??privacy,updated_at:new Date().toISOString()};
    const {error}=await supabase.from('user_settings').upsert(row,{onConflict:'user_id'});if(error)throw error;
    if(next?.currency){const {error:currencyError}=await supabase.from('profiles').update({preferred_currency:next.currency}).eq('id',user.id);if(currencyError)throw currencyError;}
-   Alert.alert('Saved','Your settings have been updated.');
+   setSaved(true);
   } catch(e){Alert.alert('Could not save settings',e instanceof Error?e.message:'Please try again.');}
   finally{setSaving(false);}
  };
@@ -70,7 +71,7 @@ export default function SettingsDetailScreen({screen,onBack}:Props) {
  {screen==='privacy'&&<><Text style={styles.intro}>Privacy & permissions</Text><Text style={styles.helper}>Control optional data use. These settings are stored with your account.</Text><View style={styles.toggleRow}><View style={styles.toggleCopy}><Text style={styles.label}>Personalized experience</Text><Text style={styles.subLabel}>Use activity to personalize recommendations and content.</Text></View><Switch value={privacy.personalization} onValueChange={value=>togglePrivacy('personalization',value)} trackColor={{false:'#D8D4DB',true:'#D6A6C4'}} thumbColor={privacy.personalization?INK:'#FFFFFF'}/></View><View style={styles.toggleRow}><View style={styles.toggleCopy}><Text style={styles.label}>Optional analytics</Text><Text style={styles.subLabel}>Allow usage analytics to help improve Wantiss.</Text></View><Switch value={privacy.analytics} onValueChange={value=>togglePrivacy('analytics',value)} trackColor={{false:'#D8D4DB',true:'#D6A6C4'}} thumbColor={privacy.analytics?INK:'#FFFFFF'}/></View><View style={styles.sectionStripe}/><Text style={styles.fieldLabel}>Account data</Text><Text style={styles.helper}>You can review or update personal information and saved addresses from Settings. To request account deletion, contact support so the request can be verified and processed securely.</Text><Pressable style={styles.outlineButton} onPress={()=>Alert.alert('Privacy support','Contact support through Help Center to request a copy of your account data or ask a privacy question.')}><Text style={styles.outlineText}>Contact privacy support</Text></Pressable></>}
  {screen==='help'&&<><Text style={styles.intro}>How can we help?</Text><Text style={styles.helper}>Send our support team a message. Include enough detail for us to understand the issue, but never include your password or verification code.</Text><Text style={styles.fieldLabel}>Your email</Text><View style={styles.readOnly}><Text style={styles.readOnlyText}>{email||'Signed-in email unavailable'}</Text></View><Text style={styles.fieldLabel}>Subject</Text><TextInput value={subject} onChangeText={setSubject} placeholder="What do you need help with?" placeholderTextColor="#A6A1AB" style={styles.input}/><Text style={styles.fieldLabel}>Message</Text><TextInput value={message} onChangeText={setMessage} placeholder="Describe the issue…" placeholderTextColor="#A6A1AB" style={[styles.input,styles.messageInput]} multiline textAlignVertical="top"/><Pressable disabled={sending} onPress={()=>void sendSupport()} style={[styles.primaryButton,sending&&{opacity:.6}]}><Text style={styles.primaryText}>{sending?'Sending…':'Send support request'}</Text></Pressable><Text style={styles.subLabel}>If support submission is unavailable, please try again later. No request is marked as sent unless the server confirms it.</Text></>}
  {screen==='about'&&<><View style={styles.brandMark}><Text style={styles.brandText}>W</Text></View><Text style={styles.aboutTitle}>Wantiss</Text><Text style={styles.aboutVersion}>Version 1.10</Text><Text style={styles.aboutBody}>Wantiss brings everyday shopping, services and payments together in one place, connecting customers with useful experiences for Haiti and the Haitian diaspora.</Text><View style={styles.sectionStripe}/><View style={styles.infoRow}><Text style={styles.label}>Application</Text><Text style={styles.subLabel}>Wantiss</Text></View><View style={styles.infoRow}><Text style={styles.label}>Version</Text><Text style={styles.subLabel}>1.10</Text></View><View style={styles.infoRow}><Text style={styles.label}>Support</Text><Text style={styles.subLabel}>Available in Help Center</Text></View></>}
- {saving&&<Text style={styles.saving}>Saving your changes…</Text>}
+ {saving&&<Text style={styles.saving}>Saving your changes…</Text>}{!saving&&saved&&<Text style={styles.saving}>Changes saved</Text>}
  </ScrollView>}</View>;
 }
 const styles=StyleSheet.create({
