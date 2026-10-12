@@ -2,6 +2,8 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import * as Linking from 'expo-linking';
+import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../lib/supabase';
 import { COUNTRIES } from './WalletSettingsScreen';
 
@@ -34,7 +36,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
   const [phone, setPhone] = useState('');
   const [emailVerified, setEmailVerified] = useState(false);
   const [phoneVerified, setPhoneVerified] = useState(false);
-  const [identities, setIdentities] = useState<string[]>([]);
+  const [identities, setIdentities] = useState<any[]>([]);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -63,7 +65,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       setPhoneCountryIso(String(user.user_metadata?.phone_country_iso ?? 'HT'));
       setEmailVerified(Boolean(user.email_confirmed_at));
       setPhoneVerified(Boolean(user.phone_confirmed_at));
-      setIdentities((user.identities ?? []).map(identity => identity.provider).filter(Boolean));
+      setIdentities((user.identities ?? []).filter(identity => Boolean(identity.provider)));
     } catch (error) {
       Alert.alert('Unable to load account', error instanceof Error ? error.message : 'Please try again.');
     } finally {
@@ -190,6 +192,55 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     ]);
   };
 
+  const linkProvider = async (provider: 'google' | 'apple') => {
+    setSaving(true);
+    try {
+      const redirectTo = Linking.createURL('auth/callback');
+      const { data, error } = await supabase.auth.linkIdentity({ provider, options: { redirectTo } });
+      if (error) throw error;
+      if (!data.url) throw new Error('The identity provider did not return a sign-in URL.');
+      const result = await WebBrowser.openAuthSessionAsync(data.url, redirectTo);
+      if (result.type !== 'success' || !result.url) return;
+      const parsed = Linking.parse(result.url);
+      const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null;
+      if (code) {
+        const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) throw exchangeError;
+      }
+      await loadAccount();
+      Alert.alert('Account connected', 'Your sign-in provider has been connected to Wantiss.');
+    } catch (error) {
+      Alert.alert('Could not connect account', error instanceof Error ? error.message : 'Check provider availability and try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const unlinkProvider = (identity: any) => {
+    if (identities.length <= 1) {
+      Alert.alert('Keep one sign-in method', 'You must keep at least one sign-in method connected to your Wantiss account.');
+      return;
+    }
+    Alert.alert('Disconnect sign-in provider?', 'You will no longer be able to sign in with this provider unless you connect it again.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Disconnect', style: 'destructive', onPress: () => {
+        void (async () => {
+          setSaving(true);
+          try {
+            const { error } = await supabase.auth.unlinkIdentity(identity);
+            if (error) throw error;
+            await loadAccount();
+            Alert.alert('Provider disconnected', 'The sign-in provider has been removed from your account.');
+          } catch (error) {
+            Alert.alert('Could not disconnect provider', error instanceof Error ? error.message : 'Please try again.');
+          } finally {
+            setSaving(false);
+          }
+        })();
+      } },
+    ]);
+  };
+
   const rowValue = (label: string) => {
     if (loading) return 'Loading…';
     if (label === 'Account ID') return userId ? userId.slice(0, 8) + '…' : 'Unavailable';
@@ -198,7 +249,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     if (label === 'Login Password') return 'Change password';
     if (label === 'Account Verification') return emailVerified ? 'Email verified' : 'Verification needed';
     if (label === 'Login Devices') return 'Manage sessions';
-    if (label === 'Linked Accounts') return identities.length ? identities.join(', ') : 'No linked accounts';
+    if (label === 'Linked Accounts') return identities.length ? identities.map(identity => identity.provider).join(', ') : 'No linked accounts';
     return '';
   };
 
@@ -276,11 +327,11 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'linked' && <>
-                <Text style={styles.helper}>{identities.length ? 'Authentication providers currently associated with this account:' : 'No linked sign-in providers were returned for this account.'}</Text>
-                {identities.map(identity => <View key={identity} style={styles.identityRow}><Text style={styles.rowLabel}>{identity}</Text><Text style={styles.rowValue}>Connected</Text></View>)}
-                <Text style={styles.smallNote}>Only sign-in providers currently connected to this Wantiss account are listed here. Available providers depend on your account setup.</Text>
+                <Text style={styles.helper}>Manage the sign-in methods connected to your Wantiss account. Keep at least one provider connected so you can continue to sign in.</Text>
+                {identities.map(identity => <View key={identity.id ?? identity.identity_id ?? identity.provider} style={styles.identityRow}><View><Text style={styles.rowLabel}>{String(identity.provider ?? 'Sign-in provider')}</Text><Text style={styles.rowValue}>Connected</Text></View><Pressable disabled={saving || identities.length <= 1} onPress={() => unlinkProvider(identity)} style={[styles.disconnectButton,(saving || identities.length <= 1)&&styles.disabledButton]}><Text style={styles.disconnectText}>Disconnect</Text></Pressable></View>)}
+                {(['google','apple'] as const).filter(provider => !identities.some(identity => identity.provider === provider)).map(provider => <Pressable key={provider} disabled={saving} onPress={() => void linkProvider(provider)} style={[styles.secondaryButton,saving&&styles.disabledButton]}><Text style={styles.secondaryButtonText}>{saving?'Please wait…':'Connect '+(provider==='google'?'Google':'Apple')}</Text></Pressable>)}
+                {identities.length === 0 && <Text style={styles.smallNote}>Connect a provider if it is enabled for Wantiss sign-in. If a provider is unavailable, use your current email and password to sign in.</Text>}
               </>}
-
               {action === 'account' && <>
                 <Text style={styles.helper}>Account ID</Text>
                 <Text selectable style={styles.accountId}>{userId || 'Unavailable'}</Text>
