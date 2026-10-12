@@ -266,15 +266,15 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'phone' && <>
-                <Text style={styles.helper}>Current phone: {phone || 'Not set'}{phoneVerified ? ' · verified' : ' · not verified'}. Include your country code.</Text>
-                <TextInput value={newPhone} onChangeText={setNewPhone} placeholder="+509…" placeholderTextColor="#A6A1AB" keyboardType="phone-pad" style={styles.input} editable={!phoneOtpRequested} />
+                <Text style={styles.helper}>Current phone: {phone || 'Not set'}{phoneVerified ? ' · verified' : ' · not verified'}. Choose your country and enter your number.</Text>
+                <View style={styles.phoneRow}><Pressable disabled={phoneOtpRequested} onPress={() => setCountryPickerOpen(true)} style={styles.countryCodeButton}><Text style={styles.countryCodeText}>{COUNTRIES.find(c => c.code === phoneCountryIso)?.flag ?? '🌐'} {dialCode(phoneCountryIso)} ▾</Text></Pressable><TextInput value={newPhone} onChangeText={setNewPhone} placeholder="Phone number" placeholderTextColor="#A6A1AB" keyboardType="phone-pad" style={[styles.input, styles.phoneInput]} editable={!phoneOtpRequested} /></View>
                 {phoneOtpRequested && <TextInput value={phoneOtp} onChangeText={setPhoneOtp} placeholder="6-digit SMS code" placeholderTextColor="#A6A1AB" keyboardType="number-pad" maxLength={6} style={styles.input} />}
                 <Pressable disabled={saving} onPress={phoneOtpRequested ? verifyPhoneChange : requestPhoneChange} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Please wait…' : phoneOtpRequested ? 'Verify phone number' : 'Send verification code'}</Text></Pressable>
               </>}
 
               {action === 'verification' && <>
                 <View style={styles.verificationInfo}><View style={styles.verificationRow}><Text style={styles.verificationLabel}>Email address</Text><Text style={styles.verificationValue}>{email || 'Not set'}</Text><Text style={[styles.statusPill, emailVerified ? styles.verified : styles.unverified]}>{emailVerified ? 'Verified' : 'Not verified'}</Text></View><View style={styles.verificationRow}><Text style={styles.verificationLabel}>Phone number</Text><Text style={styles.verificationValue}>{phone || 'Not set'}</Text><Text style={[styles.statusPill, phoneVerified ? styles.verified : styles.unverified]}>{phoneVerified ? 'Verified' : 'Not verified'}</Text></View></View>
-                {!emailVerified && email.length > 0 && <Pressable disabled={saving} onPress={async () => { setSaving(true); try { const { error } = await supabase.auth.resend({ type: 'signup', email }); if (error) throw error; Alert.alert('Verification email sent', 'Check your inbox and spam folder.'); } catch (error) { Alert.alert('Could not send email', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } }} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Sending…' : 'Resend verification email'}</Text></Pressable>}
+                {!emailVerified && email.length > 0 && <Pressable disabled={saving} onPress={async () => { setSaving(true); try { const { data: quota, error: quotaError } = await supabase.rpc('request_account_security_action', { p_request_type: 'email_verification' }); if (quotaError) throw quotaError; if (quota?.allowed !== true) throw new Error('You have reached the limit of 5 email verification requests in 24 hours. Please try again later.'); const { error } = await supabase.auth.resend({ type: 'signup', email }); if (error) throw error; Alert.alert('Verification email sent', 'Check your inbox and spam folder.'); } catch (error) { Alert.alert('Could not send email', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } }} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Sending…' : 'Resend verification email'}</Text></Pressable>}
                 {!phoneVerified && <Pressable onPress={() => setAction('phone')} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>Verify phone number</Text></Pressable>}
               </>}
 
@@ -286,7 +286,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               {action === 'linked' && <>
                 <Text style={styles.helper}>{identities.length ? 'Authentication providers currently associated with this account:' : 'No linked sign-in providers were returned for this account.'}</Text>
                 {identities.map(identity => <View key={identity} style={styles.identityRow}><Text style={styles.rowLabel}>{identity}</Text><Text style={styles.rowValue}>Connected</Text></View>)}
-                <Text style={styles.smallNote}>Linking or unlinking providers is not enabled here yet. We do not show unconfigured social sign-in options.</Text>
+                <Text style={styles.smallNote}>Only sign-in providers currently connected to this Wantiss account are listed here. Available providers depend on your account setup.</Text>
               </>}
 
               {action === 'account' && <>
@@ -295,13 +295,14 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'delete' && <>
-                <Text style={styles.helper}>Account deactivation and deletion need a secure server-side process to remove or disable your account safely.</Text>
-                <Text style={styles.smallNote}>This action is not enabled yet. Your account and data have not been changed.</Text>
+                <Text style={styles.helper}>Deleting your Wantiss account permanently removes your sign-in and account data. This cannot be undone. If you need a temporary break, sign out instead.</Text>
+                <Pressable disabled={saving} onPress={() => Alert.alert('Permanently delete account?', 'This permanently deletes your Wantiss account and associated account data. This action cannot be undone.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Delete my account', style: 'destructive', onPress: () => { void (async () => { setSaving(true); try { const { data: { session }, error: sessionError } = await supabase.auth.getSession(); if (sessionError) throw sessionError; if (!session) throw new Error('Please sign in again.'); const { data, error } = await supabase.functions.invoke('delete-my-account', { headers: { Authorization: 'Bearer ' + session.access_token }, body: { confirm: true } }); if (error) throw error; if (data?.success !== true) throw new Error(data?.error ?? 'The account deletion could not be confirmed.'); Alert.alert('Account deleted', 'Your Wantiss account has been deleted.'); } catch (error) { Alert.alert('Could not delete account', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } })(); } }])} style={[styles.primaryButton, styles.dangerButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Processing…' : 'Permanently delete account'}</Text></Pressable>
               </>}
             </View>
           </KeyboardAvoidingView>
         </View>
       </Modal>
+      <Modal visible={countryPickerOpen} transparent animationType="slide" onRequestClose={() => setCountryPickerOpen(false)}><View style={styles.modalBackdrop}><Pressable style={StyleSheet.absoluteFill} onPress={() => setCountryPickerOpen(false)} /><View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 18), maxHeight: '72%' }]}><View style={styles.sheetHandle} /><View style={styles.sheetHeader}><Text style={styles.sheetTitle}>Choose country code</Text><Pressable onPress={() => setCountryPickerOpen(false)}><Ionicons name="close" size={22} color={MUTED} /></Pressable></View><TextInput value={countrySearch} onChangeText={setCountrySearch} placeholder="Search country" placeholderTextColor="#A6A1AB" style={styles.input} /><ScrollView keyboardShouldPersistTaps="handled">{COUNTRIES.filter(c => c.name.toLowerCase().includes(countrySearch.trim().toLowerCase())).map(c => <Pressable key={c.code} onPress={() => { setPhoneCountryIso(c.code); setCountryPickerOpen(false); setCountrySearch(''); }} style={styles.countryOption}><Text style={styles.countryOptionName}>{c.flag}  {c.name}</Text><Text style={styles.countryOptionCode}>{dialCode(c.code)}</Text></Pressable>)}</ScrollView></View></View></Modal>
     </View>
   );
 }
@@ -338,4 +339,5 @@ const styles = StyleSheet.create({
   smallNote: { color: MUTED, fontSize: 12, lineHeight: 18, marginTop: 14 },
   accountId: { color: INK, fontSize: 14, lineHeight: 21, marginBottom: 10 },
   identityRow: { minHeight: 42, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F2F0F2' },
+  phoneRow: { flexDirection: 'row', gap: 8, alignItems: 'center' }, countryCodeButton: { minHeight: 48, paddingHorizontal: 10, borderWidth: 1, borderColor: '#EAE5EB', borderRadius: 10, justifyContent: 'center' }, countryCodeText: { fontSize: 13, color: INK, fontWeight: '600' }, phoneInput: { flex: 1 }, countryOption: { minHeight: 46, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F2F0F2' }, countryOptionName: { fontSize: 14, color: INK }, countryOptionCode: { fontSize: 13, color: MUTED }, dangerButton: { backgroundColor: '#B3261E' },
 });
