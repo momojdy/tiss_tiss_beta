@@ -27,6 +27,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [resolving, setResolving] = useState(false);
   const [paying, setPaying] = useState(false);
   const [walletId, setWalletId] = useState<string | null>(null);
+  const [wantissNumber, setWantissNumber] = useState<string | null>(null);
 
   const issue = useCallback(async () => {
     setBusy(true);
@@ -56,6 +57,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   }, [kind, businessId]);
 
   useEffect(() => { void issue(); }, [issue]);
+  useEffect(() => { if (kind !== 'buyer_identity') return; void (async () => { const { data: auth } = await supabase.auth.getUser(); if (!auth.user) return; const { data } = await supabase.from('profiles').select('wantiss_number').eq('id', auth.user.id).maybeSingle(); setWantissNumber(data?.wantiss_number ?? null); })().catch(() => undefined); }, [kind]);
 
   const revoke = async () => {
     if (!record?.id) return;
@@ -120,8 +122,9 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Text style={styles.title}>{theme.title}</Text><Text style={styles.subtitle}>{theme.subtitle}</Text>
           <View style={styles.qrFrame}>{busy ? <ActivityIndicator color={theme.color}/> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={218} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}</View>
           <Text style={styles.caption}>{kind === 'buyer_identity' ? 'Share this to identify your Wantiss account.' : 'Customers scan this to open your public shop.'}</Text>
+          {kind === 'buyer_identity' && wantissNumber ? <Text selectable style={{ color: theme.color, fontSize: 15, fontWeight: '800', marginTop: 8 }}>Wantiss ID · {wantissNumber}</Text> : null}
         </View>
-        {kind === 'buyer_identity' ? <View style={styles.infoCard}><Text style={styles.infoTitle}>Your Wantiss number</Text><Text style={styles.infoBody}>Your permanent account number is shown in your profile details. This QR token is private and can be rotated.</Text></View> : null}
+        {kind === 'buyer_identity' ? <View style={styles.infoCard}><Text style={styles.infoTitle}>Your Wantiss number</Text><Text selectable style={{ color: '#BF008E', fontSize: 18, fontWeight: '800', marginTop: 5 }}>{wantissNumber ?? 'Loading your ID…'}</Text><Text style={styles.infoBody}>Your account number stays the same when this QR is refreshed. QR tokens can be revoked independently.</Text></View> : null}
         <Pressable style={[styles.primary,{backgroundColor:theme.color}]} onPress={() => Alert.alert('Refresh QR?', 'The current QR will stop working immediately.', [{text:'Cancel',style:'cancel'},{text:'Refresh',onPress:()=>void issue()}])}><Ionicons name="refresh" size={18} color="#FFF"/><Text style={styles.primaryText}>Refresh QR</Text></Pressable>
         <Pressable style={[styles.outline,{borderColor:'#C94858'}]} onPress={revoke} disabled={!record?.id}><Ionicons name="close-circle-outline" size={18} color="#C94858"/><Text style={[styles.outlineText,{color:'#C94858'}]}>Revoke QR</Text></Pressable><Text style={styles.security}>Refreshing revokes the previous QR token. Keep screenshots private if the QR can receive money.</Text>
       </ScrollView></View>;
