@@ -254,7 +254,30 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           else if (target === 'personalInformation') setBuyerScreen('personalInformation');
           else { setSettingsDetail(target); setBuyerScreen('settingsDetail'); }
         }}
-        onSwitchAccount={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not switch account', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setAuthInitialMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
+        onSwitchAccount={async (destination: 'vendor' | 'buyer') => {
+          if (destination === 'vendor') {
+            try {
+              const { data: modes, error } = await supabase.rpc('get_my_account_modes');
+              if (error) throw error;
+              if (modes?.business !== true) {
+                Alert.alert('Business Space unavailable', 'This logged-in Wantiss account does not have Business Space access yet. Register B&P 2P for this same email first.');
+                return;
+              }
+              setAppMode('vendor');
+              setBuyerScreen('home');
+            } catch (error) {
+              Alert.alert('Could not open Business Space', error instanceof Error ? error.message : 'Please try again.');
+            }
+            return;
+          }
+          const { error } = await supabase.auth.signOut();
+          if (error) { Alert.alert('Could not switch account', error.message); return; }
+          setAuthenticated(false);
+          setAppMode('buyer');
+          setAuthInitialMode('buyer');
+          setScreen('auth');
+          setBuyerScreen('home');
+        }}
         onLogOut={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not log out', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
       />;
       if (buyerScreen === 'accountSecurity') return <AccountSecurityScreen onBack={() => setBuyerScreen('settings')} />;
