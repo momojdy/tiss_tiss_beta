@@ -17,8 +17,37 @@ import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
+import QRCode from 'react-native-qrcode-svg';
 
 import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow, q } from "./BusinessSpaceShared";
+
+
+function VendorShopQr({ businessId }: { businessId: string }) {
+  const [token, setToken] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const issue = useCallback(async () => {
+    setBusy(true); setError('');
+    try {
+      const { data, error: rpcError } = await supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: businessId });
+      if (rpcError) throw rpcError;
+      if (!data?.token) throw new Error('No QR token returned.');
+      setToken(data.token);
+    } catch (e) { setError(e instanceof Error ? e.message : 'Could not create shop QR.'); }
+    finally { setBusy(false); }
+  }, [businessId]);
+  useEffect(() => { void issue(); }, [issue]);
+  const card = { backgroundColor: '#F0F6FF', borderColor: '#C7DDFB' };
+  return <View style={[{ borderWidth: 1, borderRadius: 14, padding: 14, gap: 9, alignItems: 'center' }, card]}>
+    <Text style={{ alignSelf: 'stretch', color: '#397BC6', fontSize: 11, fontWeight: '800', letterSpacing: 0.7 }}>YOUR PUBLIC SHOP QR</Text>
+    <Text style={{ alignSelf: 'stretch', color: '#233A58', fontSize: 16, fontWeight: '800' }}>Let customers find your shop</Text>
+    {token ? <View style={{ padding: 10, backgroundColor: '#FFFFFF', borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${token}`} size={174} color="#397BC6" backgroundColor="#FFFFFF" /></View> : <Text style={{ color: '#64748B', padding: 24 }}>{busy ? 'Preparing shop QR…' : error || 'QR unavailable'}</Text>}
+    <Text style={{ color: '#64748B', fontSize: 11, textAlign: 'center' }}>Blue identifies your shop. Refreshing revokes the old QR; your Vendor ID stays the same.</Text>
+    <Pressable onPress={() => Alert.alert('Refresh shop QR?', 'The current QR will stop working immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])} style={{ alignSelf: 'stretch', backgroundColor: '#397BC6', borderRadius: 10, paddingVertical: 11, alignItems: 'center' }}>
+      <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>{busy ? 'Refreshing…' : 'Refresh shop QR'}</Text>
+    </Pressable>
+  </View>;
+}
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
@@ -59,6 +88,8 @@ export function Home() {
         <Text selectable style={{ color: t.ink, fontSize: 18, fontWeight: '800', letterSpacing: 1.1 }}>{biz.vendor_id ?? 'Assigning Vendor ID…'}</Text>
         <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
       </View>
+      <VendorShopQr businessId={biz.id} />
+
       <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 14, padding: 14, gap: 10 }}>
         <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PUBLIC SHOP QR</Text>
         <Text style={{ color: t.ink, fontSize: 13 }}>Customers can scan this to identify your shop. It never opens your private dashboard.</Text>
