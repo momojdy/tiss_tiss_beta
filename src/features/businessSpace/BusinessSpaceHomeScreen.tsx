@@ -3,7 +3,6 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import QRCode from 'react-native-qrcode-svg';
 import Svg, { Circle, G, Line, Polyline, Rect, SvgXml, Text as SvgText } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,7 +16,6 @@ import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
-import QRCode from 'react-native-qrcode-svg';
 
 import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow, q } from "./BusinessSpaceShared";
 
@@ -89,30 +87,6 @@ export function Home() {
         <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
       </View>
       <VendorShopQr businessId={biz.id} />
-
-      <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 14, padding: 14, gap: 10 }}>
-        <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PUBLIC SHOP QR</Text>
-        <Text style={{ color: t.ink, fontSize: 13 }}>Customers can scan this to identify your shop. It never opens your private dashboard.</Text>
-        {shopQr ? <View style={{ alignSelf: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${shopQr}`} size={176} color="#397BC6" backgroundColor="#FFFFFF" /></View> : null}
-        <Pressable disabled={qrBusy} onPress={() => { if (shopQr) Alert.alert('Refresh shop QR?', 'The previous QR token will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issueShopQr(); } }]); else void issueShopQr(); }} style={{ minHeight: 42, borderRadius: 10, backgroundColor: '#397BC6', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-          {qrBusy ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Icon name="qrcode" size={17} color="#FFFFFF" />}
-          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>{qrBusy ? 'Preparing QR…' : shopQr ? 'Refresh shop QR' : 'Create shop QR'}</Text>
-        </Pressable>
-      </View>
-      <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 16, padding: 14, gap: 8, alignItems: 'center' }}>
-        <View style={{ alignSelf: 'stretch' }}>
-          <Text style={{ color: t.blue, fontSize: 11, fontWeight: '800', letterSpacing: 0.8 }}>PUBLIC SHOP QR</Text>
-          <Text style={{ color: t.ink, fontSize: 16, fontWeight: '800', marginTop: 4 }}>Let customers find your shop</Text>
-          <Text style={{ color: t.mute, fontSize: 11, marginTop: 3 }}>Blue QR opens your public storefront, never your private dashboard.</Text>
-        </View>
-        {shopQrLoading && !shopQr ? <ActivityIndicator color={t.blue} /> : shopQr?.token ? <View style={{ padding: 12, backgroundColor: '#FFFFFF', borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${shopQr.token}`} size={174} color="#397BC6" backgroundColor="#FFFFFF" /></View> : <Text style={{ color: t.mute, fontSize: 12 }}>QR not available</Text>}
-        <Pressable onPress={() => Alert.alert('Refresh shop QR?', 'The current shop QR will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => void issueShopQr() }])} style={{ alignSelf: 'stretch', minHeight: 42, borderRadius: 11, borderWidth: 1, borderColor: t.blue, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
-          <Icon name="refresh-cw" size={15} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800', fontSize: 12 }}>Refresh shop QR</Text>
-        </Pressable>
-        <Pressable onPress={() => { if (!shopQr?.id) return; Alert.alert('Revoke shop QR?', 'The current QR will stop opening your shop.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Revoke', style: 'destructive', onPress: () => { void (async () => { const { error } = await supabase.rpc('revoke_qr_identity', { p_record_id: shopQr.id }); if (error) Alert.alert('Could not revoke QR', error.message); else setShopQr(null); })(); } }]); }} style={{ alignSelf: 'stretch', minHeight: 40, borderRadius: 11, borderWidth: 1, borderColor: t.bad, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
-          <Icon name="close-circle" size={15} color={t.bad} /><Text style={{ color: t.bad, fontWeight: '800', fontSize: 12 }}>Revoke shop QR</Text>
-        </Pressable>
-      </View>
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
       {biz.verification === 'restricted' ? <Banner tone="bad" icon="alert-circle-outline" text="Your business is restricted. View details" onPress={() => app.go('registration')} /> : null}
