@@ -3,7 +3,7 @@ import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type Props = { onBack: () => void };
+type Props = { onBack: () => void; onAccountSecurityPress: () => void };
 
 const INK = '#1E1B3A';
 const MUTED = '#8D8997';
@@ -15,12 +15,12 @@ const SECTIONS = [
   { title: 'PRIVACY & SUPPORT', rows: ['Privacy & Permissions', 'Help Center', 'About Wantiss'] },
 ];
 
-function SettingSection({ title, rows }: { title: string; rows: string[] }) {
+function SettingSection({ title, rows, onAccountSecurityPress }: { title: string; rows: string[]; onAccountSecurityPress?: () => void }) {
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
       {rows.map((label, index) => (
-        <Pressable key={label} onPress={() => {}} style={[styles.row, index < rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
+        <Pressable key={label} onPress={label === 'Account & Security' ? onAccountSecurityPress : () => {}} style={[styles.row, index < rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
           <Text style={styles.rowLabel}>{label}</Text>
           <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
         </Pressable>
@@ -29,7 +29,7 @@ function SettingSection({ title, rows }: { title: string; rows: string[] }) {
   );
 }
 
-export default function SettingsScreen({ onBack }: Props) {
+export default function SettingsScreen({ onBack, onAccountSecurityPress }: Props) {
   const insets = useSafeAreaInsets();
   return (
     <View style={styles.page}>
@@ -45,7 +45,7 @@ export default function SettingsScreen({ onBack }: Props) {
         {SECTIONS.map((section, index) => (
           <React.Fragment key={section.title}>
             {index > 0 && <View style={styles.sectionStripe} />}
-            <SettingSection title={section.title} rows={section.rows} />
+            <SettingSection title={section.title} rows={section.rows} onAccountSecurityPress={onAccountSecurityPress} />
           </React.Fragment>
         ))}
         <View style={styles.sectionStripe} />
