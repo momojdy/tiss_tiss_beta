@@ -50,9 +50,6 @@ export default function SettingsDetailScreen({screen,onBack}:Props) {
   } catch(e){Alert.alert('Could not save settings',e instanceof Error?e.message:'Please try again.');}
   finally{setSaving(false);}
  };
- const choose=async<T extends string>(value:T,items:T[],current:T,onSelect:(v:T)=>void,field:'language'|'region'|'currency')=>{
-  Alert.alert(field==='language'?'Choose language':field==='region'?'Choose region':'Choose currency',undefined,[...items.map(item=>({text:(item===current?'✓  ':'')+item,onPress:()=>{onSelect(item);void persist({[field]:item});}})),{text:'Cancel',style:'cancel'}]);
- };
  const toggleNotification=(key:keyof typeof notifications,value:boolean)=>{const next={...notifications,[key]:value};setNotifications(next);void persist({notifications:next});};
  const togglePrivacy=(key:keyof typeof privacy,value:boolean)=>{const next={...privacy,[key]:value};setPrivacy(next);void persist({privacy:next});};
  const sendSupport=async()=>{
