@@ -1,7 +1,8 @@
-import React from 'react';
-import { Alert, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { supabase } from '../lib/supabase';
 
 type Props = {
   onBack: () => void;
@@ -21,6 +22,38 @@ const SECTIONS = [
 
 export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogOut }: Props) {
   const insets = useSafeAreaInsets();
+  const [switchModalVisible, setSwitchModalVisible] = useState(false);
+  const [vendorIdSuffix, setVendorIdSuffix] = useState<string | null>(null);
+
+  useEffect(() => {
+    let active = true;
+    void (async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data, error } = await supabase
+          .from('business_members')
+          .select('businesses(id)')
+          .eq('user_id', user.id)
+          .limit(1)
+          .maybeSingle();
+        if (error) throw error;
+        const related = (data as any)?.businesses;
+        const business = Array.isArray(related) ? related[0] : related;
+        const id = typeof business?.id === 'string' ? business.id : '';
+        if (active) setVendorIdSuffix(id ? id.slice(-6).toUpperCase() : null);
+      } catch {
+        if (active) setVendorIdSuffix(null);
+      }
+    })();
+    return () => { active = false; };
+  }, []);
+
+  const chooseSwitchDestination = (destination: 'vendor' | 'buyer') => {
+    setSwitchModalVisible(false);
+    onSwitchAccount(destination);
+  };
+
   return (
     <View style={styles.page}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
@@ -48,7 +81,7 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
         ))}
         <View style={styles.sectionStripe} />
         <View style={styles.accountActions}>
-          <Pressable onPress={() => Alert.alert('Switch account', 'Choose where you want to go.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Business Space', onPress: () => onSwitchAccount('vendor') }, { text: 'Switch to another buyer account', onPress: () => onSwitchAccount('buyer') }])} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
+          <Pressable onPress={() => setSwitchModalVisible(true)} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
             <Text style={styles.rowLabel}>Switch Account</Text>
             <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
           </Pressable>
@@ -58,6 +91,42 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
           </Pressable>
         </View>
       </ScrollView>
+      <Modal
+        visible={switchModalVisible}
+        transparent
+        animationType="fade"
+        statusBarTranslucent
+        onRequestClose={() => setSwitchModalVisible(false)}
+      >
+        <Pressable style={styles.modalBackdrop} onPress={() => setSwitchModalVisible(false)}>
+          <Pressable style={[styles.switchModal, { marginBottom: Math.max(insets.bottom, 12) }]} onPress={() => undefined}>
+            <View style={styles.modalHandle} />
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Switch Account</Text>
+              <Pressable onPress={() => setSwitchModalVisible(false)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Close switch account window">
+                <Ionicons name="close" size={22} color={INK} />
+              </Pressable>
+            </View>
+            <Pressable onPress={() => chooseSwitchDestination('buyer')} style={styles.switchOption} accessibilityRole="button">
+              <View style={styles.switchOptionText}>
+                <Text style={styles.switchOptionTitle}>Other buyer account</Text>
+                <Text style={styles.switchOptionSubtitle}>Sign in with another buyer account</Text>
+              </View>
+              <View style={styles.addAccountButton}>
+                <Ionicons name="add" size={23} color="#FFFFFF" />
+              </View>
+            </Pressable>
+            <View style={styles.modalDivider} />
+            <Pressable onPress={() => chooseSwitchDestination('vendor')} style={styles.switchOption} accessibilityRole="button">
+              <View style={styles.switchOptionText}>
+                <Text style={styles.switchOptionTitle}>Business Space</Text>
+                <Text style={styles.switchOptionSubtitle}>{vendorIdSuffix ? `Vendor ID · ••••${vendorIdSuffix}` : 'Vendor dashboard for this email'}</Text>
+              </View>
+              <Ionicons name="chevron-forward" size={18} color="#B8B4BD" />
+            </Pressable>
+          </Pressable>
+        </Pressable>
+      </Modal>
     </View>
   );
 }
@@ -78,4 +147,15 @@ const styles = StyleSheet.create({
   sectionStripe: { height: 10, width: '100%', backgroundColor: PINK },
   accountActions: { paddingHorizontal: 18, paddingTop: 4, paddingBottom: 8, backgroundColor: '#FFFFFF' },
   actionRow: { minHeight: 53, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  modalBackdrop: { flex: 1, backgroundColor: 'rgba(22, 18, 32, 0.32)', justifyContent: 'flex-end', paddingHorizontal: 12, paddingBottom: 12 },
+  switchModal: { width: '100%', maxWidth: 520, alignSelf: 'center', paddingHorizontal: 20, paddingTop: 10, paddingBottom: 8, borderRadius: 22, backgroundColor: '#FFFFFF', shadowColor: '#000000', shadowOpacity: 0.16, shadowRadius: 18, shadowOffset: { width: 0, height: 5 }, elevation: 12 },
+  modalHandle: { alignSelf: 'center', width: 38, height: 4, borderRadius: 2, backgroundColor: '#E5E0E7', marginBottom: 14 },
+  modalHeader: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 10 },
+  modalTitle: { color: INK, fontSize: 18, lineHeight: 24, fontWeight: '700' },
+  switchOption: { minHeight: 68, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 14, paddingVertical: 12 },
+  switchOptionText: { flex: 1, gap: 4 },
+  switchOptionTitle: { color: '#262626', fontSize: 15, lineHeight: 21, fontWeight: '600' },
+  switchOptionSubtitle: { color: MUTED, fontSize: 12, lineHeight: 17 },
+  addAccountButton: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#BF008E', alignItems: 'center', justifyContent: 'center' },
+  modalDivider: { height: StyleSheet.hairlineWidth, backgroundColor: '#EEEAF0' },
 });
