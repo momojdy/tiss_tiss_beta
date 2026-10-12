@@ -5,6 +5,7 @@
     "noEmit": true
   },
   "files": [
+    "src/types/settings-env.d.ts",
     "src/screens/SettingsScreen.tsx",
     "src/screens/SettingsDetailScreen.tsx",
     "src/screens/AddressesScreen.tsx",
