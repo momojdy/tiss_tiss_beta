@@ -157,7 +157,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       const { error } = await supabase.auth.verifyOtp({ phone: phoneTarget, token: phoneOtp.trim(), type: 'phone_change' });
       if (error) throw error;
       const { data: current } = await supabase.auth.getUser();
-      if (current.user) { const { error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id); if (profileError) throw profileError; }
+      if (current.user) { const { error: profileError } = await supabase.from('profiles').upsert({ id: current.user.id, phone_number: phoneTarget, email: current.user.email ?? '' }, { onConflict: 'id' }); if (profileError) throw profileError; }
       await loadAccount();
       Alert.alert('Phone verified', 'Your phone number has been updated.');
       closeModal(true);
