@@ -73,8 +73,8 @@ export default function AccountSecurityScreen({ onBack }: Props) {
 
   useEffect(() => { void loadAccount(); }, [loadAccount]);
 
-  const closeModal = () => {
-    if (saving) return;
+  const closeModal = (force = false) => {
+    if (saving && !force) return;
     setAction(null);
     setNewPassword('');
     setConfirmPassword('');
@@ -101,7 +101,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) throw error;
       Alert.alert('Password updated', 'Your login password has been changed.');
-      closeModal();
+      closeModal(true);
     } catch (error) {
       Alert.alert('Could not update password', error instanceof Error ? error.message : 'Please try again.');
     } finally {
@@ -123,7 +123,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       const { error } = await supabase.auth.updateUser({ email: value });
       if (error) throw error;
       Alert.alert('Check your inbox', 'Supabase has been asked to send a confirmation link. Your account email changes after you confirm it.');
-      closeModal();
+      closeModal(true);
     } catch (error) {
       Alert.alert('Could not update email', error instanceof Error ? error.message : 'Please try again.');
     } finally {
@@ -160,7 +160,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       if (current.user) { const { error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id); if (profileError) throw profileError; }
       await loadAccount();
       Alert.alert('Phone verified', 'Your phone number has been updated.');
-      closeModal();
+      closeModal(true);
     } catch (error) {
       Alert.alert('Verification failed', error instanceof Error ? error.message : 'Please try again.');
     } finally {
@@ -288,7 +288,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
 
               {action === 'delete' && <>
                 <Text style={styles.helper}>You can submit a request to permanently delete your Wantiss account. Our team reviews deletion requests to protect your account and handle records that may need to be retained by law.</Text>
-                <Pressable disabled={saving} onPress={() => Alert.alert('Request account deletion?', 'We will submit a secure deletion request for review. Some payment or legal records may need to be retained where required. Your account will remain active until the request is processed.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Submit request', style: 'destructive', onPress: () => { void (async () => { setSaving(true); try { const { data: { user }, error: userError } = await supabase.auth.getUser(); if (userError) throw userError; if (!user) throw new Error('Please sign in again.'); const { data: existing, error: checkError } = await supabase.from('account_deletion_requests').select('id').eq('user_id', user.id).in('status', ['requested','under_review']).maybeSingle(); if (checkError) throw checkError; if (existing) { Alert.alert('Request already submitted', 'Your account deletion request is already awaiting review.'); closeModal(); return; } const { error } = await supabase.from('account_deletion_requests').insert({ user_id: user.id, email: user.email ?? '' }); if (error) throw error; Alert.alert('Request submitted', 'Your account deletion request has been recorded. Our team will review it and contact you at your account email if further verification is needed.'); closeModal(); } catch (error) { Alert.alert('Could not submit request', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } })(); } }])} style={[styles.primaryButton, styles.dangerButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Submitting…' : 'Request account deletion'}</Text></Pressable>
+                <Pressable disabled={saving} onPress={() => Alert.alert('Request account deletion?', 'We will submit a secure deletion request for review. Some payment or legal records may need to be retained where required. Your account will remain active until the request is processed.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Submit request', style: 'destructive', onPress: () => { void (async () => { setSaving(true); try { const { data: { user }, error: userError } = await supabase.auth.getUser(); if (userError) throw userError; if (!user) throw new Error('Please sign in again.'); const { data: existing, error: checkError } = await supabase.from('account_deletion_requests').select('id').eq('user_id', user.id).in('status', ['requested','under_review']).maybeSingle(); if (checkError) throw checkError; if (existing) { Alert.alert('Request already submitted', 'Your account deletion request is already awaiting review.'); setAction(null); return; } const { error } = await supabase.from('account_deletion_requests').insert({ user_id: user.id, email: user.email ?? '' }); if (error) throw error; Alert.alert('Request submitted', 'Your account deletion request has been recorded. Our team will review it and contact you at your account email if further verification is needed.'); setAction(null); } catch (error) { Alert.alert('Could not submit request', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } })(); } }])} style={[styles.primaryButton, styles.dangerButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Submitting…' : 'Request account deletion'}</Text></Pressable>
               </>}
             </View>
           </KeyboardAvoidingView>
