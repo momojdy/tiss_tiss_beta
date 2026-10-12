@@ -33,15 +33,15 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
         if (!user) return;
         const { data, error } = await supabase
           .from('business_members')
-          .select('businesses(id)')
+          .select('businesses(id,vendor_id)')
           .eq('user_id', user.id)
           .limit(1)
           .maybeSingle();
         if (error) throw error;
         const related = (data as any)?.businesses;
         const business = Array.isArray(related) ? related[0] : related;
-        const id = typeof business?.id === 'string' ? business.id : '';
-        if (active) setVendorIdSuffix(id ? id.slice(-6).toUpperCase() : null);
+        const id = typeof business?.vendor_id === 'string' ? business.vendor_id : '';
+        if (active) setVendorIdSuffix(id || null);
       } catch {
         if (active) setVendorIdSuffix(null);
       }
@@ -120,7 +120,7 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
             <Pressable onPress={() => chooseSwitchDestination('vendor')} style={styles.switchOption} accessibilityRole="button">
               <View style={styles.switchOptionText}>
                 <Text style={styles.switchOptionTitle}>Business Space</Text>
-                <Text style={styles.switchOptionSubtitle}>{vendorIdSuffix ? `Vendor ID · ••••${vendorIdSuffix}` : 'Vendor dashboard for this email'}</Text>
+                <Text style={styles.switchOptionSubtitle}>{vendorIdSuffix ? `Vendor ID · ${vendorIdSuffix}` : 'Vendor dashboard for this email'}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#B8B4BD" />
             </Pressable>
