@@ -254,8 +254,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           else if (target === 'personalInformation') setBuyerScreen('personalInformation');
           else { setSettingsDetail(target); setBuyerScreen('settingsDetail'); }
         }}
-        onSwitchAccount={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setAuthInitialMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
-        onLogOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
+        onSwitchAccount={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not switch account', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setAuthInitialMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
+        onLogOut={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not log out', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
       />;
       if (buyerScreen === 'accountSecurity') return <AccountSecurityScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'addresses') return <AddressesScreen onBack={() => setBuyerScreen('settings')} />;
