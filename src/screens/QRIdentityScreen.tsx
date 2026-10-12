@@ -98,7 +98,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     const raw = (scannedValue ?? tokenInput).trim();
     const match = raw.match(/[?&]token=([^&]+)/i);
     const token = match ? decodeURIComponent(match[1]) : raw.replace(/^wantiss:\/\//i, '');
-    if (!token) { Alert.alert('Scan a QR', 'Scan a Wantiss QR or paste its token.'); return; }
+    if (!token) { resolveLock.current = false; Alert.alert('Scan a QR', 'Scan a Wantiss QR or paste its token.'); return; }
     setCameraOpen(false);
     setResolving(true);
     try {
