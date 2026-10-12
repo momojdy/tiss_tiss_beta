@@ -29,6 +29,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [amount, setAmount] = useState('');
   const [resolving, setResolving] = useState(false);
   const [paying, setPaying] = useState(false);
+  const [requestId, setRequestId] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
@@ -100,6 +101,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       if (!data?.valid) throw new Error('This QR is invalid, expired, or revoked.');
       const destination = { ...data, token };
       setResolved(destination);
+      setRequestId(makeRequestId());
       setTokenInput(raw);
       if (data.destination === 'vendor-shop') onOpenShop?.(data.vendor_id, data.shop_name);
       if (data.destination === 'wallet-receive') onOpenWallet?.(token, data);
@@ -119,11 +121,11 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         setPaying(true);
         try {
           const { data, error } = await supabase.rpc('transfer_wallet_by_qr', {
-            p_recipient_token: resolved.token, p_amount: value, p_request_id: makeRequestId(),
+            p_recipient_token: resolved.token, p_amount: value, p_request_id: requestId ?? makeRequestId(),
           });
           if (error) throw error;
           Alert.alert(data?.duplicate ? 'Already processed' : 'Transfer complete', data?.duplicate ? 'This transfer request was already processed.' : 'Your wallet transfer was recorded successfully.');
-          setResolved(null); setTokenInput(''); setAmount('');
+          setResolved(null); setTokenInput(''); setAmount(''); setRequestId(null);
         } catch (error) { Alert.alert('Transfer not completed', error instanceof Error ? error.message : 'Please try again.'); }
         finally { setPaying(false); }
       })(); } },
