@@ -58,7 +58,7 @@ export default function SettingsDetailScreen({screen,onBack}:Props) {
   setSending(true);
   try{
    const {data:{user},error:userError}=await supabase.auth.getUser();if(userError)throw userError;if(!user)throw new Error('Please sign in again.');
-   const {error}=await supabase.functions.invoke('settings-support',{body:{subject:subject.trim(),message:message.trim(),email:user.email??email}});
+   const {error}=await supabase.from('settings_support_requests').insert({user_id:user.id,subject:subject.trim(),message:message.trim(),email:user.email??email});
    if(error)throw error;
    Alert.alert('Request sent','Your support request has been submitted.');setSubject('');setMessage('');
   }catch(e){Alert.alert('Could not submit request',e instanceof Error?e.message:'Please try again later.');}
