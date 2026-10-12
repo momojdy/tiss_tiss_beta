@@ -33,7 +33,7 @@ function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void;
           <MaterialCommunityIcons name="account-group-outline" size={23} color={MUTED} />
           <Text style={styles.walletNavLabelMuted}>Contacts</Text>
         </Pressable>
-        <Pressable style={styles.walletNavItem}>
+        <Pressable onPress={onQRPress} style={styles.walletNavItem}>
           <MaterialCommunityIcons name="qrcode-scan" size={48} color={NAV_GREEN} />
         </Pressable>
         <Pressable style={styles.walletNavItem}>
@@ -55,6 +55,7 @@ type Props = {
   onNotificationsPress?: () => void;
   onRecentActivityPress?: () => void;
   onHelpPress?: () => void;
+  onQRPress?: () => void;
 };
 
 export default function WalletHomeScreen({
@@ -63,6 +64,7 @@ export default function WalletHomeScreen({
   onMePress,
   onNotificationsPress,
   onHelpPress,
+  onQRPress,
   onRecentActivityPress,
 }: Props) {
   return (
@@ -82,11 +84,11 @@ export default function WalletHomeScreen({
           {[
             { label: 'Top up', icon: 'arrow-collapse-up' as const },
             { label: 'Send', icon: 'send-outline' as const },
-            { label: 'Request', icon: 'inbox-arrow-down-outline' as const },
+            { label: 'Request', icon: 'inbox-arrow-down-outline' as const, onPress: onQRPress },
             { label: 'Withdraw', icon: 'arrow-collapse-down' as const },
             { label: 'Utility', icon: 'water-outline' as const },
           ].map(action => (
-            <Pressable key={action.label} style={styles.actionItem}>
+            <Pressable key={action.label} onPress={action.onPress} style={styles.actionItem}>
               <View style={styles.actionIcon}>
                 <MaterialCommunityIcons name={action.icon} size={18} color="#1A2517" />
               </View>
