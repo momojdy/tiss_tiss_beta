@@ -1,0 +1,79 @@
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Pressable, ScrollView, StatusBar, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { supabase } from '../lib/supabase';
+
+export type SettingsDetailKey = 'language' | 'regionCurrency' | 'notifications' | 'privacy' | 'help' | 'about';
+type Props = { screen: SettingsDetailKey; onBack: () => void };
+const INK = '#1E1B3A', MUTED = '#8D8997', PINK = '#FCE4F1', LINE = '#F0EDF0';
+const TITLES: Record<SettingsDetailKey,string> = { language:'Language', regionCurrency:'Region & Currency', notifications:'Notifications', privacy:'Privacy & Permissions', help:'Help Center', about:'About Wantiss' };
+const LANGUAGES = ['English','Kreyòl Ayisyen','Français','Español'];
+const REGIONS = ['Haiti','United States','Dominican Republic','Canada','Philippines','France'];
+const CURRENCIES = ['USD','HTG','DOP'];
+
+export default function SettingsDetailScreen({screen,onBack}:Props) {
+ const insets=useSafeAreaInsets();
+ const [loading,setLoading]=useState(true);
+ const [saving,setSaving]=useState(false);
+ const [language,setLanguage]=useState('English');
+ const [region,setRegion]=useState('Haiti');
+ const [currency,setCurrency]=useState('USD');
+ const [notifications,setNotifications]=useState({orders:true,promotions:true,account:true,wallet:true});
+ const [privacy,setPrivacy]=useState({personalization:true,analytics:false});
+ const [email,setEmail]=useState('');
+ const [message,setMessage]=useState('');
+ const [subject,setSubject]=useState('');
+ const [sending,setSending]=useState(false);
+ const load=useCallback(async()=>{
+  setLoading(true);
+  try {
+   const {data:{user},error:userError}=await supabase.auth.getUser(); if(userError) throw userError;
+   if(!user) throw new Error('Please sign in again.');
+   setEmail(user.email??'');
+   const {data,error}=await supabase.from('user_settings').select('*').eq('user_id',user.id).maybeSingle();
+   if(error) throw error;
+   if(data){setLanguage(data.language??'English');setRegion(data.region??'Haiti');setCurrency(data.currency??'USD');setNotifications({...{orders:true,promotions:true,account:true,wallet:true},...(data.notification_preferences??{})});setPrivacy({...{personalization:true,analytics:false},...(data.privacy_preferences??{})});}
+  } catch(e) { Alert.alert('Could not load settings',e instanceof Error?e.message:'Please try again.');}
+  finally {setLoading(false);}
+ },[]);
+ useEffect(()=>{void load()},[load]);
+ const persist=async(next?:{language?:string;region?:string;currency?:string;notifications?:typeof notifications;privacy?:typeof privacy})=>{
+  setSaving(true);
+  try {
+   const {data:{user},error:userError}=await supabase.auth.getUser();if(userError)throw userError;if(!user)throw new Error('Please sign in again.');
+   const row={user_id:user.id,language:next?.language??language,region:next?.region??region,currency:next?.currency??currency,notification_preferences:next?.notifications??notifications,privacy_preferences:next?.privacy??privacy,updated_at:new Date().toISOString()};
+   const {error}=await supabase.from('user_settings').upsert(row,{onConflict:'user_id'});if(error)throw error;
+   Alert.alert('Saved','Your settings have been updated.');
+  } catch(e){Alert.alert('Could not save settings',e instanceof Error?e.message:'Please try again.');}
+  finally{setSaving(false);}
+ };
+ const choose=async<T extends string>(value:T,items:T[],current:T,onSelect:(v:T)=>void,field:'language'|'region'|'currency')=>{
+  Alert.alert(field==='language'?'Choose language':field==='region'?'Choose region':'Choose currency',undefined,[...items.map(item=>({text:(item===current?'✓  ':'')+item,onPress:()=>{onSelect(item);void persist({[field]:item});}})),{text:'Cancel',style:'cancel'}]);
+ };
+ const toggleNotification=(key:keyof typeof notifications,value:boolean)=>{const next={...notifications,[key]:value};setNotifications(next);void persist({notifications:next});};
+ const togglePrivacy=(key:keyof typeof privacy,value:boolean)=>{const next={...privacy,[key]:value};setPrivacy(next);void persist({privacy:next});};
+ const sendSupport=async()=>{
+  if(!subject.trim()||!message.trim()){Alert.alert('Add a subject and message','Tell our support team what you need help with.');return;}
+  setSending(true);
+  try{
+   const {data:{user},error:userError}=await supabase.auth.getUser();if(userError)throw userError;if(!user)throw new Error('Please sign in again.');
+   const {error}=await supabase.functions.invoke('settings-support',{body:{subject:subject.trim(),message:message.trim(),email:user.email??email}});
+   if(error)throw error;
+   Alert.alert('Request sent','Your support request has been submitted.');setSubject('');setMessage('');
+  }catch(e){Alert.alert('Could not submit request',e instanceof Error?e.message:'Please try again later.');}
+  finally{setSending(false);}
+ };
+ return <View style={styles.page}><StatusBar barStyle="dark-content" backgroundColor="#FFFFFF"/><View style={[styles.header,{paddingTop:insets.top+8}]}><Pressable onPress={onBack} style={styles.back} accessibilityRole="button" accessibilityLabel="Back"><Ionicons name="chevron-back" size={24} color={INK}/></Pressable><Text style={styles.title}>{TITLES[screen]}</Text><View style={styles.balance}/></View><View style={styles.stripe}/>{loading?<View style={styles.loading}><ActivityIndicator color={INK}/><Text style={styles.muted}>Loading your settings…</Text></View>:<ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
+ {screen==='language'&&<><Text style={styles.intro}>App language</Text><Text style={styles.helper}>Choose the language used for Wantiss settings and supported app content.</Text>{LANGUAGES.map(item=><Pressable key={item} onPress={()=>{setLanguage(item);void persist({language:item});}} style={styles.choice}><Text style={styles.label}>{item}</Text><Ionicons name={language===item?'radio-button-on':'radio-button-off'} size={21} color={language===item?INK:'#B8B4BD'}/></Pressable>)}</>}
+ {screen==='regionCurrency'&&<><Text style={styles.intro}>Regional settings</Text><Text style={styles.helper}>These choices are saved to your Wantiss account and can be changed any time.</Text><Text style={styles.fieldLabel}>Region</Text>{REGIONS.map(item=><Pressable key={item} onPress={()=>{setRegion(item);void persist({region:item});}} style={styles.choice}><Text style={styles.label}>{item}</Text><Ionicons name={region===item?'radio-button-on':'radio-button-off'} size={21} color={region===item?INK:'#B8B4BD'}/></Pressable>)}<View style={styles.sectionStripe}/><Text style={styles.fieldLabel}>Preferred currency</Text>{CURRENCIES.map(item=><Pressable key={item} onPress={()=>{setCurrency(item);void persist({currency:item});}} style={styles.choice}><View><Text style={styles.label}>{item}</Text><Text style={styles.subLabel}>{item==='USD'?'US Dollar':item==='HTG'?'Haitian Gourde':'Dominican Peso'}</Text></View><Ionicons name={currency===item?'radio-button-on':'radio-button-off'} size={21} color={currency===item?INK:'#B8B4BD'}/></Pressable>)}</>}
+ {screen==='notifications'&&<><Text style={styles.intro}>Notification preferences</Text><Text style={styles.helper}>Choose which Wantiss updates you would like to receive. Account and security notices may still be sent when necessary.</Text>{([{key:'orders',title:'Orders and deliveries',desc:'Order updates, dispatch and delivery status'},{key:'promotions',title:'Offers and promotions',desc:'Deals, recommendations and special offers'},{key:'account',title:'Account and security',desc:'Sign-in, verification and important account activity'},{key:'wallet',title:'Wallet activity',desc:'Wallet balances and payment activity'}] as const).map(item=><View key={item.key} style={styles.toggleRow}><View style={styles.toggleCopy}><Text style={styles.label}>{item.title}</Text><Text style={styles.subLabel}>{item.desc}</Text></View><Switch value={notifications[item.key]} onValueChange={value=>toggleNotification(item.key,value)} trackColor={{false:'#D8D4DB',true:'#D6A6C4'}} thumbColor={notifications[item.key]?INK:'#FFFFFF'}/></View>)}</>}
+ {screen==='privacy'&&<><Text style={styles.intro}>Privacy & permissions</Text><Text style={styles.helper}>Control optional data use. These settings are stored with your account.</Text><View style={styles.toggleRow}><View style={styles.toggleCopy}><Text style={styles.label}>Personalized experience</Text><Text style={styles.subLabel}>Use activity to personalize recommendations and content.</Text></View><Switch value={privacy.personalization} onValueChange={value=>togglePrivacy('personalization',value)} trackColor={{false:'#D8D4DB',true:'#D6A6C4'}} thumbColor={privacy.personalization?INK:'#FFFFFF'}/></View><View style={styles.toggleRow}><View style={styles.toggleCopy}><Text style={styles.label}>Optional analytics</Text><Text style={styles.subLabel}>Allow usage analytics to help improve Wantiss.</Text></View><Switch value={privacy.analytics} onValueChange={value=>togglePrivacy('analytics',value)} trackColor={{false:'#D8D4DB',true:'#D6A6C4'}} thumbColor={privacy.analytics?INK:'#FFFFFF'}/></View><View style={styles.sectionStripe}/><Text style={styles.fieldLabel}>Account data</Text><Text style={styles.helper}>You can review or update personal information and saved addresses from Settings. To request account deletion, contact support so the request can be verified and processed securely.</Text><Pressable style={styles.outlineButton} onPress={()=>Alert.alert('Privacy support','Contact support through Help Center to request a copy of your account data or ask a privacy question.')}><Text style={styles.outlineText}>Contact privacy support</Text></Pressable></>}
+ {screen==='help'&&<><Text style={styles.intro}>How can we help?</Text><Text style={styles.helper}>Send our support team a message. Include enough detail for us to understand the issue, but never include your password or verification code.</Text><Text style={styles.fieldLabel}>Your email</Text><View style={styles.readOnly}><Text style={styles.readOnlyText}>{email||'Signed-in email unavailable'}</Text></View><Text style={styles.fieldLabel}>Subject</Text><TextInput value={subject} onChangeText={setSubject} placeholder="What do you need help with?" placeholderTextColor="#A6A1AB" style={styles.input}/><Text style={styles.fieldLabel}>Message</Text><TextInput value={message} onChangeText={setMessage} placeholder="Describe the issue…" placeholderTextColor="#A6A1AB" style={[styles.input,styles.messageInput]} multiline textAlignVertical="top"/><Pressable disabled={sending} onPress={()=>void sendSupport()} style={[styles.primaryButton,sending&&{opacity:.6}]}><Text style={styles.primaryText}>{sending?'Sending…':'Send support request'}</Text></Pressable><Text style={styles.subLabel}>If support submission is unavailable, please try again later. No request is marked as sent unless the server confirms it.</Text></>}
+ {screen==='about'&&<><View style={styles.brandMark}><Text style={styles.brandText}>W</Text></View><Text style={styles.aboutTitle}>Wantiss</Text><Text style={styles.aboutVersion}>Version 1.10</Text><Text style={styles.aboutBody}>Wantiss brings everyday shopping, services and payments together in one place, connecting customers with useful experiences for Haiti and the Haitian diaspora.</Text><View style={styles.sectionStripe}/><View style={styles.infoRow}><Text style={styles.label}>Application</Text><Text style={styles.subLabel}>Wantiss</Text></View><View style={styles.infoRow}><Text style={styles.label}>Version</Text><Text style={styles.subLabel}>1.10</Text></View><View style={styles.infoRow}><Text style={styles.label}>Support</Text><Text style={styles.subLabel}>Available in Help Center</Text></View></>}
+ {saving&&<Text style={styles.saving}>Saving your changes…</Text>}
+ </ScrollView>}</View>;
+}
+const styles=StyleSheet.create({
+ page:{flex:1,backgroundColor:'#FFFFFF'},header:{minHeight:58,paddingHorizontal:16,paddingBottom:12,flexDirection:'row',alignItems:'center',borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE,backgroundColor:'#FFFFFF'},back:{width:36,height:34,alignItems:'flex-start',justifyContent:'center'},title:{flex:1,textAlign:'center',color:INK,fontSize:20,lineHeight:27,fontWeight:'700',letterSpacing:-.25},balance:{width:36},stripe:{height:10,backgroundColor:PINK},content:{paddingHorizontal:18,paddingTop:22,paddingBottom:32},loading:{flex:1,alignItems:'center',justifyContent:'center',gap:10},muted:{color:MUTED,fontSize:13},intro:{color:INK,fontSize:18,fontWeight:'700',marginBottom:6},helper:{color:MUTED,fontSize:13,lineHeight:20,marginBottom:18},choice:{minHeight:54,flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE},label:{color:'#262626',fontSize:15,lineHeight:21},subLabel:{color:MUTED,fontSize:12,lineHeight:18,marginTop:3},fieldLabel:{color:MUTED,fontSize:12,fontWeight:'600',marginTop:16,marginBottom:7},sectionStripe:{height:10,backgroundColor:PINK,marginHorizontal:-18,marginVertical:18},toggleRow:{minHeight:74,flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:12,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE},toggleCopy:{flex:1,paddingVertical:12},readOnly:{minHeight:48,borderWidth:1,borderColor:'#EAE5EB',borderRadius:10,paddingHorizontal:13,justifyContent:'center',marginBottom:10},readOnlyText:{color:INK,fontSize:14},input:{minHeight:48,borderWidth:1,borderColor:'#EAE5EB',borderRadius:10,paddingHorizontal:13,color:INK,fontSize:15,marginBottom:10,backgroundColor:'#FFFFFF'},messageInput:{minHeight:120,paddingTop:12},primaryButton:{minHeight:48,borderRadius:10,backgroundColor:INK,alignItems:'center',justifyContent:'center',marginTop:8,paddingHorizontal:14},primaryText:{color:'#FFFFFF',fontSize:14,fontWeight:'600'},outlineButton:{minHeight:46,borderRadius:10,borderWidth:1,borderColor:PINK,alignItems:'center',justifyContent:'center',marginTop:8},outlineText:{color:INK,fontSize:14,fontWeight:'600'},brandMark:{width:64,height:64,borderRadius:20,backgroundColor:PINK,alignItems:'center',justifyContent:'center',alignSelf:'center',marginBottom:14},brandText:{fontSize:34,fontWeight:'800',color:INK},aboutTitle:{fontSize:24,fontWeight:'800',color:INK,textAlign:'center'},aboutVersion:{fontSize:13,color:MUTED,textAlign:'center',marginTop:4,marginBottom:18},aboutBody:{fontSize:14,color:'#56515E',lineHeight:22,textAlign:'center',marginBottom:20},infoRow:{minHeight:48,flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:LINE},saving:{color:MUTED,fontSize:12,textAlign:'center',marginTop:16}
+});
