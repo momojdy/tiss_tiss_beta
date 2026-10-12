@@ -20,7 +20,7 @@ function WalletNavIndicator() {
   return <View style={styles.walletNavIndicator} />;
 }
 
-function WalletBottomNav({ onHomePress, onMePress }: { onHomePress?: () => void; onMePress?: () => void }) {
+function WalletBottomNav({ onHomePress, onMePress, onQRPress }: { onHomePress?: () => void; onMePress?: () => void; onQRPress?: () => void }) {
   return (
     <View style={styles.navOuter}>
       <View style={styles.walletNav}>
@@ -104,7 +104,7 @@ export default function WalletHomeScreen({
           <InviteFriendRow />
         </View>
       </ScrollView>
-      <WalletBottomNav onHomePress={onHomePress} onMePress={onMePress} />
+      <WalletBottomNav onHomePress={onHomePress} onMePress={onMePress} onQRPress={onQRPress} />
     </View>
   );
 }
