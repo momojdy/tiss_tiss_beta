@@ -14,6 +14,7 @@ import {
   useColorScheme,
 } from 'react-native';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 import { supabase } from '../lib/supabase';
 
 const BACKGROUND = '#F5F8F3';
@@ -1284,6 +1285,7 @@ type Props = {
   onPrivacyPress?: () => void;
   onDataRightsPress?: () => void;
   onCreateWalletPress?: () => void;
+  onQRPress?: () => void;
 };
 
 type Profile = { full_name: string | null; email: string | null; avatar_url: string | null };
@@ -1389,6 +1391,7 @@ export default function WalletSettingsScreen({
   onPrivacyPress,
   onDataRightsPress,
   onCreateWalletPress,
+  onQRPress,
 }: Props) {
   const system = useColorScheme();
   const [isDark, setIsDark] = useState(system === 'dark');
@@ -1398,6 +1401,8 @@ export default function WalletSettingsScreen({
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const [countryPickerOpen, setCountryPickerOpen] = useState(false);
   const [countrySearch, setCountrySearch] = useState('');
+  const [walletQrToken, setWalletQrToken] = useState<string | null>(null);
+  const [walletQrOpen, setWalletQrOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     setWalletLoading(true);
@@ -1418,6 +1423,10 @@ export default function WalletSettingsScreen({
       });
 
       setWallet(walletRow ? { id: String(walletRow.id), balance: Number(walletRow.balance ?? 0) } : null);
+      if (walletRow?.id) {
+        const { data: qrData, error: qrError } = await supabase.rpc('issue_wallet_receive_qr', { p_wallet_id: String(walletRow.id) });
+        if (!qrError && qrData?.token) setWalletQrToken(qrData.token);
+      } else setWalletQrToken(null);
 
       const metadataCountry =
         user.user_metadata?.country_code ??
@@ -1476,7 +1485,9 @@ export default function WalletSettingsScreen({
             {profile.full_name ? <Text style={styles.profileName} numberOfLines={1}>{profile.full_name}</Text> : null}
             <Text style={styles.profileEmail} numberOfLines={1}>{profile.email || 'Email not available'}</Text>
           </View>
-          <MaterialIcons name="qr-code-2" size={42} color={TEXT} />
+          <Pressable onPress={() => setWalletQrOpen(true)} accessibilityLabel="Expand wallet receiving QR" style={styles.qrPreview}>
+            {walletQrToken ? <QRCode value={`wantiss://qr?token=${walletQrToken}`} size={48} color="#438C53" backgroundColor="#FFFFFF" /> : <MaterialIcons name="qr-code-2" size={42} color={ART} />}
+          </Pressable>
         </View>
 
         {walletLoading ? (
@@ -1532,6 +1543,18 @@ export default function WalletSettingsScreen({
       </ScrollView>
 
       <BottomNav onHomePress={onHomePress} />
+
+      <Modal transparent animationType="fade" visible={walletQrOpen} onRequestClose={() => setWalletQrOpen(false)}>
+        <View style={styles.qrScrim}>
+          <View style={styles.qrSheet}>
+            <Pressable onPress={() => setWalletQrOpen(false)} style={styles.qrClose}><MaterialIcons name="close" size={22} color={TEXT} /></Pressable>
+            <Text style={styles.qrTitle}>Your wallet QR</Text>
+            <Text style={styles.qrBody}>Let someone scan this QR to find this wallet.</Text>
+            <View style={styles.qrLargeFrame}>{walletQrToken ? <QRCode value={`wantiss://qr?token=${walletQrToken}`} size={220} color="#438C53" backgroundColor="#FFFFFF" /> : <Text style={styles.qrBody}>Your wallet QR is not available yet.</Text>}</View>
+            <Pressable onPress={() => { setWalletQrOpen(false); onQRPress?.(); }} style={styles.qrMore}><Text style={styles.qrMoreText}>See more</Text><MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" /></Pressable>
+          </View>
+        </View>
+      </Modal>
 
       <Modal transparent animationType="slide" visible={countryPickerOpen} onRequestClose={() => setCountryPickerOpen(false)}>
         <View style={styles.countryScrim}>
@@ -1590,6 +1613,15 @@ const styles = StyleSheet.create({
   avatarText: { color: TEXT, fontSize: 24, fontFamily: 'Manrope_700Bold' },
   avatarImage: { width: '100%', height: '100%', borderRadius: 40 },
   profileCopy: { flex: 1, minWidth: 0 },
+  qrPreview: { width: 58, height: 58, borderRadius: 10, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: LINE, alignItems: 'center', justifyContent: 'center', padding: 4 },
+  qrScrim: { flex: 1, backgroundColor: 'rgba(0,0,0,0.42)', justifyContent: 'center', alignItems: 'center', padding: 22 },
+  qrSheet: { width: '100%', maxWidth: 360, backgroundColor: BACKGROUND, borderRadius: 22, padding: 22, alignItems: 'center' },
+  qrClose: { alignSelf: 'flex-end', padding: 4 },
+  qrTitle: { color: TEXT, fontSize: 20, fontFamily: 'Manrope_800ExtraBold', marginTop: 4 },
+  qrBody: { color: MUTED, fontSize: 13, textAlign: 'center', lineHeight: 19, marginTop: 6 },
+  qrLargeFrame: { width: 252, height: 252, borderRadius: 18, backgroundColor: '#FFFFFF', marginTop: 20, alignItems: 'center', justifyContent: 'center', padding: 14 },
+  qrMore: { width: '100%', minHeight: 46, borderRadius: 13, backgroundColor: '#438C53', marginTop: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  qrMoreText: { color: '#FFFFFF', fontSize: 14, fontFamily: 'Inter_600SemiBold' },
   profileName: { color: TEXT, fontSize: 16, fontFamily: 'Inter_500Medium' },
   profileEmail: { color: MUTED, fontSize: 14, fontFamily: 'Inter_400Regular', marginTop: 8 },
   bannerSpacing: { paddingHorizontal: 16, paddingTop: 30 },
