@@ -64,7 +64,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     } finally { setBusy(false); }
   }, [kind, businessId]);
 
-  useEffect(() => { void issue(); }, [issue]);
+  useEffect(() => { if (initialToken && kind === 'wallet_receive') { setBusy(false); return; } void issue(); }, [issue, initialToken, kind]);
   useEffect(() => {
     if (kind !== 'buyer_identity') return;
     let active = true;
@@ -154,7 +154,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         <Text style={styles.title}>{theme.title}</Text>
         <Text style={styles.subtitle}>{theme.subtitle}</Text>
         <View style={styles.qrFrame}>
-          {busy ? <ActivityIndicator color={theme.color} /> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
+          {busy ? <ActivityIndicator color={theme.color} /> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>{initialToken && kind === 'wallet_receive' ? 'Recipient link opened. Confirm the recipient below.' : 'QR unavailable'}</Text>}
         </View>
         {kind === 'buyer_identity' ? <>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { if (!record?.token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
@@ -167,7 +167,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
-        {record?.id ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
+        {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
       </View>
 
       {kind === 'wallet_receive' ? <View style={styles.scannerCard}>
