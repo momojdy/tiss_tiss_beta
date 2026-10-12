@@ -59,7 +59,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
 
   const resolve = async () => {
     const raw = tokenInput.trim().replace(/^wantiss:\/\//i, '');
-    const tokenMatch = raw.match(/[?&]token=([^&]+)/i);\n    const token = tokenMatch ? decodeURIComponent(tokenMatch[1]) : raw;
+    const tokenMatch = raw.match(/[?&]token=([^&]+)/i);
+    const token = tokenMatch ? decodeURIComponent(tokenMatch[1]) : raw;
     if (!token) { Alert.alert('Scan a QR', 'Enter the QR token to look up its destination.'); return; }
     setResolving(true);
     try {
