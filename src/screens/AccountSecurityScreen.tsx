@@ -3,6 +3,7 @@ import { Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, St
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../lib/supabase';
+import { COUNTRIES } from './WalletSettingsScreen';
 
 type Props = { onBack: () => void };
 type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'linked' | 'account' | 'delete' | null;
@@ -10,6 +11,8 @@ type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'lin
 const INK = '#1E1B3A';
 const MUTED = '#8D8997';
 const PINK = '#FCE4F1';
+const DIAL_CODES: Record<string,string> = {HT:'+509',US:'+1',CA:'+1',DO:'+1',PH:'+63',FR:'+33',GB:'+44',JM:'+1',CU:'+53',MX:'+52',ES:'+34',BR:'+55',CN:'+86',IN:'+91',AU:'+61',DE:'+49',IT:'+39',BE:'+32',CH:'+41',PR:'+1',TT:'+1',BS:'+1',BB:'+1',GD:'+1',LC:'+1',VC:'+1',AG:'+1',KN:'+1',DM:'+1',BZ:'+501',CO:'+57',AR:'+54',CL:'+56',PE:'+51',EC:'+593};
+const dialCode = (iso:string) => DIAL_CODES[iso] ?? '+1';
 
 const SECTIONS = [
   { title: 'ACCOUNT INFORMATION', rows: [{ label: 'Account ID', action: 'account' as Action }, { label: 'Phone Number', action: 'phone' as Action }, { label: 'Email Address', action: 'email' as Action }] },
@@ -33,6 +36,10 @@ export default function AccountSecurityScreen({ onBack }: Props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [phoneCountryIso, setPhoneCountryIso] = useState('HT');
+  const [countryPickerOpen, setCountryPickerOpen] = useState(false);
+  const [countrySearch, setCountrySearch] = useState('');
+  const [phoneTarget, setPhoneTarget] = useState('');
   const [phoneOtp, setPhoneOtp] = useState('');
   const [phoneOtpRequested, setPhoneOtpRequested] = useState(false);
 
@@ -69,6 +76,9 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     setConfirmPassword('');
     setNewEmail('');
     setNewPhone('');
+    setPhoneTarget('');
+    setCountryPickerOpen(false);
+    setCountrySearch('');
     setPhoneOtp('');
     setPhoneOtpRequested(false);
   };
@@ -103,6 +113,9 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     }
     setSaving(true);
     try {
+      const { data: quota, error: quotaError } = await supabase.rpc('request_account_security_action', { p_request_type: 'email_verification' });
+      if (quotaError) throw quotaError;
+      if (quota?.allowed !== true) throw new Error('You have reached the limit of 5 email verification requests in 24 hours. Please try again later.');
       const { error } = await supabase.auth.updateUser({ email: value });
       if (error) throw error;
       Alert.alert('Check your inbox', 'Supabase has been asked to send a confirmation link. Your account email changes after you confirm it.');
@@ -115,22 +128,19 @@ export default function AccountSecurityScreen({ onBack }: Props) {
   };
 
   const requestPhoneChange = async () => {
-    const value = newPhone.trim();
-    if (value.replace(/\D/g, '').length < 7) {
-      Alert.alert('Check your phone number', 'Enter a complete phone number with its country code, for example +509XXXXXXXX.');
-      return;
-    }
+    const digits = newPhone.replace(/\D/g, '');
+    if (digits.length < 7 || digits.length > 15) { Alert.alert('Check your phone number', 'Enter a valid phone number with at least 7 digits.'); return; }
+    const value = dialCode(phoneCountryIso) + digits;
     setSaving(true);
     try {
-      const { error } = await supabase.auth.updateUser({ phone: value });
-      if (error) throw error;
-      setPhoneOtpRequested(true);
+      const { data: quota, error: quotaError } = await supabase.rpc('request_account_security_action', { p_request_type: 'phone_change' });
+      if (quotaError) throw quotaError;
+      if (quota?.allowed !== true) throw new Error('You have reached the limit of 3 phone verification requests in 24 hours. Please try again later.');
+      const { error } = await supabase.auth.updateUser({ phone: value }); if (error) throw error;
+      setPhoneTarget(value); setPhoneOtpRequested(true);
       Alert.alert('Verification code sent', 'Enter the SMS code to verify your new phone number.');
-    } catch (error) {
-      Alert.alert('Could not send code', error instanceof Error ? error.message : 'Check that phone authentication is enabled.');
-    } finally {
-      setSaving(false);
-    }
+    } catch (error) { Alert.alert('Could not send code', error instanceof Error ? error.message : 'Please try again.'); }
+    finally { setSaving(false); }
   };
 
   const verifyPhoneChange = async () => {
@@ -140,8 +150,10 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     }
     setSaving(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ phone: newPhone.trim(), token: phoneOtp.trim(), type: 'phone_change' });
+      const { error } = await supabase.auth.verifyOtp({ phone: phoneTarget, token: phoneOtp.trim(), type: 'phone_change' });
       if (error) throw error;
+      const { data: current } = await supabase.auth.getUser();
+      if (current.user) { const { error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id); if (profileError) throw profileError; }
       await loadAccount();
       Alert.alert('Phone verified', 'Your phone number has been updated.');
       closeModal();
@@ -261,7 +273,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'verification' && <>
-                <Text style={styles.helper}>Email: {email || 'Not set'}\nStatus: {emailVerified ? 'Verified' : 'Not verified'}\nPhone: {phone || 'Not set'}\nStatus: {phoneVerified ? 'Verified' : 'Not verified'}</Text>
+                <View style={styles.verificationInfo}><View style={styles.verificationRow}><Text style={styles.verificationLabel}>Email address</Text><Text style={styles.verificationValue}>{email || 'Not set'}</Text><Text style={[styles.statusPill, emailVerified ? styles.verified : styles.unverified]}>{emailVerified ? 'Verified' : 'Not verified'}</Text></View><View style={styles.verificationRow}><Text style={styles.verificationLabel}>Phone number</Text><Text style={styles.verificationValue}>{phone || 'Not set'}</Text><Text style={[styles.statusPill, phoneVerified ? styles.verified : styles.unverified]}>{phoneVerified ? 'Verified' : 'Not verified'}</Text></View></View>
                 {!emailVerified && email.length > 0 && <Pressable disabled={saving} onPress={async () => { setSaving(true); try { const { error } = await supabase.auth.resend({ type: 'signup', email }); if (error) throw error; Alert.alert('Verification email sent', 'Check your inbox and spam folder.'); } catch (error) { Alert.alert('Could not send email', error instanceof Error ? error.message : 'Please try again.'); } finally { setSaving(false); } }} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Sending…' : 'Resend verification email'}</Text></Pressable>}
                 {!phoneVerified && <Pressable onPress={() => setAction('phone')} style={styles.secondaryButton}><Text style={styles.secondaryButtonText}>Verify phone number</Text></Pressable>}
               </>}
