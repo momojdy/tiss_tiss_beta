@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 type Props = {
   onBack: () => void;
   onOpen: (screen: 'accountSecurity' | 'personalInformation' | 'addresses' | 'language' | 'regionCurrency' | 'notifications' | 'privacy' | 'help' | 'about') => void;
-  onSwitchAccount: () => void;
+  onSwitchAccount: (destination: 'vendor' | 'buyer') => void;
   onLogOut: () => void;
 };
 
@@ -48,7 +48,7 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
         ))}
         <View style={styles.sectionStripe} />
         <View style={styles.accountActions}>
-          <Pressable onPress={() => Alert.alert('Switch account', 'Sign out of this account to sign in with another Wantiss account?', [{ text: 'Cancel', style: 'cancel' }, { text: 'Continue', onPress: onSwitchAccount }])} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
+          <Pressable onPress={() => Alert.alert('Switch account', 'Choose where you want to go.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Business Space', onPress: () => onSwitchAccount('vendor') }, { text: 'Switch to another buyer account', onPress: () => onSwitchAccount('buyer') }])} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
             <Text style={styles.rowLabel}>Switch Account</Text>
             <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
           </Pressable>
