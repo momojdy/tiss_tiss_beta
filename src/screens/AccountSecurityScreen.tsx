@@ -60,6 +60,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       setUserId(user.id);
       setEmail(user.email ?? profile?.email ?? '');
       setPhone(profile?.phone_number ?? user.phone ?? user.user_metadata?.phone_number ?? '');
+      setPhoneCountryIso(String(user.user_metadata?.phone_country_iso ?? 'HT'));
       setEmailVerified(Boolean(user.email_confirmed_at));
       setPhoneVerified(Boolean(user.phone_confirmed_at));
       setIdentities((user.identities ?? []).map(identity => identity.provider).filter(Boolean));
@@ -167,19 +168,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     }
   };
 
-  const openRow = (next: Action) => {
-    if (next === 'account') {
-      if (userId && !loading) {
-        Alert.alert('Account details', 'Your account ID is shown below.', [
-          { text: 'OK' },
-        ]);
-      } else {
-        setAction(next);
-      }
-      return;
-    }
-    setAction(next);
-  };
+  const openRow = (next: Action) => { setAction(next); };
 
   const signOutOtherDevices = async () => {
     Alert.alert('Sign out other devices?', 'This will end your other active sessions. This device will stay signed in.', [
