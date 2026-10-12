@@ -49,21 +49,6 @@ function VendorShopQr({ businessId }: { businessId: string }) {
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
-  const [shopQr, setShopQr] = useState<any>(null);
-  const [shopQrLoading, setShopQrLoading] = useState(false);
-  const issueShopQr = useCallback(async () => {
-    setShopQrLoading(true);
-    try {
-      const { data, error } = await supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: biz.id });
-      if (error) throw error;
-      setShopQr(data);
-    } catch (error) {
-      Alert.alert('Shop QR unavailable', error instanceof Error ? error.message : 'Please try again.');
-    } finally { setShopQrLoading(false); }
-  }, [biz.id]);
-  useEffect(() => { void issueShopQr(); }, [issueShopQr]);
-  const [shopQr, setShopQr] = useState<string | null>(null), [qrBusy, setQrBusy] = useState(false);
-  const issueShopQr = async () => { setQrBusy(true); try { const data = await rpc<any>('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: biz.id }); setShopQr(data?.token ?? null); if (!data?.token) throw new Error('No QR token returned'); } catch (e) { Alert.alert('Shop QR unavailable', errText(e)); } finally { setQrBusy(false); } };
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
