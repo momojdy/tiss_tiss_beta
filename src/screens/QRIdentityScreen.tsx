@@ -12,13 +12,14 @@ type Props = {
   businessId?: string;
   onOpenShop?: (vendorId: string, shopName: string) => void;
   onOpenWallet?: (token: string, recipient: any) => void;
+  onOpenBuyer?: () => void;
 };
 const THEMES = {
   buyer_identity: { title: 'My Wantiss ID', subtitle: 'Your buyer identity', color: '#E8A0C5', pale: '#FFF0F7' },
   wallet_receive: { title: 'Add me', subtitle: 'Share this wallet-specific receiving QR', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
-export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet }: Props) {
+export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer }: Props) {
   const theme = THEMES[kind];
   const [record, setRecord] = useState<any>(null);
   const [busy, setBusy] = useState(true);
@@ -107,6 +108,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       setTokenInput(raw);
       if (data.destination === 'vendor-shop') onOpenShop?.(data.vendor_id, data.shop_name);
       if (data.destination === 'wallet-receive') onOpenWallet?.(token, data);
+      if (data.destination === 'buyer-profile') onOpenBuyer?.();
     } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'Please try another QR.'); }
     finally { setResolving(false); }
   };
