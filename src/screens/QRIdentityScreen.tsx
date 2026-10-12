@@ -57,6 +57,21 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
 
   useEffect(() => { void issue(); }, [issue]);
 
+  const revoke = async () => {
+    if (!record?.id) return;
+    Alert.alert('Revoke this QR?', 'Anyone using the old QR will no longer be able to resolve it.', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Revoke QR', style: 'destructive', onPress: () => { void (async () => {
+        try {
+          const { error } = await supabase.rpc('revoke_qr_identity', { p_record_id: record.id });
+          if (error) throw error;
+          setRecord(null);
+          Alert.alert('QR revoked', 'This QR is no longer active. Create a new one when you are ready.');
+        } catch (error) { Alert.alert('Could not revoke QR', error instanceof Error ? error.message : 'Please try again.'); }
+      })(); } },
+    ]);
+  };
+
   const resolve = async () => {
     const raw = tokenInput.trim().replace(/^wantiss:\/\//i, '');
     const tokenMatch = raw.match(/[?&]token=([^&]+)/i);
@@ -108,7 +123,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         </View>
         {kind === 'buyer_identity' ? <View style={styles.infoCard}><Text style={styles.infoTitle}>Your Wantiss number</Text><Text style={styles.infoBody}>Your permanent account number is shown in your profile details. This QR token is private and can be rotated.</Text></View> : null}
         <Pressable style={[styles.primary,{backgroundColor:theme.color}]} onPress={() => Alert.alert('Refresh QR?', 'The current QR will stop working immediately.', [{text:'Cancel',style:'cancel'},{text:'Refresh',onPress:()=>void issue()}])}><Ionicons name="refresh" size={18} color="#FFF"/><Text style={styles.primaryText}>Refresh QR</Text></Pressable>
-        <Text style={styles.security}>Refreshing revokes the previous QR token. Keep screenshots private if the QR can receive money.</Text>
+        <Pressable style={[styles.outline,{borderColor:'#C94858'}]} onPress={revoke} disabled={!record?.id}><Ionicons name="close-circle-outline" size={18} color="#C94858"/><Text style={[styles.outlineText,{color:'#C94858'}]}>Revoke QR</Text></Pressable><Text style={styles.security}>Refreshing revokes the previous QR token. Keep screenshots private if the QR can receive money.</Text>
       </ScrollView></View>;
   }
 
@@ -119,6 +134,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         <View style={styles.qrFrame}>{busy ? <ActivityIndicator color={theme.color}/> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={208} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}</View>
         <Text style={styles.caption}>This QR belongs to wallet {walletId ? walletId.slice(0,8).toUpperCase() : '…'}, not just your account.</Text>
         <Pressable style={[styles.primary,{backgroundColor:theme.color}]} onPress={() => Alert.alert('Refresh wallet QR?', 'The previous receiving QR will be revoked.', [{text:'Cancel',style:'cancel'},{text:'Refresh',onPress:()=>void issue()}])}><Ionicons name="refresh" size={18} color="#FFF"/><Text style={styles.primaryText}>Refresh wallet QR</Text></Pressable>
+        <Pressable style={[styles.outline,{borderColor:'#C94858',marginTop:10}]} onPress={revoke} disabled={!record?.id}><Ionicons name="close-circle-outline" size={18} color="#C94858"/><Text style={[styles.outlineText,{color:'#C94858'}]}>Revoke wallet QR</Text></Pressable>
       </View>
       <View style={styles.scannerCard}><Text style={styles.sectionTitle}>Pay me / Scan a QR</Text><Text style={styles.muted}>Paste a Wantiss QR token or its link to resolve the destination securely on the server.</Text><TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} style={styles.input}/><Pressable style={[styles.outline,{borderColor:theme.color}]} onPress={resolve} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color}/> : <Ionicons name="scan-outline" size={18} color={theme.color}/>}<Text style={[styles.outlineText,{color:theme.color}]}>Resolve QR</Text></Pressable>
         {resolved ? <View style={styles.recipient}><Text style={styles.sectionTitle}>{resolved.destination==='vendor-shop'?'Shop found':resolved.destination==='wallet-receive'?'Recipient confirmed':'Wantiss profile found'}</Text><Text style={styles.recipientName}>{resolved.display_name ?? resolved.shop_name ?? 'Wantiss account'}</Text>{resolved.wantiss_number ? <Text style={styles.muted}>Wantiss ID: {resolved.wantiss_number}</Text>:null}
