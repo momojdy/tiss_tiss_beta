@@ -33,7 +33,7 @@ function withBusinessRequestTimeout<T>(request: PromiseLike<T>, label: string): 
   });
 }
 
-const BIZ_COLS = 'id,name,verification,payout_ready,is_live,created_at';
+const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at';
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
