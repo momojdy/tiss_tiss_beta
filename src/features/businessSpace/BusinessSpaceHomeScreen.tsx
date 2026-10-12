@@ -20,6 +20,19 @@ import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, S
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
+  const [shopQr, setShopQr] = useState<any>(null);
+  const [shopQrLoading, setShopQrLoading] = useState(false);
+  const issueShopQr = useCallback(async () => {
+    setShopQrLoading(true);
+    try {
+      const { data, error } = await supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: biz.id });
+      if (error) throw error;
+      setShopQr(data);
+    } catch (error) {
+      Alert.alert('Shop QR unavailable', error instanceof Error ? error.message : 'Please try again.');
+    } finally { setShopQrLoading(false); }
+  }, [biz.id]);
+  useEffect(() => { void issueShopQr(); }, [issueShopQr]);
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
@@ -41,6 +54,17 @@ export function Home() {
         <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PERMANENT VENDOR ID</Text>
         <Text selectable style={{ color: t.ink, fontSize: 18, fontWeight: '800', letterSpacing: 1.1 }}>{biz.vendor_id ?? 'Assigning Vendor ID…'}</Text>
         <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
+      </View>
+      <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 16, padding: 14, gap: 8, alignItems: 'center' }}>
+        <View style={{ alignSelf: 'stretch' }}>
+          <Text style={{ color: t.blue, fontSize: 11, fontWeight: '800', letterSpacing: 0.8 }}>PUBLIC SHOP QR</Text>
+          <Text style={{ color: t.ink, fontSize: 16, fontWeight: '800', marginTop: 4 }}>Let customers find your shop</Text>
+          <Text style={{ color: t.mute, fontSize: 11, marginTop: 3 }}>Blue QR opens your public storefront, never your private dashboard.</Text>
+        </View>
+        {shopQrLoading && !shopQr ? <ActivityIndicator color={t.blue} /> : shopQr?.token ? <View style={{ padding: 12, backgroundColor: '#FFFFFF', borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${shopQr.token}`} size={174} color="#397BC6" backgroundColor="#FFFFFF" /></View> : <Text style={{ color: t.mute, fontSize: 12 }}>QR not available</Text>}
+        <Pressable onPress={() => Alert.alert('Refresh shop QR?', 'The current shop QR will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => void issueShopQr() }])} style={{ alignSelf: 'stretch', minHeight: 42, borderRadius: 11, borderWidth: 1, borderColor: t.blue, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+          <Icon name="refresh-cw" size={15} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800', fontSize: 12 }}>Refresh shop QR</Text>
+        </Pressable>
       </View>
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
