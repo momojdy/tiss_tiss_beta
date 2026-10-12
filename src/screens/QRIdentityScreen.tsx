@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
@@ -28,6 +29,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [paying, setPaying] = useState(false);
   const [walletId, setWalletId] = useState<string | null>(null);
   const [wantissNumber, setWantissNumber] = useState<string | null>(null);
+  const [cameraOpen, setCameraOpen] = useState(false);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
 
   const issue = useCallback(async () => {
     setBusy(true);
@@ -74,8 +77,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     ]);
   };
 
-  const resolve = async () => {
-    const raw = tokenInput.trim().replace(/^wantiss:\/\//i, '');
+  const resolve = async (scannedValue?: string) => {
+    const raw = (scannedValue ?? tokenInput).trim().replace(/^wantiss:\/\//i, '');
     const tokenMatch = raw.match(/[?&]token=([^&]+)/i);
     const token = tokenMatch ? decodeURIComponent(tokenMatch[1]) : raw;
     if (!token) { Alert.alert('Scan a QR', 'Enter the QR token to look up its destination.'); return; }
@@ -139,7 +142,12 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         <Pressable style={[styles.primary,{backgroundColor:theme.color}]} onPress={() => Alert.alert('Refresh wallet QR?', 'The previous receiving QR will be revoked.', [{text:'Cancel',style:'cancel'},{text:'Refresh',onPress:()=>void issue()}])}><Ionicons name="refresh" size={18} color="#FFF"/><Text style={styles.primaryText}>Refresh wallet QR</Text></Pressable>
         <Pressable style={[styles.outline,{borderColor:'#C94858',marginTop:10}]} onPress={revoke} disabled={!record?.id}><Ionicons name="close-circle-outline" size={18} color="#C94858"/><Text style={[styles.outlineText,{color:'#C94858'}]}>Revoke wallet QR</Text></Pressable>
       </View>
-      <View style={styles.scannerCard}><Text style={styles.sectionTitle}>Pay me / Scan a QR</Text><Text style={styles.muted}>Paste a Wantiss QR token or its link to resolve the destination securely on the server.</Text><TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} style={styles.input}/><Pressable style={[styles.outline,{borderColor:theme.color}]} onPress={resolve} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color}/> : <Ionicons name="scan-outline" size={18} color={theme.color}/>}<Text style={[styles.outlineText,{color:theme.color}]}>Resolve QR</Text></Pressable>
+      <View style={styles.scannerCard}><Text style={styles.sectionTitle}>Pay me / Scan a QR</Text><Text style={styles.muted}>Scan a Wantiss QR with your camera, or paste a token/link to resolve its destination securely on the server.</Text>
+        {cameraOpen ? <View style={{ height: 290, overflow: 'hidden', borderRadius: 14, backgroundColor: '#101820' }}>
+          <CameraView style={{ flex: 1 }} facing="back" barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={({ data }) => { if (cameraOpen) { setCameraOpen(false); setTokenInput(data); void resolve(data); } }} />
+          <Pressable onPress={() => setCameraOpen(false)} style={{ position: 'absolute', top: 10, right: 10, backgroundColor: '#FFFFFF', borderRadius: 20, padding: 8 }}><Ionicons name="close" size={20} color="#202735" /></Pressable>
+        </View> : <Pressable style={[styles.outline,{borderColor:theme.color}]} onPress={async () => { if (!cameraPermission?.granted) { const result = await requestCameraPermission(); if (!result.granted) { Alert.alert('Camera permission needed', 'Allow camera access to scan Wantiss QR codes. You can still paste a QR token below.'); return; } } setCameraOpen(true); }}><Ionicons name="camera-outline" size={18} color={theme.color}/><Text style={[styles.outlineText,{color:theme.color}]}>Open camera scanner</Text></Pressable>}
+        <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} style={styles.input}/><Pressable style={[styles.outline,{borderColor:theme.color}]} onPress={resolve} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color}/> : <Ionicons name="scan-outline" size={18} color={theme.color}/>}<Text style={[styles.outlineText,{color:theme.color}]}>Resolve QR</Text></Pressable>
         {resolved ? <View style={styles.recipient}><Text style={styles.sectionTitle}>{resolved.destination==='vendor-shop'?'Shop found':resolved.destination==='wallet-receive'?'Recipient confirmed':'Wantiss profile found'}</Text><Text style={styles.recipientName}>{resolved.display_name ?? resolved.shop_name ?? 'Wantiss account'}</Text>{resolved.wantiss_number ? <Text style={styles.muted}>Wantiss ID: {resolved.wantiss_number}</Text>:null}
           {resolved.qr_type==='wallet_receive' ? <><TextInput value={amount} onChangeText={setAmount} placeholder="Amount (USD)" keyboardType="decimal-pad" style={styles.input}/><Pressable disabled={paying} style={[styles.primary,{backgroundColor:theme.color,opacity: paying ? 0.6 : 1}]} onPress={pay}>{paying?<ActivityIndicator color="#FFF"/>:<Ionicons name="send" size={17} color="#FFF"/>}<Text style={styles.primaryText}>{paying?'Processing…':'Pay me'}</Text></Pressable></>:null}
         </View>:null}
