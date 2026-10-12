@@ -66,6 +66,9 @@ export function Home() {
         <Pressable onPress={() => Alert.alert('Refresh shop QR?', 'The current shop QR will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => void issueShopQr() }])} style={{ alignSelf: 'stretch', minHeight: 42, borderRadius: 11, borderWidth: 1, borderColor: t.blue, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
           <Icon name="refresh-cw" size={15} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800', fontSize: 12 }}>Refresh shop QR</Text>
         </Pressable>
+        <Pressable onPress={() => { if (!shopQr?.id) return; Alert.alert('Revoke shop QR?', 'The current QR will stop opening your shop.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Revoke', style: 'destructive', onPress: () => { void (async () => { const { error } = await supabase.rpc('revoke_qr_identity', { p_record_id: shopQr.id }); if (error) Alert.alert('Could not revoke QR', error.message); else setShopQr(null); })(); } }]); }} style={{ alignSelf: 'stretch', minHeight: 40, borderRadius: 11, borderWidth: 1, borderColor: t.bad, alignItems: 'center', justifyContent: 'center', flexDirection: 'row', gap: 7 }}>
+          <Icon name="close-circle" size={15} color={t.bad} /><Text style={{ color: t.bad, fontWeight: '800', fontSize: 12 }}>Revoke shop QR</Text>
+        </Pressable>
       </View>
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
