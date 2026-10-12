@@ -39,7 +39,8 @@
     "expo-file-system": "~57.0.0",
     "expo-image-manipulator": "~57.0.0",
     "react-native-qrcode-svg": "^6.3.15",
-    "expo-camera": "~57.0.5"
+    "expo-camera": "~57.0.5",
+    "qrcode": "1.5.4"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
