@@ -301,7 +301,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               <View style={styles.sheetHandle} />
               <View style={styles.sheetHeader}>
                 <Text style={styles.sheetTitle}>{action === 'password' ? 'Change password' : action === 'email' ? 'Email address' : action === 'phone' ? 'Phone number' : action === 'verification' ? 'Account verification' : action === 'devices' ? 'Login devices' : action === 'linked' ? 'Linked accounts' : action === 'delete' ? 'Account deletion' : 'Account details'}</Text>
-                <Pressable onPress={closeModal} hitSlop={10}><Ionicons name="close" size={22} color={MUTED} /></Pressable>
+                <Pressable onPress={() => closeModal()} hitSlop={10}><Ionicons name="close" size={22} color={MUTED} /></Pressable>
               </View>
 
               {action === 'password' && <>
