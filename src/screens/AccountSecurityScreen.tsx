@@ -293,9 +293,9 @@ export default function AccountSecurityScreen({ onBack }: Props) {
         <Text style={styles.note}>Never share your password or verification codes with anyone.</Text>
       </ScrollView>
 
-      <Modal visible={action !== null} transparent animationType="slide" onRequestClose={closeModal}>
+      <Modal visible={action !== null} transparent animationType="slide" onRequestClose={() => closeModal()}>
         <View style={styles.modalBackdrop}>
-          <Pressable style={StyleSheet.absoluteFill} onPress={closeModal} />
+          <Pressable style={StyleSheet.absoluteFill} onPress={() => closeModal()} />
           <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.sheetPosition}>
             <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 18) }]}>
               <View style={styles.sheetHandle} />
