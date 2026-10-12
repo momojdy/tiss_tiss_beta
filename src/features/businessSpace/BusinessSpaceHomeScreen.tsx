@@ -37,6 +37,11 @@ export function Home() {
     <ScrollView contentContainerStyle={{ padding: 16, paddingTop: ins.top + 12, paddingBottom: 130, gap: 14 }} showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={app.bump} tintColor={t.blue} />}>
       <Header />
+      <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 14, padding: 14, gap: 5 }}>
+        <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PERMANENT VENDOR ID</Text>
+        <Text selectable style={{ color: t.ink, fontSize: 18, fontWeight: '800', letterSpacing: 1.1 }}>{biz.vendor_id ?? 'Assigning Vendor ID…'}</Text>
+        <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
+      </View>
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
       {biz.verification === 'restricted' ? <Banner tone="bad" icon="alert-circle-outline" text="Your business is restricted. View details" onPress={() => app.go('registration')} /> : null}
