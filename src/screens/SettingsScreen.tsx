@@ -1,35 +1,25 @@
 import React from 'react';
-import { Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-type Props = { onBack: () => void; onAccountSecurityPress: () => void };
+type Props = {
+  onBack: () => void;
+  onOpen: (screen: 'accountSecurity' | 'personalInformation' | 'addresses' | 'language' | 'regionCurrency' | 'notifications' | 'privacy' | 'help' | 'about') => void;
+  onSwitchAccount: () => void;
+  onLogOut: () => void;
+};
 
 const INK = '#1E1B3A';
 const MUTED = '#8D8997';
 const PINK = '#FCE4F1';
-
 const SECTIONS = [
-  { title: 'ACCOUNT', rows: ['Account & Security', 'Personal Information', 'Addresses'] },
-  { title: 'PREFERENCES', rows: ['Language', 'Region & Currency', 'Notifications'] },
-  { title: 'PRIVACY & SUPPORT', rows: ['Privacy & Permissions', 'Help Center', 'About Wantiss'] },
-];
+  { title: 'ACCOUNT', rows: [{ label: 'Account & Security', screen: 'accountSecurity' }, { label: 'Personal Information', screen: 'personalInformation' }, { label: 'Addresses', screen: 'addresses' }] },
+  { title: 'PREFERENCES', rows: [{ label: 'Language', screen: 'language' }, { label: 'Region & Currency', screen: 'regionCurrency' }, { label: 'Notifications', screen: 'notifications' }] },
+  { title: 'PRIVACY & SUPPORT', rows: [{ label: 'Privacy & Permissions', screen: 'privacy' }, { label: 'Help Center', screen: 'help' }, { label: 'About Wantiss', screen: 'about' }] },
+] as const;
 
-function SettingSection({ title, rows, onAccountSecurityPress }: { title: string; rows: string[]; onAccountSecurityPress?: () => void }) {
-  return (
-    <View style={styles.section}>
-      <Text style={styles.sectionTitle}>{title}</Text>
-      {rows.map((label, index) => (
-        <Pressable key={label} onPress={label === 'Account & Security' ? onAccountSecurityPress : () => {}} style={[styles.row, index < rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
-          <Text style={styles.rowLabel}>{label}</Text>
-          <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
-        </Pressable>
-      ))}
-    </View>
-  );
-}
-
-export default function SettingsScreen({ onBack, onAccountSecurityPress }: Props) {
+export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogOut }: Props) {
   const insets = useSafeAreaInsets();
   return (
     <View style={styles.page}>
@@ -45,17 +35,25 @@ export default function SettingsScreen({ onBack, onAccountSecurityPress }: Props
         {SECTIONS.map((section, index) => (
           <React.Fragment key={section.title}>
             {index > 0 && <View style={styles.sectionStripe} />}
-            <SettingSection title={section.title} rows={section.rows} onAccountSecurityPress={onAccountSecurityPress} />
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{section.title}</Text>
+              {section.rows.map((row, rowIndex) => (
+                <Pressable key={row.label} onPress={() => onOpen(row.screen)} style={[styles.row, rowIndex < section.rows.length - 1 && styles.rowDivider]} accessibilityRole="button">
+                  <Text style={styles.rowLabel}>{row.label}</Text>
+                  <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
+                </Pressable>
+              ))}
+            </View>
           </React.Fragment>
         ))}
         <View style={styles.sectionStripe} />
         <View style={styles.accountActions}>
-          <Pressable onPress={() => {}} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
+          <Pressable onPress={() => Alert.alert('Switch account', 'Sign out of this account to sign in with another Wantiss account?', [{ text: 'Cancel', style: 'cancel' }, { text: 'Continue', onPress: onSwitchAccount }])} style={[styles.actionRow, styles.rowDivider]} accessibilityRole="button">
             <Text style={styles.rowLabel}>Switch Account</Text>
             <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
           </Pressable>
-          <Pressable onPress={() => {}} style={styles.actionRow} accessibilityRole="button">
-            <Text style={styles.rowLabel}>Log Out</Text>
+          <Pressable onPress={() => Alert.alert('Log out', 'Are you sure you want to log out of Wantiss?', [{ text: 'Cancel', style: 'cancel' }, { text: 'Log Out', style: 'destructive', onPress: onLogOut }])} style={styles.actionRow} accessibilityRole="button">
+            <Text style={styles.logoutLabel}>Log Out</Text>
             <Ionicons name="chevron-forward" size={16} color="#B8B4BD" />
           </Pressable>
         </View>
@@ -70,13 +68,14 @@ const styles = StyleSheet.create({
   backButton: { width: 36, height: 34, alignItems: 'flex-start', justifyContent: 'center' },
   title: { flex: 1, textAlign: 'center', color: INK, fontSize: 21, lineHeight: 27, fontWeight: '700', letterSpacing: -0.25 },
   headerBalance: { width: 36 },
-  content: { paddingBottom: Math.max(24, 24) },
+  content: { paddingBottom: 28 },
   section: { paddingHorizontal: 18, paddingTop: 18, paddingBottom: 8, backgroundColor: '#FFFFFF' },
   sectionTitle: { color: MUTED, fontSize: 11, lineHeight: 15, fontWeight: '600', letterSpacing: 0.45, marginBottom: 4 },
-  row: { minHeight: 51, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 0, borderBottomColor: '#F2F0F2' },
-  rowDivider: { borderBottomWidth: StyleSheet.hairlineWidth },
+  row: { minHeight: 51, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  rowDivider: { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F2F0F2' },
   rowLabel: { color: '#262626', fontSize: 15, lineHeight: 21, fontWeight: '400' },
+  logoutLabel: { color: '#B3261E', fontSize: 15, lineHeight: 21, fontWeight: '400' },
   sectionStripe: { height: 10, width: '100%', backgroundColor: PINK },
   accountActions: { paddingHorizontal: 18, paddingTop: 4, paddingBottom: 8, backgroundColor: '#FFFFFF' },
-  actionRow: { minHeight: 53, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 0, borderBottomColor: '#F2F0F2' },
+  actionRow: { minHeight: 53, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 });
