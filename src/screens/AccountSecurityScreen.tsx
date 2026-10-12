@@ -162,8 +162,12 @@ export default function AccountSecurityScreen({ onBack }: Props) {
       if (current.user) {
         const { error: metadataError } = await supabase.auth.updateUser({ data: { phone_country_code: dialCode(phoneCountryIso), phone_country_iso: phoneCountryIso, phone_number: phoneTarget } });
         if (metadataError) throw metadataError;
-        const { error: profileError } = await supabase.from('profiles').upsert({ id: current.user.id, phone_number: phoneTarget, email: current.user.email ?? '' }, { onConflict: 'id' });
+        const { data: existingProfile, error: profileError } = await supabase.from('profiles').update({ phone_number: phoneTarget }).eq('id', current.user.id).select('id').maybeSingle();
         if (profileError) throw profileError;
+        if (!existingProfile) {
+          const { error: insertError } = await supabase.from('profiles').insert({ id: current.user.id, full_name: String(current.user.user_metadata?.full_name ?? ''), email: current.user.email ?? '', phone_number: phoneTarget });
+          if (insertError) throw insertError;
+        }
       }
       await loadAccount();
       Alert.alert('Phone verified', 'Your phone number has been updated.');
