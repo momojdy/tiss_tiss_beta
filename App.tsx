@@ -11,6 +11,7 @@ import WalletHomeScreen from './src/screens/WalletHomeScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
 import SettingsDetailScreen, { type SettingsDetailKey } from './src/screens/SettingsDetailScreen';
 import AddressesScreen from './src/screens/AddressesScreen';
+import PersonalInformationScreen from './src/screens/PersonalInformationScreen';
 import AccountSecurityScreen from './src/screens/AccountSecurityScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
@@ -56,7 +57,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -250,7 +251,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
         onOpen={(target) => {
           if (target === 'accountSecurity') setBuyerScreen('accountSecurity');
           else if (target === 'addresses') setBuyerScreen('addresses');
-          else if (target === 'personalInformation') setBuyerScreen('walletPersonalInfo');
+          else if (target === 'personalInformation') setBuyerScreen('personalInformation');
           else { setSettingsDetail(target); setBuyerScreen('settingsDetail'); }
         }}
         onSwitchAccount={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setAuthInitialMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
@@ -258,6 +259,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       />;
       if (buyerScreen === 'accountSecurity') return <AccountSecurityScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'addresses') return <AddressesScreen onBack={() => setBuyerScreen('settings')} />;
+      if (buyerScreen === 'personalInformation') return <PersonalInformationScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
