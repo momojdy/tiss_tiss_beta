@@ -9,7 +9,7 @@ import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
 import WalletHomeScreen from './src/screens/WalletHomeScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
-import SettingsDetailScreen, { SettingsDetailKey } from './src/screens/SettingsDetailScreen';
+import SettingsDetailScreen, { SettingsDetailKind } from './src/screens/SettingsDetailScreen';
 import AccountSecurityScreen from './src/screens/AccountSecurityScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
@@ -194,7 +194,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
-  const [settingsDetail, setSettingsDetail] = useState<SettingsDetailKey>('personalInformation');
+  const [settingsDetail, setSettingsDetail] = useState<SettingsDetailKind>('personalInfo');
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
   const [flyzSelectedFlight, setFlyzSelectedFlight] = useState<any>(null);
@@ -245,7 +245,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletNotifications') return <WalletNotificationsScreen onBack={() => setBuyerScreen('wallet')} onPayMoneyRequest={(requestId) => { console.info('Pay money request:', requestId); }} />;
       if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => setBuyerScreen('me')} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} />;
       if (buyerScreen === 'settings') return <SettingsScreen onBack={() => setBuyerScreen('me')} onAccountSecurityPress={() => setBuyerScreen('accountSecurity')} onDetailPress={(key) => { setSettingsDetail(key); setBuyerScreen('settingsDetail'); }} onSwitchAccount={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not switch account', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} onLogOut={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not log out', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
-      if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
+      if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen kind={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'accountSecurity') return <AccountSecurityScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
