@@ -90,6 +90,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   };
 
   const resolve = async (scannedValue?: string) => {
+    if (resolving) return;
     const raw = (scannedValue ?? tokenInput).trim();
     const match = raw.match(/[?&]token=([^&]+)/i);
     const token = match ? decodeURIComponent(match[1]) : raw.replace(/^wantiss:\/\//i, '');
