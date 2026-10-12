@@ -9,6 +9,8 @@ on:
       - 'src/screens/AddressesScreen.tsx'
       - 'src/screens/PersonalInformationScreen.tsx'
       - 'src/screens/AccountSecurityScreen.tsx'
+      - 'src/screens/QRIdentityScreen.tsx'
+      - 'src/features/businessSpace/BusinessSpaceHomeScreen.tsx'
       - 'supabase/migrations/**'
       - 'app.json'
       - 'package.json'
