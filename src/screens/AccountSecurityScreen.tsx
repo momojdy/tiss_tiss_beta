@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../lib/supabase';
-import { COUNTRIES } from './WalletSettingsScreen';
+import { COUNTRIES } from '../data/countries';
 
 type Props = { onBack: () => void };
 type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'linked' | 'account' | 'delete' | null;
