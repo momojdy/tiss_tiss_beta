@@ -3,6 +3,7 @@ import React, { createContext, useCallback, useContext, useEffect, useMemo, useR
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import QRCode from 'react-native-qrcode-svg';
 import Svg, { Circle, G, Line, Polyline, Rect, SvgXml, Text as SvgText } from 'react-native-svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -34,6 +35,8 @@ export function Home() {
     } finally { setShopQrLoading(false); }
   }, [biz.id]);
   useEffect(() => { void issueShopQr(); }, [issueShopQr]);
+  const [shopQr, setShopQr] = useState<string | null>(null), [qrBusy, setQrBusy] = useState(false);
+  const issueShopQr = async () => { setQrBusy(true); try { const data = await rpc<any>('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: biz.id }); setShopQr(data?.token ?? null); if (!data?.token) throw new Error('No QR token returned'); } catch (e) { Alert.alert('Shop QR unavailable', errText(e)); } finally { setQrBusy(false); } };
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
@@ -55,6 +58,15 @@ export function Home() {
         <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PERMANENT VENDOR ID</Text>
         <Text selectable style={{ color: t.ink, fontSize: 18, fontWeight: '800', letterSpacing: 1.1 }}>{biz.vendor_id ?? 'Assigning Vendor ID…'}</Text>
         <Text style={{ color: t.mute, fontSize: 11 }}>Use this ID to identify your business. It stays the same when your QR is refreshed.</Text>
+      </View>
+      <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 14, padding: 14, gap: 10 }}>
+        <Text style={{ color: t.mute, fontSize: 11, fontWeight: '700', letterSpacing: 0.7 }}>PUBLIC SHOP QR</Text>
+        <Text style={{ color: t.ink, fontSize: 13 }}>Customers can scan this to identify your shop. It never opens your private dashboard.</Text>
+        {shopQr ? <View style={{ alignSelf: 'center', backgroundColor: '#FFFFFF', padding: 12, borderRadius: 12 }}><QRCode value={`wantiss://qr?token=${shopQr}`} size={176} color="#397BC6" backgroundColor="#FFFFFF" /></View> : null}
+        <Pressable disabled={qrBusy} onPress={() => { if (shopQr) Alert.alert('Refresh shop QR?', 'The previous QR token will be revoked.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issueShopQr(); } }]); else void issueShopQr(); }} style={{ minHeight: 42, borderRadius: 10, backgroundColor: '#397BC6', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+          {qrBusy ? <ActivityIndicator color="#FFFFFF" size="small" /> : <Icon name="qrcode" size={17} color="#FFFFFF" />}
+          <Text style={{ color: '#FFFFFF', fontWeight: '800', fontSize: 13 }}>{qrBusy ? 'Preparing QR…' : shopQr ? 'Refresh shop QR' : 'Create shop QR'}</Text>
+        </Pressable>
       </View>
       <View style={{ backgroundColor: t.card, borderWidth: 1, borderColor: t.line, borderRadius: 16, padding: 14, gap: 8, alignItems: 'center' }}>
         <View style={{ alignSelf: 'stretch' }}>
