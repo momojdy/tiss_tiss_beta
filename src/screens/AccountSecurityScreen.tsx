@@ -61,8 +61,10 @@ export default function AccountSecurityScreen({ onBack }: Props) {
         .maybeSingle();
       setUserId(user.id);
       setEmail(user.email ?? profile?.email ?? '');
-      setPhone(profile?.phone_number ?? user.phone ?? user.user_metadata?.phone_number ?? '');
-      setPhoneCountryIso(String(user.user_metadata?.phone_country_iso ?? 'HT'));
+      const storedPhone = profile?.phone_number ?? user.phone ?? user.user_metadata?.phone_number ?? '';
+      const detectedCountry = Object.keys(DIAL_CODES).filter(candidate => Boolean(DIAL_CODES[candidate]) && storedPhone.startsWith(DIAL_CODES[candidate])).sort((left, right) => DIAL_CODES[right].length - DIAL_CODES[left].length)[0] ?? 'HT';
+      setPhone(storedPhone);
+      setPhoneCountryIso(String(user.user_metadata?.phone_country_iso ?? detectedCountry));
       setEmailVerified(Boolean(user.email_confirmed_at));
       setPhoneVerified(Boolean(user.phone_confirmed_at));
       setIdentities((user.identities ?? []).filter(identity => Boolean(identity.provider)));
