@@ -33,6 +33,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPhone, setNewPhone] = useState('');
+  const [phoneCountryCode, setPhoneCountryCode] = useState('+509');
   const [phoneOtp, setPhoneOtp] = useState('');
   const [phoneOtpRequested, setPhoneOtpRequested] = useState(false);
 
@@ -69,6 +70,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     setConfirmPassword('');
     setNewEmail('');
     setNewPhone('');
+    setPhoneCountryCode('+509');
     setPhoneOtp('');
     setPhoneOtpRequested(false);
   };
@@ -140,7 +142,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
     }
     setSaving(true);
     try {
-      const { error } = await supabase.auth.verifyOtp({ phone: newPhone.trim(), token: phoneOtp.trim(), type: 'phone_change' });
+      const { error } = await supabase.auth.verifyOtp({ phone: phoneCountryCode + newPhone.replace(/\\D/g, ''), token: phoneOtp.trim(), type: 'phone_change' });
       if (error) throw error;
       await loadAccount();
       Alert.alert('Phone verified', 'Your phone number has been updated.');
@@ -155,7 +157,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
   const openRow = (next: Action) => {
     if (next === 'account') {
       if (userId && !loading) {
-        Alert.alert('Account details', 'Your account ID is shown below.', [
+        Alert.alert('Account ID', userId ? userId.slice(0, 8) + '…' : 'Unavailable', [
           { text: 'OK' },
         ]);
       } else {
@@ -254,8 +256,9 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'phone' && <>
-                <Text style={styles.helper}>Current phone: {phone || 'Not set'}{phoneVerified ? ' · verified' : ' · not verified'}. Include your country code.</Text>
-                <TextInput value={newPhone} onChangeText={setNewPhone} placeholder="+509…" placeholderTextColor="#A6A1AB" keyboardType="phone-pad" style={styles.input} editable={!phoneOtpRequested} />
+                <Text style={styles.helper}>Current phone: {phone || 'Not set'} · {phoneVerified ? 'Verified' : 'Not verified'}</Text>
+                <Pressable onPress={() => Alert.alert('Country code', 'Select your country code', [{text:'Haiti (+509)',onPress:()=>setPhoneCountryCode('+509')},{text:'United States (+1)',onPress:()=>setPhoneCountryCode('+1')},{text:'Canada (+1)',onPress:()=>setPhoneCountryCode('+1')},{text:'Philippines (+63)',onPress:()=>setPhoneCountryCode('+63')},{text:'Dominican Republic (+1 809)',onPress:()=>setPhoneCountryCode('+1809')},{text:'Cancel',style:'cancel'}])} style={[styles.input,{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}]}><Text style={{color:INK,fontSize:15}}>{phoneCountryCode}</Text><Ionicons name="chevron-down" size={16} color={MUTED}/></Pressable>
+                <TextInput value={newPhone} onChangeText={setNewPhone} placeholder="Phone number" placeholderTextColor="#A6A1AB" keyboardType="phone-pad" style={styles.input} editable={!phoneOtpRequested} />
                 {phoneOtpRequested && <TextInput value={phoneOtp} onChangeText={setPhoneOtp} placeholder="6-digit SMS code" placeholderTextColor="#A6A1AB" keyboardType="number-pad" maxLength={6} style={styles.input} />}
                 <Pressable disabled={saving} onPress={phoneOtpRequested ? verifyPhoneChange : requestPhoneChange} style={[styles.primaryButton, saving && styles.disabledButton]}><Text style={styles.primaryButtonText}>{saving ? 'Please wait…' : phoneOtpRequested ? 'Verify phone number' : 'Send verification code'}</Text></Pressable>
               </>}
@@ -274,7 +277,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               {action === 'linked' && <>
                 <Text style={styles.helper}>{identities.length ? 'Authentication providers currently associated with this account:' : 'No linked sign-in providers were returned for this account.'}</Text>
                 {identities.map(identity => <View key={identity} style={styles.identityRow}><Text style={styles.rowLabel}>{identity}</Text><Text style={styles.rowValue}>Connected</Text></View>)}
-                <Text style={styles.smallNote}>Linking or unlinking providers is not enabled here yet. We do not show unconfigured social sign-in options.</Text>
+                <Text style={styles.smallNote}>For help with sign-in methods, contact Wantiss Support.</Text>
               </>}
 
               {action === 'account' && <>
@@ -283,8 +286,8 @@ export default function AccountSecurityScreen({ onBack }: Props) {
               </>}
 
               {action === 'delete' && <>
-                <Text style={styles.helper}>Account deactivation and deletion need a secure server-side process to remove or disable your account safely.</Text>
-                <Text style={styles.smallNote}>This action is not enabled yet. Your account and data have not been changed.</Text>
+                <Text style={styles.helper}>To protect your information, account closure requests are handled by Wantiss Support.</Text>
+                <Pressable onPress={() => Alert.alert('Contact Support', 'Please contact Wantiss Support to request account closure.')} style={styles.primaryButton}><Text style={styles.primaryButtonText}>Contact Support</Text></Pressable>
               </>}
             </View>
           </KeyboardAvoidingView>
@@ -325,5 +328,8 @@ const styles = StyleSheet.create({
   secondaryButtonText: { color: INK, fontSize: 14, fontWeight: '600' },
   smallNote: { color: MUTED, fontSize: 12, lineHeight: 18, marginTop: 14 },
   accountId: { color: INK, fontSize: 14, lineHeight: 21, marginBottom: 10 },
+  verificationCard: { paddingVertical: 12, paddingHorizontal: 14, borderRadius: 10, backgroundColor: '#FAF8FA', marginBottom: 12 },
+  statusText: { fontSize: 12, marginTop: 5, fontWeight: '600' },
+  statusDivider: { height: StyleSheet.hairlineWidth, backgroundColor: '#EAE5EB', marginVertical: 12 },
   identityRow: { minHeight: 42, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F2F0F2' },
 });
