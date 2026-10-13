@@ -17,25 +17,26 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Extract Stayz archive verbatim
+      - name: Extract supplied Stayz source verbatim
         shell: bash
         run: |
           set -euo pipefail
           rm -rf src/features/stayz/supplied
           mkdir -p src/features/stayz/supplied
-          git show HEAD:Stayz > /tmp/Stayz.zip
+          git fetch origin main --depth=1
+          git show origin/main:Stayz > /tmp/Stayz.zip
           unzip -q /tmp/Stayz.zip -d /tmp/stayz-extracted
           root="$(find /tmp/stayz-extracted -mindepth 1 -maxdepth 1 -type d | head -1)"
           test -n "$root"
           cp -a "$root"/. src/features/stayz/supplied/
-          rm -f Stayz
           rm -f .github/workflows/extract-stayz-source.yml
+          rm -f src/features/stayz/.extract-trigger
       - name: Commit extracted source
         shell: bash
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/features/stayz/supplied Stayz .github/workflows/extract-stayz-source.yml
-          git commit -m "chore: extract supplied Stayz guest source [skip ci]"
+          git add src/features/stayz/supplied .github/workflows/extract-stayz-source.yml src/features/stayz/.extract-trigger
+          git commit -m "chore: extract supplied Stayz guest source verbatim [skip ci]"
           git push
