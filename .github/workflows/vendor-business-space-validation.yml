@@ -26,7 +26,7 @@ jobs:
           npx tsc --ignoreConfig --noEmit --strict --skipLibCheck --esModuleInterop
           --jsx react-native --target ES2022 --moduleResolution bundler
           --module ESNext /tmp/vendor-check-globals.d.ts
-          src/features/businessSpace/BusinessSpaceScreen.tsx
+          src/features/businessSpace/BusinessSpaceHomeScreen.tsx
 
       - name: Export Expo web bundle
         run: npx expo export --platform web
