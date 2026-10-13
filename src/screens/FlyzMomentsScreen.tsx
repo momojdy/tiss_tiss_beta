@@ -26,7 +26,9 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
    let query=supabase.from('flyz_moments').select('id,user_id,media_url,media_type,caption,visibility,created_at').eq('user_id',owner).order('created_at',{ascending:false}).limit(60);
    const {data,error}=await query;
    if(error) throw error;
-   const rows=(data??[]) as Moment[];\n   const withUrls=await Promise.all(rows.map(async item=>{const {data:signed}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:signed?.signedUrl};}));\n   setItems(withUrls);
+   const rows=(data??[]) as Moment[];
+   const withUrls=await Promise.all(rows.map(async item=>{const {data:signed}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:signed?.signedUrl};}));
+   setItems(withUrls);
   } catch(e){Alert.alert('Moments unavailable',e instanceof Error?e.message:'Please try again.');}
   finally{setLoading(false);}
  };
@@ -46,8 +48,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
     const path=viewerId+'/'+Date.now()+'.'+ext;
     const {error:uploadError}=await supabase.storage.from('flyz-moments').upload(path,decode(asset.base64),{contentType:mime,upsert:false});
     if(uploadError)throw uploadError;
-    const publicResult=supabase.storage.from('flyz-moments').getPublicUrl(path);
-    url=publicResult.data.publicUrl;
+    url=path;
    } else { throw new Error('Could not read this media file. Please choose another photo or video.'); }
    const {error}=await supabase.from('flyz_moments').insert({user_id:viewerId,media_url:url,media_type:asset.type==='video'?'video':'image',caption:caption.trim(),visibility});
    if(error)throw error;
