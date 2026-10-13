@@ -6,7 +6,6 @@ import { decode } from 'base64-arraybuffer';
 import { WebView } from 'react-native-webview';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
-import { WebView } from 'react-native-webview';
 
 type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
 type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; initialMomentId?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
