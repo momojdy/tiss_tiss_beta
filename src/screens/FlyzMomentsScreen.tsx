@@ -58,7 +58,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
   finally{setPublishing(false);}
  };
  const remove=async(item:Moment)=>{
-  Alert.alert('Delete this Moment?','This removes it from your profile.',[{text:'Cancel',style:'cancel'},{text:'Delete',style:'destructive',onPress:()=>{void(async()=>{const {error}=await supabase.from('flyz_moments').delete().eq('id',item.id);if(error)Alert.alert('Could not delete',error.message);else setItems(v=>v.filter(x=>x.id!==item.id));})();}}]);
+  Alert.alert('Delete this Moment?','This removes it from your profile.',[{text:'Cancel',style:'cancel'},{text:'Delete',style:'destructive',onPress:()=>{void(async()=>{const {error:mediaError}=await supabase.storage.from('flyz-moments').remove([item.media_url]);if(mediaError){Alert.alert('Could not delete media',mediaError.message);return;}const {error}=await supabase.from('flyz_moments').delete().eq('id',item.id);if(error)Alert.alert('Could not delete',error.message);else setItems(v=>v.filter(x=>x.id!==item.id));})();}}]);
  };
  return <View style={s.page}>
   <View style={s.header}><Pressable onPress={onBack} style={s.back}><Ionicons name="chevron-back" size={23} color="#102047"/></Pressable><View style={{flex:1}}><Text style={s.brand}>Flyz.</Text><Text style={s.headerTitle}>{isOwner?'Moments':'Moments by '+(profileName||'Wantiss member')}</Text></View>{isOwner?<Pressable onPress={onPrivacyPress} style={s.brandIcon} accessibilityLabel="Profile privacy"><Ionicons name="settings-outline" size={19} color="#28469E"/></Pressable>:<View style={s.brandIcon}><MaterialCommunityIcons name="star-four-points" size={19} color="#28469E"/></View>}</View>
