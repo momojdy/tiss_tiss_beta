@@ -166,7 +166,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       setRequestId(makeRequestId());
       setTokenInput(raw);
       if (data.destination === 'vendor-shop') onOpenShop?.(data.vendor_id, data.shop_name);
-      if (data.destination === 'wallet-receive') onOpenWallet?.(token, data);
+      if (data.destination === 'wallet-receive' || data.qr_type === 'wallet_receive') { if (onOpenWallet) onOpenWallet(token, { ...data, destination: 'wallet-receive' }); else Alert.alert('Wallet destination unavailable', 'Return to your Wantiss wallet and scan the QR again.'); }
       if (data.destination === 'buyer-profile') onOpenBuyer?.(data);
     } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'Please try another QR.'); }
     finally { setResolving(false); resolveLock.current = false; }
