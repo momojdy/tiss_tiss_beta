@@ -137,9 +137,25 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     if (resolveLock.current || resolving) return;
     resolveLock.current = true;
     const raw = (scannedValue ?? tokenInput).trim();
-    const match = raw.match(/[?&]token=([^&]+)/i);
-    const token = match ? decodeURIComponent(match[1]) : raw.replace(/^wantiss:\/\//i, '');
-    if (!token) { resolveLock.current = false; Alert.alert('Scan a QR', 'Scan a Wantiss QR or paste its token.'); return; }
+    let token = raw;
+    if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
+      let parsed: ReturnType<typeof Linking.parse>;
+      try { parsed = Linking.parse(raw); } catch { parsed = { scheme: null, hostname: null, path: null, queryParams: {} }; }
+      const scheme = (parsed.scheme ?? '').toLowerCase();
+      const host = (parsed.hostname ?? '').toLowerCase();
+      const path = (parsed.path ?? '').replace(/^\\/+/, '').toLowerCase();
+      if (scheme !== 'wantiss' || !(host === 'qr' || path === 'qr')) {
+        resolveLock.current = false;
+        Alert.alert('Wantiss link only', 'For your safety, Wantiss can only open QR links created by Wantiss. Scan a Wantiss QR code or paste its token.');
+        return;
+      }
+      token = typeof parsed.queryParams?.token === 'string' ? parsed.queryParams.token : '';
+    } else if (raw.includes('?') || raw.includes('/') || raw.includes('\\')) {
+      resolveLock.current = false;
+      Alert.alert('Paste a Wantiss token', 'Use a Wantiss QR link or paste the QR token itself. Other links are not accepted.');
+      return;
+    }
+    if (!/^[A-Za-z0-9_-]{32,256}$/.test(token)) { resolveLock.current = false; Alert.alert('Wantiss QR not recognized', 'This Wantiss QR token is incomplete or invalid.'); return; }
     setCameraOpen(false);
     setResolving(true);
     try {
