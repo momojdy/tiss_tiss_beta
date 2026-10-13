@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
-import { CameraView, scanFromURLAsync, useCameraPermissions } from 'expo-camera';
+import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
@@ -93,7 +93,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: false, quality: 1 });
       if (picked.canceled || !picked.assets?.[0]?.uri) return;
       setLibraryBusy(true);
-      const results = await scanFromURLAsync(picked.assets[0].uri, ['qr']);
+      const results = await Camera.scanFromURLAsync(picked.assets[0].uri, ['qr']);
       const scanned = results.find((item: any) => typeof item.data === 'string' && item.data.length > 0);
       if (!scanned) { Alert.alert('No QR code found', 'Choose an image that clearly shows a Wantiss QR code.'); return; }
       await resolve(scanned.data);
