@@ -103,8 +103,10 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
   return <Animated.View {...responder.panHandlers} style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, transform: [{ translateX: pan.x }, { translateY: pan.y }], backgroundColor: 'rgba(255,255,255,0.92)', borderWidth: 0, borderColor: 'transparent', borderRadius: 10, padding: 15, height: 94, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}><Pressable onPress={onPress}><Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text><Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text><View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 16, marginHorizontal: 20 }} /></Pressable></Animated.View>;
 }
 
-function PublicBuyerProfileScreen({ displayName, wantissNumber, onBack }: { displayName: string; wantissNumber: string | null; onBack: () => void }) {
-  const initials = displayName.trim().split(/\\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'W';
+function PublicBuyerProfileScreen({ profile, onBack }: { profile: any; onBack: () => void }) {
+  const displayName = profile?.display_name ?? profile?.displayName ?? 'Wantiss buyer';
+  const wantissNumber = profile?.wantiss_number ?? profile?.wantissNumber ?? null;
+  const initials = displayName.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part: string) => part[0]).join('').toUpperCase() || 'W';
   return <View style={{ flex: 1, backgroundColor: '#FFF8FC' }}>
     <View style={{ height: 100, paddingHorizontal: 14, paddingBottom: 10, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#F1E4EC' }}>
       <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back" style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: '#FCE8F3' }}>
@@ -117,7 +119,7 @@ function PublicBuyerProfileScreen({ displayName, wantissNumber, onBack }: { disp
         <View style={{ width: 88, height: 88, borderRadius: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8D7E9', borderWidth: 3, borderColor: '#FFF0F7' }}>
           <Text style={{ color: '#8F1764', fontSize: 29, fontWeight: '800' }}>{initials}</Text>
         </View>
-        <Text style={{ marginTop: 16, fontSize: 23, fontWeight: '800', color: '#292033', textAlign: 'center' }}>{displayName || 'Wantiss buyer'}</Text>
+        <Text style={{ marginTop: 16, fontSize: 23, fontWeight: '800', color: '#292033', textAlign: 'center' }}>{displayName}</Text>
         <Text style={{ marginTop: 5, color: '#8D8190', fontSize: 13 }}>Wantiss buyer</Text>
         {wantissNumber ? <View style={{ alignSelf: 'stretch', marginTop: 22, padding: 14, borderRadius: 14, backgroundColor: '#FFF4FA', alignItems: 'center' }}>
           <Text style={{ color: '#A14D80', fontSize: 10, fontWeight: '800', letterSpacing: 1 }}>WANTISS ID</Text>
