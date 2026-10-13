@@ -5,9 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 type Props = {
   profile: { display_name?: string | null; wantiss_number?: string | null; avatar_url?: string | null };
   onBack: () => void;
+  onAddPerson?: () => void;
 };
 
-export default function PublicBuyerProfileScreen({ profile, onBack }: Props) {
+export default function PublicBuyerProfileScreen({ profile, onBack, onAddPerson }: Props) {
   const name = profile.display_name?.trim() || 'Wantiss member';
   return (
     <View style={styles.page}>
@@ -22,6 +23,7 @@ export default function PublicBuyerProfileScreen({ profile, onBack }: Props) {
           <View style={styles.avatar}><Ionicons name="person" size={36} color="#B85D91" /></View>
           <Text style={styles.name}>{name}</Text>
           <Text style={styles.subtitle}>Wantiss member</Text>
+          <Pressable onPress={onAddPerson} style={styles.addButton}><Ionicons name="person-add-outline" size={18} color="#FFFFFF" /><Text style={styles.addButtonText}>Add person</Text></Pressable>
           {profile.wantiss_number ? (
             <View style={styles.numberCard}>
               <Text style={styles.label}>WANTISS ID</Text>
@@ -47,6 +49,8 @@ const styles = StyleSheet.create({
   avatar: { width: 76, height: 76, borderRadius: 38, backgroundColor: '#FFF', alignItems: 'center', justifyContent: 'center' },
   name: { marginTop: 14, fontSize: 23, fontWeight: '800', color: '#302536', textAlign: 'center' },
   subtitle: { marginTop: 5, fontSize: 13, color: '#857382' },
+  addButton: { marginTop: 16, minHeight: 44, paddingHorizontal: 22, borderRadius: 13, backgroundColor: '#C2007A', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  addButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
   numberCard: { alignSelf: 'stretch', marginTop: 20, padding: 14, borderRadius: 14, backgroundColor: '#FFF', alignItems: 'center' },
   label: { fontSize: 10, fontWeight: '800', letterSpacing: 1, color: '#B85D91' },
   number: { marginTop: 6, fontSize: 17, fontWeight: '800', color: '#302536' },
