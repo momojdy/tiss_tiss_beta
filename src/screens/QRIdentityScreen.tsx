@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Image, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
-import { Camera, CameraView, useCameraPermissions } from 'expo-camera';
+import { Camera, CameraView, scanFromURLAsync, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
@@ -110,12 +110,15 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: false, quality: 1 });
       if (picked.canceled || !picked.assets?.[0]?.uri) return;
       setLibraryBusy(true);
-      const results = await Camera.scanFromURLAsync(picked.assets[0].uri, ['qr']);
+      if (typeof scanFromURLAsync !== 'function') throw new Error('QR image scanning is unavailable in this app build. Please update Wantiss and try again, or use the live camera scanner.');
+      const results = await scanFromURLAsync(picked.assets[0].uri, ['qr']);
       const scanned = results.find((item: any) => typeof item.data === 'string' && item.data.length > 0);
       if (!scanned) { Alert.alert('No QR code found', 'Choose an image that clearly shows a Wantiss QR code.'); return; }
       await resolve(scanned.data);
     } catch (error) {
-      Alert.alert('Could not read QR image', error instanceof Error ? error.message : 'Try another image or use the camera scanner.');
+      const details = error instanceof Error ? error.message : error && typeof error === 'object' && 'message' in error && typeof (error as { message?: unknown }).message === 'string' ? (error as { message: string }).message : String(error ?? 'Unknown error');
+      console.error('[QRIdentityScreen] Could not read QR image', { details, error });
+      Alert.alert('Could not read QR image', details || 'Try another image or use the camera scanner.');
     } finally { setLibraryBusy(false); }
   };
 
