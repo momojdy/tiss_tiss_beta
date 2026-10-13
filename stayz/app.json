@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Stayz",
+    "slug": "stayz",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "scheme": "stayz",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.wantiss.stayz",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Stayz uses your location to show places to stay near you."
+      }
+    },
+    "android": {
+      "package": "com.wantiss.stayz",
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": [
+      [
+        "expo-location",
+        { "locationWhenInUsePermission": "Stayz uses your location to show places to stay near you." }
+      ]
+    ]
+  }
+}
