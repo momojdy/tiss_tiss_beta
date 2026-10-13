@@ -28,7 +28,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,init
    const {data,error}=await supabase.from('flyz_moments').select('id,user_id,media_url,media_type,caption,visibility,created_at').eq('user_id',owner).order('created_at',{ascending:false}).limit(60);
    if(error) throw error;
    const rows=(data??[]) as Moment[];
-   const withUrls=await Promise.all(rows.map(async item=>{const {data:signed}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:signed?.signedUrl};}));
+   const withUrls=await Promise.all(rows.map(async item=>{const {data:signed}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,300);return {...item,display_url:signed?.signedUrl};}));
    setItems(withUrls);
   } catch(e){Alert.alert('Moments unavailable',e instanceof Error?e.message:'Please try again.');}
   finally{setLoading(false);}
