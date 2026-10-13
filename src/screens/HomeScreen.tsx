@@ -37,6 +37,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { supabase } from '../lib/supabase';
 const MAGENTA = '#BF008E';
 const PINK_BG = '#FBE8EF';
 const GOLD = '#DAAE67';
@@ -189,20 +190,20 @@ function MainPromoPopup(){
 
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
 const NAV_MUTED = '#9A96A3';
-const MESSAGE_UNREAD_COUNT = 1;
+const NOTIFICATION_FEATURE_COLORS: Record<string,string> = { wallet:'#24A148', flyz:'#2585E8', goodies:'#D88735', 'pumping goodies':'#D88735', frenzies:'#7DBD32', konsoliss:'#DDB52B', woulib:'#8D6CC8' };
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
 function BottomNav({onMePress}:{onMePress?:()=>void}){
   return <View style={{paddingHorizontal:15}}><View style={s.nav}>
     <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={25} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
-    <Pressable style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={25} color={NAV_MUTED}/><MessageBadge count={MESSAGE_UNREAD_COUNT}/></View><NavLabel>Messages</NavLabel></Pressable>
+    <Pressable onPress={onMessagesPress} style={s.navButton}><View style={s.messageIconWrap}><MaterialCommunityIcons name="message-text-outline" size={25} color={NAV_MUTED}/><MessageBadge count={unreadMessageCount}/>{unreadFeatureColors.length>0&&<View style={[s.notificationDot,{backgroundColor:activeFeatureColor}]}/>}</View><NavLabel>Messages</NavLabel></Pressable>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="cart-outline" size={25} color={NAV_MUTED}/><NavLabel>Cart</NavLabel></Pressable>
     <Pressable onPress={onMePress} style={s.navButton}><MaterialCommunityIcons name="emoticon-happy-outline" size={25} color={NAV_MUTED}/><NavLabel>Me</NavLabel></Pressable>
   </View></View>;
 }
 
-export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,onWoulibPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void}){
+export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKonsolissPress,onGoodiesPress,onWoulibPress,onMessagesPress,}:{onMePress?:()=>void;onFrenziesPress?:()=>void;onFlyzPress?:()=>void;onKonsolissPress?:()=>void;onGoodiesPress?:()=>void;onWoulibPress?:()=>void;onMessagesPress?:()=>void}){
   const{width}=useWindowDimensions(); const[scrollLocked,setScrollLocked]=useState(false); const p=useRef(new Animated.Value(0)).current;
   const colW=(width-16-12)/2;
   const masonry:{h:number;c:string}[][]=[[
@@ -219,7 +220,7 @@ export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKons
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
     </ScrollView>
     <View pointerEvents="box-none" style={{position:'absolute',left:8,right:23,bottom:102,height:40}}><MainPromoPopup/></View>
-    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress}/></View>
+    <View style={{position:'absolute',left:0,right:0,bottom:18}}><BottomNav onMePress={onMePress} onMessagesPress={onMessagesPress}/></View>
   </View>;
 }
 
@@ -244,5 +245,5 @@ const s=StyleSheet.create({
   promoBadge:{paddingHorizontal:10,paddingVertical:4,borderRadius:20,backgroundColor:MAGENTA},
   nav:{height:65,borderRadius:18,backgroundColor:'rgba(255,255,255,0.88)',borderWidth:1,borderColor:'rgba(255,255,255,0.55)',flexDirection:'row',alignItems:'center',justifyContent:'space-evenly',elevation:5,shadowColor:'#000',shadowOpacity:.13,shadowRadius:5,shadowOffset:{width:0,height:2}},
   homeButton:{width:64,height:60,alignItems:'center'},homeCircle:{marginTop:2,width:56,height:56,borderRadius:28,borderWidth:1,borderColor:'#E8CFE0',alignItems:'center',justifyContent:'center',overflow:'hidden'},homeLogo:{width:54,height:54,borderRadius:27},
-  navButton:{width:68,height:46,alignItems:'center',justifyContent:'flex-end'},messageIconWrap:{width:30,height:29,alignItems:'center',justifyContent:'center'},messageBadge:{position:'absolute',top:-5,right:-9,minWidth:16,height:16,paddingHorizontal:4,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},messageBadgeText:{color:'#FFFFFF',fontSize:9,lineHeight:11,fontWeight:'700'},navLabel:{paddingTop:4,fontSize:10.5,color:'#1F1E1E',fontFamily:F_INTER,textAlign:'center'},
+  navButton:{width:68,height:46,alignItems:'center',justifyContent:'flex-end'},messageIconWrap:{width:30,height:29,alignItems:'center',justifyContent:'center'},notificationDot:{position:'absolute',left:-3,bottom:0,width:8,height:8,borderRadius:4,borderWidth:1.5,borderColor:'#FFF'},messageBadge:{position:'absolute',top:-5,right:-9,minWidth:16,height:16,paddingHorizontal:4,borderRadius:8,backgroundColor:MAGENTA,alignItems:'center',justifyContent:'center'},messageBadgeText:{color:'#FFFFFF',fontSize:9,lineHeight:11,fontWeight:'700'},navLabel:{paddingTop:4,fontSize:10.5,color:'#1F1E1E',fontFamily:F_INTER,textAlign:'center'},
 });
