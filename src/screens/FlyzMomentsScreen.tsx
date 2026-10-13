@@ -8,7 +8,7 @@ import { supabase } from '../lib/supabase';
 import { WebView } from 'react-native-webview';
 
 type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
-type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; initialMomentId?:string; initialMomentId?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
+type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; initialMomentId?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
 
 export default function FlyzMomentsScreen({onBack,profileUserId,profileName,initialMomentId,onPrivacyPress,onHomePress,onDealsPress,onWalletPress,onMorePress}:Props) {
  const [viewerId,setViewerId]=useState<string|null>(null);
@@ -19,7 +19,6 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,init
  const [caption,setCaption]=useState('');
  const [visibility,setVisibility]=useState<'public'|'friends'|'private'>('public');
  const isOwner=!!viewerId && (!profileUserId || profileUserId===viewerId);
- useEffect(()=>{if(initialMomentId && items.length){const found=items.find(item=>item.id===initialMomentId);if(found)setSelectedMoment(found);}},[initialMomentId,items]);
  const load=async()=>{
   setLoading(true);
   try {
@@ -35,8 +34,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,init
   finally{setLoading(false);}
  };
  useEffect(()=>{void load();},[profileUserId]);
- useEffect(()=>{if(initialMomentId&&items.length){const match=items.find(item=>item.id===initialMomentId);if(match)setSelectedMoment(match);}},[initialMomentId,items]);
- useEffect(()=>{if(initialMomentId&&items.length){setSelectedMoment(items.find(item=>item.id===initialMomentId)??null);}},[initialMomentId,items]);
+ useEffect(()=>{if(initialMomentId && items.length){const found=items.find(item=>item.id===initialMomentId);if(found)setSelectedMoment(found);}},[initialMomentId,items]);
  const publish=async()=>{
   if(!viewerId){Alert.alert('Sign in required','Sign in to share a Flyz Moment.');return;}
   setPublishing(true);
