@@ -14,6 +14,8 @@ import AddressesScreen from './src/screens/AddressesScreen';
 import PersonalInformationScreen from './src/screens/PersonalInformationScreen';
 import AccountSecurityScreen from './src/screens/AccountSecurityScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
+import MessageHubScreen from './src/screens/MessageHubScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/WalletPaymentMethodsScreen';
 import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
@@ -63,7 +65,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'messageHub' | 'notifications' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -202,6 +204,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const [notificationUnreadCount, setNotificationUnreadCount] = useState(0);
+  useEffect(() => { let alive = true; let channel: ReturnType<typeof supabase.channel> | undefined; const load = async () => { const { data: { user } } = await supabase.auth.getUser(); if (!user) { if (alive) setNotificationUnreadCount(0); return; } const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false); if (!error && alive) setNotificationUnreadCount(count ?? 0); }; void load(); channel = supabase.channel('app-notification-count').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).subscribe(); return () => { alive = false; if (channel) void supabase.removeChannel(channel); }; }, [authenticated]);
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
   const [flyzSelectedFlight, setFlyzSelectedFlight] = useState<any>(null);
@@ -229,6 +233,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (authenticated) {
     try {
+      if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => Alert.alert('Messages', 'Your conversations will appear here when messaging is connected.')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={0} unreadNotifications={notificationUnreadCount} />;
+      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(destination) => setBuyerScreen(destination as BuyerScreen)} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
       if (buyerScreen === 'flyzDetails') return <FlyzDetailsScreen flight={flyzSelectedFlight} onBack={() => setBuyerScreen('flyzResults')} onContinue={() => setBuyerScreen('flyzPassengerDetails')} />;
       if (buyerScreen === 'flyzPassengerDetails') return <FlyzPassengerDetailsScreen onBack={() => setBuyerScreen('flyzDetails')} onContinue={() => setBuyerScreen('flyzPayment')} />;
@@ -308,7 +314,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
-      return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} />;
+      return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
