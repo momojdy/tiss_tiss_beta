@@ -24,7 +24,7 @@ const THEMES = {
   wallet_receive: { title: 'Add me', subtitle: '', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
-export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer, initialToken, displayToken }: Props) {
+export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer, onPrivacyPress, initialToken, displayToken }: Props) {
   const theme = THEMES[kind];
   const insets = useSafeAreaInsets();
   const [record, setRecord] = useState<any>(null);
