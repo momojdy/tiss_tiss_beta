@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { Camera, CameraView, scanFromURLAsync, useCameraPermissions } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
+import * as ExpoLinking from 'expo-linking';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
@@ -150,7 +151,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     const raw = (scannedValue ?? tokenInput).trim();
     let token = raw;
     if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
-      const parsed = Linking.parse(raw);
+      const parsed = ExpoLinking.parse(raw);
       const scheme = (parsed.scheme ?? '').toLowerCase();
       const host = (parsed.hostname ?? '').toLowerCase();
       const path = (parsed.path ?? '').split('/').filter(Boolean).join('/').toLowerCase();
