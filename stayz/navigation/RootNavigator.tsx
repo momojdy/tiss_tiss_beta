@@ -1,7 +1,7 @@
 import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { TabNavigator } from './TabNavigator';
-import { RootStackParamList } from './types';
+import { RootStackParamList } from '../../types';
 import { ResultsScreen } from '../screens/ResultsScreen';
 import { FiltersScreen } from '../screens/FiltersScreen';
 import { PropertyScreen } from '../screens/PropertyScreen';
