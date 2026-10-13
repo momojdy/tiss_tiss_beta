@@ -1,0 +1,36 @@
+import React,{useState} from 'react';
+import {ActivityIndicator,Alert,Image,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
+import {Ionicons,MaterialCommunityIcons} from '@expo/vector-icons';
+import {supabase} from '../lib/supabase';
+
+type Props={token:string;recipient:any;onBack:()=>void};
+function requestId(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3)|8).toString(16);});}
+export default function WalletQRRecipientScreen({token,recipient,onBack}:Props){
+ const [amount,setAmount]=useState('');const [busy,setBusy]=useState(false);
+ const name=recipient?.display_name?.trim()||'Wantiss member';
+ const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map((v:string)=>v[0]).join('').toUpperCase()||'W';
+ const send=()=>{
+  const value=Number(amount.trim());
+  if(!Number.isFinite(value)||value<=0||!/^\d+(\.\d{1,2})?$/.test(amount.trim())){Alert.alert('Check amount','Enter an amount greater than zero with up to two decimal places.');return;}
+  Alert.alert('Confirm transfer',`Send $${value.toFixed(2)} to ${name}?${recipient?.wantiss_number?'\nWantiss ID: '+recipient.wantiss_number:''}`,[
+   {text:'Cancel',style:'cancel'},
+   {text:'Confirm & send',onPress:()=>{void(async()=>{setBusy(true);try{
+    const {data,error}=await supabase.rpc('transfer_wallet_by_qr',{p_recipient_token:token,p_amount:value,p_request_id:requestId()});
+    if(error)throw error;
+    Alert.alert(data?.duplicate?'Already processed':'Transfer complete',data?.duplicate?'This transfer request was already processed.':'Your wallet transfer was recorded successfully.');
+    setAmount('');onBack();
+   }catch(e){Alert.alert('Transfer not completed',e instanceof Error?e.message:'Please try again.');}finally{setBusy(false);}})();}}
+  ]);
+ };
+ return <KeyboardAvoidingView style={s.page} behavior={Platform.OS==='ios'?'padding':'height'}>
+  <View style={s.header}><Pressable onPress={onBack} style={s.back}><Ionicons name="arrow-back" size={21} color="#1A2517"/></Pressable><Text style={s.headerTitle}>Wallet recipient</Text></View>
+  <ScrollView contentContainerStyle={s.content} keyboardShouldPersistTaps="handled">
+   <View style={s.hero}><View style={s.icon}><MaterialCommunityIcons name="wallet-outline" size={24} color="#438C53"/></View><Text style={s.eyebrow}>VERIFIED WANTISS QR</Text><Text style={s.title}>Send money with confidence</Text><Text style={s.subtitle}>Check the recipient before confirming a transfer.</Text></View>
+   <View style={s.recipient}><View style={s.avatar}>{recipient?.avatar_url?<Image source={{uri:recipient.avatar_url}} style={s.avatarImage}/>:<Text style={s.initials}>{initials}</Text>}</View><View style={{flex:1}}><Text style={s.name}>{name}</Text><Text style={s.id}>{recipient?.wantiss_number?'Wantiss ID · '+recipient.wantiss_number:'Wantiss wallet'}</Text><View style={s.verified}><Ionicons name="shield-checkmark" size={13} color="#438C53"/><Text style={s.verifiedText}>QR destination verified</Text></View></View><Ionicons name="checkmark-circle" size={23} color="#438C53"/></View>
+   <View style={s.amountCard}><Text style={s.amountLabel}>TRANSFER AMOUNT (USD)</Text><View style={s.amountRow}><Text style={s.currency}>$</Text><TextInput value={amount} onChangeText={setAmount} placeholder="0.00" keyboardType="decimal-pad" style={s.amount} autoFocus/></View><Text style={s.helper}>The transfer will use your existing Wantiss wallet balance.</Text></View>
+   <View style={s.notice}><Ionicons name="information-circle-outline" size={19} color="#438C53"/><Text style={s.noticeText}>Adding money to a wallet and sending money are different actions. This QR flow sends funds from your wallet to the verified recipient.</Text></View>
+   <Pressable onPress={send} disabled={busy} style={[s.send,busy&&{opacity:.6}]}>{busy?<ActivityIndicator color="#FFF"/>:<Ionicons name="send" size={18} color="#FFF"/>}<Text style={s.sendText}>{busy?'Processing…':'Review and send'}</Text></Pressable>
+  </ScrollView>
+ </KeyboardAvoidingView>;
+}
+const s=StyleSheet.create({page:{flex:1,backgroundColor:'#F6FAF5'},header:{height:100,paddingHorizontal:14,paddingBottom:10,flexDirection:'row',alignItems:'flex-end',backgroundColor:'#FFF',borderBottomWidth:1,borderBottomColor:'#DCE8D7'},back:{width:38,height:38,borderRadius:12,backgroundColor:'#EAF4E6',alignItems:'center',justifyContent:'center'},headerTitle:{marginLeft:10,paddingBottom:8,fontSize:18,fontWeight:'800',color:'#1A2517'},content:{padding:16,paddingBottom:36,gap:14},hero:{padding:20,borderRadius:22,backgroundColor:'#EFF8EF',borderWidth:1,borderColor:'#C9DFC6',alignItems:'center'},icon:{width:52,height:52,borderRadius:18,backgroundColor:'#FFF',alignItems:'center',justifyContent:'center'},eyebrow:{marginTop:13,fontSize:9,fontWeight:'900',letterSpacing:1.4,color:'#438C53'},title:{marginTop:7,fontSize:21,fontWeight:'900',color:'#1A2517',textAlign:'center'},subtitle:{marginTop:5,fontSize:12,lineHeight:18,color:'#63745E',textAlign:'center'},recipient:{flexDirection:'row',alignItems:'center',gap:12,padding:16,borderRadius:20,backgroundColor:'#FFF',borderWidth:1,borderColor:'#DCE8D7'},avatar:{width:58,height:58,borderRadius:29,backgroundColor:'#EAF4E6',alignItems:'center',justifyContent:'center',overflow:'hidden'},avatarImage:{width:58,height:58},initials:{fontSize:20,fontWeight:'900',color:'#438C53'},name:{fontSize:16,fontWeight:'900',color:'#1A2517'},id:{fontSize:11,color:'#778371',marginTop:4},verified:{flexDirection:'row',alignItems:'center',gap:4,marginTop:7},verifiedText:{fontSize:10,fontWeight:'800',color:'#438C53'},amountCard:{padding:18,borderRadius:20,backgroundColor:'#FFF',borderWidth:1,borderColor:'#DCE8D7'},amountLabel:{fontSize:10,fontWeight:'900',letterSpacing:1,color:'#7C8977'},amountRow:{flexDirection:'row',alignItems:'center',marginTop:12,borderBottomWidth:1,borderBottomColor:'#DCE8D7',paddingBottom:9},currency:{fontSize:28,fontWeight:'800',color:'#438C53'},amount:{flex:1,fontSize:32,fontWeight:'900',color:'#1A2517',paddingLeft:8},helper:{fontSize:11,lineHeight:16,color:'#7C8977',marginTop:10},notice:{flexDirection:'row',alignItems:'flex-start',gap:9,padding:14,borderRadius:15,backgroundColor:'#EFF8EF'},noticeText:{flex:1,fontSize:11,lineHeight:17,color:'#5D6D58'},send:{minHeight:50,borderRadius:14,backgroundColor:'#438C53',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:9},sendText:{fontSize:14,fontWeight:'900',color:'#FFF'}});
