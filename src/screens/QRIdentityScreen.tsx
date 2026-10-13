@@ -81,7 +81,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
 
   const revoke = () => {
     if (!record?.id) return;
-    Alert.alert('Revoke this QR?', 'The current QR will stop resolving immediately.', [
+    Alert.alert('Deactivate this QR?', 'Anyone using this QR link will no longer be able to open its destination.', [
       { text: 'Cancel', style: 'cancel' },
       { text: 'Revoke', style: 'destructive', onPress: () => { void (async () => {
         try {
@@ -145,7 +145,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     ]);
   };
 
-  return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
+  return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
     <View style={[styles.header, { paddingTop: insets.top, height: 100 }]}>
       <Pressable onPress={onBack} style={styles.back}><Ionicons name="chevron-back" size={23} color="#1D2430" /></Pressable>
       <Text style={styles.headerTitle}>{theme.title}</Text>
@@ -167,7 +167,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
-        {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
+        {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Deactivate QR</Text></Pressable> : null}
       </View>
 
       {kind !== 'vendor_shop' ? <View style={styles.scannerCard}>
