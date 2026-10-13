@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,11 +18,12 @@ type Props = {
 };
 const THEMES = {
   buyer_identity: { title: 'My Wantiss ID', subtitle: 'Your buyer identity', color: '#E8A0C5', pale: '#FFF0F7' },
-  wallet_receive: { title: 'Add me', subtitle: 'Share this wallet-specific receiving QR', color: '#438C53', pale: '#EFF8EF' },
+  wallet_receive: { title: 'Add me', subtitle: '', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
 export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer, initialToken }: Props) {
   const theme = THEMES[kind];
+  const insets = useSafeAreaInsets();
   const [record, setRecord] = useState<any>(null);
   const [busy, setBusy] = useState(true);
   const [wantissNumber, setWantissNumber] = useState('');
@@ -143,42 +145,40 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     ]);
   };
 
-  return <View style={styles.page}>
-    <View style={styles.header}>
+  return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
+    <View style={[styles.header, { paddingTop: insets.top, height: 100 }]}>
       <Pressable onPress={onBack} style={styles.back}><Ionicons name="chevron-back" size={23} color="#1D2430" /></Pressable>
       <Text style={styles.headerTitle}>{theme.title}</Text>
     </View>
-    <ScrollView contentContainerStyle={styles.content}>
+    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
       <View style={[styles.hero, { backgroundColor: theme.pale, borderColor: theme.color }]}>
         <Text style={[styles.eyebrow, { color: theme.color }]}>{kind === 'buyer_identity' ? 'BUYER IDENTITY' : kind === 'wallet_receive' ? 'WALLET RECEIVING QR' : 'PUBLIC SHOP'}</Text>
         <Text style={styles.title}>{theme.title}</Text>
         <Text style={styles.subtitle}>{theme.subtitle}</Text>
         <View style={styles.qrFrame}>
-          {busy ? <ActivityIndicator color={theme.color} /> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>{initialToken && kind === 'wallet_receive' ? 'Recipient link opened. Confirm the recipient below.' : 'QR unavailable'}</Text>}
+          {busy ? <ActivityIndicator color={theme.color} /> : (record?.token || initialToken) ? <QRCode value={`wantiss://qr?token=${record?.token ?? initialToken}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
         </View>
         {kind === 'buyer_identity' ? <>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { if (!record?.token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked. Your Wantiss number will stay the same.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh buyer QR</Text></Pressable>
           <Text style={styles.idLabel}>PERMANENT WANTISS NUMBER</Text>
           <Text selectable style={styles.idValue}>{wantissNumber || 'Loading your Wantiss number…'}</Text>
-          <Text style={styles.caption}>This pink QR identifies your buyer account, not a wallet.</Text>
         </> : kind === 'wallet_receive' ? <>
-          <Text style={styles.caption}>This green QR is tied to wallet {walletId ? walletId.slice(0, 8).toUpperCase() : '…'}. Replacing the wallet creates a different QR.</Text>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
         {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Revoke QR</Text></Pressable> : null}
       </View>
 
-      {kind === 'wallet_receive' ? <View style={styles.scannerCard}>
-        <Text style={styles.sectionTitle}>Pay me · Scan a QR</Text>
-        <Text style={styles.muted}>Scan a Wantiss QR. The server validates the token before displaying the destination.</Text>
+      {kind !== 'vendor_shop' ? <View style={styles.scannerCard}>
+        <Text style={styles.sectionTitle}>Pay or add by QR scan</Text>
+        <Text style={styles.muted}>Scan a Wantiss QR or paste its link to open a profile, wallet, or shop.</Text>
         {cameraOpen ? <View style={styles.cameraWrap}>
           {cameraPermission?.granted ? <CameraView style={styles.camera} facing="back" barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={({ data }) => { void resolve(data); }} /> : <View style={styles.permissionBox}><Text style={styles.muted}>Camera permission is required to scan QR codes.</Text><Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void requestCameraPermission(); }}><Text style={styles.primaryText}>Allow camera</Text></Pressable></View>}
           <Pressable style={styles.outline} onPress={() => setCameraOpen(false)}><Text style={styles.outlineText}>Close scanner</Text></Pressable>
         </View> : <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { if (cameraPermission?.granted) setCameraOpen(true); else void requestCameraPermission().then(p => { if (p.granted) setCameraOpen(true); }); }}><Ionicons name="scan-outline" size={19} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Open camera scanner</Text></Pressable>}
-        <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Or paste QR token / link" autoCapitalize="none" autoCorrect={false} style={styles.input} />
-        <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { void resolve(); }} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color} /> : <Ionicons name="search-outline" size={18} color={theme.color} />}<Text style={[styles.outlineText, { color: theme.color }]}>Resolve destination</Text></Pressable>
+        <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} returnKeyType="go" onSubmitEditing={() => { void resolve(); }} style={styles.input} />
+        <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { void resolve(); }} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color} /> : <Ionicons name="search-outline" size={18} color={theme.color} />}<Text style={[styles.outlineText, { color: theme.color }]}>Open QR</Text></Pressable>
         {resolved ? <View style={styles.recipient}>
           <Text style={styles.sectionTitle}>{resolved.destination === 'vendor-shop' ? 'Shop found' : resolved.destination === 'wallet-receive' ? 'Recipient confirmed' : 'Wantiss profile found'}</Text>
           <Text style={styles.recipientName}>{resolved.display_name ?? resolved.shop_name ?? 'Wantiss account'}</Text>
@@ -191,7 +191,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         </View> : null}
       </View> : null}
     </ScrollView>
-  </View>;
+  </KeyboardAvoidingView>;
 }
 function makeRequestId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -200,5 +200,5 @@ function makeRequestId() {
   });
 }
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#F7F8FA' }, header: { height: 58, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#ECEEF2', backgroundColor: '#FFF' }, back: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' }, headerTitle: { fontSize: 17, fontWeight: '700', color: '#202735', marginLeft: 6 }, content: { padding: 16, paddingBottom: 38, gap: 14 }, hero: { borderRadius: 22, borderWidth: 1, padding: 18, alignItems: 'center' }, eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3, alignSelf: 'flex-start' }, title: { fontSize: 24, fontWeight: '800', color: '#202735', marginTop: 8 }, subtitle: { fontSize: 13, color: '#707887', textAlign: 'center', marginTop: 5, lineHeight: 19 }, qrFrame: { backgroundColor: '#FFF', padding: 14, borderRadius: 18, marginTop: 20, minHeight: 236, minWidth: 236, alignItems: 'center', justifyContent: 'center' }, caption: { fontSize: 12, color: '#6D7582', textAlign: 'center', marginTop: 14, lineHeight: 18 }, primary: { minHeight: 46, borderRadius: 13, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 18, width: '100%' }, primaryText: { fontSize: 14, fontWeight: '700', color: '#FFF' }, idLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 0.8, color: '#8C7790', marginTop: 15 }, idValue: { fontSize: 17, fontWeight: '800', color: '#35253A', marginTop: 5 }, muted: { fontSize: 12, color: '#747C8B', lineHeight: 18 }, scannerCard: { padding: 16, borderRadius: 18, backgroundColor: '#FFF', gap: 10 }, sectionTitle: { fontSize: 16, fontWeight: '800', color: '#202735' }, input: { minHeight: 46, borderWidth: 1, borderColor: '#E1E5EB', borderRadius: 12, paddingHorizontal: 13, fontSize: 14, color: '#202735', backgroundColor: '#FFF' }, outline: { minHeight: 44, borderWidth: 1.3, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }, outlineText: { fontSize: 13, fontWeight: '700' }, recipient: { borderTopWidth: 1, borderTopColor: '#ECEEF2', paddingTop: 14, marginTop: 4, gap: 8 }, recipientName: { fontSize: 18, fontWeight: '800', color: '#202735' }, cameraWrap: { gap: 10 }, camera: { height: 300, borderRadius: 14, overflow: 'hidden' }, permissionBox: { minHeight: 140, alignItems: 'center', justifyContent: 'center', gap: 8 }, revokeButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginTop: 12, borderWidth: 1, borderColor: '#E1A6B2' }, revokeText: { color: '#B4455B', fontWeight: '800', fontSize: 12 }
+  page: { flex: 1, backgroundColor: '#F7F8FA' }, header: { flexDirection: 'row', alignItems: 'flex-end', paddingBottom: 10, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#ECEEF2', backgroundColor: '#FFF' }, back: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' }, headerTitle: { fontSize: 17, fontWeight: '700', color: '#202735', marginLeft: 6 }, content: { padding: 16, paddingBottom: 38, gap: 14 }, hero: { borderRadius: 22, borderWidth: 1, padding: 18, alignItems: 'center' }, eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3, alignSelf: 'flex-start' }, title: { fontSize: 24, fontWeight: '800', color: '#202735', marginTop: 8 }, subtitle: { fontSize: 13, color: '#707887', textAlign: 'center', marginTop: 5, lineHeight: 19 }, qrFrame: { backgroundColor: '#FFF', padding: 14, borderRadius: 18, marginTop: 20, minHeight: 236, minWidth: 236, alignItems: 'center', justifyContent: 'center' }, caption: { fontSize: 12, color: '#6D7582', textAlign: 'center', marginTop: 14, lineHeight: 18 }, primary: { minHeight: 46, borderRadius: 13, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 18, width: '100%' }, primaryText: { fontSize: 14, fontWeight: '700', color: '#FFF' }, idLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 0.8, color: '#8C7790', marginTop: 15 }, idValue: { fontSize: 17, fontWeight: '800', color: '#35253A', marginTop: 5 }, muted: { fontSize: 12, color: '#747C8B', lineHeight: 18 }, scannerCard: { padding: 16, borderRadius: 18, backgroundColor: '#FFF', gap: 10 }, sectionTitle: { fontSize: 16, fontWeight: '800', color: '#202735' }, input: { minHeight: 46, borderWidth: 1, borderColor: '#E1E5EB', borderRadius: 12, paddingHorizontal: 13, fontSize: 14, color: '#202735', backgroundColor: '#FFF' }, outline: { minHeight: 44, borderWidth: 1.3, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }, outlineText: { fontSize: 13, fontWeight: '700' }, recipient: { borderTopWidth: 1, borderTopColor: '#ECEEF2', paddingTop: 14, marginTop: 4, gap: 8 }, recipientName: { fontSize: 18, fontWeight: '800', color: '#202735' }, cameraWrap: { gap: 10 }, camera: { height: 300, borderRadius: 14, overflow: 'hidden' }, permissionBox: { minHeight: 140, alignItems: 'center', justifyContent: 'center', gap: 8 }, revokeButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginTop: 12, borderWidth: 1, borderColor: '#E1A6B2' }, revokeText: { color: '#B4455B', fontWeight: '800', fontSize: 12 }
 });
