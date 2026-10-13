@@ -8,7 +8,7 @@ type Profile = {
   avatar_url?: string | null; bio?: string | null; membership_tier?: string | null;
   membership_visibility?: 'public' | 'private';
   frenzies_rank?: number | null;
-  frenzies?: { lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number };
+  frenzies?: { lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number; rank?: number };
 };
 type Moment = { id: string; media_url: string; display_url?: string; media_type: 'image' | 'video'; caption: string; created_at: string };
 
@@ -105,11 +105,16 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
         </View> : <View style={styles.emptyRow}><View style={styles.emptyIcon}><Ionicons name="game-controller-outline" size={22} color="#B72A7B" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>Their next win could be the first</Text><Text style={styles.emptyText}>No public Frenzies stats yet. Invite them to play!</Text></View></View>}
         {profile.frenzies_rank ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#B8792C" />  Ranked #{profile.frenzies_rank} on the Frenzies leaderboard</Text> : null}
         {Number(stats.rank ?? 0) > 0 ? <View style={styles.rankPill}><Ionicons name="trophy-outline" size={15} color="#8E5B19" /><Text style={styles.rankText}>Frenzies rank #{Number(stats.rank).toLocaleString()}</Text></View> : null}
+        {Number(stats.rank ?? 0) > 0 ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#9B6A20" />  Ranked #{stats.rank} on Frenzies</Text> : null}
         {Number(stats.current_win_streak ?? 0) > 0 ? <Text style={styles.streak}><Ionicons name="flame" size={14} color="#D86B35" />  {stats.current_win_streak} win streak · best {stats.best_win_streak ?? stats.current_win_streak}</Text> : null}
       </View>
       <View style={styles.section}>
         <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Frenzies livestreams</Text><Text style={styles.sectionSub}>Live games and shared replays</Text></View><View style={[styles.sectionIcon,{backgroundColor:'#FFF0F0'}]}><Ionicons name="videocam-outline" size={19} color="#C04C65" /></View></View>
         <View style={styles.liveEmpty}><View style={styles.liveIcon}><Ionicons name="radio-outline" size={20} color="#C04C65" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>No public livestreams right now</Text><Text style={styles.emptyText}>If they share a Frenzies stream or replay, it can appear here.</Text></View></View>
+      </View>
+      <View style={styles.section}>
+        <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Livestreams</Text><Text style={styles.sectionSub}>Live or replay activity</Text></View><View style={[styles.sectionIcon,{backgroundColor:"#EAF5E9"}]}><Ionicons name="videocam-outline" size={19} color="#477E4A" /></View></View>
+        <View style={styles.emptyRow}><View style={[styles.emptyIcon,{backgroundColor:"#EAF5E9"}]}><Ionicons name="videocam-outline" size={22} color="#477E4A" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>No livestreams to show yet</Text><Text style={styles.emptyText}>When livestreams or replays are available for this account, public ones can appear here.</Text></View></View>
       </View>
       <View style={styles.section}>
         <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Flyz Moments</Text><Text style={styles.sectionSub}>Little highlights worth sharing</Text></View><Pressable onPress={() => profile.owner_user_id && onOpenMoments?.(profile.owner_user_id, name)}><Text style={styles.viewAll}>View all ›</Text></Pressable></View>
@@ -134,7 +139,7 @@ const styles = StyleSheet.create({
  quickRow:{flexDirection:'row',justifyContent:'space-between',paddingHorizontal:4}, quickItem:{alignItems:'center',gap:6,width:'32%'}, quickIcon:{width:44,height:44,borderRadius:15,alignItems:'center',justifyContent:'center'}, quickLabel:{fontSize:11,fontWeight:'700',color:'#706274'},
  section:{padding:16,borderRadius:20,backgroundColor:'#FFF',borderWidth:1,borderColor:'#F0E2EC',gap:13}, sectionHeading:{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}, sectionTitle:{fontSize:18,fontWeight:'800',color:'#302536'}, sectionSub:{marginTop:4,fontSize:11,color:'#918291'}, sectionIcon:{width:36,height:36,borderRadius:12,backgroundColor:'#FCE7F2',alignItems:'center',justifyContent:'center'},
  statsGrid:{flexDirection:'row',gap:8}, statCard:{flex:1,paddingVertical:14,borderRadius:14,alignItems:'center',backgroundColor:'#FFF5FA',borderWidth:1,borderColor:'#F5D9E9'}, statValue:{fontSize:20,fontWeight:'800',color:'#A52672'}, statLabel:{marginTop:5,fontSize:9,fontWeight:'800',letterSpacing:0.7,color:'#967A8E'},
- streak:{fontSize:12,fontWeight:'700',color:'#A65A35'}, emptyRow:{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:9}, emptyIcon:{width:42,height:42,borderRadius:14,alignItems:'center',justifyContent:'center',backgroundColor:'#EAF1FF'}, emptyTitle:{fontSize:13,fontWeight:'800',color:'#3A2D3F'}, emptyText:{marginTop:4,fontSize:11,lineHeight:16,color:'#8A7D8B'},
+ rankLine:{fontSize:12,fontWeight:'800',color:'#8E5B19'}, streak:{fontSize:12,fontWeight:'700',color:'#A65A35'}, emptyRow:{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:9}, emptyIcon:{width:42,height:42,borderRadius:14,alignItems:'center',justifyContent:'center',backgroundColor:'#EAF1FF'}, emptyTitle:{fontSize:13,fontWeight:'800',color:'#3A2D3F'}, emptyText:{marginTop:4,fontSize:11,lineHeight:16,color:'#8A7D8B'},
  momentGrid:{flexDirection:'row',flexWrap:'wrap',gap:8}, momentTile:{width:'48%',height:140,borderRadius:14,overflow:'hidden',backgroundColor:'#D6E6F8'}, momentImage:{width:'100%',height:'100%'}, videoTile:{flex:1,alignItems:'center',justifyContent:'center',backgroundColor:'#315AA6'}, momentOverlay:{position:'absolute',left:0,right:0,bottom:0,padding:8,backgroundColor:'rgba(18,29,57,0.52)',flexDirection:'row',gap:5,alignItems:'flex-end'}, momentCaption:{flex:1,fontSize:10,fontWeight:'700',color:'#FFF'},
  momentsEmpty:{alignItems:'center',paddingVertical:18,paddingHorizontal:15,backgroundColor:'#F6F9FF',borderRadius:16}, viewAll:{fontSize:12,fontWeight:'800',color:'#315AA6'}, footerNote:{flexDirection:'row',alignItems:'flex-start',gap:8,padding:14,borderRadius:15,backgroundColor:'#FFF'}, footerText:{flex:1,fontSize:11,lineHeight:16,color:'#8B7A8D'}
 });
