@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import * as Linking from 'expo-linking';
@@ -79,7 +79,7 @@ const FEATURES: Feature[] = [
       { t: 'Variants', f: [R('variants', 'Variants', { help: 'Optional. Each variant can have its own price and stock.', sub: [T('name', 'Option', { req: true, ph: 'Size' }), T('value', 'Value', { req: true, ph: 'M' }), M('price', 'Price'), N('qty', 'Stock', { min: 0 })] })] },
       { t: 'Delivery', f: SHIP() },
     ],
-    check: v => (v.compare && v.price && Number(v.compare) <= Number(v.price) ? { compare: 'Compare-at price must be higher than the price' } : {}),
+    check: (v): Record<string, string> => (v.compare && v.price && Number(v.compare) <= Number(v.price) ? { compare: 'Compare-at price must be higher than the price' } : {}),
   },
   {
     key: 'stayz', name: 'Stayz', emoji: '🏨', color: '#6B5CE7', noun: 'booking', add: 'Add a stay',
@@ -91,7 +91,7 @@ const FEATURES: Feature[] = [
       { t: 'Pricing', f: [M('price', 'Nightly price', { req: true, min: 1 }), M('weekend', 'Weekend price'), M('cleaning', 'Cleaning fee'), N('minNights', 'Minimum nights', { min: 1, def: 1 }), N('maxNights', 'Maximum nights', { min: 1 }), N('weekly', 'Weekly discount %', { min: 0, max: 50 }), N('monthly', 'Monthly discount %', { min: 0, max: 70 })] },
       { t: 'Rules and calendar', f: [TM('checkin', 'Check-in from', { def: '14:00' }), TM('checkout', 'Check-out by', { def: '11:00' }), S('cancel', 'Cancellation policy', ['Flexible', 'Moderate', 'Strict'], { req: true, def: 'Moderate' }), Bo('instant', 'Instant booking'), A('rules', 'House rules'), CAL('blocked', 'Block dates you are unavailable')] },
     ],
-    check: v => (v.maxNights && v.minNights && Number(v.maxNights) < Number(v.minNights) ? { maxNights: 'Must be at least the minimum nights' } : {}),
+    check: (v): Record<string, string> => (v.maxNights && v.minNights && Number(v.maxNights) < Number(v.minNights) ? { maxNights: 'Must be at least the minimum nights' } : {}),
   },
   {
     key: 'flyz', name: 'Flyz', emoji: '✈️', color: '#0EA5B7', noun: 'booking', add: 'Add a flight',
@@ -170,7 +170,7 @@ const FEATURES: Feature[] = [
       { t: 'Tickets', f: [R('tiers', 'Ticket tiers', { req: true, sub: [T('name', 'Tier name', { req: true, ph: 'General admission' }), M('price', 'Price', { req: true, min: 0 }), N('qty', 'Quantity', { req: true, min: 1 })] }), N('max', 'Max tickets per order', { min: 1, max: 50, def: 10 }), DT('salesEnd', 'Ticket sales close')] },
       { t: 'Policies', f: [S('refund', 'Refund policy', ['No refunds', 'Up to 7 days before', 'Up to 48 hours before'], { req: true }), S('age', 'Age limit', ['All ages', '16+', '18+', '21+'], { def: 'All ages' }), A('rules', 'Entry rules')] },
     ],
-    check: v => (after(v.start, v.end) ? { end: 'Event must end after it starts' } : {}),
+    check: (v): Record<string, string> => (after(v.start, v.end) ? { end: 'Event must end after it starts' } : {}),
   },
   {
     key: 'glowz', name: 'Glowz', emoji: '💅', color: '#D4639B', noun: 'appointment', add: 'Add a treatment',
@@ -232,7 +232,7 @@ const FEATURES: Feature[] = [
       { t: 'Tickets and draw', f: [M('ticket', 'Ticket price', { req: true, min: 0.5 }), N('total', 'Total tickets', { req: true, min: 10 }), N('maxPer', 'Max tickets per person', { min: 1 }), N('minSold', 'Minimum tickets to run the draw', { min: 1 }), DT('drawAt', 'Draw date', { req: true }), S('method', 'Draw method', ['Random draw by Wantiss', 'Live draw'], { req: true, def: 'Random draw by Wantiss' })] },
       { t: 'Rules', f: [A('rules', 'Rules and eligibility', { req: true, min: 30 }), T('eligible', 'Eligible countries', { req: true }), Bo('age', 'Entrants must be 18 or older', { must: true })] },
     ],
-    check: v => (v.drawAt && new Date(v.drawAt).getTime() < Date.now() ? { drawAt: 'Draw date must be in the future' } : {}),
+    check: (v): Record<string, string> => (v.drawAt && new Date(v.drawAt).getTime() < Date.now() ? { drawAt: 'Draw date must be in the future' } : {}),
   },
 ];
 
@@ -502,7 +502,7 @@ export const Divided = ({ children }: any) => { const s = useS(); const a = Reac
 export function Pg({ title, onBack, right, children, scroll = true, refreshing, onRefresh }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.bg, zIndex: 25, paddingTop: ins.top + 8 }}>
+    <View style={{ ...StyleSheet.absoluteFill, backgroundColor: t.bg, zIndex: 25, paddingTop: ins.top + 8 }}>
       <View style={{ paddingHorizontal: 16, gap: 4 }}>
         <Pressable onPress={onBack} accessibilityRole="button" style={{ flexDirection: 'row', alignItems: 'center', height: 30 }}><Icon name="chevron-left" size={22} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800', fontSize: 14 }}>Back</Text></Pressable>
         <View style={s.row}><Text style={[s.h1, { flex: 1 }]} numberOfLines={1}>{displayText(title)}</Text>{right}</View>
