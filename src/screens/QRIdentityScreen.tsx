@@ -15,6 +15,7 @@ type Props = {
   onOpenShop?: (vendorId: string, shopName: string) => void;
   onOpenWallet?: (token: string, recipient: any) => void;
   onOpenBuyer?: (recipient?: any) => void;
+  onPrivacyPress?: () => void;
   initialToken?: string | null;
   displayToken?: string | null;
 };
@@ -199,6 +200,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         {kind === 'buyer_identity' ? (initialToken ? null : <>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { const token = record?.token ?? displayToken; if (!token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked. Your Wantiss number will stay the same.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh buyer QR</Text></Pressable>
+          {onPrivacyPress ? <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={onPrivacyPress}><Ionicons name="shield-checkmark-outline" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Membership privacy</Text></Pressable> : null}
           <Text style={styles.idLabel}>PERMANENT WANTISS NUMBER</Text>
           <Text selectable style={styles.idValue}>{wantissNumber || 'Loading your Wantiss number…'}</Text>
         </>) : kind === 'wallet_receive' ? <>
