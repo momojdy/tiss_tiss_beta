@@ -6,9 +6,9 @@ import { decode } from 'base64-arraybuffer';
 import { supabase } from '../lib/supabase';
 
 type Moment = { id:string; user_id:string; media_url:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
-type Props = { onBack:()=>void; profileUserId?:string; profileName?:string };
+type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; onPrivacyPress?:()=>void };
 
-export default function FlyzMomentsScreen({onBack,profileUserId,profileName}:Props) {
+export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPrivacyPress}:Props) {
  const [viewerId,setViewerId]=useState<string|null>(null);
  const [items,setItems]=useState<Moment[]>([]);
  const [loading,setLoading]=useState(true);
@@ -59,7 +59,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName}:Pro
   Alert.alert('Delete this Moment?','This removes it from your profile.',[{text:'Cancel',style:'cancel'},{text:'Delete',style:'destructive',onPress:()=>{void(async()=>{const {error}=await supabase.from('flyz_moments').delete().eq('id',item.id);if(error)Alert.alert('Could not delete',error.message);else setItems(v=>v.filter(x=>x.id!==item.id));})();}}]);
  };
  return <View style={s.page}>
-  <View style={s.header}><Pressable onPress={onBack} style={s.back}><Ionicons name="chevron-back" size={23} color="#102047"/></Pressable><View style={{flex:1}}><Text style={s.brand}>Flyz.</Text><Text style={s.headerTitle}>{isOwner?'Moments':'Moments by '+(profileName||'Wantiss member')}</Text></View><View style={s.brandIcon}><MaterialCommunityIcons name="star-four-points" size={19} color="#28469E"/></View></View>
+  <View style={s.header}><Pressable onPress={onBack} style={s.back}><Ionicons name="chevron-back" size={23} color="#102047"/></Pressable><View style={{flex:1}}><Text style={s.brand}>Flyz.</Text><Text style={s.headerTitle}>{isOwner?'Moments':'Moments by '+(profileName||'Wantiss member')}</Text></View>{isOwner?<Pressable onPress={onPrivacyPress} style={s.brandIcon} accessibilityLabel="Profile privacy"><Ionicons name="settings-outline" size={19} color="#28469E"/></Pressable>:<View style={s.brandIcon}><MaterialCommunityIcons name="star-four-points" size={19} color="#28469E"/></View>}</View>
   <ScrollView contentContainerStyle={s.content} showsVerticalScrollIndicator={false}>
    <View style={s.intro}><View style={{flex:1}}><Text style={s.introTitle}>{isOwner?'Keep the little moments.':'A little window into their world.'}</Text><Text style={s.introSub}>{isOwner?'Share photos and short videos from your journeys, stays and everyday discoveries.':'Moments they have chosen to share on Flyz.'}</Text></View><View style={s.introIcon}><MaterialCommunityIcons name="airplane" size={30} color="#28469E"/></View></View>
    {isOwner?<View style={s.compose}>
