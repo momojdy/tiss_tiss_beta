@@ -45,6 +45,9 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,init
    if(picked.canceled||!picked.assets?.[0])return;
    const asset=picked.assets[0];
    const mime=asset.mimeType??(asset.type==='video'?'video/mp4':'image/jpeg');
+   const allowed=['image/jpeg','image/png','image/webp','image/gif','video/mp4','video/quicktime'];
+   if(!allowed.includes(mime))throw new Error('Choose a JPG, PNG, WebP, GIF, MP4 or QuickTime video.');
+   if(typeof asset.fileSize==='number' && asset.fileSize>50*1024*1024)throw new Error('Choose a media file smaller than 50 MB.');
    const base64=await FileSystem.readAsStringAsync(asset.uri,{encoding:FileSystem.EncodingType.Base64});
    if(!base64)throw new Error('Could not read this media file. Please choose another photo or video.');
    const ext=mime.split('/')[1]?.replace('quicktime','mov')??'jpg';
