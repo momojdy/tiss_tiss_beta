@@ -9,7 +9,7 @@ type Profile = {
   membership_visibility?: 'public' | 'private';
   frenzies?: { lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number };
 };
-type Moment = { id: string; media_url: string; media_type: 'image' | 'video'; caption: string; created_at: string };
+type Moment = { id: string; media_url: string; display_url?: string; media_type: 'image' | 'video'; caption: string; created_at: string };
 
 export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoments, onPrivacyPress }: { profile: Profile; onBack: () => void; onOpenMoments?: (userId: string, name: string) => void; onPrivacyPress?: () => void }) {
   const [viewerId, setViewerId] = useState<string | null>(null);
@@ -42,7 +42,7 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
         if (profile.owner_user_id) {
           const { data: items } = await supabase.from('flyz_moments').select('id,media_url,media_type,caption,created_at')
             .eq('user_id', profile.owner_user_id).order('created_at', { ascending: false }).limit(6);
-          if (active) setMoments((items ?? []) as Moment[]);
+          if (active) { const rows=(items ?? []) as Moment[]; const signed=await Promise.all(rows.map(async item=>{const {data:media}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:media?.signedUrl};})); setMoments(signed); }
         }
       } catch { /* Optional sections must not block the basic profile. */ }
       finally { if (active) setLoading(false); }
@@ -106,7 +106,7 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
       </View>
       <View style={styles.section}>
         <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Flyz Moments</Text><Text style={styles.sectionSub}>Little highlights worth sharing</Text></View><Pressable onPress={() => profile.owner_user_id && onOpenMoments?.(profile.owner_user_id, name)}><Text style={styles.viewAll}>View all ›</Text></Pressable></View>
-        {loading ? <ActivityIndicator color="#B85D91" style={{padding:22}} /> : moments.length ? <View style={styles.momentGrid}>{moments.slice(0,4).map(moment => <Pressable key={moment.id} style={styles.momentTile} onPress={() => profile.owner_user_id && onOpenMoments?.(profile.owner_user_id, name)}>{moment.media_type === 'image' ? <Image source={{uri:moment.media_url}} style={styles.momentImage} /> : <View style={styles.videoTile}><Ionicons name="play-circle" size={34} color="#FFF" /></View>}<View style={styles.momentOverlay}><Ionicons name={moment.media_type === 'video' ? 'videocam' : 'heart'} size={13} color="#FFF" /><Text numberOfLines={2} style={styles.momentCaption}>{moment.caption || 'A Flyz moment'}</Text></View></Pressable>)}</View> : <View style={styles.momentsEmpty}><View style={styles.emptyIcon}><Ionicons name="sparkles-outline" size={22} color="#315AA6" /></View><Text style={styles.emptyTitle}>Their story is just beginning</Text><Text style={styles.emptyText}>When they share a Moment on Flyz, their highlights can show up here.</Text></View>}
+        {loading ? <ActivityIndicator color="#B85D91" style={{padding:22}} /> : moments.length ? <View style={styles.momentGrid}>{moments.slice(0,4).map(moment => <Pressable key={moment.id} style={styles.momentTile} onPress={() => profile.owner_user_id && onOpenMoments?.(profile.owner_user_id, name)}>{moment.media_type === 'image' ? <Image source={{uri:moment.display_url}} style={styles.momentImage} /> : <View style={styles.videoTile}><Ionicons name="play-circle" size={34} color="#FFF" /></View>}<View style={styles.momentOverlay}><Ionicons name={moment.media_type === 'video' ? 'videocam' : 'heart'} size={13} color="#FFF" /><Text numberOfLines={2} style={styles.momentCaption}>{moment.caption || 'A Flyz moment'}</Text></View></Pressable>)}</View> : <View style={styles.momentsEmpty}><View style={styles.emptyIcon}><Ionicons name="sparkles-outline" size={22} color="#315AA6" /></View><Text style={styles.emptyTitle}>Their story is just beginning</Text><Text style={styles.emptyText}>When they share a Moment on Flyz, their highlights can show up here.</Text></View>}
       </View>
       <View style={styles.footerNote}><Ionicons name="lock-closed-outline" size={16} color="#B85D91" /><Text style={styles.footerText}>Only information allowed by their privacy settings is shown here.</Text></View>
     </ScrollView>
