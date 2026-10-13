@@ -24,7 +24,8 @@ type Props = {
   onNotificationsPress?: () => void;
   onMyTripsPress?: () => void;
   onDealsPress?: () => void;
-  onMorePress?: () => void;\n  onMomentsPress?: () => void;
+  onMorePress?: () => void;
+  onMomentsPress?: () => void;
   onDestinationPress?: (city: string, code: string, price: string) => void;
   onSearch?: (data: { from: { city: string; code: string }; to: { city: string; code: string }; departDate: Date; returnDate?: Date; passengers: string; cabin: string; tripType: string; secondFrom?: { city: string; code: string }; secondTo?: { city: string; code: string }; secondDepartDate?: Date }) => void;
 };
@@ -102,7 +103,7 @@ function BottomNav({ active, onHome, onMoments, onWallet, onDeals, onMore }: { a
   );
 }
 
-export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onDestinationPress, onSearch }: Props) {
+export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsPress, onMyTripsPress, onDealsPress, onMorePress, onMomentsPress, onDestinationPress, onSearch }: Props) {
   const { width } = useWindowDimensions();
   const [tripType, setTripType] = useState('Round trip');
   const [from, setFrom] = useState({ city: 'Port-au-Prince', code: 'PAP' });
@@ -218,7 +219,8 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
       .then((res) => res.text())
       .then((text) => {
         if (cancelled) return;
-        const parsed = text.split(/\r?\n/).map((line) => {
+        const parsed = text.split(/\r?
+/).map((line) => {
           const fields = line.split(',');
           const clean = (value: string) => value.replace(/^"|"$/g, '').replace(/""/g, '"');
           return {
