@@ -518,8 +518,8 @@ export function Pg({ title, onBack, right, children, scroll = true, refreshing, 
 export function SheetShell({ title, onClose, children, tall }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets(), { height: H } = useWindowDimensions();
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject, zIndex: 30, justifyContent: 'flex-end' }}>
-      <Pressable style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.scrim }} onPress={onClose} />
+    <View style={{ ...StyleSheet.absoluteFill, zIndex: 30, justifyContent: 'flex-end' }}>
+      <Pressable style={{ ...StyleSheet.absoluteFill, backgroundColor: t.scrim }} onPress={onClose} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={{ backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingTop: 10, paddingBottom: ins.bottom + 16, maxHeight: H * (tall ? 0.9 : 0.8) }}>
           <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
@@ -554,8 +554,8 @@ export function PanelSheet({ title, onClose, children }: any) {
   });
   const head = useRef(make(false)).current, body = useRef(make(true)).current;
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject, zIndex: 20, justifyContent: 'flex-end' }}>
-      <Pressable style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.scrim }} onPress={() => to(0, onClose)} />
+    <View style={{ ...StyleSheet.absoluteFill, zIndex: 20, justifyContent: 'flex-end' }}>
+      <Pressable style={{ ...StyleSheet.absoluteFill, backgroundColor: t.scrim }} onPress={() => to(0, onClose)} />
       <Animated.View style={{ height: h, backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingBottom: ins.bottom + 8, overflow: 'hidden' }}>
         <View {...head.panHandlers} style={{ paddingTop: 10 }}>
           <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 12 }} />
@@ -824,11 +824,11 @@ export function ListingWizard({ biz, feature, listingId, onClose, onDone, onToas
   };
   const close = async () => { if (FX.titleOf(fe, v) && !busy) { try { await save(); } catch { /* leaving stays possible */ } } onClose(); };
 
-  if (!ready) return <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.bg, zIndex: 40, padding: 20, paddingTop: ins.top + 20 }}><Loading n={4} h={60} /></View>;
+  if (!ready) return <View style={{ ...StyleSheet.absoluteFill, backgroundColor: t.bg, zIndex: 40, padding: 20, paddingTop: ins.top + 20 }}><Loading n={4} h={60} /></View>;
   const price = Number(v.price ?? v.start ?? v.ticket ?? 0), off = v.original && v.price ? Math.round((1 - Number(v.price) / Number(v.original)) * 100) : null, cover = (v.photos ?? [])[0];
   const editing = !!listingId, titles = [...fe.steps.map(x => x.t), 'Review'];
   return (
-    <View style={{ ...StyleSheet.absoluteFillObject, backgroundColor: t.bg, zIndex: 40 }}>
+    <View style={{ ...StyleSheet.absoluteFill, backgroundColor: t.bg, zIndex: 40 }}>
       <View style={{ backgroundColor: t.card, paddingTop: ins.top + 6, borderBottomWidth: 1, borderBottomColor: t.line }}>
         <View style={[s.row, { paddingHorizontal: 16, paddingBottom: 8, justifyContent: 'space-between' }]}>
           <Pressable onPress={close} style={s.row}><Icon name="close" size={20} color={t.blue} /><Text style={{ color: t.blue, fontWeight: '800' }}>Close</Text></Pressable>
