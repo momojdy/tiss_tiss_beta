@@ -17,6 +17,7 @@ export default function WalletQRRecipientScreen({token,recipient,onBack}:Props){
    {text:'Confirm & send',onPress:()=>{void(async()=>{setBusy(true);try{
     const {data,error}=await supabase.rpc('transfer_wallet_by_qr',{p_recipient_token:token,p_amount:value,p_request_id:requestId()});
     if(error)throw error;
+    if(data?.ok!==true)throw new Error(typeof data?.message==='string'?data.message:'Wantiss could not confirm this transfer. Check your wallet activity before trying again.');
     setResult({amount:value,reference:String(data?.sender_transaction_id??data?.request_id??''),status:data?.duplicate===true?'duplicate':'success'});
     setAmount('');
    }catch(e){setResult({amount:value,reference:'',status:'failure',error:e instanceof Error?e.message:'Please try again.'});}finally{setBusy(false);}})();}}
