@@ -103,26 +103,11 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
           <View style={styles.statCard}><Text style={styles.statValue}>{Number(stats.total_games_played ?? 0)}</Text><Text style={styles.statLabel}>GAMES</Text></View>
           <View style={styles.statCard}><Text style={styles.statValue}>{Number(stats.lifetime_points ?? 0).toLocaleString()}</Text><Text style={styles.statLabel}>POINTS</Text></View>
         </View> : <View style={styles.emptyRow}><View style={styles.emptyIcon}><Ionicons name="game-controller-outline" size={22} color="#B72A7B" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>Their next win could be the first</Text><Text style={styles.emptyText}>No public Frenzies stats yet. Invite them to play!</Text></View></View>}
-        {Number(stats.rank ?? 0) > 0 ? <View style={styles.rankPill}><Ionicons name="trophy-outline" size={15} color="#8E5B19" /><Text style={styles.rankText}>Frenzies rank #{Number(stats.rank).toLocaleString()}</Text></View> : null}
-        {Number(stats.rank ?? 0) > 0 ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#9B6A20" />  Ranked #{stats.rank} on Frenzies</Text> : null}
-        {Number(stats.rank ?? profile.frenzies_rank ?? 0) > 0 ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#9B6A21" />  Ranked #{Number(stats.rank ?? profile.frenzies_rank)} on Frenzies</Text> : null}
         {Number(stats.current_win_streak ?? 0) > 0 ? <Text style={styles.streak}><Ionicons name="flame" size={14} color="#D86B35" />  {stats.current_win_streak} win streak · best {stats.best_win_streak ?? stats.current_win_streak}</Text> : null}
       </View>
       <View style={styles.section}>
         <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Frenzies livestreams</Text><Text style={styles.sectionSub}>Live games and shared replays</Text></View><View style={[styles.sectionIcon,{backgroundColor:'#FFF0F0'}]}><Ionicons name="videocam-outline" size={19} color="#C04C65" /></View></View>
         <View style={styles.liveEmpty}><View style={styles.liveIcon}><Ionicons name="radio-outline" size={20} color="#C04C65" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>No public livestreams right now</Text><Text style={styles.emptyText}>If they share a Frenzies stream or replay, it can appear here.</Text></View></View>
-      </View>
-      <View style={styles.section}>
-        <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Livestreams</Text><Text style={styles.sectionSub}>Live or replay activity</Text></View><View style={[styles.sectionIcon,{backgroundColor:"#EAF5E9"}]}><Ionicons name="videocam-outline" size={19} color="#477E4A" /></View></View>
-        <View style={styles.emptyRow}><View style={[styles.emptyIcon,{backgroundColor:"#EAF5E9"}]}><Ionicons name="videocam-outline" size={22} color="#477E4A" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>No livestreams to show yet</Text><Text style={styles.emptyText}>When livestreams or replays are available for this account, public ones can appear here.</Text></View></View>
-      </View>
-      <View style={styles.section}>
-        <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Livestreams</Text><Text style={styles.sectionSub}>Live and recorded moments</Text></View><View style={[styles.sectionIcon,{backgroundColor:'#EAF1FF'}]}><Ionicons name="videocam-outline" size={19} color="#315AA6" /></View></View>
-        <View style={styles.momentsEmpty}><View style={styles.emptyIcon}><Ionicons name="videocam-outline" size={22} color="#315AA6" /></View><Text style={styles.emptyTitle}>No livestreams to show yet</Text><Text style={styles.emptyText}>When Wantiss livestreams are available for this profile, public sessions can appear here.</Text></View>
-      </View>
-      <View style={styles.section}>
-        <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Livestreams</Text><Text style={styles.sectionSub}>Live now and recent broadcasts</Text></View><View style={[styles.sectionIcon,{backgroundColor:'#EAF5E9'}]}><Ionicons name="videocam-outline" size={19} color="#477E4A" /></View></View>
-        <View style={styles.emptyRow}><View style={[styles.emptyIcon,{backgroundColor:'#EAF5E9'}]}><Ionicons name="radio-outline" size={22} color="#477E4A" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>No public livestreams yet</Text><Text style={styles.emptyText}>When livestreams are supported and shared publicly, they can appear here.</Text></View></View>
       </View>
       <View style={styles.section}>
         <View style={styles.sectionHeading}><View><Text style={styles.sectionTitle}>Flyz Moments</Text><Text style={styles.sectionSub}>Little highlights worth sharing</Text></View><Pressable onPress={() => profile.owner_user_id && onOpenMoments?.(profile.owner_user_id, name)}><Text style={styles.viewAll}>View all ›</Text></Pressable></View>
