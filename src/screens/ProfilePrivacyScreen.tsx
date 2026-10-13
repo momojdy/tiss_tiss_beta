@@ -6,7 +6,7 @@ import {supabase} from '../lib/supabase';
 type Choice='public'|'private';
 type ActivityChoice='public'|'friends'|'private';
 export default function ProfilePrivacyScreen({onBack}:{onBack:()=>void}){
- const [membership,setMembership]=useState<Choice>('private');
+ const [membership,setMembership]=useState<Choice>('private'); const [consented,setConsented]=useState(false);
  const [moments,setMoments]=useState<ActivityChoice>('public');
  const [live,setLive]=useState<ActivityChoice>('public');
  const [tier,setTier]=useState(''); const [saving,setSaving]=useState(false); const [loading,setLoading]=useState(true);
@@ -17,16 +17,30 @@ export default function ProfilePrivacyScreen({onBack}:{onBack:()=>void}){
    supabase.from('profiles').select('membership_tier').eq('id',auth.user.id).maybeSingle()
   ]);
   if(v.error)throw v.error;if(p.error)throw p.error;
-  if(active){setMembership(v.data?.membership_visibility==='public'?'public':'private');setMoments(v.data?.moments_visibility??'public');setLive(v.data?.livestream_visibility??'public');setTier(p.data?.membership_tier??'');}
+  if(active){setMembership(v.data?.membership_visibility==='public'?'public':'private');setConsented(v.data?.membership_visibility_confirmed===true);setMoments(v.data?.moments_visibility??'public');setLive(v.data?.livestream_visibility??'public');setTier(p.data?.membership_tier??'');}
  }catch(e){Alert.alert('Privacy settings unavailable',e instanceof Error?e.message:'Please try again.');}finally{if(active)setLoading(false);}})();return()=>{active=false};},[]);
  const save=async()=>{setSaving(true);try{const {data:auth}=await supabase.auth.getUser();if(!auth.user)throw new Error('Your session has expired. Sign in again.');
   const {error}=await supabase.from('user_profile_visibility').upsert({user_id:auth.user.id,membership_visibility:membership,moments_visibility:moments,livestream_visibility:live,membership_visibility_confirmed:true,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;
-  Alert.alert('Privacy saved','Your profile visibility preferences have been updated.');
+  setConsented(true);Alert.alert('Privacy saved','Your profile visibility preferences have been updated.');
  }catch(e){Alert.alert('Could not save privacy',e instanceof Error?e.message:'Please try again.');}finally{setSaving(false);}};
  const selector=(title:string,description:string,value:string,options:{value:string,label:string,detail:string}[],onChange:(v:any)=>void)=><View style={s.card}><Text style={s.cardTitle}>{title}</Text><Text style={s.desc}>{description}</Text>{options.map(o=><Pressable key={o.value} onPress={()=>onChange(o.value)} style={s.option}><View style={{flex:1}}><Text style={s.optionTitle}>{o.label}</Text><Text style={s.optionDesc}>{o.detail}</Text></View><View style={[s.radio,value===o.value&&s.radioOn]}>{value===o.value?<View style={s.radioDot}/>:null}</View></Pressable>)}</View>;
  return <View style={s.page}><View style={s.header}><Pressable onPress={onBack} style={s.back}><Ionicons name="chevron-back" size={23} color="#302536"/></Pressable><Text style={s.title}>Profile privacy</Text></View>
- <ScrollView contentContainerStyle={s.content}>{loading?<ActivityIndicator color="#C2007A" style={{padding:40}}/>:<>
- <View style={s.intro}><View style={s.introIcon}><Ionicons name="shield-checkmark-outline" size={25} color="#B72A7B"/></View><Text style={s.introTitle}>You choose what people see.</Text><Text style={s.introText}>Your basic name and Wantiss ID are used to identify you. Membership and activity have their own controls.</Text></View>
+ <ScrollView contentContainerStyle={s.content}>{loading?<ActivityIndicator color="#C2007A" style={{padding:40}}/>:!consented?<>
+ <View style={s.intro}><View style={s.introIcon}><Ionicons name="shield-checkmark-outline" size={25} color="#B72A7B"/></View><Text style={s.introTitle}>Choose your membership privacy</Text><Text style={s.introText}>Before your membership badge can appear when someone scans your Wantiss QR, choose whether you want it visible. It stays private until you confirm a choice.</Text></View>
+ <View style={s.card}><Text style={s.cardTitle}>Who can see your membership tier?</Text>
+ <Pressable onPress={()=>setMembership('private')} style={s.option}><View style={{flex:1}}><Text style={s.optionTitle}>Keep it private</Text><Text style={s.optionDesc}>People can still see your basic public profile, but not your membership tier.</Text></View><View style={[s.radio,membership==='private'&&s.radioOn]}>{membership==='private'?<View style={s.radioDot}/>:null}</View></Pressable>
+ <Pressable onPress={()=>setMembership('public')} style={s.option}><View style={{flex:1}}><Text style={s.optionTitle}>Show it publicly</Text><Text style={s.optionDesc}>{tier?'Display your '+tier+' membership badge on your public QR profile.':'Display your membership badge on your public QR profile when your tier is available.'}</Text></View><View style={[s.radio,membership==='public'&&s.radioOn]}>{membership==='public'?<View style={s.radioDot}/>:null}</View></Pressable>
+ </View>
+ <Text style={s.consentNote}><Ionicons name="information-circle-outline" size={16} color="#B85D91"/>  You can change this choice later in Profile privacy.</Text>
+ <Pressable onPress={save} disabled={saving} style={[s.save,saving&&{opacity:.65}]}>{saving?<ActivityIndicator color="#FFF"/>:<Ionicons name="checkmark-circle-outline" size={19} color="#FFF"/>}<Text style={s.saveText}>{saving?'Saving…':'Confirm my choice'}</Text></Pressable>
+ </>:<>
+ <View style={s.intro}><View style={s.introIcon}><Ionicons name="shield-checkmark-outline" size={25} color="#B72A7B"/></View><Text style={s.introTitle}>You choose what people see.</Text><Text style={s.introText}>Your basic name and Wantiss ID identify you. Membership and activity have separate controls.</Text></View>
+  {selector('Membership tier','Decide whether your membership badge and tier can appear on your scanned profile.',membership,[{value:'private',label:'Private',detail:'Hide your membership tier from people who scan your QR.'},{value:'public',label:'Public',detail:tier?'Show your '+tier+' membership badge.':'Show your membership tier when one is set.'}],setMembership)}
+ {selector('Flyz Moments','Choose who can see your published Moments.',moments,[{value:'public',label:'Everyone',detail:'Any signed-in Wantiss member can see public Moments.'},{value:'friends',label:'Friends only',detail:'Only accepted friends can see Moments set to Friends.'},{value:'private',label:'Only me',detail:'Keep your Moments visible only to you.'}],setMoments)}
+ {selector('Livestream activity','Choose visibility for livestream activity when available.',live,[{value:'public',label:'Everyone',detail:'Public livestream activity may appear on your profile.'},{value:'friends',label:'Friends only',detail:'Only accepted friends may see livestream activity.'},{value:'private',label:'Only me',detail:'Hide livestream activity from your public profile.'}],setLive)}
+
+ <Pressable onPress={save} disabled={saving} style={[s.save,saving&&{opacity:.65}]}>{saving?<ActivityIndicator color="#FFF"/>:<Ionicons name="checkmark-circle-outline" size={19} color="#FFF"/>}<Text style={s.saveText}>{saving?'Saving…':'Save privacy settings'}</Text></Pressable>
+ </>}</ScrollView></View>><View style={s.introIcon}><Ionicons name="shield-checkmark-outline" size={25} color="#B72A7B"/></View><Text style={s.introTitle}>You choose what people see.</Text><Text style={s.introText}>Your basic name and Wantiss ID are used to identify you. Membership and activity have their own controls.</Text></View>
  {selector('Membership tier','Decide whether your membership badge and tier can appear on your scanned profile.',membership,[{value:'private',label:'Private',detail:'Hide your membership tier from people who scan your QR.'},{value:'public',label:'Public',detail:tier?'Show your '+tier+' membership badge.':'Show your membership tier when one is set.'}],setMembership)}
  {selector('Flyz Moments','Choose who can see your published Moments.',moments,[{value:'public',label:'Everyone',detail:'Any signed-in Wantiss member can see public Moments.'},{value:'friends',label:'Friends only',detail:'Only accepted friends can see Moments set to Friends.'},{value:'private',label:'Only me',detail:'Keep your Moments visible only to you.'}],setMoments)}
  {selector('Livestream activity','Choose visibility for livestream activity when available.',live,[{value:'public',label:'Everyone',detail:'Public livestream activity may appear on your profile.'},{value:'friends',label:'Friends only',detail:'Only accepted friends may see livestream activity.'},{value:'private',label:'Only me',detail:'Hide livestream activity from your public profile.'}],setLive)}
