@@ -15,7 +15,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
  const [loading,setLoading]=useState(true);
  const [publishing,setPublishing]=useState(false);
  const [caption,setCaption]=useState('');
- const [visibility,setVisibility]=useState<'public'|'friends'|'private'>('public');
+ const [visibility,setVisibility]=useState<'public'|'friends'|'private'>('public');\n const [selectedMoment,setSelectedMoment]=useState<Moment|null>(null);
  const [selectedMoment,setSelectedMoment]=useState<Moment|null>(null);
  const isOwner=!!viewerId && (!profileUserId || profileUserId===viewerId);
  const load=async()=>{
@@ -75,6 +75,17 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
     <View style={s.grid}>{items.map(item=><View key={item.id} style={s.card}><Pressable onPress={()=>setSelectedMoment(item)}><View style={s.media}>{item.media_type==='image'?<Image source={{uri:item.display_url}} style={s.image}/>:<View style={s.video}><Ionicons name="play-circle" size={42} color="#FFF"/><Text style={s.videoLabel}>VIDEO MOMENT</Text></View>}<View style={s.visibilityBadge}><Ionicons name={item.visibility==='public'?'earth-outline':item.visibility==='friends'?'people-outline':'lock-closed-outline'} size={12} color="#FFF"/></View></View><View style={s.cardText}><Text style={s.caption} numberOfLines={3}>{item.caption||'A little moment worth keeping ✨'}</Text><Text style={s.date}>{new Date(item.created_at).toLocaleDateString()}</Text></View></Pressable>{isOwner?<Pressable onPress={()=>remove(item)} style={s.delete}><Ionicons name="trash-outline" size={14} color="#9C4765"/><Text style={s.deleteText}>Delete</Text></Pressable>:null}</View>)}</View>}
    <Text style={s.privacyNote}><Ionicons name="shield-checkmark-outline" size={14} color="#28469E"/>  You control who can see each Moment.</Text>
   </ScrollView>
+  <Modal visible={!!selectedMoment} animationType="fade" transparent onRequestClose={()=>setSelectedMoment(null)}>
+   <View style={s.viewerBackdrop}>
+    <View style={s.viewerCard}>
+     <View style={s.viewerHeader}><Text style={s.viewerTitle}>Flyz Moment</Text><Pressable onPress={()=>setSelectedMoment(null)} style={s.viewerClose}><Ionicons name="close" size={22} color="#0E1A3A"/></Pressable></View>
+     {selectedMoment?.media_type==='image' ? <Image source={{uri:selectedMoment.display_url}} style={s.viewerImage} resizeMode="contain"/> : <Pressable style={s.viewerVideo} onPress={()=>selectedMoment?.display_url&&void Linking.openURL(selectedMoment.display_url)}><Ionicons name="play-circle" size={58} color="#FFF"/><Text style={s.viewerVideoText}>Open video</Text></Pressable>}
+     <Text style={s.viewerCaption}>{selectedMoment?.caption||'A little moment worth keeping ✨'}</Text>
+     <Text style={s.viewerDate}>{selectedMoment?new Date(selectedMoment.created_at).toLocaleString():''}</Text>
+     {isOwner&&selectedMoment?<Pressable onPress={()=>{const item=selectedMoment;setSelectedMoment(null);remove(item);}} style={s.viewerDelete}><Ionicons name="trash-outline" size={16} color="#9C4765"/><Text style={s.deleteText}>Delete Moment</Text></Pressable>:null}
+    </View>
+   </View>
+  </Modal>
   <View style={s.bottomNav}>
    <Pressable style={s.navItem} onPress={onHomePress}><Ionicons name="home-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>Home</Text></Pressable>
    <Pressable style={s.navItem} onPress={onDealsPress}><Ionicons name="pricetag-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>Deals</Text></Pressable>
