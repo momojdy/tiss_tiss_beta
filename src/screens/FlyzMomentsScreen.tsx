@@ -19,6 +19,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,init
  const [caption,setCaption]=useState('');
  const [visibility,setVisibility]=useState<'public'|'friends'|'private'>('public');
  const isOwner=!!viewerId && (!profileUserId || profileUserId===viewerId);
+ useEffect(()=>{if(initialMomentId && items.length){const found=items.find(item=>item.id===initialMomentId);if(found)setSelectedMoment(found);}},[initialMomentId,items]);
  const load=async()=>{
   setLoading(true);
   try {
