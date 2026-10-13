@@ -22,7 +22,7 @@ export default function PublicBuyerProfileScreen({profile,onBack,onOpenMoments,o
    if(active&&data){setFriendshipId(data.id);setFriendState(data.status==='accepted'?'friends':data.status==='pending'?(data.requester_id===current?'pending-sent':'pending-received'):'none');}
   }
   if(profile.owner_user_id){const {data}=await supabase.from('flyz_moments').select('id,media_url,media_type,caption,created_at').eq('user_id',profile.owner_user_id).order('created_at',{ascending:false}).limit(4);
-   if(active){const rows=(data??[]) as Moment[];const signed=await Promise.all(rows.map(async item=>{const {data:media}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:media?.signedUrl};}));setMoments(signed);}
+   if(active){const rows=(data??[]) as Moment[];const signed=await Promise.all(rows.map(async item=>{const {data:media}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,300);return {...item,display_url:media?.signedUrl};}));setMoments(signed);}
   }
  }catch{/* Optional public sections must not block the profile. */}finally{if(active)setLoading(false);}})();return()=>{active=false};},[profile.owner_user_id]);
  const addFriend=async()=>{if(!profile.owner_user_id||!viewerId||isSelf){if(!viewerId)Alert.alert('Sign in to connect','Sign in to send a friend request.');return;}setFriendBusy(true);try{
