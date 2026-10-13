@@ -6,9 +6,9 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
-type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; onPrivacyPress?:()=>void };
+type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
 
-export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPrivacyPress}:Props) {
+export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPrivacyPress,onHomePress,onDealsPress,onWalletPress,onMorePress}:Props) {
  const [viewerId,setViewerId]=useState<string|null>(null);
  const [items,setItems]=useState<Moment[]>([]);
  const [loading,setLoading]=useState(true);
@@ -74,6 +74,13 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
     <View style={s.grid}>{items.map(item=><View key={item.id} style={s.card}><Pressable onPress={()=>setSelectedMoment(item)}><View style={s.media}>{item.media_type==='image'?<Image source={{uri:item.display_url}} style={s.image}/>:<View style={s.video}><Ionicons name="play-circle" size={42} color="#FFF"/><Text style={s.videoLabel}>VIDEO MOMENT</Text></View>}<View style={s.visibilityBadge}><Ionicons name={item.visibility==='public'?'earth-outline':item.visibility==='friends'?'people-outline':'lock-closed-outline'} size={12} color="#FFF"/></View></View><View style={s.cardText}><Text style={s.caption} numberOfLines={3}>{item.caption||'A little moment worth keeping ✨'}</Text><Text style={s.date}>{new Date(item.created_at).toLocaleDateString()}</Text></View></Pressable>{isOwner?<Pressable onPress={()=>remove(item)} style={s.delete}><Ionicons name="trash-outline" size={14} color="#9C4765"/><Text style={s.deleteText}>Delete</Text></Pressable>:null}</View>)}</View>}
    <Text style={s.privacyNote}><Ionicons name="shield-checkmark-outline" size={14} color="#28469E"/>  You control who can see each Moment.</Text>
   </ScrollView>
+  <View style={s.bottomNav}>
+   <Pressable style={s.navItem} onPress={onHomePress}><Ionicons name="home-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>Home</Text></Pressable>
+   <Pressable style={s.navItem} onPress={onDealsPress}><Ionicons name="pricetag-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>Deals</Text></Pressable>
+   <View style={s.navItem}><View style={s.navActive}><MaterialCommunityIcons name="star-four-points" size={23} color="#28469E"/></View><Text style={[s.navLabel,{color:'#28469E'}]}>Moments</Text></View>
+   <Pressable style={s.navItem} onPress={onWalletPress}><Ionicons name="wallet-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>Wallet</Text></Pressable>
+   <Pressable style={s.navItem} onPress={onMorePress}><Ionicons name="ellipsis-horizontal-circle-outline" size={23} color="#5F6E94"/><Text style={s.navLabel}>More</Text></Pressable>
+  </View>
  </View>;
 }
 const s=StyleSheet.create({
