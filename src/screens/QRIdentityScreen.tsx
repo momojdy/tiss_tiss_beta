@@ -142,7 +142,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       const parsed = Linking.parse(raw);
       const scheme = (parsed.scheme ?? '').toLowerCase();
       const host = (parsed.hostname ?? '').toLowerCase();
-      const path = (parsed.path ?? '').replace(/^\\/+/, '').toLowerCase();
+      const path = (parsed.path ?? '').split('/').filter(Boolean).join('/').toLowerCase();
       if (scheme !== 'wantiss' || host !== 'qr' || path !== '') {
         resolveLock.current = false;
         Alert.alert('Wantiss link only', 'For your safety, Wantiss can only open QR links created by Wantiss. Scan a Wantiss QR code or paste its token.');
