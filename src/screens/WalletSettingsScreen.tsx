@@ -1285,7 +1285,7 @@ type Props = {
   onPrivacyPress?: () => void;
   onDataRightsPress?: () => void;
   onCreateWalletPress?: () => void;
-  onQRPress?: () => void;
+  onQRPress?: (token?: string) => void;
 };
 
 type Profile = { full_name: string | null; email: string | null; avatar_url: string | null };
@@ -1549,9 +1549,9 @@ export default function WalletSettingsScreen({
           <View style={styles.qrSheet}>
             <Pressable onPress={() => setWalletQrOpen(false)} style={styles.qrClose}><MaterialIcons name="close" size={22} color={TEXT} /></Pressable>
             <Text style={styles.qrTitle}>Your wallet QR</Text>
-            <Text style={styles.qrBody}>Let someone scan this QR to find this wallet.</Text>
+            
             <View style={styles.qrLargeFrame}>{walletQrToken ? <QRCode value={`wantiss://qr?token=${walletQrToken}`} size={220} color="#438C53" backgroundColor="#FFFFFF" /> : <Text style={styles.qrBody}>Your wallet QR is not available yet.</Text>}</View>
-            <Pressable onPress={() => { setWalletQrOpen(false); onQRPress?.(); }} style={styles.qrMore}><Text style={styles.qrMoreText}>See more</Text><MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" /></Pressable>
+            <Pressable onPress={() => { setWalletQrOpen(false); onQRPress?.(walletQrToken ?? undefined); }} style={styles.qrMore}><Text style={styles.qrMoreText}>See more</Text><MaterialIcons name="arrow-forward" size={18} color="#FFFFFF" /></Pressable>
           </View>
         </View>
       </Modal>

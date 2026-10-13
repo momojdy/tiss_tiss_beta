@@ -59,7 +59,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -101,6 +101,37 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
     },
   }), [pan, onDismiss]);
   return <Animated.View {...responder.panHandlers} style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, transform: [{ translateX: pan.x }, { translateY: pan.y }], backgroundColor: 'rgba(255,255,255,0.92)', borderWidth: 0, borderColor: 'transparent', borderRadius: 10, padding: 15, height: 94, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}><Pressable onPress={onPress}><Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text><Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text><View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 16, marginHorizontal: 20 }} /></Pressable></Animated.View>;
+}
+
+function PublicBuyerProfileScreen({ profile, onBack }: { profile: any; onBack: () => void }) {
+  const displayName = profile?.display_name ?? profile?.displayName ?? 'Wantiss buyer';
+  const wantissNumber = profile?.wantiss_number ?? profile?.wantissNumber ?? null;
+  const initials = displayName.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((part: string) => part[0]).join('').toUpperCase() || 'W';
+  return <View style={{ flex: 1, backgroundColor: '#FFF8FC' }}>
+    <View style={{ height: 100, paddingHorizontal: 14, paddingBottom: 10, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#F1E4EC' }}>
+      <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back" style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: '#FCE8F3' }}>
+        <Text style={{ color: '#292033', fontSize: 24 }}>‹</Text>
+      </Pressable>
+      <Text style={{ marginLeft: 8, fontSize: 18, fontWeight: '800', color: '#292033', paddingBottom: 7 }}>Wantiss profile</Text>
+    </View>
+    <View style={{ padding: 18, gap: 14 }}>
+      <View style={{ alignItems: 'center', backgroundColor: '#FFF', borderRadius: 22, padding: 24, borderWidth: 1, borderColor: '#F3D7E7' }}>
+        <View style={{ width: 88, height: 88, borderRadius: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8D7E9', borderWidth: 3, borderColor: '#FFF0F7' }}>
+          <Text style={{ color: '#8F1764', fontSize: 29, fontWeight: '800' }}>{initials}</Text>
+        </View>
+        <Text style={{ marginTop: 16, fontSize: 23, fontWeight: '800', color: '#292033', textAlign: 'center' }}>{displayName}</Text>
+        <Text style={{ marginTop: 5, color: '#8D8190', fontSize: 13 }}>Wantiss buyer</Text>
+        {wantissNumber ? <View style={{ alignSelf: 'stretch', marginTop: 22, padding: 14, borderRadius: 14, backgroundColor: '#FFF4FA', alignItems: 'center' }}>
+          <Text style={{ color: '#A14D80', fontSize: 10, fontWeight: '800', letterSpacing: 1 }}>WANTISS ID</Text>
+          <Text selectable style={{ marginTop: 6, color: '#3B2940', fontSize: 17, fontWeight: '800' }}>{wantissNumber}</Text>
+        </View> : null}
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 15, borderRadius: 16, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F3D7E7' }}>
+        <Text style={{ color: '#BF008E', fontSize: 18 }}>✓</Text>
+        <Text style={{ flex: 1, color: '#776B7B', fontSize: 12, lineHeight: 18 }}>You opened this profile from a valid Wantiss QR. Private account information is not shown here.</Text>
+      </View>
+    </View>
+  </View>;
 }
 
 function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated, registerVendorMode, registerBuyerScreen }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void; registerVendorMode: (value: boolean) => void; registerBuyerScreen: (value: BuyerScreen) => void }) {
@@ -207,13 +238,15 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [publicShop, setPublicShop] = useState({ vendorId: '', shopName: '' });
   const [pendingQrToken, setPendingQrToken] = useState<string | null>(null);
   const [qrLaunchToken, setQrLaunchToken] = useState<string | null>(null);
+  const [walletQrDisplayToken, setWalletQrDisplayToken] = useState<string | null>(null);
+  const [publicBuyerProfile, setPublicBuyerProfile] = useState<any>(null);
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isVendorMode, setIsVendorMode] = useState(false);
-  useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; const token = typeof parsed.queryParams?.token === 'string' ? parsed.queryParams.token : null; if (token && (path === 'qr' || url.includes('wantiss://qr'))) { setPendingQrToken(token); return; } if (!path.includes('reset-password')) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
-  useEffect(() => { if (!authenticated || !pendingQrToken) return; let active = true; const token = pendingQrToken; void (async () => { try { const { data, error } = await supabase.rpc('resolve_qr_identity', { p_token: token }); if (error) throw error; if (!data?.valid) throw new Error('This Wantiss QR is invalid, expired, or revoked.'); if (!active) return; setPendingQrToken(null); if (data.destination === 'vendor-shop') { setPublicShop({ vendorId: data.vendor_id, shopName: data.shop_name }); setBuyerScreen('vendorShop'); } else if (data.destination === 'buyer-profile') { setBuyerScreen('me'); } else if (data.destination === 'wallet-receive') { setQrLaunchToken(token); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); } } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'This QR could not be opened.'); } })(); return () => { active = false; }; }, [authenticated, pendingQrToken]);
+  useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const path = parsed.path ?? ''; const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; const token = typeof parsed.queryParams?.token === 'string' ? parsed.queryParams.token : null; if (token && (path === 'qr' || url.includes('wantiss://qr'))) { setPendingQrToken(token); setAuthInitialMode('buyer'); setScreen('auth'); setAppMode('buyer'); return; } if (!path.includes('reset-password')) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
+  useEffect(() => { if (!authenticated || !pendingQrToken) return; let active = true; const token = pendingQrToken; void (async () => { try { const { data, error } = await supabase.rpc('resolve_qr_identity', { p_token: token }); if (error) throw error; if (!data?.valid) throw new Error('This Wantiss QR is invalid, expired, or revoked.'); if (!active) return; setPendingQrToken(null); if (data.destination === 'vendor-shop') { setPublicShop({ vendorId: data.vendor_id, shopName: data.shop_name }); setBuyerScreen('vendorShop'); } else if (data.destination === 'buyer-profile') { setPublicBuyerProfile(data); setBuyerScreen('publicBuyerProfile'); } else if (data.destination === 'wallet-receive') { setQrLaunchToken(token); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); } } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'This QR could not be opened.'); } })(); return () => { active = false; }; }, [authenticated, pendingQrToken]);
   if (!fontsLoaded || !authReady) return null;
   if (authenticated && appMode === 'vendor') {
     return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
@@ -243,15 +276,16 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'frenziesGetStreakShield') return <FrenziesGetStreakShieldScreen onBack={() => setBuyerScreen('frenziesStreakShield')} onCheckout={(quantity, total) => { setShieldCheckout({ quantity, total }); setBuyerScreen('frenziesShieldCheckout'); }} />;
       if (buyerScreen === 'frenziesShieldCheckout') return <FrenziesStreakShieldCheckoutScreen quantity={shieldCheckout.quantity} total={shieldCheckout.total} onBack={() => setBuyerScreen('frenziesGetStreakShield')} />;
       if (buyerScreen === 'frenzies') return <FrenziesChallengeLayer showChallenge={showChallenge} onPress={() => setBuyerScreen('frenziesChallenges')} onDismiss={() => setShowChallenge(false)}><FrenziesHomeScreen onBack={() => setBuyerScreen('home')} onPlayGame={(gameId) => { if (gameId === 'rps') setBuyerScreen('frenziesRpsLobby'); }} onOpenRankings={() => setBuyerScreen('frenziesRankings')} onOpenStreakShield={() => setBuyerScreen('frenziesStreakShield')} /></FrenziesChallengeLayer>;
-      if (buyerScreen === 'vendorShop') return <VendorShopScreen shopName={publicShop.shopName} vendorId={publicShop.vendorId} onBack={() => setBuyerScreen('wallet')} />;
-      if (buyerScreen === 'qrIdentity') return <QRIdentityScreen kind={qrKind} initialToken={qrLaunchToken} onBack={() => setBuyerScreen(qrKind === 'buyer_identity' ? 'me' : 'wallet')} onOpenBuyer={() => setBuyerScreen('me')} onOpenShop={(vendorId, shopName) => { setPublicShop({ vendorId, shopName }); setBuyerScreen('vendorShop'); }} />;
+      if (buyerScreen === 'vendorShop') return <VendorShopScreen shopName={publicShop.shopName} vendorId={publicShop.vendorId} onBack={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'publicBuyerProfile') return <PublicBuyerProfileScreen profile={publicBuyerProfile ?? {}} onBack={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'qrIdentity') return <QRIdentityScreen kind={qrKind} initialToken={qrLaunchToken} displayToken={qrKind === 'wallet_receive' ? walletQrDisplayToken : null} onBack={() => { setQrLaunchToken(null); setWalletQrDisplayToken(null); setBuyerScreen(qrKind === 'buyer_identity' ? 'me' : 'wallet'); }} onOpenBuyer={(profile) => { setPublicBuyerProfile(profile ?? {}); setBuyerScreen('publicBuyerProfile'); }} onOpenWallet={(token) => { setWalletQrDisplayToken(null); setQrLaunchToken(token); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} onOpenShop={(vendorId, shopName) => { setPublicShop({ vendorId, shopName }); setBuyerScreen('vendorShop'); }} />;
       if (buyerScreen === 'walletAddNewCard') return <WalletAddNewCardScreen onBack={() => setBuyerScreen('walletBankCards')} />;
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletPaymentMethods') return <WalletPaymentMethodsScreen onBack={() => setBuyerScreen('walletSettings')} onBankCardPress={() => setBuyerScreen('walletBankCards')} />;
       if (buyerScreen === 'walletRecentActivity') return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
       if (buyerScreen === 'walletHistory') return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
-      if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={() => { setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
+      if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={(token) => { setWalletQrDisplayToken(token ?? null); setQrLaunchToken(null); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
       if (buyerScreen === 'walletNotificationSettings') return <WalletNotificationSettingsScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletNotifications') return <WalletNotificationsScreen onBack={() => setBuyerScreen('wallet')} onPayMoneyRequest={(requestId) => { console.info('Pay money request:', requestId); }} />;
       if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => setBuyerScreen('me')} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onQRPress={() => { setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />;
@@ -293,7 +327,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'addresses') return <AddressesScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'personalInformation') return <PersonalInformationScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
-      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
+      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/HomeScreen').default;
       return <HomeScreen onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
