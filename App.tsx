@@ -24,7 +24,6 @@ import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import QRIdentityScreen from './src/screens/QRIdentityScreen';
 import PublicBuyerProfileScreen from './src/screens/PublicBuyerProfileScreen';
-import PublicBuyerProfileScreen from './src/screens/PublicBuyerProfileScreen';
 import VendorShopScreen from './src/screens/VendorShopScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
@@ -103,6 +102,35 @@ function ChallengePlaceholder({ count, onPress, onDismiss }: { count: number; on
     },
   }), [pan, onDismiss]);
   return <Animated.View {...responder.panHandlers} style={{ position: 'absolute', top: 54, left: 14, right: 14, zIndex: 1000, transform: [{ translateX: pan.x }, { translateY: pan.y }], backgroundColor: 'rgba(255,255,255,0.92)', borderWidth: 0, borderColor: 'transparent', borderRadius: 10, padding: 15, height: 94, shadowColor: '#000', shadowOpacity: 0.10, shadowRadius: 12, shadowOffset: { width: 0, height: 5 }, elevation: 8 }}><Pressable onPress={onPress}><Text style={{ fontSize: 14, fontWeight: '700', color: '#1A2517' }}>{count === 1 ? 'New challenge' : count + ' challenges waiting'}</Text><Text style={{ marginTop: 4, fontSize: 12, color: '#6F747A' }}>{count === 1 ? 'Maya challenged you to Rock Paper Scissors.' : 'Tap to view all pending challenges.'}</Text><View style={{ height: 1.5, backgroundColor: '#EE6B2E', borderRadius: 1, marginTop: 16, marginHorizontal: 20 }} /></Pressable></Animated.View>;
+}
+
+function PublicBuyerProfileScreen({ displayName, wantissNumber, onBack }: { displayName: string; wantissNumber: string | null; onBack: () => void }) {
+  const initials = displayName.trim().split(/\\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase() || 'W';
+  return <View style={{ flex: 1, backgroundColor: '#FFF8FC' }}>
+    <View style={{ height: 100, paddingHorizontal: 14, paddingBottom: 10, flexDirection: 'row', alignItems: 'flex-end', backgroundColor: '#FFF', borderBottomWidth: 1, borderBottomColor: '#F1E4EC' }}>
+      <Pressable onPress={onBack} accessibilityRole="button" accessibilityLabel="Back" style={{ width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: '#FCE8F3' }}>
+        <Text style={{ color: '#292033', fontSize: 24 }}>‹</Text>
+      </Pressable>
+      <Text style={{ marginLeft: 8, fontSize: 18, fontWeight: '800', color: '#292033', paddingBottom: 7 }}>Wantiss profile</Text>
+    </View>
+    <View style={{ padding: 18, gap: 14 }}>
+      <View style={{ alignItems: 'center', backgroundColor: '#FFF', borderRadius: 22, padding: 24, borderWidth: 1, borderColor: '#F3D7E7' }}>
+        <View style={{ width: 88, height: 88, borderRadius: 44, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8D7E9', borderWidth: 3, borderColor: '#FFF0F7' }}>
+          <Text style={{ color: '#8F1764', fontSize: 29, fontWeight: '800' }}>{initials}</Text>
+        </View>
+        <Text style={{ marginTop: 16, fontSize: 23, fontWeight: '800', color: '#292033', textAlign: 'center' }}>{displayName || 'Wantiss buyer'}</Text>
+        <Text style={{ marginTop: 5, color: '#8D8190', fontSize: 13 }}>Wantiss buyer</Text>
+        {wantissNumber ? <View style={{ alignSelf: 'stretch', marginTop: 22, padding: 14, borderRadius: 14, backgroundColor: '#FFF4FA', alignItems: 'center' }}>
+          <Text style={{ color: '#A14D80', fontSize: 10, fontWeight: '800', letterSpacing: 1 }}>WANTISS ID</Text>
+          <Text selectable style={{ marginTop: 6, color: '#3B2940', fontSize: 17, fontWeight: '800' }}>{wantissNumber}</Text>
+        </View> : null}
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 15, borderRadius: 16, backgroundColor: '#FFF', borderWidth: 1, borderColor: '#F3D7E7' }}>
+        <Text style={{ color: '#BF008E', fontSize: 18 }}>✓</Text>
+        <Text style={{ flex: 1, color: '#776B7B', fontSize: 12, lineHeight: 18 }}>You opened this profile from a valid Wantiss QR. Private account information is not shown here.</Text>
+      </View>
+    </View>
+  </View>;
 }
 
 function AppContent({ registerChallengePress, registerChallengeDismiss, registerAuthenticated, registerVendorMode, registerBuyerScreen }: { registerChallengePress: (fn: () => void) => void; registerChallengeDismiss: (fn: () => void) => void; registerAuthenticated: (value: boolean) => void; registerVendorMode: (value: boolean) => void; registerBuyerScreen: (value: BuyerScreen) => void }) {
