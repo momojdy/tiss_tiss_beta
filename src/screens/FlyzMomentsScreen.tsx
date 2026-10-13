@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as FileSystem from 'expo-file-system/legacy';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { decode } from 'base64-arraybuffer';
 import { supabase } from '../lib/supabase';
@@ -42,14 +43,14 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
    if(picked.canceled||!picked.assets?.[0])return;
    const asset=picked.assets[0]; setPublishing(true);
    let url=asset.uri;
-   if(asset.base64){
-    const mime=asset.mimeType??(asset.type==='video'?'video/mp4':'image/jpeg');
-    const ext=mime.split('/')[1]?.replace('quicktime','mov')??'jpg';
-    const path=viewerId+'/'+Date.now()+'.'+ext;
-    const {error:uploadError}=await supabase.storage.from('flyz-moments').upload(path,decode(asset.base64),{contentType:mime,upsert:false});
-    if(uploadError)throw uploadError;
-    url=path;
-   } else { throw new Error('Could not read this media file. Please choose another photo or video.'); }
+   const mime=asset.mimeType??(asset.type==='video'?'video/mp4':'image/jpeg');
+   const base64=asset.base64??await FileSystem.readAsStringAsync(asset.uri,{encoding:FileSystem.EncodingType.Base64});
+   if(!base64)throw new Error('Could not read this media file. Please choose another photo or video.');
+   const ext=mime.split('/')[1]?.replace('quicktime','mov')??'jpg';
+   const path=viewerId+'/'+Date.now()+'.'+ext;
+   const {error:uploadError}=await supabase.storage.from('flyz-moments').upload(path,decode(base64),{contentType:mime,upsert:false});
+   if(uploadError)throw uploadError;
+   url=path;
    const {error}=await supabase.from('flyz_moments').insert({user_id:viewerId,media_url:url,media_type:asset.type==='video'?'video':'image',caption:caption.trim(),visibility});
    if(error)throw error;
    setCaption(''); await load(); Alert.alert('Moment shared','Your Moment is now on Flyz.');
