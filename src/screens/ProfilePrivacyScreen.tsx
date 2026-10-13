@@ -13,14 +13,14 @@ export default function ProfilePrivacyScreen({onBack}:{onBack:()=>void}){
  useEffect(()=>{let active=true;void(async()=>{try{
   const {data:auth}=await supabase.auth.getUser();if(!auth.user)throw new Error('Sign in to manage your profile privacy.');
   const [v,p]=await Promise.all([
-   supabase.from('user_profile_visibility').select('membership_visibility,moments_visibility,livestream_visibility').eq('user_id',auth.user.id).maybeSingle(),
+   supabase.from('user_profile_visibility').select('membership_visibility,moments_visibility,livestream_visibility,membership_visibility_confirmed').eq('user_id',auth.user.id).maybeSingle(),
    supabase.from('profiles').select('membership_tier').eq('id',auth.user.id).maybeSingle()
   ]);
   if(v.error)throw v.error;if(p.error)throw p.error;
   if(active){setMembership(v.data?.membership_visibility==='public'?'public':'private');setMoments(v.data?.moments_visibility??'public');setLive(v.data?.livestream_visibility??'public');setTier(p.data?.membership_tier??'');}
  }catch(e){Alert.alert('Privacy settings unavailable',e instanceof Error?e.message:'Please try again.');}finally{if(active)setLoading(false);}})();return()=>{active=false};},[]);
  const save=async()=>{setSaving(true);try{const {data:auth}=await supabase.auth.getUser();if(!auth.user)throw new Error('Your session has expired. Sign in again.');
-  const {error}=await supabase.from('user_profile_visibility').upsert({user_id:auth.user.id,membership_visibility:membership,moments_visibility:moments,livestream_visibility:live,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;
+  const {error}=await supabase.from('user_profile_visibility').upsert({user_id:auth.user.id,membership_visibility:membership,moments_visibility:moments,livestream_visibility:live,membership_visibility_confirmed:true,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;
   Alert.alert('Privacy saved','Your profile visibility preferences have been updated.');
  }catch(e){Alert.alert('Could not save privacy',e instanceof Error?e.message:'Please try again.');}finally{setSaving(false);}};
  const selector=(title:string,description:string,value:string,options:{value:string,label:string,detail:string}[],onChange:(v:any)=>void)=><View style={s.card}><Text style={s.cardTitle}>{title}</Text><Text style={s.desc}>{description}</Text>{options.map(o=><Pressable key={o.value} onPress={()=>onChange(o.value)} style={s.option}><View style={{flex:1}}><Text style={s.optionTitle}>{o.label}</Text><Text style={s.optionDesc}>{o.detail}</Text></View><View style={[s.radio,value===o.value&&s.radioOn]}>{value===o.value?<View style={s.radioDot}/>:null}</View></Pressable>)}</View>;
