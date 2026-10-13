@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 type Props = { shopName: string; vendorId: string; onBack: () => void };
 export default function VendorShopScreen({ shopName, vendorId, onBack }: Props) {
+  const [isFavorite, setIsFavorite] = useState(false);
   return <View style={styles.page}>
     <View style={styles.header}>
       <Pressable onPress={onBack} style={styles.back}><Ionicons name="chevron-back" size={23} color="#17243A" /></Pressable>
@@ -14,6 +15,7 @@ export default function VendorShopScreen({ shopName, vendorId, onBack }: Props) 
         <View style={styles.shopIcon}><Ionicons name="storefront-outline" size={34} color="#397BC6" /></View>
         <Text style={styles.shopName}>{shopName}</Text>
         <Text style={styles.subtitle}>Public shop</Text>
+        <Pressable onPress={() => setIsFavorite(value => !value)} style={[styles.favoriteButton, isFavorite && styles.favoriteButtonActive]}><Ionicons name={isFavorite ? 'heart' : 'heart-outline'} size={18} color={isFavorite ? '#FFFFFF' : '#397BC6'} /><Text style={[styles.favoriteText, isFavorite && styles.favoriteTextActive]}>{isFavorite ? 'Added to favorites' : 'Add to favorites'}</Text></Pressable>
         <View style={styles.vendorId}><Text style={styles.idLabel}>VENDOR ID</Text><Text selectable style={styles.idValue}>{vendorId}</Text></View>
       </View>
       <View style={styles.info}>
