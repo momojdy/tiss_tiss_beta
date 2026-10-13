@@ -29,4 +29,5 @@ jobs:
           src/features/businessSpace/BusinessSpaceHomeScreen.tsx
 
       - name: Export Expo web bundle
+        if: always()
         run: npx expo export --platform web
