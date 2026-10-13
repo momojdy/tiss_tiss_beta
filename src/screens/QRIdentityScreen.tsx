@@ -37,6 +37,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [cameraOpen, setCameraOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const resolveLock = useRef(false);
+  const scrollRef = useRef<ScrollView>(null);
 
   const issue = useCallback(async () => {
     setBusy(true);
@@ -66,7 +67,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     } finally { setBusy(false); }
   }, [kind, businessId]);
 
-  useEffect(() => { if (initialToken && kind === 'wallet_receive') { setBusy(false); return; } void issue(); }, [issue, initialToken, kind]);
+  useEffect(() => { if (initialToken) { setBusy(false); return; } void issue(); }, [issue, initialToken]);
   useEffect(() => {
     if (kind !== 'buyer_identity') return;
     let active = true;
@@ -88,7 +89,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           const { error } = await supabase.rpc('revoke_qr_identity', { p_record_id: record.id });
           if (error) throw error;
           setRecord(null);
-          Alert.alert('QR revoked', 'Create a new QR when you are ready.');
+          Alert.alert('QR deactivated', 'Create a new QR whenever you are ready.');
         } catch (error) { Alert.alert('Could not revoke QR', error instanceof Error ? error.message : 'Please try again.'); }
       })(); } },
     ]);
@@ -145,26 +146,26 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     ]);
   };
 
-  return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
+  return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={insets.top}>
     <View style={[styles.header, { paddingTop: insets.top, height: 100 }]}>
       <Pressable onPress={onBack} style={styles.back}><Ionicons name="chevron-back" size={23} color="#1D2430" /></Pressable>
       <Text style={styles.headerTitle}>{theme.title}</Text>
     </View>
-    <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
+    <ScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
       <View style={[styles.hero, { backgroundColor: theme.pale, borderColor: theme.color }]}>
-        <Text style={[styles.eyebrow, { color: theme.color }]}>{kind === 'buyer_identity' ? 'BUYER IDENTITY' : kind === 'wallet_receive' ? 'WALLET RECEIVING QR' : 'PUBLIC SHOP'}</Text>
+        {!initialToken && kind !== 'buyer_identity' ? <Text style={[styles.eyebrow, { color: theme.color }]}>{kind === 'wallet_receive' ? 'WALLET RECEIVING QR' : 'PUBLIC SHOP'}</Text> : null}
         <Text style={styles.title}>{theme.title}</Text>
-        <Text style={styles.subtitle}>{theme.subtitle}</Text>
+        {!initialToken && theme.subtitle ? <Text style={styles.subtitle}>{theme.subtitle}</Text> : null}
         <View style={styles.qrFrame}>
-          {busy ? <ActivityIndicator color={theme.color} /> : (record?.token || initialToken) ? <QRCode value={`wantiss://qr?token=${record?.token ?? initialToken}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
+          {busy ? <ActivityIndicator color={theme.color} /> : initialToken ? <Text style={styles.recipientName}>{resolved?.display_name ?? resolved?.shop_name ?? 'Opening Wantiss…'}</Text> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
         </View>
-        {kind === 'buyer_identity' ? <>
+        {kind === 'buyer_identity' ? (initialToken ? null : <>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { if (!record?.token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh buyer QR?', 'The previous token will be revoked. Your Wantiss number will stay the same.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh buyer QR</Text></Pressable>
           <Text style={styles.idLabel}>PERMANENT WANTISS NUMBER</Text>
           <Text selectable style={styles.idValue}>{wantissNumber || 'Loading your Wantiss number…'}</Text>
-        </> : kind === 'wallet_receive' ? <>
-          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${record.token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
+        </>) : kind === 'wallet_receive' ? <>
+          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { const token = record?.token ?? initialToken; if (!token) return; void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
         {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Deactivate QR</Text></Pressable> : null}
@@ -177,7 +178,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           {cameraPermission?.granted ? <CameraView style={styles.camera} facing="back" barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={({ data }) => { void resolve(data); }} /> : <View style={styles.permissionBox}><Text style={styles.muted}>Camera permission is required to scan QR codes.</Text><Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void requestCameraPermission(); }}><Text style={styles.primaryText}>Allow camera</Text></Pressable></View>}
           <Pressable style={styles.outline} onPress={() => setCameraOpen(false)}><Text style={styles.outlineText}>Close scanner</Text></Pressable>
         </View> : <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { if (cameraPermission?.granted) setCameraOpen(true); else void requestCameraPermission().then(p => { if (p.granted) setCameraOpen(true); }); }}><Ionicons name="scan-outline" size={19} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Open camera scanner</Text></Pressable>}
-        <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} returnKeyType="go" onSubmitEditing={() => { void resolve(); }} style={styles.input} />
+        <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} returnKeyType="go" onSubmitEditing={() => { void resolve(); }} onFocus={() => { setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 250); }} style={styles.input} />
         <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { void resolve(); }} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color} /> : <Ionicons name="search-outline" size={18} color={theme.color} />}<Text style={[styles.outlineText, { color: theme.color }]}>Open QR</Text></Pressable>
         {resolved ? <View style={styles.recipient}>
           <Text style={styles.sectionTitle}>{resolved.destination === 'vendor-shop' ? 'Shop found' : resolved.destination === 'wallet-receive' ? 'Recipient confirmed' : 'Wantiss profile found'}</Text>
