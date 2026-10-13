@@ -193,7 +193,34 @@ const NAV_MUTED = '#9A96A3';
 const NOTIFICATION_FEATURE_COLORS: Record<string,string> = { wallet:'#24A148', flyz:'#2585E8', goodies:'#D88735', 'pumping goodies':'#D88735', frenzies:'#7DBD32', konsoliss:'#DDB52B', woulib:'#8D6CC8' };
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
-function BottomNav({onMePress}:{onMePress?:()=>void}){
+function BottomNav({onMePress,onMessagesPress}:{onMePress?:()=>void;onMessagesPress?:()=>void}){
+  const [unreadMessageCount] = useState(0);
+  const [unreadFeatureColors,setUnreadFeatureColors] = useState<string[]>([]);
+  const [activeFeatureColor,setActiveFeatureColor] = useState<string>(MAGENTA);
+  const notificationPulse=useRef(new Animated.Value(1)).current;
+  useEffect(()=>{
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    let alive=true;
+    const load=async()=>{
+      const {data:{user}}=await supabase.auth.getUser();
+      if(!alive||!user){setUnreadFeatureColors([]);return;}
+      const {data,error}=await supabase.from('notifications').select('feature_name').eq('user_id',user.id).eq('read',false);
+      if(error)return;
+      const colors=Array.from(new Set((data||[]).map((n:any)=>NOTIFICATION_FEATURE_COLORS[String(n.feature_name||'').toLowerCase()]||MAGENTA)));
+      if(alive)setUnreadFeatureColors(colors);
+    };
+    void load();
+    channel=supabase.channel('home-nav-notifications').on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>{void load();}).subscribe();
+    return()=>{alive=false;if(channel)void supabase.removeChannel(channel);};
+  },[]);
+  useEffect(()=>{
+    if(!unreadFeatureColors.length){setActiveFeatureColor(MAGENTA);notificationPulse.setValue(1);return;}
+    let i=0;setActiveFeatureColor(unreadFeatureColors[0]);
+    const timer=setInterval(()=>{i=(i+1)%unreadFeatureColors.length;setActiveFeatureColor(unreadFeatureColors[i]);},850);
+    const pulse=Animated.loop(Animated.sequence([Animated.timing(notificationPulse,{toValue:0.25,duration:420,useNativeDriver:true}),Animated.timing(notificationPulse,{toValue:1,duration:420,useNativeDriver:true})]));
+    pulse.start();
+    return()=>{clearInterval(timer);pulse.stop();notificationPulse.setValue(1);};
+  },[unreadFeatureColors,notificationPulse]);
   return <View style={{paddingHorizontal:15}}><View style={s.nav}>
     <View style={s.homeButton}><View style={s.homeCircle}><Image source={{uri:WANTISS_LOGO}} style={s.homeLogo} resizeMode="contain"/></View></View>
     <Pressable style={s.navButton}><MaterialCommunityIcons name="television-play" size={25} color={NAV_MUTED}/><NavLabel>Showcase</NavLabel></Pressable>
