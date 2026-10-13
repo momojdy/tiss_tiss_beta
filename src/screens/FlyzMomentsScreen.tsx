@@ -3,7 +3,6 @@ import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Tex
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { decode } from 'base64-arraybuffer';
 import { supabase } from '../lib/supabase';
 
 type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
@@ -17,7 +16,6 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
  const [caption,setCaption]=useState('');
  const [visibility,setVisibility]=useState<'public'|'friends'|'private'>('public');
  const isOwner=!!viewerId && (!profileUserId || profileUserId===viewerId);
- const targetId=profileUserId ?? viewerId;
  const load=async()=>{
   setLoading(true);
   try {
