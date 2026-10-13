@@ -216,7 +216,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [momentsTarget, setMomentsTarget] = useState<{userId?:string; name?:string}>({});
   const [privacyReturnScreen, setPrivacyReturnScreen] = useState<BuyerScreen>('flyzMoments');
   const [walletQrRecipient, setWalletQrRecipient] = useState<{token:string; recipient:any} | null>(null);
-  const [privacyReturnScreen, setPrivacyReturnScreen] = useState<BuyerScreen>('flyzMoments');
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
