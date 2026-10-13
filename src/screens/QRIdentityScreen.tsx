@@ -65,6 +65,19 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         result = data;
       }
       setRecord(result);
+      if (kind === 'buyer_identity') {
+        const { data: auth } = await supabase.auth.getUser();
+        if (auth.user) {
+          const { data: privacy } = await supabase.from('user_profile_visibility')
+            .select('membership_visibility_confirmed').eq('user_id', auth.user.id).maybeSingle();
+          if (!privacy?.membership_visibility_confirmed) {
+            Alert.alert('Choose your membership privacy', 'Would you like people who scan your Wantiss QR to see your membership tier? Your tier stays private unless you choose public.', [
+              { text: 'Keep private', style: 'cancel', onPress: () => { void supabase.from('user_profile_visibility').upsert({ user_id: auth.user!.id, membership_visibility: 'private', membership_visibility_confirmed: true, updated_at: new Date().toISOString() }, { onConflict: 'user_id' }).then(({ error }) => { if (error) Alert.alert('Privacy not saved', error.message); }); } },
+              { text: 'Make public', onPress: () => { void supabase.from('user_profile_visibility').upsert({ user_id: auth.user!.id, membership_visibility: 'public', membership_visibility_confirmed: true, updated_at: new Date().toISOString() }, { onConflict: 'user_id' }).then(({ error }) => { if (error) Alert.alert('Privacy not saved', error.message); }); } },
+            ]);
+          }
+        }
+      }
     } catch (error) {
       const details = typeof error === 'object' && error !== null && 'message' in error && typeof (error as { message?: unknown }).message === 'string' ? (error as { message: string }).message : error instanceof Error ? error.message : String(error ?? 'Unknown error');
       console.error('[QRIdentityScreen] QR issuance failed', { kind, details, error });
