@@ -101,24 +101,31 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   }, [kind]);
 
   const chooseQRFromLibrary = async () => {
+    let scanStage = 'starting';
     try {
+      scanStage = 'requesting photo permission';
+      if (typeof ImagePicker.requestMediaLibraryPermissionsAsync !== 'function') throw new Error('Photo permission API is unavailable in this app runtime.');
       const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!permission.granted) {
         Alert.alert('Photo library permission', 'Allow Wantiss to access your photos so you can choose a QR code image.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Open settings', onPress: () => { void Linking.openSettings(); } }]);
         return;
       }
+      scanStage = 'opening photo library';
+      if (typeof ImagePicker.launchImageLibraryAsync !== 'function') throw new Error('Photo library API is unavailable in this app runtime.');
       const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: false, quality: 1 });
       if (picked.canceled || !picked.assets?.[0]?.uri) return;
       setLibraryBusy(true);
-      if (typeof scanFromURLAsync !== 'function') throw new Error('QR image scanning is unavailable in this app build. Please update Wantiss and try again, or use the live camera scanner.');
+      scanStage = 'decoding QR from selected image';
+      if (typeof scanFromURLAsync !== 'function') throw new Error('This Expo Camera runtime does not provide QR scanning from saved images. Use the live scanner, or update the app build with an image QR decoder.');
       const results = await scanFromURLAsync(picked.assets[0].uri, ['qr']);
-      const scanned = results.find((item: any) => typeof item.data === 'string' && item.data.length > 0);
+      scanStage = 'reading QR result';
+      const scanned = Array.isArray(results) ? results.find((item: any) => typeof item?.data === 'string' && item.data.length > 0) : null;
       if (!scanned) { Alert.alert('No QR code found', 'Choose an image that clearly shows a Wantiss QR code.'); return; }
       await resolve(scanned.data);
     } catch (error) {
       const details = error instanceof Error ? error.message : error && typeof error === 'object' && 'message' in error && typeof (error as { message?: unknown }).message === 'string' ? (error as { message: string }).message : String(error ?? 'Unknown error');
-      console.error('[QRIdentityScreen] Could not read QR image', { details, error });
-      Alert.alert('Could not read QR image', details || 'Try another image or use the camera scanner.');
+      console.error('[QRIdentityScreen] Could not read QR image', { stage: scanStage, details, error });
+      Alert.alert('Could not read QR image', `${scanStage}: ${details || 'Unknown error'}`);
     } finally { setLibraryBusy(false); }
   };
 
