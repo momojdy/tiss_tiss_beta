@@ -4,7 +4,12 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [feature/vendor-business-space-react-native]
+    branches: [main, feature/vendor-business-space-react-native]
+    paths:
+      - 'src/features/businessSpace/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/vendor-business-space-validation.yml'
 
 jobs:
   vendor-typecheck:
