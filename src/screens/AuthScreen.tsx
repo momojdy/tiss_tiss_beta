@@ -12,6 +12,8 @@ import {
   NativeScrollEvent,
   KeyboardTypeOptions,
   Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -303,6 +305,14 @@ type AuthScreenProps = AuthCardProps;
 export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthScreenProps) {
   const { height: screenHeight } = useWindowDimensions();
   const [showForgot, setShowForgot] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  React.useEffect(() => {
+    const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
+    const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
+    const showSubscription = Keyboard.addListener(showEvent, () => setKeyboardVisible(true));
+    const hideSubscription = Keyboard.addListener(hideEvent, () => setKeyboardVisible(false));
+    return () => { showSubscription.remove(); hideSubscription.remove(); };
+  }, []);
   const headerTop = ((screenHeight - 356) / 2) * (-1.03 + 1);
 
   if (showForgot) {
@@ -316,12 +326,12 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
   }
 
   return (
-    <View style={styles.page}>
+    <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
       <StatusBar style="dark" />
       <LinearGradient colors={['#F7DDEB', '#FBEAF3', '#FFF5E9']} locations={[0, 0.85, 0.925]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={[styles.header, { top: headerTop }]} pointerEvents="none">
         <View style={styles.logoBox}><Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" /></View>
       </LinearGradient>
-      <View style={styles.cardPosition}>
+      <View style={[styles.cardPosition, keyboardVisible ? styles.cardPositionKeyboard : null]}>
         <WantissAuthCard
           initialMode={initialMode}
           onSignInPressed={onSignInPressed}
@@ -335,7 +345,7 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
           }}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -345,6 +355,7 @@ const styles = StyleSheet.create({
   logoBox: { flex: 1, paddingLeft: 10, paddingTop: 50, paddingRight: 30, paddingBottom: 25 },
   logo: { width: '100%', height: '100%', borderRadius: 8 },
   cardPosition: { position: 'absolute', top: 300, left: 15, right: 15, zIndex: 10 },
+  cardPositionKeyboard: { top: 16 },
   card: { width: '100%', height: 470, backgroundColor: '#FFFFFF', borderRadius: 20, paddingLeft: 15, paddingRight: 15, paddingTop: 24, overflow: 'hidden' },
   toggleRow: { width: '100%', paddingLeft: 8, paddingRight: 8 },
   toggleOuter: { width: '100%', height: 50 },
@@ -356,7 +367,7 @@ const styles = StyleSheet.create({
   stepIndicator: { paddingTop: 5, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' },
   stepDot: { width: 7, height: 7, borderRadius: 3.5 },
   fieldBox: { height: 60, backgroundColor: FIELD_BG, borderRadius: 15 },
-  fieldInner: { flex: 1, marginTop: 11, marginLeft: 2, flexDirection: 'row', alignItems: 'center' },
+  fieldInner: { flex: 1, marginLeft: 2, flexDirection: 'row', alignItems: 'center' },
   prefixIcon: { width: 48, alignItems: 'center', justifyContent: 'center' },
   suffixButton: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
   textInput: { flex: 1, height: '100%', padding: 0, fontSize: 18, fontWeight: '400', color: FIELD_TEXT },
