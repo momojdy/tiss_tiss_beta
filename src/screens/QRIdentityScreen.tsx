@@ -139,8 +139,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     const raw = (scannedValue ?? tokenInput).trim();
     let token = raw;
     if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
-      let parsed: ReturnType<typeof Linking.parse>;
-      try { parsed = Linking.parse(raw); } catch { parsed = { scheme: null, hostname: null, path: null, queryParams: {} }; }
+      const parsed = Linking.parse(raw);
       const scheme = (parsed.scheme ?? '').toLowerCase();
       const host = (parsed.hostname ?? '').toLowerCase();
       const path = (parsed.path ?? '').replace(/^\\/+/, '').toLowerCase();
