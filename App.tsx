@@ -24,6 +24,7 @@ import WalletHistoryScreen from './src/screens/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/WalletRecentActivityScreen';
 import QRIdentityScreen from './src/screens/QRIdentityScreen';
 import PublicBuyerProfileScreen from './src/screens/PublicBuyerProfileScreen';
+import PublicBuyerProfileScreen from './src/screens/PublicBuyerProfileScreen';
 import VendorShopScreen from './src/screens/VendorShopScreen';
 import FrenziesHomeScreen from './src/screens/FrenziesHomeScreen';
 import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
@@ -60,7 +61,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'publicBuyerProfile' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -210,6 +211,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [pendingQrToken, setPendingQrToken] = useState<string | null>(null);
   const [qrLaunchToken, setQrLaunchToken] = useState<string | null>(null);
   const [walletQrDisplayToken, setWalletQrDisplayToken] = useState<string | null>(null);
+  const [publicBuyerProfile, setPublicBuyerProfile] = useState<{ displayName: string; wantissNumber: string | null } | null>(null);
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
