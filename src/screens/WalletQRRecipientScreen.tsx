@@ -6,7 +6,7 @@ import {supabase} from '../lib/supabase';
 type Props={token:string;recipient:any;onBack:()=>void};
 function requestId(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3)|8).toString(16);});}
 export default function WalletQRRecipientScreen({token,recipient,onBack}:Props){
- const [amount,setAmount]=useState('');const [busy,setBusy]=useState(false);const [result,setResult]=useState<{amount:number;reference:string;status:'success'|'duplicate'|'failure';error?:string}|null>(null);
+ const [amount,setAmount]=useState('');const [busy,setBusy]=useState(false);const [pendingRequestId,setPendingRequestId]=useState<string|null>(null);const [result,setResult]=useState<{amount:number;reference:string;status:'success'|'duplicate'|'failure';error?:string}|null>(null);
  const name=recipient?.display_name?.trim()||'Wantiss member';
  const initials=name.split(/\s+/).filter(Boolean).slice(0,2).map((v:string)=>v[0]).join('').toUpperCase()||'W';
  const send=()=>{
@@ -15,11 +15,12 @@ export default function WalletQRRecipientScreen({token,recipient,onBack}:Props){
   Alert.alert('Confirm transfer',`Send $${value.toFixed(2)} to ${name}?${recipient?.wantiss_number?'\nWantiss ID: '+recipient.wantiss_number:''}`,[
    {text:'Cancel',style:'cancel'},
    {text:'Confirm & send',onPress:()=>{void(async()=>{setBusy(true);try{
-    const {data,error}=await supabase.rpc('transfer_wallet_by_qr',{p_recipient_token:token,p_amount:value,p_request_id:requestId()});
+    const stableRequestId=pendingRequestId??requestId();setPendingRequestId(stableRequestId);
+    const {data,error}=await supabase.rpc('transfer_wallet_by_qr',{p_recipient_token:token,p_amount:value,p_request_id:stableRequestId});
     if(error)throw error;
     if(data?.ok!==true)throw new Error(typeof data?.message==='string'?data.message:'Wantiss could not confirm this transfer. Check your wallet activity before trying again.');
     setResult({amount:value,reference:String(data?.sender_transaction_id??data?.request_id??''),status:data?.duplicate===true?'duplicate':'success'});
-    setAmount('');
+    setPendingRequestId(null);setAmount('');
    }catch(e){setResult({amount:value,reference:'',status:'failure',error:e instanceof Error?e.message:'Please try again.'});}finally{setBusy(false);}})();}}
   ]);
  };
