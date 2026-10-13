@@ -8,7 +8,7 @@ type Profile = {
   avatar_url?: string | null; bio?: string | null; membership_tier?: string | null;
   membership_visibility?: 'public' | 'private';
   frenzies_rank?: number | null;
-  frenzies?: { lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number; rank?: number };
+  frenzies?: { rank?: number; lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number; rank?: number };
 };
 type Moment = { id: string; media_url: string; display_url?: string; media_type: 'image' | 'video'; caption: string; created_at: string };
 
