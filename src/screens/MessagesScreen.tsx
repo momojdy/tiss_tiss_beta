@@ -1,0 +1,8 @@
+import React from 'react';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+const PINK='#FBE8EF',MAGENTA='#BF008E',INK='#302631',MUTED='#827783';
+export default function MessagesScreen({onBack}:{onBack:()=>void}) {
+ return <View style={s.root}><View style={s.header}><Pressable onPress={onBack} style={s.back} hitSlop={12}><MaterialCommunityIcons name="arrow-left" size={23} color={INK}/></Pressable><View><Text style={s.title}>Messages</Text><Text style={s.subtitle}>Your conversations</Text></View></View><View style={s.empty}><View style={s.icon}><MaterialCommunityIcons name="message-text-outline" size={30} color={MAGENTA}/></View><Text style={s.heading}>Your conversations</Text><Text style={s.body}>Messages will appear here when conversation messaging is connected to your Wantiss account.</Text></View></View>;
+}
+const s=StyleSheet.create({root:{flex:1,backgroundColor:'#FFF'},header:{minHeight:86,paddingHorizontal:18,paddingVertical:14,backgroundColor:PINK,flexDirection:'row',alignItems:'center',borderBottomWidth:1,borderBottomColor:'#F0D7E4'},back:{width:38,height:38,alignItems:'center',justifyContent:'center',marginRight:8},title:{fontSize:21,fontWeight:'700',color:INK},subtitle:{fontSize:12,color:MUTED,marginTop:3},empty:{flex:1,alignItems:'center',justifyContent:'center',padding:32},icon:{width:66,height:66,borderRadius:22,backgroundColor:PINK,alignItems:'center',justifyContent:'center',marginBottom:15},heading:{fontSize:17,fontWeight:'700',color:INK},body:{fontSize:13,lineHeight:20,color:MUTED,textAlign:'center',marginTop:8}});
