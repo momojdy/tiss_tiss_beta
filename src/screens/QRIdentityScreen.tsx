@@ -204,13 +204,13 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         <TextInput value={tokenInput} onChangeText={setTokenInput} placeholder="Paste QR token or link" autoCapitalize="none" autoCorrect={false} returnKeyType="go" onSubmitEditing={() => { void resolve(); }} onFocus={() => { setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 250); }} style={styles.input} />
         <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { void resolve(); }} disabled={resolving}>{resolving ? <ActivityIndicator color={theme.color} /> : <Ionicons name="search-outline" size={18} color={theme.color} />}<Text style={[styles.outlineText, { color: theme.color }]}>Open QR</Text></Pressable>
         {resolved ? <View style={styles.recipient}>
-          <Text style={styles.sectionTitle}>{resolved.destination === 'vendor-shop' ? 'Shop found' : resolved.destination === 'wallet-receive' ? 'Recipient confirmed' : 'Wantiss profile found'}</Text>
+          <Text style={styles.sectionTitle}>{resolved.destination === 'vendor-shop' ? 'Shop found' : resolved.destination === 'wallet-receive' ? 'Add or send money' : 'Wantiss profile found'}</Text>
           <Text style={styles.recipientName}>{resolved.display_name ?? resolved.shop_name ?? 'Wantiss account'}</Text>
           {resolved.vendor_id ? <Text style={styles.muted}>Vendor ID: {resolved.vendor_id}</Text> : null}
           {resolved.wantiss_number ? <Text style={styles.muted}>Wantiss ID: {resolved.wantiss_number}</Text> : null}
           {resolved.qr_type === 'wallet_receive' ? <>
             <TextInput value={amount} onChangeText={setAmount} placeholder="Amount (USD)" keyboardType="decimal-pad" style={styles.input} />
-            <Pressable disabled={paying} style={[styles.primary, { backgroundColor: theme.color, opacity: paying ? 0.6 : 1 }]} onPress={pay}>{paying ? <ActivityIndicator color="#FFF" /> : <Ionicons name="send" size={17} color="#FFF" />}<Text style={styles.primaryText}>{paying ? 'Processing…' : 'Confirm & Pay me'}</Text></Pressable>
+            <Pressable disabled={paying} style={[styles.primary, { backgroundColor: theme.color, opacity: paying ? 0.6 : 1 }]} onPress={pay}>{paying ? <ActivityIndicator color="#FFF" /> : <Ionicons name="send" size={17} color="#FFF" />}<Text style={styles.primaryText}>{paying ? 'Processing…' : 'Add or send money'}</Text></Pressable>
           </> : null}
         </View> : null}
       </View> : null}
