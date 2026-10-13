@@ -1,0 +1,41 @@
+name: Extract supplied Stayz source
+
+on:
+  push:
+    branches:
+      - feature/stayz-complete-final
+
+permissions:
+  contents: write
+
+jobs:
+  extract:
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Extract Stayz archive verbatim
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf src/features/stayz/supplied
+          mkdir -p src/features/stayz/supplied
+          git show HEAD:Stayz > /tmp/Stayz.zip
+          unzip -q /tmp/Stayz.zip -d /tmp/stayz-extracted
+          root="$(find /tmp/stayz-extracted -mindepth 1 -maxdepth 1 -type d | head -1)"
+          test -n "$root"
+          cp -a "$root"/. src/features/stayz/supplied/
+          rm -f Stayz
+          rm -f .github/workflows/extract-stayz-source.yml
+      - name: Commit extracted source
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/features/stayz/supplied Stayz .github/workflows/extract-stayz-source.yml
+          git commit -m "chore: extract supplied Stayz guest source [skip ci]"
+          git push
