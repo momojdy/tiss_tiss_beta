@@ -93,7 +93,6 @@ export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void 
             <View style={styles.empty}><Text style={tx(13, fonts.regular, colors.textSecondary)}>Loading rankings…</Text></View>
           ) : !hasPlayers ? (
             <>
-              <RankRow entry={{ rank: 1, name: 'You', wins: 0, isYou: true }} />
               <View style={styles.emptyHint}>
                 <Text style={tx(14, fonts.semibold)}>Be the first to climb the leaderboard</Text>
                 <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 5, textAlign: 'center' }]}>Play Frenzies games to earn wins and move up.</Text>
