@@ -194,7 +194,7 @@ const NOTIFICATION_FEATURE_COLORS: Record<string,string> = { wallet:'#24A148', f
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
 function BottomNav({onMePress,onMessagesPress}:{onMePress?:()=>void;onMessagesPress?:()=>void}){
-  const [unreadMessageCount] = useState(0);
+  const [unreadMessageCount,setUnreadMessageCount] = useState(0);
   const [unreadFeatureColors,setUnreadFeatureColors] = useState<string[]>([]);
   const [activeFeatureColor,setActiveFeatureColor] = useState<string>(MAGENTA);
   const notificationPulse=useRef(new Animated.Value(1)).current;
@@ -204,13 +204,15 @@ function BottomNav({onMePress,onMessagesPress}:{onMePress?:()=>void;onMessagesPr
     const load=async()=>{
       const {data:{user}}=await supabase.auth.getUser();
       if(!alive||!user){setUnreadFeatureColors([]);return;}
+      const {data:conversations}=await supabase.from('conversations').select('id').contains('participant_ids',[user.id]);
+      if(conversations?.length){const {count}=await supabase.from('messages').select('id',{count:'exact',head:true}).in('conversation_id',conversations.map((c:any)=>c.id)).is('read_at',null).neq('sender_id',user.id);if(alive)setUnreadMessageCount(count||0);}else if(alive)setUnreadMessageCount(0);
       const {data,error}=await supabase.from('notifications').select('feature_name').eq('user_id',user.id).eq('read',false);
       if(error)return;
       const colors=Array.from(new Set((data||[]).map((n:any)=>NOTIFICATION_FEATURE_COLORS[String(n.feature_name||'').toLowerCase()]||MAGENTA)));
       if(alive)setUnreadFeatureColors(colors);
     };
     void load();
-    channel=supabase.channel('home-nav-notifications').on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>{void load();}).subscribe();
+    channel=supabase.channel('home-nav-notifications').on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>{void load();}).on('postgres_changes',{event:'*',schema:'public',table:'messages'},()=>{void load();}).on('postgres_changes',{event:'*',schema:'public',table:'conversations'},()=>{void load();}).subscribe();
     return()=>{alive=false;if(channel)void supabase.removeChannel(channel);};
   },[]);
   useEffect(()=>{
