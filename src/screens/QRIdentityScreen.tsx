@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ActivityIndicator, Alert, KeyboardAvoidingView, Platform, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Alert, KeyboardAvoidingView, Linking, Platform, Pressable, ScrollView, Share, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import QRCode from 'react-native-qrcode-svg';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
@@ -36,6 +37,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [paying, setPaying] = useState(false);
   const [requestId, setRequestId] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const [libraryBusy, setLibraryBusy] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const resolveLock = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
@@ -68,7 +70,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     } finally { setBusy(false); }
   }, [kind, businessId]);
 
-  useEffect(() => { if (initialToken) { setBusy(false); return; } void issue(); }, [issue, initialToken]);
+  useEffect(() => { if (initialToken) { setBusy(false); return; } if (displayToken) { setRecord({ token: displayToken }); setBusy(false); return; } void issue(); }, [issue, initialToken, displayToken]);
   useEffect(() => {
     if (kind !== 'buyer_identity') return;
     let active = true;
@@ -80,6 +82,25 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     })().catch(() => undefined);
     return () => { active = false; };
   }, [kind]);
+
+  const chooseQRFromLibrary = async () => {
+    try {
+      const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permission.granted) {
+        Alert.alert('Photo library permission', 'Allow Wantiss to access your photos so you can choose a QR code image.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Open settings', onPress: () => { void Linking.openSettings(); } }]);
+        return;
+      }
+      const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsEditing: false, quality: 1 });
+      if (picked.canceled || !picked.assets?.[0]?.uri) return;
+      setLibraryBusy(true);
+      const results = await CameraView.scanFromURLAsync(picked.assets[0].uri, ['qr']);
+      const scanned = results.find((item: any) => typeof item.data === 'string' && item.data.length > 0);
+      if (!scanned) { Alert.alert('No QR code found', 'Choose an image that clearly shows a Wantiss QR code.'); return; }
+      await resolve(scanned.data);
+    } catch (error) {
+      Alert.alert('Could not read QR image', error instanceof Error ? error.message : 'Try another image or use the camera scanner.');
+    } finally { setLibraryBusy(false); }
+  };
 
   const revoke = () => {
     if (!record?.id) return;
@@ -150,15 +171,15 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   return <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={insets.top}>
     <View style={[styles.header, { paddingTop: insets.top, height: 100 }]}>
       <Pressable onPress={onBack} style={styles.back}><Ionicons name="chevron-back" size={23} color="#1D2430" /></Pressable>
-      <Text style={styles.headerTitle}>{theme.title}</Text>
+      {kind === 'wallet_receive' ? <Text style={styles.headerTitle}>Add me</Text> : null}
     </View>
     <ScrollView ref={scrollRef} contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag">
       <View style={[styles.hero, { backgroundColor: theme.pale, borderColor: theme.color }]}>
         {!initialToken && kind !== 'buyer_identity' ? <Text style={[styles.eyebrow, { color: theme.color }]}>{kind === 'wallet_receive' ? 'WALLET RECEIVING QR' : 'PUBLIC SHOP'}</Text> : null}
-        <Text style={styles.title}>{theme.title}</Text>
+        {kind !== 'wallet_receive' ? <Text style={styles.title}>{theme.title}</Text> : null}
         {!initialToken && theme.subtitle ? <Text style={styles.subtitle}>{theme.subtitle}</Text> : null}
         <View style={styles.qrFrame}>
-          {busy ? <ActivityIndicator color={theme.color} /> : initialToken ? <Text style={styles.recipientName}>{resolved?.display_name ?? resolved?.shop_name ?? 'Opening Wantiss…'}</Text> : record?.token ? <QRCode value={`wantiss://qr?token=${record.token}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
+          {busy ? <ActivityIndicator color={theme.color} /> : initialToken ? <Text style={styles.recipientName}>{resolved?.display_name ?? resolved?.shop_name ?? 'Opening Wantiss…'}</Text> : (record?.token ?? displayToken) ? <QRCode value={`wantiss://qr?token=${record?.token ?? displayToken}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <Text style={styles.muted}>QR unavailable</Text>}
         </View>
         {kind === 'buyer_identity' ? (initialToken ? null : <>
           <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { const token = record?.token ?? displayToken; if (!token) return; void Share.share({ title: 'My Wantiss ID', message: `Connect with me on Wantiss: wantiss://qr?token=${token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share my Wantiss ID</Text></Pressable>
@@ -166,7 +187,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
           <Text style={styles.idLabel}>PERMANENT WANTISS NUMBER</Text>
           <Text selectable style={styles.idValue}>{wantissNumber || 'Loading your Wantiss number…'}</Text>
         </>) : kind === 'wallet_receive' ? <>
-          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { const token = record?.token ?? initialToken; if (!token) return; void Share.share({ title: 'My Wantiss wallet', message: `Add me on Wantiss: wantiss://qr?token=${token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
+          <Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { const token = record?.token ?? displayToken ?? initialToken; if (!token) { Alert.alert('QR not ready', 'Wait for your wallet QR to load, then try again.'); return; } void Share.share({ title: 'Add me', message: `Add me on Wantiss: wantiss://qr?token=${token}` }); }}><Ionicons name="share-social-outline" size={18} color="#FFF" /><Text style={styles.primaryText}>Share Add me link</Text></Pressable>
           <Pressable style={[styles.outline, { borderColor: theme.color, marginTop: 10 }]} onPress={() => Alert.alert('Refresh wallet QR?', 'The old QR will be revoked immediately.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Refresh', onPress: () => { void issue(); } }])}><Ionicons name="refresh" size={18} color={theme.color} /><Text style={[styles.outlineText, { color: theme.color }]}>Refresh wallet QR</Text></Pressable>
         </> : <Text style={styles.caption}>Customers scan this blue QR to find your public shop.</Text>}
         {record?.id && !initialToken ? <Pressable style={styles.revokeButton} onPress={revoke}><Text style={styles.revokeText}>Deactivate QR</Text></Pressable> : null}
@@ -175,6 +196,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       {kind !== 'vendor_shop' ? <View style={styles.scannerCard}>
         <Text style={styles.sectionTitle}>Pay or add by QR scan</Text>
         <Text style={styles.muted}>Scan a Wantiss QR or paste its link to open a profile, wallet, or shop.</Text>
+        <Pressable style={[styles.outline, { borderColor: theme.color }]} onPress={() => { void chooseQRFromLibrary(); }} disabled={libraryBusy}>{libraryBusy ? <ActivityIndicator color={theme.color} /> : <Ionicons name="images-outline" size={19} color={theme.color} />}<Text style={[styles.outlineText, { color: theme.color }]}>{libraryBusy ? 'Reading QR image…' : 'Choose QR from photo library'}</Text></Pressable>
         {cameraOpen ? <View style={styles.cameraWrap}>
           {cameraPermission?.granted ? <CameraView style={styles.camera} facing="back" barcodeScannerSettings={{ barcodeTypes: ['qr'] }} onBarcodeScanned={({ data }) => { void resolve(data); }} /> : <View style={styles.permissionBox}><Text style={styles.muted}>Camera permission is required to scan QR codes.</Text><Pressable style={[styles.primary, { backgroundColor: theme.color }]} onPress={() => { void requestCameraPermission(); }}><Text style={styles.primaryText}>Allow camera</Text></Pressable></View>}
           <Pressable style={styles.outline} onPress={() => setCameraOpen(false)}><Text style={styles.outlineText}>Close scanner</Text></Pressable>
@@ -202,5 +224,5 @@ function makeRequestId() {
   });
 }
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#F7F8FA' }, header: { flexDirection: 'row', alignItems: 'flex-end', paddingBottom: 10, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#ECEEF2', backgroundColor: '#FFF' }, back: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center' }, headerTitle: { fontSize: 17, fontWeight: '700', color: '#202735', marginLeft: 6 }, content: { padding: 16, paddingBottom: 38, gap: 14 }, hero: { borderRadius: 22, borderWidth: 1, padding: 18, alignItems: 'center' }, eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3, alignSelf: 'flex-start' }, title: { fontSize: 24, fontWeight: '800', color: '#202735', marginTop: 8 }, subtitle: { fontSize: 13, color: '#707887', textAlign: 'center', marginTop: 5, lineHeight: 19 }, qrFrame: { backgroundColor: '#FFF', padding: 14, borderRadius: 18, marginTop: 20, minHeight: 236, minWidth: 236, alignItems: 'center', justifyContent: 'center' }, caption: { fontSize: 12, color: '#6D7582', textAlign: 'center', marginTop: 14, lineHeight: 18 }, primary: { minHeight: 46, borderRadius: 13, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 18, width: '100%' }, primaryText: { fontSize: 14, fontWeight: '700', color: '#FFF' }, idLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 0.8, color: '#8C7790', marginTop: 15 }, idValue: { fontSize: 17, fontWeight: '800', color: '#35253A', marginTop: 5 }, muted: { fontSize: 12, color: '#747C8B', lineHeight: 18 }, scannerCard: { padding: 16, borderRadius: 18, backgroundColor: '#FFF', gap: 10 }, sectionTitle: { fontSize: 16, fontWeight: '800', color: '#202735' }, input: { minHeight: 46, borderWidth: 1, borderColor: '#E1E5EB', borderRadius: 12, paddingHorizontal: 13, fontSize: 14, color: '#202735', backgroundColor: '#FFF' }, outline: { minHeight: 44, borderWidth: 1.3, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }, outlineText: { fontSize: 13, fontWeight: '700' }, recipient: { borderTopWidth: 1, borderTopColor: '#ECEEF2', paddingTop: 14, marginTop: 4, gap: 8 }, recipientName: { fontSize: 18, fontWeight: '800', color: '#202735' }, cameraWrap: { gap: 10 }, camera: { height: 300, borderRadius: 14, overflow: 'hidden' }, permissionBox: { minHeight: 140, alignItems: 'center', justifyContent: 'center', gap: 8 }, revokeButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginTop: 12, borderWidth: 1, borderColor: '#E1A6B2' }, revokeText: { color: '#B4455B', fontWeight: '800', fontSize: 12 }
+  page: { flex: 1, backgroundColor: '#F7F8FA' }, header: { flexDirection: 'row', alignItems: 'flex-end', paddingBottom: 10, paddingHorizontal: 14, borderBottomWidth: 1, borderBottomColor: '#ECEEF2', backgroundColor: '#FFF' }, back: { width: 38, height: 38, alignItems: 'center', justifyContent: 'center', borderRadius: 12, backgroundColor: '#EFF3EB' }, headerTitle: { fontSize: 17, fontWeight: '700', color: '#202735', marginLeft: 6 }, content: { padding: 16, paddingBottom: 38, gap: 14 }, hero: { borderRadius: 22, borderWidth: 1, padding: 18, alignItems: 'center' }, eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3, alignSelf: 'flex-start' }, title: { fontSize: 24, fontWeight: '800', color: '#202735', marginTop: 8 }, subtitle: { fontSize: 13, color: '#707887', textAlign: 'center', marginTop: 5, lineHeight: 19 }, qrFrame: { backgroundColor: '#FFF', padding: 14, borderRadius: 18, marginTop: 20, minHeight: 236, minWidth: 236, alignItems: 'center', justifyContent: 'center' }, caption: { fontSize: 12, color: '#6D7582', textAlign: 'center', marginTop: 14, lineHeight: 18 }, primary: { minHeight: 46, borderRadius: 13, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 18, width: '100%' }, primaryText: { fontSize: 14, fontWeight: '700', color: '#FFF' }, idLabel: { fontSize: 10, fontWeight: '800', letterSpacing: 0.8, color: '#8C7790', marginTop: 15 }, idValue: { fontSize: 17, fontWeight: '800', color: '#35253A', marginTop: 5 }, muted: { fontSize: 12, color: '#747C8B', lineHeight: 18 }, scannerCard: { padding: 16, borderRadius: 18, backgroundColor: '#FFF', gap: 10 }, sectionTitle: { fontSize: 16, fontWeight: '800', color: '#202735' }, input: { minHeight: 46, borderWidth: 1, borderColor: '#E1E5EB', borderRadius: 12, paddingHorizontal: 13, fontSize: 14, color: '#202735', backgroundColor: '#FFF' }, outline: { minHeight: 44, borderWidth: 1.3, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }, outlineText: { fontSize: 13, fontWeight: '700' }, recipient: { borderTopWidth: 1, borderTopColor: '#ECEEF2', paddingTop: 14, marginTop: 4, gap: 8 }, recipientName: { fontSize: 18, fontWeight: '800', color: '#202735' }, cameraWrap: { gap: 10 }, camera: { height: 300, borderRadius: 14, overflow: 'hidden' }, permissionBox: { minHeight: 140, alignItems: 'center', justifyContent: 'center', gap: 8 }, revokeButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginTop: 12, borderWidth: 1, borderColor: '#E1A6B2' }, revokeText: { color: '#B4455B', fontWeight: '800', fontSize: 12 }
 });
