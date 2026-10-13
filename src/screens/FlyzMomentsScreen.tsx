@@ -7,9 +7,9 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
 
 type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
-type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
+type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; initialMomentId?:string; onPrivacyPress?:()=>void; onHomePress?:()=>void; onDealsPress?:()=>void; onWalletPress?:()=>void; onMorePress?:()=>void };
 
-export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPrivacyPress,onHomePress,onDealsPress,onWalletPress,onMorePress}:Props) {
+export default function FlyzMomentsScreen({onBack,profileUserId,profileName,initialMomentId,onPrivacyPress,onHomePress,onDealsPress,onWalletPress,onMorePress}:Props) {
  const [viewerId,setViewerId]=useState<string|null>(null);
  const [items,setItems]=useState<Moment[]>([]);
  const [selectedMoment,setSelectedMoment]=useState<Moment|null>(null);
@@ -33,6 +33,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
   finally{setLoading(false);}
  };
  useEffect(()=>{void load();},[profileUserId]);
+ useEffect(()=>{if(initialMomentId&&items.length){setSelectedMoment(items.find(item=>item.id===initialMomentId)??null);}},[initialMomentId,items]);
  const publish=async()=>{
   if(!viewerId){Alert.alert('Sign in required','Sign in to share a Flyz Moment.');return;}
   setPublishing(true);
