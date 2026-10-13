@@ -1,40 +1,27 @@
 {
   "expo": {
-    "name": "tiss_tiss_beta",
-    "slug": "tiss_tiss_beta",
-    "version": "1.10.0",
-    "scheme": "wantiss",
+    "name": "Stayz",
+    "slug": "stayz",
+    "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
+    "scheme": "stayz",
+    "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.wantiss.stayz",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Stayz uses your location to show places to stay near you."
+      }
     },
     "android": {
-      "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
-        "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
-        "monochromeImage": "./assets/android-icon-monochrome.png"
-      },
-      "predictiveBackGestureEnabled": false
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "package": "com.wantiss.stayz",
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
     },
     "plugins": [
-      "expo-asset",
       [
-        "@stripe/stripe-react-native",
-        {
-          "enableGooglePay": false
-        }
-      ],
-      [
-        "expo-camera",
-        {
-          "cameraPermission": "Allow Wantiss to use your camera to scan QR codes."
-        }
+        "expo-location",
+        { "locationWhenInUsePermission": "Stayz uses your location to show places to stay near you." }
       ]
     ]
   }
