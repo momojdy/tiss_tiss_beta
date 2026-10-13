@@ -13,7 +13,7 @@ type Props = {
   businessId?: string;
   onOpenShop?: (vendorId: string, shopName: string) => void;
   onOpenWallet?: (token: string, recipient: any) => void;
-  onOpenBuyer?: () => void;
+  onOpenBuyer?: (recipient?: any) => void;
   initialToken?: string | null;
   displayToken?: string | null;
 };
@@ -115,7 +115,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       setTokenInput(raw);
       if (data.destination === 'vendor-shop') onOpenShop?.(data.vendor_id, data.shop_name);
       if (data.destination === 'wallet-receive') onOpenWallet?.(token, data);
-      if (data.destination === 'buyer-profile') onOpenBuyer?.();
+      if (data.destination === 'buyer-profile') onOpenBuyer?.(data);
     } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'Please try another QR.'); }
     finally { setResolving(false); resolveLock.current = false; }
   };
