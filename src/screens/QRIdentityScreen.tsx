@@ -66,7 +66,9 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
       }
       setRecord(result);
     } catch (error) {
-      Alert.alert('Could not create QR', error instanceof Error ? error.message : 'Please try again.');
+      const details = typeof error === 'object' && error !== null && 'message' in error && typeof (error as { message?: unknown }).message === 'string' ? (error as { message: string }).message : error instanceof Error ? error.message : String(error ?? 'Unknown error');
+      console.error('[QRIdentityScreen] QR issuance failed', { kind, details, error });
+      Alert.alert('Could not create QR', details || 'Please try again.');
     } finally { setBusy(false); }
   }, [kind, businessId]);
 
