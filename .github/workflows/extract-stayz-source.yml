@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - feature/stayz-complete-final
+  pull_request:
+    types: [opened, synchronize]
 
 permissions:
   contents: write
 
 jobs:
   extract:
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+    if: "github.event_name == 'push' && !contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
