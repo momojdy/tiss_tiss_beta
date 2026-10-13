@@ -105,6 +105,7 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
         </View> : <View style={styles.emptyRow}><View style={styles.emptyIcon}><Ionicons name="game-controller-outline" size={22} color="#B72A7B" /></View><View style={{flex:1}}><Text style={styles.emptyTitle}>Their next win could be the first</Text><Text style={styles.emptyText}>No public Frenzies stats yet. Invite them to play!</Text></View></View>}
         {Number(stats.rank ?? 0) > 0 ? <View style={styles.rankPill}><Ionicons name="trophy-outline" size={15} color="#8E5B19" /><Text style={styles.rankText}>Frenzies rank #{Number(stats.rank).toLocaleString()}</Text></View> : null}
         {Number(stats.rank ?? 0) > 0 ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#9B6A20" />  Ranked #{stats.rank} on Frenzies</Text> : null}
+        {Number(stats.rank ?? profile.frenzies_rank ?? 0) > 0 ? <Text style={styles.rankLine}><Ionicons name="trophy-outline" size={15} color="#9B6A21" />  Ranked #{Number(stats.rank ?? profile.frenzies_rank)} on Frenzies</Text> : null}
         {Number(stats.current_win_streak ?? 0) > 0 ? <Text style={styles.streak}><Ionicons name="flame" size={14} color="#D86B35" />  {stats.current_win_streak} win streak · best {stats.best_win_streak ?? stats.current_win_streak}</Text> : null}
       </View>
       <View style={styles.section}>
