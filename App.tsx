@@ -17,8 +17,6 @@ import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import MessageHubScreen from './src/screens/MessageHubScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
 import MessagesScreen from './src/screens/MessagesScreen';
-import MessageHubScreen from './src/screens/MessageHubScreen';
-import NotificationsScreen from './src/screens/NotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/WalletPaymentMethodsScreen';
 import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
@@ -68,7 +66,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'messageHub' | 'notifications' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
+type BuyerScreen = 'home' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'woulib';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -209,8 +207,24 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  const [notificationUnreadCount, setNotificationUnreadCount] = useState(0);
-  useEffect(() => { let alive = true; let channel: ReturnType<typeof supabase.channel> | undefined; const load = async () => { const { data: { user } } = await supabase.auth.getUser(); if (!user) { if (alive) setNotificationUnreadCount(0); return; } const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false); if (!error && alive) setNotificationUnreadCount(count ?? 0); }; void load(); channel = supabase.channel('app-notification-count').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, () => { void load(); }).subscribe(); return () => { alive = false; if (channel) void supabase.removeChannel(channel); }; }, [authenticated]);
+  useEffect(() => {
+    let alive = true;
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { if (alive) { setUnreadNotificationsCount(0); setUnreadMessagesCount(0); } return; }
+      const { count: notificationCount, error: notificationError } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false);
+      if (!notificationError && alive) setUnreadNotificationsCount(notificationCount ?? 0);
+      const { data: conversations } = await supabase.from('conversations').select('id').contains('participant_ids', [user.id]);
+      if (conversations?.length) {
+        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.map((conversation: { id: string }) => conversation.id)).is('read_at', null).neq('sender_id', user.id);
+        if (alive) setUnreadMessagesCount(messageCount ?? 0);
+      } else if (alive) setUnreadMessagesCount(0);
+    };
+    void load();
+    channel = supabase.channel('app-unread-counts').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, () => { void load(); }).subscribe();
+    return () => { alive = false; if (channel) void supabase.removeChannel(channel); };
+  }, [authenticated]);
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
   const [flyzSelectedFlight, setFlyzSelectedFlight] = useState<any>(null);
@@ -257,8 +271,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (authenticated) {
     try {
-      if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => Alert.alert('Messages', 'Your conversations will appear here when messaging is connected.')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={0} unreadNotifications={notificationUnreadCount} />;
-      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(destination) => setBuyerScreen(destination as BuyerScreen)} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => setBuyerScreen('messages')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(target) => setBuyerScreen(target as BuyerScreen)} />;
       if (buyerScreen === 'messages') return <MessagesScreen onBack={() => setBuyerScreen('messageHub')} />;
