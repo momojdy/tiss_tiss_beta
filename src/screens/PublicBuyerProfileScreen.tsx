@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase';
 type Profile = {
   owner_user_id?: string; display_name?: string | null; wantiss_number?: string | null;
   avatar_url?: string | null; bio?: string | null; membership_tier?: string | null;
-  membership_visibility?: 'public' | 'private';
+  membership_visibility?: 'public' | 'private'; frenzies_rank?: number | null;
   frenzies_rank?: number | null;
   frenzies?: { rank?: number; lifetime_points?: number; total_games_played?: number; total_games_won?: number; current_win_streak?: number; best_win_streak?: number; rank?: number };
 };
