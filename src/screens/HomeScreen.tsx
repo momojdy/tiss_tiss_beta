@@ -190,7 +190,7 @@ function MainPromoPopup(){
 
 const WANTISS_LOGO=BASE+'WantisslogoOuterless.PNG';
 const NAV_MUTED = '#9A96A3';
-const NOTIFICATION_FEATURE_COLORS: Record<string,string> = { wallet:'#24A148', flyz:'#2585E8', goodies:'#D88735', 'pumping goodies':'#D88735', frenzies:'#7DBD32', konsoliss:'#DDB52B', woulib:'#8D6CC8' };
+const NOTIFICATION_FEATURE_COLORS: Record<string,string> = { wallet:'#81C56C', flyz:'#4A67B0', goodies:'#FD802E', 'pumping goodies':'#FD802E', frenzies:'#B3DF4B', konsoliss:'#DDB52B', woulib:'#FEC509' };
 function NavLabel({children,style}:{children:string;style?:object}){return <Text style={[s.navLabel,style]}>{children}</Text>}
 function MessageBadge({count}:{count:number}){if(count<=0)return null;const label=count>99?'99+':String(count);return <View style={s.messageBadge}><Text style={s.messageBadgeText}>{label}</Text></View>}
 function BottomNav({onMePress,onMessagesPress}:{onMePress?:()=>void;onMessagesPress?:()=>void}){
