@@ -24,7 +24,7 @@ type Props = {
   onNotificationsPress?: () => void;
   onMyTripsPress?: () => void;
   onDealsPress?: () => void;
-  onMorePress?: () => void;
+  onMorePress?: () => void;\n  onMomentsPress?: () => void;
   onDestinationPress?: (city: string, code: string, price: string) => void;
   onSearch?: (data: { from: { city: string; code: string }; to: { city: string; code: string }; departDate: Date; returnDate?: Date; passengers: string; cabin: string; tripType: string; secondFrom?: { city: string; code: string }; secondTo?: { city: string; code: string }; secondDepartDate?: Date }) => void;
 };
@@ -469,7 +469,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
           </View>
         </View>
       </Modal>
-      <BottomNav active="Home" onHome={() => {}} onMoments={() => {}} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
+      <BottomNav active="Home" onHome={() => {}} onMoments={onMomentsPress ?? (() => {})} onWallet={onWalletPress ?? (() => {})} onDeals={onDealsPress ?? (() => Alert.alert('Flyz Deals', 'Discounted fares, travel promotions, Wantiss offers, airline promotions and destination deals.'))} onMore={onMorePress ?? (() => {})} />
       </LinearGradient>
     </View>
   );
