@@ -11,7 +11,7 @@ type Profile = {
 };
 type Moment = { id: string; media_url: string; media_type: 'image' | 'video'; caption: string; created_at: string };
 
-export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoments }: { profile: Profile; onBack: () => void; onOpenMoments?: (userId: string, name: string) => void }) {
+export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoments, onPrivacyPress }: { profile: Profile; onBack: () => void; onOpenMoments?: (userId: string, name: string) => void; onPrivacyPress?: () => void }) {
   const [viewerId, setViewerId] = useState<string | null>(null);
   const [friendState, setFriendState] = useState<'none'|'pending-sent'|'pending-received'|'friends'>('none');
   const [friendshipId, setFriendshipId] = useState<string | null>(null);
@@ -75,7 +75,7 @@ export default function PublicBuyerProfileScreen({ profile, onBack, onOpenMoment
     <View style={styles.header}>
       <Pressable onPress={onBack} style={styles.back} accessibilityRole="button" accessibilityLabel="Back"><Ionicons name="chevron-back" size={23} color="#302536" /></Pressable>
       <Text style={styles.headerTitle}>Wantiss profile</Text><View style={{ flex: 1 }} />
-      <View style={styles.headerMark}><Ionicons name="sparkles" size={17} color="#B85D91" /></View>
+      {isSelf ? <Pressable onPress={onPrivacyPress} style={styles.headerMark} accessibilityLabel="Profile privacy"><Ionicons name="settings-outline" size={17} color="#B85D91" /></Pressable> : <View style={styles.headerMark}><Ionicons name="sparkles" size={17} color="#B85D91" /></View>}
     </View>
     <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
       <View style={styles.hero}>
