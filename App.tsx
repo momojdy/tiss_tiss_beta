@@ -16,6 +16,9 @@ import AccountSecurityScreen from './src/screens/AccountSecurityScreen';
 import WalletNotificationsScreen from './src/screens/WalletNotificationsScreen';
 import MessageHubScreen from './src/screens/MessageHubScreen';
 import NotificationsScreen from './src/screens/NotificationsScreen';
+import MessagesScreen from './src/screens/MessagesScreen';
+import MessageHubScreen from './src/screens/MessageHubScreen';
+import NotificationsScreen from './src/screens/NotificationsScreen';
 import WalletSettingsScreen from './src/screens/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/WalletPaymentMethodsScreen';
 import WalletBankCardsScreen from './src/screens/WalletBankCardsScreen';
@@ -204,6 +207,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [notificationUnreadCount, setNotificationUnreadCount] = useState(0);
   useEffect(() => { let alive = true; let channel: ReturnType<typeof supabase.channel> | undefined; const load = async () => { const { data: { user } } = await supabase.auth.getUser(); if (!user) { if (alive) setNotificationUnreadCount(0); return; } const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false); if (!error && alive) setNotificationUnreadCount(count ?? 0); }; void load(); channel = supabase.channel('app-notification-count').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).subscribe(); return () => { alive = false; if (channel) void supabase.removeChannel(channel); }; }, [authenticated]);
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
@@ -221,6 +225,20 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [privacyReturnScreen, setPrivacyReturnScreen] = useState<BuyerScreen>('me');
   const [walletQrRecipient, setWalletQrRecipient] = useState<{token:string; recipient:any} | null>(null);
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
+  useEffect(() => {
+    if (!authenticated) { setUnreadNotificationsCount(0); return; }
+    let active = true;
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    const load = async () => {
+      const { data: authData } = await supabase.auth.getUser();
+      if (!authData.user) { if (active) setUnreadNotificationsCount(0); return; }
+      const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', authData.user.id).eq('read', false);
+      if (!error && active) setUnreadNotificationsCount(count || 0);
+    };
+    void load();
+    channel = supabase.channel('app-notification-count').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).subscribe();
+    return () => { active = false; if (channel) void supabase.removeChannel(channel); };
+  }, [authenticated]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -235,6 +253,9 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     try {
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => Alert.alert('Messages', 'Your conversations will appear here when messaging is connected.')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={0} unreadNotifications={notificationUnreadCount} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(destination) => setBuyerScreen(destination as BuyerScreen)} />;
+      if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => setBuyerScreen('messages')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={0} unreadNotifications={unreadNotificationsCount} />;
+      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(target) => setBuyerScreen(target as BuyerScreen)} />;
+      if (buyerScreen === 'messages') return <MessagesScreen onBack={() => setBuyerScreen('messageHub')} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
       if (buyerScreen === 'flyzDetails') return <FlyzDetailsScreen flight={flyzSelectedFlight} onBack={() => setBuyerScreen('flyzResults')} onContinue={() => setBuyerScreen('flyzPassengerDetails')} />;
       if (buyerScreen === 'flyzPassengerDetails') return <FlyzPassengerDetailsScreen onBack={() => setBuyerScreen('flyzDetails')} onContinue={() => setBuyerScreen('flyzPayment')} />;
