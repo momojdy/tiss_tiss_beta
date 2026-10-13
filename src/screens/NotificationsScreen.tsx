@@ -10,15 +10,15 @@ type NotificationRow = {
 };
 const PINK = '#FBE8EF', MAGENTA = '#BF008E', INK = '#302631', MUTED = '#827783';
 const FEATURE_COLORS: Record<string, string> = {
-  wallet: '#24A148', flyz: '#2585E8', goodies: '#D88735', 'pumping goodies': '#D88735',
-  frenzies: '#7DBD32', konsoliss: '#DDB52B', woulib: '#8D6CC8', general: MAGENTA,
+  wallet: '#81C56C', flyz: '#4A67B0', goodies: '#FD802E', 'pumping goodies': '#FD802E',
+  frenzies: '#B3DF4B', konsoliss: '#DDB52B', woulib: '#FEC509', general: MAGENTA,
 };
 const featureKey = (value?: string | null) => (value || 'general').trim().toLowerCase();
 const featureColor = (value?: string | null) => FEATURE_COLORS[featureKey(value)] || MAGENTA;
 const destinationFor = (n: NotificationRow): string | null => {
   const raw = (n.destination || String(n.metadata?.destination || '')).trim();
-  const key = raw.toLowerCase() || featureKey(n.feature_name);
-  const routes: Record<string, string> = { wallet: 'wallet', flyz: 'flyz', goodies: 'goodies', 'pumping goodies': 'goodies', frenzies: 'frenzies', konsoliss: 'konsoliss', woulib: 'woulib' };
+  const key = raw.toLowerCase().replace(/[_-]+/g, ' ').trim() || featureKey(n.feature_name);
+  const routes: Record<string, string> = { wallet: 'wallet', flyz: 'flyz', goodies: 'goodies', 'pumping goodies': 'goodies', frenzies: 'frenzies', konsoliss: 'konsoliss', woulib: 'woulib', 'wallet notifications': 'walletNotifications', 'flyz trips': 'flyzMyTrips', 'flyz deals': 'flyzDeals' };
   return routes[key] || routes[featureKey(n.feature_name)] || null;
 };
 export default function NotificationsScreen({ onBack, onNavigate }: { onBack: () => void; onNavigate: (screen: string) => void }) {
