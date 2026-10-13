@@ -71,7 +71,7 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
 }
 
 const styles = StyleSheet.create({
-  header: { width: '100%', height: 120, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end' },
+  header: { width: '100%', height: 100, backgroundColor: BACKGROUND, paddingHorizontal: 10, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'flex-end' },
   row: { width: '100%', height: 36, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   leftSide: { flexDirection: 'row', alignItems: 'center' },
   rightSide: { flexDirection: 'row', alignItems: 'center', gap: 12 },
