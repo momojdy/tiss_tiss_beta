@@ -5,7 +5,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { decode } from 'base64-arraybuffer';
 import { supabase } from '../lib/supabase';
 
-type Moment = { id:string; user_id:string; media_url:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
+type Moment = { id:string; user_id:string; media_url:string; display_url?:string; media_type:'image'|'video'; caption:string; visibility:'public'|'friends'|'private'; created_at:string };
 type Props = { onBack:()=>void; profileUserId?:string; profileName?:string; onPrivacyPress?:()=>void };
 
 export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPrivacyPress}:Props) {
@@ -26,7 +26,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
    let query=supabase.from('flyz_moments').select('id,user_id,media_url,media_type,caption,visibility,created_at').eq('user_id',owner).order('created_at',{ascending:false}).limit(60);
    const {data,error}=await query;
    if(error) throw error;
-   setItems((data??[]) as Moment[]);
+   const rows=(data??[]) as Moment[];\n   const withUrls=await Promise.all(rows.map(async item=>{const {data:signed}=await supabase.storage.from('flyz-moments').createSignedUrl(item.media_url,3600);return {...item,display_url:signed?.signedUrl};}));\n   setItems(withUrls);
   } catch(e){Alert.alert('Moments unavailable',e instanceof Error?e.message:'Please try again.');}
   finally{setLoading(false);}
  };
@@ -69,7 +69,7 @@ export default function FlyzMomentsScreen({onBack,profileUserId,profileName,onPr
    </View>:null}
    <View style={s.feedHeading}><View><Text style={s.feedTitle}>{isOwner?'Your Moments':'Shared Moments'}</Text><Text style={s.feedSub}>{items.length?items.length+' shared highlight'+(items.length===1?'':'s'):'Your highlights, all in one place'}</Text></View><View style={s.feedIcon}><Ionicons name="sparkles" size={17} color="#28469E"/></View></View>
    {loading?<ActivityIndicator color="#28469E" style={{padding:35}}/>:items.length===0?<View style={s.empty}><View style={s.emptyIcon}><MaterialCommunityIcons name="image-multiple-outline" size={30} color="#28469E"/></View><Text style={s.emptyTitle}>{isOwner?'Your next memory starts here':'No Moments shared yet'}</Text><Text style={s.emptyText}>{isOwner?'Choose a photo or video above to share a little piece of your journey.':'When they share a Moment publicly or with friends, it will appear here.'}</Text></View>:
-    <View style={s.grid}>{items.map(item=><View key={item.id} style={s.card}><View style={s.media}>{item.media_type==='image'?<Image source={{uri:item.media_url}} style={s.image}/>:<View style={s.video}><Ionicons name="play-circle" size={42} color="#FFF"/><Text style={s.videoLabel}>VIDEO MOMENT</Text></View>}<View style={s.visibilityBadge}><Ionicons name={item.visibility==='public'?'earth-outline':item.visibility==='friends'?'people-outline':'lock-closed-outline'} size={12} color="#FFF"/></View></View><View style={s.cardText}><Text style={s.caption} numberOfLines={3}>{item.caption||'A little moment worth keeping ✨'}</Text><Text style={s.date}>{new Date(item.created_at).toLocaleDateString()}</Text>{isOwner?<Pressable onPress={()=>remove(item)} style={s.delete}><Ionicons name="trash-outline" size={14} color="#9C4765"/><Text style={s.deleteText}>Delete</Text></Pressable>:null}</View></View>)}</View>}
+    <View style={s.grid}>{items.map(item=><View key={item.id} style={s.card}><View style={s.media}>{item.media_type==='image'?<Image source={{uri:item.display_url}} style={s.image}/>:<View style={s.video}><Ionicons name="play-circle" size={42} color="#FFF"/><Text style={s.videoLabel}>VIDEO MOMENT</Text></View>}<View style={s.visibilityBadge}><Ionicons name={item.visibility==='public'?'earth-outline':item.visibility==='friends'?'people-outline':'lock-closed-outline'} size={12} color="#FFF"/></View></View><View style={s.cardText}><Text style={s.caption} numberOfLines={3}>{item.caption||'A little moment worth keeping ✨'}</Text><Text style={s.date}>{new Date(item.created_at).toLocaleDateString()}</Text>{isOwner?<Pressable onPress={()=>remove(item)} style={s.delete}><Ionicons name="trash-outline" size={14} color="#9C4765"/><Text style={s.deleteText}>Delete</Text></Pressable>:null}</View></View>)}</View>}
    <Text style={s.privacyNote}><Ionicons name="shield-checkmark-outline" size={14} color="#28469E"/>  You control who can see each Moment.</Text>
   </ScrollView>
  </View>;
