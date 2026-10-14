@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Linking, View } from 'react-native';
+import { ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DESTINATIONS } from './stayzPlaces';
 import { geocodePlace } from './stayzLocation';
 import { useStayzSearch } from './stayzSearchContext';
 import { useStayzTheme } from './stayzThemeContext';
 import { Place } from './stayzTypes';
-import { StayzButton } from './stayzButton';
 import { StayzRow } from './stayzRow';
 import { StayzSheet } from './stayzSheet';
 import { StayzTextField } from './stayzTextField';
@@ -62,19 +61,6 @@ export const StayzWhereSheet = ({ visible, onClose }: Props) => {
     <StayzSheet visible={visible} title="Where to?" onClose={onClose}>
       <StayzTextField value={q} onChangeText={setQ} placeholder="Search a city or area" autoCorrect={false} returnKeyType="search" />
       <StayzRow icon="locate" label="Current location" sub={search.place?.current ? search.place.sub ?? 'Using your location' : 'Use where I am now'} onPress={useHere} right={locationStatus === 'locating' ? <ActivityIndicator color={colors.brand} /> : undefined} />
-      {locationStatus === 'denied' ? (
-        <View style={{ gap: 8 }}>
-          <StayzTxt v="small" sub>
-            Location access is off. Turn it on in Settings to search near you.
-          </StayzTxt>
-          <StayzButton title="Open Settings" kind="secondary" small onPress={() => Linking.openSettings()} />
-        </View>
-      ) : null}
-      {locationStatus === 'unavailable' ? (
-        <StayzTxt v="small" sub>
-          Your location could not be read. Choose a place below.
-        </StayzTxt>
-      ) : null}
       {busy ? <ActivityIndicator color={colors.brand} /> : null}
       {found.map((p, i) => (
         <StayzRow key={`g${i}`} icon="location-outline" label={p.label} sub={p.sub} onPress={() => pick(p)} />
