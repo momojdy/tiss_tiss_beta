@@ -25,16 +25,24 @@ export const StayzWhereSheet = ({ visible, onClose }: Props) => {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let active = true;
     if (q.trim().length < 3) {
       setFound([]);
-      return;
+      setBusy(false);
+      return () => { active = false; };
     }
     setBusy(true);
     const t = setTimeout(async () => {
-      setFound(await geocodePlace(q.trim()));
-      setBusy(false);
-    }, 450);
-    return () => clearTimeout(t);
+      const results = await geocodePlace(q.trim());
+      if (active) {
+        setFound(results);
+        setBusy(false);
+      }
+    }, 300);
+    return () => {
+      active = false;
+      clearTimeout(t);
+    };
   }, [q]);
 
   const pick = (p: Place) => {
