@@ -71,7 +71,7 @@ export const StayzProcessingScreen = ({ route }: RootProps<'Processing'>) => {
     );
 
   return (
-    <StayzScreen back={false} scroll={false} contentStyle={{ alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+    <StayzScreen scroll={false} contentStyle={{ alignItems: 'center', justifyContent: 'center', gap: 16 }}>
       <ActivityIndicator size="large" color={colors.brand} />
       <StayzTxt v="h2">Processing your payment</StayzTxt>
       <StayzTxt sub center>
