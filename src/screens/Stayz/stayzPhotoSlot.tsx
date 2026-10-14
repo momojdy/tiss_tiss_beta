@@ -38,8 +38,10 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
       {(uri || source) && ok ? (
         <Image
           source={source ?? { uri: uri! }}
-          style={[StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
-          resizeMode={source ? 'stretch' : 'cover'}
+          style={source
+            ? { width: '78%', height: '78%', opacity: loaded ? 1 : 0 }
+            : [StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
+          resizeMode={source ? 'contain' : 'cover'}
           onLoad={() => setLoaded(true)}
           onError={() => setOk(false)}
         />
