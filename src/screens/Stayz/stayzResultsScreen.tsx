@@ -93,6 +93,6 @@ export const StayzResultsScreen = () => {
 const styles = StyleSheet.create({
   bar: { gap: 8, paddingBottom: 8 },
   chips: { paddingHorizontal: 16, gap: 8 },
-  list: { padding: 16, gap: 24, paddingBottom: 40 },
+  list: { padding: 16, gap: 24, paddingBottom: 120 },
   toggle: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
 });
