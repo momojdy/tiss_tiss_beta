@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import FrenziesHeader from '../components/frenzies/FrenziesHeader';
-import { colors } from '../theme/frenziesTheme';
-import { fonts } from '../theme/frenziesFonts';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import { colors } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
 
 export type Challenge = { id: string; name: string; game: string; createdAt: string; expiresIn: string };
 export const DEMO_CHALLENGES: Challenge[] = [
