@@ -6,6 +6,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { StayzChip } from './stayzChip';
 import { StayzPropertyCard } from './stayzPropertyCard';
 import { StayzScreen } from './stayzScreen';
+import { StayzSheet } from './stayzSheet';
+import { StayzSearchPanel } from './stayzSearchPanel';
 import { StayzErrorView, StayzListSkeleton, StayzStateView } from './stayzStates';
 import { StayzTxt } from './stayzTxt';
 import { StayzResultsMap } from './stayzResultsMap';
@@ -33,6 +35,7 @@ export const StayzResultsScreen = () => {
   const api = useStayzApi();
   const { search, filters, setFilters } = useStayzSearch();
   const [map, setMap] = useState(false);
+  const [searchPopup, setSearchPopup] = useState(false);
   const range = search.mode === 'overnight' || search.mode === 'extended';
 
   const { data, loading, error, reload } = useStayzAsync(
@@ -55,9 +58,15 @@ export const StayzResultsScreen = () => {
         </Pressable>
       }>
       <View style={styles.bar}>
-        <StayzTxt v="small" sub numberOfLines={1} style={{ paddingHorizontal: 16 }}>
-          {summary}
-        </StayzTxt>
+        <Pressable accessibilityRole="button" accessibilityLabel="Edit location, dates, stay type and guests" onPress={() => setSearchPopup(true)} style={styles.summaryPressable}>
+          <StayzTxt v="small" sub numberOfLines={1}>
+            {summary}
+          </StayzTxt>
+          <Ionicons name="chevron-down" size={14} color={colors.sub} />
+        </Pressable>
+        <StayzSheet visible={searchPopup} title="Plan your stay" onClose={() => setSearchPopup(false)}>
+          <StayzSearchPanel onSubmit={() => setSearchPopup(false)} />
+        </StayzSheet>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chips}>
           <StayzChip label={count ? `Filters · ${count}` : 'Filters'} icon="options-outline" on={count > 0} onPress={() => nav.navigate('Filters')} />
           <StayzChip label="Free cancellation" on={filters.freeCancel} onPress={() => setFilters({ ...filters, freeCancel: !filters.freeCancel })} />
@@ -92,6 +101,7 @@ export const StayzResultsScreen = () => {
 
 const styles = StyleSheet.create({
   bar: { gap: 8, paddingBottom: 8 },
+  summaryPressable: { minHeight: 24, marginTop: 3, marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
   chips: { paddingHorizontal: 16, gap: 8 },
   list: { padding: 16, gap: 24, paddingBottom: 120 },
   toggle: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
