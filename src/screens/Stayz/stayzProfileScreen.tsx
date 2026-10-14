@@ -19,7 +19,7 @@ export const StayzProfileScreen = () => {
   const host = useStayzHost();
   const { currency, dark, setDark } = useStayzSettings();
   return (
-    <StayzScreen title="Profile" back={false}>
+    <StayzScreen title="Profile">
       <StayzSection title="Preferences">
         <StayzCard>
           <StayzRow icon="cash-outline" label="Currency" value={currency} onPress={() => nav.navigate('Currency')} />
