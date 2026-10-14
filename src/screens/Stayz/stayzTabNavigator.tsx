@@ -27,7 +27,7 @@ export const StayzTabNavigator = () => {
         headerShown: false,
         tabBarActiveTintColor: colors.brand,
         tabBarInactiveTintColor: colors.sub,
-        tabBarStyle: { position: 'absolute', left: 0, right: 0, alignSelf: 'center', width: 345, bottom: 18, marginHorizontal: 0, height: 65, paddingTop: 5, paddingBottom: 2, backgroundColor: 'rgba(255,255,255,0.88)', borderTopWidth: 0, borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', borderRadius: 18, elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+        tabBarStyle: { position: 'absolute', left: '50%', right: undefined, width: 345, transform: [{ translateX: -172.5 }], bottom: 18, marginHorizontal: 0, height: 65, paddingTop: 5, paddingBottom: 2, backgroundColor: 'rgba(255,255,255,0.88)', borderTopWidth: 0, borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', borderRadius: 18, elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
         tabBarItemStyle: { flex: 1, minWidth: 0 },
         tabBarLabelStyle: { fontSize: 10.5, lineHeight: 13, fontWeight: '600', marginTop: 1, paddingTop: 4 },
         tabBarIcon: ({ focused, color }) => <Ionicons name={icons[route.name][focused ? 0 : 1]} size={24} color={color} />,
