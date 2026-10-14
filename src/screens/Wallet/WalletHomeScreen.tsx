@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 18,
-    paddingHorizontal: 16,
+    paddingHorizontal: 14,
   },
   walletNav: {
     height: 65,
