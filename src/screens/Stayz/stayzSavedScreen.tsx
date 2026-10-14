@@ -27,7 +27,7 @@ export const StayzSavedScreen = () => {
   );
 
   return (
-    <StayzScreen title="Saved" back={false}>
+    <StayzScreen title="Saved">
       {loading && !data ? (
         <StayzListSkeleton count={2} />
       ) : error ? (
