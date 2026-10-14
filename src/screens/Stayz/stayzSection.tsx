@@ -11,3 +11,8 @@ export const StayzSection = ({ title, children, action }: { title: string; child
     {children}
   </View>
 );
+
+const styles = StyleSheet.create({
+  section: { gap: 12 },
+  heading: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 28 },
+});
