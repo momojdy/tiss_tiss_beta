@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 type Profile={owner_user_id?:string;display_name?:string|null;wantiss_number?:string|null;avatar_url?:string|null;bio?:string|null;membership_tier?:string|null;membership_visibility?:'public'|'private';frenzies?:{rank?:number;lifetime_points?:number;total_games_played?:number;total_games_won?:number;current_win_streak?:number;best_win_streak?:number};frenzies_rank?:number};
 type Moment={id:string;media_url:string;display_url?:string;media_type:'image'|'video';caption:string;created_at:string};

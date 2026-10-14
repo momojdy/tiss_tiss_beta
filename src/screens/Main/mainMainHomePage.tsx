@@ -1,7 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {Image,Pressable,ScrollView,StyleSheet,Text,View} from 'react-native';
 import {MaterialIcons} from '@expo/vector-icons';
-import MainDragCarousel from '../components/MainDragCarousel';
+import MainDragCarousel from '../../components/MainDragCarousel';
 import {colors,fonts} from '../theme';
 const LOGO_URL='https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
 const slogans=['Buy Happiness','Wantiss','Sell Joy'];

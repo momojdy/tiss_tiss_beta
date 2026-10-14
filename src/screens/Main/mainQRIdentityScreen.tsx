@@ -6,7 +6,7 @@ import { Camera, CameraView, scanFromURLAsync, useCameraPermissions } from 'expo
 import * as ImagePicker from 'expo-image-picker';
 import * as ExpoLinking from 'expo-linking';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 type QRKind = 'buyer_identity' | 'wallet_receive' | 'vendor_shop';
 type Props = {

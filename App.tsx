@@ -4,20 +4,20 @@ import { Alert, Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
-import AuthScreen from './src/screens/AuthScreen';
+import AuthScreen from './src/screens/Main/mainAuthScreen';
 import StayzGuestScreen from './src/features/stayz/StayzGuestScreen';
-import ForgotPasswordScreen from './src/screens/ForgotPasswordScreen';
-import ResetPasswordScreen from './src/screens/ResetPasswordScreen';
+import ForgotPasswordScreen from './src/screens/Main/mainForgotPasswordScreen';
+import ResetPasswordScreen from './src/screens/Main/mainResetPasswordScreen';
 import WalletHomeScreen from './src/screens/Wallet/WalletHomeScreen';
-import SettingsScreen from './src/screens/SettingsScreen';
-import SettingsDetailScreen, { type SettingsDetailKey } from './src/screens/SettingsDetailScreen';
-import AddressesScreen from './src/screens/AddressesScreen';
-import PersonalInformationScreen from './src/screens/PersonalInformationScreen';
-import AccountSecurityScreen from './src/screens/AccountSecurityScreen';
+import SettingsScreen from './src/screens/Main/mainSettingsScreen';
+import SettingsDetailScreen, { type SettingsDetailKey } from './src/screens/Main/mainSettingsDetailScreen';
+import AddressesScreen from './src/screens/Main/mainAddressesScreen';
+import PersonalInformationScreen from './src/screens/Main/mainPersonalInformationScreen';
+import AccountSecurityScreen from './src/screens/Main/mainAccountSecurityScreen';
 import WalletNotificationsScreen from './src/screens/Wallet/WalletNotificationsScreen';
-import MessageHubScreen from './src/screens/MessageHubScreen';
-import NotificationsScreen from './src/screens/NotificationsScreen';
-import MessagesScreen from './src/screens/MessagesScreen';
+import MessageHubScreen from './src/screens/Main/mainMessageHubScreen';
+import NotificationsScreen from './src/screens/Main/mainNotificationsScreen';
+import MessagesScreen from './src/screens/Main/mainMessagesScreen';
 import WalletSettingsScreen from './src/screens/Wallet/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/Wallet/WalletPaymentMethodsScreen';
 import WalletBankCardsScreen from './src/screens/Wallet/WalletBankCardsScreen';
@@ -26,15 +26,15 @@ import WalletPersonalInfoScreen from './src/screens/Wallet/WalletPersonalInfoScr
 import WalletNotificationSettingsScreen from './src/screens/Wallet/WalletNotificationSettingsScreen';
 import WalletHistoryScreen from './src/screens/Wallet/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/Wallet/WalletRecentActivityScreen';
-import QRIdentityScreen from './src/screens/QRIdentityScreen';
-import PublicBuyerProfileScreen from './src/screens/PublicBuyerProfileScreen';
+import QRIdentityScreen from './src/screens/Main/mainQRIdentityScreen';
+import PublicBuyerProfileScreen from './src/screens/Main/mainPublicBuyerProfileScreen';
 import FlyzMomentsScreen from './src/screens/Flyz/FlyzMomentsScreen';
-import ProfilePrivacyScreen from './src/screens/ProfilePrivacyScreen';
+import ProfilePrivacyScreen from './src/screens/Main/mainProfilePrivacyScreen';
 import WalletQRRecipientScreen from './src/screens/Wallet/WalletQRRecipientScreen';
-import VendorShopScreen from './src/screens/VendorShopScreen';
+import VendorShopScreen from './src/screens/Main/mainVendorShopScreen';
 import FrenziesHomeScreen from './src/screens/Frenzies/FrenziesHomeScreen';
-import KonsolissHomeScreen from './src/screens/KonsolissHomeScreen';
-import GoodiesHomeScreen from './src/screens/GoodiesHomeScreen';
+import KonsolissHomeScreen from './src/screens/Main/mainKonsolissHomeScreen';
+import GoodiesHomeScreen from './src/screens/Main/mainGoodiesHomeScreen';
 import WoulibFlow from './src/features/woulib/WoulibFlow';
 import FlyzHomeScreen from './src/screens/Flyz/FlyzHomeScreen';
 import FlyzMyTripsScreen from './src/screens/Flyz/FlyzMyTripsScreen';
@@ -353,8 +353,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'addresses') return <AddressesScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'personalInformation') return <PersonalInformationScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
-      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/MeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
-      const HomeScreen = require('./src/screens/HomeScreen').default;
+      if (buyerScreen === 'me') { const MeScreen = require('./src/screens/Main/mainMeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
+      const HomeScreen = require('./src/screens/Main/mainHomeScreen').default;
       return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => setBuyerScreen('goodies')} onWoulibPress={() => setBuyerScreen('woulib')} onStayzPress={() => setBuyerScreen('stayz')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }

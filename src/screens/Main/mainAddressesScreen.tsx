@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 type Address = {id:string;recipient_name:string;phone_number:string;country:string;department:string;city:string;street_address:string;apartment:string;postal_code:string;delivery_notes:string;is_default:boolean};
 const EMPTY: Omit<Address,'id'>={recipient_name:'',phone_number:'',country:'Haiti',department:'',city:'',street_address:'',apartment:'',postal_code:'',delivery_notes:'',is_default:false};

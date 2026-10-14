@@ -18,7 +18,7 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import ForgotPasswordScreen from './ForgotPasswordScreen';
+import ForgotPasswordScreen from './mainForgotPasswordScreen';
 
 const PINK = '#BF008E';
 const TOGGLE_BG = '#E0E3E7';

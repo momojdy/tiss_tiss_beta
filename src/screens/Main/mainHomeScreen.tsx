@@ -9,7 +9,7 @@ import { Animated, Easing, Image, PanResponder, Pressable, ScrollView, StyleShee
 import { StatusBar } from 'expo-status-bar';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 const MAGENTA='#BF008E',PINK_BG='#FBE8EF',GOLD='#DAAE67',LAVENDER='#A789B1',BLACK87='rgba(0,0,0,0.87)',ALTERNATE='#F6E4E8';
 const F_MONT_ITALIC='System',F_INTER='System',F_INTER_TIGHT='System';
 type MI=React.ComponentProps<typeof MaterialIcons>['name'];

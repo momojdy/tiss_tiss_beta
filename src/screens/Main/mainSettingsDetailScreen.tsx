@@ -3,7 +3,7 @@ import { ActivityIndicator, Alert, Linking, Pressable, ScrollView, StatusBar, St
 import * as Notifications from 'expo-notifications';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 export type SettingsDetailKey = 'language' | 'regionCurrency' | 'notifications' | 'privacy' | 'help' | 'about';
 type Props = { screen: SettingsDetailKey; onBack: () => void };
