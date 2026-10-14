@@ -50,7 +50,7 @@ export const dark: Palette = {
   sub: '#9AA5B1',
   line: '#2A323D',
   brand: BRAND,
-  brandSoft: '#3A1F23',
+  brandSoft: '#4A2529',
   teal: TEAL,
   tealSoft: '#172C45',
   danger: '#FF7A6B',
