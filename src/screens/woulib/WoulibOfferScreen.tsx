@@ -1,12 +1,12 @@
 import React, {useMemo, useState} from 'react';
 import {Pressable, ScrollView, Text, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import type {WoulibKit, WoulibOfferedRide, WoulibTheme} from './WoulibFlow';
+import {Btn, FROMS, MAP_TOP, PLACES, WoulibOfferedRide, fare, styles, useWoulibTheme} from './WoulibShared';
 
 const OFFER_WHEN = ['In 15 min', 'In 1 hour', 'Tonight · 7:00 PM', 'Tomorrow · 8:00 AM'];
 
-export function WoulibOfferScreen({onBack, onPublish, t, kit}: {onBack: () => void; onPublish: (r: WoulibOfferedRide) => void; t: WoulibTheme; kit: WoulibKit}) {
-  const {styles, Btn, PLACES, FROMS, fare, MAP_TOP} = kit;
+export function WoulibOfferScreen({onBack, onPublish}: {onBack: () => void; onPublish: (r: WoulibOfferedRide) => void}) {
+  const {t} = useWoulibTheme();
   const places = useMemo(() => PLACES.map(p => p.n), []);
   const [from, setFrom] = useState(FROMS[0]);
   const [to, setTo] = useState(PLACES[0].n);
@@ -18,7 +18,7 @@ export function WoulibOfferScreen({onBack, onPublish, t, kit}: {onBack: () => vo
   const field = (label: string, value: string, onPress: () => void) => (
     <View>
       <Text style={[styles.label, {color: t.muted}]}>{label}</Text>
-      <Pressable onPress={onPress} style={[styles.field, {backgroundColor: t.soft}]}>
+      <Pressable onPress={onPress} style={[styles.field, {backgroundColor: t.soft}]}> 
         <Text style={{flex: 1, color: t.ink, fontWeight: '700'}}>{value}</Text>
         <Text style={{color: t.muted, fontSize: 12}}>Tap to change</Text>
       </Pressable>
