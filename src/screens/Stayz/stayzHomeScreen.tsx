@@ -310,8 +310,8 @@ export const StayzHomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  content: { padding: 0, paddingBottom: 38, gap: 0 },
-  header: { height: 100, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth },
+  content: { padding: 0, paddingBottom: 120, gap: 0 },
+  header: { height: 100, flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 16, paddingBottom: 4, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth },
   backButton: { width: 44, height: 44, borderRadius: 15, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
   brand: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 10 },
   brandCopy: { flex: 1, minWidth: 0, gap: 3 },
