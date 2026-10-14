@@ -1697,10 +1697,12 @@ function WoulibHome({
       <View
         style={{
           position: 'absolute',
-          left: 14,
-          right: 14,
+          left: 16,
+          right: 16,
           bottom: 14,
           height: 68,
+          width: undefined,
+          alignSelf: 'stretch',
           borderRadius: 18,
           backgroundColor: t.card,
           borderWidth: 1,
