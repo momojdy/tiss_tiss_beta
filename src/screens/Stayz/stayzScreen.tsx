@@ -18,7 +18,7 @@ interface Props {
   accentStripe?: boolean;
 }
 
-export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, noTop, accentStripe = true }: Props) => {
+export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, accentStripe = true }: Props) => {
   const { colors } = useStayzTheme();
   const nav = useNavigation();
   const online = useStayzOnline();
