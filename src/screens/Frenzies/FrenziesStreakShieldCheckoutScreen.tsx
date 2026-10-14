@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { colors } from '../theme/frenziesTheme';
-import { fonts } from '../theme/frenziesFonts';
-import FrenziesHeader from '../components/frenzies/FrenziesHeader';
+import { colors } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
   fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
