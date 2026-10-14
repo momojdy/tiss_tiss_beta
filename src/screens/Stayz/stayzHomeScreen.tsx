@@ -19,6 +19,7 @@ import { useStayzTheme } from './stayzThemeContext';
 import { addDays } from './stayzDates';
 import { StayzPhotoSlot } from './stayzPhotoSlot';
 import { StayzWhereSheet } from './stayzWhereSheet';
+import { useStayzHost } from './stayzHostContext';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -68,7 +69,8 @@ export const StayzHomeScreen = () => {
   const nav = useNavigation<Nav>();
   const { colors } = useStayzTheme();
   const api = useStayzApi();
-  const { search, setSearch, setMode, filters, setFilters } = useStayzSearch();
+  const { search, setSearch, setMode, filters, setFilters, locationStatus, locate } = useStayzSearch();
+  const { onExitToWantiss } = useStayzHost();
   const [where, setWhere] = useState(false);
   const [unread, setUnread] = useState(false);
   const [recentPlaces, setRecentPlaces] = useState<(typeof DESTINATIONS)[number][]>([]);
@@ -113,24 +115,32 @@ export const StayzHomeScreen = () => {
   };
 
   return (
-    <StayzScreen back={false} contentStyle={styles.content}>
-      <View style={styles.header}>
+    <StayzScreen back={false} accentStripe={false} contentStyle={styles.content}>
+      <View style={[styles.header, { backgroundColor: colors.card, borderBottomColor: colors.line }]}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Back"
+          onPress={() => { if (nav.canGoBack()) nav.goBack(); else onExitToWantiss(); }}
+          style={[styles.backButton, { backgroundColor: colors.card, borderColor: colors.line }]}>
+          <Ionicons name="arrow-back" size={23} color={colors.text} />
+        </Pressable>
         <View style={styles.brand}>
-          <View style={styles.brandMark}><Ionicons name="bed" size={20} color="#D92D36" /></View>
-          <View>
+          <View style={styles.brandMark}><Ionicons name="bed" size={20} color={colors.brand} /></View>
+          <View style={styles.brandCopy}>
             <StayzTxt v="h2" style={styles.brandName}>stayz</StayzTxt>
-            <StayzTxt v="caption" sub style={styles.brandTag}>STAYS IN HAÏTI</StayzTxt>
+            <Pressable accessibilityRole="button" accessibilityLabel="Refresh current location" onPress={() => { void locate(); }} style={styles.locationLine}>
+              <Ionicons name="location" size={14} color={colors.teal} />
+              <StayzTxt v="caption" color={colors.teal} numberOfLines={1}>
+                {search.place?.current ? 'Current location' : search.place?.label ?? (locationStatus === 'locating' ? 'Finding current location…' : 'Set current location')}
+              </StayzTxt>
+              <Ionicons name="chevron-down" size={12} color={colors.teal} />
+            </Pressable>
           </View>
         </View>
         <Pressable accessibilityRole="button" accessibilityLabel="Notifications" onPress={() => nav.navigate('Notifications')} style={[styles.bell, { backgroundColor: colors.card, borderColor: colors.line }]}>
           <Ionicons name="notifications-outline" size={22} color={colors.text} />
           {unread ? <View style={styles.dot} /> : null}
         </Pressable>
-      </View>
-
-      <View style={styles.intro}>
-        <StayzTxt v="hero" style={styles.pageTitle}>Where would you like to stay?</StayzTxt>
-        <StayzTxt sub style={styles.pageSubtitle}>Find the right place for your next trip.</StayzTxt>
       </View>
 
       <View style={styles.searchWrap}>
@@ -301,17 +311,16 @@ export const StayzHomeScreen = () => {
 
 const styles = StyleSheet.create({
   content: { padding: 0, paddingBottom: 38, gap: 0, backgroundColor: '#FFFEFD' },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 12, paddingBottom: 12, backgroundColor: '#FFFFFF' },
-  brand: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  header: { height: 100, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 16, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth },
+  backButton: { width: 44, height: 44, borderRadius: 15, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', justifyContent: 'center' },
+  brand: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  brandCopy: { flex: 1, minWidth: 0, gap: 3 },
+  locationLine: { flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 4, maxWidth: '100%' },
   brandMark: { width: 38, height: 38, borderRadius: 11, backgroundColor: '#FCEBEC', alignItems: 'center', justifyContent: 'center' },
   brandName: { color: '#202630', fontSize: 23, lineHeight: 26, letterSpacing: -0.8 },
-  brandTag: { fontSize: 9, letterSpacing: 1.05, marginTop: 1 },
   bell: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   dot: { position: 'absolute', top: 7, right: 8, width: 9, height: 9, borderRadius: 5, backgroundColor: '#D92D36', borderWidth: 2, borderColor: '#FFFFFF' },
-  intro: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 18, backgroundColor: '#FFFFFF' },
-  pageTitle: { color: '#202630', fontSize: 27, lineHeight: 32, letterSpacing: -0.65 },
-  pageSubtitle: { marginTop: 5, fontSize: 13, lineHeight: 19 },
-  searchWrap: { marginHorizontal: 16, marginTop: 2, marginBottom: 28 },
+  searchWrap: { marginHorizontal: 16, marginTop: 18, marginBottom: 28 },
   sections: { paddingHorizontal: 16, gap: 28 },
   categoryGrid: { gap: 10 },
   categoryTopRow: { flexDirection: 'row', gap: 10 },
@@ -334,7 +343,7 @@ const styles = StyleSheet.create({
   propertyRow: { flexDirection: 'row', gap: 14, paddingRight: 16 },
   skeletonCard: { width: 250 },
   destinationRow: { gap: 12, paddingRight: 16 },
-  destinationCard: { width: 194, height: 150, borderRadius: 16, overflow: 'hidden', backgroundColor: '#E8E8E8' },
+  destinationCard: { width: 194, height: 150, borderRadius: 24, overflow: 'hidden', backgroundColor: '#E8E8E8' },
   destinationImage: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' },
   destinationShade: { flex: 1, justifyContent: 'flex-end', padding: 12, backgroundColor: 'rgba(13,19,27,0.44)' },
   discoveryRow: { gap: 12, paddingRight: 16 },
