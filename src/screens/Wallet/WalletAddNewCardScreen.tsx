@@ -18,7 +18,7 @@ import { WebView, WebViewMessageEvent } from 'react-native-webview';
 import {
   useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
 } from '@expo-google-fonts/manrope';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 // import { supabase } from './supabase';   // <- your client
 
 /* ───────────── Backend hook: replace with your create-card-setup-intent call ───────────── */
