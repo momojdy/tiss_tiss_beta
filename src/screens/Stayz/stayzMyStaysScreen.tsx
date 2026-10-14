@@ -59,7 +59,7 @@ export const StayzMyStaysScreen = () => {
   const list = (data ?? []).filter(b => bucketOf(b) === tab);
 
   return (
-    <StayzScreen title="My stays" back={false}>
+    <StayzScreen title="My stays">
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
         {TABS.map(t => (
           <StayzChip key={t} label={t} on={tab === t} onPress={() => setTab(t)} />
