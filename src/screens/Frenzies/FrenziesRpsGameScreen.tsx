@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Animated, Easing, Pressable, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Svg, { Defs, Ellipse, G, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
-import { colors } from '../../theme/frenziesTheme';
-import { fonts } from '../../theme/frenziesFonts';
+import FrenziesHeader from '../../../components/frenzies/FrenziesHeader';
+import { colors } from '../../../theme/frenziesTheme';
+import { fonts } from '../../../theme/frenziesFonts';
 
 type Move = 'rock' | 'paper' | 'scissors';
 type Result = 'win' | 'loss' | 'tie';
