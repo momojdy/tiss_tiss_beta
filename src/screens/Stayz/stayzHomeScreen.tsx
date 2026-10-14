@@ -74,6 +74,7 @@ export const StayzHomeScreen = () => {
   const { onExitToWantiss } = useStayzHost();
   const [where, setWhere] = useState(false);
   const [searchPopup, setSearchPopup] = useState(false);
+  const [popupCategory, setPopupCategory] = useState<string | null>(null);
   const [unread, setUnread] = useState(false);
   const [recentPlaces, setRecentPlaces] = useState<(typeof DESTINATIONS)[number][]>([]);
 
@@ -166,7 +167,9 @@ export const StayzHomeScreen = () => {
       </Pressable>
       <StayzSheet visible={searchPopup} title="Plan your stay" onClose={() => setSearchPopup(false)}>
         <StayzSearchPanel onSubmit={() => {
+          if (popupCategory) setFilters({ ...filters, types: [popupCategory as any] });
           setSearchPopup(false);
+          setPopupCategory(null);
           if (search.place) rememberPlace(search.place as (typeof DESTINATIONS)[number]);
           nav.navigate('Results');
         }} />
@@ -177,7 +180,7 @@ export const StayzHomeScreen = () => {
           <View style={styles.categoryGrid}>
             <View style={styles.categoryTopRow}>
               {stayCategories.slice(0, 2).map(category => (
-                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryBig, category.key === 'hotels' && styles.categoryHotelsCard, { backgroundColor: isDark ? colors.card : category.tone }]}>
+                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setPopupCategory(category.filterType); setSearchPopup(true); }} style={[styles.categoryBig, category.key === 'hotels' && styles.categoryHotelsCard, { backgroundColor: isDark ? colors.card : category.tone }]}>
                   <View style={[styles.categoryBigCopy, category.key === 'hotels' && styles.categoryHotelsCopy]}>
                     <StayzTxt v="h2" style={[styles.categoryBigTitle, { color: category.key === 'resorts' ? '#FFFFFF' : colors.text }]}>{category.title}</StayzTxt>
                     <StayzTxt v="caption" color={category.key === 'resorts' ? '#FFFFFF' : category.key === 'hotels' ? '#252525' : '#626D78'} style={category.key === 'hotels' ? styles.categoryHotelsSubtitle : undefined}>{category.subtitle}</StayzTxt>
@@ -188,7 +191,7 @@ export const StayzHomeScreen = () => {
             </View>
             <View style={styles.categoryBottomRow}>
               {stayCategories.slice(2).map(category => (
-                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categorySmall, { backgroundColor: isDark ? colors.card : category.tone }]}>
+                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setPopupCategory(category.filterType); setSearchPopup(true); }} style={[styles.categorySmall, { backgroundColor: isDark ? colors.card : category.tone }]}>
                   <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categorySmallPhoto, category.key === 'apartments' && styles.categoryApartmentPhoto, category.key === 'villas' && styles.categoryVillaPhoto]} icon={category.icon} />
                   <StayzTxt v="small" bold numberOfLines={2} style={[styles.categorySmallTitle, { color: colors.text }]}>{category.title}</StayzTxt>
                 </Pressable>
