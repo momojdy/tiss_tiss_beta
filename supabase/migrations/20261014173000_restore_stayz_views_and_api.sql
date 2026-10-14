@@ -149,6 +149,11 @@ drop policy if exists stayz_thread_messages_own_insert on public.stayz_thread_me
 create policy stayz_thread_messages_own_insert on public.stayz_thread_messages for insert to authenticated
 with check (user_id = auth.uid() and exists (select 1 from public.stayz_threads t where t.id = thread_id and t.user_id = auth.uid()));
 
+grant select, insert on public.stayz_thread_messages to authenticated;
+grant select, insert, update on public.stayz_threads to authenticated;
+grant select, update on public.stayz_notices to authenticated;
+grant select, insert on public.stayz_reviews to authenticated;
+
 create or replace function public.stayz_my_bookings()
 returns jsonb language sql stable security invoker set search_path=public as $$
  select coalesce(jsonb_agg(x.booking order by x.start_at desc), '[]'::jsonb)
