@@ -1,7 +1,7 @@
 export const BRAND = '#D92D36';
 export const BRAND_DEEP = '#B91C2A';
 export const BRAND_ACCENT = '#D92D36';
-export const TEAL = '#2F80ED';
+export const TEAL = '#187F91';
 
 export interface Palette {
   bg: string;
@@ -32,7 +32,7 @@ export const light: Palette = {
   brand: BRAND,
   brandSoft: '#FCEBEC',
   teal: TEAL,
-  tealSoft: '#E6F2FF',
+  tealSoft: '#E4F3F4',
   danger: '#D93A2B',
   dangerSoft: '#FDE4E1',
   warn: '#B7791F',
@@ -52,7 +52,7 @@ export const dark: Palette = {
   brand: BRAND,
   brandSoft: '#4A2529',
   teal: TEAL,
-  tealSoft: '#172C45',
+  tealSoft: '#18353A',
   danger: '#FF7A6B',
   dangerSoft: '#3A1F1B',
   warn: '#F2C265',
