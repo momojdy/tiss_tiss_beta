@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const C = { bg: '#F5F8F3', text: '#1A2517', muted: '#9AA595', green: '#3F6B37', tint: '#DCE8D2', strip: '#E6EDE1', pending: '#A56A12', declined: '#A33D3D' };
 const FILTERS = ['All', 'Payments', 'Top ups', 'Rewards'] as const;
