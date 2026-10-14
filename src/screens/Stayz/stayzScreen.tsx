@@ -63,7 +63,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  accentStripe: { height: 20, width: '100%', flexShrink: 0, backgroundColor: '#F4B7B9' },
+  accentStripe: { height: 20, width: '100%', flexShrink: 0, backgroundColor: '#F39A91' },
   header: { width: '100%', height: 100, flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 10, paddingBottom: 4, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent' },
   back: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth, borderColor: 'transparent' },
   title: { flex: 1, transform: [{ translateY: -4.5 }] },
