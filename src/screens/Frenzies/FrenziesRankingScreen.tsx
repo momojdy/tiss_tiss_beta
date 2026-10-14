@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { colors } from '../../../theme/frenziesTheme';
-import { fonts } from '../../../theme/frenziesFonts';
-import FrenziesHeader from '../../../components/frenzies/FrenziesHeader';
-import { supabase } from '../../../lib/supabase';
+import { colors } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import { supabase } from '../../lib/supabase';
 
 type Entry = { rank: number; name: string; wins: number; photoUrl?: string; isYou?: boolean };
 
