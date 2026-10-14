@@ -1,5 +1,5 @@
 import React from 'react';
-import { StayzApp } from '../../screens/Stayz/stayzApp';
+import { StayzApp } from './StayzApp';
 import { supabase } from '../../lib/supabase';
 
 interface Props {
