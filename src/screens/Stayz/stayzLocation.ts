@@ -5,20 +5,33 @@ export type LocationResult = { status: 'granted'; place: Place } | { status: 'de
 
 export const getCurrentPlace = async (): Promise<LocationResult> => {
   try {
-    const perm = await Location.requestForegroundPermissionsAsync();
-    if (perm.status !== 'granted') return { status: 'denied' };
-    const pos = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
-    const { latitude, longitude } = pos.coords;
+    const permission = await Location.requestForegroundPermissionsAsync();
+    if (permission.status !== 'granted') return { status: 'denied' };
+
+    // Prefer a fresh GPS fix, but fall back to the device's last known fix if GPS is slow/unavailable.
+    let position: Location.LocationObject | null = null;
+    try {
+      position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced });
+    } catch {
+      position = await Location.getLastKnownPositionAsync();
+    }
+    if (!position?.coords || !Number.isFinite(position.coords.latitude) || !Number.isFinite(position.coords.longitude)) {
+      return { status: 'unavailable' };
+    }
+
+    const { latitude, longitude } = position.coords;
     let label = 'Current location';
     let sub: string | undefined;
     try {
-      const [g] = await Location.reverseGeocodeAsync({ latitude, longitude });
-      if (g) {
-        const city = g.city || g.subregion || g.district || g.region;
-        if (city) sub = [city, g.country].filter(Boolean).join(', ');
+      const [geocoded] = await Location.reverseGeocodeAsync({ latitude, longitude });
+      if (geocoded) {
+        const area = geocoded.city || geocoded.subregion || geocoded.district || geocoded.region || geocoded.name;
+        const country = geocoded.country;
+        const placeName = [area, country].filter(Boolean).filter((value, index, all) => all.indexOf(value) === index).join(', ');
+        if (placeName) sub = placeName;
       }
     } catch {
-      sub = undefined;
+      // GPS coordinates are still useful even when reverse geocoding is unavailable.
     }
     return { status: 'granted', place: { label, sub, lat: latitude, lng: longitude, current: true } };
   } catch {
