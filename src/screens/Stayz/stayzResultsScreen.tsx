@@ -58,11 +58,20 @@ export const StayzResultsScreen = () => {
         </Pressable>
       }>
       <View style={styles.bar}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Edit location, dates, stay type and guests" onPress={() => setSearchPopup(true)} style={styles.summaryPressable}>
-          <StayzTxt v="small" sub numberOfLines={1}>
-            {summary}
-          </StayzTxt>
-          <Ionicons name="chevron-down" size={14} color={colors.sub} />
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Edit location, dates, stay type and guests"
+          hitSlop={8}
+          onPress={() => setSearchPopup(true)}
+          style={[styles.summaryPressable, { backgroundColor: colors.card, borderColor: colors.line }]}
+        >
+          <Ionicons name="location-outline" size={17} color={colors.teal} />
+          <View style={styles.summaryText}>
+            <StayzTxt v="small" sub numberOfLines={2}>
+              {summary}
+            </StayzTxt>
+          </View>
+          <Ionicons name="chevron-down" size={16} color={colors.sub} />
         </Pressable>
         <StayzSheet visible={searchPopup} title="Plan your stay" onClose={() => setSearchPopup(false)}>
           <StayzSearchPanel onSubmit={() => setSearchPopup(false)} />
@@ -101,7 +110,8 @@ export const StayzResultsScreen = () => {
 
 const styles = StyleSheet.create({
   bar: { gap: 8, paddingBottom: 8 },
-  summaryPressable: { minHeight: 24, marginTop: 3, marginHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 8 },
+  summaryPressable: { minHeight: 44, marginTop: 3, marginHorizontal: 16, paddingHorizontal: 12, paddingVertical: 8, borderWidth: 1, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 8 },
+  summaryText: { flex: 1, minWidth: 0 },
   chips: { paddingHorizontal: 16, gap: 8 },
   list: { padding: 16, gap: 24, paddingBottom: 120 },
   toggle: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
