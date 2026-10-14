@@ -29,7 +29,7 @@ export const StayzTabNavigator = () => {
         headerShown: false,
         tabBarActiveTintColor: colors.brand,
         tabBarInactiveTintColor: colors.sub,
-        tabBarStyle: { backgroundColor: colors.card, borderTopColor: colors.line, height: 58 + insets.bottom, paddingTop: 6, paddingBottom: Math.max(insets.bottom, 6) },
+        tabBarStyle: { position: 'absolute', left: 15, right: 15, bottom: 18, height: 65, paddingTop: 5, paddingBottom: 2, backgroundColor: colors.card, borderTopWidth: 0, borderWidth: 1, borderColor: colors.line, borderRadius: 18, elevation: 5, shadowColor: '#000000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
         tabBarLabelStyle: { fontSize: 11, lineHeight: 14, fontWeight: '600', marginTop: 1 },
         tabBarIcon: ({ focused, color, size }) => <Ionicons name={icons[route.name][focused ? 0 : 1]} size={size} color={color} />,
       })}>
