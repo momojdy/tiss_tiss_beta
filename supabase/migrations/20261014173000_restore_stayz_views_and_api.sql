@@ -202,6 +202,67 @@ returns jsonb language sql stable security invoker set search_path=public as $$
  where r.id=p_id and r.user_id=auth.uid()
 $$;
 
+create or replace function public.stayz_create_booking(
+  p_listing uuid, p_mode text, p_start timestamptz, p_end timestamptz,
+  p_guests integer, p_room text, p_breakfast boolean, p_special text, p_method text
+)
+returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
+declare
+  v_uid uuid := auth.uid();
+  v_listing public.stayz_listings%rowtype;
+  v_wallet public.wallets%rowtype;
+  v_mode text := case p_mode when 'dayuse' then 'day_use' else p_mode end;
+  v_units numeric;
+  v_subtotal numeric;
+  v_cleaning numeric;
+  v_tax numeric;
+  v_total numeric;
+  v_id uuid;
+begin
+  if v_uid is null then return jsonb_build_object('ok',false,'reason','auth'); end if;
+  if p_end <= p_start or coalesce(p_guests,0) < 1 then return jsonb_build_object('ok',false,'reason','unavailable'); end if;
+  if p_method is distinct from 'wallet' then
+    return jsonb_build_object('ok',false,'reason','declined');
+  end if;
+  select * into v_listing from public.stayz_listings where id=p_listing and published=true;
+  if not found then return jsonb_build_object('ok',false,'reason','unavailable'); end if;
+  if exists (
+    select 1 from public.stayz_reservations r
+    where r.listing_id=p_listing
+      and r.status in ('confirmed','pending','change_requested','extension_requested')
+      and r.start_at < p_end and r.end_at > p_start
+  ) then return jsonb_build_object('ok',false,'reason','unavailable'); end if;
+  v_units := case
+    when v_mode='hourly' then greatest(1,ceil(extract(epoch from (p_end-p_start))/3600))
+    when v_mode='day_use' then greatest(1,ceil(extract(epoch from (p_end-p_start))/86400))
+    when v_mode='extended' then greatest(1,ceil(extract(epoch from (p_end-p_start))/604800))
+    else greatest(1,ceil(extract(epoch from (p_end-p_start))/86400))
+  end;
+  v_subtotal := round((case v_mode
+    when 'hourly' then v_listing.hourly_price * v_units
+    when 'day_use' then v_listing.day_price * v_units
+    when 'extended' then v_listing.extended_price * v_units
+    else v_listing.overnight_price * v_units end)::numeric,2);
+  if v_subtotal <= 0 then return jsonb_build_object('ok',false,'reason','unavailable'); end if;
+  v_cleaning := round(v_subtotal * coalesce(v_listing.cleaning_fee_percent,0)/100,2);
+  v_tax := round((v_subtotal + v_cleaning) * coalesce(v_listing.tax_percent,0)/100,2);
+  v_total := v_subtotal + v_cleaning + v_tax;
+  select * into v_wallet from public.wallets where user_id=v_uid for update;
+  if not found or v_wallet.balance < v_total then
+    return jsonb_build_object('ok',false,'reason','insufficient_balance');
+  end if;
+  insert into public.stayz_reservations(
+    listing_id,user_id,mode,start_at,end_at,guests,subtotal,tax,cleaning_fee,discount,total,currency,status,payment_method_id,metadata
+  ) values (
+    p_listing,v_uid,v_mode,p_start,p_end,p_guests,v_subtotal,v_tax,v_cleaning,0,v_total,v_listing.currency,'confirmed',null,
+    jsonb_build_object('roomName',p_room,'special',nullif(trim(coalesce(p_special,'')),''),'paymentLabel','Wallet','source','Stayz','extOn',v_listing.extended_price>0)
+  ) returning id into v_id;
+  update public.wallets set balance=balance-v_total, updated_at=now() where user_id=v_uid;
+  insert into public.wallet_transactions(user_id,amount,direction,status,description,feature_name,activity_type,reference_id,metadata)
+  values(v_uid,v_total,'debit','completed','Stayz booking: '||v_listing.name,'stayz','stayz_booking',v_id::text,jsonb_build_object('listing_id',p_listing,'reservation_id',v_id));
+  return jsonb_build_object('ok',true,'booking',jsonb_build_object('id',v_id));
+end $$;
+
 create or replace function public.stayz_cancel_booking(p_id uuid)
 returns jsonb language plpgsql security definer set search_path=public,pg_temp as $$
 begin
