@@ -164,7 +164,7 @@ export const StayzHomeScreen = () => {
             <View style={styles.categoryBottomRow}>
               {stayCategories.slice(2).map(category => (
                 <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categorySmall, { backgroundColor: isDark ? colors.card : category.tone }]}>
-                  <StayzPhotoSlot uri={category.image} source={category.source} style={styles.categorySmallPhoto} icon={category.icon} />
+                  <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categorySmallPhoto, category.key === 'apartments' && styles.categoryApartmentPhoto]} icon={category.icon} />
                   <StayzTxt v="small" bold numberOfLines={2} style={[styles.categorySmallTitle, { color: colors.text }]}>{category.title}</StayzTxt>
                 </Pressable>
               ))}
@@ -336,6 +336,7 @@ const styles = StyleSheet.create({
   categoryBottomRow: { flexDirection: 'row', gap: 10 },
   categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
   categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
+  categoryApartmentPhoto: { height: 74 },
   categorySmallTitle: { lineHeight: 16, minHeight: 32 },
   quickStrip: { flexDirection: 'row', justifyContent: 'space-between', gap: 6, marginTop: -8 },
   quickItem: { flex: 1, alignItems: 'center', gap: 7, paddingVertical: 7 },
