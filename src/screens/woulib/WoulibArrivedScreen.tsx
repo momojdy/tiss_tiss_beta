@@ -1,10 +1,11 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
-import type {WoulibScreenProps} from './WoulibFlow';
+import {Btn, DriverRow, YELLOW, styles, useRide, useWoulibTheme} from './WoulibShared';
 
-export function WoulibArrivedScreen({ride, t, kit}: WoulibScreenProps) {
-  const {styles, Btn, DriverRow, YELLOW} = kit;
+export function WoulibArrivedScreen() {
+  const ride = useRide();
+  const {t} = useWoulibTheme();
   if (!ride.accepted) return null;
   const d = ride.accepted;
   return (
