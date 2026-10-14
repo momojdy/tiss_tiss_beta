@@ -28,7 +28,7 @@ export const StayzGuestsSheet = ({ visible, onClose }: Props) => {
     <StayzSheet visible={visible} title="Guests" onClose={onClose}>
       {line('Adults', 'Age 13 and over', search.adults, 1, 'adults')}
       {line('Children', 'Under 13', search.children, 0, 'children')}
-      {search.mode === 'overnight' || search.mode === 'extended' ? line('Rooms', 'How many rooms you need', search.rooms, 1, 'rooms') : null}
+      {line('Rooms', 'How many rooms you need', search.rooms, 1, 'rooms')}
       <StayzButton title="Done" onPress={onClose} />
     </StayzSheet>
   );
