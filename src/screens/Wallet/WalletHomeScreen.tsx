@@ -136,8 +136,9 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     shadowOffset: { width: 0, height: 2 },
   },
-  walletNavItem: { flex: 1, minWidth: 0, 
-    width: 70,
+  walletNavItem: {
+    flex: 1,
+    minWidth: 0,
     height: 50,
     alignItems: 'center',
     justifyContent: 'center',
