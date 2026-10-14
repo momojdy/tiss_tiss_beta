@@ -18,7 +18,7 @@ Use the Expo QR code with Expo Go or run a platform-specific development build. 
 - `src/screens/Main`, `src/screens/Wallet`, `src/screens/Frenzies`, `src/screens/Flyz`, `src/screens/Goodies`, `src/screens/Konsoliss` and `src/screens/Stayz` organize screens by feature.
 - `src/features/stayz/StayzGuestScreen.tsx` embeds the Stayz experience in the host app.
 - `src/components` contains shared UI components; `src/lib` contains shared services such as the Supabase client.
-- `assets` contains app artwork and feature assets.
+- `src/assets` contains app artwork and feature assets.
 
 ## Supabase
 
