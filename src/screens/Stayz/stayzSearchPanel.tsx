@@ -28,11 +28,13 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
   const [where, setWhere] = useState(false);
   const [dates, setDates] = useState(false);
   const [guests, setGuests] = useState(false);
+  const [showTimes, setShowTimes] = useState(false);
 
   const range = search.mode === 'overnight' || search.mode === 'extended';
   const whereLabel = search.place ? (search.place.current ? 'Current location' : search.place.label) : locationStatus === 'locating' ? 'Finding your location…' : 'Choose where to';
   const whereSub = search.place?.sub;
-  const guestsLabel = `${search.adults + search.children} guest${search.adults + search.children > 1 ? 's' : ''}${range ? ` · ${search.rooms} room${search.rooms > 1 ? 's' : ''}` : ''}`;
+  const guestsLabel = `${search.adults + search.children} guest${search.adults + search.children > 1 ? 's' : ''}`;
+  const roomsLabel = `${search.rooms} room${search.rooms > 1 ? 's' : ''}`;
 
   const field = (icon: keyof typeof Ionicons.glyphMap, label: string, value: string, sub: string | undefined, onPress: () => void) => (
     <Pressable accessibilityRole="button" onPress={onPress} style={[styles.field, { backgroundColor: colors.bg, borderColor: colors.line }]}>
@@ -77,28 +79,39 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
         })}
       </View>
       {field('location-outline', 'Where', whereLabel, whereSub, () => setWhere(true))}
-      {range ? field('calendar-outline', 'Dates', `${fmtDate(search.date)} → ${fmtDate(search.endDate)}`, undefined, () => setDates(true)) : field('calendar-outline', 'Date', fmtDate(search.date), undefined, () => setDates(true))}
+      <View style={styles.fieldRow}>
+        <View style={styles.halfField}>
+          {field('calendar-outline', range ? 'Dates' : 'Date', range ? \`\${fmtDate(search.date)} → \${fmtDate(search.endDate)}\` : fmtDate(search.date), undefined, () => setDates(true))}
+        </View>
+        <View style={styles.halfField}>
+          {field('time-outline', 'Start time', fmtTime(search.time), undefined, () => setShowTimes(value => !value))}
+        </View>
+      </View>
+      {showTimes ? (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.timeOptions}>
+          {START_TIMES.map(t => (
+            <StayzChip key={t} label={fmtTime(t)} on={search.time === t} onPress={() => { setSearch({ time: t }); setShowTimes(false); }} />
+          ))}
+        </ScrollView>
+      ) : null}
       {search.mode === 'hourly' ? (
-        <View style={{ gap: 8 }}>
-          <StayzTxt v="caption" sub>
-            Start time
-          </StayzTxt>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 8 }}>
-            {START_TIMES.map(t => (
-              <StayzChip key={t} label={fmtTime(t)} on={search.time === t} onPress={() => setSearch({ time: t })} />
-            ))}
-          </ScrollView>
-          <StayzTxt v="caption" sub>
-            Duration
-          </StayzTxt>
-          <View style={{ flexDirection: 'row', gap: 8 }}>
+        <View style={styles.durationBlock}>
+          <StayzTxt v="caption" sub>Duration</StayzTxt>
+          <View style={styles.durationOptions}>
             {HOURLY_OPTIONS.map(h => (
-              <StayzChip key={h} label={`${h}h`} on={search.hours === h} onPress={() => setSearch({ hours: h })} />
+              <StayzChip key={h} label={\`\${h}h\`} on={search.hours === h} onPress={() => setSearch({ hours: h })} />
             ))}
           </View>
         </View>
       ) : null}
-      {field('people-outline', 'Guests', guestsLabel, undefined, () => setGuests(true))}
+      <View style={styles.fieldRow}>
+        <View style={styles.halfField}>
+          {field('people-outline', 'Guests', guestsLabel, undefined, () => setGuests(true))}
+        </View>
+        <View style={styles.halfField}>
+          {field('bed-outline', 'Rooms', roomsLabel, undefined, () => setGuests(true))}
+        </View>
+      </View>
       <StayzButton title="Search" icon="search" onPress={onSubmit} disabled={!search.place} />
       <StayzWhereSheet visible={where} onClose={() => setWhere(false)} />
       <StayzDatesSheet visible={dates} onClose={() => setDates(false)} />
@@ -113,6 +126,11 @@ const styles = StyleSheet.create({
   searchMark: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   tabs: { flexDirection: 'row', borderRadius: 16, padding: 4, gap: 4 },
   tab: { flex: 1, minHeight: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center', gap: 3 },
-  field: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 10, borderRadius: 16, borderWidth: 1 },
+  fieldRow: { flexDirection: 'row', gap: 9 },
+  halfField: { flex: 1, minWidth: 0 },
+  field: { flexDirection: 'row', alignItems: 'center', gap: 8, padding: 9, borderRadius: 16, borderWidth: 1, minHeight: 68 },
+  timeOptions: { gap: 8, paddingVertical: 2 },
+  durationBlock: { gap: 8 },
+  durationOptions: { flexDirection: 'row', gap: 8 },
   fieldIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
 });
