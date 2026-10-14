@@ -14,7 +14,12 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
   const { colors } = useStayzTheme();
   const [ok, setOk] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [slotSize, setSlotSize] = useState({ width: 0, height: 0 });
   const pulse = useRef(new Animated.Value(0.5)).current;
+  const localImageSize = source ? Image.resolveAssetSource(source) : null;
+  const localScale = localImageSize && slotSize.width > 0 && slotSize.height > 0
+    ? Math.min(1, slotSize.width / localImageSize.width, slotSize.height / localImageSize.height)
+    : 1;
 
   useEffect(() => {
     if (loaded || (!uri && !source) || !ok) return;
@@ -29,7 +34,13 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
   }, [loaded, ok, pulse, source, uri]);
 
   return (
-    <View style={[styles.box, { backgroundColor: colors.placeholder }, style]}>
+    <View
+      onLayout={event => {
+        const { width, height } = event.nativeEvent.layout;
+        setSlotSize(previous => previous.width === width && previous.height === height ? previous : { width, height });
+      }}
+      style={[styles.box, { backgroundColor: colors.placeholder }, style]}
+    >
       {!loaded || (!uri && !source) || !ok ? (
         <Animated.View style={[StyleSheet.absoluteFillObject, styles.loading, { backgroundColor: colors.placeholder, opacity: pulse }]}>
           <Ionicons name={icon} size={28} color={colors.sub} style={{ opacity: 0.8 }} />
@@ -38,8 +49,10 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
       {(uri || source) && ok ? (
         <Image
           source={source ?? { uri: uri! }}
-          style={[StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
-          resizeMode="contain"
+          style={source && localImageSize
+            ? { width: localImageSize.width * localScale, height: localImageSize.height * localScale, opacity: loaded ? 1 : 0 }
+            : [StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
+          resizeMode={source ? 'contain' : 'cover'}
           onLoad={() => setLoaded(true)}
           onError={() => setOk(false)}
         />
