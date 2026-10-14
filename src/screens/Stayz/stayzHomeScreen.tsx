@@ -24,18 +24,23 @@ type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const destinationPhotos: Record<string, string> = {
   'Port-au-Prince': 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=720&q=85',
-  'Pétion-Ville': 'https://images.unsplash.com/photo-1601918774946-25832a4be0d6?auto=format&fit=crop&w=720&q=85',
-  Jacmel: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
   'Cap-Haïtien': 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=720&q=85',
-  Montrouis: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
-  Kenscoff: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=720&q=85',
-  Milot: 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=720&q=85',
+  Jacmel: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
   'Les Cayes': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
+  Labadee: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
 };
 
+const popularDestinations = [
+  { label: 'Port-au-Prince', sub: 'Capital energy, markets & nightlife', place: DESTINATIONS[0] },
+  { label: 'Cap-Haïtien', sub: 'History, harbor & the Citadelle', place: DESTINATIONS[3] },
+  { label: 'Jacmel', sub: 'Art, beaches & carnival', place: DESTINATIONS[2] },
+  { label: 'Les Cayes', sub: 'Southern coast', place: DESTINATIONS[7] },
+  { label: 'Labadee', sub: 'North-coast beaches', place: { label: 'Labadee', sub: 'Nord, Haiti', lat: 19.77, lng: -72.25 } },
+];
+
 const stayCategories = [
+  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const },
   { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', tone: '#E4F5F1', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const },
-  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=720&q=85', icon: 'bed-outline' as const },
   { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#FFF1E6', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', icon: 'business-outline' as const },
   { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', tone: '#EAF2FA', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=720&q=85', icon: 'cafe-outline' as const },
   { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', icon: 'home-outline' as const },
@@ -86,7 +91,7 @@ export const StayzHomeScreen = () => {
 
   const sorted = (nearby.data ?? []).slice().sort((a, b) => (distanceFrom(a, search.place) ?? 0) - (distanceFrom(b, search.place) ?? 0));
   const hourlySorted = (hourly.data ?? []).slice().sort((a, b) => (distanceFrom(a, search.place) ?? 0) - (distanceFrom(b, search.place) ?? 0));
-  const recent = [...recentPlaces, ...(search.place ? [search.place] : [])].filter((place, index, all) => all.findIndex(p => p.label === place.label) === index).slice(0, 4);
+  const recent = recentPlaces.slice(0, 4);
 
   const rememberPlace = (place: (typeof DESTINATIONS)[number]) => {
     setRecentPlaces(previous => [place, ...previous.filter(p => p.label !== place.label)].slice(0, 4));
@@ -187,8 +192,8 @@ export const StayzHomeScreen = () => {
 
         <StayzSection title="Popular destinations" action={<Pressable accessibilityRole="button" onPress={() => setWhere(true)}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.destinationRow}>
-            {DESTINATIONS.map(place => (
-              <Pressable key={place.label} accessibilityRole="button" onPress={() => openPlace(place)} style={styles.destinationCard}>
+            {popularDestinations.map(place => (
+              <Pressable key={place.label} accessibilityRole="button" onPress={() => openPlace(place.place)} style={styles.destinationCard}>
                 <StayzPhotoSlot uri={destinationPhotos[place.label]} style={styles.destinationImage} icon="location-outline" />
                 <View style={styles.destinationShade}>
                   <StayzTxt v="h3" color="#FFFFFF" numberOfLines={1}>{place.label}</StayzTxt>
@@ -240,7 +245,7 @@ export const StayzHomeScreen = () => {
           </ScrollView>
         </StayzSection>
 
-        <StayzSection title="Recent searches">
+        <StayzSection title="Recent searches" action={recent.length ? <Pressable accessibilityRole="button" onPress={() => setRecentPlaces([])}><StayzTxt v="small" bold color={colors.brand}>Clear</StayzTxt></Pressable> : undefined}>
           {recent.length ? (
             <View style={styles.recentStack}>
               {recent.map(place => (
