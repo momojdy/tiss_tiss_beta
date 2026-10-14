@@ -10,7 +10,19 @@ select
   l.business_id,
   l.name as title,
   l.description,
-  coalesce(l.photos, '[]'::jsonb) as photos,
+  case
+    when l.photos is null or l.photos = '[]'::jsonb then jsonb_build_array(
+      case lower(coalesce(l.type,''))
+        when 'resort' then 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=85'
+        when 'hotel' then 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1200&q=85'
+        when 'apartment' then 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=85'
+        when 'guesthouse' then 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=1200&q=85'
+        when 'villa' then 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=1200&q=85'
+        else 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?auto=format&fit=crop&w=1200&q=85'
+      end
+    )
+    else l.photos
+  end as photos,
   coalesce(l.published, false) as published,
   0::numeric as rating,
   0::integer as review_count,
@@ -23,7 +35,19 @@ select
     'city', split_part(coalesce(l.location, ''), ',', 1),
     'country', case when position(',' in coalesce(l.location, '')) > 0
       then trim(substr(l.location, position(',' in l.location) + 1)) else 'Haiti' end,
-    'lat', 0, 'lng', 0, 'photoCats', '[]'::jsonb,
+    'lat', case
+      when lower(coalesce(l.location,'')) like '%port-au-prince%' then 18.5944
+      when lower(coalesce(l.location,'')) like '%cap-haïtien%' or lower(coalesce(l.location,'')) like '%cap-haitien%' then 19.7592
+      when lower(coalesce(l.location,'')) like '%kenscoff%' then 18.448
+      when lower(coalesce(l.location,'')) like '%arcadins%' then 18.95
+      else 19.0 end,
+    'lng', case
+      when lower(coalesce(l.location,'')) like '%port-au-prince%' then -72.3074
+      when lower(coalesce(l.location,'')) like '%cap-haïtien%' or lower(coalesce(l.location,'')) like '%cap-haitien%' then -72.1981
+      when lower(coalesce(l.location,'')) like '%kenscoff%' then -72.28
+      when lower(coalesce(l.location,'')) like '%arcadins%' then -72.72
+      else -72.8 end,
+    'photoCats', '[]'::jsonb,
     'modes', to_jsonb(array_remove(array[
       case when coalesce(l.hourly_price,0) > 0 then 'Hourly' end,
       case when coalesce(l.day_price,0) > 0 then 'Day use' end,
