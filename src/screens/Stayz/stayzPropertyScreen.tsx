@@ -120,7 +120,7 @@ export const StayzPropertyScreen = ({ route }: RootProps<'Property'>) => {
 
   return (
     <StayzScreen
-      back={false}
+     
       noTop
       contentStyle={{ padding: 0, gap: 0, paddingBottom: 120 }}
       footer={
