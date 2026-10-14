@@ -1,11 +1,11 @@
 import React from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import WalletHeader from '../components/wallet/WalletHeader';
-import WalletBalance from '../components/wallet/WalletBalance';
-import WalletPoints from '../components/wallet/WalletPoints';
-import WalletRecentActivity from '../components/wallet/WalletRecentActivity';
-import EarnMorePointsCard from '../components/wallet/EarnMorePointsCard';
-import InviteFriendRow from '../components/wallet/InviteFriendRow';
+import WalletHeader from '../../components/wallet/WalletHeader';
+import WalletBalance from '../../components/wallet/WalletBalance';
+import WalletPoints from '../../components/wallet/WalletPoints';
+import WalletRecentActivity from '../../components/wallet/WalletRecentActivity';
+import EarnMorePointsCard from '../../components/wallet/EarnMorePointsCard';
+import InviteFriendRow from '../../components/wallet/InviteFriendRow';
 import { MaterialCommunityIcons, Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 const NAV_DARK = '#14181B';
