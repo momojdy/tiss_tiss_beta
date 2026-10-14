@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   categoryGrid: { gap: 10 },
   categoryTopRow: { flexDirection: 'row', gap: 10 },
   categoryBig: { flex: 1, minHeight: 132, borderRadius: 17, padding: 13, overflow: 'hidden', justifyContent: 'space-between' },
-  categoryHotelsCard: { minHeight: 132 },
+  categoryHotelsCard: { minHeight: 132, borderRadius: 17 },
   categoryBigCopy: { maxWidth: '72%', gap: 5, zIndex: 1 },
   categoryHotelsCopy: { paddingRight: 4 },
   categoryHotelsSubtitle: { color: '#252525' },
