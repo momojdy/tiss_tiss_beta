@@ -1,7 +1,7 @@
 import React,{useState} from 'react';
 import {ActivityIndicator,Alert,Image,KeyboardAvoidingView,Platform,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
 import {Ionicons,MaterialCommunityIcons} from '@expo/vector-icons';
-import {supabase} from '../lib/supabase';
+import {supabase} from '../../lib/supabase';
 
 type Props={token:string;recipient:any;onBack:()=>void};
 function requestId(){return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.floor(Math.random()*16);return(c==='x'?r:(r&3)|8).toString(16);});}
