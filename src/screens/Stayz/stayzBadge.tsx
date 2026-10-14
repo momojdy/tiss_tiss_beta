@@ -31,5 +31,5 @@ export const StayzBadge = ({ label, tone = 'neutral', icon }: Props) => {
 };
 
 const styles = StyleSheet.create({
-  b: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, alignSelf: 'flex-start' },
+  b: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 9, paddingVertical: 5, borderRadius: 9, alignSelf: 'flex-start' },
 });
