@@ -28,7 +28,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
       {showHeader ? (
         <View style={[styles.header, { borderBottomColor: colors.line }]}>
           {back && nav.canGoBack() ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={[styles.back, { backgroundColor: '#FFFFFF', borderColor: colors.line }]}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => { if (nav.canGoBack()) nav.goBack(); else nav.navigate('Tabs' as never, { screen: 'Home' } as never); }} style={[styles.back, { backgroundColor: '#FFFFFF', borderColor: colors.line }]}>
               <Ionicons name="arrow-back" size={23} color={colors.text} />
             </Pressable>
           ) : (
