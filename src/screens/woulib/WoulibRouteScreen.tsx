@@ -13,7 +13,7 @@ export function WoulibRouteScreen() {
       <Text style={[styles.h1, {color: t.ink, marginBottom: 12}]}>{ride.mode === 'delivery' ? 'Send something' : 'Where to?'}</Text>
       <Seg value={ride.mode} onChange={ride.setMode} />
       {label('Pickup')}
-      <Pressable onPress={ride.cycleFrom} style={[styles.field, {backgroundColor: t.soft}]}>
+      <Pressable onPress={ride.cycleFrom} style={[styles.field, {backgroundColor: t.soft}]}> 
         <View style={[styles.dot, {backgroundColor: YELLOW, borderColor: '#111'}]} />
         <Text style={{flex: 1, color: t.ink, fontWeight: '700'}}>{ride.from}</Text>
         <Text style={{color: t.muted, fontSize: 12}}>Tap to change</Text>
