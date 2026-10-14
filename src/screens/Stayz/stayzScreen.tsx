@@ -29,7 +29,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
     <View style={[styles.fill, { backgroundColor: colors.bg, paddingTop: noTop ? 0 : insets.top }]}>
       {accentStripe ? <View style={[styles.accentStripe, { backgroundColor: colors.brandSoft }]} /> : null}
       {showHeader ? (
-        <View style={styles.header}>
+        <View style={[styles.header, { borderBottomColor: colors.line }]}>
           {back && nav.canGoBack() ? (
             <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={[styles.back, { backgroundColor: colors.card, borderColor: colors.line }]}>
               <Ionicons name="arrow-back" size={20} color={colors.text} />
