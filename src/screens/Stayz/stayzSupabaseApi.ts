@@ -139,9 +139,9 @@ export const createSupabaseApi = (db: SupabaseClient): StayzApi => {
       return Number(await rpc<number>('stayz_wallet_balance'));
     },
     async listPaymentMethods() {
-      const { data, error } = await db.from('stayz_payment_methods').select('*').order('created_at');
+      const { data, error } = await db.from('user_payment_methods').select('*').order('created_at');
       fail(error);
-      const saved = (data ?? []).map((m: any): PaymentMethod => ({ id: m.id, kind: m.kind, label: m.label, detail: m.detail ?? undefined, brand: m.brand ?? undefined }));
+      const saved = (data ?? []).map((m: any): PaymentMethod => ({ id: m.id, kind: m.type ?? 'card', label: `${m.brand ?? 'Card'} •••• ${m.last4 ?? ''}`.trim(), detail: m.expiry_month && m.expiry_year ? `${String(m.expiry_month).padStart(2, '0')}/${m.expiry_year}` : undefined, brand: m.brand ?? undefined }));
       return [
         { id: 'wallet', kind: 'wallet', label: 'Wallet' },
         ...saved,
@@ -155,7 +155,7 @@ export const createSupabaseApi = (db: SupabaseClient): StayzApi => {
       return data as PaymentMethod;
     },
     async removeMethod(id) {
-      fail((await db.from('stayz_payment_methods').delete().eq('id', id)).error);
+      fail((await db.from('user_payment_methods').delete().eq('id', id)).error);
     },
     listThreads: () => rpc<Thread[]>('stayz_threads'),
     startThread: (listingId, title) => rpc<string>('stayz_start_thread', { p_listing: listingId, p_title: title }),
