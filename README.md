@@ -1,42 +1,29 @@
-# Stayz
+# Wantiss app (Expo + React Native)
 
-Wantiss Stayz guest app for Expo (React Native, TypeScript).
+Wantiss is the host app for buyer, vendor and service experiences, including the Stayz guest flow.
 
-## Run
+## Run locally
 
-```
+```sh
 npm install
-npx expo install --fix
 npx expo start
 ```
 
-Open the QR code in Expo Go.
+Use the Expo QR code with Expo Go or run a platform-specific development build. For a web preview, use `npx expo start --web`.
 
-Without environment variables the app runs on built-in sample properties and stores bookings on the device. To use Supabase, copy `.env.example` to `.env` and fill in the URL and anon key, then run `supabase/stayz_guest.sql` in the SQL editor.
+## App entry points
 
-## Embed in the Wantiss app
+- `index.ts` registers `App.tsx` with Expo.
+- `App.tsx` routes between the app's main screens and feature flows.
+- `src/screens/Main`, `src/screens/Wallet`, `src/screens/Frenzies`, `src/screens/Flyz`, `src/screens/Goodies`, `src/screens/Konsoliss` and `src/screens/Stayz` organize screens by feature.
+- `src/features/stayz/StayzGuestScreen.tsx` embeds the Stayz experience in the host app.
+- `src/components` contains shared UI components; `src/lib` contains shared services such as the Supabase client.
+- `assets` contains app artwork and feature assets.
 
-```tsx
-import { StayzApp } from './src/StayzApp';
+## Supabase
 
-<StayzApp client={supabase} onOpenWallet={openWallet} onExitToWantiss={goHome} onListProperty={openBusinessSpace} />
-```
+Configure the environment values expected by `src/lib/supabase.ts`. The root `stayz_guest.sql` file defines the Stayz guest database objects; review and apply it in the intended Supabase project before using the related backend features.
 
-Passing `client` reuses the signed-in Supabase session of the host app.
+## Maintenance
 
-## Structure
-
-- `src/screens` one file per screen
-- `src/components` shared UI, `src/components/search` search pickers
-- `src/navigation` tabs and stack
-- `src/store` settings, search, checkout draft, saved, host actions
-- `src/services` Supabase and sample-data implementations of the same API, rates, location
-- `src/lib` pricing, cancellation, dates, cards, distance
-- `supabase/stayz_guest.sql` tables, views and functions used by the Supabase API
-
-## Integration points
-
-- Guest wallet balance and top-up: `guest_wallets` table and `onOpenWallet`
-- Card tokenization: edge function `stayz-add-card` must return `{ id, kind: 'card', label, brand, detail }` and insert into `stayz_payment_methods`
-- MonCash and NatCash payments: handled by your payment provider when `p_method` is `moncash` or `natcash`
-- Promotions need a numeric `percent` column, added by the SQL file
+Legacy standalone Stayz screens and helpers at the repository root were removed because the active Stayz implementation now lives under `src/screens/Stayz` and is entered through `src/features/stayz/StayzGuestScreen.tsx`. Keep the host app's root entry files, shared services, database scripts, and active feature code intact.
