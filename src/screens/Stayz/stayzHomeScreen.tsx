@@ -16,9 +16,10 @@ import { RootStackParamList } from './stayzNavigationTypes';
 import { useStayzApi } from './stayzApiContext';
 import { useStayzSearch } from './stayzSearchContext';
 import { useStayzTheme } from './stayzThemeContext';
-import { addDays } from './stayzDates';
+import { addDays, fmtDate } from './stayzDates';
 import { StayzPhotoSlot } from './stayzPhotoSlot';
 import { StayzWhereSheet } from './stayzWhereSheet';
+import { StayzSheet } from './stayzSheet';
 import { useStayzHost } from './stayzHostContext';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
@@ -72,6 +73,7 @@ export const StayzHomeScreen = () => {
   const { search, setSearch, setMode, filters, setFilters, locationStatus, locate } = useStayzSearch();
   const { onExitToWantiss } = useStayzHost();
   const [where, setWhere] = useState(false);
+  const [searchPopup, setSearchPopup] = useState(false);
   const [unread, setUnread] = useState(false);
   const [recentPlaces, setRecentPlaces] = useState<(typeof DESTINATIONS)[number][]>([]);
 
@@ -143,9 +145,32 @@ export const StayzHomeScreen = () => {
         </Pressable>
       </View>
 
-      <View style={styles.searchWrap}>
-        <StayzSearchPanel onSubmit={() => { if (search.place) rememberPlace(search.place as (typeof DESTINATIONS)[number]); nav.navigate('Results'); }} />
-      </View>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Edit destination, dates, stay type and guests"
+        onPress={() => setSearchPopup(true)}
+        style={[styles.searchWrap, { backgroundColor: colors.card, borderColor: colors.line }]}
+      >
+        <View style={[styles.searchSummaryIcon, { backgroundColor: colors.brandSoft }]}>
+          <Ionicons name="search" size={19} color={colors.brand} />
+        </View>
+        <View style={styles.searchSummaryCopy}>
+          <StayzTxt v="h3" numberOfLines={1}>
+            {search.place?.current ? (search.place.sub || 'Current location') : search.place?.label || 'Choose a location'}
+          </StayzTxt>
+          <StayzTxt v="caption" sub numberOfLines={1}>
+            {fmtDate(search.date)} · {search.adults + search.children} guest{search.adults + search.children === 1 ? '' : 's'} · {search.mode === 'hourly' ? `${search.hours} hours` : search.mode === 'dayuse' ? 'Day use' : search.mode === 'extended' ? 'Extended stay' : 'Overnight'} 
+          </StayzTxt>
+        </View>
+        <Ionicons name="chevron-down" size={18} color={colors.sub} />
+      </Pressable>
+      <StayzSheet visible={searchPopup} title="Plan your stay" onClose={() => setSearchPopup(false)}>
+        <StayzSearchPanel onSubmit={() => {
+          setSearchPopup(false);
+          if (search.place) rememberPlace(search.place as (typeof DESTINATIONS)[number]);
+          nav.navigate('Results');
+        }} />
+      </StayzSheet>
 
       <View style={styles.sections}>
         <StayzSection title="Find your kind of stay">
@@ -320,7 +345,9 @@ const styles = StyleSheet.create({
   brandName: { fontSize: 23, lineHeight: 26, letterSpacing: -0.8 },
   bell: { width: 42, height: 42, borderRadius: 14, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
   dot: { position: 'absolute', top: 7, right: 8, width: 9, height: 9, borderRadius: 5, backgroundColor: '#D92D36', borderWidth: 2, borderColor: '#FFFFFF' },
-  searchWrap: { marginHorizontal: 16, marginTop: 18, marginBottom: 28 },
+  searchWrap: { marginHorizontal: 16, marginTop: 3, marginBottom: 28, minHeight: 66, borderWidth: 1, borderRadius: 18, paddingHorizontal: 12, paddingVertical: 10, flexDirection: 'row', alignItems: 'center', gap: 10 },
+  searchSummaryIcon: { width: 40, height: 40, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  searchSummaryCopy: { flex: 1, minWidth: 0, gap: 3 },
   sections: { paddingHorizontal: 16, gap: 28 },
   categoryGrid: { gap: 10 },
   categoryTopRow: { flexDirection: 'row', gap: 10 },
