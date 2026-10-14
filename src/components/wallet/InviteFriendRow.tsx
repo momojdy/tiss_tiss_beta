@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-const IMAGE: number | { uri: string } = {
-  uri: 'https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/refs/heads/main/inviteFriends.png',
-};
+const IMAGE: number | { uri: string } = require('../../assets/wallet/inviteFriends.png');
 
 const OLIVE = '#1A2517';
 const GREY = '#6C7280';

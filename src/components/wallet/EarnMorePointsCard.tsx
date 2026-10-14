@@ -3,9 +3,7 @@ import { Image, LayoutChangeEvent, Pressable, StyleSheet, Text, View } from 'rea
 import Svg, { Path } from 'react-native-svg';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-const IMAGE = {
-  uri: 'https://raw.githubusercontent.com/momojdy/tiss_tiss_beta/refs/heads/main/earn_more_points_frenzies.PNG',
-};
+const IMAGE = require('../../assets/wallet/earn_more_points_frenzies.PNG');
 
 const OLIVE = '#1A2517';
 const SAGE_TINT = '#DCE8D2';
