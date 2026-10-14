@@ -157,7 +157,7 @@ export const StayzHomeScreen = () => {
                     <StayzTxt v="h2" style={[styles.categoryBigTitle, { color: colors.text }]}>{category.title}</StayzTxt>
                     <StayzTxt v="caption" color={category.key === 'hotels' ? "#252525" : "#626D78"} style={category.key === 'hotels' ? styles.categoryHotelsSubtitle : undefined}>{category.subtitle}</StayzTxt>
                   </View>
-                  <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categoryBigPhoto, category.key === 'hotels' && styles.categoryHotelsPhoto]} icon={category.icon} />
+                  <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categoryBigPhoto, category.key === 'hotels' && styles.categoryHotelsPhoto, category.key === 'resorts' && styles.categoryResortsPhoto]} icon={category.icon} />
                 </Pressable>
               ))}
             </View>
@@ -332,6 +332,7 @@ const styles = StyleSheet.create({
   categoryBigTitle: { fontSize: 19, lineHeight: 23 },
   categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
   categoryHotelsPhoto: { width: 157, height: 124, borderTopLeftRadius: 17, borderBottomRightRadius: 17 },
+  categoryResortsPhoto: { width: 132 },
   categoryBottomRow: { flexDirection: 'row', gap: 10 },
   categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
   categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
