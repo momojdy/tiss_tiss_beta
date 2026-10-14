@@ -40,7 +40,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
           <View style={styles.rightSlot}>{right}</View>
         </View>
       ) : null}
-      {accentStripe ? <View style={[styles.accentStripe, { backgroundColor: colors.brandSoft }]} /> : null}
+      {accentStripe ? <View style={styles.accentStripe} /> : null}
       {!online ? (
         <View style={[styles.offline, { backgroundColor: colors.warnSoft }]}>
           <Ionicons name="cloud-offline-outline" size={16} color={colors.warn} />
@@ -63,12 +63,12 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  accentStripe: { height: 20, width: '100%', flexShrink: 0 },
-  header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 12, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent' },
+  accentStripe: { height: 20, width: '100%', flexShrink: 0, backgroundColor: '#F4B7B9' },
+  header: { width: '100%', height: 100, flexDirection: 'row', alignItems: 'flex-end', paddingHorizontal: 10, paddingBottom: 4, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent' },
   back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth, borderColor: 'transparent' },
-  title: { flex: 1 },
+  title: { flex: 1, alignSelf: 'center', transform: [{ translateY: -4.5 }] },
   rightSlot: { minWidth: 40, alignItems: 'flex-end' },
-  content: { padding: 18, paddingBottom: 34, gap: 16 },
+  content: { padding: 18, paddingBottom: 120, gap: 16 },
   footer: { paddingHorizontal: 16, paddingTop: 12, borderTopWidth: 1 },
   offline: { flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 8 },
 });
