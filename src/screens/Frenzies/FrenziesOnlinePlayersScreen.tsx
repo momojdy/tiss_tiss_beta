@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
-import { colors } from '../../theme/frenziesTheme';
-import { fonts } from '../../theme/frenziesFonts';
+import FrenziesHeader from '../../../components/frenzies/FrenziesHeader';
+import { colors } from '../../../theme/frenziesTheme';
+import { fonts } from '../../../theme/frenziesFonts';
 
 const PLAYERS = [
   { id: 'maya', name: 'Maya', game: 'Rock Paper Scissors' },
