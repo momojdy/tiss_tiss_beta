@@ -153,9 +153,9 @@ export const StayzHomeScreen = () => {
             <View style={styles.categoryTopRow}>
               {stayCategories.slice(0, 2).map(category => (
                 <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryBig, category.key === 'hotels' && styles.categoryHotelsCard, { backgroundColor: isDark ? colors.card : category.tone }]}>
-                  <View style={styles.categoryBigCopy}>
+                  <View style={[styles.categoryBigCopy, category.key === 'hotels' && styles.categoryHotelsCopy]}>
                     <StayzTxt v="h2" style={[styles.categoryBigTitle, { color: colors.text }]}>{category.title}</StayzTxt>
-                    <StayzTxt v="caption" color="#626D78">{category.subtitle}</StayzTxt>
+                    <StayzTxt v="caption" color={category.key === 'hotels' ? "#252525" : "#626D78"} style={category.key === 'hotels' ? styles.categoryHotelsSubtitle : undefined}>{category.subtitle}</StayzTxt>
                   </View>
                   <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categoryBigPhoto, category.key === 'hotels' && styles.categoryHotelsPhoto]} icon={category.icon} />
                 </Pressable>
@@ -327,6 +327,8 @@ const styles = StyleSheet.create({
   categoryBig: { flex: 1, minHeight: 132, borderRadius: 17, padding: 13, overflow: 'hidden', justifyContent: 'space-between' },
   categoryHotelsCard: { minHeight: 132 },
   categoryBigCopy: { maxWidth: '72%', gap: 5, zIndex: 1 },
+  categoryHotelsCopy: { paddingRight: 4 },
+  categoryHotelsSubtitle: { color: '#252525' },
   categoryBigTitle: { fontSize: 19, lineHeight: 23 },
   categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
   categoryHotelsPhoto: { width: 150, height: 124, borderTopLeftRadius: 28 },
