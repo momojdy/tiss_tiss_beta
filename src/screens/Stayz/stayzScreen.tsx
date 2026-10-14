@@ -16,9 +16,10 @@ interface Props {
   children: React.ReactNode;
   contentStyle?: StyleProp<ViewStyle>;
   noTop?: boolean;
+  accentStripe?: boolean;
 }
 
-export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, noTop }: Props) => {
+export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, noTop, accentStripe = true }: Props) => {
   const { colors } = useStayzTheme();
   const nav = useNavigation();
   const insets = useSafeAreaInsets();
@@ -26,6 +27,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
   const showHeader = !!title || back || !!right;
   return (
     <View style={[styles.fill, { backgroundColor: colors.bg, paddingTop: noTop ? 0 : insets.top }]}>
+      {accentStripe ? <View style={[styles.accentStripe, { backgroundColor: colors.brandSoft }]} /> : null}
       {showHeader ? (
         <View style={styles.header}>
           {back && nav.canGoBack() ? (
@@ -63,6 +65,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
+  accentStripe: { height: 5, width: '100%' },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 12, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#F0E4DF' },
   back: { width: 42, height: 42, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth, borderColor: 'transparent' },
   title: { flex: 1 },
