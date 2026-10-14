@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import QRCode from 'react-native-qrcode-svg';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const BACKGROUND = '#F5F8F3';
 const TEXT = '#1A2517';
