@@ -1,4 +1,5 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import { Linking } from 'react-native';
 import { Filters, Place, SearchState } from './stayzTypes';
 import { addDays, today } from './stayzDates';
 import { defaultFilters } from './stayzListings';
@@ -34,7 +35,7 @@ const SearchContext = createContext<SearchValue | null>(null);
 export const StayzSearchProvider = ({ children }: { children: React.ReactNode }) => {
   const [search, setSearchState] = useState<SearchState>(initial());
   const [filters, setFilters] = useState<Filters>(defaultFilters());
-  const [locationStatus, setLocationStatus] = useState<LocationStatus>('locating');
+  const [locationStatus, setLocationStatus] = useState<LocationStatus>('unavailable');
 
   const setSearch = useCallback((patch: Partial<SearchState>) => setSearchState(prev => ({ ...prev, ...patch })), []);
 
@@ -47,12 +48,11 @@ export const StayzSearchProvider = ({ children }: { children: React.ReactNode })
       return true;
     }
     setLocationStatus(r.status);
+    if (r.status === 'denied') {
+      try { await Linking.openSettings(); } catch { /* Keep the empty current-location state if settings cannot open. */ }
+    }
     return false;
   }, []);
-
-  useEffect(() => {
-    locate();
-  }, [locate]);
 
   const setMode = useCallback((mode: SearchState['mode']) => {
     setSearchState(prev => {
