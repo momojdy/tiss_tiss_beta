@@ -1,2 +1,1 @@
-export { StayzApp } from '../StayzApp';
-export type { StayzAppProps } from '../StayzApp';
+import React from 'react';
