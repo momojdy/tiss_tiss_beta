@@ -1,11 +1,13 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Pressable, Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
 import {Ionicons} from '@expo/vector-icons';
-import type {WoulibScreenProps} from './WoulibFlow';
+import {Btn, YELLOW, fare, styles, useRide, useWoulibTheme} from './WoulibShared';
 
-export function WoulibCompleteScreen({ride, t, kit, stars, setStars}: WoulibScreenProps & {stars: number; setStars: React.Dispatch<React.SetStateAction<number>>}) {
-  const {styles, Btn, fare, YELLOW} = kit;
+export function WoulibCompleteScreen() {
+  const ride = useRide();
+  const {t} = useWoulibTheme();
+  const [stars, setStars] = useState(5);
   const trip = ride.trip;
   if (!trip) return null;
   return (
