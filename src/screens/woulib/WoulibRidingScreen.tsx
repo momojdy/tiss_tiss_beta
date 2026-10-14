@@ -1,10 +1,11 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
-import type {WoulibScreenProps} from './WoulibFlow';
+import {DriverRow, YELLOW, clamp, styles, useRide, useWoulibTheme} from './WoulibShared';
 
-export function WoulibRidingScreen({ride, t, kit}: WoulibScreenProps) {
-  const {styles, DriverRow, clamp, YELLOW} = kit;
+export function WoulibRidingScreen() {
+  const ride = useRide();
+  const {t} = useWoulibTheme();
   const trip = ride.trip;
   if (!trip) return null;
   const p = clamp(1 - ride.eta / Math.max(1, trip.min), 0, 1);
