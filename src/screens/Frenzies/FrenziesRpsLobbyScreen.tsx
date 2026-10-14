@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { colors, sizes } from '../../../theme/frenziesTheme';
-import { fonts } from '../../../theme/frenziesFonts';
-import { assets } from '../../../theme/frenziesAssets';
-import FrenziesHeader from '../../../components/frenzies/FrenziesHeader';
-import { supabase } from '../../../lib/supabase';
+import { colors, sizes } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
+import { assets } from '../../theme/frenziesAssets';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import { supabase } from '../../lib/supabase';
 
 type Props = { onBack?: () => void; onDemoPress?: () => void };
 
