@@ -28,7 +28,7 @@ export const StayzPropertyCard = ({ listing: l, search, onPress, compact }: Prop
   const sp = startingPrice(l, search.mode, search.hours, search.windowIndex);
   const km = distanceFrom(l, search.place);
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.card, { backgroundColor: colors.card }, compact && styles.compact]}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.card, { backgroundColor: colors.card, borderColor: colors.line }, compact && styles.compact]}>
       <View>
         <StayzPhotoSlot uri={l.photos[0]} style={[styles.photo, compact && styles.photoCompact]} icon="bed-outline" />
         <Pressable
