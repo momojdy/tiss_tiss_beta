@@ -1647,7 +1647,7 @@ const styles = StyleSheet.create({
   emptyBody: { color: MUTED, fontSize: 14, lineHeight: 20, fontFamily: 'Inter_400Regular', textAlign: 'center', marginBottom: 20 },
   cta: { borderRadius: 999, paddingVertical: 13, paddingHorizontal: 26, backgroundColor: TEXT },
   ctaText: { color: '#FFFFFF', fontFamily: 'Inter_600SemiBold' },
-  navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 15 },
+  navOuter: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 16 },
   walletNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   walletNavItem: { width: 70, height: 50, alignItems: 'center', justifyContent: 'center' },
   walletNavIndicator: { width: 3, height: 3, borderRadius: 1.5, backgroundColor: NAV_GREEN, marginTop: 3 },
