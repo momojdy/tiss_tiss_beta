@@ -60,7 +60,7 @@ export const StayzProcessingScreen = ({ route }: RootProps<'Processing'>) => {
 
   if (fail)
     return (
-      <StayzScreen title="Payment" back={false} scroll={false}>
+      <StayzScreen title="Payment" scroll={false}>
         <StayzStateView icon="alert-circle-outline" tone="danger" title={COPY[fail].title} body={COPY[fail].body} />
         <View style={{ padding: 16, gap: 10 }}>
           {fail === 'network' ? <StayzButton title="Try again" onPress={run} /> : null}
