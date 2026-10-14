@@ -27,7 +27,7 @@ export const StayzMessagesScreen = () => {
   );
 
   return (
-    <StayzScreen title="Messages" back={false}>
+    <StayzScreen title="Messages">
       {loading && !data ? (
         <StayzListSkeleton count={3} />
       ) : error ? (
