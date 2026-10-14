@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { colors } from '../../../theme/frenziesTheme';
-import FrenziesHeader from '../../../components/frenzies/FrenziesHeader';
-import { fonts } from '../../../theme/frenziesFonts';
-import { assets } from '../../../theme/frenziesAssets';
+import { colors } from '../../theme/frenziesTheme';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import { fonts } from '../../theme/frenziesFonts';
+import { assets } from '../../theme/frenziesAssets';
 
 type DemoGame = { id: string; title: string; subtitle: string; duration: string; image: typeof assets.rps };
 const GAMES: DemoGame[] = [
