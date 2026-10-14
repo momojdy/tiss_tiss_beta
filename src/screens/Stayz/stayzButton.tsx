@@ -2,6 +2,7 @@ import React from 'react';
 import { ActivityIndicator, Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useStayzTheme } from './stayzThemeContext';
+import { BRAND_ACCENT } from './stayzColors';
 import { StayzTxt } from './stayzTxt';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 
 export const StayzButton = ({ title, onPress, kind = 'primary', loading, disabled, icon, style, small }: Props) => {
   const { colors } = useStayzTheme();
-  const bg = kind === 'primary' ? colors.brand : kind === 'danger' ? colors.dangerSoft : kind === 'secondary' ? colors.card : 'transparent';
+  const bg = kind === 'primary' ? BRAND_ACCENT : kind === 'danger' ? colors.dangerSoft : kind === 'secondary' ? colors.card : 'transparent';
   const fg = kind === 'primary' ? colors.onBrand : kind === 'danger' ? colors.danger : colors.text;
   const border = kind === 'secondary' ? colors.line : 'transparent';
   const off = disabled || loading;
@@ -42,7 +43,7 @@ export const StayzButton = ({ title, onPress, kind = 'primary', loading, disable
 };
 
 const styles = StyleSheet.create({
-  btn: { minHeight: 52, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18 },
+  btn: { minHeight: 52, borderRadius: 16, borderWidth: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 18, shadowColor: '#8D3025', shadowOpacity: 0.16, shadowRadius: 9, shadowOffset: { width: 0, height: 4 }, elevation: 3 },
   small: { minHeight: 40, borderRadius: 12, paddingHorizontal: 14 },
   inner: { flexDirection: 'row', alignItems: 'center', gap: 8 },
 });
