@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import FrenziesHeader from '../components/frenzies/FrenziesHeader';
-import { colors } from '../theme/frenziesTheme';
-import { fonts } from '../theme/frenziesFonts';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import { colors } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
 export default function FrenziesChallengeStatusScreen({ onBack, ready = false, opponent = 'Maya', game = 'Rock Paper Scissors' }: { onBack?: () => void; ready?: boolean; opponent?: string; game?: string }) {
   const [seconds, setSeconds] = useState(600);
