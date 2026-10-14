@@ -18,6 +18,7 @@ import { useStayzSearch } from './stayzSearchContext';
 import { useStayzTheme } from './stayzThemeContext';
 import { addDays } from './stayzDates';
 import { StayzPhotoSlot } from './stayzPhotoSlot';
+import { StayzWhereSheet } from './stayzWhereSheet';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
@@ -70,6 +71,7 @@ export const StayzHomeScreen = () => {
   const { colors } = useStayzTheme();
   const api = useStayzApi();
   const { search, setSearch, setMode, filters, setFilters } = useStayzSearch();
+  const [where, setWhere] = useState(false);
   const [unread, setUnread] = useState(false);
   const [recentPlaces, setRecentPlaces] = useState<(typeof DESTINATIONS)[number][]>([]);
 
@@ -294,6 +296,7 @@ export const StayzHomeScreen = () => {
           <View style={styles.confidencePoint}><Ionicons name="checkmark-circle" size={18} color="#128F82" /><StayzTxt v="small">Your reservation details in one place</StayzTxt></View>
         </View>
       </View>
+      <StayzWhereSheet visible={where} onClose={() => setWhere(false)} />
     </StayzScreen>
   );
 };
