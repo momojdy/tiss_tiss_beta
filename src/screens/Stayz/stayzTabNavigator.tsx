@@ -1,7 +1,6 @@
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStayzTheme } from './stayzThemeContext';
 import { StayzHomeScreen } from './stayzHomeScreen';
 import { StayzSavedScreen } from './stayzSavedScreen';
@@ -22,16 +21,15 @@ const icons: Record<keyof TabParamList, [keyof typeof Ionicons.glyphMap, keyof t
 
 export const StayzTabNavigator = () => {
   const { colors } = useStayzTheme();
-  const insets = useSafeAreaInsets();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.brand,
         tabBarInactiveTintColor: colors.sub,
-        tabBarStyle: { position: 'absolute', left: 15, right: 15, bottom: 18, height: 65, paddingTop: 5, paddingBottom: 2, backgroundColor: colors.card, borderTopWidth: 0, borderWidth: 1, borderColor: colors.line, borderRadius: 18, elevation: 5, shadowColor: '#000000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+        tabBarStyle: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 65, paddingTop: 5, paddingBottom: 2, paddingHorizontal: 15, backgroundColor: 'rgba(255,255,255,0.88)', borderTopWidth: 0, borderWidth: 0, borderRadius: 0, elevation: 5, shadowColor: '#000000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
         tabBarLabelStyle: { fontSize: 11, lineHeight: 14, fontWeight: '600', marginTop: 1 },
-        tabBarIcon: ({ focused, color, size }) => <Ionicons name={icons[route.name][focused ? 0 : 1]} size={size} color={color} />,
+        tabBarIcon: ({ focused, color }) => <Ionicons name={icons[route.name][focused ? 0 : 1]} size={24} color={color} />,
       })}>
       <Tab.Screen name="Home" component={StayzHomeScreen} />
       <Tab.Screen name="Saved" component={StayzSavedScreen} />
