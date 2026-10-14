@@ -59,12 +59,6 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
 
   return (
     <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.line }]}>
-      <View style={styles.panelHeading}>
-        <StayzTxt v="h2">Search stays</StayzTxt>
-        <View style={[styles.searchMark, { backgroundColor: colors.tealSoft }]}>
-          <Ionicons name="search" size={18} color={colors.teal} />
-        </View>
-      </View>
       <View style={[styles.tabs, { backgroundColor: colors.chip }]}>
         {MODES.map(m => {
           const on = search.mode === m.key;
@@ -122,8 +116,6 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
 
 const styles = StyleSheet.create({
   panel: { borderRadius: 24, borderWidth: 1, padding: 14, gap: 12, shadowColor: '#7B342A', shadowOpacity: 0.12, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 6 },
-  panelHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 2, marginBottom: 2 },
-  searchMark: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   tabs: { flexDirection: 'row', borderRadius: 16, padding: 4, gap: 4 },
   tab: { flex: 1, minHeight: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center', gap: 3 },
   fieldRow: { flexDirection: 'row', gap: 9 },
