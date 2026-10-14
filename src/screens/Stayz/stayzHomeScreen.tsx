@@ -41,13 +41,6 @@ const stayCategories = [
   { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', icon: 'home-outline' as const },
 ];
 
-const discoveryCards = [
-  { title: 'Things to do in Haïti', subtitle: 'Local experiences, culture and coastlines', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=720&q=85', icon: 'compass-outline' as const, action: 'activities' },
-  { title: 'Airport pick-up', subtitle: 'Make arrivals easier', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=720&q=85', icon: 'airplane-outline' as const, action: 'airport' },
-  { title: 'Car rental', subtitle: 'Explore at your own pace', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=720&q=85', icon: 'car-sport-outline' as const, action: 'cars' },
-  { title: 'Day passes', subtitle: 'Enjoy a resort for the day', image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const, action: 'daypasses' },
-];
-
 const quickStrip = [
   { title: 'Activities', icon: 'compass-outline' as const, tone: '#FCEBEC', accent: '#D92D36', action: 'activities' },
   { title: 'Airport pickup', icon: 'airplane-outline' as const, tone: '#E4F5F1', accent: '#128F82', action: 'airport' },
