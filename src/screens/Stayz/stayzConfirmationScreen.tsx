@@ -25,12 +25,12 @@ export const StayzConfirmationScreen = ({ route }: RootProps<'Confirmation'>) =>
   const toDetail = () => nav.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }, { name: 'BookingDetail', params: { id: route.params.id } }] }));
 
   if (loading) return <StayzScreen><StayzSkeleton height={200} radius={20} /></StayzScreen>;
-  if (error || !b) return <StayzScreen back={false}><StayzErrorView message={error ?? undefined} onRetry={reload} /></StayzScreen>;
+  if (error || !b) return <StayzScreen><StayzErrorView message={error ?? undefined} onRetry={reload} /></StayzScreen>;
 
   const requested = b.status === 'Requested';
   return (
     <StayzScreen
-      back={false}
+     
       footer={
         <View style={{ gap: 10 }}>
           <StayzButton title="View booking" onPress={toDetail} />
