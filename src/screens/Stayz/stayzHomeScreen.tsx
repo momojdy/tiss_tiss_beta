@@ -152,12 +152,12 @@ export const StayzHomeScreen = () => {
           <View style={styles.categoryGrid}>
             <View style={styles.categoryTopRow}>
               {stayCategories.slice(0, 2).map(category => (
-                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryBig, { backgroundColor: isDark ? colors.card : category.tone }]}>
+                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryBig, category.key === 'hotels' && styles.categoryHotelsCard, { backgroundColor: isDark ? colors.card : category.tone }]}>
                   <View style={styles.categoryBigCopy}>
                     <StayzTxt v="h2" style={[styles.categoryBigTitle, { color: colors.text }]}>{category.title}</StayzTxt>
                     <StayzTxt v="caption" color="#626D78">{category.subtitle}</StayzTxt>
                   </View>
-                  <StayzPhotoSlot uri={category.image} source={category.source} style={styles.categoryBigPhoto} icon={category.icon} />
+                  <StayzPhotoSlot uri={category.image} source={category.source} style={[styles.categoryBigPhoto, category.key === 'hotels' && styles.categoryHotelsPhoto]} icon={category.icon} />
                 </Pressable>
               ))}
             </View>
@@ -325,9 +325,11 @@ const styles = StyleSheet.create({
   categoryGrid: { gap: 10 },
   categoryTopRow: { flexDirection: 'row', gap: 10 },
   categoryBig: { flex: 1, minHeight: 132, borderRadius: 17, padding: 13, overflow: 'hidden', justifyContent: 'space-between' },
+  categoryHotelsCard: { minHeight: 154 },
   categoryBigCopy: { maxWidth: '72%', gap: 5, zIndex: 1 },
   categoryBigTitle: { fontSize: 19, lineHeight: 23 },
   categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
+  categoryHotelsPhoto: { width: 154, height: 124, borderTopLeftRadius: 28 },
   categoryBottomRow: { flexDirection: 'row', gap: 10 },
   categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
   categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
