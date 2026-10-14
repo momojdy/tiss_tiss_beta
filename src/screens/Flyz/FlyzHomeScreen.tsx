@@ -582,7 +582,7 @@ const styles = StyleSheet.create({
   airportCity: { fontSize: 16, fontWeight: '800', color: TEXT },
   airportCode: { color: BLUE, fontSize: 14 },
   airportName: { marginTop: 3, fontSize: 12, color: MUTED },
-  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 16, width: undefined, alignSelf: 'stretch' },
+  bottomWrap: { position: 'absolute', left: 0, right: 0, bottom: 18, paddingHorizontal: 14, width: undefined, alignSelf: 'stretch' },
   bottomNav: { height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: .13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
   navItem: { width: 68, height: 46, alignItems: 'center', justifyContent: 'flex-end' },
   navIcon: { width: 30, height: 29, alignItems: 'center', justifyContent: 'center' },
