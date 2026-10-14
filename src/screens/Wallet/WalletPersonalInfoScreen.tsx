@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Alert, Image, Keyboard, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 import { COUNTRIES } from './WalletSettingsScreen';
 
 const BACKGROUND = '#F5F8F3';
