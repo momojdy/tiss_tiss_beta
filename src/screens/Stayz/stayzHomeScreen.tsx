@@ -368,7 +368,7 @@ const styles = StyleSheet.create({
   categorySmallTitle: { lineHeight: 16, minHeight: 32 },
   quickStrip: { flexDirection: 'row', justifyContent: 'space-between', gap: 6, marginTop: -8 },
   quickItem: { flex: 1, alignItems: 'center', gap: 7, paddingVertical: 7 },
-  quickIcon: { width: 43, height: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  quickIcon: { width: 43, height: 43, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
   quickLabel: { textAlign: 'center', minHeight: 30 },
   themeList: { gap: 9 },
   themeRow: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 11, borderWidth: 1, borderRadius: 15 },
