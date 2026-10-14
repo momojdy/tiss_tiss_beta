@@ -1,0 +1,144 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Image, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { colors } from '../theme/frenziesTheme';
+import { fonts } from '../theme/frenziesFonts';
+import FrenziesHeader from '../components/frenzies/FrenziesHeader';
+import { supabase } from '../lib/supabase';
+
+type Entry = { rank: number; name: string; wins: number; photoUrl?: string; isYou?: boolean };
+
+const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
+  fontFamily: family,
+  fontSize: size,
+  lineHeight: size * 1.21,
+  color,
+  includeFontPadding: false,
+});
+
+function Avatar({ entry }: { entry: Entry }) {
+  const initials = entry.name.trim().split(/\s+/).filter(Boolean).slice(0, 2).map((x) => x[0]).join('').toUpperCase();
+  return (
+    <View style={[styles.avatar, entry.isYou && styles.youAvatar]}>
+      {entry.photoUrl ? <Image source={{ uri: entry.photoUrl }} style={styles.avatarImage} /> : <Text style={tx(11, fonts.bold, colors.rankings.avatarText)}>{initials || 'Y'}</Text>}
+    </View>
+  );
+}
+
+function RankRow({ entry, showDivider = true }: { entry: Entry; showDivider?: boolean }) {
+  return (
+    <View style={[styles.row, entry.isYou && styles.youRow, showDivider && styles.rowDivider]}>
+      <View style={styles.rank}><Text style={tx(13, fonts.bold, entry.rank <= 3 ? colors.rankings.rankTop : colors.rankings.rankMuted)}>{entry.rank}</Text></View>
+      <Avatar entry={entry} />
+      <Text numberOfLines={1} style={[tx(14, fonts.semibold, colors.rankings.text), { flex: 1, marginLeft: 12 }]}>{entry.name}</Text>
+      <View style={styles.wins}><MaterialIcons name="local-fire-department" size={13} color={colors.rankings.flamePillText} /><Text style={[tx(11.5, fonts.bold, colors.rankings.flamePillText), { marginLeft: 4 }]}>{entry.wins}</Text></View>
+    </View>
+  );
+}
+
+export default function FrenziesRankingScreen({ onBack }: { onBack?: () => void }) {
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const listRef = useRef<ScrollView>(null);
+  const youLayout = useRef<{ y: number; h: number } | null>(null);
+  const [showPinnedYou, setShowPinnedYou] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    const load = async () => {
+      const { data, error } = await supabase.rpc('frenzies_get_leaderboard');
+      if (!mounted) return;
+      if (!error) {
+        const rows = (data ?? []) as Array<{ rank: number; name: string; wins: number; avatar_url: string | null; is_you: boolean }>;
+        setEntries(rows.map((row) => ({
+          rank: row.rank,
+          name: row.is_you ? 'You' : row.name,
+          wins: row.wins ?? 0,
+          photoUrl: row.avatar_url ?? undefined,
+          isYou: row.is_you,
+        })));
+      }
+      setLoading(false);
+    };
+    load();
+    return () => { mounted = false; };
+  }, []);
+
+  const hasPlayers = entries.length > 0;
+  const displayEntries = entries;
+  const you = displayEntries.find((e) => e.isYou);
+  const onListScroll = (event: any) => {
+    if (!youLayout.current) return;
+    const offset = event.nativeEvent.contentOffset.y;
+    const top = youLayout.current.y - offset;
+    const bottom = top + youLayout.current.h;
+    setShowPinnedYou(bottom <= 0 || top >= 560);
+  };
+
+  return (
+    <View style={styles.safe}>
+      <FrenziesHeader title="Rankings" onBack={onBack} showPoints={false} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
+        <View style={styles.intro}>
+          <Text style={tx(22, fonts.bold)}>Frenzies Rankings</Text>
+          <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6 }]}>Track the players leading the Frenzies leaderboard.</Text>
+        </View>
+
+        <View style={styles.card} onLayout={(e) => { /* constrain leaderboard to screen */ }}>
+          <View style={styles.cardHeader}>
+            <Text style={tx(14, fonts.bold)}>Leaderboard</Text>
+            <View style={styles.fireLabel}><MaterialIcons name="local-fire-department" size={14} color={colors.rankings.flamePillText} /><Text style={[tx(11, fonts.semibold, colors.rankings.flamePillText), { marginLeft: 4 }]}>Wins</Text></View>
+          </View>
+          {loading ? (
+            <View style={styles.empty}><Text style={tx(13, fonts.regular, colors.textSecondary)}>Loading rankings…</Text></View>
+          ) : !hasPlayers ? (
+            <>
+              <View style={styles.emptyHint}>
+                <Text style={tx(14, fonts.semibold)}>Be the first to climb the leaderboard</Text>
+                <Text style={[tx(12, fonts.regular, colors.textSecondary), { marginTop: 5, textAlign: 'center' }]}>Play Frenzies games to earn wins and move up.</Text>
+              </View>
+            </>
+          ) : (
+            <View>
+              <ScrollView ref={listRef} style={styles.leaderboardScroll} onScroll={onListScroll} scrollEventThrottle={16} showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: 0 }}>
+                {displayEntries.map((entry) => (
+                  <View key={entry.rank} onLayout={entry.isYou ? (e) => { youLayout.current = { y: e.nativeEvent.layout.y, h: e.nativeEvent.layout.height }; } : undefined} style={entry.rank !== 200 && !entry.isYou ? styles.insetDivider : undefined}>
+                    <Pressable onPress={entry.isYou ? () => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true }) : undefined}>
+                      <RankRow entry={entry} showDivider={false} />
+                    </Pressable>
+                  </View>
+                ))}
+              </ScrollView>
+              {showPinnedYou && you && (
+                <Pressable style={styles.pinnedYou} onPress={() => listRef.current?.scrollTo({ y: Math.max(0, (youLayout.current?.y ?? 0) - 220), animated: true })}>
+                  <RankRow entry={you} showDivider={false} />
+                </Pressable>
+              )}
+            </View>
+          )}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.pageBg },
+  content: { paddingHorizontal: 18, paddingBottom: 40 },
+  intro: { paddingTop: 14, paddingBottom: 18 },
+  card: { backgroundColor: colors.rankings.cardBg, borderRadius: colors.rankings.cardRadius ?? 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
+  leaderboardScroll: { maxHeight: 560 },
+  cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
+  row: { minHeight: 58, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center' },
+  rowDivider: { borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  insetDivider: { marginHorizontal: 14, borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
+  youRow: { backgroundColor: '#E7F3D8' },
+  rank: { minWidth: 28, paddingHorizontal: 2, alignItems: 'center' },
+  avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.rankings.avatarBg, alignItems: 'center', justifyContent: 'center', overflow: 'hidden' },
+  youAvatar: { borderWidth: 2, borderColor: colors.rankings.youRing },
+  avatarImage: { width: 34, height: 34 },
+  wins: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
+  emptyHint: { minHeight: 120, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
+  pinnedYou: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: '#E7F3D8', borderTopWidth: 1, borderTopColor: colors.rankings.rowBorder },
+});
