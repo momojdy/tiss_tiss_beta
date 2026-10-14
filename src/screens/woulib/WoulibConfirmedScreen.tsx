@@ -2,10 +2,11 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
 import {Ionicons} from '@expo/vector-icons';
-import type {WoulibScreenProps} from './WoulibFlow';
+import {DriverRow, styles, useRide, useWoulibTheme} from './WoulibShared';
 
-export function WoulibConfirmedScreen({ride, t, kit}: WoulibScreenProps) {
-  const {styles, DriverRow} = kit;
+export function WoulibConfirmedScreen() {
+  const ride = useRide();
+  const {t} = useWoulibTheme();
   if (!ride.accepted) return null;
   return (
     <Animated.View entering={FadeIn}>
