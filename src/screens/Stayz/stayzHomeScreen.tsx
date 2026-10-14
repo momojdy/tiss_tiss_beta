@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -48,8 +48,8 @@ const discoveryCards = [
 ];
 
 const specialOffers = [
-  { title: 'A little more day, for less', detail: 'Discover stays with daytime booking options.', tag: 'DAY USE', tone: '#FCEBEC', accent: '#C92532', mode: 'dayuse' as const },
-  { title: 'Make room for a longer escape', detail: 'Explore weekly and extended stays.', tag: 'LONG STAYS', tone: '#E3F5F1', accent: '#128F82', mode: 'extended' as const },
+  { title: 'Explore day-use stays', detail: 'Find a place to unwind during the day.', tag: 'DAY USE', tone: '#FCEBEC', accent: '#C92532', mode: 'dayuse' as const },
+  { title: 'Stay a little longer', detail: 'Explore weekly and extended-stay options.', tag: 'LONG STAYS', tone: '#E3F5F1', accent: '#128F82', mode: 'extended' as const },
 ];
 
 export const StayzHomeScreen = () => {
@@ -80,15 +80,23 @@ export const StayzHomeScreen = () => {
   const hourlySorted = (hourly.data ?? []).slice().sort((a, b) => (distanceFrom(a, search.place) ?? 0) - (distanceFrom(b, search.place) ?? 0));
   const recent = [...recentPlaces, ...(search.place ? [search.place] : [])].filter((place, index, all) => all.findIndex(p => p.label === place.label) === index).slice(0, 4);
 
-  const openPlace = (place: (typeof DESTINATIONS)[number]) => {
+  const rememberPlace = (place: (typeof DESTINATIONS)[number]) => {
     setRecentPlaces(previous => [place, ...previous.filter(p => p.label !== place.label)].slice(0, 4));
+  };
+
+  const openPlace = (place: (typeof DESTINATIONS)[number]) => {
+    rememberPlace(place);
     setSearch({ place });
     nav.navigate('Results');
   };
 
   const openDiscovery = (action: string) => {
-    if (action === 'daypasses') setMode('dayuse');
-    nav.navigate('Results');
+    if (action === 'daypasses') {
+      setMode('dayuse');
+      nav.navigate('Results');
+      return;
+    }
+    Alert.alert('Coming soon', 'This service is not connected in the current app yet.');
   };
 
   return (
@@ -113,7 +121,7 @@ export const StayzHomeScreen = () => {
       </View>
 
       <View style={styles.searchWrap}>
-        <StayzSearchPanel onSubmit={() => nav.navigate('Results')} />
+        <StayzSearchPanel onSubmit={() => { if (search.place) rememberPlace(search.place as (typeof DESTINATIONS)[number]); nav.navigate('Results'); }} />
       </View>
 
       <View style={styles.sections}>
@@ -136,7 +144,7 @@ export const StayzHomeScreen = () => {
         </StayzSection>
 
         <StayzSection title="Available by the hour" action={<Pressable accessibilityRole="button" onPress={() => { setMode('hourly'); nav.navigate('Results'); }}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
-          {hourly.loading ? <View style={styles.propertyRow}><StayzCardSkeleton /><StayzCardSkeleton /></View> : hourly.error ? <StayzErrorView message={hourly.error} onRetry={hourly.reload} /> : hourlySorted.length === 0 ? (
+          {hourly.loading ? <View style={styles.propertyRow}><View style={styles.skeletonCard}><StayzCardSkeleton /></View><View style={styles.skeletonCard}><StayzCardSkeleton /></View></View> : hourly.error ? <StayzErrorView message={hourly.error} onRetry={hourly.reload} /> : hourlySorted.length === 0 ? (
             <StayzStateView icon="time-outline" title="Flexible hourly stays" body="Find a room for a few hours, with availability and times shown before you book." action="Explore hourly stays" onAction={() => { setMode('hourly'); nav.navigate('Results'); }} />
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.propertyRow}>
@@ -228,7 +236,7 @@ export const StayzHomeScreen = () => {
         </StayzSection>
 
         <StayzSection title="Stays near you" action={<Pressable onPress={() => nav.navigate('Results')} accessibilityRole="button"><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
-          {nearby.loading ? <View style={styles.propertyRow}><StayzCardSkeleton /><StayzCardSkeleton /></View> : nearby.error ? <StayzErrorView message={nearby.error} onRetry={nearby.reload} /> : sorted.length === 0 ? (
+          {nearby.loading ? <View style={styles.propertyRow}><View style={styles.skeletonCard}><StayzCardSkeleton /></View><View style={styles.skeletonCard}><StayzCardSkeleton /></View></View> : nearby.error ? <StayzErrorView message={nearby.error} onRetry={nearby.reload} /> : sorted.length === 0 ? (
             <StayzStateView icon="bed-outline" title="No stays available" body="Try another date or stay type." />
           ) : (
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.propertyRow}>
@@ -277,6 +285,7 @@ const styles = StyleSheet.create({
   categoryIcon: { position: 'absolute', right: 9, top: 9, width: 31, height: 31, borderRadius: 10, backgroundColor: 'rgba(22,27,34,0.64)', alignItems: 'center', justifyContent: 'center' },
   categoryInfo: { paddingHorizontal: 11, paddingVertical: 11, gap: 4 },
   propertyRow: { flexDirection: 'row', gap: 14, paddingRight: 16 },
+  skeletonCard: { width: 250 },
   destinationRow: { gap: 12, paddingRight: 16 },
   destinationCard: { width: 194, height: 150, borderRadius: 16, overflow: 'hidden', backgroundColor: '#E8E8E8' },
   destinationImage: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' },
