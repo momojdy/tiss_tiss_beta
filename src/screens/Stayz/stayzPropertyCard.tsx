@@ -28,7 +28,7 @@ export const StayzPropertyCard = ({ listing: l, search, onPress, compact }: Prop
   const sp = startingPrice(l, search.mode, search.hours, search.windowIndex);
   const km = distanceFrom(l, search.place);
   return (
-    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.card, compact && styles.compact]}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.card, { backgroundColor: colors.card }, compact && styles.compact]}>
       <View>
         <StayzPhotoSlot uri={l.photos[0]} style={[styles.photo, compact && styles.photoCompact]} icon="bed-outline" />
         <Pressable
@@ -79,13 +79,13 @@ export const StayzPropertyCard = ({ listing: l, search, onPress, compact }: Prop
 };
 
 const styles = StyleSheet.create({
-  card: { gap: 10 },
+  card: { gap: 0, borderRadius: 22, overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: '#EDE1DC', shadowColor: '#241710', shadowOpacity: 0.06, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, elevation: 2 },
   compact: { width: 260 },
-  photo: { height: 200, borderRadius: 22 },
-  photoCompact: { height: 160 },
+  photo: { height: 200, borderRadius: 0 },
+  photoCompact: { height: 160, borderRadius: 0 },
   heart: { position: 'absolute', top: 12, right: 12, width: 34, height: 34, borderRadius: 17, alignItems: 'center', justifyContent: 'center' },
   badges: { position: 'absolute', left: 12, bottom: 12, gap: 6 },
-  meta: { gap: 3, paddingHorizontal: 2 },
+  meta: { gap: 5, paddingHorizontal: 12, paddingTop: 10, paddingBottom: 13 },
   line: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   rate: { flexDirection: 'row', alignItems: 'center', gap: 3 },
 });

@@ -34,8 +34,8 @@ export const StayzSheet = ({ visible, title, onClose, children }: Props) => {
 
 const styles = StyleSheet.create({
   fill: { flex: 1, justifyContent: 'flex-end' },
-  sheet: { maxHeight: '86%', borderTopLeftRadius: 26, borderTopRightRadius: 26, paddingHorizontal: 20, paddingTop: 10 },
-  grab: { width: 44, height: 5, borderRadius: 3, alignSelf: 'center', marginBottom: 12 },
-  title: { marginBottom: 12 },
+  sheet: { maxHeight: '86%', borderTopLeftRadius: 30, borderTopRightRadius: 30, paddingHorizontal: 20, paddingTop: 12, borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#F0E4DF', shadowColor: '#20130F', shadowOpacity: 0.14, shadowRadius: 22, shadowOffset: { width: 0, height: -5 }, elevation: 12 },
+  grab: { width: 42, height: 4, borderRadius: 3, alignSelf: 'center', marginBottom: 14 },
+  title: { marginBottom: 14 },
   body: { paddingBottom: 12, gap: 12 },
 });

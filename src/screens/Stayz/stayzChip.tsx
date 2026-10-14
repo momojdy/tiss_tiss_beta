@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, StyleProp, StyleSheet, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useStayzTheme } from './stayzThemeContext';
+import { BRAND_ACCENT } from './stayzColors';
 import { StayzTxt } from './stayzTxt';
 
 interface Props {
@@ -20,7 +21,7 @@ export const StayzChip = ({ label, on, onPress, icon, disabled, style }: Props) 
       accessibilityRole="button"
       accessibilityState={{ selected: !!on, disabled: !!disabled }}
       onPress={disabled ? undefined : onPress}
-      style={[styles.chip, { backgroundColor: on ? colors.brand : colors.chip, borderColor: on ? colors.brand : colors.line, opacity: disabled ? 0.4 : 1 }, style]}>
+      style={[styles.chip, { backgroundColor: on ? BRAND_ACCENT : colors.chip, borderColor: on ? BRAND_ACCENT : colors.line, opacity: disabled ? 0.4 : 1 }, style]}>
       {icon ? <Ionicons name={icon} size={15} color={on ? colors.onBrand : colors.text} /> : null}
       <StayzTxt v="small" bold color={on ? colors.onBrand : colors.text}>
         {label}

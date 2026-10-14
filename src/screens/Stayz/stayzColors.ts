@@ -1,4 +1,6 @@
 export const BRAND = '#FF6B5A';
+export const BRAND_DEEP = '#F04E3C';
+export const BRAND_ACCENT = '#F4513F';
 export const TEAL = '#14B8A6';
 
 export interface Palette {
@@ -22,20 +24,20 @@ export interface Palette {
 }
 
 export const light: Palette = {
-  bg: '#FFF8F5',
+  bg: '#FFFAF8',
   card: '#FFFFFF',
   text: '#1B2430',
   sub: '#6B7684',
-  line: '#EFE3DD',
+  line: '#F0E4DF',
   brand: BRAND,
-  brandSoft: '#FFE9E5',
+  brandSoft: '#FFE8E4',
   teal: TEAL,
   tealSoft: '#D9F5F1',
   danger: '#D93A2B',
   dangerSoft: '#FDE4E1',
   warn: '#B7791F',
   warnSoft: '#FFF3D6',
-  chip: '#F6ECE7',
+  chip: '#F8EFEB',
   overlay: 'rgba(15,20,28,0.5)',
   onBrand: '#FFFFFF',
   placeholder: '#F3DDD6',

@@ -35,8 +35,10 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
   const guestsLabel = `${search.adults + search.children} guest${search.adults + search.children > 1 ? 's' : ''}${range ? ` · ${search.rooms} room${search.rooms > 1 ? 's' : ''}` : ''}`;
 
   const field = (icon: keyof typeof Ionicons.glyphMap, label: string, value: string, sub: string | undefined, onPress: () => void) => (
-    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.field, { backgroundColor: colors.card, borderColor: colors.line }]}>
-      <Ionicons name={icon} size={20} color={colors.brand} />
+    <Pressable accessibilityRole="button" onPress={onPress} style={[styles.field, { backgroundColor: colors.bg, borderColor: colors.line }]}>
+      <View style={[styles.fieldIcon, { backgroundColor: colors.brandSoft }]}>
+        <Ionicons name={icon} size={19} color={colors.brand} />
+      </View>
       <View style={{ flex: 1 }}>
         <StayzTxt v="caption" sub>
           {label}
@@ -55,12 +57,21 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
 
   return (
     <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.line }]}>
+      <View style={styles.panelHeading}>
+        <View>
+          <StayzTxt v="h2">Find your stay</StayzTxt>
+          <StayzTxt v="small" sub>Choose the details that work for you</StayzTxt>
+        </View>
+        <View style={[styles.searchMark, { backgroundColor: colors.brandSoft }]}>
+          <Ionicons name="search" size={18} color={colors.brand} />
+        </View>
+      </View>
       <View style={[styles.tabs, { backgroundColor: colors.chip }]}>
         {MODES.map(m => {
           const on = search.mode === m.key;
           return (
-            <Pressable key={m.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => setMode(m.key)} style={[styles.tab, on && { backgroundColor: colors.brand }]}>
-              <Ionicons name={m.icon} size={16} color={on ? colors.onBrand : colors.sub} />
+            <Pressable key={m.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => setMode(m.key)} style={[styles.tab, on && styles.tabOn]}>
+              <Ionicons name={m.icon} size={16} color={on ? '#FFFFFF' : colors.sub} />
               <StayzTxt v="caption" color={on ? colors.onBrand : colors.sub}>
                 {m.label}
               </StayzTxt>
@@ -100,8 +111,12 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
 };
 
 const styles = StyleSheet.create({
-  panel: { borderRadius: 24, borderWidth: 1, padding: 14, gap: 12 },
+  panel: { borderRadius: 24, borderWidth: 1, padding: 14, gap: 12, shadowColor: '#7B342A', shadowOpacity: 0.12, shadowRadius: 18, shadowOffset: { width: 0, height: 8 }, elevation: 6 },
+  panelHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 2, marginBottom: 2 },
+  searchMark: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   tabs: { flexDirection: 'row', borderRadius: 16, padding: 4, gap: 4 },
-  tab: { flex: 1, height: 44, borderRadius: 12, alignItems: 'center', justifyContent: 'center', gap: 2 },
-  field: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 12, borderRadius: 16, borderWidth: 1 },
+  tab: { flex: 1, minHeight: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center', gap: 3 },
+  tabOn: { backgroundColor: '#F4513F' },
+  field: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 10, borderRadius: 16, borderWidth: 1 },
+  fieldIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
 });
