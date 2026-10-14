@@ -1,0 +1,72 @@
+import React from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import FrenziesHeader from '../components/frenzies/FrenziesHeader';
+import { colors } from '../theme/frenziesTheme';
+import { fonts } from '../theme/frenziesFonts';
+
+const PLAYERS = [
+  { id: 'maya', name: 'Maya', game: 'Rock Paper Scissors' },
+  { id: 'jay', name: 'Jay', game: 'Koridò' },
+  { id: 'niko', name: 'Niko', game: 'Load Lock Ship' },
+];
+
+const tx = (size: number, family: string, color: string = colors.textPrimary) => ({
+  fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false,
+});
+
+export default function FrenziesOnlinePlayersScreen({ onBack, onChallengesPress }: { onBack?: () => void; onChallengesPress?: () => void }) {
+  return (
+    <View style={s.safe}>
+      <FrenziesHeader title="Online Players" onBack={onBack} showPoints={false} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.content}>
+        <View style={s.challengeSummary}>
+          <View style={s.challengeSummaryIcon}><MaterialIcons name="sports-esports" size={18} color="#EE6B2E" /></View>
+          <View style={{ flex: 1, marginLeft: 10 }}>
+            <Text style={tx(13, fonts.bold)}>2 challenges waiting</Text>
+            <Text style={[tx(10.5, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>Tap to review your pending challenges.</Text>
+          </View>
+          <Pressable onPress={onChallengesPress} style={s.viewChallenges}><Text style={tx(10.5, fonts.bold, colors.white)}>View</Text></Pressable>
+        </View>
+        <Text style={[tx(24, fonts.bold), { marginTop: 22 }]}>Find someone to challenge.</Text>
+        <Text style={[tx(13, fonts.regular, colors.textSecondary), { marginTop: 6, lineHeight: 19 }]}>
+          Pick a player and put your skills to the test.
+        </Text>
+        <View style={s.card}>
+          {PLAYERS.map((player, i) => (
+            <React.Fragment key={player.id}>
+              <View style={s.row}>
+                <View style={s.avatar}><Text style={tx(12, fonts.bold, colors.textSecondary)}>{player.name.slice(0, 1)}</Text></View>
+                <View style={{ flex: 1, marginLeft: 10 }}>
+                  <View style={s.nameRow}>
+                    <Text style={tx(13, fonts.semibold)}>{player.name}</Text>
+                    <View style={s.dot} />
+                    <Text style={[tx(10, fonts.regular, colors.textSecondary), { marginRight: 10 }]}>Online</Text>
+                  </View>
+                  <Text style={[tx(10.5, fonts.regular, colors.textSecondary), { marginTop: 3 }]}>{player.game}</Text>
+                </View>
+                <Pressable style={s.challenge}><Text style={tx(11, fonts.bold, colors.white)}>Challenge</Text></Pressable>
+              </View>
+              {i < PLAYERS.length - 1 && <View style={s.divider} />}
+            </React.Fragment>
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  );
+}
+
+const s = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: colors.pageBg },
+  content: { paddingHorizontal: 18, paddingTop: 14, paddingBottom: 40 },
+  challengeSummary: { minHeight: 68, padding: 11, borderRadius: 18, backgroundColor: 'rgba(238,107,46,0.22)', borderWidth: 1, borderColor: 'rgba(238,107,46,0.30)', flexDirection: 'row', alignItems: 'center' },
+  challengeSummaryIcon: { width: 38, height: 38, borderRadius: 13, backgroundColor: 'rgba(255,255,255,0.58)', alignItems: 'center', justifyContent: 'center' },
+  viewChallenges: { height: 30, paddingHorizontal: 12, borderRadius: 9, backgroundColor: colors.gameCard.playBg, alignItems: 'center', justifyContent: 'center' },
+  card: { marginTop: 18, borderRadius: 18, backgroundColor: colors.white, borderWidth: 0.5, borderColor: '#EEF0F3', overflow: 'hidden' },
+  row: { minHeight: 68, paddingHorizontal: 12, flexDirection: 'row', alignItems: 'center' },
+  avatar: { width: 38, height: 38, borderRadius: 19, backgroundColor: '#E7E9ED', alignItems: 'center', justifyContent: 'center' },
+  nameRow: { flexDirection: 'row', alignItems: 'center', paddingRight: 20 },
+  dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: '#73B54A', marginLeft: 7, marginRight: 5 },
+  challenge: { height: 31, paddingHorizontal: 11, borderRadius: 9, backgroundColor: colors.gameCard.playBg, alignItems: 'center', justifyContent: 'center' },
+  divider: { height: 1, backgroundColor: '#F1F2F4', marginLeft: 60 },
+});
