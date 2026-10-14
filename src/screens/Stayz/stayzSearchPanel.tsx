@@ -70,7 +70,7 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
         {MODES.map(m => {
           const on = search.mode === m.key;
           return (
-            <Pressable key={m.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => setMode(m.key)} style={[styles.tab, on && [styles.tabOn, { backgroundColor: colors.brand }]]}>
+            <Pressable key={m.key} accessibilityRole="tab" accessibilityState={{ selected: on }} onPress={() => setMode(m.key)} style={[styles.tab, on && { backgroundColor: colors.brand }]}>
               <Ionicons name={m.icon} size={16} color={on ? '#FFFFFF' : colors.sub} />
               <StayzTxt v="caption" color={on ? colors.onBrand : colors.sub}>
                 {m.label}
@@ -116,7 +116,6 @@ const styles = StyleSheet.create({
   searchMark: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
   tabs: { flexDirection: 'row', borderRadius: 16, padding: 4, gap: 4 },
   tab: { flex: 1, minHeight: 46, borderRadius: 12, alignItems: 'center', justifyContent: 'center', gap: 3 },
-  tabOn: {},
   field: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 10, borderRadius: 16, borderWidth: 1 },
   fieldIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
 });
