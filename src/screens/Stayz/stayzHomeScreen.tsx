@@ -331,7 +331,7 @@ const styles = StyleSheet.create({
   categoryHotelsSubtitle: { color: '#252525' },
   categoryBigTitle: { fontSize: 19, lineHeight: 23 },
   categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
-  categoryHotelsPhoto: { width: 150, height: 124, borderTopLeftRadius: 28 },
+  categoryHotelsPhoto: { width: 160, height: 124, borderTopLeftRadius: 28 },
   categoryBottomRow: { flexDirection: 'row', gap: 10 },
   categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
   categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
