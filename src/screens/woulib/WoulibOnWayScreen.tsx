@@ -2,10 +2,11 @@ import React from 'react';
 import {Linking, Pressable, Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
 import {Ionicons} from '@expo/vector-icons';
-import type {WoulibScreenProps} from './WoulibFlow';
+import {Btn, DriverRow, YELLOW, styles, useRide, useWoulibTheme} from './WoulibShared';
 
-export function WoulibOnWayScreen({ride, t, kit}: WoulibScreenProps) {
-  const {styles, Btn, DriverRow, YELLOW} = kit;
+export function WoulibOnWayScreen() {
+  const ride = useRide();
+  const {t} = useWoulibTheme();
   if (!ride.accepted) return null;
   const d = ride.accepted;
   const noun = ride.mode === 'delivery' ? 'delivery' : 'ride';
