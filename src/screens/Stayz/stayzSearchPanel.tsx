@@ -58,12 +58,9 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
   return (
     <View style={[styles.panel, { backgroundColor: colors.card, borderColor: colors.line }]}>
       <View style={styles.panelHeading}>
-        <View>
-          <StayzTxt v="h2">Find your stay</StayzTxt>
-          <StayzTxt v="small" sub>Choose the details that work for you</StayzTxt>
-        </View>
-        <View style={[styles.searchMark, { backgroundColor: colors.brandSoft }]}>
-          <Ionicons name="search" size={18} color={colors.brand} />
+        <StayzTxt v="h2">Search stays</StayzTxt>
+        <View style={[styles.searchMark, { backgroundColor: colors.tealSoft }]}>
+          <Ionicons name="search" size={18} color={colors.teal} />
         </View>
       </View>
       <View style={[styles.tabs, { backgroundColor: colors.chip }]}>
