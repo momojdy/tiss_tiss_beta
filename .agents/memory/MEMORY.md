@@ -1,1 +1,0 @@
-- [Expo import setup](expo-import-setup.md) — headless CLI avoids desktop debugger requirements; lint can modify an unconfigured import.
