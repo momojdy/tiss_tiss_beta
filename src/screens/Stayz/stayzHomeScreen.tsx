@@ -42,7 +42,7 @@ const popularDestinations = [
 const stayCategories = [
   { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzHotels.png'), icon: 'bed-outline' as const },
   { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', tone: '#E6F2FF', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzResorts.png'), icon: 'sunny-outline' as const },
-  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#FFF1E6', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', icon: 'business-outline' as const },
+  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#FFF1E6', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/apartmentsStayz.png'), icon: 'business-outline' as const },
   { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', tone: '#EAF2FF', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=720&q=85', icon: 'cafe-outline' as const },
   { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', icon: 'home-outline' as const },
 ];
