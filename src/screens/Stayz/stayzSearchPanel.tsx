@@ -81,7 +81,7 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
       {field('location-outline', 'Where', whereLabel, whereSub, () => setWhere(true))}
       <View style={styles.fieldRow}>
         <View style={styles.halfField}>
-          {field('calendar-outline', range ? 'Dates' : 'Date', range ? \`\${fmtDate(search.date)} → \${fmtDate(search.endDate)}\` : fmtDate(search.date), undefined, () => setDates(true))}
+          {field('calendar-outline', range ? 'Dates' : 'Date', range ? `${fmtDate(search.date)} → ${fmtDate(search.endDate)}` : fmtDate(search.date), undefined, () => setDates(true))}
         </View>
         <View style={styles.halfField}>
           {field('time-outline', 'Start time', fmtTime(search.time), undefined, () => setShowTimes(value => !value))}
@@ -99,7 +99,7 @@ export const StayzSearchPanel = ({ onSubmit }: { onSubmit: () => void }) => {
           <StayzTxt v="caption" sub>Duration</StayzTxt>
           <View style={styles.durationOptions}>
             {HOURLY_OPTIONS.map(h => (
-              <StayzChip key={h} label={\`\${h}h\`} on={search.hours === h} onPress={() => setSearch({ hours: h })} />
+              <StayzChip key={h} label={`${h}h`} on={search.hours === h} onPress={() => setSearch({ hours: h })} />
             ))}
           </View>
         </View>
