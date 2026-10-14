@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, ScrollView, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStayzTheme } from './stayzThemeContext';
 import { useStayzOnline } from './stayzUseOnline';
 import { StayzTxt } from './stayzTxt';
@@ -22,17 +21,15 @@ interface Props {
 export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, noTop, accentStripe = true }: Props) => {
   const { colors } = useStayzTheme();
   const nav = useNavigation();
-  const insets = useSafeAreaInsets();
   const online = useStayzOnline();
   const showHeader = !!title || back || !!right;
   return (
-    <View style={[styles.fill, { backgroundColor: colors.bg, paddingTop: noTop ? 0 : insets.top }]}>
-      {accentStripe ? <View style={[styles.accentStripe, { backgroundColor: colors.brandSoft }]} /> : null}
+    <View style={[styles.fill, { backgroundColor: colors.bg }]}>
       {showHeader ? (
         <View style={[styles.header, { borderBottomColor: colors.line }]}>
           {back && nav.canGoBack() ? (
-            <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={[styles.back, { backgroundColor: colors.card, borderColor: colors.line }]}>
-              <Ionicons name="arrow-back" size={20} color={colors.text} />
+            <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={() => nav.goBack()} style={[styles.back, { backgroundColor: '#FFFFFF', borderColor: colors.line }]}>
+              <Ionicons name="arrow-back" size={23} color={colors.text} />
             </Pressable>
           ) : (
             <View style={styles.back} />
@@ -43,6 +40,7 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
           <View style={styles.rightSlot}>{right}</View>
         </View>
       ) : null}
+      {accentStripe ? <View style={[styles.accentStripe, { backgroundColor: colors.brandSoft }]} /> : null}
       {!online ? (
         <View style={[styles.offline, { backgroundColor: colors.warnSoft }]}>
           <Ionicons name="cloud-offline-outline" size={16} color={colors.warn} />
@@ -58,16 +56,16 @@ export const StayzScreen = ({ title, back = true, right, scroll = true, footer, 
       ) : (
         <View style={[styles.fill, contentStyle]}>{children}</View>
       )}
-      {footer ? <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.line, paddingBottom: insets.bottom + 12 }]}>{footer}</View> : null}
+      {footer ? <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.line, paddingBottom: 12 }]}>{footer}</View> : null}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   fill: { flex: 1 },
-  accentStripe: { height: 5, width: '100%' },
+  accentStripe: { height: 20, width: '100%', flexShrink: 0 },
   header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 18, paddingVertical: 12, gap: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: 'transparent' },
-  back: { width: 42, height: 42, borderRadius: 15, alignItems: 'center', justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth, borderColor: 'transparent' },
+  back: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center', borderWidth: StyleSheet.hairlineWidth, borderColor: 'transparent' },
   title: { flex: 1 },
   rightSlot: { minWidth: 40, alignItems: 'flex-end' },
   content: { padding: 18, paddingBottom: 34, gap: 16 },
