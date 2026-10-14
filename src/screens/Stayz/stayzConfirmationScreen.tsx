@@ -24,7 +24,7 @@ export const StayzConfirmationScreen = ({ route }: RootProps<'Confirmation'>) =>
   const toStays = () => nav.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Tabs', state: { index: 2, routes: [{ name: 'Home' }, { name: 'Saved' }, { name: 'Stays' }, { name: 'Messages' }, { name: 'Profile' }] } }] }));
   const toDetail = () => nav.dispatch(CommonActions.reset({ index: 1, routes: [{ name: 'Tabs' }, { name: 'BookingDetail', params: { id: route.params.id } }] }));
 
-  if (loading) return <StayzScreen back={false}><StayzSkeleton height={200} radius={20} /></StayzScreen>;
+  if (loading) return <StayzScreen><StayzSkeleton height={200} radius={20} /></StayzScreen>;
   if (error || !b) return <StayzScreen back={false}><StayzErrorView message={error ?? undefined} onRetry={reload} /></StayzScreen>;
 
   const requested = b.status === 'Requested';
