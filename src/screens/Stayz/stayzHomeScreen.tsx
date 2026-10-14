@@ -103,7 +103,7 @@ export const StayzHomeScreen = () => {
                 <View style={[styles.themeIcon, { backgroundColor: '#FFFFFF', shadowColor: tileAccents[index % tileAccents.length] }]}><Ionicons name={t.icon} size={22} color={tileAccents[index % tileAccents.length]} /></View>
                 <StayzTxt v="h3" style={styles.themeTitle}>{t.title}</StayzTxt>
                 <StayzTxt v="small" color="#646B75">{t.sub}</StayzTxt>
-                <View style={[styles.themeArrow, { backgroundColor: tileAccents[index % tileAccents.length }]}><Ionicons name="arrow-up-right" size={14} color="#FFFFFF" /></View>
+                <View style={[styles.themeArrow, { backgroundColor: tileAccents[index % tileAccents.length] }]}><Ionicons name="arrow-up-right" size={14} color="#FFFFFF" /></View>
               </Pressable>
             ))}
           </View>
