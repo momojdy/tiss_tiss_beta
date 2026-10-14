@@ -239,12 +239,17 @@ export default function HomeScreen({onMePress,onFrenziesPress,onFlyzPress,onKons
   const masonry:{h:number;c:string}[][]=[[
     {h:190,c:'#FCEFD9'},{h:250,c:ALTERNATE},{h:200,c:'#F3F3F3'}],[
     {h:250,c:ALTERNATE},{h:190,c:'#FCEFD9'},{h:240,c:ALTERNATE}]];
+  const handleStayzPress = () => {
+    if (typeof onStayzPress === 'function') {
+      onStayzPress();
+    }
+  };
   return <View style={{flex:1,backgroundColor:'#fff'}}>
     <StatusBar style="dark"/>
     <MainTabSelector/>
     <View style={{paddingHorizontal:12,marginTop:8}}><SearchBar/></View>
     <ScrollView scrollEnabled={!scrollLocked} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:105}}>
-      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.(); if(label==='Woulib') onWoulibPress?.(); if(label==='Stays') onStayzPress?.();}}/></View>
+      <View style={{marginTop:6}}><MainDragCarousel p={p} onDragActive={setScrollLocked} onCategoryPress={(label)=>{if(label==='Goodies') onGoodiesPress?.(); if(label==='Frenzies') onFrenziesPress?.(); if(label==='Flyz') onFlyzPress?.(); if(label==='Konsoliss') onKonsolissPress?.(); if(label==='Woulib') onWoulibPress?.(); if(label==='Stays') handleStayzPress();}}/></View>
       <TeaserRow p={p}/>
       <View style={{marginHorizontal:6,marginTop:6}}><MainPromoBanner/></View>
       <View style={{paddingHorizontal:8,paddingTop:8,flexDirection:'row'}}>{masonry.map((col,ci)=><View key={ci} style={{width:colW,marginRight:ci===0?12:0}}>{col.map((card,k)=><View key={k} style={{height:card.h,backgroundColor:card.c,borderRadius:12,marginBottom:12}}/>)}</View>)}</View>
