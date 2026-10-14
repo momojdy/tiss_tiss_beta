@@ -128,10 +128,10 @@ export const StayzHomeScreen = () => {
           <View style={styles.brandMark}><Ionicons name="bed" size={20} color={colors.brand} /></View>
           <View style={styles.brandCopy}>
             <StayzTxt v="h2" style={[styles.brandName, { color: colors.text }]}>stayz</StayzTxt>
-            <Pressable accessibilityRole="button" accessibilityLabel="Refresh current location" onPress={() => { if (locationStatus === 'denied' || locationStatus === 'unavailable') setWhere(true); else void locate(); }} style={styles.locationLine}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Refresh current location" onPress={() => { void locate(); }} style={styles.locationLine}>
               <Ionicons name="location" size={14} color={colors.teal} />
               <StayzTxt v="caption" color={colors.teal} numberOfLines={1}>
-                {search.place?.current ? (search.place.sub || 'Current location') : search.place?.label ?? (locationStatus === 'locating' ? 'Finding current location…' : locationStatus === 'denied' ? 'Allow location access' : 'Set current location')}
+                {search.place?.current ? (search.place.sub || 'Current location') : search.place?.label ?? 'Current location'}
               </StayzTxt>
               <Ionicons name="chevron-down" size={12} color={colors.teal} />
             </Pressable>
