@@ -332,7 +332,7 @@ const styles = StyleSheet.create({
   categoryBigTitle: { fontSize: 19, lineHeight: 23 },
   categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
   categoryHotelsPhoto: { width: 157, height: 124, borderTopLeftRadius: 17, borderBottomRightRadius: 17 },
-  categoryResortsPhoto: { width: 144 },
+  categoryResortsPhoto: { width: 144, height: 122 },
   categoryBottomRow: { flexDirection: 'row', gap: 10 },
   categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
   categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
