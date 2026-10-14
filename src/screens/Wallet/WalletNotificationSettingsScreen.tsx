@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 const BACKGROUND = '#F5F8F3';
 const TEXT = '#1A2517';
