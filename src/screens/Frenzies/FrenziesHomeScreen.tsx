@@ -22,13 +22,13 @@ import {
   Inter_700Bold,
 } from '@expo-google-fonts/inter';
 
-import { colors, sizes, tournamentTiers, TournamentTierKey } from '../theme/frenziesTheme';
-import { fonts } from '../theme/frenziesFonts';
-import { assets, gameImageFit } from '../theme/frenziesAssets';
-import GradientBox from '../components/frenzies/GradientBox';
-import FrenziesHeader from '../components/frenzies/FrenziesHeader';
-import HeroBanner from '../components/frenzies/HeroBanner';
-import { supabase } from '../lib/supabase';
+import { colors, sizes, tournamentTiers, TournamentTierKey } from '../../theme/frenziesTheme';
+import { fonts } from '../../theme/frenziesFonts';
+import { assets, gameImageFit } from '../../theme/frenziesAssets';
+import GradientBox from '../../components/frenzies/GradientBox';
+import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
+import HeroBanner from '../../components/frenzies/HeroBanner';
+import { supabase } from '../../lib/supabase';
 
 const STREAK_TARGET = 5;
 const STREAK_REWARD_POINTS = 100;
