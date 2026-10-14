@@ -9,7 +9,7 @@ import { StayzPropertyCard } from './stayzPropertyCard';
 import { StayzStateView, StayzErrorView, StayzCardSkeleton } from './stayzStates';
 import { StayzTxt } from './stayzTxt';
 import { StayzSearchPanel } from './stayzSearchPanel';
-import { DESTINATIONS } from './stayzPlaces';
+import { DESTINATIONS, THEMES } from './stayzPlaces';
 import { useStayzAsync } from './stayzUseAsync';
 import { distanceFrom } from './stayzListings';
 import { RootStackParamList } from './stayzNavigationTypes';
@@ -33,11 +33,11 @@ const destinationPhotos: Record<string, string> = {
 };
 
 const stayCategories = [
-  { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const },
-  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=720&q=85', icon: 'bed-outline' as const },
-  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', icon: 'business-outline' as const },
-  { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=720&q=85', icon: 'cafe-outline' as const },
-  { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', icon: 'home-outline' as const },
+  { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', tone: '#E4F5F1', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const },
+  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=720&q=85', icon: 'bed-outline' as const },
+  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#FFF1E6', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', icon: 'business-outline' as const },
+  { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', tone: '#EAF2FA', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=720&q=85', icon: 'cafe-outline' as const },
+  { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', icon: 'home-outline' as const },
 ];
 
 const discoveryCards = [
@@ -45,6 +45,19 @@ const discoveryCards = [
   { title: 'Airport pick-up', subtitle: 'Make arrivals easier', image: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=720&q=85', icon: 'airplane-outline' as const, action: 'airport' },
   { title: 'Car rental', subtitle: 'Explore at your own pace', image: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=720&q=85', icon: 'car-sport-outline' as const, action: 'cars' },
   { title: 'Day passes', subtitle: 'Enjoy a resort for the day', image: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&w=720&q=85', icon: 'sunny-outline' as const, action: 'daypasses' },
+];
+
+const quickStrip = [
+  { title: 'Activities', icon: 'compass-outline' as const, tone: '#FCEBEC', accent: '#D92D36', action: 'activities' },
+  { title: 'Airport pickup', icon: 'airplane-outline' as const, tone: '#E4F5F1', accent: '#128F82', action: 'airport' },
+  { title: 'Car rentals', icon: 'car-sport-outline' as const, tone: '#F1ECFA', accent: '#7656A8', action: 'cars' },
+  { title: 'Day passes', icon: 'ticket-outline' as const, tone: '#FFF1E6', accent: '#B86A24', action: 'daypasses' },
+];
+
+const activityCards = [
+  { title: 'Citadelle Laferrière', subtitle: 'Guided hike & fortress visit', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=720&q=85', tag: 'TOURS' },
+  { title: 'Jacmel beach day', subtitle: 'Coastline, local food & music', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85', tag: 'EXPERIENCES' },
+  { title: 'Local art & markets', subtitle: 'Discover Haitian craft and culture', image: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=720&q=85', tag: 'CULTURE' },
 ];
 
 const specialOffers = [
@@ -126,34 +139,58 @@ export const StayzHomeScreen = () => {
 
       <View style={styles.sections}>
         <StayzSection title="Find your kind of stay">
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryRow}>
-            {stayCategories.map(category => (
-              <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryCard, { backgroundColor: colors.card, borderColor: colors.line }]}>
-                <View style={styles.categoryPhotoWrap}>
-                  <StayzPhotoSlot uri={category.image} style={styles.categoryPhoto} icon={category.icon} />
-                  <View style={styles.categoryPhotoShade} />
-                  <View style={styles.categoryIcon}><Ionicons name={category.icon} size={17} color="#FFFFFF" /></View>
-                </View>
-                <View style={styles.categoryInfo}>
-                  <StayzTxt v="h3" numberOfLines={1}>{category.title}</StayzTxt>
-                  <StayzTxt v="caption" sub numberOfLines={2}>{category.subtitle}</StayzTxt>
-                </View>
-              </Pressable>
-            ))}
-          </ScrollView>
+          <View style={styles.categoryGrid}>
+            <View style={styles.categoryTopRow}>
+              {stayCategories.slice(0, 2).map(category => (
+                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categoryBig, { backgroundColor: category.tone }]}>
+                  <View style={styles.categoryBigCopy}>
+                    <StayzTxt v="h2" style={styles.categoryBigTitle}>{category.title}</StayzTxt>
+                    <StayzTxt v="caption" color="#626D78">{category.subtitle}</StayzTxt>
+                  </View>
+                  <StayzPhotoSlot uri={category.image} style={styles.categoryBigPhoto} icon={category.icon} />
+                </Pressable>
+              ))}
+            </View>
+            <View style={styles.categoryBottomRow}>
+              {stayCategories.slice(2).map(category => (
+                <Pressable key={category.key} accessibilityRole="button" onPress={() => { setFilters({ ...filters, types: [category.filterType as any] }); nav.navigate('Results'); }} style={[styles.categorySmall, { backgroundColor: category.tone }]}>
+                  <StayzPhotoSlot uri={category.image} style={styles.categorySmallPhoto} icon={category.icon} />
+                  <StayzTxt v="small" bold numberOfLines={2} style={styles.categorySmallTitle}>{category.title}</StayzTxt>
+                </Pressable>
+              ))}
+            </View>
+          </View>
         </StayzSection>
 
-        <StayzSection title="Available by the hour" action={<Pressable accessibilityRole="button" onPress={() => { setMode('hourly'); nav.navigate('Results'); }}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
-          {hourly.loading ? <View style={styles.propertyRow}><View style={styles.skeletonCard}><StayzCardSkeleton /></View><View style={styles.skeletonCard}><StayzCardSkeleton /></View></View> : hourly.error ? <StayzErrorView message={hourly.error} onRetry={hourly.reload} /> : hourlySorted.length === 0 ? (
-            <StayzStateView icon="time-outline" title="Flexible hourly stays" body="Find a room for a few hours, with availability and times shown before you book." action="Explore hourly stays" onAction={() => { setMode('hourly'); nav.navigate('Results'); }} />
-          ) : (
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.propertyRow}>
-              {hourlySorted.slice(0, 8).map(l => <StayzPropertyCard key={l.id} listing={l} search={{ ...search, mode: 'hourly' }} compact onPress={() => nav.navigate('Property', { id: l.id })} />)}
-            </ScrollView>
-          )}
+        <View style={styles.quickStrip}>
+          {quickStrip.map(item => (
+            <Pressable key={item.action} accessibilityRole="button" onPress={() => openDiscovery(item.action)} style={styles.quickItem}>
+              <View style={[styles.quickIcon, { backgroundColor: item.tone }]}><Ionicons name={item.icon} size={21} color={item.accent} /></View>
+              <StayzTxt v="caption" bold numberOfLines={2} style={styles.quickLabel}>{item.title}</StayzTxt>
+            </Pressable>
+          ))}
+        </View>
+
+        <StayzSection title="Explore Haiti differently">
+          <View style={styles.themeList}>
+            {THEMES.map((theme, index) => {
+              const accents = ['#128F82', '#D92D36', '#7656A8', '#B86A24'];
+              const tones = ['#E4F5F1', '#FCEBEC', '#F1ECFA', '#FFF1E6'];
+              return (
+                <Pressable key={theme.key} accessibilityRole="button" onPress={() => openPlace(theme.place)} style={[styles.themeRow, { backgroundColor: colors.card, borderColor: colors.line }]}>
+                  <View style={[styles.themeIcon, { backgroundColor: tones[index % tones.length] }]}><Ionicons name={theme.icon} size={21} color={accents[index % accents.length]} /></View>
+                  <View style={styles.themeCopy}>
+                    <StayzTxt v="h3">{theme.title}</StayzTxt>
+                    <StayzTxt v="small" sub>{theme.sub}</StayzTxt>
+                  </View>
+                  <Ionicons name="chevron-forward" size={18} color={colors.sub} />
+                </Pressable>
+              );
+            })}
+          </View>
         </StayzSection>
 
-        <StayzSection title="Popular destinations" action={<Pressable accessibilityRole="button" onPress={() => openPlace(DESTINATIONS[0])}><StayzTxt v="small" bold color={colors.brand}>Explore all</StayzTxt></Pressable>}>
+        <StayzSection title="Popular destinations" action={<Pressable accessibilityRole="button" onPress={() => setWhere(true)}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.destinationRow}>
             {DESTINATIONS.map(place => (
               <Pressable key={place.label} accessibilityRole="button" onPress={() => openPlace(place)} style={styles.destinationCard}>
@@ -167,13 +204,24 @@ export const StayzHomeScreen = () => {
           </ScrollView>
         </StayzSection>
 
-        <StayzSection title="Things to do in Haïti">
+        <StayzSection title="Available by the hour" action={<Pressable accessibilityRole="button" onPress={() => { setMode('hourly'); nav.navigate('Results'); }}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
+          <StayzTxt v="caption" sub>{search.mode === 'hourly' ? 'Flexible stays for a few hours, with times and prices shown before booking.' : 'Browse hourly options, then choose your preferred time and duration.'}</StayzTxt>
+          {hourly.loading ? <View style={styles.propertyRow}><View style={styles.skeletonCard}><StayzCardSkeleton /></View><View style={styles.skeletonCard}><StayzCardSkeleton /></View></View> : hourly.error ? <StayzErrorView message={hourly.error} onRetry={hourly.reload} /> : hourlySorted.length === 0 ? (
+            <StayzStateView icon="time-outline" title="Flexible hourly stays" body="Find a room for a few hours, with availability and times shown before you book." action="Explore hourly stays" onAction={() => { setMode('hourly'); nav.navigate('Results'); }} />
+          ) : (
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.propertyRow}>
+              {hourlySorted.slice(0, 8).map(l => <StayzPropertyCard key={l.id} listing={l} search={{ ...search, mode: 'hourly' }} compact onPress={() => nav.navigate('Property', { id: l.id })} />)}
+            </ScrollView>
+          )}
+        </StayzSection>
+
+        <StayzSection title="Things to do in Haïti" action={<Pressable accessibilityRole="button" onPress={() => openDiscovery('activities')}><StayzTxt v="small" bold color={colors.brand}>See all</StayzTxt></Pressable>}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.discoveryRow}>
-            {discoveryCards.slice(0, 1).map(item => (
-              <Pressable key={item.action} accessibilityRole="button" onPress={() => openDiscovery(item.action)} style={[styles.experienceCard, { backgroundColor: colors.card, borderColor: colors.line }]}>
-                <StayzPhotoSlot uri={item.image} style={styles.experiencePhoto} icon={item.icon} />
+            {activityCards.map(item => (
+              <Pressable key={item.title} accessibilityRole="button" onPress={() => openDiscovery('activities')} style={[styles.experienceCard, { backgroundColor: colors.card, borderColor: colors.line }]}>
+                <StayzPhotoSlot uri={item.image} style={styles.experiencePhoto} icon="compass-outline" />
                 <View style={styles.experienceBody}>
-                  <View style={[styles.experienceIcon, { backgroundColor: colors.brandSoft }]}><Ionicons name={item.icon} size={18} color={colors.brand} /></View>
+                  <StayzTxt v="caption" color="#D92D36" style={styles.offerTag}>{item.tag}</StayzTxt>
                   <StayzTxt v="h3">{item.title}</StayzTxt>
                   <StayzTxt v="small" sub>{item.subtitle}</StayzTxt>
                 </View>
@@ -182,21 +230,8 @@ export const StayzHomeScreen = () => {
           </ScrollView>
         </StayzSection>
 
-        <View style={styles.discoveryGrid}>
-          {discoveryCards.slice(1).map(item => (
-            <Pressable key={item.action} accessibilityRole="button" onPress={() => openDiscovery(item.action)} style={[styles.discoveryTile, { backgroundColor: colors.card, borderColor: colors.line }]}>
-              <StayzPhotoSlot uri={item.image} style={styles.discoveryPhoto} icon={item.icon} />
-              <View style={styles.discoveryTileBody}>
-                <View style={[styles.discoveryIcon, { backgroundColor: colors.brandSoft }]}><Ionicons name={item.icon} size={17} color={colors.brand} /></View>
-                <StayzTxt v="h3" numberOfLines={1}>{item.title}</StayzTxt>
-                <StayzTxt v="caption" sub numberOfLines={2}>{item.subtitle}</StayzTxt>
-              </View>
-            </Pressable>
-          ))}
-        </View>
-
         <StayzSection title="Special offers" action={<Pressable accessibilityRole="button" onPress={() => { setMode('dayuse'); nav.navigate('Results'); }}><StayzTxt v="small" bold color={colors.brand}>View stays</StayzTxt></Pressable>}>
-          <View style={styles.offerStack}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.offerRow}>
             {specialOffers.map(offer => (
               <Pressable key={offer.tag} accessibilityRole="button" onPress={() => { setMode(offer.mode); nav.navigate('Results'); }} style={[styles.offerCard, { backgroundColor: offer.tone }]}>
                 <View style={styles.offerCopy}>
@@ -207,7 +242,7 @@ export const StayzHomeScreen = () => {
                 <View style={[styles.offerArrow, { backgroundColor: offer.accent }]}><Ionicons name="arrow-forward" size={17} color="#FFFFFF" /></View>
               </Pressable>
             ))}
-          </View>
+          </ScrollView>
         </StayzSection>
 
         <StayzSection title="Recent searches">
@@ -218,7 +253,7 @@ export const StayzHomeScreen = () => {
                   <View style={[styles.recentIcon, { backgroundColor: '#FCEBEC' }]}><Ionicons name="time-outline" size={19} color="#D92D36" /></View>
                   <View style={styles.recentCopy}>
                     <StayzTxt v="h3">{place.label}</StayzTxt>
-                    <StayzTxt v="caption" sub>{place.sub} · {search.mode === 'hourly' ? 'Hourly stay' : search.mode === 'dayuse' ? 'Day use' : search.mode === 'extended' ? 'Extended stay' : 'Accommodation'}</StayzTxt>
+                    <StayzTxt v="caption" sub>{place.sub} · {search.mode === 'hourly' ? 'Hourly' : search.mode === 'dayuse' ? 'Day use' : search.mode === 'extended' ? 'Extended' : 'Overnight'}</StayzTxt>
                   </View>
                   <Ionicons name="arrow-up-right" size={18} color={colors.sub} />
                 </Pressable>
@@ -277,34 +312,39 @@ const styles = StyleSheet.create({
   pageSubtitle: { marginTop: 5, fontSize: 13, lineHeight: 19 },
   searchWrap: { marginHorizontal: 16, marginTop: 2, marginBottom: 28 },
   sections: { paddingHorizontal: 16, gap: 28 },
-  categoryRow: { gap: 12, paddingRight: 16 },
-  categoryCard: { width: 154, borderWidth: 1, borderRadius: 17, overflow: 'hidden' },
-  categoryPhotoWrap: { height: 104, position: 'relative', backgroundColor: '#F3E8E5' },
-  categoryPhoto: { width: '100%', height: '100%' },
-  categoryPhotoShade: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(16,21,29,0.12)' },
-  categoryIcon: { position: 'absolute', right: 9, top: 9, width: 31, height: 31, borderRadius: 10, backgroundColor: 'rgba(22,27,34,0.64)', alignItems: 'center', justifyContent: 'center' },
-  categoryInfo: { paddingHorizontal: 11, paddingVertical: 11, gap: 4 },
+  categoryGrid: { gap: 10 },
+  categoryTopRow: { flexDirection: 'row', gap: 10 },
+  categoryBig: { flex: 1, minHeight: 132, borderRadius: 17, padding: 13, overflow: 'hidden', justifyContent: 'space-between' },
+  categoryBigCopy: { maxWidth: '72%', gap: 5, zIndex: 1 },
+  categoryBigTitle: { color: '#202630', fontSize: 19, lineHeight: 23 },
+  categoryBigPhoto: { position: 'absolute', right: 0, bottom: 0, width: 112, height: 96, borderTopLeftRadius: 24 },
+  categoryBottomRow: { flexDirection: 'row', gap: 10 },
+  categorySmall: { flex: 1, minWidth: 0, minHeight: 114, borderRadius: 15, padding: 8, overflow: 'hidden', justifyContent: 'space-between' },
+  categorySmallPhoto: { width: '100%', height: 64, borderRadius: 10 },
+  categorySmallTitle: { color: '#202630', lineHeight: 16, minHeight: 32 },
+  quickStrip: { flexDirection: 'row', justifyContent: 'space-between', gap: 6, marginTop: -8 },
+  quickItem: { flex: 1, alignItems: 'center', gap: 7, paddingVertical: 7 },
+  quickIcon: { width: 43, height: 43, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
+  quickLabel: { color: '#313945', textAlign: 'center', minHeight: 30 },
+  themeList: { gap: 9 },
+  themeRow: { flexDirection: 'row', alignItems: 'center', gap: 11, padding: 11, borderWidth: 1, borderRadius: 15 },
+  themeIcon: { width: 42, height: 42, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  themeCopy: { flex: 1, gap: 3 },
   propertyRow: { flexDirection: 'row', gap: 14, paddingRight: 16 },
   skeletonCard: { width: 250 },
   destinationRow: { gap: 12, paddingRight: 16 },
   destinationCard: { width: 194, height: 150, borderRadius: 16, overflow: 'hidden', backgroundColor: '#E8E8E8' },
   destinationImage: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' },
-  destinationShade: { flex: 1, justifyContent: 'flex-end', padding: 12, backgroundColor: 'rgba(13,19,27,0.36)' },
+  destinationShade: { flex: 1, justifyContent: 'flex-end', padding: 12, backgroundColor: 'rgba(13,19,27,0.44)' },
   discoveryRow: { gap: 12, paddingRight: 16 },
-  experienceCard: { width: 276, borderWidth: 1, borderRadius: 18, overflow: 'hidden' },
+  experienceCard: { width: 276, borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
   experiencePhoto: { height: 144, width: '100%' },
   experienceBody: { padding: 13, gap: 5 },
-  experienceIcon: { width: 35, height: 35, borderRadius: 11, alignItems: 'center', justifyContent: 'center', marginBottom: 2 },
-  discoveryGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-  discoveryTile: { width: '47.5%', flexGrow: 1, borderWidth: 1, borderRadius: 17, overflow: 'hidden' },
-  discoveryPhoto: { height: 105, width: '100%' },
-  discoveryTileBody: { padding: 10, gap: 5 },
-  discoveryIcon: { width: 31, height: 31, borderRadius: 10, alignItems: 'center', justifyContent: 'center', marginBottom: 1 },
-  offerStack: { gap: 11 },
-  offerCard: { borderRadius: 17, padding: 15, minHeight: 116, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  offerRow: { gap: 12, paddingRight: 16 },
+  offerCard: { width: 270, borderRadius: 16, padding: 15, minHeight: 126, flexDirection: 'row', alignItems: 'center', gap: 12 },
   offerCopy: { flex: 1, gap: 5 },
   offerTag: { fontSize: 10, letterSpacing: 1, fontWeight: '800' },
-  offerArrow: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  offerArrow: { width: 34, height: 34, borderRadius: 11, alignItems: 'center', justifyContent: 'center' },
   recentStack: { gap: 9 },
   recentRow: { flexDirection: 'row', alignItems: 'center', gap: 11, borderWidth: 1, borderRadius: 15, padding: 12 },
   recentIcon: { width: 38, height: 38, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
