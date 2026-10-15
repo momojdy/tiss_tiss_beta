@@ -25,11 +25,11 @@ import { useStayzHost } from './stayzHostContext';
 type Nav = NativeStackNavigationProp<RootStackParamList>;
 
 const destinationPhotos: Record<string, string> = {
-  'Port-au-Prince': 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=720&q=85',
-  'Cap-Haïtien': 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=720&q=85',
-  Jacmel: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
-  'Les Cayes': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
-  Labadee: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85',
+  'Port-au-Prince': 'https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=480&q=65',
+  'Cap-Haïtien': 'https://images.unsplash.com/photo-1511818966892-d7d671e672a2?auto=format&fit=crop&w=480&q=65',
+  Jacmel: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=480&q=65',
+  'Les Cayes': 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=480&q=65',
+  Labadee: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=480&q=65',
 };
 
 const popularDestinations = [
@@ -41,11 +41,11 @@ const popularDestinations = [
 ];
 
 const stayCategories = [
-  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzHotels.png'), icon: 'bed-outline' as const },
-  { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', tone: '#E6F2FF', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzResorts.png'), icon: 'sunny-outline' as const },
-  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#E8F4F0', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/apartmentsStayz.png'), icon: 'business-outline' as const },
-  { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', tone: '#FBEAEA', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzGuestHouse.png'), icon: 'cafe-outline' as const },
-  { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=720&q=85', source: require('../../assets/Stayz/stayzVilla.png'), icon: 'home-outline' as const },
+  { key: 'hotels', filterType: 'Hotel', title: 'Hotels', subtitle: 'Comfort for every trip', tone: '#FCEDEC', image: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=480&q=65', source: require('../../assets/Stayz/stayzHotels.png'), icon: 'bed-outline' as const },
+  { key: 'resorts', filterType: 'Resort', title: 'Resorts', subtitle: 'Pools, beaches & escapes', tone: '#E6F2FF', image: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=480&q=65', source: require('../../assets/Stayz/stayzResorts.png'), icon: 'sunny-outline' as const },
+  { key: 'apartments', filterType: 'Apartment', title: 'Apartments', subtitle: 'Space to feel at home', tone: '#E8F4F0', image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=480&q=65', source: require('../../assets/Stayz/apartmentsStayz.png'), icon: 'business-outline' as const },
+  { key: 'guesthouses', filterType: 'Guesthouse', title: 'Guest houses', subtitle: 'Warm local hospitality', tone: '#FBEAEA', image: 'https://images.unsplash.com/photo-1445019980597-93fa8acb246c?auto=format&fit=crop&w=480&q=65', source: require('../../assets/Stayz/stayzGuestHouse.png'), icon: 'cafe-outline' as const },
+  { key: 'villas', filterType: 'Villa', title: 'Villas', subtitle: 'Privacy and room to unwind', tone: '#F4EDFA', image: 'https://images.unsplash.com/photo-1613490493576-7fde63acd811?auto=format&fit=crop&w=480&q=65', source: require('../../assets/Stayz/stayzVilla.png'), icon: 'home-outline' as const },
 ];
 
 const quickStrip = [
@@ -56,9 +56,9 @@ const quickStrip = [
 ];
 
 const activityCards = [
-  { title: 'Citadelle Laferrière', subtitle: 'Guided hike & fortress visit', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=720&q=85', tag: 'TOURS' },
-  { title: 'Jacmel beach day', subtitle: 'Coastline, local food & music', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=720&q=85', tag: 'EXPERIENCES' },
-  { title: 'Local art & markets', subtitle: 'Discover Haitian craft and culture', image: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=720&q=85', tag: 'CULTURE' },
+  { title: 'Citadelle Laferrière', subtitle: 'Guided hike & fortress visit', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=480&q=65', tag: 'TOURS' },
+  { title: 'Jacmel beach day', subtitle: 'Coastline, local food & music', image: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?auto=format&fit=crop&w=480&q=65', tag: 'EXPERIENCES' },
+  { title: 'Local art & markets', subtitle: 'Discover Haitian craft and culture', image: 'https://images.unsplash.com/photo-1531058020387-3be344556be6?auto=format&fit=crop&w=480&q=65', tag: 'CULTURE' },
 ];
 
 const specialOffers = [
