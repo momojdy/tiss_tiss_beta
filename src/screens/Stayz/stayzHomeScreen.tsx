@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { Alert, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert, Image, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -76,6 +76,14 @@ export const StayzHomeScreen = () => {
   const [searchPopup, setSearchPopup] = useState(false);
   const [unread, setUnread] = useState(false);
   const [recentPlaces, setRecentPlaces] = useState<(typeof DESTINATIONS)[number][]>([]);
+
+  useEffect(() => {
+    // Start downloading the small category thumbnails as soon as the homepage mounts,
+    // so returning to the page can reuse the native image cache.
+    stayCategories.forEach(category => {
+      void Image.prefetch(category.image).catch(() => undefined);
+    });
+  }, []);
 
   const nearby = useStayzAsync(
     () =>
