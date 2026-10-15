@@ -14,7 +14,14 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
   const { colors } = useStayzTheme();
   const [ok, setOk] = useState(true);
   const [loaded, setLoaded] = useState(false);
+  const [usingFallback, setUsingFallback] = useState(!uri);
   const pulse = useRef(new Animated.Value(0.5)).current;
+
+  useEffect(() => {
+    setLoaded(false);
+    setOk(true);
+    setUsingFallback(!uri);
+  }, [uri, source]);
 
   useEffect(() => {
     if (loaded || (!uri && !source) || !ok) return;
@@ -37,13 +44,18 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
       ) : null}
       {(uri || source) && ok ? (
         <Image
-          source={source ?? { uri: uri! }}
-          style={source
-            ? { width: '100%', height: '100%', opacity: loaded ? 1 : 0 }
-            : [StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
-          resizeMode="stretch"
+          source={uri && !usingFallback ? { uri } : source}
+          style={[StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
+          resizeMode="cover"
           onLoad={() => setLoaded(true)}
-          onError={() => setOk(false)}
+          onError={() => {
+            if (uri && !usingFallback && source) {
+              setUsingFallback(true);
+              setLoaded(false);
+            } else {
+              setOk(false);
+            }
+          }}
         />
       ) : null}
     </View>
