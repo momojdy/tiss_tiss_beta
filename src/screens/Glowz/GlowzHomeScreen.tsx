@@ -31,10 +31,12 @@ function HomeHeader() {
   const { c } = useGlowzTheme();
   const g = useGutter();
   const state = useGlowzState();
+  const nav = useGlowzNav();
   const { openSheet } = useGlowzSheet();
   const { unreadCount } = useNotifications();
   return (
     <View style={{ paddingLeft: g.left, paddingRight: g.right, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <GlowzIconButton icon="back" label="Back to Wantiss Home" onPress={() => nav.back()} size={38} iconSize={20} />
       <GlowzText kind="display" weight={700} size={32} accessibilityRole="header" style={{ letterSpacing: -0.3 }}>
         glowz<GlowzText kind="display" weight={700} size={32} color={c.accent}>.</GlowzText>
       </GlowzText>
