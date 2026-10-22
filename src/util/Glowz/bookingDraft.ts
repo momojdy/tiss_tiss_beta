@@ -1,8 +1,8 @@
-import type { BookingDraft, BookingStep } from '../types/booking';
-import type { Provider } from '../types/provider';
+import type { BookingDraft, BookingStep } from '../../types/glowz/booking';
+import type { Provider } from '../../types/glowz/provider';
 import { bookingTotals } from './pricing';
 import { slotsFor } from './availability';
-import type { Booking } from '../types/booking';
+import type { Booking } from '../../types/glowz/booking';
 import { today } from './clock';
 
 export const BOOKING_STEP_TITLES = ['Services', 'Professional', 'Date and time', 'Location', 'Review and pay'];

@@ -1,7 +1,7 @@
-import { CATEGORIES } from '../data/categories';
-import { PRICE } from '../data/prices';
-import { PROVIDERS } from '../data/providers';
-import type { Provider, Service } from '../types/provider';
+import { CATEGORIES } from '../../data/glowz/categories';
+import { PRICE } from '../../data/glowz/prices';
+import { PROVIDERS } from '../../data/glowz/providers';
+import type { Provider, Service } from '../../types/glowz/provider';
 
 export const getProvider = (id: string): Provider | undefined => PROVIDERS.find((p) => p.id === id);
 

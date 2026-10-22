@@ -1,4 +1,4 @@
-import type { Category } from '../types/provider';
+import type { Category } from '../../types/glowz/provider';
 
 /** Configurable in the real app (admin panel). Local demo data here. */
 export const CATEGORIES: Category[] = [

@@ -1,4 +1,4 @@
-import type { HomeSection } from '../types/provider';
+import type { HomeSection } from '../../types/glowz/provider';
 
 export const HOME_SECTIONS: HomeSection[] = [
  {

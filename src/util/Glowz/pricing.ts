@@ -1,7 +1,7 @@
-import { PRICE } from '../data/prices';
-import { PROMOS } from '../data/promos';
-import type { BookingDraft, BookingTotals, PromoResult } from '../types/booking';
-import type { PromoCode, Provider } from '../types/provider';
+import { PRICE } from '../../data/glowz/prices';
+import { PROMOS } from '../../data/glowz/promos';
+import type { BookingDraft, BookingTotals, PromoResult } from '../../types/glowz/booking';
+import type { PromoCode, Provider } from '../../types/glowz/provider';
 import { getServiceOf } from './catalog';
 import { peso } from './format';
 

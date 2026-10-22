@@ -1,4 +1,4 @@
-import type { Review } from '../types/provider';
+import type { Review } from '../../types/glowz/provider';
 
 export const REVIEWS: Review[] = [
  {

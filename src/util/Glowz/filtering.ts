@@ -1,9 +1,9 @@
-import { PRICE } from '../data/prices';
-import { PROVIDERS } from '../data/providers';
-import { POSTS } from '../data/posts';
-import type { Booking } from '../types/booking';
-import type { Provider, Post } from '../types/provider';
-import type { Filters, SortKey } from '../types/state';
+import { PRICE } from '../../data/glowz/prices';
+import { PROVIDERS } from '../../data/glowz/providers';
+import { POSTS } from '../../data/glowz/posts';
+import type { Booking } from '../../types/glowz/booking';
+import type { Provider, Post } from '../../types/glowz/provider';
+import type { Filters, SortKey } from '../../types/glowz/state';
 import { categoryName, getProvider, minPrice } from './catalog';
 import { hasSlotsToday, nextSlot } from './availability';
 

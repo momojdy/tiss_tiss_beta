@@ -1,5 +1,5 @@
-import type { Booking } from '../types/booking';
-import type { Provider } from '../types/provider';
+import type { Booking } from '../../types/glowz/booking';
+import type { Provider } from '../../types/glowz/provider';
 import { nextSlot } from './availability';
 import { fmtD, fmtT } from './format';
 

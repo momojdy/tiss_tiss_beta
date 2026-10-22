@@ -1,4 +1,4 @@
-import type { Banner } from '../types/provider';
+import type { Banner } from '../../types/glowz/provider';
 
 export const BANNERS: Banner[] = [
  {

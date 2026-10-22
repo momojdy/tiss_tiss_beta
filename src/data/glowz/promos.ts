@@ -1,4 +1,4 @@
-import type { PromoCode, PromoRule } from '../types/provider';
+import type { PromoCode, PromoRule } from '../../types/glowz/provider';
 
 export const PROMOS: Record<PromoCode, PromoRule> = {
  "GLOW10": {

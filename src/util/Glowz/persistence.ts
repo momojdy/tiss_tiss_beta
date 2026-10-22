@@ -1,9 +1,9 @@
-import { AREAS } from '../data/areas';
-import { HOME_SECTIONS } from '../data/sections';
-import { POSTS } from '../data/posts';
-import type { Booking, BookingStatus } from '../types/booking';
-import type { ChatMessage, GlowzState, Notification, PictureChoice } from '../types/state';
-import { GlowzNavState, GlowzRoute, RESTORABLE_ROUTES, ROOT_TABS } from '../navigation/GlowzNavigationTypes';
+import { AREAS } from '../../data/glowz/areas';
+import { HOME_SECTIONS } from '../../data/glowz/sections';
+import { POSTS } from '../../data/glowz/posts';
+import type { Booking, BookingStatus } from '../../types/glowz/booking';
+import type { ChatMessage, GlowzState, Notification, PictureChoice } from '../../types/glowz/state';
+import { GlowzNavState, GlowzRoute, RESTORABLE_ROUTES, ROOT_TABS } from '../../navigation/glowz/GlowzNavigationTypes';
 import { getProvider, getServiceById } from './catalog';
 import { STATE_VERSION } from './storage';
 

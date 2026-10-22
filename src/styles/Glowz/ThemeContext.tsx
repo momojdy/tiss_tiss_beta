@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo } from 'react';
 import { DARK, GlowzColors, LIGHT, TONES_DARK, TONES_LIGHT, Tone } from './colors';
-import type { ThemeMode } from '../types/state';
+import type { ThemeMode } from '../../types/glowz/state';
 
 export interface GlowzTheme {
   mode: ThemeMode;
