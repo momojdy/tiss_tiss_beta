@@ -81,7 +81,7 @@ export function GlowzExploreScreen() {
   }
 
   return (
-    <GlowzScreen header={header} headerBackground={c.accent} showStripe={false} bottom="root">
+    <GlowzScreen header={header} showStripe={false} bottom="none">
       <View style={{ marginTop: 6 }}>
         <GlowzHorizontalRail gap={12}>
           <GlowzChip label="All" selected={!state.cat} onPress={() => ex.setCategory(null)} />
