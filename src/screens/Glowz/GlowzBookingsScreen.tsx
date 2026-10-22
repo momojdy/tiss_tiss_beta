@@ -3,12 +3,14 @@ import { View } from 'react-native';
 import { useGlowzStore } from '../../hooks/Glowz/GlowzStore';
 import { useBookings } from '../../hooks/Glowz/useBookings';
 import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
 import { useGutter } from '../../styles/Glowz/LayoutContext';
 import { GlowzArt } from '../../components/glowz/GlowzArt';
 import { GlowzBookingCard } from '../../components/glowz/GlowzBookingCard';
 import { GlowzButton } from '../../components/glowz/GlowzButton';
 import { GlowzCard } from '../../components/glowz/GlowzCard';
 import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzIconButton } from '../../components/glowz/GlowzIconButton';
 import { GlowzScreen } from '../../components/glowz/GlowzScreen';
 import { GlowzTabs } from '../../components/glowz/GlowzTabs';
 import { GlowzText } from '../../components/glowz/GlowzText';
@@ -24,6 +26,7 @@ const STATUS: Record<BookingsTab, BookingStatus> = { up: 'confirmed', pend: 'pen
 
 export function GlowzBookingsScreen() {
   const g = useGutter();
+  const nav = useGlowzNav();
   const { state, update } = useGlowzStore();
   const { leaveWaitlist } = useBookings();
   const { goSearch } = useGlowzCommands();
@@ -35,7 +38,7 @@ export function GlowzBookingsScreen() {
   const waitlist = t === 'pend' ? state.wl : [];
 
   return (
-    <GlowzScreen header={<View style={{ paddingLeft: g.left, paddingRight: g.right }}><GlowzText kind="display" size={34} accessibilityRole="header">Bookings</GlowzText></View>} bottom="root">
+    <GlowzScreen header={<View style={{ paddingLeft: g.left, paddingRight: g.right, flexDirection: "row", alignItems: "center", gap: 10 }}><GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} size={38} iconSize={20} /><GlowzText kind="display" size={34} accessibilityRole="header">Bookings</GlowzText></View>} bottom="root">
       <View style={{ paddingLeft: g.left, paddingRight: g.right, gap: 14 }}>
         <GlowzTabs tabs={TABS} value={t} onChange={(id) => update((s) => ({ ...s, btab: id }))} />
         {waitlist.map((k) => {
