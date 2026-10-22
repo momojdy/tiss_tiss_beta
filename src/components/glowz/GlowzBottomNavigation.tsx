@@ -2,7 +2,6 @@ import React from 'react';
 import { Pressable, View } from 'react-native';
 import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
 import type { RootTab } from '../../navigation/glowz/GlowzNavigationTypes';
-import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzIcon } from './GlowzIcon';
 import { GlowzText } from './GlowzText';
 
