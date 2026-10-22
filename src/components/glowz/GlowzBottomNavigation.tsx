@@ -14,10 +14,6 @@ const TABS: { id: RootTab; label: string; icon: string }[] = [
   { id: 'me', label: 'Profile', icon: 'user' },
 ];
 
-const NAV_DARK = '#14181B';
-const NAV_MUTED = '#5F6B5A';
-const NAV_GREEN = '#81C56C';
-
 /** Floating five-tab bar styled to match the Wallet home navigation. */
 export function GlowzBottomNavigation() {
   const nav = useGlowzNav();
