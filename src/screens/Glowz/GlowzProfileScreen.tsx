@@ -1,5 +1,5 @@
 import React from 'react';
-import { Image, View } from 'react-native';
+import { Image, View, Pressable } from 'react-native';
 import { useGlowzSheet } from '../../hooks/Glowz/GlowzSheetContext';
 import { useGlowzState } from '../../hooks/Glowz/GlowzStore';
 import { useNotifications } from '../../hooks/Glowz/useNotifications';
@@ -16,7 +16,6 @@ import { GlowzIconButton } from '../../components/glowz/GlowzIconButton';
 import { GlowzScreen } from '../../components/glowz/GlowzScreen';
 import { GlowzText } from '../../components/glowz/GlowzText';
 import { GlowzToggleRow } from '../../components/glowz/GlowzToggleRow';
-import { Pressable } from 'react-native';
 import type { PictureChoice } from '../../types/glowz/state';
 
 /** Cover or avatar: picked image, built-in illustration, or the default illustration. */
@@ -53,13 +52,12 @@ export function GlowzProfileScreen() {
   return (
     <GlowzScreen bottom="root" edgeToEdge>
       <View>
-        <View style={{ height: 132 + Math.max(0, insets.top - 12), backgroundColor: c.tint }}>
+        <View style={{ height: 132 + Math.max(0, insets.top - 12), backgroundColor: c.accent }}>
           <Picture pic={state.cover} fallbackH={350} fallbackIcon="lotus" />
         </View>
         <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} style={{ position: 'absolute', left: Math.max(16, insets.left), top: Math.max(14, insets.top) }} />
         <GlowzIconButton icon="camera" label="Change cover photo" onPress={() => void s.changePicture('cover')} style={{ position: 'absolute', right: Math.max(16, insets.right), top: Math.max(14, insets.top) }} />
       </View>
-      <View style={{ height: 20, backgroundColor: c.sageSoft }} />
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: 14, gap: 18 }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14 }}>
           <View style={{ marginTop: -50 }}>
