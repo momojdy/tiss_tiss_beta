@@ -84,7 +84,7 @@ export function GlowzNavigator() {
           );
         })}
 
-        {rootActive ? (
+        {rootActive && nav.tab !== 'explore' && nav.tab !== 'me' ? (
           <View style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}>
             <GlowzBottomNavigation />
           </View>
