@@ -8,6 +8,8 @@ export type BottomKind = 'root' | 'bar' | 'none';
 interface Props {
   /** Sticky header shown above the scrolling content. */
   header?: React.ReactNode;
+  /** Optional custom background for the sticky header. */
+  headerBackground?: string;
   /** Sticky action bar pinned to the bottom. */
   bar?: React.ReactNode;
   /** Root screens leave room for the bottom navigation. */
@@ -26,7 +28,7 @@ interface Props {
  * optional pinned bar, safe-area padding and keyboard dismissal. Scroll position is kept
  * because screens stay mounted while they are in the stack.
  */
-export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children, contentStyle, edgeToEdge, showStripe = true }: Props) {
+export function GlowzScreen({ header, headerBackground, bar, bottom = 'none', scrollRef, children, contentStyle, edgeToEdge, showStripe = true }: Props) {
   const { c } = useGlowzTheme();
   const insets = useInsets();
   const [scrolled, setScrolled] = useState(false);
@@ -41,7 +43,7 @@ export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children,
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
       {header ? (
-        <View style={{ backgroundColor: c.bg, paddingTop: Math.max(12, insets.top), paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: scrolled ? c.line : 'transparent', zIndex: 20 }}>
+        <View style={{ backgroundColor: headerBackground ?? c.bg, paddingTop: Math.max(12, insets.top), paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: scrolled ? c.line : 'transparent', zIndex: 20 }}>
           {header}
         </View>
       ) : null}
