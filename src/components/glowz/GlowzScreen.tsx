@@ -17,6 +17,8 @@ interface Props {
   contentStyle?: StyleProp<ViewStyle>;
   /** Content starts under the status bar (provider cover). */
   edgeToEdge?: boolean;
+  /** Show the slim theme separator below the screen header. */
+  showStripe?: boolean;
 }
 
 /**
@@ -24,7 +26,7 @@ interface Props {
  * optional pinned bar, safe-area padding and keyboard dismissal. Scroll position is kept
  * because screens stay mounted while they are in the stack.
  */
-export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children, contentStyle, edgeToEdge }: Props) {
+export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children, contentStyle, edgeToEdge, showStripe = true }: Props) {
   const { c } = useGlowzTheme();
   const insets = useInsets();
   const [scrolled, setScrolled] = useState(false);
@@ -52,6 +54,7 @@ export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children,
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[{ paddingBottom: padBottom, paddingTop: !header && !edgeToEdge ? Math.max(12, insets.top) : 0 }, contentStyle]}
       >
+        {showStripe && !header && !edgeToEdge ? <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} /> : null}
         {children}
       </ScrollView>
       {bar ? (
