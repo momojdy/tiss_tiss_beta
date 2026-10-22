@@ -1,4 +1,4 @@
-import type { Provider } from '../types/provider';
+import type { Provider } from '../../types/glowz/provider';
 
 /** Demo catalogue. Replace with a backend query later. */
 export const PROVIDERS: Provider[] = [

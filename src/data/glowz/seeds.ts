@@ -1,7 +1,7 @@
-import type { Booking } from '../types/booking';
-import type { GlowzState, Notification } from '../types/state';
-import { DEFAULT_FILTERS } from '../utils/filtering';
-import { addDays, today } from '../utils/clock';
+import type { Booking } from '../../types/glowz/booking';
+import type { GlowzState, Notification } from '../../types/glowz/state';
+import { DEFAULT_FILTERS } from '../../util/Glowz/filtering';
+import { addDays, today } from '../../util/Glowz/clock';
 
 /** Sample bookings relative to today so "upcoming" always makes sense. */
 export function seedBookings(): Booking[] {

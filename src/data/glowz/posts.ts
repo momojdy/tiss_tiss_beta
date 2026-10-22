@@ -1,4 +1,4 @@
-import type { Post } from '../types/provider';
+import type { Post } from '../../types/glowz/provider';
 
 export const POSTS: Post[] = [
  {
