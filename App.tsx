@@ -57,7 +57,7 @@ import FrenziesGetStreakShieldScreen from './src/screens/Frenzies/FrenziesGetStr
 import FrenziesStreakShieldCheckoutScreen from './src/screens/Frenzies/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
 import BusinessSpaceScreen from './src/features/BusinessSpace/BusinessSpaceStandaloneEntry';
-import { GlowzEntry } from './src/features/glowz/GlowzEntry';
+import { GlowzEntry } from './src/features/Glowz/GlowzStandaloneEntry';
 
 type Screen = 'auth' | 'forgot' | 'reset';
 type AppMode = 'buyer' | 'vendor';

@@ -1,17 +1,17 @@
-/* Pure-logic tests. Run with: npx tsx --test glowz/__tests__/logic.test.ts  (or node --test after transpiling). */
+/* Pure-logic tests. Run with: npx tsx --test src/test/Glowz/logic.test.ts  (or node --test after transpiling). */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { createInitialState } from '../data/seeds';
-import { initialNav, navigationReducer } from '../navigation/navigationReducer';
-import { hoursUntil, nextSlot, slotsFor } from '../utils/availability';
-import { newDraft, resolveStaff, stepHint, stepsFor, rescheduleDraft } from '../utils/bookingDraft';
-import { addDays, today } from '../utils/clock';
-import { DEFAULT_FILTERS, filterPosts, filterProviders, sectionProviders } from '../utils/filtering';
-import { fmtCountdown, fmtD, fmtT, peso } from '../utils/format';
-import { createSnapshot, restoreSnapshot } from '../utils/persistence';
-import { bookingTotals, checkPromo } from '../utils/pricing';
-import { getProvider, minPrice } from '../utils/catalog';
-import { validateProfile } from '../utils/profileValidation';
+import { createInitialState } from '../../data/glowz/seeds';
+import { initialNav, navigationReducer } from '../../navigation/glowz/navigationReducer';
+import { hoursUntil, nextSlot, slotsFor } from '../../util/Glowz/availability';
+import { newDraft, resolveStaff, stepHint, stepsFor, rescheduleDraft } from '../../util/Glowz/bookingDraft';
+import { addDays, today } from '../../util/Glowz/clock';
+import { DEFAULT_FILTERS, filterPosts, filterProviders, sectionProviders } from '../../util/Glowz/filtering';
+import { fmtCountdown, fmtD, fmtT, peso } from '../../util/Glowz/format';
+import { createSnapshot, restoreSnapshot } from '../../util/Glowz/persistence';
+import { bookingTotals, checkPromo } from '../../util/Glowz/pricing';
+import { getProvider, minPrice } from '../../util/Glowz/catalog';
+import { validateProfile } from '../../util/Glowz/profileValidation';
 
 const p1 = getProvider('p1')!;
 const p3 = getProvider('p3')!;

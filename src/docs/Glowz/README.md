@@ -8,7 +8,7 @@ A self-contained, typed React Native implementation of the Glowz beauty-booking 
 
 ## Mount it
 ```tsx
-import { GlowzEntry } from './glowz/GlowzEntry';
+import { GlowzEntry } from '../features/Glowz/GlowzStandaloneEntry';
 
 <GlowzEntry
   storage={asyncStorageAdapter}      // { getItem, setItem, removeItem } -> Promise; optional (in-memory fallback)
@@ -31,7 +31,7 @@ Typography uses `styles/typography.ts`; font files are not included. Load your s
 - `navigation/` typed route union, reducer, context, navigator (tabs, stack, sheets, swipe-back)
 
 ## Tests
-`tsx --test glowz/__tests__/logic.test.ts` (pure logic: pricing, promos, availability, filtering, persistence, validation, nav reducer).
+`tsx --test src/test/Glowz/logic.test.ts` (pure logic: pricing, promos, availability, filtering, persistence, validation, nav reducer).
 
 ## Backend needed for production
 Availability, bookings, payments/deposits, promo validation, chat, notifications, reviews, reports, profile and image upload are all local sample logic.

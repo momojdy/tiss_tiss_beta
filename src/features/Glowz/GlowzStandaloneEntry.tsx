@@ -1,19 +1,19 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View } from 'react-native';
-import { createInitialState } from './data/seeds';
-import { GlowzHost, GlowzHostProvider } from './hooks/GlowzHostContext';
-import { GlowzSheetProvider } from './hooks/GlowzSheetContext';
-import { GlowzStoreProvider, useGlowzState } from './hooks/GlowzStore';
-import { GlowzToastProvider } from './hooks/GlowzToast';
-import { GlowzNavigationProvider } from './navigation/GlowzNavigationContext';
-import type { GlowzNavState } from './navigation/GlowzNavigationTypes';
-import { GlowzNavigator } from './navigation/GlowzNavigator';
-import { GlowzLayoutProvider, Insets } from './styles/LayoutContext';
-import { GlowzThemeProvider } from './styles/ThemeContext';
-import { restoreSnapshot } from './utils/persistence';
-import { createMemoryStorage, GlowzStorage, STATE_KEY } from './utils/storage';
-import { setStorageOk } from './utils/storageStatus';
-import type { GlowzState } from './types/state';
+import { createInitialState } from '../../data/glowz/seeds';
+import { GlowzHost, GlowzHostProvider } from '../../hooks/Glowz/GlowzHostContext';
+import { GlowzSheetProvider } from '../../hooks/Glowz/GlowzSheetContext';
+import { GlowzStoreProvider, useGlowzState } from '../../hooks/Glowz/GlowzStore';
+import { GlowzToastProvider } from '../../hooks/Glowz/GlowzToast';
+import { GlowzNavigationProvider } from '../../navigation/glowz/GlowzNavigationContext';
+import type { GlowzNavState } from '../../navigation/glowz/GlowzNavigationTypes';
+import { GlowzNavigator } from '../../navigation/glowz/GlowzNavigator';
+import { GlowzLayoutProvider, Insets } from '../../styles/Glowz/LayoutContext';
+import { GlowzThemeProvider } from '../../styles/Glowz/ThemeContext';
+import { restoreSnapshot } from '../../util/Glowz/persistence';
+import { createMemoryStorage, GlowzStorage, STATE_KEY } from '../../util/Glowz/storage';
+import { setStorageOk } from '../../util/Glowz/storageStatus';
+import type { GlowzState } from '../../types/glowz/state';
 
 export interface GlowzEntryProps {
   /** Persistent storage (AsyncStorage, MMKV adapter). Defaults to memory: nothing survives a restart. */
