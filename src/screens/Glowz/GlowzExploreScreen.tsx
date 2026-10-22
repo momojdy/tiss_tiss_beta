@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
 import { CATEGORIES } from '../../data/glowz/categories';
 import { useExplore } from '../../hooks/Glowz/useExplore';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
 import { useGlowzSheet } from '../../hooks/Glowz/GlowzSheetContext';
 import { useContentWidth, useGutter } from '../../styles/Glowz/LayoutContext';
 import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
@@ -33,6 +34,7 @@ export function GlowzExploreScreen() {
   const g = useGutter();
   const w = useContentWidth();
   const ex = useExplore();
+  const nav = useGlowzNav();
   const { openSheet } = useGlowzSheet();
   const input = useRef<TextInput>(null);
   const { state } = ex;
@@ -41,7 +43,8 @@ export function GlowzExploreScreen() {
 
   const header = (
     <View style={{ paddingLeft: g.left, paddingRight: g.right, gap: 10 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} size={38} iconSize={20} />
         <GlowzSearchField value={state.q} onChangeText={ex.setQuery} placeholder="Service, salon or area" inputRef={input} />
         <GlowzIconButton icon="filter" label={ex.activeCount ? `Filters, ${ex.activeCount} active` : 'Filters'} size={50} radiusValue={16} dot={ex.activeCount > 0} onPress={() => openSheet({ kind: 'filter' })} />
       </View>
