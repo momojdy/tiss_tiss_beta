@@ -62,6 +62,12 @@ export function GlowzNavigationProvider({ initial, onExit, children }: ProviderP
       dispatch({ type: 'pop' });
       return true;
     }
+    // Root-level back stays inside Glowz unless the user is already on Glowz Home.
+    // Only Glowz Home may hand control back to the host Wantiss app.
+    if (navRef.current.tab !== 'home') {
+      dispatch({ type: 'setTab', tab: 'home' });
+      return true;
+    }
     if (onExit) {
       onExit();
       return true;
