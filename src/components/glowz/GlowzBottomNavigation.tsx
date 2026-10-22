@@ -1,9 +1,9 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import type { RootTab } from '../navigation/GlowzNavigationTypes';
-import { useInsets } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import type { RootTab } from '../../navigation/glowz/GlowzNavigationTypes';
+import { useInsets } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzIcon } from './GlowzIcon';
 import { GlowzText } from './GlowzText';
 
