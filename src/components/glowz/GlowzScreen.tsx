@@ -47,7 +47,7 @@ export function GlowzScreen({ header, headerBackground, bar, bottom = 'none', sc
           {header}
         </View>
       ) : null}
-      {showStripe && header ? <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} /> : null}
+      {showStripe && header ? <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.tint }} /> : null}
       <ScrollView
         ref={scrollRef}
         onScroll={onScroll}
