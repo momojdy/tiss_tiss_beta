@@ -50,7 +50,7 @@ export function GlowzProfileScreen() {
   const s = useProfileSettings();
 
   return (
-    <GlowzScreen bottom="root" edgeToEdge>
+    <GlowzScreen bottom="none" edgeToEdge>
       <View>
         <View style={{ height: 132 + Math.max(0, insets.top - 12), backgroundColor: c.accent }}>
           <Picture pic={state.cover} fallbackH={350} fallbackIcon="lotus" />
