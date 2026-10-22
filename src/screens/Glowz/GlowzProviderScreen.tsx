@@ -87,7 +87,7 @@ export function GlowzProviderScreen({ id, tab = 'svc' }: { id: string; tab?: Pro
         </View>
       </View>
       <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} />
-      <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: -14, gap: 10 }}>
+      <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: -54, gap: 10 }}>
         <View style={{ width: 72, height: 72, borderRadius: 36, borderWidth: 4, borderColor: c.bg, overflow: 'hidden', backgroundColor: c.sageSoft }}>
           <GlowzArt h={p.h} icon={providerIcon(p)} style={{ width: '100%', height: '100%' }} />
         </View>
