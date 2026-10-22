@@ -18,7 +18,7 @@ export function GlowzCard({ children, tone = 'surface', row, gap = 10, style }: 
   return (
     <View
       style={[
-        { backgroundColor: bg, borderRadius: radius.lg, borderWidth: 1, borderColor: tone === 'surface' ? c.line : 'transparent', paddingVertical: 12, paddingHorizontal: 14, gap },
+        { backgroundColor: bg, borderRadius: radius.lg, borderWidth: 0.5, borderColor: tone === 'surface' ? c.line : 'transparent', paddingVertical: 12, paddingHorizontal: 14, gap },
         row && { flexDirection: 'row', alignItems: 'center' },
         style,
       ]}
