@@ -55,7 +55,7 @@ export function GlowzProfileScreen() {
         <View style={{ height: 132 + Math.max(0, insets.top - 12), backgroundColor: c.accent }}>
           <Picture pic={state.cover} fallbackH={350} fallbackIcon="lotus" />
         </View>
-        <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} style={{ position: 'absolute', left: Math.max(16, insets.left), top: Math.max(14, insets.top) }} />
+        <GlowzIconButton icon="back" label="Back" onPress={() => nav.goRoot('home')} style={{ position: 'absolute', left: Math.max(16, insets.left), top: Math.max(14, insets.top) }} />
         <GlowzIconButton icon="camera" label="Change cover photo" onPress={() => void s.changePicture('cover')} style={{ position: 'absolute', right: Math.max(16, insets.right), top: Math.max(14, insets.top) }} />
       </View>
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: 14, gap: 18 }}>
