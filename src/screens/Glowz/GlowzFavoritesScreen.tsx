@@ -7,6 +7,7 @@ import { useGlowzStore } from '../../hooks/Glowz/GlowzStore';
 import { useBookingFlow } from '../../hooks/Glowz/useBookingFlow';
 import { useFavorites } from '../../hooks/Glowz/useFavorites';
 import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
 import { useContentWidth, useGutter } from '../../styles/Glowz/LayoutContext';
 import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzButton } from '../../components/glowz/GlowzButton';
@@ -29,6 +30,7 @@ const TABS: { id: FavoritesTab; label: string }[] = [
 export function GlowzFavoritesScreen() {
   const { c } = useGlowzTheme();
   const g = useGutter();
+  const nav = useGlowzNav();
   const w = useContentWidth();
   const { state, update } = useGlowzStore();
   const fav = useFavorites();
@@ -66,7 +68,7 @@ export function GlowzFavoritesScreen() {
   }
 
   return (
-    <GlowzScreen header={<View style={{ paddingLeft: g.left, paddingRight: g.right }}><GlowzText kind="display" size={34} accessibilityRole="header">Favorites</GlowzText></View>} bottom="root">
+    <GlowzScreen header={<View style={{ paddingLeft: g.left, paddingRight: g.right, flexDirection: "row", alignItems: "center", gap: 10 }}><GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} size={38} iconSize={20} /><GlowzText kind="display" size={34} accessibilityRole="header">Favorites</GlowzText></View>} bottom="root">
       <View style={{ paddingLeft: g.left, paddingRight: g.right, gap: 14 }}>
         <GlowzTabs tabs={TABS} value={state.ftab} onChange={(id) => update((s) => ({ ...s, ftab: id }))} />
         {body}
