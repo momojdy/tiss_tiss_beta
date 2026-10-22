@@ -45,6 +45,7 @@ export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children,
           {header}
         </View>
       ) : null}
+      {showStripe && header ? <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} /> : null}
       <ScrollView
         ref={scrollRef}
         onScroll={onScroll}
@@ -54,7 +55,6 @@ export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children,
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[{ paddingBottom: padBottom, paddingTop: !header && !edgeToEdge ? Math.max(12, insets.top) : 0 }, contentStyle]}
       >
-        {showStripe && !header && !edgeToEdge ? <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} /> : null}
         {children}
       </ScrollView>
       {bar ? (
