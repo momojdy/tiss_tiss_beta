@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -286,7 +287,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'glowz') return <GlowzEntry onExit={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'glowz') return <GlowzEntry storage={AsyncStorage} onExit={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'stayz') return <StayzGuestScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'walletQrRecipient') return walletQrRecipient ? <WalletQRRecipientScreen token={walletQrRecipient.token} recipient={walletQrRecipient.recipient} onBack={() => { setWalletQrRecipient(null); setBuyerScreen('wallet'); }} /> : <AppError title="Wallet recipient unavailable" error="Scan the wallet QR again." />;
       if (buyerScreen === 'profilePrivacy') return <ProfilePrivacyScreen onBack={() => setBuyerScreen(privacyReturnScreen)} />;
