@@ -1,18 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useGlowzState } from '../hooks/GlowzStore';
-import { useBookingFlow } from '../hooks/useBookingFlow';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzCard } from '../components/GlowzCard';
-import { GlowzIcon } from '../components/GlowzIcon';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzText } from '../components/GlowzText';
-import { GlowzTopBar } from '../components/GlowzTopBar';
-import { getProvider } from '../utils/catalog';
-import { fmtD, fmtT } from '../utils/format';
+import { useGlowzState } from '../../hooks/Glowz/GlowzStore';
+import { useBookingFlow } from '../../hooks/Glowz/useBookingFlow';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzCard } from '../../components/glowz/GlowzCard';
+import { GlowzIcon } from '../../components/glowz/GlowzIcon';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
+import { getProvider } from '../../util/Glowz/catalog';
+import { fmtD, fmtT } from '../../util/Glowz/format';
 
 /** Booking completion: reference, summary and where to go next. */
 export function GlowzBookingDoneScreen({ bookingRef }: { bookingRef: string }) {

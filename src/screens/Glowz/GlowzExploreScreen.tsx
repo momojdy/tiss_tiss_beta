@@ -1,26 +1,26 @@
 import React, { useEffect, useRef } from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import { CATEGORIES } from '../data/categories';
-import { useExplore } from '../hooks/useExplore';
-import { useGlowzSheet } from '../hooks/GlowzSheetContext';
-import { useContentWidth, useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzChip } from '../components/GlowzChip';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzHorizontalRail } from '../components/GlowzHorizontalRail';
-import { GlowzIcon } from '../components/GlowzIcon';
-import { GlowzIconButton } from '../components/GlowzIconButton';
-import { GlowzMapView } from '../components/GlowzMapView';
-import { GlowzPostCard } from '../components/GlowzPostCard';
-import { GlowzProviderRow } from '../components/GlowzProviderRow';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzSearchField } from '../components/GlowzSearchBar';
-import { GlowzSegmented } from '../components/GlowzSegmented';
-import { GlowzText } from '../components/GlowzText';
-import { SORT_OPTIONS } from '../components/sheets/GlowzSortSheet';
-import type { ExploreView } from '../types/state';
-import { searchFocusBus } from '../utils/events';
+import { CATEGORIES } from '../../data/glowz/categories';
+import { useExplore } from '../../hooks/Glowz/useExplore';
+import { useGlowzSheet } from '../../hooks/Glowz/GlowzSheetContext';
+import { useContentWidth, useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzChip } from '../../components/glowz/GlowzChip';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzHorizontalRail } from '../../components/glowz/GlowzHorizontalRail';
+import { GlowzIcon } from '../../components/glowz/GlowzIcon';
+import { GlowzIconButton } from '../../components/glowz/GlowzIconButton';
+import { GlowzMapView } from '../../components/glowz/GlowzMapView';
+import { GlowzPostCard } from '../../components/glowz/GlowzPostCard';
+import { GlowzProviderRow } from '../../components/glowz/GlowzProviderRow';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzSearchField } from '../../components/glowz/GlowzSearchBar';
+import { GlowzSegmented } from '../../components/glowz/GlowzSegmented';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { SORT_OPTIONS } from '../../components/glowz/sheets/GlowzSortSheet';
+import type { ExploreView } from '../../types/glowz/state';
+import { searchFocusBus } from '../../util/Glowz/events';
 
 const VIEWS: { id: ExploreView; label: string }[] = [
   { id: 'providers', label: 'List' },

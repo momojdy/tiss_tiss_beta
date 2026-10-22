@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { getProvider } from '../utils/catalog';
+import { getProvider } from '../../util/Glowz/catalog';
 import { useGlowzStore } from './GlowzStore';
 import { useToast } from './GlowzToast';
 import { useChat } from './useChat';

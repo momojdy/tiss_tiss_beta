@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzText } from './GlowzText';
 
 interface Props {

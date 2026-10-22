@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { hoursUntil } from '../utils/availability';
-import { rescheduleDraft } from '../utils/bookingDraft';
-import { peso } from '../utils/format';
-import { savedNote } from '../utils/storageStatus';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { hoursUntil } from '../../util/Glowz/availability';
+import { rescheduleDraft } from '../../util/Glowz/bookingDraft';
+import { peso } from '../../util/Glowz/format';
+import { savedNote } from '../../util/Glowz/storageStatus';
 import { useGlowzSheet } from './GlowzSheetContext';
 import { useGlowzStore } from './GlowzStore';
 import { useToast } from './GlowzToast';

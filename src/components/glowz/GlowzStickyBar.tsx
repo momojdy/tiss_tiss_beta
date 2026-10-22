@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { useGutter, useInsets } from '../styles/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { useGutter, useInsets } from '../../styles/Glowz/LayoutContext';
 
 /** Bottom action bar: price on the left, primary action on the right. */
 export function GlowzStickyBar({ children }: { children: React.ReactNode }) {

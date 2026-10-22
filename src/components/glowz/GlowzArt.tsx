@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
 import Svg, { Circle, Ellipse, G, Path, Rect } from 'react-native-svg';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import type { Tone } from '../styles/colors';
-import { toneOf } from '../utils/tone';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import type { Tone } from '../../styles/Glowz/colors';
+import { toneOf } from '../../util/Glowz/tone';
 
 /**
  * Tonal illustrations standing in for photography (no image assets exist yet).

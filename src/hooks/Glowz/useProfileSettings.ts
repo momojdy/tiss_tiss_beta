@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
-import { createInitialState } from '../data/seeds';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import type { Preferences, ThemeMode } from '../types/state';
-import { ProfileErrors, validateProfile } from '../utils/profileValidation';
-import { STATE_KEY } from '../utils/storage';
-import { savedNote } from '../utils/storageStatus';
+import { createInitialState } from '../../data/glowz/seeds';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import type { Preferences, ThemeMode } from '../../types/glowz/state';
+import { ProfileErrors, validateProfile } from '../../util/Glowz/profileValidation';
+import { STATE_KEY } from '../../util/Glowz/storage';
+import { savedNote } from '../../util/Glowz/storageStatus';
 import { useGlowzHost } from './GlowzHostContext';
 import { useGlowzStore } from './GlowzStore';
 import { useGlowzSheet } from './GlowzSheetContext';

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { getProvider } from '../utils/catalog';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { getProvider } from '../../util/Glowz/catalog';
 import { useGlowzStore } from './GlowzStore';
 import { useToast } from './GlowzToast';
 

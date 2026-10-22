@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { hash } from '../utils/hash';
+import { hash } from '../../util/Glowz/hash';
 
 const N = 21;
 const finder = (x: number, y: number): boolean => (x < 7 && y < 7) || (x >= N - 7 && y < 7) || (x < 7 && y >= N - 7);

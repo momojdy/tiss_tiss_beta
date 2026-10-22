@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleProp, ViewStyle } from 'react-native';
-import { useGutter } from '../styles/LayoutContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
 
 interface Props {
   children: React.ReactNode;

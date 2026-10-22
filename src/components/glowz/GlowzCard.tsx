@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { radius } from '../styles/tokens';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { radius } from '../../styles/Glowz/tokens';
 
 interface Props {
   children: React.ReactNode;

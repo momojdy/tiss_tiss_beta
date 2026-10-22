@@ -1,11 +1,11 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { PRICE, STARTING } from '../data/prices';
-import { useFavorites } from '../hooks/useFavorites';
-import { useBookingFlow } from '../hooks/useBookingFlow';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import type { Provider, Service } from '../types/provider';
-import { peso } from '../utils/format';
+import { PRICE, STARTING } from '../../data/glowz/prices';
+import { useFavorites } from '../../hooks/Glowz/useFavorites';
+import { useBookingFlow } from '../../hooks/Glowz/useBookingFlow';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import type { Provider, Service } from '../../types/glowz/provider';
+import { peso } from '../../util/Glowz/format';
 import { GlowzBadge } from './GlowzBadge';
 import { GlowzCard } from './GlowzCard';
 import { GlowzIconButton } from './GlowzIconButton';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleProp, View, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzText } from './GlowzText';
 
 export type BadgeTone = 'default' | 'ok' | 'warn' | 'bad' | 'mute';

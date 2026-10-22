@@ -1,17 +1,17 @@
 import React from 'react';
-import { GlowzBookingDetailScreen } from '../screens/GlowzBookingDetailScreen';
-import { GlowzBookingFlowScreen } from '../screens/GlowzBookingFlowScreen';
-import { GlowzBookingsScreen } from '../screens/GlowzBookingsScreen';
-import { GlowzChatListScreen } from '../screens/GlowzChatListScreen';
-import { GlowzChatScreen } from '../screens/GlowzChatScreen';
-import { GlowzExploreScreen } from '../screens/GlowzExploreScreen';
-import { GlowzFavoritesScreen } from '../screens/GlowzFavoritesScreen';
-import { GlowzHomeScreen } from '../screens/GlowzHomeScreen';
-import { GlowzNotificationsScreen } from '../screens/GlowzNotificationsScreen';
-import { GlowzProfileScreen } from '../screens/GlowzProfileScreen';
-import { GlowzProviderScreen } from '../screens/GlowzProviderScreen';
-import { GlowzRecentScreen } from '../screens/GlowzRecentScreen';
-import { GlowzSectionListScreen } from '../screens/GlowzSectionListScreen';
+import { GlowzBookingDetailScreen } from '../../screens/Glowz/GlowzBookingDetailScreen';
+import { GlowzBookingFlowScreen } from '../../screens/Glowz/GlowzBookingFlowScreen';
+import { GlowzBookingsScreen } from '../../screens/Glowz/GlowzBookingsScreen';
+import { GlowzChatListScreen } from '../../screens/Glowz/GlowzChatListScreen';
+import { GlowzChatScreen } from '../../screens/Glowz/GlowzChatScreen';
+import { GlowzExploreScreen } from '../../screens/Glowz/GlowzExploreScreen';
+import { GlowzFavoritesScreen } from '../../screens/Glowz/GlowzFavoritesScreen';
+import { GlowzHomeScreen } from '../../screens/Glowz/GlowzHomeScreen';
+import { GlowzNotificationsScreen } from '../../screens/Glowz/GlowzNotificationsScreen';
+import { GlowzProfileScreen } from '../../screens/Glowz/GlowzProfileScreen';
+import { GlowzProviderScreen } from '../../screens/Glowz/GlowzProviderScreen';
+import { GlowzRecentScreen } from '../../screens/Glowz/GlowzRecentScreen';
+import { GlowzSectionListScreen } from '../../screens/Glowz/GlowzSectionListScreen';
 import type { GlowzRoute, RootTab } from './GlowzNavigationTypes';
 
 export function RootTabView({ tab }: { tab: RootTab }) {

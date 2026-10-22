@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleProp, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { radius, size } from '../styles/tokens';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { radius, size } from '../../styles/Glowz/tokens';
 import { GlowzText } from './GlowzText';
 
 interface Props {

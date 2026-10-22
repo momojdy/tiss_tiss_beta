@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useReducer, useRef } from 'react';
-import { useGlowzSheet } from '../hooks/GlowzSheetContext';
+import { useGlowzSheet } from '../../hooks/Glowz/GlowzSheetContext';
 import type { GlowzNavState, GlowzRoute, ProviderTab, RootTab } from './GlowzNavigationTypes';
 import { initialNav, navigationReducer } from './navigationReducer';
 

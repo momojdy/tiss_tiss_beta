@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { createSnapshot } from '../utils/persistence';
-import { setStorageOk } from '../utils/storageStatus';
-import { STATE_KEY, THEME_KEY } from '../utils/storage';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { createSnapshot } from '../../util/Glowz/persistence';
+import { setStorageOk } from '../../util/Glowz/storageStatus';
+import { STATE_KEY, THEME_KEY } from '../../util/Glowz/storage';
 import { useGlowzHost } from './GlowzHostContext';
 import { useGlowzState } from './GlowzStore';
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, StyleProp, View, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzIcon } from './GlowzIcon';
 
 interface Props {

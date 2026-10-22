@@ -1,8 +1,8 @@
 import React from 'react';
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { useGutter, useInsets } from '../styles/LayoutContext';
-import { radius, size } from '../styles/tokens';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { useGutter, useInsets } from '../../styles/Glowz/LayoutContext';
+import { radius, size } from '../../styles/Glowz/tokens';
 import { GlowzIconButton } from './GlowzIconButton';
 import { GlowzText } from './GlowzText';
 

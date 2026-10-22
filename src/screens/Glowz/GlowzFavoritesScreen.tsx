@@ -1,26 +1,26 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { PRICE } from '../data/prices';
-import { POSTS } from '../data/posts';
-import { PROVIDERS } from '../data/providers';
-import { useGlowzStore } from '../hooks/GlowzStore';
-import { useBookingFlow } from '../hooks/useBookingFlow';
-import { useFavorites } from '../hooks/useFavorites';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useContentWidth, useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzCard } from '../components/GlowzCard';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzIconButton } from '../components/GlowzIconButton';
-import { GlowzPostCard } from '../components/GlowzPostCard';
-import { GlowzProviderRow } from '../components/GlowzProviderRow';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzTabs } from '../components/GlowzTabs';
-import { GlowzText } from '../components/GlowzText';
-import type { FavoritesTab } from '../types/state';
-import { getServiceById } from '../utils/catalog';
-import { peso } from '../utils/format';
+import { PRICE } from '../../data/glowz/prices';
+import { POSTS } from '../../data/glowz/posts';
+import { PROVIDERS } from '../../data/glowz/providers';
+import { useGlowzStore } from '../../hooks/Glowz/GlowzStore';
+import { useBookingFlow } from '../../hooks/Glowz/useBookingFlow';
+import { useFavorites } from '../../hooks/Glowz/useFavorites';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useContentWidth, useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzCard } from '../../components/glowz/GlowzCard';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzIconButton } from '../../components/glowz/GlowzIconButton';
+import { GlowzPostCard } from '../../components/glowz/GlowzPostCard';
+import { GlowzProviderRow } from '../../components/glowz/GlowzProviderRow';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzTabs } from '../../components/glowz/GlowzTabs';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import type { FavoritesTab } from '../../types/glowz/state';
+import { getServiceById } from '../../util/Glowz/catalog';
+import { peso } from '../../util/Glowz/format';
 
 const TABS: { id: FavoritesTab; label: string }[] = [
   { id: 'p', label: 'Professionals' }, { id: 's', label: 'Services' }, { id: 'x', label: 'Inspiration' },

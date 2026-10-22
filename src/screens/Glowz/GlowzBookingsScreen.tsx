@@ -1,21 +1,21 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useGlowzStore } from '../hooks/GlowzStore';
-import { useBookings } from '../hooks/useBookings';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useGutter } from '../styles/LayoutContext';
-import { GlowzArt } from '../components/GlowzArt';
-import { GlowzBookingCard } from '../components/GlowzBookingCard';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzCard } from '../components/GlowzCard';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzTabs } from '../components/GlowzTabs';
-import { GlowzText } from '../components/GlowzText';
-import type { BookingStatus } from '../types/booking';
-import type { BookingsTab } from '../types/state';
-import { getProvider, providerIcon } from '../utils/catalog';
-import { fmtD } from '../utils/format';
+import { useGlowzStore } from '../../hooks/Glowz/GlowzStore';
+import { useBookings } from '../../hooks/Glowz/useBookings';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { GlowzArt } from '../../components/glowz/GlowzArt';
+import { GlowzBookingCard } from '../../components/glowz/GlowzBookingCard';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzCard } from '../../components/glowz/GlowzCard';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzTabs } from '../../components/glowz/GlowzTabs';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import type { BookingStatus } from '../../types/glowz/booking';
+import type { BookingsTab } from '../../types/glowz/state';
+import { getProvider, providerIcon } from '../../util/Glowz/catalog';
+import { fmtD } from '../../util/Glowz/format';
 
 const TABS: { id: BookingsTab; label: string }[] = [
   { id: 'up', label: 'Upcoming' }, { id: 'pend', label: 'Pending' }, { id: 'done', label: 'Completed' }, { id: 'canc', label: 'Cancelled' },

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
-import { useGlowzTheme } from '../styles/ThemeContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { GlowzText } from './GlowzText';
 
 const STAR_D = 'M12 2.8l2.8 5.9 6.4.9-4.7 4.5 1.2 6.4L12 17.3 6.3 20.5l1.2-6.4L2.8 9.6l6.4-.9z';

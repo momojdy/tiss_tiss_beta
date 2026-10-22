@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { LayoutChangeEvent, Pressable, View } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import type { Provider } from '../types/provider';
-import { minPrice } from '../utils/catalog';
-import { peso } from '../utils/format';
-import { hash } from '../utils/hash';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import type { Provider } from '../../types/glowz/provider';
+import { minPrice } from '../../util/Glowz/catalog';
+import { peso } from '../../util/Glowz/format';
+import { hash } from '../../util/Glowz/hash';
 import { GlowzText } from './GlowzText';
 
 const CELL = 90;

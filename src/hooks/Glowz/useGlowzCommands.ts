@@ -1,9 +1,9 @@
 import { useCallback } from 'react';
-import { BANNERS } from '../data/banners';
-import { HOME_SECTIONS } from '../data/sections';
-import { POSTS } from '../data/posts';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { searchFocusBus } from '../utils/events';
+import { BANNERS } from '../../data/glowz/banners';
+import { HOME_SECTIONS } from '../../data/glowz/sections';
+import { POSTS } from '../../data/glowz/posts';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { searchFocusBus } from '../../util/Glowz/events';
 import { useGlowzHost } from './GlowzHostContext';
 import { useGlowzStore } from './GlowzStore';
 import { useToast } from './GlowzToast';

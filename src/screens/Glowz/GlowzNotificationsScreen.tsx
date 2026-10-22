@@ -1,14 +1,14 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { useNotifications } from '../hooks/useNotifications';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzCard } from '../components/GlowzCard';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzText } from '../components/GlowzText';
-import { GlowzTopBar } from '../components/GlowzTopBar';
+import { useNotifications } from '../../hooks/Glowz/useNotifications';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzCard } from '../../components/glowz/GlowzCard';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
 
 export function GlowzNotificationsScreen() {
   const { c } = useGlowzTheme();

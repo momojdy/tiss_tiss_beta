@@ -1,18 +1,18 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { useGlowzState } from '../hooks/GlowzStore';
-import { useProfileSettings } from '../hooks/useProfileSettings';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzProviderRow } from '../components/GlowzProviderRow';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzText } from '../components/GlowzText';
-import { GlowzTopBar } from '../components/GlowzTopBar';
-import { getProvider } from '../utils/catalog';
+import { useGlowzState } from '../../hooks/Glowz/GlowzStore';
+import { useProfileSettings } from '../../hooks/Glowz/useProfileSettings';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzProviderRow } from '../../components/glowz/GlowzProviderRow';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
+import { getProvider } from '../../util/Glowz/catalog';
 
 export function GlowzRecentScreen() {
   const { c } = useGlowzTheme();

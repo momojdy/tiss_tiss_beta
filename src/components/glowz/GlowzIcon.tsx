@@ -1,7 +1,7 @@
 import React from 'react';
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
-import { ICON_SHAPES } from '../data/iconPaths';
-import type { GlowzIconName } from '../data/iconPaths';
+import { ICON_SHAPES } from '../../data/glowz/iconPaths';
+import type { GlowzIconName } from '../../data/glowz/iconPaths';
 
 interface Props {
   name: GlowzIconName | string;

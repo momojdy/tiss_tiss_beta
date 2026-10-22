@@ -1,18 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
-import { useChat } from '../hooks/useChat';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { useGutter } from '../styles/LayoutContext';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzStickyBar } from '../components/GlowzStickyBar';
-import { GlowzText } from '../components/GlowzText';
-import { GlowzTextField } from '../components/GlowzTextField';
-import { GlowzTopBar } from '../components/GlowzTopBar';
-import type { ChatMessage } from '../types/state';
-import { getProvider } from '../utils/catalog';
+import { useChat } from '../../hooks/Glowz/useChat';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzStickyBar } from '../../components/glowz/GlowzStickyBar';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { GlowzTextField } from '../../components/glowz/GlowzTextField';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
+import type { ChatMessage } from '../../types/glowz/state';
+import { getProvider } from '../../util/Glowz/catalog';
 
 const WELCOME: ChatMessage[] = [{ me: 0, auto: 1, t: 'Hi! Ask us anything about your booking.' }];
 

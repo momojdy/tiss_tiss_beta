@@ -1,20 +1,20 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { PROVIDERS } from '../data/providers';
-import { useGlowzState } from '../hooks/GlowzStore';
-import { useChat } from '../hooks/useChat';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { useGutter } from '../styles/LayoutContext';
-import { GlowzArt } from '../components/GlowzArt';
-import { GlowzBadge } from '../components/GlowzBadge';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzCard } from '../components/GlowzCard';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzText } from '../components/GlowzText';
-import { GlowzTopBar } from '../components/GlowzTopBar';
-import { providerIcon } from '../utils/catalog';
+import { PROVIDERS } from '../../data/glowz/providers';
+import { useGlowzState } from '../../hooks/Glowz/GlowzStore';
+import { useChat } from '../../hooks/Glowz/useChat';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { GlowzArt } from '../../components/glowz/GlowzArt';
+import { GlowzBadge } from '../../components/glowz/GlowzBadge';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzCard } from '../../components/glowz/GlowzCard';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzText } from '../../components/glowz/GlowzText';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
+import { providerIcon } from '../../util/Glowz/catalog';
 
 export function GlowzChatListScreen() {
   const g = useGutter();

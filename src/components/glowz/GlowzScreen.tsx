@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleProp, View, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { useInsets } from '../styles/LayoutContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { useInsets } from '../../styles/Glowz/LayoutContext';
 
 export type BottomKind = 'root' | 'bar' | 'none';
 

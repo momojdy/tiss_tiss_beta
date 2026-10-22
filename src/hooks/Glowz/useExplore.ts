@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
-import type { ExploreView, Filters, SortKey } from '../types/state';
-import { DEFAULT_FILTERS, activeFilterCount, filterPosts, filterProviders } from '../utils/filtering';
+import type { ExploreView, Filters, SortKey } from '../../types/glowz/state';
+import { DEFAULT_FILTERS, activeFilterCount, filterPosts, filterProviders } from '../../util/Glowz/filtering';
 import { useGlowzStore } from './GlowzStore';
 import { useGlowzSheet } from './GlowzSheetContext';
 

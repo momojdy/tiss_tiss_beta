@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { radius, size as sz } from '../styles/tokens';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { radius, size as sz } from '../../styles/Glowz/tokens';
 import { GlowzText } from './GlowzText';
 
 export type ButtonVariant = 'primary' | 'ghost' | 'soft' | 'sage' | 'danger';

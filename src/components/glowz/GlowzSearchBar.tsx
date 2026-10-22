@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, TextInput, View } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { bodyFont } from '../styles/typography';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { bodyFont } from '../../styles/Glowz/typography';
 import { GlowzIcon } from './GlowzIcon';
 import { GlowzIconButton } from './GlowzIconButton';
 import { GlowzText } from './GlowzText';
