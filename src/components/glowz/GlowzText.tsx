@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, Text, TextProps, TextStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { bodyFont, displayFont } from '../styles/typography';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { bodyFont, displayFont } from '../../styles/Glowz/typography';
 
 export type TextKind = 'body' | 'small' | 'tiny' | 'display';
 

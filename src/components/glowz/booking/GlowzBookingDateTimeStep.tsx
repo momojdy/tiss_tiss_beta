@@ -1,20 +1,20 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import type { BookingFlow } from '../../hooks/useBookingFlow';
-import { useContentWidth, useGutter } from '../../styles/LayoutContext';
-import { useGlowzTheme } from '../../styles/ThemeContext';
-import type { BookingDraft } from '../../types/booking';
-import type { Provider } from '../../types/provider';
-import { resolveStaff } from '../../utils/bookingDraft';
-import { sameDay } from '../../utils/clock';
-import { fmtD, fmtT, monthShort, weekdayShort } from '../../utils/format';
-import { bookingTotals } from '../../utils/pricing';
+import type { BookingFlow } from '../../../hooks/Glowz/useBookingFlow';
+import { useContentWidth, useGutter } from '../../../styles/Glowz/LayoutContext';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
+import type { BookingDraft } from '../../../types/glowz/booking';
+import type { Provider } from '../../../types/glowz/provider';
+import { resolveStaff } from '../../../util/Glowz/bookingDraft';
+import { sameDay } from '../../../util/Glowz/clock';
+import { fmtD, fmtT, monthShort, weekdayShort } from '../../../util/Glowz/format';
+import { bookingTotals } from '../../../util/Glowz/pricing';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzBadge } from '../GlowzBadge';
 import { GlowzCard } from '../GlowzCard';
 import { GlowzHorizontalRail } from '../GlowzHorizontalRail';
 import { GlowzText } from '../GlowzText';
-import type { Booking } from '../../types/booking';
+import type { Booking } from '../../../types/glowz/booking';
 
 interface Props { draft: BookingDraft; provider: Provider; flow: BookingFlow; bookings: Booking[]; onWaitlisted: string[] }
 

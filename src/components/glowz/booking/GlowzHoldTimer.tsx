@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
-import { fmtCountdown } from '../../utils/format';
+import { fmtCountdown } from '../../../util/Glowz/format';
 import { GlowzText } from '../GlowzText';
 
 /** Sample five minute slot hold. Nothing is reserved; expiry sends the customer back to pick a time. */

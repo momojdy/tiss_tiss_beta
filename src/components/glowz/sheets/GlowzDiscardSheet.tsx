@@ -1,6 +1,6 @@
 import React from 'react';
-import { useBookingFlow } from '../../hooks/useBookingFlow';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
+import { useBookingFlow } from '../../../hooks/Glowz/useBookingFlow';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzSheet } from '../GlowzSheet';
 import { GlowzText } from '../GlowzText';

@@ -1,15 +1,15 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useGlowzState } from '../hooks/GlowzStore';
-import { useGlowzCommands } from '../hooks/useGlowzCommands';
-import { useGlowzNav } from '../navigation/GlowzNavigationContext';
-import { useGutter } from '../styles/LayoutContext';
-import { GlowzButton } from '../components/GlowzButton';
-import { GlowzEmptyState } from '../components/GlowzEmptyState';
-import { GlowzProviderRow } from '../components/GlowzProviderRow';
-import { GlowzScreen } from '../components/GlowzScreen';
-import { GlowzTopBar } from '../components/GlowzTopBar';
-import { sectionProviders } from '../utils/filtering';
+import { useGlowzState } from '../../hooks/Glowz/GlowzStore';
+import { useGlowzCommands } from '../../hooks/Glowz/useGlowzCommands';
+import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
+import { GlowzButton } from '../../components/glowz/GlowzButton';
+import { GlowzEmptyState } from '../../components/glowz/GlowzEmptyState';
+import { GlowzProviderRow } from '../../components/glowz/GlowzProviderRow';
+import { GlowzScreen } from '../../components/glowz/GlowzScreen';
+import { GlowzTopBar } from '../../components/glowz/GlowzTopBar';
+import { sectionProviders } from '../../util/Glowz/filtering';
 
 /** "See all" for a Home section. */
 export function GlowzSectionListScreen({ id, title }: { id: string; title: string }) {

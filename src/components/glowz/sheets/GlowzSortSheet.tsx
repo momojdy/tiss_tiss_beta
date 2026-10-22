@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useExplore } from '../../hooks/useExplore';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import type { SortKey } from '../../types/state';
+import { useExplore } from '../../../hooks/Glowz/useExplore';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import type { SortKey } from '../../../types/glowz/state';
 import { GlowzOptionRow } from '../GlowzOptionRow';
 import { GlowzSheet } from '../GlowzSheet';
 import { GlowzText } from '../GlowzText';

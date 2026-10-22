@@ -1,6 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useGutter } from '../styles/LayoutContext';
+import { useGutter } from '../../styles/Glowz/LayoutContext';
 import { GlowzIconButton } from './GlowzIconButton';
 import { GlowzText } from './GlowzText';
 

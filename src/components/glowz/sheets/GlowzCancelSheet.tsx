@@ -1,9 +1,9 @@
 import React from 'react';
-import { useGlowzState } from '../../hooks/GlowzStore';
-import { useBookings } from '../../hooks/useBookings';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { hoursUntil } from '../../utils/availability';
-import { fmtD, fmtT, peso } from '../../utils/format';
+import { useGlowzState } from '../../../hooks/Glowz/GlowzStore';
+import { useBookings } from '../../../hooks/Glowz/useBookings';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { hoursUntil } from '../../../util/Glowz/availability';
+import { fmtD, fmtT, peso } from '../../../util/Glowz/format';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzCard } from '../GlowzCard';
 import { GlowzSheet } from '../GlowzSheet';

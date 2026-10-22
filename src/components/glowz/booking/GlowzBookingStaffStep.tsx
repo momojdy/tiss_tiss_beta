@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import type { BookingFlow } from '../../hooks/useBookingFlow';
-import type { BookingDraft } from '../../types/booking';
-import type { Provider } from '../../types/provider';
+import type { BookingFlow } from '../../../hooks/Glowz/useBookingFlow';
+import type { BookingDraft } from '../../../types/glowz/booking';
+import type { Provider } from '../../../types/glowz/provider';
 import { GlowzArt } from '../GlowzArt';
 import { GlowzOptionRow } from '../GlowzOptionRow';
 import { GlowzText } from '../GlowzText';

@@ -1,10 +1,10 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
-import { PORTFOLIO_HUES } from '../../data/portfolio';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { useContentWidth, useGutter } from '../../styles/LayoutContext';
-import type { Provider } from '../../types/provider';
-import { categoryIcon } from '../../utils/catalog';
+import { PORTFOLIO_HUES } from '../../../data/glowz/portfolio';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { useContentWidth, useGutter } from '../../../styles/Glowz/LayoutContext';
+import type { Provider } from '../../../types/glowz/provider';
+import { categoryIcon } from '../../../util/Glowz/catalog';
 import { GlowzArt } from '../GlowzArt';
 import { GlowzText } from '../GlowzText';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleProp, TextInput, TextInputProps, TextStyle } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { bodyFont } from '../styles/typography';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { bodyFont } from '../../styles/Glowz/typography';
 
 interface Props extends TextInputProps {
   focused?: boolean;

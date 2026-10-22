@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { useBookings } from '../../hooks/useBookings';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { getProvider } from '../../utils/catalog';
+import { useBookings } from '../../../hooks/Glowz/useBookings';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { getProvider } from '../../../util/Glowz/catalog';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzOptionRow } from '../GlowzOptionRow';
 import { GlowzSheet } from '../GlowzSheet';

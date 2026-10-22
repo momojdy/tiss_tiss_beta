@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useChat } from '../../hooks/useChat';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { useGlowzTheme } from '../../styles/ThemeContext';
-import type { Provider } from '../../types/provider';
+import { useChat } from '../../../hooks/Glowz/useChat';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
+import type { Provider } from '../../../types/glowz/provider';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzCard } from '../GlowzCard';
 import { GlowzIcon } from '../GlowzIcon';

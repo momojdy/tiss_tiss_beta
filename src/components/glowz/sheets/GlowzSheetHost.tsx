@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
 import { GlowzAreaSheet } from './GlowzAreaSheet';
 import { GlowzCancelSheet } from './GlowzCancelSheet';
 import { GlowzDiscardSheet } from './GlowzDiscardSheet';

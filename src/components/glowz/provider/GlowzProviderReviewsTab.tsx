@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import { REVIEWS } from '../../data/reviews';
-import { useGlowzTheme } from '../../styles/ThemeContext';
-import type { Provider } from '../../types/provider';
+import { REVIEWS } from '../../../data/glowz/reviews';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
+import type { Provider } from '../../../types/glowz/provider';
 import { GlowzBadge } from '../GlowzBadge';
 import { GlowzCard } from '../GlowzCard';
 import { GlowzStarRow } from '../GlowzStars';

@@ -1,10 +1,10 @@
 import React from 'react';
 import { View } from 'react-native';
-import { PRICE } from '../../data/prices';
-import type { BookingFlow } from '../../hooks/useBookingFlow';
-import type { BookingDraft } from '../../types/booking';
-import type { Provider } from '../../types/provider';
-import { peso } from '../../utils/format';
+import { PRICE } from '../../../data/glowz/prices';
+import type { BookingFlow } from '../../../hooks/Glowz/useBookingFlow';
+import type { BookingDraft } from '../../../types/glowz/booking';
+import type { Provider } from '../../../types/glowz/provider';
+import { peso } from '../../../util/Glowz/format';
 import { GlowzChip } from '../GlowzChip';
 import { GlowzOptionRow } from '../GlowzOptionRow';
 import { GlowzText } from '../GlowzText';

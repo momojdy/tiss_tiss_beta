@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View } from 'react-native';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { useProfileSettings } from '../../hooks/useProfileSettings';
-import type { ProfileErrors } from '../../utils/profileValidation';
-import { useGlowzTheme } from '../../styles/ThemeContext';
-import { savedNote } from '../../utils/storageStatus';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { useProfileSettings } from '../../../hooks/Glowz/useProfileSettings';
+import type { ProfileErrors } from '../../../util/Glowz/profileValidation';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
+import { savedNote } from '../../../util/Glowz/storageStatus';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzSheet } from '../GlowzSheet';
 import { GlowzText } from '../GlowzText';

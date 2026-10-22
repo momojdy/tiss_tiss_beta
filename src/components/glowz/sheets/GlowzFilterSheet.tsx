@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useExplore } from '../../hooks/useExplore';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import type { Filters } from '../../types/state';
+import { useExplore } from '../../../hooks/Glowz/useExplore';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import type { Filters } from '../../../types/glowz/state';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzChip } from '../GlowzChip';
 import { GlowzSheet } from '../GlowzSheet';

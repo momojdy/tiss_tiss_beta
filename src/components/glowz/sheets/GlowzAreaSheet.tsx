@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { AREAS } from '../../data/areas';
-import { useGlowzStore } from '../../hooks/GlowzStore';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { useToast } from '../../hooks/GlowzToast';
+import { AREAS } from '../../../data/glowz/areas';
+import { useGlowzStore } from '../../../hooks/Glowz/GlowzStore';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { useToast } from '../../../hooks/Glowz/GlowzToast';
 import { GlowzOptionRow } from '../GlowzOptionRow';
 import { GlowzSheet } from '../GlowzSheet';
 import { GlowzText } from '../GlowzText';

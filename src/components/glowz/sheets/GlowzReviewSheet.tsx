@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { useBookings } from '../../hooks/useBookings';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { useGlowzTheme } from '../../styles/ThemeContext';
+import { useBookings } from '../../../hooks/Glowz/useBookings';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzSheet } from '../GlowzSheet';
 import { StarGlyph } from '../GlowzStars';

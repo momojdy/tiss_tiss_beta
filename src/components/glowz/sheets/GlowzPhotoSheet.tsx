@@ -1,8 +1,8 @@
 import React from 'react';
-import { useBookingFlow } from '../../hooks/useBookingFlow';
-import { useGlowzSheet } from '../../hooks/GlowzSheetContext';
-import { PORTFOLIO_HUES } from '../../data/portfolio';
-import { categoryIcon, getProvider } from '../../utils/catalog';
+import { useBookingFlow } from '../../../hooks/Glowz/useBookingFlow';
+import { useGlowzSheet } from '../../../hooks/Glowz/GlowzSheetContext';
+import { PORTFOLIO_HUES } from '../../../data/glowz/portfolio';
+import { categoryIcon, getProvider } from '../../../util/Glowz/catalog';
 import { GlowzArt } from '../GlowzArt';
 import { GlowzButton } from '../GlowzButton';
 import { GlowzSheet } from '../GlowzSheet';

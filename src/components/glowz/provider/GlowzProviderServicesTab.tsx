@@ -1,9 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
-import { PROMOS } from '../../data/promos';
-import { useGlowzTheme } from '../../styles/ThemeContext';
-import type { Provider, Service } from '../../types/provider';
-import { categoryName } from '../../utils/catalog';
+import { PROMOS } from '../../../data/glowz/promos';
+import { useGlowzTheme } from '../../../styles/Glowz/ThemeContext';
+import type { Provider, Service } from '../../../types/glowz/provider';
+import { categoryName } from '../../../util/Glowz/catalog';
 import { GlowzCard } from '../GlowzCard';
 import { GlowzServiceRow } from '../GlowzServiceRow';
 import { GlowzText } from '../GlowzText';
