@@ -14,13 +14,10 @@ import { GlowzCard } from '../../components/glowz/GlowzCard';
 import { GlowzIcon } from '../../components/glowz/GlowzIcon';
 import { GlowzIconButton } from '../../components/glowz/GlowzIconButton';
 import { GlowzScreen } from '../../components/glowz/GlowzScreen';
-import { GlowzSegmented } from '../../components/glowz/GlowzSegmented';
 import { GlowzText } from '../../components/glowz/GlowzText';
 import { GlowzToggleRow } from '../../components/glowz/GlowzToggleRow';
 import { Pressable } from 'react-native';
-import type { PictureChoice, ThemeMode } from '../../types/glowz/state';
-
-const THEMES: { id: ThemeMode; label: string }[] = [{ id: 'light', label: 'Light' }, { id: 'dark', label: 'Dark' }];
+import type { PictureChoice } from '../../types/glowz/state';
 
 /** Cover or avatar: picked image, built-in illustration, or the default illustration. */
 function Picture({ pic, fallbackH, fallbackIcon }: { pic: PictureChoice; fallbackH: number; fallbackIcon: string }) {
@@ -31,16 +28,14 @@ function Picture({ pic, fallbackH, fallbackIcon }: { pic: PictureChoice; fallbac
 function Row({ title, subtitle, onPress, right, icon }: { title: string; subtitle?: string; onPress: () => void; right?: React.ReactNode; icon?: string }) {
   const { c } = useGlowzTheme();
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title}>
-      <GlowzCard row>
-        {icon ? <GlowzIcon name={icon} size={22} color={c.ink} /> : null}
-        <View style={{ flex: 1 }}>
-          <GlowzText weight={600}>{title}</GlowzText>
-          {subtitle ? <GlowzText kind="small" muted>{subtitle}</GlowzText> : null}
-        </View>
-        {right}
-        <GlowzText muted>›</GlowzText>
-      </GlowzCard>
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: c.line }}>
+      {icon ? <GlowzIcon name={icon} size={22} color={c.ink} /> : null}
+      <View style={{ flex: 1 }}>
+        <GlowzText weight={600}>{title}</GlowzText>
+        {subtitle ? <GlowzText kind="small" muted>{subtitle}</GlowzText> : null}
+      </View>
+      {right}
+      <GlowzText muted>›</GlowzText>
     </Pressable>
   );
 }
@@ -61,6 +56,7 @@ export function GlowzProfileScreen() {
         <View style={{ height: 132 + Math.max(0, insets.top - 12), backgroundColor: c.tint }}>
           <Picture pic={state.cover} fallbackH={350} fallbackIcon="lotus" />
         </View>
+        <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} style={{ position: 'absolute', left: Math.max(16, insets.left), top: Math.max(14, insets.top) }} />
         <GlowzIconButton icon="camera" label="Change cover photo" onPress={() => void s.changePicture('cover')} style={{ position: 'absolute', right: Math.max(16, insets.right), top: Math.max(14, insets.top) }} />
       </View>
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: 14, gap: 18 }}>
@@ -79,14 +75,6 @@ export function GlowzProfileScreen() {
         </View>
         <GlowzText kind="small" muted>Sign-in and account security are handled by Wantiss and are not part of this prototype.</GlowzText>
 
-        <GlowzCard gap={12}>
-          <View>
-            <GlowzText weight={600}>Appearance</GlowzText>
-            <GlowzText kind="small" muted>Glowz opens in light by default</GlowzText>
-          </View>
-          <GlowzSegmented options={THEMES} value={s.theme} onChange={s.setTheme} />
-        </GlowzCard>
-
         <GlowzCard tone="sage" row>
           <GlowzIcon name="gift" size={26} color={c.sageInk} />
           <View style={{ flex: 1 }}>
@@ -96,16 +84,18 @@ export function GlowzProfileScreen() {
           <GlowzButton small variant="sage" label="Copy" onPress={s.copyReferral} style={{ backgroundColor: c.surface }} />
         </GlowzCard>
 
-        <GlowzCard gap={16}>
+        <View style={{ gap: 16 }}>
           <GlowzText weight={600}>Notifications</GlowzText>
           <GlowzToggleRow title="Booking and payment" subtitle="Always on. Confirmations, changes, receipts and refunds." value locked />
           <GlowzToggleRow title="Appointment reminders" subtitle="24 hours and 2 hours before" value={s.prefs.reminders} onToggle={() => s.togglePref('reminders')} />
           <GlowzToggleRow title="Updates from professionals you follow" value={s.prefs.follow} onToggle={() => s.togglePref('follow')} />
           <GlowzToggleRow title="Offers and promotions" subtitle="Separate from booking alerts" value={s.prefs.promo} onToggle={() => s.togglePref('promo')} />
           <GlowzText kind="small" muted>Demo settings. This prototype never sends real notifications.</GlowzText>
-        </GlowzCard>
+        </View>
 
-        <GlowzCard gap={16}>
+        <GlowzToggleRow title="Dark mode" subtitle="Use a darker appearance throughout Glowz" value={s.theme === 'dark'} onToggle={() => s.setTheme(s.theme === 'dark' ? 'light' : 'dark')} />
+
+        <View style={{ gap: 16 }}>
           <GlowzText weight={600}>Privacy</GlowzText>
           <GlowzToggleRow title="Personalised recommendations" subtitle="Shows Book again and Recently viewed on Home" value={s.prefs.private} onToggle={() => s.togglePref('private')} />
           <Pressable onPress={() => nav.push({ name: 'Recent' })} accessibilityRole="button" accessibilityLabel="Recently viewed" style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -115,7 +105,7 @@ export function GlowzProfileScreen() {
             </View>
             <GlowzText muted>›</GlowzText>
           </Pressable>
-        </GlowzCard>
+        </View>
 
         <Row icon="bell" title="Notifications" onPress={() => nav.push({ name: 'Notifications' })} right={unreadCount ? <GlowzBadge label={`${unreadCount} new`} /> : null} />
         <Row icon="chat" title="Messages" onPress={() => nav.push({ name: 'ChatList' })} />

@@ -36,6 +36,7 @@ function HomeHeader() {
   const { unreadCount } = useNotifications();
   return (
     <View style={{ paddingLeft: g.left, paddingRight: g.right, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+      <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} />
       <GlowzText kind="display" weight={700} size={32} accessibilityRole="header" style={{ letterSpacing: -0.3 }}>
         glowz<GlowzText kind="display" weight={700} size={32} color={c.accent}>.</GlowzText>
       </GlowzText>
