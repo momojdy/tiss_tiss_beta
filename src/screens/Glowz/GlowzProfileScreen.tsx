@@ -28,16 +28,14 @@ function Picture({ pic, fallbackH, fallbackIcon }: { pic: PictureChoice; fallbac
 function Row({ title, subtitle, onPress, right, icon }: { title: string; subtitle?: string; onPress: () => void; right?: React.ReactNode; icon?: string }) {
   const { c } = useGlowzTheme();
   return (
-    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title}>
-      <GlowzCard row>
-        {icon ? <GlowzIcon name={icon} size={22} color={c.ink} /> : null}
-        <View style={{ flex: 1 }}>
-          <GlowzText weight={600}>{title}</GlowzText>
-          {subtitle ? <GlowzText kind="small" muted>{subtitle}</GlowzText> : null}
-        </View>
-        {right}
-        <GlowzText muted>›</GlowzText>
-      </GlowzCard>
+    <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={title} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: c.line }}>
+      {icon ? <GlowzIcon name={icon} size={22} color={c.ink} /> : null}
+      <View style={{ flex: 1 }}>
+        <GlowzText weight={600}>{title}</GlowzText>
+        {subtitle ? <GlowzText kind="small" muted>{subtitle}</GlowzText> : null}
+      </View>
+      {right}
+      <GlowzText muted>›</GlowzText>
     </Pressable>
   );
 }
@@ -86,18 +84,18 @@ export function GlowzProfileScreen() {
           <GlowzButton small variant="sage" label="Copy" onPress={s.copyReferral} style={{ backgroundColor: c.surface }} />
         </GlowzCard>
 
-        <GlowzCard gap={16}>
+        <View style={{ gap: 16 }}>
           <GlowzText weight={600}>Notifications</GlowzText>
           <GlowzToggleRow title="Booking and payment" subtitle="Always on. Confirmations, changes, receipts and refunds." value locked />
           <GlowzToggleRow title="Appointment reminders" subtitle="24 hours and 2 hours before" value={s.prefs.reminders} onToggle={() => s.togglePref('reminders')} />
           <GlowzToggleRow title="Updates from professionals you follow" value={s.prefs.follow} onToggle={() => s.togglePref('follow')} />
           <GlowzToggleRow title="Offers and promotions" subtitle="Separate from booking alerts" value={s.prefs.promo} onToggle={() => s.togglePref('promo')} />
           <GlowzText kind="small" muted>Demo settings. This prototype never sends real notifications.</GlowzText>
-        </GlowzCard>
+        </View>
 
         <GlowzToggleRow title="Dark mode" subtitle="Use a darker appearance throughout Glowz" value={s.theme === 'dark'} onToggle={() => s.setTheme(s.theme === 'dark' ? 'light' : 'dark')} />
 
-        <GlowzCard gap={16}>
+        <View style={{ gap: 16 }}>
           <GlowzText weight={600}>Privacy</GlowzText>
           <GlowzToggleRow title="Personalised recommendations" subtitle="Shows Book again and Recently viewed on Home" value={s.prefs.private} onToggle={() => s.togglePref('private')} />
           <Pressable onPress={() => nav.push({ name: 'Recent' })} accessibilityRole="button" accessibilityLabel="Recently viewed" style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -107,7 +105,7 @@ export function GlowzProfileScreen() {
             </View>
             <GlowzText muted>›</GlowzText>
           </Pressable>
-        </GlowzCard>
+        </View>
 
         <Row icon="bell" title="Notifications" onPress={() => nav.push({ name: 'Notifications' })} right={unreadCount ? <GlowzBadge label={`${unreadCount} new`} /> : null} />
         <Row icon="chat" title="Messages" onPress={() => nav.push({ name: 'ChatList' })} />
