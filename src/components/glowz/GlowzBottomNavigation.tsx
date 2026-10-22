@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, View } from 'react-native';
 import { useGlowzNav } from '../../navigation/glowz/GlowzNavigationContext';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import type { RootTab } from '../../navigation/glowz/GlowzNavigationTypes';
 import { GlowzIcon } from './GlowzIcon';
 import { GlowzText } from './GlowzText';
@@ -20,6 +21,7 @@ const NAV_GREEN = '#81C56C';
 /** Floating five-tab bar styled to match the Wallet home navigation. */
 export function GlowzBottomNavigation() {
   const nav = useGlowzNav();
+  const { c, mode } = useGlowzTheme();
   return (
     <View
       accessibilityRole="tablist"
@@ -29,9 +31,9 @@ export function GlowzBottomNavigation() {
         style={{
           height: 65,
           borderRadius: 18,
-          backgroundColor: 'rgba(255,255,255,0.88)',
+          backgroundColor: mode === 'dark' ? 'rgba(215,154,155,0.58)' : 'rgba(201,130,131,0.76)',
           borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.55)',
+          borderColor: mode === 'dark' ? 'rgba(215,154,155,0.42)' : 'rgba(201,130,131,0.38)',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-evenly',
@@ -44,7 +46,7 @@ export function GlowzBottomNavigation() {
       >
         {TABS.map((t) => {
           const on = nav.tab === t.id;
-          const color = on ? NAV_DARK : NAV_MUTED;
+          const color = on ? c.ink : c.muted;
           return (
             <Pressable
               key={t.id}
@@ -58,7 +60,7 @@ export function GlowzBottomNavigation() {
               <GlowzText size={10.5} weight={on ? 500 : 400} color={color} style={{ paddingTop: 4, lineHeight: 13 }}>
                 {t.label}
               </GlowzText>
-              {on ? <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: NAV_GREEN, marginTop: 3 }} /> : null}
+              {on ? <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: c.sage, marginTop: 3 }} /> : null}
             </Pressable>
           );
         })}
