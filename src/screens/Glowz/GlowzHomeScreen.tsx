@@ -69,7 +69,7 @@ export function GlowzHomeScreen() {
   const promoWidth = Math.round(w * 0.76);
 
   return (
-    <GlowzScreen header={<HomeHeader />} bottom="root">
+    <GlowzScreen header={<HomeHeader />} bottom="root" showStripe={false}>
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: 4 }}>
         <GlowzSearchButton placeholder="What beauty service do you need?" onPress={cmd.goSearch} />
       </View>
