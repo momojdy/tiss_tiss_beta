@@ -55,7 +55,7 @@ export function GlowzScreen({ header, headerBackground, bar, bottom = 'none', sc
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={[{ paddingBottom: padBottom, paddingTop: !header && !edgeToEdge ? Math.max(12, insets.top) : 0 }, contentStyle]}
+        contentContainerStyle={[{ paddingBottom: padBottom, paddingTop: showStripe && header ? 15 : !header && !edgeToEdge ? Math.max(12, insets.top) : 0 }, contentStyle]}
       >
         {children}
       </ScrollView>
