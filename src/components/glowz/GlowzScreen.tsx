@@ -34,7 +34,7 @@ export function GlowzScreen({ header, bar, bottom = 'none', scrollRef, children,
     setScrolled((prev) => (prev === s ? prev : s));
   }, []);
 
-  const padBottom = bottom === 'root' ? 78 + insets.bottom : bar || bottom === 'bar' ? 92 + insets.bottom : 28 + insets.bottom;
+  const padBottom = bottom === 'root' ? 112 + insets.bottom : bar || bottom === 'bar' ? 92 + insets.bottom : 28 + insets.bottom;
 
   return (
     <View style={{ flex: 1, backgroundColor: c.bg }}>
