@@ -44,7 +44,7 @@ export function GlowzExploreScreen() {
   const header = (
     <View style={{ paddingLeft: g.left, paddingRight: g.right, gap: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-        <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} size={38} iconSize={20} />
+        <GlowzIconButton icon="back" label="Back" onPress={() => nav.goRoot('home')} size={38} iconSize={20} />
         <GlowzSearchField value={state.q} onChangeText={ex.setQuery} placeholder="Service, salon or area" inputRef={input} />
         <GlowzIconButton icon="filter" label={ex.activeCount ? `Filters, ${ex.activeCount} active` : 'Filters'} size={50} radiusValue={16} dot={ex.activeCount > 0} onPress={() => openSheet({ kind: 'filter' })} />
       </View>
