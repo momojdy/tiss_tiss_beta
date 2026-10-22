@@ -27,9 +27,9 @@ export function GlowzBottomNavigation() {
         style={{
           height: 65,
           borderRadius: 18,
-          backgroundColor: mode === 'dark' ? 'rgba(215,154,155,0.58)' : 'rgba(201,130,131,0.76)',
+          backgroundColor: mode === 'dark' ? 'rgba(30,25,23,0.82)' : 'rgba(255,247,240,0.82)',
           borderWidth: 1,
-          borderColor: mode === 'dark' ? 'rgba(215,154,155,0.42)' : 'rgba(201,130,131,0.38)',
+          borderColor: mode === 'dark' ? 'rgba(255,247,240,0.12)' : 'rgba(55,48,45,0.10)',
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'space-evenly',
