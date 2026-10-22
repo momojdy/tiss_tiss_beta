@@ -59,6 +59,7 @@ export function GlowzProfileScreen() {
         <GlowzIconButton icon="back" label="Back" onPress={() => nav.back()} style={{ position: 'absolute', left: Math.max(16, insets.left), top: Math.max(14, insets.top) }} />
         <GlowzIconButton icon="camera" label="Change cover photo" onPress={() => void s.changePicture('cover')} style={{ position: 'absolute', right: Math.max(16, insets.right), top: Math.max(14, insets.top) }} />
       </View>
+      <View style={{ height: 20, backgroundColor: c.sageSoft }} />
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: 14, gap: 18 }}>
         <View style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 14 }}>
           <View style={{ marginTop: -50 }}>
@@ -84,6 +85,11 @@ export function GlowzProfileScreen() {
           <GlowzButton small variant="sage" label="Copy" onPress={s.copyReferral} style={{ backgroundColor: c.surface }} />
         </GlowzCard>
 
+        <View style={{ height: 1, backgroundColor: c.line, marginVertical: -4 }} />
+        <Row icon="bell" title="Notifications" onPress={() => nav.push({ name: 'Notifications' })} right={unreadCount ? <GlowzBadge label={`${unreadCount} new`} /> : null} />
+        <Row icon="chat" title="Messages" onPress={() => nav.push({ name: 'ChatList' })} />
+        <View style={{ height: 1, backgroundColor: c.line, marginVertical: -4 }} />
+
         <View style={{ gap: 16 }}>
           <GlowzText weight={600}>Notifications</GlowzText>
           <GlowzToggleRow title="Booking and payment" subtitle="Always on. Confirmations, changes, receipts and refunds." value locked />
@@ -106,9 +112,6 @@ export function GlowzProfileScreen() {
             <GlowzText muted>›</GlowzText>
           </Pressable>
         </View>
-
-        <Row icon="bell" title="Notifications" onPress={() => nav.push({ name: 'Notifications' })} right={unreadCount ? <GlowzBadge label={`${unreadCount} new`} /> : null} />
-        <Row icon="chat" title="Messages" onPress={() => nav.push({ name: 'ChatList' })} />
 
         <View style={{ alignItems: 'center', gap: 8, paddingBottom: 12 }}>
           <Pressable onPress={() => void s.resetDemo()} accessibilityRole="button" style={{ padding: 6 }}>
