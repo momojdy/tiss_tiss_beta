@@ -1,8 +1,8 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
-import { useGlowzTheme } from '../styles/ThemeContext';
-import { useInsets } from '../styles/LayoutContext';
-import { bodyFont } from '../styles/typography';
+import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
+import { useInsets } from '../../styles/Glowz/LayoutContext';
+import { bodyFont } from '../../styles/Glowz/typography';
 
 type ToastFn = (message: string) => void;
 const ToastContext = createContext<ToastFn>(() => undefined);

@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react';
-import type { GlowzStorage } from '../utils/storage';
-import { createMemoryStorage } from '../utils/storage';
+import type { GlowzStorage } from '../../util/Glowz/storage';
+import { createMemoryStorage } from '../../util/Glowz/storage';
 
 /** Things only the host app can do. Everything is optional; the feature degrades gracefully without them. */
 export interface GlowzHost {

@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import type { GlowzState } from '../types/state';
+import type { GlowzState } from '../../types/glowz/state';
 
 type Updater = (s: GlowzState) => GlowzState;
 
