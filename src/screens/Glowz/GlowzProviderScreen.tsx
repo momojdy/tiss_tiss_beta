@@ -86,7 +86,7 @@ export function GlowzProviderScreen({ id, tab = 'svc' }: { id: string; tab?: Pro
           <GlowzIconButton icon="heart" label={saved ? `Remove ${p.name} from favorites` : `Save ${p.name} to favorites`} color={saved ? c.accent : c.ink} filled={saved} onPress={() => fav.toggleFavorite('p', p.id)} />
         </View>
       </View>
-      <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.sageSoft }} />
+      <View accessibilityElementsHidden style={{ height: 20, width: '100%', backgroundColor: c.tint }} />
       <View style={{ paddingLeft: g.left, paddingRight: g.right, marginTop: -54, gap: 10 }}>
         <View style={{ width: 72, height: 72, borderRadius: 36, borderWidth: 4, borderColor: c.bg, overflow: 'hidden', backgroundColor: c.sageSoft }}>
           <GlowzArt h={p.h} icon={providerIcon(p)} style={{ width: '100%', height: '100%' }} />
