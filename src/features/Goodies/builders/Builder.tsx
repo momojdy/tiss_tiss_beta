@@ -286,7 +286,7 @@ function Header({title, sub, onBack}: {title: string; sub?: string; onBack: () =
           <View style={{flex: 1, justifyContent: 'center'}}><T size={20} weight="800" style={{lineHeight: 22}}>{title}</T>{sub ? <T size={12} color={th.mut}>{sub}</T> : null}</View>
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#F6B26B'}} />
+      <View style={{height: 20, backgroundColor: '#FD802E'}} />
       <View style={{height: 15}} />
     </>
   );
