@@ -31,6 +31,7 @@ ST.forEach(s => {
   s.h = x.h || (s.c === 'restaurants' ? '10am–10pm' : '8am–9pm');
   s.nx = x.nx || '';
   s.acceptScheduledOrders = x.scheduled === true;
+  s.scheduledOrderStartMinutes = Number(x.scheduledStartMinutes ?? 60);
 });
 Object.keys(IT).forEach((k, n) => {
   const i = IT[k], s = STB[i.s];
