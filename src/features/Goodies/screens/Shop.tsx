@@ -327,6 +327,7 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">PICKUP</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
         </View>
+        <View style={{position: 'absolute', left: `${Math.max(0,Math.min(88, x / 3.2))}%`, top: `${Math.max(0,Math.min(78, y / 1.9))}%`, backgroundColor: '#fff', borderRadius: 22, width: 42, height: 42, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#F25C9C'}}><Text style={{fontSize: 25}}>🛵</Text></View>
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
