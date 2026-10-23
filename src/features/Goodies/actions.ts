@@ -88,7 +88,7 @@ export function usePromo(c: string) {
 export function goCheckout() {
   const t = totals();
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
-  if (!t.st!.open) {toast(t.st!.n + ' is closed. ' + t.st!.nx); return;}
+  if (!t.st!.open && !t.st!.acceptScheduledOrders) {toast(t.st!.n + ' is closed. ' + t.st!.nx); return;}
   if (t.sub < t.st!.min) {toast('Minimum order is ' + money(t.st!.min)); return;}
   S.cs = 0; push('checkout');
 }
@@ -96,6 +96,7 @@ export function checkoutNext() {
   if (S.cs === 0 && !isPk()) {const a = addr(); if (!a || !a.t) {toast('Choose a delivery address'); return;}}
   if (S.cs === 0 && !phoneOK(ctOf().ph)) {toast('Choose a valid contact number'); return;}
   if (S.cs === 1 && S.sch && S.sch < Date.now()) {S.sch = 0; toast('That time has passed. Pick another'); emit(); return;}
+  if (S.cs === 1 && !STB[S.cart.sid!]?.open && (!STB[S.cart.sid!]?.acceptScheduledOrders || !S.sch || S.sch <= Date.now())) {toast('This store is closed. Choose a future opening-time slot to continue.'); emit(); return;}
   if (S.cs === 2 && S.pay === 'card' && !S.cards.length) {push('payments'); return;}
   S.cs++; emit();
 }
@@ -107,7 +108,7 @@ export function placeOrder() {
   if (S.busy) return;
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
-  if (!st.open) {toast(st.n + ' is closed'); return;}
+  if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(st.n + ' is closed. Choose a future pickup or delivery time if scheduling is available.'); S.cs = 1; emit(); return;}
   const bad = S.cart.lines.filter((l: any) => {if (l.byo) return !!hooks.bCheck && !!(hooks as any).lineBad && !!(hooks as any).lineBad(l); const i = IT[l.id]; return !i || i.oos || l.q > i.stock;});
   if (bad.length) {toast(bad[0].n + ' ' + (bad[0].byo ? (hooks as any).lineBad(bad[0]) : 'is no longer available in that quantity')); reset('cart'); return;}
   if (t.sub < st.min) {toast('Minimum order is ' + money(st.min)); reset('cart'); return;}
