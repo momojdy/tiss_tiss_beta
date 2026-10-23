@@ -37,9 +37,9 @@ function Mode({title, sub, emoji, onPress, grad, bg, fg, small}: any) {
 function PromoCard({kind, title, sub, btn, emoji, target}: {kind: keyof typeof PROMO; title: string; sub: string; btn: string; emoji: string; target?: string}) {
   return (
     <Pressable onPress={() => (target ? promoGoTarget(target) : promoSheet(kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce'))}>
-      <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 16, overflow: 'hidden'}}>
+      <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
-        <T size={11.5} color="#fff" lines={1} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
+        <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
         <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
         <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>
       </Grad>
@@ -238,7 +238,7 @@ export function Search() {
           {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#F4A261'}} />
+      <View style={{height: 20, backgroundColor: '#F4B183'}} />
       <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
