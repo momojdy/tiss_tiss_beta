@@ -170,11 +170,11 @@ export function SheetBox({children}: any) {
   return <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 28, maxHeight: '88%'}}><View style={{alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: th.line, marginBottom: 14}} />{children}</View>;
 }
 
-export const heartBtn = (id: string, on: boolean, onPress: () => void) => {
+export const heartBtn = (id: string, on: boolean, onPress: () => void, label?: string) => {
   const th = useTheme();
   return (
-    <Pressable accessibilityLabel="Save store" onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
-      <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on ? '#FD802E' : undefined} />
+    <Pressable accessibilityRole="button" accessibilityLabel={label || (on ? "Remove from favorites" : "Save to favorites")} onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
+      <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on ? '#FD802E' : false} />
     </Pressable>
   );
 };
