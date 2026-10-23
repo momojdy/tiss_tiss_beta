@@ -80,7 +80,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   let body: any;
   switch (r) {
     case 'wantiss': body = <WantissEntry />; break;
-    case 'home': body = <Home />; break;
+    case 'home': body = <Home onExit={handleBack} />; break;
     case 'cats': body = <><TopBar title={tr('categories')} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
@@ -103,7 +103,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   return (
     <View style={{flex: 1, backgroundColor: th.bg}} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
-      <SafeAreaView style={{flex: 1}} edges={['top']}>
+      <SafeAreaView style={{flex: 1}} edges={[]}>
         {r === 'byo' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
           {body}
         </ScrollView>}
