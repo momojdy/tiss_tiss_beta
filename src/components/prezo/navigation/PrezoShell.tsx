@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     height: 20,
     width: '100%',
     flexShrink: 0,
+    opacity: 0.72,
   },
   routeContent: {
     flex: 1,
