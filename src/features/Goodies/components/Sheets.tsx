@@ -32,8 +32,8 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
     const s = STB[sheet.id];
     const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="700" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
     content = (<>
-      <T size={23} weight="800">{s.n}</T>
-      <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.k}</T>
+      <T size={23} weight="800">{s.businessName || s.n}</T>
+      <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
           <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>CUSTOMER RATING · VIEW REVIEWS</T><T size={18} weight="800">★ {s.r} <T size={12.5} color={th.mut} weight="500">({s.rv} reviews)</T></T></Pressable>
@@ -41,6 +41,11 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         </Row>
         {row('Opening hours', s.h)}
         {row('Current status', s.open ? 'Accepting orders' : s.nx || 'Currently closed')}
+        {s.businessAddress ? row('Address', [s.businessAddress, s.businessCity, s.businessCountry].filter(Boolean).join(', ')) : null}
+        {s.businessPhone ? row('Phone', s.businessPhone) : null}
+        {s.businessEmail ? row('Email', s.businessEmail) : null}
+        {s.businessWebsite ? row('Website', s.businessWebsite) : null}
+        {s.businessDeliveryModes?.length ? row('Available services', s.businessDeliveryModes.join(' and ')) : null}
         {row('Delivery fee', s.fee === 0 ? 'Free delivery' : money(s.fee))}
         {row('Minimum order', money(s.min))}
         {row('Distance', s.km.toFixed(1) + ' km away')}
