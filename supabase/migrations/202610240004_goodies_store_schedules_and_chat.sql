@@ -30,7 +30,12 @@ create policy "Business members can update Goodies schedules" on public.goodies_
     exists (select 1 from public.business_members bm where bm.business_id = goodies_store_schedules.business_id and bm.user_id = (select auth.uid()))
   );
 grant select on public.goodies_store_schedules to anon, authenticated;
-grant insert, update on public.goodies_store_schedules to authenticated;
+drop policy if exists "Business members can delete Goodies schedules" on public.goodies_store_schedules;
+create policy "Business members can delete Goodies schedules" on public.goodies_store_schedules
+  for delete to authenticated using (
+    exists (select 1 from public.business_members bm where bm.business_id = goodies_store_schedules.business_id and bm.user_id = (select auth.uid()))
+  );
+grant insert, update, delete on public.goodies_store_schedules to authenticated;
 
 alter table public.conversations
   add column if not exists business_id uuid references public.businesses(id) on delete cascade,
@@ -122,5 +127,7 @@ drop trigger if exists goodies_message_summary on public.messages;
 create trigger goodies_message_summary after insert on public.messages
 for each row execute function public.goodies_update_conversation_summary();
 
-grant select, insert, update on public.conversations to authenticated;
+grant select, insert on public.conversations to authenticated;
+revoke update on public.conversations from authenticated;
+grant update (last_body, updated_at, unread_business, unread_customer) on public.conversations to authenticated;
 grant select, insert on public.messages to authenticated;
