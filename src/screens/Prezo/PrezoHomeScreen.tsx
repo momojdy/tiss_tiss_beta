@@ -21,7 +21,7 @@ export const PrezoHomeScreen = () => {
   const sections = useMemo(() => {
     const live = campaigns.filter((campaign) => campaign.status === 'live');
     return {
-      categories: [...new Set(campaigns.map((campaign) => campaign.category))],
+      categories: [...new Set(live.map((campaign) => campaign.category))],
       featured: campaigns.filter((campaign) => campaign.featured),
       endingSoon: [...live]
         .filter((campaign) => campaign.closesAt !== null)
@@ -52,20 +52,22 @@ export const PrezoHomeScreen = () => {
         />
       ) : (
         <>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={styles.categories}
-            contentContainerStyle={styles.categoriesContent}
-          >
-            {sections.categories.map((category) => (
-              <FilterPill
-                key={category}
-                label={category}
-                onPress={() => navigation.navigate({ name: 'explore', category })}
-              />
-            ))}
-          </ScrollView>
+          {sections.categories.length > 0 ? (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={styles.categories}
+              contentContainerStyle={styles.categoriesContent}
+            >
+              {sections.categories.map((category) => (
+                <FilterPill
+                  key={category}
+                  label={category}
+                  onPress={() => navigation.navigate({ name: 'explore', category })}
+                />
+              ))}
+            </ScrollView>
+          ) : null}
           <CampaignStrip title="Featured" campaigns={sections.featured} />
           <CampaignStrip title="Ending soon" campaigns={sections.endingSoon} />
           <CampaignStrip title="Popular" campaigns={sections.popular} />
