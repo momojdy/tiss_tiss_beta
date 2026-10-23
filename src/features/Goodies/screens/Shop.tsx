@@ -395,6 +395,7 @@ export function Track({id}: {id: string}) {
         <Sum rows={[...o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)] as any), ['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
         {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color={th.red}>Cancel order</T></Pressable></Card></> : null}
         <Cta ghost label="Order again" onPress={() => reorder(o.id)} /><View style={{height: 10}} />
+        {!o.cx ? <><Cta ghost label="Message store" onPress={() => go('storechat', o.sid)} /><View style={{height: 10}} /></> : null}
         <Cta ghost label="Get help with this order" onPress={() => go('contact', {o: true, oid: o.id})} /><View style={{height: 10}} />
         <Cta label="Go to Orders" onPress={() => tab('orders')} />
       </View>
