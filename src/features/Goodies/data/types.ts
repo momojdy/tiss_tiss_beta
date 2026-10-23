@@ -10,7 +10,7 @@ export interface Item {
 export interface Store {
   id: string; n: string; c: string; e: string; bg: string; r: number; rv: number; km: number; eta: string; fee: number; min: number;
   pr: string; k: string; it: Item[]; km0: number; eta0: string; open: number; h: string; nx: string; far?: boolean;
-  logo?: string | null; cover?: string | null;
+  logo?: string | null; cover?: string | null; acceptScheduledOrders?: boolean;
 }
 export interface Promo {c: string; t: string; d: string; min: number; ty: 'pct' | 'ship'; v?: number; st?: string}
 export interface Address {id: number; l: string; t: string; apt: string; inst: string; def: number; z: number; cc?: string}
