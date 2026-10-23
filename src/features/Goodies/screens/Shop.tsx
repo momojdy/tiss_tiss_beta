@@ -35,7 +35,7 @@ export function Store({id}: {id: string}) {
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.km.toFixed(1)} km away</T>
-        {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">Closed right now</T><T size={13} color={th.mut}>{s.nx}. Ordering is paused until then.</T></Card> : null}
+        {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">Closed right now</T><T size={13} color={th.mut}>{s.acceptScheduledOrders ? s.nx + '. Scheduled orders are available for future opening-time slots.' : s.nx + '. Ordering is paused until then.'}</T></Card> : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, marginBottom: 4}}>
           <Badge green label={'★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /><Badge label={s.eta + ' min'} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={'Min. ' + money(s.min)} /><Badge label="Delivery + pickup" />{s.pr ? <Badge label={s.pr} /> : null}
         </View>
@@ -128,7 +128,7 @@ export function Cart() {
       <Bar title="Your cart" onBack={back} right={<Circ icon="trash" label="Clear cart" onPress={clearAsk} />} />
       <View style={{paddingHorizontal: 16}}>
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>Your order from this store · {st.eta} min</T></View></Row>
-        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.nx}. You can keep these items and order later.</T></Card> : null}
+        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. Choose a future opening-time slot at checkout.' : st.nx + '. You can keep these items, but this store does not currently accept scheduled orders.'}</T></Card> : null}
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
           return (
@@ -163,11 +163,30 @@ export function Cart() {
   );
 }
 
-function slots() {
+function slots(store: any = STB[S.cart.sid]) {
   const out: {ts: number; l: string}[] = [];
-  const F = fees(); let d = new Date(Date.now() + F.lead * 60000); d.setMinutes(Math.ceil(d.getMinutes() / F.step) * F.step, 0, 0);
-  for (let n = 0; n < F.slots; n++) {out.push({ts: d.getTime(), l: fmtTime(d)}); d = new Date(d.getTime() + 30 * 60000);}
-  return out;
+  const F = fees();
+  let d: Date;
+  if (store && !store.open && store.acceptScheduledOrders) {
+    const opening = String(store.h || '').match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i);
+    d = new Date();
+    if (/tomorrow/i.test(String(store.nx || '')) || !opening) d.setDate(d.getDate() + 1);
+    if (opening) {
+      let hour = Number(opening[1]) % 12;
+      if (opening[3].toLowerCase() === 'pm') hour += 12;
+      d.setHours(hour, Number(opening[2] || 0), 0, 0);
+      if (d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
+    } else d.setHours(9, 0, 0, 0);
+  } else {
+    d = new Date(Date.now() + F.lead * 60000);
+    d.setMinutes(Math.ceil(d.getMinutes() / F.step) * F.step, 0, 0);
+  }
+  for (let n = 0; n < F.slots; n++) {
+    const day = d.toDateString() === new Date().toDateString() ? 'Today' : d.toDateString() === new Date(Date.now() + 86400000).toDateString() ? 'Tomorrow' : fmtDay(d);
+    out.push({ts: d.getTime(), l: day + ', ' + fmtTime(d)});
+    d = new Date(d.getTime() + 30 * 60000);
+  }
+  return out.filter(x => x.ts > Date.now());
 }
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
@@ -189,8 +208,8 @@ export function Checkout() {
   </>);
   if (S.cs === 1) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>When do you want it?</T>
-    <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio>
-    {sl.map(x => <Radio key={x.ts} on={S.sch === x.ts} onPress={() => setSch(x.ts)}><T weight="700">Today, {x.l}</T></Radio>)}
+    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose an available future slot. The store will receive this as a scheduled order.</T>}
+    {sl.map(x => <Radio key={x.ts} on={S.sch === x.ts} onPress={() => setSch(x.ts)}><T weight="700">{x.l}</T></Radio>)}
     {pk ? null : (<><Ttl>Tip your courier</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : 'No tip'}</T></Pressable>)}</View></>)}
     <Input label={pk ? 'Note for the store' : 'Delivery instructions'} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
   </>);
