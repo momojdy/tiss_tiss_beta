@@ -40,7 +40,7 @@ export function ConversationPage() {
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
     setSending(true);
-    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
+    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); await q(supabase.from('conversations').update({ last_body: body, updated_at: new Date().toISOString(), unread_customer: 1 }).eq('id', id)); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
   };
   const c = conv.d;
   return (
