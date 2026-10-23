@@ -79,7 +79,7 @@ export const PrezoNavigationProvider = ({ initialRoute, onExitRequested, childre
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
-      if (canGoBack) {
+      if (canGoBack || route.name !== 'home') {
         back();
         return true;
       }
@@ -90,7 +90,7 @@ export const PrezoNavigationProvider = ({ initialRoute, onExitRequested, childre
       return false;
     });
     return () => subscription.remove();
-  }, [canGoBack, back, onExitRequested]);
+  }, [canGoBack, route.name, back, onExitRequested]);
 
   const value = useMemo(
     () => ({
