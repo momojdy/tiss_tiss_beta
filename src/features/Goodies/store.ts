@@ -2,6 +2,7 @@
    Data comes from the active provider (demo now, Supabase later); this file never imports a provider directly. */
 import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {supabase} from '../../lib/supabase';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {RAW_STORES, STX, PROMOS, DEALS} from './data/seed';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
@@ -100,6 +101,11 @@ export function useGoodies() {return useSyncExternalStore(cb => {subs.add(cb); r
 export const ui: {toast: (t: string) => void; sheet: (h: any) => void; close: () => void} = {toast: () => {}, sheet: () => {}, close: () => {}};
 export const toast = (t: string) => ui.toast(t);
 
+function formatHour(d: Date) {
+  let h = d.getHours(), m = String(d.getMinutes()).padStart(2, '0');
+  return (h % 12 || 12) + (m === '00' ? '' : ':' + m) + (h >= 12 ? 'pm' : 'am');
+}
+
 /* ---------- persistence ---------- */
 export async function load() {
   const merge = async (key: string, D: any) => {
@@ -133,6 +139,33 @@ export async function load() {
       if (v.etaMin && v.etaMax) s.eta0 = v.etaMin + '–' + v.etaMax; s.pr = v.promo || '';
     });
   } catch (e) {}
+  /* Live vendor-published opening hours and scheduled-order settings. Demo seeds remain the fallback. */
+  try {
+    const {data} = await supabase.from('goodies_store_schedules').select('store_id,hours,accept_scheduled_orders,scheduled_order_start_minutes,is_live').eq('is_live', true);
+    (data || []).forEach((v: any) => {
+      const s: any = STB[v.store_id]; if (!s) return;
+      s.scheduleHours = v.hours || {};
+      s.acceptScheduledOrders = !!v.accept_scheduled_orders;
+      s.scheduledOrderStartMinutes = Math.max(0, Number(v.scheduled_order_start_minutes ?? 60));
+      const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      const today = s.scheduleHours[names[new Date().getDay()]];
+      if (today && !today.closed && today.open && today.close) {
+        const [oh, om] = String(today.open).split(':').map(Number), [ch, cm] = String(today.close).split(':').map(Number);
+        const now = new Date(), openAt = new Date(now), closeAt = new Date(now);
+        openAt.setHours(oh, om || 0, 0, 0); closeAt.setHours(ch, cm || 0, 0, 0);
+        s.h = formatHour(openAt) + '–' + formatHour(closeAt);
+        s.open = now >= openAt && now < closeAt ? 1 : 0;
+        s.nx = now < openAt ? 'Opens at ' + formatHour(openAt) + ' today' : now >= closeAt ? 'Opens tomorrow according to store hours' : '';
+      } else {
+        s.open = 0;
+        s.nx = 'Closed today according to store hours';
+        for (let n = 1; n <= 7; n++) {
+          const d = new Date(Date.now() + n * 86400000), h = s.scheduleHours[names[d.getDay()]];
+          if (h && !h.closed && h.open) { s.nx = 'Opens ' + names[d.getDay()] + ' at ' + h.open; break; }
+        }
+      }
+    });
+  } catch (e) { /* Public schedule fetch is optional; seeded demo values remain usable offline. */ }
   applyZone(); S.ready = true; emit();
 }
 export function save() {
