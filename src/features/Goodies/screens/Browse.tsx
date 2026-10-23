@@ -2,12 +2,12 @@ import React, {useEffect, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions} from 'react-native';
 import {Icon} from '../components/Icon';
-import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme} from '../components/ui';
+import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
 import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes} from '../content';
 import {Image} from 'react-native';
-import {go, tab, back, browse, promoSheet, setFilter, setSub, clearFilters, usePromo, openNotif, readAll} from '../actions';
+import {go, tab, back, browse, promoSheet, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
 import {t as tr, tx} from '../i18n';
 import {MODE1, PROMO} from '../theme';
@@ -220,11 +220,14 @@ export function Search() {
           {sug.length ? (<><Ttl>Suggestions</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
           {cs.length ? (<><Ttl>Categories</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{cs.map((c: any) => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View></>) : null}
           {ss.length ? (<><Ttl>Stores</Ttl>{ss.map(s => (
-            <Pressable key={s.id} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flexDirection: 'row', gap: 12, alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: th.line}}>
-              <Tile e={s.e} bg={s.bg} />
-              <View style={{flex: 1}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center'}}><T weight="700">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · ★ {s.r.toFixed(1)}</T></View>
-              <Icon name="chevR" size={16} color={th.ink} />
-            </Pressable>))}</>) : null}
+            <View key={s.id} style={{flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line}}>
+              <Pressable accessibilityRole="link" onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
+                <Tile e={s.e} bg={s.bg} />
+                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="700">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · ★ {s.r.toFixed(1)}</T></View>
+              </Pressable>
+              {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
+              <Pressable accessibilityRole="link" accessibilityLabel={'Open ' + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+            </View>))}</>) : null}
           {is.length ? (<><Ttl>Products</Ttl>{is.map(i => <ItemRow key={i.id} i={i} />)}</>) : null}
         </View>
       );
