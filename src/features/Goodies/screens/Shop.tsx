@@ -236,7 +236,7 @@ export function Confirm({id}: {id: string}) {
 function DeliveryRouteMap({order, storeName, destination}: {order: any; storeName: string; destination: string}) {
   const th = useTheme();
   const progress = Math.max(0.12, Math.min(0.86, (Number(order.st || 4) - 3) / 3));
-  const x = 30 + progress * 250, y = 145 - progress * 112 - Math.sin(progress * Math.PI) * 12;
+  const x = 22 + progress * 250, y = 141 - progress * 112 - Math.sin(progress * Math.PI) * 12;
   return (
     <Card style={{padding: 12}}>
       <Row sp><T size={15} weight="800">Your delivery route</T><Badge label="Courier on the way" /></Row>
@@ -255,12 +255,47 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
-        <View style={{position: 'absolute', left: Math.max(3, Math.min(83, x / 320 * 100 - 6)) + '%', top: Math.max(18, Math.min(72, y / 190 * 100 - 8)) + '%', width: 42, height: 42, borderRadius: 21, backgroundColor: '#FCE3EF', borderWidth: 2, borderColor: '#F25C9C', alignItems: 'center', justifyContent: 'center'}}>
-          <Text style={{fontSize: 23}}>🛵</Text>
+        <View style={{position: 'absolute', left: (x / 320 * 100) + '%', top: (y / 190 * 100) + '%', width: 54, height: 42, marginLeft: -12, marginTop: -10, alignItems: 'center', justifyContent: 'center'}} pointerEvents="none">
+          <Svg width={54} height={42} viewBox="0 0 54 42">
+            <Circle cx="13" cy="32" r="7" fill="#333333" /><Circle cx="13" cy="32" r="3.2" fill="#F8F8F5" />
+            <Circle cx="39" cy="32" r="7" fill="#333333" /><Circle cx="39" cy="32" r="3.2" fill="#F8F8F5" />
+            <Path d="M13 31 L22 22 L31 31 L39 31 L34 22 L25 22" stroke="#F4C542" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <Path d="M19 21 L31 21 L34 26 L24 27 Z" fill="#F4C542" stroke="#D8A91B" strokeWidth="1" />
+            <Path d="M24 20 L20 14 L29 11 L34 20 Z" fill="#F25C9C" />
+            <Circle cx="25" cy="8" r="4.2" fill="#8C5A3C" />
+            <Path d="M21 7 Q24 1 29 5 L30 8 Z" fill="#242424" />
+            <Path d="M22 14 L17 21 M30 14 L35 18" stroke="#F25C9C" strokeWidth="3.5" strokeLinecap="round" />
+            <Path d="M23 20 L20 27 M29 20 L33 27" stroke="#252525" strokeWidth="3" strokeLinecap="round" />
+          </Svg>
         </View>
       </View>
-      <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Delivery moto</T></Row>
+      <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F4C542', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
       <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
+    </Card>
+  );
+}
+
+function PickupLocationMap({storeName}: {storeName: string}) {
+  const th = useTheme();
+  return (
+    <Card style={{padding: 12}}>
+      <Row sp><T size={15} weight="800">Pickup location</T><Badge label="Ready for pickup" /></Row>
+      <View style={{height: 174, borderRadius: 16, overflow: 'hidden', marginTop: 10, backgroundColor: '#F1F2E9'}}>
+        <Svg width="100%" height="100%" viewBox="0 0 320 174" preserveAspectRatio="xMidYMid slice">
+          <Path d="M-20 22 L340 132 M-20 86 L340 42 M12 -20 L88 200 M160 -20 L225 200 M278 -20 L230 200 M-10 160 L330 95" stroke="#FFFFFF" strokeWidth="16" fill="none" />
+          <Path d="M-20 22 L340 132 M-20 86 L340 42 M12 -20 L88 200 M160 -20 L225 200 M278 -20 L230 200 M-10 160 L330 95" stroke="#DADFD2" strokeWidth="1.5" fill="none" />
+          <Path d="M35 142 C70 130 80 104 118 98 S177 110 205 72 S253 52 285 27" stroke="#FD802E" strokeWidth="4" strokeLinecap="round" fill="none" strokeDasharray="5 6" />
+          <Circle cx="35" cy="142" r="5" fill="#FD802E" stroke="#FFFFFF" strokeWidth="2" />
+          <Path d="M285 18 L294 27 L285 36 L276 27 Z" fill="#F25C9C" stroke="#FFFFFF" strokeWidth="2" />
+          <Path d="M280 26 L280 32 L290 32 L290 26 Z" fill="#FFFFFF" />
+          <Path d="M279 25 L285 21 L291 25 Z" fill="#FFFFFF" />
+          <Path d="M283 27 L283 29 L285 29 L285 27 M287 27 L287 29 L289 29 L289 27" stroke="#F25C9C" strokeWidth="1" />
+        </Svg>
+        <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '70%'}}>
+          <T size={10.5} weight="800" color="#1B1B1F">PICK UP YOUR ORDER</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
+        </View>
+      </View>
+      <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative pickup map. Exact store coordinates and live navigation are not connected yet.</T>
     </Card>
   );
 }
@@ -283,6 +318,7 @@ export function Track({id}: {id: string}) {
           </>)}
           <T size={11.5} color={th.mut}>Demo timeline: steps advance every few seconds.</T>
         </Card>
+        {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap storeName={s.n} /> : null}
         {!o.pk && o.st >= 4 && !dn ? <><DeliveryRouteMap order={o} storeName={s.n} destination={o.ad ? o.ad.l + ': ' + o.ad.t : o.addr} /><Card><Row><Tile e="🛵" bg="bg3" size={46} /><View style={{flex: 1}}><T weight="700">Jean-Paul</T><T size={13} color={th.mut}>Courier (demo) · ★ 4.9</T></View><Circ icon="phone" label="Call courier" onPress={() => toast('Calling the courier (demo)…')} /><Circ icon="msg" label="Message courier" onPress={() => require('../store').ui.sheet({kind: 'msg'})} /></Row></Card></> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && !o.rated ? <Card><T weight="700" align="center">How was your order?</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'review', id: o.id});}}><Icon name="star" size={32} color={th.line} fill /></Pressable>)}</View></Card> : null}
