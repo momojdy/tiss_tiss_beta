@@ -71,7 +71,6 @@ export function Home({onExit}: {onExit?: () => void}) {
         </Pressable>
         <Circ icon="bell" label="Notifications" dot={unread()} onPress={() => go('notifs')} />
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
-        <Circ icon="cart" label={tr('cart')} count={cnt()} onPress={() => tab('cart')} />
       </View>
       </View>
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
@@ -238,7 +237,7 @@ export function Search() {
           {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#F4B183'}} />
+      <View style={{height: 20, backgroundColor: '#F6B26B'}} />
       <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
