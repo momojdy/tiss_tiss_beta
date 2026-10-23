@@ -79,11 +79,38 @@ export function FeaturesPanel() {
 export function OrdersPanel() {
   const app = useApp(), [f, setF] = useState('Open');
   const o = useQ(() => q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
+  const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
+  const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));
+  const nextGoodiesStatus: Record<string,string> = {scheduled:'accepted',placed:'accepted',accepted:'preparing',preparing:'ready',ready:'completed'};
+  const advanceGoodies = async (x: any) => {
+    const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
+    if (!due) {app.toast('This order is scheduled for ' + new Date(x.scheduled_for).toLocaleString()); return;}
+    const next = nextGoodiesStatus[String(x.status).toLowerCase()];
+    if (!next) return;
+    try {
+      const {error} = await supabase.from('goodies_orders').update({status: next, updated_at: new Date().toISOString()}).eq('id', x.id);
+      if (error) throw error;
+      app.bump(); app.toast('Goodies order updated');
+    } catch (e: any) {app.toast(e?.message || 'Could not update order');}
+  };
   return (
     <View style={{ gap: 10 }}>
       <Chips items={['Open', 'Closed', 'Cancelled', 'All']} value={f} onChange={setF} />
-      {o.e ? <ErrBox e={o.e} retry={o.reload} /> : o.l && !o.d ? <Loading /> : rows.length ? <Divided>{rows.map(x => <OrderRow key={x.id} o={x} />)}</Divided> : <Empty icon="clipboard-text-outline" title={(o.d ?? []).length ? 'No orders here' : 'No orders yet'} hint="They appear here when customers buy or book." />}
+      <Section title="Goodies orders" right={String(grows.length)} />
+      {goodies.e ? <ErrBox e={goodies.e} retry={goodies.reload} /> : goodies.l && !goodies.d ? <Loading /> : grows.length ? <View style={{gap:8}}>{grows.map(x => {
+        const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
+        const next = nextGoodiesStatus[String(x.status).toLowerCase()];
+        const items = Array.isArray(x.items) ? x.items.map((i: any) => (i.quantity || 1) + '× ' + i.name).join(', ') : 'Order items';
+        return <View key={x.id} style={{padding:13,borderRadius:14,borderWidth:1,borderColor:LIGHT.line,gap:7}}>
+          <View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1}}><Text style={{fontSize:14,fontWeight:'800',color:LIGHT.ink}}>Order {x.order_code}</Text><Text style={{fontSize:12,color:LIGHT.mute,marginTop:3}}>{items}</Text></View><Pill tone={String(x.status).toLowerCase()==='completed'?'good':String(x.status).toLowerCase()==='cancelled'?'bad':'warn'}>{String(x.status).replace('_',' ')}</Pill></View>
+          <Text style={{fontSize:12,color:LIGHT.mute}}>{x.scheduled_for ? (due ? 'Scheduled time reached · ' : 'Scheduled for · ') + new Date(x.scheduled_for).toLocaleString() : 'Order received'} · {money(Number(x.total))}</Text>
+          <Text style={{fontSize:11,color:LIGHT.mute}}>Payment: {x.payment_status === 'demo' ? 'Demo payment (not charged)' : x.payment_status}</Text>
+          {next && due ? <View style={{alignSelf:'flex-end'}}><Btn small label={next === 'accepted' ? 'Accept order' : next === 'preparing' ? 'Start preparing' : next === 'ready' ? 'Mark ready' : 'Complete order'} onPress={() => advanceGoodies(x)} /></View> : null}
+        </View>;
+      })}</View> : <Empty icon="clipboard-text-outline" title="No Goodies orders yet" hint="Scheduled orders from mapped Goodies stores appear here." />}
+      <Section title="Other orders" right={String(rows.length)} />
+      {o.e ? <ErrBox e={o.e} retry={o.reload} /> : o.l && !o.d ? <Loading /> : rows.length ? <Divided>{rows.map(x => <OrderRow key={x.id} o={x} />)}</Divided> : <Empty icon="clipboard-text-outline" title={(o.d ?? []).length ? 'No orders here' : 'No orders yet'} hint="Other feature orders appear here when customers buy or book." />}
     </View>
   );
 }
