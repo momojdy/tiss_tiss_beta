@@ -29,7 +29,7 @@ export const PrezoShell = () => {
         <View
           style={[
             styles.body,
-            { top: headerHeight, bottom: tabBar ? tabHeight : 0 },
+            { paddingTop: headerHeight, paddingBottom: tabBar ? tabHeight : 0 },
           ]}
         >
           <PrezoRouteView key={navigation.routeId} route={navigation.route} />
@@ -53,7 +53,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   body: {
-    ...StyleSheet.absoluteFillObject,
+    flex: 1,
+    minHeight: 0,
   },
 });
 
