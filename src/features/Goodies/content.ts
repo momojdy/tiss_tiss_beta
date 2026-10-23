@@ -1,0 +1,79 @@
+/* Content provider. PROPOSED contract: the shape below is exactly what the Wantiss Admin v5 exports (Goodies > Overview > Export content).
+   DEMO: the JSON is pasted or loaded once and stored on the device. PRODUCTION: the same shape is served by the backend; no screen changes.
+   Every accessor falls back to the v24 seed so the app never shows an empty heading. */
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {tx} from './i18n';
+import {contentHooks} from './store';
+import {CATS, DEALS, PROMOS} from './data/seed';
+import type {Txt} from './data/types';
+
+const KEY = 'goodies-content-v1';
+export interface Asset {u: string; w: number; h: number; ver: number}
+export const ASSETS: Record<string, Asset> = {};
+export const LAYOUT: Record<string, {rk: number | null; w: number | null; k: number | null; off?: boolean}> = {};
+export let C: any = null; /* raw Admin export, or null = use seed */
+const subs = new Set<() => void>();
+export const onContent = (f: () => void) => {subs.add(f); return () => {subs.delete(f);};};
+
+export function applyContent(json: any) {
+  if (!json || json.v !== 5) throw new Error('This is not a Wantiss Admin Goodies export (version 5).');
+  C = json;
+  Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
+  (json.lib || []).forEach((a: any) => {
+    LAYOUT[a.id] = {rk: a.rk, w: a.w, k: a.k, off: a.st === 'off'};
+    if (a.img && a.img.data && a.st !== 'off') ASSETS[a.id] = {u: a.img.data, w: a.img.w, h: a.img.h, ver: a.ver || 0};
+  });
+  subs.forEach(f => f());
+}
+export async function loadContent() {try {const r = await AsyncStorage.getItem(KEY); if (r) applyContent(JSON.parse(r));} catch (e) {}}
+export async function importContent(text: string) {const j = JSON.parse(text); applyContent(j); await AsyncStorage.setItem(KEY, text);}
+export async function clearContent() {C = null; Object.keys(ASSETS).forEach(k => delete ASSETS[k]); await AsyncStorage.removeItem(KEY); subs.forEach(f => f());}
+export const hasContent = () => !!C;
+
+/* ---------- accessors ---------- */
+export function categories(): {id: string; name: Txt; emoji: string; art?: string | null}[] {
+  if (!C) return CATS.map(c => ({id: c.id, name: c.name, emoji: c.emoji}));
+  return C.cats.filter((c: any) => c.st === 'on').sort((a: any, b: any) => a.ord - b.ord).map((c: any) => ({id: c.id, name: c.name, emoji: c.emoji, art: c.art ? c.art.data : null, home: c.home}));
+}
+export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? 'All stores' : id;};
+export const label = (id: string, fallback: string) => {const l = C && C.labels && C.labels.find((x: any) => x.id === id); const s = l ? tx(l.t) : ''; return s || fallback;};
+const live = (r: any) => {const n = new Date().toISOString().slice(0, 10); return r.st === 'Live' && (!r.from || r.from <= n) && (!r.to || r.to >= n);};
+export type PromoCard = {id: string; emoji: string; color: 'plum' | 'orange' | 'green'; title: string; sub: string; btn: string; target: string; newOnly: boolean};
+export function promoCards(): PromoCard[] | null {
+  if (!C) return null;
+  return C.promos.filter(live).sort((a: any, b: any) => a.ord - b.ord).map((p: any) => ({id: p.id, emoji: p.emoji, color: p.color, title: tx(p.title), sub: tx(p.sub), btn: tx(p.btn), target: p.target, newOnly: p.aud === 'New customers'}));
+}
+export function deals(): [string, number, number][] {
+  if (!C) return DEALS;
+  return C.deals.filter((d: any) => d.st === 'Live' && d.rs !== 'alcohol').map((d: any) => [d.item, d.pct, d.left]);
+}
+export function dealEnd(): number | null {return C && C.dealEnd ? new Date(C.dealEnd).getTime() : null;}
+export function coupons() {
+  if (!C) return PROMOS;
+  return C.coupons.filter(live).map((c: any) => ({c: c.code, t: tx(c.title), d: tx(c.desc), min: c.min, ty: c.kind === 'Percent' ? 'pct' : 'ship', v: c.val, st: c.store === 'All stores' ? undefined : c.store}));
+}
+export const fees = () => {
+  const f = C ? C.fees : null;
+  return {svc: f ? f.svc : 0.5, firstFree: f ? !!f.first : true, tips: f ? String(f.tips).split(',').map(Number) : [0, 1, 2, 5], lead: f ? f.lead : 30, step: f ? f.step : 15, slots: f ? f.slots : 5, far: f ? f.far : 5.5,
+    pay: f ? f.pay : {Wallet: 1, MonCash: 1, Card: 1, Cash: 1}, rfSvc: f ? !!f.rfSvc : true, rfTip: f ? !!f.rfTip : true};
+};
+/* alcohol minimum age by country (admin table), default elsewhere */
+export function minAge(cc: string | null | undefined): number {
+  if (!C) return cc === 'HT' || cc === 'DO' ? 18 : 21;
+  const r = (C.ages || []).find((a: any) => a.cc === cc); return r ? r.age : C.ageDef;
+}
+export const rgText = (id: string, fallback: string, age: number) => {const t = C && C.rg && C.rg.texts.find((x: any) => x.id === id); return (t ? tx(t.t) || fallback : fallback).replace(/\{age\}/g, String(age));};
+export const rulesLive = () => !C || !!(C.rg && C.rg.live) || true; /* demo shows rules whether or not the admin published them; production should require live */
+export const stageLabels = (pickup: boolean, fallback: string[]) => {
+  if (!C) return fallback;
+  const L = C.stages.filter((s: any) => (pickup ? /^stg\.p/ : /^stg\.d/).test(s.id)); return L.length === fallback.length ? L.map((s: any, i: number) => tx(s.t) || fallback[i]) : fallback;
+};
+export const faq = (fallback: [string, string][]): [string, string][] => (C && C.faq && C.faq.length ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : fallback);
+export const supportTopics = (fallback: string[]) => (C && C.topics && C.topics.length ? C.topics.map((t: any) => tx(t.t)) : fallback);
+export function legalDoc(id: string): string | null {const d = C && C.legal && C.legal.find((x: any) => x.id === id && x.st === 'Live'); const s = d ? tx(d.t) : ''; return s || null;}
+
+export function modes(): {emoji: string; title: string; sub: string; cat: string}[] | null {
+  if (!C || !C.modes) return null;
+  return C.modes.filter((m: any) => m.st === 'Live').map((m: any) => ({emoji: m.emoji, title: tx(m.title), sub: tx(m.sub), cat: m.cat}));
+}
+contentHooks.coupons = coupons; contentHooks.fees = fees; contentHooks.minAge = minAge;
