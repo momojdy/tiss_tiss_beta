@@ -4,7 +4,7 @@ import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions} from 
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
-import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast} from '../store';
+import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes} from '../content';
 import {Image} from 'react-native';
 import {go, tab, back, browse, promoSheet, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
@@ -36,7 +36,7 @@ function Mode({title, sub, emoji, onPress, grad, bg, fg, small}: any) {
 
 function PromoCard({kind, title, sub, btn, emoji, target}: {kind: keyof typeof PROMO; title: string; sub: string; btn: string; emoji: string; target?: string}) {
   return (
-    <Pressable onPress={() => (target ? promoGoTarget(target) : promoSheet(kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce'))}>
+    <Pressable onPress={() => ui.sheet({kind: 'promo', p: kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce', custom: {title, sub, btn, emoji, target}})}>
       <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
