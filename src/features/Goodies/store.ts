@@ -141,10 +141,20 @@ export async function load() {
   } catch (e) {}
   /* Live vendor-published opening hours and scheduled-order settings. Demo seeds remain the fallback. */
   try {
-    const {data} = await supabase.from('goodies_store_schedules').select('store_id,hours,accept_scheduled_orders,scheduled_order_start_minutes,is_live').eq('is_live', true);
+    const {data} = await supabase.from('goodies_store_schedules').select('store_id,hours,accept_scheduled_orders,scheduled_order_start_minutes,is_live,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url').eq('is_live', true);
     (data || []).forEach((v: any) => {
       const s: any = STB[v.store_id]; if (!s) return;
       s.scheduleHours = v.hours || {};
+      s.businessName = v.business_name || '';
+      s.businessDescription = v.description || '';
+      s.businessPhone = v.phone || '';
+      s.businessEmail = v.email || '';
+      s.businessWebsite = v.website || '';
+      s.businessAddress = v.address || '';
+      s.businessCity = v.city || '';
+      s.businessCountry = v.country || '';
+      s.businessDeliveryModes = v.delivery_modes || [];
+      s.businessLogoUrl = v.logo_url || '';
       s.acceptScheduledOrders = !!v.accept_scheduled_orders;
       s.scheduledOrderStartMinutes = Math.max(0, Number(v.scheduled_order_start_minutes ?? 60));
       const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
