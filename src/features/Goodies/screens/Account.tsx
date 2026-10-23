@@ -183,6 +183,8 @@ function StoreChat({id}: {id: string}) {
     try {
       const {error} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: userId, body});
       if (error) throw error;
+      const {error: threadError} = await supabase.from('conversations').update({last_body: body, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
+      if (threadError) throw threadError;
       setDraft('');
       await loadMessages(conversationId);
     } catch (e: any) { setProblem(e?.message || 'Message could not be sent.'); }
