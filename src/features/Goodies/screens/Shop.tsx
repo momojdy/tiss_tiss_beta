@@ -336,10 +336,7 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
             <Circle cx="44" cy="44" r="6" fill="#F4C542" stroke="#8F267E" strokeWidth="2" />
             <Path d="M13 31 L22 22 L31 31 L39 31 L34 22 L25 22" stroke="#F4C542" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
             <Path d="M19 21 L31 21 L34 26 L24 27 Z" fill="#F4C542" stroke="#D8A91B" strokeWidth="1" />
-            <Path d="M24 20 L20 14 L29 11 L34 20 Z" fill="#F25C9C" />
-            <Path d="M21 7 Q24 1 29 5 L30 8 Z" fill="#242424" />
-            <Path d="M22 14 L17 21 M30 14 L35 18" stroke="#F25C9C" strokeWidth="3.5" strokeLinecap="round" />
-            <Path d="M23 20 L20 27 M29 20 L33 27" stroke="#252525" strokeWidth="3" strokeLinecap="round" />
+
           </Svg>
         </View>
       </View>
