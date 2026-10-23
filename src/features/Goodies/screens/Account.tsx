@@ -1,6 +1,6 @@
 /* Account screens: settings, profile, addresses, payments, policies, support. Ported from v24. */
-import React, {useState} from 'react';
-import {View, Text, Pressable} from 'react-native';
+import React, {useState, useEffect, useRef} from 'react';
+import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, Empty, Switch, Input, Chip, useTheme, Tile} from '../components/ui';
 import {S, defAddr, money, emit, save, toast, ui, push, reset, STB} from '../store';
@@ -9,6 +9,7 @@ import {setTheme} from '../store';
 import {t as tr} from '../i18n';
 import {providerInfo} from '../providers';
 import {Home} from './Browse';
+import {supabase} from '../../../lib/supabase';
 import {legalDoc, supportTopics} from '../content';
 
 const POL: Record<string, [string, string]> = {
@@ -132,6 +133,79 @@ function Payments() {
   </View>);
 }
 
+
+function StoreChat({id}: {id: string}) {
+  const th = useTheme(), store = STB[id], listRef = useRef<ScrollView>(null);
+  const [userId, setUserId] = useState(''), [conversationId, setConversationId] = useState(''), [messages, setMessages] = useState<any[]>([]);
+  const [draft, setDraft] = useState(''), [loading, setLoading] = useState(true), [sending, setSending] = useState(false), [problem, setProblem] = useState('');
+  const loadMessages = async (cid: string) => {
+    const {data, error} = await supabase.from('messages').select('id,sender_id,body,created_at').eq('conversation_id', cid).order('created_at', {ascending: true});
+    if (error) throw error;
+    setMessages(data || []);
+  };
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const {data: auth, error: authError} = await supabase.auth.getUser();
+        if (authError) throw authError;
+        const user = auth.user;
+        if (!user) throw new Error('Sign in to message this store. Your conversation will appear here after you sign in.');
+        if (!active) return;
+        setUserId(user.id);
+        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', id).eq('is_live', true).maybeSingle();
+        if (mappingError) throw mappingError;
+        if (!mapping?.business_id) throw new Error('This store has not enabled live store messaging yet.');
+        const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', id).eq('customer_id', user.id).limit(1).maybeSingle();
+        if (findError) throw findError;
+        let cid = found?.id;
+        if (!cid) {
+          const {data: created, error: createError} = await supabase.from('conversations').insert({business_id: mapping.business_id, participant_ids: [user.id], customer_id: user.id, customer_name: S.pf.n || 'Customer', feature: 'goodies', ref_id: id, ref_label: store?.n || 'Goodies store', title: store?.n || 'Goodies store', last_body: '', unread_business: 0, unread_customer: 0}).select('id').single();
+          if (createError) throw createError;
+          cid = created.id;
+        }
+        if (!active) return;
+        setConversationId(cid);
+        await loadMessages(cid);
+      } catch (e: any) { if (active) setProblem(e?.message || 'Could not open this store conversation.'); }
+      finally { if (active) setLoading(false); }
+    })();
+    return () => { active = false; };
+  }, [id]);
+  useEffect(() => {
+    if (!conversationId) return;
+    const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(e?.message || 'Could not refresh messages.')); }).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [conversationId]);
+  const send = async () => {
+    const body = draft.trim(); if (!body || !conversationId || !userId || sending) return;
+    setSending(true);
+    try {
+      const {error} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: userId, body});
+      if (error) throw error;
+      setDraft('');
+      await loadMessages(conversationId);
+    } catch (e: any) { setProblem(e?.message || 'Message could not be sent.'); }
+    finally { setSending(false); }
+  };
+  return (
+    <View style={{flex: 1, minHeight: 430}}>
+      <Bar title={store ? store.n : 'Message store'} onBack={back} />
+      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>Private conversation with the store</T></View><Badge label="Goodies" /></Row></Card></View> : null}
+      {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId('');}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>Try again</T></Pressable></Card></View> : null}
+      {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>Opening conversation…</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: messages.length ? 'flex-end' : 'center'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
+          {messages.length ? messages.map(m => {const mine = m.sender_id === userId; return <View key={m.id} style={{maxWidth: '82%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? th.br : th.soft, borderRadius: 16, paddingHorizontal: 13, paddingVertical: 10}}><T size={14} color={mine ? '#FFFFFF' : th.ink}>{m.body}</T><T size={10} color={mine ? '#FFFFFF' : th.mut} style={{marginTop: 4}}>{new Date(m.created_at).toLocaleString()}</T></View>;}) : <View style={{alignItems: 'center', padding: 22}}><Text style={{fontSize: 42}}>💬</Text><T weight="800" style={{marginTop: 8}}>Start the conversation</T><T size={13} color={th.mut} align="center" style={{marginTop: 5}}>Ask the store about its menu, availability, or your order. Replies from the store will appear here.</T></View>}
+        </ScrollView>
+        <View style={{flexDirection: 'row', alignItems: 'flex-end', gap: 8, padding: 12, borderTopWidth: 1, borderTopColor: th.line}}>
+          <TextInput value={draft} onChangeText={setDraft} multiline placeholder="Write a message…" placeholderTextColor={th.mut} style={{flex: 1, minHeight: 44, maxHeight: 120, borderRadius: 14, paddingHorizontal: 13, paddingVertical: 10, color: th.ink, backgroundColor: th.soft, textAlignVertical: 'top'}} />
+          <Pressable accessibilityRole="button" accessibilityLabel="Send message" disabled={!draft.trim() || !conversationId || sending} onPress={send} style={{height: 44, minWidth: 58, paddingHorizontal: 13, borderRadius: 14, backgroundColor: !draft.trim() || !conversationId || sending ? th.line : th.br, alignItems: 'center', justifyContent: 'center'}}><T size={13} weight="800" color="#fff">{sending ? '…' : 'Send'}</T></Pressable>
+        </View>
+      </KeyboardAvoidingView>}
+    </View>
+  );
+}
+
 function Contact({p}: {p: any}) {
   const th = useTheme(), [topic, setTopic] = useState(p && p.o ? 'Order problem' : 'Other'), [oid, setOid] = useState(p && p.oid ? p.oid : ''), [msg, setMsg] = useState('');
   return (<View>
@@ -156,6 +230,7 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'addresses': return <Addresses />;
     case 'payments': return <Payments />;
     case 'contact': return <Contact p={p} />;
+    case 'storechat': return <StoreChat id={String(p || '')} />;
     case 'supdone': return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>Message sent</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>Ticket {p} (demo). We would reply within one business day.</T><View style={{alignSelf: 'stretch'}}><Cta label="Back to Goodies" onPress={() => tab('home')} /></View></View>;
     case 'policies': return <View><Bar title="Terms and policies" onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
     case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title="Policy" onBack={back} /><Empty emoji="📄" title="Page not found" button="Back" onPress={() => tab('home')} /></View>;
