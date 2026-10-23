@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, Image} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
@@ -246,6 +246,10 @@ function slots(store: any = STB[S.cart.sid]) {
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
+  const nowForPicker = new Date();
+  const [customDate, setCustomDate] = useState(nowForPicker.getFullYear() + '-' + String(nowForPicker.getMonth() + 1).padStart(2, '0') + '-' + String(nowForPicker.getDate()).padStart(2, '0'));
+  const [customHour, setCustomHour] = useState(String(nowForPicker.getHours()).padStart(2, '0'));
+  const [customMinute, setCustomMinute] = useState(String(Math.ceil(nowForPicker.getMinutes() / 5) * 5 % 60).padStart(2, '0'));
   useEffect(() => { void refreshLiveSchedules(); }, []);
   const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, sl = slots(st), stp = ['Delivery', 'Time', 'Payment', 'Review'];
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', 'Balance ' + money(S.wallet), 'wallet'], ['moncash', 'MonCash', 'Simulated mobile wallet', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards[0].b + ' •••• ' + S.cards[0].l4 : 'Add a card (demo)', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]]);
@@ -266,6 +270,28 @@ export function Checkout() {
     <T size={15} weight="800" style={{marginBottom: 8}}>When do you want it?</T>
     {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.</T>}
     {sl.map(x => <Radio key={x.ts} on={S.sch === x.ts} onPress={() => setSch(x.ts)}><T weight="700">{x.l}</T></Radio>)}
+    <Card style={{marginTop: 10}}>
+      <T weight="800">Choose an exact time</T>
+      <T size={12.5} color={th.mut} style={{marginTop: 3, marginBottom: 10}}>Enter a date and time instead of choosing a preset slot.</T>
+      <T size={12} color={th.mut}>Date (YYYY-MM-DD)</T>
+      <TextInput accessibilityLabel="Order date" value={customDate} onChangeText={setCustomDate} placeholder="2026-10-25" keyboardType="numbers-and-punctuation" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5,marginBottom:10}} />
+      <View style={{flexDirection:'row',gap:10}}>
+        <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><TextInput accessibilityLabel="Order hour" value={customHour} onChangeText={v=>setCustomHour(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="14" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
+        <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><TextInput accessibilityLabel="Order minute" value={customMinute} onChangeText={v=>setCustomMinute(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="30" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
+      </View>
+      <Cta small label="Use selected date & time" onPress={() => {
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(customDate.trim());
+        const hh = Number(customHour), mm = Number(customMinute);
+        if (!m || !customHour || !customMinute || hh < 0 || hh > 23 || mm < 0 || mm > 59) { toast('Enter a valid date, hour and minute.'); return; }
+        const selected = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), hh, mm, 0, 0);
+        if (selected.getFullYear() !== Number(m[1]) || selected.getMonth() !== Number(m[2])-1 || selected.getDate() !== Number(m[3]) || selected.getTime() <= Date.now()) { toast('Choose a valid future date and time.'); return; }
+        if (!st.open && !st.acceptScheduledOrders) { toast('This store does not accept scheduled orders while closed.'); return; }
+        const earliestAllowed = sl.length ? sl[0].ts : Date.now() + (st && !st.open && st.acceptScheduledOrders ? Math.max(0, Number(st.scheduledOrderStartMinutes ?? 60)) : fees().lead) * 60000;
+        if (selected.getTime() < earliestAllowed) { toast('Choose a time at or after this store’s earliest scheduled-order time: ' + fmtDay(new Date(earliestAllowed)) + ', ' + fmtTime(new Date(earliestAllowed)) + '.'); return; }
+        setSch(selected.getTime()); toast('Order time selected: ' + fmtDay(selected) + ', ' + fmtTime(selected));
+      }} />
+      {S.sch ? <T size={12.5} color={th.br} style={{marginTop:6}}>Selected: {fmtDay(new Date(S.sch))}, {fmtTime(new Date(S.sch))}</T> : null}
+    </Card>
     {pk ? null : (<><Ttl>Tip your courier</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : 'No tip'}</T></Pressable>)}</View></>)}
     <Input label={pk ? 'Note for the store' : 'Delivery instructions'} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
   </>);
@@ -330,7 +356,7 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
-        <View style={{position: 'absolute', left: Math.max(0, Math.min(82, x / 320 * 100 - 8)) + '%', top: Math.max(16, Math.min(72, y / 190 * 100 - 10)) + '%', width: 46, height: 46, borderRadius: 23, backgroundColor: '#FFFFFF', borderWidth: 2, borderColor: '#F25C9C', alignItems: 'center', justifyContent: 'center'}} pointerEvents="none"><Text style={{fontSize: 28}}>🛵</Text></View>
+        <View style={{position: 'absolute', left: Math.max(0, Math.min(82, x / 320 * 100 - 8)) + '%', top: Math.max(16, Math.min(72, y / 190 * 100 - 10)) + '%'}} pointerEvents="none"><Text style={{fontSize: 30}}>🛵</Text></View>
       </View>
       <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#D946A8', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
       <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
@@ -401,12 +427,8 @@ export function Track({id}: {id: string}) {
         {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap storeName={s.n} /> : null}
         {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap order={o} storeName={s.n} destination={o.ad ? o.ad.l + ': ' + o.ad.t : o.addr} /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
-        {dn && !o.cx && !o.rated ? <Card><T weight="700" align="center">How was your order?</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'review', id: o.id, initialStars: k});}}><Icon name="star" size={32} color="#FFB400" fill /></Pressable>)}</View></Card> : null}
-        {o.rated ? <Card><T weight="700" align="center">Thanks for rating your order: {o.rated} ★</T></Card> : null}
-        {dn && !o.cx && !o.rated ? <Cta ghost label="Write an order review" onPress={() => {S.rt = 0; require('../store').ui.sheet({kind: 'review', id: o.id});}} /> : null}
-        {dn && !o.cx && !o.pk && !o.driverRated ? <Card><T weight="700" align="center">How was your driver?</T><T size={12.5} color={th.mut} align="center" style={{marginTop: 4}}>Your driver rating is separate from your store and order review.</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'driver-review', id: o.id, initialStars: k});}}><Icon name="star" size={32} color="#FFB400" fill /></Pressable>)}</View></Card> : null}
-        {o.driverRated ? <Card><T weight="700" align="center">Thanks for rating your driver: {o.driverRated} ★</T></Card> : null}
-        {dn && !o.cx && !o.pk && !o.driverRated ? <Cta ghost label="Rate your driver" onPress={() => {S.rt = 0; require('../store').ui.sheet({kind: 'driver-review', id: o.id});}} /> : null}
+        {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your order</T><T size={12} color={th.mut}>Order and delivery feedback</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>Your rating: {o.rated} ★</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your driver</T><T size={12} color={th.mut}>Delivery experience</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
+        {o.rated && (o.pk || o.driverRated) ? <Card><T weight="700" align="center">Thank you for your feedback!</T></Card> : null}
         <Sum rows={[...o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)] as any), ['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
         {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color={th.red}>Cancel order</T></Pressable></Card></> : null}
         <Cta ghost label="Order again" onPress={() => reorder(o.id)} /><View style={{height: 10}} />
