@@ -297,8 +297,8 @@ export function Favs() {
     <View>
       <Bar title="Favorites" onBack={back} />
       <View style={{paddingHorizontal: 16}}><Seg list={[['stores', 'Stores (' + st.length + ')'], ['items', 'Items (' + it.length + ')']]} on={S.ft} onPick={k => {S.ft = k; emit();}} /></View>
-      {S.ft === 'stores' ? (st.length ? <View style={{gap: 22, padding: 16}}>{st.map(s => <StoreCard key={s.id} s={s} />)}</View> : <Empty emoji="💛" title="No favorite stores" text="Tap the heart on a store to save it." button="Browse stores" onPress={browse} />)
-        : (it.length ? <View style={{paddingHorizontal: 16, marginTop: 6}}>{it.map((i: any) => <ItemRow key={i.id} i={i} />)}</View> : <Empty emoji="💛" title="No favorite items" text="Tap the heart on a product to save it." button="Browse stores" onPress={browse} />)}
+      {S.ft === 'stores' ? (st.length ? <View style={{gap: 22, padding: 16}}>{st.map(s => <StoreCard key={s.id} s={s} />)}</View> : <Empty icon="heart" title="No favorite stores yet" text="Save the stores you love by tapping the heart on a store." button="Browse stores" onPress={browse} />)
+        : (it.length ? <View style={{paddingHorizontal: 16, marginTop: 6}}>{it.map((i: any) => <ItemRow key={i.id} i={i} />)}</View> : <Empty icon="heart" title="No favorite items yet" text="Tap the heart on a product to keep it here for later." button="Browse stores" onPress={browse} />)}
     </View>
   );
 }
