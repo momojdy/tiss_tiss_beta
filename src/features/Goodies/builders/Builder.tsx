@@ -61,7 +61,7 @@ function BurgerStage({b, fin}: {b: Builder; fin: boolean}) {
   if (!g) return <BurgerFallback b={b} />;
   const {pos, top, y} = g, n = pos.length, spacing = Math.min(19, 260 / Math.max(1, n));
   const disp = pos.map((r, i) => r.y + i * spacing), lp = pos[n - 1], totE = disp[n - 1] + lp.h, scE = Math.min(.86, 200 / Math.max(1, totE));
-  const finalH = y + top.h, scF = Math.min(.9, 200 / Math.max(1, finalH)), done = fin && !BD?.assembling, stageH = done ? Math.max(230, Math.ceil(finalH * scF + 12)) : 226, W = 210;
+  const finalH = y + top.h, scF = Math.min(.9, 200 / Math.max(1, finalH)), done = fin && !BD?.assembling, stageH = done ? Math.max(230, Math.ceil(finalH * scF + 12)) : 250, W = 210;
   const sUse = scE, topFinal = y * sUse, topStart = Math.min(stageH - 10, topFinal + top.h * sUse + 24);
   const contScale = t.interpolate({inputRange: [0, 1], outputRange: [1, scF / scE]});
   const tY = Animated.multiply(Animated.subtract(1, contScale), stageH / 2);
