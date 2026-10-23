@@ -31,7 +31,7 @@ export const PrezoShell = () => {
             { paddingTop: headerHeight, paddingBottom: tabBar ? tabHeight : 0 },
           ]}
         >
-          <View style={[styles.stripe, { backgroundColor: colors.rd }]} />
+          <View style={styles.stripe} />
           <View style={styles.routeContent}>
             <PrezoRouteView key={navigation.routeId} route={navigation.route} />
           </View>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     height: 20,
     width: '100%',
     flexShrink: 0,
-    opacity: 0.72,
+    backgroundColor: '#C62828',
   },
   routeContent: {
     flex: 1,
