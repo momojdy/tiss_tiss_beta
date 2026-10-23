@@ -10,14 +10,6 @@ import {alcAge} from '../store';
 import {rgText, importContent, clearContent, hasContent} from '../content';
 import {TextInput} from 'react-native';
 
-const PHONE_COUNTRIES = [
-  {id: 'HT', name: 'Haiti', flag: '🇭🇹', dial: '+509'}, {id: 'US', name: 'United States', flag: '🇺🇸', dial: '+1'},
-  {id: 'CA', name: 'Canada', flag: '🇨🇦', dial: '+1'}, {id: 'DO', name: 'Dominican Republic', flag: '🇩🇴', dial: '+1'},
-  {id: 'PH', name: 'Philippines', flag: '🇵🇭', dial: '+63'}, {id: 'FR', name: 'France', flag: '🇫🇷', dial: '+33'},
-  {id: 'CN', name: 'China', flag: '🇨🇳', dial: '+86'}, {id: 'GB', name: 'United Kingdom', flag: '🇬🇧', dial: '+44'},
-  {id: 'BR', name: 'Brazil', flag: '🇧🇷', dial: '+55'}, {id: 'JM', name: 'Jamaica', flag: '🇯🇲', dial: '+1'},
-] as const;
-
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const th = useTheme();
   if (!sheet) return null;
@@ -112,42 +104,22 @@ function ContactsSheet({close}: {close: () => void}) {
 }
 function CtForm({id}: {id: any}) {
   const th = useTheme(), c = S.gc.filter((x: any) => x.id == id)[0] || {l: '', ph: ''};
-  const existingDigits = String(c.ph || '').replace(/\D/g, '');
-  const matched = PHONE_COUNTRIES.slice().sort((a, b) => b.dial.length - a.dial.length).find(x => existingDigits.startsWith(x.dial.replace(/\D/g, '')));
-  const [l, setL] = useState(c.l), [countryId, setCountryId] = useState<string>(matched?.id || 'HT');
-  const initialCountry = matched || PHONE_COUNTRIES[0];
-  const [ph, setPh] = useState(matched ? existingDigits.slice(matched.dial.replace(/\D/g, '').length) : existingDigits);
-  const [showCountries, setShowCountries] = useState(false);
-  const country = PHONE_COUNTRIES.find(x => x.id === countryId) || initialCountry;
+  const [l, setL] = useState(c.l || ''), [ph, setPh] = useState(c.ph || '');
   const save_ = () => {
-    const local = ph.replace(/\D/g, ''), p = country.dial + ' ' + local;
+    const p = ph.trim();
     if (!phoneOK(p)) return toast('Enter a valid phone number (8 to 15 digits)');
-    const dg = p.replace(/\D/g, '');
-    if (dg === S.pf.ph.replace(/\D/g, '')) return toast('That is already your Wantiss number');
-    if (S.gc.some((x: any) => x.id != id && x.ph.replace(/\D/g, '') === dg)) return toast('You already saved that number');
+    const dg = p.replace(/\\D/g, '');
+    if (dg === S.pf.ph.replace(/\\D/g, '')) return toast('That is already your Wantiss number');
+    if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\\D/g, '') === dg)) return toast('You already saved that number');
     const cc = S.gc.filter((x: any) => x.id == id)[0];
     if (cc) {cc.ph = p; cc.l = l.trim();} else {const n = {id: Date.now(), ph: p, l: l.trim()}; S.gc.push(n); S.cc = n.id;}
     toast('Number saved for Goodies checkout'); save(); emit(); ui.sheet({kind: 'contacts'});
   };
   return (<>
     <T size={20} weight="800">{id ? 'Edit' : 'Add'} contact number</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 3}}>Saved for Goodies checkout only. Choose the flag and international calling code for this number.</T>
+    <T size={12.5} color={th.mut} style={{marginTop: 3}}>Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings.</T>
     <Input label="Label (optional)" value={l} onChange={setL} placeholder="e.g. Partner, Office" />
-    <T size={13} weight="700" style={{marginTop: 12, marginBottom: 5}}>Country / area code</T>
-    <Pressable accessibilityRole="button" accessibilityLabel="Choose country and calling code" onPress={() => setShowCountries(v => !v)} style={{minHeight: 50, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderRadius: 12, borderWidth: 1, borderColor: showCountries ? th.br : th.line, backgroundColor: th.soft, gap: 10}}>
-      <Text style={{fontSize: 22}}>{country.flag}</Text>
-      <View style={{flex: 1}}><T size={14} weight="700">{country.name}</T><T size={12} color={th.mut}>{country.dial}</T></View>
-      <Icon name={showCountries ? 'chevD' : 'chevR'} size={17} color={th.ink} />
-    </Pressable>
-    {showCountries ? <View style={{maxHeight: 190, borderWidth: 1, borderColor: th.line, borderRadius: 12, marginTop: 6, overflow: 'hidden'}}>
-      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
-        {PHONE_COUNTRIES.map(x => <Pressable key={x.id} onPress={() => {setCountryId(x.id); setShowCountries(false);}} style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: x.id === countryId ? th.brt : th.card}}>
-          <Text style={{fontSize: 20}}>{x.flag}</Text><T size={13.5} weight={x.id === countryId ? '800' : '500'} style={{flex: 1}}>{x.name}</T><T size={13} weight="700" color={th.mut}>{x.dial}</T>{x.id === countryId ? <Icon name="check" size={15} color="#FD802E" /> : null}
-        </Pressable>)}
-      </ScrollView>
-    </View> : null}
-    <Input label="Phone number" value={ph} onChange={setPh} placeholder="Local number, including area code" keyboard="phone-pad" />
-    <T size={11.5} color={th.mut} style={{marginTop: 5}}>Your saved number will include {country.dial} automatically.</T>
+    <Input label="Phone number" value={ph} onChange={setPh} placeholder="Enter phone number" keyboard="phone-pad" />
     <View style={{height: 14}} /><Cta label="Save number" onPress={save_} /><View style={{height: 10}} /><Cta ghost label="Back" onPress={() => ui.sheet({kind: 'contacts'})} />
   </>);
 }
