@@ -74,7 +74,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
     </>);
   }
   if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>Message courier</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
-  if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} />;
+  if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>Deliver to</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>Choosing an address here only changes Goodies. Your Wantiss default stays the same.</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
 
   return (
@@ -90,8 +90,8 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   );
 }
 
-function ReviewSheet({id, stars, driver = false}: {id: string; stars: any; driver?: boolean}) {
-  const [n, setN] = useState(S.rt || 0), [t, setT] = useState('');
+function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
+  const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
   return (<>
     <T size={20} weight="800">{driver ? 'Rate your driver' : 'Rate your order'}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder="Add a comment (optional)" multiline />
