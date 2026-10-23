@@ -76,6 +76,7 @@ const WDEF = () => ({
   ] as Address[],
 });
 const GDEF = () => ({
+  storeChats: {} as Record<string, any>,
   notifs: [
     {id: 1, t: 'Welcome to Goodies 🎉', d: 'Your first order ships free. Tap to start browsing.', r: 'catlist', p: 'restaurants', u: 1},
     {id: 2, t: 'Earn double points this weekend', d: 'Pay with your Wallet on any order. See the coupons page for current offers.', r: 'promos', p: '', u: 1},
@@ -83,7 +84,7 @@ const GDEF = () => ({
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
   wallet: 45, hasWallet: true, pay: 'wallet', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 1, promos: 1}, rev: {} as any, rec: [] as any[], rv: [] as any[],
 });
-export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp', 'cards', 'wallet', 'hasWallet', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'rec', 'rv'];
+export const WP = ['pf', 'addr'], GP = ['storeChats', 'notifs', 'orders', 'cart', 'fav', 'favp', 'cards', 'wallet', 'hasWallet', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'rec', 'rv'];
 
 export interface Route {r: string; p?: any; u: number; sy?: number}
 export const S: any = Object.assign(WDEF(), GDEF());
