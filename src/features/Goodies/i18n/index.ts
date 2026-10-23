@@ -1,6 +1,6 @@
 /* Five-language support. PROPOSED model.
    - Interface strings: bundled key tables below (en is complete; other languages are machine DRAFTS until a human marks them reviewed).
-   - Admin-managed content: Txt objects {en:{v,s}, fr:{...}, ht:{...}, ...}, resolved by tx().
+   - Admin-managed content: Txt objects {en:{v,s}, fr:{...}, ...}, resolved by tx().
    Rules: selected language -> configured default (en). Haitian Creole is shown only when human reviewed.
    Machine drafts are never shown in production; the demo may show them so all five languages can be exercised. */
 import {S} from '../store';
@@ -30,12 +30,12 @@ const drafts: Record<string, Table> = {
 };
 /* languages whose bundled strings were human reviewed (production uses only these) */
 export const REVIEWED: LangCode[] = ['en'];
-const allowed = (l: string) => REVIEWED.includes(l as LangCode) || (cfg.showMachineDrafts && l !== 'ht') || (cfg.showMachineDrafts && l === 'ht');
+const allowed = (l: string) => REVIEWED.includes(l as LangCode) || (cfg.showMachineDrafts && l !== 'ht') || (cfg.showMachineDrafts && l === 'ht'); /* demo may show drafts; production: REVIEWED only */
 
 export function t(key: string, vars?: Record<string, string | number>): string {
   const l: string = S.lang || DEFAULT_LANG;
   let s: string | undefined = l !== 'en' && allowed(l) ? drafts[l]?.[key] : undefined;
-  if (l === 'ht' && !REVIEWED.includes('ht') && !cfg.showMachineDrafts) s = undefined;
+  if (l === 'ht' && !REVIEWED.includes('ht') && !cfg.showMachineDrafts) s = undefined; /* Creole needs human review */
   s = s || en[key] || key;
   if (vars) Object.keys(vars).forEach(k => (s = (s as string).replace(new RegExp('\\{' + k + '\\}', 'g'), String(vars[k]))));
   return s as string;
