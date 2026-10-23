@@ -10,7 +10,7 @@ export function Icon({name, size = 20, color = '#1B1B1F', fill = false}: {name: 
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" fill={fill ? color : 'none'} stroke={color} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
       {shapes.map(([t, a], i) => {
-        if (t === 'path') return <Path key={i} d={a.d} />;
+        if (t === 'path') return <Path key={i} d={a.d} fill={name === 'heart' && fill ? color : undefined} />;
         if (t === 'circle') return <Circle key={i} cx={a.cx} cy={a.cy} r={a.r} />;
         return <Rect key={i} x={a.x} y={a.y} width={a.width} height={a.height} rx={a.rx} />;
       })}
