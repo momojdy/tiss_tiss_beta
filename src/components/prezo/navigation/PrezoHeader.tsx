@@ -1,52 +1,48 @@
 import React from 'react';
 import { Pressable, StyleSheet, View, type LayoutChangeEvent } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { usePrezoData } from '../../../features/prezo/PrezoDataContext';
 import { usePrezoNavigation } from '../../../features/prezo/PrezoNavigationContext';
 import { usePrezoTheme } from '../../../features/prezo/PrezoThemeContext';
-import { getActiveTab, getRouteTitle, isRootRoute, primaryTabs } from '../../../lib/prezo/navigation';
+import { getActiveTab, getRouteTitle, primaryTabs } from '../../../lib/prezo/navigation';
 import { useLayoutMode } from '../../../lib/prezo/useLayoutMode';
-import { prezoLayout } from '../../../theme/prezoTheme';
 import { BlurSurface } from '../shared/BlurSurface';
 import { Icon } from '../shared/Icon';
 import { PzText } from '../shared/PzText';
 import { CountBadge } from './CountBadge';
 
 export const PrezoHeader = ({ onLayout }: { onLayout: (event: LayoutChangeEvent) => void }) => {
-  const { colors } = usePrezoTheme();
-  const insets = useSafeAreaInsets();
+  const { colors, mode } = usePrezoTheme();
   const navigation = usePrezoNavigation();
   const data = usePrezoData();
   const { isWide } = useLayoutMode();
-  const sub = !isRootRoute(navigation.route);
   const activeTab = getActiveTab(navigation.route);
   const unread = data.unreadAlertCount;
-  const showLogo = !sub || isWide;
+  const isHome = navigation.route.name === 'home';
+  const title = getRouteTitle(navigation.route);
 
   return (
     <BlurSurface
-      opacity={0.88}
+      opacity={mode === 'dark' ? 0.94 : 0.88}
       onLayout={onLayout}
       style={[
         styles.header,
         {
           borderBottomColor: colors.ln,
-          paddingTop: insets.top,
+          backgroundColor: colors.bg,
         },
       ]}
     >
       <View style={styles.inner}>
-        {sub ? (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Go back"
-            onPress={navigation.back}
-            style={styles.iconButton}
-          >
-            <Icon name="back" color={colors.tx} />
-          </Pressable>
-        ) : null}
-        {showLogo ? (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={isHome ? 'Exit Prezo' : 'Go back'}
+          onPress={navigation.back}
+          style={styles.iconButton}
+        >
+          <Icon name="back" size={24} color={colors.tx} />
+        </Pressable>
+
+        {isHome ? (
           <Pressable
             accessibilityRole="link"
             accessibilityLabel="Prezo home"
@@ -61,17 +57,30 @@ export const PrezoHeader = ({ onLayout }: { onLayout: (event: LayoutChangeEvent)
               </PzText>
             </PzText>
           </Pressable>
-        ) : null}
-        {!isWide ? (
+        ) : (
           <PzText
             display={700}
-            size={18}
+            size={19}
             numberOfLines={1}
             style={styles.title}
             accessibilityRole="header"
           >
-            {sub ? getRouteTitle(navigation.route) : ''}
+            {title || 'Prezo'}
           </PzText>
+        )}
+
+        {!isWide ? (
+          <View style={styles.rightSpacer}>
+            <Pressable
+              accessibilityRole="link"
+              accessibilityLabel={unread ? `Alerts, ${unread} unread` : 'Alerts'}
+              onPress={() => navigation.navigate({ name: 'alerts' })}
+              style={styles.iconButton}
+            >
+              <Icon name="bell" size={24} color={colors.tx} />
+              {unread ? <CountBadge count={unread} style={styles.bellBadge} /> : null}
+            </Pressable>
+          </View>
         ) : (
           <View style={styles.nav}>
             {primaryTabs.map((tab) => {
@@ -90,17 +99,17 @@ export const PrezoHeader = ({ onLayout }: { onLayout: (event: LayoutChangeEvent)
                 </Pressable>
               );
             })}
+            <Pressable
+              accessibilityRole="link"
+              accessibilityLabel={unread ? `Alerts, ${unread} unread` : 'Alerts'}
+              onPress={() => navigation.navigate({ name: 'alerts' })}
+              style={styles.iconButton}
+            >
+              <Icon name="bell" size={24} color={colors.tx} />
+              {unread ? <CountBadge count={unread} style={styles.bellBadge} /> : null}
+            </Pressable>
           </View>
         )}
-        <Pressable
-          accessibilityRole="link"
-          accessibilityLabel={unread ? `Alerts, ${unread} unread` : 'Alerts'}
-          onPress={() => navigation.navigate({ name: 'alerts' })}
-          style={styles.iconButton}
-        >
-          <Icon name="bell" color={colors.tx} />
-          {unread ? <CountBadge count={unread} style={styles.bellBadge} /> : null}
-        </Pressable>
       </View>
     </BlurSurface>
   );
@@ -112,26 +121,35 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    borderBottomWidth: prezoLayout.hairline,
+    height: 100,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    justifyContent: 'flex-end',
+    zIndex: 10,
+    elevation: 10,
   },
   inner: {
-    height: prezoLayout.headerHeight,
+    height: 40,
     width: '100%',
-    maxWidth: prezoLayout.maxContentWidth,
+    maxWidth: 1120,
     alignSelf: 'center',
-    paddingHorizontal: prezoLayout.gutter,
+    paddingHorizontal: 10,
+    paddingBottom: 4,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 12,
   },
   iconButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: 'rgba(128,128,128,0.12)',
     alignItems: 'center',
     justifyContent: 'center',
+    flexShrink: 0,
   },
   logo: {
+    flex: 1,
+    minWidth: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
@@ -147,10 +165,17 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     minWidth: 0,
+    lineHeight: 23,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
+  },
+  rightSpacer: {
+    alignItems: 'flex-end',
   },
   nav: {
     flex: 1,
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'flex-end',
     gap: 4,
   },
@@ -161,8 +186,7 @@ const styles = StyleSheet.create({
   },
   bellBadge: {
     position: 'absolute',
-    top: 4,
-    right: 2,
+    top: 0,
+    right: 0,
   },
 });
-
