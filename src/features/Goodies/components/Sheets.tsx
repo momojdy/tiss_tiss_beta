@@ -27,7 +27,22 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'replace') content = (<><T size={20} weight="800">Replace your cart?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}.</T><Cta label="Replace and reorder" onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label="Keep current cart" onPress={close} /></>);
   if (k === 'clear') content = (<><T size={20} weight="800">Clear your cart?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>All items will be removed.</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Clear cart</T></Pressable><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>);
   if (k === 'cancel') content = (<><T size={20} weight="800">Cancel this order?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>You can cancel until the store finishes preparing it.</T><Pressable onPress={() => A.cancelOrder(sheet.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Yes, cancel order</T></Pressable><View style={{height: 10}} /><Cta ghost label="Keep order" onPress={close} /></>);
-  if (k === 'promo') { const d = PROMO_DETAIL[sheet.p as 'free' | 'points' | 'produce']; content = (<><View style={{height: 130, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: d.bg, marginBottom: 12}}><Text style={{fontSize: 72}}>{d.e}</Text></View><T size={20} weight="800">{d.t}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{d.d}</T><Cta label={d.b} onPress={() => A.promoGo(d.go)} /></>); }
+  if (k === 'promo') {
+    const d = PROMO_DETAIL[sheet.p as 'free' | 'points' | 'produce'], custom = sheet.custom || {};
+    content = (<>
+      <View style={{height: 150, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: d.bg, marginBottom: 12}}><Text style={{fontSize: 78}}>{custom.emoji || d.e}</Text></View>
+      <T size={21} weight="800">{custom.title || d.t}</T>
+      <T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{custom.sub || d.d}</T>
+      <Cta label={custom.btn || d.b} onPress={() => {
+        const target = String(custom.target || '');
+        if (target.startsWith('category:')) A.promoGo(target.slice(9));
+        else if (target === 'screen:wallet') {close(); A.go('payments');}
+        else if (target === 'screen:promos') {close(); A.go('promos');}
+        else if (target) {close(); A.go('catlist', 'all');}
+        else A.promoGo(d.go);
+      }} />
+    </>);
+  }
   if (k === 'sinfo') {
     const s = STB[sheet.id];
     const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="700" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
