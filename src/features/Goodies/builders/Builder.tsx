@@ -1,5 +1,6 @@
 /* Build Your Own screen. Port of v24 vByo, bzStage, bgView, pzView, bzOpts, bzRev, bzFoot, vByoDone. */
 import React, {useEffect, useMemo, useRef} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, Image, Animated, Easing, TextInput} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import {LinearGradient} from 'expo-linear-gradient';
@@ -276,10 +277,10 @@ export function ByoScreen({p}: {p: string}) {
 }
 const Warn = ({children}: any) => {const th = useTheme(); return <View style={{backgroundColor: th.brt, borderWidth: 1, borderColor: th.br, borderRadius: 12, padding: 10, marginBottom: 10}}><Text>{children}</Text></View>;};
 function Header({title, sub, onBack}: {title: string; sub?: string; onBack: () => void}) {
-  const th = useTheme();
+  const th = useTheme(), ins = useSafeAreaInsets();
   return (
     <>
-      <View style={{height: 100, justifyContent: 'flex-end', paddingHorizontal: 16, paddingBottom: 10}}>
+      <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Circ icon="chevL" label="Back" onPress={onBack} />
           <View style={{flex: 1, justifyContent: 'center'}}><T size={20} weight="800" style={{lineHeight: 22}}>{title}</T>{sub ? <T size={12} color={th.mut}>{sub}</T> : null}</View>
