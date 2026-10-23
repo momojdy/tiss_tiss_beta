@@ -174,7 +174,7 @@ export const heartBtn = (id: string, on: boolean, onPress: () => void) => {
   const th = useTheme();
   return (
     <Pressable accessibilityLabel="Save store" onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
-      <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on} />
+      <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on ? '#FD802E' : undefined} />
     </Pressable>
   );
 };
