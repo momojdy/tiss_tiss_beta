@@ -16,10 +16,9 @@ export const PrezoShell = () => {
   const { isWide } = useLayoutMode();
   const tabBar = showsTabBar(navigation.route) && !isWide;
 
-  const [headerHeight, setHeaderHeight] = useState(0);
+  const [headerHeight, setHeaderHeight] = useState(100);
   const [tabHeight, setTabHeight] = useState(0);
-  // Keep the route viewport between the fixed header and tab bar. The scaffold
-  // should scroll inside this viewport rather than underneath the chrome.
+  // Route screens scroll inside the viewport below the fixed header, stripe, and bottom nav.
   const chrome = { top: 0, bottom: 0 };
 
   return (
@@ -32,7 +31,10 @@ export const PrezoShell = () => {
             { paddingTop: headerHeight, paddingBottom: tabBar ? tabHeight : 0 },
           ]}
         >
-          <PrezoRouteView key={navigation.routeId} route={navigation.route} />
+          <View style={[styles.stripe, { backgroundColor: colors.rd }]} />
+          <View style={styles.routeContent}>
+            <PrezoRouteView key={navigation.routeId} route={navigation.route} />
+          </View>
         </View>
       </PrezoChromeProvider>
       <PrezoHeader
@@ -56,5 +58,14 @@ const styles = StyleSheet.create({
     flex: 1,
     minHeight: 0,
   },
+  stripe: {
+    height: 20,
+    width: '100%',
+    flexShrink: 0,
+  },
+  routeContent: {
+    flex: 1,
+    minHeight: 0,
+    marginTop: 15,
+  },
 });
-
