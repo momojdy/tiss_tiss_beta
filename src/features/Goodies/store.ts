@@ -107,7 +107,16 @@ function formatHour(d: Date) {
 }
 
 export async function refreshLiveSchedules() {
-    try {
+  ST.forEach((s: any) => {
+    const x: any = STX[s.id] || {};
+    s.open = x.open === 0 ? 0 : 1;
+    s.h = x.h || (s.c === 'restaurants' ? '10am–10pm' : '8am–9pm');
+    s.nx = x.nx || '';
+    s.acceptScheduledOrders = x.scheduled === true;
+    s.scheduledOrderStartMinutes = Number(x.scheduledStartMinutes ?? 60);
+    delete s.scheduleHours; delete s.businessName; delete s.businessDescription; delete s.businessPhone; delete s.businessEmail; delete s.businessWebsite; delete s.businessAddress; delete s.businessCity; delete s.businessCountry; delete s.businessDeliveryModes; delete s.businessLogoUrl;
+  });
+  try {
       const {data} = await supabase.from('goodies_store_schedules').select('store_id,hours,accept_scheduled_orders,scheduled_order_start_minutes,is_live,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url').eq('is_live', true);
       (data || []).forEach((v: any) => {
         const s: any = STB[v.store_id]; if (!s) return;
