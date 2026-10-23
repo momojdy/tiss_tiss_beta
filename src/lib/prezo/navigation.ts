@@ -90,6 +90,14 @@ export const getParentRoute = (route: PrezoRoute): PrezoRoute => {
 
 export const getRouteTitle = (route: PrezoRoute): string => {
   switch (route.name) {
+    case 'home':
+      return 'Prezo';
+    case 'explore':
+      return 'Explore';
+    case 'me':
+      return route.tab === 'wl' ? 'Waitlist' : 'Orders';
+    case 'profile':
+      return 'Profile';
     case 'campaign':
       return 'Campaign';
     case 'seller':
