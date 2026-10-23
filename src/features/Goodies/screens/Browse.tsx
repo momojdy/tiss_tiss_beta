@@ -7,15 +7,13 @@ import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
 import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes} from '../content';
 import {Image} from 'react-native';
-import {go, tab, back, browse, promoSheet, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
+import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
 import {t as tr, tx} from '../i18n';
 import {MODE1, PROMO} from '../theme';
 
 const cname = (id: string) => catName(id);
 const CATS = categories();
-function promoGoTarget(t: string) {if (t.startsWith('category:')) go('catlist', t.slice(9)); else if (t === 'screen:wallet') go('payments'); else if (t === 'screen:promos') go('promos'); else go('catlist', 'all');}
-
 function Mode({title, sub, emoji, onPress, grad, bg, fg, small}: any) {
   return (
     <Pressable onPress={onPress} style={{borderRadius: 18, overflow: 'hidden', height: small ? 51 : 112}}>
