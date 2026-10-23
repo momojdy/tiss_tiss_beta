@@ -36,7 +36,32 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'clear') content = (<><T size={20} weight="800">Clear your cart?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>All items will be removed.</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Clear cart</T></Pressable><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>);
   if (k === 'cancel') content = (<><T size={20} weight="800">Cancel this order?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>You can cancel until the store finishes preparing it.</T><Pressable onPress={() => A.cancelOrder(sheet.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Yes, cancel order</T></Pressable><View style={{height: 10}} /><Cta ghost label="Keep order" onPress={close} /></>);
   if (k === 'promo') { const d = PROMO_DETAIL[sheet.p as 'free' | 'points' | 'produce']; content = (<><View style={{height: 130, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: d.bg, marginBottom: 12}}><Text style={{fontSize: 72}}>{d.e}</Text></View><T size={20} weight="800">{d.t}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{d.d}</T><Cta label={d.b} onPress={() => A.promoGo(d.go)} /></>); }
-  if (k === 'sinfo') { const s = STB[sheet.id]; const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', justifyContent: 'space-between', marginVertical: 7}}><T color={th.mut}>{a}</T><T color={th.mut}>{b}</T></View>; content = (<><T size={20} weight="800">{s.n}</T><T color={th.mut} style={{marginTop: 6, marginBottom: 12}}>{s.k}</T><Card>{row('Hours', s.h)}{row('Status', s.open ? 'Open now' : 'Closed')}{row('Delivery fee', s.fee === 0 ? 'Free' : money(s.fee))}{row('Minimum order', money(s.min))}{row('Distance', s.km.toFixed(1) + ' km')}{row('Fulfillment', 'Delivery and pickup')}</Card></>); }
+  if (k === 'sinfo') {
+    const s = STB[sheet.id];
+    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="700" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
+    content = (<>
+      <T size={23} weight="800">{s.n}</T>
+      <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.k}</T>
+      <Card style={{padding: 16}}>
+        <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
+          <View style={{flex: 1}}><T size={13} color={th.mut}>CUSTOMER RATING</T><T size={18} weight="800">★ {s.r} <T size={12.5} color={th.mut} weight="500">({s.rv} reviews)</T></T></View>
+          <Badge label={s.open ? 'Open now' : 'Closed now'} />
+        </Row>
+        {row('Opening hours', s.h)}
+        {row('Current status', s.open ? 'Accepting orders' : s.nx || 'Currently closed')}
+        {row('Delivery fee', s.fee === 0 ? 'Free delivery' : money(s.fee))}
+        {row('Minimum order', money(s.min))}
+        {row('Distance', s.km.toFixed(1) + ' km away')}
+        {row('Estimated delivery', s.eta + ' min')}
+        {row('Order methods', 'Delivery and pickup')}
+        {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
+      </Card>
+      <T size={14} weight="800" style={{marginTop: 18, marginBottom: 8}}>Popular items</T>
+      {s.it.slice(0, 4).map((item: any) => <View key={item.id} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line, gap: 10}}><Text style={{fontSize: 26}}>{item.e}</Text><View style={{flex: 1}}><T weight="700">{item.n}</T><T size={12.5} color={th.mut}>{money(item.p)}</T></View></View>)}
+      <View style={{height: 12}} />
+      <Cta label="Browse this store" onPress={() => {close(); A.go('shop', {id: sheet.id});}} />
+    </>);
+  }
   if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>Message courier</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
   if (k === 'review') content = <ReviewSheet id={sheet.id} stars={stars} />;
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>Deliver to</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>Choosing an address here only changes Goodies. Your Wantiss default stays the same.</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
@@ -46,7 +71,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
         <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
           <Pressable onPress={() => {}} style={{maxHeight: '96%'}}>
-            <SheetBox><ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+            <SheetBox large={k === 'sinfo'}><ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </Pressable>
         </Pressable>
       </KeyboardAvoidingView>
