@@ -138,6 +138,66 @@ export function Home({onExit}: {onExit?: () => void}) {
   );
 }
 
+
+/* Explore is the discovery destination for an empty cart. It keeps location,
+   availability, category and product discovery together in one scrollable feed. */
+export function Explore() {
+  const th = useTheme();
+  const [scope, setScope] = useState('closest');
+  const [category, setCategory] = useState('all');
+  const selectedAddress = addr();
+  const eligible = ST.filter(s => category === 'all' || s.c === category);
+  const visible = eligible.filter(s => scope !== 'open' || !!s.open).slice().sort((x, y) => {
+    if (scope === 'closest') return x.km - y.km;
+    if (scope === 'open') return x.km - y.km;
+    return Number(!!y.open) - Number(!!x.open) || x.km - y.km;
+  });
+  const visibleIds = new Set(visible.map(s => s.id));
+  const products = visible.flatMap(s => s.it.filter(i => !i.oos && i.stock > 0));
+  const scopeOptions: [string, string][] = [['closest', 'Closest'], ['open', 'Open now'], ['all', 'All available']];
+  const categoryOptions: [string, string][] = [['all', 'All categories'], ...categories().map(c => [c.id, c.emoji + ' ' + tx(c.name)] as [string, string])];
+  return (
+    <View>
+      <Bar title="Explore nearby" onBack={back} />
+      <View style={{paddingHorizontal: 16}}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Choose browsing address" onPress={() => go('addresses')} style={{flexDirection: 'row', alignItems: 'center', gap: 11, padding: 13, borderRadius: 16, backgroundColor: th.soft, marginBottom: 14}}>
+          <View style={{width: 40, height: 40, borderRadius: 13, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name="pin" size={20} color={th.br} /></View>
+          <View style={{flex: 1}}>
+            <T size={11.5} color={th.mut}>BROWSING NEAR</T>
+            <T weight="800" size={14.5} lines={2}>{selectedAddress?.t || 'Choose your location'}</T>
+            <T size={11.5} color={th.br} style={{marginTop: 2}}>Change address</T>
+          </View>
+          <Icon name="chevR" color={th.ink} />
+        </Pressable>
+        <Ttl>Discover your options</Ttl>
+        <Chips list={scopeOptions} on={scope} onPick={setScope} />
+        <View style={{marginTop: 12}}>
+          <Ttl>Categories</Ttl>
+          <Chips list={categoryOptions} on={category} onPick={setCategory} />
+        </View>
+        <Row sp style={{marginTop: 16, marginBottom: 8}}>
+          <T size={16} weight="800">{scope === 'open' ? 'Open near you' : scope === 'closest' ? 'Closest to you' : 'All available stores'}</T>
+          <T size={11.5} color={th.mut}>{visible.length} stores</T>
+        </Row>
+      </View>
+      {visible.length ? <View style={{paddingHorizontal: 16, gap: 14}}>
+        {visible.map(s => <StoreCard key={s.id} s={s} />)}
+      </View> : <View style={{paddingHorizontal: 16}}><Empty emoji="🕒" title="No stores match right now" text="Try another category or show all available options." button="Show all available" onPress={() => {setScope('all'); setCategory('all');}} /></View>}
+      <View style={{paddingHorizontal: 16, marginTop: 20}}>
+        <Sh title="Products to explore" />
+        {products.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
+          {products.map(i => <Dish key={i.id} i={i} grid />)}
+        </View> : <T size={13} color={th.mut}>No in-stock products match these filters.</T>}
+        <View style={{alignItems: 'center', paddingVertical: 24, gap: 5}}>
+          <View style={{width: 36, height: 3, borderRadius: 2, backgroundColor: th.line}} />
+          <T size={12} color={th.mut}>You've reached the end of the currently available options.</T>
+          <T size={11} color={th.mut}>More stores and products will appear here as the catalog grows.</T>
+        </View>
+      </View>
+    </View>
+  );
+}
+
 export function Cats() {
   const th = useTheme(), {width} = useWindowDimensions(), w = (width - 32 - 16) / 3;
   const all = [...categories().map(c => ({id: c.id, e: c.emoji, n: tx(c.name), art: c.art})), {id: 'all', e: '🏪', n: 'All stores', art: null as any}];
