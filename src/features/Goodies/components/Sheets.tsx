@@ -47,6 +47,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row('Estimated delivery', s.eta + ' min')}
         {row('Order methods', 'Delivery and pickup')}
         {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
+        {s.acceptScheduledOrders ? row('Minimum advance time', Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
       </Card>
       <T size={14} weight="800" style={{marginTop: 18, marginBottom: 8}}>Popular items</T>
       {s.it.slice(0, 4).map((item: any) => <View key={item.id} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line, gap: 10}}><Text style={{fontSize: 26}}>{item.e}</Text><View style={{flex: 1}}><T weight="700">{item.n}</T><T size={12.5} color={th.mut}>{money(item.p)}</T></View></View>)}
