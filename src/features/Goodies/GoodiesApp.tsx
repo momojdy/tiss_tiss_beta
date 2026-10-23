@@ -104,7 +104,13 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'help': body = <Help />; break;
     default: body = <Account r={r} p={c.p} />;
   }
-  const showTabs = TABS.indexOf(r) > -1, showCb = cnt() > 0 && NOCB.indexOf(r) < 0, footed = FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added);
+  const [dismissedCartCount, setDismissedCartCount] = useState(-1);
+  const showTabs = TABS.indexOf(r) > -1, showCb = cnt() > 0 && NOCB.indexOf(r) < 0 && dismissedCartCount !== cnt(), footed = FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added);
+  const cartBannerPan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 10 && Math.abs(g.dx) > Math.abs(g.dy) * 1.2,
+    onPanResponderRelease: (_e, g) => { if (Math.abs(g.dx) > 42 && Math.abs(g.dx) > Math.abs(g.dy)) setDismissedCartCount(cnt()); },
+  }), []);
 
   return (
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
@@ -118,10 +124,15 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       {footed ? <View style={{position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12 + ins.bottom, backgroundColor: th.bg, borderTopWidth: 1, borderTopColor: th.line}}>{r === 'product' ? <ProductFoot /> : r === 'byo' ? <ByoFoot /> : <CheckoutFoot />}</View> : null}
 
       {showCb ? (
-        <Pressable onPress={() => A.tab('cart')} style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 8, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}}}>
-          <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">Your cart</T></Row>
-          <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 16, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="800" color={th.brd}>View cart · {money(totals().total)}</T></View>
-        </Pressable>
+        <View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 30, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12}}>
+          <Pressable accessibilityRole="button" accessibilityLabel="Open cart" onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+            <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">Your cart</T></Row>
+            <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="800" color={th.brd}>View cart · {money(totals().total)}</T></View>
+          </Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Dismiss cart banner" onPress={() => setDismissedCartCount(cnt())} hitSlop={8} style={{position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,255,255,.22)', alignItems: 'center', justifyContent: 'center', zIndex: 2}}>
+            <Icon name="x" size={13} color="#fff" />
+          </Pressable>
+        </View>
       ) : null}
 
       {showTabs ? <BottomNav r={r} bottom={18} /> : null}
