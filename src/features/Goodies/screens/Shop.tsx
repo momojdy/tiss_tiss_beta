@@ -133,7 +133,7 @@ export function ProductFoot() {
   const th = useTheme(), h = S.sh, i = h && IT[h.id];
   if (!i) return null;
   const s = STB[i.s], o = CHOOSE_SIZE_CATS.indexOf(s.c) > -1, base = h.off ? dp(i, h.off) : i.p, unit = base + (h.size > 0 ? 1.5 : 0) + (h.drink ? 1 : 0);
-  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open ? 'Store is closed' : o && h.size < 0 ? 'Choose a size' : 'Add to cart · ' + money(unit * h.q);
+  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open && !s.acceptScheduledOrders ? 'Store is closed' : !s.open ? 'Schedule order · ' + money(unit * h.q) : o && h.size < 0 ? 'Choose a size' : 'Add to cart · ' + money(unit * h.q);
   return <Row><Stepper q={h.q} onMinus={() => productQty(-1)} onPlus={() => productQty(1)} /><View style={{flex: 1}}><Cta label={lbl} disabled={!!blocked} onPress={productAdd} /></View></Row>;
 }
 
