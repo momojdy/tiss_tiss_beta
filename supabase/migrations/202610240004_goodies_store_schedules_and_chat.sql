@@ -60,6 +60,9 @@ using (
 );
 
 drop policy if exists "Users can create conversations they participate in" on public.conversations;
+create policy "Users can create non-Goodies conversations they participate in"
+on public.conversations for insert to authenticated
+with check ((select auth.uid()) = any(participant_ids) and coalesce(feature, '') <> 'goodies');
 create policy "Customers can start Goodies store conversations"
 on public.conversations for insert to authenticated
 with check (
