@@ -48,7 +48,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
           {right}
         </View>
       </View>
-      {stripe ? <><View style={{height: 20, backgroundColor: '#F4A261'}} /><View style={{height: 15}} /></> : null}
+      {stripe ? <><View style={{height: 20, backgroundColor: '#F4B183'}} /><View style={{height: 15}} /></> : null}
     </>
   );
 }
