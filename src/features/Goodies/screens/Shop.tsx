@@ -327,22 +327,10 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">PICKUP</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
         </View>
-        <View style={{position: 'absolute', left: `${Math.max(0,Math.min(88, x / 3.2))}%`, top: `${Math.max(0,Math.min(78, y / 1.9))}%`, backgroundColor: '#fff', borderRadius: 22, width: 42, height: 42, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: '#F25C9C'}}><Text style={{fontSize: 25}}>🛵</Text></View>
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
-        <View style={{position: 'absolute', left: Math.max(0, Math.min(82, x / 320 * 100 - 8)) + '%', top: Math.max(16, Math.min(72, y / 190 * 100 - 10)) + '%', width: 46, height: 46, borderRadius: 23, backgroundColor: '#E8C5E8', borderWidth: 2, borderColor: '#8F267E', alignItems: 'center', justifyContent: 'center'}} pointerEvents="none">
-          <Svg width={36} height={36} viewBox="0 0 64 64">
-            <Circle cx="20" cy="44" r="6" fill="#F4C542" stroke="#8F267E" strokeWidth="2" />
-            <Circle cx="44" cy="44" r="6" fill="#F4C542" stroke="#8F267E" strokeWidth="2" />
-            <Path d="M13 31 L22 22 L31 31 L39 31 L34 22 L25 22" stroke="#F4C542" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            <Path d="M19 21 L31 21 L34 26 L24 27 Z" fill="#F4C542" stroke="#D8A91B" strokeWidth="1" />
-            <Path d="M24 20 L20 14 L29 11 L34 20 Z" fill="#F25C9C" />
-            <Path d="M21 7 Q24 1 29 5 L30 8 Z" fill="#242424" />
-            <Path d="M22 14 L17 21 M30 14 L35 18" stroke="#F25C9C" strokeWidth="3.5" strokeLinecap="round" />
-            <Path d="M23 20 L20 27 M29 20 L33 27" stroke="#252525" strokeWidth="3" strokeLinecap="round" />
-          </Svg>
-        </View>
+        <View style={{position: 'absolute', left: Math.max(0, Math.min(82, x / 320 * 100 - 8)) + '%', top: Math.max(16, Math.min(72, y / 190 * 100 - 10)) + '%', width: 46, height: 46, borderRadius: 23, backgroundColor: '#FFFFFF', borderWidth: 2, borderColor: '#F25C9C', alignItems: 'center', justifyContent: 'center'}} pointerEvents="none"><Text style={{fontSize: 28}}>🛵</Text></View>
       </View>
       <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#D946A8', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
       <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
