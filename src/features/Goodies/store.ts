@@ -233,6 +233,10 @@ export function ctOf() {
 export const done = (o: Order) => o.cx || (o.st as number) >= (o.pk ? 4 : 6);
 export const TL = STAGES_DELIVERY, TP = STAGES_PICKUP;
 export function stage(o: Order) {
+  if (o.backendId) {
+    const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0};
+    return map[String(o.serverStatus || 'scheduled').toLowerCase()] ?? 0;
+  }
   const n = o.pk ? 5 : 7;
   let i = Math.min(n - 1, Math.floor((Date.now() - o.t0) / 5000));
   if (o.sch && Date.now() < o.sch) i = Math.min(i, 1);
