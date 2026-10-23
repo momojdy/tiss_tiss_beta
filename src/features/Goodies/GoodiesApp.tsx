@@ -2,7 +2,7 @@
      <GoodiesApp onExit={() => navigation.goBack()} />
    Navigation is an internal stack that mirrors v24 (S.stack). Native back (Android) and left-edge swipe (iOS and Android) both call navBack(). */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView} from 'react-native';
+import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
@@ -68,7 +68,13 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   /* swipe-from-left-edge back. Starts only in the first 24px so horizontal rails and carousels keep working. */
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => false,
-    onMoveShouldSetPanResponder: (e, g) => e.nativeEvent.pageX - g.dx < 24 && g.dx > 12 && Math.abs(g.dy) < g.dx / 2 && cur().r !== 'wantiss',
+    onMoveShouldSetPanResponder: (e, g) => {
+      // The floating cart bar and bottom navigation occupy this area. Do not
+      // interpret a horizontal swipe there as a navigation-back gesture.
+      const startY = e.nativeEvent.pageY - g.dy;
+      const bottomOverlay = startY >= Dimensions.get('window').height - 190;
+      return !bottomOverlay && e.nativeEvent.pageX - g.dx < 24 && g.dx > 12 && Math.abs(g.dy) < g.dx / 2 && cur().r !== 'wantiss';
+    },
     onPanResponderRelease: (_e, g) => {if (g.dx > 80 && Math.abs(g.dy) < 45) handleBack();},
   }), [sheet]);
 
