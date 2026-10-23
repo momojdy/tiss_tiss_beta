@@ -214,18 +214,64 @@ function StoreChat({id}: {id: string}) {
 }
 
 function Contact({p}: {p: any}) {
-  const th = useTheme(), [topic, setTopic] = useState(p && p.o ? 'Order problem' : 'Other'), [oid, setOid] = useState(p && p.oid ? p.oid : ''), [msg, setMsg] = useState('');
+  const th = useTheme(), storeId = p && p.storeContact ? String(p.storeId || '') : '', store = storeId ? STB[storeId] : null;
+  const [topic, setTopic] = useState(p && p.o ? 'Order problem' : store ? 'Other' : 'Other');
+  const [oid, setOid] = useState(p && p.oid ? p.oid : '');
+  const [msg, setMsg] = useState('');
+  const [sending, setSending] = useState(false);
+  const submit = async () => {
+    const body = msg.trim();
+    if (body.length < 10) {toast('Please write at least 10 characters'); return;}
+    if (sending) return;
+    setSending(true);
+    try {
+      let ticket = 'GS-' + Math.floor(1000 + Math.random() * 9000);
+      let conversationId = '';
+      if (store) {
+        const {data: auth, error: authError} = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!auth.user) throw new Error('Sign in to contact this store. Your message has not been sent.');
+        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', storeId).eq('is_live', true).maybeSingle();
+        if (mappingError) throw mappingError;
+        if (!mapping?.business_id) throw new Error('This store has not enabled live store messaging yet. Your message has not been sent.');
+        const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', storeId).eq('customer_id', auth.user.id).limit(1).maybeSingle();
+        if (findError) throw findError;
+        conversationId = found?.id || '';
+        if (!conversationId) {
+          const {data: created, error: createError} = await supabase.from('conversations').insert({
+            business_id: mapping.business_id, participant_ids: [auth.user.id], customer_id: auth.user.id,
+            customer_name: S.pf.n || 'Customer', feature: 'goodies', ref_id: storeId,
+            ref_label: store.n, title: store.n, last_body: '', unread_business: 0, unread_customer: 0
+          }).select('id').single();
+          if (createError) throw createError;
+          conversationId = created.id;
+        }
+        const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\\n\\n' + body;
+        const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
+        if (messageError) throw messageError;
+        const {error: threadError} = await supabase.from('conversations').update({last_body: ticketBody, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
+        if (threadError) throw threadError;
+      }
+      S.stack.pop();
+      push('supdone', {ticket, storeId: store ? storeId : '', conversationId, topic, orderId: oid});
+    } catch (e: any) {
+      toast(e?.message || 'Could not send your message. Please try again.');
+    } finally {setSending(false);}
+  };
   return (<View>
-    <Bar title="Contact support" onBack={back} />
-    <View style={{paddingHorizontal: 16}}>
+    <Bar title={store ? 'Contact store' : 'Contact support'} onBack={back} />
+    <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
+      {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12.5} color={th.mut}>Your message will be sent to this store.</T></View></Row></Card> : null}
       <T size={13} weight="700" style={{marginTop: 6, marginBottom: 8}}>Topic</T>
       <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
-      <T size={13} weight="700" style={{marginTop: 14, marginBottom: 8}}>Order (optional)</T>
-      <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label="None" on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + STB[o.sid].n} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
+      {!store ? <>
+        <T size={13} weight="700" style={{marginTop: 14, marginBottom: 8}}>Order (optional)</T>
+        <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label="None" on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || 'Store')} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
+      </> : null}
       <Input label="Message" value={msg} onChange={setMsg} placeholder="Tell us what happened (at least 10 characters)" multiline />
-      <View style={{marginTop: 14}}><Cta label="Send message" onPress={() => {if (msg.trim().length < 10) {toast('Please write at least 10 characters'); return;} const tk = 'GS-' + Math.floor(1000 + Math.random() * 9000); S.stack.pop(); push('supdone', tk);}} /></View>
-      <T size={12} color={th.mut} style={{marginTop: 10}}>Demo only. No real support team receives this.</T>
-    </View>
+      <View style={{marginTop: 14}}><Cta label={sending ? 'Sending…' : 'Send message'} disabled={sending} onPress={() => {void submit();}} /></View>
+      <T size={12} color={th.mut} style={{marginTop: 10}}>{store ? 'We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies.' : 'Support messages are tracked with a ticket number.'}</T>
+    </ScrollView>
   </View>);
 }
 
