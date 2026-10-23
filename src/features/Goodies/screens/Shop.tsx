@@ -286,8 +286,11 @@ export function Checkout() {
         const selected = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), hh, mm, 0, 0);
         if (selected.getFullYear() !== Number(m[1]) || selected.getMonth() !== Number(m[2])-1 || selected.getDate() !== Number(m[3]) || selected.getTime() <= Date.now()) { toast('Choose a valid future date and time.'); return; }
         if (!st.open && !st.acceptScheduledOrders) { toast('This store does not accept scheduled orders while closed.'); return; }
-        const earliestAllowed = sl.length ? sl[0].ts : Date.now() + (st && !st.open && st.acceptScheduledOrders ? Math.max(0, Number(st.scheduledOrderStartMinutes ?? 60)) : fees().lead) * 60000;
-        if (selected.getTime() < earliestAllowed) { toast('Choose a time at or after this store’s earliest scheduled-order time: ' + fmtDay(new Date(earliestAllowed)) + ', ' + fmtTime(new Date(earliestAllowed)) + '.'); return; }
+        const earliestAllowed = st.open ? Date.now() : (sl.length ? sl[0].ts : Date.now() + Math.max(0, Number(st.scheduledOrderStartMinutes ?? 60)) * 60000);
+        if (selected.getTime() < earliestAllowed) {
+          toast(st.open ? 'Choose now or a future time.' : 'Choose a time at or after this store’s earliest scheduled-order time: ' + fmtDay(new Date(earliestAllowed)) + ', ' + fmtTime(new Date(earliestAllowed)) + '.');
+          return;
+        }
         setSch(selected.getTime()); toast('Order time selected: ' + fmtDay(selected) + ', ' + fmtTime(selected));
       }} />
       {S.sch ? <T size={12.5} color={th.br} style={{marginTop:6}}>Selected: {fmtDay(new Date(S.sch))}, {fmtTime(new Date(S.sch))}</T> : null}
