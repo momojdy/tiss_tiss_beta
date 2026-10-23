@@ -169,12 +169,12 @@ export function SheetBox({children, large = false, onClose}: any) {
   const th = useTheme();
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => false,
-    onMoveShouldSetPanResponder: (_e, g) => g.dy > 10 && Math.abs(g.dy) > Math.abs(g.dx) * 1.15,
-    onPanResponderRelease: (_e, g) => { if (g.dy > 55 && onClose) onClose(); },
+    onMoveShouldSetPanResponderCapture: (_e, g) => g.dy > 14 && Math.abs(g.dy) > Math.abs(g.dx) * 1.2,
+    onPanResponderRelease: (_e, g) => { if (g.dy > 65 && onClose) onClose(); },
   }), [onClose]);
   return (
-    <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, maxHeight: large ? '94%' : '88%', flexShrink: 1, overflow: 'hidden'}}>
-      <View {...pan.panHandlers} style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
+    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, maxHeight: large ? '92%' : '86%', flexShrink: 1, minHeight: 0, overflow: 'hidden'}}>
+      <View style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
         <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
         {onClose ? <Pressable accessibilityRole="button" accessibilityLabel="Close popup" onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
       </View>
