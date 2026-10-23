@@ -165,9 +165,9 @@ export const Tile = ({e, bg, size = 56, photo}: {e: string; bg: string; size?: n
 );
 
 /* sheet rendered by the shell */
-export function SheetBox({children}: any) {
+export function SheetBox({children, large = false}: any) {
   const th = useTheme();
-  return <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 28, maxHeight: '88%'}}><View style={{alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: th.line, marginBottom: 14}} />{children}</View>;
+  return <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 28, maxHeight: large ? '94%' : '88%'}}><View style={{alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: th.line, marginBottom: 14}} />{children}</View>;
 }
 
 export const heartBtn = (id: string, on: boolean, onPress: () => void, label?: string) => {
