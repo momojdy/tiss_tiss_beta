@@ -4,8 +4,6 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, useTheme} from './ui';
 import {Icon} from './Icon';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK} from '../store';
 import * as A from '../actions';
-import {LANGS} from '../i18n';
-import {setLang} from '../store';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {alcAge} from '../store';
@@ -34,7 +32,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>Message courier</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
   if (k === 'review') content = <ReviewSheet id={sheet.id} stars={stars} />;
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>Deliver to</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>Choosing an address here only changes Goodies. Your Wantiss default stays the same.</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
-  if (k === 'lang') content = (<><T size={20} weight="800" style={{marginBottom: 12}}>Language</T>{LANGS.map(l => <Radio key={l.code} on={S.lang === l.code} onPress={() => {setLang(l.code); close();}}><T weight="700">{l.label}</T></Radio>)}<T size={12} color={th.mut}>Changing language does not change your country, currency or payment method.</T></>);
+
   return (
     <Modal transparent animationType="slide" onRequestClose={close}>
       <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
