@@ -43,7 +43,7 @@ export function Store({id}: {id: string}) {
         </View>
         <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}>
           <Cta small ghost label="Store info" onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
-          <Cta small ghost label="Message store" onPress={() => go('storechat', id)} />
+          <Cta small ghost label="Message store" onPress={() => go('contact', {storeContact: true, storeId: id})} />
         </View>
         <View style={{marginTop: 14}}><Input value={S.ss[id] || ''} onChange={v => {S.ss[id] = v; emit();}} placeholder={'Search in ' + s.n} /></View>
       </View>
