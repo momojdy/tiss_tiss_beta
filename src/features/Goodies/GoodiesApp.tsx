@@ -19,7 +19,7 @@ import {PROMO} from './theme';
 import {t as tr} from './i18n';
 
 const TABS = ['home', 'cats', 'orders', 'cart'];
-const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
+const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
 export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embedded?: boolean}) {
@@ -130,7 +130,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={{flex: 1}} edges={[]}>
-        {r === 'byo' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
+        {r === 'byo' || r === 'storechat' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
           {body}
         </ScrollView>}
       </SafeAreaView>
