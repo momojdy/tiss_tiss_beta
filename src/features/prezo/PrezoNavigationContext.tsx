@@ -70,8 +70,12 @@ export const PrezoNavigationProvider = ({ initialRoute, onExitRequested, childre
       dispatch({ type: 'pop' });
       return;
     }
+    if (route.name !== 'home') {
+      dispatch({ type: 'push', route: { name: 'home' } });
+      return;
+    }
     onExitRequested?.();
-  }, [canGoBack, onExitRequested]);
+  }, [canGoBack, route, onExitRequested]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
