@@ -18,13 +18,20 @@ export const PrezoShell = () => {
 
   const [headerHeight, setHeaderHeight] = useState(0);
   const [tabHeight, setTabHeight] = useState(0);
-  const chrome = { top: headerHeight, bottom: tabBar ? tabHeight : 0 };
+  // Keep the route viewport between the fixed header and tab bar. The scaffold
+  // should scroll inside this viewport rather than underneath the chrome.
+  const chrome = { top: 0, bottom: 0 };
 
   return (
     <View style={[styles.root, { backgroundColor: colors.bg }]}>
       <StatusBar barStyle={mode === 'dark' ? 'light-content' : 'dark-content'} />
       <PrezoChromeProvider value={chrome}>
-        <View style={styles.body}>
+        <View
+          style={[
+            styles.body,
+            { top: headerHeight, bottom: tabBar ? tabHeight : 0 },
+          ]}
+        >
           <PrezoRouteView key={navigation.routeId} route={navigation.route} />
         </View>
       </PrezoChromeProvider>
