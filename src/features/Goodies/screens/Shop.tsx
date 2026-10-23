@@ -128,7 +128,7 @@ export function Cart() {
       <Bar title="Your cart" onBack={back} right={<Circ icon="trash" label="Clear cart" onPress={clearAsk} />} />
       <View style={{paddingHorizontal: 16}}>
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>Your order from this store · {st.eta} min</T></View></Row>
-        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. Choose a future opening-time slot at checkout.' : st.nx + '. You can keep these items, but this store does not currently accept scheduled orders.'}</T></Card> : null}
+        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop; choose a future slot at checkout.' : st.nx + '. You can keep these items, but this store does not currently accept scheduled orders.'}</T></Card> : null}
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
           return (
@@ -177,6 +177,7 @@ function slots(store: any = STB[S.cart.sid]) {
       d.setHours(hour, Number(opening[2] || 0), 0, 0);
       if (d.getTime() <= Date.now()) d.setDate(d.getDate() + 1);
     } else d.setHours(9, 0, 0, 0);
+    d = new Date(d.getTime() + Math.max(0, Number(store.scheduledOrderStartMinutes ?? 60)) * 60000);
   } else {
     d = new Date(Date.now() + F.lead * 60000);
     d.setMinutes(Math.ceil(d.getMinutes() / F.step) * F.step, 0, 0);
@@ -191,7 +192,7 @@ function slots(store: any = STB[S.cart.sid]) {
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
-  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), sl = slots(), stp = ['Delivery', 'Time', 'Payment', 'Review'], st = t.st!;
+  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, sl = slots(st), stp = ['Delivery', 'Time', 'Payment', 'Review'];
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', 'Balance ' + money(S.wallet), 'wallet'], ['moncash', 'MonCash', 'Simulated mobile wallet', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards[0].b + ' •••• ' + S.cards[0].l4 : 'Add a card (demo)', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]]);
   const ct = ctOf();
   let body: any = null;
@@ -208,7 +209,7 @@ export function Checkout() {
   </>);
   if (S.cs === 1) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>When do you want it?</T>
-    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose an available future slot. The store will receive this as a scheduled order.</T>}
+    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.</T>}
     {sl.map(x => <Radio key={x.ts} on={S.sch === x.ts} onPress={() => setSch(x.ts)}><T weight="700">{x.l}</T></Radio>)}
     {pk ? null : (<><Ttl>Tip your courier</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : 'No tip'}</T></Pressable>)}</View></>)}
     <Input label={pk ? 'Note for the store' : 'Delivery instructions'} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
@@ -274,9 +275,21 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
-        <View style={{position: 'absolute', left: Math.max(3, Math.min(83, x / 320 * 100 - 6)) + '%', top: Math.max(18, Math.min(72, y / 190 * 100 - 8)) + '%', width: 42, height: 42, borderRadius: 21, backgroundColor: '#E8C5E8', borderWidth: 2, borderColor: '#8F267E', alignItems: 'center', justifyContent: 'center'}} pointerEvents="none">
-          <Text style={{fontSize: 23, color: '#8F267E'}}>🛵</Text>
-        </View>
+        <Svg width={58} height={58} viewBox="0 0 64 64" style={{position: 'absolute', left: Math.max(0, Math.min(82, x / 320 * 100 - 8)) + '%', top: Math.max(12, Math.min(68, y / 190 * 100 - 12)) + '%'}} pointerEvents="none">
+          <Circle cx="17" cy="48" r="7" fill="#FFFFFF" />
+          <Circle cx="17" cy="48" r="4.5" fill="#29232B" />
+          <Circle cx="46" cy="48" r="7" fill="#FFFFFF" />
+          <Circle cx="46" cy="48" r="4.5" fill="#29232B" />
+          <Path d="M17 46 L26 36 L39 36 L46 46 L33 46 L27 40 L23 46 Z" fill="#D946A8" />
+          <Path d="M28 36 L24 29 L35 29 L40 37 L33 39 Z" fill="#D946A8" />
+          <Path d="M37 37 L44 30 L49 31 L46 35 L41 35" fill="#D946A8" />
+          <Path d="M21 32 L26 27 L34 27 L38 31 L34 34 L25 34 Z" fill="#D946A8" />
+          <Circle cx="31" cy="16" r="7" fill="#F0BE9C" />
+          <Path d="M24 16 C24 7 38 6 39 16 L36 19 L26 19 Z" fill="#8F267E" />
+          <Path d="M28 24 L37 23 L43 31 L35 36 L28 30 L23 34 L19 31 Z" fill="#F25C9C" />
+          <Path d="M27 28 L20 35 L16 33" stroke="#F0BE9C" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+          <Path d="M35 28 L42 34 L47 32" stroke="#F0BE9C" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+        </Svg>
       </View>
       <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F4C542', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
       <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
