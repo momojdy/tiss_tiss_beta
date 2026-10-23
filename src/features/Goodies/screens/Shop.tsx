@@ -276,11 +276,11 @@ export function Checkout() {
       <T size={12} color={th.mut}>Date (YYYY-MM-DD)</T>
       <TextInput accessibilityLabel="Order date" value={customDate} onChangeText={setCustomDate} placeholder="2026-10-25" keyboardType="numbers-and-punctuation" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5,marginBottom:10}} />
       <View style={{flexDirection:'row',gap:10}}>
-        <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><TextInput accessibilityLabel="Order hour" value={customHour} onChangeText={v=>setCustomHour(v.replace(/\\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="14" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
-        <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><TextInput accessibilityLabel="Order minute" value={customMinute} onChangeText={v=>setCustomMinute(v.replace(/\\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="30" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
+        <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><TextInput accessibilityLabel="Order hour" value={customHour} onChangeText={v=>setCustomHour(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="14" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
+        <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><TextInput accessibilityLabel="Order minute" value={customMinute} onChangeText={v=>setCustomMinute(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="30" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
       </View>
       <Cta small label="Use selected date & time" onPress={() => {
-        const m = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(customDate.trim());
+        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(customDate.trim());
         const hh = Number(customHour), mm = Number(customMinute);
         if (!m || !customHour || !customMinute || hh < 0 || hh > 23 || mm < 0 || mm > 59) { toast('Enter a valid date, hour and minute.'); return; }
         const selected = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), hh, mm, 0, 0);
