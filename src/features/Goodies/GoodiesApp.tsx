@@ -106,12 +106,24 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     default: body = <Account r={r} p={c.p} />;
   }
   const [dismissedCartCount, setDismissedCartCount] = useState(-1);
+  const cartDragX = useRef(new Animated.Value(0)).current;
   const showTabs = TABS.indexOf(r) > -1, showCb = cnt() > 0 && NOCB.indexOf(r) < 0 && dismissedCartCount !== cnt(), footed = FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added);
+  useEffect(() => { cartDragX.setValue(0); }, [cnt(), cartDragX]);
   const cartBannerPan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => false,
-    onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 10 && Math.abs(g.dx) > Math.abs(g.dy) * 1.2,
-    onPanResponderRelease: (_e, g) => { if (Math.abs(g.dx) > 42 && Math.abs(g.dx) > Math.abs(g.dy)) setDismissedCartCount(cnt()); },
-  }), []);
+    onMoveShouldSetPanResponderCapture: (_e, g) => Math.abs(g.dx) > 7 && Math.abs(g.dx) > Math.abs(g.dy) * 1.15,
+    onPanResponderMove: (_e, g) => cartDragX.setValue(g.dx),
+    onPanResponderRelease: (_e, g) => {
+      if (Math.abs(g.dx) > 64 && Math.abs(g.dx) > Math.abs(g.dy) * 1.1) {
+        Animated.timing(cartDragX, {toValue: (g.dx > 0 ? 1 : -1) * Dimensions.get('window').width, duration: 260, useNativeDriver: true}).start(({finished}) => {
+          if (finished) { setDismissedCartCount(cnt()); cartDragX.setValue(0); }
+        });
+      } else {
+        Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true, speed: 22, bounciness: 5}).start();
+      }
+    },
+    onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
+  }), [cartDragX]);
 
   return (
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
@@ -125,13 +137,15 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       {footed ? <View style={{position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12 + ins.bottom, backgroundColor: th.bg, borderTopWidth: 1, borderTopColor: th.line}}>{r === 'product' ? <ProductFoot /> : r === 'byo' ? <ByoFoot /> : <CheckoutFoot />}</View> : null}
 
       {showCb ? (
-        <View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 30, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12}}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Open cart" onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-            <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">Your cart</T></Row>
-            <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="800" color={th.brd}>View cart · {money(totals().total)}</T></View>
-          </Pressable>
-          <Pressable accessibilityRole="button" accessibilityLabel="Dismiss cart banner" onPress={() => setDismissedCartCount(cnt())} hitSlop={8} style={{position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: 11, backgroundColor: 'rgba(255,255,255,.22)', alignItems: 'center', justifyContent: 'center', zIndex: 2}}>
-            <Icon name="x" size={13} color="#fff" />
+        <View pointerEvents="box-none" style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 68, zIndex: 12}}>
+          <Animated.View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 12, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12, transform: [{translateX: cartDragX}]}}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Open cart" onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">Your cart</T></Row>
+              <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="800" color={th.brd}>View cart · {money(totals().total)}</T></View>
+            </Pressable>
+          </Animated.View>
+          <Pressable accessibilityRole="button" accessibilityLabel="Dismiss cart banner" onPress={() => { cartDragX.setValue(0); setDismissedCartCount(cnt()); }} hitSlop={8} style={{position: 'absolute', top: -2, right: -3, width: 24, height: 24, borderRadius: 12, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: th.line, alignItems: 'center', justifyContent: 'center', zIndex: 3, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5}}>
+            <Icon name="x" size={13} color={th.br} />
           </Pressable>
         </View>
       ) : null}
