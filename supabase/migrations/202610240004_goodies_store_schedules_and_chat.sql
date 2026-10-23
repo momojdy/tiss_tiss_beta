@@ -23,6 +23,17 @@ create table if not exists public.goodies_store_schedules (
   delivery_modes text[] not null default '{}'::text[],
   logo_url text
 );
+alter table public.goodies_store_schedules
+  add column if not exists business_name text,
+  add column if not exists description text,
+  add column if not exists phone text,
+  add column if not exists email text,
+  add column if not exists website text,
+  add column if not exists address text,
+  add column if not exists city text,
+  add column if not exists country text,
+  add column if not exists delivery_modes text[] not null default '{}'::text[],
+  add column if not exists logo_url text;
 alter table public.goodies_store_schedules enable row level security;
 drop policy if exists "Public can read live Goodies schedules" on public.goodies_store_schedules;
 create policy "Public can read live Goodies schedules" on public.goodies_store_schedules
