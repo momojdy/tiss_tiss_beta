@@ -16,18 +16,25 @@ export const Stars = ({n, size = 13}: {n: string | number; size?: number}) => {
 export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: number; grid?: boolean}) {
   const th = useTheme(), {width} = useWindowDimensions(), s = STB[i.s];
   const p = off ? dp(i, off) : i.p, w = grid ? (width - 32 - 12) / 2 : 148;
-  const dis = i.oos || !s.open;
+  const dis = i.oos || !s.open, saved = S.favp.indexOf(i.id) > -1;
   return (
-    <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)} style={{width: w, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
-      <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>
-        <Text style={{fontSize: 54}}>{i.e}</Text>
-        {off ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: th.red, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">-{off}%</T></View> : null}
-        {i.oos ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: '#555', borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">{tr('soldOut')}</T></View> : null}
-      </Grad>
+    <View style={{width: w, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
+      <View>
+        <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)}>
+          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={{fontSize: 54}}>{i.e}</Text>
+            {off ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: th.red, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">-{off}%</T></View> : null}
+            {i.oos ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: '#555', borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">{tr('soldOut')}</T></View> : null}
+          </Grad>
+        </Pressable>
+        {heartBtn(i.id, saved, () => favp(i.id), saved ? 'Remove ' + i.n + ' from favorites' : 'Save ' + i.n + ' to favorites')}
+      </View>
       <View style={{padding: 10}}>
-        <T size={13.5} weight="700" lines={1}>{i.n}</T>
-        <T size={11.5} color={th.mut} lines={1} style={{marginTop: 1}}>{s.n}</T>
-        {off && !i.oos ? <T size={11} weight="700" color={th.red} style={{marginTop: 5}}>Only {left} left</T> : null}
+        <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)}>
+          <T size={13.5} weight="700" lines={1}>{i.n}</T>
+          <T size={11.5} color={th.mut} lines={1} style={{marginTop: 1}}>{s.n}</T>
+          {off && !i.oos ? <T size={11} weight="700" color={th.red} style={{marginTop: 5}}>Only {left} left</T> : null}
+        </Pressable>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
           <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
             <T size={15} weight="800">{money(p)}</T>
@@ -38,26 +45,29 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
           </Pressable>
         </View>
       </View>
-    </Pressable>
+    </View>
   );
 }
-
 export function VCard({s}: {s: Store}) {
-  const th = useTheme();
+  const th = useTheme(), saved = S.fav.indexOf(s.id) > -1;
   return (
-    <Pressable onPress={() => go('store', s.id)} style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
-      <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 54}}>{s.e}</Text></Grad>
-      <View style={{padding: 10}}>
+    <View style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
+      <View>
+        <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
+          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 54}}>{s.e}</Text></Grad>
+        </Pressable>
+        {heartBtn(s.id, saved, () => heart(s.id), saved ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
+      </View>
+      <Pressable onPress={() => go('store', s.id)} style={{padding: 10}}>
         <T size={13.5} weight="700" lines={1}>{s.n}</T>
         <T size={11.5} color={th.mut} lines={1}>{s.k}</T>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
           <Stars n={s.r.toFixed(1)} /><T size={11.5} color={th.mut}>{s.eta} min</T>
         </View>
-      </View>
-    </Pressable>
+      </Pressable>
+    </View>
   );
 }
-
 export function StoreCard({s}: {s: Store}) {
   const th = useTheme();
   const pill = (txt: string, left = 10) => <View style={{position: 'absolute', left, bottom: 10, backgroundColor: 'rgba(27,27,31,.78)', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={11.5} weight="700" color="#fff">{txt}</T></View>;
@@ -67,7 +77,7 @@ export function StoreCard({s}: {s: Store}) {
         <Grad idx={bgIdx(s.bg)} style={{height: 160, borderRadius: 18, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
           <Text style={{fontSize: 76}}>{s.e}</Text>
           {s.pr ? <View style={{position: 'absolute', left: 0, top: 14, backgroundColor: th.br, borderTopRightRadius: 8, borderBottomRightRadius: 8, paddingVertical: 5, paddingLeft: 12, paddingRight: 10}}><T size={12} weight="800" color="#fff">{s.pr}</T></View> : null}
-          {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id))}
+          {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
           {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far ? pill('Pickup only at this address') : s.rv > 80 ? pill('🔥 ' + Math.round(s.rv * 0.95) + ' ordered today') : null}
           <View style={{position: 'absolute', right: 10, bottom: 10, backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={12} weight="700" color="#1B1B1F">{s.eta} min</T></View>
         </Grad>
