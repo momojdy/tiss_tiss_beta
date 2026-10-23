@@ -33,7 +33,7 @@ function withBusinessRequestTimeout<T>(request: PromiseLike<T>, label: string): 
   });
 }
 
-const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at,description,phone,phone_country,email,website,address,city,country,delivery_modes,hours,logo_url,accept_scheduled_orders';
+const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at,description,phone,phone_country,email,website,address,city,country,delivery_modes,hours,logo_url,accept_scheduled_orders,scheduled_order_start_minutes';
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
