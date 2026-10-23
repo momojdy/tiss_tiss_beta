@@ -51,10 +51,7 @@ export const PrezoHeader = ({ onLayout }: { onLayout: (event: LayoutChangeEvent)
           >
             <View style={[styles.logoDot, { backgroundColor: colors.rd, shadowColor: colors.rd }]} />
             <PzText display={800} size={20} lineHeight={21}>
-              Prezo{' '}
-              <PzText display={500} size={20} tone="mu" lineHeight={21}>
-                by Wantiss
-              </PzText>
+              Prezo
             </PzText>
           </Pressable>
         ) : (
