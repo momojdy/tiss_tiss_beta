@@ -141,9 +141,17 @@ export async function refreshLiveSchedules() {
           openAt.setHours(oh, om || 0, 0, 0); closeAt.setHours(ch, cm || 0, 0, 0);
           s.h = formatHour(openAt) + '–' + formatHour(closeAt);
           s.open = now >= openAt && now < closeAt ? 1 : 0;
-          s.nx = now < openAt ? 'Opens at ' + formatHour(openAt) + ' today' : now >= closeAt ? 'Opens tomorrow according to store hours' : '';
+          s.nx = now < openAt ? 'Opens at ' + formatHour(openAt) + ' today' : '';
+          if (now >= closeAt) {
+            s.nx = 'Closed now';
+            for (let n = 1; n <= 7; n++) {
+              const d = new Date(Date.now() + n * 86400000), h = s.scheduleHours[names[d.getDay()]];
+              if (h && !h.closed && h.open) { s.nx = 'Opens ' + names[d.getDay()] + ' at ' + h.open; break; }
+            }
+          }
         } else {
           s.open = 0;
+          s.h = 'Closed today';
           s.nx = 'Closed today according to store hours';
           for (let n = 1; n <= 7; n++) {
             const d = new Date(Date.now() + n * 86400000), h = s.scheduleHours[names[d.getDay()]];
