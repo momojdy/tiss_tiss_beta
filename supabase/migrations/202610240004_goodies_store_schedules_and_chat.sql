@@ -11,7 +11,17 @@ create table if not exists public.goodies_store_schedules (
   accept_scheduled_orders boolean not null default false,
   scheduled_order_start_minutes integer not null default 60 check (scheduled_order_start_minutes >= 0 and scheduled_order_start_minutes <= 1440),
   is_live boolean not null default false,
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  business_name text,
+  description text,
+  phone text,
+  email text,
+  website text,
+  address text,
+  city text,
+  country text,
+  delivery_modes text[] not null default '{}'::text[],
+  logo_url text
 );
 alter table public.goodies_store_schedules enable row level security;
 drop policy if exists "Public can read live Goodies schedules" on public.goodies_store_schedules;
