@@ -237,7 +237,7 @@ export function Search() {
           {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#F6B26B'}} />
+      <View style={{height: 20, backgroundColor: '#FD802E'}} />
       <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
