@@ -96,11 +96,11 @@ export const Badge = ({label, green, red}: {label: string; green?: boolean; red?
 };
 export const Ttl = ({children}: any) => <T size={15} weight="800" style={{marginTop: 18, marginBottom: 8}}>{children}</T>;
 
-export function Empty({emoji, title, text, button, onPress}: {emoji: string; title: string; text?: string; button?: string; onPress?: () => void}) {
+export function Empty({emoji, icon, title, text, button, onPress}: {emoji?: string; icon?: string; title: string; text?: string; button?: string; onPress?: () => void}) {
   const th = useTheme();
   return (
     <View style={{alignItems: 'center', paddingVertical: 70, paddingHorizontal: 30}}>
-      <Text style={{fontSize: 64}}>{emoji}</Text>
+      {icon ? <View style={{width: 68, height: 68, borderRadius: 34, backgroundColor: 'rgba(253,128,46,0.12)', alignItems: 'center', justifyContent: 'center', marginBottom: 4}}><Icon name={icon} size={30} color="#FD802E" /></View> : emoji ? <Text style={{fontSize: 64}}>{emoji}</Text> : null}
       <T size={19} weight="800" style={{marginTop: 12, marginBottom: 6}}>{title}</T>
       {text ? <T size={14} color={th.mut} align="center" style={{marginBottom: 20}}>{text}</T> : null}
       {button ? <View style={{alignSelf: 'stretch'}}><Cta label={button} onPress={onPress as any} /></View> : null}
