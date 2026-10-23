@@ -1,7 +1,7 @@
 /* UI primitives. Every dimension below is copied from the Goodies v24 stylesheet. */
-import React from 'react';
+import React, {useMemo, useRef} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {View, Text, Pressable, ScrollView, TextInput, StyleSheet, ViewStyle, TextStyle, Image} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, StyleSheet, ViewStyle, TextStyle, Image, PanResponder} from 'react-native';
 import {LinearGradient} from 'expo-linear-gradient';
 import {light, dark, Theme, BG} from '../theme';
 import {S, useGoodies, money, STB, PV, toast, ui} from '../store';
@@ -165,9 +165,22 @@ export const Tile = ({e, bg, size = 56, photo}: {e: string; bg: string; size?: n
 );
 
 /* sheet rendered by the shell */
-export function SheetBox({children, large = false}: any) {
+export function SheetBox({children, large = false, onClose}: any) {
   const th = useTheme();
-  return <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 28, maxHeight: large ? '94%' : '88%'}}><View style={{alignSelf: 'center', width: 40, height: 4, borderRadius: 2, backgroundColor: th.line, marginBottom: 14}} />{children}</View>;
+  const pan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_e, g) => g.dy > 10 && Math.abs(g.dy) > Math.abs(g.dx) * 1.15,
+    onPanResponderRelease: (_e, g) => { if (g.dy > 55 && onClose) onClose(); },
+  }), [onClose]);
+  return (
+    <View style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, maxHeight: large ? '94%' : '88%', flexShrink: 1, overflow: 'hidden'}}>
+      <View {...pan.panHandlers} style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
+        <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
+        {onClose ? <Pressable accessibilityRole="button" accessibilityLabel="Close popup" onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
+      </View>
+      {children}
+    </View>
+  );
 }
 
 export const heartBtn = (id: string, on: boolean, onPress: () => void, label?: string) => {
