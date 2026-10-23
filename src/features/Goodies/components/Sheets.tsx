@@ -82,7 +82,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
         <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
           <Pressable onPress={() => {}} style={{width: '100%', height: k === 'promo' && sheet.custom ? '68%' : k === 'sinfo' || k === 'promo' ? '100%' : undefined, maxHeight: k === 'promo' && sheet.custom ? '68%' : '92%', flexShrink: 1, minHeight: 0}}>
-            <SheetBox large={k === 'sinfo' || k === 'promo'} onClose={close}><ScrollView style={{flex: 1, minHeight: 0}} contentContainerStyle={{paddingBottom: 28, flexGrow: 1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+            <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex: 1, minHeight: 0}} contentContainerStyle={{paddingBottom: 28, flexGrow: 1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </Pressable>
         </Pressable>
       </KeyboardAvoidingView>
