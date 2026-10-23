@@ -75,14 +75,16 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>Deliver to</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>Choosing an address here only changes Goodies. Your Wantiss default stays the same.</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
 
+  const isRatingSheet = k === 'review' || k === 'driver-review';
   return (
     <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
-        <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
-          <Pressable onPress={() => {}} style={{width: '100%', height: k === 'review' || k === 'driver-review' ? 320 : k === 'promo' && sheet.custom ? '68%' : k === 'sinfo' || k === 'promo' ? '100%' : undefined, maxHeight: k === 'review' || k === 'driver-review' ? '78%' : k === 'promo' && sheet.custom ? '68%' : '92%', flexShrink: 1, minHeight: 0}}>
-            <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex: 1, minHeight: 0}} contentContainerStyle={{paddingBottom: 28, flexGrow: 1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
-          </Pressable>
-        </Pressable>
+        <View style={{flex:1, backgroundColor:'rgba(0,0,0,.5)', justifyContent:'flex-end'}}>
+          <Pressable onPress={close} accessibilityRole="button" accessibilityLabel="Close sheet" style={{flex:1}} />
+          <View style={{width:'100%', maxHeight:isRatingSheet?'68%':k==='promo'&&sheet.custom?'68%':k==='sinfo'||k==='promo'?'92%':'86%', flexShrink:1, minHeight:0}}>
+            <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:28,flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+          </View>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );
