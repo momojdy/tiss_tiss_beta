@@ -11,6 +11,7 @@ import {providerInfo} from '../providers';
 import {byoRows, byoOn, lineBad, bzEdit, bzRemove} from '../builders/engine';
 import {SEED_REVIEWS} from '../data/seed';
 import {t as tr} from '../i18n';
+import Svg, {Path, Circle} from 'react-native-svg';
 
 
 const Hero = ({s, onBack, right}: any) => (
@@ -232,6 +233,38 @@ export function Confirm({id}: {id: string}) {
   );
 }
 
+function DeliveryRouteMap({order, storeName, destination}: {order: any; storeName: string; destination: string}) {
+  const th = useTheme();
+  const progress = Math.max(0.12, Math.min(0.86, (Number(order.st || 4) - 3) / 3));
+  const x = 30 + progress * 250, y = 145 - progress * 112 - Math.sin(progress * Math.PI) * 12;
+  return (
+    <Card style={{padding: 12}}>
+      <Row sp><T size={15} weight="800">Your delivery route</T><Badge label="Courier on the way" /></Row>
+      <View style={{height: 190, borderRadius: 16, overflow: 'hidden', marginTop: 10, backgroundColor: '#F1F2E9'}}>
+        <Svg width="100%" height="100%" viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice">
+          <Path d="M-20 30 L340 160 M-20 95 L340 25 M20 -20 L95 220 M180 -20 L250 220 M-10 175 L330 80" stroke="#FFFFFF" strokeWidth="15" fill="none" />
+          <Path d="M-20 30 L340 160 M-20 95 L340 25 M20 -20 L95 220 M180 -20 L250 220 M-10 175 L330 80" stroke="#DADFD2" strokeWidth="1.5" fill="none" />
+          <Path d="M22 151 C55 145 65 119 90 112 S130 115 151 83 S211 52 286 24" stroke="#FFFFFF" strokeWidth="12" strokeLinecap="round" fill="none" />
+          <Path d="M22 151 C55 145 65 119 90 112 S130 115 151 83 S211 52 286 24" stroke="#FD802E" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <Circle cx="22" cy="151" r="7" fill="#FD802E" stroke="#FFFFFF" strokeWidth="3" />
+          <Circle cx="286" cy="24" r="7" fill="#1B1B1F" stroke="#FFFFFF" strokeWidth="3" />
+        </Svg>
+        <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
+          <T size={10.5} weight="800" color="#1B1B1F">PICKUP</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
+        </View>
+        <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
+          <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
+        </View>
+        <View style={{position: 'absolute', left: Math.max(3, Math.min(83, x / 320 * 100 - 6)) + '%', top: Math.max(18, Math.min(72, y / 190 * 100 - 8)) + '%', width: 42, height: 42, borderRadius: 21, backgroundColor: '#FCE3EF', borderWidth: 2, borderColor: '#F25C9C', alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{fontSize: 23}}>🛵</Text>
+        </View>
+      </View>
+      <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Delivery moto</T></Row>
+      <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
+    </Card>
+  );
+}
+
 export function Track({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
   if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
@@ -250,7 +283,7 @@ export function Track({id}: {id: string}) {
           </>)}
           <T size={11.5} color={th.mut}>Demo timeline: steps advance every few seconds.</T>
         </Card>
-        {!o.pk && o.st >= 4 && !dn ? <Card><Row><Tile e="🛵" bg="bg3" size={46} /><View style={{flex: 1}}><T weight="700">Jean-Paul</T><T size={13} color={th.mut}>Courier (demo) · ★ 4.9</T></View><Circ icon="phone" label="Call courier" onPress={() => toast('Calling the courier (demo)…')} /><Circ icon="msg" label="Message courier" onPress={() => require('../store').ui.sheet({kind: 'msg'})} /></Row></Card> : null}
+        {!o.pk && o.st >= 4 && !dn ? <><DeliveryRouteMap order={o} storeName={s.n} destination={o.ad ? o.ad.l + ': ' + o.ad.t : o.addr} /><Card><Row><Tile e="🛵" bg="bg3" size={46} /><View style={{flex: 1}}><T weight="700">Jean-Paul</T><T size={13} color={th.mut}>Courier (demo) · ★ 4.9</T></View><Circ icon="phone" label="Call courier" onPress={() => toast('Calling the courier (demo)…')} /><Circ icon="msg" label="Message courier" onPress={() => require('../store').ui.sheet({kind: 'msg'})} /></Row></Card></> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && !o.rated ? <Card><T weight="700" align="center">How was your order?</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'review', id: o.id});}}><Icon name="star" size={32} color={th.line} fill /></Pressable>)}</View></Card> : null}
         {o.rated ? <Card><T weight="700" align="center">Thanks for rating: {o.rated} ★</T></Card> : null}
