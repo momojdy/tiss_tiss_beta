@@ -36,14 +36,19 @@ export function Circ({icon, onPress, dot, count, label}: {icon: string; onPress:
   );
 }
 
-export function Bar({title, right, onBack}: {title: string; right?: any; onBack: () => void}) {
+export function Bar({title, right, onBack, stripe = true}: {title: string; right?: any; onBack: () => void; stripe?: boolean}) {
   const th = useTheme();
   return (
-    <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10, backgroundColor: th.bg}}>
-      <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
-      <T size={20} weight="800" style={{flex: 1}}>{title}</T>
-      {right}
-    </View>
+    <>
+      <View style={{height: 100, justifyContent: 'flex-end', paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
+        <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
+          <T size={20} weight="800" style={{flex: 1}}>{title}</T>
+          {right}
+        </View>
+      </View>
+      {stripe ? <><View style={{height: 20, backgroundColor: '#FD802E'}} /><View style={{height: 15}} /></> : null}
+    </>
   );
 }
 
