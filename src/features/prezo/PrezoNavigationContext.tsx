@@ -64,9 +64,14 @@ export const PrezoNavigationProvider = ({ initialRoute, onExitRequested, childre
 
   const navigate = useCallback((next: PrezoRoute) => dispatch({ type: 'push', route: next }), []);
   const replace = useCallback((next: PrezoRoute) => dispatch({ type: 'replace', route: next }), []);
-  const back = useCallback(() => dispatch({ type: 'pop' }), []);
-
   const canGoBack = !isRootRoute(route);
+  const back = useCallback(() => {
+    if (canGoBack) {
+      dispatch({ type: 'pop' });
+      return;
+    }
+    onExitRequested?.();
+  }, [canGoBack, onExitRequested]);
 
   useEffect(() => {
     const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
