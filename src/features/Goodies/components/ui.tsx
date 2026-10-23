@@ -26,11 +26,11 @@ export function Grad({idx = 0, colors, style, children, angle = 135}: {idx?: num
 export const bgIdx = (bg: string) => +String(bg).replace('bg', '') || 0;
 
 /* header: circular icon button */
-export function Circ({icon, onPress, dot, count, label}: {icon: string; onPress: () => void; dot?: boolean; count?: number; label: string}) {
+export function Circ({icon, onPress, dot, count, label, color, fill = false}: {icon: string; onPress: () => void; dot?: boolean; count?: number; label: string; color?: string; fill?: boolean}) {
   const th = useTheme();
   return (
     <Pressable accessibilityLabel={label} onPress={onPress} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}>
-      <Icon name={icon} color={th.ink} />
+      <Icon name={icon} color={color || th.ink} fill={fill} />
       {dot ? <View style={{position: 'absolute', top: 8, right: 9, width: 8, height: 8, borderRadius: 4, backgroundColor: th.br, borderWidth: 2, borderColor: th.soft}} /> : null}
       {count ? <View style={{position: 'absolute', top: 2, right: 0, minWidth: 17, height: 17, borderRadius: 9, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4}}><Text style={{fontSize: 10.5, fontWeight: '700', color: th.navink}}>{count}</Text></View> : null}
     </Pressable>
@@ -174,7 +174,7 @@ export const heartBtn = (id: string, on: boolean, onPress: () => void) => {
   const th = useTheme();
   return (
     <Pressable accessibilityLabel="Save store" onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
-      <Icon name="heart" size={17} color={on ? th.red : '#1B1B1F'} fill={on} />
+      <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on} />
     </Pressable>
   );
 };
