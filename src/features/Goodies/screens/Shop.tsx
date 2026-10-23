@@ -11,6 +11,7 @@ import {providerInfo} from '../providers';
 import {byoRows, byoOn, lineBad, bzEdit, bzRemove} from '../builders/engine';
 import {SEED_REVIEWS} from '../data/seed';
 import {t as tr} from '../i18n';
+import {supabase} from '../../../lib/supabase';
 import Svg, {Path, Circle} from 'react-native-svg';
 
 
@@ -372,9 +373,26 @@ function PickupLocationMap({storeName}: {storeName: string}) {
 
 export function Track({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
+  useEffect(() => {
+    if (!o?.backendId) return;
+    let active = true;
+    const sync = async () => {
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for').eq('id', o.backendId).maybeSingle();
+      if (!active || error || !data) return;
+      o.serverStatus = data.status;
+      if (data.scheduled_for) o.sch = new Date(data.scheduled_for).getTime();
+      o.cx = data.status === 'cancelled' ? 1 : 0;
+      o.st = require('../store').stage(o);
+      save(); emit();
+    };
+    void sync();
+    const channel = supabase.channel('goodies-order-status-' + o.backendId).on('postgres_changes', {event: 'UPDATE', schema: 'public', table: 'goodies_orders', filter: 'id=eq.' + o.backendId}, () => { void sync(); }).subscribe();
+    return () => { active = false; void supabase.removeChannel(channel); };
+  }, [o?.backendId]);
   if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
   const s = STB[o.sid], T_ = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
-  const eta = o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
+  const serverStatus = String(o.serverStatus || '').toLowerCase();
+  const eta = o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? 'Waiting for store to accept' : serverStatus === 'accepted' ? 'Order accepted by store' : serverStatus === 'preparing' ? 'Store is preparing your order' : serverStatus === 'ready' ? (o.pk ? 'Ready for pickup' : 'Ready for courier pickup') : 'Order update') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
   return (
     <View>
       <Bar title={'Order ' + o.id} onBack={back} />
