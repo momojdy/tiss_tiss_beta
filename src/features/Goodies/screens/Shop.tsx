@@ -16,8 +16,8 @@ import {t as tr} from '../i18n';
 const Hero = ({s, onBack, right}: any) => (
   <Grad idx={bgIdx(s.bg)} style={{height: 180, alignItems: 'center', justifyContent: 'center'}}>
     <Text style={{fontSize: 90}}>{s.e}</Text>
-    <View style={{position: 'absolute', top: 16, left: 16}}><Circ icon="chevL" label={tr('back')} onPress={onBack} /></View>
-    {right}
+    <View style={{position: 'absolute', top: 50, left: 16}}><Circ icon="chevL" label={tr('back')} onPress={onBack} /></View>
+    {right ? <View style={{position: 'absolute', top: 50, right: 16}}>{right}</View> : null}
   </Grad>
 );
 
@@ -30,7 +30,7 @@ export function Store({id}: {id: string}) {
   const tabs: [string, string][] = [['all', 'All'], ['pop', 'Popular'], ['deal', 'Deals'], ...(byoOn(id) ? [['custom', 'Build your own'] as [string, string]] : [])];
   return (
     <View>
-      <Hero s={s} onBack={back} right={<View style={{position: 'absolute', right: 16, top: 16}}><Circ icon="heart" label="Save store" color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
+      <Hero s={s} onBack={back} right={<Circ icon="heart" label="Save store" color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.km.toFixed(1)} km away</T>
@@ -69,7 +69,7 @@ export function Product() {
   const fav = S.favp.indexOf(i.id) > -1;
   return (
     <View>
-      <Bar title={s.n} onBack={back} stripe={false} right={<Circ icon="heart" label="Save item" onPress={() => favp(i.id)} />} />
+      <Bar title={s.n} onBack={back} stripe={false} right={<Circ icon="heart" label="Save item" color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : undefined} fill={S.favp.indexOf(i.id) > -1} onPress={() => favp(i.id)} />} />
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
         {['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}>{i.photo ? <Image source={{uri: i.photo}} style={{width, height: 210}} /> : <Text style={{fontSize: 96}}>{i.e}</Text>}</Grad>)}
       </ScrollView>
