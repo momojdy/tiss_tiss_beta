@@ -69,8 +69,6 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
         {s.acceptScheduledOrders ? row('Minimum advance time', Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
       </Card>
-      <View style={{height: 12}} />
-      <Cta label="Browse this store" onPress={() => {close(); A.go('store', sheet.id);}} />
     </>);
   }
   if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>Message courier</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
@@ -81,7 +79,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
     <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
         <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
-          <Pressable onPress={() => {}} style={{width: '100%', height: k === 'promo' && sheet.custom ? '68%' : k === 'sinfo' || k === 'promo' ? '100%' : undefined, maxHeight: k === 'promo' && sheet.custom ? '68%' : '92%', flexShrink: 1, minHeight: 0}}>
+          <Pressable onPress={() => {}} style={{width: '100%', height: k === 'review' || k === 'driver-review' ? 320 : k === 'promo' && sheet.custom ? '68%' : k === 'sinfo' || k === 'promo' ? '100%' : undefined, maxHeight: k === 'review' || k === 'driver-review' ? '78%' : k === 'promo' && sheet.custom ? '68%' : '92%', flexShrink: 1, minHeight: 0}}>
             <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex: 1, minHeight: 0}} contentContainerStyle={{paddingBottom: 28, flexGrow: 1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </Pressable>
         </Pressable>
