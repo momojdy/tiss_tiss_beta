@@ -137,7 +137,7 @@ function Payments() {
 function StoreChat({id}: {id: string}) {
   const th = useTheme(), store = STB[id], listRef = useRef<ScrollView>(null);
   const [userId, setUserId] = useState(''), [conversationId, setConversationId] = useState(''), [messages, setMessages] = useState<any[]>([]);
-  const [draft, setDraft] = useState(''), [loading, setLoading] = useState(true), [sending, setSending] = useState(false), [problem, setProblem] = useState('');
+  const [draft, setDraft] = useState(''), [loading, setLoading] = useState(true), [sending, setSending] = useState(false), [problem, setProblem] = useState(''), [attempt, setAttempt] = useState(0);
   const loadMessages = async (cid: string) => {
     const {data, error} = await supabase.from('messages').select('id,sender_id,body,created_at').eq('conversation_id', cid).order('created_at', {ascending: true});
     if (error) throw error;
@@ -171,7 +171,7 @@ function StoreChat({id}: {id: string}) {
       finally { if (active) setLoading(false); }
     })();
     return () => { active = false; };
-  }, [id]);
+  }, [id, attempt]);
   useEffect(() => {
     if (!conversationId) return;
     const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(e?.message || 'Could not refresh messages.')); }).subscribe();
@@ -194,7 +194,7 @@ function StoreChat({id}: {id: string}) {
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : 'Message store'} onBack={back} />
       {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>Private conversation with the store</T></View><Badge label="Goodies" /></Row></Card></View> : null}
-      {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId('');}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>Try again</T></Pressable></Card></View> : null}
+      {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>Try again</T></Pressable></Card></View> : null}
       {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>Opening conversation…</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: messages.length ? 'flex-end' : 'center'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
           {messages.length ? messages.map(m => {const mine = m.sender_id === userId; return <View key={m.id} style={{maxWidth: '82%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? th.br : th.soft, borderRadius: 16, paddingHorizontal: 13, paddingVertical: 10}}><T size={14} color={mine ? '#FFFFFF' : th.ink}>{m.body}</T><T size={10} color={mine ? '#FFFFFF' : th.mut} style={{marginTop: 4}}>{new Date(m.created_at).toLocaleString()}</T></View>;}) : <View style={{alignItems: 'center', padding: 22}}><Text style={{fontSize: 42}}>💬</Text><T weight="800" style={{marginTop: 8}}>Start the conversation</T><T size={13} color={th.mut} align="center" style={{marginTop: 5}}>Ask the store about its menu, availability, or your order. Replies from the store will appear here.</T></View>}
