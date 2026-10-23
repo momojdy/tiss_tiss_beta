@@ -61,7 +61,7 @@ function BurgerStage({b, fin}: {b: Builder; fin: boolean}) {
   if (!g) return <BurgerFallback b={b} />;
   const {pos, top, y} = g, n = pos.length, spacing = Math.min(19, 260 / Math.max(1, n));
   const disp = pos.map((r, i) => r.y + i * spacing), lp = pos[n - 1], totE = disp[n - 1] + lp.h, scE = Math.min(.86, 200 / Math.max(1, totE));
-  const finalH = y + top.h, scF = Math.min(.9, 200 / Math.max(1, finalH)), done = fin && !BD?.assembling, stageH = done ? Math.max(230, Math.ceil(finalH * scF + 12)) : 250, W = 210;
+  const finalH = y + top.h, scF = Math.min(.9, 200 / Math.max(1, finalH)), done = fin && !BD?.assembling, stageH = done ? Math.max(230, Math.ceil(finalH * scF + 12)) : 260, W = 210;
   const sUse = scE, topFinal = y * sUse, topStart = Math.min(stageH - 10, topFinal + top.h * sUse + 24);
   const contScale = t.interpolate({inputRange: [0, 1], outputRange: [1, scF / scE]});
   const tY = Animated.multiply(Animated.subtract(1, contScale), stageH / 2);
@@ -165,7 +165,7 @@ function CustomPlate({b}: {b: Builder}) {
 }
 export function Stage({b, fin}: {b: Builder; fin?: boolean}) {
   return (
-    <LinearGradient colors={['#2C4A5B', '#233D4C']} style={{marginHorizontal: 16, borderRadius: 24, height: 250, flexShrink: 0, alignItems: 'center', justifyContent: 'center', paddingVertical: b.type === 'burger' ? 8 : 14, overflow: 'visible'}}>
+    <LinearGradient colors={['#2C4A5B', '#233D4C']} style={{marginHorizontal: 16, borderRadius: 24, height: 260, flexShrink: 0, alignItems: 'center', justifyContent: 'center', paddingVertical: b.type === 'burger' ? 8 : 14, overflow: 'visible'}}>
       <Pressable accessibilityLabel="Undo last change" disabled={!BD.hist.length} onPress={bzUndo} style={{position: 'absolute', left: 10, top: 10, width: 40, height: 40, borderRadius: 20, backgroundColor: '#2E4D5F', borderWidth: 1, borderColor: 'rgba(255,255,255,.14)', alignItems: 'center', justifyContent: 'center', zIndex: 20, opacity: BD.hist.length ? 1 : 0.3}}><Icon name="undo" size={20} color="#F5F5F5" /></Pressable>
       {b.type === 'pizza' ? <PizzaStage b={b} /> : b.type === 'burger' ? <BurgerStage b={b} fin={!!fin || !!BD.assembling} /> : <CustomPlate b={b} />}
     </LinearGradient>
@@ -285,7 +285,7 @@ function Header({title, sub, onBack}: {title: string; sub?: string; onBack: () =
           <View style={{flex: 1, justifyContent: 'center'}}><T size={20} weight="800" style={{lineHeight: 22}}>{title}</T>{sub ? <T size={12} color={th.mut}>{sub}</T> : null}</View>
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#FD802E'}} />
+      <View style={{height: 20, backgroundColor: '#F4A261'}} />
       <View style={{height: 15}} />
     </>
   );
