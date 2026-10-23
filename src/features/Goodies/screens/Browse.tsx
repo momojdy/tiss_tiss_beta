@@ -69,6 +69,7 @@ export function Home({onExit}: {onExit?: () => void}) {
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="800" lines={1} style={{flexShrink: 1}}>{addr().t}</T><Icon name="chevD" size={14} color={th.ink} /></View>
         </Pressable>
+        <Circ icon="heart" label="Customer favorites" color="#FD802E" onPress={() => go('favs')} />
         <Circ icon="bell" label="Notifications" dot={unread()} onPress={() => go('notifs')} />
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
