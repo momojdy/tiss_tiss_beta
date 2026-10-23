@@ -49,3 +49,14 @@ using (exists (select 1 from public.business_members bm where bm.business_id = g
 with check (exists (select 1 from public.business_members bm where bm.business_id = goodies_orders.business_id and bm.user_id = (select auth.uid())));
 grant select, insert on public.goodies_orders to authenticated;
 grant update (status, updated_at) on public.goodies_orders to authenticated;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_publication_tables
+    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'goodies_orders'
+  ) then
+    execute 'alter publication supabase_realtime add table public.goodies_orders';
+  end if;
+end;
+$$;
