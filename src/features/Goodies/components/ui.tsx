@@ -173,7 +173,7 @@ export function SheetBox({children, large = false, onClose}: any) {
     onPanResponderRelease: (_e, g) => { if (g.dy > 65 && onClose) onClose(); },
   }), [onClose]);
   return (
-    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, height: large ? '82%' : undefined, maxHeight: large ? '82%' : '78%', flexShrink: 1, minHeight: 0, overflow: 'hidden'}}>
+    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, height: large ? '100%' : undefined, maxHeight: large ? '86%' : '86%', flexShrink: 1, minHeight: 0, overflow: 'hidden'}}>
       <View style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
         <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
         {onClose ? <Pressable accessibilityRole="button" accessibilityLabel="Close popup" onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
