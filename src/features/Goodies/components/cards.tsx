@@ -108,6 +108,9 @@ export function ItemRow({i}: {i: Item}) {
           <T size={14} weight="800">{money(i.p)}</T>
         </View>
       </Pressable>
+      <Pressable accessibilityLabel={S.favp.indexOf(i.id) > -1 ? 'Remove ' + i.n + ' from favorites' : 'Add ' + i.n + ' to favorites'} onPress={() => favp(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: S.favp.indexOf(i.id) > -1 ? 'rgba(253,128,46,0.12)' : th.card, borderWidth: 1, borderColor: S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.line, alignItems: 'center', justifyContent: 'center'}}>
+        <Icon name="heart" size={17} color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.ink} fill={S.favp.indexOf(i.id) > -1} />
+      </Pressable>
       <Pressable accessibilityLabel={'Add ' + i.n + ' to cart'} disabled={dis} onPress={() => quickAdd(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1}}>
         <Icon name="plus" size={17} color="#fff" />
       </Pressable>
