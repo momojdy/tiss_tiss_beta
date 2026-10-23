@@ -5,8 +5,8 @@ import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, Empty, Switch, Input, Chip, useTheme, Tile} from '../components/ui';
 import {S, defAddr, money, emit, save, toast, ui, push, reset, STB} from '../store';
 import {back, go, tab, togglePref} from '../actions';
-import {setTheme, setLang} from '../store';
-import {LANGS, t as tr} from '../i18n';
+import {setTheme} from '../store';
+import {t as tr} from '../i18n';
 import {providerInfo} from '../providers';
 import {Home} from './Browse';
 import {legalDoc, supportTopics} from '../content';
@@ -30,7 +30,7 @@ const LRow = ({icon, title, sub, onPress, right}: {icon: string; title: string; 
 const Avatar = ({z}: {z: number}) => {const th = useTheme(); return <View style={{width: z, height: z, borderRadius: z / 2, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center'}}><T size={Math.round(z * 0.45)} weight="800" color="#fff">{S.pf.av || String(S.pf.n).charAt(0).toUpperCase()}</T></View>;};
 
 function Settings() {
-  const th = useTheme(), d = S.theme === 'dark', lang = LANGS.find(l => l.code === S.lang)?.label;
+  const th = useTheme(), d = S.theme === 'dark';
   return (<View>
     <Bar title={tr('settings')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
@@ -43,7 +43,7 @@ function Settings() {
       <LRow icon="wallet" title="Wallet and payment methods" sub={'Balance ' + money(S.wallet)} onPress={() => go('payments')} />
       <LRow icon="heart" title="Favorites" sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
       <LRow icon="tag" title="Coupons and offers" onPress={() => go('promos')} />
-      <LRow icon="msg" title={tr('language')} sub={lang} onPress={() => ui.sheet({kind: 'lang'})} />
+
       <LRow icon="moon" title="Dark mode" sub="Goodies only. Other Wantiss features keep their theme." onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title="Help center" sub="FAQs and support" onPress={() => go('help')} />
       {providerInfo.demo ? (<><Ttl>Demo</Ttl><LRow icon="tag" title="Import Admin content" sub="Paste the export from Wantiss Admin" onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title="Reset Goodies demo data" sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
