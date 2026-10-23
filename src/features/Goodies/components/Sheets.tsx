@@ -69,8 +69,6 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
         {s.acceptScheduledOrders ? row('Minimum advance time', Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
       </Card>
-      <T size={14} weight="800" style={{marginTop: 18, marginBottom: 8}}>Popular items</T>
-      {s.it.slice(0, 4).map((item: any) => <View key={item.id} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line, gap: 10}}><Text style={{fontSize: 26}}>{item.e}</Text><View style={{flex: 1}}><T weight="700">{item.n}</T><T size={12.5} color={th.mut}>{money(item.p)}</T></View></View>)}
       <View style={{height: 12}} />
       <Cta label="Browse this store" onPress={() => {close(); A.go('store', sheet.id);}} />
     </>);
@@ -83,8 +81,8 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
     <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
         <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
-          <Pressable onPress={() => {}} style={{maxHeight: '96%'}}>
-            <SheetBox large={k === 'sinfo' || k === 'promo'} onClose={close}><ScrollView style={{flexShrink: 1}} contentContainerStyle={{paddingBottom: 12}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+          <Pressable onPress={() => {}} style={{width: '100%', maxHeight: '92%', flexShrink: 1}}>
+            <SheetBox large={k === 'sinfo' || k === 'promo'} onClose={close}><ScrollView style={{flex: 1, flexShrink: 1, minHeight: 0}} contentContainerStyle={{paddingBottom: 24, flexGrow: 1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </Pressable>
         </Pressable>
       </KeyboardAvoidingView>
