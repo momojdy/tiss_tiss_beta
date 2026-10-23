@@ -24,6 +24,7 @@ const Hero = ({s, onBack, right}: any) => (
 );
 
 export function Store({id}: {id: string}) {
+  useEffect(() => { void refreshLiveSchedules(); }, [id]);
   const th = useTheme(), s = STB[id], t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
