@@ -255,18 +255,8 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
         <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
           <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
         </View>
-        <View style={{position: 'absolute', left: (x / 320 * 100) + '%', top: (y / 190 * 100) + '%', width: 54, height: 42, marginLeft: -12, marginTop: -10, alignItems: 'center', justifyContent: 'center'}} pointerEvents="none">
-          <Svg width={54} height={42} viewBox="0 0 54 42">
-            <Circle cx="13" cy="32" r="7" fill="#333333" /><Circle cx="13" cy="32" r="3.2" fill="#F8F8F5" />
-            <Circle cx="39" cy="32" r="7" fill="#333333" /><Circle cx="39" cy="32" r="3.2" fill="#F8F8F5" />
-            <Path d="M13 31 L22 22 L31 31 L39 31 L34 22 L25 22" stroke="#F4C542" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-            <Path d="M19 21 L31 21 L34 26 L24 27 Z" fill="#F4C542" stroke="#D8A91B" strokeWidth="1" />
-            <Path d="M24 20 L20 14 L29 11 L34 20 Z" fill="#F25C9C" />
-            <Circle cx="25" cy="8" r="4.2" fill="#8C5A3C" />
-            <Path d="M21 7 Q24 1 29 5 L30 8 Z" fill="#242424" />
-            <Path d="M22 14 L17 21 M30 14 L35 18" stroke="#F25C9C" strokeWidth="3.5" strokeLinecap="round" />
-            <Path d="M23 20 L20 27 M29 20 L33 27" stroke="#252525" strokeWidth="3" strokeLinecap="round" />
-          </Svg>
+        <View style={{position: 'absolute', left: Math.max(3, Math.min(83, x / 320 * 100 - 6)) + '%', top: Math.max(18, Math.min(72, y / 190 * 100 - 8)) + '%', width: 42, height: 42, borderRadius: 21, backgroundColor: '#E8C5E8', borderWidth: 2, borderColor: '#8F267E', alignItems: 'center', justifyContent: 'center'}} pointerEvents="none">
+          <Text style={{fontSize: 23, color: '#8F267E'}}>🛵</Text>
         </View>
       </View>
       <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F4C542', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
@@ -354,7 +344,7 @@ export function Orders() {
               <Row style={{marginTop: 12}}><Cta small ghost label="Reorder" onPress={() => reorder(o.id)} /><Cta small label={done(o) ? 'Details' : 'Track'} onPress={() => go('track', o.id)} /></Row>
             </Card>
           );
-        }) : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? 'No active orders' : 'No past orders yet'} text="Your orders will show up here." button="Browse stores" onPress={browse} />}
+        }) : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? 'No active orders' : 'No past orders yet'} text="Your orders will show up here." button="Browse stores" onPress={() => go('explore')} />}
       </View>
     </View>
   );
