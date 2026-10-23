@@ -61,7 +61,8 @@ export function Home() {
   const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals();
   return (
     <View>
-      <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, paddingTop: 18, paddingHorizontal: 16}}>
+      <View style={{height: 100, justifyContent: 'flex-end', paddingBottom: 10, paddingHorizontal: 16}}>
+      <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
         <Circ icon="chevL" label={tr('back')} onPress={back} />
         <Pressable onPress={() => go('addresses')} style={{flex: 1, minWidth: 0}}>
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
@@ -70,6 +71,7 @@ export function Home() {
         <Circ icon="bell" label="Notifications" dot={unread()} onPress={() => go('notifs')} />
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
         <Circ icon="cart" label={tr('cart')} count={cnt()} onPress={() => tab('cart')} />
+      </View>
       </View>
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
@@ -228,11 +230,15 @@ export function Search() {
   }
   return (
     <View>
-      <View style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingTop: 16, paddingBottom: 10}}>
-        <Circ icon="chevL" label={tr('back')} onPress={back} />
-        <TextInput autoFocus={!r.q} value={r.q} onChangeText={setQ} placeholder="Search food, groceries, drinks" placeholderTextColor={th.mut} accessibilityLabel="Search" style={{flex: 1, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12}} />
-        {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
+      <View style={{height: 100, justifyContent: 'flex-end', paddingHorizontal: 16, paddingBottom: 10}}>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+          <Circ icon="chevL" label={tr('back')} onPress={back} />
+          <TextInput autoFocus={!r.q} value={r.q} onChangeText={setQ} placeholder="Search food, groceries, drinks" placeholderTextColor={th.mut} accessibilityLabel="Search" style={{flex: 1, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12}} />
+          {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
+        </View>
       </View>
+      <View style={{height: 20, backgroundColor: '#FD802E'}} />
+      <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
       {body}
