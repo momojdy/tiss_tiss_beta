@@ -133,7 +133,7 @@ export function ProductFoot() {
   const th = useTheme(), h = S.sh, i = h && IT[h.id];
   if (!i) return null;
   const s = STB[i.s], o = CHOOSE_SIZE_CATS.indexOf(s.c) > -1, base = h.off ? dp(i, h.off) : i.p, unit = base + (h.size > 0 ? 1.5 : 0) + (h.drink ? 1 : 0);
-  const blocked = i.oos || !s.open || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open ? 'Store is closed' : o && h.size < 0 ? 'Choose a size' : 'Add to cart · ' + money(unit * h.q);
+  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open ? 'Store is closed' : o && h.size < 0 ? 'Choose a size' : 'Add to cart · ' + money(unit * h.q);
   return <Row><Stepper q={h.q} onMinus={() => productQty(-1)} onPlus={() => productQty(1)} /><View style={{flex: 1}}><Cta label={lbl} disabled={!!blocked} onPress={productAdd} /></View></Row>;
 }
 
@@ -336,7 +336,10 @@ function DeliveryRouteMap({order, storeName, destination}: {order: any; storeNam
             <Circle cx="44" cy="44" r="6" fill="#F4C542" stroke="#8F267E" strokeWidth="2" />
             <Path d="M13 31 L22 22 L31 31 L39 31 L34 22 L25 22" stroke="#F4C542" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
             <Path d="M19 21 L31 21 L34 26 L24 27 Z" fill="#F4C542" stroke="#D8A91B" strokeWidth="1" />
-
+            <Path d="M24 20 L20 14 L29 11 L34 20 Z" fill="#F25C9C" />
+            <Path d="M21 7 Q24 1 29 5 L30 8 Z" fill="#242424" />
+            <Path d="M22 14 L17 21 M30 14 L35 18" stroke="#F25C9C" strokeWidth="3.5" strokeLinecap="round" />
+            <Path d="M23 20 L20 27 M29 20 L33 27" stroke="#252525" strokeWidth="3" strokeLinecap="round" />
           </Svg>
         </View>
       </View>
@@ -409,8 +412,10 @@ export function Track({id}: {id: string}) {
         {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap storeName={s.n} /> : null}
         {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap order={o} storeName={s.n} destination={o.ad ? o.ad.l + ': ' + o.ad.t : o.addr} /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
-        {dn && !o.cx && !o.rated ? <Card><T weight="700" align="center">How was your order?</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'review', id: o.id});}}><Icon name="star" size={32} color={th.line} fill /></Pressable>)}</View></Card> : null}
-        {o.rated ? <Card><T weight="700" align="center">Thanks for rating: {o.rated} ★</T></Card> : null}
+        {dn && !o.cx && !o.rated ? <Card><T weight="700" align="center">How was your order?</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'review', id: o.id});}}><Icon name="star" size={32} color="#FFB400" fill /></Pressable>)}</View></Card> : null}
+        {o.rated ? <Card><T weight="700" align="center">Thanks for rating your order: {o.rated} ★</T></Card> : null}
+        {dn && !o.cx && !o.pk && !o.driverRated ? <Card><T weight="700" align="center">How was your driver?</T><T size={12.5} color={th.mut} align="center" style={{marginTop: 4}}>Your driver rating is separate from your store and order review.</T><View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 10}}>{[1, 2, 3, 4, 5].map(k => <Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={() => {S.rt = k; require('../store').ui.sheet({kind: 'driver-review', id: o.id});}}><Icon name="star" size={32} color="#FFB400" fill /></Pressable>)}</View></Card> : null}
+        {o.driverRated ? <Card><T weight="700" align="center">Thanks for rating your driver: {o.driverRated} ★</T></Card> : null}
         <Sum rows={[...o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)] as any), ['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
         {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color={th.red}>Cancel order</T></Pressable></Card></> : null}
         <Cta ghost label="Order again" onPress={() => reorder(o.id)} /><View style={{height: 10}} />
