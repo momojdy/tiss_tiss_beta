@@ -152,7 +152,6 @@ export function Explore() {
     if (scope === 'open') return x.km - y.km;
     return Number(!!y.open) - Number(!!x.open) || x.km - y.km;
   });
-  const visibleIds = new Set(visible.map(s => s.id));
   const products = visible.flatMap(s => s.it.filter(i => !i.oos && i.stock > 0));
   const scopeOptions: [string, string][] = [['closest', 'Closest'], ['open', 'Open now'], ['all', 'All available']];
   const categoryOptions: [string, string][] = [['all', 'All categories'], ...categories().map(c => [c.id, c.emoji + ' ' + tx(c.name)] as [string, string])];
