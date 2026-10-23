@@ -153,9 +153,9 @@ function StoreChat({id}: {id: string}) {
         if (!user) throw new Error('Sign in to message this store. Your conversation will appear here after you sign in.');
         if (!active) return;
         setUserId(user.id);
-        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', id).eq('is_live', true).maybeSingle();
+        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', id).maybeSingle();
         if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error('This store has not enabled live store messaging yet.');
+        if (!mapping?.business_id) throw new Error('We could not find the vendor account linked to this store. Please try again later.');
         const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', id).eq('customer_id', user.id).limit(1).maybeSingle();
         if (findError) throw findError;
         let cid = found?.id;
@@ -231,9 +231,9 @@ function Contact({p}: {p: any}) {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
         if (!auth.user) throw new Error('Sign in to contact this store. Your message has not been sent.');
-        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', storeId).eq('is_live', true).maybeSingle();
+        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', storeId).maybeSingle();
         if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error('This store has not enabled live store messaging yet. Your message has not been sent.');
+        if (!mapping?.business_id) throw new Error('We could not find the vendor account linked to this store. Your message has not been sent.');
         const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', storeId).eq('customer_id', auth.user.id).limit(1).maybeSingle();
         if (findError) throw findError;
         conversationId = found?.id || '';
