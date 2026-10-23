@@ -104,9 +104,9 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     <View style={{flex: 1, backgroundColor: th.bg}} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={{flex: 1}} edges={['top']}>
-        <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : r === 'byo' && footed ? 190 : footed ? 120 : 110}}>
+        {r === 'byo' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : footed ? 120 : 110}}>
           {body}
-        </ScrollView>
+        </ScrollView>}
       </SafeAreaView>
 
       {footed ? <View style={{position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12 + ins.bottom, backgroundColor: th.bg, borderTopWidth: 1, borderTopColor: th.line}}>{r === 'product' ? <ProductFoot /> : r === 'byo' ? <ByoFoot /> : <CheckoutFoot />}</View> : null}
