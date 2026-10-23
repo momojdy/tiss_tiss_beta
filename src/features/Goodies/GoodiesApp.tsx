@@ -8,7 +8,7 @@ import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
 import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push} from './store';
 import * as A from './actions';
-import {Home, Cats, CatList, Search, Promos, Notifs} from './screens/Browse';
+import {Home, Cats, CatList, Search, Promos, Notifs, Explore} from './screens/Browse';
 import {Store, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
 import {Sheets} from './components/Sheets';
@@ -90,6 +90,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'cats': body = <><TopBar title={tr('categories')} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
+    case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
     case 'catlist': body = <><TopBar title={c.p === 'all' ? 'All stores' : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
     case 'store': body = <Store id={c.p} />; break;
