@@ -268,7 +268,7 @@ export function totals() {
 export const qtyIn = (id: string) => S.cart.lines.filter((l: CartLine) => l.id === id).reduce((a: number, l: CartLine) => a + l.q, 0);
 export function canBuy(i: Item) {
   const s = STB[i.s];
-  if (!s.open) {toast(s.n + ' is closed. ' + s.nx); return false;}
+  if (!s.open && !s.acceptScheduledOrders) {toast(s.n + ' is closed. ' + s.nx); return false;}
   if (i.oos) {toast('Sorry, ' + i.n + ' is out of stock'); return false;}
   return true;
 }
