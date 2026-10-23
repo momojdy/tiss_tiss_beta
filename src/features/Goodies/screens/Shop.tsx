@@ -30,7 +30,7 @@ export function Store({id}: {id: string}) {
   const tabs: [string, string][] = [['all', 'All'], ['pop', 'Popular'], ['deal', 'Deals'], ...(byoOn(id) ? [['custom', 'Build your own'] as [string, string]] : [])];
   return (
     <View>
-      <Hero s={s} onBack={back} right={<View style={{position: 'absolute', right: 16, top: 16}}><Circ icon="heart" label="Save store" onPress={() => heart(id)} /></View>} />
+      <Hero s={s} onBack={back} right={<View style={{position: 'absolute', right: 16, top: 16}}><Circ icon="heart" label="Save store" color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.km.toFixed(1)} km away</T>
