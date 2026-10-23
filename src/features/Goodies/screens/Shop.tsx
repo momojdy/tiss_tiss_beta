@@ -69,7 +69,7 @@ export function Product() {
   const fav = S.favp.indexOf(i.id) > -1;
   return (
     <View>
-      <Bar title={s.n} onBack={back} right={<Circ icon="heart" label="Save item" onPress={() => favp(i.id)} />} />
+      <Bar title={s.n} onBack={back} stripe={false} right={<Circ icon="heart" label="Save item" onPress={() => favp(i.id)} />} />
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
         {['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}>{i.photo ? <Image source={{uri: i.photo}} style={{width, height: 210}} /> : <Text style={{fontSize: 96}}>{i.e}</Text>}</Grad>)}
       </ScrollView>
