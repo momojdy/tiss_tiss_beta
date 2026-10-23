@@ -1,4 +1,6 @@
 /* Actions. 1:1 port of the Goodies v24 `A` handlers. Messages stay in English here and move to i18n keys during the localization pass. */
+import {supabase} from '../../lib/supabase';
+import {providerInfo} from './providers';
 import {
   hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur,
 } from './store';
@@ -104,8 +106,9 @@ export function setPay(p: string) {
   if (p === 'card' && !S.cards.length) {push('payments'); return;}
   S.pay = p; save(); emit();
 }
-export function placeOrder() {
+export async function placeOrder() {
   if (S.busy) return;
+  if (!providerInfo.demo) {toast('Live payment processing is not configured. Checkout is disabled until a real payment provider is connected.'); return;}
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
   if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(st.n + ' is closed. Choose a future pickup or delivery time if scheduling is available.'); S.cs = 1; emit(); return;}
@@ -126,14 +129,42 @@ export function placeOrder() {
     if (!S.cards.length) {push('payments'); return;}
     if (S.cards[0].l4 === '0002') {toast('Card declined (demo). Your cart is safe. Try another method.'); S.cs = 2; emit(); return;}
   }
-  /* DEMO ONLY: this simulated payment must never run in production mode (see providers/index.ts) */
-  S.busy = 1;
+  /* Demo checkout only. Live mode is blocked above until real payment processing is connected. */
+  S.busy = 1; emit();
   const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (S.cards[0] ? S.cards[0].l4 : ''), cash: 'Cash'}[S.pay as string];
-  if (S.pay === 'wallet') S.wallet -= t.total;
   let id: string;
   do {id = 'GD' + Math.floor(1000 + Math.random() * 9000);} while (S.orders.some((x: any) => x.id === id));
+  let backendOrderId: string | null = null;
+  try {
+    const {data: auth, error: authError} = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (auth.user) {
+      const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', st.id).eq('is_live', true).maybeSingle();
+      if (mappingError) throw mappingError;
+      if (mapping?.business_id) {
+        const {data: savedOrder, error: orderError} = await supabase.from('goodies_orders').insert({
+          order_code: id, business_id: mapping.business_id, customer_id: auth.user.id, store_id: st.id,
+          status: S.sch && S.sch > Date.now() ? 'scheduled' : 'placed',
+          scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
+          order_type: pk ? 'pickup' : 'delivery',
+          address: pk ? null : {label: a.l, address: a.t, apt: a.apt, instructions: a.inst},
+          contact_phone: ct.ph,
+          items: S.cart.lines.map((l: any) => ({id: l.id, name: l.n, emoji: l.e, quantity: l.q, unit_price: l.p, options: l.d, custom: l.byo || null})),
+          subtotal: t.sub, delivery_fee: t.fee, service_fee: t.svc, discount: t.disc, tip: t.tip, total: t.total,
+          payment_method: S.pay, payment_status: 'demo', notes: String(S.note || '').trim()
+        }).select('id').single();
+        if (orderError) throw orderError;
+        backendOrderId = savedOrder.id;
+      }
+    }
+  } catch (e: any) {
+    S.busy = 0; emit();
+    toast('The store could not receive this order. Your cart is unchanged. ' + String(e?.message || 'Please try again.'));
+    return;
+  }
+  if (S.pay === 'wallet') S.wallet -= t.total;
   const o = {
-    id, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
+    id, backendId: backendOrderId, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
     sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
     addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
     pay: S.pay, payl: pl, note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
@@ -143,7 +174,7 @@ export function placeOrder() {
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
-  S.busy = 0; toast('Order placed!'); save(); emit();
+  S.busy = 0; toast(backendOrderId ? 'Order sent to the store' : 'Demo order placed!'); save(); emit();
 }
 export const cancelAsk = (id: string) => ui.sheet({kind: 'cancel', id});
 export function cancelOrder(id: string) {
