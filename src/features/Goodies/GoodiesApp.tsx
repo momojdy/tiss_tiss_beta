@@ -2,7 +2,7 @@
      <GoodiesApp onExit={() => navigation.goBack()} />
    Navigation is an internal stack that mirrors v24 (S.stack). Native back (Android) and left-edge swipe (iOS and Android) both call navBack(). */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar} from 'react-native';
+import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
@@ -101,7 +101,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   const showTabs = TABS.indexOf(r) > -1, showCb = cnt() > 0 && NOCB.indexOf(r) < 0, footed = FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added);
 
   return (
-    <View style={{flex: 1, backgroundColor: th.bg}} {...pan.panHandlers}>
+    <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={{flex: 1}} edges={[]}>
         {r === 'byo' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
@@ -121,7 +121,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       {showTabs ? <BottomNav r={r} bottom={18} /> : null}
       <Sheets sheet={sheet} close={() => setSheet(null)} />
       {toastTxt ? <View pointerEvents="none" style={{position: 'absolute', left: 0, right: 0, bottom: 150, alignItems: 'center', zIndex: 30}}><View style={{backgroundColor: '#1B1B1F', borderRadius: 22, paddingHorizontal: 18, paddingVertical: 11, maxWidth: '86%'}}><T size={13.5} weight="600" color="#fff" align="center">{toastTxt}</T></View></View> : null}
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 
