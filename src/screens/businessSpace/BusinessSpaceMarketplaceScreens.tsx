@@ -17,6 +17,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { Feature, FX, FM, LIGHT, useTheme, useS, money, ago, rpc, useQ, useApp, useArg, useAct, Icon, Btn, Pill, Chips, Seg, Section, Empty, Skel, ErrBox, Loading, FIcon, Row, Divided, Pg, OrderRow, ListingRow, RequirementsCard } from "./BusinessSpaceShared";
+import { GoodiesToolsCard } from "./BusinessSpaceGoodies";
 
 export function FeaturePage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), { k, focus } = useArg() as { k: string; focus?: string };
@@ -41,6 +42,7 @@ export function FeaturePage() {
         </View>
       </View>
       <RequirementsCard feature={k} />
+      {k === "goodies" && on ? (<><Section title="Goodies tools" /><GoodiesToolsCard /></>) : null}
       <Section title="Orders and requests" right={String(os.length)} />
       <Chips items={['All', ...fe.flow, 'Cancelled']} value={of} onChange={setOf} />
       {orders.e ? <ErrBox e={orders.e} retry={orders.reload} /> : (
