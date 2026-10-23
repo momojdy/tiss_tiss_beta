@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, useTheme} from './ui';
 import {Icon} from './Icon';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK} from '../store';
@@ -9,6 +9,14 @@ import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {alcAge} from '../store';
 import {rgText, importContent, clearContent, hasContent} from '../content';
 import {TextInput} from 'react-native';
+
+const PHONE_COUNTRIES = [
+  {id: 'HT', name: 'Haiti', flag: '🇭🇹', dial: '+509'}, {id: 'US', name: 'United States', flag: '🇺🇸', dial: '+1'},
+  {id: 'CA', name: 'Canada', flag: '🇨🇦', dial: '+1'}, {id: 'DO', name: 'Dominican Republic', flag: '🇩🇴', dial: '+1'},
+  {id: 'PH', name: 'Philippines', flag: '🇵🇭', dial: '+63'}, {id: 'FR', name: 'France', flag: '🇫🇷', dial: '+33'},
+  {id: 'CN', name: 'China', flag: '🇨🇳', dial: '+86'}, {id: 'GB', name: 'United Kingdom', flag: '🇬🇧', dial: '+44'},
+  {id: 'BR', name: 'Brazil', flag: '🇧🇷', dial: '+55'}, {id: 'JM', name: 'Jamaica', flag: '🇯🇲', dial: '+1'},
+] as const;
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const th = useTheme();
@@ -22,7 +30,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">Alcohol rules</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>• The courier checks your ID at the door. At a pickup, the shop checks it.</T><T size={13.5}>• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.</T></Card><View style={{height: 6}} /><Cta label="I understand" onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>); }
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
-  if (k === 'ctform') content = <CtForm id={sheet.id} />;
+  if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} />;
   if (k === 'topup') content = (<><T size={20} weight="800">Top up wallet</T><T color={th.mut} style={{marginTop: 6, marginBottom: 14}}>Demo: no real money moves.</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[10, 20, 50, 100].map(v => <Pressable key={v} onPress={() => {S.wallet += v; close(); toast('Wallet topped up to ' + money(S.wallet)); save(); emit();}} style={{paddingVertical: 10, paddingHorizontal: 16, borderRadius: 18, backgroundColor: th.soft}}><T size={14} weight="700">+{money(v)}</T></Pressable>)}</View></>);
   if (k === 'replace') content = (<><T size={20} weight="800">Replace your cart?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}.</T><Cta label="Replace and reorder" onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label="Keep current cart" onPress={close} /></>);
   if (k === 'clear') content = (<><T size={20} weight="800">Clear your cart?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>All items will be removed.</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Clear cart</T></Pressable><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>);
@@ -34,10 +42,14 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>Deliver to</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>Choosing an address here only changes Goodies. Your Wantiss default stays the same.</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
 
   return (
-    <Modal transparent animationType="slide" onRequestClose={close}>
-      <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
-        <Pressable onPress={() => {}}><SheetBox><ScrollView keyboardShouldPersistTaps="handled">{content}</ScrollView></SheetBox></Pressable>
-      </Pressable>
+    <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
+      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
+        <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
+          <Pressable onPress={() => {}} style={{maxHeight: '96%'}}>
+            <SheetBox><ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+          </Pressable>
+        </Pressable>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }
@@ -75,9 +87,15 @@ function ContactsSheet({close}: {close: () => void}) {
 }
 function CtForm({id}: {id: any}) {
   const th = useTheme(), c = S.gc.filter((x: any) => x.id == id)[0] || {l: '', ph: ''};
-  const [l, setL] = useState(c.l), [ph, setPh] = useState(c.ph);
+  const existingDigits = String(c.ph || '').replace(/\D/g, '');
+  const matched = PHONE_COUNTRIES.slice().sort((a, b) => b.dial.length - a.dial.length).find(x => existingDigits.startsWith(x.dial.replace(/\D/g, '')));
+  const [l, setL] = useState(c.l), [countryId, setCountryId] = useState<string>(matched?.id || 'HT');
+  const initialCountry = matched || PHONE_COUNTRIES[0];
+  const [ph, setPh] = useState(matched ? existingDigits.slice(matched.dial.replace(/\D/g, '').length) : existingDigits);
+  const [showCountries, setShowCountries] = useState(false);
+  const country = PHONE_COUNTRIES.find(x => x.id === countryId) || initialCountry;
   const save_ = () => {
-    const p = ph.trim();
+    const local = ph.replace(/\D/g, ''), p = country.dial + ' ' + local;
     if (!phoneOK(p)) return toast('Enter a valid phone number (8 to 15 digits)');
     const dg = p.replace(/\D/g, '');
     if (dg === S.pf.ph.replace(/\D/g, '')) return toast('That is already your Wantiss number');
@@ -87,9 +105,24 @@ function CtForm({id}: {id: any}) {
     toast('Number saved for Goodies checkout'); save(); emit(); ui.sheet({kind: 'contacts'});
   };
   return (<>
-    <T size={20} weight="800">{id ? 'Edit' : 'Add'} contact number</T><T size={12.5} color={th.mut}>Saved for Goodies checkout only.</T>
+    <T size={20} weight="800">{id ? 'Edit' : 'Add'} contact number</T>
+    <T size={12.5} color={th.mut} style={{marginTop: 3}}>Saved for Goodies checkout only. Choose the flag and international calling code for this number.</T>
     <Input label="Label (optional)" value={l} onChange={setL} placeholder="e.g. Partner, Office" />
-    <Input label="Phone number" value={ph} onChange={setPh} placeholder="+509 …" keyboard="phone-pad" />
+    <T size={13} weight="700" style={{marginTop: 12, marginBottom: 5}}>Country / area code</T>
+    <Pressable accessibilityRole="button" accessibilityLabel="Choose country and calling code" onPress={() => setShowCountries(v => !v)} style={{minHeight: 50, flexDirection: 'row', alignItems: 'center', paddingHorizontal: 12, borderRadius: 12, borderWidth: 1, borderColor: showCountries ? th.br : th.line, backgroundColor: th.soft, gap: 10}}>
+      <Text style={{fontSize: 22}}>{country.flag}</Text>
+      <View style={{flex: 1}}><T size={14} weight="700">{country.name}</T><T size={12} color={th.mut}>{country.dial}</T></View>
+      <Icon name={showCountries ? 'chevD' : 'chevR'} size={17} color={th.ink} />
+    </Pressable>
+    {showCountries ? <View style={{maxHeight: 190, borderWidth: 1, borderColor: th.line, borderRadius: 12, marginTop: 6, overflow: 'hidden'}}>
+      <ScrollView nestedScrollEnabled keyboardShouldPersistTaps="handled">
+        {PHONE_COUNTRIES.map(x => <Pressable key={x.id} onPress={() => {setCountryId(x.id); setShowCountries(false);}} style={{flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 12, paddingVertical: 10, backgroundColor: x.id === countryId ? th.brt : th.card}}>
+          <Text style={{fontSize: 20}}>{x.flag}</Text><T size={13.5} weight={x.id === countryId ? '800' : '500'} style={{flex: 1}}>{x.name}</T><T size={13} weight="700" color={th.mut}>{x.dial}</T>{x.id === countryId ? <Icon name="check" size={15} color="#FD802E" /> : null}
+        </Pressable>)}
+      </ScrollView>
+    </View> : null}
+    <Input label="Phone number" value={ph} onChange={setPh} placeholder="Local number, including area code" keyboard="phone-pad" />
+    <T size={11.5} color={th.mut} style={{marginTop: 5}}>Your saved number will include {country.dial} automatically.</T>
     <View style={{height: 14}} /><Cta label="Save number" onPress={save_} /><View style={{height: 10}} /><Cta ghost label="Back" onPress={() => ui.sheet({kind: 'contacts'})} />
   </>);
 }
