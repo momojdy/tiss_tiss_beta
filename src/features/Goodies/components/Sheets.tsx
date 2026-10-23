@@ -44,7 +44,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
-          <View style={{flex: 1}}><T size={13} color={th.mut}>CUSTOMER RATING</T><T size={18} weight="800">★ {s.r} <T size={12.5} color={th.mut} weight="500">({s.rv} reviews)</T></T></View>
+          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>CUSTOMER RATING · VIEW REVIEWS</T><T size={18} weight="800">★ {s.r} <T size={12.5} color={th.mut} weight="500">({s.rv} reviews)</T></T></Pressable>
           <Badge label={s.open ? 'Open now' : 'Closed now'} />
         </Row>
         {row('Opening hours', s.h)}
@@ -59,7 +59,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <T size={14} weight="800" style={{marginTop: 18, marginBottom: 8}}>Popular items</T>
       {s.it.slice(0, 4).map((item: any) => <View key={item.id} style={{flexDirection: 'row', alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line, gap: 10}}><Text style={{fontSize: 26}}>{item.e}</Text><View style={{flex: 1}}><T weight="700">{item.n}</T><T size={12.5} color={th.mut}>{money(item.p)}</T></View></View>)}
       <View style={{height: 12}} />
-      <Cta label="Browse this store" onPress={() => {close(); A.go('shop', {id: sheet.id});}} />
+      <Cta label="Browse this store" onPress={() => {close(); A.go('store', sheet.id);}} />
     </>);
   }
   if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>Message courier</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
@@ -71,7 +71,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
         <Pressable onPress={close} style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
           <Pressable onPress={() => {}} style={{maxHeight: '96%'}}>
-            <SheetBox large={k === 'sinfo'}><ScrollView keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+            <SheetBox large={k === 'sinfo' || k === 'promo'} onClose={close}><ScrollView style={{flexShrink: 1}} contentContainerStyle={{paddingBottom: 12}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </Pressable>
         </Pressable>
       </KeyboardAvoidingView>
