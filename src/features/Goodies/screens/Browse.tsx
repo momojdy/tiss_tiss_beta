@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from 'react';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme} from '../components/ui';
@@ -37,9 +38,9 @@ function PromoCard({kind, title, sub, btn, emoji, target}: {kind: keyof typeof P
   return (
     <Pressable onPress={() => (target ? promoGoTarget(target) : promoSheet(kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce'))}>
       <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 16, overflow: 'hidden'}}>
-        <T size={18} weight="800" color="#fff" style={{width: 170, lineHeight: 21}}>{title}</T>
-        <T size={12} color="#fff" style={{marginTop: 5, width: 160, opacity: 0.92}}>{sub}</T>
-        <View style={{position: 'absolute', left: 16, bottom: 14, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
+        <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
+        <T size={11.5} color="#fff" lines={1} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
+        <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
         <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>
       </Grad>
     </Pressable>
@@ -54,16 +55,16 @@ function Countdown() {
   return <View style={{backgroundColor: th.red, borderRadius: 12, paddingHorizontal: 9, paddingVertical: 4}}><T size={12} weight="800" color="#fff">Ends in {p(Math.floor(s / 3600))}:{p(Math.floor((s % 3600) / 60))}:{p(s % 60)}</T></View>;
 }
 
-export function Home() {
-  const th = useTheme();
+export function Home({onExit}: {onExit?: () => void}) {
+  const th = useTheme(), ins = useSafeAreaInsets();
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
   const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it);
   const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals();
   return (
     <View>
-      <View style={{height: 100, justifyContent: 'flex-end', paddingBottom: 10, paddingHorizontal: 16}}>
+      <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingBottom: 10, paddingHorizontal: 16}}>
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 6}}>
-        <Circ icon="chevL" label={tr('back')} onPress={back} />
+        <Circ icon="chevL" label={tr('back')} onPress={onExit || back} />
         <Pressable onPress={() => go('addresses')} style={{flex: 1, minWidth: 0}}>
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="800" lines={1} style={{flexShrink: 1}}>{addr().t}</T><Icon name="chevD" size={14} color={th.ink} /></View>
@@ -178,7 +179,7 @@ export function CatList({p}: {p: string}) {
 
 /* Search keeps v24's behaviour: filters, sort, suggestions, recent searches */
 export function Search() {
-  const th = useTheme();
+  const th = useTheme(), ins = useSafeAreaInsets();
   const r = S.sr, q = r.q.trim().toLowerCase(), F = r.f, any = Object.keys(F).some(k => F[k]);
   const fl: [string, string][] = [['open', 'Open now'], ['top', 'Rating 4.5+'], ['fast', 'Under 30 min'], ['free', 'Free delivery'], ['sale', 'On sale'], ['p5', 'Under $5'], ['p10', 'Under $10']];
   const sorts: [string, string][] = [['rel', 'Relevance'], ['pop', 'Popularity'], ['lo', 'Price: low to high'], ['hi', 'Price: high to low'], ['rate', 'Highest rating'], ['fast', 'Fastest delivery']];
@@ -230,14 +231,14 @@ export function Search() {
   }
   return (
     <View>
-      <View style={{height: 100, justifyContent: 'flex-end', paddingHorizontal: 16, paddingBottom: 10}}>
+      <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10}}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Circ icon="chevL" label={tr('back')} onPress={back} />
           <TextInput autoFocus={!r.q} value={r.q} onChangeText={setQ} placeholder="Search food, groceries, drinks" placeholderTextColor={th.mut} accessibilityLabel="Search" style={{flex: 1, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12}} />
           {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#FD802E'}} />
+      <View style={{height: 20, backgroundColor: '#F4A261'}} />
       <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
