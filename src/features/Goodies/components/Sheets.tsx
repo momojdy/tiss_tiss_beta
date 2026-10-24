@@ -112,7 +112,18 @@ function ScheduleSheet({close}: {close: () => void}) {
   const lead = Math.max(0, Number(store?.scheduledOrderStartMinutes ?? 60));
   const earliest = new Date(selectedDate);
   if (dayOffset === 0) { earliest.setHours(now.getHours(), now.getMinutes(), 0, 0); }
-  if (!store?.open && openingTime) {const [h,m]=openingTime.split(':').map(Number); const opening = new Date(selectedDate); opening.setHours(h,m||0,0,0); const allowed = new Date(opening.getTime()+lead*60000); if(allowed>earliest) earliest.setTime(allowed.getTime());}
+  if (!store?.open) {
+    if (openingTime) {
+      const [h,m]=openingTime.split(':').map(Number);
+      const opening = new Date(selectedDate); opening.setHours(h,m||0,0,0);
+      const allowed = new Date(opening.getTime()+lead*60000);
+      if(allowed>earliest) earliest.setTime(allowed.getTime());
+    } else {
+      const baseline = dayOffset === 0 ? new Date() : new Date(selectedDate);
+      const allowed = new Date(baseline.getTime()+lead*60000);
+      if(allowed>earliest) earliest.setTime(allowed.getTime());
+    }
+  }
   const earliestLabel = fmtTime(earliest);
   const selected = new Date(selectedDate);
   selected.setHours(Number(hour), Number(minute), 0, 0);
