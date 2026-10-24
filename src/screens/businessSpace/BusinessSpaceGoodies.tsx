@@ -183,7 +183,9 @@ export function GoodiesBuildersPage() {
 function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; onPick: (id: string, name: string) => void; onClose: () => void }) {
   const s = useS(), t = useTheme();
   const [q, setQ] = useState('');
-  const list = useMemo(() => LIB_SEED.filter(l => l.b === type && l.n.toLowerCase().includes(q.toLowerCase())), [type, q]);
+  const [library, setLibrary] = useState<{ id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[]>([]);
+  useEffect(() => { let active = true; goodiesApi.library().then(rows => { if (active) setLibrary(rows); }).catch(() => { if (active) setLibrary([]); }); return () => { active = false; }; }, []);
+  const list = useMemo(() => library.filter(l => l.b === type && l.n.toLowerCase().includes(q.toLowerCase())), [library, type, q]);
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
