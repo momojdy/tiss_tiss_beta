@@ -88,7 +88,7 @@ returns void
 language plpgsql
 security definer
 set search_path = ''
-as $
+as $$
 begin
   if auth.role() <> 'service_role' then
     raise exception 'Service role required' using errcode = '42501';
