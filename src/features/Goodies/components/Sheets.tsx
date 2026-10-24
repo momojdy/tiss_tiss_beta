@@ -6,7 +6,6 @@ import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtD
 import * as A from '../actions';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
-import {fmtDay, fmtTime, STB} from '../store';
 import {alcAge} from '../store';
 import {rgText, importContent, clearContent, hasContent} from '../content';
 import {TextInput, useWindowDimensions} from 'react-native';
