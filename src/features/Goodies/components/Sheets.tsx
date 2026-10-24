@@ -8,10 +8,11 @@ import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {alcAge} from '../store';
 import {rgText, importContent, clearContent, hasContent} from '../content';
-import {TextInput} from 'react-native';
+import {TextInput, useWindowDimensions} from 'react-native';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
-  const th = useTheme();
+  const th = useTheme(), insets = useSafeAreaInsets(), {height: windowHeight} = useWindowDimensions();
   if (!sheet) return null;
   const k = sheet.kind;
   const stars = (n: number, on: (v: number) => void) => <View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 10}}>{[1, 2, 3, 4, 5].map(v => <Pressable key={v} onPress={() => on(v)}><Icon name="star" size={32} color={n >= v ? '#FFB400' : th.line} fill /></Pressable>)}</View>;
@@ -78,11 +79,11 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   return (
     <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
-      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
+      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
         <View style={{flex:1, backgroundColor:'rgba(0,0,0,.5)', justifyContent:'flex-end'}}>
-          <Pressable onPress={close} accessibilityRole="button" accessibilityLabel="Close sheet" style={{flex:1}} />
-          <View style={{width:'100%', maxHeight:isRatingSheet?'68%':k==='promo'&&sheet.custom?'68%':k==='sinfo'||k==='promo'?'92%':'86%', flexShrink:1, minHeight:0}}>
-            <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:28,flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+          <Pressable onPress={close} accessibilityRole="button" accessibilityLabel="Close sheet" style={{position:'absolute',top:0,left:0,right:0,bottom:0}} />
+          <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : '90%', flexShrink:1, minHeight:0, marginBottom:0}}>
+            <SheetBox large={k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </View>
         </View>
       </KeyboardAvoidingView>
