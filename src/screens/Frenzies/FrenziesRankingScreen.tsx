@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.pageBg },
   content: { paddingHorizontal: 18, paddingBottom: 40 },
   intro: { paddingTop: 14, paddingBottom: 18 },
-  card: { backgroundColor: colors.rankings.cardBg, borderRadius: 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
+  card: { backgroundColor: colors.rankings.cardBg, borderRadius: colors.rankings.cardRadius ?? 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   leaderboardScroll: { maxHeight: 560 },
   cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
