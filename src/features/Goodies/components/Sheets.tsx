@@ -192,6 +192,13 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>GROUP INVITE CODE</T><T size={22} weight="800">{group.code}</T></View><Cta small label="Invite people" onPress={invite} /></Row>
       <T size={12} color={th.mut} style={{marginTop:7}}>Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link.</T>
     </Card>
+    <Card style={{marginBottom:12}}>
+      <T size={14} weight="800">Shared cart</T>
+      {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut} style={{marginTop:7}}>Add items to the cart from the selected store. The host controls checkout.</T>}
+      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">Subtotal</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
+      {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
+      <View style={{height:10}}/><Cta ghost label="View cart" onPress={()=>{close();A.go('cart');}} />
+    </Card>
     <T size={15} weight="800" style={{marginBottom:7}}>Group members</T>
     <Row style={{gap:8, marginBottom:10}}>
       <View style={{flex:1}}><Input value={name} onChange={setName} placeholder="Enter member name" /></View>
