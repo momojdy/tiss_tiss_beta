@@ -29,7 +29,6 @@ function Header({ onBack }: { onBack?: () => void }) {
 }
 
 function Option({
-  icon,
   title,
   body,
   onPress,
