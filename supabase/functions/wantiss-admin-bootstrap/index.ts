@@ -35,22 +35,15 @@ Deno.serve(async (req: Request) => {
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
-  const { data: existing, error: readError } = await admin
-    .from("wantiss_admin_staff")
-    .select("user_id")
-    .eq("role", "super_admin")
-    .limit(1);
-  if (readError) return reply(503, { error: "Admin schema is not ready" });
-  if (existing?.length) return reply(409, { error: "Super Admin bootstrap has already been used" });
-
   const displayName = String(user.user_metadata?.full_name ?? user.email ?? "Super Admin").trim().slice(0, 120);
-  const { error: insertError } = await admin.from("wantiss_admin_staff").insert({
-    user_id: user.id,
-    display_name: displayName || "Super Admin",
-    role: "super_admin",
-    status: "active",
+  const { error: bootstrapError } = await admin.rpc("wantiss_bootstrap_super_admin", {
+    p_user_id: user.id,
+    p_display_name: displayName || "Super Admin",
   });
-  if (insertError) return reply(409, { error: "Bootstrap failed; verify that this account is not already registered" });
+  if (bootstrapError) {
+    if (bootstrapError.code === "23505") return reply(409, { error: "Super Admin bootstrap has already been used" });
+    return reply(503, { error: "Bootstrap failed; verify the admin schema and account" });
+  }
 
   return reply(200, { ok: true, message: "First Super Admin created for the authenticated account" });
 });
