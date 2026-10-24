@@ -26,17 +26,17 @@ Deno.serve(async (req: Request) => {
   const { data: { user }, error: authError } = await userClient.auth.getUser();
   if (authError || !user || !user.email_confirmed_at) return reply(401, { error: "A verified staff session is required" });
 
-  const { data: allowed, error: permissionError } = await userClient.rpc("wantiss_has_permission", {
-    p_permission: "staff.manage",
-    p_min_level: "manage",
-  });
-  if (permissionError) return reply(503, { error: "Admin permission schema is not ready" });
-  if (!allowed) return reply(403, { error: "Staff management permission required" });
+  const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: actor, error: actorError } = await admin.from("wantiss_admin_staff")
+    .select("user_id,role,status").eq("user_id", user.id).maybeSingle();
+  if (actorError) return reply(503, { error: "Staff permissions are unavailable" });
+  if (!actor || actor.role !== "super_admin" || actor.status !== "active") {
+    return reply(403, { error: "Only an active Super Admin may administer staff." });
+  }
 
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return reply(400, { error: "Invalid JSON body" }); }
   const action = String(body.action || "");
-  const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
 
   if (action === "invite") {
     const email = String(body.email || "").trim().toLowerCase();
