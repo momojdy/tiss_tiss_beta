@@ -89,10 +89,6 @@ Deno.serve(async (req: Request) => {
       p_user_id: userId, p_status: status, p_reason: reason,
     });
     if (error) return reply(error.code === "42501" ? 403 : 400, { error: error.message });
-    if (status !== "active") {
-      const { data: target } = await admin.from("wantiss_admin_staff").select("user_id").eq("user_id", userId).maybeSingle();
-      if (target) await admin.auth.admin.signOut(userId, "global");
-    }
     return reply(200, { ok: true });
   }
 
