@@ -122,13 +122,13 @@ function ScheduleSheet({close}: {close: () => void}) {
   }
   const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
   const hasHours = !!(hours && !hours.closed && opening && closing);
+  let startMinute=0, endMinute=24*60;
+  if(hasHours) {
+    const [oh,om]=opening.split(':').map(Number),[ch,cm]=closing.split(':').map(Number);
+    startMinute=oh*60+(om||0); endMinute=ch*60+(cm||0);
+  } else { startMinute=8*60; endMinute=22*60; }
   const candidates:number[]=[];
   if(hasHours || noSchedule) {
-    let startMinute=0, endMinute=24*60;
-    if(hasHours) {
-      const [oh,om]=opening.split(':').map(Number),[ch,cm]=closing.split(':').map(Number);
-      startMinute=oh*60+(om||0); endMinute=ch*60+(cm||0);
-    } else { startMinute=8*60; endMinute=22*60; }
     for(let mins=startMinute;mins<endMinute;mins+=30) {
       const d=new Date(selectedDate);d.setHours(Math.floor(mins/60),mins%60,0,0);
       if(d.getTime()<=Date.now() || d.getTime()<earliest.getTime()) continue;
