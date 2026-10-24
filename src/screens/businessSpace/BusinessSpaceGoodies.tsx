@@ -6,7 +6,7 @@ import { View, Text, Modal, ScrollView, Pressable, TextInput } from 'react-nativ
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useApp, useArg, useS, useTheme, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
-import { LIB_SEED } from './goodiesLibrarySeed';
+import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
@@ -48,7 +48,12 @@ export const goodiesApi = {
   },
   listRequests: (biz: string) => rd<GRequest[]>(k(biz, 'requests'), []),
   saveRequests: (biz: string, l: GRequest[]) => AsyncStorage.setItem(k(biz, 'requests'), JSON.stringify(l)),
-  library: async () => LIB_SEED, /* Admin library: id, builder and name */
+  library: async () => {
+    const remote = await fetchPublishedWantissContent('en');
+    const record = remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
+    const payload = record?.payload as { items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
+    return Array.isArray(payload?.items) ? payload.items : [];
+  },
 };
 
 export function newBuilder(type: 'pizza' | 'burger' | 'custom'): GBuilder {
