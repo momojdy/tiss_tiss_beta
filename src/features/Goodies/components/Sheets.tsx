@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, useTheme} from './ui';
 import {Icon} from './Icon';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK} from '../store';
@@ -21,6 +21,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoleave') content = (<><T size={20} weight="800">{sheet.edit ? 'Discard your changes?' : 'Leave this builder?'}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? 'The item in your cart stays as it was.' : 'Your choices can be saved as a draft so you can pick up where you left off.'}</T>{sheet.edit ? null : <><Cta label="Save draft and leave" onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">Discard</T></Pressable><View style={{height: 10}} /><Cta ghost label="Keep editing" onPress={close} /></>);
   if (k === 'byoreset') content = (<><T size={20} weight="800">Start over?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>This clears your current choices. Items already in your cart are not affected.</T><Cta label="Start over" onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label="Keep editing" onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">Alcohol rules</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>• The courier checks your ID at the door. At a pickup, the shop checks it.</T><T size={13.5}>• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.</T></Card><View style={{height: 6}} /><Cta label="I understand" onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>); }
+  if (k === 'group-order') content = <GroupOrderSheet close={close} />;
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} />;
@@ -89,6 +90,54 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       </KeyboardAvoidingView>
     </Modal>
   );
+}
+
+function GroupOrderSheet({close}: {close: () => void}) {
+  const th = useTheme();
+  const current = S.groupOrder || {code: 'GD' + Math.random().toString(36).slice(2, 7).toUpperCase(), host: S.pf.n || 'You', members: []};
+  const [name, setName] = useState('');
+  const [group, setGroup] = useState(current);
+  const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
+  const invite = async () => {
+    try {
+      await Share.share({message: 'Join my Wantiss Goodies group order! Invite code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. Open Wantiss and enter this code to coordinate the order.'});
+    } catch (_) { toast('Invite code: ' + group.code); }
+  };
+  return <>
+    <T size={21} weight="800">Group order</T>
+    <T size={13} color={th.mut} style={{marginTop:5, marginBottom:12}}>Start a shared cart, invite friends, and coordinate everyone’s items before checkout.</T>
+    <Card style={{marginBottom:12}}>
+      <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>GROUP INVITE CODE</T><T size={22} weight="800">{group.code}</T></View><Cta small label="Invite people" onPress={invite} /></Row>
+      <T size={12} color={th.mut} style={{marginTop:7}}>Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link.</T>
+    </Card>
+    <T size={15} weight="800" style={{marginBottom:7}}>Group members</T>
+    <Row style={{gap:8, marginBottom:10}}>
+      <View style={{flex:1}}><Input value={name} onChange={setName} placeholder="Enter member name" /></View>
+      <View style={{width:88}}><Cta label="Add" onPress={() => {
+        const n=name.trim(); if(!n) {toast('Enter a member name'); return;}
+        if(group.members.some((m:any)=>m.name.toLowerCase()===n.toLowerCase())) {toast('That member is already in the group'); return;}
+        saveGroup({...group,members:[...group.members,{id:Date.now(),name:n,status:'Invited'}]}); setName('');
+      }} /></View>
+    </Row>
+    <Card>
+      <Row style={{gap:10, alignItems:'center', paddingVertical:4}}>
+        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}><Icon name="user-round" color={th.br} /></View>
+        <View style={{flex:1}}><T weight="800">{group.host || S.pf.n || 'You'} (Host)</T><T size={12} color={th.mut}>Owns the group cart</T></View>
+        <Badge green label="Active" />
+      </Row>
+      {group.members.map((m:any)=><View key={m.id} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:10,borderTopWidth:1,borderTopColor:th.line}}>
+        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user-round" color={th.mut} /></View>
+        <View style={{flex:1}}><T weight="700">{m.name}</T><T size={12} color={th.mut}>Waiting to add items</T></View>
+        <Badge label={m.status || 'Invited'} />
+        <Pressable accessibilityRole="button" accessibilityLabel={'Remove '+m.name} onPress={()=>saveGroup({...group,members:group.members.filter((x:any)=>x.id!==m.id)})}><Icon name="x" size={18} color={th.red}/></Pressable>
+      </View>)}
+      {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}>No members yet. Invite friends or add their names to plan the group.</T> : null}
+    </Card>
+    <View style={{height:12}} />
+    <Cta label="Done" onPress={close} />
+    <View style={{height:8}} />
+    <Cta ghost label="End group order" onPress={() => {S.groupOrder=null; save(); emit(); close(); toast('Group order ended');}} />
+  </>;
 }
 
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
