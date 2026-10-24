@@ -6,6 +6,7 @@ import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK} from
 import * as A from '../actions';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
+import {fmtDay, fmtTime, STB} from '../store';
 import {alcAge} from '../store';
 import {rgText, importContent, clearContent, hasContent} from '../content';
 import {TextInput, useWindowDimensions} from 'react-native';
@@ -22,6 +23,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoreset') content = (<><T size={20} weight="800">Start over?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>This clears your current choices. Items already in your cart are not affected.</T><Cta label="Start over" onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label="Keep editing" onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">Alcohol rules</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>• The courier checks your ID at the door. At a pickup, the shop checks it.</T><T size={13.5}>• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.</T></Card><View style={{height: 6}} /><Cta label="I understand" onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>); }
   if (k === 'group-order') content = <GroupOrderSheet close={close} />;
+  if (k === 'schedule') content = <ScheduleSheet close={close} />;
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} />;
@@ -90,6 +92,70 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       </KeyboardAvoidingView>
     </Modal>
   );
+}
+
+function ScheduleSheet({close}: {close: () => void}) {
+  const th = useTheme();
+  const store = STB[S.cart.sid];
+  const now = new Date();
+  const [dayOffset, setDayOffset] = useState(0);
+  const [hour, setHour] = useState(String(now.getHours()).padStart(2,'0'));
+  const [minute, setMinute] = useState(String(Math.ceil(now.getMinutes()/5)*5 % 60).padStart(2,'0'));
+  const [deliveryMode, setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const selectedDate = new Date(); selectedDate.setDate(selectedDate.getDate()+dayOffset);
+  const schedule = store?.scheduleHours || {};
+  const hours = schedule[dayNames[selectedDate.getDay()]];
+  const openingTime = hours && !hours.closed && hours.open ? String(hours.open) : '';
+  const closingTime = hours && !hours.closed && hours.close ? String(hours.close) : '';
+  const lead = Math.max(0, Number(store?.scheduledOrderStartMinutes ?? 60));
+  const earliest = new Date(selectedDate);
+  if (dayOffset === 0) { earliest.setHours(now.getHours(), now.getMinutes(), 0, 0); }
+  if (!store?.open && openingTime) {const [h,m]=openingTime.split(':').map(Number); const opening = new Date(selectedDate); opening.setHours(h,m||0,0,0); const allowed = new Date(opening.getTime()+lead*60000); if(allowed>earliest) earliest.setTime(allowed.getTime());}
+  const earliestLabel = fmtTime(earliest);
+  const selected = new Date(selectedDate);
+  selected.setHours(Number(hour), Number(minute), 0, 0);
+  const selectedMinutes = selected.getHours()*60+selected.getMinutes();
+  const inHours = !hours || hours.closed || !openingTime || !closingTime ? !store?.scheduleHours || !Object.keys(store.scheduleHours).length : (()=>{const [oh,om]=openingTime.split(':').map(Number),[ch,cm]=closingTime.split(':').map(Number);return selectedMinutes>=oh*60+(om||0)&&selectedMinutes<ch*60+(cm||0);})();
+  const earliestOk = selected.getTime() >= earliest.getTime();
+  const apply = () => {
+    if (!store) {toast('Choose a store before scheduling.');return;}
+    if (!store.open && !store.acceptScheduledOrders) {toast('This store does not accept scheduled orders while closed.');return;}
+    if (!hour || !minute || Number(hour)<0 || Number(hour)>23 || Number(minute)<0 || Number(minute)>59) {toast('Enter a valid hour and minute.');return;}
+    if (selected.getTime()<=Date.now()) {toast('Choose a future date and time.');return;}
+    if (!inHours) {toast('Choose a time during the store’s opening hours.');return;}
+    if (!earliestOk) {toast(!store.open ? 'This store’s earliest scheduled time is '+earliestLabel+'.' : 'Choose now or a future time.');return;}
+    A.setSch(selected.getTime()); A.setMode(deliveryMode); toast('Scheduled for '+fmtDay(selected)+', '+fmtTime(selected)); close();
+  };
+  return <>
+    <T size={21} weight="800">Schedule your order</T>
+    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}>Choose delivery or pickup, then select an exact date and time.</T>
+    <SegSchedule value={deliveryMode} onChange={setDeliveryMode} />
+    <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>Choose a day</T>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
+      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return <Pressable key={i} onPress={()=>{setDayOffset(i);setHour(String(i===0?new Date().getHours():Number((schedule[dayNames[d.getDay()]]?.open||'09:00').split(':')[0])).padStart(2,'0'));setMinute(String(i===0?Math.ceil(new Date().getMinutes()/5)*5%60:Number((schedule[dayNames[d.getDay()]]?.open||'09:00').split(':')[1]||0)).padStart(2,'0'));}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:dayOffset===i?th.br:th.soft,alignItems:'center'}}>
+        <T size={11.5} weight="700" color={dayOffset===i?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={dayOffset===i?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={dayOffset===i?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
+      </Pressable>;})}
+    </ScrollView>
+    {store && !store.open ? <Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">Earliest scheduled time</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (openingTime ? 'Opens '+openingTime+' · '+lead+' min advance time. Earliest today: '+earliestLabel : 'Vendor minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card> : null}
+    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>Select time</T>
+    <Row style={{gap:10,alignItems:'flex-end'}}>
+      <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><Input value={hour} onChange={v=>setHour(v.replace(/\D/g,'').slice(0,2))} placeholder="14" keyboard="number-pad" /></View>
+      <T size={20} weight="800" style={{paddingBottom:12}}>:</T>
+      <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><Input value={minute} onChange={v=>setMinute(v.replace(/\D/g,'').slice(0,2))} placeholder="30" keyboard="number-pad" /></View>
+    </Row>
+    <View style={{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:10}}>
+      {[0,15,30,45].map(m=><Pressable key={m} onPress={()=>setMinute(String(m).padStart(2,'0'))} style={{paddingHorizontal:13,paddingVertical:8,borderRadius:18,backgroundColor:Number(minute)===m?th.brt:th.soft,borderWidth:Number(minute)===m?1:0,borderColor:th.br}}><T size={12.5} weight="700">{String(m).padStart(2,'0')} min</T></Pressable>)}
+    </View>
+    <T size={12} color={th.mut} style={{marginTop:8}}>Selected: {fmtDay(selected)}, {fmtTime(selected)}</T>
+    <View style={{height:12}}/><Cta label="Apply" onPress={apply}/>
+  </>;
+}
+function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) {
+  const th=useTheme();
+  return <View style={{flexDirection:'row',gap:8}}>
+    {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="800" color={value===v?th.br:th.ink}>{v==='delivery'?'Delivery':'Pick-up'}</T></Pressable>)}
+  </View>;
 }
 
 function GroupOrderSheet({close}: {close: () => void}) {
