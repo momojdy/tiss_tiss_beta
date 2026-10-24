@@ -29,7 +29,7 @@ export const colors = {
     challengeText: '#173A12',
   },
   streak: {
-    gradient: { colors: ['#FBDEC4', '#F6B68C'], ...DIAGONAL },
+    gradient: { colors: ['#FBDEC4', '#F6B68C'], ...DIAGONAL } as GradientDef,
     flameBadgeBg: '#EE6B2E',
     flameIcon: '#180C0C',
     subtext: '#6C7280',
