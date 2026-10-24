@@ -154,7 +154,7 @@ declare
   v_existing public.wantiss_admin_staff%rowtype;
   v_name text := trim(coalesce(p_display_name, ''));
 begin
-  if v_actor is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+  if v_actor is null or not exists (select 1 from public.wantiss_admin_staff a where a.user_id = v_actor and a.status = 'active' and a.role = 'super_admin') then
     raise exception 'Not authorized' using errcode = '42501';
   end if;
   if p_user_id is null or length(v_name) < 1 or length(v_name) > 120
@@ -271,7 +271,7 @@ grant select on public.wantiss_admin_audit_log to authenticated;
 revoke all on public.wantiss_cms_content from anon, authenticated;
 revoke all on public.wantiss_cms_assets from anon, authenticated;
 grant select on public.wantiss_cms_content, public.wantiss_cms_assets to anon, authenticated;
-grant insert, update, delete on public.wantiss_cms_content, public.wantiss_cms_assets to authenticated;
+grant insert, update on public.wantiss_cms_content, public.wantiss_cms_assets to authenticated;
 
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
 values ('wantiss-cms-assets', 'wantiss-cms-assets', false, 52428800,
@@ -285,9 +285,6 @@ drop policy if exists "Authorized staff update CMS assets" on storage.objects;
 create policy "Authorized staff update CMS assets" on storage.objects for update to authenticated
 using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'))
 with check (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'));
-drop policy if exists "Authorized staff delete CMS assets" on storage.objects;
-create policy "Authorized staff delete CMS assets" on storage.objects for delete to authenticated
-using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'));
 drop policy if exists "Authorized staff read CMS assets" on storage.objects;
 create policy "Authorized staff read CMS assets" on storage.objects for select to authenticated
 using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'view'));
