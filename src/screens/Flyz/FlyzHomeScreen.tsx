@@ -393,7 +393,7 @@ export default function FlyzHomeScreen({ onBack, onWalletPress, onNotificationsP
                 <View style={{ flex: 1 }}><Text style={styles.airportCity}>{airport.city} <Text style={styles.airportCode}>{airport.code}</Text></Text><Text style={styles.airportName}>{airport.airport} · {airport.country}</Text></View>
               </Pressable>)}
             </ScrollView>
-            </Animated.View>
+            </ReanimatedAnimated.View>
           </GestureDetector>
         </View>
         </KeyboardAvoidingView>
