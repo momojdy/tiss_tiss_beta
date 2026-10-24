@@ -140,7 +140,7 @@ export interface Booking {
   mode: StayMode;
   start: string;
   end: string;
-  status: BookingStatus | string;
+  status: BookingStatus;
   cxAllowed: boolean;
   cxFree: number;
   cxLate: number;
@@ -160,7 +160,7 @@ export interface BookingInput {
   [key: string]: any;
 }
 
-export type BookingResult = { ok: true; booking: Booking } | { ok: false; reason: 'auth' | 'network' | 'availability' | 'payment' | string };
+export type BookingResult = { ok: true; booking: Booking } | { ok: false; reason: 'declined' | 'unavailable' | 'auth' | 'network' };
 
 export interface CardInput {
   number: string;
