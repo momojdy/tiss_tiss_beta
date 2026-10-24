@@ -1,9 +1,9 @@
 import { useFonts } from 'expo-font';
 import {
-  BricolageGrotesque_500Medium,
-  BricolageGrotesque_700Bold,
-  BricolageGrotesque_800ExtraBold,
-} from '@expo-google-fonts/bricolage-grotesque';
+  Montserrat_500Medium as BricolageGrotesque_500Medium,
+  Montserrat_700Bold as BricolageGrotesque_700Bold,
+  Montserrat_800ExtraBold as BricolageGrotesque_800ExtraBold,
+} from '@expo-google-fonts/montserrat';
 import {
   InterTight_400Regular,
   InterTight_500Medium,
