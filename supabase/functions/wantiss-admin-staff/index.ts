@@ -70,6 +70,14 @@ Deno.serve(async (req: Request) => {
     return reply(200, { ok: true, user_id: invited.user.id, message: "Invitation email sent" });
   }
 
+  if (action === "resend") {
+    const email = String(body.email || "").trim().toLowerCase();
+    if (!email) return reply(400, { error: "Email is required" });
+    const { error } = await admin.auth.resend({ type: "invite", email, options: { emailRedirectTo: Deno.env.get("WANTISS_ADMIN_INVITE_REDIRECT") || undefined } });
+    if (error) return reply(409, { error: "Invitation could not be resent. Check the account status and Auth email settings." });
+    return reply(200, { ok: true });
+  }
+
   if (action === "status") {
     const userId = String(body.user_id || "");
     const status = String(body.status || "");
