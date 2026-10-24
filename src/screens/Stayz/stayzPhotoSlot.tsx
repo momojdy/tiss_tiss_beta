@@ -31,7 +31,7 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
   return (
     <View style={[styles.box, { backgroundColor: colors.placeholder }, style]}>
       {!loaded || (!uri && !source) || !ok ? (
-        <Animated.View style={[StyleSheet.absoluteFillObject, styles.loading, { backgroundColor: colors.placeholder, opacity: pulse }]}>
+        <Animated.View style={[StyleSheet.absoluteFill, styles.loading, { backgroundColor: colors.placeholder, opacity: pulse }]}>
           <Ionicons name={icon} size={28} color={colors.sub} style={{ opacity: 0.8 }} />
         </Animated.View>
       ) : null}
@@ -40,7 +40,7 @@ export const StayzPhotoSlot = ({ uri, source, style, icon = 'image-outline' }: P
           source={source ?? { uri: uri! }}
           style={source
             ? { width: '100%', height: '100%', opacity: loaded ? 1 : 0 }
-            : [StyleSheet.absoluteFillObject, { opacity: loaded ? 1 : 0 }]}
+            : [StyleSheet.absoluteFill, { opacity: loaded ? 1 : 0 }]}
           resizeMode="stretch"
           onLoad={() => setLoaded(true)}
           onError={() => setOk(false)}
