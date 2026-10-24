@@ -88,8 +88,8 @@ export const stageLabels = (pickup: boolean, fallback: string[]) => {
   if (!C) return fallback;
   const L = C.stages.filter((s: any) => (pickup ? /^stg\.p/ : /^stg\.d/).test(s.id)); return L.length === fallback.length ? L.map((s: any, i: number) => tx(s.t) || fallback[i]) : fallback;
 };
-export const faq = (fallback: [string, string][]): [string, string][] => (C && C.faq && C.faq.length ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : fallback);
-export const supportTopics = (fallback: string[]) => (C && C.topics && C.topics.length ? C.topics.map((t: any) => tx(t.t)) : fallback);
+export const faq = (_fallback: [string, string][]): [string, string][] => (C && Array.isArray(C.faq) ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : []);
+export const supportTopics = (_fallback: string[]) => (C && Array.isArray(C.topics) ? C.topics.map((t: any) => tx(t.t)) : []);
 export function legalDoc(id: string): string | null {const d = C && C.legal && C.legal.find((x: any) => x.id === id && x.st === 'Live'); const s = d ? tx(d.t) : ''; return s || null;}
 
 export function modes(): {emoji: string; title: string; sub: string; cat: string}[] | null {
