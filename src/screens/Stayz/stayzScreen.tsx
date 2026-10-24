@@ -20,7 +20,7 @@ interface Props {
 
 export const StayzScreen = ({ title, back = true, right, scroll = true, footer, children, contentStyle, accentStripe = true }: Props) => {
   const { colors } = useStayzTheme();
-  const nav = useNavigation();
+  const nav = useNavigation<any>();
   const online = useStayzOnline();
   const showHeader = !!title || back || !!right;
   return (
