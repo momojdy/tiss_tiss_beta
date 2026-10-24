@@ -108,24 +108,24 @@ function ScheduleSheet({close}: {close: () => void}) {
   const openingTime = hours && !hours.closed && hours.open ? String(hours.open) : '';
   const closingTime = hours && !hours.closed && hours.close ? String(hours.close) : '';
   const lead = Math.max(0, Number(store?.scheduledOrderStartMinutes ?? 60));
-  const earliest = new Date(selectedDate);
+  const earliest = new Date(selectedDate.getTime());
   if (dayOffset === 0) { earliest.setHours(now.getHours(), now.getMinutes(), 0, 0); }
   else { earliest.setHours(0, 0, 0, 0); }
   if (!store?.open) {
     if (openingTime) {
       const [h,m]=openingTime.split(':').map(Number);
-      const opening = new Date(selectedDate); opening.setHours(h,m||0,0,0);
+      const opening = new Date(selectedDate.getTime()); opening.setHours(h,m||0,0,0);
       const allowed = new Date(opening.getTime()+lead*60000);
       if(allowed>earliest) earliest.setTime(allowed.getTime());
     } else {
-      const baseline = dayOffset === 0 ? new Date() : new Date(selectedDate);
+      const baseline = dayOffset === 0 ? new Date() : new Date(selectedDate.getTime());
       if (dayOffset > 0) baseline.setHours(0, 0, 0, 0);
       const allowed = new Date(baseline.getTime()+lead*60000);
       if(allowed>earliest) earliest.setTime(allowed.getTime());
     }
   }
   const earliestLabel = fmtTime(earliest);
-  const selected = new Date(selectedDate);
+  const selected = new Date(selectedDate.getTime());
   selected.setHours(Number(hour), Number(minute), 0, 0);
   const selectedMinutes = selected.getHours()*60+selected.getMinutes();
   const inHours = !hours || hours.closed || !openingTime || !closingTime ? !store?.scheduleHours || !Object.keys(store.scheduleHours).length : (()=>{const [oh,om]=openingTime.split(':').map(Number),[ch,cm]=closingTime.split(':').map(Number);return selectedMinutes>=oh*60+(om||0)&&selectedMinutes<ch*60+(cm||0);})();
