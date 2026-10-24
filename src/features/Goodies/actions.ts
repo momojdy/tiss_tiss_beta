@@ -54,9 +54,20 @@ export function productAdd() {
 }
 export function newCart() {
   const p = S.pend;
-  if (p && p[2]) {p[2](); return;}
-  S.cart = {sid: null, lines: []}; S.promo = ''; ui.close();
-  const n0 = cnt(); cartAdd(p[0], p[1]);
+  if (!p || !p[0] || !p[1]) {
+    ui.close();
+    toast('Please select the product again and retry.');
+    return;
+  }
+  if (p[2]) { S.pend = null; p[2](); return; }
+  // Clear the pending cross-store action before re-adding so the confirmation
+  // cannot reopen itself or leave stale vendor/product data in demo mode.
+  S.pend = null;
+  S.cart = {sid: null, lines: []};
+  S.promo = '';
+  ui.close();
+  const n0 = cnt();
+  cartAdd(p[0], p[1]);
   if (cnt() > n0 && cur().r === 'product') navBack();
 }
 export function qty(k: string, v: number) {
