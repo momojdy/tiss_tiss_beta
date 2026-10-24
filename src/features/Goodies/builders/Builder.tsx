@@ -38,7 +38,7 @@ const Wt: any = {lwb: 178, lwt: 178, patty: 184, cheese: 160, shred: 154, lettuc
 const Kt: any = {lwb: .2, lwt: .12, patty: .13, cheese: .035, shred: .035, lettuce: .07, tomato: .055, onion: .04, caramel: .045, pickle: .045, cucumber: .045, jalapeno: .045, pineapple: .05, avocado: .05, mushroom: .05, bacon: .055, egg: .055, sauce: .02, generic: .05, pepper: .025, spice: .02};
 const CL = (k: string) => /^sauce_/.test(k) ? 'sauce' : /^patty_/.test(k) ? 'patty' : /^cheese_/.test(k) ? 'cheese' : (({cheddar_shredded: 'shred', mushrooms: 'mushroom', onions_caramelized: 'caramel', onion_red: 'onion', onion_white: 'onion', egg_fried: 'egg'} as any)[k] || (RKt[k] ? k : 'generic'));
 
-type Pos = {p: {u: string; w: number; h: number}; w: number; k: number; c: string; y: number; h: number; top?: boolean; sauce?: boolean};
+type Pos = {p: {u: string; w: number; h: number}; w: number; k: number; c: string; y: number; h: number; top?: boolean; sauce?: boolean; it?: BItem};
 function burgerGeometry(b: Builder, d: any) {
   let bun: BItem | null = null; const L: BItem[] = [];
   b.groups.forEach(g => units(g, d).forEach(id => {const it = itemOf(g, id); if (!it) return; if (isBun(it)) {bun = bun || it; return;} if (isSeason(it)) return; L.push(it);}));
