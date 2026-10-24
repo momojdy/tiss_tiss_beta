@@ -144,6 +144,206 @@ $$;
 revoke all on function public.wantiss_bootstrap_first_super_admin(text, text) from public, anon;
 grant execute on function public.wantiss_bootstrap_first_super_admin(text, text) to authenticated;
 
+create or replace function public.wantiss_admin_set_staff(
+  p_user_id uuid, p_display_name text, p_status text, p_role text, p_reason text
+) returns jsonb
+language plpgsql security definer set search_path = ''
+as $
+declare
+  v_actor uuid := auth.uid();
+  v_existing public.wantiss_admin_staff%rowtype;
+  v_name text := trim(coalesce(p_display_name, ''));
+begin
+  if v_actor is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+    raise exception 'Not authorized' using errcode = '42501';
+  end if;
+  if p_user_id is null or length(v_name) < 1 or length(v_name) > 120
+     or p_status not in ('active', 'suspended', 'revoked')
+     or p_role not in ('staff', 'super_admin')
+     or length(trim(coalesce(p_reason, ''))) < 3 then
+    raise exception 'Invalid staff change' using errcode = '22023';
+  end if;
+  if not exists (select 1 from auth.users u where u.id = p_user_id) then
+    raise exception 'The user must complete Supabase Auth registration before staff access can be assigned' using errcode = '22023';
+  end if;
+  select * into v_existing from public.wantiss_admin_staff where user_id = p_user_id for update;
+  if found and v_existing.role = 'super_admin' and (p_role <> 'super_admin' or p_status <> 'active')
+     and (select count(*) from public.wantiss_admin_staff where role = 'super_admin' and status = 'active') <= 1 then
+    raise exception 'Cannot remove or suspend the last active Super Admin' using errcode = '42501';
+  end if;
+  if not found then
+    insert into public.wantiss_admin_staff(user_id, display_name, status, role, created_by)
+    values (p_user_id, v_name, p_status, p_role, v_actor);
+  else
+    update public.wantiss_admin_staff
+      set display_name = v_name, status = p_status, role = p_role, updated_at = now()
+      where user_id = p_user_id;
+  end if;
+  insert into public.wantiss_admin_audit_log(actor_user_id, action, resource_type, resource_id, reason, after_state)
+  values (v_actor, 'staff.access_changed', 'admin_staff', p_user_id::text, trim(p_reason),
+          jsonb_build_object('display_name', v_name, 'status', p_status, 'role', p_role));
+  return jsonb_build_object('user_id', p_user_id, 'display_name', v_name, 'status', p_status, 'role', p_role);
+end;
+$;
+revoke all on function public.wantiss_admin_set_staff(uuid, text, text, text, text) from public, anon;
+grant execute on function public.wantiss_admin_set_staff(uuid, text, text, text, text) to authenticated;
+
+create or replace function public.wantiss_admin_grant_permission(
+  p_staff_user_id uuid, p_permission_key text, p_access_level text, p_reason text, p_expires_at timestamptz default null
+) returns uuid
+language plpgsql security definer set search_path = ''
+as $
+declare
+  v_actor uuid := auth.uid();
+  v_grant_id uuid;
+begin
+  if v_actor is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+    raise exception 'Not authorized' using errcode = '42501';
+  end if;
+  if p_permission_key !~ '^[a-z][a-z0-9_.-]{1,99}
+returns trigger language plpgsql security definer set search_path = ''
+as $$
+declare
+  v_actor uuid := auth.uid();
+  v_old jsonb;
+  v_new jsonb;
+  v_resource_id text;
+begin
+  if tg_op <> 'INSERT' then v_old := to_jsonb(old); end if;
+  if tg_op <> 'DELETE' then v_new := to_jsonb(new); end if;
+  v_resource_id := coalesce(v_new->>'id', v_new->>'user_id', v_old->>'id', v_old->>'user_id');
+  insert into public.wantiss_admin_audit_log
+    (actor_user_id, action, resource_type, resource_id, before_state, after_state)
+  values (v_actor, lower(tg_op), tg_table_name, v_resource_id, v_old, v_new);
+  return coalesce(new, old);
+end;
+$$;
+revoke all on function private.wantiss_admin_audit_trigger() from public, anon, authenticated;
+
+drop trigger if exists wantiss_admin_staff_audit on public.wantiss_admin_staff;
+create trigger wantiss_admin_staff_audit after insert or update or delete on public.wantiss_admin_staff
+for each row execute function private.wantiss_admin_audit_trigger();
+drop trigger if exists wantiss_admin_grants_audit on public.wantiss_admin_permission_grants;
+create trigger wantiss_admin_grants_audit after insert or update or delete on public.wantiss_admin_permission_grants
+for each row execute function private.wantiss_admin_audit_trigger();
+drop trigger if exists wantiss_cms_content_audit on public.wantiss_cms_content;
+create trigger wantiss_cms_content_audit after insert or update or delete on public.wantiss_cms_content
+for each row execute function private.wantiss_admin_audit_trigger();
+drop trigger if exists wantiss_cms_assets_audit on public.wantiss_cms_assets;
+create trigger wantiss_cms_assets_audit after insert or update or delete on public.wantiss_cms_assets
+for each row execute function private.wantiss_admin_audit_trigger();
+
+alter table public.wantiss_admin_staff enable row level security;
+alter table public.wantiss_admin_permission_grants enable row level security;
+alter table public.wantiss_cms_content enable row level security;
+alter table public.wantiss_cms_assets enable row level security;
+alter table public.wantiss_admin_audit_log enable row level security;
+
+drop policy if exists "Staff can read own staff record" on public.wantiss_admin_staff;
+create policy "Staff can read own staff record" on public.wantiss_admin_staff for select to authenticated
+using (user_id = (select auth.uid()) or public.wantiss_has_permission('staff.manage', 'manage'));
+drop policy if exists "Staff can read own permission grants" on public.wantiss_admin_permission_grants;
+create policy "Staff can read own permission grants" on public.wantiss_admin_permission_grants for select to authenticated
+using (staff_user_id = (select auth.uid()) or public.wantiss_has_permission('staff.manage', 'manage'));
+drop policy if exists "Anyone can read published CMS content" on public.wantiss_cms_content;
+create policy "Anyone can read published CMS content" on public.wantiss_cms_content for select to anon, authenticated
+using (status = 'published');
+drop policy if exists "Authorized staff can manage CMS content" on public.wantiss_cms_content;
+create policy "Authorized staff can manage CMS content" on public.wantiss_cms_content for all to authenticated
+using (public.wantiss_has_permission('content.manage', 'edit'))
+with check (public.wantiss_has_permission('content.manage', 'edit') and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage')));
+drop policy if exists "Anyone can read published CMS asset metadata" on public.wantiss_cms_assets;
+create policy "Anyone can read published CMS asset metadata" on public.wantiss_cms_assets for select to anon, authenticated
+using (status = 'published');
+drop policy if exists "Authorized staff can manage CMS asset metadata" on public.wantiss_cms_assets;
+create policy "Authorized staff can manage CMS asset metadata" on public.wantiss_cms_assets for all to authenticated
+using (public.wantiss_has_permission('content.manage', 'edit'))
+with check (public.wantiss_has_permission('content.manage', 'edit') and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage')));
+drop policy if exists "Authorized staff can read admin audit log" on public.wantiss_admin_audit_log;
+create policy "Authorized staff can read admin audit log" on public.wantiss_admin_audit_log for select to authenticated
+using (public.wantiss_has_permission('audit.read', 'view'));
+
+revoke all on public.wantiss_admin_staff from anon, authenticated;
+revoke all on public.wantiss_admin_permission_grants from anon, authenticated;
+revoke all on public.wantiss_admin_audit_log from anon, authenticated;
+grant select on public.wantiss_admin_staff, public.wantiss_admin_permission_grants to authenticated;
+grant select on public.wantiss_admin_audit_log to authenticated;
+revoke all on public.wantiss_cms_content from anon, authenticated;
+revoke all on public.wantiss_cms_assets from anon, authenticated;
+grant select on public.wantiss_cms_content, public.wantiss_cms_assets to anon, authenticated;
+grant insert, update, delete on public.wantiss_cms_content, public.wantiss_cms_assets to authenticated;
+
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('wantiss-cms-assets', 'wantiss-cms-assets', false, 52428800,
+        array['image/jpeg','image/png','image/webp','image/svg+xml','application/pdf','video/mp4'])
+on conflict (id) do update set public = false, file_size_limit = 52428800, allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists "Authorized staff upload CMS assets" on storage.objects;
+create policy "Authorized staff upload CMS assets" on storage.objects for insert to authenticated
+with check (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'));
+drop policy if exists "Authorized staff update CMS assets" on storage.objects;
+create policy "Authorized staff update CMS assets" on storage.objects for update to authenticated
+using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'))
+with check (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'));
+drop policy if exists "Authorized staff delete CMS assets" on storage.objects;
+create policy "Authorized staff delete CMS assets" on storage.objects for delete to authenticated
+using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'edit'));
+drop policy if exists "Authorized staff read CMS assets" on storage.objects;
+create policy "Authorized staff read CMS assets" on storage.objects for select to authenticated
+using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.manage', 'view'));
+
+     or p_access_level not in ('view', 'edit', 'manage')
+     or length(trim(coalesce(p_reason, ''))) < 3
+     or (p_expires_at is not null and p_expires_at <= now()) then
+    raise exception 'Invalid permission grant' using errcode = '22023';
+  end if;
+  if not exists (select 1 from public.wantiss_admin_staff s where s.user_id = p_staff_user_id and s.status = 'active' and s.role = 'staff') then
+    raise exception 'Permission grants can only be assigned to active staff accounts' using errcode = '22023';
+  end if;
+  insert into public.wantiss_admin_permission_grants(staff_user_id, permission_key, access_level, granted_by, reason, expires_at)
+  values (p_staff_user_id, p_permission_key, p_access_level, v_actor, trim(p_reason), p_expires_at)
+  returning id into v_grant_id;
+  insert into public.wantiss_admin_audit_log(actor_user_id, action, resource_type, resource_id, reason, after_state)
+  values (v_actor, 'staff.permission_granted', 'permission_grant', v_grant_id::text, trim(p_reason),
+          jsonb_build_object('staff_user_id', p_staff_user_id, 'permission_key', p_permission_key,
+                             'access_level', p_access_level, 'expires_at', p_expires_at));
+  return v_grant_id;
+end;
+$;
+revoke all on function public.wantiss_admin_grant_permission(uuid, text, text, text, timestamptz) from public, anon;
+grant execute on function public.wantiss_admin_grant_permission(uuid, text, text, text, timestamptz) to authenticated;
+
+create or replace function public.wantiss_admin_revoke_permission(p_grant_id uuid, p_reason text)
+returns boolean
+language plpgsql security definer set search_path = ''
+as $
+declare
+  v_actor uuid := auth.uid();
+  v_grant public.wantiss_admin_permission_grants%rowtype;
+begin
+  if v_actor is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+    raise exception 'Not authorized' using errcode = '42501';
+  end if;
+  if length(trim(coalesce(p_reason, ''))) < 3 then
+    raise exception 'A reason is required' using errcode = '22023';
+  end if;
+  select * into v_grant from public.wantiss_admin_permission_grants where id = p_grant_id for update;
+  if not found then raise exception 'Permission grant not found' using errcode = 'P0002'; end if;
+  if v_grant.revoked_at is not null then return false; end if;
+  update public.wantiss_admin_permission_grants
+    set revoked_at = now(), revoked_by = v_actor
+    where id = p_grant_id;
+  insert into public.wantiss_admin_audit_log(actor_user_id, action, resource_type, resource_id, reason, before_state, after_state)
+  values (v_actor, 'staff.permission_revoked', 'permission_grant', p_grant_id::text, trim(p_reason),
+          jsonb_build_object('staff_user_id', v_grant.staff_user_id, 'permission_key', v_grant.permission_key,
+                             'access_level', v_grant.access_level, 'expires_at', v_grant.expires_at),
+          jsonb_build_object('revoked_at', now(), 'revoked_by', v_actor));
+  return true;
+end;
+$;
+revoke all on function public.wantiss_admin_revoke_permission(uuid, text) from public, anon;
+grant execute on function public.wantiss_admin_revoke_permission(uuid, text) to authenticated;
+
 create or replace function private.wantiss_admin_audit_trigger()
 returns trigger language plpgsql security definer set search_path = ''
 as $$
