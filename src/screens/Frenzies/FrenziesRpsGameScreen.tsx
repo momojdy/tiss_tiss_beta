@@ -321,7 +321,7 @@ const s = StyleSheet.create({
   choiceText: { fontFamily: fonts.semibold, fontSize: 11, color: colors.textPrimary, marginTop: 6 },
   note: { marginTop: 'auto', paddingTop: 13, flexDirection: 'row', alignItems: 'flex-start' },
   noteText: { flex: 1, marginLeft: 8, fontFamily: fonts.regular, fontSize: 10.5, lineHeight: 15, color: colors.textSecondary },
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(21,25,19,0.32)', alignItems: 'center', justifyContent: 'center', padding: 26, zIndex: 20 },
+  overlay: { ...StyleSheet.absoluteFill, backgroundColor: 'rgba(21,25,19,0.32)', alignItems: 'center', justifyContent: 'center', padding: 26, zIndex: 20 },
   outcome: { width: '100%', maxWidth: 360, borderRadius: 24, backgroundColor: colors.white, padding: 24, alignItems: 'center' },
   outcomeIcon: { width: 58, height: 58, borderRadius: 18, alignItems: 'center', justifyContent: 'center' },
   win: { backgroundColor: '#B8754F' },
