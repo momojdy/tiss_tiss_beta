@@ -271,7 +271,7 @@ export function RideProvider({children, service}: {children: React.ReactNode; se
 
 export const styles = StyleSheet.create({
   abs: {position: 'absolute', left: 0, top: 0},
-  absFill: {...StyleSheet.absoluteFillObject},
+  absFill: {...StyleSheet.absoluteFill},
   world: {position: 'absolute', left: 0, top: 0, width: 2500, height: 1620},
   anchor: {position: 'absolute', left: 0, top: 0},
   card: {position: 'absolute', left: 0, right: 0, bottom: 0, borderTopLeftRadius: 28, borderTopRightRadius: 28, overflow: 'hidden', elevation: 18, shadowColor: '#000', shadowOpacity: 0.16, shadowRadius: 18, shadowOffset: {width: 0, height: -6}},
