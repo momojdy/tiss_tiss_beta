@@ -160,7 +160,7 @@ export interface BookingInput {
   [key: string]: any;
 }
 
-export type BookingResult = { ok: true; booking: Booking } | { ok: false; reason: 'declined' | 'unavailable' | 'auth' | 'network' };
+export type BookingResult = { ok: true; booking: Booking } | { ok: false; reason: 'declined' | 'unavailable' | 'auth' | 'network' | 'insufficient_balance' };
 
 export interface CardInput {
   number: string;
