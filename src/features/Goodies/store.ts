@@ -70,59 +70,6 @@ function formatHour(d: Date) {
 }
 
 export async function refreshLiveSchedules() {
-  ST.forEach((s: any) => {
-    const x: any = STX[s.id] || {};
-    s.open = x.open === 0 ? 0 : 1;
-    s.h = x.h || (s.c === 'restaurants' ? '10am–10pm' : '8am–9pm');
-    s.nx = x.nx || '';
-    s.acceptScheduledOrders = x.scheduled === true;
-    s.scheduledOrderStartMinutes = Number(x.scheduledStartMinutes ?? 60);
-    delete s.scheduleHours; delete s.businessName; delete s.businessDescription; delete s.businessPhone; delete s.businessEmail; delete s.businessWebsite; delete s.businessAddress; delete s.businessCity; delete s.businessCountry; delete s.businessDeliveryModes; delete s.businessLogoUrl;
-  });
-  try {
-      const {data} = await supabase.from('goodies_store_schedules').select('store_id,hours,accept_scheduled_orders,scheduled_order_start_minutes,is_live,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url').eq('is_live', true);
-      (data || []).forEach((v: any) => {
-        const s: any = STB[v.store_id]; if (!s) return;
-        s.scheduleHours = v.hours || {};
-        s.businessName = v.business_name || '';
-        s.businessDescription = v.description || '';
-        s.businessPhone = v.phone || '';
-        s.businessEmail = v.email || '';
-        s.businessWebsite = v.website || '';
-        s.businessAddress = v.address || '';
-        s.businessCity = v.city || '';
-        s.businessCountry = v.country || '';
-        s.businessDeliveryModes = v.delivery_modes || [];
-        s.businessLogoUrl = v.logo_url || '';
-        s.acceptScheduledOrders = !!v.accept_scheduled_orders;
-        s.scheduledOrderStartMinutes = Math.max(0, Number(v.scheduled_order_start_minutes ?? 60));
-        const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-        const today = s.scheduleHours[names[new Date().getDay()]];
-        if (today && !today.closed && today.open && today.close) {
-          const [oh, om] = String(today.open).split(':').map(Number), [ch, cm] = String(today.close).split(':').map(Number);
-          const now = new Date(), openAt = new Date(now), closeAt = new Date(now);
-          openAt.setHours(oh, om || 0, 0, 0); closeAt.setHours(ch, cm || 0, 0, 0);
-          s.h = formatHour(openAt) + '–' + formatHour(closeAt);
-          s.open = now >= openAt && now < closeAt ? 1 : 0;
-          s.nx = now < openAt ? 'Opens at ' + formatHour(openAt) + ' today' : '';
-          if (now >= closeAt) {
-            s.nx = 'Closed now';
-            for (let n = 1; n <= 7; n++) {
-              const d = new Date(Date.now() + n * 86400000), h = s.scheduleHours[names[d.getDay()]];
-              if (h && !h.closed && h.open) { s.nx = 'Opens ' + names[d.getDay()] + ' at ' + h.open; break; }
-            }
-          }
-        } else {
-          s.open = 0;
-          s.h = 'Closed today';
-          s.nx = 'Closed today according to store hours';
-          for (let n = 1; n <= 7; n++) {
-            const d = new Date(Date.now() + n * 86400000), h = s.scheduleHours[names[d.getDay()]];
-            if (h && !h.closed && h.open) { s.nx = 'Opens ' + names[d.getDay()] + ' at ' + h.open; break; }
-          }
-        }
-      });
-    } catch (e) { /* Public schedule fetch is optional; seeded demo values remain usable offline. */ }
   emit();
 }
 
