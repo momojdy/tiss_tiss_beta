@@ -198,7 +198,7 @@ export function BusinessInfoPage() {
         <Btn kind="danger" label="Delete business" onPress={() => app.sheet('delete')} />
       </Pg>
       {picker ? (
-        <View style={{ ...StyleSheet.absoluteFillObject, zIndex: 35, backgroundColor: t.bg, paddingTop: 60 }}>
+        <View style={{ ...StyleSheet.absoluteFill, zIndex: 35, backgroundColor: t.bg, paddingTop: 60 }}>
           <View style={{ paddingHorizontal: 16, gap: 10, flex: 1 }}>
             <View style={s.row}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{picker === 'phone' ? 'Country code' : 'Country'}</Text><Pressable onPress={() => { setPicker(null); setCq(''); }}><Icon name="close" size={24} /></Pressable></View>
             <TextInput style={s.fld} value={cq} onChangeText={setCq} placeholder="Search" placeholderTextColor={t.mute} autoFocus />
