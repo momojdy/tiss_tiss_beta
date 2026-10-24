@@ -34,4 +34,4 @@ jobs:
         with:
           deno-version: v2.x
       - name: Type-check admin bootstrap function
-        run: deno check --node-modules-dir=auto supabase/functions/wantiss-admin-bootstrap/index.ts
+        run: deno check --node-modules-dir=auto supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts
