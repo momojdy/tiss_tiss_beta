@@ -105,9 +105,12 @@ function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string;
         S.driverRev = S.driverRev || {};
         S.driverRev[id] = {n: S.pf.n, r: n, t: t.trim(), d: 'Just now', orderId: id};
         o.driverRated = n;
+        o.driverReview = {r: n, t: t.trim(), d: 'Just now'};
       } else {
-        (S.rev[o.sid] = S.rev[o.sid] || []).unshift({n: S.pf.n, r: n, t: t.trim(), d: 'Just now', you: 1, orderId: id});
+        S.rev[o.sid] = S.rev[o.sid] || [];
+        S.rev[o.sid].unshift({n: S.pf.n, r: n, t: t.trim(), d: 'Just now', you: 1, orderId: id});
         o.rated = n;
+        o.orderReview = {r: n, t: t.trim(), d: 'Just now'};
       }
       S.rt = 0; ui.close(); toast(driver ? 'Thanks for rating your driver!' : 'Thanks for your review!'); save(); emit();
     }} />
