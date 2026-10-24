@@ -93,7 +93,7 @@ function Flakes() {
   useEffect(() => {Animated.parallel(vals.map((v, j) => Animated.timing(v, {toValue: 1, duration: 950, delay: (j % 9) * 45, easing: Easing.out(Easing.quad), useNativeDriver: true}))).start(() => {if (BD) {BD.seasoningPulse = 0; emit();}});}, []);
   return (
     <View pointerEvents="none" style={{position: 'absolute', left: 0, right: 0, top: 4, bottom: 0, zIndex: 5}}>
-      {vals.map((v, j) => {const seed = (j * 17 + 11) % 97, drift = ((j % 7) - 3) * 7; return <Animated.View key={j} style={{position: 'absolute', left: (18 + (seed % 64)) + '%', width: 2 + (j % 4), height: 3 + (j % 5), borderRadius: 1.5, backgroundColor: ['#f5d18a', '#d9a04a', '#b8792d', '#70431c', '#e8b866'][j % 5], opacity: v.interpolate({inputRange: [0, .1, .85, 1], outputRange: [0, .8, .8, 0]}), transform: [{translateY: v.interpolate({inputRange: [0, 1], outputRange: [0, 150]})}, {translateX: v.interpolate({inputRange: [0, 1], outputRange: [0, drift]})}, {rotate: v.interpolate({inputRange: [0, 1], outputRange: ['22deg', (j % 2 ? 260 : -240) + 'deg']})}]}} />;})}
+      {vals.map((v, j) => {const seed = (j * 17 + 11) % 97, drift = ((j % 7) - 3) * 7; return <Animated.View key={j} style={{position: 'absolute', left: `${18 + (seed % 64)}%`, width: 2 + (j % 4), height: 3 + (j % 5), borderRadius: 1.5, backgroundColor: ['#f5d18a', '#d9a04a', '#b8792d', '#70431c', '#e8b866'][j % 5], opacity: v.interpolate({inputRange: [0, .1, .85, 1], outputRange: [0, .8, .8, 0]}), transform: [{translateY: v.interpolate({inputRange: [0, 1], outputRange: [0, 150]})}, {translateX: v.interpolate({inputRange: [0, 1], outputRange: [0, drift]})}, {rotate: v.interpolate({inputRange: [0, 1], outputRange: ['22deg', (j % 2 ? 260 : -240) + 'deg']})}]}} />;})}
     </View>
   );
 }
