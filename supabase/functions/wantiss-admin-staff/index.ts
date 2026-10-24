@@ -24,7 +24,7 @@ Deno.serve(async (req: Request) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
   const { data: { user }, error: authError } = await userClient.auth.getUser();
-  if (authError || !user) return reply(401, { error: "Invalid session" });
+  if (authError || !user || !user.email_confirmed_at) return reply(401, { error: "A verified staff session is required" });
 
   const { data: allowed, error: permissionError } = await userClient.rpc("wantiss_has_permission", {
     p_permission: "staff.manage",
@@ -57,6 +57,9 @@ Deno.serve(async (req: Request) => {
       status: "active",
       role: "staff",
       created_by: user.id,
+      invited_by: user.id,
+      invited_at: new Date().toISOString(),
+      invitation_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
     });
     if (staffError) {
       await admin.auth.admin.deleteUser(invited.user.id);
@@ -65,7 +68,7 @@ Deno.serve(async (req: Request) => {
     await admin.from("wantiss_admin_audit_log").insert({
       actor_user_id: user.id, action: "staff_invited", resource_type: "staff",
       resource_id: invited.user.id, reason,
-      after_state: { email, display_name: displayName, status: "active", role: "staff" },
+      after_state: { email, display_name: displayName, status: "active", role: "staff", invitation_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() },
     });
     return reply(200, { ok: true, user_id: invited.user.id, message: "Invitation email sent" });
   }
