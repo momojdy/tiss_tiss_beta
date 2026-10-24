@@ -256,12 +256,12 @@ export const CheckoutFoot = () => <Cta label={S.cs === 3 ? 'Place order · ' + m
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
-  if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
+  if (!o || !o.backendId || !STB[o.sid]) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order unavailable" body="This order is not available from the live Wantiss order service." button="Go home" onPress={browse} /></View>;
   return (
     <View style={{paddingHorizontal: 16, paddingTop: 50, alignItems: 'center'}}>
       <Text style={{fontSize: 70}}>✅</Text>
       <T size={24} weight="800" style={{marginTop: 10, marginBottom: 4}}>Order placed</T>
-      <T color={th.mut} align="center">Demo order {o.id} with {STB[o.sid].n}. Nothing was sent to a real store.</T>
+      <T color={th.mut} align="center">Order {o.id} with {STB[o.sid].n}.</T>
       <View style={{alignSelf: 'stretch', marginTop: 20}}>
         <Sum rows={o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)])} total={['Total', money(o.total)]} />
         <Cta label="Track order" onPress={() => go('track', o.id)} /><View style={{height: 10}} /><Cta ghost label="Back to Goodies" onPress={() => tab('home')} />
@@ -270,59 +270,13 @@ export function Confirm({id}: {id: string}) {
   );
 }
 
-function DeliveryRouteMap({order, storeName, destination}: {order: any; storeName: string; destination: string}) {
+function DeliveryRouteMap() {
   const th = useTheme();
-  const progress = Math.max(0.12, Math.min(0.86, (Number(order.st || 4) - 3) / 3));
-  const x = 22 + progress * 250, y = 141 - progress * 112 - Math.sin(progress * Math.PI) * 12;
-  return (
-    <Card style={{padding: 12}}>
-      <Row sp><T size={15} weight="800">Your delivery route</T><Badge label="Courier on the way" /></Row>
-      <View style={{height: 190, borderRadius: 16, overflow: 'hidden', marginTop: 10, backgroundColor: '#F1F2E9'}}>
-        <Svg width="100%" height="100%" viewBox="0 0 320 190" preserveAspectRatio="xMidYMid slice">
-          <Path d="M-20 30 L340 160 M-20 95 L340 25 M20 -20 L95 220 M180 -20 L250 220 M-10 175 L330 80" stroke="#FFFFFF" strokeWidth="15" fill="none" />
-          <Path d="M-20 30 L340 160 M-20 95 L340 25 M20 -20 L95 220 M180 -20 L250 220 M-10 175 L330 80" stroke="#DADFD2" strokeWidth="1.5" fill="none" />
-          <Path d="M22 151 C55 145 65 119 90 112 S130 115 151 83 S211 52 286 24" stroke="#FFFFFF" strokeWidth="12" strokeLinecap="round" fill="none" />
-          <Path d="M22 151 C55 145 65 119 90 112 S130 115 151 83 S211 52 286 24" stroke="#FD802E" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-          <Circle cx="22" cy="151" r="7" fill="#FD802E" stroke="#FFFFFF" strokeWidth="3" />
-          <Circle cx="286" cy="24" r="7" fill="#1B1B1F" stroke="#FFFFFF" strokeWidth="3" />
-        </Svg>
-        <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
-          <T size={10.5} weight="800" color="#1B1B1F">PICKUP</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
-        </View>
-        <View style={{position: 'absolute', right: 8, top: 7, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '42%'}}>
-          <T size={10.5} weight="800" color="#1B1B1F">DROP-OFF</T><T size={11.5} weight="700" lines={1}>{destination}</T>
-        </View>
-        <View style={{position: 'absolute', left: `${Math.max(0, Math.min(82, x / 320 * 100 - 8))}%`, top: `${Math.max(16, Math.min(72, y / 190 * 100 - 10))}%`}} pointerEvents="none"><Text style={{fontSize: 30}}>🛵</Text></View>
-      </View>
-      <Row style={{gap: 7, marginTop: 9}}><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#FD802E'}} /><T size={11.5} color={th.mut}>Route</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#F25C9C', marginLeft: 8}} /><T size={11.5} color={th.mut}>Driver shirt</T><View style={{width: 9, height: 9, borderRadius: 5, backgroundColor: '#D946A8', marginLeft: 8}} /><T size={11.5} color={th.mut}>Motorcycle</T></Row>
-      <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative demo route. Live GPS and turn-by-turn directions are not connected yet.</T>
-    </Card>
-  );
+  return <Card style={{padding: 12}}><T size={15} weight="800">Live delivery route</T><Empty title="Live tracking unavailable" hint="Driver location has not been provided by the order service." /></Card>;
 }
 
-function PickupLocationMap({storeName}: {storeName: string}) {
-  const th = useTheme();
-  return (
-    <Card style={{padding: 12}}>
-      <Row sp><T size={15} weight="800">Pickup location</T><Badge label="Ready for pickup" /></Row>
-      <View style={{height: 174, borderRadius: 16, overflow: 'hidden', marginTop: 10, backgroundColor: '#F1F2E9'}}>
-        <Svg width="100%" height="100%" viewBox="0 0 320 174" preserveAspectRatio="xMidYMid slice">
-          <Path d="M-20 22 L340 132 M-20 86 L340 42 M12 -20 L88 200 M160 -20 L225 200 M278 -20 L230 200 M-10 160 L330 95" stroke="#FFFFFF" strokeWidth="16" fill="none" />
-          <Path d="M-20 22 L340 132 M-20 86 L340 42 M12 -20 L88 200 M160 -20 L225 200 M278 -20 L230 200 M-10 160 L330 95" stroke="#DADFD2" strokeWidth="1.5" fill="none" />
-          <Path d="M35 142 C70 130 80 104 118 98 S177 110 205 72 S253 52 285 27" stroke="#FD802E" strokeWidth="4" strokeLinecap="round" fill="none" strokeDasharray="5 6" />
-          <Circle cx="35" cy="142" r="5" fill="#FD802E" stroke="#FFFFFF" strokeWidth="2" />
-          <Path d="M285 18 L294 27 L285 36 L276 27 Z" fill="#F25C9C" stroke="#FFFFFF" strokeWidth="2" />
-          <Path d="M280 26 L280 32 L290 32 L290 26 Z" fill="#FFFFFF" />
-          <Path d="M279 25 L285 21 L291 25 Z" fill="#FFFFFF" />
-          <Path d="M283 27 L283 29 L285 29 L285 27 M287 27 L287 29 L289 29 L289 27" stroke="#F25C9C" strokeWidth="1" />
-        </Svg>
-        <View style={{position: 'absolute', left: 8, bottom: 8, backgroundColor: '#fff', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 6, maxWidth: '70%'}}>
-          <T size={10.5} weight="800" color="#1B1B1F">PICK UP YOUR ORDER</T><T size={11.5} weight="700" lines={1}>{storeName}</T>
-        </View>
-      </View>
-      <T size={11} color={th.mut} style={{marginTop: 6}}>Illustrative pickup map. Exact store coordinates and live navigation are not connected yet.</T>
-    </Card>
-  );
+function PickupLocationMap() {
+  return <Card style={{padding: 12}}><T size={15} weight="800">Pickup location</T><Empty title="Live location unavailable" hint="Pickup coordinates have not been provided by the store." /></Card>;
 }
 
 export function Track({id}: {id: string}) {
@@ -344,7 +298,7 @@ export function Track({id}: {id: string}) {
     return () => { active = false; void supabase.removeChannel(channel); };
   }, [o?.backendId]);
   if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
-  const s = STB[o.sid], T_ = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
+  const s = STB[o.sid], T_: string[] = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
   const serverStatus = String(o.serverStatus || '').toLowerCase();
   const eta = o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? 'Waiting for store to accept' : serverStatus === 'accepted' ? 'Order accepted by store' : serverStatus === 'preparing' ? 'Store is preparing your order' : serverStatus === 'ready' ? (o.pk ? 'Ready for pickup' : 'Ready for courier pickup') : 'Order update') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
   return (
@@ -358,10 +312,10 @@ export function Track({id}: {id: string}) {
             <View style={{flexDirection: 'row', gap: 6, marginVertical: 14}}>{T_.map((x, i) => <View key={i} style={{flex: 1, height: 6, borderRadius: 3, backgroundColor: i <= o.st ? th.br : th.line}} />)}</View>
             {T_.map((x, i) => <View key={i} style={{flexDirection: 'row', gap: 12, marginVertical: 12, alignItems: 'center'}}><View style={{width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: i <= o.st ? th.br : th.line, backgroundColor: i <= o.st ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{i <= o.st ? <Icon name="check" size={12} color="#fff" /> : null}</View><T size={14} color={i <= o.st ? th.ink : th.mut} weight={i <= o.st ? '700' : undefined}>{x}</T></View>)}
           </>)}
-          <T size={11.5} color={th.mut}>Demo timeline: steps advance every few seconds.</T>
+          <T size={11.5} color={th.mut}>Order status is provided by the live order service.</T>
         </Card>
-        {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap storeName={s.n} /> : null}
-        {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap order={o} storeName={s.n} destination={o.ad ? o.ad.l + ': ' + o.ad.t : o.addr} /> : null}
+        {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap /> : null}
+        {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your order</T><T size={12} color={th.mut}>Order and delivery feedback</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>Your rating: {o.rated} ★</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your driver</T><T size={12} color={th.mut}>Delivery experience</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
         {o.rated && (o.pk || o.driverRated) ? <Card>
