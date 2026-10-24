@@ -40,7 +40,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
             <T size={15} weight="800">{money(p)}</T>
             {off ? <T size={11.5} color={th.mut} style={{marginLeft: 5, textDecorationLine: 'line-through'}}>{money(i.p)}</T> : null}
           </View>
-          <Pressable accessibilityLabel={'Add ' + i.n + ' to cart'} disabled={dis} onPress={() => quickAdd(i.id, off)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1, shadowColor: th.br, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: {width: 0, height: 4}}}>
+          <Pressable accessibilityLabel={'Add ' + i.n + ' to cart'} disabled={!!dis} onPress={() => quickAdd(i.id, off)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1, shadowColor: th.br, shadowOpacity: 0.35, shadowRadius: 10, shadowOffset: {width: 0, height: 4}}}>
             <Icon name="plus" size={17} color="#fff" />
           </Pressable>
         </View>
@@ -121,7 +121,7 @@ export function ItemRow({i}: {i: Item}) {
       <Pressable accessibilityLabel={S.favp.indexOf(i.id) > -1 ? 'Remove ' + i.n + ' from favorites' : 'Add ' + i.n + ' to favorites'} onPress={() => favp(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: S.favp.indexOf(i.id) > -1 ? 'rgba(253,128,46,0.12)' : th.card, borderWidth: 1, borderColor: S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.line, alignItems: 'center', justifyContent: 'center'}}>
         <Icon name="heart" size={17} color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.ink} fill={S.favp.indexOf(i.id) > -1} />
       </Pressable>
-      <Pressable accessibilityLabel={'Add ' + i.n + ' to cart'} disabled={dis} onPress={() => quickAdd(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1}}>
+      <Pressable accessibilityLabel={'Add ' + i.n + ' to cart'} disabled={!!dis} onPress={() => quickAdd(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1}}>
         <Icon name="plus" size={17} color="#fff" />
       </Pressable>
     </View>
