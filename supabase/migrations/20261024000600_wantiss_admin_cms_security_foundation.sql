@@ -83,6 +83,35 @@ create index if not exists wantiss_admin_audit_resource_time_idx
 create index if not exists wantiss_admin_audit_actor_time_idx
   on public.wantiss_admin_audit_log (actor_user_id, created_at desc);
 
+create or replace function public.wantiss_bootstrap_super_admin(p_user_id uuid, p_display_name text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $
+begin
+  if auth.role() <> 'service_role' then
+    raise exception 'Service role required' using errcode = '42501';
+  end if;
+
+  perform pg_advisory_xact_lock(hashtextextended('wantiss:first-super-admin-bootstrap', 0));
+
+  if exists (select 1 from public.wantiss_admin_staff where role = 'super_admin') then
+    raise exception 'Super Admin bootstrap has already been used' using errcode = '23505';
+  end if;
+
+  if p_user_id is null or not exists (select 1 from auth.users where id = p_user_id) then
+    raise exception 'A valid authenticated user is required';
+  end if;
+
+  insert into public.wantiss_admin_staff(user_id, display_name, status, role)
+  values (p_user_id, left(coalesce(nullif(trim(p_display_name), ''), 'Super Admin'), 120), 'active', 'super_admin');
+end;
+$;
+
+revoke all on function public.wantiss_bootstrap_super_admin(uuid, text) from public, anon, authenticated;
+grant execute on function public.wantiss_bootstrap_super_admin(uuid, text) to service_role;
+
 create or replace function public.wantiss_has_permission(p_permission text, p_min_level text default 'view')
 returns boolean
 language sql
