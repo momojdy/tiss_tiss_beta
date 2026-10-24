@@ -1,5 +1,9 @@
 export type StayMode = 'hourly' | 'dayuse' | 'overnight' | 'extended';
-export type CurrencyCode = 'USD' | 'HTG' | 'DOP' | 'EUR' | 'CAD';
+export type CurrencyCode = 'USD' | 'HTG' | 'DOP';
+export type CardBrand = 'Visa' | 'Mastercard' | 'Discover' | 'JCB' | 'UnionPay';
+export type PropertyType = 'Hotel' | 'Resort' | 'Apartment' | 'Guesthouse' | 'Villa';
+export type BookingStatus = 'Requested' | 'Accepted' | 'Upcoming' | 'Checked in' | 'Completed' | 'Cancelled' | 'No-show';
+export type SortKey = 'recommended' | 'price' | 'rating' | 'distance';
 
 export interface Place {
   label: string;
@@ -136,7 +140,10 @@ export interface Booking {
   mode: StayMode;
   start: string;
   end: string;
-  status: string;
+  status: BookingStatus | string;
+  cxAllowed: boolean;
+  cxFree: number;
+  cxLate: number;
   [key: string]: any;
 }
 
@@ -153,12 +160,7 @@ export interface BookingInput {
   [key: string]: any;
 }
 
-export interface BookingResult {
-  ok: boolean;
-  booking?: Booking;
-  reason?: string;
-  [key: string]: any;
-}
+export type BookingResult = { ok: true; booking: Booking } | { ok: false; reason: 'auth' | 'network' | 'availability' | 'payment' | string };
 
 export interface CardInput {
   number: string;
