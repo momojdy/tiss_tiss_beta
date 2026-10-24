@@ -274,31 +274,15 @@ export function Checkout() {
   if (S.cs === 1) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>When do you want it?</T>
     {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.</T>}
-    {sl.map(x => <Radio key={x.ts} on={S.sch === x.ts} onPress={() => setSch(x.ts)}><T weight="700">{x.l}</T></Radio>)}
-    <Card style={{marginTop: 10}}>
-      <T weight="800">Choose an exact time</T>
-      <T size={12.5} color={th.mut} style={{marginTop: 3, marginBottom: 10}}>Enter a date and time instead of choosing a preset slot.</T>
-      <T size={12} color={th.mut}>Date (YYYY-MM-DD)</T>
-      <TextInput accessibilityLabel="Order date" value={customDate} onChangeText={setCustomDate} placeholder="2026-10-25" keyboardType="numbers-and-punctuation" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5,marginBottom:10}} />
-      <View style={{flexDirection:'row',gap:10}}>
-        <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><TextInput accessibilityLabel="Order hour" value={customHour} onChangeText={v=>setCustomHour(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="14" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
-        <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><TextInput accessibilityLabel="Order minute" value={customMinute} onChangeText={v=>setCustomMinute(v.replace(/\D/g,'').slice(0,2))} keyboardType="number-pad" maxLength={2} placeholder="30" style={{borderWidth:1,borderColor:th.line,borderRadius:12,paddingHorizontal:12,paddingVertical:10,color:th.ink,marginTop:5}} /></View>
-      </View>
-      <Cta small label="Use selected date & time" onPress={() => {
-        const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(customDate.trim());
-        const hh = Number(customHour), mm = Number(customMinute);
-        if (!m || !customHour || !customMinute || hh < 0 || hh > 23 || mm < 0 || mm > 59) { toast('Enter a valid date, hour and minute.'); return; }
-        const selected = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), hh, mm, 0, 0);
-        if (selected.getFullYear() !== Number(m[1]) || selected.getMonth() !== Number(m[2])-1 || selected.getDate() !== Number(m[3]) || selected.getTime() <= Date.now()) { toast('Choose a valid future date and time.'); return; }
-        if (!st.open && !st.acceptScheduledOrders) { toast('This store does not accept scheduled orders while closed.'); return; }
-        const earliestAllowed = st.open ? Date.now() : (sl.length ? sl[0].ts : Date.now() + Math.max(0, Number(st.scheduledOrderStartMinutes ?? 60)) * 60000);
-        if (selected.getTime() < earliestAllowed) {
-          toast(st.open ? 'Choose now or a future time.' : 'Choose a time at or after this store’s earliest scheduled-order time: ' + fmtDay(new Date(earliestAllowed)) + ', ' + fmtTime(new Date(earliestAllowed)) + '.');
-          return;
-        }
-        setSch(selected.getTime()); toast('Order time selected: ' + fmtDay(selected) + ', ' + fmtTime(selected));
-      }} />
-      {S.sch ? <T size={12.5} color={th.br} style={{marginTop:6}}>Selected: {fmtDay(new Date(S.sch))}, {fmtTime(new Date(S.sch))}</T> : null}
+    <Card style={{marginTop:10}}>
+      <Row sp style={{alignItems:'center'}}>
+        <View style={{flex:1}}>
+          <T weight="800">{S.sch ? 'Scheduled order' : 'Choose a date & time'}</T>
+          <T size={12.5} color={th.mut} style={{marginTop:3}}>{S.sch ? fmtDay(new Date(S.sch))+', '+fmtTime(new Date(S.sch)) : (st.open ? 'Choose an exact time, or keep ASAP.' : 'The store’s minimum advance time is applied automatically.')}</T>
+        </View>
+        <View style={{width:142}}><Cta small label={S.sch ? 'Change time' : 'Choose time'} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
+      </Row>
+      {S.sch ? <Pressable onPress={()=>setSch(0)} style={{alignSelf:'flex-start',paddingTop:9}}><T size={12.5} weight="700" color={th.red}>Clear scheduled time</T></Pressable> : null}
     </Card>
     {pk ? null : (<><Ttl>Tip your courier</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : 'No tip'}</T></Pressable>)}</View></>)}
     <Input label={pk ? 'Note for the store' : 'Delivery instructions'} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
