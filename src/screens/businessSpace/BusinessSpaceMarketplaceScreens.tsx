@@ -90,7 +90,7 @@ export function OrdersPanel() {
     const next = nextGoodiesStatus[String(x.status).toLowerCase()];
     if (!next) return;
     try {
-      const {error} = await supabase.from('goodies_orders').update({status: next, updated_at: new Date().toISOString()}).eq('id', x.id);
+      const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: x.id, p_status: next});
       if (error) throw error;
       app.bump(); app.toast('Goodies order updated');
     } catch (e: any) {app.toast(e?.message || 'Could not update order');}

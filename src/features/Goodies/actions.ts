@@ -1,5 +1,6 @@
 /* Actions. 1:1 port of the Goodies v24 `A` handlers. Messages stay in English here and move to i18n keys during the localization pass. */
 import {providerInfo} from './providers';
+import {supabase} from '../../lib/supabase';
 import {
   hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur,
 } from './store';
@@ -118,9 +119,14 @@ export function setPay(p: string) {
 }
 export async function placeOrder() {
   if (S.busy) return;
-  if (!providerInfo.demo) {toast('Live payment processing is not configured. Checkout is disabled until a real payment provider is connected.'); return;}
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
+  if (!providerInfo.demo) {
+    // Live mode: no payment provider is connected, so only cash on delivery/pickup can be placed for real.
+    if (S.pay !== 'cash') {toast('Only cash on ' + (isPk() ? 'pickup' : 'delivery') + ' is available right now.'); S.cs = 2; emit(); return;}
+    // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
+    if (hasAlcohol()) {toast('Alcohol orders are not available yet.'); return;}
+  }
   if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(st.n + ' is closed. Choose a future pickup or delivery time if scheduling is available.'); S.cs = 1; emit(); return;}
   const bad = S.cart.lines.filter((l: any) => {if (l.byo) return !!hooks.bCheck && !!(hooks as any).lineBad && !!(hooks as any).lineBad(l); const i = IT[l.id]; return !i || i.oos || l.q > i.stock;});
   if (bad.length) {toast(bad[0].n + ' ' + (bad[0].byo ? (hooks as any).lineBad(bad[0]) : 'is no longer available in that quantity')); reset('cart'); return;}
@@ -144,10 +150,24 @@ export async function placeOrder() {
   const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (S.cards[0] ? S.cards[0].l4 : ''), cash: 'Cash'}[S.pay as string];
   let id: string;
   do {id = 'GD' + Math.floor(1000 + Math.random() * 9000);} while (S.orders.some((x: any) => x.id === id));
-  // This feature is in local demo mode until a live provider is explicitly enabled.
-  // Do not query Supabase for a vendor mapping or authentication session here:
-  // missing test accounts must never block a local Goodies order.
-  const backendOrderId: string | null = null;
+  let backendOrderId: string | null = null;
+  if (!providerInfo.demo) {
+    // Live: the server validates the store, mode, schedule and totals, and assigns the order code.
+    const r2 = (n: number) => Math.round(n * 100) / 100;
+    const {data, error} = await supabase.rpc('place_goodies_order', {
+      p_store_id: S.cart.sid,
+      p_order_type: pk ? 'pickup' : 'delivery',
+      p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
+      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst},
+      p_contact_phone: ct.ph,
+      p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
+      p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
+      p_notes: String(S.note || '').trim() || null,
+    });
+    const row: any = Array.isArray(data) ? data[0] : data;
+    if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
+    backendOrderId = row.id; id = row.order_code || id;
+  }
   if (S.pay === 'wallet') S.wallet -= t.total;
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
@@ -158,14 +178,18 @@ export async function placeOrder() {
   };
   S.orders.unshift(o);
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
-  S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
+  S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: (backendOrderId ? 'Order sent to ' : 'Demo order sent to ') + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
   S.busy = 0; toast(backendOrderId ? 'Order sent to the store' : 'Demo order placed!'); save(); emit();
 }
 export const cancelAsk = (id: string) => ui.sheet({kind: 'cancel', id});
-export function cancelOrder(id: string) {
+export async function cancelOrder(id: string) {
   const o = S.orders.filter((x: any) => x.id === id)[0]; ui.close();
   if (!o || done(o) || o.st > 2) {toast('This order can no longer be cancelled'); emit(); return;}
+  if (o.backendId) {
+    const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: o.backendId, p_status: 'cancelled'});
+    if (error) {toast(error.message || 'This order can no longer be cancelled'); emit(); return;}
+  }
   o.cx = 1; if (o.pay === 'wallet') S.wallet += o.total;
   S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
   toast('Order cancelled'); save(); emit();
