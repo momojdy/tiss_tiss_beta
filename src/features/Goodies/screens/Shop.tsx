@@ -280,7 +280,7 @@ export function Checkout() {
           <T weight="800">{S.sch ? 'Scheduled order' : 'Choose a date & time'}</T>
           <T size={12.5} color={th.mut} style={{marginTop:3}}>{S.sch ? fmtDay(new Date(S.sch))+', '+fmtTime(new Date(S.sch)) : (st.open ? 'Choose an exact time, or keep ASAP.' : 'The store’s minimum advance time is applied automatically.')}</T>
         </View>
-        <View style={{width:142}}><Cta small label={S.sch ? 'Change time' : 'Choose time'} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
+        <View style={{width:142}}><Cta small label={S.sch ? 'Change time' : 'Choose time'} onPress={() => require('../store').ui.sheet({kind:'schedule-time',storeId:st.id})} /></View>
       </Row>
       {S.sch ? <Pressable onPress={()=>setSch(0)} style={{alignSelf:'flex-start',paddingTop:9}}><T size={12.5} weight="700" color={th.red}>Clear scheduled time</T></Pressable> : null}
     </Card>
