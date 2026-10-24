@@ -27,7 +27,7 @@ function Row({item}:{item:Item}) {
   const amount=item.points ? ((item.direction==='credit'?'+':'-')+Math.abs(item.amount).toLocaleString()+' pts') : ((item.direction==='credit'?'+':'-')+Math.abs(item.amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+item.currency);
   const status=statusText(item.status);
   return <View style={s.row}>
-    <View style={s.rowIcon}><MaterialCommunityIcons name={item.points?'stars':item.category==='Transfers'?'swap-horizontal':item.category==='Money'?'wallet-outline':'star-outline'} size={23} color={C.muted}/></View>
+    <View style={s.rowIcon}><MaterialCommunityIcons name={item.points?'star':item.category==='Transfers'?'swap-horizontal':item.category==='Money'?'wallet-outline':'star-outline'} size={23} color={C.muted}/></View>
     <View style={s.copy}><Text style={s.title} numberOfLines={1}>{item.title}</Text><Text style={s.subtitle} numberOfLines={1}>{item.subtitle}</Text><Text style={s.date}>{dateText(item.createdAt)}</Text></View>
     <View style={s.right}><Text style={[s.amount,item.direction==='credit'&&s.credit]}>{amount}</Text><Text style={[s.status,status==='Declined'&&s.declined,(status==='Pending'||status==='Processing')&&s.pending]}>{status}</Text></View>
   </View>;
