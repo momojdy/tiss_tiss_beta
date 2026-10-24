@@ -522,7 +522,6 @@ const styles = StyleSheet.create({
   tripCard: { marginHorizontal: 4, backgroundColor: 'rgba(202,232,232,.55)', borderRadius: 20, padding: 16 },
   tripLegs: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   airport: { fontSize: 26, fontWeight: '800', letterSpacing: -.5, color: TEXT },
-  airportName: { fontSize: 12, color: MUTED },
   tripLine: { flex: 1, height: 28, alignItems: 'center', justifyContent: 'center', position: 'relative' },
   line: { position: 'absolute', left: 0, right: 0, top: 13, height: 2, backgroundColor: BORDER },
   tripPlane: { zIndex: 2, backgroundColor: 'transparent', paddingHorizontal: 0 },
