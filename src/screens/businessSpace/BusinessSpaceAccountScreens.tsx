@@ -117,7 +117,7 @@ export function BusinessInfoPage() {
   useEffect(() => {
     let active = true;
     if (!b.is_live || b.verification === 'restricted') { setVendorQr(null); return () => { active = false; }; }
-    void supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: b.id }).then(({ data, error }) => {
+    void Promise.resolve(supabase.rpc('issue_qr_identity', { p_qr_type: 'vendor_shop', p_business_id: b.id })).then(({ data, error }) => {
       if (active && !error && data?.token) setVendorQr(data);
     }).catch(() => undefined);
     return () => { active = false; };
