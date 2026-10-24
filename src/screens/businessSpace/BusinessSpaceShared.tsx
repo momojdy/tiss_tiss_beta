@@ -356,7 +356,7 @@ export const uuid = () => (globalThis as any).crypto?.randomUUID?.() ?? `${Date.
 
 /* ---------- types ---------- */
 export type Status = 'setup' | 'pending' | 'action' | 'restricted' | 'verified';
-export interface Biz { id: string; name: string; logo_url: string | null; verification: Status; payout_ready: boolean; is_live: boolean; role: string; description?: string | null; phone?: string | null; phone_country?: string | null; email?: string | null; address?: string | null; city?: string | null; country?: string | null; website?: string | null; hours?: Record<string, { open: string; close: string; closed: boolean }> | null; delivery_modes?: string[] | null }
+export interface Biz { id: string; name: string; logo_url: string | null; verification: Status; payout_ready: boolean; is_live: boolean; role: string; vendor_id?: string | null; goodies_store_id?: string | null; accept_scheduled_orders?: boolean | null; scheduled_order_start_minutes?: number | null; description?: string | null; phone?: string | null; phone_country?: string | null; email?: string | null; address?: string | null; city?: string | null; country?: string | null; website?: string | null; hours?: Record<string, { open: string; close: string; closed: boolean }> | null; delivery_modes?: string[] | null }
 export interface PayRule { method: string; name: string; cap: number; window_days: number; fee: number; eta: string; needs_bank: boolean }
 export interface Meta { feats: { feature: string; status: string }[]; listings: number; unreadN: number; unreadM: number; payout: { status: string; last4: string | null } | null; rules: PayRule[]; minWithdrawal: number }
 export interface Range { key: string; from: string; to: string; label: string; days: number }
