@@ -1384,6 +1384,7 @@ export default function WalletSettingsScreen({
   onHomePress,
   onPersonalInfoPress,
   onPaymentMethodsPress,
+  onNotificationsPress,
   onNotificationsSettingsPress,
   onHistoryPress,
   onSecurityPress,
@@ -1537,8 +1538,8 @@ export default function WalletSettingsScreen({
         <View style={styles.aboutTop} />
         <SectionTitle title="About" />
         <SettingsRow icon="help-outline" label="Help center" onPress={onHelpCenterPress} />
-        <SettingsRow icon="policy" communityIcon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
-        <SettingsRow icon="database-saver-on" communityIcon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
+        <SettingsRow icon="privacy-tip" communityIcon="file-outline" outlineIcon={undefined} label="Privacy policy" onPress={onPrivacyPress} />
+        <SettingsRow icon="data-saver-on" communityIcon="database-outline" outlineIcon={undefined} label="Data rights & control" onPress={onDataRightsPress} />
 
       </ScrollView>
 
