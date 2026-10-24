@@ -31,6 +31,7 @@ Deno.serve(async (req: Request) => {
   });
   const { data: { user }, error: userError } = await authClient.auth.getUser();
   if (userError || !user) return reply(401, { error: "A valid Supabase Auth session is required" });
+  if (!user.email_confirmed_at) return reply(403, { error: "Verify the account email before bootstrapping Super Admin access" });
 
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
