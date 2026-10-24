@@ -249,16 +249,44 @@ drop policy if exists "Anyone can read published CMS content" on public.wantiss_
 create policy "Anyone can read published CMS content" on public.wantiss_cms_content for select to anon, authenticated
 using (status = 'published');
 drop policy if exists "Authorized staff can manage CMS content" on public.wantiss_cms_content;
-create policy "Authorized staff can manage CMS content" on public.wantiss_cms_content for all to authenticated
-using (public.wantiss_has_permission('content.manage', 'edit'))
-with check (public.wantiss_has_permission('content.manage', 'edit') and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage')));
+create policy "Authorized staff can insert CMS content" on public.wantiss_cms_content for insert to authenticated
+with check (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+);
+create policy "Authorized staff can update CMS content" on public.wantiss_cms_content for update to authenticated
+using (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+)
+with check (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+);
 drop policy if exists "Anyone can read published CMS asset metadata" on public.wantiss_cms_assets;
 create policy "Anyone can read published CMS asset metadata" on public.wantiss_cms_assets for select to anon, authenticated
 using (status = 'published');
 drop policy if exists "Authorized staff can manage CMS asset metadata" on public.wantiss_cms_assets;
-create policy "Authorized staff can manage CMS asset metadata" on public.wantiss_cms_assets for all to authenticated
-using (public.wantiss_has_permission('content.manage', 'edit'))
-with check (public.wantiss_has_permission('content.manage', 'edit') and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage')));
+create policy "Authorized staff can insert CMS asset metadata" on public.wantiss_cms_assets for insert to authenticated
+with check (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+);
+create policy "Authorized staff can update CMS asset metadata" on public.wantiss_cms_assets for update to authenticated
+using (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+)
+with check (
+  public.wantiss_has_permission('content.manage', 'edit')
+  and (status <> 'published' or public.wantiss_has_permission('content.publish', 'manage'))
+  and (status <> 'archived' or public.wantiss_has_permission('content.archive', 'manage'))
+);
 drop policy if exists "Authorized staff can read admin audit log" on public.wantiss_admin_audit_log;
 create policy "Authorized staff can read admin audit log" on public.wantiss_admin_audit_log for select to authenticated
 using (public.wantiss_has_permission('audit.read', 'view'));
