@@ -256,7 +256,7 @@ export const CheckoutFoot = () => <Cta label={S.cs === 3 ? 'Place order · ' + m
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
-  if (!o || !o.backendId || !STB[o.sid]) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order unavailable" body="This order is not available from the live Wantiss order service." button="Go home" onPress={browse} /></View>;
+  if (!o || !o.backendId || !STB[o.sid]) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order unavailable" text="This order is not available from the live Wantiss order service." button="Go home" onPress={browse} /></View>;
   return (
     <View style={{paddingHorizontal: 16, paddingTop: 50, alignItems: 'center'}}>
       <Text style={{fontSize: 70}}>✅</Text>
@@ -272,11 +272,11 @@ export function Confirm({id}: {id: string}) {
 
 function DeliveryRouteMap() {
   const th = useTheme();
-  return <Card style={{padding: 12}}><T size={15} weight="800">Live delivery route</T><Empty title="Live tracking unavailable" hint="Driver location has not been provided by the order service." /></Card>;
+  return <Card style={{padding: 12}}><T size={15} weight="800">Live delivery route</T><Empty title="Live tracking unavailable" text="Driver location has not been provided by the order service." /></Card>;
 }
 
 function PickupLocationMap() {
-  return <Card style={{padding: 12}}><T size={15} weight="800">Pickup location</T><Empty title="Live location unavailable" hint="Pickup coordinates have not been provided by the store." /></Card>;
+  return <Card style={{padding: 12}}><T size={15} weight="800">Pickup location</T><Empty title="Live location unavailable" text="Pickup coordinates have not been provided by the store." /></Card>;
 }
 
 export function Track({id}: {id: string}) {
