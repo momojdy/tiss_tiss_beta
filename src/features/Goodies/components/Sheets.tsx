@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, useTheme} from './ui';
 import {Icon} from './Icon';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime} from '../store';
 import * as A from '../actions';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
@@ -23,6 +23,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoreset') content = (<><T size={20} weight="800">Start over?</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>This clears your current choices. Items already in your cart are not affected.</T><Cta label="Start over" onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label="Keep editing" onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">Alcohol rules</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>• The courier checks your ID at the door. At a pickup, the shop checks it.</T><T size={13.5}>• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.</T></Card><View style={{height: 6}} /><Cta label="I understand" onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label="Cancel" onPress={close} /></>); }
   if (k === 'group-order') content = <GroupOrderSheet close={close} />;
+  if (k === 'schedule-time') content = <ScheduleTimeSheet close={close} storeId={sheet.storeId} />;
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
@@ -156,6 +157,71 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
   return <View style={{flexDirection:'row',gap:8}}>
     {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="800" color={value===v?th.br:th.ink}>{v==='delivery'?'Delivery':'Pick-up'}</T></Pressable>)}
   </View>;
+}
+
+function ScheduleTimeSheet({close, storeId}: {close: () => void; storeId: string}) {
+  const th = useTheme(), store: any = STB[storeId] || STB[S.cart.sid];
+  const initial = S.sch && S.sch > Date.now() ? new Date(S.sch) : new Date(Date.now() + (store && !store.open ? Math.max(0, Number(store.scheduledOrderStartMinutes ?? 60)) : 0) * 60000);
+  const dateString = (d: Date) => d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  const [date,setDate] = useState(dateString(initial));
+  const [hour,setHour] = useState(String(initial.getHours()).padStart(2,'0'));
+  const [minute,setMinute] = useState(String(initial.getMinutes()).padStart(2,'0'));
+  const [pickedDay,setPickedDay] = useState(dateString(initial));
+  const days = Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d;});
+  const choose = () => {
+    const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(date.trim()), hh=Number(hour), mm=Number(minute);
+    if(!m || !hour || !minute || hh<0 || hh>23 || mm<0 || mm>59) {toast('Enter a valid date, hour and minute.');return;}
+    const selected=new Date(Number(m[1]),Number(m[2])-1,Number(m[3]),hh,mm,0,0);
+    if(selected.getFullYear()!==Number(m[1])||selected.getMonth()!==Number(m[2])-1||selected.getDate()!==Number(m[3])||selected.getTime()<=Date.now()){toast('Choose a valid future date and time.');return;}
+    if(store && !store.open && !store.acceptScheduledOrders){toast('This store does not accept scheduled orders while closed.');return;}
+    let earliest=Date.now();
+    if(store && !store.open) {
+      const lead=Math.max(0,Number(store.scheduledOrderStartMinutes??60));
+      const schedule=store.scheduleHours||{};
+      const dayNames=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+      let found:Date|null=null;
+      for(let n=0;n<8;n++){
+        const d=new Date();d.setDate(d.getDate()+n);
+        const h=schedule[dayNames[d.getDay()]];
+        if(h && !h.closed && h.open && h.close){
+          const [oh,om]=String(h.open).split(':').map(Number);
+          const opening=new Date(d);opening.setHours(oh,om||0,0,0);
+          const candidate=new Date(opening.getTime()+lead*60000);
+          if(candidate.getTime()>Date.now() && (!found || candidate.getTime()<found.getTime())) found=candidate;
+        }
+      }
+      earliest=found?found.getTime():Date.now()+lead*60000;
+    }
+    if(selected.getTime()<earliest){toast('Choose a time at or after ' + fmtDay(new Date(earliest)) + ', ' + fmtTime(new Date(earliest)) + '.');return;}
+    if(store && store.scheduleHours && Object.keys(store.scheduleHours).length){
+      const h=store.scheduleHours[['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][selected.getDay()]];
+      if(!h||h.closed||!h.open||!h.close){toast('This store is closed on that date. Choose another day.');return;}
+      const [oh,om]=String(h.open).split(':').map(Number),[ch,cm]=String(h.close).split(':').map(Number);
+      const openAt=new Date(selected);openAt.setHours(oh,om||0,0,0);
+      const closeAt=new Date(selected);closeAt.setHours(ch,cm||0,0,0);
+      if(selected<openAt||selected>=closeAt){toast('Choose a time within the store opening hours.');return;}
+    }
+    require('../actions').setSch(selected.getTime());
+    toast('Order time selected: '+fmtDay(selected)+', '+fmtTime(selected));
+    close();
+  };
+  return <>
+    <T size={21} weight="800">Schedule your order</T>
+    <T size={13} color={th.mut} style={{marginTop:5,marginBottom:12}}>Choose a date and enter the exact hour and minute. The store’s minimum advance time is respected when it is closed.</T>
+    <T size={13} weight="800" style={{marginBottom:7}}>Choose a day</T>
+    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
+      {days.map((d,i)=>{const v=dateString(d),active=date===v;return <Pressable key={v} onPress={()=>{setDate(v);setPickedDay(v);}} style={{minWidth:66,paddingVertical:10,paddingHorizontal:8,borderRadius:14,alignItems:'center',backgroundColor:active?th.br:th.soft,borderWidth:1,borderColor:active?th.br:th.line}}><T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString(undefined,{weekday:'short'})}</T><T size={16} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T></Pressable>})}
+    </ScrollView>
+    <T size={13} weight="800" style={{marginTop:8}}>Exact time</T>
+    <T size={12} color={th.mut} style={{marginTop:3}}>Date: {date}</T>
+    <Input label="Date (YYYY-MM-DD)" value={date} onChange={v=>{setDate(v);setPickedDay(v);}} placeholder="YYYY-MM-DD" />
+    <Row style={{gap:10,marginTop:4}}>
+      <View style={{flex:1}}><Input label="Hour (00–23)" value={hour} onChange={v=>setHour(v.replace(/\D/g,'').slice(0,2))} keyboard="number-pad" placeholder="14" /></View>
+      <View style={{flex:1}}><Input label="Minute (00–59)" value={minute} onChange={v=>setMinute(v.replace(/\D/g,'').slice(0,2))} keyboard="number-pad" placeholder="30" /></View>
+    </Row>
+    {S.sch ? <T size={12.5} color={th.br} style={{marginTop:8}}>Current selection: {fmtDay(new Date(S.sch))}, {fmtTime(new Date(S.sch))}</T> : null}
+    <View style={{height:12}}/><Cta label="Apply" onPress={choose}/><View style={{height:8}}/><Cta ghost label="Cancel" onPress={close}/>
+  </>;
 }
 
 function GroupOrderSheet({close}: {close: () => void}) {
