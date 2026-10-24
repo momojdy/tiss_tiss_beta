@@ -107,7 +107,7 @@ begin
   insert into public.wantiss_admin_staff(user_id, display_name, status, role)
   values (p_user_id, left(coalesce(nullif(trim(p_display_name), ''), 'Super Admin'), 120), 'active', 'super_admin');
 end;
-$;
+$$;
 
 revoke all on function public.wantiss_bootstrap_super_admin(uuid, text) from public, anon, authenticated;
 grant execute on function public.wantiss_bootstrap_super_admin(uuid, text) to service_role;
