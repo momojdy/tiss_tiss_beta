@@ -46,8 +46,8 @@ Deno.serve(async (req: Request) => {
     if (displayName.length < 1 || reason.length < 3) return reply(400, { error: "Display name and invitation reason are required" });
 
     const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
-      data: { full_name: displayName },
-      redirectTo: Deno.env.get("WANTISS_ADMIN_INVITE_REDIRECT") || undefined,
+      data: { full_name: displayName, wantiss_invite_accepted: false },
+      redirectTo: Deno.env.get("WANTISS_ADMIN_INVITE_REDIRECT") || "wantiss-admin://accept-invite",
     });
     if (inviteError || !invited.user) return reply(409, { error: "Invitation could not be sent. Check whether this email already has an Auth account." });
 
@@ -65,11 +65,16 @@ Deno.serve(async (req: Request) => {
       await admin.auth.admin.deleteUser(invited.user.id);
       return reply(409, { error: "Staff record could not be created. No staff access was granted." });
     }
-    await admin.from("wantiss_admin_audit_log").insert({
+    const { error: auditError } = await admin.from("wantiss_admin_audit_log").insert({
       actor_user_id: user.id, action: "staff_invited", resource_type: "staff",
       resource_id: invited.user.id, reason,
       after_state: { email, display_name: displayName, status: "active", role: "staff", invitation_expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() },
     });
+    if (auditError) {
+      await admin.from("wantiss_admin_staff").delete().eq("user_id", invited.user.id);
+      await admin.auth.admin.deleteUser(invited.user.id);
+      return reply(500, { error: "Invitation audit failed. No staff access was created." });
+    }
     return reply(200, { ok: true, user_id: invited.user.id, message: "Invitation email sent" });
   }
 
