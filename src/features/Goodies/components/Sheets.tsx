@@ -132,6 +132,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   const earliestOk = selected.getTime() >= earliest.getTime();
   const apply = () => {
     if (!store) {toast('Choose a store before scheduling.');return;}
+    if (deliveryMode === 'delivery' && store.far) {toast('This store is outside the delivery area. Choose pick-up or another address.');return;}
     if (!store.open && !store.acceptScheduledOrders) {toast('This store does not accept scheduled orders while closed.');return;}
     if (!hour || !minute || Number(hour)<0 || Number(hour)>23 || Number(minute)<0 || Number(minute)>59) {toast('Enter a valid hour and minute.');return;}
     if (selected.getTime()<=Date.now()) {toast('Choose a future date and time.');return;}
