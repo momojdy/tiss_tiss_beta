@@ -97,8 +97,14 @@ function ScheduleSheet({close}: {close: () => void}) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const [dayOffset,setDayOffset] = useState(0);
   const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
+  const now = new Date();
+  const roundedNow = new Date(now); roundedNow.setMinutes(Math.ceil(now.getMinutes()/5)*5,0,0);
+  if (roundedNow.getTime() <= now.getTime()) roundedNow.setMinutes(roundedNow.getMinutes()+5);
+  const [customHour,setCustomHour] = useState(String(roundedNow.getHours()).padStart(2,'0'));
+  const [customMinute,setCustomMinute] = useState(String(roundedNow.getMinutes()).padStart(2,'0'));
+  const [customMode,setCustomMode] = useState(false);
   const [selectedTs,setSelectedTs] = useState<number>(() => S.sch && S.sch > Date.now() ? S.sch : 0);
-  const now = new Date(), selectedDate = new Date(now);
+  const selectedDate = new Date(now);
   selectedDate.setDate(now.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
   const schedule = store?.scheduleHours || {};
   const hours = schedule[dayNames[selectedDate.getDay()]];
@@ -129,11 +135,22 @@ function ScheduleSheet({close}: {close: () => void}) {
       candidates.push(d.getTime());
     }
   }
-  const selected = candidates.find(ts=>ts===selectedTs);
+  const customDate = new Date(selectedDate);
+  const validCustomDigits = /^\d{1,2}$/.test(customHour) && /^\d{1,2}$/.test(customMinute) && Number(customHour)>=0 && Number(customHour)<=23 && Number(customMinute)>=0 && Number(customMinute)<=59;
+  if (validCustomDigits) customDate.setHours(Number(customHour),Number(customMinute),0,0);
+  const customMinutes = customDate.getHours()*60+customDate.getMinutes();
+  const customInHours = hasHours ? customMinutes>=startMinute && customMinutes<endMinute : noSchedule && customMinutes>=8*60 && customMinutes<22*60;
+  const customValid = validCustomDigits && customDate.getTime()>Date.now() && customDate.getTime()>=earliest.getTime() && customInHours;
+  const selected = customMode ? (customValid ? customDate.getTime() : 0) : candidates.find(ts=>ts===selectedTs);
   const choose = () => {
     if(!store){toast('Choose a store before scheduling.');return;}
     if(!store.open&&!store.acceptScheduledOrders){toast('This store does not accept scheduled orders while closed.');return;}
-    if(!selected){toast('Choose one of the available times.');return;}
+    if(!selected){
+      if(customMode && !customInHours) toast('Choose a time within the store opening hours.');
+      else if(customMode && customDate.getTime()<earliest.getTime()) toast('This store’s earliest available time is '+fmtTime(earliest)+'.');
+      else toast('Choose a valid future time or select an available time.');
+      return;
+    }
     A.setSch(selected); A.setMode(deliveryMode);
     toast('Scheduled for '+fmtDay(new Date(selected))+', '+fmtTime(new Date(selected)));
     close();
@@ -144,18 +161,27 @@ function ScheduleSheet({close}: {close: () => void}) {
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
     <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>Choose a day</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
-      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
+      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);setCustomMode(false);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
         <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
     {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">Scheduled-order minimum</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? 'Opening '+opening+' · '+lead+' minutes advance time. Only times after the minimum are selectable.' : 'Minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card>:null}
     <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>Available times</T>
     {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
-      {candidates.map(ts=><Pressable key={ts} onPress={()=>setSelectedTs(ts)} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+      {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
         {selectedTs===ts?<Icon name="check-circle" color={th.br}/>:<T size={12} color={th.mut}>Select</T>}
       </Pressable>)}
-    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No times are available on this date. Choose another day.'}</T></Card>}
+    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.'}</T></Card>}
+    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>Or enter an exact time</T>
+    <Row style={{gap:10,alignItems:'flex-end'}}>
+      <View style={{flex:1}}><Input label="Hour (00–23)" value={customHour} onChange={v=>{setCustomHour(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="14" keyboard="number-pad" /></View>
+      <T size={20} weight="800" style={{paddingBottom:12}}>:</T>
+      <View style={{flex:1}}><Input label="Minute (00–59)" value={customMinute} onChange={v=>{setCustomMinute(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="30" keyboard="number-pad" /></View>
+    </Row>
+    <View style={{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:8}}>
+      {[0,5,10,15,20,25,30,35,40,45,50,55].map(m=><Pressable key={m} onPress={()=>{setCustomMinute(String(m).padStart(2,'0'));setCustomMode(true);setSelectedTs(0);}} style={{paddingHorizontal:10,paddingVertical:7,borderRadius:16,backgroundColor:Number(customMinute)===m&&customMode?th.brt:th.soft,borderWidth:Number(customMinute)===m&&customMode?1:0,borderColor:th.br}}><T size={11.5} weight="700">{String(m).padStart(2,'0')}</T></Pressable>)}
+    </View>
     {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {fmtDay(new Date(selected))}, {fmtTime(new Date(selected))}</T>:null}
     <View style={{height:12}}/><Cta label="Apply" disabled={!selected} onPress={choose}/>
   </>;
