@@ -6,11 +6,12 @@ import { supabase } from '../../lib/supabase';
 const C = { bg: '#F5F8F3', text: '#1A2517', muted: '#9AA595', green: '#3F6B37', tint: '#DCE8D2', strip: '#E6EDE1', pending: '#A56A12', declined: '#A33D3D' };
 const FILTERS = ['All', 'Payments', 'Top ups', 'Rewards'] as const;
 type Filter = typeof FILTERS[number];
-type Item = { id: string; createdAt: string; title: string; subtitle: string; amount: number; currency: string; direction: 'credit'|'debit'; status: string; category: 'Money'|'Points'|'Transfers'; points?: boolean; transactionType?: string; activityCategory?: string };
+type HistoryCategory = 'Money' | 'Points' | 'Transfers';
+type Item = { id: string; createdAt: string; title: string; subtitle: string; amount: number; currency: string; direction: 'credit'|'debit'; status: string; category: HistoryCategory; points?: boolean; transactionType?: string; activityCategory?: string };
 
 const dateText = (v:string) => { const d=new Date(v); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})+' · '+d.toLocaleTimeString(undefined,{hour:'numeric',minute:'2-digit'}); };
 const statusText = (v:string) => ({succeeded:'Completed',failed:'Declined',cancelled:'Cancelled',processing:'Processing',pending:'Pending'} as Record<string,string>)[v.toLowerCase()] ?? (v ? v.charAt(0).toUpperCase()+v.slice(1) : 'Completed');
-const category = (r:any): Exclude<Filter,'All'> => {
+const category = (r:any): HistoryCategory => {
   const activityCategory = String(r.activity_category ?? '').toLowerCase();
   const type = String(r.transaction_type ?? '').toLowerCase();
   if (activityCategory === 'points') return 'Points';
@@ -26,7 +27,7 @@ function Row({item}:{item:Item}) {
   const amount=item.points ? ((item.direction==='credit'?'+':'-')+Math.abs(item.amount).toLocaleString()+' pts') : ((item.direction==='credit'?'+':'-')+Math.abs(item.amount).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' '+item.currency);
   const status=statusText(item.status);
   return <View style={s.row}>
-    <View style={s.rowIcon}><MaterialCommunityIcons name={item.points?'stars':item.category==='Transfers'?'swap-horiz':item.category==='Money'?'account-balance-wallet':'star-outline'} size={23} color={C.muted}/></View>
+    <View style={s.rowIcon}><MaterialCommunityIcons name={item.points?'stars':item.category==='Transfers'?'swap-horizontal':item.category==='Money'?'wallet-outline':'star-outline'} size={23} color={C.muted}/></View>
     <View style={s.copy}><Text style={s.title} numberOfLines={1}>{item.title}</Text><Text style={s.subtitle} numberOfLines={1}>{item.subtitle}</Text><Text style={s.date}>{dateText(item.createdAt)}</Text></View>
     <View style={s.right}><Text style={[s.amount,item.direction==='credit'&&s.credit]}>{amount}</Text><Text style={[s.status,status==='Declined'&&s.declined,(status==='Pending'||status==='Processing')&&s.pending]}>{status}</Text></View>
   </View>;
