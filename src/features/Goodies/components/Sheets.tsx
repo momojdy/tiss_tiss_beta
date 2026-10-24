@@ -170,7 +170,7 @@ function ScheduleSheet({close}: {close: () => void}) {
     {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
       {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
-        {selectedTs===ts?<Icon name="check-circle" color={th.br}/>:<T size={12} color={th.mut}>Select</T>}
+        {selectedTs===ts?<Icon name="check" color={th.br}/>:<T size={12} color={th.mut}>Select</T>}
       </Pressable>)}
     </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.'}</T></Card>}
     <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>Or enter an exact time</T>
@@ -238,7 +238,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Badge green label="Active" />
       </Row>
       {group.members.map((m:any)=><View key={m.id} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:10,borderTopWidth:1,borderTopColor:th.line}}>
-        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user-round" color={th.mut} /></View>
+        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut} /></View>
         <View style={{flex:1}}><T weight="700">{m.name}</T><T size={12} color={th.mut}>Waiting to add items</T></View>
         <Badge label={m.status || 'Invited'} />
         <Pressable accessibilityRole="button" accessibilityLabel={'Remove '+m.name} onPress={()=>saveGroup({...group,members:group.members.filter((x:any)=>x.id!==m.id)})}><Icon name="x" size={18} color={th.red}/></Pressable>
