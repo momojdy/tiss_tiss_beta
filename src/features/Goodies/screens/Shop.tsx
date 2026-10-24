@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, Image} from 'react-native';
+import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
@@ -196,67 +196,11 @@ export function Cart() {
   );
 }
 
-function slots(store: any = STB[S.cart.sid]) {
-  const out: {ts: number; l: string}[] = [];
-  const F = fees();
-  const now = Date.now();
-  const names = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const lead = store && !store.open && store.acceptScheduledOrders ? Math.max(0, Number(store.scheduledOrderStartMinutes ?? 60)) : F.lead;
-  const schedule = store?.scheduleHours;
-  if (schedule && Object.keys(schedule).length) {
-    for (let dayOffset = 0; dayOffset < 8 && out.length < F.slots; dayOffset++) {
-      const dayDate = new Date(now);
-      dayDate.setDate(dayDate.getDate() + dayOffset);
-      const h = schedule[names[dayDate.getDay()]];
-      if (!h || h.closed || !h.open || !h.close) continue;
-      const [oh, om] = String(h.open).split(':').map(Number), [ch, cm] = String(h.close).split(':').map(Number);
-      const opening = new Date(dayDate); opening.setHours(oh, om || 0, 0, 0);
-      const closing = new Date(dayDate); closing.setHours(ch, cm || 0, 0, 0);
-      let slot = new Date(opening.getTime() + lead * 60000);
-      if (slot.getTime() <= now) {
-        const elapsed = Math.max(0, now - slot.getTime());
-        slot = new Date(slot.getTime() + (Math.floor(elapsed / (30 * 60000)) + 1) * 30 * 60000);
-      }
-      while (slot < closing && slot.getTime() > now && out.length < F.slots) {
-        const day = slot.toDateString() === new Date().toDateString() ? 'Today' : slot.toDateString() === new Date(Date.now() + 86400000).toDateString() ? 'Tomorrow' : fmtDay(slot);
-        out.push({ts: slot.getTime(), l: day + ', ' + fmtTime(slot)});
-        slot = new Date(slot.getTime() + 30 * 60000);
-      }
-    }
-    if (out.length) return out;
-  }
-  let d: Date;
-  if (store && !store.open && store.acceptScheduledOrders) {
-    const opening = String(store.h || '').match(/(\d{1,2})(?::(\d{2}))?\s*(am|pm)/i);
-    d = new Date();
-    if (/tomorrow/i.test(String(store.nx || '')) || !opening) d.setDate(d.getDate() + 1);
-    if (opening) {
-      let hour = Number(opening[1]) % 12;
-      if (opening[3].toLowerCase() === 'pm') hour += 12;
-      d.setHours(hour, Number(opening[2] || 0), 0, 0);
-      if (d.getTime() <= now) d.setDate(d.getDate() + 1);
-    } else d.setHours(9, 0, 0, 0);
-    d = new Date(d.getTime() + lead * 60000);
-  } else {
-    d = new Date(now + F.lead * 60000);
-    d.setMinutes(Math.ceil(d.getMinutes() / F.step) * F.step, 0, 0);
-  }
-  for (let n = 0; n < F.slots; n++) {
-    const day = d.toDateString() === new Date().toDateString() ? 'Today' : d.toDateString() === new Date(Date.now() + 86400000).toDateString() ? 'Tomorrow' : fmtDay(d);
-    out.push({ts: d.getTime(), l: day + ', ' + fmtTime(d)});
-    d = new Date(d.getTime() + 30 * 60000);
-  }
-  return out.filter(x => x.ts > now);
-}
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
-  const nowForPicker = new Date();
-  const [customDate, setCustomDate] = useState(nowForPicker.getFullYear() + '-' + String(nowForPicker.getMonth() + 1).padStart(2, '0') + '-' + String(nowForPicker.getDate()).padStart(2, '0'));
-  const [customHour, setCustomHour] = useState(String(nowForPicker.getHours()).padStart(2, '0'));
-  const [customMinute, setCustomMinute] = useState(String(Math.ceil(nowForPicker.getMinutes() / 5) * 5 % 60).padStart(2, '0'));
   useEffect(() => { void refreshLiveSchedules(); }, []);
-  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, sl = slots(st), stp = ['Delivery', 'Time', 'Payment', 'Review'];
+  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = ['Delivery', 'Time', 'Payment', 'Review'];
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', 'Balance ' + money(S.wallet), 'wallet'], ['moncash', 'MonCash', 'Simulated mobile wallet', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards[0].b + ' •••• ' + S.cards[0].l4 : 'Add a card (demo)', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]]);
   const ct = ctOf();
   let body: any = null;
