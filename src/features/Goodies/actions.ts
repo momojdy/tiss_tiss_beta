@@ -145,34 +145,10 @@ export async function placeOrder() {
   const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (S.cards[0] ? S.cards[0].l4 : ''), cash: 'Cash'}[S.pay as string];
   let id: string;
   do {id = 'GD' + Math.floor(1000 + Math.random() * 9000);} while (S.orders.some((x: any) => x.id === id));
-  let backendOrderId: string | null = null;
-  try {
-    const {data: auth, error: authError} = await supabase.auth.getUser();
-    if (authError) throw authError;
-    if (auth.user) {
-      const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', st.id).eq('is_live', true).maybeSingle();
-      if (mappingError) throw mappingError;
-      if (mapping?.business_id) {
-        const {data: savedOrder, error: orderError} = await supabase.from('goodies_orders').insert({
-          order_code: id, business_id: mapping.business_id, customer_id: auth.user.id, store_id: st.id,
-          status: S.sch && S.sch > Date.now() ? 'scheduled' : 'placed',
-          scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
-          order_type: pk ? 'pickup' : 'delivery',
-          address: pk ? null : {label: a.l, address: a.t, apt: a.apt, instructions: a.inst},
-          contact_phone: ct.ph,
-          items: S.cart.lines.map((l: any) => ({id: l.id, name: l.n, emoji: l.e, quantity: l.q, unit_price: l.p, options: l.d, custom: l.byo || null})),
-          subtotal: t.sub, delivery_fee: t.fee, service_fee: t.svc, discount: t.disc, tip: t.tip, total: t.total,
-          payment_method: S.pay, payment_status: 'demo', notes: String(S.note || '').trim()
-        }).select('id').single();
-        if (orderError) throw orderError;
-        backendOrderId = savedOrder.id;
-      }
-    }
-  } catch (e: any) {
-    S.busy = 0; emit();
-    toast('The store could not receive this order. Your cart is unchanged. ' + String(e?.message || 'Please try again.'));
-    return;
-  }
+  // This feature is in local demo mode until a live provider is explicitly enabled.
+  // Do not query Supabase for a vendor mapping or authentication session here:
+  // missing test accounts must never block a local Goodies order.
+  const backendOrderId: string | null = null;
   if (S.pay === 'wallet') S.wallet -= t.total;
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
