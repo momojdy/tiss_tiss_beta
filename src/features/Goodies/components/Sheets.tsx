@@ -211,7 +211,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const groupSubtotal = S.cart.lines.reduce((sum: number, line: any) => sum + Number(line.p || 0) * Number(line.q || 0), 0);
   const invite = async () => {
     try {
-      await Share.share({message: 'Join my Wantiss Goodies group order! Invite code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. Open Wantiss and enter this code to coordinate the order.'});
+      await Share.share({message: 'Wantiss Goodies group-order invitation. Code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. This is a demo invitation; please send your item choices to the host so they can add them to the shared cart.'});
     } catch (_) { toast('Invite code: ' + group.code); }
   };
   return <>
