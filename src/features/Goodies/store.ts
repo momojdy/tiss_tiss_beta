@@ -1,5 +1,4 @@
-/* Goodies store. Ports the v24 state, persistence, pricing, cart and order logic 1:1.
-   Data comes from the active provider (demo now, Supabase later); this file never imports a provider directly. */
+/* Goodies state, persistence, pricing and cart logic. */
 import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../lib/supabase';
@@ -98,14 +97,6 @@ export async function load() {
   S.gc = S.gc.filter((c: any) => c && c.id && c.ph);
   if (S.cc !== 'w' && !S.gc.some((c: any) => c.id === S.cc)) S.cc = 'w';
   if (!S.addr.some((a: Address) => a.id === S.as)) S.as = defAddr()?.id ?? 0;
-  try { /* DEMO bridge: store settings saved in the Vendor Dashboard (production: backend) */
-    const o = JSON.parse((await AsyncStorage.getItem('goodies-stores-v1')) || 'null');
-    if (o) Object.keys(o).forEach(sid => {
-      const s: any = STB[sid], v = o[sid]; if (!s || !v) return;
-      if (v.category) s.c = v.category; if (v.kind) s.k = v.kind; if (typeof v.fee === 'number') s.fee = v.fee; if (typeof v.minOrder === 'number') s.min = v.minOrder;
-      if (v.etaMin && v.etaMax) s.eta0 = v.etaMin + '–' + v.etaMax; s.pr = v.promo || '';
-    });
-  } catch (e) {}
   await refreshLiveSchedules();
   applyZone(); S.ready = true; emit();
 }
@@ -143,15 +134,9 @@ export function ctOf() {
 export const done = (o: Order) => o.cx || (o.st as number) >= (o.pk ? 4 : 6);
 export const TL = STAGES_DELIVERY, TP = STAGES_PICKUP;
 export function stage(o: Order) {
-  if (o.backendId) {
-    const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0};
-    return map[String(o.serverStatus || 'scheduled').toLowerCase()] ?? 0;
-  }
-  const n = o.pk ? 5 : 7;
-  let i = Math.min(n - 1, Math.floor((Date.now() - o.t0) / 5000));
-  if (o.sch && Date.now() < o.sch) i = Math.min(i, 1);
-  if (o.alc && o.alc.status === 'pending') i = Math.min(i, o.pk ? 3 : 5);
-  return i;
+  if (!o.backendId) return 0;
+  const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0};
+  return map[String(o.serverStatus || 'scheduled').toLowerCase()] ?? 0;
 }
 export function notify(t: string, d: string, r: string, p: string, k?: string) {
   if (k === 'o' && !S.np.orders) return;
