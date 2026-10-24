@@ -93,74 +93,71 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 }
 
 function ScheduleSheet({close}: {close: () => void}) {
-  const th = useTheme();
-  const store = STB[S.cart.sid];
-  const now = new Date();
-  const [dayOffset, setDayOffset] = useState(0);
-  const [hour, setHour] = useState(String(now.getHours()).padStart(2,'0'));
-  const [minute, setMinute] = useState(String(Math.ceil(now.getMinutes()/5)*5 % 60).padStart(2,'0'));
-  const [deliveryMode, setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
+  const th = useTheme(), store: any = STB[S.cart.sid];
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const selectedDate = new Date(); selectedDate.setDate(selectedDate.getDate()+dayOffset);
+  const [dayOffset,setDayOffset] = useState(0);
+  const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
+  const [selectedTs,setSelectedTs] = useState<number>(() => S.sch && S.sch > Date.now() ? S.sch : 0);
+  const now = new Date(), selectedDate = new Date(now);
+  selectedDate.setDate(now.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
   const schedule = store?.scheduleHours || {};
   const hours = schedule[dayNames[selectedDate.getDay()]];
-  const openingTime = hours && !hours.closed && hours.open ? String(hours.open) : '';
-  const closingTime = hours && !hours.closed && hours.close ? String(hours.close) : '';
-  const lead = Math.max(0, Number(store?.scheduledOrderStartMinutes ?? 60));
-  const earliest = new Date(selectedDate.getTime());
-  if (dayOffset === 0) { earliest.setHours(now.getHours(), now.getMinutes(), 0, 0); }
-  else { earliest.setHours(0, 0, 0, 0); }
-  if (!store?.open) {
-    if (openingTime) {
-      const [h,m]=openingTime.split(':').map(Number);
-      const opening = new Date(selectedDate.getTime()); opening.setHours(h,m||0,0,0);
-      const allowed = new Date(opening.getTime()+lead*60000);
-      if(allowed>earliest) earliest.setTime(allowed.getTime());
-    } else {
-      const baseline = dayOffset === 0 ? new Date() : new Date(selectedDate.getTime());
-      if (dayOffset > 0) baseline.setHours(0, 0, 0, 0);
-      const allowed = new Date(baseline.getTime()+lead*60000);
-      if(allowed>earliest) earliest.setTime(allowed.getTime());
+  const opening = hours && !hours.closed && hours.open ? String(hours.open) : '';
+  const closing = hours && !hours.closed && hours.close ? String(hours.close) : '';
+  const lead = Math.max(0,Number(store?.scheduledOrderStartMinutes ?? 60));
+  let earliest = new Date(selectedDate);
+  if(dayOffset===0) earliest = new Date();
+  if(store && !store.open) {
+    if(opening) {
+      const [oh,om]=opening.split(':').map(Number);
+      const opens=new Date(selectedDate);opens.setHours(oh,om||0,0,0);
+      earliest=new Date(Math.max(earliest.getTime(),opens.getTime()+lead*60000));
+    } else earliest=new Date(Math.max(earliest.getTime(),Date.now())+lead*60000);
+  }
+  const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
+  const hasHours = !!(hours && !hours.closed && opening && closing);
+  const candidates:number[]=[];
+  if(hasHours || noSchedule) {
+    let startMinute=0, endMinute=24*60;
+    if(hasHours) {
+      const [oh,om]=opening.split(':').map(Number),[ch,cm]=closing.split(':').map(Number);
+      startMinute=oh*60+(om||0); endMinute=ch*60+(cm||0);
+    } else { startMinute=8*60; endMinute=22*60; }
+    for(let mins=startMinute;mins<endMinute;mins+=30) {
+      const d=new Date(selectedDate);d.setHours(Math.floor(mins/60),mins%60,0,0);
+      if(d.getTime()<=Date.now() || d.getTime()<earliest.getTime()) continue;
+      candidates.push(d.getTime());
     }
   }
-  const earliestLabel = fmtTime(earliest);
-  const selected = new Date(selectedDate.getTime());
-  selected.setHours(Number(hour), Number(minute), 0, 0);
-  const selectedMinutes = selected.getHours()*60+selected.getMinutes();
-  const inHours = !hours || hours.closed || !openingTime || !closingTime ? !store?.scheduleHours || !Object.keys(store.scheduleHours).length : (()=>{const [oh,om]=openingTime.split(':').map(Number),[ch,cm]=closingTime.split(':').map(Number);return selectedMinutes>=oh*60+(om||0)&&selectedMinutes<ch*60+(cm||0);})();
-  const earliestOk = selected.getTime() >= earliest.getTime();
-  const apply = () => {
-    if (!store) {toast('Choose a store before scheduling.');return;}
-    if (deliveryMode === 'delivery' && store.far) {toast('This store is outside the delivery area. Choose pick-up or another address.');return;}
-    if (!store.open && !store.acceptScheduledOrders) {toast('This store does not accept scheduled orders while closed.');return;}
-    if (!hour || !minute || Number(hour)<0 || Number(hour)>23 || Number(minute)<0 || Number(minute)>59) {toast('Enter a valid hour and minute.');return;}
-    if (selected.getTime()<=Date.now()) {toast('Choose a future date and time.');return;}
-    if (!inHours) {toast('Choose a time during the store’s opening hours.');return;}
-    if (!earliestOk) {toast(!store.open ? 'This store’s earliest scheduled time is '+earliestLabel+'.' : 'Choose now or a future time.');return;}
-    A.setSch(selected.getTime()); A.setMode(deliveryMode); toast('Scheduled for '+fmtDay(selected)+', '+fmtTime(selected)); close();
+  const selected = candidates.find(ts=>ts===selectedTs);
+  const choose = () => {
+    if(!store){toast('Choose a store before scheduling.');return;}
+    if(!store.open&&!store.acceptScheduledOrders){toast('This store does not accept scheduled orders while closed.');return;}
+    if(!selected){toast('Choose one of the available times.');return;}
+    A.setSch(selected); A.setMode(deliveryMode);
+    toast('Scheduled for '+fmtDay(new Date(selected))+', '+fmtTime(new Date(selected)));
+    close();
   };
   return <>
     <T size={21} weight="800">Schedule your order</T>
-    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}>Choose delivery or pickup, then select an exact date and time.</T>
-    <SegSchedule value={deliveryMode} onChange={setDeliveryMode} />
+    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}>Choose delivery or pick-up, a date, and an available time.</T>
+    <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
     <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>Choose a day</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
-      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return <Pressable key={i} onPress={()=>{setDayOffset(i);setHour(String(i===0?new Date().getHours():Number((schedule[dayNames[d.getDay()]]?.open||'09:00').split(':')[0])).padStart(2,'0'));setMinute(String(i===0?Math.ceil(new Date().getMinutes()/5)*5%60:Number((schedule[dayNames[d.getDay()]]?.open||'09:00').split(':')[1]||0)).padStart(2,'0'));}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:dayOffset===i?th.br:th.soft,alignItems:'center'}}>
-        <T size={11.5} weight="700" color={dayOffset===i?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={dayOffset===i?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={dayOffset===i?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
+      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
+        <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
-    {store && !store.open ? <Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">Earliest scheduled time</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (openingTime ? 'Opens '+openingTime+' · '+lead+' min advance time. Earliest today: '+earliestLabel : 'Vendor minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card> : null}
-    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>Select time</T>
-    <Row style={{gap:10,alignItems:'flex-end'}}>
-      <View style={{flex:1}}><T size={12} color={th.mut}>Hour (00–23)</T><Input value={hour} onChange={v=>setHour(v.replace(/\D/g,'').slice(0,2))} placeholder="14" keyboard="number-pad" /></View>
-      <T size={20} weight="800" style={{paddingBottom:12}}>:</T>
-      <View style={{flex:1}}><T size={12} color={th.mut}>Minute (00–59)</T><Input value={minute} onChange={v=>setMinute(v.replace(/\D/g,'').slice(0,2))} placeholder="30" keyboard="number-pad" /></View>
-    </Row>
-    <View style={{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:10}}>
-      {[0,15,30,45].map(m=><Pressable key={m} onPress={()=>setMinute(String(m).padStart(2,'0'))} style={{paddingHorizontal:13,paddingVertical:8,borderRadius:18,backgroundColor:Number(minute)===m?th.brt:th.soft,borderWidth:Number(minute)===m?1:0,borderColor:th.br}}><T size={12.5} weight="700">{String(m).padStart(2,'0')} min</T></Pressable>)}
-    </View>
-    <T size={12} color={th.mut} style={{marginTop:8}}>Selected: {fmtDay(selected)}, {fmtTime(selected)}</T>
-    <View style={{height:12}}/><Cta label="Apply" onPress={apply}/>
+    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">Scheduled-order minimum</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? 'Opening '+opening+' · '+lead+' minutes advance time. Only times after the minimum are selectable.' : 'Minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card>:null}
+    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>Available times</T>
+    {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
+      {candidates.map(ts=><Pressable key={ts} onPress={()=>setSelectedTs(ts)} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+        <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
+        {selectedTs===ts?<Icon name="check-circle" color={th.br}/>:<T size={12} color={th.mut}>Select</T>}
+      </Pressable>)}
+    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No times are available on this date. Choose another day.'}</T></Card>}
+    {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {fmtDay(new Date(selected))}, {fmtTime(new Date(selected))}</T>:null}
+    <View style={{height:12}}/><Cta label="Apply" disabled={!selected} onPress={choose}/>
   </>;
 }
 function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) {
