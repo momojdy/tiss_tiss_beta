@@ -238,10 +238,14 @@ function ScheduleTimeSheet({close, storeId}: {close: () => void; storeId: string
 
 function GroupOrderSheet({close}: {close: () => void}) {
   const th = useTheme();
-  const current = S.groupOrder || {code: 'GD' + Math.random().toString(36).slice(2, 7).toUpperCase(), host: S.pf.n || 'You', members: []};
   const [name, setName] = useState('');
-  const [group, setGroup] = useState(current);
+  const [group, setGroup] = useState(() => {
+    if (S.groupOrder) return S.groupOrder;
+    const next = {code: 'GD' + Math.random().toString(36).slice(2, 7).toUpperCase(), host: S.pf.n || 'You', members: []};
+    S.groupOrder = next; save(); return next;
+  });
   const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
+  const groupSubtotal = S.cart.lines.reduce((sum: number, line: any) => sum + Number(line.p || 0) * Number(line.q || 0), 0);
   const invite = async () => {
     try {
       await Share.share({message: 'Join my Wantiss Goodies group order! Invite code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. Open Wantiss and enter this code to coordinate the order.'});
@@ -276,6 +280,12 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Pressable accessibilityRole="button" accessibilityLabel={'Remove '+m.name} onPress={()=>saveGroup({...group,members:group.members.filter((x:any)=>x.id!==m.id)})}><Icon name="x" size={18} color={th.red}/></Pressable>
       </View>)}
       {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}>No members yet. Invite friends or add their names to plan the group.</T> : null}
+    </Card>
+    <View style={{height:12}}/>
+    <T size={15} weight="800" style={{marginBottom:7}}>Shared cart</T>
+    <Card>
+      {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{paddingVertical:7,alignItems:'flex-start'}}><View style={{flex:1}}><T weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut}>The host cart is empty. Add items from a store to start the group order.</T>}
+      <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}><Row sp><T weight="800">Items subtotal</T><T weight="800">{money(groupSubtotal)}</T></Row><T size={11.5} color={th.mut} style={{marginTop:4}}>Delivery and service fees are calculated at checkout.</T></View>
     </Card>
     <View style={{height:12}} />
     <Cta label="Done" onPress={close} />
