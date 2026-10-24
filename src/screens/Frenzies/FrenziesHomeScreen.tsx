@@ -66,6 +66,7 @@ type ScreenHandlers = {
   onPlayGame?: (gameId: string) => void;
   onOpenTier?: (tier: TournamentTierKey) => void;
   onGetPass?: () => void;
+  onOpenRankings?: () => void;
   onOpenStreakShield?: () => void;
 };
 
