@@ -49,10 +49,14 @@ export const goodiesApi = {
   listRequests: (biz: string) => rd<GRequest[]>(k(biz, 'requests'), []),
   saveRequests: (biz: string, l: GRequest[]) => AsyncStorage.setItem(k(biz, 'requests'), JSON.stringify(l)),
   library: async () => {
-    const remote = await fetchPublishedWantissContent('en');
-    const record = remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
-    const payload = record?.payload as { items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
-    return Array.isArray(payload?.items) ? payload.items : [];
+    try {
+      const remote = await fetchPublishedWantissContent('en');
+      const record = remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
+      const payload = record?.payload as { items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
+      return Array.isArray(payload?.items) ? payload.items : [];
+    } catch {
+      return [];
+    }
   },
 };
 
