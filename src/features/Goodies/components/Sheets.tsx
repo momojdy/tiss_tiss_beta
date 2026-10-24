@@ -95,14 +95,20 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 function ScheduleSheet({close}: {close: () => void}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const [dayOffset,setDayOffset] = useState(0);
-  const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
   const now = new Date();
   const roundedNow = new Date(now); roundedNow.setMinutes(Math.ceil(now.getMinutes()/5)*5,0,0);
   if (roundedNow.getTime() <= now.getTime()) roundedNow.setMinutes(roundedNow.getMinutes()+5);
-  const [customHour,setCustomHour] = useState(String(roundedNow.getHours()).padStart(2,'0'));
-  const [customMinute,setCustomMinute] = useState(String(roundedNow.getMinutes()).padStart(2,'0'));
-  const [customMode,setCustomMode] = useState(false);
+  const initialSchedule = S.sch && S.sch > Date.now() ? new Date(S.sch) : roundedNow;
+  const [dayOffset,setDayOffset] = useState(() => {
+    if (!S.sch || S.sch <= Date.now()) return 0;
+    const today = new Date(); today.setHours(0,0,0,0);
+    const chosen = new Date(S.sch); chosen.setHours(0,0,0,0);
+    return Math.max(0,Math.min(6,Math.round((chosen.getTime()-today.getTime())/86400000)));
+  });
+  const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
+  const [customHour,setCustomHour] = useState(String(initialSchedule.getHours()).padStart(2,'0'));
+  const [customMinute,setCustomMinute] = useState(String(initialSchedule.getMinutes()).padStart(2,'0'));
+  const [customMode,setCustomMode] = useState(!!(S.sch && S.sch > Date.now() && ![0,15,30,45].includes(new Date(S.sch).getMinutes())));
   const [selectedTs,setSelectedTs] = useState<number>(() => S.sch && S.sch > Date.now() ? S.sch : 0);
   const selectedDate = new Date(now);
   selectedDate.setDate(now.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
