@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
   skeletonCard: { width: 250 },
   destinationRow: { gap: 12, paddingRight: 16 },
   destinationCard: { width: 194, height: 150, borderRadius: 24, overflow: 'hidden', backgroundColor: '#E8E8E8' },
-  destinationImage: { ...StyleSheet.absoluteFillObject, width: '100%', height: '100%' },
+  destinationImage: { ...StyleSheet.absoluteFill, width: '100%', height: '100%' },
   destinationShade: { flex: 1, justifyContent: 'flex-end', padding: 12, backgroundColor: 'rgba(13,19,27,0.44)' },
   discoveryRow: { gap: 12, paddingRight: 16 },
   experienceCard: { width: 276, borderWidth: 1, borderRadius: 16, overflow: 'hidden' },
