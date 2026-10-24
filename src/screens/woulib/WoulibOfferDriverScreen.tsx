@@ -1,7 +1,7 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 import Animated, {FadeIn} from 'react-native-reanimated';
-import type {WoulibScreenProps} from './WoulibFlow';
+type WoulibScreenProps = { ride: { status: string; vehicle: unknown; drivers: any[]; offerIdx: number; price: number; decline: () => void; accept: () => void }; t: { ink: string; yellowSoft: string; muted: string }; kit: { styles: any; Btn: any; DriverRow: any; fare: (price: number) => string; etaRange: (eta: number) => string } };
 
 export function WoulibOfferDriverScreen({ride, t, kit}: WoulibScreenProps) {
   const {styles, Btn, DriverRow, fare, etaRange} = kit;
