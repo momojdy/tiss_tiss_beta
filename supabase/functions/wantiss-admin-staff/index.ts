@@ -85,7 +85,7 @@ Deno.serve(async (req: Request) => {
     if (!userId || !["active", "suspended", "revoked"].includes(status) || reason.length < 3) {
       return reply(400, { error: "User ID, valid status, and reason are required" });
     }
-    const { error } = await userClient.rpc("wantiss_admin_set_staff_status", {
+    const { error } = await userClient.rpc("wantiss_admin_set_staff_status_secure", {
       p_user_id: userId, p_status: status, p_reason: reason,
     });
     if (error) return reply(error.code === "42501" ? 403 : 400, { error: error.message });
