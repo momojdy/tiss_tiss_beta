@@ -90,7 +90,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  if auth.role() <> 'service_role' then
+  if coalesce(auth.role(), '') <> 'service_role' then
     raise exception 'Service role required' using errcode = '42501';
   end if;
 
@@ -214,7 +214,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  if auth.uid() is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+  if auth.uid() is null or not exists (select 1 from public.wantiss_admin_staff a where a.user_id = (select auth.uid()) and a.status = 'active' and a.role = 'super_admin') then
     raise exception 'Not authorized' using errcode = '42501';
   end if;
   if p_status not in ('active', 'suspended', 'revoked') then
@@ -258,7 +258,7 @@ as $$
 declare
   v_id uuid;
 begin
-  if auth.uid() is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+  if auth.uid() is null or not exists (select 1 from public.wantiss_admin_staff a where a.user_id = (select auth.uid()) and a.status = 'active' and a.role = 'super_admin') then
     raise exception 'Not authorized' using errcode = '42501';
   end if;
   if p_access_level not in ('view', 'edit', 'manage') then raise exception 'Invalid access level'; end if;
@@ -284,7 +284,7 @@ security definer
 set search_path = ''
 as $$
 begin
-  if auth.uid() is null or not public.wantiss_has_permission('staff.manage', 'manage') then
+  if auth.uid() is null or not exists (select 1 from public.wantiss_admin_staff a where a.user_id = (select auth.uid()) and a.status = 'active' and a.role = 'super_admin') then
     raise exception 'Not authorized' using errcode = '42501';
   end if;
   if length(trim(coalesce(p_reason, ''))) < 3 then raise exception 'A reason is required'; end if;
@@ -323,6 +323,8 @@ begin
   if p_status = 'archived' and not public.wantiss_has_permission('content.archive', 'manage') then
     raise exception 'Archiving requires content.archive manage permission' using errcode = '42501';
   end if;
+
+  perform pg_advisory_xact_lock(hashtextextended(trim(p_content_key) || ':' || p_locale, 0));
 
   select coalesce(max(c.version), 0) + 1 into v_version
   from public.wantiss_cms_content c
