@@ -14,13 +14,14 @@ import { useStayzSearch } from './stayzSearchContext';
 import { useStayzTheme } from './stayzThemeContext';
 
 type Nav = NativeStackNavigationProp<RootStackParamList>;
-type Fail = 'declined' | 'unavailable' | 'auth' | 'network';
+type Fail = 'declined' | 'unavailable' | 'auth' | 'network' | 'insufficient_balance';
 
 const COPY: Record<Fail, { title: string; body: string }> = {
   declined: { title: 'Payment was declined', body: 'Your payment method did not go through. Try another method.' },
   unavailable: { title: 'No longer available', body: 'Someone just booked these dates. Choose different dates or another property.' },
   auth: { title: 'Sign in required', body: 'Sign in to your Wantiss account to book this stay.' },
   network: { title: 'Connection problem', body: 'We could not reach Stayz. You have not been charged. Please try again.' },
+  insufficient_balance: { title: 'Insufficient wallet balance', body: 'Your wallet balance is too low for this booking. Top up your wallet or choose another payment method.' },
 };
 
 export const StayzProcessingScreen = ({ route }: RootProps<'Processing'>) => {
