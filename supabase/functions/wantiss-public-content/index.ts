@@ -20,7 +20,7 @@ Deno.serve(async (req: Request) => {
   if (!/^[a-z]{2,3}(-[A-Z]{2})?$/.test(locale)) return reply(400, { error: "Invalid locale" });
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-  const { data: content, error: contentError } = await admin.rpc("wantiss_public_content", { p_locale: locale });
+  const { data: content, error: contentError } = await admin.rpc("wantiss_cms_published_content", { p_locale: locale });
   if (contentError) return reply(503, { error: "Published content is temporarily unavailable" });
 
   const { data: assets, error: assetError } = await admin
