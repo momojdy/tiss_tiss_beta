@@ -4,51 +4,20 @@ import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../lib/supabase';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
-import {RAW_STORES, STX, PROMOS, DEALS} from './data/seed';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
+export const KEY = 'goodies-live-v4';
+export const WKEY = 'goodies-live-profile-v2';
 
-export const KEY = 'goodies-v3';
-export const WKEY = 'goodies-wantiss-shared-mock-v1';
-
-/* ---------- catalog (built exactly like v24) ---------- */
+/* The customer catalog is empty until published backend products are available. */
 export const IT: Record<string, Item> = {};
 export const STB: Record<string, Store> = {};
-export const ST: Store[] = RAW_STORES.map(a => {
-  const s: any = {id: a.id, n: a.n, c: a.c, e: a.e, bg: a.bg, r: a.r, rv: a.rv, km: a.km, eta: a.eta, fee: a.fee, min: a.min, pr: a.pr, k: a.k};
-  s.it = a.items.map((x, i) => {
-    const o: any = {id: a.id + '_' + i, s: a.id, n: x.n, p: x.p, e: x.e};
-    IT[o.id] = o;
-    return o;
-  });
-  STB[s.id] = s;
-  return s;
-});
+export const ST: Store[] = [];
 export const PV: Record<string, boolean> = {};
-ST.forEach(s => (PV[s.id] = Math.random() < 0.5));
-ST.forEach(s => {
-  const x = STX[s.id] || ({} as any);
-  s.km0 = s.km; s.eta0 = s.eta;
-  s.open = x.open === 0 ? 0 : 1;
-  s.h = x.h || (s.c === 'restaurants' ? '10am–10pm' : '8am–9pm');
-  s.nx = x.nx || '';
-  s.acceptScheduledOrders = x.scheduled === true;
-  s.scheduledOrderStartMinutes = Number(x.scheduledStartMinutes ?? 60);
-});
-Object.keys(IT).forEach((k, n) => {
-  const i = IT[k], s = STB[i.s];
-  i.stock = 4 + ((n * 7) % 9);
-  i.oos = k === 's2_2' || k === 's6_3' ? 1 : 0;
-  if (i.oos) i.stock = 0;
-  i.d = i.n + ' from ' + s.n + '. Prepared or packed fresh the same day.';
-  i.al = s.c === 'bakery' ? 'Contains gluten, eggs and dairy.' : s.id === 's2' ? 'Contains fish or shellfish.' : '';
-  i.w = /\blb\b/.test(i.n);
-  i.restriction = /clairin|\brum\b|rhum|beer|wine|vodka|whisk/i.test(i.n) ? 'alcohol' : s.c === 'drugstore' ? 'otc' : 'none';
-});
-export const PR = PROMOS;
+export const PR: any[] = [];
 export const contentHooks: {coupons?: () => any[]; fees?: () => any; minAge?: (cc: string) => number} = {};
-const coupons = () => (contentHooks.coupons ? contentHooks.coupons() : PR);
-const feesNow = () => (contentHooks.fees ? contentHooks.fees() : {svc: 0.5, firstFree: true, far: 5.5, tips: [0, 1, 2, 5], lead: 30, step: 15, slots: 5, pay: {Wallet: 1, MonCash: 1, Card: 1, Cash: 1}, rfSvc: true, rfTip: true});
-export {DEALS};
+const coupons = () => (contentHooks.coupons ? contentHooks.coupons() : []);
+const feesNow = () => (contentHooks.fees ? contentHooks.fees() : {svc: 0, firstFree: false, far: 0, tips: [], lead: 0, step: 0, slots: 0, pay: {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: false, rfTip: false});
+export const DEALS: any[] = [];
 
 /* ---------- helpers ---------- */
 const LOC: Record<string, string> = {en: 'en-US', fr: 'fr-FR', ht: 'fr-HT', es: 'es-ES', 'zh-Hans': 'zh-Hans-CN'};
@@ -69,19 +38,13 @@ export const phoneOK = (s: string) => {s = String(s || '').trim(); const d = s.r
 
 /* ---------- state ---------- */
 const WDEF = () => ({
-  pf: {n: 'Guest', e: 'guest@wantiss.demo', ph: '+509 3700 0000', av: ''},
-  addr: [
-    {id: 1, l: 'Home', t: 'Delmas 33, Port-au-Prince', apt: '', inst: '', def: 1, z: 0, cc: 'HT'},
-    {id: 2, l: 'Work', t: 'Rue Lamarre, Pétion-Ville', apt: '', inst: '', def: 0, z: 1.4, cc: 'HT'},
-  ] as Address[],
+  pf: {n: '', e: '', ph: '', av: ''},
+  addr: [] as Address[],
 });
 const GDEF = () => ({
-  notifs: [
-    {id: 1, t: 'Welcome to Goodies 🎉', d: 'Your first order ships free. Tap to start browsing.', r: 'catlist', p: 'restaurants', u: 1},
-    {id: 2, t: 'Earn double points this weekend', d: 'Pay with your Wallet on any order. See the coupons page for current offers.', r: 'promos', p: '', u: 1},
-  ] as any[],
+  notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
-  wallet: 45, hasWallet: true, pay: 'wallet', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 1, promos: 1}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
+  wallet: 0, hasWallet: false, pay: 'cash', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
 });
 export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp', 'cards', 'wallet', 'hasWallet', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'driverRev', 'rec', 'rv', 'groupOrder'];
 
@@ -183,11 +146,11 @@ export async function load() {
   S.fav = S.fav.filter((x: string) => STB[x]); S.favp = S.favp.filter((x: string) => IT[x]);
   S.addr = S.addr.filter((a: any) => a && a.t); if (!S.addr.length) S.addr = WDEF().addr;
   S.addr.forEach((a: any) => {if (typeof a.z !== 'number') a.z = zoneOf(a.t); if (!a.cc) a.cc = 'HT';});
-  if (!S.addr.some((a: Address) => a.def)) S.addr[0].def = 1;
+  if (S.addr.length && !S.addr.some((a: Address) => a.def)) S.addr[0].def = 1;
   if (!S.pf || !S.pf.n) S.pf = WDEF().pf; if (!S.pf.ph) S.pf.ph = WDEF().pf.ph;
   S.gc = S.gc.filter((c: any) => c && c.id && c.ph);
   if (S.cc !== 'w' && !S.gc.some((c: any) => c.id === S.cc)) S.cc = 'w';
-  if (!S.addr.some((a: Address) => a.id === S.as)) S.as = defAddr().id;
+  if (!S.addr.some((a: Address) => a.id === S.as)) S.as = defAddr()?.id ?? 0;
   try { /* DEMO bridge: store settings saved in the Vendor Dashboard (production: backend) */
     const o = JSON.parse((await AsyncStorage.getItem('goodies-stores-v1')) || 'null');
     if (o) Object.keys(o).forEach(sid => {
@@ -218,7 +181,7 @@ export const unread = () => S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid].far);
 export function applyZone() {
-  const z = addr().z || 0, d = Math.round(z * 3);
+  const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
     s.km = Math.round((s.km0 + z) * 10) / 10;
     const q = s.eta0.split('–');
