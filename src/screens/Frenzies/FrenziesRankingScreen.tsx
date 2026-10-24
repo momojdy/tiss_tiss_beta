@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: colors.pageBg },
   content: { paddingHorizontal: 18, paddingBottom: 40 },
   intro: { paddingTop: 14, paddingBottom: 18 },
-  card: { backgroundColor: colors.rankings.cardBg, borderRadius: colors.rankings.cardRadius ?? 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
+  card: { backgroundColor: colors.rankings.cardBg, borderRadius: 20, borderWidth: 1, borderColor: colors.rankings.cardBorder, overflow: 'hidden' },
   leaderboardScroll: { maxHeight: 560 },
   cardHeader: { height: 52, paddingHorizontal: 16, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomColor: colors.rankings.rowBorder },
   fireLabel: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
   youAvatar: { borderWidth: 2, borderColor: colors.rankings.youRing },
   avatarImage: { width: 34, height: 34 },
   wins: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 9, paddingVertical: 5, borderRadius: 12, backgroundColor: colors.rankings.flamePillBg },
+  empty: { paddingVertical: 24, alignItems: 'center', justifyContent: 'center' },
   emptyHint: { minHeight: 120, paddingHorizontal: 24, alignItems: 'center', justifyContent: 'center' },
   pinnedYou: { position: 'absolute', left: 0, right: 0, bottom: 0, backgroundColor: '#E7F3D8', borderTopWidth: 1, borderTopColor: colors.rankings.rowBorder },
 });
