@@ -328,7 +328,7 @@ export function RideProvider({children, service}: {children: React.ReactNode; se
 
 const styles = StyleSheet.create({
   abs: {position: 'absolute', left: 0, top: 0},
-  absFill: {...StyleSheet.absoluteFillObject},
+  absFill: {...StyleSheet.absoluteFill},
   world: {position: 'absolute', left: 0, top: 0, width: 2500, height: 1620},
   anchor: {position: 'absolute', left: 0, top: 0},
   // flow
