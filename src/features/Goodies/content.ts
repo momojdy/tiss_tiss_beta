@@ -74,8 +74,8 @@ export function coupons() {
 }
 export const fees = () => {
   const f = C ? C.fees : null;
-  return {svc: f ? f.svc : 0.5, firstFree: f ? !!f.first : true, tips: f ? String(f.tips).split(',').map(Number) : [0, 1, 2, 5], lead: f ? f.lead : 30, step: f ? f.step : 15, slots: f ? f.slots : 5, far: f ? f.far : 5.5,
-    pay: f ? f.pay : {Wallet: 1, MonCash: 1, Card: 1, Cash: 1}, rfSvc: f ? !!f.rfSvc : true, rfTip: f ? !!f.rfTip : true};
+  return {svc: Number(f?.svc ?? 0), firstFree: !!f?.first, tips: f ? String(f.tips ?? '').split(',').filter(Boolean).map(Number) : [], lead: Number(f?.lead ?? 0), step: Number(f?.step ?? 0), slots: Number(f?.slots ?? 0), far: Number(f?.far ?? 0),
+    pay: f?.pay ?? {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: !!f?.rfSvc, rfTip: !!f?.rfTip};
 };
 /* alcohol minimum age by country (admin table), default elsewhere */
 export function minAge(cc: string | null | undefined): number {
@@ -83,9 +83,9 @@ export function minAge(cc: string | null | undefined): number {
   const r = (C.ages || []).find((a: any) => a.cc === cc); return r ? r.age : C.ageDef;
 }
 export const rgText = (id: string, fallback: string, age: number) => {const t = C && C.rg && C.rg.texts.find((x: any) => x.id === id); return (t ? tx(t.t) || fallback : fallback).replace(/\{age\}/g, String(age));};
-export const rulesLive = () => !C || !!(C.rg && C.rg.live) || true; /* demo shows rules whether or not the admin published them; production should require live */
+export const rulesLive = () => !!(C && C.rg && C.rg.live);
 export const stageLabels = (pickup: boolean, fallback: string[]) => {
-  if (!C) return fallback;
+  if (!C) return [];
   const L = C.stages.filter((s: any) => (pickup ? /^stg\.p/ : /^stg\.d/).test(s.id)); return L.length === fallback.length ? L.map((s: any, i: number) => tx(s.t) || fallback[i]) : fallback;
 };
 export const faq = (_fallback: [string, string][]): [string, string][] => (C && Array.isArray(C.faq) ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : []);
