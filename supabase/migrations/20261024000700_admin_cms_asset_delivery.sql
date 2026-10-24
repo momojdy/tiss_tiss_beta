@@ -105,3 +105,40 @@ with check (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('
 drop policy if exists wantiss_cms_asset_delete on storage.objects;
 create policy wantiss_cms_asset_delete on storage.objects for delete to authenticated
 using (bucket_id = 'wantiss-cms-assets' and public.wantiss_has_permission('content.assets', 'manage') and (storage.foldername(name))[1] = (select auth.uid())::text);
+
+create or replace function public.wantiss_admin_set_asset_status(p_asset_id uuid, p_status text, p_reason text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_before jsonb;
+  v_after jsonb;
+begin
+  if auth.uid() is null then raise exception 'Authentication required' using errcode = '42501'; end if;
+  if p_status not in ('draft', 'published', 'archived') then raise exception 'Invalid asset status'; end if;
+  if length(trim(coalesce(p_reason, ''))) < 3 then raise exception 'A reason is required'; end if;
+  if p_status = 'published' and not public.wantiss_has_permission('content.publish', 'manage') then
+    raise exception 'Publishing requires content.publish manage permission' using errcode = '42501';
+  end if;
+  if p_status = 'archived' and not public.wantiss_has_permission('content.archive', 'manage') then
+    raise exception 'Archiving requires content.archive manage permission' using errcode = '42501';
+  end if;
+  if p_status = 'draft' and not public.wantiss_has_permission('content.assets', 'edit') then
+    raise exception 'Asset edit permission required' using errcode = '42501';
+  end if;
+  select to_jsonb(a) into v_before from public.wantiss_cms_assets a where a.id = p_asset_id for update;
+  if v_before is null then raise exception 'Asset not found'; end if;
+  update public.wantiss_cms_assets
+  set status = p_status, updated_by = auth.uid(), updated_at = now(),
+      published_by = case when p_status = 'published' then auth.uid() else null end,
+      published_at = case when p_status = 'published' then now() else null end
+  where id = p_asset_id
+  returning to_jsonb(wantiss_cms_assets.*) into v_after;
+  insert into public.wantiss_admin_audit_log(actor_user_id, action, resource_type, resource_id, reason, before_state, after_state)
+  values (auth.uid(), 'cms_asset_status_changed', 'cms_asset', p_asset_id::text, p_reason, v_before, v_after);
+end;
+$$;
+revoke all on function public.wantiss_admin_set_asset_status(uuid, text, text) from public, anon;
+grant execute on function public.wantiss_admin_set_asset_status(uuid, text, text) to authenticated;
