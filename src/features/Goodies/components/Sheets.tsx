@@ -112,6 +112,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   const lead = Math.max(0, Number(store?.scheduledOrderStartMinutes ?? 60));
   const earliest = new Date(selectedDate);
   if (dayOffset === 0) { earliest.setHours(now.getHours(), now.getMinutes(), 0, 0); }
+  else { earliest.setHours(0, 0, 0, 0); }
   if (!store?.open) {
     if (openingTime) {
       const [h,m]=openingTime.split(':').map(Number);
@@ -120,6 +121,7 @@ function ScheduleSheet({close}: {close: () => void}) {
       if(allowed>earliest) earliest.setTime(allowed.getTime());
     } else {
       const baseline = dayOffset === 0 ? new Date() : new Date(selectedDate);
+      if (dayOffset > 0) baseline.setHours(0, 0, 0, 0);
       const allowed = new Date(baseline.getTime()+lead*60000);
       if(allowed>earliest) earliest.setTime(allowed.getTime());
     }
