@@ -48,8 +48,7 @@
     "qrcode": "1.5.4",
     "react-native-qrcode-svg": "^6.3.15",
     "expo-blur": "~57.0.0",
-    "expo-clipboard": "~57.0.0",
-    "@expo-google-fonts/bricolage-grotesque": "^0.4.2"
+    "expo-clipboard": "~57.0.0"
   },
   "devDependencies": {
     "@types/react": "~19.2.2",
