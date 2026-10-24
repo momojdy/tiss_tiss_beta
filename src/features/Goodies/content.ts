@@ -1,13 +1,9 @@
-/* Content provider. PROPOSED contract: the shape below is exactly what the Wantiss Admin v5 exports (Goodies > Overview > Export content).
-   DEMO: the JSON is pasted or loaded once and stored on the device. PRODUCTION: the same shape is served by the backend; no screen changes.
-   Every accessor falls back to the v24 seed so the app never shows an empty heading. */
-import AsyncStorage from '@react-native-async-storage/async-storage';
+/* Shared published content provider. Draft content is never read by customer or vendor clients. */
+import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 import {tx} from './i18n';
 import {contentHooks} from './store';
-import {CATS, DEALS, PROMOS} from './data/seed';
 import type {Txt} from './data/types';
 
-const KEY = 'goodies-content-v1';
 export interface Asset {u: string; w: number; h: number; ver: number}
 export const ASSETS: Record<string, Asset> = {};
 export const LAYOUT: Record<string, {rk: number | null; w: number | null; k: number | null; off?: boolean}> = {};
@@ -25,14 +21,38 @@ export function applyContent(json: any) {
   });
   subs.forEach(f => f());
 }
-export async function loadContent() {try {const r = await AsyncStorage.getItem(KEY); if (r) applyContent(JSON.parse(r));} catch (e) {}}
-export async function importContent(text: string) {const j = JSON.parse(text); applyContent(j); await AsyncStorage.setItem(KEY, text);}
-export async function clearContent() {C = null; Object.keys(ASSETS).forEach(k => delete ASSETS[k]); await AsyncStorage.removeItem(KEY); subs.forEach(f => f());}
+export async function loadContent() {
+  try {
+    const remote = await fetchPublishedWantissContent('en');
+    const record = remote.content.find(x => x.content_key === 'goodies.content' || x.content_key === 'goodies');
+    const payload: any = record?.payload;
+    if (payload && payload.v === 5) {
+      const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
+      (payload.lib || []).forEach((item: any) => {
+        const key = item.img?.assetKey || item.img?.asset_key;
+        if (key && assetByKey.has(key)) item.img.data = assetByKey.get(key);
+      });
+      applyContent(payload);
+    } else {
+      C = null;
+      Object.keys(ASSETS).forEach(k => delete ASSETS[k]);
+      Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
+      subs.forEach(f => f());
+    }
+  } catch {
+    C = null;
+    Object.keys(ASSETS).forEach(k => delete ASSETS[k]);
+    Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
+    subs.forEach(f => f());
+  }
+}
+export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); }
+export async function clearContent() { C = null; Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
 export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
 export function categories(): {id: string; name: Txt; emoji: string; art?: string | null}[] {
-  if (!C) return CATS.map(c => ({id: c.id, name: c.name, emoji: c.emoji}));
+  if (!C) return [];
   return C.cats.filter((c: any) => c.st === 'on').sort((a: any, b: any) => a.ord - b.ord).map((c: any) => ({id: c.id, name: c.name, emoji: c.emoji, art: c.art ? c.art.data : null, home: c.home}));
 }
 export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? 'All stores' : id;};
@@ -44,12 +64,12 @@ export function promoCards(): PromoCard[] | null {
   return C.promos.filter(live).sort((a: any, b: any) => a.ord - b.ord).map((p: any) => ({id: p.id, emoji: p.emoji, color: p.color, title: tx(p.title), sub: tx(p.sub), btn: tx(p.btn), target: p.target, newOnly: p.aud === 'New customers'}));
 }
 export function deals(): [string, number, number][] {
-  if (!C) return DEALS;
+  if (!C) return [];
   return C.deals.filter((d: any) => d.st === 'Live' && d.rs !== 'alcohol').map((d: any) => [d.item, d.pct, d.left]);
 }
 export function dealEnd(): number | null {return C && C.dealEnd ? new Date(C.dealEnd).getTime() : null;}
 export function coupons() {
-  if (!C) return PROMOS;
+  if (!C) return [];
   return C.coupons.filter(live).map((c: any) => ({c: c.code, t: tx(c.title), d: tx(c.desc), min: c.min, ty: c.kind === 'Percent' ? 'pct' : 'ship', v: c.val, st: c.store === 'All stores' ? undefined : c.store}));
 }
 export const fees = () => {
