@@ -148,7 +148,7 @@ export function PromoSheet() {
 export function PayoutSetupSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), p = app.meta.payout;
   const start = () => a.run(async () => {
-    const { data, error } = await supabase.functions.invoke('payout-onboarding', { body: { business_id: app.biz.id, return_url: `${APP_URL}/business/payouts` } });
+    const { data, error } = await supabase.functions.invoke('payout-onboarding', { body: { business_id: app.biz.id, return_url: Linking.createURL('/business/payouts') } });
     if (error) throw error;
     if (!data?.url) throw new Error(data?.error ?? 'Could not start payout setup');
     await WebBrowser.openBrowserAsync(data.url);
