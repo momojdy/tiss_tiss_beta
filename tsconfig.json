@@ -23,6 +23,7 @@
     "screens",
     "services",
     "store",
-    "theme"
+    "theme",
+    "supabase/functions"
   ]
 }

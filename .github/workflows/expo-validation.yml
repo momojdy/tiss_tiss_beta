@@ -24,3 +24,14 @@ jobs:
         run: npx expo-doctor
       - name: Export Expo web bundle
         run: npx expo export --platform web
+
+  edge-functions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Type-check admin bootstrap function
+        run: deno check supabase/functions/wantiss-admin-bootstrap/index.ts
