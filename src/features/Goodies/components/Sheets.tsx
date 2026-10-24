@@ -210,7 +210,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </Row>
     <Card>
       <Row style={{gap:10, alignItems:'center', paddingVertical:4}}>
-        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}><Icon name="user-round" color={th.br} /></View>
+        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.br} /></View>
         <View style={{flex:1}}><T weight="800">{group.host || S.pf.n || 'You'} (Host)</T><T size={12} color={th.mut}>Owns the group cart</T></View>
         <Badge green label="Active" />
       </Row>
