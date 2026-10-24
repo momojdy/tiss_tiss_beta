@@ -108,7 +108,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
   const [customHour,setCustomHour] = useState(String(initialSchedule.getHours()).padStart(2,'0'));
   const [customMinute,setCustomMinute] = useState(String(initialSchedule.getMinutes()).padStart(2,'0'));
-  const [customMode,setCustomMode] = useState(!!(S.sch && S.sch > Date.now() && ![0,15,30,45].includes(new Date(S.sch).getMinutes())));
+  const [customMode,setCustomMode] = useState(!!(S.sch && S.sch > Date.now() && ![0,30].includes(new Date(S.sch).getMinutes())));
   const [selectedTs,setSelectedTs] = useState<number>(() => S.sch && S.sch > Date.now() ? S.sch : 0);
   const selectedDate = new Date(now);
   selectedDate.setDate(now.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
