@@ -1,5 +1,4 @@
 /* Actions. 1:1 port of the Goodies v24 `A` handlers. Messages stay in English here and move to i18n keys during the localization pass. */
-import {supabase} from '../../lib/supabase';
 import {providerInfo} from './providers';
 import {
   hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur,
