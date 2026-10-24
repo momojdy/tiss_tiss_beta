@@ -7,10 +7,10 @@ import FrenziesHeader from '../../components/frenzies/FrenziesHeader';
 
 const SHIELD_UNIT_PRICE = 0.25;
 const PACKAGES = [
-  { quantity: 1, label: '1 Shield', sub: '$0.25 total', badge: '' },
-  { quantity: 5, label: '5 Shields', sub: '$1.00 total', badge: 'Best value' },
-  { quantity: 10, label: '10 Shields', sub: '$1.75 total', badge: 'Save 30%' },
-  { quantity: 25, label: '25 Shields', sub: '$4.00 total', badge: 'Save 36%' },
+  { quantity: 1, label: '1 Shield', sub: '$0.25 total', badge: '', price: 0.25 },
+  { quantity: 5, label: '5 Shields', sub: '$1.00 total', badge: 'Best value', price: 1.00 },
+  { quantity: 10, label: '10 Shields', sub: '$1.75 total', badge: 'Save 30%', price: 1.75 },
+  { quantity: 25, label: '25 Shields', sub: '$4.00 total', badge: 'Save 36%', price: 4.00 },
 ];
 
 const tx = (size: number, family: string, color: string = colors.textPrimary) => ({ fontFamily: family, fontSize: size, lineHeight: size * 1.21, color, includeFontPadding: false });
