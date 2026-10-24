@@ -298,7 +298,7 @@ export const StayzHomeScreen = () => {
                     <StayzTxt v="h3">{place.label}</StayzTxt>
                     <StayzTxt v="caption" sub>{place.sub} · {search.mode === 'hourly' ? 'Hourly' : search.mode === 'dayuse' ? 'Day use' : search.mode === 'extended' ? 'Extended' : 'Overnight'}</StayzTxt>
                   </View>
-                  <Ionicons name="arrow-up-right" size={18} color={colors.sub} />
+                  <Ionicons name="open-outline" size={18} color={colors.sub} />
                 </Pressable>
               ))}
             </View>
