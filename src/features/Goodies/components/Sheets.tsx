@@ -177,7 +177,6 @@ function ScheduleTimeSheet({close, storeId}: {close: () => void; storeId: string
   const [date,setDate] = useState(dateString(initial));
   const [hour,setHour] = useState(String(initial.getHours()).padStart(2,'0'));
   const [minute,setMinute] = useState(String(initial.getMinutes()).padStart(2,'0'));
-  const [pickedDay,setPickedDay] = useState(dateString(initial));
   const days = Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);return d;});
   const choose = () => {
     const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(date.trim()), hh=Number(hour), mm=Number(minute);
@@ -221,7 +220,7 @@ function ScheduleTimeSheet({close, storeId}: {close: () => void; storeId: string
     <T size={13} color={th.mut} style={{marginTop:5,marginBottom:12}}>Choose a date and enter the exact hour and minute. The store’s minimum advance time is respected when it is closed.</T>
     <T size={13} weight="800" style={{marginBottom:7}}>Choose a day</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
-      {days.map((d,i)=>{const v=dateString(d),active=date===v;return <Pressable key={v} onPress={()=>{setDate(v);setPickedDay(v);}} style={{minWidth:66,paddingVertical:10,paddingHorizontal:8,borderRadius:14,alignItems:'center',backgroundColor:active?th.br:th.soft,borderWidth:1,borderColor:active?th.br:th.line}}><T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString(undefined,{weekday:'short'})}</T><T size={16} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T></Pressable>})}
+      {days.map((d,i)=>{const v=dateString(d),active=date===v;return <Pressable key={v} onPress={()=>setDate(v)} style={{minWidth:66,paddingVertical:10,paddingHorizontal:8,borderRadius:14,alignItems:'center',backgroundColor:active?th.br:th.soft,borderWidth:1,borderColor:active?th.br:th.line}}><T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':d.toLocaleDateString(undefined,{weekday:'short'})}</T><T size={16} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T></Pressable>})}
     </ScrollView>
     <T size={13} weight="800" style={{marginTop:8}}>Exact time</T>
     <T size={12} color={th.mut} style={{marginTop:3}}>Date: {date}</T>
