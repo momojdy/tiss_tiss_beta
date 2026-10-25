@@ -208,6 +208,10 @@ export async function cancelOrder(id: string) {
   if (o.backendId) {
     const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: o.backendId, p_status: 'cancelled'});
     if (error) {toast(error.message || 'This order can no longer be cancelled'); emit(); return;}
+    if (o.pay === 'card') {
+      const refund = await supabase.functions.invoke('refund-goodies-card-order', {body: {order_id: o.backendId}});
+      if (refund.error || refund.data?.error) toast('Order cancelled. Your card refund is pending and may need support follow-up.');
+    }
   }
   o.cx = 1; if (o.pay === 'wallet') S.wallet += o.total;
   S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
