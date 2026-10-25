@@ -168,6 +168,7 @@ export async function placeOrder() {
     const row: any = Array.isArray(data) ? data[0] : data;
     if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
     backendOrderId = row.id; id = row.order_code || id;
+    if (S.pay === 'wallet') await refreshPaymentOptions();
   }
   if (providerInfo.demo && S.pay === 'wallet') S.wallet -= t.total;
   const o = {
