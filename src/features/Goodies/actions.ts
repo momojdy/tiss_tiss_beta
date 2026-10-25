@@ -230,8 +230,11 @@ export const setConsent = (v: boolean) => {S.alcConsent = v; emit();};
 export function alcAccept() {S.alcAck = 1; const p = S.pend; ui.close(); if (p && p[0] && !p[2]) cartAdd(p[0], p[1]); else if (p && p[2]) p[2]();}
 export async function refreshPaymentOptions() {
   try {
+    const {data: sessionData, error: sessionError} = await supabase.auth.getUser();
+    if (sessionError || !sessionData.user) return;
+    const userId = sessionData.user.id;
     const [walletResult, cardsResult] = await Promise.all([
-      supabase.from('wallets').select('id,balance').maybeSingle(),
+      supabase.from('wallets').select('id,balance').eq('user_id', userId).maybeSingle(),
       supabase.rpc('get_my_payment_methods'),
     ]);
     if (!walletResult.error) {
