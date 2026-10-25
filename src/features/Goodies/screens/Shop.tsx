@@ -66,7 +66,7 @@ export function Store({id}: {id: string}) {
 export function StoreReviews({id}: {id: string}) {
   const th = useTheme(), s = STB[id];
   if (!s) return <View><Bar title="Store reviews" onBack={back} /><Empty emoji="⭐" title="Store not found" button="Back to stores" onPress={browse} /></View>;
-  const reviews = SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
   return (
     <View>
       <Bar title="Reviews" onBack={back} />
