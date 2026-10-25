@@ -4,8 +4,8 @@ Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 
 ## Inventory
 
-- Consumer repository has 60 tracked SQL migration files on `main` (recounted 2026-10-25 after the latest Goodies changes).
-- Supabase reports 137 migration-history entries (live count rechecked 2026-10-25).
+- Consumer repository has 62 tracked SQL migration files on `main` (recounted 2026-10-25 after the latest Goodies changes).
+- Supabase reports 139 migration-history entries (live count rechecked 2026-10-25).
 - Migration version strings and file names are not consistently aligned. Several migration bodies have matching live history names but different versions, which means version-only comparison overstates the drift.
 - There are eight duplicate version prefixes in the repository. They must not be renamed or replayed until each migration body is compared with live schema and history. Duplicate groups include `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
 
@@ -40,14 +40,14 @@ Other migrations have matching names but mismatched version values, including bu
 
 The Goodies vendor acceptance/decline, scheduled expiry, final application rejection, and review-RPC overload cleanup migrations were applied to the live project and their SQL files were added to `main`. These are new tracked/live entries, not a reconciliation of the older 74-entry gap.
 
-**Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 137-live-versus-60-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
+**Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 139-live-versus-62-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
 
 
 ## Current status and safety boundary
 
-- Live database history count is 137; tracked SQL file count is 60. Many older database migrations are not represented by a same-version/same-name file in this repository. This historical drift is not proof that every unmatched migration is missing from the live schema.
+- Live database history count is 139; tracked SQL file count is 62. Many older database migrations are not represented by a same-version/same-name file in this repository. This historical drift is not proof that every unmatched migration is missing from the live schema.
 - Do not delete history rows, rename applied migration versions, or replay historical SQL against production merely to make counts match. Reconcile by schema diff in a disposable database, then add a forward-only repair migration for verified missing behavior.
 - Live verification confirmed the Goodies acceptance, decline, and expiry functions exist and the cron job `goodies-expire-unaccepted-orders` is active on a one-minute schedule.
 - `20261025115047_goodies_order_lifecycle_notifications_hardening` is applied in live Supabase and now tracked as `supabase/migrations/20261025115047_goodies_order_lifecycle_notifications_hardening.sql` on `main`.
-- The live database reports `goodies_server_builder_configs`, `support_published_goodies_promo_codes`, `allow_goodies_wallet_promo_checkout`, and `validate_goodies_custom_builder_orders`; exact-name migration source files were not found in the checked `main` tree during this pass. Do not invent their historical migration bodies. The live functions were inspected, and their source/history gap remains open until authoritative SQL is recovered.
+- The live database reports `goodies_server_builder_configs`, `support_published_goodies_promo_codes`, `allow_goodies_wallet_promo_checkout`, `validate_goodies_custom_builder_orders`, and `goodies_card_payment_reference`; exact-name migration source files were not found in the checked `main` tree during this pass. Do not invent their historical migration bodies. The live functions were inspected, and their source/history gap remains open until authoritative SQL is recovered.
 - The live `place_goodies_order` and `place_goodies_order_with_wallet` functions accept `p_promo_code`, read published coupons from Wantiss CMS content, and now validate configured custom-builder lines server-side. The live CMS query returned no published coupons and `goodies_builder_configs` returned no rows, so those paths are implemented but could not be exercised with active production configuration.
