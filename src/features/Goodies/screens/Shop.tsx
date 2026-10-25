@@ -240,7 +240,7 @@ export function Checkout() {
       <T weight="800">Choose a saved card</T>
       {S.cards.length ? S.cards.map((card: any) => <Radio key={card.id} on={S.selectedCardId === card.id} onPress={() => setCard(card.id)}>
         <Row><Icon name="card" size={20} color={th.ink} /><View style={{flex: 1}}><T size={13.5} weight="700">{card.b} •••• {card.l4}{card.isDefault ? ' · Default' : ''}</T><T size={11.5} color={th.mut}>{card.expiryMonth && card.expiryYear ? 'Expires ' + String(card.expiryMonth).padStart(2,'0') + '/' + card.expiryYear : 'Saved securely with Stripe'}</T></View></Row>
-      </Radio>) : <><Empty title="No saved cards" hint="Add a card in Wallet settings to pay for Goodies orders." /><Cta label="Add a card" onPress={() => go('payments')} /></>}
+      </Radio>) : <><Empty title="No saved cards" text="Add a card in Wallet settings to pay for Goodies orders." /><Cta label="Add a card" onPress={() => go('payments')} /></>}
     </Card> : null}
     {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
   </>);
