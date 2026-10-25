@@ -351,6 +351,7 @@ export function Notifs() {
   };
   useEffect(() => {
     let active = true;
+    let authEpoch = 0;
     let authTimer: ReturnType<typeof setTimeout> | null = null;
     serverMounted.current = true;
     let channel: ReturnType<typeof supabase.channel> | undefined;
@@ -367,13 +368,15 @@ export function Notifs() {
         .subscribe();
     };
     const {data: authListener} = supabase.auth.onAuthStateChange((_event, session) => {
+      authEpoch++;
       if (authTimer) clearTimeout(authTimer);
       const nextUserId = session?.user?.id || null;
       authTimer = setTimeout(() => { authTimer = null; connect(nextUserId); }, 0);
     });
+    const initialAuthEpoch = authEpoch;
     void supabase.auth.getSession().then(({data}) => {
-      if (active) connect(data.session?.user?.id || null);
-    });
+      if (active && initialAuthEpoch === authEpoch) connect(data.session?.user?.id || null);
+    }).catch(() => {});
     return () => {
       active = false;
       serverMounted.current = false;
