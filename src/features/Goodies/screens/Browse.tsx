@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions} from 'react-native';
 import {Icon} from '../components/Icon';
@@ -330,19 +330,27 @@ export function Notifs() {
   const th = useTheme();
   const [serverItems, setServerItems] = useState<any[]>([]);
   const [serverError, setServerError] = useState('');
+  const serverLoadId = useRef(0);
+  const serverMounted = useRef(false);
+  const serverUserId = useRef<string | null>(null);
   const loadServer = async () => {
+    const requestId = ++serverLoadId.current;
     const {data: auth} = await supabase.auth.getUser();
-    if (!auth.user) { setServerItems([]); return; }
+    if (!serverMounted.current || requestId !== serverLoadId.current) return;
+    if (!auth.user) { serverUserId.current = null; setServerItems([]); return; }
+    serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name')
       .eq('user_id', auth.user.id).ilike('feature_name', 'goodies')
       .order('created_at', {ascending: false}).limit(50);
+    if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(error.message); return; }
     setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || 'Goodies update', d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
   useEffect(() => {
     let active = true;
+    serverMounted.current = true;
     let channel: ReturnType<typeof supabase.channel> | undefined;
     const start = async () => {
       const {data: auth} = await supabase.auth.getUser();
@@ -354,7 +362,7 @@ export function Notifs() {
         .subscribe();
     };
     void start();
-    return () => { active = false; if (channel) void supabase.removeChannel(channel); };
+    return () => { active = false; serverMounted.current = false; serverLoadId.current++; if (channel) void supabase.removeChannel(channel); };
   }, []);
   const localItems = S.notifs.filter((n: any) => !serverItems.some((s: any) => String(s.t) === String(n.t) && String(s.d) === String(n.d)));
   const items = [...serverItems, ...localItems];
@@ -362,7 +370,7 @@ export function Notifs() {
     readAll();
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
-      const {error} = await supabase.from('notifications').update({read: true, updated_at: new Date().toISOString()})
+      const {error} = await supabase.from('notifications').update({read: true})
         .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').eq('read', false);
       if (error) setServerError(error.message);
       else await loadServer();
@@ -373,7 +381,7 @@ export function Notifs() {
     if (!n.read) {
       const {data: auth} = await supabase.auth.getUser();
       if (auth.user) {
-        const {error} = await supabase.from('notifications').update({read: true, updated_at: new Date().toISOString()})
+        const {error} = await supabase.from('notifications').update({read: true})
           .eq('id', n.id).eq('user_id', auth.user.id);
         if (error) setServerError(error.message);
         else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
