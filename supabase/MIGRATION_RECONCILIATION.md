@@ -4,8 +4,8 @@ Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 
 ## Inventory
 
-- Consumer repository has 72 tracked SQL migration files on `main` (recounted 2026-10-25 after refund-worker source tracking).
-- Supabase reports 144 migration-history entries (live count rechecked 2026-10-25).
+- Consumer repository has 75 tracked SQL migration files on `main` (recounted 2026-10-25 after refund-worker reconciliation).
+- Supabase reports 147 migration-history entries (live count rechecked 2026-10-25).
 - Migration version strings and file names are not consistently aligned. Several migration bodies have matching live history names but different versions, which means version-only comparison overstates the drift.
 - There are eight duplicate version prefixes in the repository. They must not be renamed or replayed until each migration body is compared with live schema and history. Duplicate groups include `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
 
@@ -40,7 +40,7 @@ Other migrations have matching names but mismatched version values, including bu
 
 The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds, final application rejection, review-RPC cleanup, builder configuration/validation, published promo-code validation, card payment references, refund queue/worker, and notification-hardening changes now have tracked SQL files on `main`. This improves the recent change trail, but does not reconcile the older live-history entries that have no matching tracked file.
 
-**Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 144-live-versus-72-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
+**Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 147-live-versus-75-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
 
 
 ## Current status and safety boundary
@@ -56,7 +56,7 @@ The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds
 ## Payment and checkout source tracking (2026-10-25)
 
 - Added the source for the Stripe-backed saved-card order function at `supabase/functions/place-goodies-card-order/index.ts`. It verifies the saved card belongs to the signed-in user, authorizes/captures through Stripe, places the order through the authenticated RPC, and attempts to release/refund payment if order finalization fails.
-- The new source files track the live promo validation, wallet promo forwarding, custom-builder validation, scheduled-order notification copy, and card payment reference migrations. The migration history count is 139; the repository count is now 67 SQL files.
+- The new source files track the live promo validation, wallet promo forwarding, custom-builder validation, scheduled-order notification copy, and card payment reference migrations. The migration history count is 147; the repository count is now 75 SQL files.
 - No live payment was attempted during this audit. The card function is deployed, but real-card end-to-end validation is still required.
 
 
@@ -66,3 +66,10 @@ The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds
 - Declined, expired, and cancelled captured-card orders are queued for refund processing. The `process-goodies-card-refunds` worker is scheduled every minute and checks a Vault-backed worker token before claiming jobs.
 - Refund processing is idempotent against existing Stripe refunds, retries pending/failed items, updates order payment state, and records a customer notification.
 - No live charge or refund was attempted. TypeScript/build and end-to-end payment tests remain outstanding.
+
+
+## Card refund worker verification (2026-10-25)
+
+- The scheduled worker is deployed as `process-goodies-card-refunds`. The one-minute cron job is active and the last observed HTTP responses were 200 with zero jobs scanned, refunded, pending, or failed.
+- The worker validates a Vault-backed token through a service-role-only database function, claims queue jobs with row locks, retries failed/pending refunds, updates order payment state, and records a customer notification.
+- No live payment or refund was initiated. TypeScript/build and end-to-end payment tests remain outstanding.
