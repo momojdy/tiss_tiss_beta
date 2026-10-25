@@ -1,7 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Text, View, Pressable } from 'react-native';
 import { supabase } from '../../lib/supabase';
-import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Section, Pill } from './BusinessSpaceShared';
+import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null;
@@ -17,9 +17,9 @@ const reasons = [
 ];
 const fmt = (value: string | null) => value ? new Date(value).toLocaleString() : '—';
 const money = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value) || 0);
-const remaining = (deadline: string | null) => {
+const remaining = (deadline: string | null, now: number) => {
   if (!deadline) return '15-minute response required';
-  const sec = Math.max(0, Math.floor((new Date(deadline).getTime() - Date.now()) / 1000));
+  const sec = Math.max(0, Math.floor((new Date(deadline).getTime() - now) / 1000));
   return sec ? Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0') + ' left to respond' : 'Response deadline passed';
 };
 
@@ -29,6 +29,8 @@ export function GoodiesOrdersPage() {
   const [reason, setReason] = useState('out_of_stock');
   const [detail, setDetail] = useState('');
   const [busyId, setBusyId] = useState('');
+  const [now, setNow] = useState(Date.now());
+  useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
       .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes')
@@ -38,16 +40,18 @@ export function GoodiesOrdersPage() {
   }, [app.biz.id, app.tick]);
 
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
-  const act = async (order: GoodiesOrder, action: 'accept' | 'decline') => {
+  const act = async (order: GoodiesOrder, action: 'accept' | 'decline' | 'preparing' | 'ready' | 'completed') => {
     if (busyId) return;
     setBusyId(order.id);
     try {
       const { error } = action === 'accept'
         ? await supabase.rpc('accept_goodies_order', { p_order_id: order.id })
-        : await supabase.rpc('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) });
+        : action === 'decline'
+          ? await supabase.rpc('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
+          : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
       if (error) throw error;
       setDecline(null); setDetail('');
-      app.toast(action === 'accept' ? 'Order accepted' : 'Order declined. Customer notified.');
+      app.toast(action === 'accept' ? 'Order accepted' : action === 'decline' ? 'Order declined. Customer notified.' : action === 'preparing' ? 'Order marked as preparing' : action === 'ready' ? 'Order marked ready' : 'Order completed');
       await orders.reload();
       app.bump();
     } catch (e: any) {
@@ -78,7 +82,8 @@ export function GoodiesOrdersPage() {
               <Text style={{ fontSize: 13, color: '#1A2517' }}>{(Array.isArray(order.items) ? order.items : []).map(i => (i.q || 1) + '× ' + (i.n || 'Item')).join(' · ') || 'Order items'}</Text>
               <Text style={{ fontWeight: '800', color: '#1A2517' }}>{money(order.total)}</Text>
               {order.notes ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer note: {order.notes}</Text> : null}
-              {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at)}</Text> : null}
+              {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
+              {order.status === 'accepted' || order.status === 'preparing' || order.status === 'ready' ? <Btn label={order.status === 'accepted' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready' : 'Complete order'} busy={busyId === order.id} disabled={!!busyId} onPress={() => void act(order, order.status === 'accepted' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'completed')} /> : null}
               {canRespond ? <View style={{ flexDirection: 'row', gap: 8 }}>
                 <View style={{ flex: 1 }}><Btn label="Accept order" onPress={() => void act(order, 'accept')} busy={busyId === order.id} /></View>
                 <View style={{ flex: 1 }}><Btn label="Decline" kind="danger" disabled={!!busyId} onPress={() => { setDecline(order); setReason('out_of_stock'); setDetail(''); }} /></View>
