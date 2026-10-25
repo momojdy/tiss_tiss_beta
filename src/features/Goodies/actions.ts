@@ -217,8 +217,10 @@ export async function cancelOrder(id: string) {
       if (refund.error || refund.data?.error) toast('Order cancelled. Your card refund is pending and may need support follow-up.');
     }
   }
-  o.cx = 1; if (o.pay === 'wallet') S.wallet += o.total;
-  S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
+  o.cx = 1;
+  if (providerInfo.demo && o.pay === 'wallet') S.wallet += o.total;
+  else if (o.backendId && o.pay === 'wallet') await refreshPaymentOptions();
+  if (providerInfo.demo) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
   toast('Order cancelled'); save(); emit();
   if (o.backendId) void refreshLiveSchedules(); /* stock was restored on the server */
 }
