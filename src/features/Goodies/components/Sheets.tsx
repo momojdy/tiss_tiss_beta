@@ -65,7 +65,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {s.businessDeliveryModes?.length ? row('Available services', s.businessDeliveryModes.join(' and ')) : null}
         {row('Delivery fee', s.fee === 0 ? 'Free delivery' : money(s.fee))}
         {row('Minimum order', money(s.min))}
-        {row('Distance', s.km.toFixed(1) + ' km away')}
+        {row('Distance', s.live ? 'Unavailable until store location is provided' : s.km.toFixed(1) + ' km away')}
         {row('Estimated delivery', s.eta + ' min')}
         {row('Order methods', 'Delivery and pickup')}
         {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
