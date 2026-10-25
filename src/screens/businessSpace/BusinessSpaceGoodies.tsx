@@ -1,6 +1,6 @@
 /* Goodies tools for the Vendor Dashboard (Business Space).
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
-   Store setup, products and publishing go through `goodiesApi` to Supabase. Builders and ingredient requests still use AsyncStorage (custom builder items are not orderable yet). */
+   Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests remain local until a server workflow is added. */
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
