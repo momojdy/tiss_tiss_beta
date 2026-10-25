@@ -293,7 +293,7 @@ export function Track({id}: {id: string}) {
     if (!o?.backendId) return;
     let active = true;
     const sync = async () => {
-      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status').eq('id', o.backendId).maybeSingle();
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref').eq('id', o.backendId).maybeSingle();
       if (!active || error || !data) return;
       o.serverStatus = data.status;
       o.acceptanceDeadlineAt = data.acceptance_deadline_at;
@@ -310,6 +310,13 @@ export function Track({id}: {id: string}) {
       if (data.scheduled_for) o.sch = new Date(data.scheduled_for).getTime();
       o.cx = ['cancelled', 'declined', 'expired'].includes(data.status) ? 1 : 0;
       o.st = require('../store').stage(o);
+      if (data.payment_method === 'card' && ['declined', 'expired', 'cancelled'].includes(data.status)
+        && ['paid', 'refund_pending'].includes(data.payment_status) && !o.refundWorkerRequested) {
+        o.refundWorkerRequested = true;
+        const refund = await supabase.functions.invoke('process-goodies-card-refunds', { body: { order_id: o.backendId } });
+        if (refund.error) o.refundWorkerRequested = false;
+        else { void sync(); }
+      }
       save(); emit();
     };
     void sync();
