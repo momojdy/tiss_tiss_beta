@@ -201,7 +201,7 @@ const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View s
 export function Checkout() {
   useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
   const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = ['Delivery', 'Time', 'Payment', 'Review'];
-  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', 'MonCash', 'Not available for live Goodies orders', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards[0].b + ' •••• ' + S.cards[0].l4 : 'Add a card in Wallet settings', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo || p[0] === 'wallet' || p[0] === 'cash'));
+  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', 'MonCash', 'Not available for live Goodies orders', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards[0].b + ' •••• ' + S.cards[0].l4 : 'Add a card in Wallet settings', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo || p[0] !== 'moncash'));
   const ct = ctOf();
   let body: any = null;
   if (S.cs === 0) body = (<>
@@ -233,10 +233,10 @@ export function Checkout() {
   </>);
   if (S.cs === 2) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>Payment method</T>
-    {pays.map(p => <Radio key={p[0]} on={S.pay === p[0]} onPress={() => { if (!providerInfo.demo && p[0] === 'card') { toast('Saved cards are available in Wallet, but Goodies card checkout still needs payment confirmation integration.'); return; } setPay(p[0]); }}><Row><Icon name={p[3]} size={20} color={th.ink} /><View style={{flex: 1}}><T size={14.5} weight="700">{p[1]}</T><T size={12.5} color={th.mut}>{p[2]}</T></View></Row></Radio>)}
+    {pays.map(p => <Radio key={p[0]} on={S.pay === p[0]} onPress={() => setPay(p[0])}><Row><Icon name={p[3]} size={20} color={th.ink} /><View style={{flex: 1}}><T size={14.5} weight="700">{p[1]}</T><T size={12.5} color={th.mut}>{p[2]}</T></View></Row></Radio>)}
     {!providerInfo.demo && !S.hasWallet ? <Card style={{borderColor: th.br}}><T weight="800">Wantiss wallet not found</T><T size={12.5} color={th.mut} style={{marginVertical: 6}}>Create a wallet to pay for Goodies orders with your balance.</T><Cta label="Create wallet" onPress={createWallet} /></Card> : null}
     {!providerInfo.demo && S.hasWallet && S.wallet < t.total ? <Card style={{borderColor: th.br, backgroundColor: th.brt}}><T weight="800">Insufficient wallet balance</T><T size={12.5} color={th.mut} style={{marginTop: 4}}>Your balance is {money(S.wallet)}. You need {money(Math.max(0, t.total - S.wallet))} more to pay with your Wantiss wallet.</T><Cta small label="Open Wallet" onPress={() => go('payments')} /></Card> : null}
-    {!providerInfo.demo ? <T size={12} color={th.mut}>Wallet payments are processed securely by Wantiss. Saved-card payments are not enabled for Goodies checkout yet.</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
+    {!providerInfo.demo ? <T size={12} color={th.mut}>Wantiss Wallet payments debit your available balance. Saved cards are authorized securely before the order is placed.</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
   </>);
   if (S.cs === 3) body = (<>
     <Card><T weight="700">{st.n}</T>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 8, alignItems: 'flex-start'}}><View style={{flex: 1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
