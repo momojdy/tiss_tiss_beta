@@ -4,7 +4,7 @@ Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 
 ## Inventory
 
-- Consumer repository has 62 tracked SQL migration files on `main` (recounted 2026-10-25 after the latest Goodies changes).
+- Consumer repository has 67 tracked SQL migration files on `main` (recounted 2026-10-25 after the latest Goodies changes).
 - Supabase reports 139 migration-history entries (live count rechecked 2026-10-25).
 - Migration version strings and file names are not consistently aligned. Several migration bodies have matching live history names but different versions, which means version-only comparison overstates the drift.
 - There are eight duplicate version prefixes in the repository. They must not be renamed or replayed until each migration body is compared with live schema and history. Duplicate groups include `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
@@ -45,9 +45,16 @@ The Goodies vendor acceptance/decline, scheduled expiry, final application rejec
 
 ## Current status and safety boundary
 
-- Live database history count is 139; tracked SQL file count is 62. Many older database migrations are not represented by a same-version/same-name file in this repository. This historical drift is not proof that every unmatched migration is missing from the live schema.
+- Live database history count is 139; tracked SQL file count is 67. Many older database migrations are not represented by a same-version/same-name file in this repository. This historical drift is not proof that every unmatched migration is missing from the live schema.
 - Do not delete history rows, rename applied migration versions, or replay historical SQL against production merely to make counts match. Reconcile by schema diff in a disposable database, then add a forward-only repair migration for verified missing behavior.
 - Live verification confirmed the Goodies acceptance, decline, and expiry functions exist and the cron job `goodies-expire-unaccepted-orders` is active on a one-minute schedule.
 - `20261025115047_goodies_order_lifecycle_notifications_hardening` is applied in live Supabase and now tracked as `supabase/migrations/20261025115047_goodies_order_lifecycle_notifications_hardening.sql` on `main`.
-- The live database reports `goodies_server_builder_configs`, `support_published_goodies_promo_codes`, `allow_goodies_wallet_promo_checkout`, `validate_goodies_custom_builder_orders`, and `goodies_card_payment_reference`; exact-name migration source files were not found in the checked `main` tree during this pass. Do not invent their historical migration bodies. The live functions were inspected, and their source/history gap remains open until authoritative SQL is recovered.
+- The live database reports `goodies_server_builder_configs`, `support_published_goodies_promo_codes`, `allow_goodies_wallet_promo_checkout`, `validate_goodies_custom_builder_orders`, and `goodies_card_payment_reference`; their source files are now tracked on `main` using inspected live function definitions and forward-compatible SQL. Historical drift for the older unmatched migrations remains open.
 - The live `place_goodies_order` and `place_goodies_order_with_wallet` functions accept `p_promo_code`, read published coupons from Wantiss CMS content, and now validate configured custom-builder lines server-side. The live CMS query returned no published coupons and `goodies_builder_configs` returned no rows, so those paths are implemented but could not be exercised with active production configuration.
+
+
+## Payment and checkout source tracking (2026-10-25)
+
+- Added the source for the Stripe-backed saved-card order function at `supabase/functions/place-goodies-card-order/index.ts`. It verifies the saved card belongs to the signed-in user, authorizes/captures through Stripe, places the order through the authenticated RPC, and attempts to release/refund payment if order finalization fails.
+- The new source files track the live promo validation, wallet promo forwarding, custom-builder validation, scheduled-order notification copy, and card payment reference migrations. The migration history count is 139; the repository count is now 67 SQL files.
+- No live payment was attempted during this audit. The card function is deployed, but real-card end-to-end validation is still required.
