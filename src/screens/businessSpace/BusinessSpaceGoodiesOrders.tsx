@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
-  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; payment_method?: string; payment_status?: string;
+  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null;
   scheduled_for: string | null; order_type: string; items: any[]; total: number; notes: string | null;
 };
 const reasons = [
