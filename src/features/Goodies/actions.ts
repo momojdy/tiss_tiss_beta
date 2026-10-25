@@ -141,6 +141,9 @@ export async function placeOrder() {
   if (!pk && (!a || !a.t)) {toast('Choose a delivery address'); S.cs = 0; emit(); return;}
   const ct = ctOf();
   if (!phoneOK(ct.ph)) {toast('Choose a valid contact number'); S.cs = 0; emit(); return;}
+  if (!providerInfo.demo) await refreshPaymentOptions();
+  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {toast('Your Wantiss wallet is not available. Create a wallet or choose another payment method.'); push('payments'); return;}
+  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast('Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.'); push('payments'); return;}
   const alc = hasAlcohol();
   if (alc && !S.alcConsent) {toast('Please confirm the alcohol rules to continue'); return;}
   if (alc && !S.hasWallet) {toast('Create your Wantiss wallet first. Refunds for alcohol orders go there.'); push('payments'); return;}
@@ -151,9 +154,10 @@ export async function placeOrder() {
     if (!S.cards.length) {push('payments'); return;}
     if (S.cards[0].l4 === '0002') {toast('Card declined (demo). Your cart is safe. Try another method.'); S.cs = 2; emit(); return;}
   }
-  /* Demo checkout only. Live mode is blocked above until real payment processing is connected. */
+  /* Demo orders are local; live wallet/card orders use authenticated server payment flows below. */
   S.busy = 1; emit();
-  const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (S.cards[0] ? S.cards[0].l4 : ''), cash: 'Cash'}[S.pay as string];
+  const selectedCard: any = S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0];
+  const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (selectedCard ? selectedCard.l4 : ''), cash: 'Cash'}[S.pay as string];
   let id: string;
   do {id = 'GD' + Math.floor(1000 + Math.random() * 9000);} while (S.orders.some((x: any) => x.id === id));
   let backendOrderId: string | null = null;
