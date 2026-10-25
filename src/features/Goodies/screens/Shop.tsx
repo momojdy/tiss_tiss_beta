@@ -29,17 +29,17 @@ export function Store({id}: {id: string}) {
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
-  const reviews = SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
   const tabs: [string, string][] = [['all', 'All'], ['pop', 'Popular'], ['deal', 'Deals'], ...(byoOn(id) ? [['custom', 'Build your own'] as [string, string]] : [])];
   return (
     <View>
       <Hero s={s} onBack={back} right={<Circ icon="heart" label="Save store" color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.km.toFixed(1)} km away</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live ? ' · Distance unavailable' : ' · ' + s.km.toFixed(1) + ' km away'}</T>
         {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">Closed right now</T><T size={13} color={th.mut}>{s.acceptScheduledOrders ? s.nx + '. Scheduled orders are available for future opening-time slots.' : s.nx + '. Ordering is paused until then.'}</T></Card> : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, marginBottom: 4}}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => go('reviews', id)}><Badge green label={'★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + ' min'} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={'Min. ' + money(s.min)} /><Badge label="Delivery + pickup" />{s.pr ? <Badge label={s.pr} /> : null}
+          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => go('reviews', id)}><Badge green label={s.live && s.rv === 0 ? 'New · No reviews yet' : '★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + ' min'} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={'Min. ' + money(s.min)} /><Badge label="Delivery + pickup" />{s.pr ? <Badge label={s.pr} /> : null}
         </View>
         <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}>
           <Cta small ghost label="Store info" onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
@@ -75,7 +75,7 @@ export function StoreReviews({id}: {id: string}) {
           <Row style={{alignItems: 'center', gap: 12}}>
             <View style={{width: 54, height: 54, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 30}}>{s.e}</Text></View>
             <View style={{flex: 1}}><T size={18} weight="800">{s.n}</T><T size={13} color={th.mut}>Customer reviews</T></View>
-            <View style={{alignItems: 'flex-end'}}><T size={22} weight="800">★ {s.r.toFixed(1)}</T><T size={11.5} color={th.mut}>{s.rv} reviews</T></View>
+            <View style={{alignItems: 'flex-end'}}>{s.rv > 0 ? <><T size={22} weight="800">★ {s.r.toFixed(1)}</T><T size={11.5} color={th.mut}>{s.rv} reviews</T></> : <T size={12} color={th.mut}>No reviews yet</T>}</View>
           </Row>
         </Card>
         {reviews.length ? reviews.map((v: any, k: number) => <Card key={k} style={{marginBottom: 10}}>
@@ -105,7 +105,7 @@ export function Product() {
       <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>Swipe for more photos</T>
       <View style={{paddingHorizontal: 16}}>
         <T size={23} weight="800" style={{marginTop: 10}}>{i.n}</T>
-        <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="700" color={th.br}>{s.n} · ★ {s.r.toFixed(1)}</T></Pressable>
+        <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="700" color={th.br}>{s.n}{s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : ' · New store'}</T></Pressable>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8}}>
           <T size={24} weight="800" color={th.br}>{money(base)}</T>
           {h.off ? <><T size={15} color={th.mut} style={{textDecorationLine: 'line-through'}}>{money(i.p)}</T><Badge label={'-' + h.off + '%'} /></> : null}
