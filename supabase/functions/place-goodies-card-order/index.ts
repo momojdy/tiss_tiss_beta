@@ -77,7 +77,10 @@ Deno.serve(async (req: Request) => {
     const row = Array.isArray(created) ? created[0] : created;
     if (orderError || !row?.id) {
       if (intent.status === "requires_capture") await stripe.paymentIntents.cancel(intent.id).catch(() => undefined);
-      throw orderError || new Error("The order could not be placed. Your card authorization was released.");
+      else if (intent.status === "succeeded") await stripe.refunds.create({
+        payment_intent: intent.id, reason: "requested_by_customer",
+      }, { idempotencyKey: "goodies-card-order-create-failed-" + intent.id }).catch(() => undefined);
+      throw orderError || new Error("The order could not be placed. Your card authorization was released or refunded.");
     }
     orderId = row.id;
 
