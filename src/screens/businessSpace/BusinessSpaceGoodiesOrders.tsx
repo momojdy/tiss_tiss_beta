@@ -56,10 +56,6 @@ export function GoodiesOrdersPage() {
           ? await supabase.rpc('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
           : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
       if (error) throw error;
-      if (action === 'decline' && order.payment_method === 'card' && order.payment_status === 'paid') {
-        // The server marks the card refund pending on decline; this authenticated worker asks Stripe to refund it.
-        await supabase.functions.invoke('process-goodies-card-refunds', { body: { order_id: order.id } }).catch(() => undefined);
-      }
       setDecline(null); setDetail('');
       let refundWarning = '';
       if (action === 'decline' && order.payment_method === 'card' && order.payment_status !== 'refunded') {
