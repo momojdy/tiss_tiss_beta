@@ -8,6 +8,7 @@ import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
 import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push} from './store';
 import * as A from './actions';
+import {startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, Notifs, Explore} from './screens/Browse';
 import {Store, StoreReviews, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
@@ -35,7 +36,14 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   ui.close = () => setSheet(null);
 
   useEffect(() => {
-    (async () => {await load(); await loadContent(); await loadBuilders();})();
+    let active = true;
+    let stopSync: (() => void) | null = null;
+    void (async () => {
+      await load();
+      await loadContent();
+      await loadBuilders();
+      if (active) stopSync = startGoodiesSync();
+    })();
     if (embedded) S.stack = [{r: 'home', u: Date.now()}];
     /* order progress ticker (v24: every second) */
     const id = setInterval(() => {
@@ -52,7 +60,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       });
       if (ch) {save(); emit();}
     }, 1000);
-    return () => clearInterval(id);
+    return () => {active = false; clearInterval(id); stopSync?.();};
   }, []);
 
   const handleBack = () => {
