@@ -85,6 +85,8 @@ export function RegistrationPage() {
       await applicationDocs.reload();
     }, 'Application started');
   };
+  const currentApplication = applicationDocs.d?.application;
+  const currentApplicationDocuments = applicationDocs.d?.documents ?? [];
   const rows = r.d ?? [], can = b.verification === 'setup' || b.verification === 'action';
   const msg: Record<Status, string> = { verified: 'Your business is verified.', pending: 'Your documents are in review. This usually takes 1 to 2 business days.', setup: 'Registration is optional and earns the Verified badge.', action: 'A document needs your attention. Replace it and resubmit.', restricted: 'Some actions are paused on this business.' };
   const upload = async (x: any) => {
@@ -107,17 +109,17 @@ export function RegistrationPage() {
       <View style={s.cardFlat}>
         <Text style={[s.title, { paddingTop: 14 }]}>Application documents</Text>
         <Text style={[s.mut, { paddingVertical: 8 }]}>Upload all three documents. Wantiss cannot approve your business application until each document is reviewed and verified. PDF, JPEG, PNG or WebP, up to 10 MB each.</Text>
-        {applicationDocs.e ? <View style={{ paddingVertical: 10 }}><ErrBox e={applicationDocs.e} retry={applicationDocs.reload} /></View> : applicationDocs.l && !applicationDocs.d ? <View style={{ paddingVertical: 12 }}><Skel h={110} /></View> : !applicationDocs.d?.application ? (
+        {applicationDocs.e ? <View style={{ paddingVertical: 10 }}><ErrBox e={applicationDocs.e} retry={applicationDocs.reload} /></View> : applicationDocs.l && !applicationDocs.d ? <View style={{ paddingVertical: 12 }}><Skel h={110} /></View> : !currentApplication ? (
           <View style={{ paddingVertical: 12, gap: 10 }}>
             <Text style={s.mut}>No application has been created for this account yet.</Text>
             <Btn label="Start business application" busy={a.busy} onPress={startApplication} />
           </View>
         ) : (
           <>
-            <Text style={s.mut}>Application status: {applicationDocs.d.application.status}</Text>
-            {applicationDocs.d.application.review_note ? <Text style={[s.mut, { paddingTop: 6 }]}>{applicationDocs.d.application.review_note}</Text> : null}
+            <Text style={s.mut}>Application status: {currentApplication.status}</Text>
+            {currentApplication.review_note ? <Text style={[s.mut, { paddingTop: 6 }]}>{currentApplication.review_note}</Text> : null}
             <Divided>{applicationTypes.map(doc => {
-              const row = applicationDocs.d?.documents.find((x: any) => x.document_type === doc.id);
+              const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
               const status = row?.status || 'missing';
               const tone = status === 'verified' ? 'good' : status === 'rejected' ? 'bad' : status === 'pending' ? 'warn' : 'mute';
               return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
