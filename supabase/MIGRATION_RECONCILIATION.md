@@ -5,7 +5,7 @@ Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 ## Current inventory
 
 - `main` contains **77 tracked SQL migration files**.
-- Live Supabase records **148 migration-history entries**.
+- Live Supabase records **151 migration-history entries** after the forward-only security migration was recorded on 2026-10-25. The earlier audit observed 148 entries before this new migration.
 - There are eight duplicate migration version prefixes: `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
 - Six older repository migrations still require a statement-by-statement comparison against live schema: `business_space_compatibility`, `restore_stayz_views_and_api`, `business_info_fields`, `goodies_live_schedule_and_store_chat`, `goodies_store_schedules_and_chat`, and `goodies_order_queue`.
 
