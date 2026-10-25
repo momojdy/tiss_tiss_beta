@@ -8,7 +8,7 @@ export interface Item {
   restriction?: 'none' | 'otc' | 'alcohol'; photo?: string | null;
 }
 export interface Store {
-  id: string; n: string; c: string; e: string; bg: string; r: number; rv: number; km: number; eta: string; fee: number; min: number;
+  id: string; businessId?: string; n: string; c: string; e: string; bg: string; r: number; rv: number; km: number; eta: string; fee: number; min: number;
   pr: string; k: string; it: Item[]; km0: number; eta0: string; open: number; h: string; nx: string; far?: boolean; live?: boolean;
   logo?: string | null; cover?: string | null; acceptScheduledOrders?: boolean; scheduledOrderStartMinutes?: number; scheduleHours?: Record<string, {open: string; close: string; closed: boolean}>; businessName?: string; businessDescription?: string; businessPhone?: string; businessEmail?: string; businessWebsite?: string; businessAddress?: string; businessCity?: string; businessCountry?: string; businessDeliveryModes?: string[]; businessLogoUrl?: string;
 }
