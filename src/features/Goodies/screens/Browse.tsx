@@ -319,7 +319,14 @@ export function Promos() {
             <Row sp><T weight="700">{p.t}</T><Badge label={p.c} /></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
             <Row><Cta small ghost label="Details" onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? 'Applied' : 'Use this code'} onPress={() => usePromo(p.c)} /></Row>
-          </Cardexport function Notifs() {
+          </Card>
+        ))}
+      </View>
+    </View>
+  );
+}
+
+export function Notifs() {
   const th = useTheme();
   const [serverItems, setServerItems] = useState<any[]>([]);
   const [serverError, setServerError] = useState('');
