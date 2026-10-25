@@ -68,7 +68,121 @@ function formatHour(d: Date) {
   return (h % 12 || 12) + (m === '00' ? '' : ':' + m) + (h >= 12 ? 'pm' : 'am');
 }
 
+/* ---------- live catalog (stores + products from the backend) ---------- */
+const CAT_EMOJI: Record<string, string> = {restaurants: '🍽️', produce: '🥭', beverages: '🥤', bakery: '🥐', meat: '🥩', groceries: '🛒', haitian: '🇭🇹', care: '🧴', drugstore: '💊'};
+const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+type DayHours = {open: string; close: string; closed: boolean};
+const hm = (v: any): number | null => {
+  const m = /^(\d{1,2}):(\d{2})/.exec(String(v || ''));
+  if (!m) return null;
+  const h = +m[1], mi = +m[2];
+  return h > 24 || mi > 59 ? null : h * 60 + mi;
+};
+const fmtHM = (min: number) => {const d = new Date(); d.setHours(Math.floor(min / 60) % 24, min % 60, 0, 0); return formatHour(d);};
+const bgOf = (id: string) => 'bg' + Array.from(id).reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 5, 0);
+
+/* Open or closed from the weekly hours, in the device's local time (the store and its customers share a city). */
+export function openState(hours: Record<string, DayHours> | null | undefined, now: Date = new Date()): {open: number; h: string; nx: string} {
+  if (!hours || typeof hours !== 'object' || !Object.keys(hours).length) return {open: 0, h: '', nx: 'Opening hours not set'};
+  const win = (day: number) => {
+    const d: any = (hours as any)[DAY_NAMES[((day % 7) + 7) % 7]];
+    if (!d || d.closed) return null;
+    const o = hm(d.open), c = hm(d.close);
+    return o == null || c == null ? null : {o, c};
+  };
+  const nowMin = now.getHours() * 60 + now.getMinutes(), today = now.getDay(), tw = win(today), yw = win(today - 1);
+  let open = 0, closesAt = 0;
+  if (tw) {
+    if (tw.c > tw.o) {if (nowMin >= tw.o && nowMin < tw.c) {open = 1; closesAt = tw.c;}}
+    else if (nowMin >= tw.o) {open = 1; closesAt = tw.c;} /* closes after midnight */
+  }
+  if (!open && yw && yw.c <= yw.o && nowMin < yw.c) {open = 1; closesAt = yw.c;}
+  const h = tw ? fmtHM(tw.o) + '–' + fmtHM(tw.c) : 'Closed today';
+  if (open) return {open, h, nx: 'Open until ' + fmtHM(closesAt)};
+  for (let off = 0; off <= 7; off++) {
+    const w = win(today + off);
+    if (!w || (off === 0 && nowMin >= w.o)) continue;
+    const when = off === 0 ? ' today' : off === 1 ? ' tomorrow' : ' ' + DAY_NAMES[(today + off) % 7];
+    return {open: 0, h, nx: 'Opens ' + fmtHM(w.o) + when};
+  }
+  return {open: 0, h, nx: 'Currently closed'};
+}
+
+function liveStore(r: any, items: Item[]): Store {
+  const id = String(r.store_id || r.business_id), names = r.names && typeof r.names === 'object' ? r.names : {};
+  const eMin = Number(r.eta_min) || 20, eMax = Number(r.eta_max) || 35, st = openState(r.hours);
+  const store: Store = {
+    id, c: r.category || 'groceries', e: CAT_EMOJI[r.category] || '🛍️', bg: bgOf(id), r: 0, rv: 0, km: 0, km0: 0,
+    eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
+    pr: r.promo || '', k: r.kind || '', it: items, open: st.open, h: st.h, nx: st.nx, far: false, live: true,
+    logo: r.logo_url || null, cover: null, acceptScheduledOrders: !!r.accept_scheduled_orders,
+    scheduledOrderStartMinutes: Number(r.scheduled_order_start_minutes ?? 60), scheduleHours: r.hours || undefined,
+    businessName: r.business_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
+    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '',
+    get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.business_name || 'Store';},
+  } as Store;
+  return store;
+}
+
+/* A closed stand-in so past orders and the cart keep working after a store goes offline. It never appears in browsing (not in ST). */
+function placeholderStore(sid: string, name: string): Store {
+  return {
+    id: sid, n: name || 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
+    open: 0, h: '', nx: 'No longer taking orders', far: false, acceptScheduledOrders: false,
+  };
+}
+
+let liveTimer: any = null;
 export async function refreshLiveSchedules() {
+  try {
+    const {data: rows, error} = await supabase.from('goodies_store_schedules')
+      .select('business_id,store_id,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url,hours,accept_scheduled_orders,scheduled_order_start_minutes,category,kind,min_order,delivery_fee,eta_min,eta_max,promo,names')
+      .eq('is_live', true);
+    if (error) throw error;
+    const stores: any[] = rows || [], prods: any[] = [];
+    if (stores.length) {
+      const ids = stores.map(r => r.business_id);
+      for (let from = 0; ; from += 1000) {
+        const pr = await supabase.from('goodies_products')
+          .select('id,business_id,name,description,price,emoji,stock,restriction,photo_url,sort_order,created_at')
+          .in('business_id', ids).eq('is_available', true)
+          .order('sort_order', {ascending: true}).order('created_at', {ascending: true}).order('id', {ascending: true})
+          .range(from, from + 999);
+        if (pr.error) throw pr.error;
+        prods.push(...(pr.data || []));
+        if ((pr.data || []).length < 1000) break;
+      }
+    }
+    /* Only replace the catalog once both reads succeeded. */
+    Object.keys(IT).forEach(k => delete IT[k]); Object.keys(STB).forEach(k => delete STB[k]); ST.length = 0;
+    const byBiz: Record<string, Item[]> = {};
+    stores.forEach(r => {byBiz[r.business_id] = [];});
+    prods.forEach(p => {
+      const r = stores.find(x => x.business_id === p.business_id); if (!r) return;
+      const stock = Math.max(0, Math.floor(Number(p.stock) || 0));
+      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: (p.restriction || 'none') as Item['restriction'], photo: p.photo_url || null};
+      IT[it.id] = it; byBiz[p.business_id].push(it);
+    });
+    stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); STB[s.id] = s; ST.push(s);});
+    /* Keep history and the cart readable for stores that are no longer live. */
+    (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn);});
+    if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
+    S.catalogError = '';
+    applyZone();
+  } catch (e: any) {
+    S.catalogError = String(e?.message || e || 'Could not load stores');
+  }
+  if (!liveTimer) {
+    liveTimer = setInterval(() => {
+      let ch = false;
+      ST.forEach(s => {
+        if (!s.live) return;
+        const o = openState(s.scheduleHours);
+        if (o.open !== s.open || o.nx !== s.nx || o.h !== s.h) {s.open = o.open; s.nx = o.nx; s.h = o.h; ch = true;}
+      });
+      if (ch) emit();
+    }, 60000);
+  }
   emit();
 }
 
@@ -83,6 +197,8 @@ export async function load() {
   await merge(WKEY, WDEF()); await merge(KEY, GDEF());
   try {const t = await AsyncStorage.getItem('goodies-theme'); if (t === 'light' || t === 'dark') S.theme = t;} catch (e) {}
   try {const l = await AsyncStorage.getItem('goodies-lang'); if (l) S.lang = l;} catch (e) {}
+  /* The catalog must be loaded before the cart, favorites and orders are checked against it. */
+  await refreshLiveSchedules();
   /* sanitise exactly like v24 */
   const c = S.cart;
   if (!c || !Array.isArray(c.lines)) S.cart = {sid: null, lines: []};
@@ -97,7 +213,6 @@ export async function load() {
   S.gc = S.gc.filter((c: any) => c && c.id && c.ph);
   if (S.cc !== 'w' && !S.gc.some((c: any) => c.id === S.cc)) S.cc = 'w';
   if (!S.addr.some((a: Address) => a.id === S.as)) S.as = defAddr()?.id ?? 0;
-  await refreshLiveSchedules();
   applyZone(); S.ready = true; emit();
 }
 export function save() {
@@ -121,6 +236,8 @@ export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid
 export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
+    /* Live stores have no geo data yet, so no invented distance or ETA padding. */
+    if (s.live) {s.km = 0; s.eta = s.eta0; s.far = false; return;}
     s.km = Math.round((s.km0 + z) * 10) / 10;
     const q = s.eta0.split('–');
     s.eta = (+q[0] + d) + '–' + (+q[1] + d);

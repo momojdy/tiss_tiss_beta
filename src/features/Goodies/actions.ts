@@ -2,7 +2,7 @@
 import {providerInfo} from './providers';
 import {supabase} from '../../lib/supabase';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -171,7 +171,7 @@ export async function placeOrder() {
   if (S.pay === 'wallet') S.wallet -= t.total;
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
-    sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
+    sn: st.n, sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
     addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
     pay: S.pay, payl: pl, note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
     alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
@@ -181,6 +181,7 @@ export async function placeOrder() {
   S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: (backendOrderId ? 'Order sent to ' : 'Demo order sent to ') + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
   S.busy = 0; toast(backendOrderId ? 'Order sent to the store' : 'Demo order placed!'); save(); emit();
+  if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
 export const cancelAsk = (id: string) => ui.sheet({kind: 'cancel', id});
 export async function cancelOrder(id: string) {
@@ -193,6 +194,7 @@ export async function cancelOrder(id: string) {
   o.cx = 1; if (o.pay === 'wallet') S.wallet += o.total;
   S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
   toast('Order cancelled'); save(); emit();
+  if (o.backendId) void refreshLiveSchedules(); /* stock was restored on the server */
 }
 export function reorder(id: string) {
   const o = S.orders.filter((x: any) => x.id === id)[0]; if (!o) return;
