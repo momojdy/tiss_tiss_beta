@@ -45,7 +45,7 @@ No real payment, refund, application decision, or live vendor order was performe
 
 **Migration history drift is documented but not fully reconciled.** The 151-live-versus-77-tracked difference is not a safe reason to delete migration-history rows, rename old versions, or replay historical SQL. The six unmatched migrations and duplicate version groups need schema-level comparison on a disposable database before a forward-only repair can be designed.
 
-GitHub TypeScript checks pass on the current code. Expo Doctor still fails because `react-native-screens` is not declared as a direct dependency and five Expo packages are behind the SDK 57 patch versions it expects (`expo`, `expo-location`, `expo-notifications`, `expo-blur`, `expo-clipboard`). The web export is skipped after that failure. Card payment, wallet checkout, published promotions, custom builders, and vendor/customer notifications still need end-to-end validation with a test store and provider test credentials.
+GitHub TypeScript checks pass on the current code. Expo Doctor still fails because five Expo packages are behind the SDK 57 patch versions it expects (`expo`, `expo-location`, `expo-notifications`, `expo-blur`, `expo-clipboard`). The missing `react-native-screens` peer dependency has been added directly and its lockfile updated. The web export is skipped after that failure. Card payment, wallet checkout, published promotions, custom builders, and vendor/customer notifications still need end-to-end validation with a test store and provider test credentials.
 
 
 ## Application document verification
