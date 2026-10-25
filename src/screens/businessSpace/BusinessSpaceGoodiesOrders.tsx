@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View, Pressable } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
@@ -40,6 +40,21 @@ export function GoodiesOrdersPage() {
   }, [app.biz.id, app.tick]);
 
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
+  const refundAttempts = useRef(new Set<string>());
+  useEffect(() => {
+    for (const order of orders.d || []) {
+      if (!['declined', 'expired', 'cancelled'].includes(order.status) ||
+          order.payment_method !== 'card' || !['paid', 'refund_pending'].includes(String(order.payment_status || '')) ||
+          refundAttempts.current.has(order.id)) continue;
+      refundAttempts.current.add(order.id);
+      void supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: order.id } })
+        .then(result => {
+          if (result.error || result.data?.error) refundAttempts.current.delete(order.id);
+          else void orders.reload();
+        })
+        .catch(() => refundAttempts.current.delete(order.id));
+    }
+  }, [orders.d]);
   useEffect(() => {
     const channel = supabase.channel('goodies-vendor-orders-' + app.biz.id)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'goodies_orders', filter: 'business_id=eq.' + app.biz.id }, () => { void orders.reload(); })
