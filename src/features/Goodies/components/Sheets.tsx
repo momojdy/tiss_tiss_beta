@@ -53,7 +53,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>CUSTOMER RATING · VIEW REVIEWS</T><T size={18} weight="800">★ {s.r} <T size={12.5} color={th.mut} weight="500">({s.rv} reviews)</T></T></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>CUSTOMER REVIEWS</T><T size={18} weight="800">{s.rv > 0 ? '★ ' + s.r.toFixed(1) + ' (' + s.rv + ' reviews)' : 'No reviews yet'}</T></Pressable>
           <Badge label={s.open ? 'Open now' : 'Closed now'} />
         </Row>
         {row('Opening hours', s.h)}
