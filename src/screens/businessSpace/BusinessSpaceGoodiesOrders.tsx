@@ -40,6 +40,12 @@ export function GoodiesOrdersPage() {
   }, [app.biz.id, app.tick]);
 
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
+  useEffect(() => {
+    const channel = supabase.channel('goodies-vendor-orders-' + app.biz.id)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'goodies_orders', filter: 'business_id=eq.' + app.biz.id }, () => { void orders.reload(); })
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.biz.id]);
   const act = async (order: GoodiesOrder, action: 'accept' | 'decline' | 'preparing' | 'ready' | 'completed') => {
     if (busyId) return;
     setBusyId(order.id);
