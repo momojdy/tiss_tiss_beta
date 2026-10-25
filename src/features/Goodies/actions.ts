@@ -115,7 +115,13 @@ export function checkoutNext() {
 }
 export function setPay(p: string) {
   if (p === 'card' && !S.cards.length) {push('payments'); return;}
-  S.pay = p; save(); emit();
+  S.pay = p;
+  if (p === 'card' && !S.cards.some((card: any) => card.id === S.selectedCardId)) S.selectedCardId = (S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id || '';
+  save(); emit();
+}
+export function setCard(id: string) {
+  if (!S.cards.some((card: any) => card.id === id)) return;
+  S.selectedCardId = id; save(); emit();
 }
 export async function placeOrder() {
   if (S.busy) return;
@@ -168,7 +174,7 @@ export async function placeOrder() {
     let data: any = null, error: any = null;
     if (S.pay === 'card') {
       const result = await supabase.functions.invoke('place-goodies-card-order', {
-        body: { payment_method_id: S.cards[0]?.id, idempotency_key: 'goodies-' + Date.now() + '-' + Math.random().toString(36).slice(2), order: orderPayload },
+        body: { payment_method_id: (S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id, idempotency_key: 'goodies-' + Date.now() + '-' + Math.random().toString(36).slice(2), order: orderPayload },
       });
       data = result.data; error = result.error;
     } else {
@@ -246,6 +252,7 @@ export async function refreshPaymentOptions() {
         id: card.id, b: String(card.brand || 'Card'), l4: String(card.last4 || ''),
         expiryMonth: card.expiry_month, expiryYear: card.expiry_year, isDefault: !!card.is_default,
       }));
+      if (!S.cards.some((card: any) => card.id === S.selectedCardId)) S.selectedCardId = (S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id || '';
     }
     save(); emit();
   } catch (e) {
