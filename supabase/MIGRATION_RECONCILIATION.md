@@ -1,13 +1,17 @@
 # Supabase migration reconciliation
 
-Checked 2026-10-24 against project `ycbirmgppwavorwudlrv`.
+Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 
 ## Inventory
 
-- Consumer repository has 27 tracked SQL migration files on `main`.
-- Supabase reports 98 migration-history entries.
+- Consumer repository has 50 tracked SQL migration files on `main`.
+- Supabase reports 124 migration-history entries.
 - Migration version strings and file names are not consistently aligned. Several migration bodies have matching live history names but different versions, which means version-only comparison overstates the drift.
-- There are two repository files with the same `202610240004` prefix:
+- There are eight duplicate version prefixes in the repository. They must not be renamed or replayed until each migration body is compared with live schema and history. Duplicate groups include `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
+
+Two Goodies order-response migrations are now recorded in live Supabase history: `20261025112902_goodies_vendor_acceptance_and_declines` and `20261025113645_schedule_goodies_order_acceptance_expiry`. Their SQL source is tracked as separate files on `main`.
+
+The original duplicate `202610240004` group includes:
   - `202610240004_goodies_live_schedule_and_store_chat.sql`
   - `202610240004_goodies_store_schedules_and_chat.sql`
 
@@ -33,3 +37,10 @@ Other migrations have matching names but mismatched version values, including bu
 5. Only then add the proposed admin/CMS migration to the reconciled sequence.
 
 No live migrations were applied as part of this comparison.
+
+
+## Current status and safety boundary
+
+- Live database history count is 124; tracked SQL file count is 50. Many older database migrations are not represented by a same-version/same-name file in this repository. This historical drift is not proof that every unmatched migration is missing from the live schema.
+- Do not delete history rows, rename applied migration versions, or replay historical SQL against production merely to make counts match. Reconcile by schema diff in a disposable database, then add a forward-only repair migration for verified missing behavior.
+- Live verification confirmed the Goodies acceptance, decline, and expiry functions exist and the cron job `goodies-expire-unaccepted-orders` is active on a one-minute schedule.
