@@ -125,7 +125,6 @@ function liveStore(r: any, items: Item[]): Store {
   return store;
 }
 
-/* A closed stand-in so past orders and the cart keep working after a store goes offline. It never appears in browsing (not in ST). */
 function placeholderStore(sid: string, name: string): Store {
   return {
     id: sid, n: name || 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
@@ -154,8 +153,6 @@ export async function refreshLiveSchedules() {
         if ((pr.data || []).length < 1000) break;
       }
     }
-    // Derive live-store ratings only from real customer reviews of that store's products.
-    // If review read access is unavailable, keep the honest "New / no reviews" state.
     const ratingByBiz: Record<string, {sum: number; count: number}> = {};
     if (prods.length) {
       const productBusiness = new Map(prods.map(p => [String(p.id), String(p.business_id)]));
@@ -173,22 +170,18 @@ export async function refreshLiveSchedules() {
           }
           if ((rr.data || []).length < 1000) break;
         }
-      } catch (e) {
-        // Ratings are optional; never fail the whole store catalog for review aggregation.
-      }
+      } catch (e) {}
     }
-    /* Only replace the catalog once store/product reads succeeded. */
     Object.keys(IT).forEach(k => delete IT[k]); Object.keys(STB).forEach(k => delete STB[k]); ST.length = 0;
     const byBiz: Record<string, Item[]> = {};
     stores.forEach(r => {byBiz[r.business_id] = [];});
     prods.forEach(p => {
       const r = stores.find(x => x.business_id === p.business_id); if (!r) return;
       const stock = Math.max(0, Math.floor(Number(p.stock) || 0));
-      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: (p.restriction || 'none') as Item['restriction'], photo: p.photo_url || null};
-      IT[it.id] = it; byBiz[p.business_id].push(it);
+      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1, d: p.description || '', restriction: p.restriction || null, photo: p.photo_url || null};
+      IT[p.id] = it; byBiz[r.business_id].push(it);
     });
     stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
-    /* Keep history and the cart readable for stores that are no longer live. */
     (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn);});
     if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
     S.catalogError = '';
@@ -234,9 +227,8 @@ export async function load() {
         }
         if (!methodsResult.error && Array.isArray(methodsResult.data)) {
           S.cards = methodsResult.data.map((pm: any) => ({
-            id: pm.id, brand: pm.brand, l4: pm.last4,
-            exp: String(pm.expiry_month).padStart(2, '0') + '/' + String(pm.expiry_year).slice(-2),
-            is_default: !!pm.is_default, server: true,
+            id: String(pm.id), b: String(pm.brand || 'Card'), l4: String(pm.last4 || ''),
+            expiryMonth: pm.expiry_month, expiryYear: pm.expiry_year, isDefault: !!pm.is_default,
           }));
         }
       }
