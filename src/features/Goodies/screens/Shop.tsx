@@ -313,8 +313,8 @@ export function Track({id}: {id: string}) {
       if (data.payment_method === 'card' && ['declined', 'expired', 'cancelled'].includes(data.status)
         && ['paid', 'refund_pending'].includes(data.payment_status) && !o.refundWorkerRequested) {
         o.refundWorkerRequested = true;
-        const refund = await supabase.functions.invoke('process-goodies-card-refunds', { body: { order_id: o.backendId } });
-        if (refund.error) o.refundWorkerRequested = false;
+        const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
+        if (refund.error || refund.data?.error) o.refundWorkerRequested = false;
         else { void sync(); }
       }
       save(); emit();
