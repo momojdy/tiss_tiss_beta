@@ -1,22 +1,23 @@
 /* Goodies tools for the Vendor Dashboard (Business Space).
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
-   Data goes through `goodiesApi`. The DEMO implementation below uses AsyncStorage; a Supabase implementation replaces it later without touching the screens. */
+   Store setup, products and publishing go through `goodiesApi` to Supabase. Builders and ingredient requests still use AsyncStorage (custom builder items are not orderable yet). */
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Modal, ScrollView, Pressable, TextInput } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useApp, useArg, useS, useTheme, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell } from './BusinessSpaceShared';
+import { supabase } from '../../lib/supabase';
+import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, STATUS_UI, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol' };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
 export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
 export type GRequest = { id: string; name: string; builder: 'pizza' | 'burger'; role: string; note: string; status: 'submitted' | 'approved' | 'denied' | 'needs_info'; at: number };
 
-/* admin-owned presets (demo seed). Production reads them from Wantiss Admin > Goodies > Categories. */
-export const DEMO_STORES: [string, string][] = [["s1", "Chez Marjorie"], ["s2", "Ti Krik"], ["s3", "Nature & Bien"], ["s4", "Boulangerie Delmas"], ["s5", "Jus Naturel"], ["s6", "Lakay Market"], ["s7", "Kay Atizan"], ["s8", "Pharmacie Delmas"], ["s9", "Beauté Lokalité"], ["s10", "Resto Kreyòl"], ["s11", "Boucherie Central"], ["s12", "Pizza Corner"]];
+/* admin-owned presets. The backend only accepts these category ids. */
 export const CATEGORY_PRESETS: { id: string; name: string }[] = [
   { id: 'restaurants', name: 'Restaurant' }, { id: 'produce', name: 'Fresh produce' }, { id: 'beverages', name: 'Beverages' }, { id: 'bakery', name: 'Bakery & desserts' }, { id: 'meat', name: 'Meat & seafood' },
   { id: 'groceries', name: 'Groceries' }, { id: 'haitian', name: 'Haitian products' }, { id: 'care', name: 'Personal care' }, { id: 'drugstore', name: 'Drugstore' },
@@ -28,15 +29,53 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 const k = (b: string, n: string) => `bs.goodies.${n}.${b}`;
 const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await AsyncStorage.getItem(key); return v ? (JSON.parse(v) as T) : d; } catch { return d; } };
 export const goodiesApi = {
-  getStore: (biz: string) => rd<GStore>(k(biz, 'store'), { demoStoreId: '', category: '', kind: '', minOrder: '5', fee: '2', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} }),
-  /* DEMO bridge: the Goodies customer app reads these shared keys. Production reads the backend instead. */
-  saveStore: async (biz: string, s: GStore) => {
-    await AsyncStorage.setItem(k(biz, 'store'), JSON.stringify(s));
-    try {
-      const sid = s.demoStoreId || biz, o = JSON.parse((await AsyncStorage.getItem('goodies-stores-v1')) || 'null') || {};
-      o[sid] = { category: s.category, kind: s.kind, fee: parseFloat(s.fee) || 0, minOrder: parseFloat(s.minOrder) || 0, etaMin: parseInt(s.etaMin, 10) || 20, etaMax: parseInt(s.etaMax, 10) || 35, promo: s.promo, delivery: s.delivery, pickup: s.pickup };
-      await AsyncStorage.setItem('goodies-stores-v1', JSON.stringify(o));
-    } catch { /* demo bridge only */ }
+  /* Store setup lives on the backend: the business is the store (store id = business id). */
+  getStore: async (biz: string): Promise<GStore> => {
+    const d: GStore = { demoStoreId: '', category: '', kind: '', minOrder: '5', fee: '2', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
+    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,eta_min,eta_max,promo,names,delivery_modes').eq('business_id', biz).maybeSingle());
+    if (!r) return d;
+    const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
+    return {
+      demoStoreId: '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
+      delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
+    };
+  },
+  saveStore: async (biz: string, st: GStore) => {
+    const names = Object.fromEntries(Object.entries(st.names).filter(([, v]) => String(v || '').trim()).map(([k2, v]) => [k2, String(v).trim().slice(0, 160)]));
+    await rpc('goodies_save_store_setup', {
+      p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,
+      p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,
+    });
+  },
+  /* Publish status. Going live is checked on the server: verified business, category, hours and one in-stock product. */
+  getLive: async (biz: string) => {
+    const r = await q<any>(supabase.from('goodies_store_schedules').select('is_live').eq('business_id', biz).maybeSingle());
+    const v = await q<any>(supabase.from('businesses').select('verification').eq('id', biz).maybeSingle());
+    return { live: !!r?.is_live, hasSetup: !!r, verification: (v?.verification || 'pending') as keyof typeof STATUS_UI };
+  },
+  setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
+  /* Products (stock is set by the vendor). Row security allows owners and admins only. */
+  listProducts: async (biz: string): Promise<GProduct[]> => {
+    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
+    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none' }));
+  },
+  saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
+    const f: Record<string, unknown> = {};
+    if (p.name !== undefined) f.name = p.name.trim();
+    if (p.description !== undefined) f.description = p.description.trim() || null;
+    if (p.price !== undefined) f.price = p.price;
+    if (p.emoji !== undefined) f.emoji = p.emoji.trim() || '🛍️';
+    if (p.stock !== undefined) f.stock = p.stock;
+    if (p.available !== undefined) f.is_available = p.available;
+    if (p.restriction !== undefined) f.restriction = p.restriction;
+    const res = p.id ? await supabase.from('goodies_products').update({ ...f, updated_at: new Date().toISOString() }).eq('id', p.id).select('id') : await supabase.from('goodies_products').insert({ ...f, business_id: biz }).select('id');
+    if (res.error) throw res.error;
+    if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can change products.');
+  },
+  deleteProduct: async (id: string) => {
+    const res = await supabase.from('goodies_products').delete().eq('id', id).select('id');
+    if (res.error) throw res.error;
+    if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can delete products.');
   },
   listBuilders: (biz: string) => rd<GBuilder[]>(k(biz, 'builders'), []),
   saveBuilders: async (biz: string, l: GBuilder[]) => {
@@ -103,7 +142,8 @@ export function GoodiesToolsCard() {
   const R = (title: string, sub: string, page: string) => <Row title={title} sub={sub} onPress={() => app.go(page)} right={<Icon name="chevron-right" size={18} color={t.mute} />} />;
   return (
     <View style={s.cardFlat}><Divided>
-      {R('Store setup', 'Category, minimum order, delivery fee and time', 'goodiesStore')}
+      {R('Store setup', 'Category, minimum order, delivery fee, time and publishing', 'goodiesStore')}
+      {R('Products', 'Items, prices and stock customers can buy', 'goodiesProducts')}
       {R('Builders', 'Pizza, burger and custom builders for your store', 'goodiesBuilders')}
       {R('Ingredient requests', 'Ask the platform to add a new ingredient', 'goodiesRequests')}
     </Divided></View>
@@ -115,8 +155,11 @@ const LANGS: [string, string][] = [['fr', 'Français'], ['ht', 'Kreyòl ayisyen'
 export function GoodiesStorePage() {
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false);
-  useEffect(() => { goodiesApi.getStore(app.biz.id).then(setF); }, [app.biz.id]);
-  if (!f) return <Pg title="Store setup" onBack={app.back}><Text style={s.mut}>Loading…</Text></Pg>;
+  const [loadErr, setLoadErr] = useState('');
+  const load = () => { setLoadErr(''); goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e))); };
+  useEffect(load, [app.biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
+  if (loadErr) return <Pg title="Store setup" onBack={app.back}><ErrBox e={loadErr} retry={load} /></Pg>;
+  if (!f) return <Pg title="Store setup" onBack={app.back}><Skel h={90} /><Skel h={200} /></Pg>;
   const set = (p: Partial<GStore>) => setF({ ...f, ...p });
   const err = (): string => {
     if (!f.category) return 'Choose a store category';
@@ -127,12 +170,10 @@ export function GoodiesStorePage() {
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
     return '';
   };
-  const save = async () => { const e = err(); if (e) return app.toast(e); setBusy(true); await goodiesApi.saveStore(app.biz.id, f); setBusy(false); app.toast('Store saved'); app.bump(); };
+  const save = async () => { const e = err(); if (e) return app.toast(e); setBusy(true); try { await goodiesApi.saveStore(app.biz.id, f); app.toast('Store saved'); app.bump(); } catch (x) { app.toast(errText(x)); } finally { setBusy(false); } };
   return (
     <Pg title="Store setup" onBack={app.back}>
-      <Section title="Demo link" />
-      <Text style={s.mut}>Demo only: choose which Goodies sample store this business appears as in the customer app. In production the business is the store.</Text>
-      <Chips items={[{ k: '', l: 'Not linked' }, ...DEMO_STORES.map(([id, n]) => ({ k: id, l: n }))]} value={f.demoStoreId} onChange={(v: string) => set({ demoStoreId: v })} />
+      <GoLiveCard />
       <Section title="Store category" />
       <Text style={s.mut}>Pick the category customers will find you under. Categories are set by Wantiss and cannot be created here.</Text>
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
@@ -150,7 +191,101 @@ export function GoodiesStorePage() {
       <Text style={s.mut}>Your name is shown as you entered it. Add translations if you want customers to see them in their language.</Text>
       {LANGS.map(([c, n]) => <Field key={c} label={n} value={f.names[c] || ''} onChangeText={(v: string) => set({ names: { ...f.names, [c]: v } })} />)}
       <View style={{ height: 14 }} /><Btn label="Save store" onPress={save} busy={busy} />
-      <Text style={[s.mut, { marginTop: 8 }]}>Logo, hours, address and verification are in Business information and Registration.</Text>
+      <Text style={[s.mut, { marginTop: 8 }]}>Logo, hours and address are in Business information. Your business is your store, so there is nothing to link.</Text>
+    </Pg>
+  );
+}
+
+/* ---------- publish / unpublish ---------- */
+function GoLiveCard() {
+  const app = useApp(), s = useS();
+  const st = useQ(() => goodiesApi.getLive(app.biz.id), [app.biz.id, app.tick]);
+  const [busy, setBusy] = useState(false), [err, setErr] = useState('');
+  const live = !!st.d?.live, ver = st.d?.verification || 'pending';
+  const toggle = async () => {
+    setBusy(true); setErr('');
+    try { const now = await goodiesApi.setLive(app.biz.id, !live); app.toast(now ? 'Your store is live' : 'Your store is unpublished'); st.reload(); }
+    catch (e) { const m = errText(e); setErr(m); app.toast(m); }
+    finally { setBusy(false); }
+  };
+  if (st.e && !st.d) return <ErrBox e={st.e} retry={st.reload} />;
+  return (
+    <View style={s.card}>
+      <View style={s.row}><Text style={[s.title, s.g]}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
+      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Business verification</Text><Pill tone={STATUS_UI[ver]?.tone || 'warn'}>{STATUS_UI[ver]?.label || String(ver)}</Pill></View>
+      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Customers cannot see your store yet. Wantiss must verify your business first, and you need a category, opening hours and at least one product in stock.'}</Text>
+      {err ? <Text style={[s.mut, { marginTop: 8 }]}>{err}</Text> : null}
+      <View style={{ height: 10 }} /><Btn label={live ? 'Unpublish store' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
+    </View>
+  );
+}
+
+/* ---------- products ---------- */
+const RESTRICTIONS: { k: GProduct['restriction']; l: string }[] = [{ k: 'none', l: 'No restriction' }, { k: 'otc', l: 'Over the counter' }, { k: 'alcohol', l: 'Alcohol' }];
+const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none' };
+const dollars = (n: number) => '$' + n.toFixed(2);
+function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClose: () => void; onSaved: () => void }) {
+  const app = useApp(), s = useS();
+  const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction });
+  const [busy, setBusy] = useState(false);
+  const check = (): string => {
+    const name = f.name.trim(), price = parseFloat(f.price), stock = Number(f.stock);
+    if (name.length < 1 || name.length > 120) return 'Enter a product name (up to 120 characters)';
+    if (!(price >= 0) || price > 100000) return 'Enter a price between 0 and 100,000';
+    if (Math.round(price * 100) / 100 !== price) return 'Use at most two decimals in the price';
+    if (!Number.isInteger(stock) || stock < 0 || stock > 100000) return 'Stock must be a whole number from 0 to 100,000';
+    if (f.description.length > 500) return 'Description is up to 500 characters';
+    if (ALC.test(name + ' ' + f.description) && f.restriction !== 'alcohol') return 'This looks like alcohol. Set the restriction to Alcohol.';
+    return '';
+  };
+  const save = async () => {
+    const e = check(); if (e) return app.toast(e);
+    setBusy(true);
+    try { await goodiesApi.saveProduct(app.biz.id, { id: product.id || undefined, name: f.name, description: f.description, price: parseFloat(f.price), stock: Number(f.stock), emoji: f.emoji, restriction: f.restriction }); app.toast(product.id ? 'Product saved' : 'Product added'); onSaved(); }
+    catch (x) { app.toast(errText(x)); }
+    finally { setBusy(false); }
+  };
+  const del = () => Alert.alert('Delete this product?', 'Customers will no longer see it. Past orders are not affected.', [
+    { text: 'Cancel', style: 'cancel' },
+    { text: 'Delete', style: 'destructive', onPress: async () => { setBusy(true); try { await goodiesApi.deleteProduct(product.id); app.toast('Product deleted'); onSaved(); } catch (x) { app.toast(errText(x)); } finally { setBusy(false); } } },
+  ]);
+  return (
+    <Modal transparent animationType="slide" onRequestClose={onClose}>
+      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
+        <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
+          <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
+          <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
+          <Field label="Emoji" value={f.emoji} onChangeText={(v: string) => setF({ ...f, emoji: v })} />
+          <Field label="Description (optional)" value={f.description} onChangeText={(v: string) => setF({ ...f, description: v })} multiline />
+          <Text style={s.label}>Restriction</Text>
+          <Chips items={RESTRICTIONS} value={f.restriction} onChange={(v: GProduct['restriction']) => setF({ ...f, restriction: v })} />
+          <Text style={[s.mut, { marginTop: 6 }]}>Alcohol cannot be ordered online yet. Mark it so it stays blocked.</Text>
+          <View style={{ height: 12 }} /><Btn label={product.id ? 'Save product' : 'Add product'} onPress={save} busy={busy} />
+          {product.id ? <><View style={{ height: 8 }} /><Btn kind="soft" label="Delete product" onPress={del} disabled={busy} /></> : null}
+        </SheetShell>
+      </View>
+    </Modal>
+  );
+}
+
+export function GoodiesProductsPage() {
+  const app = useApp(), s = useS(), t = useTheme();
+  const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
+  const [edit, setEdit] = useState<GProduct | null>(null);
+  const items = lst.d ?? [];
+  const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
+  return (
+    <Pg title="Products" onBack={app.back} refreshing={lst.l && !!lst.d} onRefresh={lst.reload}>
+      <Text style={s.mut}>Set the price and how many you have. Stock goes down when customers order and back up if an order is cancelled. Customers only see available products while your store is live.</Text>
+      <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
+      {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
+        <View style={s.cardFlat}><Divided>{items.map(p => (
+          <Row key={p.id} left={<Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
+            onPress={() => setEdit(p)} right={<Toggle value={p.available} onValueChange={(v: boolean) => toggle(p, v)} />} />
+        ))}</Divided></View>
+      ) : <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" hint="Add your first product. You need at least one in stock to go live." cta="Add product" onCta={() => setEdit(BLANK)} /></View>}
+      <GoLiveCard />
+      {edit ? <ProductSheet product={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); lst.reload(); }} /> : null}
     </Pg>
   );
 }
