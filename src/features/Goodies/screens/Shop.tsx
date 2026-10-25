@@ -299,7 +299,7 @@ export function Track({id}: {id: string}) {
       o.acceptanceDeadlineAt = data.acceptance_deadline_at;
       o.declineReasonPublic = data.decline_reason_public;
       o.paymentStatus = data.payment_status;
-      if (o.pay === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && data.payment_status !== 'refunded' && !o.refundRequested) {
+      if (data.payment_method === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && ['paid','refund_pending'].includes(data.payment_status) && !o.refundRequested) {
         o.refundRequested = true;
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
         if (refund.error || refund.data?.error) o.refundRequested = false;
@@ -310,13 +310,6 @@ export function Track({id}: {id: string}) {
       if (data.scheduled_for) o.sch = new Date(data.scheduled_for).getTime();
       o.cx = ['cancelled', 'declined', 'expired'].includes(data.status) ? 1 : 0;
       o.st = require('../store').stage(o);
-      if (data.payment_method === 'card' && ['declined', 'expired', 'cancelled'].includes(data.status)
-        && ['paid', 'refund_pending'].includes(data.payment_status) && !o.refundWorkerRequested) {
-        o.refundWorkerRequested = true;
-        const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
-        if (refund.error || refund.data?.error) o.refundWorkerRequested = false;
-        else { void sync(); }
-      }
       save(); emit();
     };
     void sync();
