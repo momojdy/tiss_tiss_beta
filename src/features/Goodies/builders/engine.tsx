@@ -7,6 +7,7 @@
 import React from 'react';
 import {View, Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {supabase} from '../../../lib/supabase';
 import {S, STB, ui, toast, emit, save, push, navBack, cur, hooks, money} from '../store';
 import {TEMPLATES} from './templates';
 import {T, useTheme, Tile} from '../components/ui';
@@ -56,6 +57,23 @@ export async function loadBuilders() {
   } catch (e) {}
   if (!Object.keys(BYO.cfg).length) {const seed: any = {}; ['s12', 's1', 's10'].forEach(k => (seed[k] = [fromTemplate('pizza'), fromTemplate('burger')])); BYO.cfg = seed;}
   Object.keys(BYO.cfg).forEach(k => {if (!STB[k] || !Array.isArray(BYO.cfg[k])) {delete BYO.cfg[k]; return;} BYO.cfg[k] = BYO.cfg[k].map(bClean).filter(Boolean) as Builder[];});
+  // Production builders come from the server, never from another user's local cache.
+  try {
+    const stores = Object.values(STB);
+    const businessIds = Array.from(new Set(stores.map((s: any) => String(s.businessId || '')).filter(Boolean)));
+    if (businessIds.length) {
+      const {data, error} = await supabase.from('goodies_builder_configs')
+        .select('business_id,builder_id,config,enabled').in('business_id', businessIds).eq('enabled', true);
+      if (error) throw error;
+      for (const store of stores as any[]) {
+        const rows = (data || []).filter((row: any) => row.business_id === store.businessId);
+        BYO.cfg[store.id] = rows.map((row: any) => bClean(row.config)).filter((b: Builder | null): b is Builder => !!b && b.enabled && b.available);
+      }
+    }
+  } catch (e) {
+    // If the live builder read fails, fail closed: don't offer locally cached custom items.
+    Object.values(STB).forEach((store: any) => { BYO.cfg[store.id] = []; });
+  }
   bsave(); emit();
 }
 export const bsave = () => {try {AsyncStorage.setItem(BKEY, JSON.stringify(BYO));} catch (e) {}};
