@@ -5,7 +5,7 @@ Checked 2026-10-25 against project `ycbirmgppwavorwudlrv`.
 ## Inventory
 
 - Consumer repository has 75 tracked SQL migration files on `main` (recounted 2026-10-25 after refund-worker reconciliation).
-- Supabase reports 147 migration-history entries (live count rechecked 2026-10-25).
+- Supabase reports 148 migration-history entries (live count rechecked 2026-10-25).
 - Migration version strings and file names are not consistently aligned. Several migration bodies have matching live history names but different versions, which means version-only comparison overstates the drift.
 - There are eight duplicate version prefixes in the repository. They must not be renamed or replayed until each migration body is compared with live schema and history. Duplicate groups include `202610240004`, `20261024000700`, `20261024000800`, `20261024000900`, `20261024001000`, `20261024001100`, `20261024001200`, and `20261024001300`.
 
@@ -38,7 +38,7 @@ Other migrations have matching names but mismatched version values, including bu
 
 ## Changes made on 2026-10-25
 
-The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds, final application rejection, review-RPC cleanup, builder configuration/validation, published promo-code validation, card payment references, refund queue/worker, and notification-hardening changes now have tracked SQL files on `main`. This improves the recent change trail, but does not reconcile the older live-history entries that have no matching tracked file.
+The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds, final application rejection, review-RPC cleanup, builder configuration/validation, published promo-code validation, card payment references, refund queue/worker, retry hardening, and notification-hardening changes now have tracked SQL files on `main`. This improves the recent change trail, but does not reconcile the older live-history entries that have no matching tracked file.
 
 **Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 147-live-versus-75-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
 
