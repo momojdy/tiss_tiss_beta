@@ -60,7 +60,7 @@ export function RegistrationPage() {
   const uploadApplicationDocument = async (type: string) => {
     const application = applicationDocs.d?.application;
     if (!application) return;
-    const picked = await DocumentPicker.getDocumentAsync({ type: ['image/*', 'application/pdf'], copyToCacheDirectory: true });
+    const picked = await DocumentPicker.getDocumentAsync({ type: ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'], copyToCacheDirectory: true });
     if (picked.canceled) return;
     const file: any = picked.assets[0];
     if (file.size && file.size > 10 * 1024 * 1024) { app.toast('File must be 10 MB or smaller'); return; }
