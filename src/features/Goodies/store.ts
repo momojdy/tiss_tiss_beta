@@ -141,6 +141,12 @@ export async function refreshLiveSchedules() {
       .eq('is_live', true);
     if (error) throw error;
     const stores: any[] = rows || [], prods: any[] = [];
+    let builderRows: any[] = [];
+    if (stores.length) {
+      const br = await supabase.from('goodies_builder_configs').select('business_id,builder_id,config,enabled').in('business_id', stores.map(r => r.business_id)).eq('enabled', true);
+      if (br.error) throw br.error;
+      builderRows = br.data || [];
+    }
     if (stores.length) {
       const ids = stores.map(r => r.business_id);
       for (let from = 0; ; from += 1000) {
