@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
-  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null;
+  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string; payment_status?: string;
   scheduled_for: string | null; order_type: string; items: any[]; total: number; notes: string | null;
 };
 const reasons = [
@@ -33,7 +33,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
-      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes')
+      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes,payment_method,payment_status')
       .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
@@ -57,7 +57,12 @@ export function GoodiesOrdersPage() {
           : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
       if (error) throw error;
       setDecline(null); setDetail('');
-      app.toast(action === 'accept' ? 'Order accepted' : action === 'decline' ? 'Order declined. Customer notified.' : action === 'preparing' ? 'Order marked as preparing' : action === 'ready' ? 'Order marked ready' : 'Order completed');
+      let refundWarning = '';
+      if (action === 'decline' && order.payment_method === 'card' && order.payment_status !== 'refunded') {
+        const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: order.id } });
+        if (refund.error || refund.data?.error) refundWarning = ' Card refund is pending and may need support follow-up.';
+      }
+      app.toast(action === 'accept' ? 'Order accepted' : action === 'decline' ? 'Order declined. Customer notified.' + refundWarning : action === 'preparing' ? 'Order marked as preparing' : action === 'ready' ? 'Order marked ready' : 'Order completed');
       await orders.reload();
       app.bump();
     } catch (e: any) {
