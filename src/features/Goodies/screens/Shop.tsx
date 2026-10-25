@@ -236,7 +236,13 @@ export function Checkout() {
     {pays.map(p => <Radio key={p[0]} on={S.pay === p[0]} onPress={() => setPay(p[0])}><Row><Icon name={p[3]} size={20} color={th.ink} /><View style={{flex: 1}}><T size={14.5} weight="700">{p[1]}</T><T size={12.5} color={th.mut}>{p[2]}</T></View></Row></Radio>)}
     {!providerInfo.demo && !S.hasWallet ? <Card style={{borderColor: th.br}}><T weight="800">Wantiss wallet not found</T><T size={12.5} color={th.mut} style={{marginVertical: 6}}>Create a wallet to pay for Goodies orders with your balance.</T><Cta label="Create wallet" onPress={createWallet} /></Card> : null}
     {!providerInfo.demo && S.hasWallet && S.wallet < t.total ? <Card style={{borderColor: th.br, backgroundColor: th.brt}}><T weight="800">Insufficient wallet balance</T><T size={12.5} color={th.mut} style={{marginTop: 4}}>Your balance is {money(S.wallet)}. You need {money(Math.max(0, t.total - S.wallet))} more to pay with your Wantiss wallet.</T><Cta small label="Open Wallet" onPress={() => go('payments')} /></Card> : null}
-    {!providerInfo.demo ? <T size={12} color={th.mut}>Wantiss Wallet payments debit your available balance. Saved cards are authorized securely before the order is placed.</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
+    {S.pay === 'card' ? <Card style={{marginTop: 10}}>
+      <T weight="800">Choose a saved card</T>
+      {S.cards.length ? S.cards.map((card: any) => <Radio key={card.id} on={S.selectedCardId === card.id} onPress={() => setCard(card.id)}>
+        <Row><Icon name="card" size={20} color={th.ink} /><View style={{flex: 1}}><T size={13.5} weight="700">{card.b} •••• {card.l4}{card.isDefault ? ' · Default' : ''}</T><T size={11.5} color={th.mut}>{card.expiryMonth && card.expiryYear ? 'Expires ' + String(card.expiryMonth).padStart(2,'0') + '/' + card.expiryYear : 'Saved securely with Stripe'}</T></View></Row>
+      </Radio>) : <><Empty title="No saved cards" hint="Add a card in Wallet settings to pay for Goodies orders." /><Cta label="Add a card" onPress={() => go('payments')} /></>}
+    </Card> : null}
+    {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
   </>);
   if (S.cs === 3) body = (<>
     <Card><T weight="700">{st.n}</T>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 8, alignItems: 'flex-start'}}><View style={{flex: 1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
