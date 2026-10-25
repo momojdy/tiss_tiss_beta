@@ -9,6 +9,7 @@ import {setTheme} from '../store';
 import {t as tr} from '../i18n';
 import {providerInfo} from '../providers';
 import {Home} from './Browse';
+import {LivePayments} from './Payments';
 import {supabase} from '../../../lib/supabase';
 import {legalDoc, supportTopics} from '../content';
 
@@ -114,25 +115,6 @@ function Addresses() {
     </View>
   </View>);
 }
-
-function Payments() {
-  const th = useTheme(), [f, setF] = useState<any>(null);
-  return (<View>
-    <Bar title="Wallet and payments" onBack={back} />
-    <View style={{paddingHorizontal: 16}}>
-      <View style={{borderRadius: 18, padding: 14, backgroundColor: th.br, marginBottom: 12}}>
-        <T size={13} color="#fff" style={{opacity: 0.9}}>Wantiss Wallet (demo)</T><T size={34} weight="800" color="#fff" style={{marginTop: 4, marginBottom: 14}}>{money(S.wallet)}</T>
-        <Pressable onPress={() => ui.sheet({kind: 'topup'})} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="800" color={th.brd}>Top up wallet</T></Pressable>
-      </View>
-      {!S.hasWallet ? <Card><T weight="700">You do not have a wallet yet</T><T size={13} color={th.mut} style={{marginVertical: 4}}>Create one to pay with it and to receive refunds. You can withdraw from it later.</T><Cta small label="Create wallet" onPress={() => require('../actions').createWallet()} /></Card> : null}
-      <Ttl>Saved cards</Ttl>
-      {S.cards.length ? S.cards.map((c: any, i: number) => <Card key={i}><Row><Icon name="card" size={22} color={th.ink} /><View style={{flex: 1}}><T weight="700">{c.b} •••• {c.l4}</T><T size={12.5} color={th.mut}>{c.n} · exp {c.e}</T></View><Pressable accessibilityLabel="Remove card" onPress={() => {S.cards.splice(i, 1); save(); emit();}}><Icon name="trash" size={18} color={th.red} /></Pressable></Row></Card>) : <T size={14} color={th.mut} style={{marginBottom: 12}}>No cards saved yet.</T>}
-      {f ? (<Card><Input label="Name on card" value={f.n} onChange={v => setF({...f, n: v})} /><Input label="Card number" value={f.num} keyboard="number-pad" onChange={v => setF({...f, num: v.replace(/\D/g, '')})} /><Input label="Expiry (MM/YY)" value={f.e} onChange={v => setF({...f, e: v})} /><View style={{marginTop: 12}}><Cta label="Save card" onPress={() => {if (f.num.length < 12 || !f.n.trim()) {toast('Enter a valid card'); return;} S.cards.unshift({b: /^4/.test(f.num) ? 'Visa' : /^5/.test(f.num) ? 'Mastercard' : 'Card', l4: f.num.slice(-4), n: f.n.trim(), e: f.e}); setF(null); save(); emit(); toast('Card saved');}} /></View></Card>) : <Cta ghost label="+ Add a card" onPress={() => setF({n: '', num: '', e: ''})} />}
-      <T size={12} color={th.mut} style={{marginTop: 10}}>Only the last 4 digits are kept. Demo only.</T>
-    </View>
-  </View>);
-}
-
 
 function StoreChat({id}: {id: string}) {
   const th = useTheme(), store = STB[id], listRef = useRef<ScrollView>(null);
@@ -281,7 +263,7 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'settings': return <Settings />;
     case 'profile': return <Profile />;
     case 'addresses': return <Addresses />;
-    case 'payments': return <Payments />;
+    case 'payments': return <LivePayments />;
     case 'contact': return <Contact p={p} />;
     case 'storechat': return <StoreChat id={String(p || '')} />;
     case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>Message sent</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? 'Ticket ' + result.ticket + ' was sent to ' + store.n + '. You can return to this conversation to see the store reply.' : 'Ticket ' + result.ticket + ' (demo). Your support request is not connected to a live support inbox yet.'}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label="Open store conversation" onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label="Back to Goodies" onPress={() => tab('home')} /></View></View>; }
