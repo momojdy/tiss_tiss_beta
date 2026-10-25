@@ -112,7 +112,7 @@ function liveStore(r: any, items: Item[]): Store {
   const id = String(r.store_id || r.business_id), names = r.names && typeof r.names === 'object' ? r.names : {};
   const eMin = Number(r.eta_min) || 20, eMax = Number(r.eta_max) || 35, st = openState(r.hours);
   const store: Store = {
-    id, c: r.category || 'groceries', e: CAT_EMOJI[r.category] || '🛍️', bg: bgOf(id), r: 0, rv: 0, km: 0, km0: 0,
+    id, businessId: String(r.business_id), c: r.category || 'groceries', e: CAT_EMOJI[r.category] || '🛍️', bg: bgOf(id), r: 0, rv: 0, km: 0, km0: 0,
     eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
     pr: r.promo || '', k: r.kind || '', it: items, open: st.open, h: st.h, nx: st.nx, far: false, live: true,
     logo: r.logo_url || null, cover: null, acceptScheduledOrders: !!r.accept_scheduled_orders,
