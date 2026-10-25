@@ -338,6 +338,7 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (!serverMounted.current || requestId !== serverLoadId.current) return;
     if (!auth.user) { serverUserId.current = null; setServerItems([]); return; }
+    if (serverUserId.current && serverUserId.current !== auth.user.id) return;
     serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name')
@@ -350,19 +351,37 @@ export function Notifs() {
   };
   useEffect(() => {
     let active = true;
+    let authTimer: ReturnType<typeof setTimeout> | null = null;
     serverMounted.current = true;
     let channel: ReturnType<typeof supabase.channel> | undefined;
-    const start = async () => {
-      const {data: auth} = await supabase.auth.getUser();
-      if (!auth.user) return;
-      await loadServer();
+    const connect = (userId: string | null) => {
       if (!active) return;
-      channel = supabase.channel('goodies-notifications-' + auth.user.id)
-        .on('postgres_changes', {event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + auth.user.id}, () => { void loadServer(); })
+      if (channel && serverUserId.current === userId) { void loadServer(); return; }
+      if (channel) { void supabase.removeChannel(channel); channel = undefined; }
+      serverLoadId.current++;
+      serverUserId.current = userId;
+      if (!userId) { setServerItems([]); setServerError(''); return; }
+      void loadServer();
+      channel = supabase.channel('goodies-notifications-' + userId)
+        .on('postgres_changes', {event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + userId}, () => { void loadServer(); })
         .subscribe();
     };
-    void start();
-    return () => { active = false; serverMounted.current = false; serverLoadId.current++; if (channel) void supabase.removeChannel(channel); };
+    const {data: authListener} = supabase.auth.onAuthStateChange((_event, session) => {
+      if (authTimer) clearTimeout(authTimer);
+      const nextUserId = session?.user?.id || null;
+      authTimer = setTimeout(() => { authTimer = null; connect(nextUserId); }, 0);
+    });
+    void supabase.auth.getSession().then(({data}) => {
+      if (active) connect(data.session?.user?.id || null);
+    });
+    return () => {
+      active = false;
+      serverMounted.current = false;
+      serverLoadId.current++;
+      if (authTimer) clearTimeout(authTimer);
+      authListener.subscription.unsubscribe();
+      if (channel) void supabase.removeChannel(channel);
+    };
   }, []);
   const localItems = S.notifs.filter((n: any) => !serverItems.some((s: any) => String(s.t) === String(n.t) && String(s.d) === String(n.d)));
   const items = [...serverItems, ...localItems];
