@@ -16,7 +16,7 @@ Payment and order progress are still simulated in this module. Real payments and
 
 ## Data flow (demo)
 - Wantiss Admin v5 > Goodies > Overview > Export content, then Goodies Settings > Import Admin content. Drives: categories + artwork, promo cards, flash deals, home labels, coupons, fees and tips, scheduling, age rules, alcohol texts, stage labels, FAQ, support topics, legal text, and builder artwork + layout.
-- Vendor Dashboard > Goodies > Store setup / Builders write `goodies-stores-v1` and `goodies-byo-v4` (AsyncStorage). Link a business to a sample store in Store setup > Demo link.
+- Vendor Dashboard > Goodies > Store setup, Products and Go live read and write the backend (`goodies_save_store_setup`, `goodies_products`, `goodies_set_store_live`). The business is the store (store id = business id). Builders still write `goodies-byo-v4` (AsyncStorage) and custom-builder items are not orderable yet.
 - Production: the same shapes come from the backend. No screen changes.
 
 ## Files
