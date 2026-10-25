@@ -2,6 +2,7 @@
 import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../lib/supabase';
+import {providerInfo} from './providers';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
 export const KEY = 'goodies-live-v4';
@@ -195,6 +196,31 @@ export async function load() {
     } catch (e) {}
   };
   await merge(WKEY, WDEF()); await merge(KEY, GDEF());
+  if (!providerInfo.demo) {
+    try {
+      const {data: sessionData} = await supabase.auth.getUser();
+      const userId = sessionData.user?.id;
+      if (userId) {
+        const [walletResult, methodsResult] = await Promise.all([
+          supabase.from('wallets').select('balance').eq('user_id', userId).maybeSingle(),
+          supabase.rpc('get_my_payment_methods'),
+        ]);
+        if (!walletResult.error) {
+          S.hasWallet = !!walletResult.data;
+          S.wallet = Number(walletResult.data?.balance ?? 0);
+        }
+        if (!methodsResult.error && Array.isArray(methodsResult.data)) {
+          S.cards = methodsResult.data.map((pm: any) => ({
+            id: pm.id, brand: pm.brand, l4: pm.last4,
+            exp: String(pm.expiry_month).padStart(2, '0') + '/' + String(pm.expiry_year).slice(-2),
+            is_default: !!pm.is_default, server: true,
+          }));
+        }
+      }
+    } catch (e) {
+      // Keep cached state visible if the wallet/card service is temporarily unavailable.
+    }
+  }
   try {const t = await AsyncStorage.getItem('goodies-theme'); if (t === 'light' || t === 'dark') S.theme = t;} catch (e) {}
   try {const l = await AsyncStorage.getItem('goodies-lang'); if (l) S.lang = l;} catch (e) {}
   /* The catalog must be loaded before the cart, favorites and orders are checked against it. */
