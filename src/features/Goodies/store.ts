@@ -154,7 +154,30 @@ export async function refreshLiveSchedules() {
         if ((pr.data || []).length < 1000) break;
       }
     }
-    /* Only replace the catalog once both reads succeeded. */
+    // Derive live-store ratings only from real customer reviews of that store's products.
+    // If review read access is unavailable, keep the honest "New / no reviews" state.
+    const ratingByBiz: Record<string, {sum: number; count: number}> = {};
+    if (prods.length) {
+      const productBusiness = new Map(prods.map(p => [String(p.id), String(p.business_id)]));
+      try {
+        for (let from = 0; ; from += 1000) {
+          const rr = await supabase.from('reviews').select('product_id,rating')
+            .in('product_id', prods.map(p => p.id)).gte('rating', 1).lte('rating', 5)
+            .range(from, from + 999);
+          if (rr.error) break;
+          for (const review of rr.data || []) {
+            const businessId = productBusiness.get(String(review.product_id));
+            if (!businessId) continue;
+            const acc = ratingByBiz[businessId] || (ratingByBiz[businessId] = {sum: 0, count: 0});
+            acc.sum += Number(review.rating); acc.count += 1;
+          }
+          if ((rr.data || []).length < 1000) break;
+        }
+      } catch (e) {
+        // Ratings are optional; never fail the whole store catalog for review aggregation.
+      }
+    }
+    /* Only replace the catalog once store/product reads succeeded. */
     Object.keys(IT).forEach(k => delete IT[k]); Object.keys(STB).forEach(k => delete STB[k]); ST.length = 0;
     const byBiz: Record<string, Item[]> = {};
     stores.forEach(r => {byBiz[r.business_id] = [];});
@@ -164,7 +187,7 @@ export async function refreshLiveSchedules() {
       const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: (p.restriction || 'none') as Item['restriction'], photo: p.photo_url || null};
       IT[it.id] = it; byBiz[p.business_id].push(it);
     });
-    stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); STB[s.id] = s; ST.push(s);});
+    stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
     /* Keep history and the cart readable for stores that are no longer live. */
     (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn);});
     if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
