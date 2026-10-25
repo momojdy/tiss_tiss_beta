@@ -43,15 +43,15 @@ No real payment, refund, application decision, or live vendor order was performe
 
 ## Still open
 
-**Migration history drift is documented but not fully reconciled.** The 148-live-versus-76-tracked difference is not a safe reason to delete migration-history rows, rename old versions, or replay historical SQL. The six unmatched migrations and duplicate version groups need schema-level comparison on a disposable database before a forward-only repair can be designed.
+**Migration history drift is documented but not fully reconciled.** The 151-live-versus-77-tracked difference is not a safe reason to delete migration-history rows, rename old versions, or replay historical SQL. The six unmatched migrations and duplicate version groups need schema-level comparison on a disposable database before a forward-only repair can be designed.
 
-The TypeScript build and app-level end-to-end tests were not run in this environment. Card payment, wallet checkout, published promotions, custom builders, and vendor/customer notifications still need end-to-end validation with a test store and provider test credentials.
+GitHub TypeScript checks pass on the current code. Expo Doctor still fails because `react-native-screens` is not declared as a direct dependency and five Expo packages are behind the SDK 57 patch versions it expects (`expo`, `expo-location`, `expo-notifications`, `expo-blur`, `expo-clipboard`). The web export is skipped after that failure. Card payment, wallet checkout, published promotions, custom builders, and vendor/customer notifications still need end-to-end validation with a test store and provider test credentials.
 
 
 ## Application document verification
 
 - The database now stores application documents in a private bucket and a row-level-secured table. The admin drawer reads the server records, can open signed URLs, and can verify or request replacement.
-- The review RPC refuses approval until business licence, tax ID, and owner ID records are all server-verified. The applicant-side upload screen is not yet wired into the customer app, so new applications will remain blocked until that upload flow is added.
+- The review RPC refuses approval until business licence, tax ID, and owner ID records are all server-verified. The customer app's Business Space registration page now uploads the three required documents to the private bucket and records them through the server submission RPC. The complete applicant upload → admin verification → approval flow still needs end-to-end testing.
 
 
 ## Remaining blockers after the security pass
@@ -60,5 +60,5 @@ The TypeScript build and app-level end-to-end tests were not run in this environ
 - Applicant-side business document upload is now wired into Business Space registration, but the complete upload → admin verification → approval flow has not yet been end-to-end tested.
 - No business was verified or published during this pass. Do not approve a business without reviewing its real documents. Production currently has no live Goodies store/product/order configuration, so end-to-end checkout still needs a real verified test business and provider test credentials.
 - Migration drift has not been reconciled: duplicate version prefixes and the 148 live history entries still require a disposable database comparison. No historical migration rows were deleted and no old migration was replayed.
-- The Goodies and goodies feature directories have not yet been merged because their runtime import usage must be mapped before deleting or moving files.
+- The unused lower-case `src/features/goodies/GoodiesStandaloneEntry.tsx` wrapper was removed; the active feature implementation remains in `src/features/Goodies` and the host entry screen remains under `src/screens/Goodies`.
 - GitHub TypeScript checks pass after the code fixes. Expo Doctor still fails because `react-native-screens` is not declared as a direct dependency and five Expo packages are behind the SDK 57 patch versions it expects (`expo`, `expo-location`, `expo-notifications`, `expo-blur`, `expo-clipboard`). The web export is skipped after that failure. The upload → admin review → store go-live and checkout/refund flows have not been end-to-end tested. Production readiness is not yet established.
