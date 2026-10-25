@@ -248,11 +248,11 @@ export function ctOf() {
   if (S.cc !== 'w') {const c = S.gc.filter((x: any) => x.id === S.cc)[0]; if (c) return {id: c.id, ph: c.ph, l: c.l || 'Goodies number', w: 0};}
   return {id: 'w', ph: S.pf.ph, l: 'Default Wantiss number', w: 1};
 }
-export const done = (o: Order) => o.cx || (o.st as number) >= (o.pk ? 4 : 6);
+export const done = (o: Order) => o.cx || ['declined', 'expired', 'cancelled'].includes(String((o as any).serverStatus || '').toLowerCase()) || (o.st as number) >= (o.pk ? 4 : 6);
 export const TL = STAGES_DELIVERY, TP = STAGES_PICKUP;
 export function stage(o: Order) {
   if (!o.backendId) return 0;
-  const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0};
+  const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0, declined: 0, expired: 0};
   return map[String(o.serverStatus || 'scheduled').toLowerCase()] ?? 0;
 }
 export function notify(t: string, d: string, r: string, p: string, k?: string) {
