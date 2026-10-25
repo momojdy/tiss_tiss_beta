@@ -11,6 +11,7 @@ import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNo
 import {byoNames} from '../builders/engine';
 import {t as tr, tx} from '../i18n';
 import {MODE1, PROMO} from '../theme';
+import {supabase} from '../../../lib/supabase';
 
 const cname = (id: string) => catName(id);
 const CATS = categories();
@@ -318,21 +319,70 @@ export function Promos() {
             <Row sp><T weight="700">{p.t}</T><Badge label={p.c} /></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
             <Row><Cta small ghost label="Details" onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? 'Applied' : 'Use this code'} onPress={() => usePromo(p.c)} /></Row>
-          </Card>
-        ))}
-      </View>
-    </View>
-  );
-}
-
-export function Notifs() {
+          </Cardexport function Notifs() {
   const th = useTheme();
+  const [serverItems, setServerItems] = useState<any[]>([]);
+  const [serverError, setServerError] = useState('');
+  const loadServer = async () => {
+    const {data: auth} = await supabase.auth.getUser();
+    if (!auth.user) { setServerItems([]); return; }
+    const {data, error} = await supabase.from('notifications')
+      .select('id,title,body,read,metadata,created_at,notification_type,feature_name')
+      .eq('user_id', auth.user.id).eq('feature_name', 'Goodies')
+      .order('created_at', {ascending: false}).limit(50);
+    if (error) { setServerError(error.message); return; }
+    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || 'Goodies update', d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
+    setServerError('');
+  };
+  useEffect(() => {
+    let active = true;
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    const start = async () => {
+      const {data: auth} = await supabase.auth.getUser();
+      if (!auth.user) return;
+      await loadServer();
+      if (!active) return;
+      channel = supabase.channel('goodies-notifications-' + auth.user.id)
+        .on('postgres_changes', {event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + auth.user.id}, () => { void loadServer(); })
+        .subscribe();
+    };
+    void start();
+    return () => { active = false; if (channel) void supabase.removeChannel(channel); };
+  }, []);
+  const localItems = S.notifs.filter((n: any) => !serverItems.some((s: any) => String(s.t) === String(n.t) && String(s.d) === String(n.d)));
+  const items = [...serverItems, ...localItems];
+  const markAll = async () => {
+    readAll();
+    const {data: auth} = await supabase.auth.getUser();
+    if (auth.user) {
+      const {error} = await supabase.from('notifications').update({read: true, updated_at: new Date().toISOString()})
+        .eq('user_id', auth.user.id).eq('feature_name', 'Goodies').eq('read', false);
+      if (error) setServerError(error.message);
+      else await loadServer();
+    }
+  };
+  const open = async (n: any) => {
+    if (!n.server) { openNotif(n.id); return; }
+    if (!n.read) {
+      const {data: auth} = await supabase.auth.getUser();
+      if (auth.user) {
+        const {error} = await supabase.from('notifications').update({read: true, updated_at: new Date().toISOString()})
+          .eq('id', n.id).eq('user_id', auth.user.id);
+        if (error) setServerError(error.message);
+        else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
+      }
+    }
+    const order = S.orders.find((o: any) => o.backendId && o.backendId === n.metadata?.order_id);
+    if (order) go('track', order.id);
+    else tab('orders');
+  };
   return (
     <View>
-      <Bar title="Notifications" onBack={back} right={S.notifs.length ? <Pressable onPress={readAll}><T size={13.5} weight="700" color={th.br}>Mark all read</T></Pressable> : null} />
+      <Bar title="Notifications" onBack={back} right={items.some((n: any) => n.u) ? <Pressable onPress={() => { void markAll(); }}><T size={13.5} weight="700" color={th.br}>Mark all read</T></Pressable> : null} />
       <View style={{paddingHorizontal: 16}}>
-        {S.notifs.length ? S.notifs.map((n: any) => (
-          <Pressable key={n.id} onPress={() => openNotif(n.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: th.line}}>
+        {serverError ? <T size={12} color={th.red}>{serverError}</T> : null}
+        {items.length ? items.map((n: any) => (
+          <Pressable key={(n.server ? 'server-' : 'local-') + n.id} onPress={() => { void open(n); }} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: th.line}}>
             <View style={{width: 44, height: 44, borderRadius: 16, backgroundColor: n.u ? th.brt : th.soft, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 22}}>{n.r === 'track' ? '🛵' : '🎁'}</Text></View>
             <View style={{flex: 1}}><T weight={n.u ? '800' : undefined}>{n.t}</T><T size={13} color={th.mut}>{n.d}</T></View>
             {n.u ? <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: th.br}} /> : null}
