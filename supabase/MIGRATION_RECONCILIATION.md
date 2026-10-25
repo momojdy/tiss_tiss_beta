@@ -36,3 +36,9 @@ No real payment, refund, application decision, or live vendor order was performe
 **Migration history drift is documented but not fully reconciled.** The 148-live-versus-76-tracked difference is not a safe reason to delete migration-history rows, rename old versions, or replay historical SQL. The six unmatched migrations and duplicate version groups need schema-level comparison on a disposable database before a forward-only repair can be designed.
 
 The TypeScript build and app-level end-to-end tests were not run in this environment. Card payment, wallet checkout, published promotions, custom builders, and vendor/customer notifications still need end-to-end validation with a test store and provider test credentials.
+
+
+## Application document verification
+
+- The database now stores application documents in a private bucket and a row-level-secured table. The admin drawer reads the server records, can open signed URLs, and can verify or request replacement.
+- The review RPC refuses approval until business licence, tax ID, and owner ID records are all server-verified. The applicant-side upload screen is not yet wired into the customer app, so new applications will remain blocked until that upload flow is added.
