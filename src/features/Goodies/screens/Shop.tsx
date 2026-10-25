@@ -354,6 +354,45 @@ export function Track({id}: {id: string}) {
 }
 
 export function Orders() {
+  const backendIds = S.orders.map((o: any) => o.backendId).filter(Boolean).join(',');
+  useEffect(() => {
+    let active = true;
+    let channel: ReturnType<typeof supabase.channel> | undefined;
+    const start = async () => {
+      const {data: auth} = await supabase.auth.getUser();
+      if (!active || !auth.user || !backendIds) return;
+      const ids = backendIds.split(',');
+      const sync = async () => {
+        const {data, error} = await supabase.from('goodies_orders')
+          .select('id,status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status')
+          .eq('customer_id', auth.user!.id).in('id', ids);
+        if (!active || error || !data) return;
+        let changed = false;
+        for (const row of data) {
+          const order: any = S.orders.find((o: any) => o.backendId === row.id);
+          if (!order) continue;
+          order.serverStatus = row.status;
+          order.acceptanceDeadlineAt = row.acceptance_deadline_at;
+          order.declineReasonPublic = row.decline_reason_public;
+          order.paymentStatus = row.payment_status;
+          order.declined = row.status === 'declined';
+          order.expired = row.status === 'expired';
+          order.cx = ['cancelled', 'declined', 'expired'].includes(row.status) ? 1 : 0;
+          if (row.scheduled_for) order.sch = new Date(row.scheduled_for).getTime();
+          order.st = require('../store').stage(order);
+          changed = true;
+        }
+        if (changed) { save(); emit(); }
+      };
+      await sync();
+      if (!active) return;
+      channel = supabase.channel('goodies-orders-list-' + auth.user.id)
+        .on('postgres_changes', {event: 'UPDATE', schema: 'public', table: 'goodies_orders', filter: 'customer_id=eq.' + auth.user.id}, () => { void sync(); })
+        .subscribe();
+    };
+    void start();
+    return () => { active = false; if (channel) void supabase.removeChannel(channel); };
+  }, [backendIds]);
   const th = useTheme(), a = S.orders.filter((o: any) => (S.ot === 'active' ? !done(o) : done(o)));
   const stTxt = (o: any) => (o.cx ? 'Cancelled' : stageLabels(!!o.pk, o.pk ? TP : TL)[o.st]);
   return (
