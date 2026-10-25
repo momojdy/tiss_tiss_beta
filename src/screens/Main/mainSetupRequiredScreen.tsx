@@ -7,8 +7,7 @@ export default function SetupRequiredScreen() {
       <View style={styles.card}>
         <Text style={styles.title}>Wantiss needs Supabase configuration</Text>
         <Text style={styles.body}>
-          The preview server is running. Add these settings for the existing
-          Supabase project in Replit’s Secrets tool, then stop and run the app again:
+          The app needs the existing Supabase project settings in its deployment environment before sign-in and database features can work:
         </Text>
         <Text style={styles.setting}>EXPO_PUBLIC_SUPABASE_URL</Text>
         <Text style={styles.setting}>EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY</Text>
