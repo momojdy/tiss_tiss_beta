@@ -37,6 +37,54 @@ export function PromotionsPage() {
 export function RegistrationPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
   const r = useQ(() => rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
+  const applicationDocs = useQ(async () => {
+    const { data: auth, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!auth.user) return { application: null, documents: [] as any[] };
+    const { data: application, error } = await supabase.from('business_applications')
+      .select('id,status,review_note,created_at').eq('user_id', auth.user.id)
+      .order('created_at', { ascending: false }).limit(1).maybeSingle();
+    if (error) throw error;
+    if (!application) return { application: null, documents: [] as any[] };
+    const { data: documents, error: documentError } = await supabase.from('business_application_documents')
+      .select('id,document_type,storage_path,status,review_note,submitted_at')
+      .eq('application_id', application.id);
+    if (documentError) throw documentError;
+    return { application, documents: documents || [] };
+  }, [b.id, app.tick]);
+  const applicationTypes = [
+    { id: 'business_licence', label: 'Business licence' },
+    { id: 'tax_id', label: 'Tax ID' },
+    { id: 'owner_id', label: 'Owner ID' },
+  ];
+  const uploadApplicationDocument = async (type: string) => {
+    const application = applicationDocs.d?.application;
+    if (!application) return;
+    const picked = await DocumentPicker.getDocumentAsync({ type: ['image/*', 'application/pdf'], copyToCacheDirectory: true });
+    if (picked.canceled) return;
+    const file: any = picked.assets[0];
+    if (file.size && file.size > 10 * 1024 * 1024) { app.toast('File must be 10 MB or smaller'); return; }
+    await a.run(async () => {
+      const base64 = await FileSystem.readAsStringAsync(file.uri, { encoding: FileSystem.EncodingType.Base64 });
+      const safeName = String(file.name || 'document').replace(/[^\\w.-]/g, '_');
+      const path = `${application.id}/${type}/${uuid()}-${safeName}`;
+      const { error: uploadError } = await supabase.storage.from('business-application-documents')
+        .upload(path, decode(base64), { contentType: file.mimeType || 'application/pdf' });
+      if (uploadError) throw uploadError;
+      const { error: submitError } = await supabase.rpc('submit_business_application_document', {
+        p_application_id: application.id, p_document_type: type, p_storage_path: path,
+      });
+      if (submitError) throw submitError;
+      await applicationDocs.reload();
+    }, 'Document uploaded');
+  };
+  const startApplication = async () => {
+    await a.run(async () => {
+      const { error } = await supabase.rpc('submit_business_application', { p_business_name: b.name });
+      if (error) throw error;
+      await applicationDocs.reload();
+    }, 'Application started');
+  };
   const rows = r.d ?? [], can = b.verification === 'setup' || b.verification === 'action';
   const msg: Record<Status, string> = { verified: 'Your business is verified.', pending: 'Your documents are in review. This usually takes 1 to 2 business days.', setup: 'Registration is optional and earns the Verified badge.', action: 'A document needs your attention. Replace it and resubmit.', restricted: 'Some actions are paused on this business.' };
   const upload = async (x: any) => {
@@ -55,7 +103,27 @@ export function RegistrationPage() {
   const pill = (st: string) => st === 'approved' ? <Pill tone="good">Approved</Pill> : st === 'submitted' ? <Pill tone="warn">Uploaded</Pill> : st === 'rejected' ? <Pill tone="bad">Rejected</Pill> : <Pill tone="mute">Missing</Pill>;
   const uploaded = rows.some(x => x.status === 'submitted'), stuck = rows.some(x => x.status === 'rejected');
   return (
-    <Pg title="Business registration" onBack={app.back} refreshing={r.l && !!r.d} onRefresh={app.bump}>
+    <Pg title="Business registration" onBack={app.back} refreshing={(r.l && !!r.d) || (applicationDocs.l && !!applicationDocs.d)} onRefresh={() => { app.bump(); applicationDocs.reload(); }}>
+      <View style={s.cardFlat}>
+        <Text style={[s.title, { paddingTop: 14 }]}>Application documents</Text>
+        <Text style={[s.mut, { paddingVertical: 8 }]}>Upload all three documents. Wantiss cannot approve your business application until each document is reviewed and verified. PDF, JPEG, PNG or WebP, up to 10 MB each.</Text>
+        {applicationDocs.e ? <View style={{ paddingVertical: 10 }}><ErrBox e={applicationDocs.e} retry={applicationDocs.reload} /></View> : applicationDocs.l && !applicationDocs.d ? <View style={{ paddingVertical: 12 }}><Skel h={110} /></View> : !applicationDocs.d?.application ? (
+          <View style={{ paddingVertical: 12, gap: 10 }}>
+            <Text style={s.mut}>No application has been created for this account yet.</Text>
+            <Btn label="Start business application" busy={a.busy} onPress={startApplication} />
+          </View>
+        ) : (
+          <>
+            <Text style={s.mut}>Application status: {applicationDocs.d.application.status}</Text>
+            {applicationDocs.d.application.review_note ? <Text style={[s.mut, { paddingTop: 6 }]}>{applicationDocs.d.application.review_note}</Text> : null}
+            <Divided>{applicationTypes.map(doc => {
+              const row = applicationDocs.d?.documents.find((x: any) => x.document_type === doc.id);
+              const status = row?.status || 'missing';
+              const tone = status === 'verified' ? 'good' : status === 'rejected' ? 'bad' : status === 'pending' ? 'warn' : 'mute';
+              return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
+          </>
+        )}
+      </View>
       <View style={s.row}><StatusPill s={b.verification} /></View>
       <View style={{ backgroundColor: b.verification === 'restricted' || b.verification === 'action' ? t.badBg : t.soft, borderRadius: 12, padding: 12 }}><Text style={{ color: b.verification === 'restricted' || b.verification === 'action' ? t.badFg : t.blue, fontWeight: '600', lineHeight: 20 }}>{msg[b.verification]}</Text></View>
       <View style={s.cardFlat}>
