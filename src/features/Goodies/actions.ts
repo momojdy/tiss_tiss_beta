@@ -140,7 +140,7 @@ export async function placeOrder() {
   if (alc && !S.hasWallet) {toast('Create your Wantiss wallet first. Refunds for alcohol orders go there.'); push('payments'); return;}
   if (S.promo && t.perr) {S.promo = ''; toast('Your promo code no longer applies. Totals updated'); emit(); return;}
   if (S.sch && S.sch < Date.now()) {S.sch = 0; S.cs = 1; toast('That time has passed. Pick another'); emit(); return;}
-  if (S.pay === 'wallet' && S.wallet < t.total) {toast('Wallet balance is too low. Top up or pick another method.'); push('payments'); return;}
+  if (providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast('Wallet balance is too low. Top up or pick another method.'); push('payments'); return;}
   if (S.pay === 'card') {
     if (!S.cards.length) {push('payments'); return;}
     if (S.cards[0].l4 === '0002') {toast('Card declined (demo). Your cart is safe. Try another method.'); S.cs = 2; emit(); return;}
@@ -168,7 +168,7 @@ export async function placeOrder() {
     if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
     backendOrderId = row.id; id = row.order_code || id;
   }
-  if (S.pay === 'wallet') S.wallet -= t.total;
+  if (providerInfo.demo && S.pay === 'wallet') S.wallet -= t.total;
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
     sn: st.n, sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
