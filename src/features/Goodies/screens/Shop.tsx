@@ -285,11 +285,16 @@ export function Track({id}: {id: string}) {
     if (!o?.backendId) return;
     let active = true;
     const sync = async () => {
-      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for').eq('id', o.backendId).maybeSingle();
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status').eq('id', o.backendId).maybeSingle();
       if (!active || error || !data) return;
       o.serverStatus = data.status;
+      o.acceptanceDeadlineAt = data.acceptance_deadline_at;
+      o.declineReasonPublic = data.decline_reason_public;
+      o.paymentStatus = data.payment_status;
+      o.declined = data.status === 'declined';
+      o.expired = data.status === 'expired';
       if (data.scheduled_for) o.sch = new Date(data.scheduled_for).getTime();
-      o.cx = data.status === 'cancelled' ? 1 : 0;
+      o.cx = ['cancelled', 'declined', 'expired'].includes(data.status) ? 1 : 0;
       o.st = require('../store').stage(o);
       save(); emit();
     };
@@ -300,7 +305,7 @@ export function Track({id}: {id: string}) {
   if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
   const s = STB[o.sid], T_: string[] = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
   const serverStatus = String(o.serverStatus || '').toLowerCase();
-  const eta = o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? 'Waiting for store to accept' : serverStatus === 'accepted' ? 'Order accepted by store' : serverStatus === 'preparing' ? 'Store is preparing your order' : serverStatus === 'ready' ? (o.pk ? 'Ready for pickup' : 'Ready for courier pickup') : 'Order update') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
+  const eta = o.declined ? 'Store declined the order' : o.expired ? 'Response window expired' : o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? 'Waiting for store to accept' : serverStatus === 'accepted' ? 'Order accepted by store' : serverStatus === 'preparing' ? 'Store is preparing your order' : serverStatus === 'ready' ? (o.pk ? 'Ready for pickup' : 'Ready for courier pickup') : 'Order update') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
   return (
     <View>
       <Bar title={'Order ' + o.id} onBack={back} />
@@ -308,7 +313,7 @@ export function Track({id}: {id: string}) {
         <Card>
           <Row><Tile e={s.e} bg={s.bg} /><View style={{flex: 1}}><T weight="700">{s.n}</T><T size={13} color={th.mut}>{o.pk ? 'Pickup' : 'To ' + (o.ad ? o.ad.t + (o.ad.apt ? ', ' + o.ad.apt : '') : o.addr)}</T></View></Row>
           <View style={{marginTop: 10}}><Badge green={!!(dn && !o.cx)} label={eta} /></View>
-          {o.cx ? <T size={14} color={th.mut} style={{marginTop: 12}}>This order was cancelled{o.pay === 'wallet' ? ' and refunded to your wallet.' : '.'}</T> : (<>
+          {o.cx ? <T size={14} color={th.mut} style={{marginTop: 12}}>{o.declined ? 'The store could not accept your order. ' + (o.declineReasonPublic || 'Please try another store.') : o.expired ? 'The store did not respond within 15 minutes. Your order was cancelled.' : 'This order was cancelled'}{o.paymentStatus === 'refunded' || o.pay === 'wallet' ? ' Any applicable refund will be shown in your Wantiss wallet activity.' : ' You were not charged for this order.'}</T> : (<>
             <View style={{flexDirection: 'row', gap: 6, marginVertical: 14}}>{T_.map((x, i) => <View key={i} style={{flex: 1, height: 6, borderRadius: 3, backgroundColor: i <= o.st ? th.br : th.line}} />)}</View>
             {T_.map((x, i) => <View key={i} style={{flexDirection: 'row', gap: 12, marginVertical: 12, alignItems: 'center'}}><View style={{width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: i <= o.st ? th.br : th.line, backgroundColor: i <= o.st ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{i <= o.st ? <Icon name="check" size={12} color="#fff" /> : null}</View><T size={14} color={i <= o.st ? th.ink : th.mut} weight={i <= o.st ? '700' : undefined}>{x}</T></View>)}
           </>)}
