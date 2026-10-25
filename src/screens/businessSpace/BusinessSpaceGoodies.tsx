@@ -77,7 +77,14 @@ export const goodiesApi = {
     if (res.error) throw res.error;
     if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can delete products.');
   },
-  listBuilders: (biz: string) => rd<GBuilder[]>(k(biz, 'builders'), []),
+  listBuilders: async (biz: string): Promise<GBuilder[]> => {
+    const remote = await q<any[]>(supabase.from('goodies_builder_configs').select('config,enabled').eq('business_id', biz).order('created_at', { ascending: true }));
+    if (remote?.length) return remote.filter(row => row.enabled && row.config).map(row => row.config as GBuilder);
+    // One-time compatibility import: existing vendor drafts are pushed to the server when opened.
+    const local = await rd<GBuilder[]>(k(biz, 'builders'), []);
+    if (local.length) { await goodiesApi.saveBuilders(biz, local); return local; }
+    return [];
+  },
   saveBuilders: async (biz: string, l: GBuilder[]) => {
     const existing = await q<any[]>(supabase.from('goodies_builder_configs').select('builder_id').eq('business_id', biz));
     const rows = l.map(builder => ({
