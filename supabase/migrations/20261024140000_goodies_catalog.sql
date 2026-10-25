@@ -48,19 +48,19 @@ create policy "Business members can read their products" on public.goodies_produ
 drop policy if exists "Business managers can insert products" on public.goodies_products;
 create policy "Business managers can insert products" on public.goodies_products
   for insert to authenticated with check (
-    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'manager'))
+    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'admin'))
   );
 drop policy if exists "Business managers can update products" on public.goodies_products;
 create policy "Business managers can update products" on public.goodies_products
   for update to authenticated using (
-    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'manager'))
+    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'admin'))
   ) with check (
-    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'manager'))
+    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'admin'))
   );
 drop policy if exists "Business managers can delete products" on public.goodies_products;
 create policy "Business managers can delete products" on public.goodies_products
   for delete to authenticated using (
-    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'manager'))
+    exists (select 1 from public.business_members bm where bm.business_id = goodies_products.business_id and bm.user_id = (select auth.uid()) and bm.role in ('owner', 'admin'))
   );
 revoke all on public.goodies_products from anon, authenticated;
 grant select on public.goodies_products to anon, authenticated;
@@ -101,7 +101,7 @@ declare
   v_start integer;
 begin
   if v_uid is null then raise exception 'Sign in required' using errcode = '28000'; end if;
-  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'manager')) then
+  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'admin')) then
     raise exception 'Not allowed' using errcode = '42501';
   end if;
   if p_fields is null or jsonb_typeof(p_fields) <> 'object' then raise exception 'Invalid fields' using errcode = '22023'; end if;
@@ -152,7 +152,7 @@ declare
   v_uid uuid := auth.uid();
 begin
   if v_uid is null then raise exception 'Sign in required' using errcode = '28000'; end if;
-  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'manager')) then
+  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'admin')) then
     raise exception 'Not allowed' using errcode = '42501';
   end if;
   if p_category is null or p_category not in ('restaurants', 'produce', 'beverages', 'bakery', 'meat', 'groceries', 'haitian', 'care', 'drugstore') then
@@ -200,7 +200,7 @@ declare
   s public.goodies_store_schedules%rowtype;
 begin
   if v_uid is null then raise exception 'Sign in required' using errcode = '28000'; end if;
-  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'manager')) then
+  if not exists (select 1 from public.business_members bm where bm.business_id = p_business and bm.user_id = v_uid and bm.role in ('owner', 'admin')) then
     raise exception 'Not allowed' using errcode = '42501';
   end if;
   select * into s from public.goodies_store_schedules where business_id = p_business for update;
@@ -240,7 +240,7 @@ set search_path = ''
 as $$
 begin
   if not public.wantiss_has_permission('operations', 'edit') then raise exception 'Not authorized' using errcode = '42501'; end if;
-  if p_status not in ('verified', 'pending', 'rejected') then raise exception 'Invalid status' using errcode = '22023'; end if;
+  if p_status not in ('verified', 'pending', 'restricted') then raise exception 'Invalid status' using errcode = '22023'; end if;
   update public.businesses set verification = p_status where id = p_business;
   if not found then raise exception 'Business not found' using errcode = 'P0002'; end if;
   if p_status <> 'verified' then
