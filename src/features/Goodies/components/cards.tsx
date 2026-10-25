@@ -62,7 +62,7 @@ export function VCard({s}: {s: Store}) {
         <T size={13.5} weight="700" lines={1}>{s.n}</T>
         <T size={11.5} color={th.mut} lines={1}>{s.k}</T>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
-          <Stars n={s.r.toFixed(1)} /><T size={11.5} color={th.mut}>{s.eta} min</T>
+          {s.live && s.rv === 0 ? <T size={11.5} color={th.mut}>New store</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} min</T>
         </View>
       </Pressable>
     </View>
@@ -78,7 +78,7 @@ export function StoreCard({s}: {s: Store}) {
           <Text style={{fontSize: 76}}>{s.e}</Text>
           {s.pr ? <View style={{position: 'absolute', left: 0, top: 14, backgroundColor: th.br, borderTopRightRadius: 8, borderBottomRightRadius: 8, paddingVertical: 5, paddingLeft: 12, paddingRight: 10}}><T size={12} weight="800" color="#fff">{s.pr}</T></View> : null}
           {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
-          {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far ? pill('Pickup only at this address') : s.rv > 80 ? pill('🔥 ' + Math.round(s.rv * 0.95) + ' ordered today') : null}
+          {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far && !s.live ? pill('Pickup only at this address') : s.rv > 80 ? pill('🔥 ' + Math.round(s.rv * 0.95) + ' ordered today') : null}
           <View style={{position: 'absolute', right: 10, bottom: 10, backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={12} weight="700" color="#1B1B1F">{s.eta} min</T></View>
         </Grad>
       </Pressable>
@@ -96,9 +96,9 @@ export function StoreCard({s}: {s: Store}) {
       <Pressable onPress={() => go('store', s.id)} style={{paddingTop: 10, paddingHorizontal: 2}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
           <T size={16.5} weight="800" style={{flexShrink: 1}}>{s.n}</T>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="700">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>
+          {s.live && s.rv === 0 ? <T size={12} color={th.mut}>No reviews yet</T> : <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="700">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>}
         </View>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.km.toFixed(1)} km</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.live ? 'Distance unavailable' : s.km.toFixed(1) + ' km'}</T>
         {byoTag(s.id)}
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.fee === 0 ? <T size={13} weight="700" color={th.grn}>{tr('freeDelivery')}</T> : money(s.fee) + ' ' + tr('delivery')} · {tr('minOrder')} {money(s.min)}</T>
       </Pressable>
