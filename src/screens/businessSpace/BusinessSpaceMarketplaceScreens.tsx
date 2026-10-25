@@ -83,7 +83,7 @@ export function OrdersPanel() {
   const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
   const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));
-  const nextGoodiesStatus: Record<string,string> = {scheduled:'accepted',placed:'accepted',accepted:'preparing',preparing:'ready',ready:'completed'};
+  const nextGoodiesStatus: Record<string,string> = {accepted:'preparing',preparing:'ready',ready:'completed'};
   const advanceGoodies = async (x: any) => {
     const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
     if (!due) {app.toast('This order is scheduled for ' + new Date(x.scheduled_for).toLocaleString()); return;}
@@ -99,6 +99,7 @@ export function OrdersPanel() {
     <View style={{ gap: 10 }}>
       <Chips items={['Open', 'Closed', 'Cancelled', 'All']} value={f} onChange={setF} />
       <Section title="Goodies orders" right={String(grows.length)} />
+      <Btn label="Open 15-minute response queue" kind="soft" onPress={() => app.go('goodiesOrders')} />
       {goodies.e ? <ErrBox e={goodies.e} retry={goodies.reload} /> : goodies.l && !goodies.d ? <Loading /> : grows.length ? <View style={{gap:8}}>{grows.map(x => {
         const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
         const next = nextGoodiesStatus[String(x.status).toLowerCase()];
