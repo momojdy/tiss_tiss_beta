@@ -1,0 +1,40 @@
+project_id = "ycbirmgppwavorwudlrv"
+
+[functions.create-money-request-payment]
+verify_jwt = true
+
+[functions.stripe-money-request-webhook]
+verify_jwt = false
+
+[functions.create-money-request-checkout]
+verify_jwt = true
+
+[functions.create-card-setup-intent]
+verify_jwt = true
+
+[functions.serve-card-setup-page]
+verify_jwt = false
+
+[functions.deactivate-my-account]
+verify_jwt = true
+
+[functions.wantiss-admin-staff]
+verify_jwt = true
+
+[functions.wantiss-cms-public]
+verify_jwt = false
+
+[functions.wantiss-public-content]
+verify_jwt = false
+
+[functions.wantiss-admin-bootstrap]
+verify_jwt = true
+
+[functions.place-goodies-card-order]
+verify_jwt = true
+
+[functions.refund-goodies-card-order]
+verify_jwt = true
+
+[functions.process-goodies-card-refunds]
+verify_jwt = false
