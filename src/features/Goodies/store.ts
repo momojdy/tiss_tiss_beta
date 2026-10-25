@@ -178,7 +178,7 @@ export async function refreshLiveSchedules() {
     prods.forEach(p => {
       const r = stores.find(x => x.business_id === p.business_id); if (!r) return;
       const stock = Math.max(0, Math.floor(Number(p.stock) || 0));
-      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1, d: p.description || '', restriction: p.restriction || null, photo: p.photo_url || null};
+      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', restriction: p.restriction || null, photo: p.photo_url || null};
       IT[p.id] = it; byBiz[r.business_id].push(it);
     });
     stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
