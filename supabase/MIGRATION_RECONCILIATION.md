@@ -36,7 +36,11 @@ Other migrations have matching names but mismatched version values, including bu
 4. Test the reconciled sequence against a disposable/non-production database before any production apply.
 5. Only then add the proposed admin/CMS migration to the reconciled sequence.
 
-No live migrations were applied as part of this comparison.
+## Changes made on 2026-10-25
+
+The Goodies vendor acceptance/decline, scheduled expiry, final application rejection, and review-RPC overload cleanup migrations were applied to the live project and their SQL files were added to `main`. These are new tracked/live entries, not a reconciliation of the older 74-entry gap.
+
+**Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The remaining 128-live-versus-54-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
 
 
 ## Current status and safety boundary
