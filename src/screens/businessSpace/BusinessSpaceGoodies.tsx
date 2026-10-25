@@ -142,6 +142,7 @@ export function GoodiesToolsCard() {
   const R = (title: string, sub: string, page: string) => <Row title={title} sub={sub} onPress={() => app.go(page)} right={<Icon name="chevron-right" size={18} color={t.mute} />} />;
   return (
     <View style={s.cardFlat}><Divided>
+      {R('Orders', 'Review new orders and accept or decline within 15 minutes', 'goodiesOrders')}
       {R('Store setup', 'Category, minimum order, delivery fee, time and publishing', 'goodiesStore')}
       {R('Products', 'Items, prices and stock customers can buy', 'goodiesProducts')}
       {R('Builders', 'Pizza, burger and custom builders for your store', 'goodiesBuilders')}
