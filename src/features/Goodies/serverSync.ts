@@ -114,7 +114,7 @@ export function startGoodiesSync() {
     try {
       do {
         refreshAgain = false;
-        const requestUserId = userId;
+        const requestUserId: string = userId;
         const requestGeneration = generation;
         const [unreadResult, ordersResult, walletResult] = await Promise.all([
           supabase.from('notifications')
