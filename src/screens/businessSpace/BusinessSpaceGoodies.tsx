@@ -86,24 +86,7 @@ export const goodiesApi = {
     return [];
   },
   saveBuilders: async (biz: string, l: GBuilder[]) => {
-    const existing = await q<any[]>(supabase.from('goodies_builder_configs').select('builder_id').eq('business_id', biz));
-    const rows = l.map(builder => ({
-      business_id: biz,
-      builder_id: builder.id,
-      config: builder,
-      enabled: builder.enabled && builder.available,
-      updated_at: new Date().toISOString(),
-    }));
-    if (rows.length) {
-      const saved = await supabase.from('goodies_builder_configs').upsert(rows, { onConflict: 'business_id,builder_id' });
-      if (saved.error) throw saved.error;
-    }
-    for (const row of existing || []) {
-      if (!l.some(builder => builder.id === row.builder_id)) {
-        const removed = await supabase.from('goodies_builder_configs').delete().eq('business_id', biz).eq('builder_id', row.builder_id);
-        if (removed.error) throw removed.error;
-      }
-    }
+    await rpc('goodies_save_builder_configs', { p_business: biz, p_configs: l });
     await AsyncStorage.setItem(k(biz, 'builders'), JSON.stringify(l));
     try {
       const st = await goodiesApi.getStore(biz), sid = st.demoStoreId || biz, raw = JSON.parse((await AsyncStorage.getItem('goodies-byo-v4')) || 'null') || { cfg: {}, store: {}, drafts: {} };
