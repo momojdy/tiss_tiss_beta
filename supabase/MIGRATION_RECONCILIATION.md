@@ -57,7 +57,7 @@ The TypeScript build and app-level end-to-end tests were not run in this environ
 ## Remaining blockers after the security pass
 
 - Leaked-password protection was not changed through the available project-management controls; it must be enabled and confirmed in Supabase Auth settings. It is available on Pro and above: https://supabase.com/docs/guides/auth/password-security.
-- Applicant-side business document upload is still not integrated into the customer app. The private bucket, table, and server submission RPC exist, but no complete applicant upload journey was verified.
+- Applicant-side business document upload is now wired into Business Space registration, but the complete upload → admin verification → approval flow has not yet been end-to-end tested.
 - No business was verified or published during this pass. Do not approve a business without reviewing its real documents. Production currently has no live Goodies store/product/order configuration, so end-to-end checkout still needs a real verified test business and provider test credentials.
 - Migration drift has not been reconciled: duplicate version prefixes and the 148 live history entries still require a disposable database comparison. No historical migration rows were deleted and no old migration was replayed.
 - The Goodies and goodies feature directories have not yet been merged because their runtime import usage must be mapped before deleting or moving files.
