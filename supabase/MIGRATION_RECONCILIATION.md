@@ -38,7 +38,7 @@ Other migrations have matching names but mismatched version values, including bu
 
 ## Changes made on 2026-10-25
 
-The Goodies vendor acceptance/decline, scheduled expiry, final application rejection, and review-RPC overload cleanup migrations were applied to the live project and their SQL files were added to `main`. These are new tracked/live entries, not a reconciliation of the older 74-entry gap.
+The Goodies vendor acceptance/decline, scheduled expiry, wallet checkout/refunds, final application rejection, review-RPC cleanup, builder configuration/validation, published promo-code validation, card payment references, and notification-hardening migrations are now represented by tracked SQL files on `main`. This improves the recent change trail, but does not reconcile the older live-history entries that have no matching tracked file.
 
 **Status: drift is documented but not fully reconciled.** No historical migration files were renamed or replayed, and no existing migration-history rows were manually edited. The current 139-live-versus-62-tracked difference still needs statement-by-statement schema verification before it can be safely closed.
 
