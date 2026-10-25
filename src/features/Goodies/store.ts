@@ -42,6 +42,7 @@ const WDEF = () => ({
   addr: [] as Address[],
 });
 const GDEF = () => ({
+  serverUnread: 0,
   notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
   wallet: 0, hasWallet: false, pay: 'cash', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
@@ -271,7 +272,7 @@ export const defAddr = (): Address => S.addr.filter((a: Address) => a.def)[0] ||
 export const addr = (): Address => S.addr.filter((a: Address) => a.id === S.as)[0] || defAddr();
 export const cur = (): Route => S.stack[S.stack.length - 1];
 export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q, 0);
-export const unread = () => S.notifs.some((n: any) => n.u);
+export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid].far);
 export function applyZone() {
