@@ -123,7 +123,7 @@ export async function placeOrder() {
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
   if (!providerInfo.demo) {
     // Live mode: no payment provider is connected, so only cash on delivery/pickup can be placed for real.
-    if (S.pay !== 'cash') {toast('Only cash on ' + (isPk() ? 'pickup' : 'delivery') + ' is available right now.'); S.cs = 2; emit(); return;}
+    if (S.pay !== 'cash' && S.pay !== 'wallet') {toast('Saved-card checkout is not yet connected to Goodies. Choose Wantiss Wallet or cash for now.'); S.cs = 2; emit(); return;}
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast('Alcohol orders are not available yet.'); return;}
   }
@@ -154,7 +154,7 @@ export async function placeOrder() {
   if (!providerInfo.demo) {
     // Live: the server validates the store, mode, schedule and totals, and assigns the order code.
     const r2 = (n: number) => Math.round(n * 100) / 100;
-    const {data, error} = await supabase.rpc('place_goodies_order', {
+    const {data, error} = await supabase.rpc(S.pay === 'wallet' ? 'place_goodies_order_with_wallet' : 'place_goodies_order', {
       p_store_id: S.cart.sid,
       p_order_type: pk ? 'pickup' : 'delivery',
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
@@ -216,7 +216,37 @@ export const clearFilters = () => {S.f = ''; S.sub = ''; emit();};
 /* ---------- alcohol: rules, consent, ID check, refund ---------- */
 export const setConsent = (v: boolean) => {S.alcConsent = v; emit();};
 export function alcAccept() {S.alcAck = 1; const p = S.pend; ui.close(); if (p && p[0] && !p[2]) cartAdd(p[0], p[1]); else if (p && p[2]) p[2]();}
-export function createWallet() {S.hasWallet = true; toast('Wantiss wallet created'); save(); emit();}
+export async function refreshPaymentOptions() {
+  try {
+    const [walletResult, cardsResult] = await Promise.all([
+      supabase.from('wallets').select('id,balance').maybeSingle(),
+      supabase.rpc('get_my_payment_methods'),
+    ]);
+    if (!walletResult.error) {
+      S.hasWallet = !!walletResult.data?.id;
+      S.wallet = Number(walletResult.data?.balance || 0);
+    }
+    if (!cardsResult.error) {
+      S.cards = (cardsResult.data || []).map((card: any) => ({
+        id: card.id, b: String(card.brand || 'Card'), l4: String(card.last4 || ''),
+        expiryMonth: card.expiry_month, expiryYear: card.expiry_year, isDefault: !!card.is_default,
+      }));
+    }
+    save(); emit();
+  } catch (e) {
+    // Keep checkout available; its UI will show the last known state and retry on next entry.
+  }
+}
+export async function createWallet() {
+  try {
+    const { error } = await supabase.rpc('ensure_my_wallet');
+    if (error) throw error;
+    await refreshPaymentOptions();
+    toast('Wantiss wallet is ready');
+  } catch (e: any) {
+    toast(e?.message || 'Could not create your Wantiss wallet. Please try again.');
+  }
+}
 /* DEMO ONLY: in production the courier app (delivery) or the Vendor Dashboard (pickup) records this result. */
 export function idResult(id: string, ok: boolean) {
   require('./providers').assertDemoOnly('Simulated ID check');
