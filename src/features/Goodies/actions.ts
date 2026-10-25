@@ -122,8 +122,8 @@ export async function placeOrder() {
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast('Your cart is empty'); return;}
   if (!providerInfo.demo) {
-    // Live mode: no payment provider is connected, so only cash on delivery/pickup can be placed for real.
-    if (S.pay !== 'cash' && S.pay !== 'wallet') {toast('Saved-card checkout is not yet connected to Goodies. Choose Wantiss Wallet or cash for now.'); S.cs = 2; emit(); return;}
+    if (!['cash', 'wallet', 'card'].includes(S.pay)) {toast('Choose Wantiss Wallet, a saved card, or cash.'); S.cs = 2; emit(); return;}
+    if (S.pay === 'card' && !S.cards.length) {toast('Add a saved card before checking out.'); push('payments'); return;}
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast('Alcohol orders are not available yet.'); return;}
   }
@@ -141,7 +141,7 @@ export async function placeOrder() {
   if (S.promo && t.perr) {S.promo = ''; toast('Your promo code no longer applies. Totals updated'); emit(); return;}
   if (S.sch && S.sch < Date.now()) {S.sch = 0; S.cs = 1; toast('That time has passed. Pick another'); emit(); return;}
   if (providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast('Wallet balance is too low. Top up or pick another method.'); push('payments'); return;}
-  if (S.pay === 'card') {
+  if (providerInfo.demo && S.pay === 'card') {
     if (!S.cards.length) {push('payments'); return;}
     if (S.cards[0].l4 === '0002') {toast('Card declined (demo). Your cart is safe. Try another method.'); S.cs = 2; emit(); return;}
   }
@@ -154,7 +154,7 @@ export async function placeOrder() {
   if (!providerInfo.demo) {
     // Live: the server validates the store, mode, schedule and totals, and assigns the order code.
     const r2 = (n: number) => Math.round(n * 100) / 100;
-    const {data, error} = await supabase.rpc(S.pay === 'wallet' ? 'place_goodies_order_with_wallet' : 'place_goodies_order', {
+    const orderPayload = {
       p_store_id: S.cart.sid,
       p_order_type: pk ? 'pickup' : 'delivery',
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
@@ -164,7 +164,17 @@ export async function placeOrder() {
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
       p_notes: String(S.note || '').trim() || null,
       p_promo_code: S.promo || null,
-    });
+    };
+    let data: any = null, error: any = null;
+    if (S.pay === 'card') {
+      const result = await supabase.functions.invoke('place-goodies-card-order', {
+        body: { payment_method_id: S.cards[0]?.id, idempotency_key: 'goodies-' + Date.now() + '-' + Math.random().toString(36).slice(2), order: orderPayload },
+      });
+      data = result.data; error = result.error;
+    } else {
+      const result = await supabase.rpc(S.pay === 'wallet' ? 'place_goodies_order_with_wallet' : 'place_goodies_order', orderPayload);
+      data = result.data; error = result.error;
+    }
     const row: any = Array.isArray(data) ? data[0] : data;
     if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
     backendOrderId = row.id; id = row.order_code || id;
