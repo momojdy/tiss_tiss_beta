@@ -163,6 +163,7 @@ export async function placeOrder() {
       p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
       p_notes: String(S.note || '').trim() || null,
+      p_promo_code: S.promo || null,
     });
     const row: any = Array.isArray(data) ? data[0] : data;
     if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
