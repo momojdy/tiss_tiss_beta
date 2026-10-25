@@ -200,7 +200,7 @@ export async function placeOrder() {
   };
   S.orders.unshift(o);
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
-  S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: (backendOrderId ? 'Order sent to ' : 'Demo order sent to ') + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
+  if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
   S.busy = 0; toast(backendOrderId ? 'Order sent to the store' : 'Demo order placed!'); save(); emit();
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
