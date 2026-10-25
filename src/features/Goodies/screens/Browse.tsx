@@ -335,7 +335,7 @@ export function Notifs() {
     if (!auth.user) { setServerItems([]); return; }
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name')
-      .eq('user_id', auth.user.id).eq('feature_name', 'Goodies')
+      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies')
       .order('created_at', {ascending: false}).limit(50);
     if (error) { setServerError(error.message); return; }
     setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || 'Goodies update', d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
@@ -363,7 +363,7 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true, updated_at: new Date().toISOString()})
-        .eq('user_id', auth.user.id).eq('feature_name', 'Goodies').eq('read', false);
+        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').eq('read', false);
       if (error) setServerError(error.message);
       else await loadServer();
     }
