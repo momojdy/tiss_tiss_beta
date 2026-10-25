@@ -95,6 +95,10 @@ export function startGoodiesSync() {
 
   const clearAccountState = () => {
     S.serverUnread = 0;
+    S.wallet = 0;
+    S.hasWallet = false;
+    S.cards = [];
+    S.selectedCardId = '';
     S.orders = (S.orders || []).filter((order: any) => !order?.backendId);
     save();
     emit();
@@ -112,7 +116,7 @@ export function startGoodiesSync() {
         refreshAgain = false;
         const requestUserId = userId;
         const requestGeneration = generation;
-        const [unreadResult, ordersResult] = await Promise.all([
+        const [unreadResult, ordersResult, walletResult] = await Promise.all([
           supabase.from('notifications')
             .select('id', { count: 'exact', head: true })
             .eq('user_id', requestUserId)
@@ -123,6 +127,7 @@ export function startGoodiesSync() {
             .eq('customer_id', requestUserId)
             .order('created_at', { ascending: false })
             .limit(100),
+          supabase.from('wallets').select('id,balance').eq('user_id', requestUserId).maybeSingle(),
         ]);
         if (stopped || requestGeneration !== generation || requestUserId !== userId) continue;
 
@@ -133,6 +138,12 @@ export function startGoodiesSync() {
             S.serverUnread = nextUnread;
             changed = true;
           }
+        }
+
+        if (!walletResult.error) {
+          S.hasWallet = !!walletResult.data?.id;
+          S.wallet = Number(walletResult.data?.balance || 0);
+          changed = true;
         }
 
         if (!ordersResult.error) {
