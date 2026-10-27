@@ -14,7 +14,6 @@ import {MODE1, PROMO} from '../theme';
 import {supabase} from '../../../lib/supabase';
 
 const cname = (id: string) => catName(id);
-const CATS = categories();
 function Mode({title, sub, emoji, onPress, grad, bg, fg, small}: any) {
   return (
     <Pressable onPress={onPress} style={{borderRadius: 18, overflow: 'hidden', height: small ? 51 : 112}}>
@@ -57,7 +56,7 @@ function Countdown() {
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets();
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
-  const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it);
+  const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it), cats = categories();
   const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals();
   return (
     <View>
@@ -84,7 +83,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         </View>
       </View>
       <View style={{marginTop: 18}}><Rail gap={14}>
-        {CATS.map(c => (
+        {cats.map(c => (
           <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: 68, alignItems: 'center'}}>
             <View style={{width: 62, height: 62, borderRadius: 31, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>{c.art ? <Image source={{uri: c.art}} style={{width: 62, height: 62}} resizeMode="cover" /> : <Text style={{fontSize: 30}}>{c.emoji}</Text>}</View>
             <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{tx(c.name)}</T>
