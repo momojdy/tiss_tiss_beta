@@ -128,8 +128,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       <Rail>{cat('produce').map(i => <Dish key={i.id} i={i} />)}</Rail>
       <Sh title={'🇭🇹 ' + label('lbl.haitian', tr('haitianSpecialties'))} link={tr('seeAll')} onLink={() => go('catlist', 'haitian')} />
       <Rail>{cat('haitian').map(i => <Dish key={i.id} i={i} />)}</Rail>
-      <Sh title={'🔥 ' + label('lbl.trending', tr('trending'))} />
-      <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16}}>{['s1_1', 's4_0', 's5_0', 's6_0'].map(id => <Dish key={id} i={IT[id]} grid />)}</View>
+      {(() => {const trending = ['s1_1', 's4_0', 's5_0', 's6_0'].map(id => IT[id]).filter(Boolean); return trending.length ? <><Sh title={'🔥 ' + label('lbl.trending', tr('trending'))} /><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16}}>{trending.map(i => <Dish key={i.id} i={i} grid />)}</View></> : null;})()}
       <Sh title={tr('restaurantsNear')} link={tr('seeAll')} onLink={() => go('catlist', 'all')} />
       <Chips list={FCH} on={S.f} onPick={setFilter} />
       <View style={{gap: 22, paddingTop: 12, paddingHorizontal: 16}}>{filt(ST).slice(0, 5).map(s => <StoreCard key={s.id} s={s} />)}</View>
