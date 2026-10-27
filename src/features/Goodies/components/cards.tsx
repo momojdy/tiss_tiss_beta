@@ -17,7 +17,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
   const th = useTheme(), {width} = useWindowDimensions(), s = i ? STB[i.s] : undefined;
   // The live catalog can be empty while backend products are unpublished; skip stale demo IDs safely.
   if (!i || !s) return null;
-  const p = off ? dp(i, off) : i.p, w = grid ? (width - 32 - 12) / 2;
+  const p = off ? dp(i, off) : i.p, w = grid ? (width - 32 - 12) / 2 : 148;
   const dis = i.oos || (!s.open && !s.acceptScheduledOrders), saved = S.favp.indexOf(i.id) > -1;
   return (
     <View style={{width: w, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
