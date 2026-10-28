@@ -19,6 +19,7 @@ import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import ForgotPasswordScreen from './mainForgotPasswordScreen';
+import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 const PINK = '#BF008E';
 const TOGGLE_BG = '#E0E3E7';
@@ -29,6 +30,51 @@ const LINK = '#9D315B';
 const DARK = '#14181B';
 const PAGE_BG = '#F1F4F8';
 const RED = '#FF0000';
+
+type AuthCopy = {
+  headline: string;
+  subtitle: string;
+  logo_asset_key: string;
+  primary_color: string;
+  buyer_label: string;
+  business_label: string;
+  business_space_label: string;
+  email_placeholder: string;
+  password_placeholder: string;
+  full_name_placeholder: string;
+  business_name_placeholder: string;
+  forgot_password_label: string;
+  sign_in_button: string;
+  sign_up_button: string;
+  register_prompt: string;
+  register_link: string;
+  login_prompt: string;
+  login_link: string;
+};
+
+const DEFAULT_AUTH_COPY: AuthCopy = {
+  headline: '',
+  subtitle: '',
+  logo_asset_key: 'wantiss.auth.logo',
+  primary_color: PINK,
+  buyer_label: 'Buyer',
+  business_label: 'B&P 2P',
+  business_space_label: 'Business Space',
+  email_placeholder: 'Email',
+  password_placeholder: 'Password',
+  full_name_placeholder: 'Full Name',
+  business_name_placeholder: 'Business Name (optional)',
+  forgot_password_label: 'Forgot password?',
+  sign_in_button: 'Sign in',
+  sign_up_button: 'Sign Up',
+  register_prompt: "Don't have an account? ",
+  register_link: 'Register',
+  login_prompt: 'Already have an account? ',
+  login_link: 'Sign in',
+};
+
+const safeColor = (value: unknown, fallback: string) =>
+  typeof value === 'string' && /^#[0-9a-fA-F]{6}$/.test(value.trim()) ? value.trim() : fallback;
 
 const LOGO_URL = 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG';
 const GOOGLE_PNG = 'https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.png';
@@ -41,6 +87,7 @@ type AuthCardProps = {
   onApplePressed?: () => Promise<unknown>;
   onForgotPasswordPressed?: (email: string) => Promise<unknown>;
   onForgotPasswordScreenPressed?: () => void;
+  copy?: AuthCopy;
 };
 
 type IconName = React.ComponentProps<typeof MaterialCommunityIcons>['name'];
@@ -73,7 +120,8 @@ function AuthField({ top, value, onChangeText, placeholder, icon, error, keyboar
   );
 }
 
-function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed }: AuthCardProps) {
+function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed, copy = DEFAULT_AUTH_COPY }: AuthCardProps) {
+  const accent = safeColor(copy.primary_color, PINK);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -214,49 +262,49 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
     <View style={styles.toggleRow}>
       <View style={styles.toggleOuter}>
         <View style={styles.toggleInner}>
-          <Pressable style={[styles.toggleHalf, !isVendor && { backgroundColor: PINK }]} onPress={() => isVendor && toggleRole()}>
-            <Text style={[styles.toggleText, { color: !isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF }]}>Buyer</Text>
+          <Pressable style={[styles.toggleHalf, !isVendor && { backgroundColor: accent }]} onPress={() => isVendor && toggleRole()}>
+            <Text style={[styles.toggleText, { color: !isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF }]}>{copy.buyer_label || 'Buyer'}</Text>
           </Pressable>
-          <Pressable style={[styles.toggleHalf, isVendor && { backgroundColor: PINK }]} onPress={() => !isVendor && toggleRole()}>
-            <Text style={[styles.toggleText, { color: isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF }]}>B&P 2P</Text>
+          <Pressable style={[styles.toggleHalf, isVendor && { backgroundColor: accent }]} onPress={() => !isVendor && toggleRole()}>
+            <Text style={[styles.toggleText, { color: isVendor ? '#FFFFFF' : TOGGLE_TEXT_OFF }]}>{copy.business_label || 'B&P 2P'}</Text>
           </Pressable>
         </View>
       </View>
     </View>
   );
 
-  const renderBusinessSpaceLabel = () => isVendor ? <View style={styles.businessLabelBox}><Text style={styles.businessLabelText}>Business Space</Text></View> : null;
+  const renderBusinessSpaceLabel = () => isVendor ? <View style={styles.businessLabelBox}><Text style={styles.businessLabelText}>{copy.business_space_label || 'Business Space'}</Text></View> : null;
 
   const renderRegisterStepIndicator = () => (
     <View style={styles.stepIndicator}>
-      <View style={[styles.stepDot, { backgroundColor: registerStep === 0 ? PINK : TOGGLE_BG }]} />
+      <View style={[styles.stepDot, { backgroundColor: registerStep === 0 ? accent : TOGGLE_BG }]} />
       <View style={{ width: 7 }} />
-      <View style={[styles.stepDot, { backgroundColor: registerStep === 1 ? PINK : TOGGLE_BG }]} />
+      <View style={[styles.stepDot, { backgroundColor: registerStep === 1 ? accent : TOGGLE_BG }]} />
     </View>
   );
 
-  const renderEmailField = () => <AuthField top={15} value={email} onChangeText={t => { handleCredentialChange('email', t, setEmail); if (emailError) setEmailError(null); }} placeholder="Email" icon="email-outline" error={emailError} keyboardType="email-address" />;
+  const renderEmailField = () => <AuthField top={15} value={email} onChangeText={t => { handleCredentialChange('email', t, setEmail); if (emailError) setEmailError(null); }} placeholder={copy.email_placeholder || 'Email'} icon="email-outline" error={emailError} keyboardType="email-address" />;
 
   const renderPasswordField = () => (
-    <AuthField top={12} value={password} onChangeText={t => { handleCredentialChange('password', t, setPassword); if (passwordError) setPasswordError(null); }} placeholder="Password" icon="lock-outline" error={passwordError} secureTextEntry={obscurePassword}
+    <AuthField top={12} value={password} onChangeText={t => { handleCredentialChange('password', t, setPassword); if (passwordError) setPasswordError(null); }} placeholder={copy.password_placeholder || 'Password'} icon="lock-outline" error={passwordError} secureTextEntry={obscurePassword}
       suffix={<Pressable style={styles.suffixButton} onPress={() => setObscurePassword(v => !v)}><MaterialCommunityIcons name={obscurePassword ? 'eye-off-outline' : 'eye-outline'} size={24} color={FIELD_TEXT} /></Pressable>}
     />
   );
 
-  const renderFullNameField = () => <AuthField top={15} value={fullName} onChangeText={t => { setFullName(t); if (fullNameError) setFullNameError(null); }} placeholder="Full Name" icon="account-outline" error={fullNameError} autoCapitalize="words" />;
-  const renderBusinessNameField = () => <AuthField top={12} value={businessName} onChangeText={setBusinessName} placeholder="Business Name (optional)" icon="office-building-outline" autoCapitalize="words" />;
+  const renderFullNameField = () => <AuthField top={15} value={fullName} onChangeText={t => { setFullName(t); if (fullNameError) setFullNameError(null); }} placeholder={copy.full_name_placeholder || 'Full Name'} icon="account-outline" error={fullNameError} autoCapitalize="words" />;
+  const renderBusinessNameField = () => <AuthField top={12} value={businessName} onChangeText={setBusinessName} placeholder={copy.business_name_placeholder || 'Business Name (optional)'} icon="office-building-outline" autoCapitalize="words" />;
 
   const renderForgotPassword = () => (
     <View style={styles.forgotRow}>
       <Pressable accessibilityRole="button" style={styles.forgotButton} onPress={() => onForgotPasswordScreenPressed?.()}>
-        <Text style={styles.forgotText}>Forgot password?</Text>
+        <Text style={[styles.forgotText, { color: accent }]}>{copy.forgot_password_label || 'Forgot password?'}</Text>
       </Pressable>
     </View>
   );
 
   const renderSubmitButton = (text: string) => (
     <View style={styles.submitWrap}>
-      <Pressable accessibilityRole="button" disabled={submitting} style={[styles.submitButton, submitting && { opacity: 0.65 }]} onPress={handleSubmit}>
+      <Pressable accessibilityRole="button" disabled={submitting} style={[styles.submitButton, { backgroundColor: accent }, submitting && { opacity: 0.65 }]} onPress={handleSubmit}>
         <View style={styles.submitContent}>{submitting ? <Text style={styles.submitText}>Please wait…</Text> : <><Text style={styles.submitText}>{text}</Text>{text === 'Next' ? <MaterialCommunityIcons name="arrow-right" size={22} color="#FFFFFF" /> : null}</>}</View>
       </Pressable>
     </View>
@@ -288,13 +336,13 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
           {renderToggle()}
           {renderBusinessSpaceLabel()}
           {isRegisterMode && isVendor ? renderRegisterStepIndicator() : null}
-          {isRegisterMode && isVendor ? renderBusinessRegistrationPages() : isRegisterMode ? renderCredentialsBlock('Sign Up') : renderCredentialsBlock('Sign in')}
+          {isRegisterMode && isVendor ? renderBusinessRegistrationPages() : isRegisterMode ? renderCredentialsBlock(copy.sign_up_button || 'Sign Up') : renderCredentialsBlock(copy.sign_in_button || 'Sign in')}
           {errorMessage ? <View style={styles.errorMessageWrap}><Text accessibilityRole="alert" style={styles.fieldError}>{errorMessage}</Text></View> : null}
           {successMessage ? <View style={styles.errorMessageWrap}><Text accessibilityRole="text" style={styles.successMessage}>{successMessage}</Text></View> : null}
         </ScrollView>
       </Pressable>
       <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
-        <Text style={styles.bottomSwitchText}>{isRegisterMode ? 'Already have an account? ' : "Don't have an account? "}<Text style={styles.bottomSwitchLink}>{isRegisterMode ? 'Sign in' : 'Register'}</Text></Text>
+        <Text style={styles.bottomSwitchText}>{isRegisterMode ? (copy.login_prompt || 'Already have an account? ') : (copy.register_prompt || "Don't have an account? ")}<Text style={[styles.bottomSwitchLink, { color: accent }]}>{isRegisterMode ? (copy.login_link || 'Sign in') : (copy.register_link || 'Register')}</Text></Text>
       </Pressable>
     </View>
   );
@@ -306,6 +354,24 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
   const { height: screenHeight } = useWindowDimensions();
   const [showForgot, setShowForgot] = useState(false);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const [authCopy, setAuthCopy] = useState<AuthCopy>(DEFAULT_AUTH_COPY);
+  const [logoUrl, setLogoUrl] = useState(LOGO_URL);
+  React.useEffect(() => {
+    let active = true;
+    void fetchPublishedWantissContent('en').then((published) => {
+      const latest = published.content
+        .filter((item) => item.content_key === 'wantiss.auth')
+        .sort((a, b) => b.version - a.version)[0];
+      if (!active || !latest) return;
+      const next = { ...DEFAULT_AUTH_COPY, ...(latest.payload || {}) } as AuthCopy;
+      setAuthCopy(next);
+      const asset = published.assets.find((item) => item.asset_key === next.logo_asset_key);
+      setLogoUrl(asset?.url || LOGO_URL);
+    }).catch(() => {
+      // Published CMS content is optional; keep the existing, working auth page on failure.
+    });
+    return () => { active = false; };
+  }, []);
   React.useEffect(() => {
     const showEvent = Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow';
     const hideEvent = Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide';
@@ -329,7 +395,11 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
     <KeyboardAvoidingView style={styles.page} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0}>
       <StatusBar style="dark" />
       <LinearGradient colors={['#F7DDEB', '#FBEAF3', '#FFF5E9']} locations={[0, 0.85, 0.925]} start={{ x: 1, y: 1 }} end={{ x: 0, y: 0 }} style={[styles.header, { top: headerTop }]} pointerEvents="none">
-        <View style={styles.logoBox}><Image source={{ uri: LOGO_URL }} style={styles.logo} resizeMode="contain" /></View>
+        <View style={styles.logoBox}>
+          <Image source={{ uri: logoUrl }} style={[styles.logo, (authCopy.headline || authCopy.subtitle) ? { height: '72%' } : null]} resizeMode="contain" />
+          {authCopy.headline ? <Text style={styles.authHeadline}>{authCopy.headline}</Text> : null}
+          {authCopy.subtitle ? <Text style={styles.authSubtitle}>{authCopy.subtitle}</Text> : null}
+        </View>
       </LinearGradient>
       <View style={[styles.cardPosition, keyboardVisible ? styles.cardPositionKeyboard : null]}>
         <WantissAuthCard
@@ -343,6 +413,7 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
             setShowForgot(true);
             onForgotPasswordScreenPressed?.();
           }}
+          copy={authCopy}
         />
       </View>
     </KeyboardAvoidingView>
@@ -354,6 +425,8 @@ const styles = StyleSheet.create({
   header: { position: 'absolute', left: 0, right: 0, height: 356 },
   logoBox: { flex: 1, paddingLeft: 10, paddingTop: 50, paddingRight: 30, paddingBottom: 25 },
   logo: { width: '100%', height: '100%', borderRadius: 8 },
+  authHeadline: { color: DARK, fontSize: 18, fontWeight: '700', textAlign: 'center', marginTop: 3 },
+  authSubtitle: { color: FIELD_TEXT, fontSize: 12, textAlign: 'center', marginTop: 2 },
   cardPosition: { position: 'absolute', top: 300, left: 15, right: 15, zIndex: 10 },
   cardPositionKeyboard: { top: 16 },
   card: { width: '100%', height: 470, backgroundColor: '#FFFFFF', borderRadius: 20, paddingLeft: 15, paddingRight: 15, paddingTop: 24, overflow: 'hidden' },
