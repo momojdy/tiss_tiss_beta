@@ -36,6 +36,7 @@ type AuthCopy = {
   subtitle: string;
   logo_asset_key: string;
   primary_color: string;
+  link_color: string;
   buyer_label: string;
   business_label: string;
   business_space_label: string;
@@ -57,6 +58,7 @@ const DEFAULT_AUTH_COPY: AuthCopy = {
   subtitle: '',
   logo_asset_key: 'wantiss.auth.logo',
   primary_color: PINK,
+  link_color: LINK,
   buyer_label: 'Buyer',
   business_label: 'B&P 2P',
   business_space_label: 'Business Space',
@@ -122,6 +124,7 @@ function AuthField({ top, value, onChangeText, placeholder, icon, error, keyboar
 
 function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGooglePressed, onApplePressed, onForgotPasswordPressed, onForgotPasswordScreenPressed, copy = DEFAULT_AUTH_COPY }: AuthCardProps) {
   const accent = safeColor(copy.primary_color, PINK);
+  const linkAccent = safeColor(copy.link_color, LINK);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [fullName, setFullName] = useState('');
@@ -297,7 +300,7 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
   const renderForgotPassword = () => (
     <View style={styles.forgotRow}>
       <Pressable accessibilityRole="button" style={styles.forgotButton} onPress={() => onForgotPasswordScreenPressed?.()}>
-        <Text style={[styles.forgotText, { color: accent }]}>{copy.forgot_password_label || 'Forgot password?'}</Text>
+        <Text style={[styles.forgotText, { color: linkAccent }]}>{copy.forgot_password_label || 'Forgot password?'}</Text>
       </Pressable>
     </View>
   );
@@ -342,7 +345,7 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
         </ScrollView>
       </Pressable>
       <Pressable style={styles.bottomSwitch} onPress={toggleRegisterMode}>
-        <Text style={styles.bottomSwitchText}>{isRegisterMode ? (copy.login_prompt || 'Already have an account? ') : (copy.register_prompt || "Don't have an account? ")}<Text style={[styles.bottomSwitchLink, { color: accent }]}>{isRegisterMode ? (copy.login_link || 'Sign in') : (copy.register_link || 'Register')}</Text></Text>
+        <Text style={styles.bottomSwitchText}>{isRegisterMode ? (copy.login_prompt || 'Already have an account? ') : (copy.register_prompt || "Don't have an account? ")}<Text style={[styles.bottomSwitchLink, { color: linkAccent }]}>{isRegisterMode ? (copy.login_link || 'Sign in') : (copy.register_link || 'Register')}</Text></Text>
       </Pressable>
     </View>
   );
