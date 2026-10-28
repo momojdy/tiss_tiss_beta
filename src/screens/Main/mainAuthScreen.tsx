@@ -35,6 +35,10 @@ type AuthCopy = {
   headline: string;
   subtitle: string;
   logo_asset_key: string;
+  google_asset_key: string;
+  apple_asset_key: string;
+  google_asset_url: string;
+  apple_asset_url: string;
   primary_color: string;
   link_color: string;
   buyer_label: string;
@@ -57,6 +61,10 @@ const DEFAULT_AUTH_COPY: AuthCopy = {
   headline: '',
   subtitle: '',
   logo_asset_key: 'wantiss.auth.logo',
+  google_asset_key: 'wantiss.auth.google',
+  apple_asset_key: 'wantiss.auth.apple',
+  google_asset_url: '',
+  apple_asset_url: '',
   primary_color: PINK,
   link_color: LINK,
   buyer_label: 'Buyer',
@@ -315,9 +323,9 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
 
   const renderSocialButtons = () => (
     <View style={styles.socialRow}>
-      <Pressable style={styles.socialButton} onPress={() => onGooglePressed?.()}>{googleFailed ? <Text style={styles.googleFallback}>G</Text> : <Image source={{ uri: GOOGLE_PNG }} style={{ width: 22, height: 22 }} onError={() => setGoogleFailed(true)} />}</Pressable>
+      <Pressable style={styles.socialButton} onPress={() => onGooglePressed?.()}>{googleFailed ? <Text style={styles.googleFallback}>G</Text> : <Image source={{ uri: copy.google_asset_url || GOOGLE_PNG }} style={{ width: 22, height: 22 }} onError={() => setGoogleFailed(true)} />}</Pressable>
       <View style={{ width: 90 }} />
-      <Pressable style={styles.socialButton} onPress={() => onApplePressed?.()}><MaterialCommunityIcons name="apple" size={25} color="#000000" /></Pressable>
+      <Pressable style={styles.socialButton} onPress={() => onApplePressed?.()}>{copy.apple_asset_url ? <Image source={{ uri: copy.apple_asset_url }} style={{ width: 25, height: 25 }} resizeMode="contain" /> : <MaterialCommunityIcons name="apple" size={25} color="#000000" />}</Pressable>
     </View>
   );
 
@@ -369,6 +377,13 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
       const next = { ...DEFAULT_AUTH_COPY, ...(latest.payload || {}) } as AuthCopy;
       setAuthCopy(next);
       const asset = published.assets.find((item) => item.asset_key === next.logo_asset_key);
+      const googleAsset = published.assets.find((item) => item.asset_key === next.google_asset_key);
+      const appleAsset = published.assets.find((item) => item.asset_key === next.apple_asset_key);
+      setAuthCopy({
+        ...next,
+        google_asset_url: googleAsset?.url || '',
+        apple_asset_url: appleAsset?.url || '',
+      });
       setLogoUrl(asset?.url || LOGO_URL);
     }).catch(() => {
       // Published CMS content is optional; keep the existing, working auth page on failure.
