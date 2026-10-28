@@ -324,7 +324,7 @@ function WantissAuthCard({ initialMode, onSignInPressed, onSignUpPressed, onGoog
     <View style={{ width: '100%', height: 365, overflow: 'hidden' }}>
       <ScrollView ref={pagerRef} horizontal pagingEnabled bounces={false} showsHorizontalScrollIndicator={false} keyboardShouldPersistTaps="handled" onMomentumScrollEnd={onPagerScrollEnd} style={{ width: '100%', height: 365 }}>
         <View style={{ width: pageWidth, height: 365 }}>{renderFullNameField()}{renderBusinessNameField()}{renderSubmitButton('Next')}</View>
-        <View style={{ width: pageWidth, height: 365 }}>{renderCredentialsBlock('Sign Up')}</View>
+        <View style={{ width: pageWidth, height: 365 }}>{renderCredentialsBlock(copy.sign_up_button || 'Sign Up')}</View>
       </ScrollView>
     </View>
   );
