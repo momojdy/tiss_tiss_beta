@@ -36,7 +36,7 @@ function Settings() {
   return (<View>
     <Bar title={tr('settings')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <Pressable onPress={() => go('profile')}><Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T><T size={13} color={th.mut}>Wantiss account · view profile</T></View><Icon name="chevR" size={16} color={th.ink} /></Row></Card></Pressable>
+      <Pressable onPress={() => go('profile')}><Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T><T size={13} color={th.mut}>{label('lbl.accountViewProfile', 'Wantiss account · view profile')}</T></View><Icon name="chevR" size={16} color={th.ink} /></Row></Card></Pressable>
       <Ttl>{label('lbl.notifsTitle', 'Notifications')}</Ttl>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOrderUpdates', 'Order updates')}</T><Switch on={!!S.np.orders} label={label('lbl.settingsOrderUpdates', 'Order updates')} onPress={() => togglePref('orders')} /></Row>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>
@@ -46,9 +46,9 @@ function Settings() {
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
       <LRow icon="tag" title={label('lbl.settingsCoupons', 'Coupons and offers')} onPress={() => go('promos')} />
 
-      <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub="Goodies only. Other Wantiss features keep their theme." onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
+      <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub={label('lbl.accountDarkModeHint', 'Goodies only. Other Wantiss features keep their theme.')} onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub="FAQs and support" onPress={() => go('help')} />
-      {providerInfo.demo ? (<><Ttl>Demo</Ttl><LRow icon="tag" title="Import Admin content" sub="Paste the export from Wantiss Admin" onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title="Reset Goodies demo data" sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
+      {providerInfo.demo ? (<><Ttl>Demo</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title="Reset Goodies demo data" sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
       <T size={12} color={th.mut} align="center" style={{marginTop: 18}}>Goodies {providerInfo.demo ? '(demo)' : ''}</T>
     </View>
   </View>);
@@ -75,7 +75,7 @@ function Addresses() {
   const th = useTheme(), [edit, setEdit] = useState<any>(null);
   const zoneOf = (t: string) => {let x = 0; for (let i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 97; return Math.round((x % 5) * 9) / 10;};
   const saveAddr = () => {
-    const t = (edit.t || '').trim(); if (t.length < 4) {toast('Enter the street and area'); return;}
+    const t = (edit.t || '').trim(); if (t.length < 4) {toast(label('lbl.accountStreetRequired', 'Enter the street and area')); return;}
     let a = S.addr.filter((x: any) => x.id === edit.id)[0]; const isNew = !a;
     if (isNew) {a = {id: Date.now(), def: 0}; S.addr.push(a);}
     if (isNew || a.t !== t) a.z = zoneOf(t);
@@ -86,16 +86,16 @@ function Addresses() {
   return (<View>
     <Bar title={label('lbl.settingsAddresses', 'Saved addresses')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <T size={13} color={th.mut} style={{marginBottom: 12, lineHeight: 19}}>These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default.</T>
+      <T size={13} color={th.mut} style={{marginBottom: 12, lineHeight: 19}}>{label('lbl.accountAddressScope', 'These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default.')}</T>
       {S.addr.map((a: any) => (
         <Card key={a.id}>
-          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6}}>{a.def ? <Badge green label="Wantiss default" /> : null}{a.id === S.as ? <Badge label="Delivering here" /> : null}</Row></Row>
+          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.id === S.as ? <Badge label={label('lbl.accountDeliveringHere', 'Delivering here')} /> : null}</Row></Row>
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>Note: {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
-            <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>Edit</T></Pressable>
-            {a.id !== S.as ? <Pressable onPress={() => {S.as = a.id; toast('Goodies will deliver to ' + a.l); save(); emit();}}><T size={13.5} weight="700" color={th.br}>Use for Goodies</T></Pressable> : null}
-            {!a.def ? <Pressable onPress={() => {S.addr.forEach((x: any) => (x.def = x.id === a.id ? 1 : 0)); toast('Wantiss default address updated'); save(); emit();}}><T size={13.5} weight="700" color={th.br}>Set as Wantiss default</T></Pressable> : null}
-            {S.addr.length > 1 ? <Pressable onPress={() => {S.addr = S.addr.filter((x: any) => x.id !== a.id); if (a.def) S.addr[0].def = 1; if (S.as === a.id) S.as = defAddr().id; toast('Address deleted'); save(); emit();}}><T size={13.5} weight="700" color={th.red}>Delete</T></Pressable> : <></>}
+            <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
+            {a.id !== S.as ? <Pressable onPress={() => {S.as = a.id; toast('Goodies will deliver to ' + a.l); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
+            {!a.def ? <Pressable onPress={() => {S.addr.forEach((x: any) => (x.def = x.id === a.id ? 1 : 0)); toast(label('lbl.accountDefaultAddressUpdated', 'Wantiss default address updated')); save(); emit();}}><T size={13.5} weight="700" color={th.br}>Set as Wantiss default</T></Pressable> : null}
+            {S.addr.length > 1 ? <Pressable onPress={() => {S.addr = S.addr.filter((x: any) => x.id !== a.id); if (a.def) S.addr[0].def = 1; if (S.as === a.id) S.as = defAddr().id; toast(label('lbl.accountAddressDeleted', 'Address deleted')); save(); emit();}}><T size={13.5} weight="700" color={th.red}>Delete</T></Pressable> : <></>}
           </Row>
         </Card>
       ))}
@@ -103,13 +103,13 @@ function Addresses() {
         <Card>
           <T size={17} weight="800">{edit.id ? 'Edit' : 'New'} address</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={x} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
-          <Input label="Street and area" value={edit.t || ''} onChange={v => setEdit({...edit, t: v})} />
-          <Input label="Apartment, building, floor or landmark" value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
-          <Input label="Delivery instructions" value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
-          <T size={13} weight="700" style={{marginTop: 10, marginBottom: 6}}>Country</T>
+          <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v})} />
+          <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
+          <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
+          <T size={13} weight="700" style={{marginTop: 10, marginBottom: 6}}>{label('lbl.accountCountry', 'Country')}</T>
           <Row style={{gap: 8}}>{[['HT', 'Haiti'], ['DO', 'Dominican Republic'], ['US', 'United States'], ['XX', 'Other']].map(x => <Chip key={x[0]} label={x[1]} on={(edit.cc || 'HT') === x[0]} onPress={() => setEdit({...edit, cc: x[0]})} />)}</Row>
           <Pressable disabled={!!edit.def && !!edit.id} onPress={() => setEdit({...edit, def: edit.def ? 0 : 1})} style={{flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14}}><View style={{width: 20, height: 20, borderRadius: 5, borderWidth: 2, borderColor: th.br, backgroundColor: edit.def ? th.br : 'transparent'}} /><T>{edit.def && edit.id ? 'This is your Wantiss default address' : 'Make this my default Wantiss address'}</T></Pressable>
-          <View style={{marginTop: 14}}><Cta label="Save address" onPress={saveAddr} /></View>
+          <View style={{marginTop: 14}}><Cta label={label('lbl.accountSaveAddress', 'Save address')} onPress={saveAddr} /></View>
         </Card>
       ) : <Cta label="+ Add new address" onPress={() => setEdit({id: 0, l: 'Home', t: '', apt: '', inst: '', def: 0, cc: 'HT'})} />}
     </View>
@@ -205,7 +205,7 @@ function Contact({p}: {p: any}) {
   const [sending, setSending] = useState(false);
   const submit = async () => {
     const body = msg.trim();
-    if (body.length < 10) {toast('Please write at least 10 characters'); return;}
+    if (body.length < 10) {toast(label('lbl.accountMessageMinLength', 'Please write at least 10 characters')); return;}
     if (sending) return;
     setSending(true);
     try {
@@ -246,13 +246,13 @@ function Contact({p}: {p: any}) {
     <Bar title={store ? 'Contact store' : 'Contact support'} onBack={back} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
       {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12.5} color={th.mut}>Your message will be sent to this store.</T></View></Row></Card> : null}
-      <T size={13} weight="700" style={{marginTop: 6, marginBottom: 8}}>Topic</T>
+      <T size={13} weight="700" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
       <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
       {!store ? <>
-        <T size={13} weight="700" style={{marginTop: 14, marginBottom: 8}}>Order (optional)</T>
-        <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label="None" on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || 'Store')} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
+        <T size={13} weight="700" style={{marginTop: 14, marginBottom: 8}}>{label('lbl.accountOptionalOrder', 'Order (optional)')}</T>
+        <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label={label('lbl.accountNone', 'None')} on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || 'Store')} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
       </> : null}
-      <Input label="Message" value={msg} onChange={setMsg} placeholder="Tell us what happened (at least 10 characters)" multiline />
+      <Input label={label('lbl.accountMessage', 'Message')} value={msg} onChange={setMsg} placeholder={label('lbl.accountSupportMessagePlaceholder', 'Tell us what happened (at least 10 characters)')} multiline />
       <View style={{marginTop: 14}}><Cta label={sending ? 'Sending…' : 'Send message'} disabled={sending} onPress={() => {void submit();}} /></View>
       <T size={12} color={th.mut} style={{marginTop: 10}}>{store ? 'We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies.' : 'Support messages are tracked with a ticket number.'}</T>
     </ScrollView>
@@ -271,7 +271,7 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>Message sent</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? 'Ticket ' + result.ticket + ' was sent to ' + store.n + '. You can return to this conversation to see the store reply.' : 'Ticket ' + result.ticket + ' (demo). Your support request is not connected to a live support inbox yet.'}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label="Open store conversation" onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label="Back to Goodies" onPress={() => tab('home')} /></View></View>; }
     case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
     case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title="Policy" onBack={back} /><Empty emoji="📄" title="Page not found" button="Back" onPress={() => tab('home')} /></View>;
-    case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title="Notification" onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? 'View order' : 'See details'} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title="Notification" onBack={back} /><Empty emoji="🔔" title="Notification not found" button="Back to Goodies" onPress={() => tab('home')} /></View>; }
+    case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? 'View order' : 'See details'} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><Empty emoji="🔔" title={label('lbl.accountNotificationNotFound', 'Notification not found')} button={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View>; }
     default: return <Home />;
   }
 }
