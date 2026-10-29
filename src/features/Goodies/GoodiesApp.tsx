@@ -148,12 +148,12 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       {showCb ? (
         <View pointerEvents="box-none" style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 68, zIndex: 12}}>
           <Animated.View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 12, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12, transform: [{translateX: cartDragX}]}}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Open cart" onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
-              <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">Your cart</T></Row>
+            <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAutoJGDJ0J", "Open cart")} onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
+              <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="800" color="#fff">{cnt()}</T></View><T size={14.5} weight="800" color="#fff">{label("lbl.browseAutoEJBBC2", "Your cart")}</T></Row>
               <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="800" color={th.brd}>View cart · {money(totals().total)}</T></View>
             </Pressable>
           </Animated.View>
-          <Pressable accessibilityRole="button" accessibilityLabel="Dismiss cart banner" onPress={() => { cartDragX.setValue(0); setDismissedCartCount(cnt()); }} hitSlop={8} style={{position: 'absolute', top: -2, right: -3, width: 24, height: 24, borderRadius: 12, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: th.line, alignItems: 'center', justifyContent: 'center', zIndex: 3, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5}}>
+          <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAuto1APR0T", "Dismiss cart banner")} onPress={() => { cartDragX.setValue(0); setDismissedCartCount(cnt()); }} hitSlop={8} style={{position: 'absolute', top: -2, right: -3, width: 24, height: 24, borderRadius: 12, backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: th.line, alignItems: 'center', justifyContent: 'center', zIndex: 3, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5}}>
             <Icon name="x" size={13} color={th.br} />
           </Pressable>
         </View>
@@ -198,15 +198,15 @@ function WantissEntry() {
   const th = useTheme();
   return (
     <View style={{padding: 16, paddingTop: 60}}>
-      <T size={32} weight="800" style={{fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif'}}>Wantiss</T>
-      <T color={th.mut} style={{marginTop: 6, marginBottom: 24}}>Your everyday super-app (demo entry screen)</T>
+      <T size={32} weight="800" style={{fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif'}}>{label("lbl.browseAuto1MQHTQ6", "Wantiss")}</T>
+      <T color={th.mut} style={{marginTop: 6, marginBottom: 24}}>{label("lbl.browseAutoXNYVOQ", "Your everyday super-app (demo entry screen)")}</T>
       <Pressable onPress={() => {S.stack = [{r: 'wantiss', u: 1}, {r: 'home', u: 2}]; emit();}} style={{height: 130, borderRadius: 18, overflow: 'hidden'}}>
         <Grad colors={['#FD802E', '#FF9F4D']} style={{flex: 1, padding: 14}}>
-          <T size={22} weight="800" color="#fff">Goodies</T><T size={12} color="#fff" style={{marginTop: 3}}>Food, groceries, drinks and everyday essentials</T>
+          <T size={22} weight="800" color="#fff">{label("lbl.browseAuto11P24TT", "Goodies")}</T><T size={12} color="#fff" style={{marginTop: 3}}>{label("lbl.browseAuto1R48A8", "Food, groceries, drinks and everyday essentials")}</T>
           <Text style={{position: 'absolute', right: 6, bottom: -4, fontSize: 62}}>🛍️</Text>
         </Grad>
       </Pressable>
-      <T size={12.5} color={th.mut} align="center" style={{marginTop: 16}}>This is a stand-in for the Wantiss home. Other services will appear here.</T>
+      <T size={12.5} color={th.mut} align="center" style={{marginTop: 16}}>{label("lbl.browseAuto2NONO1", "This is a stand-in for the Wantiss home. Other services will appear here.")}</T>
     </View>
   );
 }
