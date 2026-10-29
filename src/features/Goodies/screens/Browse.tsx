@@ -251,9 +251,9 @@ export function Search() {
   if (!q && !any) {
     body = (
       <View style={{paddingHorizontal: 16}}>
-        {S.rec.length ? (<><Ttl>Recent searches</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{S.rec.map((x: string) => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View><Pressable onPress={() => {S.rec = []; emit();}}><T size={13} weight="700" color={th.br} style={{marginTop: 8}}>Clear recent</T></Pressable></>) : null}
-        <Ttl>Popular searches</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['Poulet frit', 'Mango', 'Pain patate', 'Riz', 'Pharmacy', 'Jus', 'Seafood'].map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View>
-        <Ttl>Browse categories</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{categories().map(c => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View>
+        {S.rec.length ? (<><Ttl>{label('lbl.searchRecent', 'Recent searches')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{S.rec.map((x: string) => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View><Pressable onPress={() => {S.rec = []; emit();}}><T size={13} weight="700" color={th.br} style={{marginTop: 8}}>{label('lbl.searchClear', 'Clear recent')}</T></Pressable></>) : null}
+        <Ttl>{label('lbl.popular', 'Popular searches')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['Poulet frit', 'Mango', 'Pain patate', 'Riz', 'Pharmacy', 'Jus', 'Seafood'].map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View>
+        <Ttl>{label('lbl.trending', 'Browse categories')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{categories().map(c => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View>
       </View>
     );
   } else {
@@ -270,7 +270,7 @@ export function Search() {
     if (q) ST.forEach(s => {if (s.n.toLowerCase().indexOf(q) === 0 && set.indexOf(s.n) < 0) set.push(s.n); s.it.forEach(i => {const w = i.n.toLowerCase(); if ((w.indexOf(q) === 0 || w.indexOf(' ' + q) > -1) && set.indexOf(i.n) < 0) set.push(i.n);});});
     const sug = set.filter(x => x.toLowerCase() !== q).slice(0, 5);
     body = (!ss.length && !is.length && !cs.length)
-      ? <Empty emoji="🤷" title={'No results' + (q ? ' for "' + r.q + '"' : '')} text="Try another word, or remove a filter." button={any ? 'Clear filters' : 'Clear search'} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
+      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? 'Clear filters' : 'Clear search'} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
       : (
         <View style={{paddingHorizontal: 16}}>
           {sug.length ? (<><Ttl>Suggestions</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
@@ -310,13 +310,13 @@ export function Promos() {
   const th = useTheme();
   return (
     <View>
-      <Bar title="Coupons and offers" onBack={back} />
+      <Bar title={label('lbl.promosTitle', 'Coupons and offers')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         {coupons().map((p: any) => (
           <Card key={p.c}>
             <Row sp><T weight="700">{p.t}</T><Badge label={p.c} /></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
-            <Row><Cta small ghost label="Details" onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? 'Applied' : 'Use this code'} onPress={() => usePromo(p.c)} /></Row>
+            <Row><Cta small ghost label={label('lbl.promosDetails', 'Details')} onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? label('lbl.cartApplied', 'Applied') : label('lbl.promosUse', 'Use this code')} onPress={() => usePromo(p.c)} /></Row>
           </Card>
         ))}
       </View>
