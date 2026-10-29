@@ -160,13 +160,13 @@ const upd = () => {bDraftSave(); emit();};
 export function byoOpen(sid: string, bid: string) {
   const b = bGet(sid, bid);
   if (!b || !b.enabled || !b.available || BYO.store[sid] === false) {toast(label('lbl.byoNotAvailableNow', 'This builder is not available right now')); return;}
-  if (!STB[sid].open) {toast(STB[sid].n + ' is closed right now'); return;}
+  if (!STB[sid].open) {toast(label('lbl.byoStoreClosedNow', '{store} is closed right now').replace('{store}', STB[sid].n)); return;}
   BD = bDraft(b, sid); push('byo', sid + '|' + b.id);
 }
 export function bzAdd(gid: string, iid: string) {
   const b = bGet(BD.sid, BD.bid), g = b && b.groups.filter(x => x.id === gid)[0], it = g && itemOf(g, iid);
   if (!it || !g || BD.added) return;
-  if (!it.avail) {toast(it.name + ' is unavailable'); return;}
+  if (!it.avail) {toast(label('lbl.byoIngredientUnavailable', '{item} is unavailable').replace('{item}', it.name)); return;}
   const us = units(g, BD).slice();
   if (g.kind === 'one') {if (us[0] === it.id) return; hist(); BD.sel[g.id] = [it.id];}
   else {
