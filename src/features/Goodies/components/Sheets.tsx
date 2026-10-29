@@ -73,9 +73,9 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       </Card>
     </>);
   }
-  if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}{label('lbl.sheetCourierTitle', 'Message courier')}<View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
+  if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
   if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
-  if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}{label('lbl.sheetDeliverToTitle', 'Deliver to')}<T size={12.5} color={th.mut} style={{marginBottom: 12}}{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
+  if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
 
   const isRatingSheet = k === 'review' || k === 'driver-review';
   return (
@@ -162,24 +162,24 @@ function ScheduleSheet({close}: {close: () => void}) {
     close();
   };
   return <>
-    <T size={21} weight="800"{label('lbl.sheetScheduleTitle', 'Schedule your order')}
-    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}{label('lbl.sheetScheduleDescription', 'Choose delivery or pick-up, a date, and an available time.')}
+    <T size={21} weight="800">{label('lbl.sheetScheduleTitle', 'Schedule your order')}</T>
+    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}>{label('lbl.sheetScheduleDescription', 'Choose delivery or pick-up, a date, and an available time.')}</T>
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
-    <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}{label('lbl.sheetChooseDay', 'Choose a day')}
+    <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay', 'Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
       {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);setCustomMode(false);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
         <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
-    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700"{label('lbl.sheetScheduledMinimum', 'Scheduled-order minimum')}<T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? 'Opening '+opening+' · '+lead+' minutes advance time. Only times after the minimum are selectable.' : 'Minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card>:null}
-    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}{label('lbl.sheetAvailableTimes', 'Available times')}
+    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">{label('lbl.sheetScheduledMinimum', 'Scheduled-order minimum')}</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? 'Opening '+opening+' · '+lead+' minutes advance time. Only times after the minimum are selectable.' : 'Minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card>:null}
+    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>{label('lbl.sheetAvailableTimes', 'Available times')}</T>
     {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
       {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
         {selectedTs===ts?<Icon name="check" color={th.br}/>:<T size={12} color={th.mut}>Select</T>}
       </Pressable>)}
     </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.'}</T></Card>}
-    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}{label('lbl.sheetExactTime', 'Or enter an exact time')}
+    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>{label('lbl.sheetExactTime', 'Or enter an exact time')}</T>
     <Row style={{gap:10,alignItems:'flex-end'}}>
       <View style={{flex:1}}><Input label={label('lbl.sheetHourLabel', 'Hour (00–23)')} value={customHour} onChange={v=>{setCustomHour(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="14" keyboard="number-pad" /></View>
       <T size={20} weight="800" style={{paddingBottom:12}}>:</T>
@@ -215,20 +215,20 @@ function GroupOrderSheet({close}: {close: () => void}) {
     } catch (_) { toast('Invite code: ' + group.code); }
   };
   return <>
-    <T size={21} weight="800"{label('lbl.sheetGroupTitle', 'Group order')}
-    <T size={13} color={th.mut} style={{marginTop:5, marginBottom:12}}{label('lbl.sheetGroupDescription', 'Start a shared cart, invite friends, and coordinate everyone’s items before checkout.')}
+    <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
+    <T size={13} color={th.mut} style={{marginTop:5, marginBottom:12}}>{label('lbl.sheetGroupDescription', 'Start a shared cart, invite friends, and coordinate everyone’s items before checkout.')}</T>
     <Card style={{marginBottom:12}}>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
-      <T size={12} color={th.mut} style={{marginTop:7}}{label('lbl.sheetGroupShareNotice', 'Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link.')}
+      <T size={12} color={th.mut} style={{marginTop:7}}>{label('lbl.sheetGroupShareNotice', 'Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link.')}</T>
     </Card>
     <Card style={{marginBottom:12}}>
-      <T size={14} weight="800"{label('lbl.sheetSharedCart', 'Shared cart')}
+      <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut} style={{marginTop:7}}>Add items to the cart from the selected store. The host controls checkout.</T>}
-      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800"{label('lbl.sheetSubtotal', 'Subtotal')}<T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
+      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
       <View style={{height:10}}/><Cta ghost label={label('lbl.sheetViewCart', 'View cart')} onPress={()=>{close();A.go('cart');}} />
     </Card>
-    <T size={15} weight="800" style={{marginBottom:7}}{label('lbl.sheetGroupMembers', 'Group members')}
+    <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <Row style={{gap:8, marginBottom:10}}>
       <View style={{flex:1}}><Input value={name} onChange={setName} placeholder={label('lbl.sheetMemberPlaceholder', 'Enter member name')} /></View>
       <View style={{width:88}}><Cta label={label('lbl.sheetAddMember', 'Add')} onPress={() => {
@@ -240,19 +240,19 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <Card>
       <Row style={{gap:10, alignItems:'center', paddingVertical:4}}>
         <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.br} /></View>
-        <View style={{flex:1}}><T weight="800">{group.host || S.pf.n || 'You'} (Host)</T><T size={12} color={th.mut}{label('lbl.sheetGroupHostNote', 'Owns the group cart')}</View>
+        <View style={{flex:1}}><T weight="800">{group.host || S.pf.n || 'You'} (Host)</T><T size={12} color={th.mut}>{label('lbl.sheetGroupHostNote', 'Owns the group cart')}</T></View>
         <Badge green label="Active" />
       </Row>
       {group.members.map((m:any)=><View key={m.id} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:10,borderTopWidth:1,borderTopColor:th.line}}>
         <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut} /></View>
-        <View style={{flex:1}}><T weight="700">{m.name}</T><T size={12} color={th.mut}{label('lbl.sheetWaitingToAdd', 'Waiting to add items')}</View>
+        <View style={{flex:1}}><T weight="700">{m.name}</T><T size={12} color={th.mut}>{label('lbl.sheetWaitingToAdd', 'Waiting to add items')}</T></View>
         <Badge label={m.status || 'Invited'} />
         <Pressable accessibilityRole="button" accessibilityLabel={'Remove '+m.name} onPress={()=>saveGroup({...group,members:group.members.filter((x:any)=>x.id!==m.id)})}><Icon name="x" size={18} color={th.red}/></Pressable>
       </View>)}
-      {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}{label('lbl.sheetNoMembers', 'No members yet. Invite friends or add their names to plan the group.')} : null}
+      {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}>{label('lbl.sheetNoMembers', 'No members yet. Invite friends or add their names to plan the group.')}</T> : null}
     </Card>
     <View style={{height:12}}/>
-    <T size={15} weight="800" style={{marginBottom:7}}{label('lbl.sheetSharedCart', 'Shared cart')}
+    <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetSharedCart', 'Shared cart')}</T>
     <Card>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{paddingVertical:7,alignItems:'flex-start'}}><View style={{flex:1}}><T weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut}>The host cart is empty. Add items from a store to start the group order.</T>}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}><Row sp><T weight="800">Items subtotal</T><T weight="800">{money(groupSubtotal)}</T></Row><T size={11.5} color={th.mut} style={{marginTop:4}}>Delivery and service fees are calculated at checkout.</T></View>
@@ -294,8 +294,8 @@ function ContactsSheet({close}: {close: () => void}) {
   const th = useTheme();
   const rows = [{id: 'w', ph: S.pf.ph, l: 'Default Wantiss number', w: 1}].concat(S.gc.map((c: any) => ({id: c.id, ph: c.ph, l: c.l || 'Goodies number', w: 0})));
   return (<>
-    <T size={20} weight="800" style={{marginBottom: 4}}{label('lbl.sheetContactNumber', 'Contact number')}
-    <T size={12.5} color={th.mut} style={{marginBottom: 12}}{label('lbl.sheetContactNumberHint', 'We use this number for this order only. Your Wantiss account number is never changed here.')}
+    <T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetContactNumber', 'Contact number')}</T>
+    <T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetContactNumberHint', 'We use this number for this order only. Your Wantiss account number is never changed here.')}</T>
     {rows.map((r: any) => (
       <View key={r.id} style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
         <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="700">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label="Default Wantiss number" /> : <T size={12.5} color={th.mut}>Goodies checkout number · {r.l}</T>}</View></Radio></View>
