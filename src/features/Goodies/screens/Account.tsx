@@ -48,7 +48,7 @@ function Settings() {
 
       <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub={label('lbl.accountDarkModeHint', 'Goodies only. Other Wantiss features keep their theme.')} onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub="FAQs and support" onPress={() => go('help')} />
-      {providerInfo.demo ? (<><Ttl>Demo</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title="Reset Goodies demo data" sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
+      {providerInfo.demo ? (<><Ttl>{label('lbl.accountDemoHeading', 'Demo')}</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title={label('lbl.accountResetDemo', 'Reset Goodies demo data')} sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
       <T size={12} color={th.mut} align="center" style={{marginTop: 18}}>Goodies {providerInfo.demo ? '(demo)' : ''}</T>
     </View>
   </View>);
@@ -63,9 +63,9 @@ function Profile() {
       <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub="Shared with Wantiss" onPress={() => go('addresses')} />
       <LRow icon="bag" title={label('lbl.profileOrderHistory', 'Order history')} sub={S.orders.length + ' orders'} onPress={() => tab('orders')} />
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} onPress={() => go('favs')} />
-      <LRow icon="wallet" title="Wallet and payments" onPress={() => go('payments')} />
-      <LRow icon="bell" title="Notification preferences" onPress={() => go('settings')} />
-      <LRow icon="help" title="Help and support" onPress={() => go('help')} />
+      <LRow icon="wallet" title={label('lbl.accountWalletPayments', 'Wallet and payments')} onPress={() => go('payments')} />
+      <LRow icon="bell" title={label('lbl.accountNotificationPreferences', 'Notification preferences')} onPress={() => go('settings')} />
+      <LRow icon="help" title={label('lbl.accountHelpSupport', 'Help and support')} onPress={() => go('help')} />
       <LRow icon="tag" title={label('lbl.profilePolicies', 'Terms and policies')} onPress={() => go('policies')} />
     </View>
   </View>);
@@ -81,7 +81,7 @@ function Addresses() {
     if (isNew || a.t !== t) a.z = zoneOf(t);
     a.l = edit.l; a.cc = edit.cc || 'HT'; a.t = t; a.apt = (edit.apt || '').trim(); a.inst = (edit.inst || '').trim();
     if (edit.def && !a.def) {S.addr.forEach((x: any) => (x.def = 0)); a.def = 1;}
-    if (isNew) S.as = a.id; setEdit(null); toast(isNew ? 'Address saved to your Wantiss account' : 'Address updated'); save(); emit();
+    if (isNew) S.as = a.id; setEdit(null); toast(isNew ? label('lbl.accountAddressSaved', 'Address saved to your Wantiss account') : label('lbl.accountAddressUpdated', 'Address updated')); save(); emit();
   };
   return (<View>
     <Bar title={label('lbl.settingsAddresses', 'Saved addresses')} onBack={back} />
@@ -93,9 +93,9 @@ function Addresses() {
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>Note: {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
             <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
-            {a.id !== S.as ? <Pressable onPress={() => {S.as = a.id; toast('Goodies will deliver to ' + a.l); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
-            {!a.def ? <Pressable onPress={() => {S.addr.forEach((x: any) => (x.def = x.id === a.id ? 1 : 0)); toast(label('lbl.accountDefaultAddressUpdated', 'Wantiss default address updated')); save(); emit();}}><T size={13.5} weight="700" color={th.br}>Set as Wantiss default</T></Pressable> : null}
-            {S.addr.length > 1 ? <Pressable onPress={() => {S.addr = S.addr.filter((x: any) => x.id !== a.id); if (a.def) S.addr[0].def = 1; if (S.as === a.id) S.as = defAddr().id; toast(label('lbl.accountAddressDeleted', 'Address deleted')); save(); emit();}}><T size={13.5} weight="700" color={th.red}>Delete</T></Pressable> : <></>}
+            {a.id !== S.as ? <Pressable onPress={() => {S.as = a.id; toast(label('lbl.accountDeliveringToAddress', 'Goodies will deliver to {address}').replace('{address}', a.l)); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
+            {!a.def ? <Pressable onPress={() => {S.addr.forEach((x: any) => (x.def = x.id === a.id ? 1 : 0)); toast(label('lbl.accountDefaultAddressUpdated', 'Wantiss default address updated')); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountSetWantissDefault', 'Set as Wantiss default')}</T></Pressable> : null}
+            {S.addr.length > 1 ? <Pressable onPress={() => {S.addr = S.addr.filter((x: any) => x.id !== a.id); if (a.def) S.addr[0].def = 1; if (S.as === a.id) S.as = defAddr().id; toast(label('lbl.accountAddressDeleted', 'Address deleted')); save(); emit();}}><T size={13.5} weight="700" color={th.red}>{label('lbl.accountDeleteAddress', 'Delete')}</T></Pressable> : <></>}
           </Row>
         </Card>
       ))}
@@ -239,7 +239,7 @@ function Contact({p}: {p: any}) {
       S.stack.pop();
       push('supdone', {ticket, storeId: store ? storeId : '', conversationId, topic, orderId: oid});
     } catch (e: any) {
-      toast(e?.message || 'Could not send your message. Please try again.');
+      toast(e?.message || label('lbl.accountSendMessageFailed', 'Could not send your message. Please try again.'));
     } finally {setSending(false);}
   };
   return (<View>
@@ -270,8 +270,8 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'storechat': return <StoreChat id={String(p || '')} />;
     case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>Message sent</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? 'Ticket ' + result.ticket + ' was sent to ' + store.n + '. You can return to this conversation to see the store reply.' : 'Ticket ' + result.ticket + ' (demo). Your support request is not connected to a live support inbox yet.'}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label="Open store conversation" onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label="Back to Goodies" onPress={() => tab('home')} /></View></View>; }
     case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
-    case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title="Policy" onBack={back} /><Empty emoji="📄" title="Page not found" button="Back" onPress={() => tab('home')} /></View>;
-    case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? 'View order' : 'See details'} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><Empty emoji="🔔" title={label('lbl.accountNotificationNotFound', 'Notification not found')} button={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View>; }
+    case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title="Policy" onBack={back} /><Empty emoji="📄" title={label('lbl.accountPageNotFound', 'Page not found')} button={label('lbl.accountBack', 'Back')} onPress={() => tab('home')} /></View>;
+    case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? label('lbl.accountViewOrder', 'View order') : label('lbl.accountSeeDetails', 'See details')} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><Empty emoji="🔔" title={label('lbl.accountNotificationNotFound', 'Notification not found')} button={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View>; }
     default: return <Home />;
   }
 }
