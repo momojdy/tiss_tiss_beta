@@ -272,10 +272,20 @@ export async function refreshPaymentOptions() {
 }
 export async function createWallet() {
   try {
+    const { data: auth, error: authError } = await supabase.auth.getUser();
+    if (authError) throw authError;
+    if (!auth.user) throw new Error('Sign in to create a Wantiss wallet.');
     const { error } = await supabase.rpc('ensure_my_wallet');
     if (error) throw error;
+    const { data: wallet, error: verifyError } = await supabase.from('wallets')
+      .select('id,balance').eq('user_id', auth.user.id).maybeSingle();
+    if (verifyError) throw verifyError;
+    if (!wallet?.id) throw new Error('Wallet creation was not confirmed by the server. Please retry.');
+    S.hasWallet = true;
+    S.wallet = Number(wallet.balance || 0);
     await refreshPaymentOptions();
     toast(label('lbl.actionWalletReady', 'Wantiss wallet is ready'));
+    emit();
   } catch (e: any) {
     toast(e?.message || label('lbl.actionWalletCreateFailed', 'Could not create your Wantiss wallet. Please try again.'));
   }
