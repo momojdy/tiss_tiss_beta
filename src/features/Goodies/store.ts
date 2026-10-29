@@ -3,6 +3,7 @@ import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../lib/supabase';
 import {providerInfo} from './providers';
+import {label} from './content';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
 export const KEY = 'goodies-live-v4';
@@ -323,8 +324,8 @@ export function totals() {
 export const qtyIn = (id: string) => S.cart.lines.filter((l: CartLine) => l.id === id).reduce((a: number, l: CartLine) => a + l.q, 0);
 export function canBuy(i: Item) {
   const s = STB[i.s];
-  if (!s.open && !s.acceptScheduledOrders) {toast(s.n + ' is closed. ' + s.nx); return false;}
-  if (i.oos) {toast('Sorry, ' + i.n + ' is out of stock'); return false;}
+  if (!s.open && !s.acceptScheduledOrders) {toast(label('lbl.actionStoreClosedNext', '{store} is closed. {next}').replace('{store}', s.n).replace('{next}', s.nx)); return false;}
+  if (i.oos) {toast(label('lbl.actionOutOfStock', 'Sorry, {item} is out of stock').replace('{item}', i.n)); return false;}
   return true;
 }
 
@@ -349,14 +350,14 @@ export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; o
   if (!canBuy(i)) return;
   const c = S.cart;
   if (c.sid && c.sid !== i.s && c.lines.length) {S.pend = [i, o]; ui.sheet({kind: 'newcart', from: STB[c.sid].n, to: STB[i.s].n}); return;}
-  if (qtyIn(i.id) + o.q > i.stock) {toast('Only ' + i.stock + ' available'); return;}
+  if (qtyIn(i.id) + o.q > i.stock) {toast(label('lbl.actionOnlyAvailable', 'Only {count} available').replace('{count}', String(i.stock))); return;}
   if ((i as any).restriction === 'alcohol' && !S.alcAck) {S.pend = [i, o]; ui.sheet({kind: 'alcrules'}); return;}
   c.sid = i.s;
   const base = o.off ? dp(i, o.off) : i.p, unit = base + ((o.size || 0) > 0 ? 1.5 : 0) + (o.drink ? 1 : 0);
   const k = [i.id, o.size, o.drink, o.off || 0, o.note || ''].join('|'), l = c.lines.filter((x: CartLine) => x.k === k)[0];
   if (l) l.q += o.q;
   else c.lines.push({k, id: i.id, n: i.n, e: i.e, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', ')});
-  S.bump = 1; toast('Added ' + i.n + ' to your cart'); save(); emit();
+  S.bump = 1; toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
 }
 export function reorderLines(o: Order) {
   const s = STB[o.sid], miss: string[] = [], ok: CartLine[] = [];
