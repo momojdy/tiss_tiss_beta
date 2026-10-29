@@ -215,7 +215,7 @@ function Contact({p}: {p: any}) {
     if (sending) return;
     setSending(true);
     try {
-      let ticket = 'GS-' + Math.floor(1000 + Math.random() * 9000);
+      let ticket = '';
       let conversationId = '';
       if (store) {
         const {data: auth, error: authError} = await supabase.auth.getUser();
@@ -236,12 +236,27 @@ function Contact({p}: {p: any}) {
           if (createError) throw createError;
           conversationId = created.id;
         }
+        ticket = 'GS-' + conversationId.replace(/-/g, '').slice(0, 8).toUpperCase();
         const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
         const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
         if (messageError) throw messageError;
         const {error: threadError} = await supabase.from('conversations').update({last_body: ticketBody, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
         if (threadError) throw threadError;
+      } else {
+        const {data: auth, error: authError} = await supabase.auth.getUser();
+        if (authError) throw authError;
+        if (!auth.user) throw new Error('Sign in to contact support. Your ticket has not been created.');
+        const {data: created, error: ticketError} = await supabase.from('settings_support_requests').insert({
+          user_id: auth.user.id,
+          email: auth.user.email || '',
+          subject: topic + (oid ? ' · Order ' + oid : ''),
+          message: body,
+        }).select('id,ticket_code').single();
+        if (ticketError) throw ticketError;
+        if (!created?.id || !created?.ticket_code) throw new Error('Support did not confirm the ticket. Please retry before leaving this screen.');
+        ticket = created.ticket_code;
       }
+      if (!ticket) throw new Error('The server did not confirm your support ticket. Please retry.');
       S.stack.pop();
       push('supdone', {ticket, storeId: store ? storeId : '', conversationId, topic, orderId: oid});
     } catch (e: any) {
