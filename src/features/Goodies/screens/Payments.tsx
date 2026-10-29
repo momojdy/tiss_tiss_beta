@@ -145,7 +145,7 @@ export function LivePayments() {
         <View style={{borderRadius: 18, padding: 14, backgroundColor: th.br, marginBottom: 12}}>
           <T size={13} color="#fff" style={{opacity: 0.9}}>{label('lbl.paymentWalletTitle', 'Wantiss Wallet')}</T>
           <T size={34} weight="800" color="#fff" style={{marginTop: 4, marginBottom: 14}}>{money(S.wallet)}</T>
-          <Pressable accessibilityRole="button" onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="800" color={th.brd}>Top up (coming soon)</T></Pressable>
+          <Pressable accessibilityRole="button" onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="800" color={th.brd}>{label("lbl.paymentAuto1MONPPC", "Top up (coming soon)")}</T></Pressable>
         </View>
       ) : (
         <Card>
