@@ -6,7 +6,7 @@ import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtD
 import * as A from '../actions';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
-import {rgText, importContent, clearContent, hasContent} from '../content';
+import {rgText, importContent, clearContent, hasContent, label} from '../content';
 import {TextInput, useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
@@ -53,23 +53,23 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
-          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>CUSTOMER REVIEWS</T><T size={18} weight="800">{s.rv > 0 ? '★ ' + s.r.toFixed(1) + ' (' + s.rv + ' reviews)' : 'No reviews yet'}</T></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel="Read store reviews" onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>{label('lbl.storeCustomerReviews', 'Customer reviews').toUpperCase()}</T><T size={18} weight="800">{s.rv > 0 ? '★ ' + s.r.toFixed(1) + ' (' + s.rv + ' reviews)' : 'No reviews yet'}</T></Pressable>
           <Badge label={s.open ? 'Open now' : 'Closed now'} />
         </Row>
-        {row('Opening hours', s.h)}
-        {row('Current status', s.open ? 'Accepting orders' : s.nx || 'Currently closed')}
-        {s.businessAddress ? row('Address', [s.businessAddress, s.businessCity, s.businessCountry].filter(Boolean).join(', ')) : null}
-        {s.businessPhone ? row('Phone', s.businessPhone) : null}
-        {s.businessEmail ? row('Email', s.businessEmail) : null}
-        {s.businessWebsite ? row('Website', s.businessWebsite) : null}
-        {s.businessDeliveryModes?.length ? row('Available services', s.businessDeliveryModes.join(' and ')) : null}
-        {row('Delivery fee', s.fee === 0 ? 'Free delivery' : money(s.fee))}
-        {row('Minimum order', money(s.min))}
-        {row('Distance', s.live ? 'Unavailable until store location is provided' : s.km.toFixed(1) + ' km away')}
-        {row('Estimated delivery', s.eta + ' min')}
-        {row('Order methods', 'Delivery and pickup')}
-        {row('Scheduled orders', s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
-        {s.acceptScheduledOrders ? row('Minimum advance time', Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
+        {row(label('lbl.storeOpeningHours', 'Opening hours'), s.h)}
+        {row(label('lbl.storeCurrentStatus', 'Current status'), s.open ? 'Accepting orders' : s.nx || 'Currently closed')}
+        {s.businessAddress ? row(label('lbl.storeAddress', 'Address'), [s.businessAddress, s.businessCity, s.businessCountry].filter(Boolean).join(', ')) : null}
+        {s.businessPhone ? row(label('lbl.storePhone', 'Phone'), s.businessPhone) : null}
+        {s.businessEmail ? row(label('lbl.storeEmail', 'Email'), s.businessEmail) : null}
+        {s.businessWebsite ? row(label('lbl.storeWebsite', 'Website'), s.businessWebsite) : null}
+        {s.businessDeliveryModes?.length ? row(label('lbl.storeServices', 'Available services'), s.businessDeliveryModes.join(' and ')) : null}
+        {row(label('lbl.storeDeliveryFee', 'Delivery fee'), s.fee === 0 ? 'Free delivery' : money(s.fee))}
+        {row(label('lbl.storeMinimumOrder', 'Minimum order'), money(s.min))}
+        {row(label('lbl.storeDistance', 'Distance'), s.live ? 'Unavailable until store location is provided' : s.km.toFixed(1) + ' km away')}
+        {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + ' min')}
+        {row(label('lbl.storeOrderMethods', 'Order methods'), 'Delivery and pickup')}
+        {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
+        {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Minimum advance time'), Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
       </Card>
     </>);
   }
