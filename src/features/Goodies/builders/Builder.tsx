@@ -260,12 +260,12 @@ export function ByoScreen({p}: {p: string}) {
       <Header title={b.name} sub={s.n + (BD.edit ? ' · Editing item' : '')} onBack={back} />
       <Stage b={b} />
       <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingTop: 15, paddingBottom: 20}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-        {un ? <Warn><T weight="800" size={13}>Currently unavailable. </T><T size={13}>{s.open ? 'The store paused this item.' : s.n + ' is closed.'} You can look, but it cannot be added right now.</T></Warn> : null}
+        {un ? <Warn><T weight="800" size={13}>{label('lbl.byoCurrentlyUnavailable', 'Currently unavailable.')} </T><T size={13}>{s.open ? 'The store paused this item.' : s.n + ' is closed.'} You can look, but it cannot be added right now.</T></Warn> : null}
         {BD.resumed ? <Warn><T size={13}>{label('lbl.byoResumeDraft', 'Resuming the draft you left earlier.')}</T></Warn> : null}
         <Options b={b} />
         {b.notes ? (
           <View style={{marginTop: 18}}>
-            <T size={14} weight="700" style={{marginBottom: 6}}>Anything else we should know?</T>
+            <T size={14} weight="700" style={{marginBottom: 6}}>{label('lbl.byoNotesPrompt', 'Anything else we should know?')}</T>
             <TextInput value={BD.note} onChangeText={bzNote} maxLength={200} multiline placeholder={label('lbl.byoNotesPlaceholder', 'E.g. light sauce, cut into 8 slices…')} placeholderTextColor={th.mut} style={{minHeight: 64, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12, textAlignVertical: 'top'}} />
             <T size={12} color={th.mut} align="right" style={{marginTop: 3}}>{BD.note.length}/200</T>
           </View>
