@@ -6,6 +6,7 @@ import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, useTheme} from '../components/ui';
 import {S, money, emit, save, toast} from '../store';
 import {back, createWallet} from '../actions';
+import {label} from '../content';
 import {supabase} from '../../../lib/supabase';
 
 type LoadState = 'loading' | 'ready' | 'error' | 'signedout';
@@ -107,7 +108,7 @@ export function LivePayments() {
 
   if (state === 'loading') {
     return (<View>
-      <Bar title="Wallet and payments" onBack={back} />
+      <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <Skeleton h={120} /><Skeleton h={20} w={110} /><Skeleton h={64} /><Skeleton h={64} />
       </View>
@@ -115,18 +116,18 @@ export function LivePayments() {
   }
   if (state === 'signedout') {
     return (<View>
-      <Bar title="Wallet and payments" onBack={back} />
+      <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
       <View style={{padding: 16, paddingTop: 40, alignItems: 'center'}}>
         <Text style={{fontSize: 52}}>🔒</Text>
-        <T size={18} weight="800" style={{marginTop: 8}}>Sign in to see your wallet</T>
-        <T size={13.5} color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 18}}>Your Wantiss wallet and saved cards are tied to your account.</T>
+        <T size={18} weight="800" style={{marginTop: 8}}>{label('lbl.paymentsSignIn', 'Sign in to see your wallet')}</T>
+        <T size={13.5} color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.paymentsSignedOut', 'Your Wantiss wallet and saved cards are tied to your account.')}</T>
         <View style={{alignSelf: 'stretch'}}><Cta ghost label="Back" onPress={back} /></View>
       </View>
     </View>);
   }
   if (state === 'error') {
     return (<View>
-      <Bar title="Wallet and payments" onBack={back} />
+      <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <Card style={{borderColor: th.red}}>
           <T weight="800">We couldn’t load your payment details</T>
@@ -138,7 +139,7 @@ export function LivePayments() {
   }
 
   return (<View>
-    <Bar title="Wallet and payments" onBack={back} />
+    <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
       {S.hasWallet ? (
         <View style={{borderRadius: 18, padding: 14, backgroundColor: th.br, marginBottom: 12}}>
@@ -154,7 +155,7 @@ export function LivePayments() {
         </Card>
       )}
 
-      <Ttl>Saved cards</Ttl>
+      <Ttl>{label('lbl.paymentsCards', 'Saved cards')}</Ttl>
       {S.cards.length ? S.cards.map((c: any) => (
         <Card key={c.id}>
           <Row style={{gap: 10}}>
