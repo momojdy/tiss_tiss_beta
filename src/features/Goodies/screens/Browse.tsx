@@ -54,7 +54,7 @@ function Countdown() {
   const end = dealEnd(), [s, setS] = useState(end ? Math.max(0, Math.floor((end - Date.now()) / 1000)) : 2 * 3600 + 14 * 60 + 37);
   useEffect(() => {const id = setInterval(() => setS(x => (end ? Math.max(0, Math.floor((end - Date.now()) / 1000)) : x > 0 ? x - 1 : 0)), 1000); return () => clearInterval(id);}, []);
   const p = (n: number) => String(n).padStart(2, '0');
-  return <View style={{backgroundColor: th.red, borderRadius: 12, paddingHorizontal: 9, paddingVertical: 4}}><T size={12} weight="800" color="#fff">Ends in {p(Math.floor(s / 3600))}:{p(Math.floor((s % 3600) / 60))}:{p(s % 60)}</T></View>;
+  return <View style={{backgroundColor: th.red, borderRadius: 12, paddingHorizontal: 9, paddingVertical: 4}}><T size={12} weight="800" color="#fff">{label('lbl.browseCountdown', 'Ends in {time}').replace('{time}', p(Math.floor(s / 3600)) + ':' + p(Math.floor((s % 3600) / 60)) + ':' + p(s % 60))}</T></View>;
 }
 
 export function Home({onExit}: {onExit?: () => void}) {
