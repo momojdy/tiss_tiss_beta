@@ -19,6 +19,12 @@ const POL: Record<string, [string, string]> = {
   refund: ['Refund and cancellation policy', 'Placeholder policy. Orders can be cancelled until the store finishes preparing them. Wallet payments are refunded to your wallet. Final rules will be published before launch.'],
 };
 
+const POL_LABELS: Record<string, [string, string]> = {
+  terms: ['lbl.legalTermsTitle', 'lbl.legalTermsBody'],
+  privacy: ['lbl.legalPrivacyTitle', 'lbl.legalPrivacyBody'],
+  refund: ['lbl.legalRefundTitle', 'lbl.legalRefundBody'],
+};
+
 const LRow = ({icon, title, sub, onPress, right}: {icon: string; title: string; sub?: string; onPress: () => void; right?: any}) => {
   const th = useTheme();
   return (
@@ -269,8 +275,8 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'contact': return <Contact p={p} />;
     case 'storechat': return <StoreChat id={String(p || '')} />;
     case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>{label('lbl.accountSupportSentTitle', 'Message sent')}</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? label('lbl.accountStoreTicketSent', 'Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply.').replace('{ticket}', String(result.ticket)).replace('{store}', store.n) : label('lbl.accountDemoTicketSent', 'Ticket {ticket} (demo). Your support request is not connected to a live support inbox yet.').replace('{ticket}', String(result.ticket))}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label={label('lbl.accountOpenStoreConversation', 'Open store conversation')} onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View></View>; }
-    case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
-    case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title={label('lbl.legalPolicyTitle', 'Policy')} onBack={back} /><Empty emoji="📄" title={label('lbl.accountPageNotFound', 'Page not found')} button={label('lbl.accountBack', 'Back')} onPress={() => tab('home')} /></View>;
+    case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={label(POL_LABELS[k][0], POL[k][0])} onPress={() => go('policy', k)} />)}</View></View>;
+    case 'policy': return POL[p] ? <View><Bar title={label(POL_LABELS[p][0], POL[p][0])} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || label(POL_LABELS[p][1], POL[p][1])}</T></Card></View></View> : <View><Bar title={label('lbl.legalPolicyTitle', 'Policy')} onBack={back} /><Empty emoji="📄" title={label('lbl.accountPageNotFound', 'Page not found')} button={label('lbl.accountBack', 'Back')} onPress={() => tab('home')} /></View>;
     case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? label('lbl.accountViewOrder', 'View order') : label('lbl.accountSeeDetails', 'See details')} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><Empty emoji="🔔" title={label('lbl.accountNotificationNotFound', 'Notification not found')} button={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View>; }
     default: return <Home />;
   }
