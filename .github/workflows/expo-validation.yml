@@ -20,10 +20,10 @@ jobs:
         run: npm ci --no-audit --no-fund
       - name: Type-check
         run: npx tsc --noEmit
-      - name: Expo Doctor
-        run: npx expo-doctor
       - name: Export Expo web bundle
         run: npx expo export --platform web
+      - name: Expo Doctor
+        run: npx expo-doctor
 
   edge-functions:
     runs-on: ubuntu-latest
