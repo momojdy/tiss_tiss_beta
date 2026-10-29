@@ -75,7 +75,7 @@ export function qty(k: string, v: number) {
   const l = S.cart.lines;
   for (let i = 0; i < l.length; i++) if (l[i].k === k) {
     const n = l[i].q + v, mx = l[i].byo ? 20 : IT[l[i].id].stock;
-    if (n > mx && v > 0) {toast('Only ' + mx + ' available'); return;}
+    if (n > mx && v > 0) {toast(label('lbl.actionOnlyAvailable', 'Only {count} available').replace('{count}', String(mx))); return;}
     l[i].q = n; if (n < 1) l.splice(i, 1);
     break;
   }
@@ -91,18 +91,18 @@ export function promoApply(code: string) {
   const c = (code || '').trim().toUpperCase(); S.pin = c;
   const t = totals(), r = pChk(c, t.sub, S.cart.sid);
   if (r.e) {toast(r.e); return;}
-  S.promo = c; S.pin = ''; toast(c + ' applied'); save(); emit();
+  S.promo = c; S.pin = ''; toast(label('lbl.actionPromoApplied', '{code} applied').replace('{code}', c)); save(); emit();
 }
 export const promoClear = () => {S.promo = ''; save(); emit();};
 export function usePromo(c: string) {
-  if (S.cart.lines.length) {const r = pChk(c, totals().sub, S.cart.sid); if (r.e) {toast(r.e); return;} toast(c + ' applied');}
-  else toast(c + ' saved. It applies when you check out');
+  if (S.cart.lines.length) {const r = pChk(c, totals().sub, S.cart.sid); if (r.e) {toast(r.e); return;} toast(label('lbl.actionPromoApplied', '{code} applied').replace('{code}', c));}
+  else toast(label('lbl.actionPromoSaved', '{code} saved. It applies when you check out').replace('{code}', c));
   S.promo = c; save(); emit();
 }
 export function goCheckout() {
   const t = totals();
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
-  if (!t.st!.open && !t.st!.acceptScheduledOrders) {toast(t.st!.n + ' is closed. ' + t.st!.nx); return;}
+  if (!t.st!.open && !t.st!.acceptScheduledOrders) {toast(label('lbl.actionStoreClosedNext', '{store} is closed. {next}').replace('{store}', t.st!.n).replace('{next}', t.st!.nx)); return;}
   if (t.sub < t.st!.min) {toast(label('lbl.actionMinimumOrder', 'Minimum order is {amount}').replace('{amount}', money(t.st!.min))); return;}
   S.cs = 0; push('checkout');
 }
@@ -134,10 +134,10 @@ export async function placeOrder() {
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast(label('lbl.actionAlcoholUnavailable', 'Alcohol orders are not available yet.')); return;}
   }
-  if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(st.n + ' is closed. Choose a future pickup or delivery time if scheduling is available.'); S.cs = 1; emit(); return;}
+  if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(label('lbl.actionStoreClosedCheckout', '{store} is closed. Choose a future pickup or delivery time if scheduling is available.').replace('{store}', st.n)); S.cs = 1; emit(); return;}
   const bad = S.cart.lines.filter((l: any) => {if (l.byo) return !!hooks.bCheck && !!(hooks as any).lineBad && !!(hooks as any).lineBad(l); const i = IT[l.id]; return !i || i.oos || l.q > i.stock;});
-  if (bad.length) {toast(bad[0].n + ' ' + (bad[0].byo ? (hooks as any).lineBad(bad[0]) : 'is no longer available in that quantity')); reset('cart'); return;}
-  if (t.sub < st.min) {toast('Minimum order is ' + money(st.min)); reset('cart'); return;}
+  if (bad.length) {toast(label('lbl.actionLineUnavailable', '{item} {reason}').replace('{item}', bad[0].n).replace('{reason}', bad[0].byo ? (hooks as any).lineBad(bad[0]) : label('lbl.actionQuantityUnavailable', 'is no longer available in that quantity'))); reset('cart'); return;}
+  if (t.sub < st.min) {toast(label('lbl.actionMinimumOrder', 'Minimum order is {amount}').replace('{amount}', money(st.min))); reset('cart'); return;}
   const pk = isPk(), a = addr();
   if (!pk && (!a || !a.t)) {toast(label('lbl.actionChooseAddress', 'Choose a delivery address')); S.cs = 0; emit(); return;}
   const ct = ctOf();
@@ -153,7 +153,7 @@ export async function placeOrder() {
   if (providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast(label('lbl.actionWalletLow', 'Wallet balance is too low. Top up or pick another method.')); push('payments'); return;}
   if (providerInfo.demo && S.pay === 'card') {
     if (!S.cards.length) {push('payments'); return;}
-    if (S.cards[0].l4 === '0002') {toast('Card declined (demo). Your cart is safe. Try another method.'); S.cs = 2; emit(); return;}
+    if (S.cards[0].l4 === '0002') {toast(label('lbl.actionCardDeclinedDemo', 'Card declined (demo). Your cart is safe. Try another method.')); S.cs = 2; emit(); return;}
   }
   /* Demo orders are local; live wallet/card orders use authenticated server payment flows below. */
   S.busy = 1; emit();
@@ -187,7 +187,7 @@ export async function placeOrder() {
       data = result.data; error = result.error;
     }
     const row: any = Array.isArray(data) ? data[0] : data;
-    if (error || !row?.id) {S.busy = 0; toast(error?.message || 'Could not place the order. Please try again.'); emit(); return;}
+    if (error || !row?.id) {S.busy = 0; toast(error?.message || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')); emit(); return;}
     backendOrderId = row.id; id = row.order_code || id;
     if (S.pay === 'wallet') await refreshPaymentOptions();
   }
@@ -203,7 +203,7 @@ export async function placeOrder() {
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
-  S.busy = 0; toast(backendOrderId ? 'Order sent to the store' : 'Demo order placed!'); save(); emit();
+  S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!')); save(); emit();
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
 export const cancelAsk = (id: string) => ui.sheet({kind: 'cancel', id});
@@ -212,10 +212,10 @@ export async function cancelOrder(id: string) {
   if (!o || done(o) || o.st > 2) {toast(label('lbl.actionCannotCancel', 'This order can no longer be cancelled')); emit(); return;}
   if (o.backendId) {
     const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: o.backendId, p_status: 'cancelled'});
-    if (error) {toast(error.message || 'This order can no longer be cancelled'); emit(); return;}
+    if (error) {toast(error.message || label('lbl.actionCannotCancel', 'This order can no longer be cancelled')); emit(); return;}
     if (o.pay === 'card') {
       const refund = await supabase.functions.invoke('refund-goodies-card-order', {body: {order_id: o.backendId}});
-      if (refund.error || refund.data?.error) toast('Order cancelled. Your card refund is pending and may need support follow-up.');
+      if (refund.error || refund.data?.error) toast(label('lbl.actionRefundPending', 'Order cancelled. Your card refund is pending and may need support follow-up.'));
     }
   }
   o.cx = 1;
@@ -228,8 +228,8 @@ export async function cancelOrder(id: string) {
 export function reorder(id: string) {
   const o = S.orders.filter((x: any) => x.id === id)[0]; if (!o) return;
   const r = reorderLines(o);
-  if (!r.ok.length) {toast(r.miss.length ? 'Those items are unavailable right now' : 'Nothing to reorder'); return;}
-  const run = () => {S.cart = {sid: o.sid, lines: r.ok}; S.promo = ''; ui.close(); reset('cart'); toast(r.miss.length ? 'Added available items. Unavailable: ' + r.miss.join(', ') : 'Items added to your cart');};
+  if (!r.ok.length) {toast(r.miss.length ? label('lbl.actionReorderUnavailable', 'Those items are unavailable right now') : label('lbl.actionNothingToReorder', 'Nothing to reorder')); return;}
+  const run = () => {S.cart = {sid: o.sid, lines: r.ok}; S.promo = ''; ui.close(); reset('cart'); toast(r.miss.length ? label('lbl.actionReorderPartial', 'Added available items. Unavailable: {items}').replace('{items}', r.miss.join(', ')) : label('lbl.actionReorderAdded', 'Items added to your cart'));};
   if (S.cart.sid && S.cart.sid !== o.sid && S.cart.lines.length) {S.ro = run; ui.sheet({kind: 'replace', from: STB[S.cart.sid].n});} else run();
 }
 export const runReorder = () => {if (S.ro) S.ro();};
@@ -237,7 +237,7 @@ export const setOrdersTab = (t: string) => {S.ot = t; emit();};
 export function openNotif(id: any) {const n = S.notifs.filter((x: any) => x.id == id)[0]; if (!n) return; n.u = 0; push('ndetail', n.id);}
 export const readAll = () => {S.notifs.forEach((n: any) => (n.u = 0)); emit();};
 export const togglePref = (k: 'orders' | 'promos') => {S.np[k] = S.np[k] ? 0 : 1; save(); emit();};
-export const selectAddr = (id: number) => {S.as = id; ui.close(); emit(); toast('Delivering to ' + addr().l + ' (Wantiss default unchanged)');};
+export const selectAddr = (id: number) => {S.as = id; ui.close(); emit(); toast(label('lbl.actionDeliveringTo', 'Delivering to {address} (Wantiss default unchanged)').replace('{address}', addr().l));};
 export const setFilter = (k: string) => {S.f = k; emit();};
 export const setSub = (k: string) => {S.sub = k; emit();};
 export const clearFilters = () => {S.f = ''; S.sub = ''; emit();};
@@ -275,9 +275,9 @@ export async function createWallet() {
     const { error } = await supabase.rpc('ensure_my_wallet');
     if (error) throw error;
     await refreshPaymentOptions();
-    toast('Wantiss wallet is ready');
+    toast(label('lbl.actionWalletReady', 'Wantiss wallet is ready'));
   } catch (e: any) {
-    toast(e?.message || 'Could not create your Wantiss wallet. Please try again.');
+    toast(e?.message || label('lbl.actionWalletCreateFailed', 'Could not create your Wantiss wallet. Please try again.'));
   }
 }
 /* DEMO ONLY: in production the courier app (delivery) or the Vendor Dashboard (pickup) records this result. */
