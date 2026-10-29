@@ -73,7 +73,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       </Card>
     </>);
   }
-  if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast('Sent: ' + x);}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
+  if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['I am at the gate', 'Please call me', 'Leave it at the door', 'Running 5 min late'].map(x => <Pressable key={x} onPress={() => {close(); toast(label('lbl.sheetCourierSent', 'Sent: {message}').replace('{message}', x));}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x}</T></Pressable>)}</View></>);
   if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label="Wantiss default" /> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label="Manage addresses" onPress={() => {close(); A.go('addresses');}} /></>);
 
@@ -153,7 +153,7 @@ function ScheduleSheet({close}: {close: () => void}) {
     if(!store.open&&!store.acceptScheduledOrders){toast(label('lbl.sheetNoScheduleClosed', 'This store does not accept scheduled orders while closed.'));return;}
     if(!selected){
       if(customMode && !customInHours) toast(label('lbl.sheetChooseWithinHours', 'Choose a time within the store opening hours.'));
-      else if(customMode && customDate.getTime()<earliest.getTime()) toast('This store’s earliest available time is '+fmtTime(earliest)+'.');
+      else if(customMode && customDate.getTime()<earliest.getTime()) toast(label('lbl.sheetEarliestAvailableTime', 'This store’s earliest available time is {time}.').replace('{time}', fmtTime(earliest)));
       else toast(label('lbl.sheetChooseFutureTime', 'Choose a valid future time or select an available time.'));
       return;
     }
@@ -212,7 +212,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const invite = async () => {
     try {
       await Share.share({message: 'Wantiss Goodies group-order invitation. Code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. This is a demo invitation; please send your item choices to the host so they can add them to the shared cart.'});
-    } catch (_) { toast('Invite code: ' + group.code); }
+    } catch (_) { toast(label('lbl.sheetInviteCodeToast', 'Invite code: {code}').replace('{code}', group.code)); }
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
@@ -285,7 +285,7 @@ function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string;
         o.rated = n;
         o.orderReview = {r: n, t: t.trim(), d: 'Just now'};
       }
-      S.rt = 0; ui.close(); toast(driver ? 'Thanks for rating your driver!' : 'Thanks for your review!'); save(); emit();
+      S.rt = 0; ui.close(); toast(driver ? label('lbl.sheetDriverReviewThanks', 'Thanks for rating your driver!') : label('lbl.sheetReviewThanks', 'Thanks for your review!')); save(); emit();
     }} />
   </>);
 }
@@ -314,10 +314,10 @@ function CtForm({id}: {id: any}) {
     if (!phoneOK(p)) return toast(label('lbl.sheetPhoneInvalid', 'Enter a valid phone number (8 to 15 digits)'));
     const dg = p.replace(/\\D/g, '');
     if (dg === S.pf.ph.replace(/\\D/g, '')) return toast(label('lbl.sheetSameWantissPhone', 'That is already your Wantiss number'));
-    if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\\D/g, '') === dg)) return toast('You already saved that number');
+    if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\\D/g, '') === dg)) return toast(label('lbl.sheetDuplicateNumber', 'You already saved that number'));
     const cc = S.gc.filter((x: any) => x.id == id)[0];
     if (cc) {cc.ph = p; cc.l = l.trim();} else {const n = {id: Date.now(), ph: p, l: l.trim()}; S.gc.push(n); S.cc = n.id;}
-    toast('Number saved for Goodies checkout'); save(); emit(); ui.sheet({kind: 'contacts'});
+    toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout')); save(); emit(); ui.sheet({kind: 'contacts'});
   };
   return (<>
     <T size={20} weight="800">{id ? 'Edit' : 'Add'} contact number</T>
@@ -336,7 +336,7 @@ function ImportSheet({close}: {close: () => void}) {
     <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. {hasContent() ? 'Admin content is currently loaded.' : 'The built-in sample content is currently used.'}</T>
     <TextInput value={txt} onChangeText={setTxt} multiline placeholder="Paste JSON here" placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
     <View style={{height: 12}} />
-    <Cta label="Import" onPress={async () => {try {await importContent(txt.trim()); close(); toast('Admin content loaded'); emit();} catch (e: any) {toast(String(e && e.message ? e.message : 'That is not valid JSON'));}}} />
-    {hasContent() ? <><View style={{height: 10}} /><Cta ghost label="Go back to sample content" onPress={async () => {await clearContent(); close(); toast('Using sample content'); emit();}} /></> : null}
+    <Cta label="Import" onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
+    {hasContent() ? <><View style={{height: 10}} /><Cta ghost label="Go back to sample content" onPress={async () => {await clearContent(); close(); toast(label('lbl.sheetSampleContent', 'Using sample content')); emit();}} /></> : null}
   </>);
 }
