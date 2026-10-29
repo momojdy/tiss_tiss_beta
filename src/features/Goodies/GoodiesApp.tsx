@@ -15,7 +15,7 @@ import {Account} from './screens/Account';
 import {Sheets} from './components/Sheets';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent} from './content';
+import {loadContent, label} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 
