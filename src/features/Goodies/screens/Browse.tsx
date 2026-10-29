@@ -67,8 +67,8 @@ export function Home({onExit}: {onExit?: () => void}) {
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="800" lines={1} style={{flexShrink: 1}}>{addr()?.t || 'Choose your location'}</T><Icon name="chevD" size={14} color={th.ink} /></View>
         </Pressable>
-        <Circ icon="heart" label="Customer favorites" color="#FD802E" onPress={() => go('favs')} />
-        <Circ icon="bell" label="Notifications" dot={unread()} onPress={() => go('notifs')} />
+        <Circ icon="heart" label={label('lbl.browseFavorites', 'Customer favorites')} color="#FD802E" onPress={() => go('favs')} />
+        <Circ icon="bell" label={label('lbl.browseNotifications', 'Notifications')} dot={unread()} onPress={() => go('notifs')} />
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
       </View>
@@ -113,7 +113,7 @@ export function Home({onExit}: {onExit?: () => void}) {
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
               <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br}}>
                 <Text style={{fontSize: 30}}>{s.e}</Text>
-                <View style={{position: 'absolute', bottom: -5, backgroundColor: th.br, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2}}><T size={9.5} weight="800" color="#fff">Reorder</T></View>
+                <View style={{position: 'absolute', bottom: -5, backgroundColor: th.br, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2}}><T size={9.5} weight="800" color="#fff">{label('lbl.browseReorder', 'Reorder')}</T></View>
               </Grad>
               <T size={11.5} weight="600" align="center" style={{marginTop: 10}}>{s.n}</T>
             </Pressable>
@@ -154,21 +154,21 @@ export function Explore() {
   const categoryOptions: [string, string][] = [['all', 'All categories'], ...categories().map(c => [c.id, c.emoji + ' ' + tx(c.name)] as [string, string])];
   return (
     <View>
-      <Bar title="Explore nearby" onBack={back} />
+      <Bar title={label('lbl.browseExploreNearby', 'Explore nearby')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Choose browsing address" onPress={() => go('addresses')} style={{flexDirection: 'row', alignItems: 'center', gap: 11, padding: 13, borderRadius: 16, backgroundColor: th.soft, marginBottom: 14}}>
+        <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.browseChooseAddress', 'Choose browsing address')} onPress={() => go('addresses')} style={{flexDirection: 'row', alignItems: 'center', gap: 11, padding: 13, borderRadius: 16, backgroundColor: th.soft, marginBottom: 14}}>
           <View style={{width: 40, height: 40, borderRadius: 13, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name="pin" size={20} color={th.br} /></View>
           <View style={{flex: 1}}>
-            <T size={11.5} color={th.mut}>BROWSING NEAR</T>
+            <T size={11.5} color={th.mut}>{label('lbl.browseNearLabel', 'BROWSING NEAR')}</T>
             <T weight="800" size={14.5} lines={2}>{selectedAddress?.t || 'Choose your location'}</T>
-            <T size={11.5} color={th.br} style={{marginTop: 2}}>Change address</T>
+            <T size={11.5} color={th.br} style={{marginTop: 2}}>{label('lbl.browseChangeAddress', 'Change address')}</T>
           </View>
           <Icon name="chevR" color={th.ink} />
         </Pressable>
-        <Ttl>Discover your options</Ttl>
+        <Ttl>{label('lbl.browseDiscover', 'Discover your options')}</Ttl>
         <Chips list={scopeOptions} on={scope} onPick={setScope} />
         <View style={{marginTop: 12}}>
-          <Ttl>Categories</Ttl>
+          <Ttl>{label('lbl.browseCategories', 'Categories')}</Ttl>
           <Chips list={categoryOptions} on={category} onPick={setCategory} />
         </View>
         <Row sp style={{marginTop: 16, marginBottom: 8}}>
@@ -178,16 +178,16 @@ export function Explore() {
       </View>
       {visible.length ? <View style={{paddingHorizontal: 16, gap: 14}}>
         {visible.map(s => <StoreCard key={s.id} s={s} />)}
-      </View> : <View style={{paddingHorizontal: 16}}><Empty emoji="🕒" title="No stores match right now" text="Try another category or show all available options." button="Show all available" onPress={() => {setScope('all'); setCategory('all');}} /></View>}
+      </View> : <View style={{paddingHorizontal: 16}}><Empty emoji="🕒" title={label('lbl.browseNoStores', 'No stores match right now')} text={label('lbl.browseNoStoresHint', 'Try another category or show all available options.')} button={label('lbl.browseShowAll', 'Show all available')} onPress={() => {setScope('all'); setCategory('all');}} /></View>}
       <View style={{paddingHorizontal: 16, marginTop: 20}}>
-        <Sh title="Products to explore" />
+        <Sh title={label('lbl.browseProductsExplore', 'Products to explore')} />
         {products.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
           {products.map(i => <Dish key={i.id} i={i} grid />)}
-        </View> : <T size={13} color={th.mut}>No in-stock products match these filters.</T>}
+        </View> : <T size={13} color={th.mut}>{label('lbl.browseNoProducts', 'No in-stock products match these filters.')}</T>}
         <View style={{alignItems: 'center', paddingVertical: 24, gap: 5}}>
           <View style={{width: 36, height: 3, borderRadius: 2, backgroundColor: th.line}} />
-          <T size={12} color={th.mut}>You've reached the end of the currently available options.</T>
-          <T size={11} color={th.mut}>More stores and products will appear here as the catalog grows.</T>
+          <T size={12} color={th.mut}>{label('lbl.browseEndOfResults', 'You\'ve reached the end of the currently available options.')}</T>
+          <T size={11} color={th.mut}>{label('lbl.browseMoreCatalog', 'More stores and products will appear here as the catalog grows.')}</T>
         </View>
       </View>
     </View>
@@ -220,15 +220,15 @@ export function CatList({p}: {p: string}) {
       <View style={{paddingHorizontal: 16}}>
         <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? 'Everything near you' : cname(p)} sub={l.length + ' store' + (l.length === 1 ? '' : 's') + ' · ' + its.length + ' products'} emoji={c ? c.emoji : '🏪'} onPress={() => {}} /></View>
       </View>
-      {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="700" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>SUBCATEGORIES</T><Chips list={[['', 'All'], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
+      {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="700" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>{label('lbl.browseSubcategories', 'SUBCATEGORIES')}</T><Chips list={[['', 'All'], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
       <Chips list={FCH} on={S.f} onPick={setFilter} />
       {l.length ? (<>
-        {l.length > 1 ? (<><Sh title="Featured vendors" /><Rail>{l.slice().sort((a, b) => b.r - a.r).slice(0, 4).map(s => <VCard key={s.id} s={s} />)}</Rail></>) : null}
-        <Sh title="All stores" />
+        {l.length > 1 ? (<><Sh title={label('lbl.browseFeaturedVendors', 'Featured vendors')} /><Rail>{l.slice().sort((a, b) => b.r - a.r).slice(0, 4).map(s => <VCard key={s.id} s={s} />)}</Rail></>) : null}
+        <Sh title={label('lbl.browseAllStores', 'All stores')} />
         <View style={{gap: 22, paddingHorizontal: 16}}>{l.map(s => <StoreCard key={s.id} s={s} />)}</View>
-        <Sh title="Popular products" />
+        <Sh title={label('lbl.browsePopularProducts', 'Popular products')} />
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16}}>{its.slice(0, 8).map(i => <Dish key={i.id} i={i} grid />)}</View>
-      </>) : <Empty emoji="🔎" title="Nothing matches" text="Clear the filter to see every store." button="Clear filters" onPress={clearFilters} />}
+      </>) : <Empty emoji="🔎" title={label('lbl.browseNothingMatches', 'Nothing matches')} text={label('lbl.browseClearFilterHint', 'Clear the filter to see every store.')} button={label('lbl.browseClearFilters', 'Clear filters')} onPress={clearFilters} />}
     </View>
   );
 }
@@ -273,9 +273,9 @@ export function Search() {
       ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? 'Clear filters' : 'Clear search'} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
       : (
         <View style={{paddingHorizontal: 16}}>
-          {sug.length ? (<><Ttl>Suggestions</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
-          {cs.length ? (<><Ttl>Categories</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{cs.map((c: any) => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View></>) : null}
-          {ss.length ? (<><Ttl>Stores</Ttl>{ss.map(s => (
+          {sug.length ? (<><Ttl>{label('lbl.browseSuggestions', 'Suggestions')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
+          {cs.length ? (<><Ttl>{label('lbl.browseCategories', 'Categories')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{cs.map((c: any) => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View></>) : null}
+          {ss.length ? (<><Ttl>{label('lbl.browseStores', 'Stores')}</Ttl>{ss.map(s => (
             <View key={s.id} style={{flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line}}>
               <Pressable accessibilityRole="link" onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
                 <Tile e={s.e} bg={s.bg} />
@@ -293,8 +293,8 @@ export function Search() {
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10}}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Circ icon="chevL" label={tr('back')} onPress={back} />
-          <TextInput autoFocus={!r.q} value={r.q} onChangeText={setQ} placeholder="Search food, groceries, drinks" placeholderTextColor={th.mut} accessibilityLabel="Search" style={{flex: 1, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12}} />
-          {r.q ? <Circ icon="x" label="Clear search" onPress={() => setQ('')} /> : null}
+          <TextInput autoFocus={!r.q} value={r.q} onChangeText={setQ} placeholder={label('lbl.browseSearchPlaceholder', 'Search food, groceries, drinks')} placeholderTextColor={th.mut} accessibilityLabel={label('lbl.browseSearchAccessibility', 'Search')} style={{flex: 1, fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 12}} />
+          {r.q ? <Circ icon="x" label={label('lbl.browseClearSearch', 'Clear search')} onPress={() => setQ('')} /> : null}
         </View>
       </View>
       <View style={{height: 20, backgroundColor: '#FD802E'}} />
