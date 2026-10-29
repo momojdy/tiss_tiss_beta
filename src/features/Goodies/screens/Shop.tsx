@@ -103,7 +103,7 @@ export function Product() {
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
         {['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}>{i.photo ? <Image source={{uri: i.photo}} style={{width, height: 210}} /> : <Text style={{fontSize: 96}}>{i.e}</Text>}</Grad>)}
       </ScrollView>
-      <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>Swipe for more photos</T>
+      <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>{label('lbl.productPhotoHint', 'Swipe for more photos')}</T>
       <View style={{paddingHorizontal: 16}}>
         <T size={23} weight="800" style={{marginTop: 10}}>{i.n}</T>
         <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="700" color={th.br}>{s.n}{s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : ' · New store'}</T></Pressable>
@@ -111,20 +111,20 @@ export function Product() {
           <T size={24} weight="800" color={th.br}>{money(base)}</T>
           {h.off ? <><T size={15} color={th.mut} style={{textDecorationLine: 'line-through'}}>{money(i.p)}</T><Badge label={'-' + h.off + '%'} /></> : null}
         </View>
-        {i.w ? <T size={12.5} color={th.mut} style={{marginTop: 4}}>Estimated price. Final amount may vary with the exact weight.</T> : null}
+        {i.w ? <T size={12.5} color={th.mut} style={{marginTop: 4}}>{label('lbl.productEstimatedPrice', 'Estimated price. Final amount may vary with the exact weight.')}</T> : null}
         <T size={14.5} style={{marginTop: 12, lineHeight: 21}}>{i.d}</T>
-        {i.al ? <T size={13} color={th.mut} style={{marginTop: 6}}>Allergens: {i.al}</T> : null}
+        {i.al ? <T size={13} color={th.mut} style={{marginTop: 6}}>{label('lbl.productAllergens', 'Allergens')}: {i.al}</T> : null}
         {(i as any).restriction === 'alcohol' ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">Alcohol. Minors may not purchase.</T><T size={13} color={th.mut} style={{marginTop: 3}}>{rgText('rg.minors', 'Minors may not purchase alcohol.', alcAge(i.s).age)} Minimum age {alcAge(i.s).age}. Valid government photo ID is required at delivery or pickup.</T></Card> : null}
         {(i as any).restriction === 'otc' ? <T size={12.5} color={th.mut} style={{marginTop: 8}}>Over-the-counter product. Read the label and use as directed.</T> : null}
-        <T size={13} weight="700" color={i.oos ? th.red : i.stock <= 5 ? th.brd : th.grn} style={{marginTop: 8}}>{i.oos ? 'Out of stock' : i.stock <= 5 ? 'Only ' + i.stock + ' left' : 'In stock'}</T>
+        <T size={13} weight="700" color={i.oos ? th.red : i.stock <= 5 ? th.brd : th.grn} style={{marginTop: 8}}>{i.oos ? label('lbl.productStockOut', 'Out of stock') : i.stock <= 5 ? label('lbl.productStockLow', 'Only') + ' ' + i.stock + ' left' : label('lbl.productInStock', 'In stock')}</T>
         {o ? (<>
-          <Row style={{marginTop: 18, marginBottom: 8, gap: 8}}><T size={15} weight="800">Size</T><Badge label="Required" /></Row>
-          <Radio on={h.size === 0} onPress={() => setSize(0)}><T>Regular</T></Radio>
-          <Radio on={h.size === 1} onPress={() => setSize(1)}><Row sp><T>Large</T><T weight="800">+$1.50</T></Row></Radio>
+          <Row style={{marginTop: 18, marginBottom: 8, gap: 8}}><T size={15} weight="800">{label('lbl.productSize', 'Size')}</T><Badge label={label('lbl.productRequired', 'Required')} /></Row>
+          <Radio on={h.size === 0} onPress={() => setSize(0)}><T>{label('lbl.productRegular', 'Regular')}</T></Radio>
+          <Radio on={h.size === 1} onPress={() => setSize(1)}><Row sp><T>{label('lbl.productLarge', 'Large')}</T><T weight="800">+$1.50</T></Row></Radio>
         </>) : null}
-        {u ? <Radio on={!!h.drink} onPress={toggleDrink}><Row sp><T>Add a drink</T><T weight="800">+$1.00</T></Row></Radio> : null}
-        <Input label="Special instructions" value={h.note || ''} onChange={v => {S.sh.note = v; emit();}} placeholder="Optional" multiline />
-        <T size={18} weight="800" style={{paddingTop: 22, paddingBottom: 10}}>You may also like</T>
+        {u ? <Radio on={!!h.drink} onPress={toggleDrink}><Row sp><T>{label('lbl.productAddDrink', 'Add a drink')}</T><T weight="800">+$1.00</T></Row></Radio> : null}
+        <Input label={label('lbl.productInstructions', 'Special instructions')} value={h.note || ''} onChange={v => {S.sh.note = v; emit();}} placeholder={label('lbl.productOptional', 'Optional')} multiline />
+        <T size={18} weight="800" style={{paddingTop: 22, paddingBottom: 10}}>{label('lbl.productRecommendations', 'You may also like')}</T>
       </View>
       <Rail>{rel.map(x => <Dish key={x.id} i={x} />)}</Rail>
     </View>
@@ -134,7 +134,7 @@ export function ProductFoot() {
   const th = useTheme(), h = S.sh, i = h && IT[h.id];
   if (!i) return null;
   const s = STB[i.s], o = CHOOSE_SIZE_CATS.indexOf(s.c) > -1, base = h.off ? dp(i, h.off) : i.p, unit = base + (h.size > 0 ? 1.5 : 0) + (h.drink ? 1 : 0);
-  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open && !s.acceptScheduledOrders ? 'Store is closed' : !s.open ? 'Schedule order · ' + money(unit * h.q) : o && h.size < 0 ? 'Choose a size' : 'Add to cart · ' + money(unit * h.q);
+  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open && !s.acceptScheduledOrders ? label('lbl.productStoreClosed', 'Store is closed') : !s.open ? 'Schedule order · ' + money(unit * h.q) : o && h.size < 0 ? label('lbl.productChooseSize', 'Choose a size') : label('lbl.productAddToCart', 'Add to cart') + ' · ' + money(unit * h.q);
   return <Row><Stepper q={h.q} onMinus={() => productQty(-1)} onPlus={() => productQty(1)} /><View style={{flex: 1}}><Cta label={lbl} disabled={!!blocked} onPress={productAdd} /></View></Row>;
 }
 
@@ -150,13 +150,13 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || '');
-  if (!c.lines.length) return <View><Bar title="Your cart" onBack={back} /><Empty emoji="🛒" title="Your cart is empty" text="Explore nearby stores, check what's open, and discover products around your chosen address." button="Start browsing" onPress={() => go('explore')} /><View style={{paddingHorizontal:16,marginTop:12}}><Cta ghost label="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View></View>;
+  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><Empty emoji="🛒" title={label('lbl.cartEmptyTitle', 'Your cart is empty')} text={label('lbl.cartEmptyText', 'Explore nearby stores, check what\'s open, and discover products around your chosen address.')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /><View style={{paddingHorizontal:16,marginTop:12}}><Cta ghost label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
     <View>
       <Bar title="Your cart" onBack={back} right={<Circ icon="trash" label="Clear cart" onPress={clearAsk} />} />
       <View style={{paddingHorizontal: 16}}>
-        <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>Your order from this store · {st.eta} min</T></View></Row>
+        <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
         {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop; choose a future slot at checkout.' : st.nx + '. You can keep these items, but this store does not currently accept scheduled orders.'}</T></Card> : null}
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
@@ -175,23 +175,23 @@ export function Cart() {
             </View>
           );
         })}
-        <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="700" style={{flex: 1}}>+ Continue shopping</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+        <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="700" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{flexDirection:'row',alignItems:'center',gap:12,marginTop:10,padding:14,borderWidth:1,borderColor:th.br,borderRadius:16,backgroundColor:th.brt}}>
           <View style={{width:42,height:42,borderRadius:13,backgroundColor:th.card,alignItems:'center',justifyContent:'center'}}><Icon name="user" size={21} color={th.br}/></View>
-          <View style={{flex:1}}><T weight="800">Start a group order</T><T size={12.5} color={th.mut} style={{marginTop:3}}>Invite friends and coordinate a shared cart</T></View>
+          <View style={{flex:1}}><T weight="800">{label('lbl.cartGroupOrder', 'Start a group order')}</T><T size={12.5} color={th.mut} style={{marginTop:3}}>{label('lbl.cartGroupOrderDesc', 'Invite friends and coordinate a shared cart')}</T></View>
           <Icon name="chevR" size={17} color={th.br}/>
         </Pressable>
         {hasAlcohol() ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 14}}><T weight="800">Your order includes alcohol</T><T size={13} color={th.mut} style={{marginTop: 3}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(c.sid).age)}</T></Card> : null}
-        <Ttl>Promo code</Ttl>
+        <Ttl>{label('lbl.cartPromoTitle', 'Promo code')}</Ttl>
         {S.promo ? (
-          <Card style={{padding: 12}}><Row sp><View style={{flex: 1}}><Row style={{gap: 6}}><T weight="700">{S.promo}</T>{t.pok ? <Badge green label="Applied" /> : <Badge red label="Not valid" />}</Row>{t.perr ? <T size={12.5} color={th.mut} style={{marginTop: 4}}>{t.perr}</T> : null}</View><Pressable onPress={promoClear}><T weight="700" color={th.red}>Remove</T></Pressable></Row></Card>
+          <Card style={{padding: 12}}><Row sp><View style={{flex: 1}}><Row style={{gap: 6}}><T weight="700">{S.promo}</T>{t.pok ? <Badge green label={label('lbl.cartApplied', 'Applied')} /> : <Badge red label={label('lbl.cartInvalid', 'Not valid')} />}</Row>{t.perr ? <T size={12.5} color={th.mut} style={{marginTop: 4}}>{t.perr}</T> : null}</View><Pressable onPress={promoClear}><T weight="700" color={th.red}>{label('lbl.cartRemove', 'Remove')}</T></Pressable></Row></Card>
         ) : (<>
-          <Row><View style={{flex: 1}}><Input value={code} onChange={v => setCode(v.toUpperCase())} placeholder="Try GOODIES10" /></View><View style={{width: 90}}><Cta label="Apply" onPress={() => promoApply(code)} /></View></Row>
-          <Pressable onPress={() => go('promos')}><T size={13} weight="700" color={th.br} style={{marginTop: 8}}>See available coupons</T></Pressable>
+          <Row><View style={{flex: 1}}><Input value={code} onChange={v => setCode(v.toUpperCase())} placeholder={label('lbl.cartPromoPlaceholder', 'Try GOODIES10')} /></View><View style={{width: 90}}><Cta label={label('lbl.cartApply', 'Apply')} onPress={() => promoApply(code)} /></View></Row>
+          <Pressable onPress={() => go('promos')}><T size={13} weight="700" color={th.br} style={{marginTop: 8}}>{label('lbl.cartAvailableCoupons', 'See available coupons')}</T></Pressable>
         </>)}
-        <View style={{marginTop: 16}}><Sum rows={[['Subtotal', money(t.sub)], ['Delivery fee', isPk() ? 'Pickup' : t.free ? (first() ? 'Free (first order)' : 'Free') : money(t.fee), t.free ? 'g' : undefined as any], ['Service fee', money(t.svc)], ...(t.disc ? [['Discount', '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [['Courier tip', money(t.tip)] as any] : [])]} total={['Total', money(t.total)]} /></View>
-        {badLine ? <T size={13} color={th.red} align="center" style={{marginBottom: 10}}>Fix the items marked above to continue.</T> : t.sub < st.min ? <T size={13} color={th.mut} align="center" style={{marginBottom: 10}}>Add {money(st.min - t.sub)} more to reach the {money(st.min)} minimum.</T> : null}
-        <Cta label={'Checkout · ' + money(t.total)} disabled={short} onPress={goCheckout} />
+        <View style={{marginTop: 16}}><Sum rows={[[label('lbl.cartSubtotal', 'Subtotal'), money(t.sub)], [label('lbl.cartDeliveryFee', 'Delivery fee'), isPk() ? 'Pickup' : t.free ? (first() ? 'Free (first order)' : 'Free') : money(t.fee), t.free ? 'g' : undefined as any], [label('lbl.cartServiceFee', 'Service fee'), money(t.svc)], ...(t.disc ? [[label('lbl.cartDiscount', 'Discount'), '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [[label('lbl.cartCourierTip', 'Courier tip'), money(t.tip)] as any] : [])]} total={[label('lbl.cartTotal', 'Total'), money(t.total)]} /></View>
+        {badLine ? <T size={13} color={th.red} align="center" style={{marginBottom: 10}}>{label('lbl.cartFixItems', 'Fix the items marked above to continue.')}</T> : t.sub < st.min ? <T size={13} color={th.mut} align="center" style={{marginBottom: 10}}>{label('lbl.cartMinMore', 'Add')} {money(st.min - t.sub)} {label('lbl.cartReachMinimum', 'more to reach the')} {money(st.min)} minimum.</T> : null}
+        <Cta label={label('lbl.cartCheckout', 'Checkout') + ' · ' + money(t.total)} disabled={short} onPress={goCheckout} />
       </View>
     </View>
   );
@@ -201,47 +201,47 @@ const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View s
 
 export function Checkout() {
   useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
-  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = ['Delivery', 'Time', 'Payment', 'Review'];
-  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', 'Wantiss Wallet', S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', 'MonCash', 'Not available for live Goodies orders', 'phone'], ['card', 'Credit / debit card', S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card in Wallet settings', 'card'], ['cash', 'Cash on ' + (pk ? 'pickup' : 'delivery'), 'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo || p[0] !== 'moncash'));
+  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = [label('lbl.checkoutDelivery', 'Delivery'), 'Time', label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
+  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card in Wallet settings', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + (pk ? label('lbl.checkoutPickup', 'pickup') : label('lbl.checkoutDelivery', 'delivery')),  'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo || p[0] !== 'moncash'));
   const ct = ctOf();
   let body: any = null;
   if (S.cs === 0) body = (<>
     <Seg list={[['delivery', 'Delivery'], ['pickup', 'Pickup']]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
-    <Ttl>{pk ? 'Pickup from' : 'Deliver to'}</Ttl>
+    <Ttl>{pk ? label('lbl.checkoutPickupFrom', 'Pickup from') : label('lbl.checkoutDeliverTo', 'Deliver to')}</Ttl>
     <Card><Row><IcBox icon="pin" /><View style={{flex: 1}}>
       {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? 'Distance unavailable' : st.km.toFixed(1) + ' km from you'} · open {st.h}</T></> : <><T weight="700">{a.l}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>Note: {a.inst}</T> : null}<T size={11.5} color={th.mut} style={{marginTop: 3}}>Only for this order. Your Wantiss default is unchanged.</T></>}
-    </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br}>Change</T></Pressable>}</Row></Card>
-    {st.far && !st.live ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">Pickup only</T><T size={13} color={th.mut}>{st.n} is {st.km.toFixed(1)} km from this address, beyond delivery range. Pick another address to get delivery.</T></Card> : null}
-    {hasAlcohol() && !S.hasWallet ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">Create a Wantiss wallet</T><T size={13} color={th.mut} style={{marginVertical: 4}}>{rgText('rg.wallet', 'Create a Wantiss wallet so any refund has somewhere to go. You can withdraw from it later.', alcAge(S.cart.sid).age)}</T><Cta small label="Create wallet" onPress={createWallet} /></Card> : null}
-    <Ttl>Contact number</Ttl>
+    </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br} >{label('lbl.checkoutChange', 'Change')}</T></Pressable>}</Row></Card>
+    {st.far && !st.live ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.checkoutPickupOnly', 'Pickup only')}</T><T size={13} color={th.mut}>{st.n} is {st.km.toFixed(1)} km from this address, beyond delivery range. Pick another address to get delivery.</T></Card> : null}
+    {hasAlcohol() && !S.hasWallet ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">Create a Wantiss wallet</T><T size={13} color={th.mut} style={{marginVertical: 4}}>{rgText('rg.wallet', 'Create a Wantiss wallet so any refund has somewhere to go. You can withdraw from it later.', alcAge(S.cart.sid).age)}</T><Cta small label={label('lbl.checkoutCreateWallet', 'Create wallet')} onPress={createWallet} /></Card> : null}
+    <Ttl>{label('lbl.checkoutContactNumber', 'Contact number')}</Ttl>
     <Card><Row><IcBox icon="phone" /><View style={{flex: 1}}><T weight="700">{ct.ph}</T><View style={{marginTop: 3, flexDirection: 'row', gap: 6, flexWrap: 'wrap'}}>{ct.w ? <Badge green label="Default Wantiss number" /> : <><Badge label="Goodies checkout number" /><T size={12.5} color={th.mut}>{ct.l}</T></>}</View></View><Pressable onPress={() => require('../store').ui.sheet({kind: 'contacts'})}><T size={13} weight="700" color={th.br}>Change</T></Pressable></Row></Card>
   </>);
   if (S.cs === 1) body = (<>
-    <T size={15} weight="800" style={{marginBottom: 8}}>When do you want it?</T>
-    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">ASAP</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.</T>}
+    <T size={15} weight="800" style={{marginBottom: 8}}>{label('lbl.checkoutWhen', 'When do you want it?')}</T>
+    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">{label('lbl.checkoutAsap', 'ASAP')}</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.</T>}
     <Card style={{marginTop:10}}>
       <Row sp style={{alignItems:'center'}}>
         <View style={{flex:1}}>
-          <T weight="800">{S.sch ? 'Scheduled order' : 'Choose a date & time'}</T>
+          <T weight="800">{S.sch ? label('lbl.checkoutScheduled', 'Scheduled order') : label('lbl.checkoutChooseDateTime', 'Choose a date & time')}</T>
           <T size={12.5} color={th.mut} style={{marginTop:3}}>{S.sch ? fmtDay(new Date(S.sch))+', '+fmtTime(new Date(S.sch)) : (st.open ? 'Choose an exact time, or keep ASAP.' : 'The store’s minimum advance time is applied automatically.')}</T>
         </View>
-        <View style={{width:142}}><Cta small label={S.sch ? 'Change time' : 'Choose time'} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
+        <View style={{width:142}}><Cta small label={S.sch ? label('lbl.checkoutChangeTime', 'Change time') : label('lbl.checkoutChooseTime', 'Choose time')} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
       </Row>
-      {S.sch ? <Pressable onPress={()=>setSch(0)} style={{alignSelf:'flex-start',paddingTop:9}}><T size={12.5} weight="700" color={th.red}>Clear scheduled time</T></Pressable> : null}
+      {S.sch ? <Pressable onPress={()=>setSch(0)} style={{alignSelf:'flex-start',paddingTop:9}}><T size={12.5} weight="700" color={th.red}>{label('lbl.checkoutClearTime', 'Clear scheduled time')}</T></Pressable> : null}
     </Card>
-    {pk ? null : (<><Ttl>Tip your courier</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : 'No tip'}</T></Pressable>)}</View></>)}
-    <Input label={pk ? 'Note for the store' : 'Delivery instructions'} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
+    {pk ? null : (<><Ttl>{label('lbl.checkoutCourierTip', 'Tip your courier')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : label('lbl.checkoutNoTip', 'No tip')}</T></Pressable>)}</View></>)}
+    <Input label={pk ? label('lbl.checkoutStoreNote', 'Note for the store') : label('lbl.checkoutDeliveryInstructions', 'Delivery instructions')} value={S.note} onChange={v => {S.note = v; emit();}} placeholder="Optional" multiline />
   </>);
   if (S.cs === 2) body = (<>
-    <T size={15} weight="800" style={{marginBottom: 8}}>Payment method</T>
+    <T size={15} weight="800" style={{marginBottom: 8}}>{label('lbl.checkoutPaymentMethod', 'Payment method')}</T>
     {pays.map(p => <Radio key={p[0]} on={S.pay === p[0]} onPress={() => setPay(p[0])}><Row><Icon name={p[3]} size={20} color={th.ink} /><View style={{flex: 1}}><T size={14.5} weight="700">{p[1]}</T><T size={12.5} color={th.mut}>{p[2]}</T></View></Row></Radio>)}
     {!providerInfo.demo && !S.hasWallet ? <Card style={{borderColor: th.br}}><T weight="800">Wantiss wallet not found</T><T size={12.5} color={th.mut} style={{marginVertical: 6}}>Create a wallet to pay for Goodies orders with your balance.</T><Cta label="Create wallet" onPress={createWallet} /></Card> : null}
-    {!providerInfo.demo && S.hasWallet && S.wallet < t.total ? <Card style={{borderColor: th.br, backgroundColor: th.brt}}><T weight="800">Insufficient wallet balance</T><T size={12.5} color={th.mut} style={{marginTop: 4}}>Your balance is {money(S.wallet)}. You need {money(Math.max(0, t.total - S.wallet))} more to pay with your Wantiss wallet.</T><Cta small label="Open Wallet" onPress={() => go('payments')} /></Card> : null}
+    {!providerInfo.demo && S.hasWallet && S.wallet < t.total ? <Card style={{borderColor: th.br, backgroundColor: th.brt}}><T weight="800">{label('lbl.checkoutInsufficient', 'Insufficient wallet balance')}</T><T size={12.5} color={th.mut} style={{marginTop: 4}}>Your balance is {money(S.wallet)}. You need {money(Math.max(0, t.total - S.wallet))} more to pay with your Wantiss wallet.</T><Cta small label={label('lbl.checkoutOpenWallet', 'Open Wallet')} onPress={() => go('payments')} /></Card> : null}
     {S.pay === 'card' ? <Card style={{marginTop: 10}}>
-      <T weight="800">Choose a saved card</T>
+      <T weight="800">{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
       {S.cards.length ? S.cards.map((card: any) => <Radio key={card.id} on={S.selectedCardId === card.id} onPress={() => setCard(card.id)}>
         <Row><Icon name="card" size={20} color={th.ink} /><View style={{flex: 1}}><T size={13.5} weight="700">{card.b} •••• {card.l4}{card.isDefault ? ' · Default' : ''}</T><T size={11.5} color={th.mut}>{card.expiryMonth && card.expiryYear ? 'Expires ' + String(card.expiryMonth).padStart(2,'0') + '/' + card.expiryYear : 'Saved securely with Stripe'}</T></View></Row>
-      </Radio>) : <><Empty title="No saved cards" text="Add a card in Wallet settings to pay for Goodies orders." /><Cta label="Add a card" onPress={() => go('payments')} /></>}
+      </Radio>) : <><Empty title={label('lbl.checkoutNoCards', 'No saved cards')} text="Add a card in Wallet settings to pay for Goodies orders." /><Cta label={label('lbl.checkoutAddCard', 'Add a card')} onPress={() => go('payments')} /></>}
     </Card> : null}
     {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>Demo only. No real payment is taken.</T>}
   </>);
@@ -253,7 +253,7 @@ export function Checkout() {
   </>);
   return (
     <View>
-      <Bar title="Checkout" onBack={back} />
+      <Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <View style={{flexDirection: 'row', gap: 6, marginBottom: 6}}>{stp.map((x, n) => <View key={x} style={{flex: 1, alignItems: 'center'}}><View style={{height: 5, borderRadius: 3, alignSelf: 'stretch', backgroundColor: n <= S.cs ? th.br : th.line}} /><T size={11.5} weight={n === S.cs ? '800' : '500'} style={{marginTop: 5}}>{x}</T></View>)}</View>
         {body}
@@ -261,19 +261,19 @@ export function Checkout() {
     </View>
   );
 }
-export const CheckoutFoot = () => <Cta label={S.cs === 3 ? 'Place order · ' + money(totals().total) : 'Continue'} disabled={S.cs === 3 && hasAlcohol() && !S.alcConsent} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;
+export const CheckoutFoot = () => <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={S.cs === 3 && hasAlcohol() && !S.alcConsent} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
-  if (!o || !o.backendId || !STB[o.sid]) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order unavailable" text="This order is not available from the live Wantiss order service." button="Go home" onPress={browse} /></View>;
+  if (!o || !o.backendId || !STB[o.sid]) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title={label('lbl.orderUnavailable', 'Order unavailable')} text="This order is not available from the live Wantiss order service." button="Go home" onPress={browse} /></View>;
   return (
     <View style={{paddingHorizontal: 16, paddingTop: 50, alignItems: 'center'}}>
       <Text style={{fontSize: 70}}>✅</Text>
-      <T size={24} weight="800" style={{marginTop: 10, marginBottom: 4}}>Order placed</T>
+      <T size={24} weight="800" style={{marginTop: 10, marginBottom: 4}}>{label('lbl.confirmOrderPlaced', 'Order placed')}</T>
       <T color={th.mut} align="center">Order {o.id} with {STB[o.sid].n}.</T>
       <View style={{alignSelf: 'stretch', marginTop: 20}}>
         <Sum rows={o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)])} total={['Total', money(o.total)]} />
-        <Cta label="Track order" onPress={() => go('track', o.id)} /><View style={{height: 10}} /><Cta ghost label="Back to Goodies" onPress={() => tab('home')} />
+        <Cta label={label('lbl.confirmTrackOrder', 'Track order')} onPress={() => go('track', o.id)} /><View style={{height: 10}} /><Cta ghost label={label('lbl.confirmBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} />
       </View>
     </View>
   );
@@ -281,11 +281,11 @@ export function Confirm({id}: {id: string}) {
 
 function DeliveryRouteMap() {
   const th = useTheme();
-  return <Card style={{padding: 12}}><T size={15} weight="800">Live delivery route</T><Empty title="Live tracking unavailable" text="Driver location has not been provided by the order service." /></Card>;
+  return <Card style={{padding: 12}}><T size={15} weight="800">{label('lbl.orderLiveTracking', 'Live delivery route')}</T><Empty title={label('lbl.orderTrackingUnavailable', 'Live tracking unavailable')} text="Driver location has not been provided by the order service." /></Card>;
 }
 
 function PickupLocationMap() {
-  return <Card style={{padding: 12}}><T size={15} weight="800">Pickup location</T><Empty title="Live location unavailable" text="Pickup coordinates have not been provided by the store." /></Card>;
+  return <Card style={{padding: 12}}><T size={15} weight="800">{label('lbl.orderPickupLocation', 'Pickup location')}</T><Empty title={label('lbl.orderPickupUnavailable', 'Live location unavailable')} text="Pickup coordinates have not been provided by the store." /></Card>;
 }
 
 export function Track({id}: {id: string}) {
@@ -317,10 +317,10 @@ export function Track({id}: {id: string}) {
     const channel = supabase.channel('goodies-order-status-' + o.backendId).on('postgres_changes', {event: 'UPDATE', schema: 'public', table: 'goodies_orders', filter: 'id=eq.' + o.backendId}, () => { void sync(); }).subscribe();
     return () => { active = false; void supabase.removeChannel(channel); };
   }, [o?.backendId]);
-  if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title="Order not found" button="Go home" onPress={browse} /></View>;
+  if (!o) return <View><Bar title="Order" onBack={back} /><Empty emoji="📦" title={label('lbl.orderNotFound', 'Order not found')} button="Go home" onPress={browse} /></View>;
   const s = STB[o.sid], T_: string[] = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
   const serverStatus = String(o.serverStatus || '').toLowerCase();
-  const eta = o.declined ? 'Store declined the order' : o.expired ? 'Response window expired' : o.cx ? 'Cancelled' : dn ? (o.pk ? 'Picked up' : 'Delivered') : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? 'Waiting for store to accept' : serverStatus === 'accepted' ? 'Order accepted by store' : serverStatus === 'preparing' ? 'Store is preparing your order' : serverStatus === 'ready' ? (o.pk ? 'Ready for pickup' : 'Ready for courier pickup') : 'Order update') : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
+  const eta = o.declined ? label('lbl.orderStoreDeclined', 'Store declined the order') : o.expired ? label('lbl.orderExpired', 'Response window expired') : o.cx ? label('lbl.orderCancelled', 'Cancelled') : dn ? (o.pk ? label('lbl.orderPickedUp', 'Picked up') : label('lbl.orderDelivered', 'Delivered')) : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : serverStatus === 'scheduled' || serverStatus === 'placed' ? label('lbl.orderWaitingStore', 'Waiting for store to accept') : serverStatus === 'accepted' ? label('lbl.orderAccepted', 'Order accepted by store') : serverStatus === 'preparing' ? label('lbl.orderPreparing', 'Store is preparing your order') : serverStatus === 'ready' ? (o.pk ? label('lbl.orderReadyPickup', 'Ready for pickup') : label('lbl.orderReadyCourier', 'Ready for courier pickup')) : label('lbl.orderUpdated', 'Order update')) : o.sch && Date.now() < o.sch ? 'Scheduled for ' + fmtTime(new Date(o.sch)) : 'Simulated ETA · ' + Math.max(1, T_.length - 1 - o.st) * 5 + ' sec';
   return (
     <View>
       <Bar title={'Order ' + o.id} onBack={back} />
@@ -332,23 +332,23 @@ export function Track({id}: {id: string}) {
             <View style={{flexDirection: 'row', gap: 6, marginVertical: 14}}>{T_.map((x, i) => <View key={i} style={{flex: 1, height: 6, borderRadius: 3, backgroundColor: i <= o.st ? th.br : th.line}} />)}</View>
             {T_.map((x, i) => <View key={i} style={{flexDirection: 'row', gap: 12, marginVertical: 12, alignItems: 'center'}}><View style={{width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: i <= o.st ? th.br : th.line, backgroundColor: i <= o.st ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{i <= o.st ? <Icon name="check" size={12} color="#fff" /> : null}</View><T size={14} color={i <= o.st ? th.ink : th.mut} weight={i <= o.st ? '700' : undefined}>{x}</T></View>)}
           </>)}
-          <T size={11.5} color={th.mut}>Order status is provided by the live order service.</T>
+          <T size={11.5} color={th.mut}>{label('lbl.orderStatusHeading', 'Order status is provided by the live order service.')}</T>
         </Card>
         {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap /> : null}
         {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label="Demo: ID valid" onPress={() => idResult(o.id, true)} /><Cta small ghost label="Demo: ID failed" onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
-        {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your order</T><T size={12} color={th.mut}>Order and delivery feedback</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>Your rating: {o.rated} ★</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">Rate your driver</T><T size={12} color={th.mut}>Delivery experience</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
+        {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRate', 'Rate your order')}</T><T size={12} color={th.mut}>{label('lbl.orderFeedback', 'Order and delivery feedback')}</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate order ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>Your rating: {o.rated} ★</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRateDriver', 'Rate your driver')}</T><T size={12} color={th.mut}>{label('lbl.orderDeliveryExperience', 'Delivery experience')}</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={'Rate driver ' + k + ' stars'} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
         {o.rated && (o.pk || o.driverRated) ? <Card>
-          <T weight="700" align="center">Thank you for your feedback!</T>
+          <T weight="700" align="center">{label('lbl.orderThanksFeedback', 'Thank you for your feedback!')}</T>
           {o.orderReview?.t ? <T size={12.5} color={th.mut} style={{marginTop:8}}>Your shop/order comment: “{o.orderReview.t}”</T> : null}
           {o.driverReview?.t ? <T size={12.5} color={th.mut} style={{marginTop:6}}>Your driver comment: “{o.driverReview.t}”</T> : null}
         </Card> : null}
         <Sum rows={[...o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)] as any), ['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
-        {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color={th.red}>Cancel order</T></Pressable></Card></> : null}
-        <Cta ghost label="Order again" onPress={() => reorder(o.id)} /><View style={{height: 10}} />
-        {!o.cx ? <><Cta ghost label="Message store" onPress={() => go('storechat', o.sid)} /><View style={{height: 10}} /></> : null}
-        <Cta ghost label="Get help with this order" onPress={() => go('contact', {o: true, oid: o.id})} /><View style={{height: 10}} />
-        <Cta label="Go to Orders" onPress={() => tab('orders')} />
+        {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color={th.red}>{label('lbl.orderCancelAction', 'Cancel order')}</T></Pressable></Card></> : null}
+        <Cta ghost label={label('lbl.orderAgain', 'Order again')} onPress={() => reorder(o.id)} /><View style={{height: 10}} />
+        {!o.cx ? <><Cta ghost label={label('lbl.orderMessageStore', 'Message store')} onPress={() => go('storechat', o.sid)} /><View style={{height: 10}} /></> : null}
+        <Cta ghost label={label('lbl.orderGetHelp', 'Get help with this order')} onPress={() => go('contact', {o: true, oid: o.id})} /><View style={{height: 10}} />
+        <Cta label={label('lbl.orderGoToOrders', 'Go to Orders')} onPress={() => tab('orders')} />
       </View>
     </View>
   );
@@ -398,9 +398,9 @@ export function Orders() {
   const stTxt = (o: any) => (o.cx ? 'Cancelled' : stageLabels(!!o.pk, o.pk ? TP : TL)[o.st]);
   return (
     <View>
-      <Bar title="Your orders" onBack={() => require('../actions').back()} />
+      <Bar title={label('lbl.ordersTitle', 'Your orders')} onBack={() => require('../actions').back()} />
       <View style={{paddingHorizontal: 16}}>
-        <Seg list={[['active', 'Active'], ['past', 'Past']]} on={S.ot} onPick={setOrdersTab} />
+        <Seg list={[['active', label('lbl.ordersActive', 'Active')], ['past', label('lbl.ordersPast', 'Past')]]} on={S.ot} onPick={setOrdersTab} />
         <View style={{height: 14}} />
         {a.length ? a.map((o: any) => {
           const s = STB[o.sid], d = new Date(o.t0);
@@ -411,10 +411,10 @@ export function Orders() {
                 <View style={{flex: 1}}><T weight="700">{s.n}</T><T size={12.5} color={th.mut}>{o.id} · {fmtDay(d)} · {money(o.total)}</T><View style={{marginTop: 5}}><Badge green={!!(done(o) && !o.cx)} label={stTxt(o)} /></View></View>
                 <Icon name="chevR" size={16} color={th.ink} />
               </Pressable>
-              <Row style={{marginTop: 12}}><Cta small ghost label="Reorder" onPress={() => reorder(o.id)} /><Cta small label={done(o) ? 'Details' : 'Track'} onPress={() => go('track', o.id)} /></Row>
+              <Row style={{marginTop: 12}}><Cta small ghost label={label('lbl.ordersReorder', 'Reorder')} onPress={() => reorder(o.id)} /><Cta small label={done(o) ? label('lbl.ordersDetails', 'Details') : label('lbl.ordersTrack', 'Track')} onPress={() => go('track', o.id)} /></Row>
             </Card>
           );
-        }) : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? 'No active orders' : 'No past orders yet'} text="Your orders will show up here." button="Browse stores" onPress={() => go('explore')} />}
+        }) : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? label('lbl.ordersNoActive', 'No active orders') : label('lbl.ordersNoPast', 'No past orders yet')} text={label('lbl.ordersEmptyText', 'Your orders will show up here.')} button={label('lbl.ordersBrowse', 'Browse stores')} onPress={() => go('explore')} />}
       </View>
     </View>
   );
