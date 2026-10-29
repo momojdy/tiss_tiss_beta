@@ -8,6 +8,7 @@ import React from 'react';
 import {View, Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../../lib/supabase';
+import {label} from '../content';
 import {S, STB, ui, toast, emit, save, push, navBack, cur, hooks, money} from '../store';
 import {TEMPLATES} from './templates';
 import {T, useTheme, Tile} from '../components/ui';
@@ -158,7 +159,7 @@ const upd = () => {bDraftSave(); emit();};
 /* ---------- actions ---------- */
 export function byoOpen(sid: string, bid: string) {
   const b = bGet(sid, bid);
-  if (!b || !b.enabled || !b.available || BYO.store[sid] === false) {toast('This builder is not available right now'); return;}
+  if (!b || !b.enabled || !b.available || BYO.store[sid] === false) {toast(label('lbl.byoNotAvailableNow', 'This builder is not available right now')); return;}
   if (!STB[sid].open) {toast(STB[sid].n + ' is closed right now'); return;}
   BD = bDraft(b, sid); push('byo', sid + '|' + b.id);
 }
@@ -170,8 +171,8 @@ export function bzAdd(gid: string, iid: string) {
   if (g.kind === 'one') {if (us[0] === it.id) return; hist(); BD.sel[g.id] = [it.id];}
   else {
     const q = us.filter(x => x === it.id).length;
-    if (us.length >= g.max) {toast('You can choose up to ' + g.max + ' in ' + g.name); return;}
-    if (q >= limitOf(g, it)) {toast('At most ' + limitOf(g, it) + ' of ' + it.name); return;}
+    if (us.length >= g.max) {toast(label('lbl.byoMaxGroupChoices', 'You can choose up to {max} in {group}').replace('{max}', String(g.max)).replace('{group}', g.name)); return;}
+    if (q >= limitOf(g, it)) {toast(label('lbl.byoMaxSameIngredient', 'At most {max} of {item}').replace('{max}', String(limitOf(g, it))).replace('{item}', it.name)); return;}
     hist(); us.push(it.id); BD.sel[g.id] = us;
   }
   const a = (it.assetId || '').replace('burger.', '');
@@ -201,24 +202,24 @@ export function bzShop() {
 export function bzEdit(k: string) {
   const l = S.cart.lines.filter((x: any) => x.k === k)[0]; if (!l || !l.byo) return;
   const b = bGet(l.byo.sid, l.byo.bid);
-  if (!b || !b.enabled || BYO.store[l.byo.sid] === false) {toast('This item can no longer be customized. You can remove it from your cart.'); return;}
+  if (!b || !b.enabled || BYO.store[l.byo.sid] === false) {toast(label('lbl.byoNoLongerCustomizable', 'This item can no longer be customized. You can remove it from your cart.')); return;}
   BD = {sid: l.byo.sid, bid: b.id, size: l.byo.size, sel: cl(l.byo.sel), note: l.nt || '', q: l.q, hist: [], added: null, busy: 0, leave: 0, edit: l.k, snap: l.p, resumed: 0, exploded: true, assembling: 0, seasoningPulse: 0};
   BD.orig = JSON.stringify([BD.size, BD.sel, BD.note, BD.q]); push('byo', l.byo.sid + '|' + b.id);
 }
 export function bzRemove(k: string) {
   const c = S.cart, i = c.lines.findIndex((x: any) => x.k === k); if (i < 0) return;
-  c.lines.splice(i, 1); if (!c.lines.length) {c.sid = null; S.promo = '';} toast('Removed from your cart'); save(); emit();
+  c.lines.splice(i, 1); if (!c.lines.length) {c.sid = null; S.promo = '';} toast(label('lbl.byoRemovedFromCart', 'Removed from your cart')); save(); emit();
 }
 function bzCommit(b: Builder, ln: any) {
   const c = S.cart; c.sid = BD.sid;
   if (BD.edit) {
     const i = c.lines.findIndex((x: any) => x.k === BD.edit);
-    if (i < 0) {toast('That item is no longer in your cart'); BD = null; navBack(); return;}
+    if (i < 0) {toast(label('lbl.byoItemMissingCart', 'That item is no longer in your cart')); BD = null; navBack(); return;}
     c.lines.splice(i, 1); const ex = c.lines.filter((x: any) => x.k === ln.k)[0]; if (ex) ex.q += ln.q; else c.lines.splice(i, 0, ln);
-    BD = null; toast('Item updated'); save(); navBack(); return;
+    BD = null; toast(label('lbl.byoItemUpdated', 'Item updated')); save(); navBack(); return;
   }
   const ex2 = c.lines.filter((x: any) => x.k === ln.k)[0]; if (ex2) ex2.q += ln.q; else c.lines.push(ln);
-  delete BYO.drafts[b.id]; bsave(); BD.added = {n: ln.n, q: ln.q, p: ln.p}; BD.busy = 0; S.bump = 1; toast('Added to your order!'); save(); emit();
+  delete BYO.drafts[b.id]; bsave(); BD.added = {n: ln.n, q: ln.q, p: ln.p}; BD.busy = 0; S.bump = 1; toast(label('lbl.byoAddedSuccess', 'Added to your order!')); save(); emit();
 }
 function animateCommit(b: Builder, ln: any) {
   if (!BD || BD.added) return;
