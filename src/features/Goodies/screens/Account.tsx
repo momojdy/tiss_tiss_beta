@@ -11,7 +11,7 @@ import {providerInfo} from '../providers';
 import {Home} from './Browse';
 import {LivePayments} from './Payments';
 import {supabase} from '../../../lib/supabase';
-import {legalDoc, supportTopics} from '../content';
+import {legalDoc, supportTopics, label} from '../content';
 
 const POL: Record<string, [string, string]> = {
   terms: ['Terms of use', 'These are placeholder terms for the Goodies prototype. By using Goodies you agree to order responsibly and provide accurate delivery details. Final legal text will replace this page.'],
@@ -37,17 +37,17 @@ function Settings() {
     <Bar title={tr('settings')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
       <Pressable onPress={() => go('profile')}><Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T><T size={13} color={th.mut}>Wantiss account · view profile</T></View><Icon name="chevR" size={16} color={th.ink} /></Row></Card></Pressable>
-      <Ttl>Notifications</Ttl>
-      <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>Order updates</T><Switch on={!!S.np.orders} label="Order updates" onPress={() => togglePref('orders')} /></Row>
-      <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>Offers and deals</T><Switch on={!!S.np.promos} label="Offers and deals" onPress={() => togglePref('promos')} /></Row>
-      <Ttl>Account</Ttl>
-      <LRow icon="pin" title="Saved addresses" sub={address?.t ? address.t + ' · Wantiss default' : 'Add a delivery address'} onPress={() => go('addresses')} />
-      <LRow icon="wallet" title="Wallet and payment methods" sub={'Balance ' + money(S.wallet)} onPress={() => go('payments')} />
-      <LRow icon="heart" title="Favorites" sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
-      <LRow icon="tag" title="Coupons and offers" onPress={() => go('promos')} />
+      <Ttl>{label('lbl.notifsTitle', 'Notifications')}</Ttl>
+      <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOrderUpdates', 'Order updates')}</T><Switch on={!!S.np.orders} label={label('lbl.settingsOrderUpdates', 'Order updates')} onPress={() => togglePref('orders')} /></Row>
+      <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>
+      <Ttl>{label('lbl.settingsAccount', 'Account')}</Ttl>
+      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={address?.t ? address.t + ' · Wantiss default' : 'Add a delivery address'} onPress={() => go('addresses')} />
+      <LRow icon="wallet" title={label('lbl.settingsPayments', 'Wallet and payment methods')} sub={'Balance ' + money(S.wallet)} onPress={() => go('payments')} />
+      <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
+      <LRow icon="tag" title={label('lbl.settingsCoupons', 'Coupons and offers')} onPress={() => go('promos')} />
 
-      <LRow icon="moon" title="Dark mode" sub="Goodies only. Other Wantiss features keep their theme." onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
-      <LRow icon="help" title="Help center" sub="FAQs and support" onPress={() => go('help')} />
+      <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub="Goodies only. Other Wantiss features keep their theme." onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label="Dark mode" onPress={() => setTheme(d ? 'light' : 'dark')} />} />
+      <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub="FAQs and support" onPress={() => go('help')} />
       {providerInfo.demo ? (<><Ttl>Demo</Ttl><LRow icon="tag" title="Import Admin content" sub="Paste the export from Wantiss Admin" onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title="Reset Goodies demo data" sub="Clears orders, cart and checkout numbers" onPress={() => {require('../store').resetDemo(); toast('Demo data reset');}} /></>) : null}
       <T size={12} color={th.mut} align="center" style={{marginTop: 18}}>Goodies {providerInfo.demo ? '(demo)' : ''}</T>
     </View>
@@ -57,16 +57,16 @@ function Settings() {
 function Profile() {
   const th = useTheme(), p = S.pf;
   return (<View>
-    <Bar title="Profile" onBack={back} />
+    <Bar title={label('lbl.profileTitle', 'Profile')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <Card style={{alignItems: 'center'}}><Avatar z={76} /><T size={17} weight="800" style={{marginTop: 10}}>{p.n}</T><T size={13.5} color={th.mut} align="center" style={{lineHeight: 22}}>{p.e}{'\n'}{p.ph}</T><View style={{marginTop: 8}}><Badge label="Shared Wantiss account" /></View></Card>
-      <LRow icon="pin" title="Saved addresses" sub="Shared with Wantiss" onPress={() => go('addresses')} />
-      <LRow icon="bag" title="Order history" sub={S.orders.length + ' orders'} onPress={() => tab('orders')} />
-      <LRow icon="heart" title="Favorites" onPress={() => go('favs')} />
+      <Card style={{alignItems: 'center'}}><Avatar z={76} /><T size={17} weight="800" style={{marginTop: 10}}>{p.n}</T><T size={13.5} color={th.mut} align="center" style={{lineHeight: 22}}>{p.e}{'\n'}{p.ph}</T><View style={{marginTop: 8}}><Badge label={label('lbl.profileShared', 'Shared Wantiss account')} /></View></Card>
+      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub="Shared with Wantiss" onPress={() => go('addresses')} />
+      <LRow icon="bag" title={label('lbl.profileOrderHistory', 'Order history')} sub={S.orders.length + ' orders'} onPress={() => tab('orders')} />
+      <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} onPress={() => go('favs')} />
       <LRow icon="wallet" title="Wallet and payments" onPress={() => go('payments')} />
       <LRow icon="bell" title="Notification preferences" onPress={() => go('settings')} />
       <LRow icon="help" title="Help and support" onPress={() => go('help')} />
-      <LRow icon="tag" title="Terms and policies" onPress={() => go('policies')} />
+      <LRow icon="tag" title={label('lbl.profilePolicies', 'Terms and policies')} onPress={() => go('policies')} />
     </View>
   </View>);
 }
@@ -84,7 +84,7 @@ function Addresses() {
     if (isNew) S.as = a.id; setEdit(null); toast(isNew ? 'Address saved to your Wantiss account' : 'Address updated'); save(); emit();
   };
   return (<View>
-    <Bar title="Saved addresses" onBack={back} />
+    <Bar title={label('lbl.settingsAddresses', 'Saved addresses')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
       <T size={13} color={th.mut} style={{marginBottom: 12, lineHeight: 19}}>These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default.</T>
       {S.addr.map((a: any) => (
@@ -267,7 +267,7 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'contact': return <Contact p={p} />;
     case 'storechat': return <StoreChat id={String(p || '')} />;
     case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="800" style={{marginTop: 10}}>Message sent</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? 'Ticket ' + result.ticket + ' was sent to ' + store.n + '. You can return to this conversation to see the store reply.' : 'Ticket ' + result.ticket + ' (demo). Your support request is not connected to a live support inbox yet.'}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label="Open store conversation" onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label="Back to Goodies" onPress={() => tab('home')} /></View></View>; }
-    case 'policies': return <View><Bar title="Terms and policies" onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
+    case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={POL[k][0]} onPress={() => go('policy', k)} />)}</View></View>;
     case 'policy': return POL[p] ? <View><Bar title={POL[p][0]} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={14.5} style={{lineHeight: 23}}>{legalDoc(({terms: 'legal.terms', privacy: 'legal.privacy', refund: 'legal.refund'} as any)[p]) || POL[p][1]}</T></Card></View></View> : <View><Bar title="Policy" onBack={back} /><Empty emoji="📄" title="Page not found" button="Back" onPress={() => tab('home')} /></View>;
     case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title="Notification" onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="800">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? 'View order' : 'See details'} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title="Notification" onBack={back} /><Empty emoji="🔔" title="Notification not found" button="Back to Goodies" onPress={() => tab('home')} /></View>; }
     default: return <Home />;
