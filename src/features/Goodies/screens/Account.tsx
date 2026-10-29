@@ -185,7 +185,7 @@ function StoreChat({id}: {id: string}) {
   return (
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : label('lbl.chatTitle', 'Message store')} onBack={back} />
-      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label="Goodies" /></Row></Card></View> : null}
+      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></Card></View> : null}
       {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>{label('lbl.chatTryAgain', 'Try again')}</T></Pressable></Card></View> : null}
       {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>{label('lbl.chatOpening', 'Opening conversation…')}</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
@@ -251,7 +251,7 @@ function Contact({p}: {p: any}) {
   return (<View>
     <Bar title={store ? 'Contact store' : 'Contact support'} onBack={back} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
-      {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12.5} color={th.mut}>Your message will be sent to this store.</T></View></Row></Card> : null}
+      {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></Card> : null}
       <T size={13} weight="700" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
       <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
       {!store ? <>
