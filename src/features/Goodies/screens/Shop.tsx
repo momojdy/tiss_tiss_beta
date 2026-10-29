@@ -134,7 +134,7 @@ export function ProductFoot() {
   const th = useTheme(), h = S.sh, i = h && IT[h.id];
   if (!i) return null;
   const s = STB[i.s], o = CHOOSE_SIZE_CATS.indexOf(s.c) > -1, base = h.off ? dp(i, h.off) : i.p, unit = base + (h.size > 0 ? 1.5 : 0) + (h.drink ? 1 : 0);
-  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? 'Out of stock' : !s.open && !s.acceptScheduledOrders ? label('lbl.productStoreClosed', 'Store is closed') : !s.open ? 'Schedule order · ' + money(unit * h.q) : o && h.size < 0 ? label('lbl.productChooseSize', 'Choose a size') : label('lbl.productAddToCart', 'Add to cart') + ' · ' + money(unit * h.q);
+  const blocked = i.oos || (!s.open && !s.acceptScheduledOrders) || (o && h.size < 0), lbl = i.oos ? label('lbl.productStockOut', 'Out of stock') : !s.open && !s.acceptScheduledOrders ? label('lbl.productStoreClosed', 'Store is closed') : !s.open ? label('lbl.productScheduleOrder', 'Schedule order') + ' · ' + money(unit * h.q) : o && h.size < 0 ? label('lbl.productChooseSize', 'Choose a size') : label('lbl.productAddToCart', 'Add to cart') + ' · ' + money(unit * h.q);
   return <Row><Stepper q={h.q} onMinus={() => productQty(-1)} onPlus={() => productQty(1)} /><View style={{flex: 1}}><Cta label={lbl} disabled={!!blocked} onPress={productAdd} /></View></Row>;
 }
 
