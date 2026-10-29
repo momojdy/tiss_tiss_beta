@@ -413,7 +413,7 @@ export function Notifs() {
   };
   return (
     <View>
-      <Bar title="Notifications" onBack={back} right={items.some((n: any) => n.u) ? <Pressable onPress={() => { void markAll(); }}><T size={13.5} weight="700" color={th.br}>Mark all read</T></Pressable> : null} />
+      <Bar title={label('lbl.notifsTitle', 'Notifications')} onBack={back} right={items.some((n: any) => n.u) ? <Pressable onPress={() => { void markAll(); }}><T size={13.5} weight="700" color={th.br}>{label('lbl.notifsMarkAll', 'Mark all as read')}</T></Pressable> : null} />
       <View style={{paddingHorizontal: 16}}>
         {serverError ? <T size={12} color={th.red}>{serverError}</T> : null}
         {items.length ? items.map((n: any) => (
@@ -422,7 +422,7 @@ export function Notifs() {
             <View style={{flex: 1}}><T weight={n.u ? '800' : undefined}>{n.t}</T><T size={13} color={th.mut}>{n.d}</T></View>
             {n.u ? <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: th.br}} /> : null}
           </Pressable>
-        )) : <Empty emoji="🔔" title="All caught up" text="New offers and order updates appear here." />}
+        )) : <Empty emoji="🔔" title={label('lbl.notifsEmpty', 'You’re all caught up')} text={label('lbl.notifsEmptyText', 'Order updates and offers will appear here.')} />}
       </View>
     </View>
   );
