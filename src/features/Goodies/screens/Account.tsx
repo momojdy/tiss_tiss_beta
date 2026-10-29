@@ -241,7 +241,7 @@ function Contact({p}: {p: any}) {
         const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
         if (messageError) throw messageError;
         const {error: threadError} = await supabase.from('conversations').update({last_body: ticketBody, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-        if (threadError) throw threadError;
+        if (threadError) toast('Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond.');
       } else {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
