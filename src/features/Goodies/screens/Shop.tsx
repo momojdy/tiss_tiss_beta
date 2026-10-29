@@ -424,10 +424,10 @@ export function Favs() {
   const th = useTheme(), st = ST.filter(s => S.fav.indexOf(s.id) > -1), it = S.favp.map((id: string) => IT[id]).filter(Boolean);
   return (
     <View>
-      <Bar title="Favorites" onBack={back} />
+      <Bar title={label('lbl.favoritesTitle', 'Your favorites')} onBack={back} />
       <View style={{paddingHorizontal: 16}}><Seg list={[['stores', 'Stores (' + st.length + ')'], ['items', 'Items (' + it.length + ')']]} on={S.ft} onPick={k => {S.ft = k; emit();}} /></View>
-      {S.ft === 'stores' ? (st.length ? <View style={{gap: 22, padding: 16}}>{st.map(s => <StoreCard key={s.id} s={s} />)}</View> : <Empty icon="heart" title="No favorite stores yet" text="Save the stores you love by tapping the heart on a store." button="Browse stores" onPress={browse} />)
-        : (it.length ? <View style={{paddingHorizontal: 16, marginTop: 6}}>{it.map((i: any) => <ItemRow key={i.id} i={i} />)}</View> : <Empty icon="heart" title="No favorite items yet" text="Tap the heart on a product to keep it here for later." button="Browse stores" onPress={browse} />)}
+      {S.ft === 'stores' ? (st.length ? <View style={{gap: 22, padding: 16}}>{st.map(s => <StoreCard key={s.id} s={s} />)}</View> : <Empty icon="heart" title={label('lbl.favoritesEmpty', 'Nothing saved yet')} text={label('lbl.favoritesEmptyText', 'Save stores and products to find them here.')} button="Browse stores" onPress={browse} />)
+        : (it.length ? <View style={{paddingHorizontal: 16, marginTop: 6}}>{it.map((i: any) => <ItemRow key={i.id} i={i} />)}</View> : <Empty icon="heart" title={label('lbl.favoritesEmpty', 'Nothing saved yet')} text={label('lbl.favoritesEmptyText', 'Save stores and products to find them here.')} button="Browse stores" onPress={browse} />)}
     </View>
   );
 }
@@ -437,7 +437,7 @@ export function Help() {
   const th = useTheme(), [open, setOpen] = useState(-1);
   return (
     <View>
-      <Bar title="Help center" onBack={back} />
+      <Bar title={label('lbl.helpTitle', 'Help center')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         {faqList(FAQ).map((x, k) => (
           <Pressable key={k} onPress={() => setOpen(open === k ? -1 : k)} style={{borderBottomWidth: 1, borderBottomColor: th.line, paddingVertical: 14, paddingHorizontal: 4}}>
@@ -445,8 +445,8 @@ export function Help() {
             {open === k ? <T size={13.5} color={th.mut} style={{marginTop: 8, lineHeight: 20}}>{x[1]}</T> : null}
           </Pressable>
         ))}
-        <View style={{height: 18}} /><Cta label="Contact support" onPress={() => go('contact')} /><View style={{height: 10}} />
-        <Cta ghost label="Report an order problem" onPress={() => go('contact', {o: true, oid: ''})} /><View style={{height: 10}} />
+        <View style={{height: 18}} /><Cta label={label('lbl.helpContact', 'Contact support')} onPress={() => go('contact')} /><View style={{height: 10}} />
+        <Cta ghost label={label('lbl.helpOrders', 'Report an order problem')} onPress={() => go('contact', {o: true, oid: ''})} /><View style={{height: 10}} />
         <Cta ghost label="Terms and policies" onPress={() => go('policies')} />
       </View>
     </View>
