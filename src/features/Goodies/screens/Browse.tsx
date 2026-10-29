@@ -15,6 +15,8 @@ import {supabase} from '../../../lib/supabase';
 
 const cname = (id: string) => catName(id);
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
+  const [imageFailed, setImageFailed] = useState(false);
+  useEffect(() => setImageFailed(false), [image]);
   return (
     <Pressable onPress={onPress} style={{borderRadius: 18, overflow: 'hidden', height: small ? 51 : 112}}>
       {grad ? <Grad colors={MODE1} style={{flex: 1, padding: small ? 0 : 14, paddingHorizontal: 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</Grad> : <View style={{flex: 1, backgroundColor: bg, paddingHorizontal: 14, padding: small ? 0 : 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</View>}
@@ -24,22 +26,24 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
     const c = grad ? '#fff' : fg;
     return (
       <>
-        <T size={small ? 14.5 : 17} weight="800" color={c} style={{lineHeight: small ? undefined : 19.5}}>{title}</T>
-        {sub ? <T size={12} color={c} style={{marginTop: 3, opacity: 0.9}}>{sub}</T> : null}
-        {image ? <Image source={{uri: image}} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
+        <T size={small ? 14.5 : 17} weight="800" color={c} style={{lineHeight: small ? undefined : 19.5, width: image && !imageFailed ? '70%' : undefined}}>{title}</T>
+        {sub ? <T size={12} color={c} style={{marginTop: 3, opacity: 0.9, width: image && !imageFailed ? '70%' : undefined}}>{sub}</T> : null}
+        {image && !imageFailed ? <Image source={{uri: image}} onError={() => setImageFailed(true)} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
       </>
     );
   }
 }
 
 function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: keyof typeof PROMO; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
+  const [imageFailed, setImageFailed] = useState(false);
+  useEffect(() => setImageFailed(false), [image]);
   return (
     <Pressable onPress={() => ui.sheet({kind: 'promo', p: kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce', custom: {title, sub, btn, emoji, target}})}>
       <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
         <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
-        {image ? <Image source={{uri: image}} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
+        {image && !imageFailed ? <Image source={{uri: image}} onError={() => setImageFailed(true)} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
       </Grad>
     </Pressable>
   );
