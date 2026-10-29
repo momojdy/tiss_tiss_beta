@@ -29,9 +29,16 @@ export async function loadContent() {
     const payload: any = record?.payload;
     if (payload && payload.v === 5) {
       const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
-      (payload.lib || []).forEach((item: any) => {
-        const key = item.img?.assetKey || item.img?.asset_key;
-        if (key && assetByKey.has(key)) item.img.data = assetByKey.get(key);
+      /* Resolve every CMS-managed Goodies image, not just ingredient-library art. */
+      const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
+      imageLists.forEach(([list, field]) => {
+        (payload[list] || []).forEach((item: any) => {
+          const image = item[field];
+          if (!image || typeof image !== 'object') return;
+          const key = image.assetKey || image.asset_key;
+          if (key && assetByKey.has(key)) image.data = assetByKey.get(key);
+          else if (!image.data && typeof image.url === 'string') image.data = image.url;
+        });
       });
       applyContent(payload);
     } else {
