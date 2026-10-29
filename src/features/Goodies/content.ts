@@ -3,7 +3,6 @@ import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 import {tx} from './i18n';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
-import {CATS as SEED_CATS} from './data/seed';
 
 export interface Asset {u: string; w: number; h: number; ver: number}
 export const ASSETS: Record<string, Asset> = {};
@@ -60,7 +59,7 @@ export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
 export function categories(): {id: string; name: Txt; emoji: string; art?: string | null}[] {
-  if (!C) return SEED_CATS.map(c => ({id: c.id, name: c.name, emoji: c.emoji, art: null, home: c.home}));
+  if (!C) return []; /* No published CMS catalog: do not show seeded/demo categories to customers. */
   return C.cats.filter((c: any) => c.st === 'on').sort((a: any, b: any) => a.ord - b.ord).map((c: any) => ({id: c.id, name: c.name, emoji: c.emoji, art: c.art ? c.art.data : null, home: c.home}));
 }
 export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? 'All stores' : id;};
