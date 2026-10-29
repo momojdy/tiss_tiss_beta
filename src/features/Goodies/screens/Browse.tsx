@@ -92,9 +92,9 @@ export function Home({onExit}: {onExit?: () => void}) {
       </Rail></View>
       <View style={{marginTop: 20}}><Rail>
         {pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : (<>
-          {first() ? <PromoCard kind="plum" title="Free delivery on your first order" sub="Welcome to Goodies. New here? It is on us." btn="Order now" emoji="🛵" /> : null}
-          <PromoCard kind="orange" title="Earn double points this weekend" sub="Pay with Wallet on any order." btn="Start earning" emoji="🎁" />
-          <PromoCard kind="green" title="20% off fresh produce" sub="Straight from local farms and markets." btn="Shop now" emoji="🥬" />
+          {first() ? <PromoCard kind="plum" title={label("lbl.browseAutoA5EWZI", "Free delivery on your first order")} sub={label("lbl.browseAuto1DKDL24", "Welcome to Goodies. New here? It is on us.")} btn="Order now" emoji="🛵" /> : null}
+          <PromoCard kind="orange" title={label("lbl.browseAuto1CBHH3D", "Earn double points this weekend")} sub={label("lbl.browseAutoVED21M", "Pay with Wallet on any order.")} btn="Start earning" emoji="🎁" />
+          <PromoCard kind="green" title={label("lbl.browseAuto1DHXIME", "20% off fresh produce")} sub={label("lbl.browseAuto18YQL4O", "Straight from local farms and markets.")} btn="Shop now" emoji="🥬" />
         </>)}
       </Rail></View>
       <View style={{paddingHorizontal: 16, marginTop: 10}}>
@@ -243,7 +243,7 @@ export function Search() {
   const rec = (x: string) => {S.rec = [x].concat(S.rec.filter((y: string) => y.toLowerCase() !== x.toLowerCase())).slice(0, 6);};
   const head = (
     <View>
-      <Rail gap={8}>{fl.map(x => <Chip key={x[0]} label={x[1]} on={!!F[x[0]]} onPress={() => {F[x[0]] = !F[x[0]]; emit();}} />)}{any ? <Chip label="Clear all" color={th.red} onPress={() => {S.sr.f = {}; emit();}} /> : null}</Rail>
+      <Rail gap={8}>{fl.map(x => <Chip key={x[0]} label={x[1]} on={!!F[x[0]]} onPress={() => {F[x[0]] = !F[x[0]]; emit();}} />)}{any ? <Chip label={label("lbl.browseAutoE39JIC", "Clear all")} color={th.red} onPress={() => {S.sr.f = {}; emit();}} /> : null}</Rail>
       <Rail gap={8} style={{paddingTop: 8}}>{sorts.map(x => <Chip key={x[0]} label={x[1]} on={r.sort === x[0]} onPress={() => {S.sr.sort = x[0]; emit();}} />)}</Rail>
     </View>
   );
@@ -284,7 +284,7 @@ export function Search() {
               {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
               <Pressable accessibilityRole="link" accessibilityLabel={'Open ' + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
             </View>))}</>) : null}
-          {is.length ? (<><Ttl>Products</Ttl>{is.map(i => <ItemRow key={i.id} i={i} />)}</>) : null}
+          {is.length ? (<><Ttl>{label("lbl.browseAuto100SEII", "Products")}</Ttl>{is.map(i => <ItemRow key={i.id} i={i} />)}</>) : null}
         </View>
       );
   }
