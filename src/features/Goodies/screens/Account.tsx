@@ -165,10 +165,12 @@ function StoreChat({id}: {id: string}) {
     try {
       const {error} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: userId, body});
       if (error) throw error;
-      const {error: threadError} = await supabase.from('conversations').update({last_body: body, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-      if (threadError) throw threadError;
+      // The message is persisted now. Clear it before best-effort thread metadata so a
+      // metadata failure cannot lead the customer to accidentally resend the same message.
       setDraft('');
       await loadMessages(conversationId);
+      const {error: threadError} = await supabase.from('conversations').update({last_body: body, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
+      if (threadError) setProblem('Your message was sent, but the store conversation could not be refreshed. Please try again later.');
     } catch (e: any) { setProblem(e?.message || 'Message could not be sent.'); }
     finally { setSending(false); }
   };
@@ -178,11 +180,11 @@ function StoreChat({id}: {id: string}) {
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : label('lbl.chatTitle', 'Message store')} onBack={back} />
       {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label="Goodies" /></Row></Card></View> : null}
-      {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>Try again</T></Pressable></Card></View> : null}
-      {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>Opening conversation…</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+      {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>{label('lbl.chatTryAgain', 'Try again')}</T></Pressable></Card></View> : null}
+      {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>{label('lbl.chatOpening', 'Opening conversation…')}</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
           {chatActivated ? messages.map(m => {const mine = m.sender_id === userId; return <View key={m.id} style={{maxWidth: '82%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? th.br : th.soft, borderRadius: 16, paddingHorizontal: 13, paddingVertical: 10}}><T size={14} color={mine ? '#FFFFFF' : th.ink}>{m.body}</T><T size={10} color={mine ? '#FFFFFF' : th.mut} style={{marginTop: 4}}>{new Date(m.created_at).toLocaleString()}</T></View>;}) : <View style={{paddingVertical: 16, gap: 10}}>
-            <View style={{alignItems: 'center', padding: 18}}><Text style={{fontSize: 42}}>✉️</Text><T weight="800" style={{marginTop: 6}}>Contact the store</T><T size={13} color={th.mut} align="center" style={{marginTop: 5}}>Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies.</T></View>
+            <View style={{alignItems: 'center', padding: 18}}><Text style={{fontSize: 42}}>✉️</Text><T weight="800" style={{marginTop: 6}}>{label('lbl.chatContactStore', 'Contact the store')}</T><T size={13} color={th.mut} align="center" style={{marginTop: 5}}>{label('lbl.chatFirstMessageHint', 'Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies.')}</T></View>
             {customerMessages.length ? <Card><T size={13} weight="800">{label('lbl.chatMessagesSent', 'Messages sent')}</T>{customerMessages.map(m => <View key={m.id} style={{paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: th.line}}><T size={13.5}>{m.body}</T><T size={10.5} color={th.mut} style={{marginTop: 3}}>{new Date(m.created_at).toLocaleString()}</T></View>)}</Card> : null}
           </View>}
         </ScrollView>
