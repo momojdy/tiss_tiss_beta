@@ -34,12 +34,12 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   }
 }
 
-function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: keyof typeof PROMO; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
+function promoGradient(kind: string): [string, string] {\n  const preset = PROMO[kind as keyof typeof PROMO];\n  if (preset) return [preset[0], preset[1]];\n  if (!/^#[0-9a-fA-F]{6}$/.test(kind)) return [PROMO.plum[0], PROMO.plum[1]];\n  const hex = kind.slice(1);\n  const rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16));\n  const lighter = rgb.map(v => Math.round(v + (255 - v) * 0.24));\n  return [kind, '#' + lighter.map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase()];\n}\n\nfunction PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
   const [imageFailed, setImageFailed] = useState(false);
   useEffect(() => setImageFailed(false), [image]);
   return (
     <Pressable onPress={() => ui.sheet({kind: 'promo', p: kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce', custom: {title, sub, btn, emoji, target}})}>
-      <Grad colors={PROMO[kind]} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
+      <Grad colors={gradient} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
         <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
