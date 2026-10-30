@@ -104,14 +104,14 @@ export function bBreak(b: Builder, d: any) {
 }
 export function bCheck(b: Builder, d: any) {
   const errs: string[] = [], conf: string[] = [], s = STB[d.sid];
-  if (!s || BYO.store[d.sid] === false || !b.enabled || !b.available) errs.push('This builder is currently unavailable'); else if (!s.open) errs.push(s.n + ' is closed right now');
-  if (b.sizes.length) {const sz = b.sizes.filter(x => x.id === d.size)[0]; if (!sz) errs.push('Choose a size'); else if (!sz.avail) conf.push(sz.name + ' is no longer available. Choose another size');}
+  if (!s || BYO.store[d.sid] === false || !b.enabled || !b.available) errs.push(label('lbl.byoErrUnavailable', 'This builder is currently unavailable')); else if (!s.open) errs.push(label('lbl.byoErrStoreClosed', '{store} is closed right now').replace('{store}', s.n));
+  if (b.sizes.length) {const sz = b.sizes.filter(x => x.id === d.size)[0]; if (!sz) errs.push(label('lbl.byoErrChooseSize', 'Choose a size')); else if (!sz.avail) conf.push(label('lbl.byoErrSizeGone', '{size} is no longer available. Choose another size').replace('{size}', sz.name));}
   b.groups.forEach(g => {
     const us = units(g, d), mn = g.req || g.min > 0 ? Math.max(1, g.min) : 0; let live = 0; const c: any = {};
-    us.forEach(id => {const it = itemOf(g, id); c[id] = (c[id] || 0) + 1; if (!it) conf.push('An item you chose in ' + g.name + ' was removed by the store'); else if (!it.avail) conf.push(it.name + ' is unavailable'); else live++;});
-    if (live < mn) errs.push(mn === 1 ? 'Choose ' + g.name.toLowerCase() : 'Choose at least ' + mn + ' in ' + g.name);
-    if (us.length > g.max) errs.push('Too many in ' + g.name + ' (max ' + g.max + ')');
-    Object.keys(c).forEach(id => {const it = itemOf(g, id); const lim = it ? limitOf(g, it) : g.me; if (c[id] > lim) errs.push('At most ' + lim + ' of ' + (it ? it.name : 'the same item') + ' in ' + g.name);});
+    us.forEach(id => {const it = itemOf(g, id); c[id] = (c[id] || 0) + 1; if (!it) conf.push(label('lbl.byoErrItemRemoved', 'An item you chose in {group} was removed by the store').replace('{group}', g.name)); else if (!it.avail) conf.push(label('lbl.byoIngredientUnavailable', '{item} is unavailable').replace('{item}', it.name)); else live++;});
+    if (live < mn) errs.push(mn === 1 ? label('lbl.byoErrChooseOne', 'Choose {group}').replace('{group}', g.name.toLowerCase()) : label('lbl.byoErrChooseAtLeast', 'Choose at least {min} in {group}').replace('{min}', String(mn)).replace('{group}', g.name));
+    if (us.length > g.max) errs.push(label('lbl.byoErrTooMany', 'Too many in {group} (max {max})').replace('{group}', g.name).replace('{max}', String(g.max)));
+    Object.keys(c).forEach(id => {const it = itemOf(g, id); const lim = it ? limitOf(g, it) : g.me; if (c[id] > lim) errs.push(label('lbl.byoErrAtMost', 'At most {limit} of {item} in {group}').replace('{limit}', String(lim)).replace('{item}', it ? it.name : label('lbl.byoErrSameItem', 'the same item')).replace('{group}', g.name));});
   });
   return {errs, conf, ok: !errs.length && !conf.length};
 }
@@ -247,7 +247,7 @@ hooks.byoClear = () => {if (BD) {bDraftSave();} BD = null;};
 function TagText({text}: {text: string}) {const th = useTheme(); return <T size={13} weight="700" color={th.brd} style={{marginTop: 3}}>{text}</T>;}
 export function byoTag(sid: string): React.ReactNode {
   const l = byoList(sid); if (!l.length) return null;
-  return <TagText text={'Build your own ' + l.map(b => b.emoji).join(' ')} />;
+  return <TagText text={label('lbl.storeCustom', 'Build your own') + ' ' + l.map(b => b.emoji).join(' ')} />;
 }
 function ByoRow({b, s}: {b: Builder; s: any}) {
   const th = useTheme(), ok = b.available && s.open;
@@ -256,10 +256,10 @@ function ByoRow({b, s}: {b: Builder; s: any}) {
     <Pressable disabled={!ok} onPress={() => byoOpen(s.id, b.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: th.line, opacity: ok ? 1 : 0.55}}>
       <Tile e={b.emoji} bg="bg3" />
       <View style={{flex: 1}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap'}}><T weight="700">{b.name}</T><View style={{backgroundColor: th.brt, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 2}}><T size={11} weight="800" color={th.brd}>Build your own</T></View></View>
-        <T size={12.5} color={th.mut}>{ok ? (b.desc || 'Customize it your way') + ' · from ' + money(b.base + mn) : 'Currently unavailable'}</T>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap'}}><T weight="700">{b.name}</T><View style={{backgroundColor: th.brt, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 2}}><T size={11} weight="800" color={th.brd}>{label('lbl.storeCustom', 'Build your own')}</T></View></View>
+        <T size={12.5} color={th.mut}>{ok ? label('lbl.byoFromPrice', '{desc} · from {price}').replace('{desc}', b.desc || label('lbl.byoDefaultDesc', 'Customize it your way')).replace('{price}', money(b.base + mn)) : label('lbl.byoCardUnavailable', 'Currently unavailable')}</T>
       </View>
-      {ok ? <View style={{backgroundColor: th.br, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 8}}><T size={13} weight="800" color="#fff">{BYO.drafts[b.id] ? 'Resume' : 'Build'}</T></View> : null}
+      {ok ? <View style={{backgroundColor: th.br, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 8}}><T size={13} weight="800" color="#fff">{BYO.drafts[b.id] ? label('lbl.byoResume', 'Resume') : label('lbl.byoBuild', 'Build')}</T></View> : null}
     </Pressable>
   );
 }

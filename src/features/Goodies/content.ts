@@ -91,10 +91,8 @@ export function minAge(cc: string | null | undefined): number {
 }
 export const rgText = (id: string, fallback: string, age: number) => {const t = C && C.rg && C.rg.texts.find((x: any) => x.id === id); return (t ? tx(t.t) || fallback : fallback).replace(/\{age\}/g, String(age));};
 export const rulesLive = () => !!(C && C.rg && C.rg.live);
-export const stageLabels = (pickup: boolean, fallback: string[]) => {
-  if (!C) return [];
-  const L = C.stages.filter((s: any) => (pickup ? /^stg\.p/ : /^stg\.d/).test(s.id)); return L.length === fallback.length ? L.map((s: any, i: number) => tx(s.t) || fallback[i]) : fallback;
-};
+/* Order tracking step names: each step is an ordinary editable text (lbl.stageD0..., lbl.stageP0...). */
+export const stageLabels = (pickup: boolean, fallback: string[]) => fallback.map((text, i) => label('lbl.stage' + (pickup ? 'P' : 'D') + i, text));
 export const faq = (_fallback: [string, string][]): [string, string][] => (C && Array.isArray(C.faq) ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : []);
 export const supportTopics = (_fallback: string[]) => (C && Array.isArray(C.topics) ? C.topics.map((t: any) => tx(t.t)) : []);
 export function legalDoc(id: string): string | null {const d = C && C.legal && C.legal.find((x: any) => x.id === id && x.st === 'Live'); const s = d ? tx(d.t) : ''; return s || null;}

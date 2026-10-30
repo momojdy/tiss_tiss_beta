@@ -86,7 +86,7 @@ const bgOf = (id: string) => 'bg' + Array.from(id).reduce((a, c) => (a * 31 + c.
 
 /* Open or closed from the weekly hours, in the device's local time (the store and its customers share a city). */
 export function openState(hours: Record<string, DayHours> | null | undefined, now: Date = new Date()): {open: number; h: string; nx: string} {
-  if (!hours || typeof hours !== 'object' || !Object.keys(hours).length) return {open: 0, h: '', nx: 'Opening hours not set'};
+  if (!hours || typeof hours !== 'object' || !Object.keys(hours).length) return {open: 0, h: '', nx: label('lbl.storeHoursNotSet', 'Opening hours not set')};
   const win = (day: number) => {
     const d: any = (hours as any)[DAY_NAMES[((day % 7) + 7) % 7]];
     if (!d || d.closed) return null;
@@ -100,15 +100,15 @@ export function openState(hours: Record<string, DayHours> | null | undefined, no
     else if (nowMin >= tw.o) {open = 1; closesAt = tw.c;} /* closes after midnight */
   }
   if (!open && yw && yw.c <= yw.o && nowMin < yw.c) {open = 1; closesAt = yw.c;}
-  const h = tw ? fmtHM(tw.o) + '–' + fmtHM(tw.c) : 'Closed today';
-  if (open) return {open, h, nx: 'Open until ' + fmtHM(closesAt)};
+  const h = tw ? fmtHM(tw.o) + '–' + fmtHM(tw.c) : label('lbl.storeClosedToday', 'Closed today');
+  if (open) return {open, h, nx: label('lbl.storeOpenUntil', 'Open until {time}').replace('{time}', fmtHM(closesAt))};
   for (let off = 0; off <= 7; off++) {
     const w = win(today + off);
     if (!w || (off === 0 && nowMin >= w.o)) continue;
-    const when = off === 0 ? ' today' : off === 1 ? ' tomorrow' : ' ' + DAY_NAMES[(today + off) % 7];
-    return {open: 0, h, nx: 'Opens ' + fmtHM(w.o) + when};
+    const nx = off === 0 ? label('lbl.storeOpensToday', 'Opens {time} today') : off === 1 ? label('lbl.storeOpensTomorrow', 'Opens {time} tomorrow') : label('lbl.storeOpensOnDay', 'Opens {time} {day}').replace('{day}', DAY_NAMES[(today + off) % 7]);
+    return {open: 0, h, nx: nx.replace('{time}', fmtHM(w.o))};
   }
-  return {open: 0, h, nx: 'Currently closed'};
+  return {open: 0, h, nx: label('lbl.storeCurrentlyClosed', 'Currently closed')};
 }
 
 function liveStore(r: any, items: Item[]): Store {
@@ -289,8 +289,8 @@ export function applyZone() {
   });
 }
 export function ctOf() {
-  if (S.cc !== 'w') {const c = S.gc.filter((x: any) => x.id === S.cc)[0]; if (c) return {id: c.id, ph: c.ph, l: c.l || 'Goodies number', w: 0};}
-  return {id: 'w', ph: S.pf.ph, l: 'Default Wantiss number', w: 1};
+  if (S.cc !== 'w') {const c = S.gc.filter((x: any) => x.id === S.cc)[0]; if (c) return {id: c.id, ph: c.ph, l: c.l || label('lbl.sheetGoodiesNumber', 'Goodies number'), w: 0};}
+  return {id: 'w', ph: S.pf.ph, l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
 }
 export const done = (o: Order) => o.cx || ['declined', 'expired', 'cancelled'].includes(String((o as any).serverStatus || '').toLowerCase()) || (o.st as number) >= (o.pk ? 4 : 6);
 export const TL = STAGES_DELIVERY, TP = STAGES_PICKUP;
@@ -308,9 +308,9 @@ export function notify(t: string, d: string, r: string, p: string, k?: string) {
 /* ---------- pricing ---------- */
 export function pChk(code: string, sub: number, sid: string | null) {
   const p = coupons().filter((x: any) => x.c === code)[0];
-  if (!p) return {e: 'That code is not valid'} as any;
-  if (p.st && sid && p.st !== sid) return {e: 'Only valid at ' + STB[p.st].n} as any;
-  if (sub < p.min) return {e: 'Spend ' + money(p.min - sub) + ' more to use ' + code} as any;
+  if (!p) return {e: label('lbl.cartPromoInvalid', 'That code is not valid')} as any;
+  if (p.st && sid && p.st !== sid) return {e: label('lbl.cartPromoStoreOnly', 'Only valid at {store}').replace('{store}', STB[p.st].n)} as any;
+  if (sub < p.min) return {e: label('lbl.cartPromoMinimum', 'Spend {amount} more to use {code}').replace('{amount}', money(p.min - sub)).replace('{code}', code)} as any;
   return {p} as any;
 }
 export function totals() {

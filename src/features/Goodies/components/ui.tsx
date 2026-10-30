@@ -7,6 +7,7 @@ import {light, dark, Theme, BG} from '../theme';
 import {S, useGoodies, money, STB, PV, toast, ui} from '../store';
 import {Icon} from './Icon';
 import {t as tr, ts} from '../i18n';
+import {label as cmsLabel} from '../content';
 
 export const useTheme = (): Theme => {useGoodies(); return S.theme === 'dark' ? dark : light;};
 
@@ -176,7 +177,7 @@ export function SheetBox({children, large = false, compact = false, onClose}: an
     <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, height: compact || large ? '100%' : undefined, maxHeight: '100%', flexShrink: 1, minHeight: 0, overflow: 'hidden'}}>
       <View style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
         <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
-        {onClose ? <Pressable accessibilityRole="button" accessibilityLabel="Close popup" onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
+        {onClose ? <Pressable accessibilityRole="button" accessibilityLabel={cmsLabel('lbl.a11yClosePopup', 'Close popup')} onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
       </View>
       {children}
     </View>
@@ -185,7 +186,7 @@ export function SheetBox({children, large = false, compact = false, onClose}: an
 
 export const heartBtn = (id: string, on: boolean, onPress: () => void, label?: string) => {
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={label || (on ? "Remove from favorites" : "Save to favorites")} onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
+    <Pressable accessibilityRole="button" accessibilityLabel={label || (on ? cmsLabel('lbl.a11yRemoveFavoriteShort', 'Remove from favorites') : cmsLabel('lbl.a11ySaveFavoriteShort', 'Save to favorites'))} onPress={onPress} style={{position: 'absolute', top: 10, right: 10, width: 34, height: 34, borderRadius: 17, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}>
       <Icon name="heart" size={17} color={on ? '#FD802E' : '#1B1B1F'} fill={on} />
     </Pressable>
   );

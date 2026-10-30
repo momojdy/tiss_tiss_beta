@@ -17,7 +17,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const stars = (n: number, on: (v: number) => void) => <View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 10}}>{[1, 2, 3, 4, 5].map(v => <Pressable key={v} onPress={() => on(v)}><Icon name="star" size={32} color={n >= v ? '#FFB400' : th.line} fill /></Pressable>)}</View>;
   let content: any = null;
   if (k === 'newcart') content = (<><T size={20} weight="800">{label('lbl.sheetStartCart', 'Start a new cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}. Orders are placed with one store at a time, so adding from {sheet.to} replaces them.</T><Cta label={label('lbl.sheetReplace', 'Replace and add')} onPress={A.newCart} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
-  if (k === 'byoleave') content = (<><T size={20} weight="800">{sheet.edit ? 'Discard your changes?' : 'Leave this builder?'}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? 'The item in your cart stays as it was.' : 'Your choices can be saved as a draft so you can pick up where you left off.'}</T>{sheet.edit ? null : <><Cta label={label('lbl.sheetBuilderSave', 'Save draft and leave')} onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">{label('lbl.sheetDiscard', 'Discard')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
+  if (k === 'byoleave') content = (<><T size={20} weight="800">{sheet.edit ? label('lbl.sheetDiscardTitle', 'Discard your changes?') : label('lbl.sheetLeaveTitle', 'Leave this builder?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? label('lbl.sheetDiscardText', 'The item in your cart stays as it was.') : label('lbl.sheetLeaveText', 'Your choices can be saved as a draft so you can pick up where you left off.')}</T>{sheet.edit ? null : <><Cta label={label('lbl.sheetBuilderSave', 'Save draft and leave')} onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">{label('lbl.sheetDiscard', 'Discard')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'byoreset') content = (<><T size={20} weight="800">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'group-order') content = <GroupOrderSheet close={close} />;
@@ -53,22 +53,22 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
-          <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoC0Z21F", "Read store reviews")} onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>{label('lbl.storeCustomerReviews', 'Customer reviews').toUpperCase()}</T><T size={18} weight="800">{s.rv > 0 ? '★ ' + s.r.toFixed(1) + ' (' + s.rv + ' reviews)' : 'No reviews yet'}</T></Pressable>
-          <Badge label={s.open ? 'Open now' : 'Closed now'} />
+          <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoC0Z21F", "Read store reviews")} onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>{label('lbl.storeCustomerReviews', 'Customer reviews').toUpperCase()}</T><T size={18} weight="800">{s.rv > 0 ? label('lbl.sheetRatingSummary', '★ {rating} ({n} reviews)').replace('{rating}', s.r.toFixed(1)).replace('{n}', String(s.rv)) : label('lbl.storeNoReviewsYet', 'No reviews yet')}</T></Pressable>
+          <Badge label={s.open ? label('lbl.sheetOpenNow', 'Open now') : label('lbl.sheetClosedNow', 'Closed now')} />
         </Row>
         {row(label('lbl.storeOpeningHours', 'Opening hours'), s.h)}
-        {row(label('lbl.storeCurrentStatus', 'Current status'), s.open ? 'Accepting orders' : s.nx || 'Currently closed')}
+        {row(label('lbl.storeCurrentStatus', 'Current status'), s.open ? label('lbl.sheetAcceptingOrders', 'Accepting orders') : s.nx || label('lbl.storeCurrentlyClosed', 'Currently closed'))}
         {s.businessAddress ? row(label('lbl.storeAddress', 'Address'), [s.businessAddress, s.businessCity, s.businessCountry].filter(Boolean).join(', ')) : null}
         {s.businessPhone ? row(label('lbl.storePhone', 'Phone'), s.businessPhone) : null}
         {s.businessEmail ? row(label('lbl.storeEmail', 'Email'), s.businessEmail) : null}
         {s.businessWebsite ? row(label('lbl.storeWebsite', 'Website'), s.businessWebsite) : null}
         {s.businessDeliveryModes?.length ? row(label('lbl.storeServices', 'Available services'), s.businessDeliveryModes.join(' and ')) : null}
-        {row(label('lbl.storeDeliveryFee', 'Delivery fee'), s.fee === 0 ? 'Free delivery' : money(s.fee))}
+        {row(label('lbl.storeDeliveryFee', 'Delivery fee'), s.fee === 0 ? label('lbl.filterFree', 'Free delivery') : money(s.fee))}
         {row(label('lbl.storeMinimumOrder', 'Minimum order'), money(s.min))}
-        {row(label('lbl.storeDistance', 'Distance'), s.live ? 'Unavailable until store location is provided' : s.km.toFixed(1) + ' km away')}
+        {row(label('lbl.storeDistance', 'Distance'), s.live ? label('lbl.sheetDistanceUnavailable', 'Unavailable until store location is provided') : label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)))}
         {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + ' min')}
-        {row(label('lbl.storeOrderMethods', 'Order methods'), 'Delivery and pickup')}
-        {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? 'Available while closed' : 'Only while open')}
+        {row(label('lbl.storeOrderMethods', 'Order methods'), label('lbl.sheetDeliveryAndPickup', 'Delivery and pickup'))}
+        {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? label('lbl.sheetScheduledAvailable', 'Available while closed') : label('lbl.sheetScheduledOnlyOpen', 'Only while open'))}
         {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Minimum advance time'), Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
       </Card>
     </>);
@@ -171,14 +171,14 @@ function ScheduleSheet({close}: {close: () => void}) {
         <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
-    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">{label('lbl.sheetScheduledMinimum', 'Scheduled-order minimum')}</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? 'Opening '+opening+' · '+lead+' minutes advance time. Only times after the minimum are selectable.' : 'Minimum advance time: '+lead+' minutes.') : 'This store is not accepting scheduled orders while closed.'}</T></Card>:null}
+    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">{label('lbl.sheetScheduledMinimum', 'Scheduled-order minimum')}</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? label('lbl.sheetOpeningLead', 'Opening {opening} · {lead} minutes advance time. Only times after the minimum are selectable.').replace('{opening}', String(opening)).replace('{lead}', String(lead)) : label('lbl.sheetMinAdvance', 'Minimum advance time: {lead} minutes.').replace('{lead}', String(lead))) : label('lbl.sheetNoScheduledClosed', 'This store is not accepting scheduled orders while closed.')}</T></Card>:null}
     <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>{label('lbl.sheetAvailableTimes', 'Available times')}</T>
     {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
       {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
         <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
         {selectedTs===ts?<Icon name="check" color={th.br}/>:<T size={12} color={th.mut}>{label("lbl.sheetAutoTTYTF", "Select")}</T>}
       </Pressable>)}
-    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?'This store does not accept scheduled orders while closed.':'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.'}</T></Card>}
+    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?label('lbl.sheetNoScheduledClosed2', 'This store does not accept scheduled orders while closed.'):label('lbl.sheetNoPresetTimes', 'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.')}</T></Card>}
     <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>{label('lbl.sheetExactTime', 'Or enter an exact time')}</T>
     <Row style={{gap:10,alignItems:'flex-end'}}>
       <View style={{flex:1}}><Input label={label('lbl.sheetHourLabel', 'Hour (00–23)')} value={customHour} onChange={v=>{setCustomHour(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="14" keyboard="number-pad" /></View>
@@ -267,7 +267,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
   const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
   return (<>
-    <T size={20} weight="800">{driver ? 'Rate your driver' : 'Rate your order'}</T>{stars(n, setN)}
+    <T size={20} weight="800">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder={label('lbl.sheetReviewComment', 'Add a comment (optional)')} multiline />
     <View style={{height: 12}} />
     <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} onPress={() => {
@@ -292,7 +292,7 @@ function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string;
 
 function ContactsSheet({close}: {close: () => void}) {
   const th = useTheme();
-  const rows = [{id: 'w', ph: S.pf.ph, l: 'Default Wantiss number', w: 1}].concat(S.gc.map((c: any) => ({id: c.id, ph: c.ph, l: c.l || 'Goodies number', w: 0})));
+  const rows = [{id: 'w', ph: S.pf.ph, l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1}].concat(S.gc.map((c: any) => ({id: c.id, ph: c.ph, l: c.l || label('lbl.sheetGoodiesNumber', 'Goodies number'), w: 0})));
   return (<>
     <T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetContactNumber', 'Contact number')}</T>
     <T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetContactNumberHint', 'We use this number for this order only. Your Wantiss account number is never changed here.')}</T>

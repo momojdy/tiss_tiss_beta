@@ -15,7 +15,7 @@ import {Account} from './screens/Account';
 import {Sheets} from './components/Sheets';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent, label} from './content';
+import {loadContent, label, stageLabels} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 
@@ -52,9 +52,9 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
         if (!done(o)) {
           const st = stage(o);
           if (st !== o.st) {
-            o.st = st; ch = true; const Tt = o.pk ? TP : TL;
-            notify(done(o) ? 'Order ' + (o.pk ? 'picked up' : 'delivered') : 'Order update', o.id + ': ' + Tt[st], 'track', o.id, 'o');
-            if (done(o)) toast('Order ' + o.id + ' ' + (o.pk ? 'picked up' : 'delivered') + ' 🎉');
+            o.st = st; ch = true; const Tt = stageLabels(!!o.pk, o.pk ? TP : TL);
+            notify(done(o) ? (o.pk ? label('lbl.orderNotifPickedUp', 'Order picked up') : label('lbl.orderNotifDelivered', 'Order delivered')) : label('lbl.orderNotifUpdate', 'Order update'), o.id + ': ' + Tt[st], 'track', o.id, 'o');
+            if (done(o)) toast((o.pk ? label('lbl.orderToastPickedUp', 'Order {id} picked up 🎉') : label('lbl.orderToastDelivered', 'Order {id} delivered 🎉')).replace('{id}', o.id));
           }
         }
       });
@@ -100,7 +100,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'cart': body = <Cart />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
-    case 'catlist': body = <><TopBar title={c.p === 'all' ? 'All stores' : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
+    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
     case 'store': body = <Store id={c.p} />; break;
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;

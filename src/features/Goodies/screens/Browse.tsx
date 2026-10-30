@@ -69,7 +69,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Circ icon="chevL" label={tr('back')} onPress={onExit || back} />
         <Pressable onPress={() => go('addresses')} style={{flex: 1, minWidth: 0}}>
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
-          <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="800" lines={1} style={{flexShrink: 1}}>{addr()?.t || 'Choose your location'}</T><Icon name="chevD" size={14} color={th.ink} /></View>
+          <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="800" lines={1} style={{flexShrink: 1}}>{addr()?.t || label('lbl.browseChooseLocation', 'Choose your location')}</T><Icon name="chevD" size={14} color={th.ink} /></View>
         </Pressable>
         <Circ icon="heart" label={label('lbl.browseFavorites', 'Customer favorites')} color="#FD802E" onPress={() => go('favs')} />
         <Circ icon="bell" label={label('lbl.browseNotifications', 'Notifications')} dot={unread()} onPress={() => go('notifs')} />
@@ -95,11 +95,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         ))}
       </Rail></View>
       <View style={{marginTop: 20}}><Rail>
-        {pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : (<>
-          {first() ? <PromoCard kind="plum" title={label("lbl.browseAutoA5EWZI", "Free delivery on your first order")} sub={label("lbl.browseAuto1DKDL24", "Welcome to Goodies. New here? It is on us.")} btn="Order now" emoji="🛵" /> : null}
-          <PromoCard kind="orange" title={label("lbl.browseAuto1CBHH3D", "Earn double points this weekend")} sub={label("lbl.browseAutoVED21M", "Pay with Wallet on any order.")} btn="Start earning" emoji="🎁" />
-          <PromoCard kind="green" title={label("lbl.browseAuto1DHXIME", "20% off fresh produce")} sub={label("lbl.browseAuto18YQL4O", "Straight from local farms and markets.")} btn="Shop now" emoji="🥬" />
-        </>)}
+        {pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}
       </Rail></View>
       <View style={{paddingHorizontal: 16, marginTop: 10}}>
         <Pressable onPress={() => go('promos')} style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 1.5, borderColor: th.line, borderRadius: 16}}>
@@ -154,8 +150,8 @@ export function Explore() {
     return Number(!!y.open) - Number(!!x.open) || x.km - y.km;
   });
   const products = visible.flatMap(s => s.it.filter(i => !i.oos && i.stock > 0));
-  const scopeOptions: [string, string][] = [['closest', 'Closest'], ['open', 'Open now'], ['all', 'All available']];
-  const categoryOptions: [string, string][] = [['all', 'All categories'], ...categories().map(c => [c.id, c.emoji + ' ' + tx(c.name)] as [string, string])];
+  const scopeOptions: [string, string][] = [['closest', label('lbl.browseScopeClosest', 'Closest')], ['open', label('lbl.browseScopeOpen', 'Open now')], ['all', label('lbl.browseScopeAll', 'All available')]];
+  const categoryOptions: [string, string][] = [['all', label('lbl.browseAllCategories', 'All categories')], ...categories().map(c => [c.id, c.emoji + ' ' + tx(c.name)] as [string, string])];
   return (
     <View>
       <Bar title={label('lbl.browseExploreNearby', 'Explore nearby')} onBack={back} />
@@ -164,7 +160,7 @@ export function Explore() {
           <View style={{width: 40, height: 40, borderRadius: 13, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name="pin" size={20} color={th.br} /></View>
           <View style={{flex: 1}}>
             <T size={11.5} color={th.mut}>{label('lbl.browseNearLabel', 'BROWSING NEAR')}</T>
-            <T weight="800" size={14.5} lines={2}>{selectedAddress?.t || 'Choose your location'}</T>
+            <T weight="800" size={14.5} lines={2}>{selectedAddress?.t || label('lbl.browseChooseLocation', 'Choose your location')}</T>
             <T size={11.5} color={th.br} style={{marginTop: 2}}>{label('lbl.browseChangeAddress', 'Change address')}</T>
           </View>
           <Icon name="chevR" color={th.ink} />
@@ -176,7 +172,7 @@ export function Explore() {
           <Chips list={categoryOptions} on={category} onPick={setCategory} />
         </View>
         <Row sp style={{marginTop: 16, marginBottom: 8}}>
-          <T size={16} weight="800">{scope === 'open' ? 'Open near you' : scope === 'closest' ? 'Closest to you' : 'All available stores'}</T>
+          <T size={16} weight="800">{scope === 'open' ? label('lbl.browseTitleOpen', 'Open near you') : scope === 'closest' ? label('lbl.browseTitleClosest', 'Closest to you') : label('lbl.browseTitleAll', 'All available stores')}</T>
           <T size={11.5} color={th.mut}>{visible.length} stores</T>
         </Row>
       </View>
@@ -200,7 +196,7 @@ export function Explore() {
 
 export function Cats() {
   const th = useTheme(), {width} = useWindowDimensions(), w = (width - 32 - 16) / 3;
-  const all = [...categories().map(c => ({id: c.id, e: c.emoji, n: tx(c.name), art: c.art})), {id: 'all', e: '🏪', n: 'All stores', art: null as any}];
+  const all = [...categories().map(c => ({id: c.id, e: c.emoji, n: tx(c.name), art: c.art})), {id: 'all', e: '🏪', n: label('lbl.catAllStores', 'All stores'), art: null as any}];
   return (
     <View style={{paddingHorizontal: 16, flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
       {all.map(c => (
@@ -222,7 +218,7 @@ export function CatList({p}: {p: string}) {
   return (
     <View>
       <View style={{paddingHorizontal: 16}}>
-        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? 'Everything near you' : cname(p)} sub={l.length + ' store' + (l.length === 1 ? '' : 's') + ' · ' + its.length + ' products'} emoji={c ? c.emoji : '🏪'} onPress={() => {}} /></View>
+        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? label('lbl.catEverythingNear', 'Everything near you') : cname(p)} sub={(l.length === 1 ? label('lbl.catStoreOne', '{n} store') : label('lbl.catStoreMany', '{n} stores')).replace('{n}', String(l.length)) + ' · ' + label('lbl.catProducts', '{n} products').replace('{n}', String(its.length))} emoji={c ? c.emoji : '🏪'} onPress={() => {}} /></View>
       </View>
       {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="700" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>{label('lbl.browseSubcategories', 'SUBCATEGORIES')}</T><Chips list={[['', 'All'], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
       <Chips list={FCH} on={S.f} onPick={setFilter} />
@@ -241,8 +237,8 @@ export function CatList({p}: {p: string}) {
 export function Search() {
   const th = useTheme(), ins = useSafeAreaInsets();
   const r = S.sr, q = r.q.trim().toLowerCase(), F = r.f, any = Object.keys(F).some(k => F[k]);
-  const fl: [string, string][] = [['open', 'Open now'], ['top', 'Rating 4.5+'], ['fast', 'Under 30 min'], ['free', 'Free delivery'], ['sale', 'On sale'], ['p5', 'Under $5'], ['p10', 'Under $10']];
-  const sorts: [string, string][] = [['rel', 'Relevance'], ['pop', 'Popularity'], ['lo', 'Price: low to high'], ['hi', 'Price: high to low'], ['rate', 'Highest rating'], ['fast', 'Fastest delivery']];
+  const fl: [string, string][] = [['open', label('lbl.filterOpen', 'Open now')], ['top', label('lbl.filterTop', 'Rating 4.5+')], ['fast', label('lbl.filterFast', 'Under 30 min')], ['free', label('lbl.filterFree', 'Free delivery')], ['sale', label('lbl.filterSale', 'On sale')], ['p5', label('lbl.filterP5', 'Under $5')], ['p10', label('lbl.filterP10', 'Under $10')]];
+  const sorts: [string, string][] = [['rel', label('lbl.sortRelevance', 'Relevance')], ['pop', label('lbl.sortPopularity', 'Popularity')], ['lo', label('lbl.sortPriceLow', 'Price: low to high')], ['hi', label('lbl.sortPriceHigh', 'Price: high to low')], ['rate', label('lbl.sortRating', 'Highest rating')], ['fast', label('lbl.sortFastest', 'Fastest delivery')]];
   const setQ = (v: string) => {S.sr.q = v; emit();};
   const rec = (x: string) => {S.rec = [x].concat(S.rec.filter((y: string) => y.toLowerCase() !== x.toLowerCase())).slice(0, 6);};
   const head = (
@@ -256,7 +252,6 @@ export function Search() {
     body = (
       <View style={{paddingHorizontal: 16}}>
         {S.rec.length ? (<><Ttl>{label('lbl.searchRecent', 'Recent searches')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{S.rec.map((x: string) => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View><Pressable onPress={() => {S.rec = []; emit();}}><T size={13} weight="700" color={th.br} style={{marginTop: 8}}>{label('lbl.searchClear', 'Clear recent')}</T></Pressable></>) : null}
-        <Ttl>{label('lbl.popular', 'Popular searches')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{['Poulet frit', 'Mango', 'Pain patate', 'Riz', 'Pharmacy', 'Jus', 'Seafood'].map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View>
         <Ttl>{label('lbl.trending', 'Browse categories')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{categories().map(c => <Chip key={c.id} label={c.emoji + ' ' + tx(c.name)} onPress={() => go('catlist', c.id)} />)}</View>
       </View>
     );
@@ -274,7 +269,7 @@ export function Search() {
     if (q) ST.forEach(s => {if (s.n.toLowerCase().indexOf(q) === 0 && set.indexOf(s.n) < 0) set.push(s.n); s.it.forEach(i => {const w = i.n.toLowerCase(); if ((w.indexOf(q) === 0 || w.indexOf(' ' + q) > -1) && set.indexOf(i.n) < 0) set.push(i.n);});});
     const sug = set.filter(x => x.toLowerCase() !== q).slice(0, 5);
     body = (!ss.length && !is.length && !cs.length)
-      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? 'Clear filters' : 'Clear search'} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
+      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? label('lbl.searchClearFilters', 'Clear filters') : label('lbl.searchClearSearch', 'Clear search')} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
       : (
         <View style={{paddingHorizontal: 16}}>
           {sug.length ? (<><Ttl>{label('lbl.browseSuggestions', 'Suggestions')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
@@ -283,7 +278,7 @@ export function Search() {
             <View key={s.id} style={{flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line}}>
               <Pressable accessibilityRole="link" onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
                 <Tile e={s.e} bg={s.bg} />
-                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="700">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · {s.rv > 0 ? '★ ' + s.r.toFixed(1) : 'New store'}</T></View>
+                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="700">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · {s.rv > 0 ? '★ ' + s.r.toFixed(1) : label('lbl.cardNewStore', 'New store')}</T></View>
               </Pressable>
               {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
               <Pressable accessibilityRole="link" accessibilityLabel={'Open ' + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
@@ -348,7 +343,7 @@ export function Notifs() {
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(error.message); return; }
-    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || 'Goodies update', d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
+    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
   useEffect(() => {

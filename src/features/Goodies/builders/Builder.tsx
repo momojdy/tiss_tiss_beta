@@ -160,7 +160,7 @@ function CustomPlate({b}: {b: Builder}) {
   return (
     <View style={{alignItems: 'center', paddingHorizontal: 16}}>
       <Text style={{fontSize: 84, lineHeight: 92}}>{b.emoji}</Text>
-      <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginTop: 8}}>{(names.length ? names : ['Pick your options below']).map((x, i) => <View key={i} style={{backgroundColor: 'rgba(255,255,255,.12)', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5}}><T size={12.5} color="#F5F5F5">{x}</T></View>)}</View>
+      <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 6, justifyContent: 'center', marginTop: 8}}>{(names.length ? names : [label('lbl.byoPickBelow', 'Pick your options below')]).map((x, i) => <View key={i} style={{backgroundColor: 'rgba(255,255,255,.12)', borderRadius: 14, paddingHorizontal: 10, paddingVertical: 5}}><T size={12.5} color="#F5F5F5">{x}</T></View>)}</View>
     </View>
   );
 }

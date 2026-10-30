@@ -47,7 +47,7 @@ function Settings() {
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOrderUpdates', 'Order updates')}</T><Switch on={!!S.np.orders} label={label('lbl.settingsOrderUpdates', 'Order updates')} onPress={() => togglePref('orders')} /></Row>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>
       <Ttl>{label('lbl.settingsAccount', 'Account')}</Ttl>
-      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={address?.t ? address.t + ' · Wantiss default' : 'Add a delivery address'} onPress={() => go('addresses')} />
+      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={address?.t ? label('lbl.settingsAddressDefault', '{address} · Wantiss default').replace('{address}', address.t) : label('lbl.settingsAddAddressHint', 'Add a delivery address')} onPress={() => go('addresses')} />
       <LRow icon="wallet" title={label('lbl.settingsPayments', 'Wallet and payment methods')} sub={'Balance ' + money(S.wallet)} onPress={() => go('payments')} />
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
       <LRow icon="tag" title={label('lbl.settingsCoupons', 'Coupons and offers')} onPress={() => go('promos')} />
@@ -138,12 +138,12 @@ function StoreChat({id}: {id: string}) {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
         const user = auth.user;
-        if (!user) throw new Error('Sign in to message this store. Your conversation will appear here after you sign in.');
+        if (!user) throw new Error(label('lbl.chatErrSignIn', 'Sign in to message this store. Your conversation will appear here after you sign in.'));
         if (!active) return;
         setUserId(user.id);
         const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', id).maybeSingle();
         if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error('We could not find the vendor account linked to this store. Please try again later.');
+        if (!mapping?.business_id) throw new Error(label('lbl.chatErrNoVendor', 'We could not find the vendor account linked to this store. Please try again later.'));
         const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', id).eq('customer_id', user.id).limit(1).maybeSingle();
         if (findError) throw findError;
         let cid = found?.id;
@@ -155,14 +155,14 @@ function StoreChat({id}: {id: string}) {
         if (!active) return;
         setConversationId(cid);
         await loadMessages(cid);
-      } catch (e: any) { if (active) setProblem(e?.message || 'Could not open this store conversation.'); }
+      } catch (e: any) { if (active) setProblem(e?.message || label('lbl.chatErrOpen', 'Could not open this store conversation.')); }
       finally { if (active) setLoading(false); }
     })();
     return () => { active = false; };
   }, [id, attempt]);
   useEffect(() => {
     if (!conversationId) return;
-    const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(e?.message || 'Could not refresh messages.')); }).subscribe();
+    const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(e?.message || label('lbl.chatErrRefresh', 'Could not refresh messages.'))); }).subscribe();
     return () => { void supabase.removeChannel(channel); };
   }, [conversationId]);
   const send = async () => {
@@ -176,8 +176,8 @@ function StoreChat({id}: {id: string}) {
       setDraft('');
       await loadMessages(conversationId);
       const {error: threadError} = await supabase.from('conversations').update({last_body: body, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-      if (threadError) setProblem('Your message was sent, but the store conversation could not be refreshed. Please try again later.');
-    } catch (e: any) { setProblem(e?.message || 'Message could not be sent.'); }
+      if (threadError) setProblem(label('lbl.chatErrSentNotRefreshed', 'Your message was sent, but the store conversation could not be refreshed. Please try again later.'));
+    } catch (e: any) { setProblem(e?.message || label('lbl.chatErrSend', 'Message could not be sent.')); }
     finally { setSending(false); }
   };
   const chatActivated = messages.some(m => m.sender_id !== userId);
@@ -220,10 +220,10 @@ function Contact({p}: {p: any}) {
       if (store) {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
-        if (!auth.user) throw new Error('Sign in to contact this store. Your message has not been sent.');
+        if (!auth.user) throw new Error(label('lbl.contactErrSignInStore', 'Sign in to contact this store. Your message has not been sent.'));
         const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', storeId).maybeSingle();
         if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error('We could not find the vendor account linked to this store. Your message has not been sent.');
+        if (!mapping?.business_id) throw new Error(label('lbl.contactErrNoVendor', 'We could not find the vendor account linked to this store. Your message has not been sent.'));
         const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', storeId).eq('customer_id', auth.user.id).limit(1).maybeSingle();
         if (findError) throw findError;
         conversationId = found?.id || '';
@@ -241,11 +241,11 @@ function Contact({p}: {p: any}) {
         const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
         if (messageError) throw messageError;
         const {error: threadError} = await supabase.from('conversations').update({last_body: ticketBody, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-        if (threadError) toast('Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond.');
+        if (threadError) toast(label('lbl.contactErrSentNotRefreshed', 'Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond.'));
       } else {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
-        if (!auth.user) throw new Error('Sign in to contact support. Your ticket has not been created.');
+        if (!auth.user) throw new Error(label('lbl.contactErrSignInSupport', 'Sign in to contact support. Your ticket has not been created.'));
         const {data: created, error: ticketError} = await supabase.from('settings_support_requests').insert({
           user_id: auth.user.id,
           email: auth.user.email || '',
@@ -253,10 +253,10 @@ function Contact({p}: {p: any}) {
           message: body,
         }).select('id,ticket_code').single();
         if (ticketError) throw ticketError;
-        if (!created?.id || !created?.ticket_code) throw new Error('Support did not confirm the ticket. Please retry before leaving this screen.');
+        if (!created?.id || !created?.ticket_code) throw new Error(label('lbl.contactErrNotConfirmed', 'Support did not confirm the ticket. Please retry before leaving this screen.'));
         ticket = created.ticket_code;
       }
-      if (!ticket) throw new Error('The server did not confirm your support ticket. Please retry.');
+      if (!ticket) throw new Error(label('lbl.contactErrServerNotConfirmed', 'The server did not confirm your support ticket. Please retry.'));
       S.stack.pop();
       push('supdone', {ticket, storeId: store ? storeId : '', conversationId, topic, orderId: oid});
     } catch (e: any) {
@@ -264,7 +264,7 @@ function Contact({p}: {p: any}) {
     } finally {setSending(false);}
   };
   return (<View>
-    <Bar title={store ? 'Contact store' : 'Contact support'} onBack={back} />
+    <Bar title={store ? label('lbl.contactStoreTitle', 'Contact store') : label('lbl.contactSupportTitle', 'Contact support')} onBack={back} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
       {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></Card> : null}
       <T size={13} weight="700" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
@@ -274,8 +274,8 @@ function Contact({p}: {p: any}) {
         <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label={label('lbl.accountNone', 'None')} on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || 'Store')} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
       </> : null}
       <Input label={label('lbl.accountMessage', 'Message')} value={msg} onChange={setMsg} placeholder={label('lbl.accountSupportMessagePlaceholder', 'Tell us what happened (at least 10 characters)')} multiline />
-      <View style={{marginTop: 14}}><Cta label={sending ? 'Sending…' : 'Send message'} disabled={sending} onPress={() => {void submit();}} /></View>
-      <T size={12} color={th.mut} style={{marginTop: 10}}>{store ? 'We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies.' : 'Support messages are tracked with a ticket number.'}</T>
+      <View style={{marginTop: 14}}><Cta label={sending ? label('lbl.contactSending', 'Sending…') : label('lbl.contactSend', 'Send message')} disabled={sending} onPress={() => {void submit();}} /></View>
+      <T size={12} color={th.mut} style={{marginTop: 10}}>{store ? label('lbl.contactStoreNote', 'We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies.') : label('lbl.contactSupportNote', 'Support messages are tracked with a ticket number.')}</T>
     </ScrollView>
   </View>);
 }
