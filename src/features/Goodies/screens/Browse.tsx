@@ -17,6 +17,7 @@ const cname = (id: string) => catName(id);
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   const [imageFailed, setImageFailed] = useState(false);
   useEffect(() => setImageFailed(false), [image]);
+  const gradient = promoGradient(kind);
   return (
     <Pressable onPress={onPress} style={{borderRadius: 18, overflow: 'hidden', height: small ? 51 : 112}}>
       {grad ? <Grad colors={MODE1} style={{flex: 1, padding: small ? 0 : 14, paddingHorizontal: 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</Grad> : <View style={{flex: 1, backgroundColor: bg, paddingHorizontal: 14, padding: small ? 0 : 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</View>}
@@ -34,7 +35,17 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   }
 }
 
-function promoGradient(kind: string): [string, string] {\n  const preset = PROMO[kind as keyof typeof PROMO];\n  if (preset) return [preset[0], preset[1]];\n  if (!/^#[0-9a-fA-F]{6}$/.test(kind)) return [PROMO.plum[0], PROMO.plum[1]];\n  const hex = kind.slice(1);\n  const rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16));\n  const lighter = rgb.map(v => Math.round(v + (255 - v) * 0.24));\n  return [kind, '#' + lighter.map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase()];\n}\n\nfunction PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
+function promoGradient(kind: string): [string, string] {
+  const preset = PROMO[kind as keyof typeof PROMO];
+  if (preset) return [preset[0], preset[1]];
+  if (!/^#[0-9a-fA-F]{6}$/.test(kind)) return [PROMO.plum[0], PROMO.plum[1]];
+  const hex = kind.slice(1);
+  const rgb = [0, 2, 4].map(i => parseInt(hex.slice(i, i + 2), 16));
+  const lighter = rgb.map(v => Math.round(v + (255 - v) * 0.24));
+  return [kind, '#' + lighter.map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase()];
+}
+
+function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
   const [imageFailed, setImageFailed] = useState(false);
   useEffect(() => setImageFailed(false), [image]);
   return (
@@ -80,7 +91,8 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
       </Pressable>
       <View style={{flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 16}}>
-        <View style={{flex: 1.25}}><Mode grad title={(md && md[0] ? md[0].title : tr('foodDelivery')).replace(' ', '\n')} sub={md && md[0] ? md[0].sub : tr('hotFresh')} emoji={md && md[0] ? md[0].emoji : '🍛'} image={md?.[0]?.image} onPress={() => go('catlist', md && md[0] ? md[0].cat : 'restaurants')} /></View>
+        <View style={{flex: 1.25}}><Mode grad title={(md && md[0] ? md[0].title : tr('foodDelivery')).replace(' ', '
+')} sub={md && md[0] ? md[0].sub : tr('hotFresh')} emoji={md && md[0] ? md[0].emoji : '🍛'} image={md?.[0]?.image} onPress={() => go('catlist', md && md[0] ? md[0].cat : 'restaurants')} /></View>
         <View style={{flex: 1, gap: 10}}>
           <Mode small bg={th.m2bg} fg={th.m2fg} title={md && md[1] ? md[1].title : tr('groceries')} emoji={md && md[1] ? md[1].emoji : '🛒'} image={md?.[1]?.image} onPress={() => go('catlist', md && md[1] ? md[1].cat : 'groceries')} />
           <Mode small bg={th.m3bg} fg={th.m3fg} title={md && md[2] ? md[2].title : tr('drugstore')} emoji={md && md[2] ? md[2].emoji : '💊'} image={md?.[2]?.image} onPress={() => go('catlist', md && md[2] ? md[2].cat : 'drugstore')} />
