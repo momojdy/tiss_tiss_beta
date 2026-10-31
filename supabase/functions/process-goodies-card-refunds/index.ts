@@ -24,7 +24,7 @@ Deno.serve(async (req: Request) => {
     const { data: tokenValid, error: tokenError } = await service.rpc("validate_goodies_refund_worker_token", { p_token: token });
     if (tokenError || tokenValid !== true) return json({ error: "Not authorized" }, 401);
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2026-08-26.dahlia" });
+    const stripe = new Stripe(stripeKey);
     const { data: queue, error: queueError } = await service.rpc("claim_goodies_card_refunds", { p_limit: 25 });
     if (queueError) throw queueError;
     let refunded = 0, pending = 0, failed = 0;
@@ -97,9 +97,10 @@ Deno.serve(async (req: Request) => {
         }
       } catch (e) {
         failed++;
-        await service.rpc("finish_goodies_card_refund", {
+        const { error: resetError } = await service.rpc("finish_goodies_card_refund", {
           p_queue_id: item.queue_id, p_status: "failed", p_error: e instanceof Error ? e.message : "Refund attempt failed",
-        }).catch(() => undefined);
+        });
+        if (resetError) console.error("Could not release refund queue item", item.queue_id, resetError);
         console.error("Goodies card refund failed for order", item.order_id, e);
       }
     }
