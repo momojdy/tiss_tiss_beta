@@ -104,7 +104,7 @@ export function goCheckout() {
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   if (!t.st!.open && !t.st!.acceptScheduledOrders) {toast(label('lbl.actionStoreClosedNext', '{store} is closed. {next}').replace('{store}', t.st!.n).replace('{next}', t.st!.nx)); return;}
   if (t.sub < t.st!.min) {toast(label('lbl.actionMinimumOrder', 'Minimum order is {amount}').replace('{amount}', money(t.st!.min))); return;}
-  S.cs = 0; push('checkout');
+  S.cs = 0; S.pay = 'wallet'; push('checkout');
 }
 export function checkoutNext() {
   if (S.cs === 0 && !isPk()) {const a = addr(); if (!a || !a.t) {toast(label('lbl.actionChooseAddress', 'Choose a delivery address')); return;}}
@@ -143,7 +143,7 @@ export async function placeOrder() {
   const ct = ctOf();
   if (!phoneOK(ct.ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); S.cs = 0; emit(); return;}
   let deliveryQuoteId: string | null = null;
-  if (!providerInfo.demo && !pk && (st as any).deliveryPricingMode === 'distance') {
+  if (!providerInfo.demo && !pk) {
     const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst};
     const addressKey = JSON.stringify(addressPayload);
     let quote = (S as any).deliveryFeeQuote;
