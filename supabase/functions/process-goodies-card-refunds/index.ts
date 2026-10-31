@@ -49,7 +49,7 @@ Deno.serve(async (req: Request) => {
           .filter(r => r.status === "succeeded")
           .reduce((sum, r) => sum + r.amount, 0);
         const pendingRefund = priorRefunds.find(r =>
-          r.status === "pending" || r.status === "requires_action"
+          r.status === "pending"
         );
         const totalCents = Math.round(Number(item.total) * 100);
 
@@ -84,7 +84,7 @@ Deno.serve(async (req: Request) => {
             });
             if (error) throw error;
             refunded++;
-          } else if (refund.status === "pending" || refund.status === "requires_action" || refund.status === "succeeded") {
+          } else if (refund.status === "pending" || refund.status === "succeeded") {
             const { error } = await service.rpc("finish_goodies_card_refund", {
               p_queue_id: item.queue_id, p_status: "refund_pending",
               p_refund_id: refund.id, p_error: "Remaining Stripe refund amount is still pending",
