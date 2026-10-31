@@ -14,7 +14,7 @@ import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol' };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -35,12 +35,12 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', category: '', kind: '', minOrder: '5', fee: '2', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
-    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,eta_min,eta_max,promo,names,delivery_modes').eq('business_id', biz).maybeSingle());
+    const d: GStore = { demoStoreId: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
+    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes').eq('business_id', biz).maybeSingle());
     if (!r) return d;
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
-      demoStoreId: '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
+      demoStoreId: '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
       delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
     };
   },
@@ -49,6 +49,7 @@ export const goodiesApi = {
     await rpc('goodies_save_store_setup', {
       p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,
       p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,
+      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null,
     });
   },
   /* Publish status. Going live is checked on the server: verified business, category, hours and one in-stock product. */
@@ -201,7 +202,8 @@ export function GoodiesStorePage() {
   const err = (): string => {
     if (!f.category) return 'Choose a store category';
     if (!(parseFloat(f.minOrder) >= 0)) return 'Minimum order must be 0 or more';
-    if (!(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
+    if (f.pricingMode === 'fixed' && !(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
+    if (f.pricingMode === 'distance' && (!(parseFloat(f.baseFee) >= 0) || !(parseFloat(f.perKmFee) >= 0) || !(parseFloat(f.minFee) >= 0) || (f.maxFee.trim() && !(parseFloat(f.maxFee) >= parseFloat(f.minFee))) || (f.maxDistanceKm.trim() && !(parseFloat(f.maxDistanceKm) > 0)))) return 'Enter valid distance delivery pricing values';
     if (!(parseInt(f.etaMin, 10) > 0) || !(parseInt(f.etaMax, 10) >= parseInt(f.etaMin, 10))) return 'Enter a delivery time range, for example 20 to 35 minutes';
     if (!f.delivery && !f.pickup) return 'Keep delivery or pickup on';
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
@@ -218,7 +220,9 @@ export function GoodiesStorePage() {
       <Field label="Store type shown under your name (for example Haitian restaurant)" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
       <Section title="Orders" />
       <Field label="Minimum order ($)" keyboardType="decimal-pad" value={f.minOrder} onChangeText={(v: string) => set({ minOrder: v })} />
-      <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} />
+      <Section title="Delivery pricing" />
+      <Seg value={f.pricingMode} onChange={(v: string) => set({ pricingMode: v === 'distance' ? 'distance' : 'fixed' })} items={[{ k: 'fixed', l: 'Fixed fee' }, { k: 'distance', l: 'By distance' }]} />
+      {f.pricingMode === 'fixed' ? <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} /> : <View><Text style={s.mut}>Road distance is calculated automatically with Geoapify. Fee = base fee + road kilometres × rate.</Text><Field label="Base delivery fee ($)" keyboardType="decimal-pad" value={f.baseFee} onChangeText={(v: string) => set({ baseFee: v })} /><Field label="Price per kilometre ($)" keyboardType="decimal-pad" value={f.perKmFee} onChangeText={(v: string) => set({ perKmFee: v })} /><Field label="Minimum delivery fee ($)" keyboardType="decimal-pad" value={f.minFee} onChangeText={(v: string) => set({ minFee: v })} /><Field label="Maximum delivery fee ($, optional)" keyboardType="decimal-pad" value={f.maxFee} onChangeText={(v: string) => set({ maxFee: v })} /><Field label="Maximum delivery distance in km (optional)" keyboardType="decimal-pad" value={f.maxDistanceKm} onChangeText={(v: string) => set({ maxDistanceKm: v })} /></View>}
       <View style={s.row}><View style={s.g}><Field label="Fastest (min)" keyboardType="number-pad" value={f.etaMin} onChangeText={(v: string) => set({ etaMin: v })} /></View><View style={s.g}><Field label="Slowest (min)" keyboardType="number-pad" value={f.etaMax} onChangeText={(v: string) => set({ etaMax: v })} /></View></View>
       <View style={[s.row, { marginTop: 12 }]}><Text style={[s.title, s.g]}>Delivery</Text><Toggle value={f.delivery} onValueChange={(v: boolean) => set({ delivery: v })} /></View>
       <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Pickup</Text><Toggle value={f.pickup} onValueChange={(v: boolean) => set({ pickup: v })} /></View>
