@@ -317,7 +317,12 @@ export function totals() {
   const st = S.cart.sid ? STB[S.cart.sid] : null;
   const sub = S.cart.lines.reduce((a: number, l: CartLine) => a + l.p * l.q, 0), pk = isPk();
   const pc: any = S.promo && sub ? pChk(S.promo, sub, S.cart.sid) : {}, p = pc.p, ship = p && p.ty === 'ship';
-  const F = feesNow(), fee = !st || pk ? 0 : (first() && F.firstFree) || ship || st.fee === 0 ? 0 : st.fee, svc = sub ? F.svc : 0;
+  const F = feesNow();
+  const selectedAddress = addr();
+  const quote = (S as any).deliveryFeeQuote;
+  const quoteAddressKey = selectedAddress ? JSON.stringify({l: selectedAddress.l, t: selectedAddress.t, apt: selectedAddress.apt, inst: selectedAddress.inst}) : '';
+  const quoteValid = !!st && st.deliveryPricingMode === 'distance' && quote?.storeId === st.id && quote?.addressKey === quoteAddressKey && Number(quote?.expiresAt) > Date.now();
+  const fee = !st || pk ? 0 : (first() && F.firstFree) || ship ? 0 : quoteValid ? Number(quote.fee) : st.fee === 0 ? 0 : st.fee, svc = sub ? F.svc : 0;
   const disc = p && p.ty === 'pct' ? Math.round(sub * p.v) / 100 : 0, tip = pk ? 0 : S.tip;
   return {st, sub, fee, svc, disc, tip, total: sub + fee + svc - disc + tip, free: !!st && !pk && st.fee > 0 && fee === 0, perr: S.promo && sub && pc.e ? pc.e : '', pok: !!p};
 }
