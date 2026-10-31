@@ -3,7 +3,7 @@ import {providerInfo} from './providers';
 import {label} from './content';
 import {supabase} from '../../lib/supabase';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, first, contentHooks,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -156,7 +156,8 @@ export async function placeOrder() {
     }
     deliveryQuoteId = String(quoteResult.data.quote_id);
     const promoFree = !!(S.promo && pChk(S.promo, t.sub, S.cart.sid).p?.ty === 'ship');
-    const fee = (t.free || promoFree) ? 0 : Number(quoteResult.data.fee);
+    const firstFree = first() && !!contentHooks.fees?.().firstFree;
+    const fee = (t.free || promoFree || firstFree) ? 0 : Number(quoteResult.data.fee);
     t.fee = fee;
     t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
   }
