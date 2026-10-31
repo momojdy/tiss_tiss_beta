@@ -25,7 +25,7 @@ export function CardAuthentication({clientSecret, publishableKey, onComplete, on
         send({status:paymentIntent&&paymentIntent.status||'unknown'});
       }).catch(e=>send({error:String(e&&e.message||e)}));
     </script></body></html>`;
-  }, [clientSecret, publishableKey, paymentMethodId]);
+  }, [clientSecret, publishableKey]);
   const onMessage = (event: any) => {
     let value: any;
     try {value = JSON.parse(event.nativeEvent.data);} catch {setProblem('Could not read the card verification result.');setBusy(false);return;}
