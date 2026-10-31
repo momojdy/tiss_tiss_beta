@@ -78,6 +78,14 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     return()=>{cancelled=true;subscription?.remove();};
   },[available,deliveries]);
 
+  useEffect(()=>{
+    if(!available||activeOrderId)return;
+    const heartbeat=setInterval(()=>{
+      void supabase.rpc('goodies_set_courier_availability',{p_is_available:true,p_accepts_cash_on_delivery:acceptsCash});
+    },60000);
+    return()=>clearInterval(heartbeat);
+  },[available,acceptsCash,activeOrderId]);
+
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
     setBusy('presence');
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
