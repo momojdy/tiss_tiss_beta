@@ -15,7 +15,7 @@ const reasons = [
   { id: 'timing_unavailable', label: 'Timing unavailable' },
   { id: 'other', label: 'Other' },
 ];
-const fmt = (value: string | null) => value ? new Date(value).toLocaleString() : '—';
+const fmt = (value: string | null) => value ? new Date(value).toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' }) : '—';
 const money = (value: number) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value) || 0);
 const remaining = (deadline: string | null, now: number) => {
   if (!deadline) return '15-minute response required';
