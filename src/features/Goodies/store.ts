@@ -147,7 +147,7 @@ export async function refreshLiveSchedules() {
       for (let from = 0; ; from += 1000) {
         const pr = await supabase.from('goodies_products')
           .select('id,business_id,name,description,price,emoji,stock,restriction,photo_url,sort_order,created_at')
-          .in('business_id', ids).eq('is_available', true)
+          .in('business_id', ids).eq('is_available', true).eq('review_status', 'approved')
           .order('sort_order', {ascending: true}).order('created_at', {ascending: true}).order('id', {ascending: true})
           .range(from, from + 999);
         if (pr.error) throw pr.error;
