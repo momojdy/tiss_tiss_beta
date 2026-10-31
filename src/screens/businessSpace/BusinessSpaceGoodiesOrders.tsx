@@ -5,7 +5,7 @@ import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } f
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null;
-  scheduled_for: string | null; order_type: string; items: any[]; total: number; notes: string | null;
+  scheduled_for: string | null; order_type: string; items: any[]; total: number; notes: string | null; address?: Record<string, any> | null; contact_phone?: string | null;
 };
 const reasons = [
   { id: 'out_of_stock', label: 'Item unavailable' },
@@ -33,7 +33,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
-      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes,payment_method,payment_status')
+      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes,address,contact_phone,payment_method,payment_status')
       .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
@@ -105,6 +105,10 @@ export function GoodiesOrdersPage() {
                 <Pill tone={order.status === 'placed' ? 'warn' : order.status === 'accepted' || order.status === 'preparing' || order.status === 'ready' || order.status === 'completed' ? 'good' : order.status === 'declined' || order.status === 'expired' ? 'bad' : 'mute'}>{order.status}</Pill>
               </View>
               <Text style={{ color: '#5F6B5A', fontSize: 12 }}>{order.order_type === 'pickup' ? 'Pickup' : 'Delivery'} · {fmt(order.created_at)}</Text>
+              {order.order_type === 'delivery' ? <>
+                <Text style={{ color: '#1A2517', fontSize: 13 }}>Delivery address: {String(order.address?.t || order.address?.label || order.address?.address || 'Address not provided')}</Text>
+                <Text style={{ color: '#1A2517', fontSize: 13 }}>Customer phone: {String(order.contact_phone || 'Not provided')}</Text>
+              </> : null}
               <Text style={{ fontSize: 13, color: '#1A2517' }}>{(Array.isArray(order.items) ? order.items : []).map(i => (i.q || 1) + '× ' + (i.n || 'Item')).join(' · ') || 'Order items'}</Text>
               <Text style={{ fontWeight: '800', color: '#1A2517' }}>{money(order.total)}</Text>
               {order.notes ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer note: {order.notes}</Text> : null}
