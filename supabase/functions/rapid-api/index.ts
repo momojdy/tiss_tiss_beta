@@ -24,7 +24,17 @@ async function reconcileGoodiesPaymentIntent(
     p_event_id: event.id, p_event_type: event.type, p_livemode: event.livemode,
   });
   if (claimError) throw claimError;
-  if (claimed !== true) return true; // Already processed or currently being handled.
+  if (claimed !== true) {
+    const { data: existingStatus, error: statusError } = await supabase.rpc(
+      "get_goodies_stripe_webhook_event_status",
+      { p_event_id: event.id },
+    );
+    if (statusError) throw statusError;
+    if (existingStatus === "processed") return true;
+    // Do not acknowledge an in-flight delivery: Stripe should retry if its
+    // original delivery fails before the stale-claim timeout.
+    throw new Error("Stripe event is already being processed; retry delivery");
+  }
 
   try {
     const { data, error } = await supabase.rpc("process_goodies_card_payment_event", {
