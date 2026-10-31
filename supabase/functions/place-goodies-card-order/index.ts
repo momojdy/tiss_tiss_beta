@@ -128,10 +128,11 @@ Deno.serve(async (req: Request) => {
       metadata: {wantiss_user_id: userId, wantiss_purpose: "goodies_order", goodies_order_id: orderId},
     }, {idempotencyKey});
 
-    await service.from("goodies_orders").update({
+    const {error: pendingUpdateError} = await service.from("goodies_orders").update({
       payment_method: "card", payment_status: intent.status === "requires_action" ? "requires_action" : "pending",
       payment_provider_ref: intent.id, updated_at: new Date().toISOString(),
     }).eq("id", orderId).eq("customer_id", userId);
+    if (pendingUpdateError) throw pendingUpdateError;
 
     if (intent.status === "requires_action") {
       return json({
