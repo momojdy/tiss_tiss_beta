@@ -85,7 +85,12 @@ export const goodiesApi = {
     const remote = await q<any[]>(supabase.from('goodies_builder_configs').select('config,enabled').eq('business_id', biz).order('created_at', { ascending: true }));
     // Vendors must be able to open and finish unpublished drafts created in the admin.
     // Keep the server publication flag separate from the editable config payload.
-    if (remote?.length) return remote.filter(row => row.config).map(row => ({ ...(row.config as GBuilder), enabled: !!row.enabled }));
+    if (remote?.length) return remote.filter(row => row.config).map(row => {
+      const config = row.config as GBuilder;
+      // The table's enabled flag combines "offered" and "available". Keep the
+      // vendor's separate offered setting from the config so both toggles work.
+      return { ...config, enabled: typeof config.enabled === 'boolean' ? config.enabled : !!row.enabled };
+    });
     // One-time compatibility import: existing vendor drafts are pushed to the server when opened.
     const local = await rd<GBuilder[]>(k(biz, 'builders'), []);
     if (local.length) { await goodiesApi.saveBuilders(biz, local); return local; }
