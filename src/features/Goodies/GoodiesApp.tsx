@@ -108,7 +108,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
     case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
-    case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} paymentMethodId={S.cardPending.paymentMethodId} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" />; break;
+    case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
     case 'track': body = <Track id={c.p} />; break;
     case 'notifs': body = <Notifs />; break;
