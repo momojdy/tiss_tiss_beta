@@ -296,7 +296,7 @@ export const done = (o: Order) => o.cx || ['declined', 'expired', 'cancelled'].i
 export const TL = STAGES_DELIVERY, TP = STAGES_PICKUP;
 export function stage(o: Order) {
   if (!o.backendId) return 0;
-  const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, completed: o.pk ? 4 : 6, cancelled: 0, declined: 0, expired: 0};
+  const map: Record<string, number> = {scheduled: 0, placed: 0, accepted: 1, preparing: 2, ready: 3, courier_assigned: 4, picked_up: 5, completed: o.pk ? 4 : 6, cancelled: 0, declined: 0, expired: 0};
   return map[String(o.serverStatus || 'scheduled').toLowerCase()] ?? 0;
 }
 export function notify(t: string, d: string, r: string, p: string, k?: string) {
