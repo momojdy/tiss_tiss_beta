@@ -88,6 +88,7 @@ Deno.serve(async (req: Request) => {
       expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
       origin_latitude: origin.lat, origin_longitude: origin.lon,
       destination_latitude: destination.lat, destination_longitude: destination.lon,
+      route_geometry: route?.features?.[0]?.geometry || null,
     }).select("id").single();
     if (quoteError) throw quoteError;
     return reply({ quote_id: quote.id, fee, distance_km: Number(km.toFixed(2)), origin, destination, expires_in_seconds: 300 });
