@@ -55,6 +55,25 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     return()=>{cancelled=true;subscription?.remove();setLocationStatus('Location sharing is off');};
   },[activeOrderId]);
 
+  useEffect(()=>{
+    const hasActiveDelivery=deliveries.some(d=>d.status==='accepted'||d.status==='picked_up');
+    if(!available||hasActiveDelivery)return;
+    let subscription:Location.LocationSubscription|null=null;let cancelled=false;
+    void (async()=>{
+      const permission=await Location.requestForegroundPermissionsAsync();
+      if(!permission.granted){setLocationStatus('Allow location access while online so nearby stores can match you to deliveries.');return;}
+      if(cancelled)return;
+      setLocationStatus('Sharing live GPS location for nearby delivery matching');
+      subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.Balanced,timeInterval:5000,distanceInterval:20},position=>{
+        void supabase.rpc('goodies_courier_update_presence_location',{
+          p_latitude:position.coords.latitude,p_longitude:position.coords.longitude,
+          p_accuracy_m:position.coords.accuracy,p_heading:position.coords.heading,p_speed_mps:position.coords.speed,
+        }).then(({error})=>{if(error)setLocationStatus('GPS update failed: '+error.message);});
+      });
+    })().catch(e=>setLocationStatus(e.message||'Unable to start GPS sharing'));
+    return()=>{cancelled=true;subscription?.remove();};
+  },[available,deliveries]);
+
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
     setBusy('presence');
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
