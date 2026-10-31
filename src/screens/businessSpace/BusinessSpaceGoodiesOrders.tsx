@@ -28,6 +28,7 @@ const remaining = (deadline: string | null, now: number) => {
 export function GoodiesOrdersPage() {
   const app = useApp();
   const [decline, setDecline] = useState<GoodiesOrder | null>(null);
+  const [cancel, setCancel] = useState<GoodiesOrder | null>(null);
   const [reason, setReason] = useState('out_of_stock');
   const [detail, setDetail] = useState('');
   const [busyId, setBusyId] = useState('');
@@ -119,7 +120,7 @@ export function GoodiesOrdersPage() {
       .subscribe();
     return () => { void supabase.removeChannel(channel); };
   }, [app.biz.id]);
-  const act = async (order: GoodiesOrder, action: 'accept' | 'decline' | 'preparing' | 'ready' | 'completed') => {
+  const act = async (order: GoodiesOrder, action: 'accept' | 'decline' | 'cancel' | 'preparing' | 'ready' | 'completed') => {
     if (busyId) return;
     setBusyId(order.id);
     try {
@@ -127,15 +128,17 @@ export function GoodiesOrdersPage() {
         ? await supabase.rpc('accept_goodies_order', { p_order_id: order.id })
         : action === 'decline'
           ? await supabase.rpc('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
-          : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
+          : action === 'cancel'
+            ? await supabase.rpc('cancel_goodies_order_by_store', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
+            : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
       if (error) throw error;
-      setDecline(null); setDetail('');
+      setDecline(null); setCancel(null); setDetail('');
       let refundWarning = '';
       if (action === 'decline' && order.payment_method === 'card' && order.payment_status !== 'refunded') {
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: order.id } });
         if (refund.error || refund.data?.error) refundWarning = ' Card refund is pending and may need support follow-up.';
       }
-      app.toast(action === 'accept' ? 'Order accepted' : action === 'decline' ? 'Order declined. Customer notified.' + refundWarning : action === 'preparing' ? 'Order marked as preparing' : action === 'ready' ? 'Order marked ready' : 'Order completed');
+      app.toast(action === 'accept' ? 'Order accepted' : action === 'decline' ? 'Order declined. Customer notified.' + refundWarning : action === 'cancel' ? 'Order cancelled. Customer notified.' : action === 'preparing' ? 'Order marked as preparing' : action === 'ready' ? 'Order marked ready' : 'Order completed');
       await orders.reload();
       app.bump();
     } catch (e: any) {
@@ -207,8 +210,9 @@ export function GoodiesOrdersPage() {
               {order.status === 'accepted' || order.status === 'preparing' || (order.status === 'ready' && order.order_type === 'pickup') ? <Btn label={order.status === 'accepted' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready' : 'Complete order'} busy={busyId === order.id} disabled={!!busyId} onPress={() => void act(order, order.status === 'accepted' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'completed')} /> : null}
               {canRespond ? <View style={{ flexDirection: 'row', gap: 8 }}>
                 <View style={{ flex: 1 }}><Btn label="Accept order" onPress={() => void act(order, 'accept')} busy={busyId === order.id} /></View>
-                <View style={{ flex: 1 }}><Btn label="Decline" kind="danger" disabled={!!busyId} onPress={() => { setDecline(order); setReason('out_of_stock'); setDetail(''); }} /></View>
+                <View style={{ flex: 1 }}><Btn label="Decline" kind="danger" disabled={!!busyId} onPress={() => { setDecline(order); setCancel(null); setReason('out_of_stock'); setDetail(''); }} /></View>
               </View> : null}
+              {['scheduled','placed','accepted','preparing'].includes(order.status) ? <Btn label="Cancel order" kind="danger" disabled={!!busyId} onPress={() => { setCancel(order); setDecline(null); setReason('out_of_stock'); setDetail(''); }} /> : null}
             </View>;
           })}
         </View>
@@ -232,6 +236,17 @@ export function GoodiesOrdersPage() {
           <Field label={reason === 'other' ? 'Reason (required, at least 10 characters)' : 'Internal note (optional)'} value={detail} onChangeText={setDetail} multiline maxLength={1000} placeholder={reason === 'other' ? 'Explain why you cannot accept this order…' : 'Add context for your team…'} style={{ minHeight: 84, textAlignVertical: 'top' }} />
           {reason === 'other' && detail.trim().length < 10 ? <Text style={{ color: '#A33D3D', fontSize: 12 }}>Enter at least 10 characters ({detail.trim().length}/10).</Text> : null}
           <Btn label="Confirm decline" kind="danger" busy={busyId === decline.id} disabled={!!busyId || (reason === 'other' && detail.trim().length < 10)} onPress={() => void act(decline, 'decline')} />
+        </View>
+      </SheetShell> : null}
+      {cancel ? <SheetShell title={'Cancel order · ' + cancel.order_code} tall onClose={() => { if (!busyId) setCancel(null); }}>
+        <Text style={{ color: '#5F6B5A', fontSize: 13, lineHeight: 19, marginBottom: 10 }}>Choose the cancellation reason for your store’s records. The customer receives a separate, respectful explanation rather than your selected reason or private note.</Text>
+        <View style={{ gap: 8 }}>
+          {reasons.map(item => <Pressable key={item.id} onPress={() => setReason(item.id)} style={{ borderWidth: 1, borderColor: reason === item.id ? '#3F6B37' : '#D6DDD2', borderRadius: 12, padding: 12, backgroundColor: reason === item.id ? '#EAF4E5' : '#fff' }}>
+            <Text style={{ color: '#1A2517', fontWeight: reason === item.id ? '800' : '600' }}>{reason === item.id ? '●  ' : '○  '}{item.label}</Text>
+          </Pressable>)}
+          <Field label={reason === 'other' ? 'Reason (required, at least 10 characters)' : 'Internal note (optional)'} value={detail} onChangeText={setDetail} multiline maxLength={1000} placeholder={reason === 'other' ? 'Explain why your restaurant must cancel…' : 'Add private context for your team…'} style={{ minHeight: 84, textAlignVertical: 'top' }} />
+          {reason === 'other' && detail.trim().length < 10 ? <Text style={{ color: '#A33D3D', fontSize: 12 }}>Enter at least 10 characters ({detail.trim().length}/10).</Text> : null}
+          <Btn label="Confirm cancellation" kind="danger" busy={busyId === cancel.id} disabled={!!busyId || (reason === 'other' && detail.trim().length < 10)} onPress={() => void act(cancel, 'cancel')} />
         </View>
       </SheetShell> : null}
     </>
