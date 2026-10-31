@@ -91,8 +91,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
       </Pressable>
       <View style={{flexDirection: 'row', gap: 10, paddingHorizontal: 16, paddingTop: 16}}>
-        <View style={{flex: 1.25}}><Mode grad title={(md && md[0] ? md[0].title : tr('foodDelivery')).replace(' ', '
-')} sub={md && md[0] ? md[0].sub : tr('hotFresh')} emoji={md && md[0] ? md[0].emoji : '🍛'} image={md?.[0]?.image} onPress={() => go('catlist', md && md[0] ? md[0].cat : 'restaurants')} /></View>
+        <View style={{flex: 1.25}}><Mode grad title={(md && md[0] ? md[0].title : tr('foodDelivery')).replace(' ', '\n')} sub={md && md[0] ? md[0].sub : tr('hotFresh')} emoji={md && md[0] ? md[0].emoji : '🍛'} image={md?.[0]?.image} onPress={() => go('catlist', md && md[0] ? md[0].cat : 'restaurants')} /></View>
         <View style={{flex: 1, gap: 10}}>
           <Mode small bg={th.m2bg} fg={th.m2fg} title={md && md[1] ? md[1].title : tr('groceries')} emoji={md && md[1] ? md[1].emoji : '🛒'} image={md?.[1]?.image} onPress={() => go('catlist', md && md[1] ? md[1].cat : 'groceries')} />
           <Mode small bg={th.m3bg} fg={th.m3fg} title={md && md[2] ? md[2].title : tr('drugstore')} emoji={md && md[2] ? md[2].emoji : '💊'} image={md?.[2]?.image} onPress={() => go('catlist', md && md[2] ? md[2].cat : 'drugstore')} />
