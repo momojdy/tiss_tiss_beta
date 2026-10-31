@@ -11,17 +11,47 @@ Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
 
-async function reconcileGoodiesPaymentIntent(paymentIntent: Stripe.PaymentIntent, state: string) {
+async function reconcileGoodiesPaymentIntent(
+  paymentIntent: Stripe.PaymentIntent,
+  state: string,
+  event: Stripe.Event,
+  refundedAmountCents = 0,
+) {
   const orderId = paymentIntent.metadata?.goodies_order_id;
   if (paymentIntent.metadata?.wantiss_purpose !== "goodies_order" || !orderId) return false;
-  const {data, error} = await supabase.rpc("process_goodies_card_payment_event", {
-    p_order_id: orderId, p_payment_intent_id: paymentIntent.id, p_event_state: state,
-    p_amount_cents: paymentIntent.amount, p_currency: paymentIntent.currency,
+
+  const { data: claimed, error: claimError } = await supabase.rpc("claim_goodies_stripe_webhook_event", {
+    p_event_id: event.id, p_event_type: event.type, p_livemode: event.livemode,
   });
-  if (error) throw error;
-  if (data === "refund_required") {
-    await stripe.refunds.create({payment_intent: paymentIntent.id, reason: "requested_by_customer"},
-      {idempotencyKey: "goodies-late-success-refund-" + orderId});
+  if (claimError) throw claimError;
+  if (claimed !== true) return true; // Already processed or currently being handled.
+
+  try {
+    const { data, error } = await supabase.rpc("process_goodies_card_payment_event", {
+      p_order_id: orderId,
+      p_payment_intent_id: paymentIntent.id,
+      p_event_state: state,
+      p_amount_cents: paymentIntent.amount,
+      p_currency: paymentIntent.currency,
+      p_refunded_amount_cents: refundedAmountCents,
+    });
+    if (error) throw error;
+    if (data === "refund_required") {
+      await stripe.refunds.create(
+        { payment_intent: paymentIntent.id, reason: "requested_by_customer" },
+        { idempotencyKey: "goodies-late-success-refund-" + orderId },
+      );
+    }
+    const { error: completeError } = await supabase.rpc("complete_goodies_stripe_webhook_event", {
+      p_event_id: event.id,
+    });
+    if (completeError) throw completeError;
+  } catch (error) {
+    await supabase.rpc("fail_goodies_stripe_webhook_event", {
+      p_event_id: event.id,
+      p_error: error instanceof Error ? error.message : String(error),
+    });
+    throw error;
   }
   return true;
 }
@@ -83,17 +113,16 @@ if (event.type === "payment_intent.succeeded" ||
   const pi = event.data.object as Stripe.PaymentIntent;
   const state = event.type === "payment_intent.succeeded" ? "succeeded"
     : event.type === "payment_intent.canceled" ? "cancelled" : "failed";
-  if (await reconcileGoodiesPaymentIntent(pi, state)) {
+  if (await reconcileGoodiesPaymentIntent(pi, state, event)) {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
 }
 if (event.type === "charge.refunded") {
   const charge = event.data.object as Stripe.Charge;
-  if (charge.amount_refunded >= charge.amount) {
-    const pi = await paymentIntentFromCharge(charge);
-    if (pi && await reconcileGoodiesPaymentIntent(pi, "refunded")) {
-      return new Response(JSON.stringify({success:true,goodies:true,state:"refunded"}), {headers:{"Content-Type":"application/json"},status:200});
-    }
+  const pi = await paymentIntentFromCharge(charge);
+  if (pi && await reconcileGoodiesPaymentIntent(pi, "refund_updated", event, charge.amount_refunded)) {
+    const state = charge.amount_refunded >= charge.amount ? "refunded" : "partially_refunded";
+    return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
 }
 if (event.type === "charge.dispute.created" || event.type === "charge.dispute.closed") {
@@ -103,7 +132,7 @@ if (event.type === "charge.dispute.created" || event.type === "charge.dispute.cl
   const pi = await paymentIntentFromCharge(charge);
   const state = event.type === "charge.dispute.created" ? "disputed"
     : dispute.status === "won" ? "dispute_won" : "dispute_lost";
-  if (pi && await reconcileGoodiesPaymentIntent(pi, state)) {
+  if (pi && await reconcileGoodiesPaymentIntent(pi, state, event)) {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
 }
