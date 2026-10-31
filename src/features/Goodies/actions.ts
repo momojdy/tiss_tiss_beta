@@ -145,21 +145,38 @@ export async function placeOrder() {
   let deliveryQuoteId: string | null = null;
   if (!providerInfo.demo && !pk && (st as any).deliveryPricingMode === 'distance') {
     const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst};
-    const quoteResult = await supabase.functions.invoke('goodies-delivery-quote', {
-      body: {store_id: S.cart.sid, address: addressPayload},
-    });
-    if (quoteResult.error || !quoteResult.data?.quote_id) {
+    const addressKey = JSON.stringify(addressPayload);
+    let quote = (S as any).deliveryFeeQuote;
+    const quoteIsCurrent = quote?.storeId === S.cart.sid && quote?.addressKey === addressKey && Number(quote?.expiresAt) > Date.now();
+    if (!quoteIsCurrent) {
+      const quoteResult = await supabase.functions.invoke('goodies-delivery-quote', {
+        body: {store_id: S.cart.sid, address: addressPayload},
+      });
+      if (quoteResult.error || !quoteResult.data?.quote_id) {
+        S.busy = 0;
+        toast(quoteResult.data?.error || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
+        emit();
+        return;
+      }
+      quote = {
+        quoteId: String(quoteResult.data.quote_id), fee: Number(quoteResult.data.fee),
+        storeId: S.cart.sid, addressKey, expiresAt: Date.now() + 5 * 60 * 1000,
+      };
+      (S as any).deliveryFeeQuote = quote;
+    }
+    deliveryQuoteId = String(quote.quoteId);
+    const oldFee = t.fee;
+    const promoFree = !!(S.promo && pChk(S.promo, t.sub, S.cart.sid).p?.ty === 'ship');
+    const firstFree = first() && !!contentHooks.fees?.().firstFree;
+    const fee = (promoFree || firstFree) ? 0 : Number(quote.fee);
+    t.fee = fee;
+    t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
+    if (Math.abs(oldFee - fee) > 0.005) {
       S.busy = 0;
-      toast(quoteResult.data?.error || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
+      toast('Your road-based delivery fee is now ' + money(fee) + '. Review the updated total and place your order again.');
       emit();
       return;
     }
-    deliveryQuoteId = String(quoteResult.data.quote_id);
-    const promoFree = !!(S.promo && pChk(S.promo, t.sub, S.cart.sid).p?.ty === 'ship');
-    const firstFree = first() && !!contentHooks.fees?.().firstFree;
-    const fee = (t.free || promoFree || firstFree) ? 0 : Number(quoteResult.data.fee);
-    t.fee = fee;
-    t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
   }
   if (!providerInfo.demo) await refreshPaymentOptions();
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); return;}
