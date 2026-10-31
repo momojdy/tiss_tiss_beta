@@ -240,10 +240,16 @@ export async function completeCardOrder() {
 export async function cancelPendingCardOrder() {
   const pending = S.cardPending;
   if (!pending) {navBack();return;}
+  if (S.busy) return;
+  S.busy = 1; emit();
   try {
-    await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
+    const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
+    if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'The card payment could not be cancelled yet.');
+    S.cardPending = null; navBack();
+  } catch (e: any) {
+    toast(e?.message || 'The card payment could not be cancelled yet. Please retry.');
   } finally {
-    S.cardPending = null; S.busy = 0; navBack(); emit();
+    S.busy = 0; emit();
   }
 }
 
