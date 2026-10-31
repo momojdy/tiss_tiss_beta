@@ -1,0 +1,2 @@
+revoke all on function public.goodies_require_cash_policy() from public, anon, authenticated;
+revoke all on function public.goodies_orders_capture_delivery_coordinates() from public, anon, authenticated;
