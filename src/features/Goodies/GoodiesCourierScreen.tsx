@@ -31,11 +31,15 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     if(!ids.length){setDeliveries([]);return;}
     const {data:orders,error:orderError}=await supabase.from('goodies_orders').select('id,order_code,address,contact_phone,items,total,payment_method,payment_status,business_id').in('id',ids);
     if(orderError)throw orderError;
-    setDeliveries((assignments||[]).flatMap((a:any)=>{const o=(orders||[]).find((x:any)=>x.id===a.order_id);return o?[{...o,id:a.id,order_id:a.order_id,status:a.status}]:[];}));
+    const next=(assignments||[]).flatMap((a:any)=>{const o=(orders||[]).find((x:any)=>x.id===a.order_id);return o?[{...o,id:a.id,order_id:a.order_id,status:a.status}]:[];});
+    setDeliveries(previous=>{
+      const signature=(items:Delivery[])=>items.map(d=>d.order_id+':'+d.status).sort().join('|');
+      return signature(previous)===signature(next)?previous:next;
+    });
   },[]);
 
   useEffect(()=>{let active=true;void load().catch(e=>Alert.alert('Could not load deliveries',e.message)).finally(()=>{if(active)setLoading(false);});
-    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},()=>{void load();}).subscribe();
+    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.new?.status!==payload.old?.status)void load();}).subscribe();
     return()=>{active=false;void supabase.removeChannel(ch);};
   },[load,uid]);
 
