@@ -71,6 +71,21 @@ async function paymentIntentFromCharge(charge: Stripe.Charge) {
   return id ? await stripe.paymentIntents.retrieve(id) : null;
 }
 
+async function paymentIntentFromRefund(refund: Stripe.Refund) {
+  const chargeId = typeof refund.charge === "string" ? refund.charge : refund.charge?.id;
+  const charge = chargeId ? await stripe.charges.retrieve(chargeId) : null;
+  const refundPaymentIntent = typeof refund.payment_intent === "string"
+    ? refund.payment_intent
+    : refund.payment_intent?.id;
+  const chargePaymentIntent = charge
+    ? (typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id)
+    : null;
+  const paymentIntentId = refundPaymentIntent || chargePaymentIntent;
+  const paymentIntent = paymentIntentId ? await stripe.paymentIntents.retrieve(paymentIntentId) : null;
+  const refundedAmountCents = charge?.amount_refunded ?? (refund.status === "succeeded" ? refund.amount : 0);
+  return { paymentIntent, refundedAmountCents };
+}
+
 Deno.serve(async (req) => {
 try {
 const signature = req.headers.get("Stripe-Signature");
@@ -136,6 +151,16 @@ if (event.type === "charge.refunded") {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
 }
+if (event.type === "refund.updated" || event.type === "refund.failed") {
+  const refund = event.data.object as Stripe.Refund;
+  const { paymentIntent, refundedAmountCents } = await paymentIntentFromRefund(refund);
+  if (paymentIntent && await reconcileGoodiesPaymentIntent(paymentIntent, "refund_updated", event, refundedAmountCents)) {
+    const state = refundedAmountCents >= paymentIntent.amount ? "refunded"
+      : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
+    return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
+  }
+}
+
 if (event.type === "charge.dispute.created" || event.type === "charge.dispute.closed") {
   const dispute = event.data.object as Stripe.Dispute;
   const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge.id;
