@@ -96,3 +96,6 @@ do $$ begin
  if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='goodies_delivery_assignments') then alter publication supabase_realtime add table public.goodies_delivery_assignments; end if;
  if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='goodies_courier_presence') then alter publication supabase_realtime add table public.goodies_courier_presence; end if;
 end $$;
+
+revoke all on function public.goodies_list_dispatch_couriers(uuid) from public,anon;
+grant execute on function public.goodies_list_dispatch_couriers(uuid) to authenticated;
