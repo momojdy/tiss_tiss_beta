@@ -20,11 +20,11 @@ async function reconcileGoodiesPaymentIntent(
   const orderId = paymentIntent.metadata?.goodies_order_id;
   if (paymentIntent.metadata?.wantiss_purpose !== "goodies_order" || !orderId) return false;
 
-  const { data: claimed, error: claimError } = await supabase.rpc("claim_goodies_stripe_webhook_event", {
+  const { data: claimToken, error: claimError } = await supabase.rpc("claim_goodies_stripe_webhook_event", {
     p_event_id: event.id, p_event_type: event.type, p_livemode: event.livemode,
   });
   if (claimError) throw claimError;
-  if (claimed !== true) {
+  if (!claimToken) {
     const { data: existingStatus, error: statusError } = await supabase.rpc(
       "get_goodies_stripe_webhook_event_status",
       { p_event_id: event.id },
@@ -55,11 +55,13 @@ async function reconcileGoodiesPaymentIntent(
     }
     const { error: completeError } = await supabase.rpc("complete_goodies_stripe_webhook_event", {
       p_event_id: event.id,
+      p_claim_token: claimToken,
     });
     if (completeError) throw completeError;
   } catch (error) {
     await supabase.rpc("fail_goodies_stripe_webhook_event", {
       p_event_id: event.id,
+      p_claim_token: claimToken,
       p_error: error instanceof Error ? error.message : String(error),
     });
     throw error;
@@ -154,9 +156,17 @@ console.log(`Stripe event received: ${event.id} (${event.type})`);
 if (event.type === "payment_intent.succeeded" ||
     event.type === "payment_intent.payment_failed" ||
     event.type === "payment_intent.canceled") {
-  const pi = event.data.object as Stripe.PaymentIntent;
-  const state = event.type === "payment_intent.succeeded" ? "succeeded"
-    : event.type === "payment_intent.canceled" ? "cancelled" : "failed";
+  const receivedPi = event.data.object as Stripe.PaymentIntent;
+  // Stripe events can arrive out of order. Re-read the canonical PaymentIntent
+  // so an older failure snapshot cannot overwrite a later success or cancel.
+  const pi = await stripe.paymentIntents.retrieve(receivedPi.id);
+  const state = pi.status === "succeeded" ? "succeeded"
+    : pi.status === "canceled" ? "cancelled"
+    : event.type === "payment_intent.payment_failed" && pi.status === "requires_payment_method" ? "failed"
+    : null;
+  if (!state) {
+    return new Response(JSON.stringify({success:true,goodies:true,ignored:true,state:pi.status}), {headers:{"Content-Type":"application/json"},status:200});
+  }
   if (await reconcileGoodiesPaymentIntent(pi, state, event)) {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
@@ -187,12 +197,14 @@ if (event.type === "refund.updated" || event.type === "refund.failed") {
 }
 
 if (event.type === "charge.dispute.created" || event.type === "charge.dispute.closed") {
-  const dispute = event.data.object as Stripe.Dispute;
+  const receivedDispute = event.data.object as Stripe.Dispute;
+  // A delayed dispute.created event must not undo a later dispute closure.
+  const dispute = await stripe.disputes.retrieve(receivedDispute.id);
   const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge.id;
   const charge = await stripe.charges.retrieve(chargeId);
   const pi = await paymentIntentFromCharge(charge);
-  const state = event.type === "charge.dispute.created" ? "disputed"
-    : dispute.status === "won" ? "dispute_won" : "dispute_lost";
+  const state = dispute.status === "won" ? "dispute_won"
+    : dispute.status === "lost" ? "dispute_lost" : "disputed";
   if (pi && await reconcileGoodiesPaymentIntent(pi, state, event)) {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
