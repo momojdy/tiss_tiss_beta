@@ -8,7 +8,6 @@ type Delivery = {
   items:any[]; total:number; payment_method:string; payment_status:string; business_id:string;
 };
 const money=(v:number)=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(v)||0);
-const date=(v:string|null)=>v?new Date(v).toLocaleString():'—';
 
 export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   const [uid,setUid]=useState('');
@@ -59,24 +58,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     return()=>{cancelled=true;subscription?.remove();setLocationStatus('Location sharing is off');};
   },[activeOrderId]);
 
-  useEffect(()=>{
-    const hasActiveDelivery=deliveries.some(d=>d.status==='accepted'||d.status==='picked_up');
-    if(!available||hasActiveDelivery)return;
-    let subscription:Location.LocationSubscription|null=null;let cancelled=false;
-    void (async()=>{
-      const permission=await Location.requestForegroundPermissionsAsync();
-      if(!permission.granted){setLocationStatus('Allow location access while online so nearby stores can match you to deliveries.');return;}
-      if(cancelled)return;
-      setLocationStatus('Sharing live GPS location for nearby delivery matching');
-      subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.Balanced,timeInterval:5000,distanceInterval:20},position=>{
-        void supabase.rpc('goodies_courier_update_presence_location',{
-          p_latitude:position.coords.latitude,p_longitude:position.coords.longitude,
-          p_accuracy_m:position.coords.accuracy,p_heading:position.coords.heading,p_speed_mps:position.coords.speed,
-        }).then(({error})=>{if(error)setLocationStatus('GPS update failed: '+error.message);});
-      });
-    })().catch(e=>setLocationStatus(e.message||'Unable to start GPS sharing'));
-    return()=>{cancelled=true;subscription?.remove();};
-  },[available,deliveries]);
+
 
   useEffect(()=>{
     if(!available||activeOrderId)return;
@@ -113,7 +95,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
         <Text style={{fontSize:15,fontWeight:'800',color:'#1A2517'}}>Availability</Text>
-        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. Keep this screen open while working so GPS can be shared during an active delivery.</Text>
+        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts only after you accept a delivery.</Text>
         <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
           <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS sharing active':available?'You are online · Tap to go offline':'Go online'}</Text>
         </Pressable>
