@@ -295,6 +295,7 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
   const th = useTheme();
   const [courier, setCourier] = useState<any>(null);
   const [assignmentStatus, setAssignmentStatus] = useState('');
+  const [locationStale, setLocationStale] = useState(false);
   useEffect(() => {
     let active = true;
     const load = async () => {
@@ -303,9 +304,11 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
         .eq('order_id', orderId).maybeSingle();
       if (active && !error && data) {
         setAssignmentStatus(String(data.status || ''));
-        if (Number.isFinite(Number(data.latitude)) && Number.isFinite(Number(data.longitude)) && data.latitude != null && data.longitude != null) {
+        const fresh=!!data.location_updated_at && Date.now()-new Date(data.location_updated_at).getTime()<=120000;
+        setLocationStale(!!data.location_updated_at&&!fresh);
+        if (fresh && Number.isFinite(Number(data.latitude)) && Number.isFinite(Number(data.longitude)) && data.latitude != null && data.longitude != null) {
           setCourier({latitude: Number(data.latitude), longitude: Number(data.longitude), updatedAt: data.location_updated_at});
-        }
+        } else setCourier(null);
       }
     };
     void load();
@@ -326,7 +329,7 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
       {valid(courier) ? <Marker coordinate={courier} title={label('lbl.orderCourierLocation','Courier')} description={courier.updatedAt ? label('lbl.orderCourierUpdated','Updated {time}').replace('{time}',new Date(courier.updatedAt).toLocaleTimeString()) : ''} /> : null}
       {routeCoords.length > 1 ? <Polyline coordinates={routeCoords} strokeWidth={4} strokeColor={th.br} /> : valid(origin) && valid(destination) ? <Polyline coordinates={[origin,destination]} strokeWidth={3} strokeColor={th.br} lineDashPattern={[5,5]} /> : null}
     </MapView> : <Empty title={label('lbl.orderMapPreparing','Preparing delivery map')} text={label('lbl.orderMapPreparingHint','The map appears when the delivery address has been geocoded.')} />}
-    <T size={12} color={th.mut} style={{marginTop:8}}>{valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
+    <T size={12} color={th.mut} style={{marginTop:8}}>{valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : locationStale ? 'The courier GPS signal is temporarily stale. Waiting for a fresh location update.' : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : assignmentStatus === 'accepted' || assignmentStatus === 'picked_up' ? 'Courier accepted. Waiting for the first GPS location.' : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
   </Card>;
 }
 
