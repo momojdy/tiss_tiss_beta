@@ -227,7 +227,15 @@ export async function placeOrder() {
         ? Object.fromEntries(Object.entries(orderPayload.p_address).filter(([key]) => key !== 'delivery_quote_id'))
         : null;
       const fingerprint = JSON.stringify({...orderPayload, p_address: fingerprintAddress, p_payment_method: S.pay});
-      const attempt = await getGoodiesCheckoutAttempt(fingerprint);
+      let attempt: {key: string; fingerprint: string};
+      try {
+        attempt = await getGoodiesCheckoutAttempt(fingerprint);
+      } catch (storageError: any) {
+        S.busy = 0;
+        toast(storageError?.message || 'Could not securely save this checkout attempt. Please try again.');
+        emit();
+        return;
+      }
       const result = await supabase.rpc('place_goodies_order_with_payment_once', {
         p_idempotency_key: attempt.key,
         p_payment_method: S.pay,
