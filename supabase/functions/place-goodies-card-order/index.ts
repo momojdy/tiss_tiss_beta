@@ -59,6 +59,20 @@ Deno.serve(async (req: Request) => {
         return json({error: "Payment authorization does not match this order"}, 409);
       }
 
+      if (action === "capture" && ["cancelled", "declined", "expired"].includes(order.status)) {
+        if (intent.status === "requires_capture" || intent.status === "requires_action" || intent.status === "requires_confirmation") {
+          await stripe.paymentIntents.cancel(intent.id, {}, {idempotencyKey: "goodies-closed-order-" + order.id});
+        } else if (intent.status === "succeeded") {
+          await stripe.refunds.create({payment_intent: intent.id, reason: "requested_by_customer"},
+            {idempotencyKey: "goodies-closed-order-refund-" + order.id});
+        }
+        await service.from("goodies_orders").update({
+          payment_status: intent.status === "succeeded" ? "refund_pending" : "failed",
+          updated_at: new Date().toISOString(),
+        }).eq("id", order.id).eq("customer_id", userId);
+        return json({error: "This order was already closed and cannot be paid."}, 409);
+      }
+
       if (action === "cancel") {
         const captured = intent.status === "succeeded";
         if (intent.status === "requires_capture" || intent.status === "requires_action" || intent.status === "requires_confirmation") {
@@ -124,8 +138,15 @@ Deno.serve(async (req: Request) => {
     orderId = row.id;
 
     const {data: savedOrder, error: savedOrderError} = await service.from("goodies_orders")
-      .select("id,total,customer_id").eq("id", orderId).eq("customer_id", userId).single();
+      .select("id,total,customer_id,status,payment_status").eq("id", orderId).eq("customer_id", userId).single();
     if (savedOrderError) throw savedOrderError;
+    if (["cancelled", "declined", "expired"].includes(savedOrder.status) ||
+        ["failed", "refunded", "refund_pending", "disputed", "disputed_lost"].includes(savedOrder.payment_status)) {
+      return json({error: "This checkout attempt has already ended. Start a new checkout."}, 409);
+    }
+    if (savedOrder.payment_status === "paid") {
+      return json({success: true, id: row.id, order_code: row.order_code, status: row.status, payment_status: "paid"});
+    }
     const amount = Math.round(Number(savedOrder.total) * 100);
     if (!Number.isSafeInteger(amount) || amount <= 0 || amount > 10000000) {
       throw new Error("The validated order total is outside the supported card payment range.");
