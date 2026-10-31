@@ -10,7 +10,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSLocationWhenInUseUsageDescription": "Wantiss uses your location to show places to stay near you."
+        "NSLocationWhenInUseUsageDescription": "Wantiss uses your location for nearby places and, after you accept a Goodies delivery, to share your live delivery location with the customer until the delivery is complete."
       }
     },
     "android": {
@@ -43,7 +43,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Wantiss uses your location to show places to stay near you."
+          "locationWhenInUsePermission": "Wantiss uses your location for nearby places and, after you accept a Goodies delivery, to share your live delivery location with the customer until the delivery is complete."
         }
       ]
     ]
