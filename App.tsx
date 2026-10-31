@@ -57,15 +57,18 @@ import FrenziesGetStreakShieldScreen from './src/screens/Frenzies/FrenziesGetStr
 import FrenziesStreakShieldCheckoutScreen from './src/screens/Frenzies/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
 import BusinessSpaceScreen from './src/features/BusinessSpace/BusinessSpaceStandaloneEntry';
+import GoodiesCourierScreen from './src/features/Goodies/GoodiesCourierScreen';
 import { GlowzEntry } from './src/features/Glowz/GlowzStandaloneEntry';
 import PrezoStandaloneEntry from './src/features/prezo/PrezoStandaloneEntry';
 
 type Screen = 'auth' | 'forgot' | 'reset';
-type AppMode = 'buyer' | 'vendor';
+type AppMode = 'buyer' | 'vendor' | 'courier';
 
 function resolveAppMode(role: unknown): AppMode {
   const value = String(role ?? '').trim().toLowerCase();
-  return ['vendor', 'business', 'seller', 'merchant'].includes(value) ? 'vendor' : 'buyer';
+  if (['vendor', 'business', 'seller', 'merchant'].includes(value)) return 'vendor';
+  if (['courier', 'driver', 'delivery'].includes(value)) return 'courier';
+  return 'buyer';
 }
 
 type RequestedMode = 'buyer' | 'business';
@@ -126,6 +129,16 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     if (userError) throw userError;
     const user = userResult.user;
     if (!user) throw new Error('Your session has expired. Please sign in again.');
+
+    const {data: profile, error: profileError} = await withAuthRequestTimeout(supabase.from('profiles').select('role').eq('id',user.id).maybeSingle(),'Checking courier access');
+    if (profileError) throw profileError;
+    if (['courier','driver','delivery'].includes(String(profile?.role||'').trim().toLowerCase())) {
+      setBuyerScreen('home');
+      setAppMode('courier');
+      setAuthenticated(true);
+      setScreen('auth');
+      return;
+    }
 
     const { data: modes, error: modesError } = await withAuthRequestTimeout(supabase.rpc('get_my_account_modes'), 'Checking your account access');
     if (modesError) throw modesError;
@@ -270,6 +283,9 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { let mounted = true; const handleUrl = async (url: string | null) => { if (!url || !mounted) return; const parsed = Linking.parse(url); const scheme = (parsed.scheme ?? '').toLowerCase(); const host = (parsed.hostname ?? '').toLowerCase(); const path = (parsed.path ?? '').split('/').filter(Boolean).join('/').toLowerCase(); const code = typeof parsed.queryParams?.code === 'string' ? parsed.queryParams.code : null; const token = typeof parsed.queryParams?.token === 'string' ? parsed.queryParams.token : null; if (scheme !== 'wantiss') return; const isQrRoute = host === 'qr' || path === 'qr'; if (isQrRoute) { if (!token || !/^[A-Za-z0-9_-]{32,256}$/.test(token)) { Alert.alert('Wantiss link not recognized', 'This Wantiss QR link is incomplete or invalid.'); return; } setPendingQrToken(token); setAuthInitialMode('buyer'); setScreen('auth'); setAppMode('buyer'); return; } const isResetRoute = host === 'reset-password' || path === 'reset-password'; if (!isResetRoute) return; try { if (code) { const { error } = await supabase.auth.exchangeCodeForSession(code); if (error) throw error; } if (mounted) setScreen('reset'); } catch (error) { if (mounted) { setScreen('auth'); console.error('Password reset link error:', error); } } }; Linking.getInitialURL().then(handleUrl); const subscription = Linking.addEventListener('url', ({ url }) => handleUrl(url)); return () => { mounted = false; subscription.remove(); }; }, []);
   useEffect(() => { if (!authenticated || !pendingQrToken) return; let active = true; const token = pendingQrToken; void (async () => { try { const { data, error } = await supabase.rpc('resolve_qr_identity', { p_token: token }); if (error) throw error; if (!data?.valid) throw new Error('This Wantiss QR is invalid, expired, or revoked.'); if (!active) return; setPendingQrToken(null); if (data.is_self === true) { setQrLaunchToken(token); setQrKind(data.qr_type === 'wallet_receive' ? 'wallet_receive' : 'buyer_identity'); setBuyerScreen('qrIdentity'); setAppMode('buyer'); return; } if (data.destination === 'vendor-shop') { setPublicShop({ vendorId: data.vendor_id, shopName: data.shop_name }); setBuyerScreen('vendorShop'); } else if (data.destination === 'buyer-profile') { setPublicBuyerProfile(data); setBuyerScreen('publicBuyerProfile'); } else if (data.destination === 'wallet-receive' || data.qr_type === 'wallet_receive') { setWalletQrRecipient({ token, recipient: { ...data, destination: 'wallet-receive' } }); setQrLaunchToken(null); setWalletQrDisplayToken(null); setBuyerScreen('walletQrRecipient'); setAppMode('buyer'); } } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'This QR could not be opened.'); } })(); return () => { active = false; }; }, [authenticated, pendingQrToken]);
   if (!fontsLoaded || !authReady) return null;
+  if (authenticated && appMode === 'courier') {
+    return <GoodiesCourierScreen onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+  }
   if (authenticated && appMode === 'vendor') {
     return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
