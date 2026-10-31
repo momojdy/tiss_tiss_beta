@@ -36,6 +36,7 @@ export function GoodiesOrdersPage() {
   const [dispatchOrder, setDispatchOrder] = useState<GoodiesOrder | null>(null);
   const [couriers, setCouriers] = useState<any[]>([]);
   const [dispatchBusy, setDispatchBusy] = useState('');
+  const [assignmentStates, setAssignmentStates] = useState<Record<string,string>>({});
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
@@ -45,6 +46,21 @@ export function GoodiesOrdersPage() {
     return (data || []) as GoodiesOrder[];
   }, [app.biz.id, app.tick]);
 
+  useEffect(() => {
+    const orderIds=(orders.d||[]).filter(o=>o.order_type==='delivery').map(o=>o.id);
+    if(!orderIds.length){setAssignmentStates({});return;}
+    let active=true;
+    const sync=async()=>{
+      const {data,error}=await supabase.from('goodies_delivery_assignments')
+        .select('order_id,status').eq('business_id',app.biz.id).in('order_id',orderIds);
+      if(active&&!error)setAssignmentStates(Object.fromEntries((data||[]).map((a:any)=>[a.order_id,a.status])));
+    };
+    void sync();
+    const channel=supabase.channel('goodies-vendor-delivery-assignments-'+app.biz.id)
+      .on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:'business_id=eq.'+app.biz.id},()=>{void sync();})
+      .subscribe();
+    return()=>{active=false;void supabase.removeChannel(channel);};
+  },[app.biz.id,orders.d]);
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
   useEffect(() => {
     let active = true;
@@ -158,8 +174,8 @@ export function GoodiesOrdersPage() {
               <Text style={{ fontWeight: '800', color: '#1A2517' }}>{money(order.total)}</Text>
               {order.notes ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer note: {order.notes}</Text> : null}
               {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
-              {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>Delivery offer sent. Waiting for courier acceptance. You can reassign if the courier does not respond.</Text> : null}
-              {(order.status === 'ready' || order.status === 'courier_assigned') && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
+              {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>{assignmentStates[order.id]==='accepted' ? 'Courier accepted the offer. Live GPS tracking starts now.' : assignmentStates[order.id]==='picked_up' ? 'Courier picked up this order.' : 'Delivery offer sent. Waiting for courier acceptance.'}</Text> : null}
+              {(order.status === 'ready' || (order.status === 'courier_assigned' && (!assignmentStates[order.id] || assignmentStates[order.id]==='offered' || assignmentStates[order.id]==='declined'))) && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
               {order.status === 'accepted' || order.status === 'preparing' || (order.status === 'ready' && order.order_type === 'pickup') ? <Btn label={order.status === 'accepted' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready' : 'Complete order'} busy={busyId === order.id} disabled={!!busyId} onPress={() => void act(order, order.status === 'accepted' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'completed')} /> : null}
               {canRespond ? <View style={{ flexDirection: 'row', gap: 8 }}>
                 <View style={{ flex: 1 }}><Btn label="Accept order" onPress={() => void act(order, 'accept')} busy={busyId === order.id} /></View>
