@@ -13,6 +13,7 @@ import {SEED_REVIEWS} from '../data/seed';
 import {t as tr} from '../i18n';
 import {supabase} from '../../../lib/supabase';
 import Svg, {Path, Circle} from 'react-native-svg';
+import MapView, {Marker, Polyline} from 'react-native-maps';
 
 
 const Hero = ({s, onBack, right}: any) => (
@@ -202,7 +203,18 @@ const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View s
 export function Checkout() {
   useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
   const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
-  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card in Wallet settings', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + (pk ? label('lbl.checkoutPickup', 'pickup') : label('lbl.checkoutDelivery', 'delivery')),  'Pay when you receive it', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo || p[0] !== 'moncash'));
+  const [cashEligible, setCashEligible] = useState(false);
+  useEffect(() => {
+    let active = true;
+    setCashEligible(false);
+    if (!pk && st?.id && !providerInfo.demo) {
+      void supabase.rpc('goodies_cash_on_delivery_available', {p_store_id: st.id})
+        .then(({data, error}) => { if (active && !error) setCashEligible(data === true); });
+    }
+    return () => { active = false; };
+  }, [st?.id, pk]);
+  useEffect(() => { if (!cashEligible && S.pay === 'cash') { S.pay = 'wallet'; emit(); } }, [cashEligible]);
+  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card in Wallet settings', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
   const ct = ctOf();
   let body: any = null;
   if (S.cs === 0) body = (<>
@@ -279,9 +291,42 @@ export function Confirm({id}: {id: string}) {
   );
 }
 
-function DeliveryRouteMap() {
+function DeliveryRouteMap({orderId, origin, destination}: {orderId: string; origin: any; destination: any}) {
   const th = useTheme();
-  return <Card style={{padding: 12}}><T size={15} weight="800">{label('lbl.orderLiveTracking', 'Live delivery route')}</T><Empty title={label('lbl.orderTrackingUnavailable', 'Live tracking unavailable')} text={label("lbl.shopAutoK3V81G", "Driver location has not been provided by the order service.")} /></Card>;
+  const [courier, setCourier] = useState<any>(null);
+  const [assignmentStatus, setAssignmentStatus] = useState('');
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      const {data, error} = await supabase.from('goodies_delivery_assignments')
+        .select('latitude,longitude,status,location_updated_at')
+        .eq('order_id', orderId).maybeSingle();
+      if (active && !error && data) {
+        setAssignmentStatus(String(data.status || ''));
+        if (Number.isFinite(Number(data.latitude)) && Number.isFinite(Number(data.longitude)) && data.latitude != null && data.longitude != null) {
+          setCourier({latitude: Number(data.latitude), longitude: Number(data.longitude), updatedAt: data.location_updated_at});
+        }
+      }
+    };
+    void load();
+    const channel = supabase.channel('goodies-courier-map-' + orderId)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'goodies_delivery_assignments', filter: 'order_id=eq.' + orderId}, () => { void load(); })
+      .subscribe();
+    return () => { active = false; void supabase.removeChannel(channel); };
+  }, [orderId]);
+  const valid = (p: any) => p && Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude));
+  const points = [origin, destination, courier].filter(valid);
+  const center = points.length ? {latitude: points.reduce((n,p)=>n+Number(p.latitude),0)/points.length, longitude: points.reduce((n,p)=>n+Number(p.longitude),0)/points.length} : null;
+  return <Card style={{padding: 12}}>
+    <T size={15} weight="800">{label('lbl.orderLiveTracking', 'Live delivery route')}</T>
+    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} initialRegion={{...center,latitudeDelta:0.04,longitudeDelta:0.04}} showsCompass>
+      {valid(origin) ? <Marker coordinate={origin} title={label('lbl.orderStoreOrigin','Store')} pinColor="#2E8B57" /> : null}
+      {valid(destination) ? <Marker coordinate={destination} title={label('lbl.orderDeliveryDestination','Delivery address')} pinColor="#D97706" /> : null}
+      {valid(courier) ? <Marker coordinate={courier} title={label('lbl.orderCourierLocation','Courier')} description={courier.updatedAt ? label('lbl.orderCourierUpdated','Updated {time}').replace('{time}',new Date(courier.updatedAt).toLocaleTimeString()) : ''} /> : null}
+      {valid(origin) && valid(destination) && valid(courier) ? <Polyline coordinates={[origin,courier,destination]} strokeWidth={4} strokeColor={th.br} /> : null}
+    </MapView> : <Empty title={label('lbl.orderMapPreparing','Preparing delivery map')} text={label('lbl.orderMapPreparingHint','The map appears when the delivery address has been geocoded.')} />}
+    <T size={12} color={th.mut} style={{marginTop:8}}>{valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
+  </Card>;
 }
 
 function PickupLocationMap() {
@@ -294,12 +339,17 @@ export function Track({id}: {id: string}) {
     if (!o?.backendId) return;
     let active = true;
     const sync = async () => {
-      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref').eq('id', o.backendId).maybeSingle();
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref,store_latitude,store_longitude,delivery_latitude,delivery_longitude,courier_id').eq('id', o.backendId).maybeSingle();
       if (!active || error || !data) return;
       o.serverStatus = data.status;
       o.acceptanceDeadlineAt = data.acceptance_deadline_at;
       o.declineReasonPublic = data.decline_reason_public;
       o.paymentStatus = data.payment_status;
+      o.storeLatitude = data.store_latitude == null ? null : Number(data.store_latitude);
+      o.storeLongitude = data.store_longitude == null ? null : Number(data.store_longitude);
+      o.deliveryLatitude = data.delivery_latitude == null ? null : Number(data.delivery_latitude);
+      o.deliveryLongitude = data.delivery_longitude == null ? null : Number(data.delivery_longitude);
+      o.courierId = data.courier_id || null;
       if (data.payment_method === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && ['paid','refund_pending'].includes(data.payment_status) && !o.refundRequested) {
         o.refundRequested = true;
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
@@ -335,7 +385,7 @@ export function Track({id}: {id: string}) {
           <T size={11.5} color={th.mut}>{label('lbl.orderStatusHeading', 'Order status is provided by the live order service.')}</T>
         </Card>
         {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap /> : null}
-        {!o.pk && o.st >= 4 && !dn ? <DeliveryRouteMap /> : null}
+        {!o.pk && o.st >= 4 && !dn && o.backendId ? <DeliveryRouteMap orderId={o.backendId} origin={{latitude:o.storeLatitude,longitude:o.storeLongitude}} destination={{latitude:o.deliveryLatitude,longitude:o.deliveryLongitude}} /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label={label("lbl.shopAuto1RR9Q6U", "Demo: ID valid")} onPress={() => idResult(o.id, true)} /><Cta small ghost label={label("lbl.shopAuto2L0NX5", "Demo: ID failed")} onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRate', 'Rate your order')}</T><T size={12} color={th.mut}>{label('lbl.orderFeedback', 'Order and delivery feedback')}</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateOrder', 'Rate order {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>{label('lbl.orderYourRating', 'Your rating: {n} ★').replace('{n}', String(o.rated))}</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRateDriver', 'Rate your driver')}</T><T size={12} color={th.mut}>{label('lbl.orderDeliveryExperience', 'Delivery experience')}</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateDriver', 'Rate driver {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
         {o.rated && (o.pk || o.driverRated) ? <Card>
