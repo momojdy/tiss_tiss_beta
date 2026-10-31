@@ -37,7 +37,7 @@ Deno.serve(async (req: Request) => {
     if (order.payment_method !== "card") return json({ status: order.payment_status || "not_card" });
     if (order.payment_status === "refunded") return json({ status: "refunded" });
     if (!["declined", "expired", "cancelled"].includes(order.status) ||
-        !["paid", "refund_pending"].includes(order.payment_status) || !order.payment_provider_ref) {
+        !["paid", "refund_pending", "partially_refunded"].includes(order.payment_status) || !order.payment_provider_ref) {
       return json({ error: "This order is not ready for a card refund" }, 409);
     }
 
