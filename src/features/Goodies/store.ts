@@ -121,7 +121,7 @@ function liveStore(r: any, items: Item[]): Store {
     logo: r.logo_url || null, cover: null, acceptScheduledOrders: !!r.accept_scheduled_orders,
     scheduledOrderStartMinutes: Number(r.scheduled_order_start_minutes ?? 60), scheduleHours: r.hours || undefined,
     businessName: r.business_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
-    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '',
+    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed',
     get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.business_name || 'Store';},
   } as Store;
   return store;
@@ -138,7 +138,7 @@ let liveTimer: any = null;
 export async function refreshLiveSchedules() {
   try {
     const {data: rows, error} = await supabase.from('goodies_store_schedules')
-      .select('business_id,store_id,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url,hours,accept_scheduled_orders,scheduled_order_start_minutes,category,kind,min_order,delivery_fee,eta_min,eta_max,promo,names')
+      .select('business_id,store_id,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url,hours,accept_scheduled_orders,scheduled_order_start_minutes,category,kind,min_order,delivery_fee,delivery_pricing_mode,eta_min,eta_max,promo,names')
       .eq('is_live', true);
     if (error) throw error;
     const stores: any[] = rows || [], prods: any[] = [];
