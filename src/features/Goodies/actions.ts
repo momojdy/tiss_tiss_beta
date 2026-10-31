@@ -242,7 +242,6 @@ export async function cancelPendingCardOrder() {
   if (!pending) {navBack();return;}
   try {
     await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
-    await supabase.rpc('set_goodies_order_status', {p_order_id: pending.id, p_status: 'cancelled'});
   } finally {
     S.cardPending = null; S.busy = 0; navBack(); emit();
   }
