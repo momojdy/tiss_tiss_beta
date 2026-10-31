@@ -30,28 +30,70 @@ Deno.serve(async (req: Request) => {
     let refunded = 0, pending = 0, failed = 0;
     for (const item of queue || []) {
       try {
-        const prior = await stripe.refunds.list({ payment_intent: item.payment_provider_ref, limit: 20 });
-        let refund = prior.data.find(r => r.status === "succeeded" || r.status === "pending");
-        if (!refund) {
-          refund = await stripe.refunds.create(
-            { payment_intent: item.payment_provider_ref, reason: "requested_by_customer" },
-            { idempotencyKey: "goodies-card-refund-" + item.order_id + "-attempt-" + item.attempts },
-          );
+        const priorRefunds: Stripe.Refund[] = [];
+        let startingAfter: string | undefined;
+        for (;;) {
+          const page = await stripe.refunds.list({
+            payment_intent: item.payment_provider_ref,
+            limit: 100,
+            ...(startingAfter ? { starting_after: startingAfter } : {}),
+          });
+          priorRefunds.push(...page.data);
+          if (!page.has_more) break;
+          const last = page.data[page.data.length - 1];
+          if (!last) throw new Error("Stripe refund history pagination did not advance");
+          startingAfter = last.id;
         }
-        if (refund.status === "succeeded") {
+
+        const succeededAmount = priorRefunds
+          .filter(r => r.status === "succeeded")
+          .reduce((sum, r) => sum + r.amount, 0);
+        const pendingRefund = priorRefunds.find(r =>
+          r.status === "pending" || r.status === "requires_action"
+        );
+        const totalCents = Math.round(Number(item.total) * 100);
+
+        if (succeededAmount >= totalCents) {
+          const lastSucceeded = [...priorRefunds].reverse().find(r => r.status === "succeeded");
           const { error } = await service.rpc("finish_goodies_card_refund", {
-            p_queue_id: item.queue_id, p_status: "refunded", p_refund_id: refund.id, p_error: null,
+            p_queue_id: item.queue_id, p_status: "refunded",
+            p_refund_id: lastSucceeded?.id || null, p_error: null,
           });
           if (error) throw error;
           refunded++;
-        } else if (refund.status === "pending") {
+        } else if (pendingRefund) {
           const { error } = await service.rpc("finish_goodies_card_refund", {
-            p_queue_id: item.queue_id, p_status: "refund_pending", p_refund_id: refund.id, p_error: "Stripe refund is still pending",
+            p_queue_id: item.queue_id, p_status: "refund_pending",
+            p_refund_id: pendingRefund.id, p_error: "A Stripe refund is still pending",
           });
           if (error) throw error;
           pending++;
         } else {
-          throw new Error("Stripe refund status: " + refund.status);
+          const remainingCents = totalCents - succeededAmount;
+          const refund = await stripe.refunds.create(
+            {
+              payment_intent: item.payment_provider_ref,
+              amount: remainingCents,
+              reason: "requested_by_customer",
+            },
+            { idempotencyKey: "goodies-card-refund-" + item.order_id + "-attempt-" + item.attempts },
+          );
+          if (refund.status === "succeeded" && succeededAmount + refund.amount >= totalCents) {
+            const { error } = await service.rpc("finish_goodies_card_refund", {
+              p_queue_id: item.queue_id, p_status: "refunded", p_refund_id: refund.id, p_error: null,
+            });
+            if (error) throw error;
+            refunded++;
+          } else if (refund.status === "pending" || refund.status === "requires_action" || refund.status === "succeeded") {
+            const { error } = await service.rpc("finish_goodies_card_refund", {
+              p_queue_id: item.queue_id, p_status: "refund_pending",
+              p_refund_id: refund.id, p_error: "Remaining Stripe refund amount is still pending",
+            });
+            if (error) throw error;
+            pending++;
+          } else {
+            throw new Error("Stripe refund status: " + refund.status);
+          }
         }
       } catch (e) {
         failed++;
