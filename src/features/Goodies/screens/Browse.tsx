@@ -17,7 +17,6 @@ const cname = (id: string) => catName(id);
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   const [imageFailed, setImageFailed] = useState(false);
   useEffect(() => setImageFailed(false), [image]);
-  const gradient = promoGradient(kind);
   return (
     <Pressable onPress={onPress} style={{borderRadius: 18, overflow: 'hidden', height: small ? 51 : 112}}>
       {grad ? <Grad colors={MODE1} style={{flex: 1, padding: small ? 0 : 14, paddingHorizontal: 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</Grad> : <View style={{flex: 1, backgroundColor: bg, paddingHorizontal: 14, padding: small ? 0 : 14, justifyContent: small ? 'center' : 'flex-start'}}>{inner()}</View>}
@@ -47,6 +46,7 @@ function promoGradient(kind: string): [string, string] {
 
 function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
   const [imageFailed, setImageFailed] = useState(false);
+  const gradient = promoGradient(kind);
   useEffect(() => setImageFailed(false), [image]);
   return (
     <Pressable onPress={() => ui.sheet({kind: 'promo', p: kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce', custom: {title, sub, btn, emoji, target}})}>
