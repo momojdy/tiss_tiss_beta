@@ -213,8 +213,9 @@ export function Checkout() {
     }
     return () => { active = false; };
   }, [st?.id, pk]);
-  useEffect(() => { if (!cashEligible && S.pay === 'cash') { S.pay = 'wallet'; emit(); } }, [cashEligible]);
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card in Wallet settings', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
+  const availablePayKey = pays.map(p => p[0]).join('|');
+  useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf();
   let body: any = null;
   if (S.cs === 0) body = (<>
