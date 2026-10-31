@@ -214,7 +214,11 @@ begin
    where id=p_queue_id and status<>'completed' returning order_id into v_order_id;
   if v_order_id is null then return; end if;
   update public.goodies_orders set
-    payment_status=case when p_status='refunded' then 'refunded' else 'refund_pending' end,
+    payment_status=case
+      when p_status='refunded' then 'refunded'
+      when payment_refunded_amount > 0 then 'partially_refunded'
+      else 'refund_pending'
+    end,
     payment_refunded_amount=case when p_status='refunded' then total else payment_refunded_amount end,
     payment_refunded_at=case when p_status='refunded' then coalesce(payment_refunded_at,now()) else payment_refunded_at end,
     updated_at=now()
