@@ -13,6 +13,7 @@ import {Home, Cats, CatList, Search, Promos, Notifs, Explore} from './screens/Br
 import {Store, StoreReviews, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
 import {Sheets} from './components/Sheets';
+import WalletAddNewCardScreen from '../../screens/Wallet/WalletAddNewCardScreen';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
 import {loadContent, label, stageLabels} from './content';
@@ -105,6 +106,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
+    case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
     case 'track': body = <Track id={c.p} />; break;
     case 'notifs': body = <Notifs />; break;
