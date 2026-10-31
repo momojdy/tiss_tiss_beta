@@ -1,8 +1,12 @@
 /* Goodies tools for the Vendor Dashboard (Business Space).
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
-   Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests remain local until a server workflow is added. */
+   Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests, their photos and the photo rules go through Supabase. */
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image } from 'react-native';
+import { decode } from 'base64-arraybuffer';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as ImageManipulator from 'expo-image-manipulator';
+import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../lib/supabase';
 import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, STATUS_UI, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
@@ -15,7 +19,7 @@ export type GProduct = { id: string; name: string; description: string; price: n
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
 export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
-export type GRequest = { id: string; name: string; builder: 'pizza' | 'burger'; role: string; note: string; status: 'submitted' | 'approved' | 'denied' | 'needs_info'; at: number };
+export type GRequest = { id: string; name: string; builder: 'pizza' | 'burger' | 'custom'; role: string; note: string; status: 'submitted' | 'approved' | 'denied' | 'needs_info'; reviewNote: string; photo: boolean; at: number };
 
 /* admin-owned presets. The backend only accepts these category ids. */
 export const CATEGORY_PRESETS: { id: string; name: string }[] = [
@@ -93,14 +97,31 @@ export const goodiesApi = {
       raw.cfg = raw.cfg || {}; raw.cfg[sid] = l; await AsyncStorage.setItem('goodies-byo-v4', JSON.stringify(raw));
     } catch { /* local compatibility cache only */ }
   },
-  listRequests: (biz: string) => rd<GRequest[]>(k(biz, 'requests'), []),
-  saveRequests: (biz: string, l: GRequest[]) => AsyncStorage.setItem(k(biz, 'requests'), JSON.stringify(l)),
+  listRequests: async (biz: string): Promise<GRequest[]> => {
+    const rows = await rpc<any[]>('goodies_list_ingredient_requests', { p_business: biz });
+    return (rows || []).map(r => ({ id: r.id, name: r.name, builder: r.builder, role: r.role || '', note: r.note || '', status: r.status, reviewNote: r.review_note || '', photo: !!r.image_path, at: Date.parse(r.created_at) }));
+  },
+  rules: async (): Promise<string> => String((await rpc<string>('goodies_get_ingredient_rules', {})) || ''),
+  uploadRequestPhoto: async (biz: string, uri: string): Promise<string> => {
+    const m = await ImageManipulator.manipulateAsync(uri, [{ resize: { width: 1200 } }], { compress: 0.85, format: ImageManipulator.SaveFormat.JPEG });
+    const b64 = await FileSystem.readAsStringAsync(m.uri, { encoding: FileSystem.EncodingType.Base64 });
+    const path = `${biz}/${uid()}${uid()}.jpg`;
+    const { error } = await supabase.storage.from('goodies-ingredient-requests').upload(path, decode(b64), { contentType: 'image/jpeg' });
+    if (error) throw error;
+    return path;
+  },
+  submitRequest: (biz: string, f: { name: string; builder: string; role: string; note: string }, imagePath: string | null) =>
+    rpc('goodies_submit_ingredient_request', { p_business: biz, p_name: f.name, p_builder: f.builder, p_role: f.role || null, p_note: f.note || null, p_image_path: imagePath }),
   library: async () => {
     try {
       const remote = await fetchPublishedWantissContent('en');
       const record = remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
       const payload = record?.payload as { items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
-      return Array.isArray(payload?.items) ? payload.items : [];
+      const base = Array.isArray(payload?.items) ? payload.items : [];
+      const added = await rpc<any[]>('goodies_list_library_ingredients', {}).catch(() => [] as any[]);
+      const seen = new Set(base.map(x => x.id));
+      const extra = (added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(x => ({ id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key }));
+      return [...base, ...extra];
     } catch {
       return [];
     }
@@ -421,32 +442,55 @@ export function GoodiesBuilderEditPage() {
 /* ---------- ingredient requests ---------- */
 export function GoodiesRequestsPage() {
   const app = useApp(), s = useS(), t = useTheme();
-  const [list, setList] = useState<GRequest[]>([]), [open, setOpen] = useState(false);
-  const [f, setF] = useState<{ name: string; builder: 'pizza' | 'burger'; role: string; note: string }>({ name: '', builder: 'burger', role: '', note: '' });
-  useEffect(() => { goodiesApi.listRequests(app.biz.id).then(setList); }, [app.biz.id]);
+  const [list, setList] = useState<GRequest[]>([]), [open, setOpen] = useState(false), [busy, setBusy] = useState(false);
+  const [rules, setRules] = useState(''), [ack, setAck] = useState(false), [photo, setPhoto] = useState('');
+  const blank = { name: '', builder: 'burger' as GRequest['builder'], role: '', note: '' };
+  const [f, setF] = useState(blank);
+  const load = () => goodiesApi.listRequests(app.biz.id).then(setList).catch(e => app.toast(errText(e)));
+  useEffect(() => { void load(); goodiesApi.rules().then(setRules).catch(() => setRules('')); }, [app.biz.id]);
+  const choose = async () => {
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) return app.toast('Allow photo access to add a picture');
+    const r = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 1 });
+    if (!r.canceled && r.assets[0]) setPhoto(r.assets[0].uri);
+  };
   const send = async () => {
     if (f.name.trim().length < 2) return app.toast('Enter the ingredient name');
-    const r: GRequest = { id: uid(), name: f.name.trim(), builder: f.builder, role: f.role.trim(), note: f.note.trim(), status: 'submitted', at: Date.now() };
-    const l = [r, ...list]; setList(l); await goodiesApi.saveRequests(app.biz.id, l); setOpen(false); setF({ name: '', builder: 'burger', role: '', note: '' }); app.toast('Request sent to Wantiss');
+    if (!ack) return app.toast('Read the photo rules first');
+    setBusy(true);
+    try {
+      const path = photo ? await goodiesApi.uploadRequestPhoto(app.biz.id, photo) : null;
+      await goodiesApi.submitRequest(app.biz.id, { ...f, name: f.name.trim(), role: f.role.trim(), note: f.note.trim() }, path);
+      setOpen(false); setF(blank); setPhoto(''); setAck(false); app.toast('Request sent to Wantiss'); await load();
+    } catch (e) { app.toast(errText(e)); } finally { setBusy(false); }
   };
   const tone = (st: string): any => (st === 'approved' ? 'good' : st === 'denied' ? 'bad' : 'warn');
   const label: Record<string, string> = { submitted: 'Waiting', approved: 'Approved', denied: 'Not approved', needs_info: 'Needs info' };
   return (
     <Pg title="Ingredient requests" onBack={app.back} right={undefined}>
-      <Text style={s.mut}>You cannot upload ingredients yourself. Send a request and the Wantiss team will approve or decline it. If approved, it appears in your library and you decide whether to show it, its price and how many a customer can pick.</Text>
+      <Text style={s.mut}>You cannot add ingredients yourself. Send a request with a photo and the Wantiss team will approve or decline it. Wantiss may replace your photo with one that fits the builder. If approved, it appears in your ingredient list and you decide whether to show it, its price and how many a customer can pick.</Text>
       <View style={{ height: 10 }} /><Btn label="Request an ingredient" onPress={() => setOpen(true)} />
       <Section title="Your requests" />
-      {list.length === 0 ? <Text style={s.mut}>No requests yet.</Text> : <View style={s.cardFlat}><Divided>{list.map(r => <Row key={r.id} title={r.name} sub={`${r.builder}${r.role ? ' · ' + r.role : ''}`} right={<Pill tone={tone(r.status)}>{label[r.status]}</Pill>} />)}</Divided></View>}
+      {list.length === 0 ? <Text style={s.mut}>No requests yet.</Text> : <View style={s.cardFlat}><Divided>{list.map(r => <Row key={r.id} title={r.name} sub={`${r.builder}${r.role ? ' · ' + r.role : ''}${r.photo ? ' · photo sent' : ''}${r.reviewNote ? '\n' + r.reviewNote : ''}`} right={<Pill tone={tone(r.status)}>{label[r.status]}</Pill>} />)}</Divided></View>}
       {open ? (
         <Modal transparent animationType="slide" onRequestClose={() => setOpen(false)}>
           <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
             <SheetShell title="Request an ingredient" onClose={() => setOpen(false)} tall>
-              <Field label="Ingredient name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
-              <Text style={s.label}>For which builder</Text>
-              <Chips items={[{ k: 'burger', l: 'Burger' }, { k: 'pizza', l: 'Pizza' }]} value={f.builder} onChange={(v: any) => setF({ ...f, builder: v })} />
-              <Field label="What is it (topping, sauce, bun, patty…)" value={f.role} onChangeText={(v: string) => setF({ ...f, role: v })} />
-              <Field label="Notes for the team" value={f.note} onChangeText={(v: string) => setF({ ...f, note: v })} multiline />
-              <View style={{ height: 12 }} /><Btn label="Send request" onPress={send} />
+              <ScrollView style={{ maxHeight: 520 }}>
+                <Field label="Ingredient name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
+                <Text style={s.label}>For which builder</Text>
+                <Chips items={[{ k: 'burger', l: 'Burger' }, { k: 'pizza', l: 'Pizza' }, { k: 'custom', l: 'Custom' }]} value={f.builder} onChange={(v: any) => setF({ ...f, builder: v })} />
+                <Field label="What is it (topping, sauce, bun, patty…)" value={f.role} onChangeText={(v: string) => setF({ ...f, role: v })} />
+                <Field label="Notes for the team" value={f.note} onChangeText={(v: string) => setF({ ...f, note: v })} multiline />
+                <Text style={s.label}>Photo rules</Text>
+                <View style={s.cardFlat}><Text style={s.mut}>{rules || 'Use a clear, square, top-down photo of only the ingredient on a plain background.'}</Text></View>
+                <Text style={s.label}>Photo</Text>
+                {photo ? <Image source={{ uri: photo }} style={{ width: 120, height: 120, borderRadius: 10, marginBottom: 8 }} /> : null}
+                <Btn small kind="soft" label={photo ? 'Change photo' : 'Choose photo'} onPress={choose} />
+                <View style={{ height: 10 }} />
+                <Btn small kind="soft" label={ack ? '✓ I have read the photo rules' : 'I have read the photo rules'} onPress={() => setAck(!ack)} />
+                <View style={{ height: 12 }} /><Btn label="Send request" onPress={send} busy={busy} disabled={busy} />
+              </ScrollView>
             </SheetShell>
           </View>
         </Modal>
