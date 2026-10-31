@@ -158,7 +158,8 @@ export function GoodiesOrdersPage() {
               <Text style={{ fontWeight: '800', color: '#1A2517' }}>{money(order.total)}</Text>
               {order.notes ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer note: {order.notes}</Text> : null}
               {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
-              {order.status === 'ready' && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
+              {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>Delivery offer sent. Waiting for courier acceptance. You can reassign if the courier does not respond.</Text> : null}
+              {(order.status === 'ready' || order.status === 'courier_assigned') && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
               {order.status === 'accepted' || order.status === 'preparing' || (order.status === 'ready' && order.order_type === 'pickup') ? <Btn label={order.status === 'accepted' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready' : 'Complete order'} busy={busyId === order.id} disabled={!!busyId} onPress={() => void act(order, order.status === 'accepted' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'completed')} /> : null}
               {canRespond ? <View style={{ flexDirection: 'row', gap: 8 }}>
                 <View style={{ flex: 1 }}><Btn label="Accept order" onPress={() => void act(order, 'accept')} busy={busyId === order.id} /></View>
