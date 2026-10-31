@@ -187,7 +187,11 @@ export async function placeOrder() {
       data = result.data; error = result.error;
     }
     const row: any = Array.isArray(data) ? data[0] : data;
-    if (error || !row?.id) {S.busy = 0; toast(error?.message || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')); emit(); return;}
+    if (error || !row?.id) {S.busy = 0; toast(error?.message || data?.error || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')); emit(); return;}
+    if (S.pay === 'card' && data?.requires_action && data?.client_secret && data?.publishable_key && data?.stripe_payment_method_id) {
+      S.cardPending = {id: row.id, orderCode: row.order_code, status: row.status, clientSecret: data.client_secret, publishableKey: data.publishable_key, paymentMethodId: data.stripe_payment_method_id};
+      S.busy = 0; push('cardauth'); emit(); return;
+    }
     backendOrderId = row.id; id = row.order_code || id;
     if (S.pay === 'wallet') await refreshPaymentOptions();
   }
@@ -206,6 +210,44 @@ export async function placeOrder() {
   S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!')); save(); emit();
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
+export async function completeCardOrder() {
+  const pending = S.cardPending;
+  if (!pending || S.busy) return;
+  S.busy = 1; emit();
+  try {
+    const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'capture', order_id: pending.id}});
+    if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'Card payment could not be completed.');
+    const t = totals(), st = t.st!, pk = isPk(), a = addr(), ct = ctOf(), alc = hasAlcohol();
+    const selectedCard: any = S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0];
+    const o = {
+      id: pending.orderCode, backendId: pending.id, serverStatus: pending.status || 'placed', sid: S.cart.sid,
+      lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
+      sn: st.n, sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
+      addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
+      pay: 'card', payl: 'Card •••• ' + (selectedCard ? selectedCard.l4 : ''), note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
+      alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
+    };
+    S.orders.unshift(o);
+    S.cardPending = null; S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
+    S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
+    S.busy = 0; toast(label('lbl.actionOrderSent', 'Order sent to the store')); save(); emit();
+    void refreshLiveSchedules();
+  } catch (e: any) {
+    S.busy = 0; toast(e?.message || 'Card payment could not be completed. Your order has not been confirmed.'); emit();
+  }
+}
+
+export async function cancelPendingCardOrder() {
+  const pending = S.cardPending;
+  if (!pending) {navBack();return;}
+  try {
+    await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
+    await supabase.rpc('set_goodies_order_status', {p_order_id: pending.id, p_status: 'cancelled'});
+  } finally {
+    S.cardPending = null; S.busy = 0; navBack(); emit();
+  }
+}
+
 export const cancelAsk = (id: string) => ui.sheet({kind: 'cancel', id});
 export async function cancelOrder(id: string) {
   const o = S.orders.filter((x: any) => x.id === id)[0]; ui.close();
