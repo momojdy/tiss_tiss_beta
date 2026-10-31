@@ -82,8 +82,26 @@ async function paymentIntentFromRefund(refund: Stripe.Refund) {
     : null;
   const paymentIntentId = refundPaymentIntent || chargePaymentIntent;
   const paymentIntent = paymentIntentId ? await stripe.paymentIntents.retrieve(paymentIntentId) : null;
-  const refundedAmountCents = charge?.amount_refunded ?? (refund.status === "succeeded" ? refund.amount : 0);
-  return { paymentIntent, refundedAmountCents };
+  return paymentIntent;
+}
+
+async function succeededRefundAmountCents(paymentIntentId: string) {
+  let total = 0;
+  let startingAfter: string | undefined;
+  for (;;) {
+    const page = await stripe.refunds.list({
+      payment_intent: paymentIntentId,
+      limit: 100,
+      ...(startingAfter ? { starting_after: startingAfter } : {}),
+    });
+    total += page.data.filter(refund => refund.status === "succeeded")
+      .reduce((sum, refund) => sum + refund.amount, 0);
+    if (!page.has_more) break;
+    const last = page.data[page.data.length - 1];
+    if (!last) throw new Error("Stripe refund history pagination did not advance");
+    startingAfter = last.id;
+  }
+  return total;
 }
 
 Deno.serve(async (req) => {
@@ -146,18 +164,25 @@ if (event.type === "payment_intent.succeeded" ||
 if (event.type === "charge.refunded") {
   const charge = event.data.object as Stripe.Charge;
   const pi = await paymentIntentFromCharge(charge);
-  if (pi && await reconcileGoodiesPaymentIntent(pi, "refund_updated", event, charge.amount_refunded)) {
-    const state = charge.amount_refunded >= charge.amount ? "refunded" : "partially_refunded";
-    return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
+  if (pi?.metadata?.wantiss_purpose === "goodies_order" && pi.metadata.goodies_order_id) {
+    const refundedAmountCents = await succeededRefundAmountCents(pi.id);
+    if (await reconcileGoodiesPaymentIntent(pi, "refund_updated", event, refundedAmountCents)) {
+      const state = refundedAmountCents >= pi.amount ? "refunded"
+        : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
+      return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
+    }
   }
 }
 if (event.type === "refund.updated" || event.type === "refund.failed") {
   const refund = event.data.object as Stripe.Refund;
-  const { paymentIntent, refundedAmountCents } = await paymentIntentFromRefund(refund);
-  if (paymentIntent && await reconcileGoodiesPaymentIntent(paymentIntent, "refund_updated", event, refundedAmountCents)) {
-    const state = refundedAmountCents >= paymentIntent.amount ? "refunded"
-      : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
-    return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
+  const paymentIntent = await paymentIntentFromRefund(refund);
+  if (paymentIntent?.metadata?.wantiss_purpose === "goodies_order" && paymentIntent.metadata.goodies_order_id) {
+    const refundedAmountCents = await succeededRefundAmountCents(paymentIntent.id);
+    if (await reconcileGoodiesPaymentIntent(paymentIntent, "refund_updated", event, refundedAmountCents)) {
+      const state = refundedAmountCents >= paymentIntent.amount ? "refunded"
+        : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
+      return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
+    }
   }
 }
 
