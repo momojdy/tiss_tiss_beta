@@ -110,8 +110,13 @@ Deno.serve(async (req: Request) => {
       return json({error: "The saved card is not connected to your Wantiss payment profile"}, 400);
     }
 
-    // Validate the full order and reserve stock before asking Stripe to authorize or capture funds.
-    const {data: created, error: orderError} = await authClient.rpc("place_goodies_order", {
+    // Idempotently validate the order and reserve stock before authorizing funds.
+    const idempotencyKey = String(body.idempotency_key || "").trim();
+    if (idempotencyKey.length < 8 || idempotencyKey.length > 200) {
+      return json({error: "A valid checkout key is required. Please retry checkout."}, 400);
+    }
+    const {data: created, error: orderError} = await authClient.rpc("place_goodies_card_order_once", {
+      p_idempotency_key: idempotencyKey,
       ...order, p_promo_code: order.p_promo_code || null,
     });
     const row = Array.isArray(created) ? created[0] : created;
@@ -126,7 +131,6 @@ Deno.serve(async (req: Request) => {
       throw new Error("The validated order total is outside the supported card payment range.");
     }
 
-    const idempotencyKey = String(body.idempotency_key || ("goodies-" + orderId)).slice(0, 200);
     intent = await stripe.paymentIntents.create({
       amount, currency: "usd", customer: customer.stripe_customer_id,
       payment_method: savedMethod.stripe_payment_method_id,
