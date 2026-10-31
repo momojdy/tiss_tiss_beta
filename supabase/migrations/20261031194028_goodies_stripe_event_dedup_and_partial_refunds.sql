@@ -1,8 +1,7 @@
 -- Goodies Stripe event deduplication and cumulative partial-refund reconciliation.
 
 alter table public.goodies_orders
-  add column if not exists payment_refunded_amount numeric(12,2) not null default 0,
-  add column if not exists payment_last_event_created bigint not null default 0;
+  add column if not exists payment_refunded_amount numeric(12,2) not null default 0;
 
 do $$
 begin
@@ -101,11 +100,9 @@ grant execute on function public.complete_goodies_stripe_webhook_event(text) to 
 grant execute on function public.fail_goodies_stripe_webhook_event(text,text) to service_role;
 
 drop function if exists public.process_goodies_card_payment_event(uuid,text,text,bigint,text);
-drop function if exists public.process_goodies_card_payment_event(uuid,text,text,bigint,text,bigint);
 create function public.process_goodies_card_payment_event(
   p_order_id uuid,p_payment_intent_id text,p_event_state text,
-  p_amount_cents bigint,p_currency text,p_refunded_amount_cents bigint,
-  p_event_created bigint
+  p_amount_cents bigint,p_currency text,p_refunded_amount_cents bigint
 ) returns text
 language plpgsql security definer set search_path='public','pg_temp'
 as $$
@@ -123,17 +120,6 @@ begin
   if lower(coalesce(p_currency,'')) <> 'usd' or p_amount_cents <> round(v_order.total*100)::bigint then
     raise exception 'Stripe amount or currency does not match the Goodies order' using errcode='22023';
   end if;
-  if p_event_created is null or p_event_created <= 0 then
-    raise exception 'Stripe event creation time is required' using errcode='22023';
-  end if;
-  -- Ignore older, distinct Stripe events delivered after a newer event for this order.
-  if p_event_created < coalesce(v_order.payment_last_event_created,0) then
-    return 'stale';
-  end if;
-  update public.goodies_orders
-     set payment_last_event_created=p_event_created,updated_at=now()
-   where id=v_order.id;
-
   if p_event_state='refund_updated' then
     if p_refunded_amount_cents is null or p_refunded_amount_cents < 0 or p_refunded_amount_cents > p_amount_cents then
       raise exception 'Stripe refunded amount is invalid' using errcode='22023';
@@ -193,8 +179,8 @@ begin
   end if;
 end;
 $$;
-revoke all on function public.process_goodies_card_payment_event(uuid,text,text,bigint,text,bigint,bigint) from public,anon,authenticated;
-grant execute on function public.process_goodies_card_payment_event(uuid,text,text,bigint,text,bigint,bigint) to service_role;
+revoke all on function public.process_goodies_card_payment_event(uuid,text,text,bigint,text,bigint) from public,anon,authenticated;
+grant execute on function public.process_goodies_card_payment_event(uuid,text,text,bigint,text,bigint) to service_role;
 
 create or replace function public.enqueue_goodies_card_refund()
 returns trigger language plpgsql security definer set search_path='public','pg_temp' as $$
@@ -227,11 +213,7 @@ begin
    where id=p_queue_id and status<>'completed' returning order_id into v_order_id;
   if v_order_id is null then return; end if;
   update public.goodies_orders set
-    payment_status=case
-      when p_status='refunded' then 'refunded'
-      when payment_refunded_amount > 0 then 'partially_refunded'
-      else 'refund_pending'
-    end,
+    payment_status=case when p_status='refunded' then 'refunded' else 'refund_pending' end,
     payment_refunded_amount=case when p_status='refunded' then total else payment_refunded_amount end,
     payment_refunded_at=case when p_status='refunded' then coalesce(payment_refunded_at,now()) else payment_refunded_at end,
     updated_at=now()
