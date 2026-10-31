@@ -11,7 +11,7 @@ export const LANGS: {code: LangCode; label: string}[] = [
   {code: 'en', label: 'English'}, {code: 'fr', label: 'Français'}, {code: 'ht', label: 'Kreyòl ayisyen'}, {code: 'es', label: 'Español'}, {code: 'zh-Hans', label: '简体中文'},
 ];
 export const DEFAULT_LANG: LangCode = 'en';
-export const cfg = {showMachineDrafts: true /* demo: true, production: false */};
+export const cfg = {showMachineDrafts: false};
 
 type Table = Record<string, string>;
 const en: Table = {
