@@ -142,6 +142,24 @@ export async function placeOrder() {
   if (!pk && (!a || !a.t)) {toast(label('lbl.actionChooseAddress', 'Choose a delivery address')); S.cs = 0; emit(); return;}
   const ct = ctOf();
   if (!phoneOK(ct.ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); S.cs = 0; emit(); return;}
+  let deliveryQuoteId: string | null = null;
+  if (!providerInfo.demo && !pk && (st as any).deliveryPricingMode === 'distance') {
+    const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst};
+    const quoteResult = await supabase.functions.invoke('goodies-delivery-quote', {
+      body: {store_id: S.cart.sid, address: addressPayload},
+    });
+    if (quoteResult.error || !quoteResult.data?.quote_id) {
+      S.busy = 0;
+      toast(quoteResult.data?.error || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
+      emit();
+      return;
+    }
+    deliveryQuoteId = String(quoteResult.data.quote_id);
+    const promoFree = !!(S.promo && pChk(S.promo, t.sub, S.cart.sid).p?.ty === 'ship');
+    const fee = (t.free || promoFree) ? 0 : Number(quoteResult.data.fee);
+    t.fee = fee;
+    t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
+  }
   if (!providerInfo.demo) await refreshPaymentOptions();
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); return;}
   if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); push('payments'); return;}
@@ -169,7 +187,7 @@ export async function placeOrder() {
       p_store_id: S.cart.sid,
       p_order_type: pk ? 'pickup' : 'delivery',
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
-      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst},
+      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst, ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
       p_contact_phone: ct.ph,
       p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
