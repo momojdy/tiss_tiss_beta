@@ -5,7 +5,9 @@ import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } f
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; courier_id?: string | null;
-  scheduled_for: string | null; order_type: string; items: any[]; total: number; notes: string | null; address?: Record<string, any> | null; contact_phone?: string | null;
+  scheduled_for: string | null; order_type: string; items: any[]; total: number; subtotal: number; discount: number;
+  commissionable_subtotal: number; platform_commission_rate: number; platform_commission_amount: number; vendor_net_amount: number;
+  notes: string | null; address?: Record<string, any> | null; contact_phone?: string | null;
 };
 const reasons = [
   { id: 'out_of_stock', label: 'Item unavailable' },
@@ -40,7 +42,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
-      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,notes,address,contact_phone,payment_method,payment_status,courier_id')
+      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,courier_id')
       .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
@@ -171,7 +173,32 @@ export function GoodiesOrdersPage() {
                 <Text style={{ color: '#1A2517', fontSize: 13 }}>Customer phone: {String(order.contact_phone || 'Not provided')}</Text>
               </> : null}
               <Text style={{ fontSize: 13, color: '#1A2517' }}>{(Array.isArray(order.items) ? order.items : []).map(i => (i.q || 1) + '× ' + (i.n || 'Item')).join(' · ') || 'Order items'}</Text>
-              <Text style={{ fontWeight: '800', color: '#1A2517' }}>{money(order.total)}</Text>
+              <View style={{ borderTopWidth: 1, borderTopColor: '#E7ECE3', paddingTop: 8, gap: 4 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Product subtotal</Text>
+                  <Text style={{ color: '#1A2517', fontSize: 12 }}>{money(order.subtotal)}</Text>
+                </View>
+                {Number(order.discount) > 0 ? <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Discount</Text>
+                  <Text style={{ color: '#1A2517', fontSize: 12 }}>−{money(order.discount)}</Text>
+                </View> : null}
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Commissionable product amount</Text>
+                  <Text style={{ color: '#1A2517', fontSize: 12 }}>{money(order.commissionable_subtotal)}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Wantiss commission ({(Number(order.platform_commission_rate) * 100).toFixed(0)}%)</Text>
+                  <Text style={{ color: '#1A2517', fontSize: 12 }}>−{money(order.platform_commission_amount)}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
+                  <Text style={{ color: '#1A2517', fontSize: 13, fontWeight: '800' }}>Your net product earnings</Text>
+                  <Text style={{ color: '#1A2517', fontSize: 13, fontWeight: '800' }}>{money(order.vendor_net_amount)}</Text>
+                </View>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8, paddingTop: 3 }}>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer order total (includes excluded fees)</Text>
+                  <Text style={{ color: '#5F6B5A', fontSize: 12 }}>{money(order.total)}</Text>
+                </View>
+              </View>
               {order.notes ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Customer note: {order.notes}</Text> : null}
               {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
               {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>{assignmentStates[order.id]==='accepted' ? 'Courier accepted the offer. Live GPS tracking starts now.' : assignmentStates[order.id]==='picked_up' ? 'Courier picked up this order.' : 'Delivery offer sent. Waiting for courier acceptance.'}</Text> : null}
