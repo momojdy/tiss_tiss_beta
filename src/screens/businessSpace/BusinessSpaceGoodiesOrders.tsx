@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
-  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; courier_id?: string | null;
+  id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; payment_refunded_amount?: number | null; courier_id?: string | null;
   scheduled_for: string | null; order_type: string; items: any[]; total: number; subtotal: number; discount: number;
   commissionable_subtotal: number; platform_commission_rate: number; platform_commission_amount: number; vendor_net_amount: number;
   notes: string | null; address?: Record<string, any> | null; contact_phone?: string | null;
@@ -42,7 +42,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
-      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,courier_id')
+      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,payment_refunded_amount,courier_id')
       .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
@@ -102,7 +102,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => {
     for (const order of orders.d || []) {
       if (!['declined', 'expired', 'cancelled'].includes(order.status) ||
-          order.payment_method !== 'card' || !['paid', 'refund_pending'].includes(String(order.payment_status || '')) ||
+          order.payment_method !== 'card' || !['paid', 'refund_pending', 'partially_refunded'].includes(String(order.payment_status || '')) ||
           refundAttempts.current.has(order.id)) continue;
       refundAttempts.current.add(order.id);
       void supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: order.id } })
@@ -168,6 +168,7 @@ export function GoodiesOrdersPage() {
                 <Pill tone={order.status === 'placed' ? 'warn' : order.status === 'accepted' || order.status === 'preparing' || order.status === 'ready' || order.status === 'completed' ? 'good' : order.status === 'declined' || order.status === 'expired' ? 'bad' : 'mute'}>{order.status}</Pill>
               </View>
               <Text style={{ color: '#5F6B5A', fontSize: 12 }}>{order.order_type === 'pickup' ? 'Pickup' : 'Delivery'} · {fmt(order.created_at)}{order.scheduled_for ? ' · Scheduled fulfilment: ' + fmt(order.scheduled_for) : ''}</Text>
+              {order.payment_method === 'card' ? <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Card payment: {order.payment_status || 'unknown'}{Number(order.payment_refunded_amount) > 0 ? ' · refunded ' + money(Number(order.payment_refunded_amount)) : ''}</Text> : null}
               {order.order_type === 'delivery' ? <>
                 <Text style={{ color: '#1A2517', fontSize: 13 }}>Delivery address: {String(order.address?.t || order.address?.label || order.address?.address || 'Address not provided')}</Text>
                 <Text style={{ color: '#1A2517', fontSize: 13 }}>Customer phone: {String(order.contact_phone || 'Not provided')}</Text>
