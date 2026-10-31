@@ -95,7 +95,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
         <Text style={{fontSize:15,fontWeight:'800',color:'#1A2517'}}>Availability</Text>
-        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts only after you accept a delivery.</Text>
+        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts only after you accept; keep this screen open during the delivery.</Text>
         <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
           <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS sharing active':available?'You are online · Tap to go offline':'Go online'}</Text>
         </Pressable>
