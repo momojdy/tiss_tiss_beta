@@ -1,4 +1,29 @@
 -- Goodies product moderation hardening.
+-- Apply the same prohibited-alcohol rule on product creation, not just at checkout.
+create or replace function public.goodies_products_default_pending_review()
+returns trigger
+language plpgsql
+set search_path = public, pg_temp
+as $function$
+begin
+  if auth.uid() is not null then
+    if coalesce(new.restriction, 'none') = 'alcohol'
+       or concat_ws(' ', new.name, new.description) ~*
+          '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)' then
+      raise exception 'Alcohol products are prohibited on Wantiss'
+        using errcode = 'P0001';
+    end if;
+
+    new.review_status := 'pending';
+    new.review_note := null;
+    new.reviewed_by := null;
+    new.reviewed_at := null;
+    new.is_available := false;
+  end if;
+  return new;
+end
+$function$;
+
 -- Vendor content edits return products to review; stock-only updates remain vendor-managed.
 -- Catalogue visibility, store publication, and checkout all require an approved product.
 
@@ -14,6 +39,14 @@ begin
   -- Trusted backend operations without an end-user JWT remain available to workers.
   if auth.uid() is null then
     return new;
+  end if;
+
+  -- Prohibited products cannot be introduced or relabelled by vendors or admins.
+  if coalesce(new.restriction, 'none') = 'alcohol'
+     or concat_ws(' ', new.name, new.description) ~*
+        '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)' then
+    raise exception 'Alcohol products are prohibited on Wantiss'
+      using errcode = 'P0001';
   end if;
 
   -- Admin review actions use the existing staff authorization gate.
@@ -84,6 +117,10 @@ using (
   review_status = 'approved'
   and is_available = true
   and restriction <> 'alcohol'
+  and not (
+    concat_ws(' ', name, description) ~*
+    '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)'
+  )
   and exists (
     select 1
     from public.goodies_store_schedules gs
@@ -108,14 +145,14 @@ begin
   if position(v_old in v_definition) = 0 then
     raise exception 'Could not locate Goodies product checkout lookup; migration stopped';
   end if;
-  v_new := 'gp.business_id = v_store.business_id and gp.is_available and gp.review_status = ''approved'' and gp.restriction <> ''alcohol'' for update;';
+  v_new := 'gp.business_id = v_store.business_id and gp.is_available and gp.review_status = ''approved'' and gp.restriction <> ''alcohol'' and not (concat_ws('' '', gp.name, gp.description) ~* ''(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)'') for update;';
   v_definition := replace(v_definition, v_old, v_new);
 
   v_old := 'where gp.id = v_agg.pid and gp.business_id = v_store.business_id and gp.is_available and gp.stock >= v_agg.qty;';
   if position(v_old in v_definition) = 0 then
     raise exception 'Could not locate Goodies atomic stock reservation; migration stopped';
   end if;
-  v_new := 'where gp.id = v_agg.pid and gp.business_id = v_store.business_id and gp.is_available and gp.review_status = ''approved'' and gp.restriction <> ''alcohol'' and gp.stock >= v_agg.qty;';
+  v_new := 'where gp.id = v_agg.pid and gp.business_id = v_store.business_id and gp.is_available and gp.review_status = ''approved'' and gp.restriction <> ''alcohol'' and not (concat_ws('' '', gp.name, gp.description) ~* ''(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)'') and gp.stock >= v_agg.qty;';
   v_definition := replace(v_definition, v_old, v_new);
 
   execute v_definition;
@@ -138,7 +175,7 @@ begin
   if position(v_old in v_definition) = 0 then
     raise exception 'Could not locate Goodies store publication product check; migration stopped';
   end if;
-  v_new := 'p.business_id = p_business and p.is_available and p.stock > 0 and p.review_status = ''approved'' and p.restriction <> ''alcohol'')';
+  v_new := 'p.business_id = p_business and p.is_available and p.stock > 0 and p.review_status = ''approved'' and p.restriction <> ''alcohol'' and not (concat_ws('' '', p.name, p.description) ~* ''(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)'') )';
   v_definition := replace(v_definition, v_old, v_new);
 
   execute v_definition;
