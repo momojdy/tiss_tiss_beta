@@ -6,6 +6,7 @@ import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, useTheme} from '../components/ui';
 import {S, money, emit, save, toast} from '../store';
 import {back, createWallet} from '../actions';
+import {push} from '../store';
 import {label} from '../content';
 import {supabase} from '../../../lib/supabase';
 
@@ -182,7 +183,7 @@ export function LivePayments() {
           <T size={13} color={th.mut} align="center" style={{marginTop: 4, lineHeight: 19}}>{label('lbl.paymentSavedCardsHint', 'Saved cards will appear here and can be used at checkout.')}</T>
         </Card>
       )}
-      <Cta ghost label={label('lbl.paymentAddCard', '+ Add a card')} onPress={() => toast(label('lbl.paymentAddCardUnavailable', 'Adding cards is not available yet.'))} />
+      <Cta ghost label={label('lbl.paymentAddCard', '+ Add a card')} onPress={() => push('addcard')} />
       <T size={12} color={th.mut} style={{marginTop: 10}}>{label('lbl.paymentCardPrivacy', 'Only the brand, last 4 digits and expiry are shown.')}</T>
     </View>
   </View>);
