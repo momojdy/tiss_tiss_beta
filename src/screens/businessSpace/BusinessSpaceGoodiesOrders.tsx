@@ -174,7 +174,7 @@ export function GoodiesOrdersPage() {
         {!dispatchBusy && !couriers.length ? <Empty title="No eligible couriers online" hint="Try again when a courier is available and has enabled the required payment preference." /> : null}
         {couriers.map((courier:any) => <View key={courier.courier_id} style={{padding:12,borderWidth:1,borderColor:'#DCE4D7',borderRadius:12,marginBottom:8,gap:5}}>
           <Text style={{fontWeight:'800',color:'#1A2517'}}>{courier.full_name || 'Courier'}</Text>
-          <Text style={{fontSize:12,color:'#5F6B5A'}}>{courier.phone_number || 'No phone'} · {courier.accepts_cash_on_delivery ? 'Accepts cash' : 'Wallet/card only'}</Text>
+          <Text style={{fontSize:12,color:'#5F6B5A'}}>{courier.phone_number || 'No phone'} · {courier.accepts_cash_on_delivery ? 'Accepts cash' : 'Wallet/card only'} · {courier.distance_km == null ? 'Distance unavailable' : Number(courier.distance_km).toFixed(1) + ' km away'}</Text>
           <Btn label="Send delivery offer" busy={dispatchBusy === courier.courier_id} disabled={!!dispatchBusy} onPress={() => void assignCourier(courier.courier_id)} />
         </View>)}
       </SheetShell> : null}
