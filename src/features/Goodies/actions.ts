@@ -1,6 +1,6 @@
 /* Actions. 1:1 port of the Goodies v24 `A` handlers. Messages stay in English here and move to i18n keys during the localization pass. */
 import {providerInfo} from './providers';
-import {label} from './content';
+import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
 import {
   hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, first, contentHooks,
@@ -111,7 +111,11 @@ export function checkoutNext() {
   if (S.cs === 0 && !phoneOK(ctOf().ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); return;}
   if (S.cs === 1 && S.sch && S.sch < Date.now()) {S.sch = 0; toast(label('lbl.actionTimePassed', 'That time has passed. Pick another')); emit(); return;}
   if (S.cs === 1 && !STB[S.cart.sid!]?.open && (!STB[S.cart.sid!]?.acceptScheduledOrders || !S.sch || S.sch <= Date.now())) {toast(label('lbl.actionStoreClosedSchedule', 'This store is closed. Choose a future opening-time slot to continue.')); emit(); return;}
-  if (S.cs === 2 && S.pay === 'card' && !S.cards.length) {push('payments'); return;}
+  if (S.cs === 2) {
+    const methodKey = ({wallet: 'Wallet', card: 'Card', cash: 'Cash'} as any)[S.pay];
+    if (!methodKey || !fees().pay[methodKey]) {toast(label('lbl.actionPaymentUnavailable', 'This payment method is no longer available. Choose another method.')); return;}
+    if (S.pay === 'card' && !S.cards.length) {push('payments'); return;}
+  }
   S.cs++; emit();
 }
 export function setPay(p: string) {
