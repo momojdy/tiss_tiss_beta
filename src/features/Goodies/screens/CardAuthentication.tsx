@@ -6,23 +6,21 @@ import {Bar, Cta, Card, useTheme} from '../components/ui';
 type Props = {
   clientSecret: string;
   publishableKey: string;
-  paymentMethodId: string;
   onComplete: () => void;
   onCancel: () => void;
 };
 
-export function CardAuthentication({clientSecret, publishableKey, paymentMethodId, onComplete, onCancel}: Props) {
+export function CardAuthentication({clientSecret, publishableKey, onComplete, onCancel}: Props) {
   const th = useTheme();
   const [busy, setBusy] = useState(false);
   const [problem, setProblem] = useState('');
   const html = useMemo(() => {
     const secret = JSON.stringify(clientSecret);
     const key = JSON.stringify(publishableKey);
-    const method = JSON.stringify(paymentMethodId);
-    return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="font-family:Arial,sans-serif;color:#1A2517;padding:18px;text-align:center"><p>Securely verifying your card…</p><script src="https://js.stripe.com/v3/"></script><script>
+      return `<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="font-family:Arial,sans-serif;color:#1A2517;padding:18px;text-align:center"><p>Securely verifying your card…</p><script src="https://js.stripe.com/v3/"></script><script>
       const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
       const stripe=Stripe(${key});
-      stripe.confirmCardPayment(${secret},{payment_method:${method}}).then(({paymentIntent,error})=>{
+      stripe.handleCardAction(${secret}).then(({paymentIntent,error})=>{
         if(error){send({error:error.message||'Card verification failed'});return;}
         send({status:paymentIntent&&paymentIntent.status||'unknown'});
       }).catch(e=>send({error:String(e&&e.message||e)}));
