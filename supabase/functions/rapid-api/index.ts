@@ -34,6 +34,7 @@ async function reconcileGoodiesPaymentIntent(
       p_amount_cents: paymentIntent.amount,
       p_currency: paymentIntent.currency,
       p_refunded_amount_cents: refundedAmountCents,
+      p_event_created: event.created,
     });
     if (error) throw error;
     if (data === "refund_required") {
