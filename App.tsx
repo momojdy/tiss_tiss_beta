@@ -130,6 +130,15 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     const user = userResult.user;
     if (!user) throw new Error('Your session has expired. Please sign in again.');
 
+    const {data: courierAccess, error: courierAccessError} = await withAuthRequestTimeout(supabase.from('goodies_courier_roster').select('courier_id').eq('courier_id',user.id).eq('is_approved',true).maybeSingle(),'Checking Goodies courier access');
+    if (courierAccessError && courierAccessError.code !== '42P01') throw courierAccessError;
+    if (courierAccess?.courier_id) {
+      setBuyerScreen('home');
+      setAppMode('courier');
+      setAuthenticated(true);
+      setScreen('auth');
+      return;
+    }
     const {data: profile, error: profileError} = await withAuthRequestTimeout(supabase.from('profiles').select('role').eq('id',user.id).maybeSingle(),'Checking courier access');
     if (profileError) throw profileError;
     if (['courier','driver','delivery'].includes(String(profile?.role||'').trim().toLowerCase())) {
