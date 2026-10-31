@@ -55,18 +55,20 @@ Deno.serve(async (req: Request) => {
 
         if (succeededAmount >= totalCents) {
           const lastSucceeded = [...priorRefunds].reverse().find(r => r.status === "succeeded");
-          const { error } = await service.rpc("finish_goodies_card_refund", {
+          const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
             p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refunded",
             p_refund_id: lastSucceeded?.id || null, p_error: null,
           });
           if (error) throw error;
+          if (finished !== true) throw new Error("Refund worker lease is no longer current");
           refunded++;
         } else if (pendingRefund) {
-          const { error } = await service.rpc("finish_goodies_card_refund", {
+          const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
             p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refund_pending",
             p_refund_id: pendingRefund.id, p_error: "A Stripe refund is still pending",
           });
           if (error) throw error;
+          if (finished !== true) throw new Error("Refund worker lease is no longer current");
           pending++;
         } else {
           const remainingCents = totalCents - succeededAmount;
@@ -79,17 +81,19 @@ Deno.serve(async (req: Request) => {
             { idempotencyKey: "goodies-card-refund-" + item.order_id + "-full-v1" },
           );
           if (refund.status === "succeeded" && succeededAmount + refund.amount >= totalCents) {
-            const { error } = await service.rpc("finish_goodies_card_refund", {
+            const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
               p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refunded", p_refund_id: refund.id, p_error: null,
             });
             if (error) throw error;
+            if (finished !== true) throw new Error("Refund worker lease is no longer current");
             refunded++;
           } else if (refund.status === "pending" || refund.status === "succeeded") {
-            const { error } = await service.rpc("finish_goodies_card_refund", {
+            const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
               p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refund_pending",
               p_refund_id: refund.id, p_error: "Remaining Stripe refund amount is still pending",
             });
             if (error) throw error;
+            if (finished !== true) throw new Error("Refund worker lease is no longer current");
             pending++;
           } else {
             throw new Error("Stripe refund status: " + refund.status);
@@ -97,10 +101,10 @@ Deno.serve(async (req: Request) => {
         }
       } catch (e) {
         failed++;
-        const { error: resetError } = await service.rpc("finish_goodies_card_refund", {
+        const { data: released, error: resetError } = await service.rpc("finish_goodies_card_refund", {
           p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "failed", p_error: e instanceof Error ? e.message : "Refund attempt failed",
         });
-        if (resetError) console.error("Could not release refund queue item", item.queue_id, resetError);
+        if (resetError || released !== true) console.error("Could not release refund queue item", item.queue_id, resetError || "Lease is no longer current");
         console.error("Goodies card refund failed for order", item.order_id, e);
       }
     }
