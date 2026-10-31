@@ -106,10 +106,10 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
         <Text style={{fontSize:15,fontWeight:'800',color:'#1A2517'}}>Availability</Text>
         <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. Keep this screen open while working so GPS can be shared during an active delivery.</Text>
-        <Pressable disabled={!!busy} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
-          <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':available?'You are online · Tap to go offline':'Go online'}</Text>
+        <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
+          <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS sharing active':available?'You are online · Tap to go offline':'Go online'}</Text>
         </Pressable>
-        <Pressable disabled={!!busy||!available} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
+        <Pressable disabled={!!busy||!available||!!activeOrderId} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
           <Text style={{fontSize:13,color:'#263324'}}>I accept cash on delivery</Text><Text style={{fontSize:13,fontWeight:'800',color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?'ON':'OFF'}</Text>
         </Pressable>
         <Text style={{fontSize:11,color:'#697567'}}>{locationStatus}</Text>
