@@ -211,7 +211,7 @@ export async function placeOrder() {
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
       p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst, ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
       p_contact_phone: ct.ph,
-      p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
+      p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo, options: l.byo ? undefined : (l.options || (() => {const parts = String(l.k || '').split('|'); const category = STB[S.cart.sid!]?.c; return {size: CHOOSE_SIZE_CATS.includes(category) ? (parts[1] === '1' ? 'large' : 'regular') : null, drink: parts[2] === '1', discount_pct: Number(parts[3] || 0)};})())})),
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
       p_notes: String(S.note || '').trim() || null,
       p_promo_code: S.promo || null,

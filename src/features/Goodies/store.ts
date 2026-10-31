@@ -395,7 +395,7 @@ export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; o
   const base = o.off ? dp(i, o.off) : i.p, unit = base + ((o.size || 0) > 0 ? 1.5 : 0) + (o.drink ? 1 : 0);
   const k = [i.id, o.size, o.drink, o.off || 0, o.note || ''].join('|'), l = c.lines.filter((x: CartLine) => x.k === k)[0];
   if (l) l.q += o.q;
-  else c.lines.push({k, id: i.id, n: i.n, e: i.e, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', ')});
+  else c.lines.push({k, id: i.id, n: i.n, e: i.e, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', '), options: {size: ['restaurants', 'bakery', 'beverages'].includes(STB[i.s].c) ? ((o.size || 0) > 0 ? 'large' : 'regular') : null, drink: !!o.drink, discount_pct: Number(o.off || 0)}});
   S.bump = 1; toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
 }
 export function reorderLines(o: Order) {
