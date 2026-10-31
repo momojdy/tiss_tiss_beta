@@ -291,7 +291,7 @@ export function Confirm({id}: {id: string}) {
   );
 }
 
-function DeliveryRouteMap({orderId, origin, destination}: {orderId: string; origin: any; destination: any}) {
+function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: string; origin: any; destination: any; route: any}) {
   const th = useTheme();
   const [courier, setCourier] = useState<any>(null);
   const [assignmentStatus, setAssignmentStatus] = useState('');
@@ -314,16 +314,17 @@ function DeliveryRouteMap({orderId, origin, destination}: {orderId: string; orig
       .subscribe();
     return () => { active = false; void supabase.removeChannel(channel); };
   }, [orderId]);
-  const valid = (p: any) => p && Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude));
+  const valid = (p: any) => p && p.latitude != null && p.longitude != null && Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude));
+  const routeCoords = Array.isArray(route?.coordinates) ? (route.type === 'MultiLineString' ? route.coordinates.flat(1) : route.coordinates).map((p:any)=>({latitude:Number(p[1]),longitude:Number(p[0])})).filter((p:any)=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)) : [];
   const points = [origin, destination, courier].filter(valid);
   const center = points.length ? {latitude: points.reduce((n,p)=>n+Number(p.latitude),0)/points.length, longitude: points.reduce((n,p)=>n+Number(p.longitude),0)/points.length} : null;
   return <Card style={{padding: 12}}>
     <T size={15} weight="800">{label('lbl.orderLiveTracking', 'Live delivery route')}</T>
-    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} initialRegion={{...center,latitudeDelta:0.04,longitudeDelta:0.04}} showsCompass>
+    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} region={{...center,latitudeDelta:0.04,longitudeDelta:0.04}} showsCompass>
       {valid(origin) ? <Marker coordinate={origin} title={label('lbl.orderStoreOrigin','Store')} pinColor="#2E8B57" /> : null}
       {valid(destination) ? <Marker coordinate={destination} title={label('lbl.orderDeliveryDestination','Delivery address')} pinColor="#D97706" /> : null}
       {valid(courier) ? <Marker coordinate={courier} title={label('lbl.orderCourierLocation','Courier')} description={courier.updatedAt ? label('lbl.orderCourierUpdated','Updated {time}').replace('{time}',new Date(courier.updatedAt).toLocaleTimeString()) : ''} /> : null}
-      {valid(origin) && valid(destination) && valid(courier) ? <Polyline coordinates={[origin,courier,destination]} strokeWidth={4} strokeColor={th.br} /> : null}
+      {routeCoords.length > 1 ? <Polyline coordinates={routeCoords} strokeWidth={4} strokeColor={th.br} /> : valid(origin) && valid(destination) ? <Polyline coordinates={[origin,destination]} strokeWidth={3} strokeColor={th.br} lineDashPattern={[5,5]} /> : null}
     </MapView> : <Empty title={label('lbl.orderMapPreparing','Preparing delivery map')} text={label('lbl.orderMapPreparingHint','The map appears when the delivery address has been geocoded.')} />}
     <T size={12} color={th.mut} style={{marginTop:8}}>{valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
   </Card>;
@@ -339,7 +340,7 @@ export function Track({id}: {id: string}) {
     if (!o?.backendId) return;
     let active = true;
     const sync = async () => {
-      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref,store_latitude,store_longitude,delivery_latitude,delivery_longitude,courier_id').eq('id', o.backendId).maybeSingle();
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref,store_latitude,store_longitude,delivery_latitude,delivery_longitude,delivery_route,courier_id').eq('id', o.backendId).maybeSingle();
       if (!active || error || !data) return;
       o.serverStatus = data.status;
       o.acceptanceDeadlineAt = data.acceptance_deadline_at;
@@ -349,6 +350,7 @@ export function Track({id}: {id: string}) {
       o.storeLongitude = data.store_longitude == null ? null : Number(data.store_longitude);
       o.deliveryLatitude = data.delivery_latitude == null ? null : Number(data.delivery_latitude);
       o.deliveryLongitude = data.delivery_longitude == null ? null : Number(data.delivery_longitude);
+      o.deliveryRoute = data.delivery_route || null;
       o.courierId = data.courier_id || null;
       if (data.payment_method === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && ['paid','refund_pending'].includes(data.payment_status) && !o.refundRequested) {
         o.refundRequested = true;
@@ -385,7 +387,7 @@ export function Track({id}: {id: string}) {
           <T size={11.5} color={th.mut}>{label('lbl.orderStatusHeading', 'Order status is provided by the live order service.')}</T>
         </Card>
         {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap /> : null}
-        {!o.pk && o.st >= 4 && !dn && o.backendId ? <DeliveryRouteMap orderId={o.backendId} origin={{latitude:o.storeLatitude,longitude:o.storeLongitude}} destination={{latitude:o.deliveryLatitude,longitude:o.deliveryLongitude}} /> : null}
+        {!o.pk && o.st >= 4 && !dn && o.backendId ? <DeliveryRouteMap orderId={o.backendId} origin={{latitude:o.storeLatitude,longitude:o.storeLongitude}} destination={{latitude:o.deliveryLatitude,longitude:o.deliveryLongitude}} route={o.deliveryRoute} /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="800">ID check · {o.alc.age}+ ({o.alc.who === 'shop' ? 'checked by the shop' : 'checked by the courier'})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? 'Have your valid government photo ID ready. The order is completed only after it is checked.' : o.alc.status === 'passed' ? 'ID checked.' : (o.pay === 'cash' ? 'ID check failed. You were not charged.' : 'ID check failed. ' + money(o.refund || 0) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.')}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label={label("lbl.shopAuto1RR9Q6U", "Demo: ID valid")} onPress={() => idResult(o.id, true)} /><Cta small ghost label={label("lbl.shopAuto2L0NX5", "Demo: ID failed")} onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRate', 'Rate your order')}</T><T size={12} color={th.mut}>{label('lbl.orderFeedback', 'Order and delivery feedback')}</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateOrder', 'Rate order {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>{label('lbl.orderYourRating', 'Your rating: {n} ★').replace('{n}', String(o.rated))}</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="800">{label('lbl.orderRateDriver', 'Rate your driver')}</T><T size={12} color={th.mut}>{label('lbl.orderDeliveryExperience', 'Delivery experience')}</T></View>{o.driverRated ? <T weight="700">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateDriver', 'Rate driver {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
         {o.rated && (o.pk || o.driverRated) ? <Card>
