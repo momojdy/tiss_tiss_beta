@@ -3,7 +3,7 @@ import {providerInfo} from './providers';
 import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, first, contentHooks,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -223,7 +223,16 @@ export async function placeOrder() {
       });
       data = result.data; error = result.error;
     } else {
-      const result = await supabase.rpc(S.pay === 'wallet' ? 'place_goodies_order_with_wallet' : 'place_goodies_order', orderPayload);
+      const fingerprintAddress = orderPayload.p_address
+        ? Object.fromEntries(Object.entries(orderPayload.p_address).filter(([key]) => key !== 'delivery_quote_id'))
+        : null;
+      const fingerprint = JSON.stringify({...orderPayload, p_address: fingerprintAddress, p_payment_method: S.pay});
+      const attempt = await getGoodiesCheckoutAttempt(fingerprint);
+      const result = await supabase.rpc('place_goodies_order_with_payment_once', {
+        p_idempotency_key: attempt.key,
+        p_payment_method: S.pay,
+        ...orderPayload,
+      });
       data = result.data; error = result.error;
     }
     const row: any = Array.isArray(data) ? data[0] : data;
@@ -247,7 +256,10 @@ export async function placeOrder() {
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
-  S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!')); save(); emit();
+  S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!'));
+  await save();
+  if (backendOrderId && (S.pay === 'wallet' || S.pay === 'cash')) await completeGoodiesCheckoutAttempt(backendOrderId);
+  emit();
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
 export async function completeCardOrder() {

@@ -43,7 +43,7 @@ const WDEF = () => ({
   addr: [] as Address[],
 });
 const GDEF = () => ({
-  serverUnread: 0,
+  serverUnread: 0, checkoutAttempt: null as any,
   notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
   wallet: 0, hasWallet: false, pay: 'wallet', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
@@ -214,6 +214,10 @@ export async function load() {
     } catch (e) {}
   };
   await merge(WKEY, WDEF()); await merge(KEY, GDEF());
+  try {
+    const attempt = JSON.parse((await AsyncStorage.getItem('goodies-checkout-attempt-v1')) || 'null');
+    if (attempt && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
+  } catch (e) {}
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
   if (!providerInfo.demo) {
     try {
@@ -248,6 +252,10 @@ export async function load() {
   if (!c || !Array.isArray(c.lines)) S.cart = {sid: null, lines: []};
   S.cart.lines = S.cart.lines.filter((l: any) => l && ((l.byo && l.byo.bid && l.byo.sel && l.byo.lines) || IT[l.id]) && l.q > 0);
   if (!S.cart.lines.length) S.cart.sid = null;
+  if (S.checkoutAttempt && !S.cart.lines.length && !S.checkoutAttempt.completed) {
+    S.checkoutAttempt = {...S.checkoutAttempt, completed: true};
+    try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
+  }
   S.orders = S.orders.filter((o: any) => o && STB[o.sid] && Array.isArray(o.lines));
   S.fav = S.fav.filter((x: string) => STB[x]); S.favp = S.favp.filter((x: string) => IT[x]);
   S.addr = S.addr.filter((a: any) => a && a.t); if (!S.addr.length) S.addr = WDEF().addr;
@@ -259,12 +267,38 @@ export async function load() {
   if (!S.addr.some((a: Address) => a.id === S.as)) S.as = defAddr()?.id ?? 0;
   applyZone(); S.ready = true; emit();
 }
-export function save() {
+export function save(): Promise<void> {
   try {
     const w: any = {}, g: any = {};
     WP.forEach(k => (w[k] = S[k])); GP.forEach(k => (g[k] = S[k]));
-    AsyncStorage.setItem(WKEY, JSON.stringify(w)); AsyncStorage.setItem(KEY, JSON.stringify(g));
-  } catch (e) {}
+    return Promise.all([
+      AsyncStorage.setItem(WKEY, JSON.stringify(w)),
+      AsyncStorage.setItem(KEY, JSON.stringify(g)),
+    ]).then(() => undefined).catch(() => undefined);
+  } catch (e) {
+    return Promise.resolve();
+  }
+}
+
+export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{key: string; fingerprint: string}> {
+  const current = S.checkoutAttempt;
+  if (current && !current.completed && current.fingerprint === fingerprint && typeof current.key === 'string') {
+    return {key: current.key, fingerprint: current.fingerprint};
+  }
+  const attempt = {
+    key: 'goodies-checkout-' + Date.now() + '-' + Math.random().toString(36).slice(2),
+    fingerprint,
+    completed: false,
+  };
+  S.checkoutAttempt = attempt;
+  await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(attempt));
+  return {key: attempt.key, fingerprint: attempt.fingerprint};
+}
+
+export async function completeGoodiesCheckoutAttempt(orderId: string): Promise<void> {
+  if (!S.checkoutAttempt || !orderId) return;
+  S.checkoutAttempt = {...S.checkoutAttempt, completed: true, orderId};
+  try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
 }
 export const setTheme = (t: 'light' | 'dark') => {S.theme = t; AsyncStorage.setItem('goodies-theme', t); emit();};
 export const setLang = (l: string) => {S.lang = l; AsyncStorage.setItem('goodies-lang', l); emit();};
@@ -394,7 +428,7 @@ export const FCH: [string, string][] = [['', 'All'], ['offers', 'Offers'], ['fre
 export async function resetDemo() {
   const {assertDemoOnly} = require('./providers');
   assertDemoOnly('Reset demo data');
-  await AsyncStorage.multiRemove([KEY, WKEY]);
+  await AsyncStorage.multiRemove([KEY, WKEY, 'goodies-checkout-attempt-v1']);
   Object.assign(S, WDEF(), GDEF());
   S.stack = [{r: 'home', u: ++uid}];
   applyZone(); emit();
