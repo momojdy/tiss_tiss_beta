@@ -39,9 +39,9 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     return()=>{active=false;void supabase.removeChannel(ch);};
   },[load,uid]);
 
+  const activeOrderId = deliveries.find(d=>d.status==='accepted'||d.status==='picked_up')?.order_id || '';
   useEffect(()=>{
-    const active=deliveries.find(d=>d.status==='accepted'||d.status==='picked_up');
-    if(!active)return;
+    if(!activeOrderId)return;
     let subscription:Location.LocationSubscription|null=null;let cancelled=false;
     void (async()=>{
       const permission=await Location.requestForegroundPermissionsAsync();
@@ -49,11 +49,11 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       if(cancelled)return;
       setLocationStatus('Sharing live GPS location');
       subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.Balanced,timeInterval:5000,distanceInterval:15},position=>{
-        void supabase.rpc('goodies_courier_update_location',{p_order_id:active.order_id,p_latitude:position.coords.latitude,p_longitude:position.coords.longitude,p_accuracy_m:position.coords.accuracy,p_heading:position.coords.heading,p_speed_mps:position.coords.speed}).then(({error})=>{if(error)setLocationStatus('GPS update failed: '+error.message);});
+        void supabase.rpc('goodies_courier_update_location',{p_order_id:activeOrderId,p_latitude:position.coords.latitude,p_longitude:position.coords.longitude,p_accuracy_m:position.coords.accuracy,p_heading:position.coords.heading,p_speed_mps:position.coords.speed}).then(({error})=>{if(error)setLocationStatus('GPS update failed: '+error.message);});
       });
     })().catch(e=>setLocationStatus(e.message||'Unable to start GPS sharing'));
     return()=>{cancelled=true;subscription?.remove();setLocationStatus('Location sharing is off');};
-  },[deliveries]);
+  },[activeOrderId]);
 
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
     setBusy('presence');
