@@ -231,8 +231,8 @@ export function Checkout() {
   </>);
   if (S.cs === 1) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>{label('lbl.checkoutWhen', 'When do you want it?')}</T>
-    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">{label('lbl.checkoutAsap', 'ASAP')}</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>{label("lbl.shopAuto1C7JJU5", "Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.")}</T>}
-    <Card style={{marginTop:10}}>
+    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">{label('lbl.checkoutAsap', 'ASAP')}</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>{st.acceptScheduledOrders ? label("lbl.shopAuto1C7JJU5", "Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.") : 'This store is closed and does not accept orders for later.'}</T>}
+    {st.acceptScheduledOrders ? <Card style={{marginTop:10}}>
       <Row sp style={{alignItems:'center'}}>
         <View style={{flex:1}}>
           <T weight="800">{S.sch ? label('lbl.checkoutScheduled', 'Scheduled order') : label('lbl.checkoutChooseDateTime', 'Choose a date & time')}</T>
@@ -241,7 +241,7 @@ export function Checkout() {
         <View style={{width:142}}><Cta small label={S.sch ? label('lbl.checkoutChangeTime', 'Change time') : label('lbl.checkoutChooseTime', 'Choose time')} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
       </Row>
       {S.sch ? <Pressable onPress={()=>setSch(0)} style={{alignSelf:'flex-start',paddingTop:9}}><T size={12.5} weight="700" color={th.red}>{label('lbl.checkoutClearTime', 'Clear scheduled time')}</T></Pressable> : null}
-    </Card>
+    </Card> : null}
     {pk ? null : (<><Ttl>{label('lbl.checkoutCourierTip', 'Tip your courier')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{fees().tips.map((v: number) => <Pressable key={v} onPress={() => setTip(v)} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: S.tip === v ? th.br : th.soft}}><T size={13.5} weight="700" color={S.tip === v ? '#fff' : th.ink}>{v ? money(v) : label('lbl.checkoutNoTip', 'No tip')}</T></Pressable>)}</View></>)}
     <Input label={pk ? label('lbl.checkoutStoreNote', 'Note for the store') : label('lbl.checkoutDeliveryInstructions', 'Delivery instructions')} value={S.note} onChange={v => {S.note = v; emit();}} placeholder={label('lbl.checkoutOptional', 'Optional')} multiline />
   </>);
