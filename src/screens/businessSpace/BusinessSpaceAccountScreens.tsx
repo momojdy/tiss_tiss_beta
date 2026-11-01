@@ -89,7 +89,7 @@ export function RegistrationPage() {
   };
   const currentApplication = applicationDocs.d?.application;
   const currentApplicationDocuments = applicationDocs.d?.documents ?? [];
-  const canResubmitApplication = ['rejected', 'needs_info'].includes(currentApplication?.status) && !currentApplication.final_rejection && applicationTypes.every(doc => {
+  const canResubmitApplication = !!currentApplication && ['rejected', 'needs_info'].includes(currentApplication.status) && !currentApplication.final_rejection && applicationTypes.every(doc => {
     const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
     return !!row?.storage_path && (row.status === 'pending' || row.status === 'verified');
   });
