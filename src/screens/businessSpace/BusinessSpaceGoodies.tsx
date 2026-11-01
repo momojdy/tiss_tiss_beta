@@ -338,6 +338,14 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const app = useApp(), s = useS();
   const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUri: '', removePhoto: false });
   const [busy, setBusy] = useState(false);
+  const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  useEffect(() => { if (!product.id) goodiesApi.listBuilders(app.biz.id).then(rows => setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomTypes([])); }, [product.id, app.biz.id]);
+  const openCustom = (type: 'pizza' | 'burger') => {
+    const target = customTypes.find(x => x.type === type);
+    if (!target) return app.toast('Enable this custom product type in Store Setup first.');
+    onClose();
+    app.go('goodiesBuilder', { id: target.id });
+  };
   const choosePhoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) { app.toast('Allow photo access to choose a product photo'); return; }
@@ -390,6 +398,13 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
         <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
+          {!product.id ? <View style={{ marginBottom: 12 }}>
+            <Text style={s.label}>Product type</Text>
+            <View style={{ flexDirection: 'row', gap: 8 }}>
+              <View style={{ flex: 1 }}><Btn small kind="soft" label="Regular product" disabled /></View>
+              {customTypes.map(option => <View key={option.id} style={{ flex: 1 }}><Btn small kind="soft" label={option.type === 'pizza' ? '🍕 Custom pizza' : '🍔 Custom burger'} onPress={() => openCustom(option.type as 'pizza' | 'burger')} /></View>)}
+            </View>
+          </View> : null}
           <Text style={s.label}>Product photo</Text>
           {f.photoUri || f.photoUrl ? <Image source={{ uri: f.photoUri || f.photoUrl }} style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8 }} /> : <View style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8, backgroundColor: '#F1F3EF', alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 36 }}>{f.emoji || '🛍️'}</Text></View>}
           <View style={{ flexDirection: 'row', gap: 8, marginBottom: 10 }}><Btn small kind="soft" label={f.photoUri || f.photoUrl ? 'Change photo' : 'Add photo'} onPress={choosePhoto} /><Btn small kind="soft" label="Remove" disabled={!f.photoUri && !f.photoUrl} onPress={() => setF({ ...f, photoUri: '', photoUrl: '', removePhoto: true })} /></View>
@@ -413,11 +428,7 @@ export function GoodiesProductsPage() {
   const add = route?.add;
   const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
-  const [customOptions, setCustomOptions] = useState<GBuilder[]>([]);
-  useEffect(() => {
-    if (add) setEdit(BLANK);
-    goodiesApi.listBuilders(app.biz.id).then(rows => setCustomOptions(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomOptions([]));
-  }, [add, app.biz.id]);
+  useEffect(() => { if (add) setEdit(BLANK); }, [add]);
   const items = lst.d ?? [];
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
   return (
@@ -425,13 +436,7 @@ export function GoodiesProductsPage() {
       <Text style={s.mut}>Set the price and how many you have. Stock goes down when customers order and back up if an order is cancelled. Customers only see available products while your store is live.</Text>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       <View style={{ height: 8 }} />
-      {customOptions.length ? <View style={s.cardFlat}>
-        <Text style={s.title}>Custom products</Text>
-        <Text style={s.mut}>Choose a product type to set its base price and customer ingredient options.</Text>
-        <View style={[s.row, { marginTop: 8 }]}>
-          {customOptions.map(option => <View key={option.id} style={s.g}><Btn small kind="soft" label={option.type === 'pizza' ? '🍕 Pizza' : '🍔 Burger'} onPress={() => app.go('goodiesBuilder', { id: option.id })} /></View>)}
-        </View>
-      </View> : null}
+
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
           <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
