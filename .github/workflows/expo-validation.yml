@@ -35,3 +35,5 @@ jobs:
           deno-version: v2.x
       - name: Type-check deployed edge functions
         run: deno check --node-modules-dir=auto supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts
+      - name: Test Goodies refund decision logic
+        run: deno test --no-check supabase/functions/process-goodies-card-refunds/refundLogic_test.ts
