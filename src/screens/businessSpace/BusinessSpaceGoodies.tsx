@@ -14,7 +14,7 @@ import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; coverUrl: string | null; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; coverUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -35,12 +35,12 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', coverUrl: null, category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
-    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url').eq('business_id', biz).maybeSingle());
+    const d: GStore = { demoStoreId: '', coverUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
+    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country').eq('business_id', biz).maybeSingle());
     if (!r) return d;
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
-      demoStoreId: '', coverUrl: r.cover_url || null, category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
+      demoStoreId: '', coverUrl: r.cover_url || null, address: r.address || '', city: r.city || '', country: r.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
       delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
     };
   },
@@ -50,7 +50,7 @@ export const goodiesApi = {
     await rpc('goodies_save_store_setup', {
       p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,
       p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,
-      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null,
+      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(),
     });
   },
   /* Store publication is self-service for Business Space members. */
@@ -216,6 +216,7 @@ export function GoodiesStorePage() {
   const set = (p: Partial<GStore>) => setF({ ...f, ...p });
   const err = (): string => {
     if (!f.category) return 'Choose a store category';
+    if (!f.address.trim() || !f.city.trim() || !f.country.trim()) return 'Enter the full store address, city and country';
     if (!(parseFloat(f.minOrder) >= 0)) return 'Minimum order must be 0 or more';
     if (f.pricingMode === 'fixed' && !(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
     if (f.pricingMode === 'distance' && (!(parseFloat(f.baseFee) >= 0) || !(parseFloat(f.perKmFee) >= 0) || !(parseFloat(f.minFee) >= 0) || (f.maxFee.trim() && !(parseFloat(f.maxFee) >= parseFloat(f.minFee))) || (f.maxDistanceKm.trim() && !(parseFloat(f.maxDistanceKm) > 0)))) return 'Enter valid distance delivery pricing values';
@@ -269,22 +270,25 @@ export function GoodiesStorePage() {
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
       {f.category === 'drugstore' ? <View style={s.card}><Text style={s.title}>Pharmacy licence required</Text><Text style={s.mut}>Drugstore stores must upload a pharmacy licence during registration. Only over-the-counter products are allowed.</Text></View> : null}
       <Field label="Store type shown under your name (for example Haitian restaurant)" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
+      <Section title="Store address" />
+      <Field label="Street address" value={f.address} onChangeText={(v: string) => set({ address: v })} placeholder="Street, building and number" />
+      <View style={s.row}><View style={s.g}><Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} /></View><View style={s.g}><Field label="Country" value={f.country} onChangeText={(v: string) => set({ country: v })} /></View></View>
       <Section title="Custom products" />
       <View style={[s.row, { marginTop: 8 }]}>
-        <View style={s.g}><Text style={s.title}>Allow custom products</Text><Text style={s.mut}>Let customers customize products using ingredient options.</Text></View>
+        <View style={s.g}><Text style={s.title}>Allow custom products</Text><Text style={s.mut}>Let customers customize pizza or burger products.</Text></View>
         <Toggle value={customProducts} onValueChange={setCustomProducts} />
       </View>
       {customProducts ? <View style={s.cardFlat}>
-        <Text style={s.mut}>Choose the custom product types your store offers.</Text>
+        <Text style={s.mut}>Choose which custom product types customers can order.</Text>
         {(['pizza', 'burger'] as const).map(type => {
-          const current = customTypes.find(x => x.type === type);
+          const current = customTypes.find(x => x.type === type && x.enabled);
           return <View key={type} style={[s.row, { marginTop: 10 }]}>
-            <View style={s.g}><Text style={s.title}>{type === 'pizza' ? 'Pizza' : 'Burger'}</Text><Text style={s.mut}>{current ? current.groups.length + ' ingredient groups' : 'Ready-to-customize template'}</Text></View>
-            <Toggle value={!!current && current.enabled} onValueChange={v => setCustomTypes(prev => {
-              const found = prev.find(x => x.type === type);
-              return found ? prev.map(x => x.type === type ? { ...x, enabled: v } : x) : [...prev, { ...newBuilder(type), enabled: v }];
+            <View style={s.g}><Text style={s.title}>{type === 'pizza' ? 'Pizza' : 'Burger'}</Text></View>
+            <Toggle value={!!current} onValueChange={v => setCustomTypes(prev => {
+              const found = prev.some(x => x.type === type);
+              if (found) return prev.map(x => x.type === type ? { ...x, enabled: v } : x);
+              return [...prev, { ...newBuilder(type), enabled: v }];
             })} />
-            {current ? <Btn small kind="soft" label="Edit options" onPress={() => app.go('goodiesBuilder', { id: current.id })} /> : null}
           </View>;
         })}
       </View> : null}
@@ -339,12 +343,11 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUri: '', removePhoto: false });
   const [busy, setBusy] = useState(false);
   const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  const [productMode, setProductMode] = useState<'regular' | 'custom'>('regular');
   useEffect(() => { if (!product.id) goodiesApi.listBuilders(app.biz.id).then(rows => setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomTypes([])); }, [product.id, app.biz.id]);
   const openCustom = (type: 'pizza' | 'burger') => {
-    const target = customTypes.find(x => x.type === type);
-    if (!target) return app.toast('Enable this custom product type in Store Setup first.');
     onClose();
-    app.go('goodiesBuilder', { id: target.id });
+    app.go('goodiesBuilder', { type, create: true });
   };
   const choosePhoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -401,9 +404,16 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
           {!product.id ? <View style={{ marginBottom: 12 }}>
             <Text style={s.label}>Product type</Text>
             <View style={{ flexDirection: 'row', gap: 8 }}>
-              <View style={{ flex: 1 }}><Btn small kind="soft" label="Regular product" disabled /></View>
-              {customTypes.map(option => <View key={option.id} style={{ flex: 1 }}><Btn small kind="soft" label={option.type === 'pizza' ? '🍕 Custom pizza' : '🍔 Custom burger'} onPress={() => openCustom(option.type as 'pizza' | 'burger')} /></View>)}
+              <View style={{ flex: 1 }}><Btn small kind={productMode === 'regular' ? 'primary' : 'soft'} label="Regular product" onPress={() => setProductMode('regular')} /></View>
+              <View style={{ flex: 1 }}><Btn small kind={productMode === 'custom' ? 'primary' : 'soft'} label="Custom product" onPress={() => setProductMode('custom')} /></View>
             </View>
+            {productMode === 'custom' ? <View style={{ marginTop: 10 }}>
+              <Text style={s.mut}>Choose an enabled custom product type.</Text>
+              <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
+                {(['pizza', 'burger'] as const).filter(type => customTypes.some(x => x.type === type)).map(type => <View key={type} style={{ flex: 1 }}><Btn small kind="soft" label={type === 'pizza' ? 'Pizza' : 'Burger'} onPress={() => openCustom(type)} /></View>)}
+              </View>
+              {!customTypes.length ? <Text style={s.mut}>Enable Pizza or Burger in Store Setup first.</Text> : null}
+            </View> : null}
           </View> : null}
           <Text style={s.label}>Product photo</Text>
           {f.photoUri || f.photoUrl ? <Image source={{ uri: f.photoUri || f.photoUrl }} style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8 }} /> : <View style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8, backgroundColor: '#F1F3EF' }} />}
@@ -472,7 +482,7 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
 }
 
 export function GoodiesBuilderEditPage() {
-  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string } | undefined, id = route?.id;
+  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [pick, setPick] = useState<{ gi: number; ii: number } | null>(null), [errs, setErrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState('');
   useEffect(() => {
@@ -481,15 +491,15 @@ export function GoodiesBuilderEditPage() {
     goodiesApi.listBuilders(app.biz.id).then(l => {
       if (!active) return;
       setAll(l);
-      setB(id ? l.find(x => x.id === id) || null : null);
+      setB(createType ? newBuilder(createType) : id ? l.find(x => x.id === id) || null : null);
     }).catch(e => {
       if (active) setLoadError(errText(e));
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
-  }, [app.biz.id, id]);
+  }, [app.biz.id, id, createType]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
   if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
-  if (!id || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This custom product could not be found for this store. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
+  if ((!id && !createType) || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This custom product could not be found for this store. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
@@ -497,7 +507,7 @@ export function GoodiesBuilderEditPage() {
   const save = async () => {
     const e = validateBuilder(b); setErrs(e);
     if (e.length) return app.toast(e[0]);
-    await goodiesApi.saveBuilders(app.biz.id, all.map(x => (x.id === b.id ? b : x)));
+    await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? b : x)) : [...all, b]);
     app.toast('Builder saved'); app.bump(); app.back();
   };
   const num = (v: string) => parseInt(v.replace(/\D/g, '') || '0', 10);
