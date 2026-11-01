@@ -459,11 +459,11 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
   return (
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
-        <SheetShell title="Choose from the Wantiss library" onClose={onClose} tall>
+        <SheetShell title="Ingredient library" onClose={onClose} tall>
           <Field label="Search" value={q} onChangeText={setQ} />
           <ScrollView style={{ maxHeight: 380 }}>
             {list.map(l => <Row key={l.id} title={l.n} sub={l.id} onPress={() => onPick(l.id, l.n)} right={<Icon name="plus" size={18} color={t.mute} />} />)}
-            {!list.length ? <Text style={s.mut}>Nothing matches. You can request a new ingredient below.</Text> : null}
+            {!list.length ? <Text style={s.mut}>Nothing matches. You can request a missing ingredient.</Text> : null}
           </ScrollView>
         </SheetShell>
       </View>
@@ -489,7 +489,7 @@ export function GoodiesBuilderEditPage() {
   }, [app.biz.id, id]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
   if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
-  if (!id || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This builder could not be found for the selected business. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
+  if (!id || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This custom product could not be found for this store. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
@@ -584,7 +584,7 @@ export function GoodiesRequestsPage() {
   const label: Record<string, string> = { submitted: 'Waiting', approved: 'Approved', denied: 'Not approved', needs_info: 'Needs info' };
   return (
     <Pg title="Ingredient requests" onBack={app.back} right={undefined}>
-      <Text style={s.mut}>You cannot add ingredients yourself. Send a request with a photo and the Wantiss team will approve or decline it. Wantiss may replace your photo with one that fits the builder. If approved, it appears in your ingredient list and you decide whether to show it, its price and how many a customer can pick.</Text>
+      <Text style={s.mut}>Send a request with a photo and our team will review it. If approved, the ingredient appears in the library for your selected product type. You can then choose whether to offer it, set its price and define customer limits.</Text>
       <View style={{ height: 10 }} /><Btn label="Request an ingredient" onPress={() => setOpen(true)} />
       <Section title="Your requests" />
       {list.length === 0 ? <Text style={s.mut}>No requests yet.</Text> : <View style={s.cardFlat}><Divided>{list.map(r => <Row key={r.id} title={r.name} sub={`${r.builder}${r.role ? ' · ' + r.role : ''}${r.photo ? ' · photo sent' : ''}${r.reviewNote ? '\n' + r.reviewNote : ''}`} right={<Pill tone={tone(r.status)}>{label[r.status]}</Pill>} />)}</Divided></View>}
