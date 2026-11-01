@@ -251,7 +251,7 @@ export function ByoFoot() {
 
 export function ByoScreen({p}: {p: string}) {
   const th = useTheme(), a = (p || '').split('|'), sid = a[0], b = bGet(sid, a[1]);
-  if (!b || !STB[sid]) return <View><Header title={label('lbl.byoTitle', 'Builder')} onBack={back} /><Empty emoji="🍽️" title={label('lbl.byoUnavailableTitle', 'This builder is not available')} text={label('lbl.byoUnavailableText', 'The store may have turned it off.')} button={label('lbl.byoBackGoodies', 'Back to Goodies')} onPress={browse} /></View>;
+  if (!b || !STB[sid]) return <View><Header title={label('lbl.byoTitle', 'Customize your product')} onBack={back} /><Empty emoji="🍽️" title={label('lbl.byoUnavailableTitle', 'This custom product is not available')} text={label('lbl.byoUnavailableText', 'The store may have turned it off.')} button={label('lbl.byoBackGoodies', 'Back to Goodies')} onPress={browse} /></View>;
   if (!BD || BD.bid !== b.id || BD.sid !== sid) setBD(bDraft(b, sid));
   if (BD.added) return <ByoDone b={b} />;
   const s = STB[sid], un = !b.enabled || !b.available || BYO.store[sid] === false || !s.open;
