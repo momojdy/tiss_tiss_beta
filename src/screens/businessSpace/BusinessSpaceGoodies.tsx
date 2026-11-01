@@ -518,12 +518,11 @@ export function GoodiesRequestsPage() {
   const load = () => goodiesApi.listRequests(app.biz.id).then(setList).catch(e => app.toast(errText(e)));
   useEffect(() => {
     void load(); goodiesApi.rules().then(setRules).catch(() => setRules(''));
-    const channel = supabase.channel('goodies-ingredient-status-' + app.biz.id)
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'goodies_ingredient_requests', filter: 'business_id=eq.' + app.biz.id }, payload => {
-        const next: any = payload.new, previous: any = payload.old;
-        if (next?.status && next.status !== previous?.status) {
-          const title = next.status === 'approved' ? 'Ingredient approved' : next.status === 'denied' ? 'Ingredient request declined' : next.status === 'needs_info' ? 'More information needed' : 'Ingredient request updated';
-          Alert.alert(title, next.name + (next.review_note ? '\\n' + next.review_note : ''));
+    const channel = supabase.channel('goodies-ingredient-notifications-' + app.userId)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + app.userId }, payload => {
+        const notice: any = payload.new;
+        if (String(notice?.notification_type || '').startsWith('goodies_ingredient_')) {
+          Alert.alert(String(notice.title || 'Ingredient request update'), String(notice.body || 'Your ingredient request was updated.'));
           void load();
         }
       }).subscribe();
