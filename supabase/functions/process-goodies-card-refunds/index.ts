@@ -35,7 +35,8 @@ Deno.serve(async (req: Request) => {
       else if (result === "pending") pending++;
       else failed++;
     }
-    return json({ scanned: queue?.length || 0, refunded, pending, failed });
+    const summary = { scanned: queue?.length || 0, refunded, pending, failed };
+    return json(summary, failed > 0 ? 500 : 200);
   } catch (e) {
     console.error("process-goodies-card-refunds:", e);
     return json({ error: e instanceof Error ? e.message : "Refund processing failed" }, 500);
