@@ -14,7 +14,7 @@ import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; coverUrl: string | null; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -35,15 +35,16 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
-    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes').eq('business_id', biz).maybeSingle());
+    const d: GStore = { demoStoreId: '', coverUrl: null, category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
+    const r = await q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url').eq('business_id', biz).maybeSingle());
     if (!r) return d;
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
-      demoStoreId: '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
+      demoStoreId: '', coverUrl: r.cover_url || null, category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
       delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
     };
   },
+  saveStoreCover: (biz: string, coverUrl: string | null) => rpc('goodies_save_store_cover', { p_business: biz, p_cover_url: coverUrl }),
   saveStore: async (biz: string, st: GStore) => {
     const names = Object.fromEntries(Object.entries(st.names).filter(([, v]) => String(v || '').trim()).map(([k2, v]) => [k2, String(v).trim().slice(0, 160)]));
     await rpc('goodies_save_store_setup', {
@@ -61,7 +62,7 @@ export const goodiesApi = {
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
   listProducts: async (biz: string): Promise<GProduct[]> => {
     const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
-    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_url || null, reviewStatus: r.review_status || 'pending', reviewNote: r.review_note || null }));
+    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_url || null, reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
     const f: Record<string, unknown> = {};
@@ -71,6 +72,7 @@ export const goodiesApi = {
     if (p.emoji !== undefined) f.emoji = p.emoji.trim() || '🛍️';
     if (p.stock !== undefined) f.stock = p.stock;
     if (p.available !== undefined) f.is_available = p.available;
+    if (!p.id) { f.review_status = 'approved'; f.review_note = null; }
     if (p.restriction !== undefined) f.restriction = p.restriction;
     if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
     const res = p.id ? await supabase.from('goodies_products').update({ ...f, updated_at: new Date().toISOString() }).eq('id', p.id).select('id') : await supabase.from('goodies_products').insert({ ...f, business_id: biz }).select('id');
@@ -177,6 +179,7 @@ export function validateBuilder(b: GBuilder): string[] {
 export function GoodiesToolsCard() {
   const app = useApp(), s = useS(), t = useTheme();
   const R = (title: string, sub: string, page: string) => <Row title={title} sub={sub} onPress={() => app.go(page)} right={<Icon name="chevron-right" size={18} color={t.mute} />} />;
+  if (!app.meta.feats.some(f => f.feature === 'goodies')) return null;
   return (
     <View style={s.cardFlat}><Divided>
       {R('Orders', 'Review new orders and accept or decline within 15 minutes', 'goodiesOrders')}
@@ -192,7 +195,7 @@ export function GoodiesToolsCard() {
 const LANGS: [string, string][] = [['fr', 'Français'], ['ht', 'Kreyòl ayisyen'], ['es', 'Español'], ['zh-Hans', '简体中文']];
 export function GoodiesStorePage() {
   const app = useApp(), s = useS(), t = useTheme();
-  const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false);
+  const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const load = () => { setLoadErr(''); goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e))); };
   useEffect(load, [app.biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -210,9 +213,34 @@ export function GoodiesStorePage() {
     return '';
   };
   const save = async () => { const e = err(); if (e) return app.toast(e); setBusy(true); try { await goodiesApi.saveStore(app.biz.id, f); app.toast('Store saved'); app.bump(); } catch (x) { app.toast(errText(x)); } finally { setBusy(false); } };
+  const chooseCover = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return app.toast('Allow photo access to choose a store cover');
+    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [16, 9], quality: 0.9 });
+    if (picked.canceled || !picked.assets?.[0]) return;
+    setCoverBusy(true);
+    let uploadedPath = '';
+    try {
+      const resized = await ImageManipulator.manipulateAsync(picked.assets[0].uri, [{ resize: { width: 1600 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
+      const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
+      uploadedPath = `${app.biz.id}/goodies/store-cover/${uid()}${uid()}.jpg`;
+      const { error } = await supabase.storage.from('listing-photos').upload(uploadedPath, decode(base64), { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+      if (error) throw error;
+      const url = supabase.storage.from('listing-photos').getPublicUrl(uploadedPath).data.publicUrl;
+      await goodiesApi.saveStoreCover(app.biz.id, url);
+      setF(current => current ? { ...current, coverUrl: url } : current);
+      app.toast('Store cover updated');
+    } catch (e) {
+      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
+      app.toast(errText(e));
+    } finally { setCoverBusy(false); }
+  };
   return (
     <Pg title="Store setup" onBack={app.back}>
       <GoLiveCard />
+      <Section title="Store cover photo" />
+      {f.coverUrl ? <Image source={{ uri: f.coverUrl }} style={{ width: '100%', height: 150, borderRadius: 14, marginBottom: 8 }} /> : <View style={{ height: 130, borderRadius: 14, backgroundColor: s.card.backgroundColor, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}><Text style={s.mut}>No store cover photo yet</Text></View>}
+      <Btn kind="soft" label={f.coverUrl ? 'Change cover photo' : 'Add cover photo'} onPress={chooseCover} busy={coverBusy} />
       <Section title="Store category" />
       <Text style={s.mut}>Pick the category customers will find you under. Categories are set by Wantiss and cannot be created here.</Text>
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
@@ -253,7 +281,7 @@ function GoLiveCard() {
   return (
     <View style={s.card}>
       <View style={s.row}><Text style={[s.title, s.g]}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
-      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Publish your restaurant when your category, opening hours and at least one in-stock product are ready. Products appear to customers after product review.'}</Text>
+      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Publish your restaurant when your category, opening hours and at least one in-stock product are ready. Permitted products appear in your store as soon as you save them.'}</Text>
       {err ? <Text style={[s.mut, { marginTop: 8 }]}>{err}</Text> : null}
       <View style={{ height: 10 }} /><Btn label={live ? 'Unpublish store' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
     </View>
@@ -262,7 +290,7 @@ function GoLiveCard() {
 
 /* ---------- products ---------- */
 const RESTRICTIONS: { k: GProduct['restriction']; l: string }[] = [{ k: 'none', l: 'No restriction' }, { k: 'otc', l: 'Over the counter' }, { k: 'alcohol', l: 'Alcohol' }];
-const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, reviewStatus: 'pending', reviewNote: null };
+const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, reviewStatus: 'approved', reviewNote: null };
 const dollars = (n: number) => '$' + n.toFixed(2);
 function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClose: () => void; onSaved: () => void }) {
   const app = useApp(), s = useS();
@@ -304,7 +332,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
         const oldPath = product.photoUrl.includes(marker) ? decodeURIComponent(product.photoUrl.split(marker).pop() || '') : '';
         if (oldPath) await supabase.storage.from('listing-photos').remove([oldPath]);
       }
-      app.toast(product.id ? 'Product saved. Content changes are awaiting Wantiss review.' : 'Product added. It will appear after Wantiss review.'); onSaved();
+      app.toast(product.id ? 'Product saved and updated in your store.' : 'Product added to your store.'); onSaved();
     }
     catch (x) {
       if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
@@ -325,6 +353,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
           <View style={{ flexDirection: 'row', gap: 8, marginBottom: 10 }}><Btn small kind="soft" label={f.photoUri || f.photoUrl ? 'Change photo' : 'Add photo'} onPress={choosePhoto} /><Btn small kind="soft" label="Remove" disabled={!f.photoUri && !f.photoUrl} onPress={() => setF({ ...f, photoUri: '', photoUrl: '', removePhoto: true })} /></View>
           <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
           <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
+          {Number.isFinite(parseFloat(f.price)) && parseFloat(f.price) >= 0 ? <View style={[s.card, { marginTop: 4 }]}><Text style={s.title}>Your earnings per unit</Text><View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Selling price</Text><Text style={s.rt}>{dollars(parseFloat(f.price))}</Text></View><View style={s.row}><Text style={[s.mut, s.g]}>Wantiss platform fee (10%)</Text><Text style={s.rt}>−{dollars(Math.round(parseFloat(f.price) * 10) / 100)}</Text></View><View style={s.row}><Text style={[s.title, s.g]}>You receive</Text><Text style={s.title}>{dollars(Math.round(parseFloat(f.price) * 90) / 100)}</Text></View></View> : null}
           <Field label="Emoji" value={f.emoji} onChangeText={(v: string) => setF({ ...f, emoji: v })} />
           <Field label="Description (optional)" value={f.description} onChangeText={(v: string) => setF({ ...f, description: v })} multiline />
           <Text style={s.label}>Restriction</Text>
@@ -350,8 +379,8 @@ export function GoodiesProductsPage() {
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
-          <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'} · ${p.reviewStatus === 'approved' ? 'Approved' : p.reviewStatus === 'rejected' ? 'Rejected — edit to resubmit' : 'Pending review'}${p.reviewNote ? ' · ' + p.reviewNote : ''}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
-            onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.reviewStatus !== 'approved' || p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
+          <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
+            onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
         ))}</Divided></View>
       ) : <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" hint="Add your first product. You need at least one in stock to go live." cta="Add product" onCta={() => setEdit(BLANK)} /></View>}
       <GoLiveCard />

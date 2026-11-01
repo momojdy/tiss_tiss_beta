@@ -25,7 +25,7 @@ export function FeaturePage() {
   const orders = useQ<any[]>(() => k === 'goodies' ? Promise.resolve([]) : q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).eq('feature', k).order('created_at', { ascending: false }).limit(60)), [app.biz.id, k, app.tick]);
   const lst = useQ<any[]>(() => k === 'goodies' ? Promise.resolve([]) : q<any[]>(supabase.from('listings').select('id,title,status,price,stock,photos,feature,updated_at').eq('business_id', app.biz.id).eq('feature', k).neq('status', 'archived').order('updated_at', { ascending: false })), [app.biz.id, k, app.tick]);
   if (!fe) return <Pg title="Feature" onBack={app.back}><Empty title="Feature not found" /></Pg>;
-  if (k === 'goodies') return <Pg title={fe.name} onBack={app.back}><Section title="Goodies tools" /><GoodiesToolsCard /></Pg>;
+  if (k === 'goodies') return <Pg title={fe.name} onBack={app.back}><View style={s.card}><View style={s.row}><FIcon k="goodies" size={40} /><View style={s.g}><Text style={[s.rt, { fontSize: 15 }]}>{fe.name}</Text><Text style={s.mut}>{on ? 'Active' : 'Not activated'}</Text></View>{on ? <Pill tone="good">Active</Pill> : null}</View><Text style={[s.mut, { marginTop: 10 }]}>Activate Goodies to unlock your store, products, orders and ingredient tools. No additional Goodies paperwork or review is required.</Text><View style={{ marginTop: 12 }}><Btn label={on ? 'Deactivate' : 'Activate Goodies'} kind={on ? 'soft' : 'primary'} disabled={!on && app.biz.verification === 'restricted'} busy={a.busy} onPress={() => a.run(() => rpc(on ? 'deactivate_feature' : 'activate_feature', { p_business: app.biz.id, p_feature: 'goodies' }), on ? 'Goodies deactivated' : 'Goodies activated')} /></View></View>{on ? <><Section title="Goodies tools" /><GoodiesToolsCard /></> : null}</Pg>;
   const os = orders.d ?? [], ls = lst.d ?? [];
   const fo = os.filter(o => of === 'All' || (of === 'Cancelled' ? o.status === 'Cancelled' : o.status === of));
   const fl = ls.filter(l => lf === 'All' || l.status === lf);
@@ -70,10 +70,8 @@ export function FeaturesPanel() {
         {FX.FEATURES.map(f => (
           <Row key={f.key} left={<FIcon k={f.key} size={38} />} title={f.name} sub={f.key === 'goodies' ? 'Self-service restaurant setup' : on.has(f.key) ? 'Active' : f.approval ? 'Needs approval' : 'Not activated'}
             right={<View style={[s.row, { gap: 8 }]}>
-              {f.key === 'goodies' ? <Btn small label="Open tools" onPress={() => app.go('feature', { k: f.key })} /> : <>
-                {on.has(f.key) ? <Pressable accessibilityLabel={`Add to ${f.name}`} onPress={() => app.wizard(f.key)} style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: app.dark ? '#202B4F' : '#EEF1FF', alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={LIGHT.blue} /></Pressable> : null}
-                <Btn small kind={on.has(f.key) ? 'soft' : 'primary'} label={on.has(f.key) ? 'Deactivate' : 'Activate'} disabled={!on.has(f.key) && restricted} busy={a.busy} onPress={() => a.run(() => rpc(on.has(f.key) ? 'deactivate_feature' : 'activate_feature', { p_business: app.biz.id, p_feature: f.key }), on.has(f.key) ? `${f.name} deactivated` : `${f.name} activated`)} />
-              </>}
+              {on.has(f.key) ? <Pressable accessibilityLabel={`Add to ${f.name}`} onPress={() => app.wizard(f.key)} style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: app.dark ? '#202B4F' : '#EEF1FF', alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={LIGHT.blue} /></Pressable> : null}
+              <Btn small kind={on.has(f.key) ? 'soft' : 'primary'} label={on.has(f.key) ? 'Deactivate' : 'Activate'} disabled={!on.has(f.key) && restricted} busy={a.busy} onPress={() => a.run(() => rpc(on.has(f.key) ? 'deactivate_feature' : 'activate_feature', { p_business: app.biz.id, p_feature: f.key }), on.has(f.key) ? `${f.name} deactivated` : `${f.name} activated`)} />
             </View>} />
         ))}
       </Divided>

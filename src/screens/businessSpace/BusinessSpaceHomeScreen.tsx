@@ -107,8 +107,7 @@ export function Home() {
           </View>
         </>
       )}
-      <Section title="Goodies tools" />
-      <GoodiesToolsCard />
+      {meta.feats.some(f => f.feature === 'goodies') ? <><Section title="Goodies tools" /><GoodiesToolsCard /></> : null}
     </ScrollView>
   );
 }
