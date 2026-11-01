@@ -15,7 +15,12 @@ export type RefundQueueItem = {
 };
 
 type StripeRefundPage = { data: RefundRecord[]; has_more: boolean };
+type StripeDispute = { id: string; status: string };
+type StripeDisputePage = { data: StripeDispute[]; has_more: boolean };
 type StripeRefundClient = {
+  disputes: {
+    list(args: { payment_intent: string; limit: number; starting_after?: string }): Promise<StripeDisputePage>;
+  };
   refunds: {
     list(args: { payment_intent: string; limit: number; starting_after?: string }): Promise<StripeRefundPage>;
     create(
@@ -85,6 +90,42 @@ export async function processRefundQueueItem(
     }
 
     const remainingCents = getRemainingRefundAmount(totalCents, succeededAmount);
+
+    // Fail closed: check every dispute attached to this PaymentIntent immediately
+    // before issuing a new refund. A failed Stripe lookup must never permit a refund.
+    const disputes: StripeDispute[] = [];
+    let disputeCursor: string | undefined;
+    for (;;) {
+      const page = await stripe.disputes.list({
+        payment_intent: item.payment_provider_ref,
+        limit: 100,
+        ...(disputeCursor ? { starting_after: disputeCursor } : {}),
+      });
+      disputes.push(...page.data);
+      if (!page.has_more) break;
+      const last = page.data[page.data.length - 1];
+      if (!last) throw new Error("Stripe dispute history pagination did not advance");
+      disputeCursor = last.id;
+    }
+
+    const openDispute = disputes.find(dispute =>
+      dispute.status === "needs_response" ||
+      dispute.status === "under_review" ||
+      dispute.status === "warning_needs_response" ||
+      dispute.status === "warning_under_review"
+    );
+    if (openDispute) {
+      const { data, error } = await service.rpc("pause_goodies_card_refund_for_dispute", {
+        p_queue_id: item.queue_id,
+        p_lease_token: item.lease_token,
+        p_error: "Refund paused because Stripe dispute " + openDispute.id + " is " + openDispute.status,
+      });
+      if (error) throw error;
+      if (data !== true) throw new Error("Could not safely pause refund for the open Stripe dispute");
+      return "pending";
+    }
+
+    // No await occurs between the successful dispute check and this Stripe call.
     // Reuse the same key after an uncertain network failure with no Stripe
     // refund record. Advance the key only after Stripe records an attempt.
     const refundIdempotencyKey = getRefundIdempotencyKey(item.order_id, priorRefunds.length);
