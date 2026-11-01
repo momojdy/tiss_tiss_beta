@@ -68,31 +68,40 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       }
 
       const taskAvailable=await TaskManager.isAvailableAsync();
+      let backgroundStarted=false;
       if(taskAvailable){
-        const background=await Location.requestBackgroundPermissionsAsync();
-        if(background.granted){
-          const started=await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
-          if(!started){
-            await Location.startLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK,{
-              accuracy:Location.Accuracy.High,
-              timeInterval:5000,
-              distanceInterval:15,
-              pausesUpdatesAutomatically:false,
-              showsBackgroundLocationIndicator:true,
-              activityType:Location.ActivityType.AutomotiveNavigation,
-              foregroundService:{
-                notificationTitle:'Wantiss delivery tracking is active',
-                notificationBody:'Your live location is shared with the customer for this delivery.',
-                killServiceOnDestroy:false,
-              },
-            });
+        try {
+          const background=await Location.requestBackgroundPermissionsAsync();
+          if(background.granted){
+            const started=await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+            if(!started){
+              await Location.startLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK,{
+                accuracy:Location.Accuracy.High,
+                timeInterval:5000,
+                distanceInterval:15,
+                pausesUpdatesAutomatically:false,
+                showsBackgroundLocationIndicator:true,
+                activityType:Location.ActivityType.AutomotiveNavigation,
+                foregroundService:{
+                  notificationTitle:'Wantiss delivery tracking is active',
+                  notificationBody:'Your live location is shared with the customer for this delivery.',
+                  killServiceOnDestroy:false,
+                },
+              });
+            }
+            backgroundStarted=true;
+          } else if(!cancelled) {
+            setLocationStatus('Background permission was not granted. Live GPS works only while Wantiss is open.');
           }
-          if(!cancelled)setLocationStatus('Background GPS active · location sharing continues when you switch apps or lock your phone');
-          return;
+        } catch (backgroundError:any) {
+          if(!cancelled)setLocationStatus('Background GPS is unavailable in this app build. Live GPS will continue while Wantiss is open.');
         }
-        if(!cancelled)setLocationStatus('Background permission was not granted. Live GPS works only while Wantiss is open.');
       } else if(!cancelled) {
         setLocationStatus('Foreground GPS only in Expo Go. A Wantiss development build is required for background tracking.');
+      }
+      if(backgroundStarted){
+        if(!cancelled)setLocationStatus('Background GPS active · location sharing continues when you switch apps or lock your phone');
+        return;
       }
 
       foregroundSubscription=await Location.watchPositionAsync({
