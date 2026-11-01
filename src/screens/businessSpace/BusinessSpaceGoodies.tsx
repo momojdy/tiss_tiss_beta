@@ -193,6 +193,11 @@ export function GoodiesToolsCard() {
 
 /* ---------- store setup ---------- */
 const LANGS: [string, string][] = [['fr', 'Français'], ['ht', 'Kreyòl ayisyen'], ['es', 'Español'], ['zh-Hans', '简体中文']];
+export function GoodiesToolsPage() {
+  const app = useApp();
+  return <Pg title="Goodies tools" onBack={app.back}><GoodiesToolsCard /></Pg>;
+}
+
 export function GoodiesStorePage() {
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
@@ -368,9 +373,10 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
 }
 
 export function GoodiesProductsPage() {
-  const app = useApp(), s = useS(), t = useTheme();
+  const app = useApp(), s = useS(), t = useTheme(), { add } = useArg() as { add?: boolean };
   const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
+  useEffect(() => { if (add) setEdit(BLANK); }, [add]);
   const items = lst.d ?? [];
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
   return (
