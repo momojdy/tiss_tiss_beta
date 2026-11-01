@@ -290,7 +290,9 @@ export function GoodiesStorePage() {
       <Field label="Store type" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
       <Section title="Store address" />
       <Field label="Street address" value={f.address} onChangeText={(v: string) => set({ address: v })} placeholder="Street, building and number" />
-      <View style={s.row}><View style={s.g}><Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} /></View><View style={s.g}><Text style={s.label}>Country</Text><Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable></View></View>
+      <Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} />
+      <Text style={s.label}>Country</Text>
+      <Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable>
       <Modal visible={countryOpen} transparent animationType="slide" onRequestClose={() => setCountryOpen(false)}>
         <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
           <View style={{ backgroundColor: t.card, borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 16, maxHeight: '82%' }}>
