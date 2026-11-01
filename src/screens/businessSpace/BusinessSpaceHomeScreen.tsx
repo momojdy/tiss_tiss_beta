@@ -17,7 +17,6 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow, q } from "./BusinessSpaceShared";
-import { GoodiesToolsCard } from "./BusinessSpaceGoodies";
 
 
 export function Home() {
@@ -107,7 +106,6 @@ export function Home() {
           </View>
         </>
       )}
-      {meta.feats.some(f => f.feature === 'goodies') ? <><Section title="Goodies tools" /><GoodiesToolsCard /></> : null}
     </ScrollView>
   );
 }
