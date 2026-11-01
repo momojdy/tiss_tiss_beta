@@ -290,7 +290,7 @@ export function GoodiesStorePage() {
     const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [16, 9], quality: 0.9 });
     if (picked.canceled || !picked.assets?.[0]) return;
     setCoverBusy(true);
-    const uploadedPaths: string[] = [];
+    let uploadedPath = '';
     try {
       const resized = await ImageManipulator.manipulateAsync(picked.assets[0].uri, [{ resize: { width: 1600 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
       const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
@@ -302,7 +302,7 @@ export function GoodiesStorePage() {
       setF(current => current ? { ...current, coverUrl: url } : current);
       app.toast('Store cover updated');
     } catch (e) {
-      if (uploadedPaths.length) await supabase.storage.from('listing-photos').remove(uploadedPaths).catch(() => undefined);
+      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
       app.toast(errText(e));
     } finally { setCoverBusy(false); }
   };
@@ -497,7 +497,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const save = async () => {
     const e = check(); if (e) return app.toast(e);
     setBusy(true);
-    let uploadedPath = '';
+    const uploadedPaths: string[] = [];
     try {
       const photoUrls = [...f.photoUrls];
       for (const uri of f.photoUris) {
@@ -517,7 +517,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
       app.toast(product.id ? 'Product saved and updated in your store.' : 'Product added to your store.'); onSaved();
     }
     catch (x) {
-      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
+      if (uploadedPaths.length) await supabase.storage.from('listing-photos').remove(uploadedPaths).catch(() => undefined);
       app.toast(errText(x));
     }
     finally { setBusy(false); }
