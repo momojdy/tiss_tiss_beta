@@ -373,7 +373,8 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
 }
 
 export function GoodiesProductsPage() {
-  const app = useApp(), s = useS(), t = useTheme(), { add } = useArg() as { add?: boolean };
+  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { add?: boolean } | undefined;
+  const add = route?.add;
   const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
   useEffect(() => { if (add) setEdit(BLANK); }, [add]);
