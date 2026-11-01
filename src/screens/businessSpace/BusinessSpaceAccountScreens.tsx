@@ -42,7 +42,7 @@ export function RegistrationPage() {
     if (authError) throw authError;
     if (!auth.user) return { application: null, documents: [] as any[] };
     const { data: application, error } = await supabase.from('business_applications')
-      .select('id,status,review_note,created_at').eq('user_id', auth.user.id)
+      .select('id,status,review_note,final_rejection,created_at').eq('user_id', auth.user.id)
       .order('created_at', { ascending: false }).limit(1).maybeSingle();
     if (error) throw error;
     if (!application) return { application: null, documents: [] as any[] };
@@ -87,6 +87,10 @@ export function RegistrationPage() {
   };
   const currentApplication = applicationDocs.d?.application;
   const currentApplicationDocuments = applicationDocs.d?.documents ?? [];
+  const canResubmitApplication = currentApplication?.status === 'rejected' && !currentApplication.final_rejection && applicationTypes.every(doc => {
+    const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
+    return !!row?.storage_path && (row.status === 'pending' || row.status === 'verified');
+  });
   const rows = r.d ?? [], can = b.verification === 'setup' || b.verification === 'action';
   const msg: Record<Status, string> = { verified: 'Your business is verified.', pending: 'Your documents are in review. This usually takes 1 to 2 business days.', setup: 'Registration is optional and earns the Verified badge.', action: 'A document needs your attention. Replace it and resubmit.', restricted: 'Some actions are paused on this business.' };
   const upload = async (x: any) => {
@@ -122,7 +126,12 @@ export function RegistrationPage() {
               const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
               const status = row?.status || 'missing';
               const tone = status === 'verified' ? 'good' : status === 'rejected' ? 'bad' : status === 'pending' ? 'warn' : 'mute';
-              return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
+              return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' && !currentApplication.final_rejection ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
+            {currentApplication.status === 'rejected' && !currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}>
+              <Text style={s.mut}>Replace every rejected document. Once all three documents are uploaded and ready, you can resubmit your application for review.</Text>
+              <Btn label="Resubmit application" disabled={!canResubmitApplication} busy={a.busy} onPress={() => a.run(async () => { await rpc('resubmit_business_application', { p_application_id: currentApplication.id }); await applicationDocs.reload(); }, 'Application resubmitted')} />
+            </View> : null}
+            {currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}><Text style={s.mut}>This application has a final rejection. Contact Wantiss support if you believe it needs another review.</Text><Btn kind="soft" label="Contact support" onPress={() => app.go('help')} /></View> : null}
           </>
         )}
       </View>
