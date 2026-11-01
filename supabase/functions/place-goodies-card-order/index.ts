@@ -40,6 +40,12 @@ Deno.serve(async (req: Request) => {
     const action = String(body.action || "start");
 
     if (action === "capture" || action === "cancel") {
+      if (action === "capture") {
+        const {data: accessRows, error: accessError} = await authClient.rpc("get_my_goodies_access_status");
+        if (accessError) return json({error: "Goodies access could not be verified. Please retry."}, 503);
+        const access = Array.isArray(accessRows) ? accessRows[0] : accessRows;
+        if (access?.status === "suspended" || access?.status === "banned") return json({error: access.status === "banned" ? "Your access to Goodies has been permanently restricted." : "Your access to Goodies is temporarily suspended."}, 403);
+      }
       orderId = String(body.order_id || "");
       if (!orderId) return json({error: "Order is required"}, 400);
       const {data: order, error: orderError} = await service.from("goodies_orders")
@@ -85,6 +91,11 @@ Deno.serve(async (req: Request) => {
       if (updateError) throw updateError;
       return json({success: true, payment_status: "paid", payment_intent_id: intent.id});
     }
+
+    const {data: accessRows, error: accessError} = await authClient.rpc("get_my_goodies_access_status");
+    if (accessError) return json({error: "Goodies access could not be verified. Please retry."}, 503);
+    const access = Array.isArray(accessRows) ? accessRows[0] : accessRows;
+    if (access?.status === "suspended" || access?.status === "banned") return json({error: access.status === "banned" ? "Your access to Goodies has been permanently restricted." : "Your access to Goodies is temporarily suspended."}, 403);
 
     const methodId = String(body.payment_method_id || "");
     const order = body.order || {};
