@@ -516,7 +516,19 @@ export function GoodiesRequestsPage() {
   const blank = { name: '', builder: 'burger' as GRequest['builder'], role: '', note: '' };
   const [f, setF] = useState(blank);
   const load = () => goodiesApi.listRequests(app.biz.id).then(setList).catch(e => app.toast(errText(e)));
-  useEffect(() => { void load(); goodiesApi.rules().then(setRules).catch(() => setRules('')); }, [app.biz.id]);
+  useEffect(() => {
+    void load(); goodiesApi.rules().then(setRules).catch(() => setRules(''));
+    const channel = supabase.channel('goodies-ingredient-status-' + app.biz.id)
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'goodies_ingredient_requests', filter: 'business_id=eq.' + app.biz.id }, payload => {
+        const next: any = payload.new, previous: any = payload.old;
+        if (next?.status && next.status !== previous?.status) {
+          const title = next.status === 'approved' ? 'Ingredient approved' : next.status === 'denied' ? 'Ingredient request declined' : next.status === 'needs_info' ? 'More information needed' : 'Ingredient request updated';
+          Alert.alert(title, next.name + (next.review_note ? '\\n' + next.review_note : ''));
+          void load();
+        }
+      }).subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.biz.id]);
   const choose = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) return app.toast('Allow photo access to add a picture');
