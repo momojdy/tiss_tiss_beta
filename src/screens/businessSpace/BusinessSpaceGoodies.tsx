@@ -459,10 +459,18 @@ export function GoodiesProductsPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { add?: boolean } | undefined;
   const add = route?.add;
   const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
+  const builders = useQ(() => goodiesApi.listBuilders(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
   useEffect(() => { if (add) setEdit(BLANK); }, [add]);
   const items = lst.d ?? [];
+  const customItems = (builders.d ?? []).filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled);
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
+  const toggleCustom = async (b: GBuilder, v: boolean) => {
+    try {
+      await goodiesApi.saveBuilders(app.biz.id, (builders.d ?? []).map(x => x.id === b.id ? { ...x, available: v } : x));
+      builders.reload(); app.bump();
+    } catch (e) { app.toast(errText(e)); }
+  };
   return (
     <Pg title="Products" onBack={app.back} refreshing={lst.l && !!lst.d} onRefresh={lst.reload}>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
@@ -473,7 +481,9 @@ export function GoodiesProductsPage() {
           <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
             onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
         ))}</Divided></View>
-      ) : <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" hint="Add your first product. You need at least one in stock to go live." cta="Add product" onCta={() => setEdit(BLANK)} /></View>}
+      ) : null}
+      {customItems.length ? <><Section title="Custom products" /><View style={s.cardFlat}><Divided>{customItems.map(b => <Row key={b.id} title={b.name} sub={`${b.type === 'pizza' ? 'Pizza' : 'Burger'} · ${dollars(Number(b.base) || 0)} base price`} onPress={() => app.go('goodiesBuilder', { id: b.id })} right={<Toggle value={b.available} onValueChange={(v: boolean) => toggleCustom(b, v)} />} />)}</Divided></View></> : null}
+      {!items.length && !customItems.length && !lst.l ? <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" cta="Add product" onCta={() => setEdit(BLANK)} /></View> : null}
       <GoLiveCard />
       {edit ? <ProductSheet product={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); lst.reload(); }} /> : null}
     </Pg>
