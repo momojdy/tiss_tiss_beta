@@ -276,7 +276,7 @@ export function GoodiesStorePage() {
     <Pg title="Store setup" onBack={app.back}>
       <GoLiveCard />
       <Section title="Store cover photo" />
-      {f.coverUrl ? <Image source={{ uri: f.coverUrl }} style={{ width: '100%', height: 150, borderRadius: 14, marginBottom: 8 }} /> : <View style={{ height: 130, borderRadius: 14, backgroundColor: s.card.backgroundColor, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}><Text style={s.mut}>No store cover photo yet</Text></View>}
+      {f.coverUrl ? <Image source={{ uri: f.coverUrl }} style={{ width: '100%', height: 150, borderRadius: 14, marginBottom: 8 }} /> : null}
       <Btn kind="soft" label={f.coverUrl ? 'Change cover photo' : 'Add cover photo'} onPress={chooseCover} busy={coverBusy} />
       <Section title="Store category" />
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
@@ -346,10 +346,12 @@ function GoLiveCard() {
   };
   if (st.e && !st.d) return <ErrBox e={st.e} retry={st.reload} />;
   return (
-    <View style={[s.row, { paddingVertical: 4 }]}>
-      <View style={s.g}><Text style={s.title}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
-      <Btn small label={live ? 'Unpublish' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
-      {err ? <Text style={[s.mut, { marginTop: 8 }]}>{err}</Text> : null}
+    <View>
+      <View style={[s.row, { paddingVertical: 4 }]}>
+        <View style={s.g}><Text style={s.title}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
+        <Btn small label={live ? 'Unpublish' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
+      </View>
+      {err ? <Text style={[s.mut, { marginTop: 6 }]}>{err}</Text> : null}
     </View>
   );
 }
@@ -463,7 +465,6 @@ export function GoodiesProductsPage() {
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
   return (
     <Pg title="Products" onBack={app.back} refreshing={lst.l && !!lst.d} onRefresh={lst.reload}>
-      <Text style={s.mut}>Set the price and how many you have. Stock goes down when customers order and back up if an order is cancelled. Customers only see available products while your store is live.</Text>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       <View style={{ height: 8 }} />
 
