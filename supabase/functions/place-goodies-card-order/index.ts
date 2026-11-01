@@ -1,5 +1,5 @@
 import Stripe from "npm:stripe@18.5.0";
-import { createClient } from "npm:@supabase/supabase-js@2";
+import { createClient, type SupabaseClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -19,8 +19,8 @@ Deno.serve(async (req: Request) => {
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!stripeKey || !publishableKey || !url || !anonKey || !serviceKey) return json({error: "Payment service is not configured"}, 503);
 
-  let authClient: ReturnType<typeof createClient> | null = null;
-  let service: ReturnType<typeof createClient> | null = null;
+  let authClient: SupabaseClient<any> | null = null;
+  let service: SupabaseClient<any> | null = null;
   let stripe: Stripe;
   let userId = "";
   let orderId = "";
@@ -29,14 +29,14 @@ Deno.serve(async (req: Request) => {
   try {
     const authorization = req.headers.get("Authorization");
     if (!authorization) return json({error: "Sign in required"}, 401);
-    authClient = createClient(url, anonKey, {global: {headers: {Authorization: authorization}}});
-    service = createClient(url, serviceKey, {auth: {persistSession: false, autoRefreshToken: false}});
+    authClient = createClient<any>(url, anonKey, {global: {headers: {Authorization: authorization}}});
+    service = createClient<any>(url, serviceKey, {auth: {persistSession: false, autoRefreshToken: false}});
     const {data: {user}, error: authError} = await authClient.auth.getUser();
     if (authError || !user) return json({error: "Sign in required"}, 401);
     userId = user.id;
 
     const body = await req.json();
-    stripe = new Stripe(stripeKey, {apiVersion: "2026-08-26.dahlia"});
+    stripe = new Stripe(stripeKey, {apiVersion: "2026-08-26.dahlia" as any});
     const action = String(body.action || "start");
 
     if (action === "capture" || action === "cancel") {
