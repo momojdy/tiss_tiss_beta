@@ -164,7 +164,7 @@ Deno.serve(async (req: Request) => {
           const {error: queueError} = await service.from("goodies_orders").update({payment_method: "card", payment_status: "refund_pending", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
           if (queueError) console.error("Goodies card refund queueing failed:", queueError);
         } else {
-          await authClient.rpc("set_goodies_order_status", {p_order_id: orderId, p_status: "cancelled"}).catch(() => undefined);
+          try { await authClient.rpc("set_goodies_order_status", {p_order_id: orderId, p_status: "cancelled"}); } catch { /* best-effort cleanup */ }
           await service.from("goodies_orders").update({payment_method: "card", payment_status: "failed", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
         }
       } catch (cleanupError) { console.error("Goodies card cleanup needs reconciliation:", cleanupError); }
