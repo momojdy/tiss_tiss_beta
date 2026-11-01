@@ -26,13 +26,16 @@ function makeStripe(refunds: RefundRecord[], createResult?: RefundRecord, create
     createArgs: [],
     listCalls: 0,
   };
-  const stripe = {
+  const stripe: StripeRefundClient = {
+    disputes: {
+      async list() { return { data: [], has_more: false }; },
+    },
     refunds: {
-      async list() {
+      async list(_args) {
         calls.listCalls++;
         return { data: refunds, has_more: false };
       },
-      async create(params: { amount: number }, options: { idempotencyKey: string }) {
+      async create(params, options) {
         calls.createArgs.push({ amount: params.amount, key: options.idempotencyKey });
         if (createError) throw createError;
         if (!createResult) throw new Error("Missing mock Stripe refund response");
@@ -146,16 +149,19 @@ Deno.test("Stripe refund history pagination is exhausted before calculating the 
   ];
   const cursors: Array<string | undefined> = [];
   const createCalls: Array<{ amount: number; key: string }> = [];
-  const stripe = {
+  const stripe: StripeRefundClient = {
+    disputes: {
+      async list() { return { data: [], has_more: false }; },
+    },
     refunds: {
-      async list(args: { starting_after?: string }) {
+      async list(args) {
         cursors.push(args.starting_after);
         const page = pages.shift();
         if (!page) throw new Error("Unexpected extra Stripe refund page");
         return page;
       },
-      async create(params: { amount: number }, options: { idempotencyKey: string }) {
-        createCalls.push({ amount: params.amount, key: options.idempotencyKey });
+      async create(params, _options) {
+        createCalls.push({ amount: params.amount, key: _options.idempotencyKey });
         return { id: "re_remaining", status: "succeeded", amount: params.amount };
       },
     },
