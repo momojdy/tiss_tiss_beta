@@ -73,6 +73,10 @@ Deno.serve(async (req: Request) => {
         return json({error: "This order was already closed and cannot be paid."}, 409);
       }
 
+      if (action === "cancel" && !["scheduled", "placed"].includes(order.status)) {
+        return json({error: "This order can no longer be cancelled after the restaurant accepts it."}, 409);
+      }
+
       if (action === "cancel") {
         const captured = intent.status === "succeeded";
         if (intent.status === "requires_capture" || intent.status === "requires_action" || intent.status === "requires_confirmation") {
