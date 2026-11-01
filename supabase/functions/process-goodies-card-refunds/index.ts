@@ -1,6 +1,6 @@
 import Stripe from "npm:stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
-import { findBlockingRefund, getRefundIdempotencyKey, getRemainingRefundAmount, getSucceededRefundAmount } from "./refundLogic.ts";
+import { processRefundQueueItem } from "./refundProcessor.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,85 +30,10 @@ Deno.serve(async (req: Request) => {
     if (queueError) throw queueError;
     let refunded = 0, pending = 0, failed = 0;
     for (const item of queue || []) {
-      try {
-        const priorRefunds: Stripe.Refund[] = [];
-        let startingAfter: string | undefined;
-        for (;;) {
-          const page = await stripe.refunds.list({
-            payment_intent: item.payment_provider_ref,
-            limit: 100,
-            ...(startingAfter ? { starting_after: startingAfter } : {}),
-          });
-          priorRefunds.push(...page.data);
-          if (!page.has_more) break;
-          const last = page.data[page.data.length - 1];
-          if (!last) throw new Error("Stripe refund history pagination did not advance");
-          startingAfter = last.id;
-        }
-
-        const succeededAmount = getSucceededRefundAmount(priorRefunds);
-        const pendingRefund = findBlockingRefund(priorRefunds);
-        const totalCents = Math.round(Number(item.total) * 100);
-
-        if (succeededAmount >= totalCents) {
-          const lastSucceeded = [...priorRefunds].reverse().find(r => r.status === "succeeded");
-          const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
-            p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refunded",
-            p_refund_id: lastSucceeded?.id || null, p_error: null,
-          });
-          if (error) throw error;
-          if (finished !== true) throw new Error("Refund worker lease is no longer current");
-          refunded++;
-        } else if (pendingRefund) {
-          const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
-            p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refund_pending",
-            p_refund_id: pendingRefund.id, p_error: "A Stripe refund is still pending",
-          });
-          if (error) throw error;
-          if (finished !== true) throw new Error("Refund worker lease is no longer current");
-          pending++;
-        } else {
-          const remainingCents = getRemainingRefundAmount(totalCents, succeededAmount);
-          // Reuse the original key when no Stripe refund object exists. This
-          // safely replays an uncertain network/5xx attempt. Once Stripe has
-          // recorded a failed or partial refund, advance the generation so a
-          // genuine retry does not replay that terminal refund forever.
-          const refundIdempotencyKey = getRefundIdempotencyKey(item.order_id, priorRefunds.length);
-          const refund = await stripe.refunds.create(
-            {
-              payment_intent: item.payment_provider_ref,
-              amount: remainingCents,
-              reason: "requested_by_customer",
-            },
-            { idempotencyKey: refundIdempotencyKey },
-          );
-          if (refund.status === "succeeded" && succeededAmount + refund.amount >= totalCents) {
-            const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
-              p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refunded", p_refund_id: refund.id, p_error: null,
-            });
-            if (error) throw error;
-            if (finished !== true) throw new Error("Refund worker lease is no longer current");
-            refunded++;
-          } else if (refund.status === "pending" || refund.status === "succeeded") {
-            const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
-              p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "refund_pending",
-              p_refund_id: refund.id, p_error: "Remaining Stripe refund amount is still pending",
-            });
-            if (error) throw error;
-            if (finished !== true) throw new Error("Refund worker lease is no longer current");
-            pending++;
-          } else {
-            throw new Error("Stripe refund status: " + refund.status);
-          }
-        }
-      } catch (e) {
-        failed++;
-        const { data: released, error: resetError } = await service.rpc("finish_goodies_card_refund", {
-          p_queue_id: item.queue_id, p_lease_token: item.lease_token, p_status: "failed", p_error: e instanceof Error ? e.message : "Refund attempt failed",
-        });
-        if (resetError || released !== true) console.error("Could not release refund queue item", item.queue_id, resetError || "Lease is no longer current");
-        console.error("Goodies card refund failed for order", item.order_id, e);
-      }
+      const result = await processRefundQueueItem(item, stripe, service);
+      if (result === "refunded") refunded++;
+      else if (result === "pending") pending++;
+      else failed++;
     }
     return json({ scanned: queue?.length || 0, refunded, pending, failed });
   } catch (e) {
