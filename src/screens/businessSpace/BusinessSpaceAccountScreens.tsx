@@ -89,10 +89,12 @@ export function RegistrationPage() {
   };
   const currentApplication = applicationDocs.d?.application;
   const currentApplicationDocuments = applicationDocs.d?.documents ?? [];
-  const canResubmitApplication = !!currentApplication && ['rejected', 'needs_info'].includes(currentApplication.status) && !currentApplication.final_rejection && applicationTypes.every(doc => {
-    const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
-    return !!row?.storage_path && (row.status === 'pending' || row.status === 'verified');
-  });
+  const canResubmitApplication = currentApplication ? (
+    ['rejected', 'needs_info'].includes(currentApplication.status) && !currentApplication.final_rejection && applicationTypes.every(doc => {
+      const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
+      return !!row?.storage_path && (row.status === 'pending' || row.status === 'verified');
+    })
+  ) : false;
   const rows = r.d ?? [], can = b.verification === 'setup' || b.verification === 'action';
   const msg: Record<Status, string> = { verified: 'Your business is verified.', pending: 'Your documents are in review. This usually takes 1 to 2 business days.', setup: 'Registration is optional and earns the Verified badge.', action: 'A document needs your attention. Replace it and resubmit.', restricted: 'Some actions are paused on this business.' };
   const upload = async (x: any) => {
