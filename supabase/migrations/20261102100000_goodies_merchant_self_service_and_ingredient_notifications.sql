@@ -27,7 +27,7 @@ begin
   if auth.uid() is not null and (
     coalesce(new.restriction, 'none') = 'alcohol'
     or concat_ws(' ', new.name, new.description) ~*
-      '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\mbeer|bi[èe]re|\\mwine|champagne|cocktail)'
+      '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)'
   ) then
     raise exception 'Alcohol products are prohibited on Wantiss' using errcode = 'P0001';
   end if;
@@ -46,7 +46,7 @@ begin
   if auth.uid() is null then return new; end if;
   if coalesce(new.restriction, 'none') = 'alcohol'
      or concat_ws(' ', new.name, new.description) ~*
-       '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\mbeer|bi[èe]re|\\mwine|champagne|cocktail)' then
+       '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\mbeer|bi[èe]re|\mwine|champagne|cocktail)' then
     raise exception 'Alcohol products are prohibited on Wantiss' using errcode = 'P0001';
   end if;
   begin
