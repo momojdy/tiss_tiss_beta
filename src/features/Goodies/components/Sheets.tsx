@@ -69,7 +69,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + ' min')}
         {row(label('lbl.storeOrderMethods', 'Order methods'), label('lbl.sheetDeliveryAndPickup', 'Delivery and pickup'))}
         {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? label('lbl.sheetScheduledAvailable', 'Available while closed') : label('lbl.sheetScheduledOnlyOpen', 'Only while open'))}
-        {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Minimum advance time'), Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes after opening') : null}
+        {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Minimum advance time'), Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes') : null}
       </Card>
     </>);
   }
