@@ -37,7 +37,7 @@ begin
   where business_id = p_business;
 end;
 $function$;
-revoke all on function public.goodies_save_store_setup(uuid,text,text,numeric,numeric,integer,integer,text,jsonb,boolean,boolean,text,numeric,numeric,numeric,numeric,numeric,text,text,text,boolean,text,text,text) from public;
+revoke all on function public.goodies_save_store_setup(uuid,text,text,numeric,numeric,integer,integer,text,jsonb,boolean,boolean,text,numeric,numeric,numeric,numeric,numeric,text,text,text,boolean,text,text,text) from public, anon;
 grant execute on function public.goodies_save_store_setup(uuid,text,text,numeric,numeric,integer,integer,text,jsonb,boolean,boolean,text,numeric,numeric,numeric,numeric,numeric,text,text,text,boolean,text,text,text) to authenticated;
 
 create or replace function public.goodies_save_store_thumbnail(p_business uuid, p_thumbnail_url text)
@@ -52,5 +52,5 @@ begin
   return true;
 end;
 $function$;
-revoke all on function public.goodies_save_store_thumbnail(uuid,text) from public;
+revoke all on function public.goodies_save_store_thumbnail(uuid,text) from public, anon;
 grant execute on function public.goodies_save_store_thumbnail(uuid,text) to authenticated;
