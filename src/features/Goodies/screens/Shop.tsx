@@ -26,8 +26,13 @@ const Hero = ({s, onBack, right}: any) => (
 
 export function Store({id}: {id: string}) {
   const th = useTheme(), s = STB[id], address = addr(), t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
-  useEffect(() => { void refreshLiveSchedules(); }, [id]);
-  useEffect(() => { if (s?.live && address?.t) void refreshStoreDistance(id, address).catch(() => undefined); }, [id, s?.live, address?.t, address?.apt, address?.inst]);
+  useEffect(() => {
+    let active = true;
+    void refreshLiveSchedules().then(() => {
+      if (active && address?.t) return refreshStoreDistance(id, address).catch(() => undefined);
+    });
+    return () => { active = false; };
+  }, [id, address?.t, address?.apt, address?.inst]);
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
@@ -211,9 +216,15 @@ const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View s
 export function Checkout() {
   const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
   const [cashEligible, setCashEligible] = useState(false);
-  useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
+  useEffect(() => {
+    let active = true;
+    void refreshLiveSchedules().then(() => {
+      if (active && st?.id && st.live && a?.t) return refreshStoreDistance(st.id, a).catch(() => undefined);
+    });
+    void refreshPaymentOptions();
+    return () => { active = false; };
+  }, [st?.id, st?.live, a?.t, a?.apt, a?.inst]);
   useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
-  useEffect(() => { if (st?.live && a?.t) void refreshStoreDistance(st.id, a).catch(() => undefined); }, [st?.id, st?.live, a?.t, a?.apt, a?.inst]);
   useEffect(() => {
     let active = true;
     setCashEligible(false);
