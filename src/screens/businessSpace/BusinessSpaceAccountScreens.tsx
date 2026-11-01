@@ -41,11 +41,13 @@ export function RegistrationPage() {
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError) throw authError;
     if (!auth.user) return { application: null, documents: [] as any[] };
-    const { data: application, error } = await supabase.from('business_applications')
-      .select('id,status,review_note,final_rejection,created_at').eq('user_id', auth.user.id)
-      .order('created_at', { ascending: false }).limit(1).maybeSingle();
+    const { data: applications, error } = await supabase.from('business_applications')
+      .select('id,business_id,status,review_note,final_rejection,created_at').eq('user_id', auth.user.id)
+      .or(`business_id.eq.${b.id},business_id.is.null`).order('created_at', { ascending: false });
     if (error) throw error;
-    if (!application) return { application: null, documents: [] as any[] };
+    const application = (applications || []).find((x: any) => x.business_id === b.id) || null;
+    const needsBusinessMapping = !application && (applications || []).some((x: any) => !x.business_id);
+    if (!application) return { application: null, documents: [] as any[], needsBusinessMapping };
     const { data: documents, error: documentError } = await supabase.from('business_application_documents')
       .select('id,document_type,storage_path,status,review_note,submitted_at')
       .eq('application_id', application.id);
@@ -80,7 +82,7 @@ export function RegistrationPage() {
   };
   const startApplication = async () => {
     await a.run(async () => {
-      const { error } = await supabase.rpc('submit_business_application', { p_business_name: b.name });
+      const { error } = await supabase.rpc('submit_business_application', { p_business_name: b.name, p_business_id: b.id });
       if (error) throw error;
       await applicationDocs.reload();
     }, 'Application started');
@@ -115,8 +117,7 @@ export function RegistrationPage() {
         <Text style={[s.mut, { paddingVertical: 8 }]}>Upload all three documents. Wantiss cannot approve your business application until each document is reviewed and verified. PDF, JPEG, PNG or WebP, up to 10 MB each.</Text>
         {applicationDocs.e ? <View style={{ paddingVertical: 10 }}><ErrBox e={applicationDocs.e} retry={applicationDocs.reload} /></View> : applicationDocs.l && !applicationDocs.d ? <View style={{ paddingVertical: 12 }}><Skel h={110} /></View> : !currentApplication ? (
           <View style={{ paddingVertical: 12, gap: 10 }}>
-            <Text style={s.mut}>No application has been created for this account yet.</Text>
-            <Btn label="Start business application" busy={a.busy} onPress={startApplication} />
+            {applicationDocs.d?.needsBusinessMapping ? <Text style={s.mut}>An existing application needs to be linked to the correct business workspace before it can continue. Wantiss support can help complete this matching.</Text> : <><Text style={s.mut}>No application has been created for this business yet.</Text><Btn label="Start business application" busy={a.busy} onPress={startApplication} /></>}
           </View>
         ) : (
           <>
