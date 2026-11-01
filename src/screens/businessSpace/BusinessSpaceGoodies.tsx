@@ -18,7 +18,7 @@ import { COUNTRIES } from './countries';
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
-export type GItem = TplItem & { id: string; avail: boolean };
+export type GItem = TplItem & { id: string; avail: boolean; assetUrl?: string | null };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
 export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; productCreated?: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
 export type GRequest = { id: string; name: string; builder: 'pizza' | 'burger' | 'custom'; role: string; note: string; status: 'submitted' | 'approved' | 'denied' | 'needs_info'; reviewNote: string; photo: boolean; at: number };
@@ -136,8 +136,10 @@ export const goodiesApi = {
       const base = Array.isArray(payload?.items) ? payload.items : [];
       const added = await rpc<any[]>('goodies_list_library_ingredients', {}).catch(() => [] as any[]);
       const seen = new Set(base.map(x => x.id));
-      const extra = (added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(x => ({ id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key }));
-      return [...base, ...extra];
+      const assetUrl = (key: string | null | undefined) => key ? remote.assets.find(a => a.asset_key === key || a.asset_key.endsWith('/' + key))?.url || null : null;
+      const baseWithAssets = base.map(x => ({ ...x, assetUrl: assetUrl(x.id) }));
+      const extra = (added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(x => ({ id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key, assetUrl: assetUrl(x.asset_key) }));
+      return [...baseWithAssets, ...extra];
     } catch {
       return [];
     }
@@ -567,10 +569,10 @@ export function GoodiesProductsPage() {
 }
 
 /* ---------- builder editor ---------- */
-function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; onPick: (id: string, name: string) => void; onClose: () => void }) {
+function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; onPick: (id: string, name: string, assetUrl?: string | null) => void; onClose: () => void }) {
   const s = useS(), t = useTheme();
   const [q, setQ] = useState('');
-  const [library, setLibrary] = useState<{ id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[]>([]);
+  const [library, setLibrary] = useState<{ id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean; assetUrl?: string | null }[]>([]);
   useEffect(() => { let active = true; goodiesApi.library().then(rows => { if (active) setLibrary(rows); }).catch(() => { if (active) setLibrary([]); }); return () => { active = false; }; }, []);
   const list = useMemo(() => library.filter(l => l.b === type && l.n.toLowerCase().includes(q.toLowerCase())), [library, type, q]);
   return (
@@ -579,7 +581,7 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
         <SheetShell title="Ingredient library" onClose={onClose} tall>
           <Field label="Search" value={q} onChangeText={setQ} />
           <ScrollView style={{ maxHeight: 380 }}>
-            {list.map(l => <Row key={l.id} title={l.n} sub={l.id} onPress={() => onPick(l.id, l.n)} right={<Icon name="plus" size={18} color={t.mute} />} />)}
+            {list.map(l => <Pressable key={l.id} onPress={() => onPick(l.id, l.n, l.assetUrl || null)} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: t.line }}>{l.assetUrl ? <Image source={{ uri: l.assetUrl }} style={{ width: 38, height: 38, borderRadius: 8 }} /> : <View style={{ width: 38, height: 38, borderRadius: 8, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center' }}><Icon name="image-outline" size={17} color={t.mute} /></View>}<View style={{ flex: 1 }}><Text style={{ color: t.ink, fontWeight: '600' }}>{l.n}</Text><Text style={s.mut}>{l.id}</Text></View><Icon name="plus" size={18} color={t.mute} /></Pressable>)}
             {!list.length ? <Text style={s.mut}>Nothing matches. You can request a missing ingredient.</Text> : null}
           </ScrollView>
         </SheetShell>
@@ -697,7 +699,7 @@ export function GoodiesBuilderEditPage() {
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
       <Btn kind="soft" label="Request an ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
       <View style={{ height: 14 }} /><Btn label={b.productCreated === false ? 'Add custom product' : 'Save changes'} onPress={save} busy={saving} />
-      {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
+      {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm, assetUrl) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, assetUrl: assetUrl || null, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
 }
