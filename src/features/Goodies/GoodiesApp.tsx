@@ -118,9 +118,22 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'help': body = <Help />; break;
     default: body = <Account r={r} p={c.p} />;
   }
+  const accessBlocked = S.goodiesAccess?.status === 'suspended' || S.goodiesAccess?.status === 'banned';
+  const accessRoutes = ['home', 'cats', 'cart', 'explore', 'search', 'catlist', 'store', 'product', 'checkout', 'byo', 'promos', 'favs'];
+  if (accessBlocked && accessRoutes.includes(r)) {
+    const banned = S.goodiesAccess.status === 'banned';
+    body = <View style={{padding: 20, paddingTop: 36}}>
+      <Card>
+        <Ttl>{banned ? 'Goodies access permanently restricted' : 'Goodies access temporarily suspended'}</Ttl>
+        <T size={13} style={{marginTop: 8}}>{S.goodiesAccess.reason || (banned ? 'Your account can no longer use Goodies.' : 'Your access to Goodies is currently paused.')}</T>
+        {S.goodiesAccess.endsAt ? <T size={12} style={{marginTop: 8}}>Access suspension ends {new Date(S.goodiesAccess.endsAt).toLocaleDateString()}.</T> : null}
+        <T size={12} style={{marginTop: 12}}>Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect.</T>
+      </Card>
+    </View>;
+  }
   const [dismissedCartCount, setDismissedCartCount] = useState(-1);
   const cartDragX = useRef(new Animated.Value(0)).current;
-  const showTabs = TABS.indexOf(r) > -1, showCb = cnt() > 0 && NOCB.indexOf(r) < 0 && dismissedCartCount !== cnt(), footed = FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added);
+  const showTabs = TABS.indexOf(r) > -1, showCb = !accessBlocked && cnt() > 0 && NOCB.indexOf(r) < 0 && dismissedCartCount !== cnt(), footed = !accessBlocked && (FOOTED.indexOf(r) > -1 || (r === 'byo' && !!BD && !BD.added));
   useEffect(() => { cartDragX.setValue(0); }, [cnt(), cartDragX]);
   const cartBannerPan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => false,
