@@ -37,7 +37,7 @@ async function reconcileGoodiesPaymentIntent(
   }
 
   try {
-    const { data, error } = await supabase.rpc("process_goodies_card_payment_event", {
+    const { error } = await supabase.rpc("process_goodies_card_payment_event", {
       p_order_id: orderId,
       p_payment_intent_id: paymentIntent.id,
       p_event_state: state,
@@ -47,12 +47,10 @@ async function reconcileGoodiesPaymentIntent(
       p_event_created: event.created,
     });
     if (error) throw error;
-    if (data === "refund_required") {
-      await stripe.refunds.create(
-        { payment_intent: paymentIntent.id, reason: "requested_by_customer" },
-        { idempotencyKey: "goodies-late-success-refund-" + orderId },
-      );
-    }
+    // A late successful payment for a terminal order sets payment_status to
+    // refund_pending. The database trigger enqueues it for the refund worker.
+    // Keep Stripe refund creation in that worker only to prevent competing
+    // webhook and queue-worker refunds for the same PaymentIntent.
     const { error: completeError } = await supabase.rpc("complete_goodies_stripe_webhook_event", {
       p_event_id: event.id,
       p_claim_token: claimToken,
