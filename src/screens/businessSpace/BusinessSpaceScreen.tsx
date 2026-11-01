@@ -154,6 +154,12 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     let h: any;
     const ch = supabase.channel(`bs-${biz.id}`), kick = () => { clearTimeout(h); h = setTimeout(bump, 400); };
     ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
+    ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
+      const notice: any = payload.new;
+      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_')) {
+        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: notice.metadata || {} }, trigger: null });
+      }
+    });
     ch.on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'messages' }, kick);
     ch.subscribe();
     return () => { clearTimeout(h); supabase.removeChannel(ch); };
