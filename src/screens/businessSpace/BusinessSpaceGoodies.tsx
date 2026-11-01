@@ -217,13 +217,14 @@ export function GoodiesStorePage() {
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
   const [languageOpen, setLanguageOpen] = useState(false), [languageQuery, setLanguageQuery] = useState('');
-  const [timePickerOpen, setTimePickerOpen] = useState(false);
+  const [timePickerOpen, setTimePickerOpen] = useState(false), [sameAsCover, setSameAsCover] = useState(false), [thumbnailBusy, setThumbnailBusy] = useState(false);
   const load = () => {
     setLoadErr('');
     setF(null);
     Promise.all([goodiesApi.getStore(app.biz.id), goodiesApi.listBuilders(app.biz.id)])
       .then(([store, rows]) => {
         setF(store);
+        setSameAsCover(!!store.coverUrl && store.thumbnailUrl === store.coverUrl);
         setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
         setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
       })
@@ -251,6 +252,7 @@ export function GoodiesStorePage() {
     setBusy(true);
     try {
       await goodiesApi.saveStore(app.biz.id, f);
+      await goodiesApi.saveStoreThumbnail(app.biz.id, sameAsCover ? f.coverUrl : f.thumbnailUrl);
       const rows = await goodiesApi.listBuilders(app.biz.id);
       const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
       next.push(...customTypes.map(x => ({ ...x, enabled: customProducts && x.enabled })));
@@ -280,12 +282,39 @@ export function GoodiesStorePage() {
       app.toast(errText(e));
     } finally { setCoverBusy(false); }
   };
+  const chooseThumbnail = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) return app.toast('Allow photo access to choose a store thumbnail');
+    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 0.9 });
+    if (picked.canceled || !picked.assets?.[0]) return;
+    setThumbnailBusy(true);
+    let uploadedPath = '';
+    try {
+      const resized = await ImageManipulator.manipulateAsync(picked.assets[0].uri, [{ resize: { width: 800 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
+      const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
+      uploadedPath = `${app.biz.id}/goodies/store-thumbnail/${uid()}${uid()}.jpg`;
+      const { error } = await supabase.storage.from('listing-photos').upload(uploadedPath, decode(base64), { contentType: 'image/jpeg', cacheControl: '31536000', upsert: false });
+      if (error) throw error;
+      const url = supabase.storage.from('listing-photos').getPublicUrl(uploadedPath).data.publicUrl;
+      setF(current => current ? { ...current, thumbnailUrl: url } : current);
+      setSameAsCover(false);
+      app.toast('Store thumbnail selected. Save store setup to publish it.');
+    } catch (e) {
+      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
+      app.toast(errText(e));
+    } finally { setThumbnailBusy(false); }
+  };
   return (
     <Pg title="Store setup" onBack={app.back}>
       <GoLiveCard />
       <Section title="Store cover photo" />
       {f.coverUrl ? <Image source={{ uri: f.coverUrl }} style={{ width: '100%', height: 150, borderRadius: 14, marginBottom: 8 }} /> : null}
       <Btn kind="soft" label={f.coverUrl ? 'Change cover photo' : 'Add cover photo'} onPress={chooseCover} busy={coverBusy} />
+      <Section title="Store thumbnail" />
+      <Text style={s.mut}>Shown on the customer home page and store listings.</Text>
+      {(sameAsCover ? f.coverUrl : f.thumbnailUrl) ? <Image source={{ uri: (sameAsCover ? f.coverUrl : f.thumbnailUrl) as string }} style={{ width: 88, height: 88, borderRadius: 14, marginVertical: 8 }} /> : null}
+      <Btn kind="soft" label="Upload thumbnail" onPress={chooseThumbnail} busy={thumbnailBusy} />
+      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Use cover photo as thumbnail</Text><Toggle value={sameAsCover} onValueChange={v => { setSameAsCover(v); if (v) set({ thumbnailUrl: f.coverUrl }); }} /></View>
       <Field label="Store name" value={f.storeName} onChangeText={(v: string) => set({ storeName: v })} placeholder="Name customers will see" />
       <Section title="Store category" />
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
