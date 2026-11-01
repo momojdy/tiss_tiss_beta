@@ -209,10 +209,11 @@ export function Cart() {
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
-  useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
-  useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
   const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
   const [cashEligible, setCashEligible] = useState(false);
+  useEffect(() => { void refreshLiveSchedules(); void refreshPaymentOptions(); }, []);
+  useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
+  useEffect(() => { if (st?.live && a?.t) void refreshStoreDistance(st.id, a).catch(() => undefined); }, [st?.id, st?.live, a?.t, a?.apt, a?.inst]);
   useEffect(() => {
     let active = true;
     setCashEligible(false);
