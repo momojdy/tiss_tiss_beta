@@ -17,7 +17,7 @@ export type RefundQueueItem = {
 type StripeRefundPage = { data: RefundRecord[]; has_more: boolean };
 type StripeDispute = { id: string; status: string };
 type StripeDisputePage = { data: StripeDispute[]; has_more: boolean };
-type StripeRefundClient = {
+export type StripeRefundClient = {
   disputes: {
     list(args: { payment_intent: string; limit: number; starting_after?: string }): Promise<StripeDisputePage>;
   };
