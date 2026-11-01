@@ -9,6 +9,21 @@ create table if not exists public.business_features (
   primary key (business_id, feature)
 );
 
+create or replace function public.is_business_member(p_business uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $
+  select exists (
+    select 1 from public.business_members bm
+    where bm.business_id = p_business and bm.user_id = auth.uid()
+  );
+$;
+revoke all on function public.is_business_member(uuid) from public, anon;
+grant execute on function public.is_business_member(uuid) to authenticated;
+
 alter table public.business_features enable row level security;
 
 drop policy if exists business_features_member_read on public.business_features;
