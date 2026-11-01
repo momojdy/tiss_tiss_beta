@@ -196,7 +196,7 @@ export function GoodiesToolsCard() {
 }
 
 /* ---------- store setup ---------- */
-const LANGS: [string, string][] = [['fr', 'Français'], ['ht', 'Kreyòl ayisyen'], ['es', 'Español'], ['zh-Hans', '简体中文']];
+const LANGS: [string, string][] = [['fr','Français'],['ht','Kreyòl ayisyen'],['es','Español'],['zh-Hans','简体中文'],['en','English'],['ar','العربية'],['bn','বাংলা'],['bg','Български'],['my','မြန်မာ'],['ca','Català'],['hr','Hrvatski'],['cs','Čeština'],['da','Dansk'],['nl','Nederlands'],['et','Eesti'],['fi','Suomi'],['de','Deutsch'],['el','Ελληνικά'],['gu','ગુજરાતી'],['he','עברית'],['hi','हिन्दी'],['hu','Magyar'],['is','Íslenska'],['id','Bahasa Indonesia'],['it','Italiano'],['ja','日本語'],['jv','Basa Jawa'],['kn','ಕನ್ನಡ'],['km','ខ្មែរ'],['ko','한국어'],['lo','ລາວ'],['lv','Latviešu'],['lt','Lietuvių'],['ms','Bahasa Melayu'],['ml','മലയാളം'],['mr','मराठी'],['mn','Монгол'],['ne','नेपाली'],['no','Norsk'],['fa','فارسی'],['pl','Polski'],['pt','Português'],['pa','ਪੰਜਾਬੀ'],['ro','Română'],['ru','Русский'],['sr','Српски'],['sk','Slovenčina'],['sl','Slovenščina'],['sw','Kiswahili'],['sv','Svenska'],['ta','தமிழ்'],['te','తెలుగు'],['th','ไทย'],['tr','Türkçe'],['uk','Українська'],['ur','اردو'],['uz','Oʻzbek'],['vi','Tiếng Việt'],['yo','Yorùbá'],['zu','isiZulu'],['am','አማርኛ'],['az','Azərbaycanca'],['eu','Euskara'],['gl','Galego'],['ga','Gaeilge'],['mk','Македонски'],['sq','Shqip']];
 const COUNTRY_OPTIONS = COUNTRIES.map(({ code, name }) => ({
   code,
   name,
@@ -346,8 +346,28 @@ export function GoodiesStorePage() {
       <View style={[s.row, { marginTop: 12 }]}><Text style={[s.title, s.g]}>Delivery</Text><Toggle value={f.delivery} onValueChange={(v: boolean) => set({ delivery: v })} /></View>
       <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Pickup</Text><Toggle value={f.pickup} onValueChange={(v: boolean) => set({ pickup: v })} /></View>
       <Field label="Promotion line on your card (optional)" value={f.promo} onChangeText={(v: string) => set({ promo: v })} />
-      <Section title="Store name in other languages (optional)" />
-      {LANGS.map(([c, n]) => <Field key={c} label={n} value={f.names[c] || ''} onChangeText={(v: string) => set({ names: { ...f.names, [c]: v } })} />)}
+      <View style={[s.row, { marginTop: 18, marginBottom: 8 }]}>
+        <Text style={[s.title, s.g]}>Store name translations</Text>
+        <Pressable onPress={() => { setLanguageQuery(''); setLanguageOpen(true); }}><Text style={{ color: t.br, fontWeight: '700' }}>+ Add language</Text></Pressable>
+      </View>
+      {Object.entries(f.names).filter(([code]) => LANGS.some(([key]) => key === code)).map(([code, value]) => {
+        const language = LANGS.find(([key]) => key === code);
+        return <View key={code} style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <View style={{ flex: 1 }}><Field label={language?.[1] || code} value={String(value || '')} onChangeText={(v: string) => set({ names: { ...f.names, [code]: v } })} /></View>
+          <Pressable onPress={() => { const names = { ...f.names }; delete names[code]; set({ names }); }} style={{ padding: 10 }}><Icon name="close" size={18} color={t.mute} /></Pressable>
+        </View>;
+      })}
+      <Modal visible={languageOpen} transparent animationType="slide" onRequestClose={() => setLanguageOpen(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: t.card, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, maxHeight: '78%' }}>
+            <View style={[s.row, { marginBottom: 10 }]}><Text style={[s.title, s.g]}>Add a language</Text><Pressable onPress={() => setLanguageOpen(false)}><Icon name="close" size={22} /></Pressable></View>
+            <TextInput value={languageQuery} onChangeText={setLanguageQuery} placeholder="Search languages" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
+            <ScrollView keyboardShouldPersistTaps="handled">
+              {LANGS.filter(([code, name]) => !Object.prototype.hasOwnProperty.call(f.names, code) && (name + ' ' + code).toLowerCase().includes(languageQuery.trim().toLowerCase())).map(([code, name]) => <Pressable key={code} onPress={() => { set({ names: { ...f.names, [code]: '' } }); setLanguageOpen(false); }} style={{ paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: t.ink, flex: 1 }}>{name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{code}</Text></Pressable>)}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
       <View style={{ height: 14 }} /><Btn label="Save store" onPress={save} busy={busy} />
     </Pg>
   );
