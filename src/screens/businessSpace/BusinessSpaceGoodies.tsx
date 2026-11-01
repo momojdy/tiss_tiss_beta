@@ -2,7 +2,8 @@
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
    Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests, their photos and the photo rules go through Supabase. */
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
@@ -15,7 +16,7 @@ import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 import { COUNTRIES } from './countries';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; coverUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartMinutes: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; coverUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -36,15 +37,15 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', coverUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', acceptScheduledOrders: false, scheduledOrderStartMinutes: '60', promo: '', delivery: true, pickup: true, names: {} };
+    const d: GStore = { demoStoreId: '', coverUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', acceptScheduledOrders: false, scheduledOrderStartTime: '10:00', promo: '', delivery: true, pickup: true, names: {} };
     const [r, business] = await Promise.all([
-      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country,accept_scheduled_orders,scheduled_order_start_minutes').eq('business_id', biz).maybeSingle()),
+      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country,accept_scheduled_orders,scheduled_order_start_time').eq('business_id', biz).maybeSingle()),
       q<any>(supabase.from('businesses').select('address,city,country').eq('id', biz).maybeSingle()),
     ]);
     if (!r) return { ...d, address: business?.address || '', city: business?.city || '', country: business?.country || '' };
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
-      demoStoreId: '', coverUrl: r.cover_url || null, address: r.address || business?.address || '', city: r.city || business?.city || '', country: r.country || business?.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), acceptScheduledOrders: !!r.accept_scheduled_orders, scheduledOrderStartMinutes: String(r.scheduled_order_start_minutes ?? 60), promo: r.promo || '',
+      demoStoreId: '', coverUrl: r.cover_url || null, address: r.address || business?.address || '', city: r.city || business?.city || '', country: r.country || business?.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), acceptScheduledOrders: !!r.accept_scheduled_orders, scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), promo: r.promo || '',
       delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
     };
   },
@@ -54,7 +55,7 @@ export const goodiesApi = {
     await rpc('goodies_save_store_setup', {
       p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,
       p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,
-      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(), p_accept_scheduled_orders: st.acceptScheduledOrders, p_scheduled_order_start_minutes: parseInt(st.scheduledOrderStartMinutes, 10) || 60,
+      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(), p_accept_scheduled_orders: st.acceptScheduledOrders, p_scheduled_order_start_time: st.scheduledOrderStartTime,
     });
   },
   /* Store publication is self-service for Business Space members. */
@@ -214,6 +215,8 @@ export function GoodiesStorePage() {
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
+  const [languageOpen, setLanguageOpen] = useState(false), [languageQuery, setLanguageQuery] = useState('');
+  const [timePickerOpen, setTimePickerOpen] = useState(false);
   const load = () => {
     setLoadErr('');
     setF(null);
@@ -236,7 +239,7 @@ export function GoodiesStorePage() {
     if (f.pricingMode === 'fixed' && !(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
     if (f.pricingMode === 'distance' && (!(parseFloat(f.baseFee) >= 0) || !(parseFloat(f.perKmFee) >= 0) || !(parseFloat(f.minFee) >= 0) || (f.maxFee.trim() && !(parseFloat(f.maxFee) >= parseFloat(f.minFee))) || (f.maxDistanceKm.trim() && !(parseFloat(f.maxDistanceKm) > 0)))) return 'Enter valid distance delivery pricing values';
     if (!(parseInt(f.etaMin, 10) > 0) || !(parseInt(f.etaMax, 10) >= parseInt(f.etaMin, 10))) return 'Enter a valid delivery time range';
-    if (f.acceptScheduledOrders && (!(parseInt(f.scheduledOrderStartMinutes, 10) >= 15) || !(parseInt(f.scheduledOrderStartMinutes, 10) <= 10080))) return 'Set scheduled orders at least 15 minutes ahead';
+    if (f.acceptScheduledOrders && !/^([01]\\d|2[0-3]):[0-5]\\d$/.test(f.scheduledOrderStartTime)) return 'Choose a valid earliest order time';
     if (!f.delivery && !f.pickup) return 'Keep delivery or pickup on';
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
     return '';
@@ -283,7 +286,7 @@ export function GoodiesStorePage() {
       <Btn kind="soft" label={f.coverUrl ? 'Change cover photo' : 'Add cover photo'} onPress={chooseCover} busy={coverBusy} />
       <Section title="Store category" />
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
-      {f.category === 'drugstore' ? <View style={s.card}><Text style={s.title}>Pharmacy licence required</Text><Text style={s.mut}>Drugstore stores must upload a pharmacy licence during registration. Only over-the-counter products are allowed.</Text></View> : null}
+      {f.category === 'drugstore' ? <Text style={[s.mut, { marginTop: 6 }]}>Pharmacy licence required during registration. Only over-the-counter products are allowed.</Text> : null}
       <Field label="Store type" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
       <Section title="Store address" />
       <Field label="Street address" value={f.address} onChangeText={(v: string) => set({ address: v })} placeholder="Street, building and number" />
