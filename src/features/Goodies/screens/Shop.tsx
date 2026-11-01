@@ -31,7 +31,7 @@ export function Store({id}: {id: string}) {
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
   const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
-  const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Build your own')] as [string, string]] : [])];
+  const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
       <Hero s={s} onBack={back} right={<Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
