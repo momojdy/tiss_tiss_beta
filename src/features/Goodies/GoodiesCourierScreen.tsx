@@ -1,6 +1,8 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, ScrollView, Text, View} from 'react-native';
 import * as Location from 'expo-location';
+import * as TaskManager from 'expo-task-manager';
+import {GOODIES_COURIER_LOCATION_TASK} from './goodiesCourierBackgroundLocation';
 import {supabase} from '../../lib/supabase';
 
 type Delivery = {
@@ -44,20 +46,81 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
 
   const activeOrderId = deliveries.find(d=>d.status==='accepted'||d.status==='picked_up')?.order_id || '';
   useEffect(()=>{
-    if(!activeOrderId)return;
-    let subscription:Location.LocationSubscription|null=null;let cancelled=false;
-    void (async()=>{
-      const permission=await Location.requestForegroundPermissionsAsync();
-      if(!permission.granted){setLocationStatus('Location permission is required for active delivery tracking.');return;}
-      if(cancelled)return;
-      setLocationStatus('Sharing live GPS location');
-      subscription=await Location.watchPositionAsync({accuracy:Location.Accuracy.Balanced,timeInterval:5000,distanceInterval:15},position=>{
-        void supabase.rpc('goodies_courier_update_location',{p_order_id:activeOrderId,p_latitude:position.coords.latitude,p_longitude:position.coords.longitude,p_accuracy_m:position.coords.accuracy,p_heading:position.coords.heading,p_speed_mps:position.coords.speed}).then(({error})=>{if(error)setLocationStatus('GPS update failed: '+error.message);});
-      });
-    })().catch(e=>setLocationStatus(e.message||'Unable to start GPS sharing'));
-    return()=>{cancelled=true;subscription?.remove();setLocationStatus('Location sharing is off');};
-  },[activeOrderId]);
+    let cancelled=false;
+    let foregroundSubscription:Location.LocationSubscription|null=null;
 
+    const stopWhenNoActiveDelivery=async()=>{
+      if(activeOrderId)return;
+      try {
+        if(await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK)){
+          await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+        }
+      } catch {}
+      if(!cancelled)setLocationStatus('Location sharing stops when no delivery is active');
+    };
+
+    const startTracking=async()=>{
+      if(!activeOrderId){await stopWhenNoActiveDelivery();return;}
+      const foreground=await Location.requestForegroundPermissionsAsync();
+      if(!foreground.granted){
+        if(!cancelled)setLocationStatus('Allow location access to track your active delivery.');
+        return;
+      }
+
+      const taskAvailable=await TaskManager.isAvailableAsync();
+      if(taskAvailable){
+        const background=await Location.requestBackgroundPermissionsAsync();
+        if(background.granted){
+          const started=await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+          if(!started){
+            await Location.startLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK,{
+              accuracy:Location.Accuracy.High,
+              timeInterval:5000,
+              distanceInterval:15,
+              pausesUpdatesAutomatically:false,
+              showsBackgroundLocationIndicator:true,
+              activityType:Location.ActivityType.AutomotiveNavigation,
+              foregroundService:{
+                notificationTitle:'Wantiss delivery tracking is active',
+                notificationBody:'Your live location is shared with the customer for this delivery.',
+                killServiceOnDestroy:false,
+              },
+            });
+          }
+          if(!cancelled)setLocationStatus('Background GPS active · location sharing continues when you switch apps or lock your phone');
+          return;
+        }
+        if(!cancelled)setLocationStatus('Background permission was not granted. Live GPS works only while Wantiss is open.');
+      } else if(!cancelled) {
+        setLocationStatus('Foreground GPS only in Expo Go. A Wantiss development build is required for background tracking.');
+      }
+
+      foregroundSubscription=await Location.watchPositionAsync({
+        accuracy:Location.Accuracy.High,
+        timeInterval:5000,
+        distanceInterval:15,
+      },position=>{
+        void supabase.rpc('goodies_courier_update_location',{
+          p_order_id:activeOrderId,
+          p_latitude:position.coords.latitude,
+          p_longitude:position.coords.longitude,
+          p_accuracy_m:position.coords.accuracy,
+          p_heading:position.coords.heading,
+          p_speed_mps:position.coords.speed,
+        }).then(({error})=>{
+          if(error&&!cancelled)setLocationStatus('GPS update failed: '+error.message);
+        });
+      });
+    };
+
+    void startTracking().catch(error=>{
+      if(!cancelled)setLocationStatus(error?.message||'Unable to start background GPS');
+    });
+    return()=>{
+      cancelled=true;
+      foregroundSubscription?.remove();
+    };
+  },[activeOrderId]);
 
 
   useEffect(()=>{
@@ -95,9 +158,9 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
         <Text style={{fontSize:15,fontWeight:'800',color:'#1A2517'}}>Availability</Text>
-        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts only after you accept; keep this screen open during the delivery.</Text>
+        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts after you accept and continues in the background while the delivery is active.</Text>
         <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
-          <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS sharing active':available?'You are online · Tap to go offline':'Go online'}</Text>
+          <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS tracking active':available?'You are online · Tap to go offline':'Go online'}</Text>
         </Pressable>
         <Pressable disabled={!!busy||!available||!!activeOrderId} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
           <Text style={{fontSize:13,color:'#263324'}}>I accept cash on delivery</Text><Text style={{fontSize:13,fontWeight:'800',color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?'ON':'OFF'}</Text>
