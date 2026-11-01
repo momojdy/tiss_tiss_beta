@@ -15,12 +15,12 @@ language sql
 stable
 security definer
 set search_path = ''
-as $
+as $fn$
   select exists (
     select 1 from public.business_members bm
     where bm.business_id = p_business and bm.user_id = auth.uid()
   );
-$;
+$fn$;
 revoke all on function public.is_business_member(uuid) from public, anon;
 grant execute on function public.is_business_member(uuid) to authenticated;
 
