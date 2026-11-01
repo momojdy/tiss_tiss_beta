@@ -592,6 +592,7 @@ export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [pick, setPick] = useState<{ gi: number; ii: number } | null>(null), [errs, setErrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false);
+  const [expandedGroup, setExpandedGroup] = useState<number | null>(0), [selectedItem, setSelectedItem] = useState<{ gi: number; ii: number } | null>(null);
   useEffect(() => {
     let active = true;
     setLoading(true); setLoadError(''); setB(null);
@@ -645,31 +646,54 @@ export function GoodiesBuilderEditPage() {
 
       <Section title="Ingredients and customer choices" right="Add group" onRight={() => up({ groups: [...b.groups, { id: uid(), name: '', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] })} />
       
-      {b.groups.map((g, gi) => (
-        <View key={g.id} style={s.card}>
-          <Field label="Group name (for example Crust, Toppings)" value={g.name} onChangeText={(v: string) => upG(gi, { name: v })} />
-          <View style={{ height: 8 }} /><Seg items={['Pick one', 'Pick several']} value={g.kind === 'one' ? 'Pick one' : 'Pick several'} onChange={(v: string) => upG(gi, v === 'Pick one' ? { kind: 'one', min: g.req ? 1 : 0, max: 1, inc: 0, me: 1 } : { kind: 'many' })} />
-          <View style={[s.row, { marginTop: 10 }]}><Text style={[s.title, s.g]}>Required</Text><Toggle value={g.req} onValueChange={(v: boolean) => upG(gi, { req: v, min: g.kind === 'one' ? (v ? 1 : 0) : g.min })} /></View>
-          {g.kind === 'many' ? (<>
-            <View style={s.row}><View style={s.g}><Field label="Minimum choices in this group" keyboardType="number-pad" value={String(g.min)} onChangeText={(v: string) => upG(gi, { min: num(v) })} /></View><View style={s.g}><Field label="Maximum choices in this group" keyboardType="number-pad" value={String(g.max)} onChangeText={(v: string) => upG(gi, { max: num(v) })} /></View></View>
-            <View style={s.row}><View style={s.g}><Field label="Included free in this group" keyboardType="number-pad" value={String(g.inc)} onChangeText={(v: string) => upG(gi, { inc: num(v) })} /></View><View style={s.g}><Field label="Max of same ingredient" keyboardType="number-pad" value={String(g.me)} onChangeText={(v: string) => upG(gi, { me: num(v) })} /></View></View>
-          </>) : null}
-          <Text style={[s.title, { marginTop: 12 }]}>Ingredients</Text>
-          {g.items.map((it, ii) => (
-            <View key={it.id} style={[s.card, { backgroundColor: t.bg }]}>
-              <Field label="Name" value={it.name} onChangeText={(v: string) => upI(gi, ii, { name: v })} />
-              <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" editable={!it.free} value={it.free ? '0' : String(it.price)} onChangeText={(v: string) => upI(gi, ii, { price: parseFloat(v) || 0 })} /></View>
-                <View style={s.g}><Field label="Max per product (optional)" keyboardType="number-pad" value={it.max ? String(it.max) : ''} onChangeText={(v: string) => upI(gi, ii, { max: v ? num(v) : undefined })} /></View></View>
-              <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Free</Text><Toggle value={it.free} onValueChange={(v: boolean) => upI(gi, ii, { free: v, price: v ? 0 : it.price })} /></View>
-              <View style={[s.row, { marginTop: 6 }]}><Text style={[s.mut, s.g]}>Available</Text><Toggle value={it.avail} onValueChange={(v: boolean) => upI(gi, ii, { avail: v })} /></View>
-              {b.type !== 'custom' ? <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]} numberOfLines={1}>{it.assetId ? 'Library: ' + it.assetId : 'No library ingredient chosen'}</Text><Btn small kind="soft" label={it.assetId ? 'Change' : 'Choose'} onPress={() => setPick({ gi, ii })} /></View> : <Field label="Colour (hex, optional)" value={it.col || ''} onChangeText={(v: string) => upI(gi, ii, { col: v })} />}
-              <View style={[s.row, { marginTop: 8 }]}><View style={s.g}><Btn small kind="soft" label="↑" onPress={() => upG(gi, { items: move(g.items, ii, -1) })} /></View><View style={s.g}><Btn small kind="soft" label="↓" onPress={() => upG(gi, { items: move(g.items, ii, 1) })} /></View><View style={s.g}><Btn small kind="soft" label="Remove" onPress={() => upG(gi, { items: g.items.filter((_, j) => j !== ii) })} /></View></View>
+      <Section title="Sections and ingredients" right="Add section" onRight={() => { up({ groups: [...b.groups, { id: uid(), name: 'New section', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] }); setExpandedGroup(b.groups.length); setSelectedItem(null); }} />
+      {b.groups.map((g, gi) => {
+        const expanded = expandedGroup === gi;
+        return <View key={g.id} style={{ borderBottomWidth: 1, borderBottomColor: t.line, paddingVertical: 8 }}>
+          <Pressable onPress={() => { setExpandedGroup(expanded ? null : gi); setSelectedItem(null); }} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 6 }}>
+            <View style={{ flex: 1 }}>
+              <Text style={[s.title, { fontSize: 15 }]}>{g.name || 'Untitled section'}</Text>
+              <Text style={s.mut}>{g.items.length} ingredients · {g.kind === 'one' ? 'Choose one' : 'Choose several'}{g.req ? ' · Required' : ''}</Text>
             </View>
-          ))}
-          <View style={s.row}><View style={s.g}><Btn small kind="soft" label="+ Ingredient" onPress={() => upG(gi, { items: [...g.items, { id: uid(), name: '', price: 0, free: true, avail: true, assetId: null, col: null }] })} /></View><View style={s.g}><Btn small kind="soft" label="Remove group" onPress={() => up({ groups: b.groups.filter((_, j) => j !== gi) })} /></View></View>
-          <View style={[s.row, { marginTop: 8 }]}><View style={s.g}><Btn small kind="soft" label="Move up" onPress={() => up({ groups: move(b.groups, gi, -1) })} /></View><View style={s.g}><Btn small kind="soft" label="Move down" onPress={() => up({ groups: move(b.groups, gi, 1) })} /></View></View>
-        </View>
-      ))}
+            <Icon name={expanded ? 'chevron-up' : 'chevron-down'} size={20} color={t.mute} />
+          </Pressable>
+          {expanded ? <View style={{ paddingTop: 8 }}>
+            <Field label="Section name" value={g.name} onChangeText={(v: string) => upG(gi, { name: v })} />
+            <View style={{ height: 8 }} />
+            <Seg items={['Pick one', 'Pick several']} value={g.kind === 'one' ? 'Pick one' : 'Pick several'} onChange={(v: string) => upG(gi, v === 'Pick one' ? { kind: 'one', min: g.req ? 1 : 0, max: 1, inc: 0, me: 1 } : { kind: 'many' })} />
+            <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Required</Text><Toggle value={g.req} onValueChange={(v: boolean) => upG(gi, { req: v, min: g.kind === 'one' ? (v ? 1 : 0) : g.min })} /></View>
+            {g.kind === 'many' ? <View>
+              <View style={s.row}><View style={s.g}><Field label="Minimum picks" keyboardType="number-pad" value={String(g.min)} onChangeText={(v: string) => upG(gi, { min: num(v) })} /></View><View style={s.g}><Field label="Maximum picks" keyboardType="number-pad" value={String(g.max)} onChangeText={(v: string) => upG(gi, { max: num(v) })} /></View></View>
+              <View style={s.row}><View style={s.g}><Field label="Included free" keyboardType="number-pad" value={String(g.inc)} onChangeText={(v: string) => upG(gi, { inc: num(v) })} /></View><View style={s.g}><Field label="Max same ingredient" keyboardType="number-pad" value={String(g.me)} onChangeText={(v: string) => upG(gi, { me: num(v) })} /></View></View>
+            </View> : null}
+            <View style={{ marginTop: 6 }}>
+              {g.items.map((it, ii) => {
+                const selected = selectedItem?.gi === gi && selectedItem?.ii === ii;
+                return <View key={it.id}>
+                  <Pressable onPress={() => setSelectedItem(selected ? null : { gi, ii })} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8 }}>
+                    {it.assetUrl ? <Image source={{ uri: it.assetUrl }} style={{ width: 42, height: 42, borderRadius: 9 }} resizeMode="cover" /> : <View style={{ width: 42, height: 42, borderRadius: 9, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center' }}><Icon name="image-outline" size={18} color={t.mute} /></View>}
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: t.ink, fontWeight: '600' }}>{it.name || 'Unnamed ingredient'}</Text>
+                      <Text style={s.mut}>{it.avail ? (it.free ? 'Included' : dollars(it.price)) : 'Not offered'}{it.max ? ' · Max ' + it.max : ''}</Text>
+                    </View>
+                    <Icon name={selected ? 'chevron-up' : 'chevron-down'} size={18} color={t.mute} />
+                  </Pressable>
+                  {selected ? <View style={{ backgroundColor: t.bg, borderRadius: 12, padding: 12, marginBottom: 8 }}>
+                    <Field label="Ingredient name" value={it.name} onChangeText={(v: string) => upI(gi, ii, { name: v })} />
+                    <View style={s.row}><View style={s.g}><Field label="Add-on price ($)" keyboardType="decimal-pad" editable={!it.free} value={it.free ? '0' : String(it.price)} onChangeText={(v: string) => upI(gi, ii, { price: parseFloat(v) || 0 })} /></View><View style={s.g}><Field label="Max per product" keyboardType="number-pad" value={it.max ? String(it.max) : ''} onChangeText={(v: string) => upI(gi, ii, { max: v ? num(v) : undefined })} /></View></View>
+                    <View style={[s.row, { marginTop: 4 }]}><Text style={[s.mut, s.g]}>Free / included</Text><Toggle value={it.free} onValueChange={(v: boolean) => upI(gi, ii, { free: v, price: v ? 0 : it.price })} /></View>
+                    <View style={[s.row, { marginTop: 4 }]}><Text style={[s.mut, s.g]}>Available to customers</Text><Toggle value={it.avail} onValueChange={(v: boolean) => upI(gi, ii, { avail: v })} /></View>
+                    {b.type !== 'custom' ? <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]} numberOfLines={1}>{it.assetId ? 'Library ingredient selected' : 'No library image selected'}</Text><Btn small kind="soft" label="Change image" onPress={() => setPick({ gi, ii })} /></View> : <Field label="Colour (hex, optional)" value={it.col || ''} onChangeText={(v: string) => upI(gi, ii, { col: v })} />}
+                    <View style={[s.row, { marginTop: 8 }]}><View style={s.g}><Btn small kind="soft" label="Move up" onPress={() => { upG(gi, { items: move(g.items, ii, -1) }); setSelectedItem(null); }} /></View><View style={s.g}><Btn small kind="soft" label="Move down" onPress={() => { upG(gi, { items: move(g.items, ii, 1) }); setSelectedItem(null); }} /></View><View style={s.g}><Btn small kind="soft" label="Remove" onPress={() => { upG(gi, { items: g.items.filter((_, j) => j !== ii) }); setSelectedItem(null); }} /></View></View>
+                  </View> : null}
+                </View>;
+              })}
+            </View>
+            <View style={[s.row, { marginTop: 8 }]}><View style={s.g}><Btn small kind="soft" label="+ Ingredient" onPress={() => { upG(gi, { items: [...g.items, { id: uid(), name: '', price: 0, free: true, avail: true, assetId: null, assetUrl: null, col: null }] }); setSelectedItem({ gi, ii: g.items.length }); }} /></View><View style={s.g}><Btn small kind="soft" label="Remove section" onPress={() => { up({ groups: b.groups.filter((_, j) => j !== gi) }); setExpandedGroup(null); setSelectedItem(null); }} /></View></View>
+            <View style={[s.row, { marginTop: 8 }]}><View style={s.g}><Btn small kind="soft" label="Move section up" onPress={() => { up({ groups: move(b.groups, gi, -1) }); setExpandedGroup(Math.max(0, gi - 1)); setSelectedItem(null); }} /></View><View style={s.g}><Btn small kind="soft" label="Move section down" onPress={() => { up({ groups: move(b.groups, gi, 1) }); setExpandedGroup(Math.min(b.groups.length - 1, gi + 1)); setSelectedItem(null); }} /></View></View>
+          </View> : null}
+        </View>;
+      })}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
       <Btn kind="soft" label="Request an ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
       <View style={{ height: 14 }} /><Btn label={b.productCreated === false ? 'Add custom product' : 'Save changes'} onPress={save} busy={saving} />
