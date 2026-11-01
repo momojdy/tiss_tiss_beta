@@ -147,7 +147,7 @@ export async function refreshLiveSchedules() {
       const ids = stores.map(r => r.business_id);
       for (let from = 0; ; from += 1000) {
         const pr = await supabase.from('goodies_products')
-          .select('id,business_id,name,description,price,emoji,stock,restriction,photo_url,sort_order,created_at')
+          .select('id,business_id,name,description,price,emoji,stock,restriction,photo_url,photo_urls,sort_order,created_at')
           .in('business_id', ids).eq('is_available', true).eq('review_status', 'approved')
           .order('sort_order', {ascending: true}).order('created_at', {ascending: true}).order('id', {ascending: true})
           .range(from, from + 999);
@@ -181,7 +181,7 @@ export async function refreshLiveSchedules() {
     prods.forEach(p => {
       const r = stores.find(x => x.business_id === p.business_id); if (!r) return;
       const stock = Math.max(0, Math.floor(Number(p.stock) || 0));
-      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: p.restriction || null, photo: p.photo_url || null};
+      const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: p.restriction || null, photo: p.photo_urls?.[0] || p.photo_url || null, photos: (Array.isArray(p.photo_urls) && p.photo_urls.length ? p.photo_urls : (p.photo_url ? [p.photo_url] : [])).slice(0,5)};
       IT[p.id] = it; byBiz[r.business_id].push(it);
     });
     S.cart?.lines?.forEach((line: CartLine) => {
