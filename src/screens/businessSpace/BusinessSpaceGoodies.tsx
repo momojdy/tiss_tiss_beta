@@ -434,6 +434,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
               </View>
             </View> : null}
           </View> : null}
+          {product.id || productMode === 'regular' ? <>
           <Text style={s.label}>Product photo</Text>
           {f.photoUri || f.photoUrl ? <Image source={{ uri: f.photoUri || f.photoUrl }} style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8 }} /> : <View style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8, backgroundColor: '#F1F3EF' }} />}
           <View style={{ flexDirection: 'row', gap: 8, marginBottom: 10 }}><Btn small kind="soft" label={f.photoUri || f.photoUrl ? 'Change photo' : 'Add photo'} onPress={choosePhoto} /><Btn small kind="soft" label="Remove" disabled={!f.photoUri && !f.photoUrl} onPress={() => setF({ ...f, photoUri: '', photoUrl: '', removePhoto: true })} /></View>
@@ -446,6 +447,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
           <Text style={[s.mut, { marginTop: 6 }]}>Alcohol cannot be ordered online yet. Mark it so it stays blocked.</Text>
           <View style={{ height: 12 }} /><Btn label={product.id ? 'Save product' : 'Add product'} onPress={save} busy={busy} />
           {product.id ? <><View style={{ height: 8 }} /><Btn kind="soft" label="Delete product" onPress={del} disabled={busy} /></> : null}
+          </> : null}
         </SheetShell>
       </View>
     </Modal>
@@ -503,7 +505,7 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
 export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [pick, setPick] = useState<{ gi: number; ii: number } | null>(null), [errs, setErrs] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState('');
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false);
   useEffect(() => {
     let active = true;
     setLoading(true); setLoadError(''); setB(null);
@@ -526,8 +528,15 @@ export function GoodiesBuilderEditPage() {
   const save = async () => {
     const e = validateBuilder(b); setErrs(e);
     if (e.length) return app.toast(e[0]);
-    await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true } : x)) : [...all, { ...b, enabled: true, available: true }]);
-    app.toast('Custom product added'); app.bump(); app.back();
+    setSaving(true);
+    try {
+      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true } : x)) : [...all, { ...b, enabled: true, available: true }]);
+      app.toast('Custom product added'); app.bump(); app.back();
+    } catch (error) {
+      app.toast(errText(error));
+    } finally {
+      setSaving(false);
+    }
   };
   const num = (v: string) => parseInt(v.replace(/\D/g, '') || '0', 10);
   return (
@@ -549,7 +558,7 @@ export function GoodiesBuilderEditPage() {
       ))}
 
       <Section title="Ingredients and customer choices" right="Add group" onRight={() => up({ groups: [...b.groups, { id: uid(), name: '', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] })} />
-      <Text style={s.mut}>Set the limit on the whole group, on individual ingredients, or both.</Text>
+      
       {b.groups.map((g, gi) => (
         <View key={g.id} style={s.card}>
           <Field label="Group name (for example Crust, Toppings)" value={g.name} onChangeText={(v: string) => upG(gi, { name: v })} />
@@ -576,8 +585,8 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
-      <Btn kind="soft" label="Request a missing ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
-      <View style={{ height: 14 }} /><Btn label={id ? 'Save changes' : 'Add custom product'} onPress={save} />
+      <Btn kind="soft" label="Request an ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
+      <View style={{ height: 14 }} /><Btn label={id ? 'Save changes' : 'Add custom product'} onPress={save} busy={saving} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
