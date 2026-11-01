@@ -1,59 +1,22 @@
 create or replace function public.goodies_customer_can_access()
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $function$
-  select (select auth.uid()) is null
-    or not exists (
-      select 1
-      from public.wantiss_admin_account_restrictions r
-      where r.target_user_id = (select auth.uid())
-        and r.scope in ('all', 'Goodies')
-        and r.status = 'active'
-        and r.starts_at <= now()
-        and (r.ends_at is null or r.ends_at > now())
-    );
+returns boolean language sql stable security definer set search_path = '' as $function$
+ select (select auth.uid()) is null or not exists(select 1 from public.wantiss_admin_account_restrictions r where r.target_user_id=(select auth.uid()) and r.scope in ('all','Goodies') and r.status='active' and r.starts_at<=now() and (r.ends_at is null or r.ends_at>now()));
 $function$;
-
 revoke all on function public.goodies_customer_can_access() from public;
-grant execute on function public.goodies_customer_can_access() to anon, authenticated;
-
+grant execute on function public.goodies_customer_can_access() to anon,authenticated;
 create or replace function public.get_my_goodies_access_status()
-returns table(status text, reason text, ends_at timestamptz, restriction_kind text)
-language plpgsql
-stable
-security definer
-set search_path = ''
-as $function$
-declare
-  v_uid uuid := (select auth.uid());
-  v_row record;
+returns table(status text,reason text,ends_at timestamptz,restriction_kind text)
+language plpgsql stable security definer set search_path = '' as $function$
+declare v_uid uuid := (select auth.uid()); v_row record;
 begin
-  if v_uid is null then raise exception 'Sign in required' using errcode = '28000'; end if;
-  select r.kind, r.reason, r.ends_at
-    into v_row
-    from public.wantiss_admin_account_restrictions r
-   where r.target_user_id = v_uid
-     and r.scope in ('all', 'Goodies')
-     and r.status = 'active'
-     and r.starts_at <= now()
-     and (r.ends_at is null or r.ends_at > now())
-   order by case when r.kind = 'Ban' then 0 else 1 end, r.starts_at desc
-   limit 1;
-  if found then
-    return query select case when v_row.kind = 'Ban' then 'banned' else 'suspended' end,
-      v_row.reason, v_row.ends_at, v_row.kind;
-  else
-    return query select 'active'::text, null::text, null::timestamptz, null::text;
-  end if;
+ if v_uid is null then raise exception 'Sign in required' using errcode='28000'; end if;
+ select r.kind,r.reason,r.ends_at into v_row from public.wantiss_admin_account_restrictions r where r.target_user_id=v_uid and r.scope in ('all','Goodies') and r.status='active' and r.starts_at<=now() and (r.ends_at is null or r.ends_at>now()) order by case when r.kind='Ban' then 0 else 1 end,r.starts_at desc limit 1;
+ if found then return query select case when v_row.kind='Ban' then 'banned' else 'suspended' end,v_row.reason,v_row.ends_at,v_row.kind;
+ else return query select 'active'::text,null::text,null::timestamptz,null::text; end if;
 end;
 $function$;
-
-revoke all on function public.get_my_goodies_access_status() from public, anon;
+revoke all on function public.get_my_goodies_access_status() from public,anon;
 grant execute on function public.get_my_goodies_access_status() to authenticated;
-
 CREATE OR REPLACE FUNCTION public.place_goodies_order(p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text)
  RETURNS TABLE(id uuid, order_code text, status text)
  LANGUAGE plpgsql
@@ -282,34 +245,18 @@ begin
 end;
 $function$
 
-
+;
 drop policy if exists "Public can read live Goodies schedules" on public.goodies_store_schedules;
-create policy "Public can read live Goodies schedules"
-on public.goodies_store_schedules for select to anon, authenticated
-using (is_live = true and public.goodies_customer_can_access());
-
+create policy "Public can read live Goodies schedules" on public.goodies_store_schedules for select to anon, authenticated using (is_live = true and public.goodies_customer_can_access());
 drop policy if exists "Public can read products of live stores" on public.goodies_products;
-create policy "Public can read products of live stores"
-on public.goodies_products for select to anon, authenticated
-using (
-  review_status = 'approved'
-  and is_available = true
-  and restriction <> 'alcohol'
-  and not (concat_ws(' ', name, description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\mbeer|bi[èe]re|\\mwine|champagne|cocktail)')
-  and exists (select 1 from public.goodies_store_schedules gs where gs.business_id = goodies_products.business_id and gs.is_live = true)
-  and public.goodies_customer_can_access()
+create policy "Public can read products of live stores" on public.goodies_products for select to anon, authenticated using (
+ review_status='approved' and is_available=true and restriction<>'alcohol'
+ and not (concat_ws(' ',name,description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\mbeer|bi[èe]re|\\mwine|champagne|cocktail)')
+ and exists(select 1 from public.goodies_store_schedules gs where gs.business_id=goodies_products.business_id and gs.is_live=true)
+ and public.goodies_customer_can_access()
 );
-
 drop policy if exists "Customers can create Goodies orders for mapped stores" on public.goodies_orders;
-create policy "Customers can create Goodies orders for mapped stores"
-on public.goodies_orders for insert to authenticated
-with check (
-  customer_id = (select auth.uid())
-  and public.goodies_customer_can_access()
-  and exists (
-    select 1 from public.goodies_store_schedules gs
-    where gs.business_id = goodies_orders.business_id
-      and gs.store_id = goodies_orders.store_id
-      and gs.is_live = true
-  )
+create policy "Customers can create Goodies orders for mapped stores" on public.goodies_orders for insert to authenticated with check (
+ customer_id=(select auth.uid()) and public.goodies_customer_can_access()
+ and exists(select 1 from public.goodies_store_schedules gs where gs.business_id=goodies_orders.business_id and gs.store_id=goodies_orders.store_id and gs.is_live=true)
 );
