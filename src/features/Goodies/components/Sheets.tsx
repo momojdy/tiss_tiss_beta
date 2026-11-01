@@ -9,6 +9,7 @@ import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
 import {TextInput, useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const th = useTheme(), insets = useSafeAreaInsets(), {height: windowHeight} = useWindowDimensions();
@@ -189,14 +190,25 @@ function ScheduleSheet({close}: {close: () => void}) {
         {selectedTs===ts?<Icon name="check" color={th.br}/>:<T size={12} color={th.mut}>{label("lbl.sheetAutoTTYTF", "Select")}</T>}
       </Pressable>)}
     </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?label('lbl.sheetNoScheduledClosed2', 'This store does not accept scheduled orders while closed.'):label('lbl.sheetNoPresetTimes', 'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.')}</T></Card>}
-    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>{label('lbl.sheetExactTime', 'Or enter an exact time')}</T>
-    <Row style={{gap:10,alignItems:'flex-end'}}>
-      <View style={{flex:1}}><Input label={label('lbl.sheetHourLabel', 'Hour (00–23)')} value={customHour} onChange={v=>{setCustomHour(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="14" keyboard="number-pad" /></View>
-      <T size={20} weight="800" style={{paddingBottom:12}}>:</T>
-      <View style={{flex:1}}><Input label={label('lbl.sheetMinuteLabel', 'Minute (00–59)')} value={customMinute} onChange={v=>{setCustomMinute(v.replace(/\D/g,'').slice(0,2));setCustomMode(true);setSelectedTs(0);}} placeholder="30" keyboard="number-pad" /></View>
-    </Row>
-    <View style={{flexDirection:'row',flexWrap:'wrap',gap:7,marginTop:8}}>
-      {[0,5,10,15,20,25,30,35,40,45,50,55].map(m=><Pressable key={m} onPress={()=>{setCustomMinute(String(m).padStart(2,'0'));setCustomMode(true);setSelectedTs(0);}} style={{paddingHorizontal:10,paddingVertical:7,borderRadius:16,backgroundColor:Number(customMinute)===m&&customMode?th.brt:th.soft,borderWidth:Number(customMinute)===m&&customMode?1:0,borderColor:th.br}}><T size={11.5} weight="700">{String(m).padStart(2,'0')}</T></Pressable>)}
+    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>{label('lbl.sheetExactTime', 'Choose a time')}</T>
+    <View style={{alignItems:'center',paddingVertical:4}}>
+      <DateTimePicker
+        value={customDate}
+        mode="time"
+        display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
+        minuteInterval={5}
+        minimumDate={earliest}
+        onChange={(_, date) => {
+          if (!date) return;
+          const picked = new Date(selectedDate);
+          picked.setHours(date.getHours(), date.getMinutes(), 0, 0);
+          const safe = picked.getTime() < earliest.getTime() ? earliest : picked;
+          setCustomHour(String(safe.getHours()).padStart(2,'0'));
+          setCustomMinute(String(safe.getMinutes()).padStart(2,'0'));
+          setCustomMode(true);
+          setSelectedTs(0);
+        }}
+      />
     </View>
     {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {fmtDay(new Date(selected))}, {fmtTime(new Date(selected))}</T>:null}
     <View style={{height:12}}/><Cta label={label('lbl.sheetApply', 'Apply')} disabled={!selected} onPress={choose}/>
