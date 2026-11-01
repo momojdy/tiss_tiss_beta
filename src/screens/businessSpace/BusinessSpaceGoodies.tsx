@@ -323,7 +323,22 @@ export function GoodiesStorePage() {
       <Section title="Orders" />
       <Field label="Minimum order ($)" keyboardType="decimal-pad" value={f.minOrder} onChangeText={(v: string) => set({ minOrder: v })} />
       <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Accept orders for later</Text><Toggle value={f.acceptScheduledOrders} onValueChange={(v: boolean) => set({ acceptScheduledOrders: v })} /></View>
-      {f.acceptScheduledOrders ? <Field label="Minimum notice for first delivery (minutes)" keyboardType="number-pad" value={f.scheduledOrderStartMinutes} onChangeText={(v: string) => set({ scheduledOrderStartMinutes: v.replace(/\D/g, '') })} /> : null}
+      {f.acceptScheduledOrders ? <View style={{ marginTop: 8 }}>
+        <Text style={s.label}>Earliest scheduled order</Text>
+        <Pressable onPress={() => setTimePickerOpen(true)} style={[s.fld, { minHeight: 48, justifyContent: 'center', flexDirection: 'row', alignItems: 'center' }]}>
+          <Text style={{ color: t.ink, fontSize: 16, fontWeight: '600', flex: 1 }}>{f.scheduledOrderStartTime || '10:00'}</Text>
+          <Icon name="clock-outline" size={19} color={t.mute} />
+        </Pressable>
+        <Modal visible={timePickerOpen} transparent animationType="slide" onRequestClose={() => setTimePickerOpen(false)}>
+          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
+            <View style={{ backgroundColor: t.card, padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
+              <View style={[s.row, { marginBottom: 8 }]}><Text style={[s.title, s.g]}>Earliest order time</Text><Pressable onPress={() => setTimePickerOpen(false)}><Icon name="close" size={22} /></Pressable></View>
+              <DateTimePicker value={(() => { const d = new Date(); const [h,m] = (f.scheduledOrderStartTime || '10:00').split(':').map(Number); d.setHours(h,m,0,0); return d; })()} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => { if (date) set({ scheduledOrderStartTime: date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0') }); if (Platform.OS !== 'ios') setTimePickerOpen(false); }} />
+              {Platform.OS === 'ios' ? <Btn label="Done" onPress={() => setTimePickerOpen(false)} /> : null}
+            </View>
+          </View>
+        </Modal>
+      </View> : null}
       <Section title="Delivery pricing" />
       <Seg value={f.pricingMode === 'distance' ? 'By distance' : 'Fixed fee'} onChange={(v: string) => set({ pricingMode: v === 'By distance' ? 'distance' : 'fixed' })} items={['Fixed fee', 'By distance']} />
       {f.pricingMode === 'fixed' ? <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} /> : <View><Field label="Base delivery fee ($)" keyboardType="decimal-pad" value={f.baseFee} onChangeText={(v: string) => set({ baseFee: v })} /><Field label="Price per kilometre ($)" keyboardType="decimal-pad" value={f.perKmFee} onChangeText={(v: string) => set({ perKmFee: v })} /><Field label="Minimum delivery fee ($)" keyboardType="decimal-pad" value={f.minFee} onChangeText={(v: string) => set({ minFee: v })} /><Field label="Maximum delivery fee ($, optional)" keyboardType="decimal-pad" value={f.maxFee} onChangeText={(v: string) => set({ maxFee: v })} /><Field label="Maximum delivery distance in km (optional)" keyboardType="decimal-pad" value={f.maxDistanceKm} onChangeText={(v: string) => set({ maxDistanceKm: v })} /></View>}
