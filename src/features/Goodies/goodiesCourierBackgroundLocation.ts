@@ -11,7 +11,12 @@ TaskManager.defineTask<LocationTaskData>(GOODIES_COURIER_LOCATION_TASK, async ({
 
   const {data: sessionData} = await supabase.auth.getSession();
   const userId = sessionData.session?.user.id;
-  if (!userId) return;
+  if (!userId) {
+    if (await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK)) {
+      await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+    }
+    return;
+  }
 
   const {data: assignments, error: assignmentError} = await supabase
     .from('goodies_delivery_assignments')
