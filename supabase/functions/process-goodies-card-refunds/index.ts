@@ -72,13 +72,20 @@ Deno.serve(async (req: Request) => {
           pending++;
         } else {
           const remainingCents = totalCents - succeededAmount;
+          // Reuse the original key when no Stripe refund object exists. This
+          // safely replays an uncertain network/5xx attempt. Once Stripe has
+          // recorded a failed or partial refund, advance the generation so a
+          // genuine retry does not replay that terminal refund forever.
+          const refundIdempotencyKey = priorRefunds.length === 0
+            ? "goodies-card-refund-" + item.order_id + "-full-v1"
+            : "goodies-card-refund-" + item.order_id + "-attempt-" + (priorRefunds.length + 1);
           const refund = await stripe.refunds.create(
             {
               payment_intent: item.payment_provider_ref,
               amount: remainingCents,
               reason: "requested_by_customer",
             },
-            { idempotencyKey: "goodies-card-refund-" + item.order_id + "-full-v1" },
+            { idempotencyKey: refundIdempotencyKey },
           );
           if (refund.status === "succeeded" && succeededAmount + refund.amount >= totalCents) {
             const { data: finished, error } = await service.rpc("finish_goodies_card_refund", {
