@@ -194,7 +194,11 @@ if (event.type === "refund.updated" || event.type === "refund.failed") {
   }
 }
 
-if (event.type === "charge.dispute.created" ||\n    event.type === "charge.dispute.updated" ||\n    event.type === "charge.dispute.closed" ||\n    event.type === "charge.dispute.funds_reinstated" ||\n    event.type === "charge.dispute.funds_withdrawn") {
+if (event.type === "charge.dispute.created" ||
+    event.type === "charge.dispute.updated" ||
+    event.type === "charge.dispute.closed" ||
+    event.type === "charge.dispute.funds_reinstated" ||
+    event.type === "charge.dispute.funds_withdrawn") {
   const receivedDispute = event.data.object as Stripe.Dispute;
   // A delayed dispute.created event must not undo a later dispute closure.
   const dispute = await stripe.disputes.retrieve(receivedDispute.id);
