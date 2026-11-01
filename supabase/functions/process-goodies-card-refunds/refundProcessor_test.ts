@@ -114,3 +114,59 @@ Deno.test("stale lease cannot finalize a Stripe refund", async () => {
   assertEquals(calls[0]?.p_status, "refunded", "worker attempted correct completion");
   assertEquals(calls[1]?.p_status, "failed", "worker attempted safe lease release");
 });
+
+
+Deno.test("already fully refunded PaymentIntent is finalized without creating another refund", async () => {
+  const existing: RefundRecord[] = [{ id: "re_already_full", status: "succeeded", amount: 10000 }];
+  const { stripe, calls } = makeStripe(existing);
+  const { service, calls: finishCalls } = makeService();
+  const result = await processRefundQueueItem(makeItem(), stripe, service);
+  assertEquals(result, "refunded", "processor result");
+  assertEquals(calls.createArgs.length, 0, "no additional Stripe refund");
+  assertEquals(finishCalls[0]?.p_status, "refunded", "finalized status");
+});
+
+Deno.test("invalid order totals are rejected before Stripe is contacted", async () => {
+  for (const total of [0, -1, "not-a-number", "Infinity", "90071992547410"]) {
+    const item = { ...makeItem(), total };
+    const { stripe, calls } = makeStripe([]);
+    const { service, calls: finishCalls } = makeService();
+    const result = await processRefundQueueItem(item, stripe, service);
+    assertEquals(result, "failed", "invalid total result for " + String(total));
+    assertEquals(calls.listCalls, 0, "Stripe must not be contacted for " + String(total));
+    assertEquals(calls.createArgs.length, 0, "no refund created for " + String(total));
+    assertEquals(finishCalls[0]?.p_status, "failed", "queue item safely failed for " + String(total));
+  }
+});
+
+Deno.test("Stripe refund history pagination is exhausted before calculating the remainder", async () => {
+  const pages = [
+    { data: [{ id: "re_failed", status: "failed", amount: 500 }], has_more: true },
+    { data: [{ id: "re_partial", status: "succeeded", amount: 2500 }], has_more: false },
+  ];
+  const cursors: Array<string | undefined> = [];
+  const createCalls: Array<{ amount: number; key: string }> = [];
+  const stripe = {
+    refunds: {
+      async list(args: { starting_after?: string }) {
+        cursors.push(args.starting_after);
+        const page = pages.shift();
+        if (!page) throw new Error("Unexpected extra Stripe refund page");
+        return page;
+      },
+      async create(params: { amount: number }, options: { idempotencyKey: string }) {
+        createCalls.push({ amount: params.amount, key: options.idempotencyKey });
+        return { id: "re_remaining", status: "succeeded", amount: params.amount };
+      },
+    },
+  };
+  const { service, calls: finishCalls } = makeService();
+  const result = await processRefundQueueItem(makeItem(), stripe, service);
+  assertEquals(result, "refunded", "processor result");
+  assertEquals(cursors.length, 2, "all Stripe pages read");
+  assertEquals(cursors[0], undefined, "first page has no cursor");
+  assertEquals(cursors[1], "re_failed", "second page starts after last item");
+  assertEquals(createCalls[0]?.amount, 7500, "remaining amount includes all pages");
+  assertEquals(createCalls[0]?.key, "goodies-card-refund-order-123-attempt-3", "key uses all recorded attempts");
+  assertEquals(finishCalls[0]?.p_status, "refunded", "finalized status");
+});

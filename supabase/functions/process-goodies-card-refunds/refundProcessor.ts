@@ -52,6 +52,11 @@ export async function processRefundQueueItem(
   service: RefundServiceClient,
 ): Promise<"refunded" | "pending" | "failed"> {
   try {
+    const totalCents = Math.round(Number(item.total) * 100);
+    if (!Number.isSafeInteger(totalCents) || totalCents <= 0) {
+      throw new Error("Refund total must be a positive safe integer number of cents");
+    }
+
     const priorRefunds: RefundRecord[] = [];
     let startingAfter: string | undefined;
     for (;;) {
@@ -69,8 +74,6 @@ export async function processRefundQueueItem(
 
     const succeededAmount = getSucceededRefundAmount(priorRefunds);
     const pendingRefund = findBlockingRefund(priorRefunds);
-    const totalCents = Math.round(Number(item.total) * 100);
-
     if (succeededAmount >= totalCents) {
       const lastSucceeded = [...priorRefunds].reverse().find(refund => refund.status === "succeeded");
       await finish(service, item, "refunded", lastSucceeded?.id || null, null);
