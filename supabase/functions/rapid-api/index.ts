@@ -1,4 +1,9 @@
 import Stripe from "npm:stripe@18.5.0";
+import {
+  resolveGoodiesDisputeState,
+  resolveGoodiesPaymentIntentState,
+  resolveGoodiesRefundState,
+} from "./goodiesStripeState.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY")!);
@@ -158,10 +163,7 @@ if (event.type === "payment_intent.succeeded" ||
   // Stripe events can arrive out of order. Re-read the canonical PaymentIntent
   // so an older failure snapshot cannot overwrite a later success or cancel.
   const pi = await stripe.paymentIntents.retrieve(receivedPi.id);
-  const state = pi.status === "succeeded" ? "succeeded"
-    : pi.status === "canceled" ? "cancelled"
-    : event.type === "payment_intent.payment_failed" && pi.status === "requires_payment_method" ? "failed"
-    : null;
+  const state = resolveGoodiesPaymentIntentState(event.type, pi.status);
   if (!state) {
     return new Response(JSON.stringify({success:true,goodies:true,ignored:true,state:pi.status}), {headers:{"Content-Type":"application/json"},status:200});
   }
@@ -175,8 +177,7 @@ if (event.type === "charge.refunded") {
   if (pi?.metadata?.wantiss_purpose === "goodies_order" && pi.metadata.goodies_order_id) {
     const refundedAmountCents = await succeededRefundAmountCents(pi.id);
     if (await reconcileGoodiesPaymentIntent(pi, "refund_updated", event, refundedAmountCents)) {
-      const state = refundedAmountCents >= pi.amount ? "refunded"
-        : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
+      const state = resolveGoodiesRefundState(refundedAmountCents, pi.amount);
       return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
     }
   }
@@ -187,8 +188,7 @@ if (event.type === "refund.updated" || event.type === "refund.failed") {
   if (paymentIntent?.metadata?.wantiss_purpose === "goodies_order" && paymentIntent.metadata.goodies_order_id) {
     const refundedAmountCents = await succeededRefundAmountCents(paymentIntent.id);
     if (await reconcileGoodiesPaymentIntent(paymentIntent, "refund_updated", event, refundedAmountCents)) {
-      const state = refundedAmountCents >= paymentIntent.amount ? "refunded"
-        : refundedAmountCents > 0 ? "partially_refunded" : "refund_pending";
+      const state = resolveGoodiesRefundState(refundedAmountCents, paymentIntent.amount);
       return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
     }
   }
@@ -201,8 +201,7 @@ if (event.type === "charge.dispute.created" || event.type === "charge.dispute.cl
   const chargeId = typeof dispute.charge === "string" ? dispute.charge : dispute.charge.id;
   const charge = await stripe.charges.retrieve(chargeId);
   const pi = await paymentIntentFromCharge(charge);
-  const state = dispute.status === "won" ? "dispute_won"
-    : dispute.status === "lost" ? "dispute_lost" : "disputed";
+  const state = resolveGoodiesDisputeState(dispute.status);
   if (pi && await reconcileGoodiesPaymentIntent(pi, state, event)) {
     return new Response(JSON.stringify({success:true,goodies:true,state}), {headers:{"Content-Type":"application/json"},status:200});
   }
