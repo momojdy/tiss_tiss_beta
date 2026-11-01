@@ -15,7 +15,7 @@ import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
-export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol' };
+export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
 export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
@@ -29,7 +29,7 @@ export const CATEGORY_PRESETS: { id: string; name: string }[] = [
 const ALC = /alcohol|alcool|liquor|licor|\brum\b|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\bbeer|bi[èe]re|cerveza|\bwine|\bvin\b|vino|champagne|cocktail|\bspirits\b|啤酒|白酒|葡萄酒|红酒|烈酒|威士忌|伏特加|朗姆|鸡尾酒/i;
 const uid = () => Math.random().toString(36).slice(2, 10);
 
-/* ---------- data access: swap this object for Supabase later ---------- */
+/* ---------- data access ---------- */
 const k = (b: string, n: string) => `bs.goodies.${n}.${b}`;
 const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await AsyncStorage.getItem(key); return v ? (JSON.parse(v) as T) : d; } catch { return d; } };
 export const goodiesApi = {
@@ -61,8 +61,8 @@ export const goodiesApi = {
   setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
   listProducts: async (biz: string): Promise<GProduct[]> => {
-    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
-    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none' }));
+    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
+    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_url || null, reviewStatus: r.review_status || 'pending', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
     const f: Record<string, unknown> = {};
@@ -73,6 +73,7 @@ export const goodiesApi = {
     if (p.stock !== undefined) f.stock = p.stock;
     if (p.available !== undefined) f.is_available = p.available;
     if (p.restriction !== undefined) f.restriction = p.restriction;
+    if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
     const res = p.id ? await supabase.from('goodies_products').update({ ...f, updated_at: new Date().toISOString() }).eq('id', p.id).select('id') : await supabase.from('goodies_products').insert({ ...f, business_id: biz }).select('id');
     if (res.error) throw res.error;
     if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can change products.');
@@ -263,12 +264,18 @@ function GoLiveCard() {
 
 /* ---------- products ---------- */
 const RESTRICTIONS: { k: GProduct['restriction']; l: string }[] = [{ k: 'none', l: 'No restriction' }, { k: 'otc', l: 'Over the counter' }, { k: 'alcohol', l: 'Alcohol' }];
-const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none' };
+const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, reviewStatus: 'pending', reviewNote: null };
 const dollars = (n: number) => '$' + n.toFixed(2);
 function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClose: () => void; onSaved: () => void }) {
   const app = useApp(), s = useS();
-  const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction });
+  const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUri: '', removePhoto: false });
   const [busy, setBusy] = useState(false);
+  const choosePhoto = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) { app.toast('Allow photo access to choose a product photo'); return; }
+    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 1 });
+    if (!picked.canceled && picked.assets[0]) setF(prev => ({ ...prev, photoUri: picked.assets[0].uri, removePhoto: false }));
+  };
   const check = (): string => {
     const name = f.name.trim(), price = parseFloat(f.price), stock = Number(f.stock);
     if (name.length < 1 || name.length > 120) return 'Enter a product name (up to 120 characters)';
@@ -282,8 +289,29 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const save = async () => {
     const e = check(); if (e) return app.toast(e);
     setBusy(true);
-    try { await goodiesApi.saveProduct(app.biz.id, { id: product.id || undefined, name: f.name, description: f.description, price: parseFloat(f.price), stock: Number(f.stock), emoji: f.emoji, restriction: f.restriction }); app.toast(product.id ? 'Product saved' : 'Product added'); onSaved(); }
-    catch (x) { app.toast(errText(x)); }
+    let uploadedPath = '';
+    try {
+      let photoUrl: string | null = f.removePhoto ? null : f.photoUrl || null;
+      if (f.photoUri) {
+        const resized = await ImageManipulator.manipulateAsync(f.photoUri, [{ resize: { width: 1200 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
+        const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
+        uploadedPath = `${app.biz.id}/goodies/products/${uid()}${uid()}.jpg`;
+        const { error } = await supabase.storage.from('listing-photos').upload(uploadedPath, decode(base64), { contentType: 'image/jpeg', cacheControl: '31536000' });
+        if (error) throw error;
+        photoUrl = supabase.storage.from('listing-photos').getPublicUrl(uploadedPath).data.publicUrl;
+      }
+      await goodiesApi.saveProduct(app.biz.id, { id: product.id || undefined, name: f.name, description: f.description, price: parseFloat(f.price), stock: Number(f.stock), emoji: f.emoji, restriction: f.restriction, photoUrl });
+      if (product.photoUrl && (product.photoUrl !== photoUrl || f.removePhoto)) {
+        const marker = '/storage/v1/object/public/listing-photos/';
+        const oldPath = product.photoUrl.includes(marker) ? decodeURIComponent(product.photoUrl.split(marker).pop() || '') : '';
+        if (oldPath) await supabase.storage.from('listing-photos').remove([oldPath]);
+      }
+      app.toast(product.id ? 'Product saved. Content changes are awaiting Wantiss review.' : 'Product added. It will appear after Wantiss review.'); onSaved();
+    }
+    catch (x) {
+      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
+      app.toast(errText(x));
+    }
     finally { setBusy(false); }
   };
   const del = () => Alert.alert('Delete this product?', 'Customers will no longer see it. Past orders are not affected.', [
@@ -294,6 +322,9 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
         <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
+          <Text style={s.label}>Product photo</Text>
+          {f.photoUri || f.photoUrl ? <Image source={{ uri: f.photoUri || f.photoUrl }} style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8 }} /> : <View style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8, backgroundColor: '#F1F3EF', alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 36 }}>{f.emoji || '🛍️'}</Text></View>}
+          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 10 }}><Btn small kind="soft" label={f.photoUri || f.photoUrl ? 'Change photo' : 'Add photo'} onPress={choosePhoto} /><Btn small kind="soft" label="Remove" disabled={!f.photoUri && !f.photoUrl} onPress={() => setF({ ...f, photoUri: '', photoUrl: '', removePhoto: true })} /></View>
           <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
           <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
           <Field label="Emoji" value={f.emoji} onChangeText={(v: string) => setF({ ...f, emoji: v })} />
@@ -321,8 +352,8 @@ export function GoodiesProductsPage() {
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
-          <Row key={p.id} left={<Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
-            onPress={() => setEdit(p)} right={<Toggle value={p.available} onValueChange={(v: boolean) => toggle(p, v)} />} />
+          <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'} · ${p.reviewStatus === 'approved' ? 'Approved' : p.reviewStatus === 'rejected' ? 'Rejected — edit to resubmit' : 'Pending review'}${p.reviewNote ? ' · ' + p.reviewNote : ''}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
+            onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.reviewStatus !== 'approved' || p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
         ))}</Divided></View>
       ) : <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" hint="Add your first product. You need at least one in stock to go live." cta="Add product" onCta={() => setEdit(BLANK)} /></View>}
       <GoLiveCard />
