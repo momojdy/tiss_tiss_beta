@@ -242,11 +242,11 @@ export async function load() {
     if (attempt && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
   } catch (e) {}
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
-  await refreshGoodiesAccess();
   if (!providerInfo.demo) {
     try {
       const {data: sessionData} = await supabase.auth.getUser();
       const userId = sessionData.user?.id;
+      await refreshGoodiesAccess();
       if (userId) {
         const [walletResult, methodsResult] = await Promise.all([
           supabase.from('wallets').select('balance').eq('user_id', userId).maybeSingle(),
