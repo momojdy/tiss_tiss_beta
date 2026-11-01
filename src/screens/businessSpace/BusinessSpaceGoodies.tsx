@@ -106,11 +106,18 @@ export const goodiesApi = {
     return [];
   },
   saveBuilders: async (biz: string, l: GBuilder[]) => {
-    await rpc('goodies_save_builder_configs', { p_business: biz, p_configs: l });
-    await AsyncStorage.setItem(k(biz, 'builders'), JSON.stringify(l));
+    const persisted = l.map(builder => ({
+      ...builder,
+      groups: builder.groups.map(group => ({
+        ...group,
+        items: group.items.map(({ assetUrl, ...item }) => item),
+      })),
+    }));
+    await rpc('goodies_save_builder_configs', { p_business: biz, p_configs: persisted });
+    await AsyncStorage.setItem(k(biz, 'builders'), JSON.stringify(persisted));
     try {
       const st = await goodiesApi.getStore(biz), sid = st.demoStoreId || biz, raw = JSON.parse((await AsyncStorage.getItem('goodies-byo-v4')) || 'null') || { cfg: {}, store: {}, drafts: {} };
-      raw.cfg = raw.cfg || {}; raw.cfg[sid] = l; await AsyncStorage.setItem('goodies-byo-v4', JSON.stringify(raw));
+      raw.cfg = raw.cfg || {}; raw.cfg[sid] = persisted; await AsyncStorage.setItem('goodies-byo-v4', JSON.stringify(raw));
     } catch { /* local compatibility cache only */ }
   },
   listRequests: async (biz: string): Promise<GRequest[]> => {
