@@ -1,5 +1,6 @@
 import Stripe from "npm:stripe@18.5.0";
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { findBlockingRefund, getRefundIdempotencyKey, getRemainingRefundAmount, getSucceededRefundAmount } from "./refundLogic.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -45,12 +46,8 @@ Deno.serve(async (req: Request) => {
           startingAfter = last.id;
         }
 
-        const succeededAmount = priorRefunds
-          .filter(r => r.status === "succeeded")
-          .reduce((sum, r) => sum + r.amount, 0);
-        const pendingRefund = priorRefunds.find(r =>
-          r.status === "pending"
-        );
+        const succeededAmount = getSucceededRefundAmount(priorRefunds);
+        const pendingRefund = findBlockingRefund(priorRefunds);
         const totalCents = Math.round(Number(item.total) * 100);
 
         if (succeededAmount >= totalCents) {
@@ -71,14 +68,12 @@ Deno.serve(async (req: Request) => {
           if (finished !== true) throw new Error("Refund worker lease is no longer current");
           pending++;
         } else {
-          const remainingCents = totalCents - succeededAmount;
+          const remainingCents = getRemainingRefundAmount(totalCents, succeededAmount);
           // Reuse the original key when no Stripe refund object exists. This
           // safely replays an uncertain network/5xx attempt. Once Stripe has
           // recorded a failed or partial refund, advance the generation so a
           // genuine retry does not replay that terminal refund forever.
-          const refundIdempotencyKey = priorRefunds.length === 0
-            ? "goodies-card-refund-" + item.order_id + "-full-v1"
-            : "goodies-card-refund-" + item.order_id + "-attempt-" + (priorRefunds.length + 1);
+          const refundIdempotencyKey = getRefundIdempotencyKey(item.order_id, priorRefunds.length);
           const refund = await stripe.refunds.create(
             {
               payment_intent: item.payment_provider_ref,
