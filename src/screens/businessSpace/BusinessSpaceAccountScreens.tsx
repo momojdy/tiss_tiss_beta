@@ -77,14 +77,14 @@ export function RegistrationPage() {
         p_application_id: application.id, p_document_type: type, p_storage_path: path,
       });
       if (submitError) throw submitError;
-      await applicationDocs.reload();
+      await applicationDocs.reload(); app.bump();
     }, 'Document uploaded');
   };
   const startApplication = async () => {
     await a.run(async () => {
       const { error } = await supabase.rpc('submit_business_application', { p_business_name: b.name, p_business_id: b.id });
       if (error) throw error;
-      await applicationDocs.reload();
+      await applicationDocs.reload(); app.bump();
     }, 'Application started');
   };
   const currentApplication = applicationDocs.d?.application;
@@ -130,7 +130,7 @@ export function RegistrationPage() {
               return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' && !currentApplication.final_rejection ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
             {currentApplication.status === 'rejected' && !currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}>
               <Text style={s.mut}>Replace every rejected document. Once all three documents are uploaded and ready, you can resubmit your application for review.</Text>
-              <Btn label="Resubmit application" disabled={!canResubmitApplication} busy={a.busy} onPress={() => a.run(async () => { await rpc('resubmit_business_application', { p_application_id: currentApplication.id }); await applicationDocs.reload(); }, 'Application resubmitted')} />
+              <Btn label="Resubmit application" disabled={!canResubmitApplication} busy={a.busy} onPress={() => a.run(async () => { await rpc('resubmit_business_application', { p_application_id: currentApplication.id }); await applicationDocs.reload(); app.bump(); }, 'Application resubmitted')} />
             </View> : null}
             {currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}><Text style={s.mut}>This application has a final rejection. Contact Wantiss support if you believe it needs another review.</Text><Btn kind="soft" label="Contact support" onPress={() => app.go('help')} /></View> : null}
           </>
