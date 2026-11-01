@@ -117,14 +117,13 @@ function ScheduleSheet({close}: {close: () => void}) {
   const opening = hours && !hours.closed && hours.open ? String(hours.open) : '';
   const closing = hours && !hours.closed && hours.close ? String(hours.close) : '';
   const lead = Math.max(0,Number(store?.scheduledOrderStartMinutes ?? 60));
-  let earliest = new Date(selectedDate);
-  if(dayOffset===0) earliest = new Date();
-  if(store && !store.open) {
-    if(opening) {
-      const [oh,om]=opening.split(':').map(Number);
-      const opens=new Date(selectedDate);opens.setHours(oh,om||0,0,0);
-      earliest=new Date(Math.max(earliest.getTime(),opens.getTime()+lead*60000));
-    } else earliest=new Date(Math.max(earliest.getTime(),Date.now())+lead*60000);
+  let earliest = dayOffset === 0 ? new Date() : new Date(selectedDate);
+  if (opening) {
+    const [oh, om] = opening.split(':').map(Number);
+    const opens = new Date(selectedDate); opens.setHours(oh, om || 0, 0, 0);
+    earliest = new Date(Math.max(earliest.getTime(), opens.getTime()) + lead * 60000);
+  } else {
+    earliest = new Date(Math.max(earliest.getTime(), Date.now()) + lead * 60000);
   }
   const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
   const hasHours = !!(hours && !hours.closed && opening && closing);
@@ -150,7 +149,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   const selected = customMode ? (customValid ? customDate.getTime() : 0) : candidates.find(ts=>ts===selectedTs);
   const choose = () => {
     if(!store){toast(label('lbl.sheetChooseStore', 'Choose a store before scheduling.'));return;}
-    if(!store.open&&!store.acceptScheduledOrders){toast(label('lbl.sheetNoScheduleClosed', 'This store does not accept scheduled orders while closed.'));return;}
+    if(!store.acceptScheduledOrders){toast(label('lbl.sheetNoScheduleClosed', 'This store does not accept scheduled orders.'));return;}
     if(!selected){
       if(customMode && !customInHours) toast(label('lbl.sheetChooseWithinHours', 'Choose a time within the store opening hours.'));
       else if(customMode && customDate.getTime()<earliest.getTime()) toast(label('lbl.sheetEarliestAvailableTime', 'This store’s earliest available time is {time}.').replace('{time}', fmtTime(earliest)));
