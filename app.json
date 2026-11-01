@@ -21,7 +21,13 @@
         "monochromeImage": "./src/assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE",
+        "FOREGROUND_SERVICE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./src/assets/favicon.png"
@@ -43,7 +49,10 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Wantiss uses your location for nearby places and, after you accept a Goodies delivery, to share your live delivery location with the customer until the delivery is complete."
+          "locationWhenInUsePermission": "Wantiss uses your location while you are online and during active Goodies deliveries.",
+          "locationAlwaysAndWhenInUsePermission": "Wantiss shares your live location with the customer only during an active Goodies delivery, including when the app is in the background. Sharing stops when the delivery ends.",
+          "isIosBackgroundLocationEnabled": true,
+          "isAndroidBackgroundLocationEnabled": true
         }
       ]
     ]
