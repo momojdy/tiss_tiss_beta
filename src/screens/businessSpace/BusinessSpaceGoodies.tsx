@@ -542,7 +542,7 @@ export function GoodiesBuilderEditPage() {
     setSaving(true);
     try {
       await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
-      app.toast('Custom product added'); app.bump(); app.back();
+      app.toast(b.productCreated === false ? 'Custom product added' : 'Custom product saved'); app.bump(); app.back();
     } catch (error) {
       app.toast(errText(error));
     } finally {
@@ -551,7 +551,7 @@ export function GoodiesBuilderEditPage() {
   };
   const num = (v: string) => parseInt(v.replace(/\D/g, '') || '0', 10);
   return (
-    <Pg title={id ? (b.name || 'Custom product') : 'Add custom product'} onBack={app.back}>
+    <Pg title={b.productCreated === false ? 'Add custom product' : (b.name || 'Custom product')} onBack={app.back}>
       <Section title="Product details" />
       <Field label="Name" value={b.name} onChangeText={(v: string) => up({ name: v })} />
       <Field label="Description" value={b.desc} onChangeText={(v: string) => up({ desc: v })} multiline />
@@ -597,7 +597,7 @@ export function GoodiesBuilderEditPage() {
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
       <Btn kind="soft" label="Request an ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
-      <View style={{ height: 14 }} /><Btn label={id ? 'Save changes' : 'Add custom product'} onPress={save} busy={saving} />
+      <View style={{ height: 14 }} /><Btn label={b.productCreated === false ? 'Add custom product' : 'Save changes'} onPress={save} busy={saving} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
