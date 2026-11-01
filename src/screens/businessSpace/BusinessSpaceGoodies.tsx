@@ -14,7 +14,7 @@ import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; coverUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; coverUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartMinutes: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -35,15 +35,15 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', coverUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', promo: '', delivery: true, pickup: true, names: {} };
+    const d: GStore = { demoStoreId: '', coverUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', acceptScheduledOrders: false, scheduledOrderStartMinutes: '60', promo: '', delivery: true, pickup: true, names: {} };
     const [r, business] = await Promise.all([
-      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country').eq('business_id', biz).maybeSingle()),
+      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country,accept_scheduled_orders,scheduled_order_start_minutes').eq('business_id', biz).maybeSingle()),
       q<any>(supabase.from('businesses').select('address,city,country').eq('id', biz).maybeSingle()),
     ]);
     if (!r) return { ...d, address: business?.address || '', city: business?.city || '', country: business?.country || '' };
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
-      demoStoreId: '', coverUrl: r.cover_url || null, address: r.address || business?.address || '', city: r.city || business?.city || '', country: r.country || business?.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), promo: r.promo || '',
+      demoStoreId: '', coverUrl: r.cover_url || null, address: r.address || business?.address || '', city: r.city || business?.city || '', country: r.country || business?.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), acceptScheduledOrders: !!r.accept_scheduled_orders, scheduledOrderStartMinutes: String(r.scheduled_order_start_minutes ?? 60), promo: r.promo || '',
       delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
     };
   },
@@ -53,7 +53,7 @@ export const goodiesApi = {
     await rpc('goodies_save_store_setup', {
       p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,
       p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,
-      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(),
+      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(), p_accept_scheduled_orders: st.acceptScheduledOrders, p_scheduled_order_start_minutes: parseInt(st.scheduledOrderStartMinutes, 10) || 60,
     });
   },
   /* Store publication is self-service for Business Space members. */
@@ -195,6 +195,15 @@ export function GoodiesToolsCard() {
 
 /* ---------- store setup ---------- */
 const LANGS: [string, string][] = [['fr', 'Français'], ['ht', 'Kreyòl ayisyen'], ['es', 'Español'], ['zh-Hans', '简体中文']];
+const COUNTRY_CODES = 'AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS YE YT ZA ZM ZW'.split(' ');
+const COUNTRY_OPTIONS = COUNTRY_CODES.map(code => {
+  let name = code;
+  try { name = new Intl.DisplayNames(['en'], { type: 'region' }).of(code) || code; } catch {}
+  const flag = String.fromCodePoint(...code.split('').map(ch => 127397 + ch.charCodeAt(0)));
+  return { code, name, flag };
+}).sort((a, b) => a.name.localeCompare(b.name));
+const countryOption = (value: string) => COUNTRY_OPTIONS.find(x => x.code === value || x.name.toLowerCase() === value.toLowerCase());
+
 export function GoodiesToolsPage() {
   const app = useApp();
   return <Pg title="Goodies tools" onBack={app.back}><GoodiesToolsCard /></Pg>;
@@ -205,6 +214,7 @@ export function GoodiesStorePage() {
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
   const load = () => {
     setLoadErr('');
     goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e)));
@@ -223,7 +233,8 @@ export function GoodiesStorePage() {
     if (!(parseFloat(f.minOrder) >= 0)) return 'Minimum order must be 0 or more';
     if (f.pricingMode === 'fixed' && !(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
     if (f.pricingMode === 'distance' && (!(parseFloat(f.baseFee) >= 0) || !(parseFloat(f.perKmFee) >= 0) || !(parseFloat(f.minFee) >= 0) || (f.maxFee.trim() && !(parseFloat(f.maxFee) >= parseFloat(f.minFee))) || (f.maxDistanceKm.trim() && !(parseFloat(f.maxDistanceKm) > 0)))) return 'Enter valid distance delivery pricing values';
-    if (!(parseInt(f.etaMin, 10) > 0) || !(parseInt(f.etaMax, 10) >= parseInt(f.etaMin, 10))) return 'Enter a delivery time range, for example 20 to 35 minutes';
+    if (!(parseInt(f.etaMin, 10) > 0) || !(parseInt(f.etaMax, 10) >= parseInt(f.etaMin, 10))) return 'Enter a valid delivery time range';
+    if (f.acceptScheduledOrders && (!(parseInt(f.scheduledOrderStartMinutes, 10) >= 15) || !(parseInt(f.scheduledOrderStartMinutes, 10) <= 10080))) return 'Set scheduled orders at least 15 minutes ahead';
     if (!f.delivery && !f.pickup) return 'Keep delivery or pickup on';
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
     return '';
@@ -269,20 +280,29 @@ export function GoodiesStorePage() {
       {f.coverUrl ? <Image source={{ uri: f.coverUrl }} style={{ width: '100%', height: 150, borderRadius: 14, marginBottom: 8 }} /> : <View style={{ height: 130, borderRadius: 14, backgroundColor: s.card.backgroundColor, alignItems: 'center', justifyContent: 'center', marginBottom: 8 }}><Text style={s.mut}>No store cover photo yet</Text></View>}
       <Btn kind="soft" label={f.coverUrl ? 'Change cover photo' : 'Add cover photo'} onPress={chooseCover} busy={coverBusy} />
       <Section title="Store category" />
-      <Text style={s.mut}>Pick the category customers will find you under. Categories are set by Wantiss and cannot be created here.</Text>
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
       {f.category === 'drugstore' ? <View style={s.card}><Text style={s.title}>Pharmacy licence required</Text><Text style={s.mut}>Drugstore stores must upload a pharmacy licence during registration. Only over-the-counter products are allowed.</Text></View> : null}
-      <Field label="Store type shown under your name (for example Haitian restaurant)" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
+      <Field label="Store type" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
       <Section title="Store address" />
       <Field label="Street address" value={f.address} onChangeText={(v: string) => set({ address: v })} placeholder="Street, building and number" />
-      <View style={s.row}><View style={s.g}><Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} /></View><View style={s.g}><Field label="Country" value={f.country} onChangeText={(v: string) => set({ country: v })} /></View></View>
+      <View style={s.row}><View style={s.g}><Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} /></View><View style={s.g}><Text style={s.label}>Country</Text><Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable></View></View>
+      <Modal visible={countryOpen} transparent animationType="slide" onRequestClose={() => setCountryOpen(false)}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
+          <View style={{ backgroundColor: t.card, borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 16, maxHeight: '82%' }}>
+            <View style={[s.row, { marginBottom: 12 }]}><Text style={[s.h1, s.g]}>Choose country</Text><Pressable onPress={() => setCountryOpen(false)}><Icon name="close" size={22} /></Pressable></View>
+            <TextInput value={countryQuery} onChangeText={setCountryQuery} placeholder="Search countries" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
+            <ScrollView keyboardShouldPersistTaps="handled">
+              {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
       <Section title="Custom products" />
-      <View style={[s.row, { marginTop: 8 }]}>
-        <View style={s.g}><Text style={s.title}>Allow custom products</Text><Text style={s.mut}>Let customers customize pizza or burger products.</Text></View>
+      <View style={[s.row, { marginTop: 4 }]}>
+        <Text style={[s.title, s.g]}>Allow custom products</Text>
         <Toggle value={customProducts} onValueChange={setCustomProducts} />
       </View>
-      {customProducts ? <View style={s.cardFlat}>
-        <Text style={s.mut}>Choose which custom product types customers can order.</Text>
+      {customProducts ? <View>
         {(['pizza', 'burger'] as const).map(type => {
           const current = customTypes.find(x => x.type === type && x.enabled);
           return <View key={type} style={[s.row, { marginTop: 10 }]}>
@@ -297,19 +317,18 @@ export function GoodiesStorePage() {
       </View> : null}
       <Section title="Orders" />
       <Field label="Minimum order ($)" keyboardType="decimal-pad" value={f.minOrder} onChangeText={(v: string) => set({ minOrder: v })} />
+      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Accept orders for later</Text><Toggle value={f.acceptScheduledOrders} onValueChange={(v: boolean) => set({ acceptScheduledOrders: v })} /></View>
+      {f.acceptScheduledOrders ? <Field label="Minimum notice for first delivery (minutes)" keyboardType="number-pad" value={f.scheduledOrderStartMinutes} onChangeText={(v: string) => set({ scheduledOrderStartMinutes: v.replace(/\\D/g, '') })} /> : null}
       <Section title="Delivery pricing" />
       <Seg value={f.pricingMode === 'distance' ? 'By distance' : 'Fixed fee'} onChange={(v: string) => set({ pricingMode: v === 'By distance' ? 'distance' : 'fixed' })} items={['Fixed fee', 'By distance']} />
-      {f.pricingMode === 'fixed' ? <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} /> : <View><Text style={s.mut}>Road distance is calculated automatically with Geoapify. Fee = base fee + road kilometres × rate.</Text><Field label="Base delivery fee ($)" keyboardType="decimal-pad" value={f.baseFee} onChangeText={(v: string) => set({ baseFee: v })} /><Field label="Price per kilometre ($)" keyboardType="decimal-pad" value={f.perKmFee} onChangeText={(v: string) => set({ perKmFee: v })} /><Field label="Minimum delivery fee ($)" keyboardType="decimal-pad" value={f.minFee} onChangeText={(v: string) => set({ minFee: v })} /><Field label="Maximum delivery fee ($, optional)" keyboardType="decimal-pad" value={f.maxFee} onChangeText={(v: string) => set({ maxFee: v })} /><Field label="Maximum delivery distance in km (optional)" keyboardType="decimal-pad" value={f.maxDistanceKm} onChangeText={(v: string) => set({ maxDistanceKm: v })} /></View>}
+      {f.pricingMode === 'fixed' ? <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} /> : <View><Field label="Base delivery fee ($)" keyboardType="decimal-pad" value={f.baseFee} onChangeText={(v: string) => set({ baseFee: v })} /><Field label="Price per kilometre ($)" keyboardType="decimal-pad" value={f.perKmFee} onChangeText={(v: string) => set({ perKmFee: v })} /><Field label="Minimum delivery fee ($)" keyboardType="decimal-pad" value={f.minFee} onChangeText={(v: string) => set({ minFee: v })} /><Field label="Maximum delivery fee ($, optional)" keyboardType="decimal-pad" value={f.maxFee} onChangeText={(v: string) => set({ maxFee: v })} /><Field label="Maximum delivery distance in km (optional)" keyboardType="decimal-pad" value={f.maxDistanceKm} onChangeText={(v: string) => set({ maxDistanceKm: v })} /></View>}
       <View style={s.row}><View style={s.g}><Field label="Fastest (min)" keyboardType="number-pad" value={f.etaMin} onChangeText={(v: string) => set({ etaMin: v })} /></View><View style={s.g}><Field label="Slowest (min)" keyboardType="number-pad" value={f.etaMax} onChangeText={(v: string) => set({ etaMax: v })} /></View></View>
       <View style={[s.row, { marginTop: 12 }]}><Text style={[s.title, s.g]}>Delivery</Text><Toggle value={f.delivery} onValueChange={(v: boolean) => set({ delivery: v })} /></View>
       <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Pickup</Text><Toggle value={f.pickup} onValueChange={(v: boolean) => set({ pickup: v })} /></View>
       <Field label="Promotion line on your card (optional)" value={f.promo} onChangeText={(v: string) => set({ promo: v })} />
-      <Text style={s.mut}>Alcohol cannot be advertised or promoted.</Text>
       <Section title="Store name in other languages (optional)" />
-      <Text style={s.mut}>Your name is shown as you entered it. Add translations if you want customers to see them in their language.</Text>
       {LANGS.map(([c, n]) => <Field key={c} label={n} value={f.names[c] || ''} onChangeText={(v: string) => set({ names: { ...f.names, [c]: v } })} />)}
       <View style={{ height: 14 }} /><Btn label="Save store" onPress={save} busy={busy} />
-      <Text style={[s.mut, { marginTop: 8 }]}>Logo, hours and address are in Business information. Your business is your store, so there is nothing to link.</Text>
     </Pg>
   );
 }
@@ -404,18 +423,16 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
         <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
-          {!product.id ? <View style={{ marginBottom: 12 }}>
+          {!product.id && customTypes.length > 0 ? <View style={{ marginBottom: 12 }}>
             <Text style={s.label}>Product type</Text>
             <View style={{ flexDirection: 'row', gap: 8 }}>
               <View style={{ flex: 1 }}><Btn small kind={productMode === 'regular' ? 'primary' : 'soft'} label="Regular product" onPress={() => setProductMode('regular')} /></View>
               <View style={{ flex: 1 }}><Btn small kind={productMode === 'custom' ? 'primary' : 'soft'} label="Custom product" onPress={() => setProductMode('custom')} /></View>
             </View>
             {productMode === 'custom' ? <View style={{ marginTop: 10 }}>
-              <Text style={s.mut}>Choose an enabled custom product type.</Text>
               <View style={{ flexDirection: 'row', gap: 8, marginTop: 8 }}>
                 {(['pizza', 'burger'] as const).filter(type => customTypes.some(x => x.type === type)).map(type => <View key={type} style={{ flex: 1 }}><Btn small kind="soft" label={type === 'pizza' ? 'Pizza' : 'Burger'} onPress={() => openCustom(type)} /></View>)}
               </View>
-              {!customTypes.length ? <Text style={s.mut}>Enable Pizza or Burger in Store Setup first.</Text> : null}
             </View> : null}
           </View> : null}
           <Text style={s.label}>Product photo</Text>
@@ -510,12 +527,12 @@ export function GoodiesBuilderEditPage() {
   const save = async () => {
     const e = validateBuilder(b); setErrs(e);
     if (e.length) return app.toast(e[0]);
-    await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? b : x)) : [...all, b]);
-    app.toast('Custom product saved'); app.bump(); app.back();
+    await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true } : x)) : [...all, { ...b, enabled: true, available: true }]);
+    app.toast('Custom product added'); app.bump(); app.back();
   };
   const num = (v: string) => parseInt(v.replace(/\D/g, '') || '0', 10);
   return (
-    <Pg title={b.name || 'Custom product'} onBack={app.back}>
+    <Pg title={id ? (b.name || 'Custom product') : 'Add custom product'} onBack={app.back}>
       <Section title="Product details" />
       <Field label="Name" value={b.name} onChangeText={(v: string) => up({ name: v })} />
       <Field label="Description" value={b.desc} onChangeText={(v: string) => up({ desc: v })} multiline />
@@ -561,7 +578,7 @@ export function GoodiesBuilderEditPage() {
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
       <Btn kind="soft" label="Request a missing ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
-      <View style={{ height: 14 }} /><Btn label="Save custom product" onPress={save} />
+      <View style={{ height: 14 }} /><Btn label={id ? 'Save changes' : 'Add custom product'} onPress={save} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
