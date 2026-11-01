@@ -334,7 +334,7 @@ export const cur = (): Route => S.stack[S.stack.length - 1];
 export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q, 0);
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
-export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid].far);
+export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
 export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
