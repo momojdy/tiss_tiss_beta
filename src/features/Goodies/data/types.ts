@@ -5,7 +5,7 @@ export type Txt = Partial<Record<LangCode, {v: string; s: 'missing' | 'draft' | 
 export interface Category {id: string; name: Txt; emoji: string; art?: string | null; home?: boolean}
 export interface Item {
   id: string; s: string; n: string; p: number; e: string; stock: number; oos: number; d: string; al: string; w: boolean;
-  restriction?: 'none' | 'otc' | 'alcohol'; photo?: string | null;
+  restriction?: 'none' | 'otc' | 'alcohol'; photo?: string | null; photos?: string[];
 }
 export interface Store {
   id: string; businessId?: string; n: string; c: string; e: string; bg: string; r: number; rv: number; km: number; eta: string; fee: number; min: number;
