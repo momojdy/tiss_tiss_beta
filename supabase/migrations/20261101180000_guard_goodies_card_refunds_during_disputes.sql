@@ -58,22 +58,33 @@ begin
            updated_at=now()
      where order_id=new.id
        and status in ('pending','processing','failed');
-  elsif new.payment_dispute_status='won'
-        and new.status in ('declined','expired','cancelled')
-        and new.payment_method='card'
-        and new.payment_provider_ref is not null
-        and new.payment_status in ('paid','refund_pending','partially_refunded') then
-    insert into public.goodies_card_refund_queue(order_id,status,next_attempt_at)
-    values(new.id,'pending',now())
-    on conflict(order_id) do update set
-      status=case
-        when public.goodies_card_refund_queue.status='completed' then 'completed'
-        else 'pending'
-      end,
-      next_attempt_at=now(),
-      lease_token=null,
-      last_error=null,
-      updated_at=now();
+  elsif new.payment_dispute_status='won' then
+    if new.payment_refunded_amount >= new.total then
+      -- A refund may complete while the dispute is open. Preserve the
+      -- cumulative full-refund result when the dispute later closes as won.
+      update public.goodies_orders
+         set payment_status='refunded',updated_at=now()
+       where id=new.id and payment_status is distinct from 'refunded';
+      update public.goodies_card_refund_queue
+         set status='completed',lease_token=null,last_error=null,updated_at=now()
+       where order_id=new.id
+         and status in ('cancelled','pending','processing','failed');
+    elsif new.status in ('declined','expired','cancelled')
+          and new.payment_method='card'
+          and new.payment_provider_ref is not null
+          and new.payment_status in ('paid','refund_pending','partially_refunded') then
+      insert into public.goodies_card_refund_queue(order_id,status,next_attempt_at)
+      values(new.id,'pending',now())
+      on conflict(order_id) do update set
+        status=case
+          when public.goodies_card_refund_queue.status='completed' then 'completed'
+          else 'pending'
+        end,
+        next_attempt_at=now(),
+        lease_token=null,
+        last_error=null,
+        updated_at=now();
+    end if;
   end if;
 
   return new;
