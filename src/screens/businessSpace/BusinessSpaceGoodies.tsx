@@ -318,7 +318,7 @@ export function GoodiesStorePage() {
       <Section title="Orders" />
       <Field label="Minimum order ($)" keyboardType="decimal-pad" value={f.minOrder} onChangeText={(v: string) => set({ minOrder: v })} />
       <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Accept orders for later</Text><Toggle value={f.acceptScheduledOrders} onValueChange={(v: boolean) => set({ acceptScheduledOrders: v })} /></View>
-      {f.acceptScheduledOrders ? <Field label="Minimum notice for first delivery (minutes)" keyboardType="number-pad" value={f.scheduledOrderStartMinutes} onChangeText={(v: string) => set({ scheduledOrderStartMinutes: v.replace(/\\D/g, '') })} /> : null}
+      {f.acceptScheduledOrders ? <Field label="Minimum notice for first delivery (minutes)" keyboardType="number-pad" value={f.scheduledOrderStartMinutes} onChangeText={(v: string) => set({ scheduledOrderStartMinutes: v.replace(/\D/g, '') })} /> : null}
       <Section title="Delivery pricing" />
       <Seg value={f.pricingMode === 'distance' ? 'By distance' : 'Fixed fee'} onChange={(v: string) => set({ pricingMode: v === 'By distance' ? 'distance' : 'fixed' })} items={['Fixed fee', 'By distance']} />
       {f.pricingMode === 'fixed' ? <Field label="Delivery fee ($, 0 = free)" keyboardType="decimal-pad" value={f.fee} onChangeText={(v: string) => set({ fee: v })} /> : <View><Field label="Base delivery fee ($)" keyboardType="decimal-pad" value={f.baseFee} onChangeText={(v: string) => set({ baseFee: v })} /><Field label="Price per kilometre ($)" keyboardType="decimal-pad" value={f.perKmFee} onChangeText={(v: string) => set({ perKmFee: v })} /><Field label="Minimum delivery fee ($)" keyboardType="decimal-pad" value={f.minFee} onChangeText={(v: string) => set({ minFee: v })} /><Field label="Maximum delivery fee ($, optional)" keyboardType="decimal-pad" value={f.maxFee} onChangeText={(v: string) => set({ maxFee: v })} /><Field label="Maximum delivery distance in km (optional)" keyboardType="decimal-pad" value={f.maxDistanceKm} onChangeText={(v: string) => set({ maxDistanceKm: v })} /></View>}
@@ -347,11 +347,10 @@ function GoLiveCard() {
   };
   if (st.e && !st.d) return <ErrBox e={st.e} retry={st.reload} />;
   return (
-    <View style={s.card}>
-      <View style={s.row}><Text style={[s.title, s.g]}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
-      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Publish your restaurant when your category, opening hours and at least one in-stock product are ready. Permitted products appear in your store as soon as you save them.'}</Text>
+    <View style={[s.row, { paddingVertical: 4 }]}>
+      <View style={s.g}><Text style={s.title}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
+      <Btn small label={live ? 'Unpublish' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
       {err ? <Text style={[s.mut, { marginTop: 8 }]}>{err}</Text> : null}
-      <View style={{ height: 10 }} /><Btn label={live ? 'Unpublish store' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
     </View>
   );
 }
