@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Pressable, useWindowDimensions} from 'react-native';
+import {View, Text, Pressable, useWindowDimensions, Image} from 'react-native';
 import {Icon} from './Icon';
 import {T, Grad, Tile, bgIdx, useTheme, Badge, heartBtn} from './ui';
 import {S, STB, PV, money, dp} from '../store';
@@ -25,7 +25,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
       <View>
         <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)}>
           <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>
-            <Text style={{fontSize: 54}}>{i.e}</Text>
+            {i.photo ? <Image source={{uri: i.photo}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 54}}>{i.e}</Text>}
             {off ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: th.red, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">-{off}%</T></View> : null}
             {i.oos ? <View style={{position: 'absolute', left: 8, top: 8, backgroundColor: '#555', borderRadius: 9, paddingHorizontal: 8, paddingVertical: 3}}><T size={11.5} weight="800" color="#fff">{tr('soldOut')}</T></View> : null}
           </Grad>
@@ -57,7 +57,7 @@ export function VCard({s}: {s: Store}) {
     <View style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
       <View>
         <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
-          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 54}}>{s.e}</Text></Grad>
+          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>{s.thumbnail ? <Image source={{uri: s.thumbnail}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 54}}>{s.e}</Text>}</Grad>
         </Pressable>
         {heartBtn(s.id, saved, () => heart(s.id), (saved ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11ySaveFavorite', 'Save {name} to favorites')).replace('{name}', s.n))}
       </View>
@@ -78,7 +78,7 @@ export function StoreCard({s}: {s: Store}) {
     <View>
       <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
         <Grad idx={bgIdx(s.bg)} style={{height: 160, borderRadius: 18, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
-          <Text style={{fontSize: 76}}>{s.e}</Text>
+          {s.thumbnail ? <Image source={{uri: s.thumbnail}} style={{width: '100%', height: '100%', position: 'absolute'}} resizeMode="cover" /> : <Text style={{fontSize: 76}}>{s.e}</Text>}
           {s.pr ? <View style={{position: 'absolute', left: 0, top: 14, backgroundColor: th.br, borderTopRightRadius: 8, borderBottomRightRadius: 8, paddingVertical: 5, paddingLeft: 12, paddingRight: 10}}><T size={12} weight="800" color="#fff">{s.pr}</T></View> : null}
           {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), (S.fav.indexOf(s.id) > -1 ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11ySaveFavorite', 'Save {name} to favorites')).replace('{name}', s.n))}
           {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far && !s.live ? pill(label('lbl.cardPickupOnly', 'Pickup only at this address')) : null}
@@ -114,7 +114,7 @@ export function ItemRow({i}: {i: Item}) {
   return (
     <View style={{flexDirection: 'row', gap: 12, alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: th.line}}>
       <Pressable onPress={() => openProduct(i.id)} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
-        <Tile e={i.e} bg={s.bg} />
+        <Tile e={i.e} bg={s.bg} photo={i.photo} />
         <View style={{flex: 1, minWidth: 0}}>
           <T weight="700">{i.n}</T>
           <T size={12.5} color={th.mut}>{s.n}{i.oos ? ' · ' : ''}{i.oos ? <T size={12.5} color={th.red}>{tr('soldOut')}</T> : null}</T>
