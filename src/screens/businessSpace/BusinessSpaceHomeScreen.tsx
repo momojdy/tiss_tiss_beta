@@ -17,6 +17,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, Section, Empty, Skel, ErrBox, FIcon, Divided, RangeBar, Header, Banner, WalletCard, Checklist, ActionCard, ActivityRow, q } from "./BusinessSpaceShared";
+import { GoodiesToolsCard } from "./BusinessSpaceGoodies";
 
 
 export function Home() {
@@ -48,7 +49,7 @@ export function Home() {
           <Checklist />
           <View style={s.card}><Empty icon="chart-line" title="No revenue yet" hint="Sales appear here after your first completed order." /></View>
           {actions.length ? <ActionCard actions={actions} /> : null}
-          <View style={s.card}><Empty icon="storefront-outline" title="No features yet" hint="Activate a feature to start selling." cta="Explore features" onCta={() => app.go('explore')} /></View>
+          <View style={s.card}><Empty icon="storefront-outline" title="No features yet" hint="Set up a Goodies restaurant or explore other features." cta="Explore features" onCta={() => app.go('explore')} /></View>
         </>
       ) : (
         <>
@@ -106,6 +107,8 @@ export function Home() {
           </View>
         </>
       )}
+      <Section title="Goodies tools" />
+      <GoodiesToolsCard />
     </ScrollView>
   );
 }
