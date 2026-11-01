@@ -322,7 +322,7 @@ export function useS() {
     label: { fontSize: 12, fontWeight: '700', color: t.mute, marginTop: 12, marginBottom: 6 },
     fld: { minHeight: 46, borderWidth: 1, borderColor: t.line, borderRadius: 12, backgroundColor: t.card, paddingHorizontal: 14, color: t.ink, fontSize: 14 },
     sec: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 3 },
-    secT: { fontSize: 16, fontWeight: '800', color: t.ink },
+    secT: { fontSize: 15, fontWeight: '800', color: t.ink },
     link: { fontSize: 12, fontWeight: '700', color: t.blue },
   }), [t]);
 }
