@@ -69,7 +69,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + ' min')}
         {row(label('lbl.storeOrderMethods', 'Order methods'), label('lbl.sheetDeliveryAndPickup', 'Delivery and pickup'))}
         {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? label('lbl.sheetScheduledAvailable', 'Available while closed') : label('lbl.sheetScheduledOnlyOpen', 'Only while open'))}
-        {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Minimum advance time'), Math.max(0, Number(s.scheduledOrderStartMinutes ?? 60)) + ' minutes') : null}
+        {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Earliest order time'), String(s.scheduledOrderStartTime || '10:00').slice(0,5)) : null}
       </Card>
     </>);
   }
@@ -116,14 +116,17 @@ function ScheduleSheet({close}: {close: () => void}) {
   const hours = schedule[dayNames[selectedDate.getDay()]];
   const opening = hours && !hours.closed && hours.open ? String(hours.open) : '';
   const closing = hours && !hours.closed && hours.close ? String(hours.close) : '';
-  const lead = Math.max(0,Number(store?.scheduledOrderStartMinutes ?? 60));
+  const minimumOrderTime = String(store?.scheduledOrderStartTime || '10:00').slice(0,5);
+  const [minimumHour, minimumMinute] = minimumOrderTime.split(':').map(Number);
+  const configuredMinimum = new Date(selectedDate);
+  configuredMinimum.setHours(minimumHour || 0, minimumMinute || 0, 0, 0);
   let earliest = dayOffset === 0 ? new Date() : new Date(selectedDate);
   if (opening) {
     const [oh, om] = opening.split(':').map(Number);
     const opens = new Date(selectedDate); opens.setHours(oh, om || 0, 0, 0);
-    earliest = new Date(Math.max(earliest.getTime(), opens.getTime()) + lead * 60000);
+    earliest = new Date(Math.max(earliest.getTime(), opens.getTime(), configuredMinimum.getTime()));
   } else {
-    earliest = new Date(Math.max(earliest.getTime(), Date.now()) + lead * 60000);
+    earliest = new Date(Math.max(earliest.getTime(), configuredMinimum.getTime()));
   }
   const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
   const hasHours = !!(hours && !hours.closed && opening && closing);
@@ -170,7 +173,7 @@ function ScheduleSheet({close}: {close: () => void}) {
         <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
-    {store&&!store.open?<Card style={{marginTop:4,marginBottom:8,backgroundColor:th.brt,borderColor:th.br}}><T size={12.5} weight="700">{label('lbl.sheetScheduledMinimum', 'Scheduled-order minimum')}</T><T size={12} color={th.mut}>{store.acceptScheduledOrders ? (opening ? label('lbl.sheetOpeningLead', 'Opening {opening} · {lead} minutes advance time. Only times after the minimum are selectable.').replace('{opening}', String(opening)).replace('{lead}', String(lead)) : label('lbl.sheetMinAdvance', 'Minimum advance time: {lead} minutes.').replace('{lead}', String(lead))) : label('lbl.sheetNoScheduledClosed', 'This store is not accepting scheduled orders while closed.')}</T></Card>:null}
+    {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum', 'Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens ' + opening : ''}</T> : store&&!store.open ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetNoScheduledClosed', 'This store is not accepting scheduled orders while closed.')}</T> : null}
     <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>{label('lbl.sheetAvailableTimes', 'Available times')}</T>
     {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
       {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
