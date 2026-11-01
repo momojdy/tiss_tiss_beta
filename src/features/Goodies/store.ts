@@ -184,6 +184,10 @@ export async function refreshLiveSchedules() {
       const it: Item = {id: p.id, s: String(r.store_id || r.business_id), n: p.name, p: Number(p.price) || 0, e: p.emoji || '🛍️', stock, oos: stock < 1 ? 1 : 0, d: p.description || '', al: '', w: false, restriction: p.restriction || null, photo: p.photo_url || null};
       IT[p.id] = it; byBiz[r.business_id].push(it);
     });
+    S.cart?.lines?.forEach((line: CartLine) => {
+      const current = IT[line.id];
+      if (current?.photo) line.photo = current.photo;
+    });
     stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
     (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn);});
     if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
@@ -418,7 +422,7 @@ export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; o
   c.sid = i.s;
   const base = o.off ? dp(i, o.off) : i.p, unit = base + ((o.size || 0) > 0 ? 1.5 : 0) + (o.drink ? 1 : 0);
   const k = [i.id, o.size, o.drink, o.off || 0, o.note || ''].join('|'), l = c.lines.filter((x: CartLine) => x.k === k)[0];
-  if (l) l.q += o.q;
+  if (l) { l.q += o.q; if (!l.photo && i.photo) l.photo = i.photo; }
   else c.lines.push({k, id: i.id, n: i.n, e: i.e, photo: i.photo || null, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', '), options: {size: ['restaurants', 'bakery', 'beverages'].includes(STB[i.s].c) ? ((o.size || 0) > 0 ? 'large' : 'regular') : null, drink: !!o.drink, discount_pct: Number(o.off || 0)}});
   S.bump = 1; toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
 }
