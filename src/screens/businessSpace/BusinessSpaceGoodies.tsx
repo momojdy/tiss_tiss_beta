@@ -407,7 +407,7 @@ export function GoodiesBuildersPage() {
   const del = (b: GBuilder) => persist(list.filter(x => x.id !== b.id)).then(() => app.toast('Builder deleted'));
   return (
     <Pg title="Builders" onBack={app.back}>
-      <Text style={s.mut}>Customers build their own pizza, burger or custom order from these. Ingredients come from the Wantiss library. You choose which to offer, the price and how many a customer may pick.</Text>
+      <Text style={s.mut}>Create menu items that customers can customize before checkout. For example, build-your-own pizza or burgers: choose sizes, ingredient groups, included toppings, extra charges and selection limits. If you sell fixed menu items only, you can skip Builders and add those items under Products.</Text>
       {list.length === 0 ? <View style={s.card}><Text style={s.title}>No builders yet</Text><Text style={s.mut}>Start from a template and change it.</Text></View> : null}
       {list.map(b => (
         <View key={b.id} style={s.card}>
@@ -447,10 +447,24 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
 }
 
 export function GoodiesBuilderEditPage() {
-  const app = useApp(), s = useS(), t = useTheme(), { id } = useArg() as { id: string };
+  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string } | undefined, id = route?.id;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [pick, setPick] = useState<{ gi: number; ii: number } | null>(null), [errs, setErrs] = useState<string[]>([]);
-  useEffect(() => { goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(l.find(x => x.id === id) || null); }); }, [id]);
-  if (!b) return <Pg title="Builder" onBack={app.back}><Text style={s.mut}>Builder not found.</Text></Pg>;
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState('');
+  useEffect(() => {
+    let active = true;
+    setLoading(true); setLoadError(''); setB(null);
+    goodiesApi.listBuilders(app.biz.id).then(l => {
+      if (!active) return;
+      setAll(l);
+      setB(id ? l.find(x => x.id === id) || null : null);
+    }).catch(e => {
+      if (active) setLoadError(errText(e));
+    }).finally(() => { if (active) setLoading(false); });
+    return () => { active = false; };
+  }, [app.biz.id, id]);
+  if (loading) return <Pg title="Builder" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
+  if (loadError) return <Pg title="Builder" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
+  if (!id || !b) return <Pg title="Builder" onBack={app.back}><Empty icon="tune-variant" title="Builder unavailable" hint="This builder could not be found for the selected business. Return to Builders and refresh the list, or create a new builder there." cta="Back to Builders" onCta={() => app.go('goodiesBuilders')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
