@@ -46,7 +46,7 @@ export function RegistrationPage() {
       .or(`business_id.eq.${b.id},business_id.is.null`).order('created_at', { ascending: false });
     if (error) throw error;
     const application = (applications || []).find((x: any) => x.business_id === b.id) || null;
-    const needsBusinessMapping = !application && (applications || []).some((x: any) => !x.business_id);
+    const needsBusinessMapping = !application && (applications || []).some((x: any) => !x.business_id && (x.status === 'pending' || (x.status === 'rejected' && !x.final_rejection)));
     if (!application) return { application: null, documents: [] as any[], needsBusinessMapping };
     const { data: documents, error: documentError } = await supabase.from('business_application_documents')
       .select('id,document_type,storage_path,status,review_note,submitted_at')
