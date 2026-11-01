@@ -19,7 +19,7 @@ export type GStore = { demoStoreId: string; coverUrl: string | null; address: st
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
-export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
+export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; productCreated?: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
 export type GRequest = { id: string; name: string; builder: 'pizza' | 'burger' | 'custom'; role: string; note: string; status: 'submitted' | 'approved' | 'denied' | 'needs_info'; reviewNote: string; photo: boolean; at: number };
 
 /* admin-owned presets. The backend only accepts these category ids. */
@@ -145,7 +145,7 @@ export const goodiesApi = {
 export function newBuilder(type: 'pizza' | 'burger' | 'custom'): GBuilder {
   const t: TplBuilder = TEMPLATES[type];
   return {
-    id: uid(), type, name: t.name, desc: t.desc, emoji: t.emoji, base: String(t.base), enabled: true, available: true, notes: true,
+    id: uid(), type, name: t.name, desc: t.desc, emoji: t.emoji, base: String(t.base), enabled: true, available: true, productCreated: false, notes: true,
     sizes: t.sizes.map(s => ({ id: uid(), name: s.name, add: String(s.add), avail: true })),
     groups: t.groups.map(g => ({ ...g, id: uid(), items: g.items.map(i => ({ ...i, id: uid(), avail: true })) })),
   };
@@ -309,7 +309,7 @@ export function GoodiesStorePage() {
             <Toggle value={!!current} onValueChange={v => setCustomTypes(prev => {
               const found = prev.some(x => x.type === type);
               if (found) return prev.map(x => x.type === type ? { ...x, enabled: v } : x);
-              return [...prev, { ...newBuilder(type), enabled: v }];
+              return [...prev, { ...newBuilder(type), enabled: v, available: false, productCreated: false }];
             })} />
           </View>;
         })}
@@ -464,7 +464,7 @@ export function GoodiesProductsPage() {
   const [edit, setEdit] = useState<GProduct | null>(null);
   useEffect(() => { if (add) setEdit(BLANK); }, [add]);
   const items = lst.d ?? [];
-  const customItems = (builders.d ?? []).filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled);
+  const customItems = (builders.d ?? []).filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled && x.productCreated !== false);
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
   const toggleCustom = async (b: GBuilder, v: boolean) => {
     try {
@@ -541,7 +541,7 @@ export function GoodiesBuilderEditPage() {
     if (e.length) return app.toast(e[0]);
     setSaving(true);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true } : x)) : [...all, { ...b, enabled: true, available: true }]);
+      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
       app.toast('Custom product added'); app.bump(); app.back();
     } catch (error) {
       app.toast(errText(error));
