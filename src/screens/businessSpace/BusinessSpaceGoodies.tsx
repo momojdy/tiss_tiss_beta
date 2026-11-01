@@ -239,7 +239,7 @@ export function GoodiesStorePage() {
     if (f.pricingMode === 'fixed' && !(parseFloat(f.fee) >= 0)) return 'Delivery fee must be 0 or more (use 0 for free delivery)';
     if (f.pricingMode === 'distance' && (!(parseFloat(f.baseFee) >= 0) || !(parseFloat(f.perKmFee) >= 0) || !(parseFloat(f.minFee) >= 0) || (f.maxFee.trim() && !(parseFloat(f.maxFee) >= parseFloat(f.minFee))) || (f.maxDistanceKm.trim() && !(parseFloat(f.maxDistanceKm) > 0)))) return 'Enter valid distance delivery pricing values';
     if (!(parseInt(f.etaMin, 10) > 0) || !(parseInt(f.etaMax, 10) >= parseInt(f.etaMin, 10))) return 'Enter a valid delivery time range';
-    if (f.acceptScheduledOrders && !/^([01]\\d|2[0-3]):[0-5]\\d$/.test(f.scheduledOrderStartTime)) return 'Choose a valid earliest order time';
+    if (f.acceptScheduledOrders && !/^([01]\d|2[0-3]):[0-5]\d$/.test(f.scheduledOrderStartTime)) return 'Choose a valid earliest order time';
     if (!f.delivery && !f.pickup) return 'Keep delivery or pickup on';
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
     return '';
