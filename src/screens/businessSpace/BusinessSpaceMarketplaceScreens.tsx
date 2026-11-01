@@ -69,7 +69,7 @@ export function FeaturesPanel() {
       <Divided>
         {FX.FEATURES.map(f => (
           <Row key={f.key} left={<FIcon k={f.key} size={38} />} title={f.name} sub={f.key === 'goodies' ? 'Self-service restaurant setup' : on.has(f.key) ? 'Active' : f.approval ? 'Needs approval' : 'Not activated'}
-            onPress={f.key === 'goodies' ? () => app.go('goodiesTools') : undefined}
+            onPress={f.key === 'goodies' ? () => app.go(on.has(f.key) ? 'goodiesTools' : 'feature', on.has(f.key) ? undefined : { k: f.key }) : undefined}
             right={<View style={[s.row, { gap: 8 }]}>
               {on.has(f.key) ? <Pressable accessibilityLabel={`Add to ${f.name}`} onPress={() => f.key === 'goodies' ? app.go('goodiesProducts', { add: true }) : app.wizard(f.key)} style={{ width: 34, height: 34, borderRadius: 11, backgroundColor: app.dark ? '#202B4F' : '#EEF1FF', alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={LIGHT.blue} /></Pressable> : null}
               <Btn small kind={on.has(f.key) ? 'soft' : 'primary'} label={on.has(f.key) ? 'Deactivate' : 'Activate'} disabled={!on.has(f.key) && restricted} busy={a.busy} onPress={() => a.run(() => rpc(on.has(f.key) ? 'deactivate_feature' : 'activate_feature', { p_business: app.biz.id, p_feature: f.key }), on.has(f.key) ? `${f.name} deactivated` : `${f.name} activated`)} />
