@@ -9,7 +9,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../lib/supabase';
-import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, STATUS_UI, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
+import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
@@ -52,11 +52,10 @@ export const goodiesApi = {
       p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: st.maxFee.trim() ? parseFloat(st.maxFee) : null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null,
     });
   },
-  /* Publish status. Going live is checked on the server: verified business, category, hours and one in-stock product. */
+  /* Store publication is self-service for Business Space members. */
   getLive: async (biz: string) => {
     const r = await q<any>(supabase.from('goodies_store_schedules').select('is_live').eq('business_id', biz).maybeSingle());
-    const v = await q<any>(supabase.from('businesses').select('verification').eq('id', biz).maybeSingle());
-    return { live: !!r?.is_live, hasSetup: !!r, verification: (v?.verification || 'pending') as keyof typeof STATUS_UI };
+    return { live: !!r?.is_live, hasSetup: !!r };
   },
   setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
@@ -243,7 +242,7 @@ function GoLiveCard() {
   const app = useApp(), s = useS();
   const st = useQ(() => goodiesApi.getLive(app.biz.id), [app.biz.id, app.tick]);
   const [busy, setBusy] = useState(false), [err, setErr] = useState('');
-  const live = !!st.d?.live, ver = st.d?.verification || 'pending';
+  const live = !!st.d?.live;
   const toggle = async () => {
     setBusy(true); setErr('');
     try { const now = await goodiesApi.setLive(app.biz.id, !live); app.toast(now ? 'Your store is live' : 'Your store is unpublished'); st.reload(); }
@@ -254,8 +253,7 @@ function GoLiveCard() {
   return (
     <View style={s.card}>
       <View style={s.row}><Text style={[s.title, s.g]}>Store status</Text>{st.d ? <Pill tone={live ? 'good' : 'mute'}>{live ? 'Live' : 'Not live'}</Pill> : null}</View>
-      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Business verification</Text><Pill tone={STATUS_UI[ver]?.tone || 'warn'}>{STATUS_UI[ver]?.label || String(ver)}</Pill></View>
-      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Customers cannot see your store yet. Wantiss must verify your business first, and you need a category, opening hours and at least one product in stock.'}</Text>
+      <Text style={[s.mut, { marginTop: 8 }]}>{live ? 'Customers can see your store and order from it. Unpublish to pause orders.' : 'Publish your restaurant when your category, opening hours and at least one in-stock product are ready. Products appear to customers after product review.'}</Text>
       {err ? <Text style={[s.mut, { marginTop: 8 }]}>{err}</Text> : null}
       <View style={{ height: 10 }} /><Btn label={live ? 'Unpublish store' : 'Go live'} kind={live ? 'soft' : 'primary'} busy={busy} disabled={!st.d} onPress={toggle} />
     </View>
