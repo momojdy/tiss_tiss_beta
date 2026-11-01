@@ -231,12 +231,7 @@ export function GoodiesStorePage() {
       await goodiesApi.saveStore(app.biz.id, f);
       const rows = await goodiesApi.listBuilders(app.biz.id);
       const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
-      if (customProducts) {
-        (['pizza', 'burger'] as const).forEach(type => {
-          const existing = customTypes.find(x => x.type === type);
-          next.push(existing ? { ...existing, enabled: true } : newBuilder(type));
-        });
-      } else next.push(...customTypes.map(x => ({ ...x, enabled: false })));
+      next.push(...customTypes.map(x => ({ ...x, enabled: customProducts && x.enabled })));
       await goodiesApi.saveBuilders(app.biz.id, next);
       app.toast('Store saved'); app.bump();
     } catch (x) { app.toast(errText(x)); } finally { setBusy(false); }
@@ -418,7 +413,11 @@ export function GoodiesProductsPage() {
   const add = route?.add;
   const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
-  useEffect(() => { if (add) setEdit(BLANK); }, [add]);
+  const [customOptions, setCustomOptions] = useState<GBuilder[]>([]);
+  useEffect(() => {
+    if (add) setEdit(BLANK);
+    goodiesApi.listBuilders(app.biz.id).then(rows => setCustomOptions(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomOptions([]));
+  }, [add, app.biz.id]);
   const items = lst.d ?? [];
   const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
   return (
@@ -426,14 +425,13 @@ export function GoodiesProductsPage() {
       <Text style={s.mut}>Set the price and how many you have. Stock goes down when customers order and back up if an order is cancelled. Customers only see available products while your store is live.</Text>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       <View style={{ height: 8 }} />
-      <Btn kind="soft" label="Add custom product" onPress={async () => {
-        try {
-          const rows = await goodiesApi.listBuilders(app.biz.id);
-          const available = rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled);
-          if (!available.length) return app.toast('Enable custom products and choose Pizza or Burger in Store Setup first.');
-          app.go('goodiesBuilder', { id: available[0].id });
-        } catch (e) { app.toast(errText(e)); }
-      }} />
+      {customOptions.length ? <View style={s.cardFlat}>
+        <Text style={s.title}>Custom products</Text>
+        <Text style={s.mut}>Choose a product type to set its base price and customer ingredient options.</Text>
+        <View style={[s.row, { marginTop: 8 }]}>
+          {customOptions.map(option => <View key={option.id} style={s.g}><Btn small kind="soft" label={option.type === 'pizza' ? '🍕 Pizza' : '🍔 Burger'} onPress={() => app.go('goodiesBuilder', { id: option.id })} /></View>)}
+        </View>
+      </View> : null}
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
           <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
@@ -573,6 +571,7 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
+      <Btn kind="soft" label="Request a missing ingredient" onPress={() => app.go('goodiesRequests')} />
       <View style={{ height: 14 }} /><Btn label="Save custom product" onPress={save} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
