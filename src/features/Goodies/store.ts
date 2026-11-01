@@ -44,6 +44,7 @@ const WDEF = () => ({
 });
 const GDEF = () => ({
   serverUnread: 0, checkoutAttempt: null as any,
+  goodiesAccess: {status: 'active', reason: '', endsAt: null as string | null},
   notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
   wallet: 0, hasWallet: false, pay: 'wallet', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
@@ -206,6 +207,28 @@ export async function refreshLiveSchedules() {
 }
 
 /* ---------- persistence ---------- */
+export async function refreshGoodiesAccess() {
+  if (providerInfo.demo) {
+    S.goodiesAccess = {status: 'active', reason: '', endsAt: null};
+    emit();
+    return S.goodiesAccess;
+  }
+  const {data, error} = await supabase.rpc('get_my_goodies_access_status');
+  if (error) {
+    S.goodiesAccess = {status: 'unknown', reason: '', endsAt: null};
+    emit();
+    return S.goodiesAccess;
+  }
+  const row = Array.isArray(data) ? data[0] : data;
+  S.goodiesAccess = {
+    status: row?.status === 'suspended' || row?.status === 'banned' ? row.status : 'active',
+    reason: String(row?.reason || ''),
+    endsAt: row?.ends_at || null,
+  };
+  emit();
+  return S.goodiesAccess;
+}
+
 export async function load() {
   const merge = async (key: string, D: any) => {
     try {
@@ -219,6 +242,7 @@ export async function load() {
     if (attempt && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
   } catch (e) {}
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
+  await refreshGoodiesAccess();
   if (!providerInfo.demo) {
     try {
       const {data: sessionData} = await supabase.auth.getUser();
