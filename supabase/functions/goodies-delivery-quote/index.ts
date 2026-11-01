@@ -69,6 +69,7 @@ Deno.serve(async (req: Request) => {
     const distanceM = Number(route?.features?.[0]?.properties?.distance);
     if (!Number.isFinite(distanceM) || distanceM <= 0) throw new Error("No driving route was found for this address.");
     const km = distanceM / 1000;
+    if (body.distance_only === true) return reply({ distance_km: Number(km.toFixed(2)) });
     const maxDistance = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
     if (maxDistance != null && km > maxDistance) {
       return reply({ error: "This address is outside the shop's delivery area.", outside_delivery_area: true, distance_km: Number(km.toFixed(2)) }, 422);
