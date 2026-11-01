@@ -18,6 +18,15 @@ begin
 end
 $constraint$;
 
+update public.goodies_orders
+   set payment_dispute_status=case
+     when payment_status='disputed' then 'open'
+     when payment_status='dispute_won' then 'won'
+     when payment_status='disputed_lost' then 'lost'
+   end
+ where payment_dispute_status is null
+   and payment_status in ('disputed','dispute_won','disputed_lost');
+
 CREATE OR REPLACE FUNCTION public.process_goodies_card_payment_event(p_order_id uuid, p_payment_intent_id text, p_event_state text, p_amount_cents bigint, p_currency text, p_refunded_amount_cents bigint, p_event_created bigint)
  RETURNS text
  LANGUAGE plpgsql
