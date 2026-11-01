@@ -98,7 +98,17 @@ function ScheduleSheet({close}: {close: () => void}) {
   const now = new Date();
   const roundedNow = new Date(now); roundedNow.setMinutes(Math.ceil(now.getMinutes()/5)*5,0,0);
   if (roundedNow.getTime() <= now.getTime()) roundedNow.setMinutes(roundedNow.getMinutes()+5);
-  const initialSchedule = S.sch && S.sch > Date.now() ? new Date(S.sch) : roundedNow;
+  const minimumOrderTime = String(store?.scheduledOrderStartTime || '10:00').slice(0,5);
+  const [minimumHour, minimumMinute] = minimumOrderTime.split(':').map(Number);
+  const configuredMinimum = new Date(now);
+  configuredMinimum.setHours(minimumHour || 0, minimumMinute || 0, 0, 0);
+  const todayHours = store?.scheduleHours?.[dayNames[now.getDay()]];
+  const openingMinimum = new Date(now);
+  if (todayHours && !todayHours.closed && todayHours.open) {
+    const [openHour, openMinute] = String(todayHours.open).split(':').map(Number);
+    openingMinimum.setHours(openHour, openMinute || 0, 0, 0);
+  } else openingMinimum.setHours(0, 0, 0, 0);
+  const initialSchedule = new Date(Math.max(S.sch && S.sch > Date.now() ? S.sch : 0, roundedNow.getTime(), configuredMinimum.getTime(), openingMinimum.getTime()));
   const [dayOffset,setDayOffset] = useState(() => {
     if (!S.sch || S.sch <= Date.now()) return 0;
     const today = new Date(); today.setHours(0,0,0,0);
@@ -116,8 +126,6 @@ function ScheduleSheet({close}: {close: () => void}) {
   const hours = schedule[dayNames[selectedDate.getDay()]];
   const opening = hours && !hours.closed && hours.open ? String(hours.open) : '';
   const closing = hours && !hours.closed && hours.close ? String(hours.close) : '';
-  const minimumOrderTime = String(store?.scheduledOrderStartTime || '10:00').slice(0,5);
-  const [minimumHour, minimumMinute] = minimumOrderTime.split(':').map(Number);
   const configuredMinimum = new Date(selectedDate);
   configuredMinimum.setHours(minimumHour || 0, minimumMinute || 0, 0, 0);
   let earliest = dayOffset === 0 ? new Date() : new Date(selectedDate);
