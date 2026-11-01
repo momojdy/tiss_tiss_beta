@@ -139,7 +139,7 @@ let liveTimer: any = null;
 export async function refreshLiveSchedules() {
   try {
     const {data: rows, error} = await supabase.from('goodies_store_schedules')
-      .select('business_id,store_id,business_name,description,phone,email,website,address,city,country,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,category,kind,min_order,delivery_fee,delivery_pricing_mode,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
+      .select('business_id,store_id,description,phone,email,website,address,city,country,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,category,kind,min_order,delivery_fee,delivery_pricing_mode,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
       .eq('is_live', true);
     if (error) throw error;
     const stores: any[] = rows || [], prods: any[] = [];
