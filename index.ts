@@ -1,3 +1,4 @@
+import './src/features/Goodies/goodiesCourierBackgroundLocation';
 import { registerRootComponent } from 'expo';
 import App from './App';
 
