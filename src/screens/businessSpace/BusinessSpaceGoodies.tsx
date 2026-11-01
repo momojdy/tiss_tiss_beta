@@ -138,7 +138,14 @@ export const goodiesApi = {
       const seen = new Set(base.map(x => x.id));
       const assetUrl = (key: string | null | undefined) => key ? remote.assets.find(a => a.asset_key === key || a.asset_key.endsWith('/' + key))?.url || null : null;
       const baseWithAssets = base.map(x => ({ ...x, assetUrl: assetUrl(x.id) }));
-      const extra = (added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(x => ({ id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key, assetUrl: assetUrl(x.asset_key) }));
+      const extra = await Promise.all((added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(async x => {
+        let url = assetUrl(x.asset_key);
+        if (!url && x.asset_key) {
+          const signed = await supabase.storage.from('wantiss-cms-assets').createSignedUrl(String(x.asset_key), 3600).catch(() => ({ data: null }));
+          url = signed.data?.signedUrl || null;
+        }
+        return { id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key, assetUrl: url };
+      }));
       return [...baseWithAssets, ...extra];
     } catch {
       return [];
