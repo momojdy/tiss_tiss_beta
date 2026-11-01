@@ -24,7 +24,11 @@ export function Home() {
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
-  const cnt = useQ(async () => ({ l: await q<any[]>(supabase.from('listings').select('feature,status').eq('business_id', biz.id)), o: await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id)) }), [biz.id, app.tick]);
+  const cnt = useQ(async () => ({
+    l: await q<any[]>(supabase.from('listings').select('feature,status').eq('business_id', biz.id)),
+    p: await q<any[]>(supabase.from('goodies_products').select('id').eq('business_id', biz.id)),
+    o: await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id))
+  }), [biz.id, app.tick]);
   const d = sum.d, refreshing = !!d && (sum.l || act.l);
   const payOK = meta.payout?.status === 'verified', hasF = meta.feats.length > 0;
   const top = (d?.features ?? []).filter((x: any) => Number(x.amount) > 0).sort((a: any, b: any) => b.amount - a.amount);
@@ -33,7 +37,9 @@ export function Home() {
   const ser: { d: string; v: number }[] = d?.series ?? [], mx = Math.max(1, ...ser.map(x => Math.abs(x.v))), hasSales = ser.some(x => x.v !== 0);
   const actions: any[] = act.d ?? [];
   const open = (k: string) => (cnt.d?.o ?? []).filter((o: any) => o.feature === k && !FX.FM[k].flow.slice(-1).includes(o.status) && o.status !== 'Cancelled').length;
-  const lcount = (k: string) => (cnt.d?.l ?? []).filter((l: any) => l.feature === k && l.status !== 'archived').length;
+  const lcount = (k: string) => k === 'goodies'
+    ? (cnt.d?.p ?? []).length
+    : (cnt.d?.l ?? []).filter((l: any) => l.feature === k && l.status !== 'archived').length;
   return (
     <ScrollView contentContainerStyle={{ padding: 16, paddingTop: ins.top + 12, paddingBottom: 130, gap: 14 }} showsVerticalScrollIndicator={false}
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={app.bump} tintColor={t.blue} />}>
@@ -87,7 +93,7 @@ export function Home() {
             {top.length ? <Pressable onPress={() => app.go('charts')} style={{ marginTop: 6 }}><Text style={s.link}>View charts →</Text></Pressable> : null}
           </View>
           {actions.length ? <ActionCard actions={actions} /> : null}
-          <Section title="Your business tools" right={`${meta.feats.length} enabled`} />
+          <Section title="Business Tools" right={`${meta.feats.length} enabled`} />
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 9 }}>
             {meta.feats.slice(0, 5).map(f => (
               <Pressable key={f.feature} onPress={() => app.go('feature', { k: f.feature })} style={{ width: '31.5%', minHeight: 112, borderRadius: 16, padding: 11, backgroundColor: t.card, borderWidth: 1, borderColor: t.line }}>
