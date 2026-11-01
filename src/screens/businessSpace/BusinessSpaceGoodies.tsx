@@ -150,7 +150,7 @@ export function newBuilder(type: 'pizza' | 'burger' | 'custom'): GBuilder {
 /* validation. Rules ported from the v24 builder rules (min/max/included/max-same); exact v24 save-time messages still need a side-by-side check. */
 export function validateBuilder(b: GBuilder): string[] {
   const e: string[] = [];
-  if (!b.name.trim()) e.push('Give the builder a name');
+  if (!b.name.trim()) e.push('Give this custom product a name');
   if (!(parseFloat(b.base) >= 0)) e.push('Base price must be 0 or more');
   if (b.type === 'pizza' && !b.sizes.length) e.push('Add at least one size');
   b.sizes.forEach(s => { if (!s.name.trim()) e.push('Every size needs a name'); if (!(parseFloat(s.add) >= 0)) e.push(`Size "${s.name || '?'}" needs a price of 0 or more`); });
@@ -449,34 +449,6 @@ export function GoodiesProductsPage() {
   );
 }
 
-/* ---------- builders list ---------- */
-export function GoodiesBuildersPage() {
-  const app = useApp(), s = useS(), t = useTheme();
-  const [list, setList] = useState<GBuilder[]>([]);
-  const load = () => goodiesApi.listBuilders(app.biz.id).then(setList);
-  useEffect(() => { load(); }, [app.biz.id, app.tick]);
-  const persist = async (l: GBuilder[]) => { setList(l); await goodiesApi.saveBuilders(app.biz.id, l); };
-  const add = async (type: 'pizza' | 'burger' | 'custom') => { const b = newBuilder(type); await persist([...list, b]); app.go('goodiesBuilder', { id: b.id }); };
-  const del = (b: GBuilder) => persist(list.filter(x => x.id !== b.id)).then(() => app.toast('Builder deleted'));
-  return (
-    <Pg title="Custom products" onBack={app.back}>
-      <Text style={s.mut}>Create menu items that customers can customize before checkout. For example, build-your-own pizza or burgers: choose sizes, ingredient groups, included toppings, extra charges and selection limits. If you sell fixed menu items only, you can skip Builders and add those items under Products.</Text>
-      {list.length === 0 ? <View style={s.card}><Text style={s.title}>No builders yet</Text><Text style={s.mut}>Start from a template and change it.</Text></View> : null}
-      {list.map(b => (
-        <View key={b.id} style={s.card}>
-          <View style={s.row}><Text style={{ fontSize: 28 }}>{b.emoji}</Text><View style={s.g}><Text style={s.title}>{b.name}</Text><Text style={s.mut}>{b.type} · {b.groups.length} groups · {b.groups.reduce((a, g) => a + g.items.length, 0)} ingredients</Text></View>{b.enabled ? <Pill tone="good">On</Pill> : <Pill tone="mute">Off</Pill>}</View>
-          <View style={[s.row, { marginTop: 10 }]}><Text style={[s.mut, s.g]}>Offered to customers</Text><Toggle value={b.enabled} onValueChange={(v: boolean) => persist(list.map(x => (x.id === b.id ? { ...x, enabled: v } : x)))} /></View>
-          <View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Available right now</Text><Toggle value={b.available} onValueChange={(v: boolean) => persist(list.map(x => (x.id === b.id ? { ...x, available: v } : x)))} /></View>
-          <View style={[s.row, { marginTop: 12 }]}><View style={s.g}><Btn small kind="soft" label="Edit" onPress={() => app.go('goodiesBuilder', { id: b.id })} /></View><View style={s.g}><Btn small kind="soft" label="Delete" onPress={() => del(b)} /></View></View>
-        </View>
-      ))}
-      <Section title="Add a builder" />
-      <View style={s.row}><View style={s.g}><Btn small label="🍕 Pizza" onPress={() => add('pizza')} /></View><View style={s.g}><Btn small label="🍔 Burger" onPress={() => add('burger')} /></View><View style={s.g}><Btn small label="✨ Custom" onPress={() => add('custom')} /></View></View>
-      <View style={{ height: 14 }} /><Btn kind="soft" label="Request a new ingredient" onPress={() => app.go('goodiesRequests')} />
-    </Pg>
-  );
-}
-
 /* ---------- builder editor ---------- */
 function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; onPick: (id: string, name: string) => void; onClose: () => void }) {
   const s = useS(), t = useTheme();
@@ -517,7 +489,7 @@ export function GoodiesBuilderEditPage() {
   }, [app.biz.id, id]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
   if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
-  if (!id || !b) return <Pg title="Builder" onBack={app.back}><Empty icon="tune-variant" title="Builder unavailable" hint="This builder could not be found for the selected business. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
+  if (!id || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This builder could not be found for the selected business. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
