@@ -122,7 +122,7 @@ function liveStore(r: any, items: Item[]): Store {
     logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, acceptScheduledOrders: !!r.accept_scheduled_orders,
     scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduleHours: r.hours || undefined,
     businessName: r.store_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
-    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed',
+    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', distanceReady: false, distanceAddressKey: '',
     get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.store_name || 'Store';},
   } as Store;
   return store;
@@ -339,11 +339,28 @@ export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
+export async function refreshStoreDistance(storeId: string, address: Address | null = addr()) {
+  const store = STB[storeId];
+  if (!store?.live || !address?.t?.trim()) return null;
+  const addressKey = JSON.stringify({t: address.t, apt: address.apt, inst: address.inst});
+  if (store.distanceReady && store.distanceAddressKey === addressKey) return store.km;
+  const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
+    body: {store_id: storeId, address, distance_only: true},
+  });
+  if (error) throw error;
+  const distance = Number(data?.distance_km);
+  if (!Number.isFinite(distance) || distance < 0) throw new Error(data?.error || 'Distance is unavailable for this address.');
+  store.km = Math.round(distance * 10) / 10;
+  store.distanceReady = true;
+  store.distanceAddressKey = addressKey;
+  emit();
+  return store.km;
+}
 export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
     /* Live stores have no geo data yet, so no invented distance or ETA padding. */
-    if (s.live) {s.km = 0; s.eta = s.eta0; s.far = false; return;}
+    if (s.live) {const a = addr(); const key = a ? JSON.stringify({t:a.t,apt:a.apt,inst:a.inst}) : ''; if (s.distanceAddressKey !== key) {s.km = 0; s.distanceReady = false; s.distanceAddressKey = key;} s.eta = s.eta0; s.far = false; return;}
     s.km = Math.round((s.km0 + z) * 10) / 10;
     const q = s.eta0.split('–');
     s.eta = (+q[0] + d) + '–' + (+q[1] + d);
