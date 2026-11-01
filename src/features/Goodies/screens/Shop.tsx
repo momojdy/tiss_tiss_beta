@@ -3,7 +3,7 @@ import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'rea
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
-import {fmtTime, fmtDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules} from '../store';
+import {fmtTime, fmtDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
 import {go, tab, back, browse, heart, favp, setSize, toggleDrink, productQty, productAdd, qty, clearAsk, promoApply, promoClear, goCheckout, checkoutNext, setMode, setTip, setSch, setPay, setCard, placeOrder, cancelAsk, reorder, setOrdersTab, refreshPaymentOptions} from '../actions';
 import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
@@ -25,8 +25,9 @@ const Hero = ({s, onBack, right}: any) => (
 );
 
 export function Store({id}: {id: string}) {
+  const th = useTheme(), s = STB[id], address = addr(), t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
   useEffect(() => { void refreshLiveSchedules(); }, [id]);
-  const th = useTheme(), s = STB[id], t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
+  useEffect(() => { if (s?.live && address?.t) void refreshStoreDistance(id, address).catch(() => undefined); }, [id, s?.live, address?.t, address?.apt, address?.inst]);
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
@@ -37,7 +38,7 @@ export function Store({id}: {id: string}) {
       <Hero s={s} onBack={back} right={<Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live ? ' · ' + label('lbl.storeDistanceUnavailable', 'Distance unavailable') : ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1))}</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live ? ' · ' + (s.distanceReady ? label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', s.km.toFixed(1)) : label('lbl.storeDistanceUnavailable', 'Distance unavailable')) : ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1))}</T>
         {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.storeClosed', 'Closed right now')}</T><T size={13} color={th.mut}>{s.acceptScheduledOrders ? s.nx + '. Scheduled orders are available for future opening-time slots.' : s.nx + '. Ordering is paused until then.'}</T></Card> : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, marginBottom: 4}}>
           <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeReadReviews', 'Read store reviews')} onPress={() => go('reviews', id)}><Badge green label={s.live && s.rv === 0 ? label('lbl.storeNewNoReviews', 'New · No reviews yet') : '★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + ' min'} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={'Min. ' + money(s.min)} /><Badge label={label("lbl.shopAuto18E4IBZ", "Delivery + pickup")} />{s.pr ? <Badge label={s.pr} /> : null}
@@ -230,7 +231,7 @@ export function Checkout() {
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
     <Ttl>{pk ? label('lbl.checkoutPickupFrom', 'Pickup from') : label('lbl.checkoutDeliverTo', 'Deliver to')}</Ttl>
     <Card><Row><IcBox icon="pin" /><View style={{flex: 1}}>
-      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? label('lbl.storeDistanceUnavailable', 'Distance unavailable') : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))} · {label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h)}</T></> : <><T weight="700">{a.l}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}<T size={11.5} color={th.mut} style={{marginTop: 3}}>{label("lbl.shopAutoCOUOZX", "Only for this order. Your Wantiss default is unchanged.")}</T></>}
+      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? (st.distanceReady ? label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', st.km.toFixed(1)) : label('lbl.storeDistanceUnavailable', 'Distance unavailable')) : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))} · {label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h)}</T></> : <><T weight="700">{a.l}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}<T size={11.5} color={th.mut} style={{marginTop: 3}}>{label("lbl.shopAutoCOUOZX", "Only for this order. Your Wantiss default is unchanged.")}</T></>}
     </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br} >{label('lbl.checkoutChange', 'Change')}</T></Pressable>}</Row></Card>
     {st.far && !st.live ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.checkoutPickupOnly', 'Pickup only')}</T><T size={13} color={th.mut}>{st.n} is {st.km.toFixed(1)} km from this address, beyond delivery range. Pick another address to get delivery.</T></Card> : null}
     {hasAlcohol() && !S.hasWallet ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">{label('lbl.checkoutCreateWallet', 'Create a Wantiss wallet')}</T><T size={13} color={th.mut} style={{marginVertical: 4}}>{rgText('rg.wallet', 'Create a Wantiss wallet so any refund has somewhere to go. You can withdraw from it later.', alcAge(S.cart.sid).age)}</T><Cta small label={label('lbl.checkoutCreateWallet', 'Create wallet')} onPress={createWallet} /></Card> : null}
