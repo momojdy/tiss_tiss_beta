@@ -93,6 +93,8 @@ export function StoreReviews({id}: {id: string}) {
 
 export function Product() {
   const th = useTheme(), {width} = useWindowDimensions(), h = S.sh, i = h && IT[h.id];
+  const [photoIndex, setPhotoIndex] = useState(0);
+  useEffect(() => { setPhotoIndex(0); }, [h?.id]);
   if (!i) return <View><Bar title={label('lbl.productTitle', 'Product')} onBack={back} /><Empty emoji="📦" title={label('lbl.productNotFound', 'Product not found')} button={label('lbl.productBackGoodies', 'Back to Goodies')} onPress={browse} /></View>;
   const s = STB[i.s], o = CHOOSE_SIZE_CATS.indexOf(s.c) > -1, u = ['restaurants', 'bakery'].indexOf(s.c) > -1;
   const base = h.off ? dp(i, h.off) : i.p, unit = base + (h.size > 0 ? 1.5 : 0) + (h.drink ? 1 : 0);
@@ -101,10 +103,14 @@ export function Product() {
   return (
     <View>
       <Bar title={s.n} onBack={back} stripe={false} right={<Circ icon="heart" label={label('lbl.productSaveItem', 'Save item')} color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : undefined} fill={S.favp.indexOf(i.id) > -1} onPress={() => favp(i.id)} />} />
-      <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
-        {i.photo ? ['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}><Image source={{uri: i.photo}} style={{width, height: 210}} /></Grad>) : <Grad idx={bgIdx(s.bg)} style={{width, height: 210}} />}
-      </ScrollView>
-      {i.photo ? <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>{label('lbl.productPhotoHint', 'Swipe for more photos')}</T> : null}
+      {((i.photos && i.photos.length ? i.photos : i.photo ? [i.photo] : [])).length ? <>
+        <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} onMomentumScrollEnd={e => setPhotoIndex(Math.round(e.nativeEvent.contentOffset.x / width))}>
+          {(i.photos && i.photos.length ? i.photos : [i.photo]).filter(Boolean).slice(0,5).map((photo, n) => <View key={photo + n} style={{width, height:210, backgroundColor:th.soft, alignItems:'center',justifyContent:'center'}}><Image source={{uri:photo}} style={{width,height:210}} resizeMode="contain" /></View>)}
+        </ScrollView>
+        {(i.photos && i.photos.length ? i.photos : [i.photo]).length > 1 ? <View style={{flexDirection:'row',justifyContent:'center',alignItems:'center',gap:6,marginTop:9}}>
+          {(i.photos && i.photos.length ? i.photos : [i.photo]).slice(0,5).map((photo,n)=><View key={photo+n} style={{width:photoIndex===n?16:6,height:6,borderRadius:4,backgroundColor:photoIndex===n?th.br:th.line}} />)}
+        </View> : null}
+      </> : <Grad idx={bgIdx(s.bg)} style={{width, height:210}} />}
       <View style={{paddingHorizontal: 16}}>
         <T size={23} weight="800" style={{marginTop: 10}}>{i.n}</T>
         <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="700" color={th.br}>{s.n}{s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : ' · New store'}</T></Pressable>
