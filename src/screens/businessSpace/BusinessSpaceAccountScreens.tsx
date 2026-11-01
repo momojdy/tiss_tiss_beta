@@ -46,7 +46,7 @@ export function RegistrationPage() {
       .or(`business_id.eq.${b.id},business_id.is.null`).order('created_at', { ascending: false });
     if (error) throw error;
     const application = (applications || []).find((x: any) => x.business_id === b.id) || null;
-    const needsBusinessMapping = !application && (applications || []).some((x: any) => !x.business_id && (x.status === 'pending' || (x.status === 'rejected' && !x.final_rejection)));
+    const needsBusinessMapping = !application && (applications || []).some((x: any) => !x.business_id && (['pending', 'in_review', 'needs_info'].includes(x.status) || (x.status === 'rejected' && !x.final_rejection)));
     if (!application) return { application: null, documents: [] as any[], needsBusinessMapping };
     const { data: documents, error: documentError } = await supabase.from('business_application_documents')
       .select('id,document_type,storage_path,status,review_note,submitted_at')
@@ -89,7 +89,7 @@ export function RegistrationPage() {
   };
   const currentApplication = applicationDocs.d?.application;
   const currentApplicationDocuments = applicationDocs.d?.documents ?? [];
-  const canResubmitApplication = currentApplication?.status === 'rejected' && !currentApplication.final_rejection && applicationTypes.every(doc => {
+  const canResubmitApplication = ['rejected', 'needs_info'].includes(currentApplication?.status) && !currentApplication.final_rejection && applicationTypes.every(doc => {
     const row = currentApplicationDocuments.find((x: any) => x.document_type === doc.id);
     return !!row?.storage_path && (row.status === 'pending' || row.status === 'verified');
   });
@@ -128,8 +128,8 @@ export function RegistrationPage() {
               const status = row?.status || 'missing';
               const tone = status === 'verified' ? 'good' : status === 'rejected' ? 'bad' : status === 'pending' ? 'warn' : 'mute';
               return <Row key={doc.id} title={doc.label} sub={row?.review_note || (row?.storage_path ? row.storage_path.split('/').pop() : 'Required before approval')} right={<View style={{ alignItems: 'flex-end', gap: 6 }}><Pill tone={tone as any}>{status === 'pending' ? 'Under review' : status === 'verified' ? 'Verified' : status === 'rejected' ? 'Replace required' : 'Missing'}</Pill>{status !== 'verified' && !currentApplication.final_rejection ? <Btn small kind="soft" label={row ? 'Replace' : 'Upload'} busy={a.busy} onPress={() => uploadApplicationDocument(doc.id)} /> : null}</View>} />; })}</Divided>
-            {currentApplication.status === 'rejected' && !currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}>
-              <Text style={s.mut}>Replace every rejected document. Once all three documents are uploaded and ready, you can resubmit your application for review.</Text>
+            {['rejected', 'needs_info'].includes(currentApplication.status) && !currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}>
+              <Text style={s.mut}>{currentApplication.status === 'needs_info' ? 'Wantiss requested more information. Upload or replace the requested documents, then resubmit your application.' : 'Replace every rejected document. Once all three documents are uploaded and ready, you can resubmit your application for review.'}</Text>
               <Btn label="Resubmit application" disabled={!canResubmitApplication} busy={a.busy} onPress={() => a.run(async () => { await rpc('resubmit_business_application', { p_application_id: currentApplication.id }); await applicationDocs.reload(); app.bump(); }, 'Application resubmitted')} />
             </View> : null}
             {currentApplication.final_rejection ? <View style={{ paddingVertical: 12, gap: 8 }}><Text style={s.mut}>This application has a final rejection. Contact Wantiss support if you believe it needs another review.</Text><Btn kind="soft" label="Contact support" onPress={() => app.go('help')} /></View> : null}
