@@ -131,6 +131,21 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     return()=>clearInterval(heartbeat);
   },[available,acceptsCash,activeOrderId]);
 
+  const signOut=async()=>{
+    if(activeOrderId){
+      Alert.alert('Delivery in progress','Complete the active delivery before signing out so customer tracking is not interrupted.');
+      return;
+    }
+    const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:false,p_accepts_cash_on_delivery:acceptsCash});
+    if(error){Alert.alert('Could not go offline',error.message);return;}
+    try {
+      if(await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK)){
+        await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+      }
+    } catch {}
+    onSignOut();
+  };
+
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
     setBusy('presence');
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
@@ -153,7 +168,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
     <View style={{height:100,paddingHorizontal:20,paddingBottom:12,backgroundColor:'#fff',borderBottomWidth:1,borderBottomColor:'#E3E8DF',flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'}}>
       <View><Text style={{fontSize:20,fontWeight:'800',color:'#172316'}}>Goodies Courier</Text><Text style={{fontSize:11,color:'#667064'}}>Delivery assignments and live GPS</Text></View>
-      <Pressable onPress={onSignOut}><Text style={{fontSize:12,fontWeight:'700',color:'#52634F'}}>Sign out</Text></Pressable>
+      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight:'700',color:'#52634F'}}>Sign out</Text></Pressable>
     </View>
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
