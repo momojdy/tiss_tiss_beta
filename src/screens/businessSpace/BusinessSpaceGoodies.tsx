@@ -316,7 +316,7 @@ export function GoodiesStorePage() {
       <Text style={s.mut}>Shown on the customer home page and store listings.</Text>
       {(sameAsCover ? f.coverUrl : f.thumbnailUrl) ? <Image source={{ uri: (sameAsCover ? f.coverUrl : f.thumbnailUrl) as string }} style={{ width: 88, height: 88, borderRadius: 14, marginVertical: 8 }} /> : null}
       <Btn kind="soft" label="Upload thumbnail" onPress={chooseThumbnail} busy={thumbnailBusy} />
-      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Use cover photo as thumbnail</Text><Toggle value={sameAsCover} onValueChange={v => { setSameAsCover(v); if (v) set({ thumbnailUrl: f.coverUrl }); }} /></View>
+      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Use cover photo as thumbnail</Text><Toggle value={sameAsCover} onValueChange={v => { if (v && !f.coverUrl) { app.toast('Add a cover photo first'); return; } setSameAsCover(v); set({ thumbnailUrl: v ? f.coverUrl : null }); }} /></View>
       <Field label="Store name" value={f.storeName} onChangeText={(v: string) => set({ storeName: v })} placeholder="Name customers will see" />
       <Section title="Store category" />
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
@@ -598,17 +598,28 @@ export function GoodiesBuilderEditPage() {
   useEffect(() => {
     let active = true;
     setLoading(true); setLoadError(''); setB(null);
-    goodiesApi.listBuilders(app.biz.id).then(l => {
+    Promise.all([goodiesApi.listBuilders(app.biz.id), goodiesApi.library()]).then(([rows, library]) => {
       if (!active) return;
+      const attachAssets = (builder: GBuilder): GBuilder => ({
+        ...builder,
+        groups: builder.groups.map(group => ({
+          ...group,
+          items: group.items.map(item => ({
+            ...item,
+            assetUrl: item.assetUrl || library.find(asset => asset.id === item.assetId)?.assetUrl || null,
+          })),
+        })),
+      });
+      const l = rows.map(attachAssets);
       setAll(l);
-      setB(createType ? newBuilder(createType) : id ? l.find(x => x.id === id) || null : null);
+      setB(createType ? attachAssets(newBuilder(createType)) : id ? l.find(x => x.id === id) || null : null);
     }).catch(e => {
       if (active) setLoadError(errText(e));
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [app.biz.id, id, createType]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
-  if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(createType ? newBuilder(createType) : id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
+  if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); Promise.all([goodiesApi.listBuilders(app.biz.id), goodiesApi.library()]).then(([rows, library]) => { const attachAssets = (builder: GBuilder): GBuilder => ({ ...builder, groups: builder.groups.map(group => ({ ...group, items: group.items.map(item => ({ ...item, assetUrl: item.assetUrl || library.find(asset => asset.id === item.assetId)?.assetUrl || null })) })) }); const l = rows.map(attachAssets); setAll(l); setB(createType ? attachAssets(newBuilder(createType)) : id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
   if ((!id && !createType) || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This custom product could not be found for this store. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
