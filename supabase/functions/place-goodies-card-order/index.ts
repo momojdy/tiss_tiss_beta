@@ -52,7 +52,12 @@ Deno.serve(async (req: Request) => {
 
       if (action === "capture" && ["cancelled", "declined", "expired"].includes(order.status)) {
         if (["requires_capture", "requires_action", "requires_confirmation"].includes(intent.status)) await stripe.paymentIntents.cancel(intent.id, {}, {idempotencyKey: "goodies-closed-order-" + order.id});
-        else if (intent.status === "succeeded") await stripe.refunds.create({payment_intent: intent.id, reason: "requested_by_customer"}, {idempotencyKey: "goodies-closed-order-refund-" + order.id});
+        else if (intent.status === "succeeded") {
+          const {error: refundQueueError} = await service.from("goodies_orders").update({payment_status: "refund_pending", updated_at: new Date().toISOString()}).eq("id", order.id).eq("customer_id", userId);
+          if (refundQueueError) throw refundQueueError;
+        } else if (intent.status !== "canceled") {
+          return json({error: "The card payment is still processing. Please retry in a moment."}, 409);
+        }
         await service.from("goodies_orders").update({payment_status: intent.status === "succeeded" ? "refund_pending" : "failed", updated_at: new Date().toISOString()}).eq("id", order.id).eq("customer_id", userId);
         return json({error: "This order was already closed and cannot be paid."}, 409);
       }
@@ -60,11 +65,17 @@ Deno.serve(async (req: Request) => {
       if (action === "cancel") {
         const captured = intent.status === "succeeded";
         if (["requires_capture", "requires_action", "requires_confirmation"].includes(intent.status)) await stripe.paymentIntents.cancel(intent.id, {}, {idempotencyKey: "goodies-cancel-" + order.id});
-        else if (captured) await stripe.refunds.create({payment_intent: intent.id, reason: "requested_by_customer"}, {idempotencyKey: "goodies-cancel-refund-" + order.id});
+        else if (captured) {
+          const {error: cancelError} = await authClient.rpc("set_goodies_order_status", {p_order_id: order.id, p_status: "cancelled"});
+          if (cancelError) throw cancelError;
+          const {error: refundPendingError} = await service.from("goodies_orders").update({payment_status: "refund_pending", updated_at: new Date().toISOString()}).eq("id", order.id).eq("customer_id", userId);
+          if (refundPendingError) throw refundPendingError;
+          return json({success: true, cancelled: true, payment_status: "refund_pending"});
+        }
         else if (intent.status !== "canceled") return json({error: "The card payment is still processing. Please retry in a moment."}, 409);
         const {error: cancelError} = await authClient.rpc("set_goodies_order_status", {p_order_id: order.id, p_status: "cancelled"});
         if (cancelError) throw cancelError;
-        const {error: statusError} = await service.from("goodies_orders").update({payment_status: captured ? "refund_pending" : "failed", updated_at: new Date().toISOString()}).eq("id", order.id).eq("customer_id", userId);
+        const {error: statusError} = await service.from("goodies_orders").update({payment_status: "failed", updated_at: new Date().toISOString()}).eq("id", order.id).eq("customer_id", userId);
         if (statusError) throw statusError;
         return json({success: true, cancelled: true});
       }
@@ -133,10 +144,18 @@ Deno.serve(async (req: Request) => {
     console.error("place-goodies-card-order:", error);
     if (orderId && authClient && service) {
       try {
-        if (intent?.status === "requires_capture" || intent?.status === "requires_action" || intent?.status === "requires_confirmation") await stripe!.paymentIntents.cancel(intent.id, {}, {idempotencyKey: "goodies-failed-" + orderId}).catch(() => undefined);
-        else if (intent?.status === "succeeded") await stripe!.refunds.create({payment_intent: intent.id, reason: "requested_by_customer"}, {idempotencyKey: "goodies-failed-refund-" + orderId}).catch(() => undefined);
-        await authClient.rpc("set_goodies_order_status", {p_order_id: orderId, p_status: "cancelled"}).catch(() => undefined);
-        await service.from("goodies_orders").update({payment_method: "card", payment_status: "failed", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
+        if (intent?.status === "requires_capture" || intent?.status === "requires_action" || intent?.status === "requires_confirmation") {
+          await stripe!.paymentIntents.cancel(intent.id, {}, {idempotencyKey: "goodies-failed-" + orderId}).catch(() => undefined);
+          await service.from("goodies_orders").update({payment_method: "card", payment_status: "failed", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
+        } else if (intent?.status === "succeeded") {
+          const {error: statusError} = await authClient.rpc("set_goodies_order_status", {p_order_id: orderId, p_status: "cancelled"});
+          if (statusError) console.error("Goodies card cleanup status update failed:", statusError);
+          const {error: queueError} = await service.from("goodies_orders").update({payment_method: "card", payment_status: "refund_pending", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
+          if (queueError) console.error("Goodies card refund queueing failed:", queueError);
+        } else {
+          await authClient.rpc("set_goodies_order_status", {p_order_id: orderId, p_status: "cancelled"}).catch(() => undefined);
+          await service.from("goodies_orders").update({payment_method: "card", payment_status: "failed", updated_at: new Date().toISOString()}).eq("id", orderId).eq("customer_id", userId);
+        }
       } catch (cleanupError) { console.error("Goodies card cleanup needs reconciliation:", cleanupError); }
     }
     return json({error: error instanceof Error ? error.message : "Card payment failed. Try another method."}, 400);
