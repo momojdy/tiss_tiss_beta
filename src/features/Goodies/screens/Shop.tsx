@@ -102,9 +102,9 @@ export function Product() {
     <View>
       <Bar title={s.n} onBack={back} stripe={false} right={<Circ icon="heart" label={label('lbl.productSaveItem', 'Save item')} color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : undefined} fill={S.favp.indexOf(i.id) > -1} onPress={() => favp(i.id)} />} />
       <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false}>
-        {['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}>{i.photo ? <Image source={{uri: i.photo}} style={{width, height: 210}} /> : null}</Grad>)}
+        {i.photo ? ['bg0', 'bg1', 'bg2'].map((b, n) => <Grad key={b} idx={bgIdx(n ? b : s.bg)} style={{width, height: 210, alignItems: 'center', justifyContent: 'center'}}><Image source={{uri: i.photo}} style={{width, height: 210}} /></Grad>) : <Grad idx={bgIdx(s.bg)} style={{width, height: 210}} />}
       </ScrollView>
-      <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>{label('lbl.productPhotoHint', 'Swipe for more photos')}</T>
+      {i.photo ? <T size={12} color={th.mut} align="center" style={{marginTop: 6}}>{label('lbl.productPhotoHint', 'Swipe for more photos')}</T> : null}
       <View style={{paddingHorizontal: 16}}>
         <T size={23} weight="800" style={{marginTop: 10}}>{i.n}</T>
         <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="700" color={th.br}>{s.n}{s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : ' · New store'}</T></Pressable>
