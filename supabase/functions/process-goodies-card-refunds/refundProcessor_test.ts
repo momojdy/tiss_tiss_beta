@@ -1,4 +1,4 @@
-import { processRefundQueueItem, type RefundQueueItem } from "./refundProcessor.ts";
+import { processRefundQueueItem, type RefundQueueItem, type StripeRefundClient } from "./refundProcessor.ts";
 import type { RefundRecord } from "./refundLogic.ts";
 
 function assertEquals<T>(actual: T, expected: T, message: string): void {
