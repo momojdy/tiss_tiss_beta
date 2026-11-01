@@ -6,7 +6,7 @@ import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, 
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
-import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push} from './store';
+import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess} from './store';
 import * as A from './actions';
 import {startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, Notifs, Explore} from './screens/Browse';
@@ -29,7 +29,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   useGoodies();
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
-  const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState('');
+  const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false);
   const toastT = useRef<any>(null);
 
   /* bridge for store/actions */
@@ -42,6 +42,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     let stopSync: (() => void) | null = null;
     void (async () => {
       await load();
+      setGoodiesLoaded(true);
       await loadContent();
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
@@ -89,6 +90,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   }), [sheet]);
 
   const c = cur(), r = c.r;
+  useEffect(() => { if (goodiesLoaded && ['home','cats','cart','explore','search','catlist','store','product','checkout','byo','promos','favs'].includes(r)) void refreshGoodiesAccess(); }, [goodiesLoaded, r]);
   const key = c.u + '|' + (r === 'checkout' ? S.cs : '');
   const lastKey = useRef('');
   useEffect(() => {if (key !== lastKey.current) {scroll.current?.scrollTo({y: c.sy || 0, animated: false}); lastKey.current = key;}}, [key]);
