@@ -17,7 +17,7 @@ import { COUNTRIES } from './countries';
 
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
-export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
+export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; photoUrls: string[]; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean; assetUrl?: string | null };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
 export type GBuilder = { id: string; type: 'pizza' | 'burger' | 'custom'; name: string; desc: string; emoji: string; base: string; enabled: boolean; available: boolean; productCreated?: boolean; sizes: { id: string; name: string; add: string; avail: boolean }[]; groups: GGroup[]; notes: boolean };
@@ -68,7 +68,7 @@ export const goodiesApi = {
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
   listProducts: async (biz: string): Promise<GProduct[]> => {
     const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
-    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_url || null, reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
+    return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_urls?.[0] || r.photo_url || null, photoUrls: (Array.isArray(r.photo_urls) && r.photo_urls.length ? r.photo_urls : (r.photo_url ? [r.photo_url] : [])).slice(0,5), reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
     const f: Record<string, unknown> = {};
@@ -81,6 +81,7 @@ export const goodiesApi = {
     if (!p.id) { f.review_status = 'approved'; f.review_note = null; }
     if (p.restriction !== undefined) f.restriction = p.restriction;
     if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
+    if ('photoUrls' in p) f.photo_urls = (p.photoUrls || []).slice(0, 5);
     const res = p.id ? await supabase.from('goodies_products').update({ ...f, updated_at: new Date().toISOString() }).eq('id', p.id).select('id') : await supabase.from('goodies_products').insert({ ...f, business_id: biz }).select('id');
     if (res.error) throw res.error;
     if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can change products.');
@@ -289,7 +290,7 @@ export function GoodiesStorePage() {
     const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [16, 9], quality: 0.9 });
     if (picked.canceled || !picked.assets?.[0]) return;
     setCoverBusy(true);
-    let uploadedPath = '';
+    const uploadedPaths: string[] = [];
     try {
       const resized = await ImageManipulator.manipulateAsync(picked.assets[0].uri, [{ resize: { width: 1600 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
       const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
@@ -301,7 +302,7 @@ export function GoodiesStorePage() {
       setF(current => current ? { ...current, coverUrl: url } : current);
       app.toast('Store cover updated');
     } catch (e) {
-      if (uploadedPath) await supabase.storage.from('listing-photos').remove([uploadedPath]).catch(() => undefined);
+      if (uploadedPaths.length) await supabase.storage.from('listing-photos').remove(uploadedPaths).catch(() => undefined);
       app.toast(errText(e));
     } finally { setCoverBusy(false); }
   };
@@ -456,11 +457,11 @@ function GoLiveCard() {
 
 /* ---------- products ---------- */
 const RESTRICTIONS: { k: GProduct['restriction']; l: string }[] = [{ k: 'none', l: 'No restriction' }, { k: 'otc', l: 'Over the counter' }, { k: 'alcohol', l: 'Alcohol' }];
-const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, reviewStatus: 'approved', reviewNote: null };
+const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, photoUrls: [], reviewStatus: 'approved', reviewNote: null };
 const dollars = (n: number) => '$' + n.toFixed(2);
 function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClose: () => void; onSaved: () => void }) {
   const app = useApp(), s = useS();
-  const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUri: '', removePhoto: false });
+  const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUrls: product.photoUrls?.length ? product.photoUrls : product.photoUrl ? [product.photoUrl] : [], photoUris: [] as string[] });
   const [busy, setBusy] = useState(false);
   const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [productMode, setProductMode] = useState<'regular' | 'custom'>('regular');
@@ -472,10 +473,17 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   };
   const choosePhoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { app.toast('Allow photo access to choose a product photo'); return; }
-    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsEditing: true, aspect: [1, 1], quality: 1 });
-    if (!picked.canceled && picked.assets[0]) setF(prev => ({ ...prev, photoUri: picked.assets[0].uri, removePhoto: false }));
+    if (!permission.granted) { app.toast('Allow photo access to choose product photos'); return; }
+    const room = Math.max(0, 5 - f.photoUrls.length - f.photoUris.length);
+    if (!room) { app.toast('A product can have up to 5 photos'); return; }
+    const picked = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, allowsMultipleSelection: true, selectionLimit: room, quality: 1 });
+    if (!picked.canceled && picked.assets.length) setF(prev => ({ ...prev, photoUris: [...prev.photoUris, ...picked.assets.slice(0, Math.max(0, 5 - prev.photoUrls.length - prev.photoUris.length)).map(a => a.uri)] }));
   };
+  const removePhotoAt = (index: number) => setF(prev => {
+    const saved = [...prev.photoUrls], pending = [...prev.photoUris];
+    if (index < saved.length) saved.splice(index, 1); else pending.splice(index - saved.length, 1);
+    return { ...prev, photoUrls: saved, photoUris: pending };
+  });
   const check = (): string => {
     const name = f.name.trim(), price = parseFloat(f.price), stock = Number(f.stock);
     if (name.length < 1 || name.length > 120) return 'Enter a product name (up to 120 characters)';
@@ -491,21 +499,21 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     setBusy(true);
     let uploadedPath = '';
     try {
-      let photoUrl: string | null = f.removePhoto ? null : f.photoUrl || null;
-      if (f.photoUri) {
-        const resized = await ImageManipulator.manipulateAsync(f.photoUri, [{ resize: { width: 1200 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
+      const photoUrls = [...f.photoUrls];
+      for (const uri of f.photoUris) {
+        const resized = await ImageManipulator.manipulateAsync(uri, [{ resize: { width: 1200 } }], { compress: 0.86, format: ImageManipulator.SaveFormat.JPEG });
         const base64 = await FileSystem.readAsStringAsync(resized.uri, { encoding: FileSystem.EncodingType.Base64 });
-        uploadedPath = `${app.biz.id}/goodies/products/${uid()}${uid()}.jpg`;
+        const uploadedPath = `${app.biz.id}/goodies/products/${uid()}${uid()}.jpg`;
         const { error } = await supabase.storage.from('listing-photos').upload(uploadedPath, decode(base64), { contentType: 'image/jpeg', cacheControl: '31536000' });
         if (error) throw error;
-        photoUrl = supabase.storage.from('listing-photos').getPublicUrl(uploadedPath).data.publicUrl;
+        uploadedPaths.push(uploadedPath);
+        photoUrls.push(supabase.storage.from('listing-photos').getPublicUrl(uploadedPath).data.publicUrl);
       }
-      await goodiesApi.saveProduct(app.biz.id, { id: product.id || undefined, name: f.name, description: f.description, price: parseFloat(f.price), stock: Number(f.stock), emoji: f.emoji, restriction: f.restriction, photoUrl });
-      if (product.photoUrl && (product.photoUrl !== photoUrl || f.removePhoto)) {
-        const marker = '/storage/v1/object/public/listing-photos/';
-        const oldPath = product.photoUrl.includes(marker) ? decodeURIComponent(product.photoUrl.split(marker).pop() || '') : '';
-        if (oldPath) await supabase.storage.from('listing-photos').remove([oldPath]);
-      }
+      const nextPhotoUrls = photoUrls.slice(0, 5), photoUrl = nextPhotoUrls[0] || null;
+      await goodiesApi.saveProduct(app.biz.id, { id: product.id || undefined, name: f.name, description: f.description, price: parseFloat(f.price), stock: Number(f.stock), emoji: f.emoji, restriction: f.restriction, photoUrl, photoUrls: nextPhotoUrls });
+      const marker = '/storage/v1/object/public/listing-photos/';
+      const removedPaths = (product.photoUrls?.length ? product.photoUrls : product.photoUrl ? [product.photoUrl] : []).filter(url => !nextPhotoUrls.includes(url)).map(url => url.includes(marker) ? decodeURIComponent(url.split(marker).pop() || '') : '').filter(Boolean);
+      if (removedPaths.length) await supabase.storage.from('listing-photos').remove(removedPaths);
       app.toast(product.id ? 'Product saved and updated in your store.' : 'Product added to your store.'); onSaved();
     }
     catch (x) {
@@ -535,9 +543,14 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
             </View> : null}
           </View> : null}
           {product.id || productMode === 'regular' ? <>
-          <Text style={s.label}>Product photo</Text>
-          {f.photoUri || f.photoUrl ? <Image source={{ uri: f.photoUri || f.photoUrl }} style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8 }} /> : <View style={{ width: 132, height: 132, borderRadius: 12, marginBottom: 8, backgroundColor: '#F1F3EF' }} />}
-          <View style={{ flexDirection: 'row', gap: 8, marginBottom: 10 }}><Btn small kind="soft" label={f.photoUri || f.photoUrl ? 'Change photo' : 'Add photo'} onPress={choosePhoto} /><Btn small kind="soft" label="Remove" disabled={!f.photoUri && !f.photoUrl} onPress={() => setF({ ...f, photoUri: '', photoUrl: '', removePhoto: true })} /></View>
+          <Text style={s.label}>Product photos · {f.photoUrls.length + f.photoUris.length}/5</Text>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: 8 }}>
+            {[...f.photoUrls, ...f.photoUris].map((uri, index) => <View key={uri + index} style={{ position: 'relative' }}>
+              <Image source={{ uri }} style={{ width: 76, height: 76, borderRadius: 10 }} />
+              <Pressable onPress={() => removePhotoAt(index)} style={{ position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#222', alignItems: 'center', justifyContent: 'center' }}><Icon name="close" size={13} color="#fff" /></Pressable>
+            </View>)}
+            {f.photoUrls.length + f.photoUris.length < 5 ? <Pressable onPress={choosePhoto} style={{ width: 76, height: 76, borderRadius: 10, borderWidth: 1, borderColor: t.line, alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={t.br} /><Text style={{ color: t.mute, fontSize: 10 }}>Add photo</Text></Pressable> : null}
+          </View>
           <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
           <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
           {Number.isFinite(parseFloat(f.price)) && parseFloat(f.price) >= 0 ? <View style={[s.card, { marginTop: 4 }]}><Text style={s.title}>Your earnings per unit</Text><View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Selling price</Text><Text style={s.rt}>{dollars(parseFloat(f.price))}</Text></View><View style={s.row}><Text style={[s.mut, s.g]}>Service fee (10%)</Text><Text style={s.rt}>−{dollars(Math.round(parseFloat(f.price) * 10) / 100)}</Text></View><View style={s.row}><Text style={[s.title, s.g]}>You receive</Text><Text style={s.title}>{dollars(Math.round(parseFloat(f.price) * 90) / 100)}</Text></View></View> : null}
@@ -577,7 +590,7 @@ export function GoodiesProductsPage() {
 
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
-          <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
+          <Row key={p.id} left={(p.photoUrls?.[0] || p.photoUrl) ? <Image source={{ uri: p.photoUrls?.[0] || p.photoUrl! }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
             onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
         ))}</Divided></View>
       ) : null}
