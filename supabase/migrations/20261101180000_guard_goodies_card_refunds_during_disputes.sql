@@ -29,7 +29,6 @@ begin
         else 'pending'
       end,
       next_attempt_at=now(),
-      lease_token=null,
       updated_at=now();
   end if;
   return new;
