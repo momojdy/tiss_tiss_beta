@@ -11,7 +11,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Range, DEFAULT_RULES, presetRange, rpc, q, useQ, App, AppCtx, ArgCtx, useAct, Btn, Field, Skel, ErrBox, PanelSheet, ListingWizard } from "./BusinessSpaceShared";
-import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuildersPage, GoodiesBuilderEditPage, GoodiesRequestsPage } from "./BusinessSpaceGoodies";
+import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage } from "./BusinessSpaceGoodies";
 import { GoodiesOrdersPage } from "./BusinessSpaceGoodiesOrders";
 import { Home } from "./BusinessSpaceHomeScreen";
 import { ActionsPage, ActivityPage, ExplorePage, ChartsPage } from "./BusinessSpaceActivityScreens";
@@ -39,7 +39,7 @@ const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
-  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilders: GoodiesBuildersPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage,
+  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage,
 };
 const TABS: [string, string, string | null][] = [['Overview', 'view-dashboard-outline', null], ['Features', 'apps', 'features'], ['Orders', 'clipboard-list-outline', 'orders'], ['Listings', 'format-list-bulleted', 'listings'], ['Payouts', 'bank-transfer-out', 'payouts']];
 
