@@ -216,11 +216,14 @@ export function GoodiesStorePage() {
   const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
   const load = () => {
     setLoadErr('');
-    goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e)));
-    goodiesApi.listBuilders(app.biz.id).then(rows => {
-      setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
-      setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
-    }).catch(e => setLoadErr(errText(e)));
+    setF(null);
+    Promise.all([goodiesApi.getStore(app.biz.id), goodiesApi.listBuilders(app.biz.id)])
+      .then(([store, rows]) => {
+        setF(store);
+        setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
+        setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
+      })
+      .catch(e => setLoadErr(errText(e)));
   };
   useEffect(load, [app.biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (loadErr) return <Pg title="Store setup" onBack={app.back}><ErrBox e={loadErr} retry={load} /></Pg>;
