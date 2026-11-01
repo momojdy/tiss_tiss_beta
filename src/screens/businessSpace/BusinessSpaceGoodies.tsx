@@ -185,7 +185,6 @@ export function GoodiesToolsCard() {
       {R('Orders', 'Review new orders and accept or decline within 15 minutes', 'goodiesOrders')}
       {R('Store setup', 'Category, minimum order, delivery fee, time and publishing', 'goodiesStore')}
       {R('Products', 'Items, prices and stock customers can buy', 'goodiesProducts')}
-      {R('Builders', 'Pizza, burger and custom builders for your store', 'goodiesBuilders')}
       {R('Ingredient requests', 'Ask the platform to add a new ingredient', 'goodiesRequests')}
     </Divided></View>
   );
@@ -202,7 +201,15 @@ export function GoodiesStorePage() {
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
   const [loadErr, setLoadErr] = useState('');
-  const load = () => { setLoadErr(''); goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e))); };
+  const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  const load = () => {
+    setLoadErr('');
+    goodiesApi.getStore(app.biz.id).then(setF).catch(e => setLoadErr(errText(e)));
+    goodiesApi.listBuilders(app.biz.id).then(rows => {
+      setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
+      setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
+    }).catch(e => setLoadErr(errText(e)));
+  };
   useEffect(load, [app.biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (loadErr) return <Pg title="Store setup" onBack={app.back}><ErrBox e={loadErr} retry={load} /></Pg>;
   if (!f) return <Pg title="Store setup" onBack={app.back}><Skel h={90} /><Skel h={200} /></Pg>;
@@ -217,7 +224,23 @@ export function GoodiesStorePage() {
     if (ALC.test(f.promo)) return 'Alcohol ads and promotions are prohibited on Wantiss';
     return '';
   };
-  const save = async () => { const e = err(); if (e) return app.toast(e); setBusy(true); try { await goodiesApi.saveStore(app.biz.id, f); app.toast('Store saved'); app.bump(); } catch (x) { app.toast(errText(x)); } finally { setBusy(false); } };
+  const save = async () => {
+    const e = err(); if (e) return app.toast(e);
+    setBusy(true);
+    try {
+      await goodiesApi.saveStore(app.biz.id, f);
+      const rows = await goodiesApi.listBuilders(app.biz.id);
+      const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
+      if (customProducts) {
+        (['pizza', 'burger'] as const).forEach(type => {
+          const existing = customTypes.find(x => x.type === type);
+          next.push(existing ? { ...existing, enabled: true } : newBuilder(type));
+        });
+      } else next.push(...customTypes.map(x => ({ ...x, enabled: false })));
+      await goodiesApi.saveBuilders(app.biz.id, next);
+      app.toast('Store saved'); app.bump();
+    } catch (x) { app.toast(errText(x)); } finally { setBusy(false); }
+  };
   const chooseCover = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) return app.toast('Allow photo access to choose a store cover');
@@ -251,6 +274,25 @@ export function GoodiesStorePage() {
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
       {f.category === 'drugstore' ? <View style={s.card}><Text style={s.title}>Pharmacy licence required</Text><Text style={s.mut}>Drugstore stores must upload a pharmacy licence during registration. Only over-the-counter products are allowed.</Text></View> : null}
       <Field label="Store type shown under your name (for example Haitian restaurant)" value={f.kind} onChangeText={(v: string) => set({ kind: v })} />
+      <Section title="Custom products" />
+      <View style={[s.row, { marginTop: 8 }]}>
+        <View style={s.g}><Text style={s.title}>Allow custom products</Text><Text style={s.mut}>Let customers customize products using ingredient options.</Text></View>
+        <Toggle value={customProducts} onValueChange={setCustomProducts} />
+      </View>
+      {customProducts ? <View style={s.cardFlat}>
+        <Text style={s.mut}>Choose the custom product types your store offers.</Text>
+        {(['pizza', 'burger'] as const).map(type => {
+          const current = customTypes.find(x => x.type === type);
+          return <View key={type} style={[s.row, { marginTop: 10 }]}>
+            <View style={s.g}><Text style={s.title}>{type === 'pizza' ? 'Pizza' : 'Burger'}</Text><Text style={s.mut}>{current ? current.groups.length + ' ingredient groups' : 'Ready-to-customize template'}</Text></View>
+            <Toggle value={!!current && current.enabled} onValueChange={v => setCustomTypes(prev => {
+              const found = prev.find(x => x.type === type);
+              return found ? prev.map(x => x.type === type ? { ...x, enabled: v } : x) : [...prev, { ...newBuilder(type), enabled: v }];
+            })} />
+            {current ? <Btn small kind="soft" label="Edit options" onPress={() => app.go('goodiesBuilder', { id: current.id })} /> : null}
+          </View>;
+        })}
+      </View> : null}
       <Section title="Orders" />
       <Field label="Minimum order ($)" keyboardType="decimal-pad" value={f.minOrder} onChangeText={(v: string) => set({ minOrder: v })} />
       <Section title="Delivery pricing" />
@@ -359,7 +401,6 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
           <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
           <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
           {Number.isFinite(parseFloat(f.price)) && parseFloat(f.price) >= 0 ? <View style={[s.card, { marginTop: 4 }]}><Text style={s.title}>Your earnings per unit</Text><View style={[s.row, { marginTop: 8 }]}><Text style={[s.mut, s.g]}>Selling price</Text><Text style={s.rt}>{dollars(parseFloat(f.price))}</Text></View><View style={s.row}><Text style={[s.mut, s.g]}>Service fee (10%)</Text><Text style={s.rt}>−{dollars(Math.round(parseFloat(f.price) * 10) / 100)}</Text></View><View style={s.row}><Text style={[s.title, s.g]}>You receive</Text><Text style={s.title}>{dollars(Math.round(parseFloat(f.price) * 90) / 100)}</Text></View></View> : null}
-          <Field label="Emoji" value={f.emoji} onChangeText={(v: string) => setF({ ...f, emoji: v })} />
           <Field label="Description (optional)" value={f.description} onChangeText={(v: string) => setF({ ...f, description: v })} multiline />
           <Text style={s.label}>Restriction</Text>
           <Chips items={RESTRICTIONS} value={f.restriction} onChange={(v: GProduct['restriction']) => setF({ ...f, restriction: v })} />
@@ -384,6 +425,15 @@ export function GoodiesProductsPage() {
     <Pg title="Products" onBack={app.back} refreshing={lst.l && !!lst.d} onRefresh={lst.reload}>
       <Text style={s.mut}>Set the price and how many you have. Stock goes down when customers order and back up if an order is cancelled. Customers only see available products while your store is live.</Text>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
+      <View style={{ height: 8 }} />
+      <Btn kind="soft" label="Add custom product" onPress={async () => {
+        try {
+          const rows = await goodiesApi.listBuilders(app.biz.id);
+          const available = rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled);
+          if (!available.length) return app.toast('Enable custom products and choose Pizza or Burger in Store Setup first.');
+          app.go('goodiesBuilder', { id: available[0].id });
+        } catch (e) { app.toast(errText(e)); }
+      }} />
       {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
           <Row key={p.id} left={p.photoUrl ? <Image source={{ uri: p.photoUrl }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
@@ -406,7 +456,7 @@ export function GoodiesBuildersPage() {
   const add = async (type: 'pizza' | 'burger' | 'custom') => { const b = newBuilder(type); await persist([...list, b]); app.go('goodiesBuilder', { id: b.id }); };
   const del = (b: GBuilder) => persist(list.filter(x => x.id !== b.id)).then(() => app.toast('Builder deleted'));
   return (
-    <Pg title="Builders" onBack={app.back}>
+    <Pg title="Custom products" onBack={app.back}>
       <Text style={s.mut}>Create menu items that customers can customize before checkout. For example, build-your-own pizza or burgers: choose sizes, ingredient groups, included toppings, extra charges and selection limits. If you sell fixed menu items only, you can skip Builders and add those items under Products.</Text>
       {list.length === 0 ? <View style={s.card}><Text style={s.title}>No builders yet</Text><Text style={s.mut}>Start from a template and change it.</Text></View> : null}
       {list.map(b => (
@@ -438,7 +488,7 @@ function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; on
           <Field label="Search" value={q} onChangeText={setQ} />
           <ScrollView style={{ maxHeight: 380 }}>
             {list.map(l => <Row key={l.id} title={l.n} sub={l.id} onPress={() => onPick(l.id, l.n)} right={<Icon name="plus" size={18} color={t.mute} />} />)}
-            {!list.length ? <Text style={s.mut}>Nothing matches. You can request a new ingredient from the Builders page.</Text> : null}
+            {!list.length ? <Text style={s.mut}>Nothing matches. You can request a new ingredient below.</Text> : null}
           </ScrollView>
         </SheetShell>
       </View>
@@ -462,9 +512,9 @@ export function GoodiesBuilderEditPage() {
     }).finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [app.biz.id, id]);
-  if (loading) return <Pg title="Builder" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
+  if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
   if (loadError) return <Pg title="Builder" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
-  if (!id || !b) return <Pg title="Builder" onBack={app.back}><Empty icon="tune-variant" title="Builder unavailable" hint="This builder could not be found for the selected business. Return to Builders and refresh the list, or create a new builder there." cta="Back to Builders" onCta={() => app.go('goodiesBuilders')} /></Pg>;
+  if (!id || !b) return <Pg title="Builder" onBack={app.back}><Empty icon="tune-variant" title="Builder unavailable" hint="This builder could not be found for the selected business. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
@@ -477,8 +527,8 @@ export function GoodiesBuilderEditPage() {
   };
   const num = (v: string) => parseInt(v.replace(/\D/g, '') || '0', 10);
   return (
-    <Pg title={b.name || 'Builder'} onBack={app.back}>
-      <Section title="Basics" />
+    <Pg title={b.name || 'Custom product'} onBack={app.back}>
+      <Section title="Product details" />
       <Field label="Name" value={b.name} onChangeText={(v: string) => up({ name: v })} />
       <Field label="Description" value={b.desc} onChangeText={(v: string) => up({ desc: v })} multiline />
       <Field label="Emoji" value={b.emoji} onChangeText={(v: string) => up({ emoji: v })} />
@@ -495,7 +545,7 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
 
-      <Section title="Groups and ingredients" right="Add group" onRight={() => up({ groups: [...b.groups, { id: uid(), name: '', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] })} />
+      <Section title="Ingredients and customer choices" right="Add group" onRight={() => up({ groups: [...b.groups, { id: uid(), name: '', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] })} />
       <Text style={s.mut}>Set the limit on the whole group, on individual ingredients, or both.</Text>
       {b.groups.map((g, gi) => (
         <View key={g.id} style={s.card}>
@@ -523,7 +573,7 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
-      <View style={{ height: 14 }} /><Btn label="Save builder" onPress={save} />
+      <View style={{ height: 14 }} /><Btn label="Save custom product" onPress={save} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
