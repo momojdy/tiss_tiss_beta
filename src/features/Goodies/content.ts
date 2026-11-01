@@ -28,7 +28,6 @@ export async function loadContent() {
     const payload: any = record?.payload;
     if (payload && payload.v === 5) {
       const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
-      /* Resolve every CMS-managed Goodies image, not just ingredient-library art. */
       const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
       imageLists.forEach(([list, field]) => {
         (payload[list] || []).forEach((item: any) => {
@@ -59,7 +58,7 @@ export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
 export function categories(): {id: string; name: Txt; emoji: string; art?: string | null}[] {
-  if (!C) return []; /* No published CMS catalog: do not show seeded/demo categories to customers. */
+  if (!C) return [];
   return C.cats.filter((c: any) => c.st === 'on').sort((a: any, b: any) => a.ord - b.ord).map((c: any) => ({id: c.id, name: c.name, emoji: c.emoji, art: c.art ? c.art.data : null, home: c.home}));
 }
 export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? 'All stores' : id;};
@@ -81,24 +80,28 @@ export function coupons() {
 }
 export const fees = () => {
   const f = C ? C.fees : null;
-  return {svc: Number(f?.svc ?? 0), firstFree: !!f?.first, tips: f ? String(f.tips ?? '').split(',').filter(Boolean).map(Number) : [], lead: Number(f?.lead ?? 0), step: Number(f?.step ?? 0), slots: Number(f?.slots ?? 0), far: Number(f?.far ?? 0),
-    pay: f?.pay ?? {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: !!f?.rfSvc, rfTip: !!f?.rfTip};
+  return {svc: Number(f?.svc ?? 0), firstFree: !!f?.first, tips: f ? String(f.tips ?? '').split(',').filter(Boolean).map(Number) : [], lead: Number(f?.lead ?? 0), step: Number(f?.step ?? 0), slots: Number(f?.slots ?? 0), far: Number(f?.far ?? 0), pay: f?.pay ?? {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: !!f?.rfSvc, rfTip: !!f?.rfTip};
 };
-/* alcohol minimum age by country (admin table), default elsewhere */
 export function minAge(cc: string | null | undefined): number {
   if (!C) return cc === 'HT' || cc === 'DO' ? 18 : 21;
   const r = (C.ages || []).find((a: any) => a.cc === cc); return r ? r.age : C.ageDef;
 }
 export const rgText = (id: string, fallback: string, age: number) => {const t = C && C.rg && C.rg.texts.find((x: any) => x.id === id); return (t ? tx(t.t) || fallback : fallback).replace(/\{age\}/g, String(age));};
 export const rulesLive = () => !!(C && C.rg && C.rg.live);
-/* Order tracking step names: each step is an ordinary editable text (lbl.stageD0..., lbl.stageP0...). */
 export const stageLabels = (pickup: boolean, fallback: string[]) => fallback.map((text, i) => label('lbl.stage' + (pickup ? 'P' : 'D') + i, text));
 export const faq = (_fallback: [string, string][]): [string, string][] => (C && Array.isArray(C.faq) ? C.faq.map((f: any) => [tx(f.q), tx(f.a)] as [string, string]) : []);
 export const supportTopics = (_fallback: string[]) => (C && Array.isArray(C.topics) ? C.topics.map((t: any) => tx(t.t)) : []);
 export function legalDoc(id: string): string | null {const d = C && C.legal && C.legal.find((x: any) => x.id === id && x.st === 'Live'); const s = d ? tx(d.t) : ''; return s || null;}
-
 export function modes(): {emoji: string; image?: string | null; title: string; sub: string; cat: string}[] | null {
   if (!C || !C.modes) return [];
   return C.modes.filter((m: any) => m.st === 'Live').map((m: any) => ({emoji: m.emoji, image: m.img?.data || m.img?.url || null, title: tx(m.title), sub: tx(m.sub), cat: m.cat}));
 }
-contentHooks.coupons = coupons; contentHooks.fees = fees; contentHooks.minAge = minAge;
+
+/* Goodies store/content is a circular module pair. Hermes can expose the imported binding before
+   the store module has finished initializing. Register these hooks after the current module graph
+   has finished evaluating so contentHooks is guaranteed to be initialized. */
+Promise.resolve().then(() => {
+  contentHooks.coupons = coupons;
+  contentHooks.fees = fees;
+  contentHooks.minAge = minAge;
+});
