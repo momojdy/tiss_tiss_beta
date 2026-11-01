@@ -368,8 +368,9 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const [productMode, setProductMode] = useState<'regular' | 'custom'>('regular');
   useEffect(() => { if (!product.id) goodiesApi.listBuilders(app.biz.id).then(rows => setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomTypes([])); }, [product.id, app.biz.id]);
   const openCustom = (type: 'pizza' | 'burger') => {
+    const existing = customTypes.find(x => x.type === type);
     onClose();
-    app.go('goodiesBuilder', { type, create: true });
+    app.go('goodiesBuilder', existing ? { id: existing.id } : { type, create: true });
   };
   const choosePhoto = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
