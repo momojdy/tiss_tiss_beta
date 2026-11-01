@@ -131,18 +131,29 @@ export const goodiesApi = {
   library: async () => {
     try {
       const remote = await fetchPublishedWantissContent('en');
-      const record = remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
-      const payload = record?.payload as { items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
-      const base = Array.isArray(payload?.items) ? payload.items : [];
+      const record = remote.content.find(x => x.content_key === 'goodies.content' || x.content_key === 'goodies')
+        || remote.content.find(x => x.content_key === 'goodies.library' || x.content_key === 'goodies.vendor.library');
+      const payload = record?.payload as { lib?: any[]; items?: { id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean }[] } | undefined;
+      const legacy = Array.isArray(payload?.items) ? payload.items : [];
+      const contentLibrary = Array.isArray(payload?.lib) ? payload.lib.map((x: any) => {
+        const id = String(x?.id || '');
+        const b = x?.builder === 'pizza' || id.startsWith('pizza.') ? 'pizza' : x?.builder === 'burger' || id.startsWith('burger.') ? 'burger' : null;
+        const image = x?.img || x?.image || {};
+        const key = image.assetKey || image.asset_key || x?.assetKey || x?.asset_key || null;
+        const rawName = x?.name;
+        const n = typeof rawName === 'string' ? rawName : rawName?.en?.v || rawName?.en || id;
+        return b && id ? { id, b, n: String(n), hasArt: !!key, assetKey: key } : null;
+      }).filter(Boolean) as any[] : [];
+      const base = [...legacy, ...contentLibrary];
       const added = await rpc<any[]>('goodies_list_library_ingredients', {}).catch(() => [] as any[]);
       const seen = new Set(base.map(x => x.id));
       const assetUrl = (key: string | null | undefined) => key ? remote.assets.find(a => a.asset_key === key || a.asset_key.endsWith('/' + key))?.url || null : null;
-      const baseWithAssets = base.map(x => ({ ...x, assetUrl: assetUrl(x.id) }));
+      const baseWithAssets = base.map(x => ({ ...x, assetUrl: assetUrl(x.assetKey || x.asset_key || x.id) }));
       const extra = await Promise.all((added || []).filter(x => (x.builder === 'pizza' || x.builder === 'burger') && !seen.has(x.id)).map(async x => {
         let url = assetUrl(x.asset_key);
         if (!url && x.asset_key) {
-          const signed = await supabase.storage.from('wantiss-cms-assets').createSignedUrl(String(x.asset_key), 3600).catch(() => ({ data: null }));
-          url = signed.data?.signedUrl || null;
+          const { data } = await supabase.storage.from('wantiss-cms-assets').createSignedUrl(String(x.asset_key), 3600).catch(() => ({ data: null }));
+          url = data?.signedUrl || null;
         }
         return { id: x.id as string, b: x.builder as 'burger' | 'pizza', n: x.name as string, hasArt: !!x.asset_key, assetUrl: url };
       }));
