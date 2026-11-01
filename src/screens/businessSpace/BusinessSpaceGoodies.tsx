@@ -590,30 +590,9 @@ export function GoodiesProductsPage() {
 }
 
 /* ---------- builder editor ---------- */
-function LibraryPicker({ type, onPick, onClose }: { type: 'pizza' | 'burger'; onPick: (id: string, name: string, assetUrl?: string | null) => void; onClose: () => void }) {
-  const s = useS(), t = useTheme();
-  const [q, setQ] = useState('');
-  const [library, setLibrary] = useState<{ id: string; b: 'burger' | 'pizza'; n: string; hasArt?: boolean; assetUrl?: string | null }[]>([]);
-  useEffect(() => { let active = true; goodiesApi.library().then(rows => { if (active) setLibrary(rows); }).catch(() => { if (active) setLibrary([]); }); return () => { active = false; }; }, []);
-  const list = useMemo(() => library.filter(l => l.b === type && l.n.toLowerCase().includes(q.toLowerCase())), [library, type, q]);
-  return (
-    <Modal transparent animationType="slide" onRequestClose={onClose}>
-      <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
-        <SheetShell title="Ingredient library" onClose={onClose} tall>
-          <Field label="Search" value={q} onChangeText={setQ} />
-          <ScrollView style={{ maxHeight: 380 }}>
-            {list.map(l => <Pressable key={l.id} onPress={() => onPick(l.id, l.n, l.assetUrl || null)} style={{ flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: t.line }}>{l.assetUrl ? <Image source={{ uri: l.assetUrl }} style={{ width: 38, height: 38, borderRadius: 8 }} /> : <View style={{ width: 38, height: 38, borderRadius: 8, backgroundColor: t.bg, alignItems: 'center', justifyContent: 'center' }}><Icon name="image-outline" size={17} color={t.mute} /></View>}<View style={{ flex: 1 }}><Text style={{ color: t.ink, fontWeight: '600' }}>{l.n}</Text><Text style={s.mut}>{l.id}</Text></View><Icon name="plus" size={18} color={t.mute} /></Pressable>)}
-            {!list.length ? <Text style={s.mut}>Nothing matches. You can request a missing ingredient.</Text> : null}
-          </ScrollView>
-        </SheetShell>
-      </View>
-    </Modal>
-  );
-}
-
 export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
-  const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [pick, setPick] = useState<{ gi: number; ii: number } | null>(null), [errs, setErrs] = useState<string[]>([]);
+  const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [errs, setErrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(0), [selectedItem, setSelectedItem] = useState<{ gi: number; ii: number } | null>(null);
   useEffect(() => {
@@ -678,8 +657,6 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
 
-      <Section title="Ingredients and customer choices" right="Add group" onRight={() => up({ groups: [...b.groups, { id: uid(), name: '', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] })} />
-      
       <Section title="Sections and ingredients" right="Add section" onRight={() => { up({ groups: [...b.groups, { id: uid(), name: 'New section', kind: 'many', req: false, min: 0, max: 1, inc: 0, me: 1, items: [] }] }); setExpandedGroup(b.groups.length); setSelectedItem(null); }} />
       {b.groups.map((g, gi) => {
         const expanded = expandedGroup === gi;
@@ -731,7 +708,6 @@ export function GoodiesBuilderEditPage() {
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
       <Btn kind="soft" label="Request an ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
       <View style={{ height: 14 }} /><Btn label={b.productCreated === false ? 'Add custom product' : 'Save changes'} onPress={save} busy={saving} />
-      {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm, assetUrl) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, assetUrl: assetUrl || null, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
   );
 }
