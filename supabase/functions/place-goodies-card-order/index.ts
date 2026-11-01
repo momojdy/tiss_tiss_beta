@@ -129,6 +129,9 @@ Deno.serve(async (req: Request) => {
     if (idempotencyKey.length < 8 || idempotencyKey.length > 200) {
       return json({error: "A valid checkout key is required. Please retry checkout."}, 400);
     }
+    // Stripe idempotency keys are account-wide; scope this one to the
+    // authenticated customer to prevent cross-customer key collisions.
+    const stripeIdempotencyKey = "goodies-card-" + userId + "-" + idempotencyKey;
     const {data: created, error: orderError} = await authClient.rpc("place_goodies_card_order_once", {
       p_idempotency_key: idempotencyKey,
       ...order, p_promo_code: order.p_promo_code || null,
@@ -152,12 +155,19 @@ Deno.serve(async (req: Request) => {
       throw new Error("The validated order total is outside the supported card payment range.");
     }
 
-    intent = await stripe.paymentIntents.create({
+    const createdIntent = await stripe.paymentIntents.create({
       amount, currency: "usd", customer: customer.stripe_customer_id,
       payment_method: savedMethod.stripe_payment_method_id,
       confirm: true, off_session: false, capture_method: "manual",
       metadata: {wantiss_user_id: userId, wantiss_purpose: "goodies_order", goodies_order_id: orderId},
-    }, {idempotencyKey});
+    }, {idempotencyKey: stripeIdempotencyKey});
+    if (createdIntent.metadata?.wantiss_purpose !== "goodies_order" ||
+        createdIntent.metadata?.goodies_order_id !== orderId ||
+        createdIntent.metadata?.wantiss_user_id !== userId ||
+        createdIntent.amount !== amount || createdIntent.currency !== "usd") {
+      throw new Error("Stripe returned a PaymentIntent that does not match this Goodies order.");
+    }
+    intent = createdIntent;
 
     const {error: pendingUpdateError} = await service.from("goodies_orders").update({
       payment_method: "card", payment_status: intent.status === "requires_action" ? "requires_action" : "pending",
