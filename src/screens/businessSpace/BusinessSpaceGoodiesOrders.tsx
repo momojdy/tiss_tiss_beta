@@ -134,7 +134,7 @@ export function GoodiesOrdersPage() {
       if (error) throw error;
       setDecline(null); setCancel(null); setDetail('');
       let refundWarning = '';
-      if (action === 'decline' && order.payment_method === 'card' && order.payment_status !== 'refunded') {
+      if (action === 'decline' && order.payment_method === 'card' && ['paid', 'refund_pending', 'partially_refunded'].includes(String(order.payment_status || ''))) {
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: order.id } });
         if (refund.error || refund.data?.error) refundWarning = ' Card refund is pending and may need support follow-up.';
       }
