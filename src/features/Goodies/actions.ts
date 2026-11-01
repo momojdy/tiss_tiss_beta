@@ -3,7 +3,7 @@ import {providerInfo} from './providers';
 import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -130,6 +130,8 @@ export function setCard(id: string) {
 }
 export async function placeOrder() {
   if (S.busy) return;
+  const access = await refreshGoodiesAccess();
+  if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? 'Your access to Goodies has been permanently restricted.' : 'Your access to Goodies is temporarily suspended.'); return;}
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   if (!providerInfo.demo) {
