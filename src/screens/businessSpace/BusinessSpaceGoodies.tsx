@@ -152,7 +152,7 @@ export function validateBuilder(b: GBuilder): string[] {
   const e: string[] = [];
   if (!b.name.trim()) e.push('Give the builder a name');
   if (!(parseFloat(b.base) >= 0)) e.push('Base price must be 0 or more');
-  if (!b.sizes.length) e.push('Add at least one size');
+  if (b.type === 'pizza' && !b.sizes.length) e.push('Add at least one size');
   b.sizes.forEach(s => { if (!s.name.trim()) e.push('Every size needs a name'); if (!(parseFloat(s.add) >= 0)) e.push(`Size "${s.name || '?'}" needs a price of 0 or more`); });
   if (!b.groups.length) e.push('Add at least one group');
   b.groups.forEach(g => {
@@ -511,7 +511,7 @@ export function GoodiesBuilderEditPage() {
     return () => { active = false; };
   }, [app.biz.id, id]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
-  if (loadError) return <Pg title="Builder" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
+  if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); goodiesApi.listBuilders(app.biz.id).then(l => { setAll(l); setB(id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
   if (!id || !b) return <Pg title="Builder" onBack={app.back}><Empty icon="tune-variant" title="Builder unavailable" hint="This builder could not be found for the selected business. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
@@ -529,7 +529,6 @@ export function GoodiesBuilderEditPage() {
       <Section title="Product details" />
       <Field label="Name" value={b.name} onChangeText={(v: string) => up({ name: v })} />
       <Field label="Description" value={b.desc} onChangeText={(v: string) => up({ desc: v })} multiline />
-      <Field label="Emoji" value={b.emoji} onChangeText={(v: string) => up({ emoji: v })} />
       <Field label="Base price ($)" keyboardType="decimal-pad" value={b.base} onChangeText={(v: string) => up({ base: v })} />
       <View style={[s.row, { marginTop: 10 }]}><Text style={[s.title, s.g]}>Allow special instructions</Text><Toggle value={b.notes} onValueChange={(v: boolean) => up({ notes: v })} /></View>
 
@@ -571,7 +570,7 @@ export function GoodiesBuilderEditPage() {
         </View>
       ))}
       {errs.length ? <View style={s.card}><Text style={s.title}>Fix these first</Text>{errs.map(e => <Text key={e} style={s.mut}>• {e}</Text>)}</View> : null}
-      <Btn kind="soft" label="Request a missing ingredient" onPress={() => app.go('goodiesRequests')} />
+      <Btn kind="soft" label="Request a missing ingredient" onPress={() => app.go('goodiesRequests', { open: true, builder: b.type })} />
       <View style={{ height: 14 }} /><Btn label="Save custom product" onPress={save} />
       {pick && b.type !== 'custom' ? <LibraryPicker type={b.type} onClose={() => setPick(null)} onPick={(aid, nm) => { const it = b.groups[pick.gi].items[pick.ii]; upI(pick.gi, pick.ii, { assetId: aid, name: it.name || nm }); setPick(null); }} /> : null}
     </Pg>
@@ -580,11 +579,12 @@ export function GoodiesBuilderEditPage() {
 
 /* ---------- ingredient requests ---------- */
 export function GoodiesRequestsPage() {
-  const app = useApp(), s = useS(), t = useTheme();
+  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { open?: boolean; builder?: GRequest['builder'] } | undefined;
   const [list, setList] = useState<GRequest[]>([]), [open, setOpen] = useState(false), [busy, setBusy] = useState(false);
   const [rules, setRules] = useState(''), [ack, setAck] = useState(false), [photo, setPhoto] = useState('');
-  const blank = { name: '', builder: 'burger' as GRequest['builder'], role: '', note: '' };
+  const blank = { name: '', builder: route?.builder || 'burger' as GRequest['builder'], role: '', note: '' };
   const [f, setF] = useState(blank);
+  useEffect(() => { if (route?.open) setOpen(true); if (route?.builder) setF(current => ({ ...current, builder: route.builder! })); }, [route?.open, route?.builder]);
   const load = () => goodiesApi.listRequests(app.biz.id).then(setList).catch(e => app.toast(errText(e)));
   useEffect(() => { void load(); goodiesApi.rules().then(setRules).catch(() => setRules('')); }, [app.biz.id]);
   const choose = async () => {
@@ -617,7 +617,7 @@ export function GoodiesRequestsPage() {
             <SheetShell title="Request an ingredient" onClose={() => setOpen(false)} tall>
               <ScrollView style={{ maxHeight: 520 }}>
                 <Field label="Ingredient name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
-                <Text style={s.label}>For which builder</Text>
+                <Text style={s.label}>For which custom product</Text>
                 <Chips items={[{ k: 'burger', l: 'Burger' }, { k: 'pizza', l: 'Pizza' }, { k: 'custom', l: 'Custom' }]} value={f.builder} onChange={(v: any) => setF({ ...f, builder: v })} />
                 <Field label="What is it (topping, sauce, bun, patty…)" value={f.role} onChangeText={(v: string) => setF({ ...f, role: v })} />
                 <Field label="Notes for the team" value={f.note} onChangeText={(v: string) => setF({ ...f, note: v })} multiline />
