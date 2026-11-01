@@ -91,7 +91,10 @@ begin
       jsonb_build_object('request_id', new.id, 'business_id', new.business_id, 'ingredient', new.name), false
     from public.wantiss_admin_staff s
     where s.status = 'active'
-      and exists (select 1 from public.wantiss_admin_permission_grants g where g.staff_user_id = s.user_id and g.permission_key = 'goodies.requests' and g.access_level in ('view','edit') and g.revoked_at is null and (g.expires_at is null or g.expires_at > now()));
+      and (
+        s.role = 'super_admin'
+        or exists (select 1 from public.wantiss_admin_permission_grants g where g.staff_user_id = s.user_id and g.permission_key = 'goodies.requests' and g.access_level in ('view','edit') and g.revoked_at is null and (g.expires_at is null or g.expires_at > now()))
+      );
   elsif new.status is distinct from old.status then
     v_title := case new.status when 'approved' then 'Ingredient request approved' when 'denied' then 'Ingredient request declined' when 'needs_info' then 'More information needed' else 'Ingredient request updated' end;
     v_body := case new.status when 'approved' then 'Your ingredient ' || new.name || ' was approved and added to the builder library.' when 'denied' then 'Your ingredient ' || new.name || ' was declined. ' || coalesce(new.review_note, '') when 'needs_info' then 'More information is needed for ' || new.name || '. ' || coalesce(new.review_note, '') else 'Your ingredient request was updated.' end;
