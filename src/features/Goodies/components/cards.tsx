@@ -89,7 +89,7 @@ export function StoreCard({s}: {s: Store}) {
         <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
           {s.it.slice(0, 3).map(i => (
             <Pressable key={i.id} onPress={() => openProduct(i.id)} style={{flex: 1, minWidth: 0}}>
-              <Grad idx={bgIdx(s.bg)} style={{height: 72, borderRadius: 14, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 36}}>{i.e}</Text></Grad>
+              <Grad idx={bgIdx(s.bg)} style={{height: 72, borderRadius: 14, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>{i.photo ? <Image source={{uri: i.photo}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 36}}>{i.e}</Text>}</Grad>
               <T size={13} weight="800" style={{marginTop: 5}}>{money(i.p)}</T>
               <T size={11.5} color={th.mut} lines={1}>{i.n}</T>
             </Pressable>
