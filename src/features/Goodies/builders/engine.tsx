@@ -247,7 +247,7 @@ hooks.byoClear = () => {if (BD) {bDraftSave();} BD = null;};
 function TagText({text}: {text: string}) {const th = useTheme(); return <T size={13} weight="700" color={th.brd} style={{marginTop: 3}}>{text}</T>;}
 export function byoTag(sid: string): React.ReactNode {
   const l = byoList(sid); if (!l.length) return null;
-  return <TagText text={label('lbl.storeCustom', 'Build your own') + ' ' + l.map(b => b.emoji).join(' ')} />;
+  return <TagText text={label('lbl.storeCustom', 'Custom products') + ' ' + l.map(b => b.emoji).join(' ')} />;
 }
 function ByoRow({b, s}: {b: Builder; s: any}) {
   const th = useTheme(), ok = b.available && s.open;
@@ -256,7 +256,7 @@ function ByoRow({b, s}: {b: Builder; s: any}) {
     <Pressable disabled={!ok} onPress={() => byoOpen(s.id, b.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: th.line, opacity: ok ? 1 : 0.55}}>
       <Tile e={b.emoji} bg="bg3" />
       <View style={{flex: 1}}>
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap'}}><T weight="700">{b.name}</T><View style={{backgroundColor: th.brt, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 2}}><T size={11} weight="800" color={th.brd}>{label('lbl.storeCustom', 'Build your own')}</T></View></View>
+        <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap'}}><T weight="700">{b.name}</T><View style={{backgroundColor: th.brt, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 2}}><T size={11} weight="800" color={th.brd}>{label('lbl.storeCustom', 'Customizable')}</T></View></View>
         <T size={12.5} color={th.mut}>{ok ? label('lbl.byoFromPrice', '{desc} · from {price}').replace('{desc}', b.desc || label('lbl.byoDefaultDesc', 'Customize it your way')).replace('{price}', money(b.base + mn)) : label('lbl.byoCardUnavailable', 'Currently unavailable')}</T>
       </View>
       {ok ? <View style={{backgroundColor: th.br, borderRadius: 14, paddingHorizontal: 14, paddingVertical: 8}}><T size={13} weight="800" color="#fff">{BYO.drafts[b.id] ? label('lbl.byoResume', 'Resume') : label('lbl.byoBuild', 'Build')}</T></View> : null}
