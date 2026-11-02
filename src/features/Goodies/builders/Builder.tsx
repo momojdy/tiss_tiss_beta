@@ -186,8 +186,8 @@ function OptTile({b, g, it}: {b: Builder; g: any; it: BItem}) {
   const th = useTheme(), us = units(g, BD), q = us.filter(x => x === it.id).length, on = q > 0, free = it.free || it.price === 0, lab = !it.avail ? label('lbl.byoUnavailableOption', label('lbl.byoUnavailableOption', 'Unavailable')) : free ? label('lbl.byoFree', 'Free') : g.kind === 'many' && us.length < g.inc ? label('lbl.byoFree', 'Free') : '+' + money(it.price);
   return (
     <View style={{width: 96, opacity: it.avail ? 1 : 0.45}}>
-      <Pressable accessibilityRole="button" accessibilityLabel={it.name + ', ' + lab + (on ? ', selected ' + q : '')} accessibilityState={{selected: on, disabled: !it.avail}} disabled={!it.avail} onPress={() => bzAdd(g.id, it.id)} style={{alignItems: 'center', gap: 4, paddingTop: 10, paddingBottom: 8, paddingHorizontal: 4, borderRadius: 16, borderWidth: 2, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, minHeight: 100}}>
-        <View style={{width: 46, height: 46, borderRadius: 23, backgroundColor: it.bg || th.soft, alignItems: 'center', justifyContent: 'center'}}><TileIcon it={it} type={b.type} /></View>
+      <Pressable accessibilityRole="button" accessibilityLabel={it.name + ', ' + lab + (on ? ', selected ' + q : '')} accessibilityState={{selected: on, disabled: !it.avail}} disabled={!it.avail} onPress={() => bzAdd(g.id, it.id)} style={{alignItems: 'center', gap: 4, paddingTop: 10, paddingBottom: 8, paddingHorizontal: 4, borderRadius: 16, borderWidth: 2, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : (it.bg || th.card), minHeight: 100}}>
+        <View style={{width: 46, height: 46, borderRadius: 23, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><TileIcon it={it} type={b.type} /></View>
         <T size={12.5} weight="700" align="center" style={{lineHeight: 14}}>{it.name}</T>
         <T size={11.5} color={on ? th.brd : th.mut} weight={on ? '700' : undefined}>{lab}</T>
       </Pressable>
