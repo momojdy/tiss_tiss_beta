@@ -8,12 +8,12 @@ module.exports = defineConfig([
     rules: {
       // The existing app does not enable React Compiler; its compiler-only diagnostics
       // flag legacy patterns throughout untouched screens. Keep Rules of Hooks enabled.
-      'react-hooks/refs': 'off',
-      'react-hooks/purity': 'off',
-      'react-hooks/set-state-in-effect': 'off',
-      'react-hooks/preserve-manual-memoization': 'off',
-      'react-hooks/immutability': 'off',
-      'react-hooks/use-memo': 'off',
+      'react-hooks/refs': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/preserve-manual-memoization': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/use-memo': 'warn',
       // Existing import/style issues are reported without blocking feature validation.
       'react/display-name': 'warn',
       'react/no-unescaped-entities': 'warn',
