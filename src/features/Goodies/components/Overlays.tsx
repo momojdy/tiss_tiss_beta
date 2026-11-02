@@ -1,6 +1,6 @@
 import React from 'react';
-import {Modal, View, Pressable, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
-import {useEffect, useState} from 'react';
+import {Modal, View, Pressable, KeyboardAvoidingView, Platform, Keyboard, Animated} from 'react-native';
+import {useEffect, useRef, useState} from 'react';
 
 /**
  * Shared overlay primitives for Goodies.
@@ -45,13 +45,18 @@ type ConfirmDialogProps = {
 };
 
 export function ConfirmDialog({visible, onClose, children, accessibilityLabel = 'Close confirmation'}: ConfirmDialogProps) {
+  const scale = useRef(new Animated.Value(0.96)).current;
+  useEffect(() => {
+    if (visible) Animated.spring(scale, {toValue: 1, useNativeDriver: true, speed: 22, bounciness: 4}).start();
+    else scale.setValue(0.96);
+  }, [visible, scale]);
   return (
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 22, paddingVertical: 24}}>
         <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onClose} style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}} />
-        <View style={{width: '100%', maxWidth: 360, maxHeight: '80%', flexShrink: 1, minHeight: 0}}>
+        <Animated.View accessibilityViewIsModal style={{width: '100%', maxWidth: 360, maxHeight: '80%', flexShrink: 1, minHeight: 0, transform: [{scale}]}}>
           {children}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
