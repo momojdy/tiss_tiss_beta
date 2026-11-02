@@ -322,9 +322,9 @@ export async function load() {
   }
   S.orders = S.orders.filter((o: any) => o && STB[o.sid] && Array.isArray(o.lines));
   S.fav = S.fav.filter((x: string) => STB[x]); S.favp = S.favp.filter((x: string) => IT[x]);
-  S.addr = S.addr.filter((a: any) => a && a.t); if (!S.addr.length) S.addr = WDEF().addr;
+  S.addr = S.addr.filter((a: any) => a && a.t); if (!S.addr.length && providerInfo.demo) S.addr = WDEF().addr;
   S.addr.forEach((a: any) => {if (typeof a.z !== 'number') a.z = zoneOf(a.t); if (!a.cc) a.cc = 'HT';});
-  if (S.addr.length && !S.addr.some((a: Address) => a.def)) S.addr[0].def = 1;
+  if (S.addr.length && !S.addr.some((a: Address) => a.def) && providerInfo.demo) S.addr[0].def = 1;
   if (!S.pf || !S.pf.n) S.pf = WDEF().pf; if (!S.pf.ph) S.pf.ph = WDEF().pf.ph;
   S.gc = S.gc.filter((c: any) => c && c.id && c.ph);
   if (S.cc !== 'w' && !S.gc.some((c: any) => c.id === S.cc)) S.cc = 'w';
