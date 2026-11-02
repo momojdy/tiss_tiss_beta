@@ -57,7 +57,7 @@ export function VCard({s}: {s: Store}) {
     <View style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
       <View>
         <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
-          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>{s.thumbnail ? <Image source={{uri: s.thumbnail}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 54}}>{s.e}</Text>}</Grad>
+          <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>{s.cover || s.thumbnail || s.logo ? <Image source={{uri: s.cover || s.thumbnail || s.logo || undefined}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 54}}>{s.e}</Text>}</Grad>
         </Pressable>
         {heartBtn(s.id, saved, () => heart(s.id), (saved ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11ySaveFavorite', 'Save {name} to favorites')).replace('{name}', s.n))}
       </View>
