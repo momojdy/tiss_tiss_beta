@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -326,7 +326,13 @@ function GroupOrderSheet({close}: {close: () => void}) {
         const product=Array.isArray(item.product)?item.product[0]:item.product;
         return <Row key={item.id} sp style={{paddingVertical:8,alignItems:'flex-start'}}>
           <View style={{flex:1}}><T weight="700">{item.quantity}× {product?.name || 'Unavailable product'}</T><T size={11.5} color={th.mut}>Added by {String(item.user_id).slice(0,8)}{item.note ? ' · '+item.note : ''}</T></View>
-          <T weight="700">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
+          <View style={{alignItems:'flex-end',gap:7}}>
+            <T weight="700">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
+            {group.serverBacked && String(item.user_id)===currentUserId ? <Pressable accessibilityRole="button" accessibilityLabel="Remove my shared cart item" onPress={async()=>{
+              const {error}=await removeGroupOrderCartLine(group.groupId,item.line_key);
+              if(error)toast('Could not remove this shared item: '+error.message);
+            }}><Icon name="trash-2" size={17} color={th.red}/></Pressable> : null}
+          </View>
         </Row>;
       }) : <T size={12.5} color={th.mut}>No shared items yet. Members can add products from this store and they will appear here.</T>}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
