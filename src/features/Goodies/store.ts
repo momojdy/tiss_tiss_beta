@@ -237,27 +237,26 @@ export async function refreshUserAddresses() {
   if (providerInfo.demo) return S.addr;
   const {data: auth, error: authError} = await supabase.auth.getUser();
   if (authError || !auth.user) return S.addr;
-  let result = await supabase.from('user_addresses')
-    .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,is_goodies_default,created_at')
+  const {data, error} = await supabase.from('user_addresses')
+    .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at')
     .eq('user_id', auth.user.id).order('is_default', {ascending: false}).order('created_at', {ascending: true});
-  if (result.error && /is_goodies_default|column/i.test(result.error.message || '')) {
-    result = await supabase.from('user_addresses')
-      .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at')
-      .eq('user_id', auth.user.id).order('is_default', {ascending: false}).order('created_at', {ascending: true});
-  }
-  if (result.error) throw result.error;
-  const rows = (result.data || []).map((row: any) => ({
+  if (error) throw error;
+  const metadataAddressId = String(auth.user.user_metadata?.goodies_default_address_id || '');
+  const rows = (data || []).map((row: any) => ({
     id: String(row.id), l: String(row.recipient_name || 'Home'),
     t: [row.street_address, row.city, row.department, row.country].filter(Boolean).join(', '),
     apt: String(row.apartment || ''), inst: String(row.delivery_notes || ''),
-    def: row.is_default ? 1 : 0, goodiesDefault: row.is_goodies_default ? 1 : 0,
+    def: row.is_default ? 1 : 0, goodiesDefault: String(row.id) === metadataAddressId ? 1 : 0,
     z: 0, cc: row.country === 'Dominican Republic' ? 'DO' : row.country === 'United States' ? 'US' : 'HT',
     city: String(row.city || ''), department: String(row.department || ''), country: String(row.country || ''),
     phone: String(row.phone_number || ''), createdAt: row.created_at,
   }));
   S.addr = rows;
-  const selected = rows.find((row: any) => row.goodiesDefault) || rows.find((row: any) => row.id === String(S.as)) || rows.find((row: any) => row.def) || rows[0];
+  const selected = rows.find((row: any) => row.id === metadataAddressId) || rows.find((row: any) => row.def) || rows[0];
   S.as = selected?.id ?? 0;
+  if (selected && selected.id !== metadataAddressId) {
+    void supabase.auth.updateUser({data: {goodies_default_address_id: selected.id}});
+  }
   applyZone(); emit();
   return S.addr;
 }
