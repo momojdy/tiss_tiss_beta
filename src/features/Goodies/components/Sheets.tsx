@@ -4,7 +4,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from '.
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, contentHooks} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -474,10 +474,19 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </View> : null}
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
+      {checkoutPreview && (groupCheckoutType==='pickup'||groupDeliveryQuote) ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
+        <T size={12} weight="800" style={{marginBottom:7}}>Payment estimate</T>
+        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="700">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="700">{money(Number(groupDeliveryQuote?.fee||0))}</T></Row> : null}
+        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="700">{money(Number(contentHooks.fees?.().svc||0))}</T></Row>
+        <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
+        <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutPreview.subtotal||0)+(groupCheckoutType==='delivery'?Number(groupDeliveryQuote?.fee||0):0)+Number(contentHooks.fees?.().svc||0))}</T></Row>
+        <T size={10.5} color={th.mut} style={{marginTop:6}}>Estimate excludes any eligible first-order delivery-fee waiver. The server recalculates fees and checks your Wallet balance before placing the order.</T>
+      </View> : null}
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
-      <T size={11.5} color={th.mut} style={{marginTop:4}}>Final delivery and service fees are calculated and checked by the server at checkout.</T>
+      <T size={11.5} color={th.mut} style={{marginTop:4}}>Your Wallet must cover the final server-calculated total.</T>
       <View style={{height:9}}/>
-      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&!S.addr.length)}/>
+      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
     </Card> : null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
