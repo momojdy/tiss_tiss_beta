@@ -267,7 +267,6 @@ function GroupOrderSheet({close}: {close: () => void}) {
       .subscribe();
     return ()=>{active=false;void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId]);
-  const groupSubtotal = S.cart.lines.reduce((sum: number, line: any) => sum + Number(line.p || 0) * Number(line.q || 0), 0);
 
   const invite = async () => {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
