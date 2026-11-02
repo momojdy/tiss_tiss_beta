@@ -73,6 +73,27 @@ function mapOrder(row: ServerOrder) {
   };
 }
 
+export async function fetchGoodiesOrderForNotification(orderId?: string, orderCode?: string) {
+  const {data: auth, error: authError} = await supabase.auth.getUser();
+  if (authError) throw authError;
+  if (!auth.user) throw new Error('Please sign in again.');
+  let query = supabase.from('goodies_orders')
+    .select('id,order_code,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
+    .eq('customer_id', auth.user.id);
+  if (orderId) query = query.eq('id', orderId);
+  else if (orderCode) query = query.eq('order_code', orderCode);
+  else return null;
+  const {data, error} = await query.maybeSingle();
+  if (error) throw error;
+  if (!data) return null;
+  const mapped = mapOrder(data as ServerOrder);
+  const cached = (S.orders || []).find((order: any) => order?.backendId === mapped.backendId);
+  const order = {...cached, ...mapped};
+  S.orders = [order, ...(S.orders || []).filter((item: any) => item?.backendId !== mapped.backendId)];
+  save(); emit();
+  return order.id;
+}
+
 export function startGoodiesSync() {
   let stopped = false;
   let userId: string | null = null;
