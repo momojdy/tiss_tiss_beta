@@ -32,6 +32,8 @@ export const fmtTime = (d: Date) => {
 export const fmtDay = (d: Date) => {
   try {return new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {month: 'short', day: 'numeric'}).format(d);} catch (e) {return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()] + ' ' + d.getDate();}
 };
+export const fmtStoreDay = (sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: STB[sid]?.scheduledOrderTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone, month: 'short', day: 'numeric'}).format(new Date(timestamp));
+export const fmtStoreTime = (sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: STB[sid]?.scheduledOrderTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone, hour: 'numeric', minute: '2-digit'}).format(new Date(timestamp));
 export const dp = (i: Item, off: number) => Math.round(i.p * (100 - off)) / 100;
 export const cname = (id: string, cats: {id: string; name: any}[]) => (cats.find(c => c.id === id) as any)?.name || 'All stores';
 const zoneOf = (t: string) => {let x = 0; for (let i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 97; return Math.round((x % 5) * 9) / 10;};
