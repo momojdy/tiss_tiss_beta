@@ -281,11 +281,13 @@ export function BusinessInfoPage() {
       </Pg>
       {picker ? (
         <View style={{ ...StyleSheet.absoluteFill, zIndex: 35, backgroundColor: t.bg, paddingTop: 60 }}>
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
           <View style={{ paddingHorizontal: 16, gap: 10, flex: 1 }}>
             <View style={s.row}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{picker === 'phone' ? 'Country code' : 'Country'}</Text><Pressable onPress={() => { setPicker(null); setCq(''); }}><Icon name="close" size={24} /></Pressable></View>
             <TextInput style={s.fld} value={cq} onChangeText={setCq} placeholder="Search" placeholderTextColor={t.mute} autoFocus />
-            <ScrollView keyboardShouldPersistTaps="handled">{list.map(c => <Pressable key={c.code} onPress={() => { set(picker === 'phone' ? 'phone_country' : 'country', c.code); setPicker(null); setCq(''); }} style={[s.ar, s.div]}><Text style={{ fontSize: 22 }}>{flagOf(c.code)}</Text><Text style={[s.rt, { flex: 1 }]}>{c.name}</Text>{picker === 'phone' ? <Text style={s.mut}>+{c.dial}</Text> : null}</Pressable>)}</ScrollView>
+            <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 24 }}>{list.map(c => <Pressable key={c.code} onPress={() => { set(picker === 'phone' ? 'phone_country' : 'country', c.code); setPicker(null); setCq(''); }} style={[s.ar, s.div]}><Text style={{ fontSize: 22 }}>{flagOf(c.code)}</Text><Text style={[s.rt, { flex: 1 }]}>{c.name}</Text>{picker === 'phone' ? <Text style={s.mut}>+{c.dial}</Text> : null}</Pressable>)}</ScrollView>
           </View>
+          </KeyboardAvoidingView>
         </View>
       ) : null}
     </>
