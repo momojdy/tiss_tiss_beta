@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { supabase } from '../../lib/supabase';
 
+const StatusBarCompat: any = StatusBar;
+
 type Props = {
   onBack: () => void;
   onOpen: (screen: 'accountSecurity' | 'personalInformation' | 'addresses' | 'language' | 'regionCurrency' | 'notifications' | 'privacy' | 'help' | 'about') => void;
@@ -56,7 +58,7 @@ export default function SettingsScreen({ onBack, onOpen, onSwitchAccount, onLogO
 
   return (
     <View style={styles.page}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBarCompat barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={onBack} hitSlop={10} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Back">
           <Ionicons name="chevron-back" size={24} color={INK} />
