@@ -112,7 +112,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       <View style={{marginTop: 18}}><Rail gap={14}>
         {cats.map(c => (
           <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: 68, alignItems: 'center'}}>
-            {c.art ? <Image source={{uri: c.art}} style={{width: 58, height: 58}} resizeMode="contain" /> : <Text style={{fontSize: 30}}>{c.emoji}</Text>}
+            {c.art ? <Image source={{uri: c.art}} style={{width: 48, height: 48}} resizeMode="contain" /> : <Text style={{fontSize: 30}}>{c.emoji}</Text>}
             <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{tx(c.name)}</T>
           </Pressable>
         ))}
