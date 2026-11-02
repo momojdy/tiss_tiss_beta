@@ -264,12 +264,12 @@ export function Checkout() {
   </>);
   if (S.cs === 1) body = (<>
     <T size={15} weight="800" style={{marginBottom: 8}}>{label('lbl.checkoutWhen', 'When do you want it?')}</T>
-    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">{label('lbl.checkoutAsap', 'ASAP')}</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : <T size={12.5} color={th.mut} style={{marginBottom: 10}}>{st.acceptScheduledOrders ? label("lbl.shopAuto1C7JJU5", "Choose a future slot. This shop's minimum advance time is already applied; the store receives the order for that selected time.") : 'This store is closed and does not accept orders for later.'}</T>}
+    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}><T weight="700">{label('lbl.checkoutAsap', 'ASAP')}</T><T size={12.5} color={th.mut}>{st.eta} min</T></Radio> : null}
     {st.acceptScheduledOrders ? <Card style={{marginTop:10}}>
       <Row sp style={{alignItems:'center'}}>
         <View style={{flex:1}}>
           <T weight="800">{S.sch ? label('lbl.checkoutScheduled', 'Scheduled order') : label('lbl.checkoutChooseDateTime', 'Choose a date & time')}</T>
-          <T size={12.5} color={th.mut} style={{marginTop:3}}>{S.sch ? fmtDay(new Date(S.sch))+', '+fmtTime(new Date(S.sch)) : (st.open ? label('lbl.checkoutTimeHint', 'Choose an exact time, or keep ASAP.') : label('lbl.checkoutTimeAuto', 'The store’s minimum advance time is applied automatically.'))}</T>
+          {S.sch ? <T size={12.5} color={th.mut} style={{marginTop:3}}>{fmtDay(new Date(S.sch))+', '+fmtTime(new Date(S.sch))}</T> : null}
         </View>
         <View style={{width:142}}><Cta small label={S.sch ? label('lbl.checkoutChangeTime', 'Change time') : label('lbl.checkoutChooseTime', 'Choose time')} onPress={() => require('../store').ui.sheet({kind:'schedule'})} /></View>
       </Row>
