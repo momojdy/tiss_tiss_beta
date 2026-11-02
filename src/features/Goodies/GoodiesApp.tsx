@@ -41,9 +41,10 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     let active = true;
     let stopSync: (() => void) | null = null;
     void (async () => {
+      const contentReady = loadContent();
       await load();
       setGoodiesLoaded(true);
-      await loadContent();
+      await contentReady;
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
     })();
