@@ -385,7 +385,7 @@ export function GoodiesStorePage() {
         {timePickerOpen ? <Modal visible transparent animationType="slide" onRequestClose={() => setTimePickerOpen(false)}><SheetShell title="Earliest order time" onClose={() => setTimePickerOpen(false)}>
           <DateTimePicker value={(() => { const d = new Date(); const [h,m] = (f.scheduledOrderStartTime || '10:00').split(':').map(Number); d.setHours(h,m,0,0); return d; })()} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => { if (date) set({ scheduledOrderStartTime: date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0') }); if (Platform.OS !== 'ios') setTimePickerOpen(false); }} />
           {Platform.OS === 'ios' ? <Btn label="Done" onPress={() => setTimePickerOpen(false)} /> : null}
-        </SheetShell> : null}
+        </SheetShell></Modal> : null}
       </View> : null}
       <Section title="Delivery pricing" />
       <Seg value={f.pricingMode === 'distance' ? 'By distance' : 'Fixed fee'} onChange={(v: string) => set({ pricingMode: v === 'By distance' ? 'distance' : 'fixed' })} items={['Fixed fee', 'By distance']} />
