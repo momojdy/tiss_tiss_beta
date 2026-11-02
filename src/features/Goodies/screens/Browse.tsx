@@ -61,9 +61,14 @@ function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string;
 }
 
 function Countdown() {
-  const th = useTheme();
-  const end = dealEnd(), [s, setS] = useState(end ? Math.max(0, Math.floor((end - Date.now()) / 1000)) : 2 * 3600 + 14 * 60 + 37);
-  useEffect(() => {const id = setInterval(() => setS(x => (end ? Math.max(0, Math.floor((end - Date.now()) / 1000)) : x > 0 ? x - 1 : 0)), 1000); return () => clearInterval(id);}, []);
+  const th = useTheme(), end = dealEnd();
+  const [s, setS] = useState(() => end && end > Date.now() ? Math.max(0, Math.floor((end - Date.now()) / 1000)) : 0);
+  useEffect(() => {
+    if (!end || end <= Date.now()) { setS(0); return; }
+    const id = setInterval(() => setS(Math.max(0, Math.floor((end - Date.now()) / 1000))), 1000);
+    return () => clearInterval(id);
+  }, [end]);
+  if (!end || end <= Date.now()) return null;
   const p = (n: number) => String(n).padStart(2, '0');
   return <View style={{backgroundColor: th.red, borderRadius: 12, paddingHorizontal: 9, paddingVertical: 4}}><T size={12} weight="800" color="#fff">{label('lbl.browseCountdown', 'Ends in {time}').replace('{time}', p(Math.floor(s / 3600)) + ':' + p(Math.floor((s % 3600) / 60)) + ':' + p(s % 60))}</T></View>;
 }
@@ -72,7 +77,7 @@ export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets();
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
   const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it), cats = categories();
-  const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals();
+  const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals(), activeDeals = dl.filter(d => IT[d[0]]);
   return (
     <View>
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingBottom: 10, paddingHorizontal: 16}}>
@@ -114,8 +119,7 @@ export function Home({onExit}: {onExit?: () => void}) {
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
       </View>
-      <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} />
-      <Rail>{dl.filter(d => IT[d[0]]).map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail>
+      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} /><View style={{paddingHorizontal: 16}}><Empty title="No flash deals" /></View></>}
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
@@ -322,13 +326,13 @@ export function Promos() {
     <View>
       <Bar title={label('lbl.promosTitle', 'Coupons and offers')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
-        {coupons().map((p: any) => (
+        {coupons().length ? coupons().map((p: any) => (
           <Card key={p.c}>
             <Row sp><T weight="700">{p.t}</T><Badge label={p.c} /></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
             <Row><Cta small ghost label={label('lbl.promosDetails', 'Details')} onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? label('lbl.cartApplied', 'Applied') : label('lbl.promosUse', 'Use this code')} onPress={() => usePromo(p.c)} /></Row>
           </Card>
-        ))}
+        )) : <Empty title="No coupons or offers" />}
       </View>
     </View>
   );
@@ -349,12 +353,12 @@ export function Notifs() {
     if (serverUserId.current && serverUserId.current !== auth.user.id) return;
     serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
-      .select('id,title,body,read,metadata,created_at,notification_type,feature_name')
-      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies')
+      .select('id,title,body,read,metadata,created_at,notification_type,feature_name,destination')
+      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').not('notification_type', 'like', 'goodies_ingredient_%')
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(error.message); return; }
-    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: 'track', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
+    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
   useEffect(() => {
@@ -417,9 +421,22 @@ export function Notifs() {
         else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
       }
     }
-    const order = S.orders.find((o: any) => o.backendId && o.backendId === n.metadata?.order_id);
-    if (order) go('track', order.id);
-    else tab('orders');
+    const destination = String(n.destination || '').toLowerCase();
+    const metadata = n.metadata || {};
+    if (destination.includes('ingredientrequest')) return;
+    if (destination.includes('order') || n.notification_type === 'goodies_order_status' || n.notification_type === 'goodies_order_update') {
+      const order = S.orders.find((o: any) => o.backendId && (o.backendId === metadata.order_id || o.id === metadata.order_code));
+      if (order) go('track', order.id);
+      else tab('orders');
+      return;
+    }
+    if (destination.includes('promos') || destination.includes('promotion') || destination.includes('coupon')) { go('promos'); return; }
+    if (destination.includes('address')) { go('addresses'); return; }
+    if (destination.includes('wallet') || destination.includes('payment')) { go('payments'); return; }
+    if (destination.includes('store') && (metadata.store_id || metadata.storeId)) { go('store', metadata.store_id || metadata.storeId); return; }
+    if (destination.includes('product') && (metadata.product_id || metadata.productId)) { go('product', metadata.product_id || metadata.productId); return; }
+    if (destination === 'goodies' || destination === 'goodieshome') { go('home'); return; }
+    go('notifs');
   };
   return (
     <View>
