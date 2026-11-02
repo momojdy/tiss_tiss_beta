@@ -4,7 +4,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from '.
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, addr} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
