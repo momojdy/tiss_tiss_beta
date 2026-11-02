@@ -159,7 +159,7 @@ function Addresses() {
     <View style={{paddingHorizontal: 16}}>
       {rows.map((a: any) => (
         <Card key={a.id}>
-          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <Badge color="#FD802E" label="Goodies" /> : null}</Row></Row>
+          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <Badge label="Goodies" /> : null}</Row></Row>
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.accountAddressNote', 'Note:')} {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
             <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
