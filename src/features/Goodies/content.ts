@@ -50,7 +50,7 @@ export async function loadContent() {
       });
       applyContent(payload);
       const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
-        .filter((url:any): url is string => typeof url === 'string' && /^https?:\\/\\//i.test(url));
+        .filter((url:any): url is string => typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://')));
       void Promise.allSettled(Array.from(new Set(imageUrls)).map(url => Image.prefetch(url)));
     }
     // A missing/temporarily unavailable published record must not erase the last
