@@ -224,6 +224,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [sharedItems, setSharedItems] = useState<any[]>([]);
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
   const [membershipError, setMembershipError] = useState('');
+  const [checkoutPreview, setCheckoutPreview] = useState<any>(null);
+  const [previewBusy, setPreviewBusy] = useState(false);
   const [currentUserId, setCurrentUserId] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -284,6 +286,14 @@ function GroupOrderSheet({close}: {close: () => void}) {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
     try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
     catch (_) {toast('Invite code: '+group.code);}
+  };
+  const reviewSharedOrder = async () => {
+    if(!group.serverBacked||!group.groupId){toast('Create or join a server-backed group order first.');return;}
+    setPreviewBusy(true); setCheckoutPreview(null);
+    const {data,error}=await supabase.rpc('goodies_group_order_checkout_preview',{p_group_id:group.groupId});
+    setPreviewBusy(false);
+    if(error){toast(error.message||'Could not validate the shared cart.');return;}
+    setCheckoutPreview(data);
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
@@ -352,7 +362,19 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Row sp><T weight="800">Shared items subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
         <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically when group members add or change items. Delivery and service fees are calculated at checkout.</T>
       </View>
+      <View style={{height:10}}/>
+      <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
     </Card>
+    {checkoutPreview ? <Card style={{marginBottom:12}}>
+      <T size={15} weight="800">Validated group cart</T>
+      <T size={12} color={th.mut} style={{marginTop:4}}>Store: {checkoutPreview.store_name} · {checkoutPreview.item_count} shared lines</T>
+      {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
+        <View style={{flex:1}}><T size={13} weight="700">{item.quantity}× {item.name}</T><T size={11} color={th.mut}>Current catalogue price</T></View>
+        <T size={13} weight="700">{money(Number(item.unit_price)*Number(item.quantity))}</T>
+      </Row>)}
+      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="800">Validated item subtotal</T><T weight="800">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <T size={11.5} color={th.mut} style={{marginTop:6}}>This checks item availability and current stock. It is not a final checkout quote or payment authorization.</T>
+    </Card>:null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
