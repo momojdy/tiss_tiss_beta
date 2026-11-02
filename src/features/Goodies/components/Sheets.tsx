@@ -217,10 +217,12 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
 
 function GroupOrderSheet({close}: {close: () => void}) {
   const th = useTheme();
-  const [name, setName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [groupBusy, setGroupBusy] = useState(false);
   const [sharedItems, setSharedItems] = useState<any[]>([]);
+  const [groupMembers, setGroupMembers] = useState<any[]>([]);
+  const [membershipError, setMembershipError] = useState('');
+  const [currentUserId, setCurrentUserId] = useState('');
   const [group, setGroup] = useState(() => {
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
@@ -253,17 +255,23 @@ function GroupOrderSheet({close}: {close: () => void}) {
     toast('You joined the group order.');
   };
   useEffect(() => {
-    if (!group.serverBacked || !group.groupId) {setSharedItems([]);return;}
     let active=true;
-    const load=async () => {
+    void supabase.auth.getUser().then(({data})=>{if(active)setCurrentUserId(data.user?.id||'');});
+    if (!group.serverBacked || !group.groupId) {setSharedItems([]);setGroupMembers([]);setMembershipError('');return ()=>{active=false;};}
+    const loadItems=async () => {
       const {data,error}=await supabase.from('goodies_group_order_items')
         .select('id,user_id,line_key,quantity,options,note,product:goodies_products(name,price,photo_url,emoji)')
         .eq('group_id',group.groupId).order('created_at',{ascending:true});
-      if(active&&!error)setSharedItems(data||[]);
+      if(active){if(error)toast('Could not refresh the shared cart: '+error.message);else setSharedItems(data||[]);}
     };
-    void load();
-    const channel=supabase.channel('goodies-group-cart-'+group.groupId)
-      .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void load();})
+    const loadMembers=async () => {
+      const {data,error}=await supabase.rpc('goodies_group_order_list_members',{p_group_id:group.groupId});
+      if(active){setMembershipError(error?.message||'');if(!error)setGroupMembers(data||[]);}
+    };
+    void loadItems(); void loadMembers();
+    const channel=supabase.channel('goodies-group-live-'+group.groupId)
+      .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void loadItems();})
+      .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_members',filter:'group_id=eq.'+group.groupId},()=>{void loadMembers();})
       .subscribe();
     return ()=>{active=false;void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId]);
@@ -298,27 +306,18 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <View style={{height:8}}/><Cta ghost label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </Card>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
-    <Row style={{gap:8, marginBottom:10}}>
-      <View style={{flex:1}}><Input value={name} onChange={setName} placeholder={label('lbl.sheetMemberPlaceholder', 'Enter member name')} /></View>
-      <View style={{width:88}}><Cta label={label('lbl.sheetAddMember', 'Add')} onPress={() => {
-        const n=name.trim(); if(!n) {toast(label('lbl.sheetEnterMemberName', 'Enter a member name')); return;}
-        if(group.members.some((m:any)=>m.name.toLowerCase()===n.toLowerCase())) {toast(label('lbl.sheetMemberDuplicate', 'That member is already in the group')); return;}
-        saveGroup({...group,members:[...group.members,{id:Date.now(),name:n,status:'Invited'}]}); setName('');
-      }} /></View>
-    </Row>
     <Card>
-      <Row style={{gap:10, alignItems:'center', paddingVertical:4}}>
-        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.br} /></View>
-        <View style={{flex:1}}><T weight="800">{group.host || S.pf.n || 'You'} (Host)</T><T size={12} color={th.mut}>{label('lbl.sheetGroupHostNote', 'Owns the group cart')}</T></View>
-        <Badge green label={label("lbl.sheetAuto5VK7FH", "Active")} />
-      </Row>
-      {group.members.map((m:any)=><View key={m.id} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:10,borderTopWidth:1,borderTopColor:th.line}}>
-        <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut} /></View>
-        <View style={{flex:1}}><T weight="700">{m.name}</T><T size={12} color={th.mut}>{label('lbl.sheetWaitingToAdd', 'Waiting to add items')}</T></View>
-        <Badge label={m.status || 'Invited'} />
-        <Pressable accessibilityRole="button" accessibilityLabel={'Remove '+m.name} onPress={()=>saveGroup({...group,members:group.members.filter((x:any)=>x.id!==m.id)})}><Icon name="x" size={18} color={th.red}/></Pressable>
-      </View>)}
-      {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}>{label('lbl.sheetNoMembers', 'No members yet. Invite friends or add their names to plan the group.')}</T> : null}
+      {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
+      {groupMembers.map((member:any)=>{
+        const uid=String(member.user_id||'');
+        const isYou=uid===currentUserId;
+        return <Row key={uid} style={{gap:10,alignItems:'center',paddingVertical:9}}>
+          <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut}/></View>
+          <View style={{flex:1}}><T weight="700">{isYou?'You':member.display_name}</T><T size={12} color={th.mut}>{member.is_host?'Host':'Joined group order'}</T></View>
+          {isYou?<Badge green label="You"/>:null}
+        </Row>;
+      })}
+      {!groupMembers.length&&!membershipError?<T size={13} color={th.mut} style={{paddingVertical:10}}>No one has joined this group yet. Share the invite code to add members.</T>:null}
     </Card>
     <View style={{height:12}}/>
     <T size={15} weight="800" style={{marginBottom:7}}>Live group cart</T>
