@@ -3,7 +3,7 @@ import {providerInfo} from './providers';
 import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt, syncGroupOrderCartLine, removeGroupOrderCartLine,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -76,7 +76,16 @@ export function qty(k: string, v: number) {
   for (let i = 0; i < l.length; i++) if (l[i].k === k) {
     const n = l[i].q + v, mx = l[i].byo ? 20 : IT[l[i].id].stock;
     if (n > mx && v > 0) {toast(label('lbl.actionOnlyAvailable', 'Only {count} available').replace('{count}', String(mx))); return;}
-    l[i].q = n; if (n < 1) l.splice(i, 1);
+    l[i].q = n;
+    const changedLine = {...l[i]};
+    if (n < 1) l.splice(i, 1);
+    const activeGroup = S.groupOrder;
+    if (activeGroup?.serverBacked && activeGroup?.groupId && activeGroup?.storeId === S.cart.sid) {
+      const sync = n < 1
+        ? removeGroupOrderCartLine(activeGroup.groupId, changedLine.k)
+        : syncGroupOrderCartLine(activeGroup.groupId, changedLine);
+      void sync.then(({error}: any) => {if (error) toast('Could not update the group cart: ' + error.message);});
+    }
     break;
   }
   if (!l.length) {S.cart.sid = null; S.promo = '';}
