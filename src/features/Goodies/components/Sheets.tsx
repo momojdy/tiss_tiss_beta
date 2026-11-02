@@ -87,7 +87,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isCenteredSheet = ['remove-item','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
     <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
-      <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+      <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
   if (isCenteredSheet) {
@@ -143,7 +143,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   configuredMinimum.setHours(minimumHour || 0,minimumMinute || 0,0,0);
   const hasHours = !!(hours && !hours.closed && opening && closing);
   const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
-  const closedDay = !hasHours && !noSchedule;
+  const closedDay = (!hasHours && !noSchedule);
   let startMinute = 8*60, endMinute = 22*60;
   if (hasHours) {
     const [oh,om] = opening.split(':').map(Number), [ch,cm] = closing.split(':').map(Number);
@@ -167,9 +167,10 @@ function ScheduleSheet({close}: {close: () => void}) {
   const latestMinute = Math.max(startMinute, endMinute-5);
   const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
   clampedWall.setHours(Math.floor(safeMinute/60),Math.ceil((safeMinute%60)/5)*5,0,0);
-  const selected = customValid ? customInstant.getTime() : closedDay ? 0 : zonedInstant(clampedWall).getTime();
-  const reason = closedDay
-    ? label('lbl.sheetClosedDayReason','This store is closed on that day. Choose another day.')
+  const noFutureSlot = closedDay || earliestMinute >= endMinute;
+  const selected = customValid ? customInstant.getTime() : noFutureSlot ? 0 : zonedInstant(clampedWall).getTime();
+  const reason = noFutureSlot
+    ? label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.')
     : !customWithinHours
       ? label('lbl.sheetClampOpeningHours','Time adjusted to fit this store’s opening hours.')
       : !customValid
