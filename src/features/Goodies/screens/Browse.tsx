@@ -35,6 +35,19 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   }
 }
 
+function CategoryTile({category, onPress}: {category: {id:string; name:any; emoji:string; art?:string|null}; onPress:()=>void}) {
+  const [failed, setFailed] = useState(false);
+  useEffect(() => setFailed(false), [category.art]);
+  return (
+    <Pressable onPress={onPress} style={{width:68,alignItems:'center'}}>
+      {category.art && !failed
+        ? <Image source={{uri:category.art}} onError={() => setFailed(true)} style={{width:48,height:48}} resizeMode="contain" />
+        : <View style={{width:48,height:48,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
+      <T size={11.5} weight="600" align="center" style={{marginTop:6,lineHeight:14}}>{tx(category.name)}</T>
+    </Pressable>
+  );
+}
+
 function promoGradient(kind: string): [string, string] {
   const preset = PROMO[kind as keyof typeof PROMO];
   if (preset) return [preset[0], preset[1]];
@@ -110,12 +123,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         </View>
       </View>
       <View style={{marginTop: 18}}><Rail gap={14}>
-        {cats.map(c => (
-          <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: 68, alignItems: 'center'}}>
-            {c.art ? <Image source={{uri: c.art}} style={{width: 48, height: 48}} resizeMode="contain" /> : <Text style={{fontSize: 30}}>{c.emoji}</Text>}
-            <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{tx(c.name)}</T>
-          </Pressable>
-        ))}
+        {cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}
       </Rail></View>
       <View style={{marginTop: 20}}><Rail>
         {pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}
@@ -126,7 +134,7 @@ export function Home({onExit}: {onExit?: () => void}) {
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
       </View>
-      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} link={tr('seeAll')} onLink={() => go('promos')} />}
+      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} link={tr('seeAll')} onLink={() => go('flashdeals')} />}
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
@@ -323,6 +331,20 @@ export function Search() {
       {head}
       <View style={{height: 8}} />
       {body}
+    </View>
+  );
+}
+
+export function FlashDeals() {
+  const activeDeals = deals().filter(d => IT[d[0]]);
+  return (
+    <View>
+      <Bar title={label('lbl.flash', tr('flashDeals'))} onBack={back} />
+      <View style={{paddingHorizontal:16}}>
+        {activeDeals.length ? <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>
+          {activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} grid />)}
+        </View> : <Empty title={label('lbl.flashEmptyTitle','No flash deals available')} text={label('lbl.flashEmptyBody','Check back soon for limited-time offers.')} />}
+      </View>
     </View>
   );
 }
