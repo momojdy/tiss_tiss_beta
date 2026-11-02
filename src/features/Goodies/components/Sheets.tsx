@@ -291,7 +291,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <Card style={{marginBottom:12}}>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
       {group.code ? <T size={12} color={th.mut} style={{marginTop:7}}>Server invitation · expires {new Date(group.expiresAt).toLocaleString()}</T> : <T size={12} color={th.mut} style={{marginTop:7}}>Create a server invitation for this store. Each new group order receives a fresh code.</T>}
-      {group.code ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
+      {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
       {group.serverBacked ? <View style={{height:8}}/> : null}
