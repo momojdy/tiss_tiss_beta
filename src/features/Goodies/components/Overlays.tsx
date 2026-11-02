@@ -1,5 +1,6 @@
 import React from 'react';
-import {Modal, View, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
+import {Modal, View, Pressable, KeyboardAvoidingView, Platform, Keyboard} from 'react-native';
+import {useEffect, useState} from 'react';
 
 /**
  * Shared overlay primitives for Goodies.
@@ -11,15 +12,23 @@ type BottomSheetProps = {
   onClose: () => void;
   children: React.ReactNode;
   maxHeight?: number | string;
+  keyboardAware?: boolean;
 };
 
-export function BottomSheet({visible, onClose, children, maxHeight = '90%'}: BottomSheetProps) {
+export function BottomSheet({visible, onClose, children, maxHeight = '90%', keyboardAware = false}: BottomSheetProps) {
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  useEffect(() => {
+    if (!keyboardAware) return;
+    const show = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow', () => setKeyboardVisible(true));
+    const hide = Keyboard.addListener(Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide', () => setKeyboardVisible(false));
+    return () => { show.remove(); hide.remove(); };
+  }, [keyboardAware]);
   return (
     <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
-      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
-        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
+      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={Platform.OS === 'ios' ? 12 : 0}>
+        <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: keyboardAware && keyboardVisible ? 'flex-start' : 'flex-end', paddingTop: keyboardAware && keyboardVisible ? 28 : 0}}>
           <Pressable accessibilityRole="button" accessibilityLabel="Close sheet" onPress={onClose} style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}} />
-          <View style={{width: '100%', maxHeight, flexShrink: 1, minHeight: 0}}>
+          <View style={{width: '100%', maxHeight: keyboardAware && keyboardVisible ? '68%' : maxHeight, flexShrink: 1, minHeight: 0}}>
             {children}
           </View>
         </View>
@@ -40,7 +49,7 @@ export function ConfirmDialog({visible, onClose, children, accessibilityLabel = 
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 22, paddingVertical: 24}}>
         <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onClose} style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}} />
-        <View style={{width: '100%', maxHeight: '80%', flexShrink: 1, minHeight: 0}}>
+        <View style={{width: '100%', maxWidth: 360, maxHeight: '80%', flexShrink: 1, minHeight: 0}}>
           {children}
         </View>
       </View>
