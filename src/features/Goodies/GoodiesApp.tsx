@@ -2,7 +2,7 @@
      <GoodiesApp onExit={() => navigation.goBack()} />
    Navigation is an internal stack that mirrors v24 (S.stack). Native back (Android) and left-edge swipe (iOS and Android) both call navBack(). */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions} from 'react-native';
+import {View, Text, Pressable, ScrollView, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions, AppState} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
@@ -50,6 +50,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     })();
     if (embedded) S.stack = [{r: 'home', u: Date.now()}];
     /* order progress ticker (v24: every second) */
+    const appStateSub = AppState.addEventListener('change', next => { if (next === 'active') void loadContent(); });
     const id = setInterval(() => {
       let ch = false;
       S.orders.forEach((o: any) => {
@@ -64,7 +65,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       });
       if (ch) {save(); emit();}
     }, 1000);
-    return () => {active = false; clearInterval(id); stopSync?.();};
+    return () => {active = false; appStateSub.remove(); clearInterval(id); stopSync?.();};
   }, []);
 
   const handleBack = () => {
