@@ -8,7 +8,7 @@ import {Icon} from '../components/Icon';
 import {T, Circ, Cta, Empty, Stepper, useTheme} from '../components/ui';
 import {S, STB, money, cnt, emit} from '../store';
 import {back, browse, go, tab} from '../actions';
-import {ASSETS, LAYOUT, label} from '../content';
+import {ASSETS, LAYOUT, label, stripeColor} from '../content';
 import {BD, Builder, BItem, bGet, bDraft, setBD, units, itemOf, bBreak, bCheck, bzDirty, BYO, bzAdd, bzSub, bzSize, bzUndo, bzQty, bzNote, bzResetAsk, bzAddOrder, bzCancel, bzAnother, bzShop} from './engine';
 import {PSZ, bzr, hs, clamp, shade, pizzaBase, defsXml, shreds, iconXml, hasSymbol} from './pizzaArt';
 
@@ -177,6 +177,7 @@ export function Stage({b, fin}: {b: Builder; fin?: boolean}) {
 const hint = (g: any) => {const rq = g.req || g.min > 0, mn = rq ? Math.max(1, g.min) : 0, status = rq ? label('lbl.byoRequired', 'Required') : label('lbl.byoOptional', 'Optional'); if (g.kind === 'one') return label('lbl.byoChooseOne', 'Choose 1') + ' · ' + status; return (mn ? label('lbl.byoChoose', 'Choose') + ' ' + mn + (g.max > mn ? ' ' + label('lbl.byoTo', 'to') + ' ' + g.max : '') : label('lbl.byoUpTo', 'Up to') + ' ' + g.max) + ' · ' + status;};
 function TileIcon({it, type}: {it: BItem; type: string}) {
   const th = useTheme(), a = thumbAsset(it, type);
+  if (it.img?.data) return <Image source={{uri: it.img.data}} style={{width: 42, height: 42}} resizeMode="contain" />;
   if (a) return <Image source={{uri: a.u}} style={{width: 42, height: 42}} resizeMode="contain" />;
   if (type === 'pizza') {const art = pizzaArtOf(it); if (hasSymbol(art)) return <SvgXml width={36} height={36} xml={iconXml(art)} />;}
   return <View style={{width: 26, height: 26, borderRadius: 13, backgroundColor: it.col, borderWidth: 2, borderColor: 'rgba(0,0,0,.12)'}} />;
@@ -186,7 +187,7 @@ function OptTile({b, g, it}: {b: Builder; g: any; it: BItem}) {
   return (
     <View style={{width: 96, opacity: it.avail ? 1 : 0.45}}>
       <Pressable accessibilityRole="button" accessibilityLabel={it.name + ', ' + lab + (on ? ', selected ' + q : '')} accessibilityState={{selected: on, disabled: !it.avail}} disabled={!it.avail} onPress={() => bzAdd(g.id, it.id)} style={{alignItems: 'center', gap: 4, paddingTop: 10, paddingBottom: 8, paddingHorizontal: 4, borderRadius: 16, borderWidth: 2, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, minHeight: 100}}>
-        <View style={{width: 46, height: 46, borderRadius: 23, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><TileIcon it={it} type={b.type} /></View>
+        <View style={{width: 46, height: 46, borderRadius: 23, backgroundColor: it.bg || th.soft, alignItems: 'center', justifyContent: 'center'}}><TileIcon it={it} type={b.type} /></View>
         <T size={12.5} weight="700" align="center" style={{lineHeight: 14}}>{it.name}</T>
         <T size={11.5} color={on ? th.brd : th.mut} weight={on ? '700' : undefined}>{lab}</T>
       </Pressable>
@@ -286,7 +287,7 @@ function Header({title, sub, onBack}: {title: string; sub?: string; onBack: () =
           <View style={{flex: 1, justifyContent: 'center'}}><T size={20} weight="800" style={{lineHeight: 22}}>{title}</T>{sub ? <T size={12} color={th.mut}>{sub}</T> : null}</View>
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#FD802E'}} />
+      <View style={{height: 20, backgroundColor: stripeColor()}} />
       <View style={{height: 15}} />
     </>
   );

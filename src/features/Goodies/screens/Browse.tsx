@@ -5,7 +5,7 @@ import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
 import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistance} from '../store';
-import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes} from '../content';
+import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor} from '../content';
 import {Image} from 'react-native';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
@@ -337,7 +337,7 @@ export function Search() {
           {r.q ? <Circ icon="x" label={label('lbl.browseClearSearch', 'Clear search')} onPress={() => setQ('')} /> : null}
         </View>
       </View>
-      <View style={{height: 20, backgroundColor: '#FD802E'}} />
+      <View style={{height: 20, backgroundColor: stripeColor()}} />
       <View style={{height: 15}} />
       {head}
       <View style={{height: 8}} />
