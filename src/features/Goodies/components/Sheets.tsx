@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
+import {CameraView, useCameraPermissions} from 'expo-camera';
+import QRCode from 'react-native-qrcode-svg';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
@@ -223,6 +225,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
   const [membershipError, setMembershipError] = useState('');
   const [currentUserId, setCurrentUserId] = useState('');
+  const [scannerOpen, setScannerOpen] = useState(false);
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [group, setGroup] = useState(() => {
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
@@ -287,6 +291,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <Card style={{marginBottom:12}}>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
       {group.code ? <T size={12} color={th.mut} style={{marginTop:7}}>Server invitation · expires {new Date(group.expiresAt).toLocaleString()}</T> : <T size={12} color={th.mut} style={{marginTop:7}}>Create a server invitation for this store. Each new group order receives a fresh code.</T>}
+      {group.code ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
       {group.serverBacked ? <View style={{height:8}}/> : null}
@@ -303,7 +308,11 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={14} weight="800">Join a group order</T>
       <T size={12} color={th.mut} style={{marginTop:4,marginBottom:8}}>Enter the invite code shared by your friend to join their active order.</T>
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
-      <View style={{height:8}}/><Cta ghost label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
+      <View style={{height:8}}/><Cta ghost label="Scan QR code" onPress={async()=>{
+        if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
+        setScannerOpen(true);
+      }} />
+      <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </Card>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <Card>
@@ -344,6 +353,20 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
     <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={() => {S.groupOrder=null; save(); emit(); close(); toast(label('lbl.sheetGroupEnded', 'Group order ended'));}} />
+    <Modal visible={scannerOpen} animationType="slide" onRequestClose={()=>setScannerOpen(false)}>
+      <View style={{flex:1,backgroundColor:'#000000'}}>
+        <CameraView style={{flex:1}} facing="back" barcodeScannerSettings={{barcodeTypes:['qr']}} onBarcodeScanned={({data})=>{
+          setScannerOpen(false);
+          const code=String(data||'').trim().toUpperCase();
+          setInviteCode(code);
+          toast('QR code scanned. Review the invite code and tap Join group order.');
+        }}/>
+        <View style={{padding:18,backgroundColor:'#111111'}}>
+          <T color="#FFFFFF" weight="700" textAlign="center">Scan a Wantiss group invite QR code</T>
+          <Cta label="Close scanner" onPress={()=>setScannerOpen(false)}/>
+        </View>
+      </View>
+    </Modal>
   </>;
 }
 
