@@ -19,12 +19,15 @@ const cname = (id: string) => catName(id);
 function CachedContentImage({uri, style, contentFit = 'contain', onFail}: {uri: string; style: any; contentFit?: 'contain'|'cover'; onFail?: () => void}) {
   const [failed, setFailed] = useState(false);
   const [retried, setRetried] = useState(false);
-  useEffect(() => { setFailed(false); setRetried(false); }, [uri]);
+  const [reloadKey, setReloadKey] = useState(0);
+  useEffect(() => { setFailed(false); setRetried(false); setReloadKey(0); }, [uri]);
   if (failed) return null;
-  return <ExpoImage source={{uri}} style={style} contentFit={contentFit} cachePolicy="disk" recyclingKey={uri} transition={120}
-    onError={(_error, retry) => {
-      if (!retried) { setRetried(true); void loadContent().finally(() => retry()); }
-      else { setFailed(true); onFail?.(); }
+  return <ExpoImage key={uri + ':' + reloadKey} source={{uri}} style={style} contentFit={contentFit} cachePolicy="disk" recyclingKey={uri} transition={120}
+    onError={() => {
+      if (!retried) {
+        setRetried(true);
+        void loadContent().finally(() => setReloadKey(value => value + 1));
+      } else { setFailed(true); onFail?.(); }
     }} />;
 }
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
@@ -351,6 +354,8 @@ export function Search() {
 
 export function FlashDeals() {
   const th = useTheme();
+  const [, setContentVersion] = useState(0);
+  useEffect(() => onContent(() => setContentVersion(value => value + 1)), []);
   const activeDeals = deals().filter(d => IT[d[0]]);
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
