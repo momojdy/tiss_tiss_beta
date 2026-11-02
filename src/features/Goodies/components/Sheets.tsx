@@ -226,6 +226,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [membershipError, setMembershipError] = useState('');
   const [checkoutPreview, setCheckoutPreview] = useState<any>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
+  const [groupCheckoutBusy, setGroupCheckoutBusy] = useState(false);
   const [currentUserId, setCurrentUserId] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -297,6 +298,28 @@ function GroupOrderSheet({close}: {close: () => void}) {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
     try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
     catch (_) {toast('Invite code: '+group.code);}
+  };
+  const checkoutGroupOrder = async () => {
+    if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
+    if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
+    if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
+    if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
+    setGroupCheckoutBusy(true);
+    const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
+      p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
+      p_group_id:group.groupId,
+      p_order_type:'pickup',
+      p_scheduled_for:null,
+      p_address:null,
+      p_contact_phone:S.pf.ph,
+      p_tip:0,
+      p_notes:null
+    });
+    setGroupCheckoutBusy(false);
+    const order=Array.isArray(data)?data[0]:data;
+    if(error||!order?.id){toast(error?.message||'Group order checkout failed.');return;}
+    toast('Group order placed. Order '+(order.order_code||order.id)+'. Paid with Wantiss Wallet.');
+    S.groupOrder=null;save();emit();close();
   };
   const reviewSharedOrder = async () => {
     if(!group.serverBacked||!group.groupId){toast('Create or join a server-backed group order first.');return;}
@@ -388,6 +411,13 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="800">Validated item subtotal</T><T weight="800">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
       <T size={11.5} color={th.mut} style={{marginTop:6}}>Prices include validated size, drink and active deal options. Delivery/service fees and payment are still handled at checkout.</T>
     </Card>:null}
+    {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <Card style={{marginBottom:12}}>
+      <T size={15} weight="800">Host checkout</T>
+      <T size={12} color={th.mut} style={{marginTop:5}}>Pickup orders only in this checkout step. Payment is taken from the host’s Wantiss Wallet; delivery checkout is not enabled here yet.</T>
+      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
+      <View style={{height:9}}/>
+      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||Number(S.wallet||0)<Number(checkoutPreview.subtotal||0)}/>
+    </Card> : null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
