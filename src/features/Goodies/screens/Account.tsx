@@ -79,7 +79,7 @@ function Addresses() {
   const th = useTheme(), [edit, setEdit] = useState<any>(null), [busy, setBusy] = useState(false);
   useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(e?.message || 'Could not load saved addresses.')); }, []);
   const rows = S.addr || [];
-  const countryName = (cc: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || 'Other';
+  const countryName = (cc: string, fallback?: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || (fallback && fallback !== 'Other' ? fallback : 'Other');
   const selectForGoodies = async (a: any) => {
     if (busy) return;
     setBusy(true);
@@ -108,7 +108,7 @@ function Addresses() {
       const payload = {
         recipient_name: String(edit.l || 'Home').trim().slice(0, 80) || 'Home',
         phone_number: String(edit.phone || S.pf.ph || '').trim(),
-        country: countryName(edit.cc || 'HT'),
+        country: countryName(edit.cc || 'HT', edit.country),
         department: String(edit.department || '').trim(),
         city,
         street_address: street,
