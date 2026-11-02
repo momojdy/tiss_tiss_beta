@@ -120,7 +120,7 @@ function liveStore(r: any, items: Item[]): Store {
     eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
     pr: r.promo || '', k: r.kind || '', it: items, open: st.open, h: st.h, nx: st.nx, far: false, live: true,
     logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, acceptScheduledOrders: !!r.accept_scheduled_orders,
-    scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduleHours: r.hours || undefined,
+    scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || 'UTC'), scheduleHours: r.hours || undefined,
     businessName: r.store_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
     businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', maxDeliveryDistanceKm: r.delivery_max_distance_km == null ? null : Number(r.delivery_max_distance_km), distanceReady: false, distanceAddressKey: '',
     get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.store_name || 'Store';},
@@ -139,7 +139,7 @@ let liveTimer: any = null;
 export async function refreshLiveSchedules() {
   try {
     const {data: rows, error} = await supabase.from('goodies_store_schedules')
-      .select('business_id,store_id,description,phone,email,website,address,city,country,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_max_distance_km,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
+      .select('business_id,store_id,description,phone,email,website,address,city,country,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_max_distance_km,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
       .eq('is_live', true);
     if (error) throw error;
     const stores: any[] = rows || [], prods: any[] = [];
