@@ -52,6 +52,15 @@ export function Store({id}: {id: string}) {
           <Cta small ghost label={label('lbl.storeInfo', 'Store info')} onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
           <Cta small ghost label={label('lbl.messageStore', 'Message store')} onPress={() => go('contact', {storeContact: true, storeId: id})} />
         </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')}
+          onPress={() => go('grouporder')}
+          style={{flexDirection:'row',alignItems:'center',gap:7,alignSelf:'flex-start',marginTop:8,paddingVertical:5,paddingHorizontal:2}}
+        >
+          <Icon name="users" size={15} color={th.mut} />
+          <T size={12.5} weight="600" color={th.mut}>{label('lbl.storeGroupOrder', 'Order together')}</T>
+        </Pressable>
         <View style={{marginTop: 14}}><Input value={S.ss[id] || ''} onChange={v => {S.ss[id] = v; emit();}} placeholder={label('lbl.storeSearch', 'Search in ' + s.n)} /></View>
       </View>
       <View style={{marginTop: 8}}><Chips list={tabs} on={t} onPick={k => {S.ss[id + 't'] = k; emit();}} /></View>
