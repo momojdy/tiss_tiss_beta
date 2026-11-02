@@ -54,7 +54,7 @@ Deno.serve(async (req: Request) => {
     if (!store) return reply({ error: "This store is not accepting delivery orders." }, 404);
     const shopAddress = [store.address, store.city, store.country].filter(Boolean).join(", ");
     if (!shopAddress) return reply({ error: "The shop needs a complete business address before distance delivery can be enabled." }, 409);
-    const customerAddress = [address.t, address.apt, address.inst].filter(Boolean).join(", ");
+    const customerAddress = [address.t, address.apt, address.city, address.department, address.country].filter(Boolean).join(", ");
     const [origin, destination] = await Promise.all([
       geocode(shopAddress, geoKey),
       geocode(customerAddress, geoKey),
@@ -69,7 +69,7 @@ Deno.serve(async (req: Request) => {
     const distanceM = Number(route?.features?.[0]?.properties?.distance);
     if (!Number.isFinite(distanceM) || distanceM <= 0) throw new Error("No driving route was found for this address.");
     const km = distanceM / 1000;
-    if (body.distance_only === true) return reply({ distance_km: Number(km.toFixed(2)) });
+    if (body.distance_only === true) return reply({ distance_km: Number(km.toFixed(2)), distance_m: Math.round(distanceM) });
     const maxDistance = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
     if (maxDistance != null && km > maxDistance) {
       return reply({ error: "This address is outside the shop's delivery area.", outside_delivery_area: true, distance_km: Number(km.toFixed(2)) }, 422);

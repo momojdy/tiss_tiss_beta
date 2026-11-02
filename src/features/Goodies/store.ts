@@ -378,17 +378,21 @@ export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid
 export async function refreshStoreDistance(storeId: string, address: Address | null = addr()) {
   const store = STB[storeId];
   if (!store?.live || !address?.t?.trim()) return null;
-  const addressKey = JSON.stringify({t: address.t, apt: address.apt, inst: address.inst});
+  const addressKey = JSON.stringify({t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country});
   if (store.distanceReady && store.distanceAddressKey === addressKey) return store.km;
+  store.distanceError = '';
   const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
-    body: {store_id: storeId, address: {t: address.t, apt: address.apt, inst: address.inst}, distance_only: true},
+    body: {store_id: storeId, address: {t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country}, distance_only: true},
   });
-  if (error) throw error;
+  if (error) {store.distanceError = error.message || 'Distance is unavailable for this address.'; emit(); throw error;}
+  const distanceMeters = Number(data?.distance_m);
   const distance = Number(data?.distance_km);
-  if (!Number.isFinite(distance) || distance < 0) throw new Error(data?.error || 'Distance is unavailable for this address.');
-  store.km = Math.round(distance * 1000) / 1000;
+  const meters = Number.isFinite(distanceMeters) && distanceMeters >= 0 ? Math.round(distanceMeters) : Number.isFinite(distance) && distance >= 0 ? Math.round(distance * 1000) : NaN;
+  if (!Number.isFinite(meters)) {store.distanceError = data?.error || 'Distance is unavailable for this address.'; emit(); throw new Error(store.distanceError);}
+  store.km = meters / 1000;
   store.far = store.maxDeliveryDistanceKm != null && distance > store.maxDeliveryDistanceKm;
   store.distanceReady = true;
+  store.distanceError = '';
   store.distanceAddressKey = addressKey;
   emit();
   return store.km;
@@ -397,7 +401,7 @@ export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
     /* Live stores have no geo data yet, so no invented distance or ETA padding. */
-    if (s.live) {const a = addr(); const key = a ? JSON.stringify({t:a.t,apt:a.apt,inst:a.inst}) : ''; if (s.distanceAddressKey !== key) {s.km = 0; s.distanceReady = false; s.distanceAddressKey = key;} s.eta = s.eta0; s.far = false; return;}
+    if (s.live) {const a = addr(); const key = a ? JSON.stringify({t:a.t,apt:a.apt,inst:a.inst}) : ''; if (s.distanceAddressKey !== key) {s.km = 0; s.distanceReady = false; s.distanceError = ''; s.distanceAddressKey = key;} s.eta = s.eta0; s.far = false; return;}
     s.km = Math.round((s.km0 + z) * 10) / 10;
     const q = s.eta0.split('–');
     s.eta = (+q[0] + d) + '–' + (+q[1] + d);
