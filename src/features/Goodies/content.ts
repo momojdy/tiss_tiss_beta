@@ -31,6 +31,7 @@ export async function loadContent() {
     const payload: any = record?.payload;
     if (payload && payload.v === 5) {
       const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
+      const previous = C;
       const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
       imageLists.forEach(([list, field]) => {
         (payload[list] || []).forEach((item: any) => {
@@ -39,20 +40,19 @@ export async function loadContent() {
           const key = image.assetKey || image.asset_key;
           if (key && assetByKey.has(key)) image.data = assetByKey.get(key);
           else if (!image.data && typeof image.url === 'string') image.data = image.url;
+          else if (!image.data) {
+            const oldItem = (previous?.[list] || []).find((candidate: any) => candidate.id === item.id);
+            const oldImage = oldItem?.[field];
+            if (oldImage?.data) image.data = oldImage.data;
+          }
         });
       });
       applyContent(payload);
-    } else {
-      C = null;
-      Object.keys(ASSETS).forEach(k => delete ASSETS[k]);
-      Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
-      subs.forEach(f => f());
     }
+    // A missing/temporarily unavailable published record must not erase the last
+    // successfully loaded customer content and its image URLs.
   } catch {
-    C = null;
-    Object.keys(ASSETS).forEach(k => delete ASSETS[k]);
-    Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
-    subs.forEach(f => f());
+    // Keep the last known published content visible during transient network errors.
   }
 }
 export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); }
