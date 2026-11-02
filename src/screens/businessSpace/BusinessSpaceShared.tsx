@@ -536,12 +536,12 @@ export function SheetShell({ title, onClose, children, tall }: any) {
       <Pressable style={{ ...StyleSheet.absoluteFill, backgroundColor: t.scrim }} onPress={onClose} />
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <Animated.View style={{ transform: [{ translateY }], backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingTop: 10, paddingBottom: ins.bottom + 16, maxHeight: H * (tall ? 0.9 : 0.8) }}>
-          <View {...pan.panHandlers}>
-            <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
-            <View style={[s.row, { marginBottom: 6 }]}>
-              <View {...pan.panHandlers} style={{ flex: 1 }}><Text style={[s.h1, { fontSize: 20 }]}>{displayText(title)}</Text></View>
-              <Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable>
+          <View style={[s.row, { marginBottom: 6 }]}>
+            <View {...pan.panHandlers} style={{ flex: 1 }}>
+              <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
+              <Text style={[s.h1, { fontSize: 20 }]}>{displayText(title)}</Text>
             </View>
+            <Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable>
           </View>
           <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
         </Animated.View>
