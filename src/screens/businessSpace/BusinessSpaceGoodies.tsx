@@ -606,33 +606,45 @@ export function GoodiesProductsPage() {
 export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [errs, setErrs] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false), [loadAttempt, setLoadAttempt] = useState(0);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(0), [selectedItem, setSelectedItem] = useState<{ gi: number; ii: number } | null>(null);
   useEffect(() => {
     let active = true;
     setLoading(true); setLoadError(''); setB(null);
-    Promise.all([goodiesApi.listBuilders(app.biz.id), goodiesApi.library()]).then(([rows, library]) => {
-      if (!active) return;
-      const attachAssets = (builder: GBuilder): GBuilder => ({
-        ...builder,
-        groups: builder.groups.map(group => ({
-          ...group,
-          items: group.items.map(item => ({
-            ...item,
-            assetUrl: item.assetUrl || library.find(asset => asset.id === item.assetId)?.assetUrl || null,
-          })),
+    const attachAssets = (builder: GBuilder, library: any[]): GBuilder => ({
+      ...builder,
+      groups: builder.groups.map(group => ({
+        ...group,
+        items: group.items.map(item => ({
+          ...item,
+          assetUrl: item.assetUrl || library.find(asset => asset.id === item.assetId)?.assetUrl || null,
         })),
-      });
-      const l = rows.map(attachAssets);
-      setAll(l);
-      setB(createType ? attachAssets(newBuilder(createType)) : id ? l.find(x => x.id === id) || null : null);
-    }).catch(e => {
-      if (active) setLoadError(errText(e));
-    }).finally(() => { if (active) setLoading(false); });
+      })),
+    });
+    (async () => {
+      try {
+        const rows = await goodiesApi.listBuilders(app.biz.id);
+        if (!active) return;
+        const initial = createType ? newBuilder(createType) : id ? rows.find(x => x.id === id) || null : null;
+        setAll(rows);
+        setB(initial);
+        setLoading(false);
+        try {
+          const library = await goodiesApi.library();
+          if (!active) return;
+          setAll(current => current.map(builder => attachAssets(builder, library)));
+          setB(current => current ? attachAssets(current, library) : current);
+        } catch {
+          // The builder remains usable when optional library metadata is unavailable.
+        }
+      } catch (e) {
+        if (active) { setLoadError(errText(e)); setLoading(false); }
+      }
+    })();
     return () => { active = false; };
-  }, [app.biz.id, id, createType]);
+  }, [app.biz.id, id, createType, loadAttempt]);
   if (loading) return <Pg title="Custom product" onBack={app.back}><Skel h={180} /><Skel h={220} /></Pg>;
-  if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); Promise.all([goodiesApi.listBuilders(app.biz.id), goodiesApi.library()]).then(([rows, library]) => { const attachAssets = (builder: GBuilder): GBuilder => ({ ...builder, groups: builder.groups.map(group => ({ ...group, items: group.items.map(item => ({ ...item, assetUrl: item.assetUrl || library.find(asset => asset.id === item.assetId)?.assetUrl || null })) })) }); const l = rows.map(attachAssets); setAll(l); setB(createType ? attachAssets(newBuilder(createType)) : id ? l.find(x => x.id === id) || null : null); }).catch(e => setLoadError(errText(e))).finally(() => setLoading(false)); }} /></Pg>;
+  if (loadError) return <Pg title="Custom product" onBack={app.back}><ErrBox e={loadError} retry={() => { setLoading(true); setLoadError(''); setLoadAttempt(v => v + 1); }} /></Pg>;
   if ((!id && !createType) || !b) return <Pg title="Custom product" onBack={app.back}><Empty icon="tune-variant" title="Custom product unavailable" hint="This custom product could not be found for this store. Return to Products and add a custom product there." cta="Back to Products" onCta={() => app.go('goodiesProducts')} /></Pg>;
   const up = (p: Partial<GBuilder>) => setB({ ...b, ...p });
   const upG = (gi: number, p: Partial<GGroup>) => up({ groups: b.groups.map((g, i) => (i === gi ? { ...g, ...p } : g)) });
