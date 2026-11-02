@@ -471,6 +471,19 @@ export function navBack(): 'exit' | void {
 }
 
 /* ---------- cart ops ---------- */
+export async function syncGroupOrderCartLine(groupId: string, line: CartLine) {
+  const productId = IT[line.id] ? line.id : '';
+  if (!productId) return {error: new Error('This cart item is not linked to a live catalogue product.')};
+  return supabase.rpc('goodies_group_order_upsert_item', {
+    p_group_id: groupId,
+    p_product_id: productId,
+    p_line_key: line.k,
+    p_quantity: line.q,
+    p_options: line.options || {},
+    p_note: line.nt || null,
+  });
+}
+
 export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; off?: number; note?: string}) {
   if (!canBuy(i)) return;
   const c = S.cart;
@@ -482,7 +495,15 @@ export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; o
   const k = [i.id, o.size, o.drink, o.off || 0, o.note || ''].join('|'), l = c.lines.filter((x: CartLine) => x.k === k)[0];
   if (l) { l.q += o.q; if (!l.photo && i.photo) l.photo = i.photo; }
   else c.lines.push({k, id: i.id, n: i.n, e: i.e, photo: i.photo || null, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', '), options: {size: ['restaurants', 'bakery', 'beverages'].includes(STB[i.s].c) ? ((o.size || 0) > 0 ? 'large' : 'regular') : null, drink: !!o.drink, discount_pct: Number(o.off || 0)}});
-  S.bump = 1; toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
+  S.bump = 1;
+  const activeGroup = S.groupOrder;
+  if (activeGroup?.serverBacked && activeGroup?.groupId && activeGroup?.storeId === i.s) {
+    const groupLine = c.lines.find((x: CartLine) => x.k === k);
+    if (groupLine) void syncGroupOrderCartLine(activeGroup.groupId, groupLine).then(({error}) => {
+      if (error) toast('Could not sync this item to the group cart: ' + error.message);
+    });
+  }
+  toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
 }
 export function reorderLines(o: Order) {
   const s = STB[o.sid], miss: string[] = [], ok: CartLine[] = [];
