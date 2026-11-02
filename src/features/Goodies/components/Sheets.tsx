@@ -13,6 +13,7 @@ import {rgText, importContent, clearContent, hasContent, label} from '../content
 import {TextInput, useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {BottomSheet, ConfirmDialog} from './Overlays';
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const th = useTheme(), insets = useSafeAreaInsets(), {height: windowHeight} = useWindowDimensions();
@@ -84,18 +85,15 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = k === 'remove-item' || k === 'clear';
-  return (
-    <Modal transparent animationType="slide" onRequestClose={close} statusBarTranslucent>
-      <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
-        <View style={{flex:1, backgroundColor:'rgba(0,0,0,.5)', justifyContent:isCenteredSheet?'center':'flex-end', alignItems:isCenteredSheet?'center':'stretch', paddingHorizontal:isCenteredSheet?22:0}}>
-          <Pressable onPress={close} accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close sheet")} style={{position:'absolute',top:0,left:0,right:0,bottom:0}} />
-          <View style={{width:isCenteredSheet?'100%':'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
-            <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
+  const sheetBody = (
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
+      <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
+    </View>
   );
+  if (isCenteredSheet) {
+    return <ConfirmDialog visible onClose={close} accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close dialog")}>{sheetBody}</ConfirmDialog>;
+  }
+  return <BottomSheet visible onClose={close} maxHeight={k==='schedule' ? Math.min(windowHeight * 0.86, 760) : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
 function ScheduleSheet({close}: {close: () => void}) {
