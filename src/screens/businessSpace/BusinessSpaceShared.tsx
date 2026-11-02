@@ -517,15 +517,34 @@ export function Pg({ title, onBack, right, children, scroll = true, refreshing, 
 /** Short bottom sheet used for forms and menus. */
 export function SheetShell({ title, onClose, children, tall }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets(), { height: H } = useWindowDimensions();
+  const translateY = useRef(new Animated.Value(0)).current, startY = useRef(0), onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+  const close = useCallback(() => Animated.timing(translateY, { toValue: H, duration: 180, useNativeDriver: true }).start(({ finished }) => { if (finished) onCloseRef.current(); }), [H, translateY]);
+  const pan = useRef(PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, g: any) => g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx),
+    onPanResponderGrant: () => { translateY.stopAnimation((v: number) => { startY.current = v; }); },
+    onPanResponderMove: (_: any, g: any) => translateY.setValue(Math.max(0, startY.current + g.dy)),
+    onPanResponderRelease: (_: any, g: any) => {
+      if (g.dy > 80 || g.vy > 1.2) close();
+      else Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start();
+    },
+    onPanResponderTerminate: () => Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 0 }).start(),
+  })).current;
   return (
     <View style={{ ...StyleSheet.absoluteFill, zIndex: 30, justifyContent: 'flex-end' }}>
       <Pressable style={{ ...StyleSheet.absoluteFill, backgroundColor: t.scrim }} onPress={onClose} />
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <View style={{ backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingTop: 10, paddingBottom: ins.bottom + 16, maxHeight: H * (tall ? 0.9 : 0.8) }}>
-          <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
-          <View style={[s.row, { marginBottom: 6 }]}><Text style={[s.h1, { flex: 1, fontSize: 20 }]}>{displayText(title)}</Text><Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable></View>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <Animated.View style={{ transform: [{ translateY }], backgroundColor: t.card, borderTopLeftRadius: 24, borderTopRightRadius: 24, paddingHorizontal: 18, paddingTop: 10, paddingBottom: ins.bottom + 16, maxHeight: H * (tall ? 0.9 : 0.8) }}>
+          <View {...pan.panHandlers}>
+            <View style={{ alignSelf: 'center', width: 40, height: 5, borderRadius: 3, backgroundColor: t.line, marginBottom: 10 }} />
+            <View style={[s.row, { marginBottom: 6 }]}>
+              <View {...pan.panHandlers} style={{ flex: 1 }}><Text style={[s.h1, { fontSize: 20 }]}>{displayText(title)}</Text></View>
+              <Pressable onPress={onClose} accessibilityLabel="Close"><Icon name="close" size={24} /></Pressable>
+            </View>
+          </View>
           <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>{children}</ScrollView>
-        </View>
+        </Animated.View>
       </KeyboardAvoidingView>
     </View>
   );
@@ -544,8 +563,8 @@ export function PanelSheet({ title, onClose, children }: any) {
     else to(snap.current === 'f' ? fH : dH);
   };
   const make = (capture: boolean) => PanResponder.create({
-    onStartShouldSetPanResponder: () => !capture,
-    onMoveShouldSetPanResponder: () => !capture,
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, g: any) => !capture && Math.abs(g.dy) > 8 && Math.abs(g.dy) > Math.abs(g.dx),
     onMoveShouldSetPanResponderCapture: (_: any, g: any) => capture && Math.abs(g.dy) > 8 && Math.abs(g.dy) > Math.abs(g.dx) && ((g.dy < 0 && snap.current === 'd') || (g.dy > 0 && scrollY.current <= 0)),
     onPanResponderGrant: () => { h.stopAnimation((v: number) => { start.current = v; }); },
     onPanResponderMove: (_: any, g: any) => h.setValue(Math.max(120, Math.min(fH, start.current - g.dy))),
