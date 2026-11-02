@@ -1,5 +1,5 @@
 import React from 'react';
-import {Modal, View, Pressable, KeyboardAvoidingView, Platform, Keyboard, Animated} from 'react-native';
+import {Modal, View, Pressable, KeyboardAvoidingView, Platform, Keyboard, Animated, type ViewStyle} from 'react-native';
 import {useEffect, useRef, useState} from 'react';
 
 /**
