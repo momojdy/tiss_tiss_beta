@@ -80,8 +80,8 @@ export async function fetchGoodiesOrderForNotification(orderId?: string, orderCo
   let query = supabase.from('goodies_orders')
     .select('id,order_code,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
     .eq('customer_id', auth.user.id);
-  if (orderId) query = query.eq('id', orderId);
-  else if (orderCode) query = query.eq('order_code', orderCode);
+  if (orderId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId)) query = query.eq('id', orderId);
+  else if (orderCode || orderId) query = query.eq('order_code', orderCode || orderId);
   else return null;
   const {data, error} = await query.maybeSingle();
   if (error) throw error;
