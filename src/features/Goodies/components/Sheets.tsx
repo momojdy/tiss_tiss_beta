@@ -6,7 +6,7 @@ import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses} from '../store';
 import * as A from '../actions';
-import {supabase} from '../../lib/supabase';
+import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
@@ -510,7 +510,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
           toast('QR code scanned. Review the invite code and tap Join group order.');
         }}/>
         <View style={{padding:18,backgroundColor:'#111111'}}>
-          <T color="#FFFFFF" weight="700" textAlign="center">Scan a Wantiss group invite QR code</T>
+          <T color="#FFFFFF" weight="700" align="center">Scan a Wantiss group invite QR code</T>
           <Cta label="Close scanner" onPress={()=>setScannerOpen(false)}/>
         </View>
       </View>
