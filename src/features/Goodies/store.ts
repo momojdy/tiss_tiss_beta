@@ -386,7 +386,7 @@ export async function refreshStoreDistance(storeId: string, address: Address | n
   if (error) throw error;
   const distance = Number(data?.distance_km);
   if (!Number.isFinite(distance) || distance < 0) throw new Error(data?.error || 'Distance is unavailable for this address.');
-  store.km = Math.round(distance * 10) / 10;
+  store.km = Math.round(distance * 1000) / 1000;
   store.far = store.maxDeliveryDistanceKm != null && distance > store.maxDeliveryDistanceKm;
   store.distanceReady = true;
   store.distanceAddressKey = addressKey;
