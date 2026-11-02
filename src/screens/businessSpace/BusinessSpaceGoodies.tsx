@@ -2,7 +2,7 @@
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
    Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests, their photos and the photo rules go through Supabase. */
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform, KeyboardAvoidingView } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
