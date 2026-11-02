@@ -534,7 +534,7 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
               <Image source={{ uri }} style={{ width: 76, height: 76, borderRadius: 10 }} />
               <Pressable onPress={() => removePhotoAt(index)} style={{ position: 'absolute', top: -6, right: -6, width: 22, height: 22, borderRadius: 11, backgroundColor: '#222', alignItems: 'center', justifyContent: 'center' }}><Icon name="close" size={13} color="#fff" /></Pressable>
             </View>)}
-            {f.photoUrls.length + f.photoUris.length < 5 ? <Pressable onPress={choosePhoto} style={{ width: 76, height: 76, borderRadius: 10, borderWidth: 1, borderColor: t.line, alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={t.br} /><Text style={{ color: t.mute, fontSize: 10 }}>Add photo</Text></Pressable> : null}
+            {f.photoUrls.length + f.photoUris.length < 5 ? <Pressable onPress={choosePhoto} style={{ width: 76, height: 76, borderRadius: 10, borderWidth: 1, borderColor: t.line, alignItems: 'center', justifyContent: 'center' }}><Icon name="plus" size={22} color={t.blue} /><Text style={{ color: t.mute, fontSize: 10 }}>Add photo</Text></Pressable> : null}
           </View>
           <Field label="Name" value={f.name} onChangeText={(v: string) => setF({ ...f, name: v })} />
           <View style={s.row}><View style={s.g}><Field label="Price ($)" keyboardType="decimal-pad" value={f.price} onChangeText={(v: string) => setF({ ...f, price: v })} /></View><View style={s.g}><Field label="In stock" keyboardType="number-pad" value={f.stock} onChangeText={(v: string) => setF({ ...f, stock: v.replace(/\D/g, '') })} /></View></View>
