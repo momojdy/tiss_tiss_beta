@@ -115,7 +115,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       </View>
       </View>
       {deliveryStatus === 'none' || deliveryStatus === 'choose' || deliveryStatus === 'error' ? <View style={{paddingHorizontal: 16, paddingTop: 8}}>
-        <Empty icon="map-pin" title={deliveryStatus === 'none' ? 'No stores deliver to this address' : deliveryStatus === 'choose' ? 'Choose a delivery address' : 'Delivery availability could not be checked'} button={deliveryStatus === 'none' ? 'Change address' : 'Choose address'} onPress={() => go('addresses')} />
+        <Empty emoji="📍" title={deliveryStatus === 'none' ? 'No stores deliver to this address' : deliveryStatus === 'choose' ? 'Choose a delivery address' : 'Delivery availability could not be checked'} button={deliveryStatus === 'none' ? 'Change address' : 'Choose address'} onPress={() => go('addresses')} />
       </View> : null}
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
