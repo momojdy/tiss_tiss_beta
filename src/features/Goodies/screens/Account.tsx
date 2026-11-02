@@ -88,7 +88,7 @@ function Addresses() {
       const {data: auth, error: authError} = await supabase.auth.getUser();
       if (authError) throw authError;
       if (!auth.user) throw new Error('Please sign in again.');
-      const {error} = await supabase.rpc('set_goodies_default_user_address', {p_address_id: String(a.id)});
+      const {error} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(a.id)}});
       if (error) throw error;
       S.as = a.id;
       await refreshUserAddresses();
@@ -130,8 +130,8 @@ function Addresses() {
         if (defaultError) throw defaultError;
       }
       if (isNew && !rows.some((a: any) => a.goodiesDefault)) {
-        const {error: goodiesError} = await supabase.rpc('set_goodies_default_user_address', {p_address_id: result.data.id});
-        if (goodiesError) throw goodiesError;
+        const {error: preferenceError} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(result.data.id)}});
+        if (preferenceError) throw preferenceError;
       }
       setEdit(null);
       await refreshUserAddresses();
