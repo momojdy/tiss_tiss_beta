@@ -359,8 +359,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </Row>;
       }) : <T size={12.5} color={th.mut}>No shared items yet. Members can add products from this store and they will appear here.</T>}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
-        <Row sp><T weight="800">Shared items subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
-        <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically when group members add or change items. Delivery and service fees are calculated at checkout.</T>
+        <Row sp><T weight="800">Shared base-price subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
+        <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically as members edit the cart. Selected options and active deals are validated in Review combined cart; delivery and service fees are calculated at checkout.</T>
       </View>
       <View style={{height:10}}/>
       <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
