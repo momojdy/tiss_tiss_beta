@@ -229,6 +229,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [groupCheckoutBusy, setGroupCheckoutBusy] = useState(false);
   const [groupCheckoutType, setGroupCheckoutType] = useState<'pickup'|'delivery'>('pickup');
   const [groupAddressId, setGroupAddressId] = useState<string|number>(()=>addr()?.id ?? '');
+  const [groupDeliveryQuote, setGroupDeliveryQuote] = useState<any>(null);
+  const [groupQuoteBusy, setGroupQuoteBusy] = useState(false);
   useEffect(() => {
     if(groupCheckoutType!=='delivery') return;
     let active=true;
@@ -310,6 +312,21 @@ function GroupOrderSheet({close}: {close: () => void}) {
     try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
     catch (_) {toast('Invite code: '+group.code);}
   };
+  const calculateGroupDeliveryQuote = async () => {
+    let addresses=S.addr||[];
+    if(!addresses.length) addresses=await refreshUserAddresses();
+    const selected=addresses.find((item:any)=>String(item.id)===String(groupAddressId))||addresses.find((item:any)=>item.id===S.as)||addresses[0];
+    if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
+    setGroupQuoteBusy(true);
+    try {
+      const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
+      const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview?.store_id,address:addressPayload}});
+      if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
+      setGroupDeliveryQuote({addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000});
+    } catch(e:any) {
+      setGroupDeliveryQuote(null);toast(e?.message||'Could not calculate delivery.');
+    } finally {setGroupQuoteBusy(false);}
+  };
   const checkoutGroupOrder = async () => {
     if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
@@ -320,14 +337,12 @@ function GroupOrderSheet({close}: {close: () => void}) {
       await A.refreshPaymentOptions();
       let addressPayload:any=null;
       if(groupCheckoutType==='delivery'){
-        let addresses=S.addr||[];
-        if(!addresses.length) addresses=await refreshUserAddresses();
-        const selected=addresses.find((item:any)=>String(item.id)===String(groupAddressId))||addresses.find((item:any)=>item.id===S.as)||addresses[0];
+        const selected=(S.addr||[]).find((item:any)=>String(item.id)===String(groupAddressId))||(S.addr||[]).find((item:any)=>item.id===S.as)||(S.addr||[])[0];
         if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
-        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
-        const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview.store_id,address:addressPayload}});
-        if(quote.error||!quote.data?.quote_id){toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
-        addressPayload.delivery_quote_id=String(quote.data.quote_id);
+        if(!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(selected.id)||groupDeliveryQuote.expiresAt<=Date.now()){
+          toast('Calculate the delivery fee and review it before placing the order.');return;
+        }
+        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',delivery_quote_id:groupDeliveryQuote.quoteId};
       }
       const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
         p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
@@ -447,10 +462,16 @@ function GroupOrderSheet({close}: {close: () => void}) {
       </Row>
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
         <T size={12} weight="700" style={{marginBottom:6}}>Deliver to</T>
-        {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>setGroupAddressId(item.id)}>
+        {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);}}>
           <View style={{flex:1}}><T size={13} weight="700">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
         </Radio>)}
         {!S.addr.length ? <T size={12} color={th.mut}>No saved addresses found. Add a delivery address to your profile first.</T> : null}
+        <Cta ghost small label={groupQuoteBusy?'Calculating delivery…':'Calculate delivery fee'} onPress={()=>void calculateGroupDeliveryQuote()} disabled={groupQuoteBusy||!S.addr.length}/>
+        {groupDeliveryQuote&&groupDeliveryQuote.addressId===String(groupAddressId)&&groupDeliveryQuote.expiresAt>Date.now() ? <View style={{marginTop:8,padding:10,borderRadius:10,backgroundColor:th.soft}}>
+          <Row sp><T size={12} color={th.mut}>Delivery fee</T><T size={13} weight="800">{money(groupDeliveryQuote.fee)}</T></Row>
+          {groupDeliveryQuote.distanceKm>0 ? <T size={11} color={th.mut} style={{marginTop:3}}>Approx. {groupDeliveryQuote.distanceKm.toFixed(1)} km by road</T> : null}
+          <T size={11} color={th.mut} style={{marginTop:4}}>Quote expires shortly. Service fee, if applicable, is calculated by the server at checkout.</T>
+        </View> : null}
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
