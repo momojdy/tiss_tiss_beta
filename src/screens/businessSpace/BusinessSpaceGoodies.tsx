@@ -2,7 +2,7 @@
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
    Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests, their photos and the photo rules go through Supabase. */
 import React, { useEffect, useMemo, useState } from 'react';
-import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform } from 'react-native';
+import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform, KeyboardAvoidingView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -350,14 +350,17 @@ export function GoodiesStorePage() {
       <Text style={s.label}>Country</Text>
       <Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable>
       <Modal visible={countryOpen} transparent animationType="slide" onRequestClose={() => setCountryOpen(false)}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
-          <View style={{ backgroundColor: t.card, borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 16, maxHeight: '82%' }}>
-            <View style={[s.row, { marginBottom: 12 }]}><Text style={[s.h1, s.g]}>Choose country</Text><Pressable onPress={() => setCountryOpen(false)}><Icon name="close" size={22} /></Pressable></View>
-            <TextInput value={countryQuery} onChangeText={setCountryQuery} placeholder="Search countries" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
-            <ScrollView keyboardShouldPersistTaps="handled">
-              {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
-            </ScrollView>
-          </View>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Pressable accessibilityLabel="Close country selector" onPress={() => setCountryOpen(false)} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,.45)' }} />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={{ backgroundColor: t.card, borderTopLeftRadius: 22, borderTopRightRadius: 22, padding: 16, maxHeight: '82%' }}>
+              <View style={[s.row, { marginBottom: 12 }]}><Text style={[s.h1, s.g]}>Choose country</Text><Pressable onPress={() => setCountryOpen(false)}><Icon name="close" size={22} /></Pressable></View>
+              <TextInput value={countryQuery} onChangeText={setCountryQuery} placeholder="Search countries" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
+              <ScrollView keyboardShouldPersistTaps="handled">
+                {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
+              </ScrollView>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
       <Section title="Custom products" />
@@ -388,7 +391,8 @@ export function GoodiesStorePage() {
           <Icon name="clock-outline" size={19} color={t.mute} />
         </Pressable>
         <Modal visible={timePickerOpen} transparent animationType="slide" onRequestClose={() => setTimePickerOpen(false)}>
-          <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
+          <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+            <Pressable accessibilityLabel="Close time picker" onPress={() => setTimePickerOpen(false)} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,.45)' }} />
             <View style={{ backgroundColor: t.card, padding: 16, borderTopLeftRadius: 20, borderTopRightRadius: 20 }}>
               <View style={[s.row, { marginBottom: 8 }]}><Text style={[s.title, s.g]}>Earliest order time</Text><Pressable onPress={() => setTimePickerOpen(false)}><Icon name="close" size={22} /></Pressable></View>
               <DateTimePicker value={(() => { const d = new Date(); const [h,m] = (f.scheduledOrderStartTime || '10:00').split(':').map(Number); d.setHours(h,m,0,0); return d; })()} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => { if (date) set({ scheduledOrderStartTime: date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0') }); if (Platform.OS !== 'ios') setTimePickerOpen(false); }} />
@@ -416,14 +420,17 @@ export function GoodiesStorePage() {
         </View>;
       })}
       <Modal visible={languageOpen} transparent animationType="slide" onRequestClose={() => setLanguageOpen(false)}>
-        <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
-          <View style={{ backgroundColor: t.card, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, maxHeight: '78%' }}>
-            <View style={[s.row, { marginBottom: 10 }]}><Text style={[s.title, s.g]}>Add a language</Text><Pressable onPress={() => setLanguageOpen(false)}><Icon name="close" size={22} /></Pressable></View>
-            <TextInput value={languageQuery} onChangeText={setLanguageQuery} placeholder="Search languages" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
-            <ScrollView keyboardShouldPersistTaps="handled">
-              {LANGS.filter(([code, name]) => !Object.prototype.hasOwnProperty.call(f.names, code) && (name + ' ' + code).toLowerCase().includes(languageQuery.trim().toLowerCase())).map(([code, name]) => <Pressable key={code} onPress={() => { set({ names: { ...f.names, [code]: '' } }); setLanguageOpen(false); }} style={{ paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: t.ink, flex: 1 }}>{name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{code}</Text></Pressable>)}
-            </ScrollView>
-          </View>
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          <Pressable accessibilityLabel="Close language selector" onPress={() => setLanguageOpen(false)} style={{ position: 'absolute', top: 0, right: 0, bottom: 0, left: 0, backgroundColor: 'rgba(0,0,0,.45)' }} />
+          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <View style={{ backgroundColor: t.card, borderTopLeftRadius: 20, borderTopRightRadius: 20, padding: 16, maxHeight: '78%' }}>
+              <View style={[s.row, { marginBottom: 10 }]}><Text style={[s.title, s.g]}>Add a language</Text><Pressable onPress={() => setLanguageOpen(false)}><Icon name="close" size={22} /></Pressable></View>
+              <TextInput value={languageQuery} onChangeText={setLanguageQuery} placeholder="Search languages" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
+              <ScrollView keyboardShouldPersistTaps="handled">
+                {LANGS.filter(([code, name]) => !Object.prototype.hasOwnProperty.call(f.names, code) && (name + ' ' + code).toLowerCase().includes(languageQuery.trim().toLowerCase())).map(([code, name]) => <Pressable key={code} onPress={() => { set({ names: { ...f.names, [code]: '' } }); setLanguageOpen(false); }} style={{ paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: t.ink, flex: 1 }}>{name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{code}</Text></Pressable>)}
+              </ScrollView>
+            </View>
+          </KeyboardAvoidingView>
         </View>
       </Modal>
       <View style={{ height: 14 }} /><Btn label="Save store" onPress={save} busy={busy} />
