@@ -4,6 +4,8 @@ import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-contex
 import {WebView} from 'react-native-webview';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
+const StatusBarCompat: any = StatusBar;
+
 
 const L = {bg: '#FFFBD4', tx: '#2B1210', mu: '#7a5a52', ac: '#A90E02', tint: 'rgba(169,14,2,0.1)', nav: '#FFFBD4', card: 'rgba(255,255,255,0.55)', bd: 'rgba(169,14,2,0.12)', gr: '#1E8E3E', inp: '#fff9c2'};
 const Dk: typeof L = {bg: '#17100F', tx: '#FFFBD4', mu: '#BDB08C', ac: '#FF5B4A', tint: 'rgba(255,251,212,0.09)', nav: '#1E1514', card: 'rgba(255,251,212,0.06)', bd: 'rgba(255,251,212,0.1)', gr: '#5FD38A', inp: '#241a18'};
@@ -100,7 +102,7 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
 function Screen({onBack}: {onBack?: () => void}) {
   const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true);
   const nav = ['Home', 'Warehouse', 'Konso', 'Sourcing+', 'Hub'];
-  return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBar barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
+  return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
       <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable></View><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>KS-2048 · Filling</Tx></View></View>
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>My current load</Tx><Tx style={[s.num, {color: t.ac}]}>51.7<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}}> / 68 CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray="66.85 87.96" rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>76% filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}}>16.3 CBM</Tx> available</Tx></View></View>
