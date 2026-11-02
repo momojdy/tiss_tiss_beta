@@ -71,21 +71,21 @@ export function VCard({s}: {s: Store}) {
     </View>
   );
 }
-export function StoreCard({s}: {s: Store}) {
+export function StoreCard({s, showProducts = false}: {s: Store; showProducts?: boolean}) {
   const th = useTheme();
   const pill = (txt: string, left = 10) => <View style={{position: 'absolute', left, bottom: 10, backgroundColor: 'rgba(27,27,31,.78)', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={11.5} weight="700" color="#fff">{txt}</T></View>;
   return (
     <View>
       <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
         <Grad idx={bgIdx(s.bg)} style={{height: 160, borderRadius: 18, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>
-          {s.thumbnail ? <Image source={{uri: s.thumbnail}} style={{width: '100%', height: '100%', position: 'absolute'}} resizeMode="cover" /> : <Text style={{fontSize: 76}}>{s.e}</Text>}
+          {s.cover || s.thumbnail || s.logo ? <Image source={{uri: s.cover || s.thumbnail || s.logo || undefined}} style={{width: '100%', height: '100%', position: 'absolute'}} resizeMode="cover" /> : <Text style={{fontSize: 76}}>{s.e}</Text>}
           {s.pr ? <View style={{position: 'absolute', left: 0, top: 14, backgroundColor: th.br, borderTopRightRadius: 8, borderBottomRightRadius: 8, paddingVertical: 5, paddingLeft: 12, paddingRight: 10}}><T size={12} weight="800" color="#fff">{s.pr}</T></View> : null}
           {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), (S.fav.indexOf(s.id) > -1 ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11ySaveFavorite', 'Save {name} to favorites')).replace('{name}', s.n))}
           {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far && !s.live ? pill(label('lbl.cardPickupOnly', 'Pickup only at this address')) : null}
           <View style={{position: 'absolute', right: 10, bottom: 10, backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={12} weight="700" color="#1B1B1F">{s.eta} min</T></View>
         </Grad>
       </Pressable>
-      {PV[s.id] ? (
+      {PV[s.id] || showProducts ? (
         <View style={{flexDirection: 'row', gap: 8, marginTop: 8}}>
           {s.it.slice(0, 3).map(i => (
             <Pressable key={i.id} onPress={() => openProduct(i.id)} style={{flex: 1, minWidth: 0}}>
@@ -101,7 +101,7 @@ export function StoreCard({s}: {s: Store}) {
           <T size={16.5} weight="800" style={{flexShrink: 1}}>{s.n}</T>
           {s.live && s.rv === 0 ? <T size={12} color={th.mut}>{label('lbl.storeNoReviewsYet', 'No reviews yet')}</T> : <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="700">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>}
         </View>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k} · {s.live ? label('lbl.storeDistanceUnavailable', 'Distance unavailable') : s.km.toFixed(1) + ' km'}</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + s.km.toFixed(1) + ' km' : !s.live ? ' · ' + s.km.toFixed(1) + ' km' : ''}</T>
         {byoTag(s.id)}
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.fee === 0 ? <T size={13} weight="700" color={th.grn}>{tr('freeDelivery')}</T> : money(s.fee) + ' ' + tr('delivery')} · {tr('minOrder')} {money(s.min)}</T>
       </Pressable>
