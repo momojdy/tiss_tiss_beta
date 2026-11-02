@@ -225,7 +225,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const th = useTheme();
   const [name, setName] = useState('');
   const [group, setGroup] = useState(() => {
-    if (S.groupOrder) return S.groupOrder;
+    const saved = S.groupOrder;
+    if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
     const next = {code: 'GD' + Math.random().toString(36).slice(2, 7).toUpperCase(), host: S.pf.n || 'You', members: []};
     S.groupOrder = next; save(); return next;
   });
