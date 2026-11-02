@@ -4,7 +4,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from '.
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, addr} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -227,6 +227,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [checkoutPreview, setCheckoutPreview] = useState<any>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
   const [groupCheckoutBusy, setGroupCheckoutBusy] = useState(false);
+  const [groupCheckoutType, setGroupCheckoutType] = useState<'pickup'|'delivery'>('pickup');
+  const [groupAddressId, setGroupAddressId] = useState<string|number>(()=>addr()?.id ?? '');
   const [currentUserId, setCurrentUserId] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -305,21 +307,35 @@ function GroupOrderSheet({close}: {close: () => void}) {
     if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
-    const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
-      p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
-      p_group_id:group.groupId,
-      p_order_type:'pickup',
-      p_scheduled_for:null,
-      p_address:null,
-      p_contact_phone:S.pf.ph,
-      p_tip:0,
-      p_notes:null
-    });
-    setGroupCheckoutBusy(false);
-    const order=Array.isArray(data)?data[0]:data;
-    if(error||!order?.id){toast(error?.message||'Group order checkout failed.');return;}
-    toast('Group order placed. Order '+(order.order_code||order.id)+'. Paid with Wantiss Wallet.');
-    S.groupOrder=null;save();emit();close();
+    try {
+      let addressPayload:any=null;
+      if(groupCheckoutType==='delivery'){
+        let addresses=S.addr||[];
+        if(!addresses.length) addresses=await refreshUserAddresses();
+        const selected=addresses.find((item:any)=>String(item.id)===String(groupAddressId))||addresses.find((item:any)=>item.id===S.as)||addresses[0];
+        if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
+        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
+        const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview.store_id,address:addressPayload}});
+        if(quote.error||!quote.data?.quote_id){toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
+        addressPayload.delivery_quote_id=String(quote.data.quote_id);
+      }
+      const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
+        p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
+        p_group_id:group.groupId,
+        p_order_type:groupCheckoutType,
+        p_scheduled_for:null,
+        p_address:addressPayload,
+        p_contact_phone:S.pf.ph,
+        p_tip:0,
+        p_notes:null
+      });
+      const order=Array.isArray(data)?data[0]:data;
+      if(error||!order?.id){toast(error?.message||'Group order checkout failed.');return;}
+      toast('Group order placed. Order '+(order.order_code||order.id)+'. Paid with Wantiss Wallet.');
+      S.groupOrder=null;save();emit();close();
+    } catch(e:any) {
+      toast(e?.message||'Could not complete group order checkout.');
+    } finally {setGroupCheckoutBusy(false);}
   };
   const reviewSharedOrder = async () => {
     if(!group.serverBacked||!group.groupId){toast('Create or join a server-backed group order first.');return;}
@@ -413,10 +429,24 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </Card>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <Card style={{marginBottom:12}}>
       <T size={15} weight="800">Host checkout</T>
-      <T size={12} color={th.mut} style={{marginTop:5}}>Pickup orders only in this checkout step. Payment is taken from the host’s Wantiss Wallet; delivery checkout is not enabled here yet.</T>
-      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
+      <T size={12} color={th.mut} style={{marginTop:5}}>Choose pickup or delivery. The host pays the full group order from their Wantiss Wallet.</T>
+      <View style={{height:10}}/>
+      <Row style={{gap:8}}>
+        <View style={{flex:1}}><Radio on={groupCheckoutType==='pickup'} onPress={()=>setGroupCheckoutType('pickup')}>Pickup</Radio></View>
+        <View style={{flex:1}}><Radio on={groupCheckoutType==='delivery'} onPress={()=>setGroupCheckoutType('delivery')}>Delivery</Radio></View>
+      </Row>
+      {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
+        <T size={12} weight="700" style={{marginBottom:6}}>Deliver to</T>
+        {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>setGroupAddressId(item.id)}>
+          <View style={{flex:1}}><T size={13} weight="700">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
+        </Radio>)}
+        {!S.addr.length ? <T size={12} color={th.mut}>No saved addresses found. Add a delivery address to your profile first.</T> : null}
+        <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
+      </View> : null}
+      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
+      <T size={11.5} color={th.mut} style={{marginTop:4}}>Final delivery and service fees are calculated and checked by the server at checkout.</T>
       <View style={{height:9}}/>
-      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||Number(S.wallet||0)<Number(checkoutPreview.subtotal||0)}/>
+      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||Number(S.wallet||0)<Number(checkoutPreview.subtotal||0)||(groupCheckoutType==='delivery'&&!S.addr.length)}/>
     </Card> : null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
