@@ -9,6 +9,7 @@ import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes} 
 import {Image} from 'react-native';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
+import {fetchGoodiesOrderForNotification} from '../serverSync';
 import {t as tr, tx} from '../i18n';
 import {MODE1, PROMO} from '../theme';
 import {supabase} from '../../../lib/supabase';
@@ -430,7 +431,7 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
-        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').not('notification_type', 'like', 'goodies_ingredient_%').eq('read', false);
+        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').eq('read', false);
       if (error) setServerError(error.message);
       else await loadServer();
     }
@@ -450,9 +451,18 @@ export function Notifs() {
     const metadata = n.metadata || {};
     if (destination.includes('ingredientrequest')) return;
     if (destination.includes('order') || metadata.order_id || metadata.order_code || n.notification_type === 'goodies_order_status' || n.notification_type === 'goodies_order_update') {
-      const order = S.orders.find((o: any) => o.backendId && (o.backendId === metadata.order_id || o.id === metadata.order_code));
+      let order = S.orders.find((o: any) => o.backendId && (o.backendId === metadata.order_id || o.id === metadata.order_code));
+      if (!order) {
+        try {
+          const id = await fetchGoodiesOrderForNotification(metadata.order_id, metadata.order_code);
+          if (id) order = S.orders.find((o: any) => o.id === id);
+        } catch (e: any) {
+          toast(e?.message || 'Could not load this order.');
+          return;
+        }
+      }
       if (order) go('track', order.id);
-      else tab('orders');
+      else { toast('This order could not be found.'); go('notifs'); }
       return;
     }
     if (destination.includes('promos') || destination.includes('promotion') || destination.includes('coupon')) { go('promos'); return; }
