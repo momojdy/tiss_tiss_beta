@@ -41,7 +41,7 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
       <>
         <T size={small ? 14.5 : 17} weight="800" color={c} style={{lineHeight: small ? undefined : 19.5, width: image && !imageFailed ? '70%' : undefined}}>{title}</T>
         {sub ? <T size={12} color={c} style={{marginTop: 3, opacity: 0.9, width: image && !imageFailed ? '70%' : undefined}}>{sub}</T> : null}
-        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
+        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} onFail={() => setImageFailed(true)} /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
       </>
     );
   }
@@ -80,7 +80,7 @@ function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string;
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
         <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
-        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
+        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} onFail={() => setImageFailed(true)} /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
       </Grad>
     </Pressable>
   );
@@ -102,7 +102,7 @@ function Countdown() {
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
   const [contentReady, setContentReady] = useState(hasContent());
-  useEffect(() => { const off = onContent(() => setContentReady(hasContent())); void loadContent(); return off; }, []);
+  useEffect(() => { const off = onContent(() => setContentReady(hasContent())); return off; }, []);
   const storeKey = ST.filter(s => s.live).map(s => s.id).join('|');
   useEffect(() => {
     if (!address?.t) return;
