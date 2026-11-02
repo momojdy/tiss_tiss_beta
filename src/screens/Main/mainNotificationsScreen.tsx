@@ -16,6 +16,7 @@ const FEATURE_COLORS: Record<string, string> = {
 const featureKey = (value?: string | null) => (value || 'general').trim().toLowerCase();
 const featureColor = (value?: string | null) => FEATURE_COLORS[featureKey(value)] || MAGENTA;
 const destinationFor = (n: NotificationRow): string | null => {
+  if (n.notification_type === 'goodies_ingredient_request') return null;
   const raw = (n.destination || String(n.metadata?.destination || '')).trim();
   const key = raw.toLowerCase().replace(/[_-]+/g, ' ').trim() || featureKey(n.feature_name);
   const routes: Record<string, string> = { wallet: 'wallet', flyz: 'flyz', goodies: 'goodies', 'pumping goodies': 'goodies', frenzies: 'frenzies', konsoliss: 'konsoliss', woulib: 'woulib', 'wallet notifications': 'walletNotifications', 'flyz trips': 'flyzMyTrips', 'flyz deals': 'flyzDeals' };
@@ -30,7 +31,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
     if (!auth.user) { setItems([]); setLoading(false); setError('Sign in to view your notifications.'); return; }
     const { data, error: queryError } = await supabase.from('notifications')
       .select('id,title,body,read,feature_name,notification_type,destination,metadata,created_at')
-      .eq('user_id', auth.user.id).order('created_at', { ascending: false }).limit(100);
+      .eq('user_id', auth.user.id).or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').order('created_at', { ascending: false }).limit(100);
     if (queryError) setError(queryError.message);
     else { setItems((data || []) as NotificationRow[]); setError(''); }
     setLoading(false);
@@ -61,7 +62,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
   const markAll = async () => {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user || unread === 0) return;
-    const { error: updateError } = await supabase.from('notifications').update({ read: true, updated_at: new Date().toISOString() }).eq('user_id', auth.user.id).eq('read', false);
+    const { error: updateError } = await supabase.from('notifications').update({ read: true, updated_at: new Date().toISOString() }).eq('user_id', auth.user.id).eq('read', false).or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%');
     if (updateError) setError(updateError.message);
     else setItems(prev => prev.map(n => ({ ...n, read: true })));
   };
