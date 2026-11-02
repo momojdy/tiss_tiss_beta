@@ -13,6 +13,8 @@ import { ROOT_TABS, RootTab } from './GlowzNavigationTypes';
 import { RootTabView, RouteView } from './GlowzRouteView';
 import { GlowzSwipeBack } from './GlowzSwipeBack';
 
+const StatusBarCompat: any = StatusBar;
+
 const hidden = { opacity: 0 } as const;
 
 /**
@@ -45,7 +47,7 @@ export function GlowzNavigator() {
 
   return (
     <View style={{ flex: 1, backgroundColor: mode === 'dark' ? '#120E0D' : '#EADDD2' }}>
-      <StatusBar barStyle={mode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={c.bg} translucent />
+      <StatusBarCompat barStyle={mode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={c.bg} translucent />
       <View style={{ flex: 1, width: '100%', maxWidth: size.contentMaxWidth, alignSelf: 'center', backgroundColor: c.bg, overflow: 'hidden' }}>
         {ROOT_TABS.filter((t) => visited.includes(t)).map((t) => {
           const showing = rootActive && t === nav.tab;
