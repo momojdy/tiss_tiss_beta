@@ -336,6 +336,7 @@ export function Search() {
 }
 
 export function FlashDeals() {
+  const th = useTheme();
   const activeDeals = deals().filter(d => IT[d[0]]);
   const [refreshing, setRefreshing] = useState(false);
   const refresh = async () => {
@@ -353,7 +354,7 @@ export function FlashDeals() {
         showsVerticalScrollIndicator={false}
       >
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
-          <T size={13} weight="700" color="#fff">{label('lbl.flashLimitedTime','Limited-time offers')}</T>
+          <T size={13} weight="700" color={th.mut}>{label('lbl.flashLimitedTime','Limited-time offers')}</T>
           <Countdown />
         </View>
         {activeDeals.length ? <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>
