@@ -86,7 +86,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
         <View style={{flex:1, backgroundColor:'rgba(0,0,0,.5)', justifyContent:isCenteredSheet?'center':'flex-end', alignItems:isCenteredSheet?'center':'stretch', paddingHorizontal:isCenteredSheet?22:0}}>
           <Pressable onPress={close} accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close sheet")} style={{position:'absolute',top:0,left:0,right:0,bottom:0}} />
-          <View style={{width:isCenteredSheet?'100%':'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
+          <View style={{width:isCenteredSheet?'100%':'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
             <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
           </View>
         </View>
@@ -176,28 +176,20 @@ function ScheduleSheet({close}: {close: () => void}) {
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetScheduleTitle', 'Schedule your order')}</T>
-    <T size={12.5} color={th.mut} style={{marginTop:4,marginBottom:12}}>{label('lbl.sheetScheduleDescription', 'Choose delivery or pick-up, a date, and an available time.')}</T>
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
     <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay', 'Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
-      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);setCustomMode(false);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
+      {Array.from({length:7},(_,i)=>{const d=new Date();d.setDate(d.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);setSelectedTs(0);setCustomMode(true);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:1,borderColor:active?th.br:th.line}}>
         <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum', 'Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens ' + opening : ''}</T> : store&&!store.open ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetNoScheduledClosed', 'This store is not accepting scheduled orders while closed.')}</T> : null}
-    <T size={14} weight="800" style={{marginTop:8,marginBottom:8}}>{label('lbl.sheetAvailableTimes', 'Available times')}</T>
-    {candidates.length ? <ScrollView style={{maxHeight:230}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{gap:7,paddingBottom:8}}>
-      {candidates.map(ts=><Pressable key={ts} onPress={()=>{setSelectedTs(ts);setCustomHour(String(new Date(ts).getHours()).padStart(2,'0'));setCustomMinute(String(new Date(ts).getMinutes()).padStart(2,'0'));setCustomMode(false);}} style={{minHeight:45,paddingHorizontal:14,paddingVertical:10,borderRadius:13,borderWidth:1,borderColor:selectedTs===ts?th.br:th.line,backgroundColor:selectedTs===ts?th.brt:th.card,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
-        <T size={14} weight={selectedTs===ts?'800':'600'} color={selectedTs===ts?th.br:th.ink}>{fmtTime(new Date(ts))}</T>
-        {selectedTs===ts?<Icon name="check" color={th.br}/>:<T size={12} color={th.mut}>{label("lbl.sheetAutoTTYTF", "Select")}</T>}
-      </Pressable>)}
-    </ScrollView>:<Card><T size={13} color={th.mut}>{store&&!store.open&&!store.acceptScheduledOrders?label('lbl.sheetNoScheduledClosed2', 'This store does not accept scheduled orders while closed.'):label('lbl.sheetNoPresetTimes', 'No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it.')}</T></Card>}
-    <T size={13} weight="800" style={{marginTop:8,marginBottom:6}}>{label('lbl.sheetExactTime', 'Choose a time')}</T>
+    <T size={13} weight="800" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime', 'Choose a time')}</T>
     <View style={{alignItems:'center',paddingVertical:4}}>
       <DateTimePicker
         value={customDate}
         mode="time"
-        display={Platform.OS === 'ios' ? 'compact' : 'clock'}
+        display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
         minuteInterval={5}
         onChange={(_, date) => {
           if (!date) return;
