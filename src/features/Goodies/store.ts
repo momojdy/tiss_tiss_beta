@@ -247,7 +247,7 @@ export async function refreshUserAddresses() {
     t: [row.street_address, row.city, row.department, row.country].filter(Boolean).join(', '),
     apt: String(row.apartment || ''), inst: String(row.delivery_notes || ''),
     def: row.is_default ? 1 : 0, goodiesDefault: String(row.id) === metadataAddressId ? 1 : 0,
-    z: 0, cc: row.country === 'Dominican Republic' ? 'DO' : row.country === 'United States' ? 'US' : 'HT',
+    z: 0, cc: row.country === 'Dominican Republic' ? 'DO' : row.country === 'United States' ? 'US' : row.country === 'Haiti' ? 'HT' : 'XX',
     city: String(row.city || ''), department: String(row.department || ''), country: String(row.country || ''),
     phone: String(row.phone_number || ''), createdAt: row.created_at,
   }));
