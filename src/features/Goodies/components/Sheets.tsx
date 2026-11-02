@@ -378,7 +378,15 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
-    <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={() => {S.groupOrder=null; save(); emit(); close(); toast(label('lbl.sheetGroupEnded', 'Group order ended'));}} />
+    <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={async () => {
+      if (!group.serverBacked || !group.groupId) {toast('This group invitation is not server-backed.');return;}
+      setGroupBusy(true);
+      const {data,error}=await supabase.rpc('goodies_group_order_end',{p_group_id:group.groupId});
+      setGroupBusy(false);
+      if(error){toast(error.message||'Could not end this group order.');return;}
+      S.groupOrder=null; save(); emit(); close();
+      toast('Group order ended.');
+    }} />
     <Modal visible={scannerOpen} animationType="slide" onRequestClose={()=>setScannerOpen(false)}>
       <View style={{flex:1,backgroundColor:'#000000'}}>
         <CameraView style={{flex:1}} facing="back" barcodeScannerSettings={{barcodeTypes:['qr']}} onBarcodeScanned={({data})=>{
