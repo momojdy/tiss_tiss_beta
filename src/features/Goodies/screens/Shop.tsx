@@ -225,7 +225,7 @@ export function Cart() {
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
-  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
+  const th = useTheme(), t = totals(), pk = isPk(), a = addr() || null, st = t.st, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
   const [cashEligible, setCashEligible] = useState(false);
   useEffect(() => {
     let active = true;
@@ -248,7 +248,7 @@ export function Checkout() {
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
-  const ct = ctOf();
+  const ct = ctOf() || {ph: S.pf?.ph || '', l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
   if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
   if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
   let body: any = null;
