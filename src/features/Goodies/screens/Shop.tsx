@@ -32,7 +32,7 @@ export function Store({id}: {id: string}) {
       if (active && address?.t) return refreshStoreDistance(id, address).catch(() => undefined);
     });
     return () => { active = false; };
-  }, [id, address?.t, address?.apt, address?.inst, address?.city, address?.country]);
+  }, [id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
@@ -233,7 +233,7 @@ export function Checkout() {
     });
     void refreshPaymentOptions();
     return () => { active = false; };
-  }, [st?.id, st?.live, a?.t, a?.apt, a?.inst, a?.city, a?.country]);
+  }, [st?.id, st?.live, a?.t, a?.apt, a?.inst, a?.city, a?.department, a?.country]);
   useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
   useEffect(() => {
     let active = true;
@@ -255,7 +255,7 @@ export function Checkout() {
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
     <Ttl>{pk ? label('lbl.checkoutPickupFrom', 'Pickup from') : label('lbl.checkoutDeliverTo', 'Deliver to')}</Ttl>
     <Card><Row><IcBox icon="pin" /><View style={{flex: 1}}>
-      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? (st.distanceReady ? label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', st.km.toFixed(1)) : null) : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))}{st.h ? ' · ' + label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h) : ''}</T></> : a ? <><T weight="700">{a.l || 'Delivery address'}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}</> : <><T weight="700">Choose a delivery address</T><T size={13} color={th.mut}>Select a saved address to continue.</T></>}
+      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? (st.distanceReady ? (Math.round(st.km * 1000) < 1000 ? Math.round(st.km * 1000) + ' m from your address' : st.km.toFixed(1) + ' km from your address') : st.distanceError ? 'Distance unavailable' : null) : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))}{st.h ? ' · ' + label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h) : ''}</T></> : a ? <><T weight="700">{a.l || 'Delivery address'}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}</> : <><T weight="700">Choose a delivery address</T><T size={13} color={th.mut}>Select a saved address to continue.</T></>}
     </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br} >{a ? label('lbl.checkoutChange', 'Change') : 'Add address'}</T></Pressable>}</Row></Card>
     {st.far && !st.live ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.checkoutPickupOnly', 'Pickup only')}</T><T size={13} color={th.mut}>{st.n} is {st.km.toFixed(1)} km from this address, beyond delivery range. Pick another address to get delivery.</T></Card> : null}
     {hasAlcohol() && !S.hasWallet ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">{label('lbl.checkoutCreateWallet', 'Create a Wantiss wallet')}</T><T size={13} color={th.mut} style={{marginVertical: 4}}>{rgText('rg.wallet', 'Create a Wantiss wallet so any refund has somewhere to go. You can withdraw from it later.', alcAge(S.cart.sid).age)}</T><Cta small label={label('lbl.checkoutCreateWallet', 'Create wallet')} onPress={createWallet} /></Card> : null}
