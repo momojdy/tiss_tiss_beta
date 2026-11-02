@@ -37,7 +37,7 @@
  */
 
 import React, {createContext, memo, useCallback, useContext, useEffect, useMemo, useRef, useState} from 'react';
-import {InteractionManager, KeyboardAvoidingView, LayoutChangeEvent, Linking, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions} from 'react-native';
+import {KeyboardAvoidingView, LayoutChangeEvent, Linking, PanResponder, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View, useWindowDimensions} from 'react-native';
 import Animated, {Easing, FadeIn, FadeInDown, FadeOut, SharedValue, useAnimatedProps, useAnimatedStyle, useDerivedValue, useFrameCallback, useSharedValue, withDelay, withTiming} from 'react-native-reanimated';
 import Svg, {Circle, Ellipse, G, Path, Polygon, Polyline} from 'react-native-svg';
 import MapView, {Circle as GCircle, Marker as GMarker, Polyline as GPolyline, UrlTile} from 'react-native-maps';
@@ -1394,8 +1394,7 @@ function WoulibMapView(props: WoulibMapProps) {
   const live = ride.mapView === 'live';
   const [liveOK, setLiveOK] = useState(false);
   const [note, setNote] = useState('');
-  const [mounted, setMounted] = useState(true);
-  useEffect(() => { const h = InteractionManager.runAfterInteractions(() => setMounted(true)); return () => h.cancel(); }, []);
+  const mounted = true;
   const center = trip?.fromLL ?? GEO[ride.from.split(',')[0]] ?? GEO['Current location'];
   const hasTrip = !!trip;
   // first screen (no destination yet): a few cars cruise around the pickup point
@@ -1455,16 +1454,11 @@ function WoulibHome({
 
   useEffect(() => {
     let id: ReturnType<typeof setTimeout> | undefined;
-    const h = InteractionManager.runAfterInteractions(() => {
-      id = setTimeout(() => {
-        getCity(dark);
-        getTraffic();
-      }, 300);
-    });
-    return () => {
-      h.cancel();
-      if (id) clearTimeout(id);
-    };
+    id = setTimeout(() => {
+      getCity(dark);
+      getTraffic();
+    }, 300);
+    return () => { if (id) clearTimeout(id); };
   }, [dark]);
 
   const field = (icon: string, label: string, value: string) => (
