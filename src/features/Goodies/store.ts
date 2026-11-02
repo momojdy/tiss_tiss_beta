@@ -483,6 +483,9 @@ export async function syncGroupOrderCartLine(groupId: string, line: CartLine) {
     p_note: line.nt || null,
   });
 }
+export async function removeGroupOrderCartLine(groupId: string, lineKey: string) {
+  return supabase.rpc('goodies_group_order_remove_item', {p_group_id: groupId, p_line_key: lineKey});
+}
 
 export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; off?: number; note?: string}) {
   if (!canBuy(i)) return;
