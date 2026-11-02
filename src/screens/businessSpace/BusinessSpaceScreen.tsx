@@ -153,7 +153,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => {
     let h: any;
     const ch = supabase.channel(`bs-${biz.id}`), kick = () => { clearTimeout(h); h = setTimeout(bump, 400); };
-    ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
+    ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods', 'goodies_products', 'goodies_builder_configs'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
     ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
       const notice: any = payload.new;
       if (String(notice?.notification_type || '').startsWith('goodies_ingredient_')) {
