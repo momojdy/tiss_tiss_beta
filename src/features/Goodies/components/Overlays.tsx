@@ -1,6 +1,5 @@
 import React from 'react';
 import {Modal, View, Pressable, KeyboardAvoidingView, Platform} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 /**
  * Shared overlay primitives for Goodies.
@@ -15,13 +14,12 @@ type BottomSheetProps = {
 };
 
 export function BottomSheet({visible, onClose, children, maxHeight = '90%'}: BottomSheetProps) {
-  const insets = useSafeAreaInsets();
   return (
     <Modal transparent visible={visible} animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined} keyboardVerticalOffset={0}>
         <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'flex-end'}}>
           <Pressable accessibilityRole="button" accessibilityLabel="Close sheet" onPress={onClose} style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}} />
-          <View style={{width: '100%', maxHeight, paddingBottom: Math.max(0, insets.bottom), flexShrink: 1, minHeight: 0}}>
+          <View style={{width: '100%', maxHeight, flexShrink: 1, minHeight: 0}}>
             {children}
           </View>
         </View>
