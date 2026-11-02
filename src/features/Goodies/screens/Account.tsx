@@ -65,10 +65,9 @@ function Profile() {
     <Bar title={label('lbl.profileTitle', 'Profile')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
       <Card style={{alignItems: 'center'}}><Avatar z={76} /><T size={17} weight="800" style={{marginTop: 10}}>{p.n}</T><T size={13.5} color={th.mut} align="center" style={{lineHeight: 22}}>{p.e}{'\n'}{p.ph}</T><View style={{marginTop: 8}}><Badge label={label('lbl.profileShared', 'Shared Wantiss account')} /></View></Card>
-      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={label('lbl.accountSharedWithWantiss', 'Shared with Wantiss')} onPress={() => go('addresses')} />
+      <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} onPress={() => go('addresses')} />
       <LRow icon="bag" title={label('lbl.profileOrderHistory', 'Order history')} sub={S.orders.length + ' orders'} onPress={() => tab('orders')} />
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} onPress={() => go('favs')} />
-      <LRow icon="wallet" title={label('lbl.accountWalletPayments', 'Wallet and payments')} onPress={() => go('payments')} />
       <LRow icon="bell" title={label('lbl.accountNotificationPreferences', 'Notification preferences')} onPress={() => go('settings')} />
       <LRow icon="help" title={label('lbl.accountHelpSupport', 'Help and support')} onPress={() => go('help')} />
       <LRow icon="tag" title={label('lbl.profilePolicies', 'Terms and policies')} onPress={() => go('policies')} />
@@ -94,9 +93,7 @@ function Addresses() {
       await refreshUserAddresses();
       save(); emit();
     } catch (e: any) {
-      S.as = a.id;
-      save(); emit();
-      toast(e?.message || 'Goodies address selected. Sync the address preference when the account update is available.');
+      toast(e?.message || 'Could not update the Goodies delivery address.');
     } finally { setBusy(false); }
   };
   const saveAddr = async () => {
@@ -159,7 +156,7 @@ function Addresses() {
     <View style={{paddingHorizontal: 16}}>
       {rows.map((a: any) => (
         <Card key={a.id}>
-          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <Badge label="Goodies" /> : null}</Row></Row>
+          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="800" color="#fff">GOODIES</T></View> : null}</Row></Row>
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.accountAddressNote', 'Note:')} {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
             <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
