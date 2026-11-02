@@ -1,9 +1,9 @@
 /* Account screens: settings, profile, addresses, payments, policies, support. Ported from v24. */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, Empty, Switch, Input, Chip, useTheme, Tile} from '../components/ui';
-import {S, defAddr, money, emit, save, toast, ui, push, reset, STB} from '../store';
+import {S, defAddr, money, emit, save, toast, ui, push, reset, STB, refreshUserAddresses} from '../store';
 import {back, go, tab, togglePref} from '../actions';
 import {setTheme} from '../store';
 import {t as tr} from '../i18n';
@@ -35,20 +35,19 @@ const LRow = ({icon, title, sub, onPress, right}: {icon: string; title: string; 
     </Pressable>
   );
 };
-const Avatar = ({z}: {z: number}) => {const th = useTheme(); return <View style={{width: z, height: z, borderRadius: z / 2, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center'}}><T size={Math.round(z * 0.45)} weight="800" color="#fff">{S.pf.av || String(S.pf.n).charAt(0).toUpperCase()}</T></View>;};
+const Avatar = ({z}: {z: number}) => {const th = useTheme(); return <View style={{width: z, height: z, borderRadius: z / 2, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', overflow: 'hidden'}}>{S.pf.av ? <Image source={{uri: S.pf.av}} style={{width: z, height: z, borderRadius: z / 2}} resizeMode="cover" /> : <T size={Math.round(z * 0.45)} weight="800" color="#fff">{String(S.pf.n).charAt(0).toUpperCase()}</T>}</View>;};
 
 function Settings() {
   const th = useTheme(), d = S.theme === 'dark', address = defAddr();
   return (<View>
     <Bar title={tr('settings')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <Pressable onPress={() => go('profile')}><Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T><T size={13} color={th.mut}>{label('lbl.accountViewProfile', 'Wantiss account · view profile')}</T></View><Icon name="chevR" size={16} color={th.ink} /></Row></Card></Pressable>
+      <Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T></View></Row></Card>
       <Ttl>{label('lbl.notifsTitle', 'Notifications')}</Ttl>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOrderUpdates', 'Order updates')}</T><Switch on={!!S.np.orders} label={label('lbl.settingsOrderUpdates', 'Order updates')} onPress={() => togglePref('orders')} /></Row>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>
       <Ttl>{label('lbl.settingsAccount', 'Account')}</Ttl>
       <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={address?.t ? label('lbl.settingsAddressDefault', '{address} · Wantiss default').replace('{address}', address.t) : label('lbl.settingsAddAddressHint', 'Add a delivery address')} onPress={() => go('addresses')} />
-      <LRow icon="wallet" title={label('lbl.settingsPayments', 'Wallet and payment methods')} sub={'Balance ' + money(S.wallet)} onPress={() => go('payments')} />
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
       <LRow icon="tag" title={label('lbl.settingsCoupons', 'Coupons and offers')} onPress={() => go('promos')} />
 
@@ -78,46 +77,112 @@ function Profile() {
 }
 
 function Addresses() {
-  const th = useTheme(), [edit, setEdit] = useState<any>(null);
-  const zoneOf = (t: string) => {let x = 0; for (let i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 97; return Math.round((x % 5) * 9) / 10;};
-  const saveAddr = () => {
-    const t = (edit.t || '').trim(); if (t.length < 4) {toast(label('lbl.accountStreetRequired', 'Enter the street and area')); return;}
-    let a = S.addr.filter((x: any) => x.id === edit.id)[0]; const isNew = !a;
-    if (isNew) {a = {id: Date.now(), def: 0}; S.addr.push(a);}
-    if (isNew || a.t !== t) a.z = zoneOf(t);
-    a.l = edit.l; a.cc = edit.cc || 'HT'; a.t = t; a.apt = (edit.apt || '').trim(); a.inst = (edit.inst || '').trim();
-    if (edit.def && !a.def) {S.addr.forEach((x: any) => (x.def = 0)); a.def = 1;}
-    if (isNew) S.as = a.id; setEdit(null); toast(isNew ? label('lbl.accountAddressSaved', 'Address saved to your Wantiss account') : label('lbl.accountAddressUpdated', 'Address updated')); save(); emit();
+  const th = useTheme(), [edit, setEdit] = useState<any>(null), [busy, setBusy] = useState(false);
+  useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(e?.message || 'Could not load saved addresses.')); }, []);
+  const rows = S.addr || [];
+  const countryName = (cc: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || 'Other';
+  const selectForGoodies = async (a: any) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      const {data: auth, error: authError} = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!auth.user) throw new Error('Please sign in again.');
+      const {error} = await supabase.rpc('set_goodies_default_user_address', {p_address_id: String(a.id)});
+      if (error) throw error;
+      S.as = a.id;
+      await refreshUserAddresses();
+      save(); emit();
+    } catch (e: any) {
+      S.as = a.id;
+      save(); emit();
+      toast(e?.message || 'Goodies address selected. Sync the address preference when the account update is available.');
+    } finally { setBusy(false); }
   };
+  const saveAddr = async () => {
+    const street = String(edit.t || '').trim(), city = String(edit.city || '').trim();
+    if (street.length < 4 || !city) { toast('Enter the street address and city.'); return; }
+    if (busy) return;
+    setBusy(true);
+    try {
+      const {data: auth, error: authError} = await supabase.auth.getUser();
+      if (authError) throw authError;
+      if (!auth.user) throw new Error('Please sign in again.');
+      const payload = {
+        recipient_name: String(edit.l || 'Home').trim().slice(0, 80) || 'Home',
+        phone_number: String(edit.phone || S.pf.ph || '').trim(),
+        country: countryName(edit.cc || 'HT'),
+        department: String(edit.department || '').trim(),
+        city,
+        street_address: street,
+        apartment: String(edit.apt || '').trim(),
+        postal_code: String(edit.postal_code || '').trim(),
+        delivery_notes: String(edit.inst || '').trim(),
+        updated_at: new Date().toISOString(),
+      };
+      const isNew = !edit.id || typeof edit.id === 'number';
+      const result = isNew
+        ? await supabase.from('user_addresses').insert({...payload, user_id: auth.user.id, is_default: rows.length === 0}).select('id').single()
+        : await supabase.from('user_addresses').update(payload).eq('id', String(edit.id)).eq('user_id', auth.user.id).select('id').single();
+      if (result.error) throw result.error;
+      if (isNew && rows.length === 0) {
+        const {error: defaultError} = await supabase.rpc('set_default_user_address', {p_address_id: result.data.id});
+        if (defaultError) throw defaultError;
+      }
+      if (isNew && !rows.some((a: any) => a.goodiesDefault)) {
+        const {error: goodiesError} = await supabase.rpc('set_goodies_default_user_address', {p_address_id: result.data.id});
+        if (goodiesError) throw goodiesError;
+      }
+      setEdit(null);
+      await refreshUserAddresses();
+      toast(isNew ? 'Address saved to your Wantiss account.' : 'Address updated.');
+      save(); emit();
+    } catch (e: any) {
+      toast(e?.message || 'Could not save this address.');
+    } finally { setBusy(false); }
+  };
+  const removeAddr = (a: any) => Alert.alert('Delete address?', 'This address will be removed from Wantiss and Goodies.', [
+    {text:'Cancel',style:'cancel'},
+    {text:'Delete',style:'destructive',onPress:()=>{void(async()=>{
+      if (busy) return;
+      setBusy(true);
+      try {
+        const {error} = await supabase.rpc('delete_user_address', {p_address_id: String(a.id)});
+        if (error) throw error;
+        await refreshUserAddresses(); save(); emit();
+      } catch (e: any) { toast(e?.message || 'Could not delete this address.'); }
+      finally { setBusy(false); }
+    })();}},
+  ]);
   return (<View>
     <Bar title={label('lbl.settingsAddresses', 'Saved addresses')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <T size={13} color={th.mut} style={{marginBottom: 12, lineHeight: 19}}>{label('lbl.accountAddressScope', 'These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default.')}</T>
-      {S.addr.map((a: any) => (
+      {rows.map((a: any) => (
         <Card key={a.id}>
-          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.id === S.as ? <Badge label={label('lbl.accountDeliveringHere', 'Delivering here')} /> : null}</Row></Row>
+          <Row sp style={{flexWrap: 'wrap'}}><T weight="700">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <Badge color="#FD802E" label="Goodies" /> : null}</Row></Row>
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.accountAddressNote', 'Note:')} {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
             <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
-            {a.id !== S.as ? <Pressable onPress={() => {S.as = a.id; toast(label('lbl.accountDeliveringToAddress', 'Goodies will deliver to {address}').replace('{address}', a.l)); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
-            {!a.def ? <Pressable onPress={() => {S.addr.forEach((x: any) => (x.def = x.id === a.id ? 1 : 0)); toast(label('lbl.accountDefaultAddressUpdated', 'Wantiss default address updated')); save(); emit();}}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountSetWantissDefault', 'Set as Wantiss default')}</T></Pressable> : null}
-            {S.addr.length > 1 ? <Pressable onPress={() => {S.addr = S.addr.filter((x: any) => x.id !== a.id); if (a.def) S.addr[0].def = 1; if (S.as === a.id) S.as = defAddr().id; toast(label('lbl.accountAddressDeleted', 'Address deleted')); save(); emit();}}><T size={13.5} weight="700" color={th.red}>{label('lbl.accountDeleteAddress', 'Delete')}</T></Pressable> : <></>}
+            {String(a.id) !== String(S.as) ? <Pressable disabled={busy} onPress={() => void selectForGoodies(a)}><T size={13.5} weight="700" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
+            {!a.def ? <Pressable onPress={() => Alert.alert('Wantiss default', 'Change your main Wantiss default address in Me → Settings → Saved addresses.')}><T size={13.5} weight="700" color={th.mut}>Main default</T></Pressable> : null}
+            {rows.length > 1 ? <Pressable disabled={busy} onPress={() => removeAddr(a)}><T size={13.5} weight="700" color={th.red}>{label('lbl.accountDeleteAddress', 'Delete')}</T></Pressable> : null}
           </Row>
         </Card>
       ))}
       {edit ? (
         <Card>
-          <T size={17} weight="800">{edit.id ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
+          <T size={17} weight="800">{edit.id && typeof edit.id === 'string' ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={label('lbl.accountAddressType' + x, x)} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
           <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v})} />
+          <Input label="City" value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
+          <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
           <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
           <T size={13} weight="700" style={{marginTop: 10, marginBottom: 6}}>{label('lbl.accountCountry', 'Country')}</T>
-          <Row style={{gap: 8}}>{[['HT', 'Haiti', 'lbl.accountCountryHaiti'], ['DO', 'Dominican Republic', 'lbl.accountCountryDominicanRepublic'], ['US', 'United States', 'lbl.accountCountryUnitedStates'], ['XX', 'Other', 'lbl.accountCountryOther']].map(x => <Chip key={x[0]} label={label(x[2], x[1])} on={(edit.cc || 'HT') === x[0]} onPress={() => setEdit({...edit, cc: x[0]})} />)}</Row>
-          <Pressable disabled={!!edit.def && !!edit.id} onPress={() => setEdit({...edit, def: edit.def ? 0 : 1})} style={{flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 14}}><View style={{width: 20, height: 20, borderRadius: 5, borderWidth: 2, borderColor: th.br, backgroundColor: edit.def ? th.br : 'transparent'}} /><T>{edit.def && edit.id ? label('lbl.accountThisDefaultAddress', 'This is your Wantiss default address') : label('lbl.accountMakeDefaultAddress', 'Make this my default Wantiss address')}</T></Pressable>
-          <View style={{marginTop: 14}}><Cta label={label('lbl.accountSaveAddress', 'Save address')} onPress={saveAddr} /></View>
+          <Row style={{gap: 8, flexWrap: 'wrap'}}>{[['HT', 'Haiti', 'lbl.accountCountryHaiti'], ['DO', 'Dominican Republic', 'lbl.accountCountryDominicanRepublic'], ['US', 'United States', 'lbl.accountCountryUnitedStates'], ['XX', 'Other', 'lbl.accountCountryOther']].map(x => <Chip key={x[0]} label={label(x[2], x[1])} on={(edit.cc || 'HT') === x[0]} onPress={() => setEdit({...edit, cc: x[0]})} />)}</Row>
+          <View style={{marginTop: 14}}><Cta label={busy ? 'Saving…' : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
         </Card>
-      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', apt: '', inst: '', def: 0, cc: 'HT'})} />}
+      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: 'HT', phone: S.pf.ph || ''})} />}
     </View>
   </View>);
 }
