@@ -4,6 +4,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from '.
 import {Icon} from './Icon';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge} from '../store';
 import * as A from '../actions';
+import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
@@ -217,25 +218,52 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
 function GroupOrderSheet({close}: {close: () => void}) {
   const th = useTheme();
   const [name, setName] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
+  const [groupBusy, setGroupBusy] = useState(false);
   const [group, setGroup] = useState(() => {
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
-    const next = {code: 'GD' + Math.random().toString(36).slice(2, 7).toUpperCase(), host: S.pf.n || 'You', members: []};
+    const next = {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
     S.groupOrder = next; save(); return next;
   });
   const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
+  const createServerGroup = async () => {
+    if (!S.cart.sid) {toast('Add an item from a store first, then create its group order.');return;}
+    setGroupBusy(true);
+    const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
+    setGroupBusy(false);
+    const row=Array.isArray(data)?data[0]:data;
+    if(error||!row?.invite_code){toast(error?.message||'Could not create the group invitation.');return;}
+    saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
+    toast('A new group invitation is ready.');
+  };
+  const joinServerGroup = async () => {
+    const code=inviteCode.trim().toUpperCase();
+    if(!code){toast('Enter a group invite code.');return;}
+    setGroupBusy(true);
+    const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
+    setGroupBusy(false);
+    const row=Array.isArray(data)?data[0]:data;
+    if(error||!row?.group_id){toast(error?.message||'Could not join this group order.');return;}
+    saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
+    toast('You joined the group order.');
+  };
   const groupSubtotal = S.cart.lines.reduce((sum: number, line: any) => sum + Number(line.p || 0) * Number(line.q || 0), 0);
   const invite = async () => {
-    try {
-      await Share.share({message: 'Wantiss Goodies group-order invitation. Code: ' + group.code + '. Store: ' + (S.cart.sid && STB[S.cart.sid] ? STB[S.cart.sid].n : 'Choose a store together') + '. This is a demo invitation; please send your item choices to the host so they can add them to the shared cart.'});
-    } catch (_) { toast(label('lbl.sheetInviteCodeToast', 'Invite code: {code}').replace('{code}', group.code)); }
+    if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
+    try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
+    catch (_) {toast('Invite code: '+group.code);}
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
     <T size={13} color={th.mut} style={{marginTop:5, marginBottom:12}}>{label('lbl.sheetGroupDescription', 'Start a shared cart, invite friends, and coordinate everyone’s items before checkout.')}</T>
     <Card style={{marginBottom:12}}>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
-      <T size={12} color={th.mut} style={{marginTop:7}}>{label('lbl.sheetGroupShareNotice', 'Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link.')}</T>
+      {group.code ? <T size={12} color={th.mut} style={{marginTop:7}}>Server invitation · expires {new Date(group.expiresAt).toLocaleString()}</T> : <T size={12} color={th.mut} style={{marginTop:7}}>Create a server invitation for this store. Each new group order receives a fresh code.</T>}
+      <View style={{height:9}}/>
+      <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
+      {group.serverBacked ? <View style={{height:8}}/> : null}
+      {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </Card>
     <Card style={{marginBottom:12}}>
       <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
@@ -243,6 +271,12 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
       <View style={{height:10}}/><Cta ghost label={label('lbl.sheetViewCart', 'View cart')} onPress={()=>{close();A.go('cart');}} />
+    </Card>
+    <Card style={{marginBottom:12}}>
+      <T size={14} weight="800">Join a group order</T>
+      <T size={12} color={th.mut} style={{marginTop:4,marginBottom:8}}>Enter the invite code shared by your friend to join their active order.</T>
+      <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" autoCapitalize="characters" />
+      <View style={{height:8}}/><Cta ghost label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </Card>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <Row style={{gap:8, marginBottom:10}}>
