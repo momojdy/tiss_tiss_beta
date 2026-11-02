@@ -1,6 +1,6 @@
 /* Account screens: settings, profile, addresses, payments, policies, support. Ported from v24. */
 import React, {useState, useEffect, useRef} from 'react';
-import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image, Alert} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, Empty, Switch, Input, Chip, useTheme, Tile} from '../components/ui';
 import {S, defAddr, money, emit, save, toast, ui, push, reset, STB, refreshUserAddresses} from '../store';
