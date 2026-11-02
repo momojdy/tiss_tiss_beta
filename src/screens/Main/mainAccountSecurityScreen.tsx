@@ -7,6 +7,8 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 import { COUNTRIES } from '../../data/countries';
 
+const StatusBarCompat: any = StatusBar;
+
 type Props = { onBack: () => void };
 type Action = 'password' | 'email' | 'phone' | 'verification' | 'devices' | 'linked' | 'account' | 'delete' | null;
 
@@ -262,7 +264,7 @@ export default function AccountSecurityScreen({ onBack }: Props) {
 
   return (
     <View style={styles.page}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      <StatusBarCompat barStyle="dark-content" backgroundColor="#FFFFFF" />
       <View style={[styles.header, { paddingTop: insets.top + 8 }]}>
         <Pressable onPress={onBack} hitSlop={10} style={styles.backButton} accessibilityRole="button" accessibilityLabel="Back to Settings">
           <Ionicons name="chevron-back" size={24} color={INK} />
