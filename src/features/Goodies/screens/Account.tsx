@@ -108,7 +108,7 @@ function Addresses() {
       const payload = {
         recipient_name: String(edit.l || 'Home').trim().slice(0, 80) || 'Home',
         phone_number: String(edit.phone || S.pf.ph || '').trim(),
-        country: countryName(edit.cc || 'HT', edit.country),
+        country: String(edit.country || countryName(edit.cc || 'HT')).trim(),
         department: String(edit.department || '').trim(),
         city,
         street_address: street,
@@ -175,11 +175,10 @@ function Addresses() {
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
           <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
-          <T size={13} weight="700" style={{marginTop: 10, marginBottom: 6}}>{label('lbl.accountCountry', 'Country')}</T>
-          <Row style={{gap: 8, flexWrap: 'wrap'}}>{[['HT', 'Haiti', 'lbl.accountCountryHaiti'], ['DO', 'Dominican Republic', 'lbl.accountCountryDominicanRepublic'], ['US', 'United States', 'lbl.accountCountryUnitedStates'], ['XX', 'Other', 'lbl.accountCountryOther']].map(x => <Chip key={x[0]} label={label(x[2], x[1])} on={(edit.cc || 'HT') === x[0]} onPress={() => setEdit({...edit, cc: x[0]})} />)}</Row>
+          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country || countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v, cc: 'XX'})} />
           <View style={{marginTop: 14}}><Cta label={busy ? 'Saving…' : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
         </Card>
-      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: 'HT', phone: S.pf.ph || ''})} />}
+      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: 'HT', country: 'Haiti', phone: S.pf.ph || ''})} />}
     </View>
   </View>);
 }
