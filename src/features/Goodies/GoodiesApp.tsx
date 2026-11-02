@@ -12,7 +12,7 @@ import {startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, Notifs, Explore} from './screens/Browse';
 import {Store, StoreReviews, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
-import {Sheets} from './components/Sheets';
+import {Sheets, GroupOrderPage} from './components/Sheets';
 import WalletAddNewCardScreen from '../../screens/Wallet/WalletAddNewCardScreen';
 import {CardAuthentication} from './screens/CardAuthentication';
 import {ByoScreen, ByoFoot} from './builders/Builder';
@@ -22,7 +22,7 @@ import {PROMO} from './theme';
 import {t as tr} from './i18n';
 
 const TABS = ['home', 'cats', 'orders', 'cart'];
-const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
+const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
 export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embedded?: boolean}) {
@@ -102,6 +102,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'cats': body = <><TopBar title={tr('categories')} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
+    case 'grouporder': body = <GroupOrderPage onBack={handleBack} />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
     case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;

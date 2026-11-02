@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
-import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, useTheme} from './ui';
+import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
 import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge} from '../store';
 import * as A from '../actions';
@@ -195,9 +195,8 @@ function ScheduleSheet({close}: {close: () => void}) {
       <DateTimePicker
         value={customDate}
         mode="time"
-        display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
+        display={Platform.OS === 'ios' ? 'compact' : 'clock'}
         minuteInterval={5}
-        minimumDate={earliest}
         onChange={(_, date) => {
           if (!date) return;
           const picked = new Date(selectedDate);
@@ -285,6 +284,14 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <View style={{height:8}} />
     <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={() => {S.groupOrder=null; save(); emit(); close(); toast(label('lbl.sheetGroupEnded', 'Group order ended'));}} />
   </>;
+}
+
+export function GroupOrderPage({onBack}: {onBack: () => void}) {
+  const th = useTheme();
+  return <View style={{flex: 1, backgroundColor: th.bg}}>
+    <Bar title={label('lbl.sheetGroupTitle', 'Group order')} onBack={onBack} />
+    <View style={{paddingHorizontal: 16, paddingBottom: 24}}><GroupOrderSheet close={onBack} /></View>
+  </View>;
 }
 
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {

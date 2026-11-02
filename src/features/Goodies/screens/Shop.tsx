@@ -32,7 +32,7 @@ export function Store({id}: {id: string}) {
       if (active && address?.t) return refreshStoreDistance(id, address).catch(() => undefined);
     });
     return () => { active = false; };
-  }, [id, address?.t, address?.apt, address?.inst]);
+  }, [id, address?.t, address?.apt, address?.inst, address?.city, address?.country]);
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
@@ -43,7 +43,7 @@ export function Store({id}: {id: string}) {
       <Hero s={s} onBack={back} right={<Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="800" style={{marginTop: 16}}>{s.n}</T>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', s.km.toFixed(1)) : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : ''}</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + (Math.round(s.km * 1000) < 1000 ? Math.round(s.km * 1000) + ' m' : s.km.toFixed(1) + ' km') + ' from your address' : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : s.live && s.distanceError ? ' · Distance unavailable' : ''}</T>
         {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.storeClosed', 'Closed right now')}</T><T size={13} color={th.mut}>{s.acceptScheduledOrders ? s.nx + '. Scheduled orders are available for future opening-time slots.' : s.nx + '. Ordering is paused until then.'}</T></Card> : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, marginBottom: 4}}>
           <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeReadReviews', 'Read store reviews')} onPress={() => go('reviews', id)}><Badge green label={s.live && s.rv === 0 ? label('lbl.storeNewNoReviews', 'New · No reviews yet') : '★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + ' min'} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={'Min. ' + money(s.min)} /><Badge label={label("lbl.shopAuto18E4IBZ", "Delivery + pickup")} />{s.pr ? <Badge label={s.pr} /> : null}
@@ -163,7 +163,7 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || '');
-  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><Empty emoji="🛒" title={label('lbl.cartEmptyTitle', 'Your cart is empty')} text={label('lbl.cartEmptyText', 'Explore nearby stores, check what\'s open, and discover products around your chosen address.')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /><View style={{paddingHorizontal:16,marginTop:12}}><Cta ghost label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View></View>;
+  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><Empty emoji="🛒" title={label('lbl.cartEmptyTitle', 'Your cart is empty')} text={label('lbl.cartEmptyText', 'Explore nearby stores, check what\'s open, and discover products around your chosen address.')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /><View style={{paddingHorizontal:16,marginTop:12}}><Cta ghost label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} /></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
     <View>
@@ -171,7 +171,6 @@ export function Cart() {
       <View style={{paddingHorizontal: 16}}>
         {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
-        <View style={{marginBottom: 10}}><Cta ghost small label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View>
         {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
         <Card style={{marginTop: 12}}>
           <Row sp>
@@ -201,7 +200,7 @@ export function Cart() {
           );
         })}
         <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="700" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
-        <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartStartGroup', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{flexDirection:'row',alignItems:'center',gap:12,marginTop:10,padding:14,borderWidth:1,borderColor:th.br,borderRadius:16,backgroundColor:th.brt}}>
+        <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartStartGroup', 'Start a group order')} onPress={() => go('grouporder')} style={{flexDirection:'row',alignItems:'center',gap:12,marginTop:10,padding:14,borderWidth:1,borderColor:th.br,borderRadius:16,backgroundColor:th.brt}}>
           <View style={{width:42,height:42,borderRadius:13,backgroundColor:th.card,alignItems:'center',justifyContent:'center'}}><Icon name="user" size={21} color={th.br}/></View>
           <View style={{flex:1}}><T weight="800">{label('lbl.cartGroupOrder', 'Start a group order')}</T><T size={12.5} color={th.mut} style={{marginTop:3}}>{label('lbl.cartGroupOrderDesc', 'Invite friends and coordinate a shared cart')}</T></View>
           <Icon name="chevR" size={17} color={th.br}/>
@@ -234,7 +233,7 @@ export function Checkout() {
     });
     void refreshPaymentOptions();
     return () => { active = false; };
-  }, [st?.id, st?.live, a?.t, a?.apt, a?.inst]);
+  }, [st?.id, st?.live, a?.t, a?.apt, a?.inst, a?.city, a?.country]);
   useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
   useEffect(() => {
     let active = true;
