@@ -229,6 +229,15 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [groupCheckoutBusy, setGroupCheckoutBusy] = useState(false);
   const [groupCheckoutType, setGroupCheckoutType] = useState<'pickup'|'delivery'>('pickup');
   const [groupAddressId, setGroupAddressId] = useState<string|number>(()=>addr()?.id ?? '');
+  useEffect(() => {
+    if(groupCheckoutType!=='delivery') return;
+    let active=true;
+    void refreshUserAddresses().then((addresses:any[])=>{
+      if(!active||!addresses?.length) return;
+      setGroupAddressId((current:any)=>addresses.some((item:any)=>String(item.id)===String(current))?current:addresses.find((item:any)=>item.def)?.id??addresses[0].id);
+    }).catch((error:any)=>{if(active)toast(error?.message||'Could not load saved delivery addresses.');});
+    return ()=>{active=false;};
+  },[groupCheckoutType]);
   const [currentUserId, setCurrentUserId] = useState('');
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
@@ -308,6 +317,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
     try {
+      await A.refreshPaymentOptions();
       let addressPayload:any=null;
       if(groupCheckoutType==='delivery'){
         let addresses=S.addr||[];
@@ -446,7 +456,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
       <T size={11.5} color={th.mut} style={{marginTop:4}}>Final delivery and service fees are calculated and checked by the server at checkout.</T>
       <View style={{height:9}}/>
-      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||Number(S.wallet||0)<Number(checkoutPreview.subtotal||0)||(groupCheckoutType==='delivery'&&!S.addr.length)}/>
+      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&!S.addr.length)}/>
     </Card> : null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
