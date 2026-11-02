@@ -84,7 +84,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label={label("lbl.sheetAutoCKTN2B", "Wantiss default")} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="800" color="#fff">GOODIES</T></View> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label={label("lbl.sheetAuto16NJT2W", "Manage addresses")} onPress={() => {close(); A.go('addresses');}} /></>);
 
   const isRatingSheet = k === 'review' || k === 'driver-review';
-  const isCenteredSheet = k === 'remove-item' || k === 'clear';
+  const isCenteredSheet = ['remove-item','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
     <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}><ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView></SheetBox>
@@ -93,7 +93,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (isCenteredSheet) {
     return <ConfirmDialog visible onClose={close} accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close dialog")}>{sheetBody}</ConfirmDialog>;
   }
-  return <BottomSheet visible onClose={close} maxHeight={k==='schedule' ? Math.min(windowHeight * 0.86, 760) : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
+  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.min(windowHeight * 0.86, 760) : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
 function ScheduleSheet({close}: {close: () => void}) {
@@ -190,7 +190,7 @@ function ScheduleSheet({close}: {close: () => void}) {
       <DateTimePicker
         value={customDate}
         mode="time"
-        display={Platform.OS === 'ios' ? 'spinner' : 'clock'}
+        display="spinner"
         minuteInterval={5}
         onChange={(_, date) => {
           if (!date) return;
