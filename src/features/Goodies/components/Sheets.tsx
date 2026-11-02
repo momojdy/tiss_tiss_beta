@@ -274,10 +274,21 @@ function GroupOrderSheet({close}: {close: () => void}) {
       const {data,error}=await supabase.rpc('goodies_group_order_list_members',{p_group_id:group.groupId});
       if(active){setMembershipError(error?.message||'');if(!error)setGroupMembers(data||[]);}
     };
-    void loadItems(); void loadMembers();
+    const refreshGroupStatus=async () => {
+      const {data,error}=await supabase.rpc('goodies_group_order_get_status',{p_group_id:group.groupId});
+      if(!active||error)return;
+      const statusRow=Array.isArray(data)?data[0]:data;
+      if(!statusRow||statusRow.status!=='open'||new Date(statusRow.expires_at).getTime()<=Date.now()){
+        S.groupOrder=null; save(); emit(); setGroup({code:'',host:S.pf.n||'You',members:[],serverBacked:false});
+        setSharedItems([]);setGroupMembers([]);setCheckoutPreview(null);
+        toast(statusRow?.status==='cancelled'?'The group host ended this group order.':'This group order has closed or expired.');
+      }
+    };
+    void loadItems(); void loadMembers(); void refreshGroupStatus();
     const channel=supabase.channel('goodies-group-live-'+group.groupId)
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void loadItems();})
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_members',filter:'group_id=eq.'+group.groupId},()=>{void loadMembers();})
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'goodies_group_orders',filter:'id=eq.'+group.groupId},()=>{void refreshGroupStatus();})
       .subscribe();
     return ()=>{active=false;void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId]);
