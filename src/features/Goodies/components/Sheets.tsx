@@ -290,7 +290,7 @@ export function GroupOrderPage({onBack}: {onBack: () => void}) {
   const th = useTheme();
   return <View style={{flex: 1, backgroundColor: th.bg}}>
     <Bar title={label('lbl.sheetGroupTitle', 'Group order')} onBack={onBack} />
-    <View style={{paddingHorizontal: 16, paddingBottom: 24}}><GroupOrderSheet close={onBack} /></View>
+    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 24}} keyboardShouldPersistTaps="handled"><GroupOrderSheet close={onBack} /></ScrollView>
   </View>;
 }
 
