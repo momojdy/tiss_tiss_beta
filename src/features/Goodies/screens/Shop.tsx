@@ -195,7 +195,7 @@ export function Cart() {
                 <T size={14} weight="800" style={{marginTop: 4}}>{money(l.p * l.q)}</T>
                 {l.byo ? <View style={{flexDirection: 'row', gap: 16, marginTop: 6}}><Pressable onPress={() => bzEdit(l.k)}><T size={13} weight="700" color={th.br}>{label('lbl.cartEditItem', 'Edit')}</T></Pressable><Pressable onPress={() => bzRemove(l.k)}><T size={13} weight="700" color={th.red}>{label("lbl.shopAutoU0R7PW", "Remove")}</T></Pressable></View> : null}
               </View>
-              <Stepper q={l.q} onMinus={() => qty(l.k, -1)} onPlus={() => qty(l.k, 1)} />
+              <Stepper q={l.q} onMinus={() => l.q > 1 ? qty(l.k, -1) : require('../store').ui.sheet({kind: 'remove-item', lineKey: l.k, itemName: l.n})} onPlus={() => qty(l.k, 1)} />
             </View>
           );
         })}
