@@ -42,7 +42,6 @@ function Settings() {
   return (<View>
     <Bar title={tr('settings')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
-      <Card><Row><Avatar z={48} /><View style={{flex: 1}}><T weight="700">{S.pf.n}</T></View></Row></Card>
       <Ttl>{label('lbl.notifsTitle', 'Notifications')}</Ttl>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOrderUpdates', 'Order updates')}</T><Switch on={!!S.np.orders} label={label('lbl.settingsOrderUpdates', 'Order updates')} onPress={() => togglePref('orders')} /></Row>
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>

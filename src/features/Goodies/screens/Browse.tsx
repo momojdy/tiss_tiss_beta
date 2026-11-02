@@ -76,27 +76,11 @@ function Countdown() {
 
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
-  const storeKey = ST.map(s => s.id).join('|');
-  const [deliveryStatus, setDeliveryStatus] = useState<'checking' | 'available' | 'none' | 'choose' | 'error'>('checking');
+  const storeKey = ST.filter(s => s.live && s.c === 'restaurants').map(s => s.id).join('|');
   useEffect(() => {
-    let active = true;
-    if (!address?.t) { setDeliveryStatus('choose'); return () => { active = false; }; }
-    const candidates = ST.filter(s => s.live && (!s.businessDeliveryModes?.length || s.businessDeliveryModes.includes('delivery')));
-    if (!candidates.length) { setDeliveryStatus('none'); return () => { active = false; }; }
-    setDeliveryStatus('checking');
-    void (async () => {
-      let checked = 0, available = 0;
-      for (const store of candidates) {
-        try {
-          const distance = await refreshStoreDistance(store.id, address);
-          if (distance != null) { checked++; if (!store.far) available++; }
-        } catch {}
-        if (!active) return;
-      }
-      if (!active) return;
-      setDeliveryStatus(available ? 'available' : checked === candidates.length ? 'none' : 'error');
-    })();
-    return () => { active = false; };
+    if (!address?.t) return;
+    const restaurants = ST.filter(s => s.live && s.c === 'restaurants');
+    void Promise.all(restaurants.map(store => refreshStoreDistance(store.id, address).catch(() => null)));
   }, [address?.id, address?.t, address?.apt, address?.inst, storeKey]);
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
   const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it), cats = categories();
@@ -115,9 +99,6 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
       </View>
-      {deliveryStatus === 'none' || deliveryStatus === 'choose' || deliveryStatus === 'error' ? <View style={{paddingHorizontal: 16, paddingTop: 8}}>
-        <Empty emoji="📍" title={deliveryStatus === 'none' ? 'No stores deliver to this address' : deliveryStatus === 'choose' ? 'Choose a delivery address' : 'Delivery availability could not be checked'} button={deliveryStatus === 'none' ? 'Change address' : 'Choose address'} onPress={() => go('addresses')} />
-      </View> : null}
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
       </Pressable>
@@ -171,7 +152,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       {(() => {const trending = ['s1_1', 's4_0', 's5_0', 's6_0'].map(id => IT[id]).filter(Boolean); return trending.length ? <><Sh title={'🔥 ' + label('lbl.trending', tr('trending'))} /><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16}}>{trending.map(i => <Dish key={i.id} i={i} grid />)}</View></> : null;})()}
       <Sh title={tr('restaurantsNear')} link={tr('seeAll')} onLink={() => go('catlist', 'all')} />
       <Chips list={FCH} on={S.f} onPick={setFilter} />
-      <View style={{gap: 22, paddingTop: 12, paddingHorizontal: 16}}>{filt(ST.filter(s => deliveryStatus !== 'none' || !s.live || !s.businessDeliveryModes?.includes('delivery'))).slice(0, 5).map(s => <StoreCard key={s.id} s={s} />)}</View>
+      <View style={{gap: 22, paddingTop: 12, paddingHorizontal: 16}}>{filt(ST).slice(0, 5).map(s => <StoreCard key={s.id} s={s} />)}</View>
     </View>
   );
 }

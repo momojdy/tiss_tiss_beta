@@ -51,6 +51,13 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
     </View>
   );
 }
+const storeDistanceLabel = (s: Store) => {
+  if (!s.live) return s.km.toFixed(1) + ' km';
+  if (!s.distanceReady) return '';
+  const meters = Math.round(s.km * 1000);
+  return meters < 1000 ? meters + ' m' : (meters / 1000).toFixed(1) + ' km';
+};
+
 export function VCard({s}: {s: Store}) {
   const th = useTheme(), saved = S.fav.indexOf(s.id) > -1;
   return (
@@ -63,7 +70,7 @@ export function VCard({s}: {s: Store}) {
       </View>
       <Pressable onPress={() => go('store', s.id)} style={{padding: 10}}>
         <T size={13.5} weight="700" lines={1}>{s.n}</T>
-        <T size={11.5} color={th.mut} lines={1}>{s.k}</T>
+        <T size={11.5} color={th.mut} lines={1}>{s.k}{storeDistanceLabel(s) ? ' · ' + storeDistanceLabel(s) : ''}</T>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
           {s.live && s.rv === 0 ? <T size={11.5} color={th.mut}>{label('lbl.cardNewStore', 'New store')}</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} min</T>
         </View>
@@ -101,7 +108,7 @@ export function StoreCard({s, showProducts = false}: {s: Store; showProducts?: b
           <T size={16.5} weight="800" style={{flexShrink: 1}}>{s.n}</T>
           {s.live && s.rv === 0 ? <T size={12} color={th.mut}>{label('lbl.storeNoReviewsYet', 'No reviews yet')}</T> : <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="700">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>}
         </View>
-        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + s.km.toFixed(1) + ' km' : !s.live ? ' · ' + s.km.toFixed(1) + ' km' : ''}</T>
+        <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{storeDistanceLabel(s) ? ' · ' + storeDistanceLabel(s) : ''}</T>
         {byoTag(s.id)}
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.fee === 0 ? <T size={13} weight="700" color={th.grn}>{tr('freeDelivery')}</T> : money(s.fee) + ' ' + tr('delivery')} · {tr('minOrder')} {money(s.min)}</T>
       </Pressable>
