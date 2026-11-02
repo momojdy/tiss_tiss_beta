@@ -445,7 +445,7 @@ const RESTRICTIONS: { k: GProduct['restriction']; l: string }[] = [{ k: 'none', 
 const BLANK: GProduct = { id: '', name: '', description: '', price: 0, emoji: '🛍️', stock: 0, available: true, restriction: 'none', photoUrl: null, photoUrls: [], reviewStatus: 'approved', reviewNote: null };
 const dollars = (n: number) => '$' + n.toFixed(2);
 function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClose: () => void; onSaved: () => void }) {
-  const app = useApp(), s = useS();
+  const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState({ name: product.name, description: product.description, price: product.id ? String(product.price) : '', stock: String(product.stock), emoji: product.emoji, restriction: product.restriction, photoUrl: product.photoUrl || '', photoUrls: product.photoUrls?.length ? product.photoUrls : product.photoUrl ? [product.photoUrl] : [], photoUris: [] as string[] });
   const [busy, setBusy] = useState(false);
   const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
