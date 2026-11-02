@@ -430,7 +430,7 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
-        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').eq('read', false);
+        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').not('notification_type', 'like', 'goodies_ingredient_%').eq('read', false);
       if (error) setServerError(error.message);
       else await loadServer();
     }
@@ -449,7 +449,7 @@ export function Notifs() {
     const destination = String(n.destination || '').toLowerCase();
     const metadata = n.metadata || {};
     if (destination.includes('ingredientrequest')) return;
-    if (destination.includes('order') || n.notification_type === 'goodies_order_status' || n.notification_type === 'goodies_order_update') {
+    if (destination.includes('order') || metadata.order_id || metadata.order_code || n.notification_type === 'goodies_order_status' || n.notification_type === 'goodies_order_update') {
       const order = S.orders.find((o: any) => o.backendId && (o.backendId === metadata.order_id || o.id === metadata.order_code));
       if (order) go('track', order.id);
       else tab('orders');
