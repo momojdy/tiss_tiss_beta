@@ -22,7 +22,7 @@ jobs:
       - name: Install and align dependencies with Expo SDK 58
         run: |
           npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
-          npx expo install --fix
+          NPM_CONFIG_LEGACY_PEER_DEPS=true npx expo install --fix
           npm install --package-lock-only --legacy-peer-deps --ignore-scripts --no-audit --no-fund
       - name: Persist refreshed Expo manifest and lockfile
         run: |
@@ -38,7 +38,7 @@ jobs:
             git push origin HEAD:main
           fi
       - name: Install dependencies from the committed lockfile
-        run: npm ci --no-audit --no-fund
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
       - name: Lint
         run: npx expo lint
       - name: Type-check
