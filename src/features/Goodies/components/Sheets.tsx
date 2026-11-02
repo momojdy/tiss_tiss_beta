@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -220,6 +220,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [name, setName] = useState('');
   const [inviteCode, setInviteCode] = useState('');
   const [groupBusy, setGroupBusy] = useState(false);
+  const [sharedItems, setSharedItems] = useState<any[]>([]);
   const [group, setGroup] = useState(() => {
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
@@ -235,6 +236,9 @@ function GroupOrderSheet({close}: {close: () => void}) {
     const row=Array.isArray(data)?data[0]:data;
     if(error||!row?.invite_code){toast(error?.message||'Could not create the group invitation.');return;}
     saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
+    const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
+    const failed=synced.find((result:any)=>result.error);
+    if(failed)toast('Group created, but one or more existing cart items could not be shared: '+failed.error.message);
     toast('A new group invitation is ready.');
   };
   const joinServerGroup = async () => {
@@ -248,7 +252,23 @@ function GroupOrderSheet({close}: {close: () => void}) {
     saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
     toast('You joined the group order.');
   };
+  useEffect(() => {
+    if (!group.serverBacked || !group.groupId) {setSharedItems([]);return;}
+    let active=true;
+    const load=async () => {
+      const {data,error}=await supabase.from('goodies_group_order_items')
+        .select('id,user_id,line_key,quantity,options,note,product:goodies_products(name,price,photo_url,emoji)')
+        .eq('group_id',group.groupId).order('created_at',{ascending:true});
+      if(active&&!error)setSharedItems(data||[]);
+    };
+    void load();
+    const channel=supabase.channel('goodies-group-cart-'+group.groupId)
+      .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void load();})
+      .subscribe();
+    return ()=>{active=false;void supabase.removeChannel(channel);};
+  },[group.serverBacked,group.groupId]);
   const groupSubtotal = S.cart.lines.reduce((sum: number, line: any) => sum + Number(line.p || 0) * Number(line.q || 0), 0);
+
   const invite = async () => {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
     try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
@@ -302,10 +322,19 @@ function GroupOrderSheet({close}: {close: () => void}) {
       {!group.members.length ? <T size={13} color={th.mut} style={{paddingVertical:10}}>{label('lbl.sheetNoMembers', 'No members yet. Invite friends or add their names to plan the group.')}</T> : null}
     </Card>
     <View style={{height:12}}/>
-    <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetSharedCart', 'Shared cart')}</T>
+    <T size={15} weight="800" style={{marginBottom:7}}>Live group cart</T>
     <Card>
-      {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{paddingVertical:7,alignItems:'flex-start'}}><View style={{flex:1}}><T weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut}>{label("lbl.sheetAutoDGWG5R", "The host cart is empty. Add items from a store to start the group order.")}</T>}
-      <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}><Row sp><T weight="800">{label("lbl.sheetAuto1KZZ2LV", "Items subtotal")}</T><T weight="800">{money(groupSubtotal)}</T></Row><T size={11.5} color={th.mut} style={{marginTop:4}}>{label("lbl.sheetAuto17YI8XJ", "Delivery and service fees are calculated at checkout.")}</T></View>
+      {sharedItems.length ? sharedItems.map((item:any)=>{
+        const product=Array.isArray(item.product)?item.product[0]:item.product;
+        return <Row key={item.id} sp style={{paddingVertical:8,alignItems:'flex-start'}}>
+          <View style={{flex:1}}><T weight="700">{item.quantity}× {product?.name || 'Unavailable product'}</T><T size={11.5} color={th.mut}>Added by {String(item.user_id).slice(0,8)}{item.note ? ' · '+item.note : ''}</T></View>
+          <T weight="700">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
+        </Row>;
+      }) : <T size={12.5} color={th.mut}>No shared items yet. Members can add products from this store and they will appear here.</T>}
+      <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
+        <Row sp><T weight="800">Shared items subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
+        <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically when group members add or change items. Delivery and service fees are calculated at checkout.</T>
+      </View>
     </Card>
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
