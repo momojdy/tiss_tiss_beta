@@ -4,7 +4,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from '.
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, contentHooks} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -225,6 +225,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
   const [membershipError, setMembershipError] = useState('');
   const [checkoutPreview, setCheckoutPreview] = useState<any>(null);
+  const [checkoutEstimate, setCheckoutEstimate] = useState<any>(null);
   const [previewBusy, setPreviewBusy] = useState(false);
   const [groupCheckoutBusy, setGroupCheckoutBusy] = useState(false);
   const [groupCheckoutType, setGroupCheckoutType] = useState<'pickup'|'delivery'>('pickup');
@@ -322,7 +323,11 @@ function GroupOrderSheet({close}: {close: () => void}) {
       const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
       const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview?.store_id,address:addressPayload}});
       if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
-      setGroupDeliveryQuote({addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000});
+      const quoteState={addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000};
+      setGroupDeliveryQuote(quoteState);
+      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
+      if(estimate.error) {setCheckoutEstimate(null);toast(estimate.error.message||'Could not calculate the final estimate.');}
+      else setCheckoutEstimate(estimate.data);
     } catch(e:any) {
       setGroupDeliveryQuote(null);toast(e?.message||'Could not calculate delivery.');
     } finally {setGroupQuoteBusy(false);}
@@ -462,7 +467,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       </Row>
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
         <T size={12} weight="700" style={{marginBottom:6}}>Deliver to</T>
-        {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);}}>
+        {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
           <View style={{flex:1}}><T size={13} weight="700">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
         </Radio>)}
         {!S.addr.length ? <T size={12} color={th.mut}>No saved addresses found. Add a delivery address to your profile first.</T> : null}
@@ -474,14 +479,15 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </View> : null}
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
-      {checkoutPreview && (groupCheckoutType==='pickup'||groupDeliveryQuote) ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
-        <T size={12} weight="800" style={{marginBottom:7}}>Payment estimate</T>
-        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="700">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
-        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="700">{money(Number(groupDeliveryQuote?.fee||0))}</T></Row> : null}
-        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="700">{money(Number(contentHooks.fees?.().svc||0))}</T></Row>
+      {checkoutEstimate ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
+        <T size={12} weight="800" style={{marginBottom:7}}>Server-calculated payment estimate</T>
+        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="700">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
+        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="700">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
+        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="700">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
         <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
-        <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutPreview.subtotal||0)+(groupCheckoutType==='delivery'?Number(groupDeliveryQuote?.fee||0):0)+Number(contentHooks.fees?.().svc||0))}</T></Row>
-        <T size={10.5} color={th.mut} style={{marginTop:6}}>Estimate excludes any eligible first-order delivery-fee waiver. The server recalculates fees and checks your Wallet balance before placing the order.</T>
+        <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
+        {checkoutEstimate.first_order_delivery_waiver ? <T size={10.5} color={th.mut} style={{marginTop:6}}>Your first-order delivery-fee waiver has been applied.</T> : null}
+        <T size={10.5} color={th.mut} style={{marginTop:4}}>Final payment is recalculated and checked by the server when you place the order.</T>
       </View> : null}
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
       <T size={11.5} color={th.mut} style={{marginTop:4}}>Your Wallet must cover the final server-calculated total.</T>
