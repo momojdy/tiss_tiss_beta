@@ -1,11 +1,11 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
 import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistance} from '../store';
-import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor} from '../content';
+import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent} from '../content';
 import {Image} from 'react-native';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
@@ -134,7 +134,7 @@ export function Home({onExit}: {onExit?: () => void}) {
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
       </View>
-      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} link={tr('seeAll')} onLink={() => go('flashdeals')} />}
+      <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Row style={{gap:10}}><Countdown /><Pressable accessibilityRole="button" onPress={() => go('flashdeals')}><T size={13} weight="800" color={th.br}>{tr('seeAll')}</T></Pressable></Row>} />{activeDeals.length ? <Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail> : <View style={{paddingHorizontal:16,paddingBottom:8}}><T size={12.5} color={th.mut}>{label('lbl.flashEmptyBody','Check back soon for limited-time offers.')}</T></View>}
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
@@ -337,14 +337,29 @@ export function Search() {
 
 export function FlashDeals() {
   const activeDeals = deals().filter(d => IT[d[0]]);
+  const [refreshing, setRefreshing] = useState(false);
+  const refresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    try { await loadContent(); }
+    finally { setRefreshing(false); }
+  };
   return (
     <View>
       <Bar title={label('lbl.flash', tr('flashDeals'))} onBack={back} />
-      <View style={{paddingHorizontal:16}}>
+      <ScrollView
+        contentContainerStyle={{paddingHorizontal:16,paddingBottom:24}}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {void refresh();}} />}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+          <T size={13} weight="700" color="#fff">{label('lbl.flashLimitedTime','Limited-time offers')}</T>
+          <Countdown />
+        </View>
         {activeDeals.length ? <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>
           {activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} grid />)}
         </View> : <Empty title={label('lbl.flashEmptyTitle','No flash deals available')} text={label('lbl.flashEmptyBody','Check back soon for limited-time offers.')} />}
-      </View>
+      </ScrollView>
     </View>
   );
 }
