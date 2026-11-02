@@ -3,7 +3,7 @@ import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'rea
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
-import {fmtTime, fmtDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
+import {fmtTime, fmtDay, fmtStoreTime, fmtStoreDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
 import {go, tab, back, browse, heart, favp, setSize, toggleDrink, productQty, productAdd, qty, clearAsk, promoApply, promoClear, goCheckout, checkoutNext, setMode, setTip, setSch, setPay, setCard, placeOrder, cancelAsk, reorder, setOrdersTab, refreshPaymentOptions} from '../actions';
 import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
@@ -185,7 +185,7 @@ export function Cart() {
           <Row sp>
             <View style={{flex:1}}>
               <T weight="800">Order time</T>
-              <T size={13} color={th.mut} style={{marginTop:3}}>{S.sch > Date.now() ? fmtDay(new Date(S.sch)) + ' · ' + fmtTime(new Date(S.sch)) : 'ASAP'}</T>
+              <T size={13} color={th.mut} style={{marginTop:3}}>{S.sch > Date.now() ? fmtStoreDay(S.cart.sid,S.sch) + ' · ' + fmtStoreTime(S.cart.sid,S.sch) : 'ASAP'}</T>
             </View>
             {st.acceptScheduledOrders ? <Pressable onPress={() => require('../store').ui.sheet({kind:'schedule'})}><T size={13.5} weight="800" color={th.br}>{S.sch > Date.now() ? 'Change time' : 'Choose time'}</T></Pressable> : <Badge label="ASAP" />}
           </Row>
@@ -283,7 +283,7 @@ export function Checkout() {
       <Row sp style={{alignItems:'center',flex:1}}>
         <View style={{flex:1,minWidth:0}}>
           <T weight="700">{label('lbl.checkoutScheduleOption','Schedule')}</T>
-          {S.sch ? <T size={12.5} color={th.mut} style={{marginTop:3}}>{fmtDay(new Date(S.sch))+' · '+fmtTime(new Date(S.sch))}</T> : null}
+          {S.sch ? <T size={12.5} color={th.mut} style={{marginTop:3}}>{fmtStoreDay(st.id,S.sch)+' · '+fmtStoreTime(st.id,S.sch)}</T> : null}
         </View>
         <Icon name="edit" size={17} color={th.br}/>
       </Row>
@@ -306,7 +306,7 @@ export function Checkout() {
   </>);
   if (S.cs === 3) body = (<>
     <Card>{st.cover ? <Image source={{uri:st.cover}} style={{width:"100%",height:100,borderRadius:12,marginBottom:10}} resizeMode="cover" /> : null}<Row style={{gap:10, alignItems:"center"}}><Tile e={st.e} bg={st.bg} size={46} photo={st.thumbnail || st.logo} /><View style={{flex:1}}><T weight="700">{st.n}</T><T size={12} color={th.mut}>Your order from this store</T></View></Row>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 10, alignItems: "center"}}><Row style={{flex:1, gap:9, alignItems:"center"}}><Tile e={l.e} bg="bg0" size={42} photo={l.photo} /><View style={{flex:1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View></Row><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
-    <Sum rows={[[pk ? 'Pickup' : 'Delivery to', pk ? st.n : a.t], ['When', S.sch ? fmtDay(new Date(S.sch)) + ', ' + fmtTime(new Date(S.sch)) : 'ASAP'], ['Contact', ct.ph], ['Payment', S.pay === 'card' ? 'Card •••• ' + ((S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards[0])?.l4 || '') : ({wallet: 'Wallet', moncash: 'MonCash', cash: 'Cash'} as any)[S.pay]], ...(S.note ? [['Note', S.note] as any] : [])]} />
+    <Sum rows={[[pk ? 'Pickup' : 'Delivery to', pk ? st.n : a.t], ['When', S.sch ? fmtStoreDay(st.id,S.sch) + ', ' + fmtStoreTime(st.id,S.sch) : 'ASAP'], ['Contact', ct.ph], ['Payment', S.pay === 'card' ? 'Card •••• ' + ((S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards[0])?.l4 || '') : ({wallet: 'Wallet', moncash: 'MonCash', cash: 'Cash'} as any)[S.pay]], ...(S.note ? [['Note', S.note] as any] : [])]} />
     {hasAlcohol() ? <Card style={{borderColor: th.br}}><T weight="800">{label('lbl.checkoutAlcoholConfirm', 'Alcohol order. Please confirm.')}</T><T size={13} color={th.mut} style={{marginVertical: 6}}>{rgText('rg.refund', 'If the ID check fails, the alcohol returns to the store and you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(S.cart.sid).age)}</T><Pressable onPress={() => setConsent(!S.alcConsent)} accessibilityRole="checkbox" accessibilityState={{checked: !!S.alcConsent}} style={{flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 4}}><View style={{width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: th.br, backgroundColor: S.alcConsent ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{S.alcConsent ? <Icon name="check" size={14} color="#fff" /> : null}</View><T size={13.5} style={{flex: 1}}>{rgText('rg.consent', 'I am {age} or older and will show valid government photo ID on delivery or pickup.', alcAge(S.cart.sid).age)}</T></Pressable></Card> : null}
     <Sum rows={[['Subtotal', money(t.sub)], ['Delivery fee', pk ? 'Pickup' : t.free ? 'Free' : money(t.fee), t.free ? 'g' : undefined as any], ['Service fee', money(t.svc)], ...(t.disc ? [['Discount', '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [['Tip', money(t.tip)] as any] : [])]} total={['Total', money(t.total)]} />
   </>);
