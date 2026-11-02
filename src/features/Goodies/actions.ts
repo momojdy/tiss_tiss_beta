@@ -346,7 +346,7 @@ export const setOrdersTab = (t: string) => {S.ot = t; emit();};
 export function openNotif(id: any) {const n = S.notifs.filter((x: any) => x.id == id)[0]; if (!n) return; n.u = 0; push('ndetail', n.id);}
 export const readAll = () => {S.notifs.forEach((n: any) => (n.u = 0)); emit();};
 export const togglePref = (k: 'orders' | 'promos') => {S.np[k] = S.np[k] ? 0 : 1; save(); emit();};
-export const selectAddr = (id: number) => {S.as = id; ui.close(); emit(); toast(label('lbl.actionDeliveringTo', 'Delivering to {address} (Wantiss default unchanged)').replace('{address}', addr().l));};
+export const selectAddr = (id: string | number) => {S.as = id; ui.close(); emit(); toast(label('lbl.actionDeliveringTo', 'Delivering to {address} (Wantiss default unchanged)').replace('{address}', addr().l));};
 export const setFilter = (k: string) => {S.f = k; emit();};
 export const setSub = (k: string) => {S.sub = k; emit();};
 export const clearFilters = () => {S.f = ''; S.sub = ''; emit();};
