@@ -1,12 +1,12 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl} from 'react-native';
+import {Image as ExpoImage} from 'expo-image';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
 import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistance} from '../store';
-import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent} from '../content';
-import {Image} from 'react-native';
+import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent, onContent, hasContent} from '../content';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
 import {fetchGoodiesOrderForNotification} from '../serverSync';
@@ -15,6 +15,18 @@ import {MODE1, PROMO} from '../theme';
 import {supabase} from '../../../lib/supabase';
 
 const cname = (id: string) => catName(id);
+
+function CachedContentImage({uri, style, contentFit = 'contain', onFail}: {uri: string; style: any; contentFit?: 'contain'|'cover'; onFail?: () => void}) {
+  const [failed, setFailed] = useState(false);
+  const [retried, setRetried] = useState(false);
+  useEffect(() => { setFailed(false); setRetried(false); }, [uri]);
+  if (failed) return null;
+  return <ExpoImage source={{uri}} style={style} contentFit={contentFit} cachePolicy="disk" recyclingKey={uri} transition={120}
+    onError={(_error, retry) => {
+      if (!retried) { setRetried(true); void loadContent().finally(() => retry()); }
+      else { setFailed(true); onFail?.(); }
+    }} />;
+}
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
   const [imageFailed, setImageFailed] = useState(false);
   useEffect(() => setImageFailed(false), [image]);
@@ -29,7 +41,7 @@ function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
       <>
         <T size={small ? 14.5 : 17} weight="800" color={c} style={{lineHeight: small ? undefined : 19.5, width: image && !imageFailed ? '70%' : undefined}}>{title}</T>
         {sub ? <T size={12} color={c} style={{marginTop: 3, opacity: 0.9, width: image && !imageFailed ? '70%' : undefined}}>{sub}</T> : null}
-        {image && !imageFailed ? <Image source={{uri: image}} onError={() => setImageFailed(true)} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
+        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: small ? 6 : 8, bottom: small ? 2 : -4, top: small ? 2 : undefined, width: small ? 46 : 82, height: small ? 46 : 82, opacity: 0.98}} /> : <Text style={{position: 'absolute', right: small ? 10 : 6, bottom: small ? undefined : -4, top: small ? 8 : undefined, fontSize: small ? 34 : 62, lineHeight: small ? 36 : 62}}>{emoji}</Text>}
       </>
     );
   }
@@ -41,7 +53,7 @@ function CategoryTile({category, onPress}: {category: {id:string; name:any; emoj
   return (
     <Pressable onPress={onPress} style={{width:68,alignItems:'center'}}>
       {category.art && !failed
-        ? <Image source={{uri:category.art}} onError={() => setFailed(true)} style={{width:48,height:48}} resizeMode="contain" />
+        ? <CachedContentImage uri={category.art} style={{width:48,height:48}} onFail={() => setFailed(true)} />
         : <View style={{width:48,height:48,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
       <T size={11.5} weight="600" align="center" style={{marginTop:6,lineHeight:14}}>{tx(category.name)}</T>
     </Pressable>
@@ -68,7 +80,7 @@ function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string;
         <T size={18} weight="800" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
         <View style={{position: 'absolute', left: 16, bottom: 8, backgroundColor: '#fff', borderRadius: 16, paddingHorizontal: 14, paddingVertical: 7}}><T size={12.5} weight="800" color="#1B1B1F">{btn}</T></View>
-        {image && !imageFailed ? <Image source={{uri: image}} onError={() => setImageFailed(true)} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} resizeMode="contain" /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
+        {image && !imageFailed ? <CachedContentImage uri={image} style={{position: 'absolute', right: 8, bottom: 2, width: 92, height: 92}} /> : <Text style={{position: 'absolute', right: 8, bottom: 0, fontSize: 78, lineHeight: 78}}>{emoji}</Text>}
       </Grad>
     </Pressable>
   );
@@ -89,6 +101,8 @@ function Countdown() {
 
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
+  const [contentReady, setContentReady] = useState(hasContent());
+  useEffect(() => { const off = onContent(() => setContentReady(hasContent())); void loadContent(); return off; }, []);
   const storeKey = ST.filter(s => s.live).map(s => s.id).join('|');
   useEffect(() => {
     if (!address?.t) return;
@@ -122,19 +136,19 @@ export function Home({onExit}: {onExit?: () => void}) {
           <Mode small bg={th.m3bg} fg={th.m3fg} title={md && md[2] ? md[2].title : tr('drugstore')} emoji={md && md[2] ? md[2].emoji : '💊'} image={md?.[2]?.image} onPress={() => go('catlist', md && md[2] ? md[2].cat : 'drugstore')} />
         </View>
       </View>
-      <View style={{marginTop: 18}}><Rail gap={14}>
-        {cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}
-      </Rail></View>
-      <View style={{marginTop: 20}}><Rail>
-        {pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}
-      </Rail></View>
+      <View style={{marginTop: 18}}>
+        {contentReady ? <Rail gap={14}>{cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:10,paddingHorizontal:16}}>{Array.from({length:6},(_,i)=><View key={i} style={{width:68,alignItems:'center'}}><View style={{width:48,height:48,borderRadius:24,backgroundColor:th.soft}}/><View style={{width:42,height:7,borderRadius:4,backgroundColor:th.soft,marginTop:7}}/></View>)}</ScrollView>}
+      </View>
+      <View style={{marginTop: 20}}>
+        {contentReady ? <Rail>{pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:12,paddingHorizontal:16}}>{[0,1].map(i=><View key={i} style={{width:300,height:124,borderRadius:18,backgroundColor:th.soft}}/>)}</ScrollView>}
+      </View>
       <View style={{paddingHorizontal: 16, marginTop: 10}}>
         <Pressable onPress={() => go('promos')} style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 1.5, borderColor: th.line, borderRadius: 16}}>
           <View style={{flex: 1}}><T weight="700">{label('lbl.coupons', tr('couponsOffers'))}</T><T size={12.5} color={th.mut}>{label('lbl.coupons2', tr('codesCheckout'))}</T></View>
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
       </View>
-      <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Row style={{gap:10}}><Countdown /><Pressable accessibilityRole="button" onPress={() => go('flashdeals')}><T size={13} weight="800" color={th.br}>{tr('seeAll')}</T></Pressable></Row>} />{activeDeals.length ? <Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail> : <View style={{paddingHorizontal:16,paddingBottom:8}}><T size={12.5} color={th.mut}>{label('lbl.flashEmptyBody','Check back soon for limited-time offers.')}</T></View>}
+      <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Row style={{gap:10}}><Countdown /><Pressable accessibilityRole="button" onPress={() => go('flashdeals')}><T size={13} weight="800" color={th.br}>{tr('seeAll')}</T></Pressable></Row>} />{activeDeals.length ? <Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail> : null}
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
@@ -231,7 +245,7 @@ export function Cats() {
     <View style={{paddingHorizontal: 16, flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
       {all.map(c => (
         <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: w, alignItems: 'center'}}>
-          {c.art ? <Image source={{uri: c.art}} style={{width: 58, height: 58}} resizeMode="contain" /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
+          {c.art ? <CachedContentImage uri={c.art} style={{width: 58, height: 58}} /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
           <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{c.n}</T>
         </Pressable>
       ))}
