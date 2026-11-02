@@ -171,7 +171,17 @@ export function Cart() {
       <View style={{paddingHorizontal: 16}}>
         {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
-        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop; choose a future slot at checkout.' : st.nx + '. You can keep these items, but this store does not currently accept scheduled orders.'}</T></Card> : null}
+        {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
+        <Card style={{marginTop: 12}}>
+          <Row sp>
+            <View style={{flex:1}}>
+              <T weight="800">Order time</T>
+              <T size={13} color={th.mut} style={{marginTop:3}}>{S.sch > Date.now() ? fmtDay(new Date(S.sch)) + ' · ' + fmtTime(new Date(S.sch)) : 'ASAP'}</T>
+            </View>
+            {st.acceptScheduledOrders ? <Pressable onPress={() => require('../store').ui.sheet({kind:'schedule'})}><T size={13.5} weight="800" color={th.br}>{S.sch > Date.now() ? 'Change time' : 'Choose time'}</T></Pressable> : <Badge label="ASAP" />}
+          </Row>
+          {S.sch > Date.now() ? <Pressable onPress={() => setSch(0)} style={{alignSelf:'flex-start',marginTop:8}}><T size={12.5} weight="700" color={th.br}>Switch to ASAP</T></Pressable> : null}
+        </Card>
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
           return (
@@ -245,8 +255,8 @@ export function Checkout() {
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
     <Ttl>{pk ? label('lbl.checkoutPickupFrom', 'Pickup from') : label('lbl.checkoutDeliverTo', 'Deliver to')}</Ttl>
     <Card><Row><IcBox icon="pin" /><View style={{flex: 1}}>
-      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? (st.distanceReady ? label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', st.km.toFixed(1)) : label('lbl.storeDistanceUnavailable', 'Distance unavailable')) : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))} · {label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h)}</T></> : <><T weight="700">{a.l}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}<T size={11.5} color={th.mut} style={{marginTop: 3}}>{label("lbl.shopAutoCOUOZX", "Only for this order. Your Wantiss default is unchanged.")}</T></>}
-    </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br} >{label('lbl.checkoutChange', 'Change')}</T></Pressable>}</Row></Card>
+      {pk ? <><T weight="700">{st.n}</T><T size={13} color={th.mut}>{st.live ? (st.distanceReady ? label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', st.km.toFixed(1)) : null) : label('lbl.checkoutKmFromYou', '{km} km from you').replace('{km}', st.km.toFixed(1))}{st.h ? ' · ' + label('lbl.checkoutOpenHours', 'open {hours}').replace('{hours}', st.h) : ''}</T></> : a ? <><T weight="700">{a.l || 'Delivery address'}</T><T size={13} color={th.mut}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.checkoutNote', 'Note: {note}').replace('{note}', a.inst)}</T> : null}</> : <><T weight="700">Choose a delivery address</T><T size={13} color={th.mut}>Select a saved address to continue.</T></>}
+    </View>{pk ? null : <Pressable onPress={() => go('addresses')}><T size={13} weight="700" color={th.br} >{a ? label('lbl.checkoutChange', 'Change') : 'Add address'}</T></Pressable>}</Row></Card>
     {st.far && !st.live ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="700">{label('lbl.checkoutPickupOnly', 'Pickup only')}</T><T size={13} color={th.mut}>{st.n} is {st.km.toFixed(1)} km from this address, beyond delivery range. Pick another address to get delivery.</T></Card> : null}
     {hasAlcohol() && !S.hasWallet ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="800">{label('lbl.checkoutCreateWallet', 'Create a Wantiss wallet')}</T><T size={13} color={th.mut} style={{marginVertical: 4}}>{rgText('rg.wallet', 'Create a Wantiss wallet so any refund has somewhere to go. You can withdraw from it later.', alcAge(S.cart.sid).age)}</T><Cta small label={label('lbl.checkoutCreateWallet', 'Create wallet')} onPress={createWallet} /></Card> : null}
     <Ttl>{label('lbl.checkoutContactNumber', 'Contact number')}</Ttl>
