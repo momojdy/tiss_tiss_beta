@@ -31,7 +31,7 @@ jobs:
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add package.json package-lock.json
+            git add -u
             git commit -m "chore: align dependencies with Expo SDK 58" -m "Co-authored-by: Claude <noreply@anthropic.com>"
             git fetch origin main
             git rebase origin/main
