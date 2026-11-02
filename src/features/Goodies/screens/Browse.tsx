@@ -379,7 +379,7 @@ export function Notifs() {
     serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name,destination')
-      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').not('notification_type', 'like', 'goodies_ingredient_%')
+      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(error.message); return; }
