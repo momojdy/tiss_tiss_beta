@@ -67,7 +67,7 @@ export const goodiesApi = {
   setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
   listProducts: async (biz: string): Promise<GProduct[]> => {
-    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
+    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,photo_urls,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
     return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_urls?.[0] || r.photo_url || null, photoUrls: (Array.isArray(r.photo_urls) && r.photo_urls.length ? r.photo_urls : (r.photo_url ? [r.photo_url] : [])).slice(0,5), reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
