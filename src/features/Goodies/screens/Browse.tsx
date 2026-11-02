@@ -89,11 +89,11 @@ function Countdown() {
 
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
-  const storeKey = ST.filter(s => s.live && s.c === 'restaurants').map(s => s.id).join('|');
+  const storeKey = ST.filter(s => s.live).map(s => s.id).join('|');
   useEffect(() => {
     if (!address?.t) return;
-    const restaurants = ST.filter(s => s.live && s.c === 'restaurants');
-    void Promise.all(restaurants.map(store => refreshStoreDistance(store.id, address).catch(() => null)));
+    const liveStores = ST.filter(s => s.live);
+    void Promise.all(liveStores.map(store => refreshStoreDistance(store.id, address).catch(() => null)));
   }, [address?.id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country, storeKey]);
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
   const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it), cats = categories();
