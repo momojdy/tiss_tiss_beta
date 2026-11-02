@@ -275,7 +275,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <Card style={{marginBottom:12}}>
       <T size={14} weight="800">Join a group order</T>
       <T size={12} color={th.mut} style={{marginTop:4,marginBottom:8}}>Enter the invite code shared by your friend to join their active order.</T>
-      <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" autoCapitalize="characters" />
+      <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
       <View style={{height:8}}/><Cta ghost label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </Card>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
