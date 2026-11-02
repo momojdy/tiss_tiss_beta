@@ -349,12 +349,12 @@ export function GoodiesStorePage() {
       <Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} />
       <Text style={s.label}>Country</Text>
       <Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable>
-      {countryOpen ? <SheetShell title="Choose country" onClose={() => setCountryOpen(false)} tall>
+      {countryOpen ? <Modal visible transparent animationType="slide" onRequestClose={() => setCountryOpen(false)}><SheetShell title="Choose country" onClose={() => setCountryOpen(false)} tall>
         <TextInput value={countryQuery} onChangeText={setCountryQuery} placeholder="Search countries" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
         <ScrollView style={{maxHeight: 420}} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
           {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
         </ScrollView>
-      </SheetShell> : null}
+      </SheetShell></Modal> : null}
       <Section title="Custom products" />
       <View style={[s.row, { marginTop: 4 }]}>
         <Text style={[s.title, s.g]}>Allow custom products</Text>
@@ -382,7 +382,7 @@ export function GoodiesStorePage() {
           <Text style={{ color: t.ink, fontSize: 16, fontWeight: '600', flex: 1 }}>{f.scheduledOrderStartTime || '10:00'}</Text>
           <Icon name="clock-outline" size={19} color={t.mute} />
         </Pressable>
-        {timePickerOpen ? <SheetShell title="Earliest order time" onClose={() => setTimePickerOpen(false)}>
+        {timePickerOpen ? <Modal visible transparent animationType="slide" onRequestClose={() => setTimePickerOpen(false)}><SheetShell title="Earliest order time" onClose={() => setTimePickerOpen(false)}>
           <DateTimePicker value={(() => { const d = new Date(); const [h,m] = (f.scheduledOrderStartTime || '10:00').split(':').map(Number); d.setHours(h,m,0,0); return d; })()} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => { if (date) set({ scheduledOrderStartTime: date.getHours().toString().padStart(2,'0') + ':' + date.getMinutes().toString().padStart(2,'0') }); if (Platform.OS !== 'ios') setTimePickerOpen(false); }} />
           {Platform.OS === 'ios' ? <Btn label="Done" onPress={() => setTimePickerOpen(false)} /> : null}
         </SheetShell> : null}
@@ -405,12 +405,12 @@ export function GoodiesStorePage() {
           <Pressable onPress={() => { const names = { ...f.names }; delete names[code]; set({ names }); }} style={{ padding: 10 }}><Icon name="close" size={18} color={t.mute} /></Pressable>
         </View>;
       })}
-      {languageOpen ? <SheetShell title="Add a language" onClose={() => setLanguageOpen(false)} tall>
+      {languageOpen ? <Modal visible transparent animationType="slide" onRequestClose={() => setLanguageOpen(false)}><SheetShell title="Add a language" onClose={() => setLanguageOpen(false)} tall>
         <TextInput value={languageQuery} onChangeText={setLanguageQuery} placeholder="Search languages" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
         <ScrollView style={{maxHeight: 420}} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
           {LANGS.filter(([code, name]) => !Object.prototype.hasOwnProperty.call(f.names, code) && (name + ' ' + code).toLowerCase().includes(languageQuery.trim().toLowerCase())).map(([code, name]) => <Pressable key={code} onPress={() => { set({ names: { ...f.names, [code]: '' } }); setLanguageOpen(false); }} style={{ paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center' }}><Text style={{ color: t.ink, flex: 1 }}>{name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{code}</Text></Pressable>)}
         </ScrollView>
-      </SheetShell> : null}
+      </SheetShell></Modal> : null}
       <View style={{ height: 14 }} /><Btn label="Save store" onPress={save} busy={busy} />
     </Pg>
   );
