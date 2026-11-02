@@ -53,7 +53,6 @@ function Settings() {
       <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub={label('lbl.accountDarkModeHint', 'Goodies only. Other Wantiss features keep their theme.')} onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label={label('lbl.settingsDarkMode', 'Dark mode')} onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub={label('lbl.accountFaqSupportHint', 'FAQs and support')} onPress={() => go('help')} />
       {providerInfo.demo ? (<><Ttl>{label('lbl.accountDemoHeading', 'Demo')}</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title={label('lbl.accountResetDemo', 'Reset Goodies demo data')} sub={label('lbl.accountResetDemoHint', 'Clears orders, cart and checkout numbers')} onPress={() => {require('../store').resetDemo(); toast(label('lbl.accountDemoResetDone', 'Demo data reset'));}} /></>) : null}
-      <T size={12} color={th.mut} align="center" style={{marginTop: 18}}>{label('lbl.accountGoodiesFooter', 'Goodies')}{providerInfo.demo ? ' (' + label('lbl.accountDemoTag', 'demo') + ')' : ''}</T>
     </View>
   </View>);
 }
@@ -201,20 +200,15 @@ function StoreChat({id}: {id: string}) {
         if (!user) throw new Error(label('lbl.chatErrSignIn', 'Sign in to message this store. Your conversation will appear here after you sign in.'));
         if (!active) return;
         setUserId(user.id);
-        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', id).maybeSingle();
-        if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error(label('lbl.chatErrNoVendor', 'We could not find the vendor account linked to this store. Please try again later.'));
-        const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', id).eq('customer_id', user.id).limit(1).maybeSingle();
-        if (findError) throw findError;
-        let cid = found?.id;
-        if (!cid) {
-          const {data: created, error: createError} = await supabase.from('conversations').insert({business_id: mapping.business_id, participant_ids: [user.id], customer_id: user.id, customer_name: S.pf.n || 'Customer', feature: 'goodies', ref_id: id, ref_label: store?.n || 'Goodies store', title: store?.n || 'Goodies store', last_body: '', unread_business: 0, unread_customer: 0}).select('id').single();
-          if (createError) throw createError;
-          cid = created.id;
-        }
+        const {data: cid, error: conversationError} = await supabase.rpc('goodies_start_store_conversation', {
+          p_store_id: id,
+          p_customer_name: S.pf.n || 'Customer',
+        });
+        if (conversationError) throw conversationError;
+        if (!cid) throw new Error(label('lbl.chatErrOpen', 'Could not open this store conversation.'));
         if (!active) return;
-        setConversationId(cid);
-        await loadMessages(cid);
+        setConversationId(String(cid));
+        await loadMessages(String(cid));
       } catch (e: any) { if (active) setProblem(e?.message || label('lbl.chatErrOpen', 'Could not open this store conversation.')); }
       finally { if (active) setLoading(false); }
     })();
@@ -245,7 +239,7 @@ function StoreChat({id}: {id: string}) {
   return (
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : label('lbl.chatTitle', 'Message store')} onBack={back} />
-      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></Card></View> : null}
+      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card style={{overflow: 'hidden', padding: 0}}>{store.cover || store.thumbnail || store.logo ? <Image source={{uri: store.cover || store.thumbnail || store.logo || undefined}} style={{width: '100%', height: 112}} resizeMode="cover" /> : null}<View style={{padding: 12}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo} /><View style={{flex: 1}}><T weight="800">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></View></Card></View> : null}
       {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="800" color={th.br} style={{marginTop: 8}}>{label('lbl.chatTryAgain', 'Try again')}</T></Pressable></Card></View> : null}
       {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>{label('lbl.chatOpening', 'Opening conversation…')}</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
@@ -281,21 +275,13 @@ function Contact({p}: {p: any}) {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;
         if (!auth.user) throw new Error(label('lbl.contactErrSignInStore', 'Sign in to contact this store. Your message has not been sent.'));
-        const {data: mapping, error: mappingError} = await supabase.from('goodies_store_schedules').select('business_id').eq('store_id', storeId).maybeSingle();
-        if (mappingError) throw mappingError;
-        if (!mapping?.business_id) throw new Error(label('lbl.contactErrNoVendor', 'We could not find the vendor account linked to this store. Your message has not been sent.'));
-        const {data: found, error: findError} = await supabase.from('conversations').select('id').eq('business_id', mapping.business_id).eq('feature', 'goodies').eq('ref_id', storeId).eq('customer_id', auth.user.id).limit(1).maybeSingle();
-        if (findError) throw findError;
-        conversationId = found?.id || '';
-        if (!conversationId) {
-          const {data: created, error: createError} = await supabase.from('conversations').insert({
-            business_id: mapping.business_id, participant_ids: [auth.user.id], customer_id: auth.user.id,
-            customer_name: S.pf.n || 'Customer', feature: 'goodies', ref_id: storeId,
-            ref_label: store.n, title: store.n, last_body: '', unread_business: 0, unread_customer: 0
-          }).select('id').single();
-          if (createError) throw createError;
-          conversationId = created.id;
-        }
+        const {data: createdConversation, error: conversationError} = await supabase.rpc('goodies_start_store_conversation', {
+          p_store_id: storeId,
+          p_customer_name: S.pf.n || 'Customer',
+        });
+        if (conversationError) throw conversationError;
+        if (!createdConversation) throw new Error(label('lbl.contactErrNoVendor', 'We could not find the vendor account linked to this store. Your message has not been sent.'));
+        conversationId = String(createdConversation);
         ticket = 'GS-' + conversationId.replace(/-/g, '').slice(0, 8).toUpperCase();
         const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
         const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
