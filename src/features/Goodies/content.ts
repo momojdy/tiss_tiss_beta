@@ -1,5 +1,6 @@
 /* Shared published content provider. Draft content is never read by customer or vendor clients. */
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
+import {Image} from 'react-native';
 import {tx} from './i18n';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
@@ -48,6 +49,9 @@ export async function loadContent() {
         });
       });
       applyContent(payload);
+      const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
+        .filter((url:any): url is string => typeof url === 'string' && /^https?:\\/\\//i.test(url));
+      void Promise.allSettled(Array.from(new Set(imageUrls)).map(url => Image.prefetch(url)));
     }
     // A missing/temporarily unavailable published record must not erase the last
     // successfully loaded customer content and its image URLs.
