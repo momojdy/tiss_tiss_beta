@@ -462,7 +462,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={12} color={th.mut} style={{marginTop:5}}>Choose pickup or delivery. The host pays the full group order from their Wantiss Wallet.</T>
       <View style={{height:10}}/>
       <Row style={{gap:8}}>
-        <View style={{flex:1}}><Radio on={groupCheckoutType==='pickup'} onPress={()=>setGroupCheckoutType('pickup')}>Pickup</Radio></View>
+        <View style={{flex:1}}><Radio on={groupCheckoutType==='pickup'} onPress={()=>{setGroupCheckoutType('pickup');setGroupDeliveryQuote(null);void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}}>Pickup</Radio></View>
         <View style={{flex:1}}><Radio on={groupCheckoutType==='delivery'} onPress={()=>setGroupCheckoutType('delivery')}>Delivery</Radio></View>
       </Row>
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
