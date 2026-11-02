@@ -121,6 +121,7 @@ export function startGoodiesSync() {
             .select('id', { count: 'exact', head: true })
             .eq('user_id', requestUserId)
             .ilike('feature_name', 'goodies')
+            .or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
             .eq('read', false),
           supabase.from('goodies_orders')
             .select('id,order_code,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
