@@ -581,13 +581,18 @@ function CtForm({id}: {id: any}) {
     if (cc) {cc.ph = p; cc.l = l.trim();} else {const n = {id: Date.now(), ph: p, l: l.trim()}; S.gc.push(n); S.cc = n.id;}
     toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout')); save(); emit(); ui.sheet({kind: 'contacts'});
   };
-  return (<>
-    <T size={20} weight="800">{id ? 'Edit' : 'Add'} contact number</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 3}}>{label("lbl.sheetAutoLZBAF5", "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings.")}</T>
-    <Input label={label("lbl.sheetAuto5601C6", "Label (optional)")} value={l} onChange={setL} placeholder={label("lbl.sheetAutoBBS3LN", "e.g. Partner, Office")} />
-    <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
-    <View style={{height: 14}} /><Cta label={label("lbl.sheetAuto9HY80N", "Save number")} onPress={save_} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
-  </>);
+  return <View style={{flex:1,minHeight:0}}>
+    <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:12}}>
+      <T size={20} weight="800">{id ? label('lbl.sheetEditContactNumber','Edit contact number') : label('lbl.sheetAddContactNumber','Add contact number')}</T>
+      <T size={12.5} color={th.mut} style={{marginTop:3,marginBottom:10}}>{label("lbl.sheetAutoLZBAF5", "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings.")}</T>
+      <Input label={label("lbl.sheetAuto5601C6", "Label (optional)")} value={l} onChange={setL} placeholder={label("lbl.sheetAutoBBS3LN", "e.g. Partner, Office")} />
+      <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
+    </ScrollView>
+    <View style={{paddingTop:8,borderTopWidth:1,borderTopColor:th.line}}>
+      <Cta label={label("lbl.sheetAuto9HY80N", "Save number")} onPress={save_} />
+      <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
+    </View>
+  </View>;
 }
 
 /* DEMO: paste the JSON exported from Wantiss Admin (Goodies > Overview > Export content). Production fetches the same shape from the backend. */
