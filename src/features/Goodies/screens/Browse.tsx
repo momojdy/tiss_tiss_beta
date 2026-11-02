@@ -126,7 +126,7 @@ export function Home({onExit}: {onExit?: () => void}) {
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
       </View>
-      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} /><View style={{paddingHorizontal: 16}}><Empty title="No flash deals" /></View></>}
+      {activeDeals.length ? <><Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Countdown />} /><Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail></> : <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} link={tr('seeAll')} onLink={() => go('promos')} />}
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
