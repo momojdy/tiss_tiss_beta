@@ -192,7 +192,7 @@ export function Explore() {
         </Row>
       </View>
       {visible.length ? <View style={{paddingHorizontal: 16, gap: 14}}>
-        {visible.map(s => <StoreCard key={s.id} s={s} />)}
+        {visible.map(s => <StoreCard key={s.id} s={s} showProducts={scope === 'open'} />)}
       </View> : <View style={{paddingHorizontal: 16}}><Empty emoji="🕒" title={label('lbl.browseNoStores', 'No stores match right now')} text={label('lbl.browseNoStoresHint', 'Try another category or show all available options.')} button={label('lbl.browseShowAll', 'Show all available')} onPress={() => {setScope('all'); setCategory('all');}} /></View>}
       <View style={{paddingHorizontal: 16, marginTop: 20}}>
         <Sh title={label('lbl.browseProductsExplore', 'Products to explore')} />
