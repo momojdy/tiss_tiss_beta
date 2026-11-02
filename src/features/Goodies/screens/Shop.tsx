@@ -214,7 +214,7 @@ export function Cart() {
 const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.brt, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} color={th.br} /></View>;};
 
 export function Checkout() {
-  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st!, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
+  const th = useTheme(), t = totals(), pk = isPk(), a = addr(), st = t.st, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
   const [cashEligible, setCashEligible] = useState(false);
   useEffect(() => {
     let active = true;
@@ -238,6 +238,8 @@ export function Checkout() {
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf();
+  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
+  if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
   let body: any = null;
   if (S.cs === 0) body = (<>
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
