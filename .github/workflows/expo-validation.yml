@@ -19,20 +19,25 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Regenerate the Expo SDK lockfile
-        run: npm install --package-lock-only --ignore-scripts --no-audit --no-fund
-      - name: Persist refreshed lockfile
+      - name: Install and align dependencies with Expo SDK 58
         run: |
-          if git diff --quiet -- package-lock.json; then
-            echo "package-lock.json is already current."
+          npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+          npx expo install --fix
+          npm install --package-lock-only --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+      - name: Persist refreshed Expo manifest and lockfile
+        run: |
+          if git diff --quiet -- package.json package-lock.json; then
+            echo "Expo manifest and lockfile are already current."
           else
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add package-lock.json
-            git commit -m "chore: regenerate Expo SDK lockfile" -m "Co-authored-by: Claude <noreply@anthropic.com>"
+            git add package.json package-lock.json
+            git commit -m "chore: align dependencies with Expo SDK 58" -m "Co-authored-by: Claude <noreply@anthropic.com>"
+            git fetch origin main
+            git rebase origin/main
             git push origin HEAD:main
           fi
-      - name: Install dependencies
+      - name: Install dependencies from the committed lockfile
         run: npm ci --no-audit --no-fund
       - name: Lint
         run: npx expo lint
