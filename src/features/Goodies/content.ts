@@ -1,6 +1,7 @@
 /* Shared published content provider. Draft content is never read by customer or vendor clients. */
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
-import {Image} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {Image as ExpoImage} from 'expo-image';
 import {tx} from './i18n';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
@@ -10,6 +11,15 @@ export const ASSETS: Record<string, Asset> = {};
 export const LAYOUT: Record<string, {rk: number | null; w: number | null; k: number | null; off?: boolean}> = {};
 export let C: any = null; /* raw Admin export, or null = use seed */
 const subs = new Set<() => void>();
+const CONTENT_CACHE_KEY = 'goodies-published-content-v5';
+let hydration: Promise<void> | null = null;
+async function hydrateContent() {
+  if (C) return;
+  if (!hydration) hydration = (async () => {
+    try { const cached = await AsyncStorage.getItem(CONTENT_CACHE_KEY); if (cached && !C) applyContent(JSON.parse(cached)); } catch { /* Ignore corrupt or unavailable cache; fetch fresh content below. */ }
+  })();
+  await hydration;
+}
 export const onContent = (f: () => void) => {subs.add(f); return () => {subs.delete(f);};};
 
 /** The orange stripe under every Goodies header. Admin can change it in the Goodies content. */
@@ -26,6 +36,7 @@ export function applyContent(json: any) {
   subs.forEach(f => f());
 }
 export async function loadContent() {
+  await hydrateContent();
   try {
     const remote = await fetchPublishedWantissContent('en');
     const record = remote.content.find(x => x.content_key === 'goodies.content' || x.content_key === 'goodies');
@@ -49,9 +60,10 @@ export async function loadContent() {
         });
       });
       applyContent(payload);
+      try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(payload)); } catch { /* Disk cache is an optimization; live content remains usable. */ }
       const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
         .filter((url:any): url is string => typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://')));
-      void Promise.allSettled(Array.from(new Set(imageUrls)).map(url => Image.prefetch(url)));
+      void ExpoImage.prefetch(Array.from(new Set(imageUrls)), {cachePolicy: 'disk'}).catch(() => false);
     }
     // A missing/temporarily unavailable published record must not erase the last
     // successfully loaded customer content and its image URLs.
@@ -59,8 +71,8 @@ export async function loadContent() {
     // Keep the last known published content visible during transient network errors.
   }
 }
-export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); }
-export async function clearContent() { C = null; Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
+export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(j)); } catch { /* Optional persistence. */ } }
+export async function clearContent() { C = null; hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
 export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
