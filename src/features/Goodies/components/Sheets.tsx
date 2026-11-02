@@ -363,7 +363,9 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically as members edit the cart. Selected options and active deals are validated in Review combined cart; delivery and service fees are calculated at checkout.</T>
       </View>
       <View style={{height:10}}/>
-      <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
+      {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
+        ? <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
+        : <T size={12} color={th.mut}>The group host will review the combined cart and continue to checkout.</T>}
     </Card>
     {checkoutPreview ? <Card style={{marginBottom:12}}>
       <T size={15} weight="800">Validated group cart</T>
