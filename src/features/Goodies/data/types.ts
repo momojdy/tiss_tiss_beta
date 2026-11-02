@@ -10,10 +10,10 @@ export interface Item {
 export interface Store {
   id: string; businessId?: string; n: string; c: string; e: string; bg: string; r: number; rv: number; km: number; eta: string; fee: number; min: number;
   pr: string; k: string; it: Item[]; km0: number; eta0: string; open: number; h: string; nx: string; far?: boolean; live?: boolean;
-  logo?: string | null; cover?: string | null; thumbnail?: string | null; acceptScheduledOrders?: boolean; scheduledOrderStartTime?: string; scheduleHours?: Record<string, {open: string; close: string; closed: boolean}>; businessName?: string; businessDescription?: string; businessPhone?: string; businessEmail?: string; businessWebsite?: string; businessAddress?: string; businessCity?: string; businessCountry?: string; businessDeliveryModes?: string[]; businessLogoUrl?: string; acceptCashOnDelivery?: boolean; deliveryPricingMode?: 'fixed' | 'distance'; distanceReady?: boolean; distanceAddressKey?: string;
+  logo?: string | null; cover?: string | null; thumbnail?: string | null; acceptScheduledOrders?: boolean; scheduledOrderStartTime?: string; scheduleHours?: Record<string, {open: string; close: string; closed: boolean}>; businessName?: string; businessDescription?: string; businessPhone?: string; businessEmail?: string; businessWebsite?: string; businessAddress?: string; businessCity?: string; businessCountry?: string; businessDeliveryModes?: string[]; businessLogoUrl?: string; acceptCashOnDelivery?: boolean; deliveryPricingMode?: 'fixed' | 'distance'; maxDeliveryDistanceKm?: number | null; distanceReady?: boolean; distanceAddressKey?: string;
 }
 export interface Promo {c: string; t: string; d: string; min: number; ty: 'pct' | 'ship'; v?: number; st?: string}
-export interface Address {id: number; l: string; t: string; apt: string; inst: string; def: number; z: number; cc?: string}
+export interface Address {id: string | number; l: string; t: string; apt: string; inst: string; def: number; goodiesDefault?: number; z: number; cc?: string; city?: string; department?: string; country?: string; phone?: string}
 export interface CartLine {k: string; id: string; n: string; e: string; photo?: string | null; p: number; q: number; d: string; byo?: any; nt?: string; options?: {size: 'regular' | 'large' | null; drink: boolean; discount_pct: number}}
 export interface Order {
   id: string; sid: string; lines: CartLine[]; t0: number; pk?: boolean; cx?: boolean; st?: number; sch?: number; [k: string]: any;
