@@ -338,7 +338,7 @@ export function GoodiesStorePage() {
       <Text style={s.mut}>Shown on the customer home page and store listings.</Text>
       {(sameAsCover ? f.coverUrl : f.thumbnailUrl) ? <Image source={{ uri: (sameAsCover ? f.coverUrl : f.thumbnailUrl) as string }} style={{ width: 88, height: 88, borderRadius: 14, marginVertical: 8 }} /> : null}
       <Btn kind="soft" label="Upload thumbnail" onPress={chooseThumbnail} busy={thumbnailBusy} />
-      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Use cover photo as thumbnail</Text><Toggle value={sameAsCover} onValueChange={v => { if (v && !f.coverUrl) { app.toast('Add a cover photo first'); return; } setSameAsCover(v); set({ thumbnailUrl: v ? f.coverUrl : null }); }} /></View>
+      <View style={[s.row, { marginTop: 8 }]}><Text style={[s.title, s.g]}>Use cover photo as thumbnail</Text><Toggle value={sameAsCover} onValueChange={(v: boolean) => { if (v && !f.coverUrl) { app.toast('Add a cover photo first'); return; } setSameAsCover(v); set({ thumbnailUrl: v ? f.coverUrl : null }); }} /></View>
       <Field label="Store name" value={f.storeName} onChangeText={(v: string) => set({ storeName: v })} placeholder="Name customers will see" />
       <Section title="Store category" />
       <Chips items={CATEGORY_PRESETS.map(c => ({ k: c.id, l: c.name }))} value={f.category} onChange={(v: string) => set({ category: v })} />
@@ -365,7 +365,7 @@ export function GoodiesStorePage() {
           const current = customTypes.find(x => x.type === type && x.enabled);
           return <View key={type} style={[s.row, { marginTop: 10 }]}>
             <View style={s.g}><Text style={s.title}>{type === 'pizza' ? 'Pizza' : 'Burger'}</Text></View>
-            <Toggle value={!!current} onValueChange={v => setCustomTypes(prev => {
+            <Toggle value={!!current} onValueChange={(v: boolean) => setCustomTypes(prev => {
               const found = prev.some(x => x.type === type);
               if (found) return prev.map(x => x.type === type ? { ...x, enabled: v } : x);
               return [...prev, { ...newBuilder(type), enabled: v, available: false, productCreated: false }];
@@ -396,7 +396,7 @@ export function GoodiesStorePage() {
       <Field label="Promotion line on your card (optional)" value={f.promo} onChangeText={(v: string) => set({ promo: v })} />
       <View style={[s.row, { marginTop: 18, marginBottom: 8 }]}>
         <Text style={[s.title, s.g]}>Store name translations</Text>
-        <Pressable onPress={() => { setLanguageQuery(''); setLanguageOpen(true); }}><Text style={{ color: t.br, fontWeight: '700' }}>+ Add language</Text></Pressable>
+        <Pressable onPress={() => { setLanguageQuery(''); setLanguageOpen(true); }}><Text style={{ color: t.blue, fontWeight: '700' }}>+ Add language</Text></Pressable>
       </View>
       {Object.entries(f.names).filter(([code]) => LANGS.some(([key]) => key === code)).map(([code, value]) => {
         const language = LANGS.find(([key]) => key === code);
@@ -418,7 +418,7 @@ export function GoodiesStorePage() {
 
 /* ---------- publish / unpublish ---------- */
 function GoLiveCard() {
-  const app = useApp(), s = useS();
+  const app = useApp(), s = useS(), t = useTheme();
   const st = useQ(() => goodiesApi.getLive(app.biz.id), [app.biz.id, app.tick]);
   const [busy, setBusy] = useState(false), [err, setErr] = useState('');
   const live = !!st.d?.live;
