@@ -21,39 +21,39 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const k = sheet.kind;
   const stars = (n: number, on: (v: number) => void) => <View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 10}}>{[1, 2, 3, 4, 5].map(v => <Pressable key={v} onPress={() => on(v)}><Icon name="star" size={32} color={n >= v ? '#FFB400' : th.line} fill /></Pressable>)}</View>;
   let content: any = null;
-  if (k === 'newcart') content = (<><T size={20} weight="800">{label('lbl.sheetStartCart', 'Start a new cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}. Orders are placed with one store at a time, so adding from {sheet.to} replaces them.</T><Cta label={label('lbl.sheetReplace', 'Replace and add')} onPress={A.newCart} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
-  if (k === 'byoleave') content = (<><T size={20} weight="800">{sheet.edit ? label('lbl.sheetDiscardTitle', 'Discard your changes?') : label('lbl.sheetLeaveTitle', 'Leave this builder?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? label('lbl.sheetDiscardText', 'The item in your cart stays as it was.') : label('lbl.sheetLeaveText', 'Your choices can be saved as a draft so you can pick up where you left off.')}</T>{sheet.edit ? null : <><Cta label={label('lbl.sheetBuilderSave', 'Save draft and leave')} onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">{label('lbl.sheetDiscard', 'Discard')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
-  if (k === 'byoreset') content = (<><T size={20} weight="800">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
-  if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="800">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="800">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
+  if (k === 'newcart') content = (<><T size={20} weight="600">{label('lbl.sheetStartCart', 'Start a new cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}. Orders are placed with one store at a time, so adding from {sheet.to} replaces them.</T><Cta label={label('lbl.sheetReplace', 'Replace and add')} onPress={A.newCart} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
+  if (k === 'byoleave') content = (<><T size={20} weight="600">{sheet.edit ? label('lbl.sheetDiscardTitle', 'Discard your changes?') : label('lbl.sheetLeaveTitle', 'Leave this builder?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? label('lbl.sheetDiscardText', 'The item in your cart stays as it was.') : label('lbl.sheetLeaveText', 'Your choices can be saved as a draft so you can pick up where you left off.')}</T>{sheet.edit ? null : <><Cta label={label('lbl.sheetBuilderSave', 'Save draft and leave')} onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetDiscard', 'Discard')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
+  if (k === 'byoreset') content = (<><T size={20} weight="600">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
+  if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'group-order') content = <GroupOrderSheet close={close} />;
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} bottomInset={insets.bottom} />;
-  if (k === 'topup') content = (<><T size={20} weight="800">{label('lbl.sheetTopup', 'Top up wallet')}</T><T color={th.mut} style={{marginTop: 6, marginBottom: 14}}>{label('lbl.sheetDemoMoney', 'Demo: no real money moves.')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[10, 20, 50, 100].map(v => <Pressable key={v} onPress={() => {S.wallet += v; close(); toast(label('lbl.sheetWalletToppedUp', 'Wallet topped up to {amount}').replace('{amount}', money(S.wallet))); save(); emit();}} style={{paddingVertical: 10, paddingHorizontal: 16, borderRadius: 18, backgroundColor: th.soft}}><T size={14} weight="700">+{money(v)}</T></Pressable>)}</View></>);
-  if (k === 'replace') content = (<><T size={20} weight="800">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
+  if (k === 'topup') content = (<><T size={20} weight="600">{label('lbl.sheetTopup', 'Top up wallet')}</T><T color={th.mut} style={{marginTop: 6, marginBottom: 14}}>{label('lbl.sheetDemoMoney', 'Demo: no real money moves.')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[10, 20, 50, 100].map(v => <Pressable key={v} onPress={() => {S.wallet += v; close(); toast(label('lbl.sheetWalletToppedUp', 'Wallet topped up to {amount}').replace('{amount}', money(S.wallet))); save(); emit();}} style={{paddingVertical: 10, paddingHorizontal: 16, borderRadius: 18, backgroundColor: th.soft}}><T size={14} weight="600">+{money(v)}</T></Pressable>)}</View></>);
+  if (k === 'replace') content = (<><T size={20} weight="600">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
   if (k === 'remove-number') content = (<>
-    <T size={20} weight="800">{label('lbl.sheetRemoveNumberTitle', 'Remove this contact number?')}</T>
+    <T size={20} weight="600">{label('lbl.sheetRemoveNumberTitle', 'Remove this contact number?')}</T>
     <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveNumberBody', 'Remove {number} from your Goodies checkout contacts?').replace('{number}', String(sheet.numberLabel || 'this number'))}</T>
     <Cta label={label('lbl.sheetRemoveNumberConfirm', 'Remove number')} onPress={() => { void sheet.onConfirm?.(); }} />
     <View style={{height: 10}} />
     <Cta ghost label={label('lbl.sheetKeepNumber', 'Keep number')} onPress={close} />
   </>);
   if (k === 'remove-address') content = (<>
-    <T size={20} weight="800">{label('lbl.sheetDeleteAddressTitle', 'Delete this address?')}</T>
+    <T size={20} weight="600">{label('lbl.sheetDeleteAddressTitle', 'Delete this address?')}</T>
     <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetDeleteAddressBody', 'Remove {address} from your saved addresses?').replace('{address}', String(sheet.addressLabel || 'this address'))}</T>
     <Cta label={label('lbl.sheetDeleteAddressConfirm', 'Delete address')} onPress={() => { void sheet.onConfirm?.(); }} />
     <View style={{height: 10}} />
     <Cta ghost label={label('lbl.sheetKeepAddress', 'Keep address')} onPress={close} />
   </>);
-  if (k === 'remove-item') content = (<><T size={20} weight="800">{label('lbl.sheetRemoveItemTitle', 'Remove this item?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveItemBody', 'Remove {item} from your cart?').replace('{item}', String(sheet.itemName || 'this item'))}</T><Cta label={label('lbl.sheetRemoveItemConfirm', 'Remove item')} onPress={() => { A.qty(String(sheet.lineKey), -1); close(); }} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepItem', 'Keep item')} onPress={close} /></>);
-  if (k === 'clear') content = (<><T size={20} weight="800">{label('lbl.sheetClearCart', 'Clear your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1K2QIKR", "All items will be removed.")}</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">{label('lbl.sheetClearCartAction', 'Clear cart')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>);
-  if (k === 'cancel') content = (<><T size={20} weight="800">{label('lbl.sheetCancelOrder', 'Cancel this order?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAutoFMXIAY", "You can cancel until the store finishes preparing it.")}</T><Pressable onPress={() => A.cancelOrder(sheet.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="800" color="#fff">{label('lbl.sheetCancelConfirm', 'Yes, cancel order')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto81YEJ2", "Keep order")} onPress={close} /></>);
+  if (k === 'remove-item') content = (<><T size={20} weight="600">{label('lbl.sheetRemoveItemTitle', 'Remove this item?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveItemBody', 'Remove {item} from your cart?').replace('{item}', String(sheet.itemName || 'this item'))}</T><Cta label={label('lbl.sheetRemoveItemConfirm', 'Remove item')} onPress={() => { A.qty(String(sheet.lineKey), -1); close(); }} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepItem', 'Keep item')} onPress={close} /></>);
+  if (k === 'clear') content = (<><T size={20} weight="600">{label('lbl.sheetClearCart', 'Clear your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1K2QIKR", "All items will be removed.")}</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetClearCartAction', 'Clear cart')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>);
+  if (k === 'cancel') content = (<><T size={20} weight="600">{label('lbl.sheetCancelOrder', 'Cancel this order?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAutoFMXIAY", "You can cancel until the store finishes preparing it.")}</T><Pressable onPress={() => A.cancelOrder(sheet.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetCancelConfirm', 'Yes, cancel order')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto81YEJ2", "Keep order")} onPress={close} /></>);
   if (k === 'promo') {
     const d = PROMO_DETAIL[sheet.p as 'free' | 'points' | 'produce'], custom = sheet.custom || {};
     content = (<>
       <View style={{height: 150, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: d.bg, marginBottom: 12}}><Text style={{fontSize: 78}}>{custom.emoji || d.e}</Text></View>
-      <T size={21} weight="800">{custom.title || d.t}</T>
+      <T size={21} weight="600">{custom.title || d.t}</T>
       <T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{custom.sub || d.d}</T>
       <Cta label={custom.btn || d.b} onPress={() => {
         const target = String(custom.target || '');
@@ -67,13 +67,13 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   }
   if (k === 'sinfo') {
     const s = STB[sheet.id];
-    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="700" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
+    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="600" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
     content = (<>
-      <T size={23} weight="800">{s.businessName || s.n}</T>
+      <T size={23} weight="600">{s.businessName || s.n}</T>
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
       <Card style={{padding: 16}}>
         <Row style={{gap: 10, alignItems: 'center', marginBottom: 10}}>
-          <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoC0Z21F", "Read store reviews")} onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>{label('lbl.storeCustomerReviews', 'Customer reviews').toUpperCase()}</T><T size={18} weight="800">{s.rv > 0 ? label('lbl.sheetRatingSummary', '★ {rating} ({n} reviews)').replace('{rating}', s.r.toFixed(1)).replace('{n}', String(s.rv)) : label('lbl.storeNoReviewsYet', 'No reviews yet')}</T></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.sheetAutoC0Z21F", "Read store reviews")} onPress={() => {close(); A.go('reviews', sheet.id);}} style={{flex: 1}}><T size={13} color={th.br}>{label('lbl.storeCustomerReviews', 'Customer reviews').toUpperCase()}</T><T size={18} weight="600">{s.rv > 0 ? label('lbl.sheetRatingSummary', '★ {rating} ({n} reviews)').replace('{rating}', s.r.toFixed(1)).replace('{n}', String(s.rv)) : label('lbl.storeNoReviewsYet', 'No reviews yet')}</T></Pressable>
           <Badge label={s.open ? label('lbl.sheetOpenNow', 'Open now') : label('lbl.sheetClosedNow', 'Closed now')} />
         </Row>
         {row(label('lbl.storeOpeningHours', 'Opening hours'), s.h)}
@@ -93,9 +93,9 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
       </Card>
     </>);
   }
-  if (k === 'msg') content = (<><T size={20} weight="800" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[{id: 'lbl.sheetCourierAtGate', text: label('lbl.sheetCourierAtGate', 'I am at the gate')}, {id: 'lbl.sheetCourierCall', text: label('lbl.sheetCourierCall', 'Please call me')}, {id: 'lbl.sheetCourierDoor', text: label('lbl.sheetCourierDoor', 'Leave it at the door')}, {id: 'lbl.sheetCourierLate', text: label('lbl.sheetCourierLate', 'Running 5 min late')}].map(x => <Pressable key={x.id} onPress={() => {close(); toast(label('lbl.sheetCourierSent', 'Sent: {message}').replace('{message}', x.text));}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="700">{x.text}</T></Pressable>)}</View></>);
+  if (k === 'msg') content = (<><T size={20} weight="600" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[{id: 'lbl.sheetCourierAtGate', text: label('lbl.sheetCourierAtGate', 'I am at the gate')}, {id: 'lbl.sheetCourierCall', text: label('lbl.sheetCourierCall', 'Please call me')}, {id: 'lbl.sheetCourierDoor', text: label('lbl.sheetCourierDoor', 'Leave it at the door')}, {id: 'lbl.sheetCourierLate', text: label('lbl.sheetCourierLate', 'Running 5 min late')}].map(x => <Pressable key={x.id} onPress={() => {close(); toast(label('lbl.sheetCourierSent', 'Sent: {message}').replace('{message}', x.text));}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="600">{x.text}</T></Pressable>)}</View></>);
   if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
-  if (k === 'addr') content = (<><T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="700">{a.l}</T>{a.def ? <Badge green label={label("lbl.sheetAutoCKTN2B", "Wantiss default")} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="800" color="#fff">GOODIES</T></View> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label={label("lbl.sheetAuto16NJT2W", "Manage addresses")} onPress={() => {close(); A.go('addresses');}} /></>);
+  if (k === 'addr') content = (<><T size={20} weight="600" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="600">{a.l}</T>{a.def ? <Badge green label={label("lbl.sheetAutoCKTN2B", "Wantiss default")} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="600" color="#fff">GOODIES</T></View> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label={label("lbl.sheetAuto16NJT2W", "Manage addresses")} onPress={() => {close(); A.go('addresses');}} /></>);
 
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
@@ -204,10 +204,10 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   return <View style={inline ? {paddingTop: 12, paddingBottom: 12, borderTopWidth: 0.5, borderTopColor: th.line, marginTop: 10} : undefined}>
     {inline ? null : <T size={21} weight="600">{label('lbl.sheetScheduleTitle','Schedule your order')}</T>}
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
-    <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
+    <T size={14} weight="600" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
       {Array.from({length:7},(_,i)=>{const d=new Date(storeNow);d.setDate(storeNow.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:0.5,borderColor:active?th.br:th.line}}>
-        <T size={11.5} weight="700" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="800" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
+        <T size={11.5} weight="600" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="600" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
@@ -225,7 +225,7 @@ export function ScheduleInline({close}: {close: () => void}) { return <ScheduleS
 function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) {
   const th=useTheme();
   return <View style={{flexDirection:'row',gap:8}}>
-    {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="800" color={value===v?th.br:th.ink}>{v==='delivery'?'Delivery':'Pick-up'}</T></Pressable>)}
+    {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="600" color={value===v?th.br:th.ink}>{v==='delivery'?'Delivery':'Pick-up'}</T></Pressable>)}
   </View>;
 }
 
@@ -388,7 +388,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     setCheckoutPreview(data);
   };
   return <>
-    <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
+    <T size={21} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T>
     {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
@@ -398,14 +398,14 @@ function GroupOrderSheet({close}: {close: () => void}) {
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
     {S.cart.lines.length > 0 ? <View>
-      <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
+      <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
-      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
+      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
 
     </View> : null}
     <View>
-      <T size={14} weight="800">Join a group order</T>
+      <T size={14} weight="600">Join a group order</T>
 
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
       <View style={{height:8}}/><Cta ghost label="Scan QR code" onPress={async()=>{
@@ -415,7 +415,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </View>
     {group.serverBacked ? <>
-    <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
+    <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
       {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
       {groupMembers.map((member:any)=>{
@@ -423,23 +423,23 @@ function GroupOrderSheet({close}: {close: () => void}) {
         const isYou=uid===currentUserId;
         return <Row key={uid} style={{gap:10,alignItems:'center',paddingVertical:9}}>
           <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut}/></View>
-          <View style={{flex:1}}><T weight="700">{isYou?'You':member.display_name}</T><T size={12} color={th.mut}>{member.is_host?'Host':'Joined group order'}</T></View>
+          <View style={{flex:1}}><T weight="600">{isYou?'You':member.display_name}</T><T size={12} color={th.mut}>{member.is_host?'Host':'Joined group order'}</T></View>
           {isYou?<Badge green label="You"/>:null}
         </Row>;
       })}
 
     </View>
     <View style={{height:12}}/>
-    <T size={15} weight="800" style={{marginBottom:7}}>Live group cart</T>
+    <T size={15} weight="600" style={{marginBottom:7}}>Live group cart</T>
     <View>
       {sharedItems.length ? sharedItems.map((item:any)=>{
         const product=Array.isArray(item.product)?item.product[0]:item.product;
         const contributor=groupMembers.find((member:any)=>String(member.user_id)===String(item.user_id));
         const contributorName=String(item.user_id)===currentUserId?'You':contributor?.display_name||'Group member';
         return <Row key={item.id} sp style={{paddingVertical:8,alignItems:'flex-start'}}>
-          <View style={{flex:1}}><T weight="700">{item.quantity}× {product?.name || 'Unavailable product'}</T><T size={11.5} color={th.mut}>Added by {contributorName}{item.note ? ' · '+item.note : ''}</T></View>
+          <View style={{flex:1}}><T weight="600">{item.quantity}× {product?.name || 'Unavailable product'}</T><T size={11.5} color={th.mut}>Added by {contributorName}{item.note ? ' · '+item.note : ''}</T></View>
           <View style={{alignItems:'flex-end',gap:7}}>
-            <T weight="700">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
+            <T weight="600">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
             {group.serverBacked && String(item.user_id)===currentUserId ? <Pressable accessibilityRole="button" accessibilityLabel="Remove my shared cart item" onPress={async()=>{
               const {error}=await removeGroupOrderCartLine(group.groupId,item.line_key);
               if(error){toast('Could not remove this shared item: '+error.message);return;}
@@ -450,7 +450,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </Row>;
       }) : null}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
-        <Row sp><T weight="800">Shared base-price subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
+        <Row sp><T weight="600">Shared base-price subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
       <View style={{height:10}}/>
       {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
@@ -459,17 +459,17 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </View>
     </> : null}
     {checkoutPreview ? <View>
-      <T size={15} weight="800">Validated group cart</T>
+      <T size={15} weight="600">Validated group cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
       {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
-        <View style={{flex:1}}><T size={13} weight="700">{item.quantity}× {item.name}</T> </View>
-        <T size={13} weight="700">{money(Number(item.unit_price)*Number(item.quantity))}</T>
+        <View style={{flex:1}}><T size={13} weight="600">{item.quantity}× {item.name}</T> </View>
+        <T size={13} weight="600">{money(Number(item.unit_price)*Number(item.quantity))}</T>
       </Row>)}
-      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="800">Validated item subtotal</T><T weight="800">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Validated item subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
-      <T size={15} weight="800">Host checkout</T>
+      <T size={15} weight="600">Host checkout</T>
 
       <View style={{height:10}}/>
       <Row style={{gap:8}}>
@@ -477,30 +477,30 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <View style={{flex:1}}><Radio on={groupCheckoutType==='delivery'} onPress={()=>setGroupCheckoutType('delivery')}>Delivery</Radio></View>
       </Row>
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
-        <T size={12} weight="700" style={{marginBottom:6}}>Deliver to</T>
+        <T size={12} weight="600" style={{marginBottom:6}}>Deliver to</T>
         {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
-          <View style={{flex:1}}><T size={13} weight="700">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
+          <View style={{flex:1}}><T size={13} weight="600">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
         </Radio>)}
         {!S.addr.length ? <T size={12} color={th.mut}>No saved addresses found. Add a delivery address to your profile first.</T> : null}
         <Cta ghost small label={groupQuoteBusy?'Calculating delivery…':'Calculate delivery fee'} onPress={()=>void calculateGroupDeliveryQuote()} disabled={groupQuoteBusy||!S.addr.length}/>
         {groupDeliveryQuote&&groupDeliveryQuote.addressId===String(groupAddressId)&&groupDeliveryQuote.expiresAt>Date.now() ? <View style={{marginTop:8,padding:10,borderRadius:10,backgroundColor:th.soft}}>
-          <Row sp><T size={12} color={th.mut}>Delivery fee</T><T size={13} weight="800">{money(groupDeliveryQuote.fee)}</T></Row>
+          <Row sp><T size={12} color={th.mut}>Delivery fee</T><T size={13} weight="600">{money(groupDeliveryQuote.fee)}</T></Row>
 
 
         </View> : null}
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
       {checkoutEstimate ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
-        <T size={12} weight="800" style={{marginBottom:7}}>Server-calculated payment estimate</T>
-        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="700">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
-        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="700">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
-        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="700">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
+        <T size={12} weight="600" style={{marginBottom:7}}>Server-calculated payment estimate</T>
+        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="600">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
+        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
+        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
         <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
-        <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
+        <Row sp><T size={13} weight="600">Estimated total</T><T size={15} weight="600">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
 
 
       </View> : null}
-      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
+      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="600">{money(Number(S.wallet||0))}</T></Row>
 
       <View style={{height:9}}/>
       <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
@@ -526,7 +526,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
           toast('QR code scanned. Review the invite code and tap Join group order.');
         }}/>
         <View style={{padding:18,backgroundColor:'#111111'}}>
-          <T color="#FFFFFF" weight="700" align="center">Scan a Wantiss group invite QR code</T>
+          <T color="#FFFFFF" weight="600" align="center">Scan a Wantiss group invite QR code</T>
           <Cta label="Close scanner" onPress={()=>setScannerOpen(false)}/>
         </View>
       </View>
@@ -545,7 +545,7 @@ export function GroupOrderPage({onBack}: {onBack: () => void}) {
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
   const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
   return (<>
-    <T size={20} weight="800">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
+    <T size={20} weight="600">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder={label('lbl.sheetReviewComment', 'Add a comment (optional)')} multiline />
     <View style={{height: 12}} />
     <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} onPress={() => {
@@ -572,12 +572,12 @@ function ContactsSheet({close}: {close: () => void}) {
   const th = useTheme();
   const rows = [{id: 'w', ph: S.pf.ph, l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1}].concat(S.gc.map((c: any) => ({id: c.id, ph: c.ph, l: c.l || label('lbl.sheetGoodiesNumber', 'Goodies number'), w: 0})));
   return (<>
-    <T size={20} weight="800" style={{marginBottom: 4}}>{label('lbl.sheetContactNumber', 'Contact number')}</T>
+    <T size={20} weight="600" style={{marginBottom: 4}}>{label('lbl.sheetContactNumber', 'Contact number')}</T>
     <T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetContactNumberHint', 'We use this number for this order only. Your Wantiss account number is never changed here.')}</T>
     {rows.map((r: any) => (
       <View key={r.id} style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-        <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="700">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>Goodies checkout number · {r.l}</T>}</View></Radio></View>
-        {r.w ? null : <><Pressable accessibilityLabel={label('lbl.sheetEditNumber', 'Edit number')} onPress={() => ui.sheet({kind: 'ctform', id: r.id})}><T size={13} weight="700" color={th.br}>{label("lbl.sheetAuto1CISXZJ", "Edit")}</T></Pressable>
+        <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="600">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>Goodies checkout number · {r.l}</T>}</View></Radio></View>
+        {r.w ? null : <><Pressable accessibilityLabel={label('lbl.sheetEditNumber', 'Edit number')} onPress={() => ui.sheet({kind: 'ctform', id: r.id})}><T size={13} weight="600" color={th.br}>{label("lbl.sheetAuto1CISXZJ", "Edit")}</T></Pressable>
         <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {S.gc = S.gc.filter((c: any) => c.id !== r.id); if (S.cc === r.id) S.cc = 'w'; toast(label('lbl.sheetNumberRemoved', 'Number removed')); save(); emit(); ui.sheet({kind: 'contacts'});}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
       </View>
     ))}
@@ -599,7 +599,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
   };
   return <View style={{flex:1,minHeight:0,paddingBottom:Math.max(0,bottomInset-20)}}>
     <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:12}}>
-      <T size={20} weight="800">{id ? label('lbl.sheetEditContactNumber','Edit contact number') : label('lbl.sheetAddContactNumber','Add contact number')}</T>
+      <T size={20} weight="600">{id ? label('lbl.sheetEditContactNumber','Edit contact number') : label('lbl.sheetAddContactNumber','Add contact number')}</T>
       <T size={12.5} color={th.mut} style={{marginTop:3,marginBottom:10}}>{label("lbl.sheetAutoLZBAF5", "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings.")}</T>
       <Input label={label("lbl.sheetAuto5601C6", "Label (optional)")} value={l} onChange={setL} placeholder={label("lbl.sheetAutoBBS3LN", "e.g. Partner, Office")} />
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
@@ -615,9 +615,9 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
 function ImportSheet({close}: {close: () => void}) {
   const th = useTheme(), [txt, setTxt] = useState('');
   return (<>
-    <T size={20} weight="800">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
+    <T size={20} weight="600">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
     <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. {hasContent() ? 'Admin content is currently loaded.' : 'The built-in sample content is currently used.'}</T>
-    <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
+    <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
     <View style={{height: 12}} />
     <Cta label={label("lbl.sheetAuto1EXCTAI", "Import")} onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
     {hasContent() ? <><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto1U4P0PS", "Go back to sample content")} onPress={async () => {await clearContent(); close(); toast(label('lbl.sheetSampleContent', 'Using sample content')); emit();}} /></> : null}

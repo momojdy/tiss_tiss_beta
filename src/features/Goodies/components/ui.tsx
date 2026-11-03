@@ -61,7 +61,7 @@ export function Sh({title, link, onLink, right}: {title: string; link?: string; 
   return (
     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 24, paddingBottom: 10, gap: 8}}>
       <T size={18} weight="600" style={{flexShrink: 1}}>{title}</T>
-      {link ? <Pressable onPress={onLink}><T size={13} weight="700" color={th.br}>{link}</T></Pressable> : right || null}
+      {link ? <Pressable onPress={onLink}><T size={13} weight="600" color={th.br}>{link}</T></Pressable> : right || null}
     </View>
   );
 }
@@ -95,9 +95,9 @@ export const Card = ({children, style}: any) => {const th = useTheme(); const su
 export const Row = ({children, style, sp}: any) => <View style={[{flexDirection: 'row', alignItems: 'center', gap: 12}, sp ? {justifyContent: 'space-between'} : null, style]}>{children}</View>;
 export const Badge = ({label, green, red}: {label: string; green?: boolean; red?: boolean}) => {
   const th = useTheme();
-  return <View style={{alignSelf: 'flex-start', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 3, backgroundColor: red ? th.red : green ? 'rgba(14,159,110,.14)' : th.brt}}><T size={11.5} weight="800" color={red ? '#fff' : green ? th.grn : th.brd}>{label}</T></View>;
+  return <View style={{alignSelf: 'flex-start', borderRadius: 9, paddingHorizontal: 9, paddingVertical: 3, backgroundColor: red ? th.red : green ? 'rgba(14,159,110,.14)' : th.brt}}><T size={11.5} weight="600" color={red ? '#fff' : green ? th.grn : th.brd}>{label}</T></View>;
 };
-export const Ttl = ({children}: any) => <T size={15} weight="800" style={{marginTop: 18, marginBottom: 8}}>{children}</T>;
+export const Ttl = ({children}: any) => <T size={15} weight="600" style={{marginTop: 18, marginBottom: 8}}>{children}</T>;
 
 export function Empty({emoji, icon, title, text, button, onPress}: {emoji?: string; icon?: string; title: string; text?: string; button?: string; onPress?: () => void}) {
   const th = useTheme();
@@ -136,7 +136,7 @@ export function Seg({list, on, onPick}: {list: [string, string][]; on: string; o
     <View style={{flexDirection: 'row', backgroundColor: th.soft, borderRadius: 14, padding: 4, gap: 4}}>
       {list.map(x => (
         <Pressable key={x[0]} onPress={() => onPick(x[0])} style={{flex: 1, height: 38, borderRadius: 11, alignItems: 'center', justifyContent: 'center', backgroundColor: on === x[0] ? th.card : 'transparent', shadowColor: '#000', shadowOpacity: on === x[0] ? 0.12 : 0, shadowRadius: 2, shadowOffset: {width: 0, height: 1}}}>
-          <T size={13.5} weight="700" color={on === x[0] ? th.ink : th.mut}>{x[1]}</T>
+          <T size={13.5} weight="600" color={on === x[0] ? th.ink : th.mut}>{x[1]}</T>
         </Pressable>
       ))}
     </View>
@@ -146,7 +146,7 @@ export function Seg({list, on, onPick}: {list: [string, string][]; on: string; o
 export function Stepper({q, onMinus, onPlus}: {q: number; onMinus: () => void; onPlus: () => void}) {
   const th = useTheme();
   const b = (icon: string, f: () => void, lb: string) => <Pressable accessibilityLabel={lb} onPress={f} style={{width: 30, height: 30, borderRadius: 15, backgroundColor: th.card, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} size={16} color={th.ink} /></Pressable>;
-  return <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: th.soft, borderRadius: 20, padding: 4}}>{b('minus', onMinus, 'Less')}<T size={14} weight="800" style={{minWidth: 16, textAlign: 'center'}}>{q}</T>{b('plus', onPlus, 'More')}</View>;
+  return <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: th.soft, borderRadius: 20, padding: 4}}>{b('minus', onMinus, 'Less')}<T size={14} weight="600" style={{minWidth: 16, textAlign: 'center'}}>{q}</T>{b('plus', onPlus, 'More')}</View>;
 }
 
 export function Input({label, value, onChange, placeholder, multiline, keyboard}: {label?: string; value: string; onChange: (s: string) => void; placeholder?: string; multiline?: boolean; keyboard?: any}) {
@@ -154,7 +154,7 @@ export function Input({label, value, onChange, placeholder, multiline, keyboard}
   const [f, setF] = React.useState(false);
   return (
     <View>
-      {label ? <T size={13} weight="700" style={{marginTop: 10, marginBottom: 5}}>{label}</T> : null}
+      {label ? <T size={13} weight="600" style={{marginTop: 10, marginBottom: 5}}>{label}</T> : null}
       <TextInput value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={th.mut} multiline={multiline} keyboardType={keyboard} onFocus={() => setF(true)} onBlur={() => setF(false)}
         style={{fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: f ? th.br : th.line, borderRadius: 12, padding: 12, minHeight: multiline ? 84 : undefined, textAlignVertical: multiline ? 'top' : 'center'}} />
     </View>

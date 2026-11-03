@@ -291,13 +291,13 @@ export async function placeOrder() {
     if (error || !row?.id) {
       S.busy = 0;
       const detail = String(error?.message || data?.error || '');
-      if (S.pay === 'wallet' && /insufficient|not enough|balance too low/i.test(detail)) {
-        toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
-      } else if (S.pay === 'wallet' && /edge function returned a non-2xx|non-2xx status/i.test(detail)) {
+      if (S.pay === 'wallet') {
         const verified = await refreshPaymentOptions();
-        toast(verified && (!S.hasWallet || S.wallet < t.total)
-          ? label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.')
-          : 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
+        if (/insufficient|not enough|balance too low/i.test(detail) || (verified && (!S.hasWallet || S.wallet < t.total))) {
+          toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
+        } else {
+          toast('Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
+        }
       } else {
         toast(detail || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.'));
       }
