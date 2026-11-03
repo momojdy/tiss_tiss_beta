@@ -421,7 +421,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
         distances[store.id] = null;
         return;
       }
-      const gps = location && Number.isFinite(Number(store.storeLatitude)) && Number.isFinite(Number(store.storeLongitude)) ? location : null;
+      const gps = location && store.storeLatitude != null && store.storeLongitude != null && Number.isFinite(Number(store.storeLatitude)) && Number.isFinite(Number(store.storeLongitude)) ? location : null;
       if (gps) {
         const rad = (degrees: number) => degrees * Math.PI / 180;
         const dLat = rad(Number(store.storeLatitude) - Number(gps.latitude));
