@@ -13,6 +13,7 @@ export let C: any = null; /* raw Admin export, or null = use seed */
 const subs = new Set<() => void>();
 const CONTENT_CACHE_KEY = 'goodies-published-content-v5';
 let hydration: Promise<void> | null = null;
+let contentLoad: Promise<void> | null = null;
 async function hydrateContent() {
   if (C) return;
   if (!hydration) hydration = (async () => {
@@ -35,41 +36,47 @@ export function applyContent(json: any) {
   });
   subs.forEach(f => f());
 }
-export async function loadContent() {
-  await hydrateContent();
-  try {
-    const remote = await fetchPublishedWantissContent('en');
-    const record = remote.content.find(x => x.content_key === 'goodies.content' || x.content_key === 'goodies');
-    const payload: any = record?.payload;
-    if (payload && payload.v === 5) {
-      const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
-      const previous = C;
-      const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
-      imageLists.forEach(([list, field]) => {
-        (payload[list] || []).forEach((item: any) => {
-          const image = item[field];
-          if (!image || typeof image !== 'object') return;
-          const key = image.assetKey || image.asset_key;
-          if (key && assetByKey.has(key)) image.data = assetByKey.get(key);
-          else if (!image.data && typeof image.url === 'string') image.data = image.url;
-          else if (!image.data) {
-            const oldItem = (previous?.[list] || []).find((candidate: any) => candidate.id === item.id);
-            const oldImage = oldItem?.[field];
-            if (oldImage?.data) image.data = oldImage.data;
-          }
+export function loadContent(): Promise<void> {
+  if (contentLoad) return contentLoad;
+  const request = (async () => {
+    await hydrateContent();
+    try {
+      const remote = await fetchPublishedWantissContent('en');
+      const record = remote.content.find(x => x.content_key === 'goodies.content' || x.content_key === 'goodies');
+      const payload: any = record?.payload;
+      if (payload && payload.v === 5) {
+        const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
+        const previous = C;
+        const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
+        imageLists.forEach(([list, field]) => {
+          (payload[list] || []).forEach((item: any) => {
+            const image = item[field];
+            if (!image || typeof image !== 'object') return;
+            const key = image.assetKey || image.asset_key;
+            if (key && assetByKey.has(key)) image.data = assetByKey.get(key);
+            else if (!image.data && typeof image.url === 'string') image.data = image.url;
+            else if (!image.data) {
+              const oldItem = (previous?.[list] || []).find((candidate: any) => candidate.id === item.id);
+              const oldImage = oldItem?.[field];
+              if (oldImage?.data) image.data = oldImage.data;
+            }
+          });
         });
-      });
-      applyContent(payload);
-      try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(payload)); } catch { /* Disk cache is an optimization; live content remains usable. */ }
-      const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
-        .filter((url:any): url is string => typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://')));
-      void ExpoImage.prefetch(Array.from(new Set(imageUrls)), {cachePolicy: 'disk'}).catch(() => false);
+        applyContent(payload);
+        try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(payload)); } catch { /* Disk cache is an optimization; live content remains usable. */ }
+        const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
+          .filter((url:any): url is string => typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://')));
+        void ExpoImage.prefetch(Array.from(new Set(imageUrls)), {cachePolicy: 'disk'}).catch(() => false);
+      }
+      // A missing/temporarily unavailable published record must not erase the last
+      // successfully loaded customer content and its image URLs.
+    } catch {
+      // Keep the last known published content visible during transient network errors.
     }
-    // A missing/temporarily unavailable published record must not erase the last
-    // successfully loaded customer content and its image URLs.
-  } catch {
-    // Keep the last known published content visible during transient network errors.
-  }
+  })();
+  const tracked = request.finally(() => { if (contentLoad === tracked) contentLoad = null; });
+  contentLoad = tracked;
+  return tracked;
 }
 export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(j)); } catch { /* Optional persistence. */ } }
 export async function clearContent() { C = null; hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
