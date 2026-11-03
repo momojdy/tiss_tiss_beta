@@ -387,8 +387,8 @@ export async function refreshStoreDistance(storeId: string, address: Address | n
     body: {store_id: storeId, address: {t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country}, distance_only: true},
   });
   if (error) {store.distanceError = error.message || 'Distance is unavailable for this address.'; emit(); throw error;}
-  const distanceMeters = Number(data?.distance_m);
-  const distance = Number(data?.distance_km);
+  const distanceMeters = data?.distance_m == null ? NaN : Number(data.distance_m);
+  const distance = data?.distance_km == null ? NaN : Number(data.distance_km);
   const meters = Number.isFinite(distanceMeters) && distanceMeters >= 0 ? Math.round(distanceMeters) : Number.isFinite(distance) && distance >= 0 ? Math.round(distance * 1000) : NaN;
   if (!Number.isFinite(meters)) {store.distanceError = data?.error || 'Distance is unavailable for this address.'; emit(); throw new Error(store.distanceError);}
   store.km = meters / 1000;
