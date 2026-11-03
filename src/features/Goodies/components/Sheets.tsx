@@ -159,7 +159,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const validDigits=/^\d{1,2}$/.test(customHour)&&/^\d{1,2}$/.test(customMinute)&&rawHour>=0&&rawHour<=23&&rawMinute>=0&&rawMinute<=59;
   const customDate=new Date(selectedDate);if(validDigits)customDate.setHours(rawHour,rawMinute,0,0);
   const customInstant=validDigits?new Date(customDate):new Date(0);
-  const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now()+60_000;
+  const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now()+15*60_000;
   const selected=customValid?customInstant.getTime():0;
   const noFutureSlot=!availableSlots.length;
   const reason=noFutureSlot?label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.') : !customValid?label('lbl.sheetClampEarliest','Choose the minimum available time or a later available time.'):'';
