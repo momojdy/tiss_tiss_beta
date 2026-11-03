@@ -199,10 +199,11 @@ export function Explore() {
     if (scope !== 'closest' || !selectedAddress?.t) return;
     void refreshStoreDistances(eligible.filter(store => store.live).map(store => store.id), selectedAddress).catch(() => null);
   }, [scope, category, selectedAddress?.id, selectedAddress?.t, selectedAddress?.apt, selectedAddress?.inst, selectedAddress?.city, selectedAddress?.department, selectedAddress?.country]);
+  const distanceOf = (store: typeof ST[number]) => store.live && !store.distanceReady ? Number.POSITIVE_INFINITY : store.km;
   const visible = eligible.filter(s => scope !== 'open' || !!s.open).slice().sort((x, y) => {
-    if (scope === 'closest') return x.km - y.km;
-    if (scope === 'open') return x.km - y.km;
-    return Number(!!y.open) - Number(!!x.open) || x.km - y.km;
+    if (scope === 'closest') return distanceOf(x) - distanceOf(y);
+    if (scope === 'open') return distanceOf(x) - distanceOf(y);
+    return Number(!!y.open) - Number(!!x.open) || distanceOf(x) - distanceOf(y);
   });
   const products = visible.flatMap(s => s.it.filter(i => !i.oos && i.stock > 0));
   const scopeOptions: [string, string][] = [['closest', label('lbl.browseScopeClosest', 'Closest')], ['open', label('lbl.browseScopeOpen', 'Open now')], ['all', label('lbl.browseScopeAll', 'All available')]];
