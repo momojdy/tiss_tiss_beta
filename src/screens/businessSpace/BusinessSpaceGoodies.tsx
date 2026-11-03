@@ -14,7 +14,6 @@ import { supabase } from '../../lib/supabase';
 import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
-import { COUNTRIES } from './countries';
 
 /* ---------- types (PROPOSED contracts) ---------- */
 export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string>; storeLatitude: number | null; storeLongitude: number | null };
@@ -224,13 +223,6 @@ export function GoodiesToolsCard() {
 
 /* ---------- store setup ---------- */
 const LANGS: [string, string][] = [['fr','Français'],['ht','Kreyòl ayisyen'],['es','Español'],['zh-Hans','简体中文'],['en','English'],['ar','العربية'],['bn','বাংলা'],['bg','Български'],['my','မြန်မာ'],['ca','Català'],['hr','Hrvatski'],['cs','Čeština'],['da','Dansk'],['nl','Nederlands'],['et','Eesti'],['fi','Suomi'],['de','Deutsch'],['el','Ελληνικά'],['gu','ગુજરાતી'],['he','עברית'],['hi','हिन्दी'],['hu','Magyar'],['is','Íslenska'],['id','Bahasa Indonesia'],['it','Italiano'],['ja','日本語'],['jv','Basa Jawa'],['kn','ಕನ್ನಡ'],['km','ខ្មែរ'],['ko','한국어'],['lo','ລາວ'],['lv','Latviešu'],['lt','Lietuvių'],['ms','Bahasa Melayu'],['ml','മലയാളം'],['mr','मराठी'],['mn','Монгол'],['ne','नेपाली'],['no','Norsk'],['fa','فارسی'],['pl','Polski'],['pt','Português'],['pa','ਪੰਜਾਬੀ'],['ro','Română'],['ru','Русский'],['sr','Српски'],['sk','Slovenčina'],['sl','Slovenščina'],['sw','Kiswahili'],['sv','Svenska'],['ta','தமிழ்'],['te','తెలుగు'],['th','ไทย'],['tr','Türkçe'],['uk','Українська'],['ur','اردو'],['uz','Oʻzbek'],['vi','Tiếng Việt'],['yo','Yorùbá'],['zu','isiZulu'],['am','አማርኛ'],['az','Azərbaycanca'],['eu','Euskara'],['gl','Galego'],['ga','Gaeilge'],['mk','Македонски'],['sq','Shqip']];
-const COUNTRY_OPTIONS = COUNTRIES.map(({ code, name }) => ({
-  code,
-  name,
-  flag: String.fromCodePoint(...code.split('').map(ch => 127397 + ch.charCodeAt(0))),
-})).sort((a, b) => a.name.localeCompare(b.name));
-const countryOption = (value: string) => COUNTRY_OPTIONS.find(x => x.code === value || x.name.toLowerCase() === value.toLowerCase());
-
 export function GoodiesToolsPage() {
   const app = useApp();
   return <Pg title="Goodies tools" onBack={app.back}><GoodiesToolsCard /></Pg>;
@@ -244,7 +236,6 @@ export function GoodiesStorePage() {
   const [locationBusy, setLocationBusy] = useState(false), [locationSaving, setLocationSaving] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
-  const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
   const [languageOpen, setLanguageOpen] = useState(false), [languageQuery, setLanguageQuery] = useState('');
   const [timePickerOpen, setTimePickerOpen] = useState(false), [sameAsCover, setSameAsCover] = useState(false), [thumbnailBusy, setThumbnailBusy] = useState(false);
   const load = () => {
@@ -401,14 +392,7 @@ export function GoodiesStorePage() {
       <Section title="Store address" />
       <Field label="Street address" value={f.address} onChangeText={(v: string) => set({ address: v })} placeholder="Street, building and number" />
       <Field label="City" value={f.city} onChangeText={(v: string) => set({ city: v })} />
-      <Text style={s.label}>Country</Text>
-      <Pressable onPress={() => { setCountryQuery(''); setCountryOpen(true); }} style={[s.fld, { minHeight: 48, justifyContent: 'center' }]}><Text style={{ color: t.ink, fontSize: 14 }}>{countryOption(f.country) ? countryOption(f.country)!.flag + '  ' + countryOption(f.country)!.name + ' (' + countryOption(f.country)!.code + ')' : 'Choose country'}</Text></Pressable>
-      {countryOpen ? <Modal visible transparent animationType="slide" onRequestClose={() => setCountryOpen(false)}><SheetShell title="Choose country" onClose={() => setCountryOpen(false)} tall>
-        <TextInput value={countryQuery} onChangeText={setCountryQuery} placeholder="Search countries" placeholderTextColor={t.mute} style={[s.fld, { marginBottom: 8 }]} />
-        <ScrollView style={{maxHeight: 420}} keyboardShouldPersistTaps="handled" nestedScrollEnabled>
-          {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
-        </ScrollView>
-      </SheetShell></Modal> : null}
+      <Field label="Country" value={f.country} onChangeText={(v: string) => set({ country: v })} placeholder="Type any country name" />
       <Section title="Store location" />
       <View style={[s.cardFlat, { padding: 14, gap: 8 }]}>
         <Text style={s.mut}>Stand at your shop entrance and capture its position. This gives delivery-distance quotes a precise starting point even when map services cannot find your street address.</Text>
