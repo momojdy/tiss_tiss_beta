@@ -414,7 +414,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
       const row: any = byId.get(store.id);
       const meters = row?.distance_m == null ? NaN : Number(row.distance_m);
       if (!Number.isFinite(meters) || meters < 0) {
-        store.distanceError = 'Distance is unavailable for this address.';
+        store.distanceError = row?.error || 'Distance is unavailable for this address.';
         distances[store.id] = null;
         return;
       }
