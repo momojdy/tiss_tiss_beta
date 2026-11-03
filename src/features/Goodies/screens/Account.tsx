@@ -1,6 +1,7 @@
 /* Account screens: settings, profile, addresses, payments, policies, support. Ported from v24. */
 import React, {useState, useEffect, useRef} from 'react';
 import {View, Text, Pressable, ScrollView, TextInput, KeyboardAvoidingView, Platform, Image, Alert} from 'react-native';
+import * as Location from 'expo-location';
 import {Icon} from '../components/Icon';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, Empty, Switch, Input, Chip, useTheme, Tile} from '../components/ui';
 import {S, defAddr, money, emit, save, toast, ui, push, reset, STB, refreshUserAddresses} from '../store';
@@ -75,6 +76,24 @@ function Profile() {
 
 function Addresses() {
   const th = useTheme(), [edit, setEdit] = useState<any>(null), [busy, setBusy] = useState(false);
+  const [locating, setLocating] = useState(false);
+  const fillFromCurrentLocation = async () => {
+    if (locating || !edit) return;
+    setLocating(true);
+    try {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      if (permission.status !== 'granted') {toast('Allow location access to fill your address from where you are.'); return;}
+      const position = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
+      const [place] = await Location.reverseGeocodeAsync({latitude: position.coords.latitude, longitude: position.coords.longitude});
+      if (!place) {toast('We could not turn your location into an address. Please type it in.'); return;}
+      const street = [place.streetNumber, place.street].filter(Boolean).join(' ').trim() || place.name || '';
+      const city = place.city || place.subregion || place.district || '';
+      S.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude, capturedAt: Date.now(), addressText: [street, city, place.region || '', place.country || ''].filter(Boolean).join(', ')};
+      setEdit((prev: any) => prev ? {...prev, t: street || prev.t, city: city || prev.city, department: place.region || prev.department, country: place.country || prev.country} : prev);
+      toast('Address filled from your current location. Check the details before saving.');
+    } catch (e: any) {toast(e?.message || 'Could not get your current location.');}
+    finally {setLocating(false);}
+  };
   useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(e?.message || 'Could not load saved addresses.')); }, []);
   const rows = S.addr || [];
   const countryName = (cc: string, fallback?: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || (fallback && fallback !== 'Other' ? fallback : 'Other');
@@ -169,6 +188,7 @@ function Addresses() {
         <Card>
           <T size={17} weight="600">{edit.id && typeof edit.id === 'string' ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={label('lbl.accountAddressType' + x, x)} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
+          <View style={{marginBottom: 12}}><Cta ghost small label={locating ? 'Locating…' : 'Use my current location'} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
           <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v})} />
           <Input label="City" value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
@@ -239,7 +259,7 @@ function StoreChat({id}: {id: string}) {
   return (
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : label('lbl.chatTitle', 'Message store')} onBack={back} />
-      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card style={{overflow: 'hidden', padding: 0}}><View style={{padding: 12}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo} /><View style={{flex: 1}}><T weight="600">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></View></Card></View> : null}
+      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card style={{overflow: 'hidden', padding: 0}}><View style={{padding: 12}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo || store.cover} /><View style={{flex: 1}}><T weight="600">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></View></Card></View> : null}
       {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="600" color={th.br} style={{marginTop: 8}}>{label('lbl.chatTryAgain', 'Try again')}</T></Pressable></Card></View> : null}
       {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>{label('lbl.chatOpening', 'Opening conversation…')}</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
@@ -310,7 +330,7 @@ function Contact({p}: {p: any}) {
   return (<View>
     <Bar title={store ? label('lbl.contactStoreTitle', 'Contact store') : label('lbl.contactSupportTitle', 'Contact support')} onBack={back} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
-      {store ? <Card style={{marginTop: 4, marginBottom: 8, overflow:'hidden', padding:0}}>{store.cover || store.thumbnail || store.logo ? <Image source={{uri:String(store.cover || store.thumbnail || store.logo || '')}} style={{width:'100%',height:124,backgroundColor:th.soft}} resizeMode="cover" /> : null}<View style={{padding:12}}><Row style={{gap:10,alignItems:'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo} /><View style={{flex:1}}><T weight="600">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></View></Card> : null}
+      {store ? <Card style={{marginTop: 4, marginBottom: 8, overflow:'hidden', padding:0}}><View style={{padding:12}}><Row style={{gap:10,alignItems:'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo || store.cover} /><View style={{flex:1}}><T weight="600">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></View></Card> : null}
       <T size={13} weight="600" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
       <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
       {!store ? <>
