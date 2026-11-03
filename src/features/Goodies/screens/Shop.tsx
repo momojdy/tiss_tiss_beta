@@ -296,7 +296,11 @@ export function Checkout() {
     <T size={15} weight="600" style={{marginBottom: 8}}>{label('lbl.checkoutPaymentMethod', 'Payment method')}</T>
     {pays.map(p => <Radio key={p[0]} on={S.pay === p[0]} onPress={() => setPay(p[0])}><Row><Icon name={p[3]} size={20} color={th.ink} /><View style={{flex: 1}}><T size={14.5} weight="600">{p[1]}</T><T size={12.5} color={th.mut}>{p[2]}</T></View></Row></Radio>)}
     {!providerInfo.demo && !S.hasWallet ? <Card style={{borderColor: th.br}}><T weight="600">{label('lbl.checkoutWalletNotFound', 'Wantiss wallet not found')}</T><T size={12.5} color={th.mut} style={{marginVertical: 6}}>{label('lbl.checkoutWalletHint', 'Create a wallet to pay for Goodies orders with your balance.')}</T><Cta label={label("lbl.shopAutoFLJ2MD", "Create wallet")} onPress={createWallet} /></Card> : null}
-    {!providerInfo.demo && S.hasWallet && S.wallet < t.total ? <Card style={{borderColor: th.br, backgroundColor: th.brt}}><T weight="600">{label('lbl.checkoutInsufficient', 'Insufficient wallet balance')}</T><T size={12.5} color={th.mut} style={{marginTop: 4}}>Your balance is {money(S.wallet)}. You need {money(Math.max(0, t.total - S.wallet))} more. Top up your Wantiss Wallet or choose a saved card if available.</T><Cta small label={label('lbl.checkoutOpenWallet', 'Open Wallet')} onPress={() => go('payments')} /></Card> : null}
+    {!providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < t.total) ? <View style={{paddingVertical:10}}>
+      <T size={14} weight="600" color={th.red}>{!S.hasWallet ? label('lbl.checkoutWalletNotFound', 'Wantiss wallet not found') : label('lbl.checkoutInsufficient', 'Insufficient wallet balance')}</T>
+      <T size={12.5} color={th.mut} style={{marginTop:4}}>{!S.hasWallet ? 'Create a Wantiss wallet or choose another payment method.' : 'Balance: ' + money(S.wallet) + ' · Add at least ' + money(Math.max(0, t.total - S.wallet)) + ' to continue.'}</T>
+      <Pressable onPress={() => go('payments')} style={{alignSelf:'flex-start',paddingVertical:7}}><T size={13} weight="600" color={th.br}>{label('lbl.checkoutOpenWallet', 'Open Wallet')}</T></Pressable>
+    </View> : null}
     {S.pay === 'card' ? <Card style={{marginTop: 10}}>
       <T weight="600">{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
       {S.cards.length ? S.cards.map((card: any) => <Radio key={card.id} on={S.selectedCardId === card.id} onPress={() => setCard(card.id)}>
@@ -307,6 +311,11 @@ export function Checkout() {
   </>);
   if (S.cs === 3) body = (<>
     <Card>{st.cover ? <Image source={{uri:st.cover}} style={{width:"100%",height:100,borderRadius:12,marginBottom:10}} resizeMode="cover" /> : null}<Row style={{gap:10, alignItems:"center"}}><Tile e={st.e} bg={st.bg} size={46} photo={st.thumbnail || st.logo} /><View style={{flex:1}}><T weight="600">{st.n}</T><T size={12} color={th.mut}>Your order from this store</T></View></Row>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 10, alignItems: "center"}}><Row style={{flex:1, gap:9, alignItems:"center"}}><Tile e={l.e} bg="bg0" size={42} photo={l.photo} /><View style={{flex:1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View></Row><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
+    {S.pay === 'wallet' && !providerInfo.demo && (!S.hasWallet || S.wallet < t.total) ? <View style={{paddingVertical:10}}>
+      <T size={14} weight="600" color={th.red}>{!S.hasWallet ? 'Wantiss Wallet is not available.' : 'Insufficient Wantiss Wallet balance.'}</T>
+      <T size={12.5} color={th.mut} style={{marginTop:3}}>{!S.hasWallet ? 'Create a wallet or choose another payment method.' : 'Your balance is ' + money(S.wallet) + '. Add ' + money(Math.max(0,t.total-S.wallet)) + ' or choose another payment method.'}</T>
+      <Pressable onPress={() => go('payments')} style={{alignSelf:'flex-start',paddingVertical:6}}><T size={13} weight="600" color={th.br}>Open Wallet</T></Pressable>
+    </View> : null}
     <Sum rows={[[pk ? 'Pickup' : 'Delivery to', pk ? st.n : a.t], ['When', S.sch ? fmtStoreDay(st.id,S.sch) + ', ' + fmtStoreTime(st.id,S.sch) : 'ASAP'], ['Contact', ct.ph], ['Payment', S.pay === 'card' ? 'Card •••• ' + ((S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards[0])?.l4 || '') : ({wallet: 'Wallet', moncash: 'MonCash', cash: 'Cash'} as any)[S.pay]], ...(S.note ? [['Note', S.note] as any] : [])]} />
     {hasAlcohol() ? <Card style={{borderColor: th.br}}><T weight="600">{label('lbl.checkoutAlcoholConfirm', 'Alcohol order. Please confirm.')}</T><T size={13} color={th.mut} style={{marginVertical: 6}}>{rgText('rg.refund', 'If the ID check fails, the alcohol returns to the store and you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(S.cart.sid).age)}</T><Pressable onPress={() => setConsent(!S.alcConsent)} accessibilityRole="checkbox" accessibilityState={{checked: !!S.alcConsent}} style={{flexDirection: 'row', gap: 10, alignItems: 'center', marginTop: 4}}><View style={{width: 22, height: 22, borderRadius: 6, borderWidth: 2, borderColor: th.br, backgroundColor: S.alcConsent ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{S.alcConsent ? <Icon name="check" size={14} color="#fff" /> : null}</View><T size={13.5} style={{flex: 1}}>{rgText('rg.consent', 'I am {age} or older and will show valid government photo ID on delivery or pickup.', alcAge(S.cart.sid).age)}</T></Pressable></Card> : null}
     <Sum rows={[['Subtotal', money(t.sub)], ['Delivery fee', pk ? 'Pickup' : t.free ? 'Free' : money(t.fee), t.free ? 'g' : undefined as any], ['Service fee', money(t.svc)], ...(t.disc ? [['Discount', '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [['Tip', money(t.tip)] as any] : [])]} total={['Total', money(t.total)]} />
@@ -321,7 +330,7 @@ export function Checkout() {
     </View>
   );
 }
-export const CheckoutFoot = () => <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={S.cs === 3 && hasAlcohol() && !S.alcConsent} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;
+export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={(S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;};
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
