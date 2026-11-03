@@ -304,7 +304,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       const {data,error}=await supabase.from('goodies_group_order_items')
         .select('id,user_id,line_key,quantity,options,note,product:goodies_products(name,price,photo_url,emoji)')
         .eq('group_id',group.groupId).order('created_at',{ascending:true});
-      if(active){if(error)toast('Could not refresh the shared cart: '+error.message);else setSharedItems(data||[]);}
+      if(active){if(error)toast('Could not refresh the shared cart: '+error.message);else {setSharedItems(data||[]);setCheckoutPreview(null);setCheckoutEstimate(null);}}
     };
     const loadMembers=async () => {
       const {data,error}=await supabase.rpc('goodies_group_order_list_members',{p_group_id:group.groupId});
