@@ -96,7 +96,7 @@ function Addresses() {
   };
   const saveAddr = async () => {
     const street = String(edit.t || '').trim(), city = String(edit.city || '').trim();
-    if (street.length < 4 || !city) { toast('Enter the street address and city.'); return; }
+    if (street.length < 4 || !city || !String(edit.country || '').trim()) { toast('Enter the street address, city and country.'); return; }
     if (busy) return;
     setBusy(true);
     try {
@@ -106,7 +106,7 @@ function Addresses() {
       const payload = {
         recipient_name: String(edit.l || 'Home').trim().slice(0, 80) || 'Home',
         phone_number: String(edit.phone || S.pf.ph || '').trim(),
-        country: String(edit.country || countryName(edit.cc || 'HT')).trim(),
+        country: String(edit.country || '').trim(),
         department: String(edit.department || '').trim(),
         city,
         street_address: street,
@@ -174,10 +174,10 @@ function Addresses() {
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
           <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
-          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country ?? countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v, cc: 'XX'})} placeholder="Country name (e.g. Philippines)" />
+          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country ?? countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v})} placeholder="Country name (e.g. Philippines)" />
           <View style={{marginTop: 14}}><Cta label={busy ? 'Saving…' : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
         </Card>
-      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: 'HT', country: 'Haiti', phone: S.pf.ph || ''})} />}
+      ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: '', country: '', phone: S.pf.ph || ''})} />}
     </View>
   </View>);
 }

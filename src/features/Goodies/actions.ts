@@ -281,7 +281,21 @@ export async function placeOrder() {
       data = result.data; error = result.error;
     }
     const row: any = Array.isArray(data) ? data[0] : data;
-    if (error || !row?.id) {S.busy = 0; toast(error?.message || data?.error || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')); emit(); return;}
+    if (error || !row?.id) {
+      S.busy = 0;
+      const detail = String(error?.message || data?.error || '');
+      if (S.pay === 'wallet' && /insufficient|not enough|balance too low/i.test(detail)) {
+        toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
+      } else if (S.pay === 'wallet' && /edge function returned a non-2xx|non-2xx status/i.test(detail)) {
+        const verified = await refreshPaymentOptions();
+        toast(verified && (!S.hasWallet || S.wallet < t.total)
+          ? label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.')
+          : 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
+      } else {
+        toast(detail || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.'));
+      }
+      emit(); return;
+    }
     if (S.pay === 'card' && data?.requires_action && data?.client_secret && data?.publishable_key && data?.stripe_payment_method_id) {
       S.cardPending = {id: row.id, orderCode: row.order_code, status: row.status, clientSecret: data.client_secret, publishableKey: data.publishable_key, paymentMethodId: data.stripe_payment_method_id};
       S.busy = 0; push('cardauth'); emit(); return;

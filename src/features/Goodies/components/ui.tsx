@@ -47,7 +47,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
-          <Text numberOfLines={1} style={{flex:1,fontSize:19,fontWeight:"600",color:th.ink}}>{title}</Text>
+          <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:23,fontFamily:"Inter_600SemiBold",fontWeight:"600",color:th.ink}}>{title}</Text>
           {right}
         </View>
       </View>
@@ -73,7 +73,7 @@ export const Rail = ({children, gap = 10, style}: any) => (
 export function Chip({label, on, onPress, color}: {label: string; on?: boolean; onPress: () => void; color?: string}) {
   const th = useTheme();
   return (
-    <Pressable onPress={onPress} style={{height: 34, paddingHorizontal: 14, borderRadius: 17, borderWidth: 1, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, alignItems: 'center', justifyContent: 'center'}}>
+    <Pressable onPress={onPress} style={{height: 34, paddingHorizontal: 14, borderRadius: 17, borderWidth: 0.5, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, alignItems: 'center', justifyContent: 'center'}}>
       <T size={13} weight="600" color={color || (on ? th.chipOnText : th.ink)}>{label}</T>
     </Pressable>
   );
@@ -91,7 +91,7 @@ export function Cta({label, onPress, ghost, disabled, small}: {label: string; on
   );
 }
 
-export const Card = ({children, style}: any) => {const th = useTheme(); const surface = !!(style && (style.backgroundColor || style.borderColor || style.borderWidth || style.padding || style.alignItems || style.overflow)); return <View style={[surface ? {backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 12, marginBottom: 10} : {backgroundColor: 'transparent', borderWidth: 0, borderRadius: 0, padding: 0, marginBottom: 14}, style]}>{children}</View>;};
+export const Card = ({children, style}: any) => {const th = useTheme(); const surface = !!(style && (style.backgroundColor || style.borderColor || style.borderWidth)); return <View style={[surface ? {backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 12, marginBottom: 10} : {backgroundColor: 'transparent', borderWidth: 0, borderRadius: 0, padding: 0, marginBottom: 14}, style]}>{children}</View>;};
 export const Row = ({children, style, sp}: any) => <View style={[{flexDirection: 'row', alignItems: 'center', gap: 12}, sp ? {justifyContent: 'space-between'} : null, style]}>{children}</View>;
 export const Badge = ({label, green, red}: {label: string; green?: boolean; red?: boolean}) => {
   const th = useTheme();

@@ -21,7 +21,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
   const p = off ? dp(i, off) : i.p, w = grid ? (width - 32 - 12) / 2 : 148;
   const dis = i.oos || (!s.open && !s.acceptScheduledOrders), saved = S.favp.indexOf(i.id) > -1;
   return (
-    <View style={{width: w, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
+    <View style={{width: w, borderRadius: 18, backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, overflow: 'hidden'}}>
       <View>
         <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)}>
           <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>
@@ -61,7 +61,7 @@ const storeDistanceLabel = (s: Store) => {
 export function VCard({s}: {s: Store}) {
   const th = useTheme(), saved = S.fav.indexOf(s.id) > -1;
   return (
-    <View style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 1, borderColor: th.line, overflow: 'hidden'}}>
+    <View style={{width: 148, borderRadius: 18, backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, overflow: 'hidden'}}>
       <View>
         <Pressable accessibilityRole="link" onPress={() => go('store', s.id)}>
           <Grad idx={bgIdx(s.bg)} style={{height: 108, alignItems: 'center', justifyContent: 'center'}}>{s.cover || s.thumbnail || s.logo ? <Image source={{uri: s.cover || s.thumbnail || s.logo || undefined}} style={{width: '100%', height: '100%'}} resizeMode="cover" /> : <Text style={{fontSize: 54}}>{s.e}</Text>}</Grad>
@@ -128,7 +128,7 @@ export function ItemRow({i}: {i: Item}) {
           <T size={14} weight="800">{money(i.p)}</T>
         </View>
       </Pressable>
-      <Pressable accessibilityLabel={(S.favp.indexOf(i.id) > -1 ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11yAddFavorite', 'Add {name} to favorites')).replace('{name}', i.n)} onPress={() => favp(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: S.favp.indexOf(i.id) > -1 ? 'rgba(253,128,46,0.12)' : th.card, borderWidth: 1, borderColor: S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.line, alignItems: 'center', justifyContent: 'center'}}>
+      <Pressable accessibilityLabel={(S.favp.indexOf(i.id) > -1 ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11yAddFavorite', 'Add {name} to favorites')).replace('{name}', i.n)} onPress={() => favp(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: S.favp.indexOf(i.id) > -1 ? 'rgba(253,128,46,0.12)' : th.card, borderWidth: 0.5, borderColor: S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.line, alignItems: 'center', justifyContent: 'center'}}>
         <Icon name="heart" size={17} color={S.favp.indexOf(i.id) > -1 ? '#FD802E' : th.ink} fill={S.favp.indexOf(i.id) > -1} />
       </Pressable>
       <Pressable accessibilityLabel={label('lbl.a11yAddToCart', 'Add {name} to cart').replace('{name}', i.n)} disabled={!!dis} onPress={() => quickAdd(i.id)} style={{width: 34, height: 34, borderRadius: 17, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', opacity: dis ? 0.4 : 1}}>

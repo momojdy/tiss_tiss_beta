@@ -10,6 +10,7 @@ import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
 import {providerInfo} from '../providers';
 import {byoRows, byoOn, lineBad, bzEdit, bzRemove} from '../builders/engine';
 import {SEED_REVIEWS} from '../data/seed';
+import {ScheduleInline} from '../components/Sheets';
 import {t as tr} from '../i18n';
 import {supabase} from '../../../lib/supabase';
 import Svg, {Path, Circle} from 'react-native-svg';
@@ -171,7 +172,7 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 };
 
 export function Cart() {
-  const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || '');
+  const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || ''), [scheduleOpen, setScheduleOpen] = useState(false);
   if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
@@ -187,9 +188,10 @@ export function Cart() {
               <T weight="800">Order time</T>
               <T size={13} color={th.mut} style={{marginTop:3}}>{S.sch > Date.now() ? fmtStoreDay(S.cart.sid,S.sch) + ' · ' + fmtStoreTime(S.cart.sid,S.sch) : 'ASAP'}</T>
             </View>
-            {st.acceptScheduledOrders ? <Pressable onPress={() => require('../store').ui.sheet({kind:'schedule'})}><T size={13.5} weight="800" color={th.br}>{S.sch > Date.now() ? 'Change time' : 'Choose time'}</T></Pressable> : <Badge label="ASAP" />}
+            {st.acceptScheduledOrders ? <Pressable onPress={() => setScheduleOpen(v => !v)}><T size={13.5} weight="600" color={th.br}>{scheduleOpen ? 'Close' : S.sch > Date.now() ? 'Change time' : 'Choose time'}</T></Pressable> : <Badge label="ASAP" />}
           </Row>
-          {S.sch > Date.now() ? <Pressable onPress={() => setSch(0)} style={{alignSelf:'flex-start',marginTop:8}}><T size={12.5} weight="700" color={th.br}>Switch to ASAP</T></Pressable> : null}
+          {S.sch > Date.now() ? <Pressable onPress={() => {setSch(0);setScheduleOpen(false);}} style={{alignSelf:'flex-start',marginTop:8}}><T size={12.5} weight="600" color={th.br}>Switch to ASAP</T></Pressable> : null}
+          {scheduleOpen ? <ScheduleInline close={() => setScheduleOpen(false)} /> : null}
         </View>
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
@@ -208,7 +210,7 @@ export function Cart() {
             </View>
           );
         })}
-        <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 1.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="700" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+        <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 0.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="700" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
         <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartStartGroup', 'Start a group order')} onPress={() => go('grouporder')} style={{alignSelf:'flex-start',marginTop:12,paddingVertical:6}}>
           <T size={13} weight="600" color={th.br}>{label('lbl.cartGroupOrder', 'Start a group order')} ›</T>
         </Pressable>
