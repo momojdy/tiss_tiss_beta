@@ -1,7 +1,6 @@
 /* Shared published content provider. Draft content is never read by customer or vendor clients. */
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Image as ExpoImage} from 'expo-image';
 import {tx} from './i18n';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
@@ -64,9 +63,6 @@ export function loadContent(): Promise<void> {
         });
         applyContent(payload);
         try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(payload)); } catch { /* Disk cache is an optimization; live content remains usable. */ }
-        const imageUrls = [...(payload.cats || []).map((x:any)=>x.art?.data), ...(payload.modes || []).map((x:any)=>x.img?.data), ...(payload.promos || []).map((x:any)=>x.img?.data)]
-          .filter((url:any): url is string => typeof url === 'string' && (url.startsWith('https://') || url.startsWith('http://')));
-        void ExpoImage.prefetch(Array.from(new Set(imageUrls)), {cachePolicy: 'disk'}).catch(() => false);
       }
       // A missing/temporarily unavailable published record must not erase the last
       // successfully loaded customer content and its image URLs.
