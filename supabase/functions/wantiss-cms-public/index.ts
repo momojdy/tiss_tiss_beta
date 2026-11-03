@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
       headers: {
         ...headers,
         "Content-Type": asset.content_type || "application/octet-stream",
-        "Cache-Control": "public, max-age=300, stale-while-revalidate=3600",
+        "Cache-Control": "public, max-age=60",
         "X-Content-Type-Options": "nosniff",
       },
     });
