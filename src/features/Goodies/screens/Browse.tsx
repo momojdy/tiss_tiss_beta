@@ -105,9 +105,10 @@ function Countdown() {
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
   const [contentReady, setContentReady] = useState(hasContent());
+  const [, setContentVersion] = useState(0);
   useEffect(() => {
     let active = true;
-    const off = onContent(() => setContentReady(hasContent()));
+    const off = onContent(() => { setContentReady(hasContent()); setContentVersion(value => value + 1); });
     void loadContent().finally(() => { if (active) setContentReady(true); });
     return () => { active = false; off(); };
   }, []);
@@ -362,21 +363,10 @@ export function FlashDeals() {
   const [, setContentVersion] = useState(0);
   useEffect(() => onContent(() => setContentVersion(value => value + 1)), []);
   const activeDeals = deals().filter(d => IT[d[0]]);
-  const [refreshing, setRefreshing] = useState(false);
-  const refresh = async () => {
-    if (refreshing) return;
-    setRefreshing(true);
-    try { await loadContent(); }
-    finally { setRefreshing(false); }
-  };
   return (
     <View>
       <Bar title={label('lbl.flash', tr('flashDeals'))} onBack={back} />
-      <ScrollView
-        contentContainerStyle={{paddingHorizontal:16,paddingBottom:24}}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {void refresh();}} />}
-        showsVerticalScrollIndicator={false}
-      >
+      <View style={{paddingHorizontal:16,paddingBottom:24}}>
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
           <T size={13} weight="700" color={th.mut}>{label('lbl.flashLimitedTime','Limited-time offers')}</T>
           <Countdown />
@@ -384,7 +374,7 @@ export function FlashDeals() {
         {activeDeals.length ? <View style={{flexDirection:'row',flexWrap:'wrap',gap:12}}>
           {activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} grid />)}
         </View> : <Empty title={label('lbl.flashEmptyTitle','No flash deals available')} text={label('lbl.flashEmptyBody','Check back soon for limited-time offers.')} />}
-      </ScrollView>
+      </View>
     </View>
   );
 }
