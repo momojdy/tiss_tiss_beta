@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+const PUBLISHED_ASSET_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 
 const headers = {
@@ -30,7 +31,7 @@ Deno.serve(async (req: Request) => {
   if (assetError) return reply(503, { error: "Published assets are temporarily unavailable" });
 
   const publishedAssets = await Promise.all((assets || []).map(async asset => {
-    const { data, error } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, 300);
+    const { data, error } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, PUBLISHED_ASSET_URL_TTL_SECONDS);
     if (error || !data?.signedUrl) return null;
     return { asset_key: asset.asset_key, url: data.signedUrl, content_type: asset.content_type, byte_size: asset.byte_size, alt_text: asset.alt_text };
   }));
