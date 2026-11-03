@@ -388,9 +388,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
         <T size={12} weight="600" style={{marginTop:9}}>Scan to join this group</T>
         <T size={11.5} color={th.mut} style={{marginTop:3}}>Invite code: {group.code}</T>
       </View> : null}
-      <View style={{height:9}}/>
+      <View style={{height:14}}/>
       {!group.serverBacked ? <Cta label={groupBusy?'Please wait…':'Create group invite'} onPress={()=>void createServerGroup()} disabled={groupBusy} /> : null}
-      {group.serverBacked ? <View style={{height:8}}/> : null}
+      {group.serverBacked ? <View style={{height:14}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
     {S.cart.lines.length > 0 && !group.serverBacked ? <View>
@@ -401,9 +401,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
 
     </View> : null}
     {!group.serverBacked ? <View>
-      <T size={14} weight="600" style={{marginTop:18,marginBottom:12}}>Join a group order</T>
+      <T size={14} weight="600" style={{marginTop:28,marginBottom:16}}>Join a group order</T>
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
-      <Row style={{gap:8,marginTop:12,marginBottom:12}}>
+      <Row style={{gap:10,marginTop:16,marginBottom:18}}>
         <Pressable accessibilityRole="button" accessibilityLabel="Scan group invite QR code" disabled={groupBusy} onPress={async()=>{
           if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
           setScannerOpen(true);
