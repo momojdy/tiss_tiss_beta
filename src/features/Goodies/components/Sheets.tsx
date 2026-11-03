@@ -177,13 +177,14 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const customMinutes = customDate.getHours()*60+customDate.getMinutes();
   const customInstant = validDigits ? zonedInstant(customDate) : new Date(0);
   const customWithinHours = customMinutes>=startMinute && customMinutes<endMinute;
-  const customValid = validDigits && !closedDay && customWithinHours && customInstant.getTime()>Date.now() && customInstant.getTime()>=earliestInstant.getTime();
+  const customValid = validDigits && !closedDay && customWithinHours && customMinutes>=earliestMinute && customInstant.getTime()>Date.now();
   const clampedWall = new Date(selectedDate);
   const latestMinute = Math.max(startMinute, endMinute-5);
   const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
   clampedWall.setHours(Math.floor(safeMinute/60),Math.ceil((safeMinute%60)/5)*5,0,0);
   const noFutureSlot = closedDay || earliestMinute >= endMinute || Math.ceil(earliestMinute/15)*15 >= endMinute;
-  const selected = customValid ? customInstant.getTime() : noFutureSlot ? 0 : zonedInstant(clampedWall).getTime();
+  // Never silently substitute a different time when the customer's selected time is invalid.
+  const selected = customValid && !noFutureSlot ? customInstant.getTime() : 0;
   const reason = noFutureSlot
     ? label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.')
     : !customWithinHours
