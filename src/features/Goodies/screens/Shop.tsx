@@ -314,7 +314,7 @@ export function Checkout() {
         </View>
         <View style={{paddingHorizontal:12,paddingVertical:10,backgroundColor:S.selectedCardId === card.id ? '#EAF2E5' : th.soft,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
           <T size={13} weight="600">{card.b} ending in {card.l4}</T>
-          <Icon name={S.selectedCardId === card.id ? 'checkCircle' : 'circle'} size={19} color={S.selectedCardId === card.id ? '#557B4C' : th.mut}/>
+          <View style={{width:19,height:19,borderRadius:10,borderWidth:2,borderColor:S.selectedCardId === card.id ? '#557B4C' : th.mut,alignItems:'center',justifyContent:'center'}}>{S.selectedCardId === card.id ? <Icon name="check" size={12} color="#557B4C"/> : null}</View>
         </View>
       </Pressable>) : <View style={{alignItems:'center',paddingVertical:20,paddingHorizontal:10}}>
         <View style={{width:62,height:62,borderRadius:20,backgroundColor:'#DCE8D2',alignItems:'center',justifyContent:'center',marginBottom:10}}><Icon name="card" size={30} color="#1A2517"/></View>
