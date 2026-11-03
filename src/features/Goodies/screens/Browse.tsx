@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl, Image as RNImage} from 'react-native';
+import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl} from 'react-native';
+import {Image as ExpoImage} from 'expo-image';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
@@ -21,7 +22,8 @@ function CachedContentImage({uri, style, contentFit = 'contain', onFail}: {uri: 
   const [reloadKey, setReloadKey] = useState(0);
   useEffect(() => { setFailed(false); setRetried(false); setReloadKey(0); }, [uri]);
   if (failed) return null;
-  return <RNImage key={uri + ':' + reloadKey} source={{uri}} style={style} resizeMode={contentFit}
+  return <ExpoImage key={uri + ':' + reloadKey} source={{uri}} style={style} contentFit={contentFit}
+    cachePolicy="memory-disk" priority="high" transition={120}
     onError={() => {
       if (!retried) {
         setRetried(true);
