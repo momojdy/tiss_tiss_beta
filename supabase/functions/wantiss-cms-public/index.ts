@@ -9,9 +9,8 @@ const headers = {
 const reply = (status: number, body: unknown) =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json", "Cache-Control": "no-store" } });
 
-function assetUrl(requestUrl: string, assetKey: string) {
-  const url = new URL(requestUrl);
-  url.search = "";
+function assetUrl(projectUrl: string, assetKey: string) {
+  const url = new URL("/functions/v1/wantiss-cms-public", projectUrl);
   url.searchParams.set("asset_file", assetKey);
   return url.toString();
 }
@@ -50,7 +49,7 @@ Deno.serve(async (req: Request) => {
       .select("asset_key,content_type,alt_text").eq("asset_key", assetKey).eq("status", "published").maybeSingle();
     if (error) return reply(500, { error: "Published asset could not be loaded" });
     if (!asset) return reply(404, { error: "Published asset not found" });
-    return reply(200, { ...asset, url: assetUrl(req.url, asset.asset_key) });
+    return reply(200, { ...asset, url: assetUrl(url, asset.asset_key) });
   }
 
   const locale = params.get("locale") || "en";
@@ -63,7 +62,7 @@ Deno.serve(async (req: Request) => {
   if (contentError || assetError) return reply(500, { error: "Published content could not be loaded" });
   const publishedAssets = (assets || []).map(asset => ({
     ...asset,
-    url: assetUrl(req.url, asset.asset_key),
+    url: assetUrl(url, asset.asset_key),
   }));
   return reply(200, { locale, content: content || [], assets: publishedAssets, generated_at: new Date().toISOString() });
 });
