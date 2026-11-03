@@ -9,20 +9,138 @@ const cors = {
 const reply = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...cors, "Content-Type": "application/json" } });
 
-async function geocode(address: string, key: string) {
-  const url = new URL("https://api.geoapify.com/v1/geocode/search");
-  url.searchParams.set("text", address);
-  url.searchParams.set("format", "json");
-  url.searchParams.set("limit", "1");
+type AddressInput = {
+  t?: string; apt?: string; inst?: string; city?: string; department?: string; country?: string;
+};
+type Point = { lat: number; lon: number };
+type Route = { meters: number; geometry: unknown; origin: Point; destination: Point };
+const validPoint = (lat: unknown, lon: unknown): lat is number =>
+  Number.isFinite(Number(lat)) && Number(lat) >= -90 && Number(lat) <= 90 &&
+  Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
+
+function addressParts(address: AddressInput) {
+  const raw = [address.t, address.apt, address.city, address.department, address.country]
+    .filter((part): part is string => typeof part === "string" && !!part.trim());
+  const seen = new Set<string>();
+  const parts: string[] = [];
+  for (const part of raw.flatMap(value => value.split(/[,\n/]+/))) {
+    const normalized = part.trim().replace(/\s+/g, " ")
+      .replace(/\bPuerto\s+Princessa\b/gi, "Puerto Princesa")
+      .replace(/\bPuerto\s+Princesa\s+City\b/gi, "Puerto Princesa");
+    const key = normalized.toLocaleLowerCase();
+    if (normalized && !seen.has(key)) { seen.add(key); parts.push(normalized); }
+  }
+  return parts;
+}
+
+function countryCode(parts: string[]) {
+  const joined = parts.join(" ").toLowerCase();
+  if (joined.includes("philippines")) return "ph";
+  if (joined.includes("haiti")) return "ht";
+  if (joined.includes("dominican republic")) return "do";
+  if (joined.includes("united states") || /\busa\b/.test(joined)) return "us";
+  if (joined.includes("canada")) return "ca";
+  return "";
+}
+
+async function sha256(value: string) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function geocode(address: AddressInput, key: string, service: ReturnType<typeof createClient>): Promise<Point> {
+  const parts = addressParts(address);
+  if (!parts.length) throw new Error("Please enter a complete address.");
+  const canonical = parts.join(", ");
+  const cacheKey = await sha256(canonical.toLocaleLowerCase());
+  const { data: cached } = await service.from("goodies_geocode_cache")
+    .select("latitude,longitude").eq("address_hash", cacheKey)
+    .gt("expires_at", new Date().toISOString()).maybeSingle();
+  if (cached && validPoint(cached.latitude, cached.longitude)) {
+    return { lat: Number(cached.latitude), lon: Number(cached.longitude) };
+  }
+
+  const streetParts = parts.slice(0, Math.min(2, parts.length));
+  const localityParts = parts.slice(streetParts.length);
+  const candidates = Array.from(new Set([
+    canonical,
+    [...streetParts.slice().reverse(), ...localityParts].join(", "),
+    parts.slice(1).join(", "),
+  ].filter(Boolean)));
+  const expectedCountry = countryCode(parts);
+  for (const candidate of candidates) {
+    const url = new URL("https://api.geoapify.com/v1/geocode/search");
+    url.searchParams.set("text", candidate);
+    url.searchParams.set("format", "json");
+    url.searchParams.set("limit", "5");
+    if (expectedCountry) url.searchParams.set("filter", `countrycode:${expectedCountry}`);
+    url.searchParams.set("apiKey", key);
+    const response = await fetch(url);
+    if (!response.ok) throw new Error("Address lookup is temporarily unavailable. Please try again.");
+    const payload = await response.json();
+    const results = Array.isArray(payload?.results) ? payload.results : [];
+    const result = results.find((item: any) =>
+      validPoint(item?.lat, item?.lon) &&
+      (!expectedCountry || String(item?.country_code || "").toLowerCase() === expectedCountry));
+    if (!result) continue;
+    const point = { lat: Number(result.lat), lon: Number(result.lon) };
+    await service.from("goodies_geocode_cache").upsert({
+      address_hash: cacheKey, latitude: point.lat, longitude: point.lon,
+      updated_at: new Date().toISOString(), expires_at: new Date(Date.now() + 90 * 86400000).toISOString(),
+    }, { onConflict: "address_hash" });
+    return point;
+  }
+  throw new Error("We could not locate this address. Check the street, barangay, city and country, then try again.");
+}
+
+async function storeOrigin(store: any, key: string, service: ReturnType<typeof createClient>): Promise<Point> {
+  if (validPoint(store.store_latitude, store.store_longitude)) {
+    return { lat: Number(store.store_latitude), lon: Number(store.store_longitude) };
+  }
+  const point = await geocode({
+    t: store.address || "",
+    city: store.city || "",
+    country: store.country || "",
+  }, key, service);
+  const { error } = await service.from("goodies_store_schedules")
+    .update({ store_latitude: point.lat, store_longitude: point.lon, updated_at: new Date().toISOString() })
+    .eq("store_id", store.store_id);
+  if (error) throw error;
+  return point;
+}
+
+async function routeKm(
+  store: any, destination: Point, addressHash: string, key: string, service: ReturnType<typeof createClient>,
+): Promise<Route> {
+  const origin = await storeOrigin(store, key, service);
+  const { data: cached } = await service.from("goodies_route_cache")
+    .select("origin_latitude,origin_longitude,distance_m,route_geometry")
+    .eq("store_id", store.store_id).eq("address_hash", addressHash)
+    .gt("expires_at", new Date().toISOString()).maybeSingle();
+  if (cached && Math.abs(Number(cached.origin_latitude) - origin.lat) < 0.000001 &&
+      Math.abs(Number(cached.origin_longitude) - origin.lon) < 0.000001 &&
+      Number(cached.distance_m) > 0) {
+    return { meters: Number(cached.distance_m), geometry: cached.route_geometry, origin, destination };
+  }
+
+  const url = new URL("https://api.geoapify.com/v1/routing");
+  url.searchParams.set("waypoints", `${origin.lat},${origin.lon}|${destination.lat},${destination.lon}`);
+  url.searchParams.set("mode", "drive");
   url.searchParams.set("apiKey", key);
   const response = await fetch(url);
-  if (!response.ok) throw new Error("Address lookup is temporarily unavailable.");
-  const data = await response.json();
-  const item = data?.results?.[0];
-  if (!item || !Number.isFinite(Number(item.lat)) || !Number.isFinite(Number(item.lon))) {
-    throw new Error("We could not locate the shop or delivery address. Please check the address.");
-  }
-  return { lat: Number(item.lat), lon: Number(item.lon) };
+  if (!response.ok) throw new Error("Road distance is temporarily unavailable. Please try again.");
+  const payload = await response.json();
+  const feature = payload?.features?.[0];
+  const meters = Number(feature?.properties?.distance);
+  if (!Number.isFinite(meters) || meters <= 0) throw new Error("No driving route was found for this store and delivery address.");
+  const geometry = feature?.geometry || null;
+  await service.from("goodies_route_cache").upsert({
+    store_id: store.store_id, address_hash: addressHash,
+    origin_latitude: origin.lat, origin_longitude: origin.lon,
+    distance_m: Math.round(meters), route_geometry: geometry,
+    updated_at: new Date().toISOString(), expires_at: new Date(Date.now() + 7 * 86400000).toISOString(),
+  }, { onConflict: "store_id,address_hash" });
+  return { meters, geometry, origin, destination };
 }
 
 Deno.serve(async (req: Request) => {
@@ -41,58 +159,89 @@ Deno.serve(async (req: Request) => {
     if (authError || !auth.user) return reply({ error: "Your session has expired. Please sign in again." }, 401);
 
     const body = await req.json();
-    const storeId = String(body.store_id || "");
-    const address = body.address && typeof body.address === "object" ? body.address : null;
-    if (!storeId || !address || typeof address.t !== "string" || !address.t.trim()) {
-      return reply({ error: "A store and complete delivery address are required." }, 400);
+    const address: AddressInput | null = body.address && typeof body.address === "object" ? body.address : null;
+    if (!address || typeof address.t !== "string" || !address.t.trim()) {
+      return reply({ error: "A complete delivery address is required." }, 400);
     }
-    const service = createClient(url, serviceKey, { auth: { persistSession: false } });
-    const { data: store, error: storeError } = await service.from("goodies_store_schedules")
-      .select("store_id,address,city,country,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km")
-      .eq("store_id", storeId).eq("is_live", true).maybeSingle();
+    const distanceOnly = body.distance_only === true;
+    const rawIds = Array.isArray(body.store_ids) ? body.store_ids : [body.store_id];
+    const storeIds = [...new Set(rawIds.map((value: unknown) => String(value || "").trim()).filter(Boolean))];
+    const limit = distanceOnly ? 25 : 8;
+    if (!storeIds.length || storeIds.length > limit) {
+      return reply({ error: `Choose between one and ${limit} stores.` }, 400);
+    }
+
+    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: stores, error: storeError } = await service.from("goodies_store_schedules")
+      .select("store_id,address,city,country,store_latitude,store_longitude,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km")
+      .in("store_id", storeIds).eq("is_live", true);
     if (storeError) throw storeError;
-    if (!store) return reply({ error: "This store is not accepting delivery orders." }, 404);
-    const shopAddress = [store.address, store.city, store.country].filter(Boolean).join(", ");
-    if (!shopAddress) return reply({ error: "The shop needs a complete business address before distance delivery can be enabled." }, 409);
-    const customerAddress = [address.t, address.apt, address.city, address.department, address.country].filter(Boolean).join(", ");
-    const [origin, destination] = await Promise.all([
-      geocode(shopAddress, geoKey),
-      geocode(customerAddress, geoKey),
-    ]);
-    const routeUrl = new URL("https://api.geoapify.com/v1/routing");
-    routeUrl.searchParams.set("waypoints", `${origin.lat},${origin.lon}|${destination.lat},${destination.lon}`);
-    routeUrl.searchParams.set("mode", "drive");
-    routeUrl.searchParams.set("apiKey", geoKey);
-    const routeResponse = await fetch(routeUrl);
-    if (!routeResponse.ok) throw new Error("Road distance is temporarily unavailable. Please try again.");
-    const route = await routeResponse.json();
-    const distanceM = Number(route?.features?.[0]?.properties?.distance);
-    if (!Number.isFinite(distanceM) || distanceM <= 0) throw new Error("No driving route was found for this address.");
-    const km = distanceM / 1000;
-    if (body.distance_only === true) return reply({ distance_km: Number(km.toFixed(2)), distance_m: Math.round(distanceM) });
-    const maxDistance = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
-    if (maxDistance != null && km > maxDistance) {
-      return reply({ error: "This address is outside the shop's delivery area.", outside_delivery_area: true, distance_km: Number(km.toFixed(2)) }, 422);
-    }
-    let fee: number;
-    if (store.delivery_pricing_mode === "distance") {
-      const raw = Number(store.delivery_base_fee) + km * Number(store.delivery_per_km_fee);
-      const floor = Number(store.delivery_min_fee || 0);
-      const ceiling = store.delivery_max_fee == null ? null : Number(store.delivery_max_fee);
-      fee = Math.round(Math.max(floor, ceiling == null ? raw : Math.min(raw, ceiling)) * 100) / 100;
-    } else {
-      fee = Math.max(0, Number(store.delivery_fee || 0));
-    }
-    const { data: quote, error: quoteError } = await service.from("goodies_delivery_quotes").insert({
-      customer_id: auth.user.id, store_id: storeId, address_payload: address,
-      distance_m: Math.round(distanceM), fee,
-      expires_at: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
-      origin_latitude: origin.lat, origin_longitude: origin.lon,
+    if (!stores || stores.length !== storeIds.length) return reply({ error: "One or more stores are no longer accepting orders." }, 404);
+
+    const customerParts = addressParts(address);
+    const addressHash = await sha256(customerParts.join(", ").toLocaleLowerCase());
+    const destination = await geocode(address, geoKey, service);
+    const routes = await Promise.all(stores.map(async (store: any) => {
+      const route = await routeKm(store, destination, addressHash, geoKey, service);
+      const km = route.meters / 1000;
+      const max = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
+      const outsideDeliveryArea = max != null && km > max;
+      let fee = store.delivery_pricing_mode === "distance"
+        ? Math.max(Number(store.delivery_min_fee) || 0, Number(store.delivery_base_fee || 0) + km * Number(store.delivery_per_km_fee || 0))
+        : Math.max(0, Number(store.delivery_fee) || 0);
+      if (store.delivery_pricing_mode === "distance" && store.delivery_max_fee != null) fee = Math.min(fee, Number(store.delivery_max_fee));
+      return {
+        store_id: store.store_id, distance_m: Math.round(route.meters), distance_km: Number(km.toFixed(2)),
+        base_fee: Math.round(fee * 100) / 100, outside_delivery_area,
+        origin: route.origin, destination: route.destination, geometry: route.geometry,
+      };
+    }));
+
+    if (distanceOnly) return reply({
+      stores: routes.map(({ store_id, distance_m, distance_km, outside_delivery_area }) =>
+        ({ store_id, distance_m, distance_km, outside_delivery_area })),
+    });
+    const outside = routes.find(route => route.outside_delivery_area);
+    if (outside) return reply({
+      error: "This address is outside a participating store's delivery area.",
+      outside_delivery_area: true, store_id: outside.store_id, distance_km: outside.distance_km,
+    }, 422);
+
+    const { data: cms, error: cmsError } = await service.from("wantiss_cms_content")
+      .select("payload").eq("content_key", "goodies.content").eq("locale", "en")
+      .eq("status", "published").order("version", { ascending: false }).limit(1).maybeSingle();
+    if (cmsError) throw cmsError;
+    const policy = cms?.payload?.fees || {};
+    const surchargeEnabled = policy.additionalStoreSurchargeEnabled === true;
+    const flatFee = Math.max(0, Number(policy.additionalStoreFee) || 0);
+    const perKm = Math.max(0, Number(policy.extraDistancePerKm) || 0);
+    const extraKm = routes.slice(1).reduce((total, route) => total + route.distance_m / 1000, 0);
+    const additionalStoreFee = surchargeEnabled ? flatFee * Math.max(0, routes.length - 1) : 0;
+    const extraDistanceFee = surchargeEnabled ? perKm * extraKm : 0;
+    const baseTotal = routes.reduce((total, route) => total + route.base_fee, 0);
+    const deliveryTotal = Math.round((baseTotal + additionalStoreFee + extraDistanceFee) * 100) / 100;
+    const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
+    const inserts = routes.map(route => ({
+      customer_id: auth.user.id, store_id: route.store_id, address_payload: address,
+      distance_m: route.distance_m,
+      fee: route.base_fee + (surchargeEnabled ? (additionalStoreFee + extraDistanceFee) / routes.length : 0),
+      expires_at: expiresAt, origin_latitude: route.origin.lat, origin_longitude: route.origin.lon,
       destination_latitude: destination.lat, destination_longitude: destination.lon,
-      route_geometry: route?.features?.[0]?.geometry || null,
-    }).select("id").single();
+      route_geometry: route.geometry,
+    }));
+    const { data: quotes, error: quoteError } = await service.from("goodies_delivery_quotes")
+      .insert(inserts).select("id,store_id,fee,expires_at");
     if (quoteError) throw quoteError;
-    return reply({ quote_id: quote.id, fee, distance_km: Number(km.toFixed(2)), origin, destination, expires_in_seconds: 300 });
+    return reply({
+      quote_id: quotes.length === 1 ? quotes[0].id : undefined,
+      fee: quotes.length === 1 ? deliveryTotal : undefined,
+      quote_ids: quotes.map(quote => quote.id), quotes,
+      stores: routes.map(({ store_id, distance_m, distance_km }) => ({ store_id, distance_m, distance_km })),
+      base_delivery_fee: Math.round(baseTotal * 100) / 100,
+      additional_store_fee: Math.round(additionalStoreFee * 100) / 100,
+      extra_distance_fee: Math.round(extraDistanceFee * 100) / 100,
+      delivery_fee: deliveryTotal, surcharge_enabled: surchargeEnabled, expires_in_seconds: 300,
+    });
   } catch (error) {
     console.error("goodies-delivery-quote:", error);
     return reply({ error: error instanceof Error ? error.message : "Could not calculate delivery." }, 400);
