@@ -273,7 +273,7 @@ export function Checkout() {
   </>);
   if (S.cs === 1) body = (<>
     <T size={15} weight="600" style={{marginBottom: 8}}>{label('lbl.checkoutWhen', 'When do you want it?')}</T>
-    {st.open ? <Radio on={!S.sch} onPress={() => setSch(0)}>
+    {st.open ? <Radio on={!S.sch} onPress={() => {setSch(0);setScheduleOpen(false);}}>
       <Row sp style={{alignItems:'center',flex:1}}>
         <T weight="600">{label('lbl.checkoutAsap', 'ASAP')}</T>
         <T size={12.5} color={th.mut}>{st.eta} min</T>
