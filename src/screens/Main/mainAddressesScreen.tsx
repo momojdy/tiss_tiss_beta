@@ -16,10 +16,10 @@ export default function AddressesScreen({onBack}:{onBack:()=>void}){
  const openNew=()=>{setEditing(null);setForm({...EMPTY,recipient_name:'',phone_number:''});setVisible(true);};
  const openEdit=(a:Address)=>{setEditing(a.id);const {id,is_goodies_default,...rest}=a;setForm(rest);setVisible(true);};
  const update=(key:keyof typeof EMPTY,value:string|boolean)=>setForm(prev=>({...prev,[key]:value}));
- const save=async()=>{if(!form.recipient_name.trim()||!form.phone_number.trim()||!form.country.trim()||!form.city.trim()||!form.street_address.trim()){Alert.alert('Required information','Enter recipient name, phone number, country, city and street address.');return;}setSaving(true);try{const {data:{user},error:authError}=await supabase.auth.getUser();if(authError)throw authError;if(!user)throw new Error('Please sign in again.');
+ const save=async()=>{if(!form.recipient_name.trim()||!form.phone_number.trim()||!String(form.country||'').trim()||!form.city.trim()||!form.street_address.trim()){Alert.alert('Required information','Enter recipient name, phone number, country, city and street address.');return;}setSaving(true);try{const {data:{user},error:authError}=await supabase.auth.getUser();if(authError)throw authError;if(!user)throw new Error('Please sign in again.');
   const wasDefault=Boolean(editing&&rows.some(row=>row.id===editing&&row.is_default));
   const {is_goodies_default: _goodiesDefault, ...formFields}=form as any;
-  const payload={...formFields,is_default:false,user_id:user.id,recipient_name:form.recipient_name.trim(),phone_number:form.phone_number.trim(),country:form.country.trim(),department:form.department.trim(),city:form.city.trim(),street_address:form.street_address.trim(),updated_at:new Date().toISOString()};
+  const payload={...formFields,is_default:false,user_id:user.id,recipient_name:form.recipient_name.trim(),phone_number:form.phone_number.trim(),country:String(form.country||'').trim(),department:String(form.department||'').trim(),city:form.city.trim(),street_address:form.street_address.trim(),updated_at:new Date().toISOString()};
   const result=editing?await supabase.from('user_addresses').update(payload).eq('id',editing).eq('user_id',user.id).select('id').single():await supabase.from('user_addresses').insert(payload).select('id').single();
   if(result.error)throw result.error;
   const savedId=result.data.id as string;
