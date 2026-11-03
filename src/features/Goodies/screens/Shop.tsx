@@ -41,7 +41,7 @@ export function Store({id}: {id: string}) {
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
-      <Hero s={s} onBack={back} right={<Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
+      <Hero s={s} onBack={back} right={<View style={{flexDirection:'row',gap:10}}><Circ icon="users" label={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} /><Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="600" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + (Math.round(s.km * 1000) < 1000 ? Math.round(s.km * 1000) + ' m' : s.km.toFixed(1) + ' km') + ' from your address' : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : s.live && s.distanceError ? ' · Distance unavailable' : ''}</T>
@@ -53,14 +53,6 @@ export function Store({id}: {id: string}) {
           <Cta small ghost label={label('lbl.storeInfo', 'Store info')} onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
           <Cta small ghost label={label('lbl.messageStore', 'Message store')} onPress={() => go('contact', {storeContact: true, storeId: id})} />
         </View>
-        <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} style={{flexDirection:'row',alignItems:'center',alignSelf:'flex-start',gap:10,marginTop:12,paddingVertical:10,paddingHorizontal:14,borderRadius:14,backgroundColor:th.soft,borderWidth:1,borderColor:th.line}}>
-          <View style={{width:30,height:30,borderRadius:10,backgroundColor:th.brt,alignItems:'center',justifyContent:'center'}}>
-            <Icon name="users" size={19} color={th.br}/>
-            <View style={{position:'absolute',right:-3,bottom:-3,width:15,height:15,borderRadius:8,backgroundColor:th.br,alignItems:'center',justifyContent:'center',borderWidth:1.5,borderColor:th.soft}}><Icon name="plus" size={10} color="#FFFFFF"/></View>
-          </View>
-          <View><T size={13.5} weight="600" color={th.ink}>{label('lbl.storeGroupOrder','Order together')}</T><T size={11} color={th.mut}>Invite friends to share an order</T></View>
-          <Icon name="chevR" size={15} color={th.mut}/>
-        </Pressable>
         <View style={{marginTop: 14}}><Input value={S.ss[id] || ''} onChange={v => {S.ss[id] = v; emit();}} placeholder={label('lbl.storeSearch', 'Search in ' + s.n)} /></View>
       </View>
       <View style={{marginTop: 8}}><Chips list={tabs} on={t} onPick={k => {S.ss[id + 't'] = k; emit();}} /></View>
