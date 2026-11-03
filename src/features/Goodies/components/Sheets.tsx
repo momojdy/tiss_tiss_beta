@@ -136,14 +136,16 @@ function ScheduleSheet({close}: {close: () => void}) {
   };
   const storeNow = wallDateInZone(new Date());
   const initialWall = S.sch && S.sch > Date.now() ? wallDateInZone(new Date(S.sch)) : storeNow;
+  const initialSlotWall = new Date(initialWall);
+  initialSlotWall.setMinutes(Math.ceil(initialWall.getMinutes()/15)*15,0,0);
   const [dayOffset,setDayOffset] = useState(() => {
     const a = Date.UTC(storeNow.getFullYear(),storeNow.getMonth(),storeNow.getDate());
     const b = Date.UTC(initialWall.getFullYear(),initialWall.getMonth(),initialWall.getDate());
     return Math.max(0,Math.min(6,Math.round((b-a)/86400000)));
   });
   const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
-  const [customHour,setCustomHour] = useState(String(initialWall.getHours()).padStart(2,'0'));
-  const [customMinute,setCustomMinute] = useState(String(Math.ceil(initialWall.getMinutes()/5)*5 % 60).padStart(2,'0'));
+  const [customHour,setCustomHour] = useState(String(initialSlotWall.getHours()).padStart(2,'0'));
+  const [customMinute,setCustomMinute] = useState(String(initialSlotWall.getMinutes()).padStart(2,'0'));
   const selectedDate = new Date(storeNow);
   selectedDate.setDate(storeNow.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
   const schedule = store?.scheduleHours || {};
@@ -180,7 +182,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   const latestMinute = Math.max(startMinute, endMinute-5);
   const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
   clampedWall.setHours(Math.floor(safeMinute/60),Math.ceil((safeMinute%60)/5)*5,0,0);
-  const noFutureSlot = closedDay || earliestMinute >= endMinute;
+  const noFutureSlot = closedDay || earliestMinute >= endMinute || Math.ceil(earliestMinute/15)*15 >= endMinute;
   const selected = customValid ? customInstant.getTime() : noFutureSlot ? 0 : zonedInstant(clampedWall).getTime();
   const reason = noFutureSlot
     ? label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.')
