@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform, TextInput, useWindowDimensions} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
@@ -11,8 +11,6 @@ import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
-import {TextInput, useWindowDimensions, Platform} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 
@@ -338,7 +336,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
       const quoteState={addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000};
       setGroupDeliveryQuote(quoteState);
-      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
+      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
       if(estimate.error) {setCheckoutEstimate(null);toast(estimate.error.message||'Could not calculate the final estimate.');}
       else setCheckoutEstimate(estimate.data);
     } catch(e:any) {
@@ -471,7 +469,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <T size={15} weight="600">Checkout</T>
 
       <View style={{height:10}}/>
-      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}} />
+      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}} />
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
         <T size={12} weight="600" style={{marginBottom:6}}>Deliver to</T>
         {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
