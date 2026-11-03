@@ -35,7 +35,7 @@ export function Circ({icon, onPress, dot, count, label, color, fill = false}: {i
     <Pressable accessibilityLabel={label} onPress={onPress} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}>
       <Icon name={icon} color={color || th.ink} fill={fill} />
       {dot ? <View style={{position: 'absolute', top: 8, right: 9, width: 8, height: 8, borderRadius: 4, backgroundColor: th.br, borderWidth: 2, borderColor: th.soft}} /> : null}
-      {count ? <View style={{position: 'absolute', top: 2, right: 0, minWidth: 17, height: 17, borderRadius: 9, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4}}><Text style={{fontSize: 10.5, fontWeight: '700', color: th.navink}}>{count}</Text></View> : null}
+      {count ? <View style={{position: 'absolute', top: 2, right: 0, minWidth: 17, height: 17, borderRadius: 9, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 4}}><Text style={{fontSize: 10.5, fontWeight: '600', color: th.navink}}>{count}</Text></View> : null}
     </Pressable>
   );
 }
