@@ -81,7 +81,7 @@ function BurgerStage({b, fin}: {b: Builder; fin: boolean}) {
       {labels.map((l, k) => (
         <Animated.View key={k} pointerEvents="none" style={{position: 'absolute', top: l.top - 8, [l.side]: 8, width: '30%', maxWidth: 118, opacity: Animated.subtract(1, t) as any, zIndex: 4, flexDirection: l.side === 'left' ? 'row' : 'row-reverse', alignItems: 'center'}}>
           <Text style={{color: '#fff', fontSize: 10, fontWeight: '600', textAlign: l.side === 'left' ? 'left' : 'right', flexShrink: 1}}>{l.name}</Text>
-          <View style={{width: 18, borderTopWidth: 1, borderTopColor: 'rgba(255,255,255,.72)', marginHorizontal: 3}} />
+          <View style={{width: 18, borderTopWidth: 0.5, borderTopColor: 'rgba(255,255,255,.72)', marginHorizontal: 3}} />
         </Animated.View>
       ))}
       {BD?.seasoningPulse && !fin ? <Flakes /> : null}
@@ -167,7 +167,7 @@ function CustomPlate({b}: {b: Builder}) {
 export function Stage({b, fin}: {b: Builder; fin?: boolean}) {
   return (
     <LinearGradient colors={[b.stageBgColor || '#2C4A5B', b.stageBgColor || '#2C4A5B']} style={{marginHorizontal: 16, borderRadius: 24, height: 300, flexShrink: 0, alignItems: 'center', justifyContent: 'center', paddingVertical: b.type === 'burger' ? 8 : 14, overflow: 'visible'}}>
-      <Pressable accessibilityLabel={label('lbl.byoUndo', 'Undo last change')} disabled={!BD.hist.length} onPress={bzUndo} style={{position: 'absolute', left: 10, top: 10, width: 40, height: 40, borderRadius: 20, backgroundColor: '#2E4D5F', borderWidth: 1, borderColor: 'rgba(255,255,255,.14)', alignItems: 'center', justifyContent: 'center', zIndex: 20, opacity: BD.hist.length ? 1 : 0.3}}><Icon name="undo" size={20} color="#F5F5F5" /></Pressable>
+      <Pressable accessibilityLabel={label('lbl.byoUndo', 'Undo last change')} disabled={!BD.hist.length} onPress={bzUndo} style={{position: 'absolute', left: 10, top: 10, width: 40, height: 40, borderRadius: 20, backgroundColor: '#2E4D5F', borderWidth: 0.5, borderColor: 'rgba(255,255,255,.14)', alignItems: 'center', justifyContent: 'center', zIndex: 20, opacity: BD.hist.length ? 1 : 0.3}}><Icon name="undo" size={20} color="#F5F5F5" /></Pressable>
       {b.type === 'pizza' ? <PizzaStage b={b} /> : b.type === 'burger' ? <BurgerStage b={b} fin={!!fin || !!BD.assembling} /> : <CustomPlate b={b} />}
     </LinearGradient>
   );
@@ -222,15 +222,15 @@ function Options({b}: {b: Builder}) {
 }
 function Review({b}: {b: Builder}) {
   const th = useTheme(), br = bBreak(b, BD), ck = bCheck(b, BD);
-  const R = (a: string, c: string, strong?: boolean) => <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: 10, marginVertical: 5, ...(strong ? {borderTopWidth: 1, borderStyle: 'dashed', borderTopColor: th.line, paddingTop: 8, marginTop: 8} : {})}}><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} style={{flexShrink: 1}}>{a}</T><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} color={strong ? th.ink : th.mut}>{c}</T></View>;
+  const R = (a: string, c: string, strong?: boolean) => <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: 10, marginVertical: 5, ...(strong ? {borderTopWidth: 0.5, borderStyle: 'dashed', borderTopColor: th.line, paddingTop: 8, marginTop: 8} : {})}}><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} style={{flexShrink: 1}}>{a}</T><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} color={strong ? th.ink : th.mut}>{c}</T></View>;
   return (
     <View style={{marginTop: 20, borderWidth: 0.5, borderColor: th.line, borderRadius: 18, padding: 14, backgroundColor: th.card}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8}}><T size={15} weight="600">{label('lbl.byoYourOrder', 'Your order')}</T>{bzDirty() && !BD.edit ? <Pressable onPress={bzResetAsk}><T size={12.5} weight="600" color={th.br}>{label('lbl.byoStartOver', 'Start over')}</T></Pressable> : null}</View>
       {R(b.name + (br.size ? ' — ' + br.size.name : ''), money(b.base + (br.size ? br.size.add : 0)))}
       {br.lines.map((L: any) => <View key={L.gid}><T size={11.5} weight="600" color={th.mut} style={{marginTop: 8, letterSpacing: 0.4}}>{String(L.gname).toUpperCase()}</T>{L.items.map((i: any) => <View key={i.id}>{R((i.qty > 1 ? i.qty + '× ' : '') + i.name, i.charge > 0 ? '+' + money(i.charge) : i.inc ? label('lbl.byoIncluded', 'Included') : label('lbl.byoFree', 'Free'))}</View>)}</View>)}
       {R(label('lbl.byoItemPrice', 'Item price'), money(br.total), true)}
-      {BD.edit && BD.snap != null && br.total !== BD.snap ? <View style={{backgroundColor: th.brt, borderWidth: 1, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13}>{label('lbl.byoPriceChanged', 'Prices changed since you added this item')} (was {money(BD.snap)}, now {money(br.total)}). Saving applies the new price.</T></View> : null}
-      {ck.conf.length ? <View style={{backgroundColor: th.brt, borderWidth: 1, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13} weight="600">{label('lbl.byoChoicesChanged', 'Some choices changed')}</T>{ck.conf.map(x => <T key={x} size={13}>• {x}</T>)}<T size={13}>{label('lbl.byoReplaceChoices', 'Please remove or replace them to continue. We did not change anything for you.')}</T></View> : null}
+      {BD.edit && BD.snap != null && br.total !== BD.snap ? <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13}>{label('lbl.byoPriceChanged', 'Prices changed since you added this item')} (was {money(BD.snap)}, now {money(br.total)}). Saving applies the new price.</T></View> : null}
+      {ck.conf.length ? <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13} weight="600">{label('lbl.byoChoicesChanged', 'Some choices changed')}</T>{ck.conf.map(x => <T key={x} size={13}>• {x}</T>)}<T size={13}>{label('lbl.byoReplaceChoices', 'Please remove or replace them to continue. We did not change anything for you.')}</T></View> : null}
     </View>
   );
 }
@@ -276,7 +276,7 @@ export function ByoScreen({p}: {p: string}) {
     </View>
   );
 }
-const Warn = ({children}: any) => {const th = useTheme(); return <View style={{backgroundColor: th.brt, borderWidth: 1, borderColor: th.br, borderRadius: 12, padding: 10, marginBottom: 10}}><Text>{children}</Text></View>;};
+const Warn = ({children}: any) => {const th = useTheme(); return <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginBottom: 10}}><Text>{children}</Text></View>;};
 function Header({title, sub, onBack}: {title: string; sub?: string; onBack: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets();
   return (
