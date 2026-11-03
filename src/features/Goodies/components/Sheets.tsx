@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Platform, Share} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share} from 'react-native';
 import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
@@ -12,7 +12,6 @@ import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
 import {TextInput, useWindowDimensions} from 'react-native';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
