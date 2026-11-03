@@ -112,7 +112,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
   const customerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Etc/GMT';
-  const storeZone = customerZone;
+  const storeZone = store?.scheduledOrderTimezone || customerZone;
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const storeParts = (instant: Date) => {
     const parts = new Intl.DateTimeFormat('en-US',{timeZone:storeZone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(instant);
@@ -138,7 +138,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const slotsForDay = (offset:number) => {
     const start=customerDayStart(offset), end=new Date(start);end.setDate(end.getDate()+1);
     // Keep a five-minute safety margin so the database cannot reject a slot selected at the edge of "now".
-    let cursor=Math.max(start.getTime(),Math.ceil((Date.now()+5*60_000)/300000)*300000);
+    let cursor=Math.max(start.getTime(),Math.ceil((Date.now()+15*60_000)/300000)*300000);
     const slots:Date[]=[];
     for(;cursor<end.getTime();cursor+=300000){const candidate=new Date(cursor);if(isAvailableInstant(candidate))slots.push(candidate);}
     return slots;
