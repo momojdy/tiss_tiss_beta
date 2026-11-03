@@ -124,7 +124,7 @@ function liveStore(r: any, items: Item[]): Store {
     logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, acceptScheduledOrders: !!r.accept_scheduled_orders,
     scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || 'UTC'), scheduleHours: r.hours || undefined,
     businessName: r.store_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
-    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', maxDeliveryDistanceKm: r.delivery_max_distance_km == null ? null : Number(r.delivery_max_distance_km), distanceReady: false, distanceAddressKey: '',
+    businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', maxDeliveryDistanceKm: r.delivery_max_distance_km == null ? null : Number(r.delivery_max_distance_km), distanceReady: false, distanceAddressKey: '', distanceError: '',
     get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.store_name || 'Store';},
   } as Store;
   return store;
@@ -141,7 +141,7 @@ let liveTimer: any = null;
 export async function refreshLiveSchedules() {
   try {
     const {data: rows, error} = await supabase.from('goodies_store_schedules')
-      .select('business_id,store_id,description,phone,email,website,address,city,country,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_max_distance_km,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
+      .select('business_id,store_id,description,phone,email,website,address,city,country,store_latitude,store_longitude,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_max_distance_km,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
       .eq('is_live', true);
     if (error) throw error;
     const stores: any[] = rows || [], prods: any[] = [];
@@ -377,36 +377,62 @@ export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
-export async function refreshStoreDistance(storeId: string, address: Address | null = addr()) {
-  const store = STB[storeId];
-  if (!store?.live || !address?.t?.trim()) return null;
-  const addressKey = JSON.stringify({t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country});
-  if (store.distanceReady && store.distanceAddressKey === addressKey) return store.km;
-  store.distanceError = '';
-  const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
-    body: {store_id: storeId, address: {t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country}, distance_only: true},
-  });
-  if (error) {
-    if (JSON.stringify({t: addr()?.t, apt: addr()?.apt, inst: addr()?.inst, city: addr()?.city, department: addr()?.department, country: addr()?.country}) === addressKey) {
-      store.distanceError = error.message || 'Distance is unavailable for this address.';
+const distanceAddressKey = (address: Address) => JSON.stringify({
+  t: address.t, apt: address.apt, inst: address.inst,
+  city: address.city, department: address.department, country: address.country,
+});
+const currentDistanceAddressKey = () => {
+  const current = addr();
+  return current ? distanceAddressKey(current) : '';
+};
+export async function refreshStoreDistances(storeIds: string[], address: Address | null = addr()) {
+  if (!address?.t?.trim()) return {};
+  const addressKey = distanceAddressKey(address);
+  const pending = [...new Set(storeIds)].map(id => STB[id]).filter(store =>
+    store?.live && (!store.distanceReady || store.distanceAddressKey !== addressKey));
+  if (!pending.length) return Object.fromEntries(storeIds.map(id => [id, STB[id]?.km ?? null]));
+  pending.forEach(store => { store.distanceError = ''; });
+  const payloadAddress = {
+    t: address.t, apt: address.apt, inst: address.inst,
+    city: address.city, department: address.department, country: address.country,
+  };
+  const distances: Record<string, number | null> = {};
+  for (let offset = 0; offset < pending.length; offset += 25) {
+    const batch = pending.slice(offset, offset + 25);
+    const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
+      body: {store_ids: batch.map(store => store.id), address: payloadAddress, distance_only: true},
+    });
+    if (currentDistanceAddressKey() !== addressKey) return distances;
+    if (error) {
+      batch.forEach(store => { store.distanceError = error.message || 'Distance is unavailable for this address.'; });
       emit();
+      throw error;
     }
-    throw error;
+    const rows = Array.isArray(data?.stores) ? data.stores : [];
+    const byId = new Map(rows.map((row: any) => [String(row.store_id), row]));
+    batch.forEach(store => {
+      const row: any = byId.get(store.id);
+      const meters = row?.distance_m == null ? NaN : Number(row.distance_m);
+      if (!Number.isFinite(meters) || meters < 0) {
+        store.distanceError = 'Distance is unavailable for this address.';
+        distances[store.id] = null;
+        return;
+      }
+      store.km = meters / 1000;
+      store.far = row.outside_delivery_area === true ||
+        (store.maxDeliveryDistanceKm != null && store.km > store.maxDeliveryDistanceKm);
+      store.distanceReady = true;
+      store.distanceError = '';
+      store.distanceAddressKey = addressKey;
+      distances[store.id] = store.km;
+    });
+    emit();
   }
-  const currentAddress = addr();
-  const currentAddressKey = currentAddress ? JSON.stringify({t: currentAddress.t, apt: currentAddress.apt, inst: currentAddress.inst, city: currentAddress.city, department: currentAddress.department, country: currentAddress.country}) : '';
-  if (currentAddressKey !== addressKey) return null;
-  const distanceMeters = data?.distance_m == null ? NaN : Number(data.distance_m);
-  const distance = data?.distance_km == null ? NaN : Number(data.distance_km);
-  const meters = Number.isFinite(distanceMeters) && distanceMeters >= 0 ? Math.round(distanceMeters) : Number.isFinite(distance) && distance >= 0 ? Math.round(distance * 1000) : NaN;
-  if (!Number.isFinite(meters)) {store.distanceError = data?.error || 'Distance is unavailable for this address.'; emit(); throw new Error(store.distanceError);}
-  store.km = meters / 1000;
-  store.far = store.maxDeliveryDistanceKm != null && meters / 1000 > store.maxDeliveryDistanceKm;
-  store.distanceReady = true;
-  store.distanceError = '';
-  store.distanceAddressKey = addressKey;
-  emit();
-  return store.km;
+  return distances;
+}
+export async function refreshStoreDistance(storeId: string, address: Address | null = addr()) {
+  const result = await refreshStoreDistances([storeId], address);
+  return result[storeId] ?? null;
 }
 export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
