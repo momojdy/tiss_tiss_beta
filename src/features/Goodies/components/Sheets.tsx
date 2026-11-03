@@ -10,7 +10,8 @@ import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
-import {TextInput, useWindowDimensions} from 'react-native';
+import {TextInput, useWindowDimensions, Platform} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 
@@ -109,7 +110,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '86%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
-function ScheduleSheet({close}: {close: () => void}) {
+function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
   const zone = String(store?.scheduledOrderTimezone || 'UTC');
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -200,8 +201,8 @@ function ScheduleSheet({close}: {close: () => void}) {
     toast(label('lbl.sheetScheduledFor','Scheduled for {day}, {time}').replace('{day}',formatStore(selected,{weekday:'short',month:'short',day:'numeric'})).replace('{time}',formatStore(selected,{hour:'numeric',minute:'2-digit'})));
     close();
   };
-  return <>
-    <T size={21} weight="800">{label('lbl.sheetScheduleTitle','Schedule your order')}</T>
+  return <View style={inline ? {paddingTop: 12, paddingBottom: 12, borderTopWidth: 0.5, borderTopColor: th.line, marginTop: 10} : undefined}>
+    {inline ? null : <T size={21} weight="600">{label('lbl.sheetScheduleTitle','Schedule your order')}</T>}
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
     <T size={14} weight="800" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
@@ -210,15 +211,17 @@ function ScheduleSheet({close}: {close: () => void}) {
       </Pressable>;})}
     </ScrollView>
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
-    <T size={13} weight="800" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
-    <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
+    <T size={13} weight="600" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
+    {inline ? <DateTimePicker value={customValid ? customDate : clampedWall} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => {if(date){setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(date.getMinutes()).padStart(2,'0'));}}} /> : <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
       {Array.from({length:Math.max(0,Math.floor((endMinute-1-Math.ceil(earliestMinute/15)*15)/15)+1)},(_,i)=>Math.ceil(earliestMinute/15)*15+i*15).map(minute=>{const hour=Math.floor(minute/60),mins=minute%60,key=String(hour).padStart(2,'0')+':'+String(mins).padStart(2,'0'),active=customHour===String(hour).padStart(2,'0')&&customMinute===String(mins).padStart(2,'0');return <Pressable key={key} onPress={()=>{setCustomHour(String(hour).padStart(2,'0'));setCustomMinute(String(mins).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight="600" color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
-    </ScrollView>
+    </ScrollView>}
     {reason ? <T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T> : null}
     {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {formatStore(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatStore(selected,{hour:'numeric',minute:'2-digit'})}</T> : null}
     <View style={{height:12}}/><Cta label={label('lbl.sheetApply','Apply')} disabled={!selected} onPress={choose}/>
-  </>;
+  </View>;
 }
+export function ScheduleInline({close}: {close: () => void}) { return <ScheduleSheet close={close} inline />; }
+
 function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) {
   const th=useTheme();
   return <View style={{flexDirection:'row',gap:8}}>
