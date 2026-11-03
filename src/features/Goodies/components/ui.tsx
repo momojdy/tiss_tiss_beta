@@ -47,7 +47,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
-          <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:23,fontFamily:"Inter_600SemiBold",fontWeight:"600",transform:[{translateY:-4.5}],color:th.ink}}>{title}</Text>
+          <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:19,fontWeight:"600",transform:[{translateY:1}],color:th.ink}}>{title}</Text>
           {right}
         </View>
       </View>
@@ -156,7 +156,7 @@ export function Input({label, value, onChange, placeholder, multiline, keyboard}
     <View>
       {label ? <T size={13} weight="600" style={{marginTop: 10, marginBottom: 5}}>{label}</T> : null}
       <TextInput value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={th.mut} multiline={multiline} keyboardType={keyboard} onFocus={() => setF(true)} onBlur={() => setF(false)}
-        style={{fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: f ? th.br : th.line, borderRadius: 12, padding: 12, minHeight: multiline ? 84 : undefined, textAlignVertical: multiline ? 'top' : 'center'}} />
+        style={{fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: f ? th.br : th.line, borderRadius: 12, padding: 12, minHeight: multiline ? 84 : undefined, textAlignVertical: multiline ? 'top' : 'center'}} />
     </View>
   );
 }
