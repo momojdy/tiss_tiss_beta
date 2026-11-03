@@ -2,7 +2,7 @@
      <GoodiesApp onExit={() => navigation.goBack()} />
    Navigation is an internal stack that mirrors v24 (S.stack). Native back (Android) and left-edge swipe (iOS and Android) both call navBack(). */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions, AppState} from 'react-native';
+import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions, AppState, Linking} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
@@ -31,6 +31,23 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   const scroll = useRef<ScrollView>(null);
   const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false), [refreshing, setRefreshing] = useState(false);
   const toastT = useRef<any>(null);
+
+  useEffect(() => {
+    if (!goodiesLoaded) return;
+    let active = true;
+    const openInvite = (url: string | null) => {
+      if (!url) return;
+      const match = url.match(/wantiss:\/\/goodies\/group\?code=([^&]+)/i);
+      if (!match) return;
+      try {(S as any).pendingGroupInviteCode = decodeURIComponent(match[1]).trim().toUpperCase();}
+      catch {return;}
+      S.stack.push({r: 'grouporder', p: undefined, u: Date.now()});
+      emit();
+    };
+    void Linking.getInitialURL().then(url => {if (active) openInvite(url);});
+    const subscription = Linking.addEventListener('url', ({url}) => openInvite(url));
+    return () => {active = false; subscription.remove();};
+  }, [goodiesLoaded]);
 
   /* bridge for store/actions */
   ui.toast = (t: string) => {setToastTxt(t); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToastTxt(''), 2300);};
