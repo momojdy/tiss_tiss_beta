@@ -47,7 +47,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
-          <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:23,fontFamily:"Inter_600SemiBold",fontWeight:"600",transform:[{translateY:-4.5}],color:th.ink}}>{title}</Text>
+          <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:19,fontWeight:"600",transform:[{translateY:1}],color:th.ink}}>{title}</Text>
           {right}
         </View>
       </View>
@@ -156,7 +156,7 @@ export function Input({label, value, onChange, placeholder, multiline, keyboard}
     <View>
       {label ? <T size={13} weight="600" style={{marginTop: 10, marginBottom: 5}}>{label}</T> : null}
       <TextInput value={value} onChangeText={onChange} placeholder={placeholder} placeholderTextColor={th.mut} multiline={multiline} keyboardType={keyboard} onFocus={() => setF(true)} onBlur={() => setF(false)}
-        style={{fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 1, borderColor: f ? th.br : th.line, borderRadius: 12, padding: 12, minHeight: multiline ? 84 : undefined, textAlignVertical: multiline ? 'top' : 'center'}} />
+        style={{fontSize: 15, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: f ? th.br : th.line, borderRadius: 12, padding: 12, minHeight: multiline ? 84 : undefined, textAlignVertical: multiline ? 'top' : 'center'}} />
     </View>
   );
 }
@@ -176,7 +176,7 @@ export function SheetBox({children, large = false, compact = false, centered = f
     onPanResponderRelease: (_e, g) => { if (g.dy > 65 && onClose) onClose(); },
   }), [onClose]);
   return (
-    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderBottomLeftRadius: centered ? 24 : 0, borderBottomRightRadius: centered ? 24 : 0, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, height: compact || large ? '100%' : undefined, maxHeight: '100%', flexShrink: 1, minHeight: centered ? 250 : 0, overflow: 'hidden'}}>
+    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderBottomLeftRadius: centered ? 24 : 0, borderBottomRightRadius: centered ? 24 : 0, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, height: compact || large ? '100%' : undefined, maxHeight: '100%', flexShrink: 1, minHeight: centered ? 320 : 0, overflow: 'hidden'}}>
       <View style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
         <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
         {onClose ? <Pressable accessibilityRole="button" accessibilityLabel={cmsLabel('lbl.a11yClosePopup', 'Close popup')} onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}

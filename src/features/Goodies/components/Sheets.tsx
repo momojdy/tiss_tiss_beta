@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform, TextInput, useWindowDimensions} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
@@ -11,8 +11,6 @@ import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
 import {rgText, importContent, clearContent, hasContent, label} from '../content';
-import {TextInput, useWindowDimensions, Platform} from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 
@@ -68,7 +66,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   }
   if (k === 'sinfo') {
     const s = STB[sheet.id];
-    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="600" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
+    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 0.5, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="600" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
     content = (<>
       <T size={23} weight="600">{s.businessName || s.n}</T>
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
@@ -101,14 +99,14 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(560, windowHeight * 0.82) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '90%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 320 : k==='ctform' || k==='contacts' ? 360 : 0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(600, windowHeight * 0.84) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '94%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 360 : k==='ctform' || k==='contacts' ? 400 : 0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || k === 'schedule' || k === 'ctform' || k === 'contacts' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
   if (isCenteredSheet) {
     return <ConfirmDialog visible onClose={close} accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close dialog")}>{sheetBody}</ConfirmDialog>;
   }
-  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '86%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
+  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '94%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
@@ -213,7 +211,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
     </ScrollView>
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
     <T size={13} weight="600" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
-    {inline ? <DateTimePicker value={customValid ? customDate : clampedWall} mode="time" display="spinner" minuteInterval={5} onChange={(_, date) => {if(date){setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(date.getMinutes()).padStart(2,'0'));}}} /> : <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
+    {inline ? <DateTimePicker value={customValid ? customDate : clampedWall} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => {if(date){setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(date.getMinutes()).padStart(2,'0'));}}} /> : <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
       {Array.from({length:Math.max(0,Math.floor((endMinute-1-Math.ceil(earliestMinute/15)*15)/15)+1)},(_,i)=>Math.ceil(earliestMinute/15)*15+i*15).map(minute=>{const hour=Math.floor(minute/60),mins=minute%60,key=String(hour).padStart(2,'0')+':'+String(mins).padStart(2,'0'),active=customHour===String(hour).padStart(2,'0')&&customMinute===String(mins).padStart(2,'0');return <Pressable key={key} onPress={()=>{setCustomHour(String(hour).padStart(2,'0'));setCustomMinute(String(mins).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight="600" color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
     </ScrollView>}
     {reason ? <T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T> : null}
@@ -267,26 +265,36 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
   const createServerGroup = async () => {
     if (!S.cart.sid) {toast('Add an item from a store first, then create its group order.');return;}
     setGroupBusy(true);
-    const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
-    setGroupBusy(false);
-    const row=Array.isArray(data)?data[0]:data;
-    if(error||!row?.invite_code){toast(error?.message||'Could not create the group invitation.');return;}
-    saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
-    const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
-    const failed=synced.find((result:any)=>result.error);
-    if(failed)toast('Group created, but one or more existing cart items could not be shared: '+failed.error.message);
-    toast('A new group invitation is ready.');
+    try {
+      const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
+      const row=Array.isArray(data)?data[0]:data;
+      if(error||!row?.invite_code) throw error || new Error('Could not create the group invitation.');
+      saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
+      const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
+      const failed=synced.find((result:any)=>result.error);
+      if(failed)toast('Group created, but one or more cart items could not be shared: '+failed.error.message);
+      toast('A new group invitation is ready.');
+    } catch(error:any) {
+      toast(error?.message||'Could not create the group invitation. Please try again.');
+    } finally {
+      setGroupBusy(false);
+    }
   };
   const joinServerGroup = async () => {
     const code=inviteCode.trim().toUpperCase();
     if(!code){toast('Enter a group invite code.');return;}
     setGroupBusy(true);
-    const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
-    setGroupBusy(false);
-    const row=Array.isArray(data)?data[0]:data;
-    if(error||!row?.group_id){toast(error?.message||'Could not join this group order.');return;}
-    saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
-    toast('You joined the group order.');
+    try {
+      const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
+      const row=Array.isArray(data)?data[0]:data;
+      if(error||!row?.group_id) throw error || new Error('Could not join this group order.');
+      saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
+      toast('You joined the group order.');
+    } catch(error:any) {
+      toast(error?.message||'Could not join this group order. Check the invite code and try again.');
+    } finally {
+      setGroupBusy(false);
+    }
   };
   useEffect(() => {
     let active=true;
@@ -296,7 +304,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       const {data,error}=await supabase.from('goodies_group_order_items')
         .select('id,user_id,line_key,quantity,options,note,product:goodies_products(name,price,photo_url,emoji)')
         .eq('group_id',group.groupId).order('created_at',{ascending:true});
-      if(active){if(error)toast('Could not refresh the shared cart: '+error.message);else setSharedItems(data||[]);}
+      if(active){if(error)toast('Could not refresh the shared cart: '+error.message);else {setSharedItems(data||[]);setCheckoutPreview(null);setCheckoutEstimate(null);}}
     };
     const loadMembers=async () => {
       const {data,error}=await supabase.rpc('goodies_group_order_list_members',{p_group_id:group.groupId});
@@ -333,12 +341,12 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
     setGroupQuoteBusy(true);
     try {
-      const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
+      const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||''};
       const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview?.store_id,address:addressPayload}});
       if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
       const quoteState={addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000};
       setGroupDeliveryQuote(quoteState);
-      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
+      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
       if(estimate.error) {setCheckoutEstimate(null);toast(estimate.error.message||'Could not calculate the final estimate.');}
       else setCheckoutEstimate(estimate.data);
     } catch(e:any) {
@@ -349,10 +357,15 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
     if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
+    if(!checkoutEstimate || checkoutEstimate.group_id!==group.groupId || checkoutEstimate.order_type!==groupCheckoutType){toast('Review the current group-order total before placing the order.');return;}
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
     try {
-      await A.refreshPaymentOptions();
+      const walletVerified=await A.refreshPaymentOptions();
+      if(!walletVerified){toast('Could not verify your live Wantiss Wallet balance. Please retry.');return;}
+      if(!S.hasWallet){toast('Your Wantiss Wallet is not available. Create a wallet before placing this group order.');return;}
+      const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
+      if(estimatedTotal>0&&S.wallet<estimatedTotal){toast('Insufficient Wantiss Wallet balance. Add '+money(estimatedTotal-S.wallet)+' or choose another payment method.');return;}
       let addressPayload:any=null;
       if(groupCheckoutType==='delivery'){
         const selected=(S.addr||[]).find((item:any)=>String(item.id)===String(groupAddressId))||(S.addr||[]).find((item:any)=>item.id===S.as)||(S.addr||[])[0];
@@ -360,7 +373,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
         if(!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(selected.id)||groupDeliveryQuote.expiresAt<=Date.now()){
           toast('Calculate the delivery fee and review it before placing the order.');return;
         }
-        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',delivery_quote_id:groupDeliveryQuote.quoteId};
+        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||'',delivery_quote_id:groupDeliveryQuote.quoteId};
       }
       const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
         p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
@@ -387,6 +400,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     setPreviewBusy(false);
     if(error){toast(error.message||'Could not validate the shared cart.');return;}
     setCheckoutPreview(data);
+    if(groupCheckoutType==='pickup'){
+      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}});
+      if(estimate.error){setCheckoutEstimate(null);toast(estimate.error.message||'Could not calculate the payment estimate.');}
+      else setCheckoutEstimate(estimate.data);
+    }
   };
   return <>
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
@@ -394,14 +412,14 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={104} backgroundColor="#FFFFFF" color="#111111"/></View> : null}
       <View style={{height:9}}/>
-      <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
+      {!group.serverBacked ? <Cta label={groupBusy?'Please wait…':'Create group invite'} onPress={()=>void createServerGroup()} disabled={groupBusy} /> : null}
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
-    {S.cart.lines.length > 0 ? <View>
+    {S.cart.lines.length > 0 && !group.serverBacked ? <View>
       <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
-      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
+      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth: 0.5,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
 
 
     </View> : null}
@@ -418,7 +436,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     {group.serverBacked ? <>
     <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
-      {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
+      {membershipError ? <T size={12} color={th.red}>Could not load group members. Try again.</T> : null}
       {groupMembers.map((member:any)=>{
         const uid=String(member.user_id||'');
         const isYou=uid===currentUserId;
@@ -448,7 +466,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
           </View>
         </Row>;
       }) : null}
-      <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
+      <View style={{borderTopWidth: 0.5,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
         <Row sp><T weight="600">Items subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
       <View style={{height:10}}/>
@@ -459,19 +477,16 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     </> : null}
     {checkoutPreview ? <View>
       <T size={15} weight="600">Combined cart</T>
-      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
-      {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
-        <View style={{flex:1}}><T size={13} weight="600">{item.quantity}× {item.name}</T> </View>
-        <T size={13} weight="600">{money(Number(item.unit_price)*Number(item.quantity))}</T>
-      </Row>)}
-      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items from everyone</T>
+      
+      <Row sp style={{borderTopWidth: 0.5,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
       <T size={15} weight="600">Checkout</T>
 
       <View style={{height:10}}/>
-      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}} />
+      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}} />
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
         <T size={12} weight="600" style={{marginBottom:6}}>Deliver to</T>
         {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
@@ -598,7 +613,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <Input label={label("lbl.sheetAuto5601C6", "Label (optional)")} value={l} onChange={setL} placeholder={label("lbl.sheetAutoBBS3LN", "e.g. Partner, Office")} />
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
     </ScrollView>
-    <View style={{paddingTop:8,borderTopWidth:1,borderTopColor:th.line}}>
+    <View style={{paddingTop:8,borderTopWidth: 0.5,borderTopColor:th.line}}>
       <Cta label={label("lbl.sheetAuto9HY80N", "Save number")} onPress={save_} />
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>

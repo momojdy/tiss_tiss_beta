@@ -72,5 +72,16 @@
   "private": true,
   "engines": {
     "node": ">=22.13.0"
+  },
+  "expo": {
+    "install": {
+      "exclude": [
+        "expo",
+        "expo-asset",
+        "expo-linking",
+        "expo-notifications",
+        "react-native-safe-area-context"
+      ]
+    }
   }
 }
