@@ -114,6 +114,11 @@ export function Home({onExit}: {onExit?: () => void}) {
     return () => { active = false; off(); };
   }, []);
   useEffect(() => {
+    if (!contentReady) return;
+    const urls = categories().map(category => category.art).filter((url): url is string => typeof url === 'string' && !!url);
+    if (urls.length) void ExpoImage.prefetch(urls, 'disk');
+  }, [contentReady]);
+  useEffect(() => {
     if (S.f !== 'near' || !address?.t) return;
     void refreshStoreDistances(ST.filter(store => store.live).map(store => store.id), address).catch(() => null);
   }, [S.f, address?.id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
