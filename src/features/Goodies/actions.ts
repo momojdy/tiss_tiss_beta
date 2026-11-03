@@ -149,6 +149,7 @@ export async function placeOrder() {
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast(label('lbl.actionAlcoholUnavailable', 'Alcohol orders are not available yet.')); return;}
   }
+  if (S.sch && S.sch <= Date.now() + 2 * 60_000) { S.busy = 0; S.cs = 1; toast('That scheduled time is too close or has passed. Please choose a later time.'); emit(); return; }
   if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(label('lbl.actionStoreClosedCheckout', '{store} is closed. Choose a future pickup or delivery time if scheduling is available.').replace('{store}', st.n)); S.cs = 1; emit(); return;}
   const bad = S.cart.lines.filter((l: any) => {if (l.byo) return !!hooks.bCheck && !!(hooks as any).lineBad && !!(hooks as any).lineBad(l); const i = IT[l.id]; return !i || i.oos || l.q > i.stock;});
   if (bad.length) {toast(label('lbl.actionLineUnavailable', '{item} {reason}').replace('{item}', bad[0].n).replace('{reason}', bad[0].byo ? (hooks as any).lineBad(bad[0]) : label('lbl.actionQuantityUnavailable', 'is no longer available in that quantity'))); reset('cart'); return;}
