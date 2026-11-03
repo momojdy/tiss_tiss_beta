@@ -41,7 +41,7 @@ export function Store({id}: {id: string}) {
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
-      <Hero s={s} onBack={back} right={<View style={{flexDirection:'row',gap:10}}><Circ icon="users" label={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} /><Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
+      <Hero s={s} onBack={back} right={<View style={{flexDirection:'row',gap:10}}><Circ icon="user-plus" label={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} /><Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="600" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + (Math.round(s.km * 1000) < 1000 ? Math.round(s.km * 1000) + ' m' : s.km.toFixed(1) + ' km') + ' from your address' : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : s.live && s.distanceError ? ' · Distance unavailable' : ''}</T>
@@ -164,7 +164,7 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || ''), [scheduleOpen, setScheduleOpen] = useState(false);
-  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="users" label="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
+  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="user-plus" label="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
     <View>
@@ -202,7 +202,10 @@ export function Cart() {
           );
         })}
         <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 0.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="600" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
-        <View style={{marginBottom:10}}><Cta ghost small label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View>
+        <Pressable accessibilityRole="button" accessibilityLabel="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:10,paddingVertical:15,paddingHorizontal:16,borderRadius:14,backgroundColor:th.soft,borderWidth:1,borderColor:th.line}}>
+          <Icon name="users" size={20} color={th.br}/>
+          <T size={14.5} weight="600" color={th.br}>Group order</T>
+        </Pressable>
         {hasAlcohol() ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 14}}><T weight="600">{label('lbl.cartAlcoholHeading', 'Your order includes alcohol')}</T><T size={13} color={th.mut} style={{marginTop: 3}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(c.sid).age)}</T></Card> : null}
         <Ttl>{label('lbl.cartPromoTitle', 'Promo code')}</Ttl>
         {S.promo ? (
