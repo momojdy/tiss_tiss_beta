@@ -159,6 +159,7 @@ export async function placeOrder() {
   if (!phoneOK(ct.ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); S.cs = 0; emit(); return;}
   // Refresh the wallet before doing delivery routing so an insufficient balance
   // is explained immediately instead of being masked by an unrelated quote error.
+  if (!providerInfo.demo) await refreshPaymentOptions();
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
     S.busy = 0; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); emit(); return;
   }
