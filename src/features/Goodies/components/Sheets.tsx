@@ -86,7 +86,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(windowHeight * 0.86, 760) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.max(0, windowHeight - insets.top) : undefined, maxHeight: isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
