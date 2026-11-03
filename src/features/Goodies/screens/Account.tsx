@@ -136,19 +136,20 @@ function Addresses() {
       toast(e?.message || 'Could not save this address.');
     } finally { setBusy(false); }
   };
-  const removeAddr = (a: any) => Alert.alert('Delete address?', 'This address will be removed from Wantiss and Goodies.', [
-    {text:'Cancel',style:'cancel'},
-    {text:'Delete',style:'destructive',onPress:()=>{void(async()=>{
+  const removeAddr = (a: any) => ui.sheet({kind: 'remove-address', addressLabel: a.l, onConfirm: () => {
+    void (async () => {
       if (busy) return;
       setBusy(true);
       try {
         const {error} = await supabase.rpc('delete_user_address', {p_address_id: String(a.id)});
         if (error) throw error;
         await refreshUserAddresses(); save(); emit();
+        ui.close();
+        toast('Address deleted.');
       } catch (e: any) { toast(e?.message || 'Could not delete this address.'); }
       finally { setBusy(false); }
-    })();}},
-  ]);
+    })();
+  }});
   return (<View>
     <Bar title={label('lbl.settingsAddresses', 'Saved addresses')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
