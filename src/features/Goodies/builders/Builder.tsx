@@ -224,7 +224,7 @@ function Review({b}: {b: Builder}) {
   const th = useTheme(), br = bBreak(b, BD), ck = bCheck(b, BD);
   const R = (a: string, c: string, strong?: boolean) => <View style={{flexDirection: 'row', justifyContent: 'space-between', gap: 10, marginVertical: 5, ...(strong ? {borderTopWidth: 1, borderStyle: 'dashed', borderTopColor: th.line, paddingTop: 8, marginTop: 8} : {})}}><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} style={{flexShrink: 1}}>{a}</T><T size={strong ? 16 : 13.5} weight={strong ? '800' : undefined} color={strong ? th.ink : th.mut}>{c}</T></View>;
   return (
-    <View style={{marginTop: 20, borderWidth: 1, borderColor: th.line, borderRadius: 18, padding: 14, backgroundColor: th.card}}>
+    <View style={{marginTop: 20, borderWidth: 0.5, borderColor: th.line, borderRadius: 18, padding: 14, backgroundColor: th.card}}>
       <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8}}><T size={15} weight="800">{label('lbl.byoYourOrder', 'Your order')}</T>{bzDirty() && !BD.edit ? <Pressable onPress={bzResetAsk}><T size={12.5} weight="700" color={th.br}>{label('lbl.byoStartOver', 'Start over')}</T></Pressable> : null}</View>
       {R(b.name + (br.size ? ' — ' + br.size.name : ''), money(b.base + (br.size ? br.size.add : 0)))}
       {br.lines.map((L: any) => <View key={L.gid}><T size={11.5} weight="800" color={th.mut} style={{marginTop: 8, letterSpacing: 0.4}}>{String(L.gname).toUpperCase()}</T>{L.items.map((i: any) => <View key={i.id}>{R((i.qty > 1 ? i.qty + '× ' : '') + i.name, i.charge > 0 ? '+' + money(i.charge) : i.inc ? label('lbl.byoIncluded', 'Included') : label('lbl.byoFree', 'Free'))}</View>)}</View>)}

@@ -208,7 +208,7 @@ function BottomNav({r, bottom}: {r: string; bottom: number}) {
     );
   };
   return (
-    <View style={{position: 'absolute', left: 14, right: 14, bottom, height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5, zIndex: 6}}>
+    <View style={{position: 'absolute', left: 14, right: 14, bottom, height: 65, borderRadius: 18, backgroundColor: 'rgba(255,255,255,0.88)', borderWidth: 0.5, borderColor: 'rgba(255,255,255,0.55)', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5, zIndex: 6}}>
       {item('home', tr('home'), 'home')}{item('cats', tr('categories'), 'grid')}
       <Pressable accessibilityLabel={tr('search')} onPress={() => A.go('search')} style={{width: 58, height: 58, borderRadius: 29, backgroundColor: th.br, alignItems: 'center', justifyContent: 'center', marginTop: -26, shadowColor: th.br, shadowOpacity: 0.4, shadowRadius: 9, shadowOffset: {width: 0, height: 8}}}><Icon name="search" size={26} color={th.navink} /></Pressable>
       {item('orders', tr('orders'), 'bag')}{item('cart', tr('cart'), 'cart')}

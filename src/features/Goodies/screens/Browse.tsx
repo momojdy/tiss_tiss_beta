@@ -149,7 +149,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         {contentReady ? <Rail>{pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:12,paddingHorizontal:16}}>{[0,1].map(i=><View key={i} style={{width:300,height:124,borderRadius:18,backgroundColor:th.soft}}/>)}</ScrollView>}
       </View>
       <View style={{paddingHorizontal: 16, marginTop: 10}}>
-        <Pressable onPress={() => go('promos')} style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 1.5, borderColor: th.line, borderRadius: 16}}>
+        <Pressable onPress={() => go('promos')} style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 0.5, borderColor: th.line, borderRadius: 16}}>
           <View style={{flex: 1}}><T weight="700">{label('lbl.coupons', tr('couponsOffers'))}</T><T size={12.5} color={th.mut}>{label('lbl.coupons2', tr('codesCheckout'))}</T></View>
           <Icon name="chevR" size={16} color={th.ink} />
         </Pressable>
