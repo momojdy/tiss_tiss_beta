@@ -11,6 +11,7 @@ const reply = (body: unknown, status = 200) =>
 
 type AddressInput = {
   t?: string; apt?: string; inst?: string; city?: string; department?: string; country?: string;
+  latitude?: number; longitude?: number;
 };
 type Point = { lat: number; lon: number };
 type Route = { meters: number; geometry: unknown; origin: Point; destination: Point };
@@ -190,8 +191,12 @@ Deno.serve(async (req: Request) => {
     if (!stores || stores.length !== storeIds.length) return reply({ error: "One or more stores are no longer accepting orders." }, 404);
 
     const customerParts = addressParts(address);
-    const addressHash = await sha256(customerParts.join(", ").toLocaleLowerCase());
-    const destination = await geocode(address, geoKey, service);
+    const addressHash = await sha256((validPoint(address.latitude, address.longitude)
+      ? `${Number(address.latitude).toFixed(6)},${Number(address.longitude).toFixed(6)}`
+      : customerParts.join(", ")).toLocaleLowerCase());
+    const destination = validPoint(address.latitude, address.longitude)
+      ? {lat: Number(address.latitude), lon: Number(address.longitude)}
+      : await geocode(address, geoKey, service);
     const routeResults = await Promise.all(stores.map(async (store: any) => {
       try {
         const route = await routeKm(store, destination, addressHash, geoKey, service);
