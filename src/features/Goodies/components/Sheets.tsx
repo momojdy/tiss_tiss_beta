@@ -401,7 +401,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
-      {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
+
 
     </View> : null}
     {!group.serverBacked ? <View>
@@ -534,7 +534,7 @@ export function GroupOrderPage({onBack}: {onBack: () => void}) {
   const th = useTheme();
   return <View style={{flex: 1, backgroundColor: th.bg}}>
     <Bar title={label('lbl.sheetGroupTitle', 'Group order')} onBack={onBack} />
-    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 24}} keyboardShouldPersistTaps="handled"><GroupOrderSheet close={onBack} /></ScrollView>
+    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 24}} keyboardShouldPersistTaps="handled"><GroupOrderSheet close={onBack} showTitle={false} showDone={false} /></ScrollView>
   </View>;
 }
 
