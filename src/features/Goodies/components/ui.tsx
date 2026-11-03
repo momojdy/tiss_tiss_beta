@@ -91,7 +91,7 @@ export function Cta({label, onPress, ghost, disabled, small}: {label: string; on
   );
 }
 
-export const Card = ({children, style}: any) => {const th = useTheme(); return <View style={[{backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, borderRadius: 13, padding: 12, marginBottom: 8}, style]}>{children}</View>;};
+export const Card = ({children, style}: any) => {const th = useTheme(); const surface = !!(style && (style.backgroundColor || style.borderColor || style.borderWidth || style.padding)); return <View style={[surface ? {backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 12, marginBottom: 10} : {backgroundColor: 'transparent', borderWidth: 0, borderRadius: 0, padding: 0, marginBottom: 14}, style]}>{children}</View>;};
 export const Row = ({children, style, sp}: any) => <View style={[{flexDirection: 'row', alignItems: 'center', gap: 12}, sp ? {justifyContent: 'space-between'} : null, style]}>{children}</View>;
 export const Badge = ({label, green, red}: {label: string; green?: boolean; red?: boolean}) => {
   const th = useTheme();
