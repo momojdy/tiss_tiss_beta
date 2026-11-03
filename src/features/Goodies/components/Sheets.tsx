@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform} from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
