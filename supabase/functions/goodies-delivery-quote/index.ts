@@ -177,7 +177,7 @@ Deno.serve(async (req: Request) => {
     const distanceOnly = body.distance_only === true;
     const rawIds = Array.isArray(body.store_ids) ? body.store_ids : [body.store_id];
     const storeIds = [...new Set(rawIds.map((value: unknown) => String(value || "").trim()).filter(Boolean))];
-    const limit = distanceOnly ? 25 : 8;
+    const limit = 8;
     if (!storeIds.length || storeIds.length > limit) {
       return reply({ error: `Choose between one and ${limit} stores.` }, 400);
     }
