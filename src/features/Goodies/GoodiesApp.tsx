@@ -166,7 +166,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
         </ScrollView>}
       </SafeAreaView>
 
-      {footed ? <View style={{position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12 + ins.bottom, backgroundColor: th.bg, borderTopWidth: 1, borderTopColor: th.line}}>{r === 'product' ? <ProductFoot /> : r === 'byo' ? <ByoFoot /> : <CheckoutFoot />}</View> : null}
+      {footed ? <View style={{position: 'absolute', left: 0, right: 0, bottom: 0, paddingTop: 12, paddingHorizontal: 16, paddingBottom: 12 + ins.bottom, backgroundColor: th.bg, borderTopWidth: 0.5, borderTopColor: th.line}}>{r === 'product' ? <ProductFoot /> : r === 'byo' ? <ByoFoot /> : <CheckoutFoot />}</View> : null}
 
       {showCb ? (
         <View pointerEvents="box-none" style={{position: 'absolute', left: 12, right: 12, bottom: showTabs ? 92 + ins.bottom : 14 + ins.bottom, height: 68, zIndex: 12}}>
