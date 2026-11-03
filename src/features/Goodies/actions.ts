@@ -297,7 +297,7 @@ export async function placeOrder() {
         if (/insufficient|not enough|balance too low/i.test(detail) || (verified && (!S.hasWallet || S.wallet < t.total))) {
           toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
         } else {
-          toast('Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
+          toast(detail ? 'Wantiss Wallet payment failed: ' + detail + '. Your cart is still saved.' : 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
         }
       } else {
         toast(detail || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.'));
