@@ -37,7 +37,7 @@ Deno.serve(async (req: Request) => {
     if (downloadError || !file) return reply(404, { error: "Published asset file is unavailable" });
     return new Response(file, {
       status: 200,
-      headers: { ...headers, "Content-Type": asset.content_type || "application/octet-stream", "Cache-Control": "public, max-age=300, stale-while-revalidate=3600", "X-Content-Type-Options": "nosniff" },
+      headers: { ...headers, "Content-Type": asset.content_type || "application/octet-stream", "Cache-Control": "public, max-age=60", "X-Content-Type-Options": "nosniff" },
     });
   }
 
@@ -52,7 +52,7 @@ Deno.serve(async (req: Request) => {
     if (downloadError || !file) return reply(404, { error: "Published branding asset file is unavailable" });
     return new Response(file, {
       status: 200,
-      headers: { ...headers, "Content-Type": file.type || "application/octet-stream", "Cache-Control": "public, max-age=300, stale-while-revalidate=3600", "X-Content-Type-Options": "nosniff" },
+      headers: { ...headers, "Content-Type": file.type || "application/octet-stream", "Cache-Control": "public, max-age=60", "X-Content-Type-Options": "nosniff" },
     });
   }
 
