@@ -566,7 +566,7 @@ export function filt(list: Store[]) {
   if (f === 'top') l = l.filter(s => s.r >= 4.5);
   if (f === 'fast') l = l.filter(s => parseInt(s.eta.split('–')[1], 10) <= 30);
   if (f === 'open') l = l.filter(s => s.open);
-  if (f === 'near') l.sort((a, b) => a.km - b.km);
+  if (f === 'near') l.sort((a, b) => (a.live && !a.distanceReady ? Number.POSITIVE_INFINITY : a.km) - (b.live && !b.distanceReady ? Number.POSITIVE_INFINITY : b.km));
   return l;
 }
 export const FCH: [string, string][] = [['', 'All'], ['offers', 'Offers'], ['free', 'Free delivery'], ['top', 'Rating 4.5+'], ['fast', 'Under 30 min'], ['open', 'Open now'], ['near', 'Nearest']];
