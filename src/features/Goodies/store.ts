@@ -32,8 +32,8 @@ export const fmtTime = (d: Date) => {
 export const fmtDay = (d: Date) => {
   try {return new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {month: 'short', day: 'numeric'}).format(d);} catch (e) {return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()] + ' ' + d.getDate();}
 };
-export const fmtStoreDay = (sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: STB[sid]?.scheduledOrderTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone, month: 'short', day: 'numeric'}).format(new Date(timestamp));
-export const fmtStoreTime = (sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: STB[sid]?.scheduledOrderTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone, hour: 'numeric', minute: '2-digit'}).format(new Date(timestamp));
+export const fmtStoreDay = (_sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, month: 'short', day: 'numeric'}).format(new Date(timestamp));
+export const fmtStoreTime = (_sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, hour: 'numeric', minute: '2-digit', timeZoneName: 'short'}).format(new Date(timestamp));
 export const dp = (i: Item, off: number) => Math.round(i.p * (100 - off)) / 100;
 export const cname = (id: string, cats: {id: string; name: any}[]) => (cats.find(c => c.id === id) as any)?.name || 'All stores';
 const zoneOf = (t: string) => {let x = 0; for (let i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 97; return Math.round((x % 5) * 9) / 10;};
@@ -122,7 +122,7 @@ function liveStore(r: any, items: Item[]): Store {
     eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
     pr: r.promo || '', k: r.kind || '', it: items, open: st.open, h: st.h, nx: st.nx, far: false, live: true,
     logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, acceptScheduledOrders: !!r.accept_scheduled_orders,
-    scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || 'UTC'), scheduleHours: r.hours || undefined,
+    scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || Intl.DateTimeFormat().resolvedOptions().timeZone), scheduleHours: r.hours || undefined,
     businessName: r.store_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
     businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', maxDeliveryDistanceKm: r.delivery_max_distance_km == null ? null : Number(r.delivery_max_distance_km), distanceReady: false, distanceAddressKey: '', distanceError: '',
     get n() {const t = names[S.lang]; return (typeof t === 'string' && t.trim()) || r.store_name || 'Store';},
