@@ -202,7 +202,9 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
 
 function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''}: {close: () => void; showTitle?: boolean; showDone?: boolean; storeId?: string}) {
   const th = useTheme();
-  const [inviteCode, setInviteCode] = useState(() => {const code = (S as any).pendingGroupInviteCode || ''; delete (S as any).pendingGroupInviteCode; return String(code);});
+  const incomingInviteCode = String((S as any).pendingGroupInviteCode || '');
+  delete (S as any).pendingGroupInviteCode;
+  const [inviteCode, setInviteCode] = useState(incomingInviteCode);
   const [groupBusy, setGroupBusy] = useState(false);
   const [sharedItems, setSharedItems] = useState<any[]>([]);
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
@@ -228,7 +230,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [group, setGroup] = useState(() => {
-    if ((S as any).pendingGroupInviteCode) return {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
+    if (incomingInviteCode) return {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
     const next = {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
