@@ -395,14 +395,14 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </View>
     <View>
       <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
-      {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut} style={{marginTop:7}}>{label("lbl.sheetAutoX38X9M", "Add items to the cart from the selected store. The host controls checkout.")}</T>}
+      {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
-      <View style={{height:10}}/><Cta ghost label={label('lbl.sheetViewCart', 'View cart')} onPress={()=>{close();A.go('cart');}} />
+
     </View>
     <View>
       <T size={14} weight="800">Join a group order</T>
-      <T size={12} color={th.mut} style={{marginTop:4,marginBottom:8}}>Enter the invite code shared by your friend to join their active order.</T>
+
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
       <View style={{height:8}}/><Cta ghost label="Scan QR code" onPress={async()=>{
         if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
@@ -422,7 +422,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
           {isYou?<Badge green label="You"/>:null}
         </Row>;
       })}
-      {!groupMembers.length&&!membershipError?<T size={13} color={th.mut} style={{paddingVertical:10}}>No one has joined this group yet. Share the invite code to add members.</T>:null}
+
     </View>
     <View style={{height:12}}/>
     <T size={15} weight="800" style={{marginBottom:7}}>Live group cart</T>
@@ -450,11 +450,11 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <View style={{height:10}}/>
       {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
         ? <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
-        : <T size={12} color={th.mut}>The group host will review the combined cart and continue to checkout.</T>}
+        : null}
     </View>
     {checkoutPreview ? <View>
       <T size={15} weight="800">Validated group cart</T>
-      <T size={12} color={th.mut} style={{marginTop:4}}>Store: {checkoutPreview.store_name} · {checkoutPreview.item_count} shared lines</T>
+      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
       {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
         <View style={{flex:1}}><T size={13} weight="700">{item.quantity}× {item.name}</T><T size={11} color={th.mut}>Current price with selected options</T></View>
         <T size={13} weight="700">{money(Number(item.unit_price)*Number(item.quantity))}</T>
@@ -464,7 +464,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
       <T size={15} weight="800">Host checkout</T>
-      <T size={12} color={th.mut} style={{marginTop:5}}>Choose pickup or delivery. The host pays the full group order from their Wantiss Wallet.</T>
+
       <View style={{height:10}}/>
       <Row style={{gap:8}}>
         <View style={{flex:1}}><Radio on={groupCheckoutType==='pickup'} onPress={()=>{setGroupCheckoutType('pickup');setGroupDeliveryQuote(null);void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}}>Pickup</Radio></View>
@@ -492,10 +492,10 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
         <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
         {checkoutEstimate.first_order_delivery_waiver ? <T size={10.5} color={th.mut} style={{marginTop:6}}>Your first-order delivery-fee waiver has been applied.</T> : null}
-        <T size={10.5} color={th.mut} style={{marginTop:4}}>Final payment is recalculated and checked by the server when you place the order.</T>
+
       </View> : null}
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
-      <T size={11.5} color={th.mut} style={{marginTop:4}}>Your Wallet must cover the final server-calculated total.</T>
+
       <View style={{height:9}}/>
       <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
     </View> : null}
