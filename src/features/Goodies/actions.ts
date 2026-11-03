@@ -119,7 +119,7 @@ export function checkoutNext() {
   if (S.cs === 0 && !isPk()) {const a = addr(); if (!a || !a.t) {toast(label('lbl.actionChooseAddress', 'Choose a delivery address')); return;}}
   if (S.cs === 0 && !phoneOK(ctOf().ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); return;}
   if (S.cs === 1 && S.sch && S.sch < Date.now()) {S.sch = 0; toast(label('lbl.actionTimePassed', 'That time has passed. Pick another')); emit(); return;}
-  if (S.cs === 1 && !STB[S.cart.sid!]?.open && (!STB[S.cart.sid!]?.acceptScheduledOrders || !S.sch || S.sch <= Date.now())) {toast(label('lbl.actionStoreClosedSchedule', 'This store is closed. Choose a future opening-time slot to continue.')); emit(); return;}
+  if (S.cs === 1 && !STB[S.cart.sid!]?.open && (!STB[S.cart.sid!]?.acceptScheduledOrders || !S.sch || S.sch <= Date.now())) {toast(label('lbl.actionStoreClosedSchedule', 'This store is closed. Pick a time under "Schedule" and tap Apply to continue.')); emit(); return;}
   if (S.cs === 2) {
     const methodKey = ({wallet: 'Wallet', card: 'Card', cash: 'Cash'} as any)[S.pay];
     if (!methodKey || !fees().pay[methodKey]) {toast(label('lbl.actionPaymentUnavailable', 'This payment method is no longer available. Choose another method.')); return;}
@@ -292,12 +292,13 @@ export async function placeOrder() {
     if (error || !row?.id) {
       S.busy = 0;
       const detail = String(error?.message || data?.error || '');
+      if (error || !row?.id) console.warn('Goodies checkout failed', {payment: S.pay, error, data});
       if (S.pay === 'wallet') {
         const verified = await refreshPaymentOptions();
         if (/insufficient|not enough|balance too low/i.test(detail) || (verified && (!S.hasWallet || S.wallet < t.total))) {
           toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
         } else {
-          toast(detail ? 'Wantiss Wallet payment failed: ' + detail + '. Your cart is still saved.' : 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.');
+          toast(detail ? 'Wantiss Wallet payment failed: ' + detail + '. Your cart is still saved.' : 'Wantiss Wallet could not complete this payment' + (error?.code ? ' (' + error.code + ')' : '') + '. Your cart is still saved. Please retry or choose another payment method.');
         }
       } else {
         toast(detail || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.'));

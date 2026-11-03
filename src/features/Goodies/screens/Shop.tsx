@@ -235,6 +235,8 @@ export function Checkout() {
     return () => { active = false; };
   }, [st?.id, st?.live, a?.t, a?.apt, a?.inst, a?.city, a?.department, a?.country]);
   useEffect(() => { if (st?.id && !st.acceptScheduledOrders && S.sch) setSch(0); }, [st?.id, st?.acceptScheduledOrders]);
+  /* A closed store can only be ordered from by scheduling: open the picker so the customer is not left on an empty "Schedule" choice. */
+  useEffect(() => { if (st?.id && !st.open && st.acceptScheduledOrders && !S.sch) setScheduleOpen(true); }, [st?.id, st?.open, st?.acceptScheduledOrders]);
   useEffect(() => {
     let active = true;
     setCashEligible(false);

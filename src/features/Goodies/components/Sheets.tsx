@@ -162,6 +162,8 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now()+15*60_000;
   const selected=customValid?customInstant.getTime():0;
   const noFutureSlot=!availableSlots.length;
+  /* Closed store with nothing chosen yet: pre-select the earliest valid slot so checkout can continue without an extra Apply step. */
+  useEffect(()=>{if(inline&&store&&!store.open&&store.acceptScheduledOrders&&!S.sch&&earliestInstant)A.setSch(earliestInstant.getTime());},[inline,store?.id,store?.open,earliestInstant?.getTime()]);
   const reason=noFutureSlot?label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.') : !customValid?label('lbl.sheetClampEarliest','Choose the minimum available time or a later available time.'):'';
   const formatCustomer=(ts:number,options:Intl.DateTimeFormatOptions)=>new Intl.DateTimeFormat(undefined,{...options,timeZone:customerZone}).format(new Date(ts));
   const choose=()=>{

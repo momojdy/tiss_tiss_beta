@@ -19,6 +19,7 @@ import {
   useFonts, Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold,
 } from '@expo-google-fonts/manrope';
 import { supabase } from '../../lib/supabase';
+import { functionErrorMessage } from '../../lib/functionError';
 // import { supabase } from './supabase';   // <- your client
 
 /* ───────────── Backend hook: replace with your create-card-setup-intent call ───────────── */
@@ -86,7 +87,7 @@ window.addEventListener('message',onMsg);document.addEventListener('message',onM
 
 async function getSetupIntent(): Promise<{ client_secret: string; publishable_key: string }> {
   const { data, error } = await supabase.functions.invoke('create-card-setup-intent', { body: {} });
-  if (error) throw error;
+  if (error) throw new Error(await functionErrorMessage(error, 'Could not start card setup. Please try again.'));
   if (!data?.client_secret || !data?.publishable_key) throw new Error(data?.error || 'Unable to create card setup session');
   return { client_secret: data.client_secret, publishable_key: data.publishable_key };
 }
