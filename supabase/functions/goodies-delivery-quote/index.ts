@@ -181,26 +181,40 @@ Deno.serve(async (req: Request) => {
     const customerParts = addressParts(address);
     const addressHash = await sha256(customerParts.join(", ").toLocaleLowerCase());
     const destination = await geocode(address, geoKey, service);
-    const routes = await Promise.all(stores.map(async (store: any) => {
-      const route = await routeKm(store, destination, addressHash, geoKey, service);
-      const km = route.meters / 1000;
-      const max = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
-      const outsideDeliveryArea = max != null && km > max;
-      let fee = store.delivery_pricing_mode === "distance"
-        ? Math.max(Number(store.delivery_min_fee) || 0, Number(store.delivery_base_fee || 0) + km * Number(store.delivery_per_km_fee || 0))
-        : Math.max(0, Number(store.delivery_fee) || 0);
-      if (store.delivery_pricing_mode === "distance" && store.delivery_max_fee != null) fee = Math.min(fee, Number(store.delivery_max_fee));
-      return {
-        store_id: store.store_id, distance_m: Math.round(route.meters), distance_km: Number(km.toFixed(2)),
-        base_fee: Math.round(fee * 100) / 100, outside_delivery_area,
-        origin: route.origin, destination: route.destination, geometry: route.geometry,
-      };
+    const routeResults = await Promise.all(stores.map(async (store: any) => {
+      try {
+        const route = await routeKm(store, destination, addressHash, geoKey, service);
+        const km = route.meters / 1000;
+        const max = store.delivery_max_distance_km == null ? null : Number(store.delivery_max_distance_km);
+        const outsideDeliveryArea = max != null && km > max;
+        let fee = store.delivery_pricing_mode === "distance"
+          ? Math.max(Number(store.delivery_min_fee) || 0, Number(store.delivery_base_fee || 0) + km * Number(store.delivery_per_km_fee || 0))
+          : Math.max(0, Number(store.delivery_fee) || 0);
+        if (store.delivery_pricing_mode === "distance" && store.delivery_max_fee != null) fee = Math.min(fee, Number(store.delivery_max_fee));
+        return {
+          store_id: store.store_id, distance_m: Math.round(route.meters), distance_km: Number(km.toFixed(2)),
+          base_fee: Math.round(fee * 100) / 100, outside_delivery_area,
+          origin: route.origin, destination: route.destination, geometry: route.geometry, error: null,
+        };
+      } catch (error) {
+        return {
+          store_id: store.store_id, distance_m: null, distance_km: null, base_fee: null,
+          outside_delivery_area: false, origin: null, destination: null, geometry: null,
+          error: error instanceof Error ? error.message : "Road distance is unavailable for this store.",
+        };
+      }
     }));
 
     if (distanceOnly) return reply({
-      stores: routes.map(({ store_id, distance_m, distance_km, outside_delivery_area }) =>
-        ({ store_id, distance_m, distance_km, outside_delivery_area })),
+      stores: routeResults.map(({ store_id, distance_m, distance_km, outside_delivery_area, error }) =>
+        ({ store_id, distance_m, distance_km, outside_delivery_area, error })),
     });
+    const routeFailure = routeResults.find(route => route.error);
+    if (routeFailure) return reply({ error: routeFailure.error, store_id: routeFailure.store_id }, 422);
+    const routes = routeResults as Array<{
+      store_id: string; distance_m: number; distance_km: number; base_fee: number;
+      outside_delivery_area: boolean; origin: Point; destination: Point; geometry: unknown; error: null;
+    }>;
     const outside = routes.find(route => route.outside_delivery_area);
     if (outside) return reply({
       error: "This address is outside a participating store's delivery area.",
