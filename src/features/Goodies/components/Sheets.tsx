@@ -66,7 +66,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   }
   if (k === 'sinfo') {
     const s = STB[sheet.id];
-    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 1, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="600" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
+    const row = (a: string, b: string) => <View key={a} style={{flexDirection: 'row', alignItems: 'flex-start', gap: 12, paddingVertical: 11, borderBottomWidth: 0.5, borderBottomColor: th.line}}><T color={th.mut} style={{width: '38%'}}>{a}</T><T color={th.ink} weight="600" style={{flex: 1, textAlign: 'right'}}>{b}</T></View>;
     content = (<>
       <T size={23} weight="600">{s.businessName || s.n}</T>
       <T color={th.mut} style={{marginTop: 6, marginBottom: 14, lineHeight: 21}}>{s.businessDescription || s.k}</T>
@@ -418,7 +418,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     {S.cart.lines.length > 0 && !group.serverBacked ? <View>
       <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
-      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
+      <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth: 0.5,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
 
 
     </View> : null}
@@ -465,7 +465,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
           </View>
         </Row>;
       }) : null}
-      <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
+      <View style={{borderTopWidth: 0.5,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
         <Row sp><T weight="600">Items subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
       <View style={{height:10}}/>
@@ -478,7 +478,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <T size={15} weight="600">Combined cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items from everyone</T>
       
-      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <Row sp style={{borderTopWidth: 0.5,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
@@ -612,7 +612,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <Input label={label("lbl.sheetAuto5601C6", "Label (optional)")} value={l} onChange={setL} placeholder={label("lbl.sheetAutoBBS3LN", "e.g. Partner, Office")} />
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
     </ScrollView>
-    <View style={{paddingTop:8,borderTopWidth:1,borderTopColor:th.line}}>
+    <View style={{paddingTop:8,borderTopWidth: 0.5,borderTopColor:th.line}}>
       <Cta label={label("lbl.sheetAuto9HY80N", "Save number")} onPress={save_} />
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
