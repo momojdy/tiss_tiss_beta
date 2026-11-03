@@ -404,7 +404,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
 
     </View> : null}
-    <View>
+    {!group.serverBacked ? <View>
       <T size={14} weight="600">Join a group order</T>
 
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
@@ -413,7 +413,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         setScannerOpen(true);
       }} />
       <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
-    </View>
+    </View> : null}
     {group.serverBacked ? <>
     <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
@@ -434,10 +434,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <View>
       {sharedItems.length ? sharedItems.map((item:any)=>{
         const product=Array.isArray(item.product)?item.product[0]:item.product;
-        const contributor=groupMembers.find((member:any)=>String(member.user_id)===String(item.user_id));
-        const contributorName=String(item.user_id)===currentUserId?'You':contributor?.display_name||'Group member';
         return <Row key={item.id} sp style={{paddingVertical:8,alignItems:'flex-start'}}>
-          <View style={{flex:1}}><T weight="600">{item.quantity}× {product?.name || 'Unavailable product'}</T><T size={11.5} color={th.mut}>Added by {contributorName}{item.note ? ' · '+item.note : ''}</T></View>
+          <View style={{flex:1}}><T weight="600">{item.quantity}× {product?.name || 'Unavailable product'}</T>{item.note ? <T size={11.5} color={th.mut}>{item.note}</T> : null}</View>
           <View style={{alignItems:'flex-end',gap:7}}>
             <T weight="600">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
             {group.serverBacked && String(item.user_id)===currentUserId ? <Pressable accessibilityRole="button" accessibilityLabel="Remove my shared cart item" onPress={async()=>{
@@ -465,7 +463,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <View style={{flex:1}}><T size={13} weight="600">{item.quantity}× {item.name}</T> </View>
         <T size={13} weight="600">{money(Number(item.unit_price)*Number(item.quantity))}</T>
       </Row>)}
-      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Validated item subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
@@ -505,9 +503,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <View style={{height:9}}/>
       <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
     </View> : null}
-    <View style={{height:12}} />
-    <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
-    <View style={{height:8}} />
+    {showDone ? <><View style={{height:12}} /><Cta label={label('lbl.sheetDone', 'Done')} onPress={close} /><View style={{height:8}} /></> : null}
     {group.serverBacked && group.groupId ? <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={async () => {
       if (!group.serverBacked || !group.groupId) {toast('This group invitation is not server-backed.');return;}
       setGroupBusy(true);
