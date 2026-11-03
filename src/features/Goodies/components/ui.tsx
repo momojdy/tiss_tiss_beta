@@ -47,7 +47,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
           <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
-          <T size={20} weight="800" style={{flex: 1}}>{title}</T>
+          <Text numberOfLines={1} style={{flex:1,fontSize:19,fontWeight:"600",color:th.ink}}>{title}</Text>
           {right}
         </View>
       </View>
@@ -60,7 +60,7 @@ export function Sh({title, link, onLink, right}: {title: string; link?: string; 
   const th = useTheme();
   return (
     <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 16, paddingTop: 24, paddingBottom: 10, gap: 8}}>
-      <T size={19} weight="800" style={{flexShrink: 1}}>{title}</T>
+      <T size={18} weight="600" style={{flexShrink: 1}}>{title}</T>
       {link ? <Pressable onPress={onLink}><T size={13} weight="700" color={th.br}>{link}</T></Pressable> : right || null}
     </View>
   );
@@ -86,7 +86,7 @@ export function Cta({label, onPress, ghost, disabled, small}: {label: string; on
   const th = useTheme();
   return (
     <Pressable disabled={disabled} onPress={onPress} style={({pressed}) => ({height: small ? 42 : 52, borderRadius: 16, backgroundColor: ghost ? th.soft : th.br, alignItems: 'center', justifyContent: 'center', opacity: disabled ? 0.45 : 1, transform: [{scale: pressed ? 0.94 : 1}], flex: small ? 1 : undefined})}>
-      <T size={small ? 14 : 15.5} weight="800" color={ghost ? th.ink : '#fff'}>{label}</T>
+      <T size={small ? 14 : 15.5} weight="600" color={ghost ? th.ink : '#fff'}>{label}</T>
     </Pressable>
   );
 }
@@ -104,7 +104,7 @@ export function Empty({emoji, icon, title, text, button, onPress}: {emoji?: stri
   return (
     <View style={{alignItems: 'center', paddingVertical: 38, paddingHorizontal: 24}}>
       {icon ? <View style={{width: 68, height: 68, borderRadius: 34, backgroundColor: 'rgba(253,128,46,0.12)', alignItems: 'center', justifyContent: 'center', marginBottom: 4}}><Icon name={icon} size={30} color="#FD802E" /></View> : emoji ? <Text style={{fontSize: 64}}>{emoji}</Text> : null}
-      <T size={19} weight="800" style={{marginTop: 12, marginBottom: 6}}>{title}</T>
+      <T size={18} weight="600" style={{marginTop: 12, marginBottom: 6}}>{title}</T>
       {text ? <T size={14} color={th.mut} align="center" style={{marginBottom: 20}}>{text}</T> : null}
       {button ? <View style={{alignSelf: 'stretch'}}><Cta label={button} onPress={onPress as any} /></View> : null}
     </View>
@@ -123,7 +123,7 @@ export function Switch({on, onPress, label}: {on: boolean; onPress: () => void; 
 export function Radio({on, onPress, children}: {on: boolean; onPress: () => void; children: any}) {
   const th = useTheme();
   return (
-    <Pressable onPress={onPress} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 14, borderWidth: 1.5, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : 'transparent', borderRadius: 16, marginBottom: 10}}>
+    <Pressable onPress={onPress} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 13, paddingHorizontal: 14, borderWidth: 0.5, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : 'transparent', borderRadius: 16, marginBottom: 10}}>
       <View style={{width: 20, height: 20, borderRadius: 10, borderWidth: on ? 6 : 2, borderColor: on ? th.br : th.line}} />
       <View style={{flex: 1}}>{children}</View>
     </Pressable>
@@ -176,7 +176,7 @@ export function SheetBox({children, large = false, compact = false, centered = f
     onPanResponderRelease: (_e, g) => { if (g.dy > 65 && onClose) onClose(); },
   }), [onClose]);
   return (
-    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderBottomLeftRadius: centered ? 24 : 0, borderBottomRightRadius: centered ? 24 : 0, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 20, height: compact || large ? '100%' : undefined, maxHeight: '100%', flexShrink: 1, minHeight: centered ? 190 : 0, overflow: 'hidden'}}>
+    <View {...pan.panHandlers} style={{backgroundColor: th.bg, borderTopLeftRadius: 24, borderTopRightRadius: 24, borderBottomLeftRadius: centered ? 24 : 0, borderBottomRightRadius: centered ? 24 : 0, paddingHorizontal: 20, paddingTop: 10, paddingBottom: 24, height: compact || large ? '100%' : undefined, maxHeight: '100%', flexShrink: 1, minHeight: centered ? 250 : 0, overflow: 'hidden'}}>
       <View style={{height: 34, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 8}}>
         <View style={{width: 40, height: 4, borderRadius: 2, backgroundColor: th.line}} />
         {onClose ? <Pressable accessibilityRole="button" accessibilityLabel={cmsLabel('lbl.a11yClosePopup', 'Close popup')} onPress={onClose} hitSlop={12} style={{position: 'absolute', right: 0, top: 2, width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center', backgroundColor: th.soft}}><Text style={{fontSize: 20, lineHeight: 22, color: th.ink}}>×</Text></Pressable> : null}
