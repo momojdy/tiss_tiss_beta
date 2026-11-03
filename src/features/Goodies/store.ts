@@ -477,7 +477,7 @@ export function totals() {
   const F = feesNow();
   const selectedAddress = addr();
   const quote = (S as any).deliveryFeeQuote;
-  const quoteAddressKey = selectedAddress ? JSON.stringify({l: selectedAddress.l, t: selectedAddress.t, apt: selectedAddress.apt, inst: selectedAddress.inst}) : '';
+  const quoteAddressKey = selectedAddress ? JSON.stringify({l: selectedAddress.l, t: selectedAddress.t, apt: selectedAddress.apt, inst: selectedAddress.inst, city: selectedAddress.city, department: selectedAddress.department, country: selectedAddress.country}) : '';
   const quoteValid = !!st && st.deliveryPricingMode === 'distance' && quote?.storeId === st.id && quote?.addressKey === quoteAddressKey && Number(quote?.expiresAt) > Date.now();
   const fee = !st || pk ? 0 : (first() && F.firstFree) || ship ? 0 : quoteValid ? Number(quote.fee) : st.fee === 0 ? 0 : st.fee, svc = sub ? F.svc : 0;
   const disc = p && p.ty === 'pct' ? Math.round(sub * p.v) / 100 : 0, tip = pk ? 0 : S.tip;
