@@ -8,6 +8,7 @@ import { decode } from 'base64-arraybuffer';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../lib/supabase';
 import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
@@ -16,7 +17,7 @@ import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 import { COUNTRIES } from './countries';
 
 /* ---------- types (PROPOSED contracts) ---------- */
-export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string> };
+export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string>; storeLatitude: number | null; storeLongitude: number | null };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; photoUrls: string[]; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean; assetUrl?: string | null };
 export type GGroup = Omit<TplGroup, 'items'> & { id: string; items: GItem[] };
@@ -37,18 +38,19 @@ const rd = async <T,>(key: string, d: T): Promise<T> => { try { const v = await 
 export const goodiesApi = {
   /* Store setup lives on the backend: the business is the store (store id = business id). */
   getStore: async (biz: string): Promise<GStore> => {
-    const d: GStore = { demoStoreId: '', storeName: '', coverUrl: null, thumbnailUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', acceptScheduledOrders: false, scheduledOrderStartTime: '10:00', scheduledOrderTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', promo: '', delivery: true, pickup: true, names: {} };
+    const d: GStore = { demoStoreId: '', storeName: '', coverUrl: null, thumbnailUrl: null, address: '', city: '', country: '', category: '', kind: '', minOrder: '5', fee: '2', pricingMode: 'fixed', baseFee: '2', perKmFee: '0.5', minFee: '0', maxFee: '', maxDistanceKm: '', etaMin: '20', etaMax: '35', acceptScheduledOrders: false, scheduledOrderStartTime: '10:00', scheduledOrderTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC', promo: '', delivery: true, pickup: true, names: {}, storeLatitude: null, storeLongitude: null };
     const [r, business] = await Promise.all([
-      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,store_name,thumbnail_url').eq('business_id', biz).maybeSingle()),
+      q<any>(supabase.from('goodies_store_schedules').select('category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km,eta_min,eta_max,promo,names,delivery_modes,cover_url,address,city,country,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,store_name,thumbnail_url,store_latitude,store_longitude').eq('business_id', biz).maybeSingle()),
       q<any>(supabase.from('businesses').select('address,city,country').eq('id', biz).maybeSingle()),
     ]);
     if (!r) return { ...d, address: business?.address || '', city: business?.city || '', country: business?.country || '' };
     const modes: string[] = Array.isArray(r.delivery_modes) ? r.delivery_modes.map((x: string) => String(x).toLowerCase()) : [];
     return {
       demoStoreId: '', storeName: String(r.store_name || ''), coverUrl: r.cover_url || null, thumbnailUrl: r.thumbnail_url || null, address: r.address || business?.address || '', city: r.city || business?.city || '', country: r.country || business?.country || '', category: r.category || '', kind: r.kind || '', minOrder: String(r.min_order ?? 5), fee: String(r.delivery_fee ?? 2), pricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', baseFee: String(r.delivery_base_fee ?? r.delivery_fee ?? 2), perKmFee: String(r.delivery_per_km_fee ?? 0.5), minFee: String(r.delivery_min_fee ?? 0), maxFee: r.delivery_max_fee == null ? '' : String(r.delivery_max_fee), maxDistanceKm: r.delivery_max_distance_km == null ? '' : String(r.delivery_max_distance_km), etaMin: String(r.eta_min ?? 20), etaMax: String(r.eta_max ?? 35), acceptScheduledOrders: !!r.accept_scheduled_orders, scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'), promo: r.promo || '',
-      delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {},
+      delivery: modes.length ? modes.includes('delivery') : true, pickup: modes.length ? modes.includes('pickup') : true, names: r.names && typeof r.names === 'object' ? r.names : {}, storeLatitude: r.store_latitude == null ? null : Number(r.store_latitude), storeLongitude: r.store_longitude == null ? null : Number(r.store_longitude),
     };
   },
+  saveStoreLocation: (biz: string, latitude: number, longitude: number) => rpc<boolean>('goodies_save_store_location', { p_business: biz, p_latitude: latitude, p_longitude: longitude }),
   saveStoreCover: (biz: string, coverUrl: string | null) => rpc('goodies_save_store_cover', { p_business: biz, p_cover_url: coverUrl }),
   saveStoreThumbnail: (biz: string, thumbnailUrl: string | null) => rpc('goodies_save_store_thumbnail', { p_business: biz, p_thumbnail_url: thumbnailUrl }),
   saveStore: async (biz: string, st: GStore) => {
@@ -237,6 +239,9 @@ export function GoodiesToolsPage() {
 export function GoodiesStorePage() {
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
+  const [savedAddress, setSavedAddress] = useState({ address: '', city: '', country: '' });
+  const [capturedLocation, setCapturedLocation] = useState<{ latitude: number; longitude: number; accuracy: number | null } | null>(null);
+  const [locationBusy, setLocationBusy] = useState(false), [locationSaving, setLocationSaving] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [countryOpen, setCountryOpen] = useState(false), [countryQuery, setCountryQuery] = useState('');
@@ -248,6 +253,8 @@ export function GoodiesStorePage() {
     Promise.all([goodiesApi.getStore(app.biz.id), goodiesApi.listBuilders(app.biz.id)])
       .then(([store, rows]) => {
         setF(store);
+        setSavedAddress({ address: store.address.trim(), city: store.city.trim(), country: store.country.trim() });
+        setCapturedLocation(null);
         setSameAsCover(!!store.coverUrl && store.thumbnailUrl === store.coverUrl);
         setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
         setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
@@ -257,7 +264,11 @@ export function GoodiesStorePage() {
   useEffect(load, [app.biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
   if (loadErr) return <Pg title="Store setup" onBack={app.back}><ErrBox e={loadErr} retry={load} /></Pg>;
   if (!f) return <Pg title="Store setup" onBack={app.back}><Skel h={90} /><Skel h={200} /></Pg>;
-  const set = (p: Partial<GStore>) => setF({ ...f, ...p });
+  const set = (p: Partial<GStore>) => {
+    const addressChanged = ['address', 'city', 'country'].some(key => key in p && String(p[key as keyof GStore] || '').trim() !== savedAddress[key as keyof typeof savedAddress]);
+    setF({ ...f, ...p, ...(addressChanged ? { storeLatitude: null, storeLongitude: null } : {}) });
+    if (addressChanged) setCapturedLocation(null);
+  };
   const err = (): string => {
     if (!f.storeName.trim()) return 'Enter a store name';
     if (!f.category) return 'Choose a store category';
@@ -276,6 +287,10 @@ export function GoodiesStorePage() {
     setBusy(true);
     try {
       await goodiesApi.saveStore(app.biz.id, f);
+      const nextSavedAddress = { address: f.address.trim(), city: f.city.trim(), country: f.country.trim() };
+      const addressChanged = nextSavedAddress.address !== savedAddress.address || nextSavedAddress.city !== savedAddress.city || nextSavedAddress.country !== savedAddress.country;
+      setSavedAddress(nextSavedAddress);
+      if (addressChanged) setF(current => current ? { ...current, storeLatitude: null, storeLongitude: null } : current);
       await goodiesApi.saveStoreThumbnail(app.biz.id, sameAsCover ? f.coverUrl : f.thumbnailUrl);
       const rows = await goodiesApi.listBuilders(app.biz.id);
       const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
@@ -283,6 +298,45 @@ export function GoodiesStorePage() {
       await goodiesApi.saveBuilders(app.biz.id, next);
       app.toast('Store saved'); app.bump();
     } catch (x) { app.toast(errText(x)); } finally { setBusy(false); }
+  };
+  const captureStoreLocation = async () => {
+    setLocationBusy(true);
+    try {
+      const permission = await Location.requestForegroundPermissionsAsync();
+      if (permission.status !== 'granted') {
+        app.toast('Allow location access to pin your store. You can enable it in your device settings.');
+        return;
+      }
+      const position = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+      const { latitude, longitude, accuracy } = position.coords;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude) || latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) {
+        throw new Error('Your device returned invalid coordinates. Try again.');
+      }
+      setCapturedLocation({ latitude, longitude, accuracy: Number.isFinite(accuracy) ? accuracy : null });
+      app.toast('Location captured. Review it below, then save the pin.');
+    } catch (e) {
+      app.toast(errText(e));
+    } finally {
+      setLocationBusy(false);
+    }
+  };
+  const saveStoreLocation = async () => {
+    if (!capturedLocation) return app.toast('Capture your store location first.');
+    const currentAddress = { address: f.address.trim(), city: f.city.trim(), country: f.country.trim() };
+    if (currentAddress.address !== savedAddress.address || currentAddress.city !== savedAddress.city || currentAddress.country !== savedAddress.country) {
+      return app.toast('Save your store address first, then save its location.');
+    }
+    setLocationSaving(true);
+    try {
+      await goodiesApi.saveStoreLocation(app.biz.id, capturedLocation.latitude, capturedLocation.longitude);
+      setF(current => current ? { ...current, storeLatitude: capturedLocation.latitude, storeLongitude: capturedLocation.longitude } : current);
+      setCapturedLocation(null);
+      app.toast('Store location saved. Delivery quotes can now use this pin.');
+    } catch (e) {
+      app.toast(errText(e));
+    } finally {
+      setLocationSaving(false);
+    }
   };
   const chooseCover = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -355,6 +409,19 @@ export function GoodiesStorePage() {
           {COUNTRY_OPTIONS.filter(x => (x.name + ' ' + x.code).toLowerCase().includes(countryQuery.trim().toLowerCase())).map(x => <Pressable key={x.code} onPress={() => { set({ country: x.name }); setCountryOpen(false); }} style={{ paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: t.line, flexDirection: 'row', alignItems: 'center', gap: 12 }}><Text style={{ fontSize: 22 }}>{x.flag}</Text><Text style={{ color: t.ink, flex: 1 }}>{x.name}</Text><Text style={{ color: t.mute, fontWeight: '700' }}>{x.code}</Text></Pressable>)}
         </ScrollView>
       </SheetShell></Modal> : null}
+      <Section title="Store location" />
+      <View style={[s.cardFlat, { padding: 14, gap: 8 }]}>
+        <Text style={s.mut}>Stand at your shop entrance and capture its position. This gives delivery-distance quotes a precise starting point even when map services cannot find your street address.</Text>
+        {f.storeLatitude != null && f.storeLongitude != null ? <Text style={{ color: t.ink, fontWeight: '600' }}>Saved pin: {f.storeLatitude.toFixed(6)}, {f.storeLongitude.toFixed(6)}</Text> : <Text style={s.mut}>No store pin saved yet. Delivery distance may not work until you set one.</Text>}
+        <Btn kind="soft" label={f.storeLatitude != null && f.storeLongitude != null ? 'Update store location' : 'Use my current location'} onPress={captureStoreLocation} busy={locationBusy} disabled={locationBusy || locationSaving} />
+        {capturedLocation ? <View style={{ gap: 6, paddingTop: 4 }}>
+          <Text style={{ color: t.ink, fontWeight: '700' }}>Location captured — review before saving</Text>
+          <Text style={s.mut}>{capturedLocation.latitude.toFixed(6)}, {capturedLocation.longitude.toFixed(6)}{capturedLocation.accuracy != null ? ` · accuracy about ${Math.round(capturedLocation.accuracy)} m` : ''}</Text>
+          <Text style={s.mut}>Make sure you are physically at the shop. Save your address changes first if you edited the address above.</Text>
+          <Btn label="Save store location" onPress={saveStoreLocation} busy={locationSaving} disabled={locationSaving || locationBusy} />
+          <Btn small kind="soft" label="Discard captured location" onPress={() => setCapturedLocation(null)} disabled={locationSaving} />
+        </View> : null}
+      </View>
       <Section title="Custom products" />
       <View style={[s.row, { marginTop: 4 }]}>
         <Text style={[s.title, s.g]}>Allow custom products</Text>
