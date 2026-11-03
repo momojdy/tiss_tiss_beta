@@ -172,7 +172,7 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || '');
-  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><Empty emoji="🛒" title={label('lbl.cartEmptyTitle', 'Your cart is empty')} text={label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')} button={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View>;
+  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="shopping-bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
     <View>
@@ -181,7 +181,7 @@ export function Cart() {
         {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="700">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
         {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="700">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
-        <Card style={{marginTop: 12}}>
+        <View style={{marginTop:14,marginBottom:8,paddingVertical:10,borderBottomWidth:0.5,borderBottomColor:th.line}}>
           <Row sp>
             <View style={{flex:1}}>
               <T weight="800">Order time</T>
@@ -190,7 +190,7 @@ export function Cart() {
             {st.acceptScheduledOrders ? <Pressable onPress={() => require('../store').ui.sheet({kind:'schedule'})}><T size={13.5} weight="800" color={th.br}>{S.sch > Date.now() ? 'Change time' : 'Choose time'}</T></Pressable> : <Badge label="ASAP" />}
           </Row>
           {S.sch > Date.now() ? <Pressable onPress={() => setSch(0)} style={{alignSelf:'flex-start',marginTop:8}}><T size={12.5} weight="700" color={th.br}>Switch to ASAP</T></Pressable> : null}
-        </Card>
+        </View>
         {c.lines.map((l: any) => {
           const bad = l.byo ? lineBad(l) : '';
           return (
