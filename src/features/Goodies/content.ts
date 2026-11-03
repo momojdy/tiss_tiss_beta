@@ -46,7 +46,7 @@ export function loadContent(): Promise<void> {
       if (payload && payload.v === 5) {
         const assetByKey = new Map(remote.assets.map(a => [a.asset_key, a.url]));
         const previous = C;
-        const imageLists: Array<[string, string]> = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
+        const imageLists: [string, string][] = [['lib', 'img'], ['modes', 'img'], ['promos', 'img'], ['cats', 'art']];
         imageLists.forEach(([list, field]) => {
           (payload[list] || []).forEach((item: any) => {
             const image = item[field];
