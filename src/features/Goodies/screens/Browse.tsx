@@ -191,7 +191,7 @@ export function Home({onExit}: {onExit?: () => void}) {
    availability, category and product discovery together in one scrollable feed. */
 export function Explore() {
   const th = useTheme();
-  const [scope, setScope] = useState('closest');
+  const [scope, setScope] = useState('all');
   const [category, setCategory] = useState('all');
   const selectedAddress = addr();
   const eligible = ST.filter(s => category === 'all' || s.c === category);
@@ -202,8 +202,8 @@ export function Explore() {
   const distanceOf = (store: (typeof ST)[number]) => store.live && !store.distanceReady ? Number.POSITIVE_INFINITY : store.km;
   const visible = eligible.filter(s => scope !== 'open' || !!s.open).slice().sort((x, y) => {
     if (scope === 'closest') return distanceOf(x) - distanceOf(y);
-    if (scope === 'open') return distanceOf(x) - distanceOf(y);
-    return Number(!!y.open) - Number(!!x.open) || distanceOf(x) - distanceOf(y);
+    if (scope === 'open') return y.r - x.r || y.rv - x.rv;
+    return Number(!!y.open) - Number(!!x.open) || y.r - x.r || y.rv - x.rv;
   });
   const products = visible.flatMap(s => s.it.filter(i => !i.oos && i.stock > 0));
   const scopeOptions: [string, string][] = [['closest', label('lbl.browseScopeClosest', 'Closest')], ['open', label('lbl.browseScopeOpen', 'Open now')], ['all', label('lbl.browseScopeAll', 'All available')]];
