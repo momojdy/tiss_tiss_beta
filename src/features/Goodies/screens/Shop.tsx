@@ -52,7 +52,7 @@ export function Store({id}: {id: string}) {
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 10}}>
           <Cta small ghost label={label('lbl.storeInfo', 'Store info')} onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
           <Cta small ghost label={label('lbl.messageStore', 'Message store')} onPress={() => go('contact', {storeContact: true, storeId: id})} />
-          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder')} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={21} color={th.br} /></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder', id)} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={21} color={th.br} /></Pressable>
         </View>
         <View style={{marginTop: 14}}><Input value={S.ss[id] || ''} onChange={v => {S.ss[id] = v; emit();}} placeholder={label('lbl.storeSearch', 'Search in ' + s.n)} /></View>
       </View>
