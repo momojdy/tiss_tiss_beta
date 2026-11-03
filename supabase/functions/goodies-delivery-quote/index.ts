@@ -62,7 +62,7 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
     return { lat: Number(cached.latitude), lon: Number(cached.longitude) };
   }
 
-  const localityParts = parts.length > 2 ? parts.slice(-3, -1) : parts.slice(0, 1);
+  const localityParts = parts.length >= 4 ? parts.slice(-3, -1) : parts.length === 3 ? [parts[1]] : [];
   const streetSwap = parts.length > 3 && /\b(road|rd|street|st|avenue|ave|drive|dr|lane|ln|highway|hwy)\b/i.test(parts[1])
     ? [parts[1], parts[0], ...parts.slice(2)].join(", ")
     : "";
@@ -88,8 +88,7 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
         item?.city, item?.state, item?.county, item?.district, item?.suburb,
         item?.village, item?.municipality, item?.formatted,
       ].filter(Boolean).join(" ").toLocaleLowerCase();
-      const localityMatches = !localityParts.length ||
-        localityParts.some(part => locality.includes(part.toLocaleLowerCase()));
+      const localityMatches = !localityParts.length || locality.includes(localityParts[0].toLocaleLowerCase());
       return validPoint(item?.lat, item?.lon) &&
         (!expectedCountry || String(item?.country_code || "").toLowerCase() === expectedCountry) &&
         localityMatches;
