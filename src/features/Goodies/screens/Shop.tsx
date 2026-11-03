@@ -301,13 +301,29 @@ export function Checkout() {
       <T size={12.5} color={th.mut} style={{marginTop:4}}>{!S.hasWallet ? 'Create a Wantiss wallet or choose another payment method.' : 'Balance: ' + money(S.wallet) + ' · Add at least ' + money(Math.max(0, t.total - S.wallet)) + ' to continue.'}</T>
       <Pressable onPress={() => go('payments')} style={{alignSelf:'flex-start',paddingVertical:7}}><T size={13} weight="600" color={th.br}>{label('lbl.checkoutOpenWallet', 'Open Wallet')}</T></Pressable>
     </View> : null}
-    {S.pay === 'card' ? <Card style={{marginTop: 10}}>
-      <T weight="600">{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
-      {S.cards.length ? S.cards.map((card: any) => <Radio key={card.id} on={S.selectedCardId === card.id} onPress={() => setCard(card.id)}>
-        <Row><Icon name="card" size={20} color={th.ink} /><View style={{flex: 1}}><T size={13.5} weight="600">{card.b} •••• {card.l4}{card.isDefault ? ' · Default' : ''}</T><T size={11.5} color={th.mut}>{card.expiryMonth && card.expiryYear ? 'Expires ' + String(card.expiryMonth).padStart(2,'0') + '/' + card.expiryYear : 'Saved securely with Stripe'}</T></View></Row>
-      </Radio>) : <><Empty title={label('lbl.checkoutNoCards', 'No saved cards')} text={label("lbl.shopAuto1B7G8B0", "Add a card to your Wantiss Wallet to pay for Goodies orders.")} /><Cta label={label('lbl.checkoutAddCard', 'Add a card')} onPress={() => go('payments')} /></>}
+    {S.pay === 'card' ? <Card style={{marginTop: 10, padding: 12}}>
+      <T weight="600" style={{marginBottom: 10}}>{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
+      {S.cards.length ? S.cards.map((card: any) => <Pressable key={card.id} accessibilityRole="radio" accessibilityState={{checked:S.selectedCardId === card.id}} onPress={() => setCard(card.id)} style={{marginBottom:10,borderRadius:16,borderWidth:S.selectedCardId === card.id ? 2 : 1,borderColor:S.selectedCardId === card.id ? '#8FAF84' : th.line,overflow:'hidden'}}>
+        <View style={{backgroundColor:'#1A2517',padding:14,minHeight:104,justifyContent:'space-between'}}>
+          <Row sp><T size={11} weight="600" color="#ACC8A2">WANTISS · {String(card.b || 'CARD').toUpperCase()}</T>{card.isDefault ? <T size={10} weight="600" color="#ACC8A2">DEFAULT</T> : null}</Row>
+          <View style={{flexDirection:'row',alignItems:'center',gap:9}}>
+            <View style={{width:32,height:23,borderRadius:5,backgroundColor:'#ACC8A2',padding:4}}><View style={{flex:1,borderRadius:2,backgroundColor:'rgba(26,37,23,0.16)'}} /></View>
+            <T size={15} weight="600" color="#FFFFFF">••••  ••••  ••••  {card.l4}</T>
+          </View>
+          <Row sp><T size={10} color="#ACC8A2">{card.expiryMonth && card.expiryYear ? 'EXP ' + String(card.expiryMonth).padStart(2,'0') + '/' + String(card.expiryYear).slice(-2) : 'SAVED CARD'}</T><T size={11} weight="600" color="#ACC8A2">WANTISS</T></Row>
+        </View>
+        <View style={{paddingHorizontal:12,paddingVertical:10,backgroundColor:S.selectedCardId === card.id ? '#EAF2E5' : th.soft,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+          <T size={13} weight="600">{card.b} ending in {card.l4}</T>
+          <Icon name={S.selectedCardId === card.id ? 'checkCircle' : 'circle'} size={19} color={S.selectedCardId === card.id ? '#557B4C' : th.mut}/>
+        </View>
+      </Pressable>) : <View style={{alignItems:'center',paddingVertical:20,paddingHorizontal:10}}>
+        <View style={{width:62,height:62,borderRadius:20,backgroundColor:'#DCE8D2',alignItems:'center',justifyContent:'center',marginBottom:10}}><Icon name="card" size={30} color="#1A2517"/></View>
+        <T weight="600">{label('lbl.checkoutNoCards', 'No saved cards yet')}</T>
+        <T size={12.5} color={th.mut} align="center" style={{marginTop:5,lineHeight:18}}>{S.hasWallet ? 'Add a debit or credit card to your Wantiss Wallet to pay here.' : 'Your Wantiss Wallet is not set up yet. Create your wallet to add and use saved cards.'}</T>
+        <Cta label={S.hasWallet ? label('lbl.checkoutAddCard', 'Add a card') : 'Create wallet'} onPress={() => go('payments')} />
+      </View>}
     </Card> : null}
-    {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>{label("lbl.shopAuto12HC9JV", "Demo only. No real payment is taken.")}</T>}
+    {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your payment is processed securely.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>{label("lbl.shopAuto12HC9JV", "Demo only. No real payment is taken.")}</T>}
   </>);
   if (S.cs === 3) body = (<>
     <Card>{st.cover ? <Image source={{uri:st.cover}} style={{width:"100%",height:100,borderRadius:12,marginBottom:10}} resizeMode="cover" /> : null}<Row style={{gap:10, alignItems:"center"}}><Tile e={st.e} bg={st.bg} size={46} photo={st.thumbnail || st.logo} /><View style={{flex:1}}><T weight="600">{st.n}</T><T size={12} color={th.mut}>Your order from this store</T></View></Row>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 10, alignItems: "center"}}><Row style={{flex:1, gap:9, alignItems:"center"}}><Tile e={l.e} bg="bg0" size={42} photo={l.photo} /><View style={{flex:1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View></Row><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
