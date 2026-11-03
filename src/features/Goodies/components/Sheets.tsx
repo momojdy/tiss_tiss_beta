@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share} from 'react-native';
-import {T, Cta, Row, Card, Badge, Input, Radio, SheetBox, Bar, useTheme} from './ui';
+import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
@@ -229,7 +229,7 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
   </View>;
 }
 
-function GroupOrderSheet({close}: {close: () => void}) {
+function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () => void; showTitle?: boolean; showDone?: boolean}) {
   const th = useTheme();
   const [inviteCode, setInviteCode] = useState('');
   const [groupBusy, setGroupBusy] = useState(false);
@@ -388,7 +388,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     setCheckoutPreview(data);
   };
   return <>
-    <T size={21} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T>
+    {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
     {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={104} backgroundColor="#FFFFFF" color="#111111"/></View> : null}
@@ -470,10 +470,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={15} weight="600">Checkout</T>
 
       <View style={{height:10}}/>
-      <Row style={{gap:8}}>
-        <View style={{flex:1}}><Radio on={groupCheckoutType==='pickup'} onPress={()=>{setGroupCheckoutType('pickup');setGroupDeliveryQuote(null);void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}}>Pickup</Radio></View>
-        <View style={{flex:1}}><Radio on={groupCheckoutType==='delivery'} onPress={()=>setGroupCheckoutType('delivery')}>Delivery</Radio></View>
-      </Row>
+      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.id,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(error.message||'Could not calculate the payment estimate.');}else setCheckoutEstimate(data);});}} />
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
         <T size={12} weight="600" style={{marginBottom:6}}>Deliver to</T>
         {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
