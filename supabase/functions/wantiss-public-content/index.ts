@@ -9,9 +9,8 @@ const headers = {
 const reply = (status: number, body: Record<string, unknown>): Response =>
   new Response(JSON.stringify(body), { status, headers: { ...headers, "Content-Type": "application/json", "Cache-Control": "no-store" } });
 
-function stableAssetUrl(requestUrl: string, key: string, value: string) {
-  const url = new URL(requestUrl);
-  url.search = "";
+function stableAssetUrl(projectUrl: string, key: string, value: string) {
+  const url = new URL("/functions/v1/wantiss-public-content", projectUrl);
   url.searchParams.set(key, value);
   return url.toString();
 }
@@ -70,14 +69,14 @@ Deno.serve(async (req: Request) => {
 
   const publishedAssets = (assets || []).map(asset => ({
     ...asset,
-    url: stableAssetUrl(req.url, "asset_file", asset.asset_key),
+    url: stableAssetUrl(url, "asset_file", asset.asset_key),
   }));
   const { data: brand } = await admin.from("wantiss_admin_branding")
     .select("brand_name,logo_storage_path,wordmark_storage_path,updated_at").eq("id", 1).maybeSingle();
   const branding = {
     name: brand?.brand_name || "Wantiss",
-    logo_url: brand?.logo_storage_path ? stableAssetUrl(req.url, "brand_asset", "logo") : null,
-    wordmark_url: brand?.wordmark_storage_path ? stableAssetUrl(req.url, "brand_asset", "wordmark") : null,
+    logo_url: brand?.logo_storage_path ? stableAssetUrl(url, "brand_asset", "logo") : null,
+    wordmark_url: brand?.wordmark_storage_path ? stableAssetUrl(url, "brand_asset", "wordmark") : null,
     updated_at: brand?.updated_at || null,
   };
   return new Response(JSON.stringify({ content: content || [], assets: publishedAssets, branding }), {
