@@ -164,10 +164,10 @@ export async function placeOrder() {
     S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
   }
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
-    S.busy = 0; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); emit(); return;
+    S.busy = 0; S.cs = 2; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;
   }
   if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {
-    S.busy = 0; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); push('payments'); emit(); return;
+    S.busy = 0; S.cs = 2; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;
   }
   let deliveryQuoteId: string | null = null;
   if (!providerInfo.demo && !pk) {
@@ -227,8 +227,8 @@ export async function placeOrder() {
   if (!providerInfo.demo && S.pay === 'wallet' && !walletVerifiedAfterQuote) {
     S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
   }
-  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); return;}
-  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); push('payments'); return;}
+  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {S.cs = 3; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;}
+  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {S.cs = 3; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;}
   const alc = hasAlcohol();
   if (alc && !S.alcConsent) {toast(label('lbl.actionConfirmAlcohol', 'Please confirm the alcohol rules to continue')); return;}
   if (alc && !S.hasWallet) {toast(label('lbl.actionCreateWalletAlcohol', 'Create your Wantiss wallet first. Refunds for alcohol orders go there.')); push('payments'); return;}
