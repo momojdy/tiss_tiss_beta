@@ -357,9 +357,6 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
     if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
-    if(!S.hasWallet){toast('Your Wantiss Wallet is not available. Create a wallet before placing this group order.');return;}
-    const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
-    if(estimatedTotal>0&&S.wallet<estimatedTotal){toast('Insufficient Wantiss Wallet balance. Add '+money(estimatedTotal-S.wallet)+' or choose another payment method.');return;}
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
     try {
