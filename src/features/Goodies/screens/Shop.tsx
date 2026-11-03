@@ -173,11 +173,11 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || ''), [scheduleOpen, setScheduleOpen] = useState(false);
-  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
+  if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View><Pressable accessibilityRole="button" accessibilityLabel="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{width:'100%',flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:12,paddingVertical:15,paddingHorizontal:16,borderRadius:14,backgroundColor:th.soft,borderWidth:1,borderColor:th.line}}><Icon name="users" size={20} color={th.br}/><T size={14.5} weight="600" color={th.br}>Group order</T></Pressable></View></View>;
   const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
   return (
     <View>
-      <Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Row style={{gap:10}}><Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} /><Circ icon="trash" label={label('lbl.cartClearAction', 'Clear cart')} onPress={clearAsk} /></Row>} />
+      <Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="trash" label={label('lbl.cartClearAction', 'Clear cart')} onPress={clearAsk} />} />
       <View style={{paddingHorizontal: 16}}>
         {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="600">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
@@ -211,6 +211,10 @@ export function Cart() {
           );
         })}
         <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 0.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="600" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel="Start a group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{flexDirection:'row',alignItems:'center',justifyContent:'center',gap:10,marginTop:10,paddingVertical:15,paddingHorizontal:16,borderRadius:14,backgroundColor:th.soft,borderWidth:1,borderColor:th.line}}>
+          <Icon name="users" size={20} color={th.br}/>
+          <T size={14.5} weight="600" color={th.br}>Group order</T>
+        </Pressable>
         {hasAlcohol() ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 14}}><T weight="600">{label('lbl.cartAlcoholHeading', 'Your order includes alcohol')}</T><T size={13} color={th.mut} style={{marginTop: 3}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(c.sid).age)}</T></Card> : null}
         <Ttl>{label('lbl.cartPromoTitle', 'Promo code')}</Ttl>
         {S.promo ? (
@@ -254,8 +258,8 @@ export function Checkout() {
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf() || {ph: S.pf?.ph || '', l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
-  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
-  if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
+  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
+  if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
   let body: any = null;
   if (S.cs === 0) body = (<>
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
@@ -319,7 +323,7 @@ export function Checkout() {
   </>);
   return (
     <View>
-      <Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} />
+      <Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <View style={{flexDirection: 'row', gap: 6, marginBottom: 6}}>{stp.map((x, n) => <View key={x} style={{flex: 1, alignItems: 'center'}}><View style={{height: 5, borderRadius: 3, alignSelf: 'stretch', backgroundColor: n <= S.cs ? th.br : th.line}} /><T size={11.5} weight={n === S.cs ? '800' : '500'} style={{marginTop: 5}}>{x}</T></View>)}</View>
         {body}
