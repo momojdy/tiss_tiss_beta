@@ -157,6 +157,14 @@ export async function placeOrder() {
   if (!pk && (!a || !a.t)) {toast(label('lbl.actionChooseAddress', 'Choose a delivery address')); S.cs = 0; emit(); return;}
   const ct = ctOf();
   if (!phoneOK(ct.ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); S.cs = 0; emit(); return;}
+  // Refresh the wallet before doing delivery routing so an insufficient balance
+  // is explained immediately instead of being masked by an unrelated quote error.
+  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
+    S.busy = 0; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); emit(); return;
+  }
+  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {
+    S.busy = 0; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); push('payments'); emit(); return;
+  }
   let deliveryQuoteId: string | null = null;
   if (!providerInfo.demo && !pk) {
     const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst};
@@ -168,8 +176,16 @@ export async function placeOrder() {
         body: {store_id: S.cart.sid, address: addressPayload},
       });
       if (quoteResult.error || !quoteResult.data?.quote_id) {
+        let detail = quoteResult.data?.error || '';
+        const response = quoteResult.error?.context;
+        if (!detail && response && typeof response.clone === 'function') {
+          try {
+            const payload = await response.clone().json();
+            detail = String(payload?.error || payload?.message || '');
+          } catch { /* use the SDK message below when the response has no JSON body */ }
+        }
         S.busy = 0;
-        toast(quoteResult.data?.error || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
+        toast(detail || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
         emit();
         return;
       }
