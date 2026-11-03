@@ -63,7 +63,7 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
   }
 
   const localityParts = parts.length > 2 ? parts.slice(-3, -1) : parts.slice(0, 1);
-  const streetSwap = parts.length > 3 && /\\b(road|rd|street|st|avenue|ave|drive|dr|lane|ln|highway|hwy)\\b/i.test(parts[1])
+  const streetSwap = parts.length > 3 && /\b(road|rd|street|st|avenue|ave|drive|dr|lane|ln|highway|hwy)\b/i.test(parts[1])
     ? [parts[1], parts[0], ...parts.slice(2)].join(", ")
     : "";
   const candidates = Array.from(new Set([
