@@ -137,7 +137,8 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const customerDayStart = (offset:number) => {const d=new Date(customerNow);d.setHours(0,0,0,0);d.setDate(d.getDate()+offset);return d;};
   const slotsForDay = (offset:number) => {
     const start=customerDayStart(offset), end=new Date(start);end.setDate(end.getDate()+1);
-    let cursor=Math.max(start.getTime(),Math.ceil(Date.now()/300000)*300000);
+    // Keep a five-minute safety margin so the database cannot reject a slot selected at the edge of "now".
+    let cursor=Math.max(start.getTime(),Math.ceil((Date.now()+5*60_000)/300000)*300000);
     const slots:Date[]=[];
     for(;cursor<end.getTime();cursor+=300000){const candidate=new Date(cursor);if(isAvailableInstant(candidate))slots.push(candidate);}
     return slots;
@@ -158,7 +159,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const validDigits=/^\d{1,2}$/.test(customHour)&&/^\d{1,2}$/.test(customMinute)&&rawHour>=0&&rawHour<=23&&rawMinute>=0&&rawMinute<=59;
   const customDate=new Date(selectedDate);if(validDigits)customDate.setHours(rawHour,rawMinute,0,0);
   const customInstant=validDigits?new Date(customDate):new Date(0);
-  const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now();
+  const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now()+60_000;
   const selected=customValid?customInstant.getTime():0;
   const noFutureSlot=!availableSlots.length;
   const reason=noFutureSlot?label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.') : !customValid?label('lbl.sheetClampEarliest','Choose the minimum available time or a later available time.'):'';
