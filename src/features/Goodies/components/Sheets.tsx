@@ -387,7 +387,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
     {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
-      <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
+      <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
@@ -505,7 +505,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
-    <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={async () => {
+    {group.serverBacked && group.groupId ? <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={async () => {
       if (!group.serverBacked || !group.groupId) {toast('This group invitation is not server-backed.');return;}
       setGroupBusy(true);
       const {data,error}=await supabase.rpc('goodies_group_order_end',{p_group_id:group.groupId});
@@ -513,7 +513,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       if(error){toast(error.message||'Could not end this group order.');return;}
       S.groupOrder=null; save(); emit(); close();
       toast('Group order ended.');
-    }} />
+    }} /> : null}
     <Modal visible={scannerOpen} animationType="slide" onRequestClose={()=>setScannerOpen(false)}>
       <View style={{flex:1,backgroundColor:'#000000'}}>
         <CameraView style={{flex:1}} facing="back" barcodeScannerSettings={{barcodeTypes:['qr']}} onBarcodeScanned={({data})=>{
