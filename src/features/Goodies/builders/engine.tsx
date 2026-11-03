@@ -263,7 +263,7 @@ function ByoRow({b, s}: {b: Builder; s: any}) {
   const th = useTheme(), ok = b.available && s.open;
   let mn = b.sizes.filter(z => z.avail).reduce((a, z) => Math.min(a, z.add), 1e9); if (mn === 1e9) mn = 0;
   return (
-    <Pressable disabled={!ok} onPress={() => byoOpen(s.id, b.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: th.line, opacity: ok ? 1 : 0.55}}>
+    <Pressable disabled={!ok} onPress={() => byoOpen(s.id, b.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, borderBottomWidth: 0.5, borderBottomColor: th.line, opacity: ok ? 1 : 0.55}}>
       <Tile e={b.emoji} bg="bg3" />
       <View style={{flex: 1}}>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 6, flexWrap: 'wrap'}}><T weight="600">{b.name}</T><View style={{backgroundColor: th.brt, borderRadius: 9, paddingHorizontal: 8, paddingVertical: 2}}><T size={11} weight="600" color={th.brd}>{label('lbl.storeCustom', 'Customizable')}</T></View></View>
