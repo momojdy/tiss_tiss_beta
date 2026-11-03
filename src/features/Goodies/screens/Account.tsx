@@ -183,13 +183,14 @@ function Addresses() {
 }
 
 function StoreChat({id}: {id: string}) {
-  const th = useTheme(), store = STB[id], listRef = useRef<ScrollView>(null);
+  const th = useTheme(), store = STB[id], listRef = useRef<ScrollView>(null), userIdRef = useRef('');
   const [userId, setUserId] = useState(''), [conversationId, setConversationId] = useState(''), [messages, setMessages] = useState<any[]>([]);
   const [draft, setDraft] = useState(''), [loading, setLoading] = useState(true), [sending, setSending] = useState(false), [problem, setProblem] = useState(''), [attempt, setAttempt] = useState(0);
   const loadMessages = async (cid: string) => {
     const {data, error} = await supabase.from('messages').select('id,sender_id,body,created_at').eq('conversation_id', cid).order('created_at', {ascending: true});
     if (error) throw error;
     setMessages(data || []);
+    if ((data || []).some((m: any) => m.sender_id !== userIdRef.current)) void supabase.rpc('mark_conversation_read', {p_conv: cid});
   };
   useEffect(() => {
     let active = true;
@@ -200,7 +201,7 @@ function StoreChat({id}: {id: string}) {
         const user = auth.user;
         if (!user) throw new Error(label('lbl.chatErrSignIn', 'Sign in to message this store. Your conversation will appear here after you sign in.'));
         if (!active) return;
-        setUserId(user.id);
+        setUserId(user.id); userIdRef.current = user.id;
         const {data: cid, error: conversationError} = await supabase.rpc('goodies_start_store_conversation', {
           p_store_id: id,
           p_customer_name: S.pf.n || 'Customer',
@@ -230,8 +231,6 @@ function StoreChat({id}: {id: string}) {
       // metadata failure cannot lead the customer to accidentally resend the same message.
       setDraft('');
       await loadMessages(conversationId);
-      const {error: threadError} = await supabase.from('conversations').update({last_body: body, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-      if (threadError) setProblem(label('lbl.chatErrSentNotRefreshed', 'Your message was sent, but the store conversation could not be refreshed. Please try again later.'));
     } catch (e: any) { setProblem(e?.message || label('lbl.chatErrSend', 'Message could not be sent.')); }
     finally { setSending(false); }
   };
@@ -246,7 +245,7 @@ function StoreChat({id}: {id: string}) {
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
           {chatActivated ? messages.map(m => {const mine = m.sender_id === userId; return <View key={m.id} style={{maxWidth: '82%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? th.br : th.soft, borderRadius: 16, paddingHorizontal: 13, paddingVertical: 10}}><T size={14} color={mine ? '#FFFFFF' : th.ink}>{m.body}</T><T size={10} color={mine ? '#FFFFFF' : th.mut} style={{marginTop: 4}}>{new Date(m.created_at).toLocaleString()}</T></View>;}) : <View style={{paddingVertical: 16, gap: 10}}>
             <View style={{alignItems: 'center', padding: 18}}><Text style={{fontSize: 42}}>✉️</Text><T weight="800" style={{marginTop: 6}}>{label('lbl.chatContactStore', 'Contact the store')}</T><T size={13} color={th.mut} align="center" style={{marginTop: 5}}>{label('lbl.chatFirstMessageHint', 'Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies.')}</T></View>
-            {customerMessages.length ? <Card><T size={13} weight="800">{label('lbl.chatMessagesSent', 'Messages sent')}</T>{customerMessages.map(m => <View key={m.id} style={{paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: th.line}}><T size={13.5}>{m.body}</T><T size={10.5} color={th.mut} style={{marginTop: 3}}>{new Date(m.created_at).toLocaleString()}</T></View>)}</Card> : null}
+            {customerMessages.length ? <Card><T size={12.5} color={th.mut} style={{marginBottom:6}}>{label('lbl.chatWaitingStore', 'Waiting for the store to reply. The chat opens here as soon as they respond.')}</T><T size={13} weight="800">{label('lbl.chatMessagesSent', 'Messages sent')}</T>{customerMessages.map(m => <View key={m.id} style={{paddingVertical: 8, borderBottomWidth: 1, borderBottomColor: th.line}}><T size={13.5}>{m.body}</T><T size={10.5} color={th.mut} style={{marginTop: 3}}>{new Date(m.created_at).toLocaleString()}</T></View>)}</Card> : null}
           </View>}
         </ScrollView>
         <View style={{flexDirection: 'row', alignItems: 'flex-end', gap: 8, padding: 12, borderTopWidth: 1, borderTopColor: th.line}}>
@@ -287,8 +286,6 @@ function Contact({p}: {p: any}) {
         const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
         const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
         if (messageError) throw messageError;
-        const {error: threadError} = await supabase.from('conversations').update({last_body: ticketBody, updated_at: new Date().toISOString(), unread_business: 1}).eq('id', conversationId);
-        if (threadError) toast(label('lbl.contactErrSentNotRefreshed', 'Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond.'));
       } else {
         const {data: auth, error: authError} = await supabase.auth.getUser();
         if (authError) throw authError;

@@ -19,13 +19,13 @@ import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, 
 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
-  const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('id', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
+  const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
   const rows = (c.d ?? []).filter(x => f === 'All' || x.feature === f);
   return (
     <Pg title="Messages" onBack={app.back} refreshing={c.l && !!c.d} onRefresh={app.bump}>
       <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={f} onChange={setF} />
       {c.e ? <ErrBox e={c.e} retry={c.reload} /> : c.l && !c.d ? <Loading /> : rows.length ? (
-        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
+        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · awaiting your reply · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
       ) : <View style={s.card}><Empty icon="chat-outline" title="No conversations yet" hint="Customer messages about your listings and orders appear here." /></View>}
     </Pg>
   );
@@ -39,7 +39,7 @@ export function ConversationPage() {
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
     setSending(true);
-    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); await q(supabase.from('conversations').update({ last_body: body, updated_at: new Date().toISOString(), unread_customer: 1 }).eq('id', id)); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
+    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
   };
   const c = conv.d;
   return (
