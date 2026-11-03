@@ -200,7 +200,7 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
   </View>;
 }
 
-function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () => void; showTitle?: boolean; showDone?: boolean}) {
+function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''}: {close: () => void; showTitle?: boolean; showDone?: boolean; storeId?: string}) {
   const th = useTheme();
   const [inviteCode, setInviteCode] = useState('');
   const [groupBusy, setGroupBusy] = useState(false);
@@ -235,14 +235,14 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
   });
   const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
   const createServerGroup = async () => {
-    if (!S.cart.sid) {toast('Add an item from a store first, then create its group order.');return;}
+    const targetStoreId = storeId || S.cart.sid || group.storeId || '';\n    if (!targetStoreId) {toast('Open a store first to create its group invitation.');return;}\n    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast('Your current cart belongs to another store. Clear it before creating this group.');return;}
     setGroupBusy(true);
     try {
-      const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
+      const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:targetStoreId});
       const row=Array.isArray(data)?data[0]:data;
       if(error||!row?.invite_code) throw error || new Error('Could not create the group invitation.');
-      saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
-      const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
+      saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:targetStoreId,expiresAt:row.expires_at,serverBacked:true});
+      const synced=await Promise.all((S.cart.sid === targetStoreId ? S.cart.lines : []).map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
       const failed=synced.find((result:any)=>result.error);
       if(failed)toast('Group created, but one or more cart items could not be shared: '+failed.error.message);
       toast('A new group invitation is ready.');
@@ -381,7 +381,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
   };
   return <>
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
-    {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
+    {(S.cart.lines.length > 0 || group.serverBacked || !!storeId) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:14,marginTop:8,marginBottom:4,borderRadius:16,backgroundColor:th.soft}}>
         <QRCode value={'wantiss://goodies/group?code='+encodeURIComponent(group.code)} size={156} backgroundColor="#FFFFFF" color="#111111"/>
@@ -526,11 +526,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
   </>;
 }
 
-export function GroupOrderPage({onBack}: {onBack: () => void}) {
+export function GroupOrderPage({onBack, storeId = ''}: {onBack: () => void; storeId?: string}) {
   const th = useTheme();
   return <View style={{flex: 1, backgroundColor: th.bg}}>
     <Bar title={label('lbl.sheetGroupTitle', 'Group order')} onBack={onBack} />
-    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32}} keyboardShouldPersistTaps="handled"><GroupOrderSheet close={onBack} showTitle={false} showDone={false} /></ScrollView>
+    <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingTop: 16, paddingBottom: 32}} keyboardShouldPersistTaps="handled"><GroupOrderSheet close={onBack} showTitle={false} showDone={false} storeId={storeId} /></ScrollView>
   </View>;
 }
 
