@@ -155,7 +155,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const earliestInstant=availableSlots[0] || null;
   const earliestWall=earliestInstant ? new Date(earliestInstant) : selectedDate;
   const rawHour=Number(customHour),rawMinute=Number(customMinute);
-  const validDigits=/^\\d{1,2}$/.test(customHour)&&/^\\d{1,2}$/.test(customMinute)&&rawHour>=0&&rawHour<=23&&rawMinute>=0&&rawMinute<=59;
+  const validDigits=/^\d{1,2}$/.test(customHour)&&/^\d{1,2}$/.test(customMinute)&&rawHour>=0&&rawHour<=23&&rawMinute>=0&&rawMinute<=59;
   const customDate=new Date(selectedDate);if(validDigits)customDate.setHours(rawHour,rawMinute,0,0);
   const customInstant=validDigits?new Date(customDate):new Date(0);
   const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now();
