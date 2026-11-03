@@ -54,7 +54,7 @@ export function ConfirmDialog({visible, onClose, children, accessibilityLabel = 
     <Modal transparent visible={visible} animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,.5)', justifyContent: 'center', alignItems: 'center', paddingHorizontal: 22, paddingVertical: 24}}>
         <Pressable accessibilityRole="button" accessibilityLabel={accessibilityLabel} onPress={onClose} style={{position: 'absolute', top: 0, left: 0, right: 0, bottom: 0}} />
-        <Animated.View accessibilityViewIsModal style={{width: '100%', maxWidth: 360, maxHeight: '80%', flexShrink: 1, minHeight: 0, transform: [{scale}]}}>
+        <Animated.View accessibilityViewIsModal style={{width: '100%', maxWidth: 360, maxHeight: '86%', flexShrink: 0, minHeight: 220, transform: [{scale}]}}>
           {children}
         </Animated.View>
       </View>
