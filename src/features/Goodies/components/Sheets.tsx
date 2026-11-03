@@ -156,7 +156,7 @@ function ScheduleSheet({close}: {close: () => void}) {
   earliestWall.setHours(Math.floor(earliestMinute/60),Math.ceil((earliestMinute%60)/5)*5,0,0);
   const earliestInstant = zonedInstant(earliestWall);
   const rawHour = Number(customHour), rawMinute = Number(customMinute);
-  const validDigits = /^\\d{1,2}$/.test(customHour) && /^\\d{1,2}$/.test(customMinute) && rawHour>=0 && rawHour<=23 && rawMinute>=0 && rawMinute<=59;
+  const validDigits = /^\d{1,2}$/.test(customHour) && /^\d{1,2}$/.test(customMinute) && rawHour>=0 && rawHour<=23 && rawMinute>=0 && rawMinute<=59;
   const customDate = new Date(selectedDate);
   if (validDigits) customDate.setHours(rawHour,rawMinute,0,0);
   const customMinutes = customDate.getHours()*60+customDate.getMinutes();
@@ -574,9 +574,9 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
   const save_ = () => {
     const p = ph.trim();
     if (!phoneOK(p)) return toast(label('lbl.sheetPhoneInvalid', 'Enter a valid phone number (8 to 15 digits)'));
-    const dg = p.replace(/\\D/g, '');
-    if (dg === S.pf.ph.replace(/\\D/g, '')) return toast(label('lbl.sheetSameWantissPhone', 'That is already your Wantiss number'));
-    if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\\D/g, '') === dg)) return toast(label('lbl.sheetDuplicateNumber', 'You already saved that number'));
+    const dg = p.replace(/\D/g, '');
+    if (dg === S.pf.ph.replace(/\D/g, '')) return toast(label('lbl.sheetSameWantissPhone', 'That is already your Wantiss number'));
+    if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\D/g, '') === dg)) return toast(label('lbl.sheetDuplicateNumber', 'You already saved that number'));
     const cc = S.gc.filter((x: any) => x.id == id)[0];
     if (cc) {cc.ph = p; cc.l = l.trim();} else {const n = {id: Date.now(), ph: p, l: l.trim()}; S.gc.push(n); S.cc = n.id;}
     toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout')); save(); emit(); ui.sheet({kind: 'contacts'});
