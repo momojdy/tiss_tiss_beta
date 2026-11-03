@@ -211,7 +211,7 @@ function ScheduleSheet({close}: {close: () => void}) {
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
     <T size={13} weight="800" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
     <View style={{alignItems:'center',paddingVertical:4}}>
-      <DateTimePicker value={customDate} mode="time" display="spinner" minuteInterval={5}
+      <DateTimePicker value={customDate} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5}
         onChange={(_,date)=>{if(!date)return;setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(Math.round(date.getMinutes()/5)*5%60).padStart(2,'0'));}} />
     </View>
     {reason ? <T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T> : null}
