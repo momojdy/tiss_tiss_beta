@@ -260,6 +260,8 @@ Deno.serve(async (req: Request) => {
     return reply({
       quote_id: quotes.length === 1 ? quotes[0].id : undefined,
       fee: quotes.length === 1 ? deliveryTotal : undefined,
+      distance_m: routes.length === 1 ? routes[0].distance_m : undefined,
+      distance_km: routes.length === 1 ? routes[0].distance_km : undefined,
       quote_ids: quotes.map((quote: any) => quote.id), quotes,
       stores: routes.map(({ store_id, distance_m, distance_km }) => ({ store_id, distance_m, distance_km })),
       base_delivery_fee: Math.round(baseTotal * 100) / 100,
