@@ -38,3 +38,6 @@ verify_jwt = true
 
 [functions.process-goodies-card-refunds]
 verify_jwt = false
+
+[functions.goodies-delivery-quote]
+verify_jwt = true
