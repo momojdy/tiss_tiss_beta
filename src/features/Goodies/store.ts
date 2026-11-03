@@ -121,7 +121,7 @@ function liveStore(r: any, items: Item[]): Store {
     id, businessId: String(r.business_id), c: r.category || 'groceries', e: CAT_EMOJI[r.category] || '🛍️', bg: bgOf(id), r: 0, rv: 0, km: 0, km0: 0,
     eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
     pr: r.promo || '', k: r.kind || '', it: items, open: st.open, h: st.h, nx: st.nx, far: false, live: true,
-    logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, acceptScheduledOrders: !!r.accept_scheduled_orders,
+    logo: r.logo_url || null, cover: r.cover_url || null, thumbnail: r.thumbnail_url || null, storeLatitude: r.store_latitude == null ? null : Number(r.store_latitude), storeLongitude: r.store_longitude == null ? null : Number(r.store_longitude), acceptScheduledOrders: !!r.accept_scheduled_orders,
     scheduledOrderStartTime: String(r.scheduled_order_start_time || '10:00').slice(0,5), scheduledOrderTimezone: String(r.scheduled_order_timezone || Intl.DateTimeFormat().resolvedOptions().timeZone), scheduleHours: r.hours || undefined,
     businessName: r.store_name || '', businessDescription: r.description || '', businessPhone: r.phone || '', businessEmail: r.email || '', businessWebsite: r.website || '',
     businessAddress: r.address || '', businessCity: r.city || '', businessCountry: r.country || '', businessDeliveryModes: Array.isArray(r.delivery_modes) ? r.delivery_modes : [], businessLogoUrl: r.logo_url || '', acceptCashOnDelivery: !!r.accept_cash_on_delivery, deliveryPricingMode: r.delivery_pricing_mode === 'distance' ? 'distance' : 'fixed', maxDeliveryDistanceKm: r.delivery_max_distance_km == null ? null : Number(r.delivery_max_distance_km), distanceReady: false, distanceAddressKey: '', distanceError: '',
@@ -380,6 +380,7 @@ export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid
 const distanceAddressKey = (address: Address) => JSON.stringify({
   t: address.t, apt: address.apt, inst: address.inst,
   city: address.city, department: address.department, country: address.country,
+  location: S.currentLocation && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? [S.currentLocation.latitude, S.currentLocation.longitude] : null,
 });
 const currentDistanceAddressKey = () => {
   const current = addr();
@@ -392,9 +393,11 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     store?.live && (!store.distanceReady || store.distanceAddressKey !== addressKey));
   if (!pending.length) return Object.fromEntries(storeIds.map(id => [id, STB[id]?.km ?? null]));
   pending.forEach(store => { store.distanceError = ''; });
+  const location = S.currentLocation && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? S.currentLocation : null;
   const payloadAddress = {
     t: address.t, apt: address.apt, inst: address.inst,
     city: address.city, department: address.department, country: address.country,
+    ...(location ? {latitude: location.latitude, longitude: location.longitude} : {}),
   };
   const distances: Record<string, number | null> = {};
   for (let offset = 0; offset < pending.length; offset += 8) {
@@ -418,7 +421,14 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
         distances[store.id] = null;
         return;
       }
-      store.km = meters / 1000;
+      const gps = location && Number.isFinite(Number(store.storeLatitude)) && Number.isFinite(Number(store.storeLongitude)) ? location : null;
+      if (gps) {
+        const rad = (degrees: number) => degrees * Math.PI / 180;
+        const dLat = rad(Number(store.storeLatitude) - Number(gps.latitude));
+        const dLon = rad(Number(store.storeLongitude) - Number(gps.longitude));
+        const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(Number(gps.latitude))) * Math.cos(rad(Number(store.storeLatitude))) * Math.sin(dLon / 2) ** 2;
+        store.km = 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      } else store.km = meters / 1000;
       store.far = row.outside_delivery_area === true ||
         (store.maxDeliveryDistanceKm != null && store.km > store.maxDeliveryDistanceKm);
       store.distanceReady = true;
