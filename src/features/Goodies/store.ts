@@ -386,7 +386,16 @@ export async function refreshStoreDistance(storeId: string, address: Address | n
   const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
     body: {store_id: storeId, address: {t: address.t, apt: address.apt, inst: address.inst, city: address.city, department: address.department, country: address.country}, distance_only: true},
   });
-  if (error) {store.distanceError = error.message || 'Distance is unavailable for this address.'; emit(); throw error;}
+  if (error) {
+    if (JSON.stringify({t: addr()?.t, apt: addr()?.apt, inst: addr()?.inst, city: addr()?.city, department: addr()?.department, country: addr()?.country}) === addressKey) {
+      store.distanceError = error.message || 'Distance is unavailable for this address.';
+      emit();
+    }
+    throw error;
+  }
+  const currentAddress = addr();
+  const currentAddressKey = currentAddress ? JSON.stringify({t: currentAddress.t, apt: currentAddress.apt, inst: currentAddress.inst, city: currentAddress.city, department: currentAddress.department, country: currentAddress.country}) : '';
+  if (currentAddressKey !== addressKey) return null;
   const distanceMeters = data?.distance_m == null ? NaN : Number(data.distance_m);
   const distance = data?.distance_km == null ? NaN : Number(data.distance_km);
   const meters = Number.isFinite(distanceMeters) && distanceMeters >= 0 ? Math.round(distanceMeters) : Number.isFinite(distance) && distance >= 0 ? Math.round(distance * 1000) : NaN;
@@ -403,7 +412,7 @@ export function applyZone() {
   const z = addr()?.z || 0, d = Math.round(z * 3);
   ST.forEach(s => {
     /* Live stores have no geo data yet, so no invented distance or ETA padding. */
-    if (s.live) {const a = addr(); const key = a ? JSON.stringify({t:a.t,apt:a.apt,inst:a.inst}) : ''; if (s.distanceAddressKey !== key) {s.km = 0; s.distanceReady = false; s.distanceError = ''; s.distanceAddressKey = key;} s.eta = s.eta0; s.far = false; return;}
+    if (s.live) {const a = addr(); const key = a ? JSON.stringify({t:a.t,apt:a.apt,inst:a.inst,city:a.city,department:a.department,country:a.country}) : ''; if (s.distanceAddressKey !== key) {s.km = 0; s.distanceReady = false; s.distanceError = ''; s.distanceAddressKey = key;} s.eta = s.eta0; s.far = false; return;}
     s.km = Math.round((s.km0 + z) * 10) / 10;
     const q = s.eta0.split('–');
     s.eta = (+q[0] + d) + '–' + (+q[1] + d);
