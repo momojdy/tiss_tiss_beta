@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+const PUBLISHED_ASSET_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 
 const headers = {
@@ -24,9 +25,9 @@ Deno.serve(async (req: Request) => {
       .select("asset_key,storage_path,content_type,alt_text").eq("asset_key", assetKey).eq("status", "published").maybeSingle();
     if (error) return reply(500, { error: "Published asset could not be loaded" });
     if (!asset) return reply(404, { error: "Published asset not found" });
-    const { data: signed, error: signedError } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, 300);
+    const { data: signed, error: signedError } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, PUBLISHED_ASSET_URL_TTL_SECONDS);
     if (signedError || !signed) return reply(500, { error: "Asset link could not be created" });
-    return reply(200, { asset_key: asset.asset_key, content_type: asset.content_type, alt_text: asset.alt_text, url: signed.signedUrl, expires_in: 300 });
+    return reply(200, { asset_key: asset.asset_key, content_type: asset.content_type, alt_text: asset.alt_text, url: signed.signedUrl, expires_in: PUBLISHED_ASSET_URL_TTL_SECONDS });
   }
 
   const locale = params.get("locale") || "en";
@@ -38,8 +39,8 @@ Deno.serve(async (req: Request) => {
   ]);
   if (contentError || assetError) return reply(500, { error: "Published content could not be loaded" });
   const publishedAssets = await Promise.all((assets || []).map(async (asset) => {
-    const { data } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, 300);
-    return data ? { asset_key: asset.asset_key, content_type: asset.content_type, alt_text: asset.alt_text, url: data.signedUrl, expires_in: 300 } : null;
+    const { data } = await admin.storage.from("wantiss-cms-assets").createSignedUrl(asset.storage_path, PUBLISHED_ASSET_URL_TTL_SECONDS);
+    return data ? { asset_key: asset.asset_key, content_type: asset.content_type, alt_text: asset.alt_text, url: data.signedUrl, expires_in: PUBLISHED_ASSET_URL_TTL_SECONDS } : null;
   }));
   return reply(200, { locale, content: content || [], assets: publishedAssets.filter(Boolean), generated_at: new Date().toISOString() });
 });
