@@ -55,8 +55,8 @@ function CategoryTile({category, onPress}: {category: {id:string; name:any; emoj
   return (
     <Pressable onPress={onPress} style={{width:68,alignItems:'center'}}>
       {category.art && !failed
-        ? <CachedContentImage uri={category.art} style={{width:48,height:48}} onFail={() => setFailed(true)} />
-        : <View style={{width:48,height:48,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
+        ? <CachedContentImage uri={category.art} style={{width:42,height:42}} onFail={() => setFailed(true)} />
+        : <View style={{width:42,height:42,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
       <T size={11.5} weight="600" align="center" style={{marginTop:6,lineHeight:14}}>{tx(category.name)}</T>
     </Pressable>
   );
@@ -148,7 +148,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         </View>
       </View>
       <View style={{marginTop: 18}}>
-        {contentReady ? <Rail gap={14}>{cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:10,paddingHorizontal:16}}>{Array.from({length:6},(_,i)=><View key={i} style={{width:68,alignItems:'center'}}><View style={{width:48,height:48,borderRadius:24,backgroundColor:th.soft}}/><View style={{width:42,height:7,borderRadius:4,backgroundColor:th.soft,marginTop:7}}/></View>)}</ScrollView>}
+        {contentReady ? <Rail gap={14}>{cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:10,paddingHorizontal:16}}>{Array.from({length:6},(_,i)=><View key={i} style={{width:68,alignItems:'center'}}><View style={{width:42,height:42,borderRadius:24,backgroundColor:th.soft}}/><View style={{width:42,height:7,borderRadius:4,backgroundColor:th.soft,marginTop:7}}/></View>)}</ScrollView>}
       </View>
       <View style={{marginTop: 20}}>
         {contentReady ? <Rail>{pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:12,paddingHorizontal:16}}>{[0,1].map(i=><View key={i} style={{width:300,height:124,borderRadius:18,backgroundColor:th.soft}}/>)}</ScrollView>}
