@@ -38,7 +38,7 @@ export function CardAuthentication({clientSecret, publishableKey, onComplete, on
     <Bar title="Verify card" onBack={onCancel} />
     <View style={{padding: 16, gap: 12}}>
       <Card>
-        <Text style={{color: th.ink, fontWeight: '700', fontSize: 15}}>Your bank may ask you to approve this payment</Text>
+        <Text style={{color: th.ink, fontWeight: '600', fontSize: 15}}>Your bank may ask you to approve this payment</Text>
         <Text style={{color: th.mut, fontSize: 13, lineHeight: 19, marginTop: 6}}>Complete the secure verification from your bank. Your card is only captured after verification succeeds.</Text>
       </Card>
       <View style={{height: 330, overflow: 'hidden', borderRadius: 14, backgroundColor: '#fff'}}>
