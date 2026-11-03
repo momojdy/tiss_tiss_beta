@@ -100,14 +100,14 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 190 : k==='ctform' || k==='contacts' ? 300 : 0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(560, windowHeight * 0.78) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '86%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 190 : k==='ctform' || k==='contacts' ? 300 : 0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || k === 'schedule' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
   if (isCenteredSheet) {
     return <ConfirmDialog visible onClose={close} accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close dialog")}>{sheetBody}</ConfirmDialog>;
   }
-  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
+  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '86%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
 function ScheduleSheet({close}: {close: () => void}) {
@@ -210,10 +210,9 @@ function ScheduleSheet({close}: {close: () => void}) {
     </ScrollView>
     {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
     <T size={13} weight="800" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
-    <View style={{alignItems:'center',paddingVertical:4}}>
-      <DateTimePicker value={customDate} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5}
-        onChange={(_,date)=>{if(!date)return;setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(Math.round(date.getMinutes()/5)*5%60).padStart(2,'0'));}} />
-    </View>
+    <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
+      {Array.from({length:Math.max(0,Math.floor((endMinute-1-Math.ceil(earliestMinute/15)*15)/15)+1)},(_,i)=>Math.ceil(earliestMinute/15)*15+i*15).map(minute=>{const hour=Math.floor(minute/60),mins=minute%60,key=String(hour).padStart(2,'0')+':'+String(mins).padStart(2,'0'),active=customHour===String(hour).padStart(2,'0')&&customMinute===String(mins).padStart(2,'0');return <Pressable key={key} onPress={()=>{setCustomHour(String(hour).padStart(2,'0'));setCustomMinute(String(mins).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight="600" color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
+    </ScrollView>
     {reason ? <T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T> : null}
     {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {formatStore(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatStore(selected,{hour:'numeric',minute:'2-digit'})}</T> : null}
     <View style={{height:12}}/><Cta label={label('lbl.sheetApply','Apply')} disabled={!selected} onPress={choose}/>
