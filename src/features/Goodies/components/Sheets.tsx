@@ -177,7 +177,8 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const customMinutes = customDate.getHours()*60+customDate.getMinutes();
   const customInstant = validDigits ? zonedInstant(customDate) : new Date(0);
   const customWithinHours = customMinutes>=startMinute && customMinutes<endMinute;
-  const customValid = validDigits && !closedDay && customWithinHours && customMinutes>=earliestMinute && customInstant.getTime()>Date.now();
+  const earliestSelectableMinute = earliestWall.getHours()*60+earliestWall.getMinutes();
+  const customValid = validDigits && !closedDay && customWithinHours && customMinutes>=earliestSelectableMinute && customInstant.getTime()>Date.now();
   const clampedWall = new Date(selectedDate);
   const latestMinute = Math.max(startMinute, endMinute-5);
   const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
