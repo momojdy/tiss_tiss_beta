@@ -182,8 +182,11 @@ export async function placeOrder() {
         if (!detail && response && typeof response.clone === 'function') {
           try {
             const payload = await response.clone().json();
-            detail = String(payload?.error || payload?.message || '');
-          } catch { /* use the SDK message below when the response has no JSON body */ }
+            detail = String(payload?.error || payload?.message || payload?.details || '');
+          } catch {
+            try { detail = String(await response.clone().text()).slice(0, 360); } catch { /* retain the SDK error */ }
+          }
+          if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + '). Check the delivery address and try again.';
         }
         S.busy = 0;
         toast(detail || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
