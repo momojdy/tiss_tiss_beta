@@ -104,7 +104,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'cats': body = <><TopBar title={tr('categories')} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
-    case 'grouporder': body = <GroupOrderPage onBack={handleBack} />; break;
+    case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
     case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
