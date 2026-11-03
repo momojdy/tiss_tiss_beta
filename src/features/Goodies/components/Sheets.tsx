@@ -239,7 +239,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
   const createServerGroup = async () => {
     const targetStoreId = storeId || S.cart.sid || group.storeId || '';
-    if (!targetStoreId) {toast('Open a store first to create its group invitation.');return;}\n    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast('Your current cart belongs to another store. Clear it before creating this group.');return;}
+    if (!targetStoreId) {toast('Open a store first to create its group invitation.');return;}
+    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast('Your current cart belongs to another store. Clear it before creating this group.');return;}
     setGroupBusy(true);
     try {
       const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:targetStoreId});
