@@ -401,10 +401,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
 
     </View> : null}
     {!group.serverBacked ? <View>
-      <T size={14} weight="600">Join a group order</T>
-
+      <T size={14} weight="600" style={{marginTop:18,marginBottom:12}}>Join a group order</T>
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
-      <Row style={{gap:8,marginTop:8}}>
+      <Row style={{gap:8,marginTop:12,marginBottom:12}}>
         <Pressable accessibilityRole="button" accessibilityLabel="Scan group invite QR code" disabled={groupBusy} onPress={async()=>{
           if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
           setScannerOpen(true);
