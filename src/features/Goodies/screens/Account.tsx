@@ -310,7 +310,7 @@ function Contact({p}: {p: any}) {
   return (<View>
     <Bar title={store ? label('lbl.contactStoreTitle', 'Contact store') : label('lbl.contactSupportTitle', 'Contact support')} onBack={back} />
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
-      {store ? <Card style={{marginTop: 4, marginBottom: 8}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} /><View style={{flex: 1}}><T weight="600">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></Card> : null}
+      {store ? <Card style={{marginTop: 4, marginBottom: 8, overflow:'hidden', padding:0}}>{store.cover || store.thumbnail || store.logo ? <Image source={{uri:store.cover || store.thumbnail || store.logo}} style={{width:'100%',height:124}} resizeMode="cover" /> : null}<View style={{padding:12}}><Row style={{gap:10,alignItems:'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo} /><View style={{flex:1}}><T weight="600">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></View></Card> : null}
       <T size={13} weight="600" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
       <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
       {!store ? <>
