@@ -202,7 +202,7 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
 
 function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''}: {close: () => void; showTitle?: boolean; showDone?: boolean; storeId?: string}) {
   const th = useTheme();
-  const [inviteCode, setInviteCode] = useState('');
+  const [inviteCode, setInviteCode] = useState(() => {const code = (S as any).pendingGroupInviteCode || ''; delete (S as any).pendingGroupInviteCode; return String(code);});
   const [groupBusy, setGroupBusy] = useState(false);
   const [sharedItems, setSharedItems] = useState<any[]>([]);
   const [groupMembers, setGroupMembers] = useState<any[]>([]);
