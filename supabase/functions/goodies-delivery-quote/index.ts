@@ -14,7 +14,9 @@ type AddressInput = {
 };
 type Point = { lat: number; lon: number };
 type Route = { meters: number; geometry: unknown; origin: Point; destination: Point };
-const validPoint = (lat: unknown, lon: unknown): lat is number =>
+const validPoint = (lat: unknown, lon: unknown): boolean =>
+  lat !== null && lat !== undefined && String(lat).trim() !== "" &&
+  lon !== null && lon !== undefined && String(lon).trim() !== "" &&
   Number.isFinite(Number(lat)) && Number(lat) >= -90 && Number(lat) <= 90 &&
   Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
 
