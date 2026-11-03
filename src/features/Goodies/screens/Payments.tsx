@@ -3,6 +3,7 @@
 import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {View, Pressable, Text} from 'react-native';
 import {Icon} from '../components/Icon';
+import WalletBalance from '../../../components/wallet/WalletBalance';
 import {T, Bar, Cta, Card, Row, Badge, Ttl, useTheme} from '../components/ui';
 import {S, money, emit, save, toast} from '../store';
 import {back, createWallet} from '../actions';
@@ -143,10 +144,12 @@ export function LivePayments() {
     <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
     <View style={{paddingHorizontal: 16}}>
       {S.hasWallet ? (
-        <View style={{borderRadius: 18, padding: 14, backgroundColor: th.br, marginBottom: 12}}>
-          <T size={13} color="#fff" style={{opacity: 0.9}}>{label('lbl.paymentWalletTitle', 'Wantiss Wallet')}</T>
-          <T size={34} weight="600" color="#fff" style={{marginTop: 4, marginBottom: 14}}>{money(S.wallet)}</T>
-          <Pressable accessibilityRole="button" onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="600" color={th.brd}>{label("lbl.paymentAuto1MONPPC", "Top up (coming soon)")}</T></Pressable>
+        <View style={{marginBottom: 12}}>
+          {/* Same green wallet card as the Wallet feature home; it loads its own balance and stays live. */}
+          <View style={{marginHorizontal: -16, marginTop: -13}}><WalletBalance /></View>
+          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.paymentTopup', 'Top up')} hitSlop={10} onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{alignSelf: 'flex-start', marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 6}}>
+            <Icon name="plus" size={16} color={th.br} /><T size={13.5} weight="600" color={th.br}>{label('lbl.paymentTopup', 'Top up')}</T>
+          </Pressable>
         </View>
       ) : (
         <Card>
