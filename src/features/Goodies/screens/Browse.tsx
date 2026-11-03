@@ -199,7 +199,7 @@ export function Explore() {
     if (scope !== 'closest' || !selectedAddress?.t) return;
     void refreshStoreDistances(eligible.filter(store => store.live).map(store => store.id), selectedAddress).catch(() => null);
   }, [scope, category, selectedAddress?.id, selectedAddress?.t, selectedAddress?.apt, selectedAddress?.inst, selectedAddress?.city, selectedAddress?.department, selectedAddress?.country]);
-  const distanceOf = (store: typeof ST[number]) => store.live && !store.distanceReady ? Number.POSITIVE_INFINITY : store.km;
+  const distanceOf = (store: (typeof ST)[number]) => store.live && !store.distanceReady ? Number.POSITIVE_INFINITY : store.km;
   const visible = eligible.filter(s => scope !== 'open' || !!s.open).slice().sort((x, y) => {
     if (scope === 'closest') return distanceOf(x) - distanceOf(y);
     if (scope === 'open') return distanceOf(x) - distanceOf(y);
