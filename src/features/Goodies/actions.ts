@@ -159,7 +159,10 @@ export async function placeOrder() {
   if (!phoneOK(ct.ph)) {toast(label('lbl.actionValidPhone', 'Choose a valid contact number')); S.cs = 0; emit(); return;}
   // Refresh the wallet before doing delivery routing so an insufficient balance
   // is explained immediately instead of being masked by an unrelated quote error.
-  if (!providerInfo.demo) await refreshPaymentOptions();
+  const walletVerified = providerInfo.demo ? true : await refreshPaymentOptions();
+  if (!providerInfo.demo && S.pay === 'wallet' && !walletVerified) {
+    S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
+  }
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
     S.busy = 0; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); emit(); return;
   }
@@ -391,19 +394,18 @@ export const clearFilters = () => {S.f = ''; S.sub = ''; emit();};
 /* ---------- alcohol: rules, consent, ID check, refund ---------- */
 export const setConsent = (v: boolean) => {S.alcConsent = v; emit();};
 export function alcAccept() {S.alcAck = 1; const p = S.pend; ui.close(); if (p && p[0] && !p[2]) cartAdd(p[0], p[1]); else if (p && p[2]) p[2]();}
-export async function refreshPaymentOptions() {
+export async function refreshPaymentOptions(): Promise<boolean> {
   try {
     const {data: sessionData, error: sessionError} = await supabase.auth.getUser();
-    if (sessionError || !sessionData.user) return;
+    if (sessionError || !sessionData.user) return false;
     const userId = sessionData.user.id;
     const [walletResult, cardsResult] = await Promise.all([
       supabase.from('wallets').select('id,balance').eq('user_id', userId).maybeSingle(),
       supabase.rpc('get_my_payment_methods'),
     ]);
-    if (!walletResult.error) {
-      S.hasWallet = !!walletResult.data?.id;
-      S.wallet = Number(walletResult.data?.balance || 0);
-    }
+    if (walletResult.error) return false;
+    S.hasWallet = !!walletResult.data?.id;
+    S.wallet = Number(walletResult.data?.balance || 0);
     if (!cardsResult.error) {
       S.cards = (cardsResult.data || []).map((card: any) => ({
         id: card.id, b: String(card.brand || 'Card'), l4: String(card.last4 || ''),
@@ -412,8 +414,10 @@ export async function refreshPaymentOptions() {
       if (!S.cards.some((card: any) => card.id === S.selectedCardId)) S.selectedCardId = (S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id || '';
     }
     save(); emit();
+    return true;
   } catch (e) {
-    // Keep checkout available; its UI will show the last known state and retry on next entry.
+    // Keep the last known state visible, but tell checkout it could not verify the live balance.
+    return false;
   }
 }
 export async function createWallet() {
