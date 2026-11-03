@@ -13,7 +13,9 @@ export const useTheme = (): Theme => {useGoodies(); return S.theme === 'dark' ? 
 
 export function T({children, style, size = 14, weight, color, lines, align}: {children?: any; style?: TextStyle; size?: number; weight?: any; color?: string; lines?: number; align?: any}) {
   const th = useTheme();
-  return <Text numberOfLines={lines} style={[{fontSize: size, color: color || th.ink, fontWeight: weight}, align ? {textAlign: align} : null, style]}>{typeof children === 'string' ? ts(children) : children}</Text>;
+  const visualWeight = weight && Number(weight) >= 700 ? '600' : weight;
+  const visualSize = size >= 20 ? size - 2 : size >= 15 ? size - 1 : size;
+  return <Text numberOfLines={lines} style={[{fontSize: visualSize, color: color || th.ink, fontWeight: visualWeight}, align ? {textAlign: align} : null, style]}>{typeof children === 'string' ? ts(children) : children}</Text>;
 }
 export const Mut = (p: any) => {const th = useTheme(); return <T {...p} color={th.mut} />;};
 
@@ -89,7 +91,7 @@ export function Cta({label, onPress, ghost, disabled, small}: {label: string; on
   );
 }
 
-export const Card = ({children, style}: any) => {const th = useTheme(); return <View style={[{backgroundColor: th.card, borderWidth: 1, borderColor: th.line, borderRadius: 18, padding: 14, marginBottom: 12}, style]}>{children}</View>;};
+export const Card = ({children, style}: any) => {const th = useTheme(); return <View style={[{backgroundColor: th.card, borderWidth: 0.5, borderColor: th.line, borderRadius: 13, padding: 12, marginBottom: 8}, style]}>{children}</View>;};
 export const Row = ({children, style, sp}: any) => <View style={[{flexDirection: 'row', alignItems: 'center', gap: 12}, sp ? {justifyContent: 'space-between'} : null, style]}>{children}</View>;
 export const Badge = ({label, green, red}: {label: string; green?: boolean; red?: boolean}) => {
   const th = useTheme();
@@ -100,7 +102,7 @@ export const Ttl = ({children}: any) => <T size={15} weight="800" style={{margin
 export function Empty({emoji, icon, title, text, button, onPress}: {emoji?: string; icon?: string; title: string; text?: string; button?: string; onPress?: () => void}) {
   const th = useTheme();
   return (
-    <View style={{alignItems: 'center', paddingVertical: 70, paddingHorizontal: 30}}>
+    <View style={{alignItems: 'center', paddingVertical: 38, paddingHorizontal: 24}}>
       {icon ? <View style={{width: 68, height: 68, borderRadius: 34, backgroundColor: 'rgba(253,128,46,0.12)', alignItems: 'center', justifyContent: 'center', marginBottom: 4}}><Icon name={icon} size={30} color="#FD802E" /></View> : emoji ? <Text style={{fontSize: 64}}>{emoji}</Text> : null}
       <T size={19} weight="800" style={{marginTop: 12, marginBottom: 6}}>{title}</T>
       {text ? <T size={14} color={th.mut} align="center" style={{marginBottom: 20}}>{text}</T> : null}
