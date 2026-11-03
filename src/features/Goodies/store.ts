@@ -392,7 +392,7 @@ export async function refreshStoreDistance(storeId: string, address: Address | n
   const meters = Number.isFinite(distanceMeters) && distanceMeters >= 0 ? Math.round(distanceMeters) : Number.isFinite(distance) && distance >= 0 ? Math.round(distance * 1000) : NaN;
   if (!Number.isFinite(meters)) {store.distanceError = data?.error || 'Distance is unavailable for this address.'; emit(); throw new Error(store.distanceError);}
   store.km = meters / 1000;
-  store.far = store.maxDeliveryDistanceKm != null && distance > store.maxDeliveryDistanceKm;
+  store.far = store.maxDeliveryDistanceKm != null && meters / 1000 > store.maxDeliveryDistanceKm;
   store.distanceReady = true;
   store.distanceError = '';
   store.distanceAddressKey = addressKey;
