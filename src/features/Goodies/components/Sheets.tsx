@@ -331,7 +331,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
 
   const invite = async () => {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
-    try {await Share.share({message:'Join my Wantiss Goodies group order. Invite code: '+group.code+'. Open Goodies > Group order > Join with code.'});}
+    const inviteLink='wantiss://goodies/group?code='+encodeURIComponent(group.code);
+    try {await Share.share({message:'Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: '+inviteLink+'\n\nOr enter invite code: '+group.code});}
     catch (_) {toast('Invite code: '+group.code);}
   };
   const calculateGroupDeliveryQuote = async () => {
@@ -410,7 +411,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
     {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
-      {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={104} backgroundColor="#FFFFFF" color="#111111"/></View> : null}
+      {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:14,marginTop:8,marginBottom:4,borderRadius:16,backgroundColor:th.soft}}>
+        <QRCode value={'wantiss://goodies/group?code='+encodeURIComponent(group.code)} size={156} backgroundColor="#FFFFFF" color="#111111"/>
+        <T size={12} weight="600" style={{marginTop:9}}>Scan to join this group</T>
+        <T size={11.5} color={th.mut} style={{marginTop:3}}>Invite code: {group.code}</T>
+      </View> : null}
       <View style={{height:9}}/>
       {!group.serverBacked ? <Cta label={groupBusy?'Please wait…':'Create group invite'} onPress={()=>void createServerGroup()} disabled={groupBusy} /> : null}
       {group.serverBacked ? <View style={{height:8}}/> : null}
@@ -427,11 +432,15 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <T size={14} weight="600">Join a group order</T>
 
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
-      <View style={{height:8}}/><Cta ghost label="Scan QR code" onPress={async()=>{
-        if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
-        setScannerOpen(true);
-      }} />
-      <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
+      <Row style={{gap:8,marginTop:8}}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Scan group invite QR code" disabled={groupBusy} onPress={async()=>{
+          if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
+          setScannerOpen(true);
+        }} style={{width:52,height:48,borderRadius:14,alignItems:'center',justifyContent:'center',backgroundColor:th.soft,opacity:groupBusy?0.45:1}}>
+          <Icon name="scan" size={22} color={th.ink}/>
+        </Pressable>
+        <View style={{flex:1}}><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} disabled={groupBusy} /></View>
+      </Row>
     </View> : null}
     {group.serverBacked ? <>
     <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
@@ -530,9 +539,12 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <View style={{flex:1,backgroundColor:'#000000'}}>
         <CameraView style={{flex:1}} facing="back" barcodeScannerSettings={{barcodeTypes:['qr']}} onBarcodeScanned={({data})=>{
           setScannerOpen(false);
-          const code=String(data||'').trim().toUpperCase();
+          const scanned=String(data||'').trim();
+          const linkCode=scanned.match(/[?&]code=([^&]+)/i)?.[1] || scanned.match(/^wantiss:\/\/goodies\/group\/([^/?#]+)/i)?.[1];
+          let code=linkCode ? decodeURIComponent(linkCode) : scanned;
+          code=code.trim().toUpperCase();
           setInviteCode(code);
-          toast('QR code scanned. Review the invite code and tap Join group order.');
+          toast('QR code scanned. Tap Join group order to continue.');
         }}/>
         <View style={{padding:18,backgroundColor:'#111111'}}>
           <T color="#FFFFFF" weight="600" align="center">Scan a Wantiss group invite QR code</T>
