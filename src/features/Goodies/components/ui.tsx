@@ -14,8 +14,8 @@ export const useTheme = (): Theme => {useGoodies(); return S.theme === 'dark' ? 
 export function T({children, style, size = 14, weight, color, lines, align}: {children?: any; style?: TextStyle; size?: number; weight?: any; color?: string; lines?: number; align?: any}) {
   const th = useTheme();
   const visualWeight = weight && Number(weight) >= 700 ? '600' : weight;
-  const visualSize = size >= 20 ? size - 2 : size >= 15 ? size - 1 : size;
-  return <Text numberOfLines={lines} style={[{fontSize: visualSize, color: color || th.ink, fontWeight: visualWeight}, align ? {textAlign: align} : null, style]}>{typeof children === 'string' ? ts(children) : children}</Text>;
+  const visualSize = size >= 20 ? size - 3 : size >= 15 ? size - 1 : size;
+  return <Text numberOfLines={lines} style={[{fontSize: visualSize, color: color || th.ink}, align ? {textAlign: align} : null, style, visualWeight ? {fontWeight: visualWeight} : null]}>{typeof children === 'string' ? ts(children) : children}</Text>;
 }
 export const Mut = (p: any) => {const th = useTheme(); return <T {...p} color={th.mut} />;};
 
