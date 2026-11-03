@@ -380,7 +380,7 @@ export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid
 const distanceAddressKey = (address: Address) => JSON.stringify({
   t: address.t, apt: address.apt, inst: address.inst,
   city: address.city, department: address.department, country: address.country,
-  location: S.currentLocation && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? [S.currentLocation.latitude, S.currentLocation.longitude] : null,
+  location: S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? [S.currentLocation.latitude, S.currentLocation.longitude] : null,
 });
 const currentDistanceAddressKey = () => {
   const current = addr();
@@ -393,7 +393,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     store?.live && (!store.distanceReady || store.distanceAddressKey !== addressKey));
   if (!pending.length) return Object.fromEntries(storeIds.map(id => [id, STB[id]?.km ?? null]));
   pending.forEach(store => { store.distanceError = ''; });
-  const location = S.currentLocation && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? S.currentLocation : null;
+  const location = S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? S.currentLocation : null;
   const payloadAddress = {
     t: address.t, apt: address.apt, inst: address.inst,
     city: address.city, department: address.department, country: address.country,
