@@ -112,7 +112,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
   const customerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Etc/GMT';
-  const storeZone = String(store?.scheduledOrderTimezone || customerZone);
+  const storeZone = customerZone;
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const storeParts = (instant: Date) => {
     const parts = new Intl.DateTimeFormat('en-US',{timeZone:storeZone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(instant);
