@@ -211,7 +211,7 @@ Deno.serve(async (req: Request) => {
     });
     const routeFailure = routeResults.find(route => route.error);
     if (routeFailure) return reply({ error: routeFailure.error, store_id: routeFailure.store_id }, 422);
-    const routes = routeResults as Array<{
+    const routes = routeResults as unknown as Array<{
       store_id: string; distance_m: number; distance_km: number; base_fee: number;
       outside_delivery_area: boolean; origin: Point; destination: Point; geometry: unknown; error: null;
     }>;
