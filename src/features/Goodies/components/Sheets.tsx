@@ -100,7 +100,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.max(0, windowHeight - insets.top) : undefined, maxHeight: k==='schedule' ? Math.max(0, windowHeight - insets.top) : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight:0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(680, windowHeight * 0.82) : undefined, maxHeight: k==='schedule' ? Math.min(680, windowHeight * 0.82) : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'60%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 190 : k==='ctform' || k==='contacts' ? 300 : 0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || k === 'schedule' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
@@ -386,24 +386,22 @@ function GroupOrderSheet({close}: {close: () => void}) {
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
-    <T size={13} color={th.mut} style={{marginTop:5, marginBottom:12}}>{label('lbl.sheetGroupDescription', 'Start a shared cart, invite friends, and coordinate everyone’s items before checkout.')}</T>
-    <Card style={{marginBottom:12}}>
+    <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
-      {group.code ? <T size={12} color={th.mut} style={{marginTop:7}}>Server invitation · expires {new Date(group.expiresAt).toLocaleString()}</T> : <T size={12} color={th.mut} style={{marginTop:7}}>Create a server invitation for this store. Each new group order receives a fresh code.</T>}
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
-    </Card>
-    <Card style={{marginBottom:12}}>
+    </View>
+    <View>
       <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="700">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="700">{money(line.p*line.q)}</T></Row>) : <T size={12.5} color={th.mut} style={{marginTop:7}}>{label("lbl.sheetAutoX38X9M", "Add items to the cart from the selected store. The host controls checkout.")}</T>}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
       <View style={{height:10}}/><Cta ghost label={label('lbl.sheetViewCart', 'View cart')} onPress={()=>{close();A.go('cart');}} />
-    </Card>
-    <Card style={{marginBottom:12}}>
+    </View>
+    <View>
       <T size={14} weight="800">Join a group order</T>
       <T size={12} color={th.mut} style={{marginTop:4,marginBottom:8}}>Enter the invite code shared by your friend to join their active order.</T>
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
@@ -412,9 +410,9 @@ function GroupOrderSheet({close}: {close: () => void}) {
         setScannerOpen(true);
       }} />
       <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
-    </Card>
+    </View>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
-    <Card>
+    <View>
       {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
       {groupMembers.map((member:any)=>{
         const uid=String(member.user_id||'');
@@ -426,10 +424,10 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </Row>;
       })}
       {!groupMembers.length&&!membershipError?<T size={13} color={th.mut} style={{paddingVertical:10}}>No one has joined this group yet. Share the invite code to add members.</T>:null}
-    </Card>
+    </View>
     <View style={{height:12}}/>
     <T size={15} weight="800" style={{marginBottom:7}}>Live group cart</T>
-    <Card>
+    <View>
       {sharedItems.length ? sharedItems.map((item:any)=>{
         const product=Array.isArray(item.product)?item.product[0]:item.product;
         const contributor=groupMembers.find((member:any)=>String(member.user_id)===String(item.user_id));
@@ -449,14 +447,13 @@ function GroupOrderSheet({close}: {close: () => void}) {
       }) : <T size={12.5} color={th.mut}>No shared items yet. Members can add products from this store and they will appear here.</T>}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
         <Row sp><T weight="800">Shared base-price subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
-        <T size={11.5} color={th.mut} style={{marginTop:4}}>Updates automatically as members edit the cart. Selected options and active deals are validated in Review combined cart; delivery and service fees are calculated at checkout.</T>
-      </View>
+       </View>
       <View style={{height:10}}/>
       {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
         ? <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
         : <T size={12} color={th.mut}>The group host will review the combined cart and continue to checkout.</T>}
-    </Card>
-    {checkoutPreview ? <Card style={{marginBottom:12}}>
+    </View>
+    {checkoutPreview ? <View>
       <T size={15} weight="800">Validated group cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>Store: {checkoutPreview.store_name} · {checkoutPreview.item_count} shared lines</T>
       {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
@@ -465,8 +462,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
       </Row>)}
       <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="800">Validated item subtotal</T><T weight="800">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
       <T size={11.5} color={th.mut} style={{marginTop:6}}>Prices include validated size, drink and active deal options. Delivery/service fees and payment are still handled at checkout.</T>
-    </Card>:null}
-    {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <Card style={{marginBottom:12}}>
+    </View>:null}
+    {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
       <T size={15} weight="800">Host checkout</T>
       <T size={12} color={th.mut} style={{marginTop:5}}>Choose pickup or delivery. The host pays the full group order from their Wantiss Wallet.</T>
       <View style={{height:10}}/>
@@ -502,7 +499,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={11.5} color={th.mut} style={{marginTop:4}}>Your Wallet must cover the final server-calculated total.</T>
       <View style={{height:9}}/>
       <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
-    </Card> : null}
+    </View> : null}
     <View style={{height:12}} />
     <Cta label={label('lbl.sheetDone', 'Done')} onPress={close} />
     <View style={{height:8}} />
