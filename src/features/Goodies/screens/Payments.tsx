@@ -120,7 +120,7 @@ export function LivePayments() {
       <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
       <View style={{padding: 16, paddingTop: 40, alignItems: 'center'}}>
         <Text style={{fontSize: 52}}>🔒</Text>
-        <T size={18} weight="800" style={{marginTop: 8}}>{label('lbl.paymentsSignIn', 'Sign in to see your wallet')}</T>
+        <T size={18} weight="600" style={{marginTop: 8}}>{label('lbl.paymentsSignIn', 'Sign in to see your wallet')}</T>
         <T size={13.5} color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.paymentsSignedOut', 'Your Wantiss wallet and saved cards are tied to your account.')}</T>
         <View style={{alignSelf: 'stretch'}}><Cta ghost label={label('lbl.paymentBack', 'Back')} onPress={back} /></View>
       </View>
@@ -131,7 +131,7 @@ export function LivePayments() {
       <Bar title={label('lbl.paymentsTitle', 'Wallet and payments')} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <Card style={{borderColor: th.red}}>
-          <T weight="800">{label('lbl.paymentLoadError', 'We couldn’t load your payment details')}</T>
+          <T weight="600">{label('lbl.paymentLoadError', 'We couldn’t load your payment details')}</T>
           <T size={13} color={th.red} style={{marginTop: 4}}>{problem}</T>
           <View style={{marginTop: 12}}><Cta small label={label('lbl.paymentRetry', 'Try again')} onPress={() => {void load();}} /></View>
         </Card>
@@ -145,12 +145,12 @@ export function LivePayments() {
       {S.hasWallet ? (
         <View style={{borderRadius: 18, padding: 14, backgroundColor: th.br, marginBottom: 12}}>
           <T size={13} color="#fff" style={{opacity: 0.9}}>{label('lbl.paymentWalletTitle', 'Wantiss Wallet')}</T>
-          <T size={34} weight="800" color="#fff" style={{marginTop: 4, marginBottom: 14}}>{money(S.wallet)}</T>
-          <Pressable accessibilityRole="button" onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="800" color={th.brd}>{label("lbl.paymentAuto1MONPPC", "Top up (coming soon)")}</T></Pressable>
+          <T size={34} weight="600" color="#fff" style={{marginTop: 4, marginBottom: 14}}>{money(S.wallet)}</T>
+          <Pressable accessibilityRole="button" onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{height: 44, borderRadius: 16, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center'}}><T size={15} weight="600" color={th.brd}>{label("lbl.paymentAuto1MONPPC", "Top up (coming soon)")}</T></Pressable>
         </View>
       ) : (
         <Card>
-          <Row style={{gap: 10}}><Text style={{fontSize: 30}}>👛</Text><View style={{flex: 1}}><T weight="800">{label('lbl.paymentNoWallet', 'No Wantiss wallet found')}</T></View></Row>
+          <Row style={{gap: 10}}><Text style={{fontSize: 30}}>👛</Text><View style={{flex: 1}}><T weight="600">{label('lbl.paymentNoWallet', 'No Wantiss wallet found')}</T></View></Row>
           <T size={13} color={th.mut} style={{marginVertical: 6, lineHeight: 19}}>You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at {money(0)}.</T>
           <Cta small label={creating ? 'Creating…' : 'Create wallet'} disabled={creating} onPress={() => {void makeWallet();}} />
         </Card>
@@ -162,7 +162,7 @@ export function LivePayments() {
           <Row style={{gap: 10}}>
             <Icon name="card" size={22} color={th.ink} />
             <View style={{flex: 1}}>
-              <T weight="700">{c.b} •••• {c.l4}</T>
+              <T weight="600">{c.b} •••• {c.l4}</T>
               <T size={12.5} color={th.mut}>{expLabel(c) ? 'Expires ' + expLabel(c) : 'Saved card'}</T>
             </View>
             {c.isDefault ? <Badge green label={label('lbl.paymentDefaultCard', 'Default')} /> : null}
@@ -170,16 +170,16 @@ export function LivePayments() {
           </Row>
           {(!c.isDefault || confirmId === c.id) ? (
             <Row style={{marginTop: 10, gap: 16}}>
-              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="700" color={th.br}>{busyId === c.id ? 'Updating…' : 'Set as default'}</T></Pressable> : null}
-              {confirmId === c.id ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => removeCard(c.id)}><T size={13.5} weight="700" color={th.red}>{label('lbl.paymentTapAgainRemove', 'Tap again to remove')}</T></Pressable> : null}
-              {confirmId === c.id ? <Pressable accessibilityRole="button" onPress={() => setConfirmId('')}><T size={13.5} weight="700" color={th.mut}>{label('lbl.paymentCancel', 'Cancel')}</T></Pressable> : null}
+              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="600" color={th.br}>{busyId === c.id ? 'Updating…' : 'Set as default'}</T></Pressable> : null}
+              {confirmId === c.id ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => removeCard(c.id)}><T size={13.5} weight="600" color={th.red}>{label('lbl.paymentTapAgainRemove', 'Tap again to remove')}</T></Pressable> : null}
+              {confirmId === c.id ? <Pressable accessibilityRole="button" onPress={() => setConfirmId('')}><T size={13.5} weight="600" color={th.mut}>{label('lbl.paymentCancel', 'Cancel')}</T></Pressable> : null}
             </Row>
           ) : null}
         </Card>
       )) : (
         <Card style={{alignItems: 'center', paddingVertical: 22}}>
           <Text style={{fontSize: 40}}>💳</Text>
-          <T weight="800" style={{marginTop: 6}}>{label('lbl.paymentNoCards', 'No saved cards yet')}</T>
+          <T weight="600" style={{marginTop: 6}}>{label('lbl.paymentNoCards', 'No saved cards yet')}</T>
           <T size={13} color={th.mut} align="center" style={{marginTop: 4, lineHeight: 19}}>{label('lbl.paymentSavedCardsHint', 'Saved cards will appear here and can be used at checkout.')}</T>
         </Card>
       )}

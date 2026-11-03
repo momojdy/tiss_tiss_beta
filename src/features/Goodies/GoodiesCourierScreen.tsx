@@ -176,32 +176,32 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
 
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
     <View style={{height:100,paddingHorizontal:20,paddingBottom:12,backgroundColor:'#fff',borderBottomWidth:1,borderBottomColor:'#E3E8DF',flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'}}>
-      <View><Text style={{fontSize:20,fontWeight:'800',color:'#172316'}}>Goodies Courier</Text><Text style={{fontSize:11,color:'#667064'}}>Delivery assignments and live GPS</Text></View>
-      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight:'700',color:'#52634F'}}>Sign out</Text></Pressable>
+      <View><Text style={{fontSize:20,fontWeight: "600",color:'#172316'}}>Goodies Courier</Text><Text style={{fontSize:11,color:'#667064'}}>Delivery assignments and live GPS</Text></View>
+      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight: "600",color:'#52634F'}}>Sign out</Text></Pressable>
     </View>
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
-        <Text style={{fontSize:15,fontWeight:'800',color:'#1A2517'}}>Availability</Text>
+        <Text style={{fontSize:15,fontWeight: "600",color:'#1A2517'}}>Availability</Text>
         <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts after you accept and continues in the background while the delivery is active.</Text>
         <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
-          <Text style={{fontWeight:'800',color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS tracking active':available?'You are online · Tap to go offline':'Go online'}</Text>
+          <Text style={{fontWeight: "600",color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS tracking active':available?'You are online · Tap to go offline':'Go online'}</Text>
         </Pressable>
         <Pressable disabled={!!busy||!available||!!activeOrderId} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={{fontSize:13,color:'#263324'}}>I accept cash on delivery</Text><Text style={{fontSize:13,fontWeight:'800',color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?'ON':'OFF'}</Text>
+          <Text style={{fontSize:13,color:'#263324'}}>I accept cash on delivery</Text><Text style={{fontSize:13,fontWeight: "600",color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?'ON':'OFF'}</Text>
         </Pressable>
         <Text style={{fontSize:11,color:'#697567'}}>{locationStatus}</Text>
       </View>
-      <Text style={{fontSize:17,fontWeight:'800',color:'#1A2517'}}>My deliveries</Text>
+      <Text style={{fontSize:17,fontWeight: "600",color:'#1A2517'}}>My deliveries</Text>
       {loading?<ActivityIndicator/>:null}
-      {!loading&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight:'700',color:'#263324'}}>No active delivery offers</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>New offers will appear here when a store assigns you.</Text></View>:null}
+      {!loading&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>No active delivery offers</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>New offers will appear here when a store assigns you.</Text></View>:null}
       {deliveries.map(d=><View key={d.id} style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:8}}>
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight:'800',color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight:'700',color:'#426B39'}}>{d.status}</Text></View>
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight: "600",color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight: "600",color:'#426B39'}}>{d.status}</Text></View>
         <Text style={{fontSize:13,color:'#263324'}}> {String(d.address?.t||d.address?.address||'Delivery address unavailable')} </Text>
         <Text style={{fontSize:12,color:'#687264'}}>Customer: {d.contact_phone||'No phone'} · {d.payment_method==='cash'?'Cash on delivery':'Prepaid'}</Text>
-        <Text style={{fontSize:13,fontWeight:'800',color:'#1A2517'}}>{money(d.total)}</Text>
-        {d.status==='offered'?<View style={{flexDirection:'row',gap:8}}><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,true)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight:'800',color:'#28552B'}}>{busy===d.order_id?'Saving…':'Accept delivery'}</Text></Pressable><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,false)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#F7ECEA',alignItems:'center'}}><Text style={{fontWeight:'800',color:'#9B4036'}}>Decline</Text></Pressable></View>:null}
-        {d.status==='accepted'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'picked_up')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight:'800',color:'#28552B'}}>Picked up order</Text></Pressable>:null}
-        {d.status==='picked_up'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'delivered')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight:'800',color:'#28552B'}}>Mark delivered</Text></Pressable>:null}
+        <Text style={{fontSize:13,fontWeight: "600",color:'#1A2517'}}>{money(d.total)}</Text>
+        {d.status==='offered'?<View style={{flexDirection:'row',gap:8}}><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,true)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{busy===d.order_id?'Saving…':'Accept delivery'}</Text></Pressable><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,false)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#F7ECEA',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#9B4036'}}>Decline</Text></Pressable></View>:null}
+        {d.status==='accepted'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'picked_up')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>Picked up order</Text></Pressable>:null}
+        {d.status==='picked_up'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'delivered')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>Mark delivered</Text></Pressable>:null}
       </View>)}
     </ScrollView>
   </View>;

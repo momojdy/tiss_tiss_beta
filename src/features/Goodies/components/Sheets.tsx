@@ -391,14 +391,14 @@ function GroupOrderSheet({close}: {close: () => void}) {
     <T size={21} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T>
     {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
-      {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
+      {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={104} backgroundColor="#FFFFFF" color="#111111"/></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
     {S.cart.lines.length > 0 ? <View>
-      <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
+      <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
@@ -430,7 +430,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
 
     </View>
     <View style={{height:12}}/>
-    <T size={15} weight="600" style={{marginBottom:7}}>Live group cart</T>
+    <T size={15} weight="600" style={{marginBottom:7}}>Shared items</T>
     <View>
       {sharedItems.length ? sharedItems.map((item:any)=>{
         const product=Array.isArray(item.product)?item.product[0]:item.product;
@@ -450,7 +450,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         </Row>;
       }) : null}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
-        <Row sp><T weight="600">Shared base-price subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
+        <Row sp><T weight="600">Items subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
       <View style={{height:10}}/>
       {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
@@ -459,7 +459,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
     </View>
     </> : null}
     {checkoutPreview ? <View>
-      <T size={15} weight="600">Validated group cart</T>
+      <T size={15} weight="600">Combined cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
       {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
         <View style={{flex:1}}><T size={13} weight="600">{item.quantity}× {item.name}</T> </View>
@@ -469,7 +469,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
-      <T size={15} weight="600">Host checkout</T>
+      <T size={15} weight="600">Checkout</T>
 
       <View style={{height:10}}/>
       <Row style={{gap:8}}>
@@ -491,7 +491,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
       {checkoutEstimate ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
-        <T size={12} weight="600" style={{marginBottom:7}}>Server-calculated payment estimate</T>
+        <T size={12} weight="600" style={{marginBottom:7}}>Payment estimate</T>
         <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="600">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
         {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
         <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
