@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform, TextInput, useWindowDimensions} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, TextInput, useWindowDimensions} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
@@ -99,14 +99,14 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(600, windowHeight * 0.84) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '94%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 320 : k==='ctform' || k==='contacts' ? 400 : 0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(600, windowHeight * 0.84) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '94%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 360 : k==='ctform' || k==='contacts' ? 400 : 0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || k === 'schedule' || k === 'ctform' || k === 'contacts' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
   if (isCenteredSheet) {
     return <ConfirmDialog visible onClose={close} accessibilityLabel={label("lbl.sheetAutoKDBKGE", "Close dialog")}>{sheetBody}</ConfirmDialog>;
   }
-  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '86%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
+  return <BottomSheet visible onClose={close} keyboardAware={k === 'contacts' || k === 'ctform'} maxHeight={k==='schedule' ? Math.max(0, windowHeight - insets.top) : k==='ctform' || k==='contacts' ? '94%' : k==='sinfo'||k==='promo' ? '92%' : isRatingSheet ? windowHeight * 0.68 : '90%'}>{sheetBody}</BottomSheet>;
 }
 
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
@@ -411,7 +411,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="600">{group.code || 'Not created yet'}</T></View>{group.serverBacked ? <Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /> : null}</Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={104} backgroundColor="#FFFFFF" color="#111111"/></View> : null}
       <View style={{height:9}}/>
-      <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
+      {!group.serverBacked ? <Cta label={groupBusy?'Please wait…':'Create group invite'} onPress={()=>void createServerGroup()} disabled={groupBusy} /> : null}
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
