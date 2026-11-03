@@ -119,7 +119,7 @@ export function StoreCard({s, showProducts = false}: {s: Store; showProducts?: b
 export function ItemRow({i}: {i: Item}) {
   const th = useTheme(), s = STB[i.s], dis = i.oos || (!s.open && !s.acceptScheduledOrders);
   return (
-    <View style={{flexDirection: 'row', gap: 12, alignItems: 'center', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: th.line}}>
+    <View style={{flexDirection: 'row', gap: 12, alignItems: 'center', paddingVertical: 14, borderBottomWidth: 0.5, borderBottomColor: th.line}}>
       <Pressable onPress={() => openProduct(i.id)} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
         <Tile e={i.e} bg={s.bg} photo={i.photo} />
         <View style={{flex: 1, minWidth: 0}}>
