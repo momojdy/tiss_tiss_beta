@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl} from 'react-native';
-import {Image as ExpoImage} from 'expo-image';
+import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl, Image} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
@@ -22,8 +21,7 @@ function CachedContentImage({uri, style, contentFit = 'contain', onFail}: {uri: 
   const [reloadKey, setReloadKey] = useState(0);
   useEffect(() => { setFailed(false); setRetried(false); setReloadKey(0); }, [uri]);
   if (failed) return null;
-  return <ExpoImage key={uri + ':' + reloadKey} source={{uri}} style={style} contentFit={contentFit}
-    cachePolicy="memory-disk" priority="high" transition={120}
+  return <Image key={uri + ':' + reloadKey} source={{uri}} style={style} resizeMode={contentFit}
     onError={() => {
       if (!retried) {
         setRetried(true);
@@ -116,7 +114,7 @@ export function Home({onExit}: {onExit?: () => void}) {
   useEffect(() => {
     if (!contentReady) return;
     const urls = categories().map(category => category.art).filter((url): url is string => typeof url === 'string' && !!url);
-    if (urls.length) void ExpoImage.prefetch(urls, 'disk');
+    if (urls.length) void Promise.all(urls.map(url => Image.prefetch(url).catch(() => false)));
   }, [contentReady]);
   useEffect(() => {
     if (S.f !== 'near' || !address?.t) return;
