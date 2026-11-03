@@ -386,21 +386,21 @@ function GroupOrderSheet({close}: {close: () => void}) {
   };
   return <>
     <T size={21} weight="800">{label('lbl.sheetGroupTitle', 'Group order')}</T>
-    <View>
+    {(S.cart.lines.length > 0 || group.serverBacked) ? <View>
       <Row sp><View style={{flex:1}}><T size={11.5} weight="800" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={22} weight="800">{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
       {group.code && group.serverBacked ? <View style={{alignItems:'center',paddingVertical:12}}><QRCode value={group.code} size={142} backgroundColor="#FFFFFF" color="#111111"/><T size={11.5} color={th.mut} style={{marginTop:7}}>Scan to join this group</T></View> : null}
       <View style={{height:9}}/>
       <Cta label={groupBusy?'Please wait…':group.serverBacked?'Create new invite code':'Create group invite'} onPress={()=>void createServerGroup()} />
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
-    </View>
-    <View>
+    </View> : null}
+    {S.cart.lines.length > 0 ? <View>
       <T size={14} weight="800">{label('lbl.sheetSharedCart', 'Shared cart')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="800">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="800">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
       {S.cart.sid && STB[S.cart.sid] ? <T size={12} color={th.mut} style={{marginTop:5}}>Store: {STB[S.cart.sid].n}</T> : null}
 
-    </View>
+    </View> : null}
     <View>
       <T size={14} weight="800">Join a group order</T>
 
@@ -411,6 +411,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
       }} />
       <View style={{height:8}}/><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} />
     </View>
+    {group.serverBacked ? <>
     <T size={15} weight="800" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
       {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
@@ -453,6 +454,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         ? <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
         : null}
     </View>
+    </> : null}
     {checkoutPreview ? <View>
       <T size={15} weight="800">Validated group cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
