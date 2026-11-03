@@ -184,7 +184,6 @@ export function LivePayments() {
         </Card>
       )}
       <Cta ghost label={label('lbl.paymentAddCard', '+ Add a card')} onPress={() => push('addcard')} />
-      <T size={12} color={th.mut} style={{marginTop: 10}}>{label('lbl.paymentCardPrivacy', 'Only the brand, last 4 digits and expiry are shown.')}</T>
     </View>
   </View>);
 }
