@@ -249,7 +249,7 @@ Deno.serve(async (req: Request) => {
     return reply({
       quote_id: quotes.length === 1 ? quotes[0].id : undefined,
       fee: quotes.length === 1 ? deliveryTotal : undefined,
-      quote_ids: quotes.map(quote => quote.id), quotes,
+      quote_ids: quotes.map((quote: any) => quote.id), quotes,
       stores: routes.map(({ store_id, distance_m, distance_km }) => ({ store_id, distance_m, distance_km })),
       base_delivery_fee: Math.round(baseTotal * 100) / 100,
       additional_store_fee: Math.round(additionalStoreFee * 100) / 100,
