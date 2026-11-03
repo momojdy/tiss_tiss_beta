@@ -21,7 +21,7 @@ const validPoint = (lat: unknown, lon: unknown): boolean =>
   Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
 
 function addressParts(address: AddressInput) {
-  const raw = [address.t, address.apt, address.city, address.department, address.country]
+  const raw = [address.t, address.city, address.department, address.country]
     .filter((part): part is string => typeof part === "string" && !!part.trim());
   const seen = new Set<string>();
   const parts: string[] = [];
@@ -62,12 +62,14 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
     return { lat: Number(cached.latitude), lon: Number(cached.longitude) };
   }
 
-  const streetParts = parts.slice(0, Math.min(2, parts.length));
-  const localityParts = parts.slice(streetParts.length);
+  const localityParts = parts.length > 2 ? parts.slice(-3, -1) : parts.slice(0, 1);
+  const streetSwap = parts.length > 3 && /\\b(road|rd|street|st|avenue|ave|drive|dr|lane|ln|highway|hwy)\\b/i.test(parts[1])
+    ? [parts[1], parts[0], ...parts.slice(2)].join(", ")
+    : "";
   const candidates = Array.from(new Set([
     canonical,
-    [...streetParts.slice().reverse(), ...localityParts].join(", "),
     parts.slice(1).join(", "),
+    streetSwap,
   ].filter(Boolean)));
   const expectedCountry = countryCode(parts);
   for (const candidate of candidates) {
@@ -81,9 +83,17 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
     if (!response.ok) throw new Error("Address lookup is temporarily unavailable. Please try again.");
     const payload = await response.json();
     const results = Array.isArray(payload?.results) ? payload.results : [];
-    const result = results.find((item: any) =>
-      validPoint(item?.lat, item?.lon) &&
-      (!expectedCountry || String(item?.country_code || "").toLowerCase() === expectedCountry));
+    const result = results.find((item: any) => {
+      const locality = [
+        item?.city, item?.state, item?.county, item?.district, item?.suburb,
+        item?.village, item?.municipality, item?.formatted,
+      ].filter(Boolean).join(" ").toLocaleLowerCase();
+      const localityMatches = !localityParts.length ||
+        localityParts.some(part => locality.includes(part.toLocaleLowerCase()));
+      return validPoint(item?.lat, item?.lon) &&
+        (!expectedCountry || String(item?.country_code || "").toLowerCase() === expectedCountry) &&
+        localityMatches;
+    });
     if (!result) continue;
     const point = { lat: Number(result.lat), lon: Number(result.lon) };
     await service.from("goodies_geocode_cache").upsert({
