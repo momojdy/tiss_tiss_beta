@@ -254,8 +254,8 @@ export function Checkout() {
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf() || {ph: S.pf?.ph || '', l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
-  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
-  if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
+  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
+  if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
   let body: any = null;
   if (S.cs === 0) body = (<>
     <Seg list={[['delivery', label('lbl.checkoutDelivery', 'Delivery')], ['pickup', label('lbl.checkoutPickup', 'Pickup')]]} on={pk ? 'pickup' : 'delivery'} onPick={k => {if (k === 'delivery' && st.far) return; setMode(k);}} />
@@ -319,7 +319,7 @@ export function Checkout() {
   </>);
   return (
     <View>
-      <Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} />
+      <Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} right={<Circ icon="users" label="Group order" onPress={() => require('../store').ui.sheet({kind:'group-order'})} />} />
       <View style={{paddingHorizontal: 16}}>
         <View style={{flexDirection: 'row', gap: 6, marginBottom: 6}}>{stp.map((x, n) => <View key={x} style={{flex: 1, alignItems: 'center'}}><View style={{height: 5, borderRadius: 3, alignSelf: 'stretch', backgroundColor: n <= S.cs ? th.br : th.line}} /><T size={11.5} weight={n === S.cs ? '800' : '500'} style={{marginTop: 5}}>{x}</T></View>)}</View>
         {body}
