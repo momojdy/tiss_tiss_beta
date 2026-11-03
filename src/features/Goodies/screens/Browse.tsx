@@ -105,7 +105,12 @@ function Countdown() {
 export function Home({onExit}: {onExit?: () => void}) {
   const th = useTheme(), ins = useSafeAreaInsets(), address = addr();
   const [contentReady, setContentReady] = useState(hasContent());
-  useEffect(() => { const off = onContent(() => setContentReady(hasContent())); return off; }, []);
+  useEffect(() => {
+    let active = true;
+    const off = onContent(() => setContentReady(hasContent()));
+    void loadContent().finally(() => { if (active) setContentReady(true); });
+    return () => { active = false; off(); };
+  }, []);
   const storeKey = ST.filter(s => s.live).map(s => s.id).join('|');
   useEffect(() => {
     if (!address?.t) return;
