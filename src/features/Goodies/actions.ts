@@ -192,7 +192,14 @@ export async function placeOrder() {
           if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + '). Check the delivery address and try again.';
         }
         S.busy = 0;
-        toast(detail || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.');
+        let checkoutMessage = detail || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.';
+        if (S.pay === 'wallet') {
+          const verified = await refreshPaymentOptions();
+          if (verified && (!S.hasWallet || S.wallet < t.total)) {
+            checkoutMessage = label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.');
+          }
+        }
+        toast(checkoutMessage);
         emit();
         return;
       }
