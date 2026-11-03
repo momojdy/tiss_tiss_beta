@@ -216,7 +216,10 @@ export async function placeOrder() {
       return;
     }
   }
-  if (!providerInfo.demo) await refreshPaymentOptions();
+  const walletVerifiedAfterQuote = providerInfo.demo ? true : await refreshPaymentOptions();
+  if (!providerInfo.demo && S.pay === 'wallet' && !walletVerifiedAfterQuote) {
+    S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
+  }
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); push('payments'); return;}
   if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); push('payments'); return;}
   const alc = hasAlcohol();
