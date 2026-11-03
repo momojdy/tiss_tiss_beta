@@ -93,7 +93,7 @@ async function geocode(address: AddressInput, key: string, service: any): Promis
   throw new Error("We could not locate this address. Check the street, barangay, city and country, then try again.");
 }
 
-async function storeOrigin(store: any, key: string, service: ReturnType<typeof createClient>): Promise<Point> {
+async function storeOrigin(store: any, key: string, service: any): Promise<Point> {
   if (validPoint(store.store_latitude, store.store_longitude)) {
     return { lat: Number(store.store_latitude), lon: Number(store.store_longitude) };
   }
@@ -110,7 +110,7 @@ async function storeOrigin(store: any, key: string, service: ReturnType<typeof c
 }
 
 async function routeKm(
-  store: any, destination: Point, addressHash: string, key: string, service: ReturnType<typeof createClient>,
+  store: any, destination: Point, addressHash: string, key: string, service: any,
 ): Promise<Route> {
   const origin = await storeOrigin(store, key, service);
   const { data: cached } = await service.from("goodies_route_cache")
