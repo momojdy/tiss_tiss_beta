@@ -228,6 +228,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [group, setGroup] = useState(() => {
+    if ((S as any).pendingGroupInviteCode) return {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
     const next = {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
