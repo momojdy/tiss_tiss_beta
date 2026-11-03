@@ -397,8 +397,8 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     city: address.city, department: address.department, country: address.country,
   };
   const distances: Record<string, number | null> = {};
-  for (let offset = 0; offset < pending.length; offset += 25) {
-    const batch = pending.slice(offset, offset + 25);
+  for (let offset = 0; offset < pending.length; offset += 8) {
+    const batch = pending.slice(offset, offset + 8);
     const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {
       body: {store_ids: batch.map(store => store.id), address: payloadAddress, distance_only: true},
     });
