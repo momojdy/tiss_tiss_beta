@@ -99,7 +99,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const isRatingSheet = k === 'review' || k === 'driver-review';
   const isCenteredSheet = ['remove-item','remove-address','remove-number','clear','cancel','newcart','replace','byoleave','byoreset','alcrules'].includes(k);
   const sheetBody = (
-    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(560, windowHeight * 0.82) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '90%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 320 : k==='ctform' || k==='contacts' ? 360 : 0, marginBottom:0}}>
+    <View style={{width:'100%', height: isRatingSheet ? Math.min(430, windowHeight * 0.68) : k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? Math.min(600, windowHeight * 0.84) : undefined, maxHeight: k==='schedule' ? Math.min(560, windowHeight * 0.72) : k==='ctform' || k==='contacts' ? '94%' : isRatingSheet ? windowHeight * 0.68 : k==='promo'&&sheet.custom ? '68%' : k==='sinfo'||k==='promo' ? '92%' : isCenteredSheet?'90%':'90%', flexShrink:1, minHeight: isCenteredSheet ? 320 : k==='ctform' || k==='contacts' ? 400 : 0, marginBottom:0}}>
       <SheetBox centered={isCenteredSheet || k === 'contacts' || k === 'ctform'} large={isRatingSheet || k === 'sinfo' || k === 'schedule' || k === 'ctform' || k === 'contacts' || (k === 'promo' && !sheet.custom)} compact={k === 'promo' && !!sheet.custom} onClose={close}>{k === 'ctform' ? content : <ScrollView style={{flex:1,minHeight:0}} contentContainerStyle={{paddingBottom:Math.max(16,insets.bottom),flexGrow:1}} nestedScrollEnabled keyboardShouldPersistTaps="handled" keyboardDismissMode="interactive" showsVerticalScrollIndicator={false}>{content}</ScrollView>}</SheetBox>
     </View>
   );
@@ -265,26 +265,36 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
   const createServerGroup = async () => {
     if (!S.cart.sid) {toast('Add an item from a store first, then create its group order.');return;}
     setGroupBusy(true);
-    const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
-    setGroupBusy(false);
-    const row=Array.isArray(data)?data[0]:data;
-    if(error||!row?.invite_code){toast(error?.message||'Could not create the group invitation.');return;}
-    saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
-    const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
-    const failed=synced.find((result:any)=>result.error);
-    if(failed)toast('Group created, but one or more existing cart items could not be shared: '+failed.error.message);
-    toast('A new group invitation is ready.');
+    try {
+      const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:S.cart.sid});
+      const row=Array.isArray(data)?data[0]:data;
+      if(error||!row?.invite_code) throw error || new Error('Could not create the group invitation.');
+      saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:S.cart.sid,expiresAt:row.expires_at,serverBacked:true});
+      const synced=await Promise.all(S.cart.lines.map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
+      const failed=synced.find((result:any)=>result.error);
+      if(failed)toast('Group created, but one or more cart items could not be shared: '+failed.error.message);
+      toast('A new group invitation is ready.');
+    } catch(error:any) {
+      toast(error?.message||'Could not create the group invitation. Please try again.');
+    } finally {
+      setGroupBusy(false);
+    }
   };
   const joinServerGroup = async () => {
     const code=inviteCode.trim().toUpperCase();
     if(!code){toast('Enter a group invite code.');return;}
     setGroupBusy(true);
-    const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
-    setGroupBusy(false);
-    const row=Array.isArray(data)?data[0]:data;
-    if(error||!row?.group_id){toast(error?.message||'Could not join this group order.');return;}
-    saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
-    toast('You joined the group order.');
+    try {
+      const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
+      const row=Array.isArray(data)?data[0]:data;
+      if(error||!row?.group_id) throw error || new Error('Could not join this group order.');
+      saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
+      toast('You joined the group order.');
+    } catch(error:any) {
+      toast(error?.message||'Could not join this group order. Check the invite code and try again.');
+    } finally {
+      setGroupBusy(false);
+    }
   };
   useEffect(() => {
     let active=true;
@@ -353,7 +363,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
     try {
-      await A.refreshPaymentOptions();
+      const walletVerified=await A.refreshPaymentOptions();
+      if(!walletVerified){toast('Could not verify your live Wantiss Wallet balance. Please retry.');return;}
+      if(!S.hasWallet){toast('Your Wantiss Wallet is not available. Create a wallet before placing this group order.');return;}
+      const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
+      if(estimatedTotal>0&&S.wallet<estimatedTotal){toast('Insufficient Wantiss Wallet balance. Add '+money(estimatedTotal-S.wallet)+' or choose another payment method.');return;}
       let addressPayload:any=null;
       if(groupCheckoutType==='delivery'){
         const selected=(S.addr||[]).find((item:any)=>String(item.id)===String(groupAddressId))||(S.addr||[]).find((item:any)=>item.id===S.as)||(S.addr||[])[0];
@@ -388,6 +402,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     setPreviewBusy(false);
     if(error){toast(error.message||'Could not validate the shared cart.');return;}
     setCheckoutPreview(data);
+    if(groupCheckoutType==='pickup'){
+      const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}});
+      if(estimate.error){setCheckoutEstimate(null);toast(estimate.error.message||'Could not calculate the payment estimate.');}
+      else setCheckoutEstimate(estimate.data);
+    }
   };
   return <>
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
