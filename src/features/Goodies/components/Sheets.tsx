@@ -444,7 +444,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
             }}><Icon name="trash-2" size={17} color={th.red}/></Pressable> : null}
           </View>
         </Row>;
-      }) : <T size={12.5} color={th.mut}>No shared items yet. Members can add products from this store and they will appear here.</T>}
+      }) : null}
       <View style={{borderTopWidth:1,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
         <Row sp><T weight="800">Shared base-price subtotal</T><T weight="800">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
@@ -457,11 +457,11 @@ function GroupOrderSheet({close}: {close: () => void}) {
       <T size={15} weight="800">Validated group cart</T>
       <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
       {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
-        <View style={{flex:1}}><T size={13} weight="700">{item.quantity}× {item.name}</T><T size={11} color={th.mut}>Current price with selected options</T></View>
+        <View style={{flex:1}}><T size={13} weight="700">{item.quantity}× {item.name}</T> </View>
         <T size={13} weight="700">{money(Number(item.unit_price)*Number(item.quantity))}</T>
       </Row>)}
       <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="800">Validated item subtotal</T><T weight="800">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
-      <T size={11.5} color={th.mut} style={{marginTop:6}}>Prices include validated size, drink and active deal options. Delivery/service fees and payment are still handled at checkout.</T>
+ 
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
       <T size={15} weight="800">Host checkout</T>
@@ -480,8 +480,8 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Cta ghost small label={groupQuoteBusy?'Calculating delivery…':'Calculate delivery fee'} onPress={()=>void calculateGroupDeliveryQuote()} disabled={groupQuoteBusy||!S.addr.length}/>
         {groupDeliveryQuote&&groupDeliveryQuote.addressId===String(groupAddressId)&&groupDeliveryQuote.expiresAt>Date.now() ? <View style={{marginTop:8,padding:10,borderRadius:10,backgroundColor:th.soft}}>
           <Row sp><T size={12} color={th.mut}>Delivery fee</T><T size={13} weight="800">{money(groupDeliveryQuote.fee)}</T></Row>
-          {groupDeliveryQuote.distanceKm>0 ? <T size={11} color={th.mut} style={{marginTop:3}}>Approx. {groupDeliveryQuote.distanceKm.toFixed(1)} km by road</T> : null}
-          <T size={11} color={th.mut} style={{marginTop:4}}>Quote expires shortly. Service fee, if applicable, is calculated by the server at checkout.</T>
+
+
         </View> : null}
         <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
@@ -492,7 +492,7 @@ function GroupOrderSheet({close}: {close: () => void}) {
         <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="700">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
         <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
         <Row sp><T size={13} weight="800">Estimated total</T><T size={15} weight="800">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
-        {checkoutEstimate.first_order_delivery_waiver ? <T size={10.5} color={th.mut} style={{marginTop:6}}>Your first-order delivery-fee waiver has been applied.</T> : null}
+
 
       </View> : null}
       <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="800">{money(Number(S.wallet||0))}</T></Row>
