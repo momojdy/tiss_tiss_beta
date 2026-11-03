@@ -256,6 +256,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       setGroupBusy(false);
     }
   };
+  useEffect(() => {
+    if (storeId && (!group.serverBacked || group.storeId !== storeId)) void createServerGroup();
+  }, [storeId]);
   const joinServerGroup = async () => {
     const code=inviteCode.trim().toUpperCase();
     if(!code){toast('Enter a group invite code.');return;}
