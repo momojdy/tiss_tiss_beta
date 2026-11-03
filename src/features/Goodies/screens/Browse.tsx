@@ -5,7 +5,7 @@ import {Image as ExpoImage} from 'expo-image';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
-import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistance} from '../store';
+import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistances} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent, onContent, hasContent} from '../content';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo as applyPromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
@@ -112,12 +112,10 @@ export function Home({onExit}: {onExit?: () => void}) {
     void loadContent().finally(() => { if (active) setContentReady(true); });
     return () => { active = false; off(); };
   }, []);
-  const storeKey = ST.filter(s => s.live).map(s => s.id).join('|');
   useEffect(() => {
-    if (!address?.t) return;
-    const liveStores = ST.filter(s => s.live);
-    void Promise.all(liveStores.map(store => refreshStoreDistance(store.id, address).catch(() => null)));
-  }, [address?.id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country, storeKey]);
+    if (S.f !== 'near' || !address?.t) return;
+    void refreshStoreDistances(ST.filter(store => store.live).map(store => store.id), address).catch(() => null);
+  }, [S.f, address?.id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
   const seen: any = {}, os = S.orders.filter((o: any) => {if (seen[o.sid]) return false; seen[o.sid] = 1; return true;}).slice(0, 6);
   const cat = (c: string) => ST.filter(s => s.c === c).flatMap(s => s.it), cats = categories();
   const rv = S.rv.filter((id: string) => IT[id]).slice(0, 6), md = modes(), pc = promoCards(), dl = deals(), activeDeals = dl.filter(d => IT[d[0]]);
@@ -197,6 +195,10 @@ export function Explore() {
   const [category, setCategory] = useState('all');
   const selectedAddress = addr();
   const eligible = ST.filter(s => category === 'all' || s.c === category);
+  useEffect(() => {
+    if (scope !== 'closest' || !selectedAddress?.t) return;
+    void refreshStoreDistances(eligible.filter(store => store.live).map(store => store.id), selectedAddress).catch(() => null);
+  }, [scope, category, selectedAddress?.id, selectedAddress?.t, selectedAddress?.apt, selectedAddress?.inst, selectedAddress?.city, selectedAddress?.department, selectedAddress?.country]);
   const visible = eligible.filter(s => scope !== 'open' || !!s.open).slice().sort((x, y) => {
     if (scope === 'closest') return x.km - y.km;
     if (scope === 'open') return x.km - y.km;
@@ -263,8 +265,12 @@ export function Cats() {
 }
 
 export function CatList({p}: {p: string}) {
-  const th = useTheme();
+  const th = useTheme(), address = addr();
   const base = ST.filter(s => p === 'all' || s.c === p), kinds: string[] = [];
+  useEffect(() => {
+    if (S.f !== 'near' || !address?.t) return;
+    void refreshStoreDistances(base.filter(store => store.live).map(store => store.id), address).catch(() => null);
+  }, [S.f, p, address?.id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
   base.forEach(s => {if (kinds.indexOf(s.k) < 0) kinds.push(s.k);});
   const l = filt(base.filter(s => !S.sub || s.k === S.sub)), c = categories().find(x => x.id === p);
   const its = l.flatMap(s => s.it);
