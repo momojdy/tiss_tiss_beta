@@ -29,7 +29,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   useGoodies();
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
-  const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false);
+  const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false), [refreshing, setRefreshing] = useState(false);
   const toastT = useRef<any>(null);
 
   /* bridge for store/actions */
