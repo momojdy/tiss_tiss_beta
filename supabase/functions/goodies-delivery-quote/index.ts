@@ -48,7 +48,7 @@ async function sha256(value: string) {
   return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, "0")).join("");
 }
 
-async function geocode(address: AddressInput, key: string, service: ReturnType<typeof createClient>): Promise<Point> {
+async function geocode(address: AddressInput, key: string, service: any): Promise<Point> {
   const parts = addressParts(address);
   if (!parts.length) throw new Error("Please enter a complete address.");
   const canonical = parts.join(", ");
@@ -171,7 +171,7 @@ Deno.serve(async (req: Request) => {
       return reply({ error: `Choose between one and ${limit} stores.` }, 400);
     }
 
-    const service = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const service: any = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: stores, error: storeError } = await service.from("goodies_store_schedules")
       .select("store_id,address,city,country,store_latitude,store_longitude,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km")
       .in("store_id", storeIds).eq("is_live", true);
@@ -193,7 +193,7 @@ Deno.serve(async (req: Request) => {
         if (store.delivery_pricing_mode === "distance" && store.delivery_max_fee != null) fee = Math.min(fee, Number(store.delivery_max_fee));
         return {
           store_id: store.store_id, distance_m: Math.round(route.meters), distance_km: Number(km.toFixed(2)),
-          base_fee: Math.round(fee * 100) / 100, outside_delivery_area,
+          base_fee: Math.round(fee * 100) / 100, outside_delivery_area: outsideDeliveryArea,
           origin: route.origin, destination: route.destination, geometry: route.geometry, error: null,
         };
       } catch (error) {
