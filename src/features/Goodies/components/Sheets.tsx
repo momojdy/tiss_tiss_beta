@@ -331,7 +331,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
     setGroupQuoteBusy(true);
     try {
-      const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||''};
+      const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||''};
       const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview?.store_id,address:addressPayload}});
       if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(quote.data?.error||quote.error?.message||'Could not calculate delivery for this address.');return;}
       const quoteState={addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000};
@@ -347,6 +347,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
     if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
+    if(!S.hasWallet){toast('Your Wantiss Wallet is not available. Create a wallet before placing this group order.');return;}
+    const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
+    if(estimatedTotal>0&&S.wallet<estimatedTotal){toast('Insufficient Wantiss Wallet balance. Add '+money(estimatedTotal-S.wallet)+' or choose another payment method.');return;}
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
     setGroupCheckoutBusy(true);
     try {
@@ -358,7 +361,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
         if(!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(selected.id)||groupDeliveryQuote.expiresAt<=Date.now()){
           toast('Calculate the delivery fee and review it before placing the order.');return;
         }
-        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',delivery_quote_id:groupDeliveryQuote.quoteId};
+        addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||'',delivery_quote_id:groupDeliveryQuote.quoteId};
       }
       const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
         p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
@@ -396,7 +399,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
       {group.serverBacked ? <View style={{height:8}}/> : null}
       {group.serverBacked ? <Cta small ghost label="Share invite code" onPress={()=>void invite()} /> : null}
     </View> : null}
-    {S.cart.lines.length > 0 ? <View>
+    {S.cart.lines.length > 0 && !group.serverBacked ? <View>
       <T size={14} weight="600">{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
       <Row sp style={{marginTop:12,paddingTop:10,borderTopWidth:1,borderTopColor:th.line}}><T weight="600">{label('lbl.sheetSubtotal', 'Subtotal')}</T><T weight="600">{money(S.cart.lines.reduce((sum:number,line:any)=>sum+line.p*line.q,0))}</T></Row>
@@ -416,7 +419,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     {group.serverBacked ? <>
     <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
-      {membershipError ? <T size={12} color={th.red}>Could not load group members: {membershipError}</T> : null}
+      {membershipError ? <T size={12} color={th.red}>Could not load group members. Try again.</T> : null}
       {groupMembers.map((member:any)=>{
         const uid=String(member.user_id||'');
         const isYou=uid===currentUserId;
@@ -457,11 +460,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true}: {close: () 
     </> : null}
     {checkoutPreview ? <View>
       <T size={15} weight="600">Combined cart</T>
-      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items</T>
-      {(checkoutPreview.items||[]).map((item:any)=><Row key={item.item_id} sp style={{paddingVertical:7}}>
-        <View style={{flex:1}}><T size={13} weight="600">{item.quantity}× {item.name}</T> </View>
-        <T size={13} weight="600">{money(Number(item.unit_price)*Number(item.quantity))}</T>
-      </Row>)}
+      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items from everyone</T>
+      
       <Row sp style={{borderTopWidth:1,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
