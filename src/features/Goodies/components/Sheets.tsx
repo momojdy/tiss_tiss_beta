@@ -111,114 +111,82 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
-  const zone = String(store?.scheduledOrderTimezone || 'UTC');
+  const customerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Etc/GMT';
+  const storeZone = String(store?.scheduledOrderTimezone || customerZone);
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const zonedParts = (date: Date) => {
-    const parts = new Intl.DateTimeFormat('en-US', {timeZone: zone, year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'}).formatToParts(date);
-    const get = (key: string) => Number(parts.find(part => part.type === key)?.value || 0);
-    return {year:get('year'),month:get('month'),day:get('day'),hour:get('hour'),minute:get('minute'),second:get('second')};
+  const storeParts = (instant: Date) => {
+    const parts = new Intl.DateTimeFormat('en-US',{timeZone:storeZone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(instant);
+    const get = (key:string) => parts.find(part=>part.type===key)?.value || '';
+    return {year:Number(get('year')),month:Number(get('month')),day:Number(get('day')),weekday:get('weekday'),hour:Number(get('hour')),minute:Number(get('minute'))};
   };
-  // A wall-clock Date is used only for the native wheel/calendar arithmetic; convert it
-  // to an absolute instant with the store's IANA timezone before saving or comparing.
-  const wallDateInZone = (date: Date) => {
-    const p = zonedParts(date);
-    return new Date(p.year,p.month-1,p.day,p.hour,p.minute,p.second,0);
-  };
-  const zonedInstant = (wall: Date) => {
-    const target = Date.UTC(wall.getFullYear(),wall.getMonth(),wall.getDate(),wall.getHours(),wall.getMinutes(),0,0);
-    let guess = target;
-    for (let i=0;i<3;i++) {
-      const p = zonedParts(new Date(guess));
-      const represented = Date.UTC(p.year,p.month-1,p.day,p.hour,p.minute,p.second,0);
-      guess += target-represented;
-    }
-    return new Date(guess);
-  };
-  const storeNow = wallDateInZone(new Date());
-  const initialWall = S.sch && S.sch > Date.now() ? wallDateInZone(new Date(S.sch)) : storeNow;
-  const initialSlotWall = new Date(initialWall);
-  initialSlotWall.setMinutes(Math.ceil(initialWall.getMinutes()/15)*15,0,0);
-  const [dayOffset,setDayOffset] = useState(() => {
-    const a = Date.UTC(storeNow.getFullYear(),storeNow.getMonth(),storeNow.getDate());
-    const b = Date.UTC(initialWall.getFullYear(),initialWall.getMonth(),initialWall.getDate());
-    return Math.max(0,Math.min(6,Math.round((b-a)/86400000)));
-  });
-  const [deliveryMode,setDeliveryMode] = useState(S.mode === 'pickup' ? 'pickup' : 'delivery');
-  const [customHour,setCustomHour] = useState(String(initialSlotWall.getHours()).padStart(2,'0'));
-  const [customMinute,setCustomMinute] = useState(String(initialSlotWall.getMinutes()).padStart(2,'0'));
-  const selectedDate = new Date(storeNow);
-  selectedDate.setDate(storeNow.getDate()+dayOffset); selectedDate.setHours(0,0,0,0);
-  const schedule = store?.scheduleHours || {};
-  const hours = schedule[dayNames[selectedDate.getDay()]];
-  const opening = hours && !hours.closed && hours.open ? String(hours.open) : '';
-  const closing = hours && !hours.closed && hours.close ? String(hours.close) : '';
+  const customerNow = new Date();
   const minimumOrderTime = String(store?.scheduledOrderStartTime || '10:00').slice(0,5);
   const [minimumHour,minimumMinute] = minimumOrderTime.split(':').map(Number);
-  const configuredMinimum = new Date(selectedDate);
-  configuredMinimum.setHours(minimumHour || 0,minimumMinute || 0,0,0);
-  const hasHours = !!(hours && !hours.closed && opening && closing);
-  const noSchedule = !store?.scheduleHours || !Object.keys(store.scheduleHours).length;
-  const closedDay = (!hasHours && !noSchedule);
-  let startMinute = 8*60, endMinute = 22*60;
-  if (hasHours) {
-    const [oh,om] = opening.split(':').map(Number), [ch,cm] = closing.split(':').map(Number);
-    startMinute = oh*60+(om||0); endMinute = ch*60+(cm||0);
-  }
-  const earliestWall = new Date(selectedDate);
-  const minWallTime = Math.max(startMinute, minimumHour*60+(minimumMinute||0));
-  const currentWallTime = dayOffset===0 ? storeNow.getHours()*60+storeNow.getMinutes() : 0;
-  const earliestMinute = Math.max(minWallTime, currentWallTime);
-  earliestWall.setHours(Math.floor(earliestMinute/60),Math.ceil((earliestMinute%60)/5)*5,0,0);
-  const earliestInstant = zonedInstant(earliestWall);
-  const rawHour = Number(customHour), rawMinute = Number(customMinute);
-  const validDigits = /^\d{1,2}$/.test(customHour) && /^\d{1,2}$/.test(customMinute) && rawHour>=0 && rawHour<=23 && rawMinute>=0 && rawMinute<=59;
-  const customDate = new Date(selectedDate);
-  if (validDigits) customDate.setHours(rawHour,rawMinute,0,0);
-  const customMinutes = customDate.getHours()*60+customDate.getMinutes();
-  const customInstant = validDigits ? zonedInstant(customDate) : new Date(0);
-  const customWithinHours = customMinutes>=startMinute && customMinutes<endMinute;
-  const earliestSelectableMinute = earliestWall.getHours()*60+earliestWall.getMinutes();
-  const customValid = validDigits && !closedDay && customWithinHours && customMinutes>=earliestSelectableMinute && customInstant.getTime()>Date.now();
-  const clampedWall = new Date(selectedDate);
-  const latestMinute = Math.max(startMinute, endMinute-5);
-  const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
-  clampedWall.setHours(Math.floor(safeMinute/60),Math.ceil((safeMinute%60)/5)*5,0,0);
-  const slotStep = inline ? 5 : 15;
-  const noFutureSlot = closedDay || earliestMinute >= endMinute || Math.ceil(earliestMinute/slotStep)*slotStep >= endMinute;
-  // Never silently substitute a different time when the customer's selected time is invalid.
-  const selected = customValid && !noFutureSlot ? customInstant.getTime() : 0;
-  const reason = noFutureSlot
-    ? label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.')
-    : !customWithinHours
-      ? label('lbl.sheetClampOpeningHours','Time adjusted to fit this store’s opening hours.')
-      : !customValid
-        ? label('lbl.sheetClampEarliest','Time adjusted to the earliest available order time.')
-        : '';
-  const formatStore = (ts: number, options: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(undefined,{...options,timeZone:zone}).format(new Date(ts));
-  const choose = () => {
-    if (!store) {toast(label('lbl.sheetChooseStore','Choose a store before scheduling.'));return;}
-    if (!store.acceptScheduledOrders) {toast(label('lbl.sheetNoScheduleClosed','This store does not accept scheduled orders.'));return;}
-    if (!selected) {toast(reason || label('lbl.sheetChooseDay','Choose an available day.'));return;}
-    A.setSch(selected); A.setMode(deliveryMode);
-    toast(label('lbl.sheetScheduledFor','Scheduled for {day}, {time}').replace('{day}',formatStore(selected,{weekday:'short',month:'short',day:'numeric'})).replace('{time}',formatStore(selected,{hour:'numeric',minute:'2-digit'})));
+  const isAvailableInstant = (instant:Date) => {
+    const p=storeParts(instant), hours=store?.scheduleHours?.[p.weekday] || null;
+    if (hours && hours.closed) return false;
+    let openMinute=8*60, closeMinute=22*60;
+    if (hours && hours.open && hours.close) {
+      const [oh,om]=String(hours.open).slice(0,5).split(':').map(Number);
+      const [ch,cm]=String(hours.close).slice(0,5).split(':').map(Number);
+      openMinute=oh*60+(om||0); closeMinute=ch*60+(cm||0);
+    } else if (store?.scheduleHours && Object.keys(store.scheduleHours).length && !hours) return false;
+    const minute=p.hour*60+p.minute, minimum=(minimumHour||0)*60+(minimumMinute||0);
+    return minute>=Math.max(openMinute,minimum) && minute<closeMinute;
+  };
+  const customerDayStart = (offset:number) => {const d=new Date(customerNow);d.setHours(0,0,0,0);d.setDate(d.getDate()+offset);return d;};
+  const slotsForDay = (offset:number) => {
+    const start=customerDayStart(offset), end=new Date(start);end.setDate(end.getDate()+1);
+    let cursor=Math.max(start.getTime(),Math.ceil(Date.now()/300000)*300000);
+    const slots:Date[]=[];
+    for(;cursor<end.getTime();cursor+=300000){const candidate=new Date(cursor);if(isAvailableInstant(candidate))slots.push(candidate);}
+    return slots;
+  };
+  const initialScheduled = S.sch && S.sch>Date.now() ? new Date(S.sch) : null;
+  const initialOffset = initialScheduled ? Math.max(0,Math.min(6,Math.round((new Date(initialScheduled.getFullYear(),initialScheduled.getMonth(),initialScheduled.getDate()).getTime()-new Date(customerNow.getFullYear(),customerNow.getMonth(),customerNow.getDate()).getTime())/86400000))) : 0;
+  const initialSlots=slotsForDay(initialOffset);
+  const initialChoice=initialScheduled && isAvailableInstant(initialScheduled) ? initialScheduled : initialSlots[0] || new Date(customerNow);
+  const [dayOffset,setDayOffset]=useState(initialOffset);
+  const [deliveryMode,setDeliveryMode]=useState(S.mode==='pickup'?'pickup':'delivery');
+  const [customHour,setCustomHour]=useState(String(initialChoice.getHours()).padStart(2,'0'));
+  const [customMinute,setCustomMinute]=useState(String(initialChoice.getMinutes()).padStart(2,'0'));
+  const selectedDate=customerDayStart(dayOffset);
+  const availableSlots=slotsForDay(dayOffset);
+  const earliestInstant=availableSlots[0] || null;
+  const earliestWall=earliestInstant ? new Date(earliestInstant) : selectedDate;
+  const rawHour=Number(customHour),rawMinute=Number(customMinute);
+  const validDigits=/^\\d{1,2}$/.test(customHour)&&/^\\d{1,2}$/.test(customMinute)&&rawHour>=0&&rawHour<=23&&rawMinute>=0&&rawMinute<=59;
+  const customDate=new Date(selectedDate);if(validDigits)customDate.setHours(rawHour,rawMinute,0,0);
+  const customInstant=validDigits?new Date(customDate):new Date(0);
+  const customValid=validDigits&&isAvailableInstant(customInstant)&&customInstant.getTime()>Date.now();
+  const selected=customValid?customInstant.getTime():0;
+  const noFutureSlot=!availableSlots.length;
+  const reason=noFutureSlot?label('lbl.sheetClosedDayReason','This store has no remaining scheduled times on that day. Choose another day.') : !customValid?label('lbl.sheetClampEarliest','Choose the minimum available time or a later available time.'):'';
+  const formatCustomer=(ts:number,options:Intl.DateTimeFormatOptions)=>new Intl.DateTimeFormat(undefined,{...options,timeZone:customerZone}).format(new Date(ts));
+  const choose=()=>{
+    if(!store){toast(label('lbl.sheetChooseStore','Choose a store before scheduling.'));return;}
+    if(!store.acceptScheduledOrders){toast(label('lbl.sheetNoScheduleClosed','This store does not accept scheduled orders.'));return;}
+    if(!selected){toast(reason||label('lbl.sheetChooseDay','Choose an available day.'));return;}
+    A.setSch(selected);A.setMode(deliveryMode);
+    toast(label('lbl.sheetScheduledFor','Scheduled for {day}, {time}').replace('{day}',formatCustomer(selected,{weekday:'short',month:'short',day:'numeric'})).replace('{time}',formatCustomer(selected,{hour:'numeric',minute:'2-digit',timeZoneName:'short'})));
     close();
   };
-  return <View style={inline ? {paddingTop: 12, paddingBottom: 12, borderTopWidth: 0.5, borderTopColor: th.line, marginTop: 10} : undefined}>
-    {inline ? null : <T size={21} weight="600">{label('lbl.sheetScheduleTitle','Schedule your order')}</T>}
+  return <View style={inline?{paddingTop:12,paddingBottom:12,borderTopWidth:0.5,borderTopColor:th.line,marginTop:10}:undefined}>
+    {inline?null:<T size={21} weight='600'>{label('lbl.sheetScheduleTitle','Schedule your order')}</T>}
     <SegSchedule value={deliveryMode} onChange={setDeliveryMode}/>
-    <T size={14} weight="600" style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
+    <T size={14} weight='600' style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
-      {Array.from({length:7},(_,i)=>{const d=new Date(storeNow);d.setDate(storeNow.getDate()+i);const active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:0.5,borderColor:active?th.br:th.line}}>
-        <T size={11.5} weight="600" color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight="600" color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
+      {Array.from({length:7},(_,i)=>{const d=customerDayStart(i),active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);const first=slotsForDay(i)[0];if(first){setCustomHour(String(first.getHours()).padStart(2,'0'));setCustomMinute(String(first.getMinutes()).padStart(2,'0'));}}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:0.5,borderColor:active?th.br:th.line}}>
+        <T size={11.5} weight='600' color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight='600' color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
-    {store?.acceptScheduledOrders ? <T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest order time')}: {minimumOrderTime}{opening ? ' · Opens '+opening : ''} · {zone}</T> : null}
-    <T size={13} weight="600" style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
-    {inline ? <DateTimePicker value={customValid ? customDate : clampedWall} mode="time" display={Platform.OS === 'ios' ? 'spinner' : 'clock'} minuteInterval={5} onChange={(_, date) => {if(date){setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(date.getMinutes()).padStart(2,'0'));}}} /> : <ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
-      {Array.from({length:Math.max(0,Math.floor((endMinute-1-Math.ceil(earliestMinute/15)*15)/15)+1)},(_,i)=>Math.ceil(earliestMinute/15)*15+i*15).map(minute=>{const hour=Math.floor(minute/60),mins=minute%60,key=String(hour).padStart(2,'0')+':'+String(mins).padStart(2,'0'),active=customHour===String(hour).padStart(2,'0')&&customMinute===String(mins).padStart(2,'0');return <Pressable key={key} onPress={()=>{setCustomHour(String(hour).padStart(2,'0'));setCustomMinute(String(mins).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight="600" color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
+    {store?.acceptScheduledOrders?<T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest available time')}: {earliestInstant?formatCustomer(earliestInstant.getTime(),{hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'—'} · {customerZone}</T>:null}
+    <T size={13} weight='600' style={{marginTop:12,marginBottom:6}}>{label('lbl.sheetExactTime','Choose a time')}</T>
+    {inline?<DateTimePicker value={customValid?customDate:earliestWall} mode='time' display={Platform.OS==='ios'?'spinner':'clock'} minuteInterval={5} onChange={(_,date)=>{if(date){setCustomHour(String(date.getHours()).padStart(2,'0'));setCustomMinute(String(date.getMinutes()).padStart(2,'0'));}}}/>:<ScrollView style={{maxHeight:156,marginTop:6}} nestedScrollEnabled showsVerticalScrollIndicator={false} contentContainerStyle={{flexDirection:'row',flexWrap:'wrap',gap:8,paddingBottom:4}}>
+      {availableSlots.filter((_,i)=>i%3===0 || availableSlots.length<24).map(slot=>{const key=String(slot.getHours()).padStart(2,'0')+':'+String(slot.getMinutes()).padStart(2,'0'),active=customHour===String(slot.getHours()).padStart(2,'0')&&customMinute===String(slot.getMinutes()).padStart(2,'0');return <Pressable key={slot.getTime()} onPress={()=>{setCustomHour(String(slot.getHours()).padStart(2,'0'));setCustomMinute(String(slot.getMinutes()).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight='600' color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
     </ScrollView>}
-    {reason ? <T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T> : null}
-    {selected ? <T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {formatStore(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatStore(selected,{hour:'numeric',minute:'2-digit'})}</T> : null}
+    {reason?<T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T>:null}
+    {selected?<T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {formatCustomer(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatCustomer(selected,{hour:'numeric',minute:'2-digit',timeZoneName:'short'})}</T>:null}
     <View style={{height:12}}/><Cta label={label('lbl.sheetApply','Apply')} disabled={!selected} onPress={choose}/>
   </View>;
 }
