@@ -174,7 +174,7 @@ function Addresses() {
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
           <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
-          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country || countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v, cc: 'XX'})} />
+          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country ?? countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v, cc: 'XX'})} placeholder="Enter any country name" />
           <View style={{marginTop: 14}}><Cta label={busy ? 'Saving…' : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
         </Card>
       ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: 'HT', country: 'Haiti', phone: S.pf.ph || ''})} />}
