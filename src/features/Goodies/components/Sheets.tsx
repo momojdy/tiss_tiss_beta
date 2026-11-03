@@ -182,7 +182,8 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
   const latestMinute = Math.max(startMinute, endMinute-5);
   const safeMinute = Math.max(earliestMinute, Math.min(latestMinute, validDigits ? customMinutes : earliestMinute));
   clampedWall.setHours(Math.floor(safeMinute/60),Math.ceil((safeMinute%60)/5)*5,0,0);
-  const noFutureSlot = closedDay || earliestMinute >= endMinute || Math.ceil(earliestMinute/15)*15 >= endMinute;
+  const slotStep = inline ? 5 : 15;
+  const noFutureSlot = closedDay || earliestMinute >= endMinute || Math.ceil(earliestMinute/slotStep)*slotStep >= endMinute;
   // Never silently substitute a different time when the customer's selected time is invalid.
   const selected = customValid && !noFutureSlot ? customInstant.getTime() : 0;
   const reason = noFutureSlot
