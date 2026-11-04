@@ -73,7 +73,7 @@ export function ConversationPage() {
         <ScrollView ref={ref} style={{ flex: 1 }} onContentSizeChange={() => ref.current?.scrollToEnd({ animated: false })} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
           {ms.e ? <ErrBox e={ms.e} retry={ms.reload} /> : ms.l && !ms.d ? <Loading n={3} h={44} /> : (ms.d ?? []).length ? (ms.d ?? []).map(m => { const mine = m.sender_id === app.userId; return <View key={m.id} style={{ maxWidth: '78%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? t.blue : t.chip, borderRadius: 14, paddingHorizontal: 13, paddingVertical: 10 }}><Text style={{ color: mine ? '#fff' : t.ink, fontSize: 13 }}>{m.body}</Text></View>; }) : <Empty icon="message-text-outline" title="No messages yet" />}
         </ScrollView>
-        <View style={[s.row, { paddingTop: 8 }]}><TextInput style={[s.fld, { flex: 1 }]} value={text} onChangeText={setText} placeholder="Write a reply" placeholderTextColor={t.mute} onSubmitEditing={send} returnKeyType="send" /><Btn label="Send" small busy={sending} disabled={!text.trim() || !c} onPress={send} style={{ minHeight: 46 }} /></View>
+        <View style={[s.row, { paddingTop: 8 }]}><TextInput style={[s.fld, { flex: 1 }]} value={text} onChangeText={setText} maxLength={c?.feature === 'goodies' ? 2000 : undefined} placeholder="Write a reply" placeholderTextColor={t.mute} onSubmitEditing={send} returnKeyType="send" /><Btn label="Send" small busy={sending} disabled={!text.trim() || !c} onPress={send} style={{ minHeight: 46 }} /></View>
       </KeyboardAvoidingView>
     </Pg>
   );
