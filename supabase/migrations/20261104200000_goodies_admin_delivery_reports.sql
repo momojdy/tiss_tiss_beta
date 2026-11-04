@@ -75,7 +75,6 @@ begin
            delivery_dispute_status = 'resolved_release',
            updated_at = now()
      where id = p_order_id;
-
     v_notification_body := 'Order ' || v_o.order_code || ' was confirmed as delivered.';
   else
     if v_o.payment_method = 'wallet' then
@@ -90,6 +89,13 @@ begin
       else
         raise exception 'Wallet payment is not in a refundable paid state; report remains open for review' using errcode = 'P0001';
       end if;
+
+      update public.goodies_orders
+         set status = 'cancelled',
+             cancelled_at = now(),
+             delivery_dispute_status = 'resolved_refund',
+             updated_at = now()
+       where id = p_order_id;
 
     elsif v_o.payment_method = 'card' then
       if v_o.payment_status in ('paid', 'partially_refunded', 'refund_pending') then
@@ -125,24 +131,7 @@ begin
       end if;
 
     else
-      -- Cash-on-delivery or another non-prepaid method: cancel without claiming
-      -- that money was returned.
-      update public.goodies_orders
-         set status = 'cancelled',
-             cancelled_at = now(),
-             delivery_dispute_status = 'resolved_refund',
-             updated_at = now()
-       where id = p_order_id;
-      v_notification_body := 'Order ' || v_o.order_code || ' was cancelled. No payment refund was needed.';
-    end if;
-
-    if v_o.payment_method = 'wallet' then
-      update public.goodies_orders
-         set status = 'cancelled',
-             cancelled_at = now(),
-             delivery_dispute_status = 'resolved_refund',
-             updated_at = now()
-       where id = p_order_id;
+      raise exception 'Unsupported payment method; report remains open for manual review' using errcode = 'P0001';
     end if;
   end if;
 
