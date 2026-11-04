@@ -145,7 +145,7 @@ begin
     perform set_config('app.goodies_group_waive_service_fee', case when v_i = 1 then 'off' else 'on' end, true);
     v_addr := case when p_order_type = 'delivery' then (coalesce(p_address, '{}'::jsonb) || jsonb_build_object('delivery_quote_id', v_stop->>'delivery_quote_id')) else null end;
     select o.* into v_created from public.place_goodies_order_with_payment_once(
-      p_idempotency_key || '-s' || v_i, p_payment_method, v_sid, p_order_type, p_scheduled_for, v_addr, p_contact_phone,
+      md5(v_uid::text || ':' || p_idempotency_key || ':' || v_i::text), p_payment_method, v_sid, p_order_type, p_scheduled_for, v_addr, p_contact_phone,
       v_stop->'items', v_sub, v_fee, v_svc, 0, v_tip, v_total, p_notes, null) o limit 1;
     if v_created.id is null then raise exception 'A store order could not be created' using errcode='P0001'; end if;
     update public.goodies_orders as go set parent_id = v_group, stop_index = v_i where go.id = v_created.id and go.customer_id = v_uid;
@@ -180,3 +180,33 @@ begin
 end $$;
 revoke all on function public.goodies_admin_update_max_stops(integer) from public, anon;
 grant execute on function public.goodies_admin_update_max_stops(integer) to authenticated;
+
+-- Save the surcharge and maximum stop count as one transaction. This avoids
+-- publishing one half of the delivery policy when the second write fails.
+create or replace function public.goodies_admin_update_multi_store_policy(
+  p_enabled boolean,
+  p_additional_store_fee numeric,
+  p_extra_distance_per_km numeric,
+  p_max_stops integer
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $
+begin
+  perform public.goodies_admin_assert();
+  if p_enabled is null
+     or p_additional_store_fee is null or p_additional_store_fee < 0 or p_additional_store_fee > 1000
+     or p_extra_distance_per_km is null or p_extra_distance_per_km < 0 or p_extra_distance_per_km > 1000
+     or p_max_stops is null or p_max_stops < 1 or p_max_stops > 8 then
+    raise exception 'Invalid multi-store delivery settings' using errcode = '22023';
+  end if;
+  perform public.goodies_admin_update_delivery_surcharge_policy(
+    p_enabled, p_additional_store_fee, p_extra_distance_per_km
+  );
+  perform public.goodies_admin_update_max_stops(p_max_stops);
+end
+$;
+revoke all on function public.goodies_admin_update_multi_store_policy(boolean,numeric,numeric,integer) from public, anon;
+grant execute on function public.goodies_admin_update_multi_store_policy(boolean,numeric,numeric,integer) to authenticated;
