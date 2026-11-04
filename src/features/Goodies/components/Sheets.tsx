@@ -510,7 +510,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       </View> : null}
       <View style={{height:14}}/>
       <Cta small ghost label="Share invite code" onPress={()=>void invite()} />
-      {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View style={{marginTop:12}}>
+      {groupMembers.some((member:any)=>member.user_id===currentUserId) ? <View style={{marginTop:12}}>
         <Cta small ghost label={friendsOpen?'Hide friends':'Invite friends'} onPress={()=>{if(friendsOpen)setFriendsOpen(false);else void openFriends();}} />
         {friendsOpen ? <View style={{marginTop:10}}>
           {friendsBusy&&!friends.length ? <T size={13} color={th.mut}>Loading friends…</T> : null}
@@ -519,7 +519,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
             const uid=String(f.user_id), blocked=!!f.already_member || !!f.already_invited, picked=pickedFriends.includes(uid);
             return <Pressable key={uid} disabled={blocked} accessibilityRole="checkbox" accessibilityState={{checked:picked,disabled:blocked}} onPress={()=>setPickedFriends(list=>picked?list.filter(x=>x!==uid):[...list,uid])} style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:9,opacity:blocked?0.5:1}}>
               <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center',overflow:'hidden'}}>{f.avatar_url?<Image source={{uri:f.avatar_url}} style={{width:38,height:38}} />:<Icon name="user" color={th.mut}/>}</View>
-              <View style={{flex:1}}><T weight="600">{f.display_name}</T>{f.already_member?<T size={12} color={th.mut}>In the group</T>:f.already_invited?<T size={12} color={th.mut}>Invited</T>:null}</View>
+              <View style={{flex:1}}><T weight="600">{f.display_name}</T>{f.already_member?<T size={12} color={th.mut}>Joined</T>:f.already_invited?<T size={12} color={th.mut}>Invited</T>:f.invite_status==='declined'?<T size={12} color={th.mut}>Declined</T>:null}</View>
               <View style={{width:22,height:22,borderRadius:7,borderWidth:1.5,borderColor:picked?th.br:th.line,backgroundColor:picked?th.br:'transparent',alignItems:'center',justifyContent:'center'}}>{picked?<Icon name="check" size={14} color="#FFF"/>:null}</View>
             </Pressable>;
           })}
