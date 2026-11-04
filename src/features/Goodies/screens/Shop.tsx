@@ -233,6 +233,7 @@ const IcBox = ({icon}: {icon: string}) => {const th = useTheme(); return <View s
 
 export function Checkout() {
   const th = useTheme(), t = totals(), pk = isPk(), a = addr() || null, st = t.st, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
+  const stops: string[] = (t as any).stops || [], multi = stops.length > 1;
   const [cashEligible, setCashEligible] = useState(false), [scheduleOpen, setScheduleOpen] = useState(false);
   useEffect(() => {
     let active = true;
@@ -248,13 +249,17 @@ export function Checkout() {
   useEffect(() => {
     let active = true;
     setCashEligible(false);
-    if (!pk && st?.id && !providerInfo.demo) {
-      void supabase.rpc('goodies_cash_on_delivery_available', {p_store_id: st.id})
-        .then(({data, error}) => { if (active && !error) setCashEligible(data === true); });
+    const storeIds = multi ? stops : st?.id ? [st.id] : [];
+    if (!pk && storeIds.length && !providerInfo.demo) {
+      void Promise.all(storeIds.map(async storeId => {
+        const {data, error} = await supabase.rpc('goodies_cash_on_delivery_available', {p_store_id: storeId});
+        return !error && data === true;
+      })).then(results => {
+        if (active) setCashEligible(results.length === storeIds.length && results.every(Boolean));
+      });
     }
     return () => { active = false; };
-  }, [st?.id, pk]);
-  const stops: string[] = (t as any).stops || [], multi = stops.length > 1;
+  }, [st?.id, pk, multi, stops.join(',')]);
   const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && !(multi && p[0] === 'card') && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
