@@ -83,21 +83,30 @@ const hm = (v: any): number | null => {
   const m = /^(\d{1,2}):(\d{2})/.exec(String(v || ''));
   if (!m) return null;
   const h = +m[1], mi = +m[2];
-  return h > 24 || mi > 59 ? null : h * 60 + mi;
+  return h > 23 || mi > 59 ? null : h * 60 + mi;
 };
 const fmtHM = (min: number) => {const d = new Date(); d.setHours(Math.floor(min / 60) % 24, min % 60, 0, 0); return formatHour(d);};
 const bgOf = (id: string) => 'bg' + Array.from(id).reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 5, 0);
 
-/* Open or closed from the weekly hours, in the device's local time (the store and its customers share a city). */
-export function openState(hours: Record<string, DayHours> | null | undefined, now: Date = new Date()): {open: number; h: string; nx: string} {
+/* Opening hours use the store's configured timezone, matching server checkout validation. */
+export function openState(hours: Record<string, DayHours> | null | undefined, now: Date = new Date(), timezone = 'UTC'): {open: number; h: string; nx: string} {
   if (!hours || typeof hours !== 'object' || !Object.keys(hours).length) return {open: 0, h: '', nx: label('lbl.storeHoursNotSet', 'Opening hours not set')};
+  let today = -1, nowMin = 0;
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', {timeZone: timezone || 'UTC', weekday: 'long', hour: '2-digit', minute: '2-digit', hourCycle: 'h23'}).formatToParts(now);
+    today = DAY_NAMES.indexOf(parts.find(p => p.type === 'weekday')?.value || '');
+    nowMin = Number(parts.find(p => p.type === 'hour')?.value) * 60 + Number(parts.find(p => p.type === 'minute')?.value);
+  } catch {
+    return {open: 0, h: '', nx: label('lbl.storeHoursUnavailable', 'Opening hours unavailable')};
+  }
+  if (today < 0 || !Number.isFinite(nowMin)) return {open: 0, h: '', nx: label('lbl.storeHoursUnavailable', 'Opening hours unavailable')};
   const win = (day: number) => {
     const d: any = (hours as any)[DAY_NAMES[((day % 7) + 7) % 7]];
     if (!d || d.closed) return null;
     const o = hm(d.open), c = hm(d.close);
     return o == null || c == null ? null : {o, c};
   };
-  const nowMin = now.getHours() * 60 + now.getMinutes(), today = now.getDay(), tw = win(today), yw = win(today - 1);
+  const tw = win(today), yw = win(today - 1);
   let open = 0, closesAt = 0;
   if (tw) {
     if (tw.c > tw.o) {if (nowMin >= tw.o && nowMin < tw.c) {open = 1; closesAt = tw.c;}}
@@ -117,7 +126,7 @@ export function openState(hours: Record<string, DayHours> | null | undefined, no
 
 function liveStore(r: any, items: Item[]): Store {
   const id = String(r.store_id || r.business_id), names = r.names && typeof r.names === 'object' ? r.names : {};
-  const eMin = Number(r.eta_min) || 20, eMax = Number(r.eta_max) || 35, st = openState(r.hours);
+  const eMin = Number(r.eta_min) || 20, eMax = Number(r.eta_max) || 35, st = openState(r.hours, new Date(), String(r.scheduled_order_timezone || 'UTC'));
   const store: Store = {
     id, businessId: String(r.business_id), c: r.category || 'groceries', e: CAT_EMOJI[r.category] || '🛍️', bg: bgOf(id), r: 0, rv: 0, km: 0, km0: 0,
     eta: eMin + '–' + eMax, eta0: eMin + '–' + eMax, fee: Number(r.delivery_fee) || 0, min: Number(r.min_order) || 0,
@@ -204,7 +213,7 @@ export async function refreshLiveSchedules() {
       let ch = false;
       ST.forEach(s => {
         if (!s.live) return;
-        const o = openState(s.scheduleHours);
+        const o = openState(s.scheduleHours, new Date(), s.scheduledOrderTimezone || 'UTC');
         if (o.open !== s.open || o.nx !== s.nx || o.h !== s.h) {s.open = o.open; s.nx = o.nx; s.h = o.h; ch = true;}
       });
       if (ch) emit();
