@@ -18,14 +18,19 @@ import { supabase } from '../../lib/supabase';
 import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, q } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
-  const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
+  const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All'), [statusFilter, setStatusFilter] = useState('All');
   const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
-  const rows = (c.d ?? []).filter(x => f === 'All' || x.feature === f);
+  const rows = (c.d ?? []).filter(x =>
+    (statusFilter === 'All' || (statusFilter === 'Needs reply' && x.status === 'pending_vendor') ||
+      (statusFilter === 'Active' && x.status === 'active') || (statusFilter === 'Closed' && x.status === 'closed')) &&
+    (f === 'All' || x.feature === f)
+  );
   return (
     <Pg title="Messages" onBack={app.back} refreshing={c.l && !!c.d} onRefresh={app.bump}>
-      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={f} onChange={setF} />
+      <Chips items={['All', 'Needs reply', 'Active', 'Closed'].map(k => ({ k, l: k }))} value={statusFilter} onChange={setStatusFilter} />
+      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All topics' : FX.FM[k]?.name }))} value={f} onChange={setF} />
       {c.e ? <ErrBox e={c.e} retry={c.reload} /> : c.l && !c.d ? <Loading /> : rows.length ? (
-        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · awaiting your reply · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
+        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEEDS REPLY · ' : x.status === 'active' ? 'ACTIVE · ' : x.status === 'closed' ? 'CLOSED · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
       ) : <View style={s.card}><Empty icon="chat-outline" title="No conversations yet" hint="Customer messages about your listings and orders appear here." /></View>}
     </Pg>
   );
@@ -39,7 +44,14 @@ export function ConversationPage() {
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
     setSending(true);
-    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
+    try {
+      if (c?.feature === 'goodies') {
+        await q(supabase.rpc('goodies_vendor_reply', { p_conversation_id: id, p_body: body }));
+      } else {
+        await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body }));
+      }
+      setText(''); ms.reload(); conv.reload(); app.bump();
+    } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
   };
   const c = conv.d;
   return (
@@ -49,7 +61,7 @@ export function ConversationPage() {
         <ScrollView ref={ref} style={{ flex: 1 }} onContentSizeChange={() => ref.current?.scrollToEnd({ animated: false })} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
           {ms.e ? <ErrBox e={ms.e} retry={ms.reload} /> : ms.l && !ms.d ? <Loading n={3} h={44} /> : (ms.d ?? []).length ? (ms.d ?? []).map(m => { const mine = m.sender_id === app.userId; return <View key={m.id} style={{ maxWidth: '78%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? t.blue : t.chip, borderRadius: 14, paddingHorizontal: 13, paddingVertical: 10 }}><Text style={{ color: mine ? '#fff' : t.ink, fontSize: 13 }}>{m.body}</Text></View>; }) : <Empty icon="message-text-outline" title="No messages yet" />}
         </ScrollView>
-        <View style={[s.row, { paddingTop: 8 }]}><TextInput style={[s.fld, { flex: 1 }]} value={text} onChangeText={setText} placeholder="Write a reply" placeholderTextColor={t.mute} onSubmitEditing={send} returnKeyType="send" /><Btn label="Send" small busy={sending} disabled={!text.trim()} onPress={send} style={{ minHeight: 46 }} /></View>
+        <View style={[s.row, { paddingTop: 8 }]}><TextInput style={[s.fld, { flex: 1 }]} value={text} onChangeText={setText} placeholder="Write a reply" placeholderTextColor={t.mute} onSubmitEditing={send} returnKeyType="send" /><Btn label="Send" small busy={sending} disabled={!text.trim() || !c} onPress={send} style={{ minHeight: 46 }} /></View>
       </KeyboardAvoidingView>
     </Pg>
   );
