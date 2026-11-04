@@ -90,7 +90,7 @@ export function qty(k: string, v: number) {
   save(); emit();
 }
 export const clearAsk = () => ui.sheet({kind: 'clear'});
-export function clearCart() {S.cart = {sid: null, lines: []}; S.promo = ''; ui.close(); toast(label('lbl.actionCartCleared', 'Cart cleared')); save(); emit();}
+export function clearCart() {S.cart = {sid: null, lines: []}; S.promo = ''; clearActiveGroup(); ui.close(); toast(label('lbl.actionCartCleared', 'Cart cleared')); save(); emit();}
 export const setMode = (m: string) => {S.mode = m; save(); emit();};
 export const setTip = (n: number) => {S.tip = n; save(); emit();};
 export const setSch = (n: number) => {S.sch = n; save(); emit();};

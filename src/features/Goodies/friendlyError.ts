@@ -1,15 +1,20 @@
 /**
- * Customers must never see database, SQL or edge-function internals.
- * Technical detail goes to the console only; the screen gets a short plain sentence.
- * Messages written on purpose for customers by the server (for example "The delivery fee has changed.")
- * pass through; anything that looks technical is replaced by the caller's fallback.
+ * Never render raw server errors in customer-facing UI.
+ * Technical details stay in the console; callers provide the customer-safe fallback.
  */
-const TECHNICAL = /(violates|constraint|ambiguous|relation\s|column\s|row-level|row level|permission denied|syntax error|does not exist|duplicate key|null value|invalid input|unique|foreign key|function\s+\S+\(|schema|rpc|edge function|non-2xx|jwt|postgres|pgrst|sql|undefined|\[object|stack|TypeError|ReferenceError|Network request failed|fetch failed|timeout of|ECONN|ENOTFOUND)/i;
-
 export function friendlyError(error: any, fallback: string): string {
   const raw = String((error && (error.message ?? error.error ?? error)) ?? '').trim();
-  if (raw) console.warn('[Goodies]', fallback, '|', raw, error && error.code ? '(' + error.code + ')' : '');
-  if (!raw || raw.length > 160 || TECHNICAL.test(raw) || /[{}<>_]{1}/.test(raw)) return fallback;
-  if (/insufficient/i.test(raw)) return 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.';
-  return raw;
+  if (raw) {
+    const code = error && typeof error === 'object' && error.code ? String(error.code) : '';
+    console.warn('[Goodies] Request failed:', fallback, code ? '(' + code + ')' : '', raw);
+  }
+
+  // Translate the one known actionable server condition into app-owned copy.
+  if (/insufficient(?:\s+funds?|\s+balance)?/i.test(raw)) {
+    return 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.';
+  }
+
+  // Do not pass through even apparently human-readable server messages: they can
+  // contain secrets, SQL details, table/column names, tokens or other internals.
+  return fallback;
 }
