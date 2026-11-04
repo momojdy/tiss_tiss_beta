@@ -66,7 +66,8 @@ begin
   if v_o.status <> 'picked_up' or v_o.vendor_delivered_at is not null then raise exception 'This order cannot be marked delivered now' using errcode='P0001'; end if;
   if nullif(trim(coalesce(p_proof_url,'')), '') is null
     or position('/storage/v1/object/public/listing-photos/' || v_o.business_id::text || '/delivery-proofs/' in p_proof_url) = 0
-    or lower(regexp_replace(split_part(p_proof_url, '?', 1), '^.*\\.', '')) not in ('jpg','jpeg','png','webp') then
+    or not (right(lower(split_part(p_proof_url, '?', 1)), 4) in ('.jpg','.png')
+      or right(lower(split_part(p_proof_url, '?', 1)), 5) in ('.jpeg','.webp')) then
     raise exception 'Upload a valid delivery photo for this store first' using errcode='P0001';
   end if;
   update public.goodies_orders set delivery_proof_url = trim(p_proof_url), vendor_delivered_at = now(),
