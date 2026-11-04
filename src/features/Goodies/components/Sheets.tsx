@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Platform, TextInput, useWindowDimensions} from 'react-native';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
@@ -336,6 +336,56 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     return ()=>{active=false;void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId]);
 
+  /* Friends picker (host) and invitations from friends (guest). */
+  const [friends, setFriends] = useState<any[]>([]);
+  const [friendsOpen, setFriendsOpen] = useState(false);
+  const [pickedFriends, setPickedFriends] = useState<string[]>([]);
+  const [friendsBusy, setFriendsBusy] = useState(false);
+  const [myInvites, setMyInvites] = useState<any[]>([]);
+  useEffect(() => {
+    if (group.serverBacked) return;
+    let active = true;
+    void supabase.rpc('goodies_group_order_my_invites').then(({data, error}) => {
+      if (active && !error) setMyInvites(Array.isArray(data) ? data : []);
+      else if (error) console.warn('Group invites could not load', error.message);
+    });
+    return () => {active = false;};
+  }, [group.serverBacked]);
+  const openFriends = async () => {
+    if (!group.groupId) return;
+    setFriendsOpen(true); setFriendsBusy(true);
+    const {data, error} = await supabase.rpc('goodies_group_order_list_friends', {p_group_id: group.groupId});
+    setFriendsBusy(false);
+    if (error) {setFriends([]); toast(friendlyError(error, 'Could not load your friends. Please try again.')); return;}
+    setFriends(Array.isArray(data) ? data : []); setPickedFriends([]);
+  };
+  const sendFriendInvites = async () => {
+    if (!group.groupId || !pickedFriends.length) return;
+    setFriendsBusy(true);
+    const {data, error} = await supabase.rpc('goodies_group_order_invite_friends', {p_group_id: group.groupId, p_user_ids: pickedFriends});
+    setFriendsBusy(false);
+    if (error) {toast(friendlyError(error, 'Could not send the invitations. Please try again.')); return;}
+    toast(Number(data) > 0 ? 'Invitation sent.' : 'Nothing to send.');
+    setFriendsOpen(false); setPickedFriends([]);
+  };
+  const joinFromInvite = async (code: string) => {
+    setInviteCode(code);
+    setGroupBusy(true);
+    try {
+      const {data, error} = await supabase.rpc('goodies_group_order_join', {p_invite_code: code});
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row?.group_id) throw error || new Error('join failed');
+      saveGroup({code: row.invite_code, groupId: row.group_id, storeId: row.store_id, expiresAt: row.expires_at, host: S.pf.n || 'You', members: [], serverBacked: true});
+      toast('You joined the group order.');
+    } catch (error: any) {
+      toast(friendlyError(error, 'Could not join this group order. It may have closed.'));
+    } finally {setGroupBusy(false);}
+  };
+  const declineInvite = async (groupId: string) => {
+    setMyInvites(list => list.filter(i => i.group_id !== groupId));
+    const {error} = await supabase.rpc('goodies_group_order_decline_invite', {p_group_id: groupId});
+    if (error) console.warn('Decline invite failed', error.message);
+  };
   const invite = async () => {
     if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
     const inviteLink='wantiss://goodies/group?code='+encodeURIComponent(group.code);
@@ -417,6 +467,14 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   return <>
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
     {!group.serverBacked ? <View>
+      {myInvites.length ? <View style={{marginBottom:22}}>
+        <T size={16} weight="800">Invitations from friends</T>
+        {myInvites.map((inv:any)=><Row key={inv.group_id} style={{gap:10,alignItems:'center',marginTop:12,padding:12,borderRadius:14,backgroundColor:th.soft}}>
+          <View style={{flex:1}}><T weight="600">{inv.host_name}</T><T size={12} color={th.mut}>invited you to a group order</T></View>
+          <Pressable accessibilityRole="button" onPress={()=>void declineInvite(inv.group_id)} hitSlop={8}><T size={13} color={th.mut}>Decline</T></Pressable>
+          <Cta small label="Join" onPress={()=>void joinFromInvite(inv.invite_code)} disabled={groupBusy} />
+        </Row>)}
+      </View> : null}
       <T size={16} weight="800">{label('lbl.sheetJoinGroup', 'Join a group order')}</T>
       <T size={13} color={th.mut} style={{marginTop:6,marginBottom:16,lineHeight:19}}>{label('lbl.sheetJoinGroupHint', 'Enter the invite code, or scan the QR code your friend shared.')}</T>
       <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
@@ -452,6 +510,22 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       </View> : null}
       <View style={{height:14}}/>
       <Cta small ghost label="Share invite code" onPress={()=>void invite()} />
+      {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View style={{marginTop:12}}>
+        <Cta small ghost label={friendsOpen?'Hide friends':'Invite friends'} onPress={()=>{if(friendsOpen)setFriendsOpen(false);else void openFriends();}} />
+        {friendsOpen ? <View style={{marginTop:10}}>
+          {friendsBusy&&!friends.length ? <T size={13} color={th.mut}>Loading friends…</T> : null}
+          {!friendsBusy&&!friends.length ? <T size={13} color={th.mut}>No friends to invite yet.</T> : null}
+          {friends.map((f:any)=>{
+            const uid=String(f.user_id), blocked=!!f.already_member, picked=pickedFriends.includes(uid);
+            return <Pressable key={uid} disabled={blocked} accessibilityRole="checkbox" accessibilityState={{checked:picked,disabled:blocked}} onPress={()=>setPickedFriends(list=>picked?list.filter(x=>x!==uid):[...list,uid])} style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:9,opacity:blocked?0.5:1}}>
+              <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center',overflow:'hidden'}}>{f.avatar_url?<Image source={{uri:f.avatar_url}} style={{width:38,height:38}} />:<Icon name="user" color={th.mut}/>}</View>
+              <View style={{flex:1}}><T weight="600">{f.display_name}</T>{blocked?<T size={12} color={th.mut}>In the group</T>:f.already_invited?<T size={12} color={th.mut}>Invited</T>:null}</View>
+              <View style={{width:22,height:22,borderRadius:7,borderWidth:1.5,borderColor:picked?th.br:th.line,backgroundColor:picked?th.br:'transparent',alignItems:'center',justifyContent:'center'}}>{picked?<Icon name="check" size={14} color="#FFF"/>:null}</View>
+            </Pressable>;
+          })}
+          {friends.length ? <View style={{marginTop:10}}><Cta label={friendsBusy?'Sending…':'Send invitation'+(pickedFriends.length?' ('+pickedFriends.length+')':'')} onPress={()=>void sendFriendInvites()} disabled={friendsBusy||!pickedFriends.length} /></View> : null}
+        </View> : null}
+      </View> : null}
       <View style={{height:24}}/>
     </View> : null}
     {group.serverBacked ? <>
