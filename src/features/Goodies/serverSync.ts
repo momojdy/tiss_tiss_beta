@@ -5,6 +5,8 @@ import { S, STB, IT, emit, save } from './store';
 type ServerOrder = {
   id: string;
   order_code: string;
+  parent_id: string | null;
+  stop_index: number | null;
   store_id: string;
   status: string;
   created_at: string;
@@ -46,6 +48,8 @@ function mapOrder(row: ServerOrder) {
   return {
     id: String(row.order_code || row.id),
     backendId: row.id,
+    parentId: row.parent_id || undefined,
+    stop: row.stop_index == null ? undefined : Number(row.stop_index),
     serverStatus: String(row.status || 'placed').toLowerCase(),
     serverUpdatedAt: row.updated_at,
     sid,
@@ -78,7 +82,7 @@ export async function fetchGoodiesOrderForNotification(orderId?: string, orderCo
   if (authError) throw authError;
   if (!auth.user) throw new Error('Please sign in again.');
   let query = supabase.from('goodies_orders')
-    .select('id,order_code,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
+    .select('id,order_code,parent_id,stop_index,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
     .eq('customer_id', auth.user.id);
   if (orderId && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(orderId)) query = query.eq('id', orderId);
   else if (orderCode || orderId) query = query.eq('order_code', orderCode || orderId);
@@ -145,7 +149,7 @@ export function startGoodiesSync() {
             .or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
             .eq('read', false),
           supabase.from('goodies_orders')
-            .select('id,order_code,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
+            .select('id,order_code,parent_id,stop_index,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
             .eq('customer_id', requestUserId)
             .order('created_at', { ascending: false })
             .limit(100),
