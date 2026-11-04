@@ -132,7 +132,7 @@ begin
   end loop;
   return v_n;
 end $;
-do $$ begin
+do $ begin
   if not exists (select 1 from cron.job where jobname = 'goodies-auto-complete-self-deliveries') then
     perform cron.schedule('goodies-auto-complete-self-deliveries', '* * * * *', 'select public.goodies_auto_complete_self_deliveries();');
   end if;
