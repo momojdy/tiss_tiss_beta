@@ -424,7 +424,7 @@ export function Notifs() {
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(friendlyError(error, 'Something went wrong. Please try again.')); return; }
-    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
+    setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: n.notification_type === 'store_message' ? 'chat' : String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
   useEffect(() => {
@@ -489,6 +489,15 @@ export function Notifs() {
     }
     const destination = String(n.destination || '').toLowerCase();
     const metadata = n.metadata || {};
+    if (n.notification_type === 'store_message' || destination.includes('message') || destination === 'storechat') {
+      let storeId = metadata.store_id || metadata.storeId;
+      if (!storeId && metadata.conversation_id) {
+        const {data, error} = await supabase.from('conversations').select('ref_id').eq('id', metadata.conversation_id).maybeSingle();
+        if (error) { setServerError(friendlyError(error, 'Could not open this store conversation.')); return; }
+        storeId = data?.ref_id;
+      }
+      if (storeId) { go('storechat', String(storeId)); return; }
+    }
     if (destination.includes('ingredientrequest')) return;
     if (destination.includes('order') || metadata.order_id || metadata.order_code || n.notification_type === 'goodies_order_status' || n.notification_type === 'goodies_order_update') {
       let order = S.orders.find((o: any) => o.backendId && (o.backendId === metadata.order_id || o.id === metadata.order_code));
@@ -520,7 +529,7 @@ export function Notifs() {
         {serverError ? <T size={12} color={th.red}>{serverError}</T> : null}
         {items.length ? items.map((n: any) => (
           <Pressable key={(n.server ? 'server-' : 'local-') + n.id} onPress={() => { void open(n); }} style={{flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 14, paddingHorizontal: 4, borderBottomWidth: 1, borderBottomColor: th.line}}>
-            <View style={{width: 44, height: 44, borderRadius: 16, backgroundColor: n.u ? th.brt : th.soft, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 22}}>{n.r === 'track' ? '🛵' : '🎁'}</Text></View>
+            <View style={{width: 44, height: 44, borderRadius: 16, backgroundColor: n.u ? th.brt : th.soft, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 22}}>{n.r === 'chat' ? '💬' : n.r === 'track' ? '🛵' : '🎁'}</Text></View>
             <View style={{flex: 1}}><T weight={n.u ? '800' : undefined}>{n.t}</T><T size={13} color={th.mut}>{n.d}</T></View>
             {n.u ? <View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: th.br}} /> : null}
           </Pressable>

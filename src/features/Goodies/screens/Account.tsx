@@ -247,7 +247,7 @@ function StoreChat({id}: {id: string}) {
     const body = draft.trim(); if (!body || !conversationId || !userId || sending) return;
     setSending(true);
     try {
-      const {error} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: userId, body});
+      const {error} = await supabase.rpc('goodies_send_store_message', {p_conversation_id: conversationId, p_body: body});
       if (error) throw error;
       // The message is persisted now. Clear it before best-effort thread metadata so a
       // metadata failure cannot lead the customer to accidentally resend the same message.
@@ -306,7 +306,7 @@ function Contact({p}: {p: any}) {
         conversationId = String(createdConversation);
         ticket = 'GS-' + conversationId.replace(/-/g, '').slice(0, 8).toUpperCase();
         const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
-        const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
+        const {error: messageError} = await supabase.rpc('goodies_send_store_message', {p_conversation_id: conversationId, p_body: ticketBody});
         if (messageError) throw messageError;
       } else {
         const {data: auth, error: authError} = await supabase.auth.getUser();
