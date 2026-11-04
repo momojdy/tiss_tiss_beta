@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text, Pressable, useWindowDimensions, Image} from 'react-native';
 import {Icon} from './Icon';
 import {T, Grad, Tile, bgIdx, useTheme, Badge, heartBtn} from './ui';
-import {S, STB, PV, money, dp} from '../store';
+import {S, STB, PV, money, dp, addr} from '../store';
 import {Item, Store} from '../data/types';
 import {go, openProduct, quickAdd, heart, favp} from '../actions';
 import {byoTag} from '../builders/engine';
@@ -53,7 +53,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
 }
 const storeDistanceLabel = (s: Store) => {
   if (!s.live) return s.km.toFixed(1) + ' km';
-  if (!s.distanceReady) return s.distanceError ? 'Distance unavailable' : '';
+  if (!s.distanceReady) return !addr()?.t?.trim() ? label('lbl.storeAddAddressForDistance', 'Add address to see distance') : s.distanceError ? 'Distance unavailable' : '';
   const meters = Math.round(s.km * 1000);
   return meters < 1000 ? meters + ' m' : (meters / 1000).toFixed(1) + ' km';
 };
