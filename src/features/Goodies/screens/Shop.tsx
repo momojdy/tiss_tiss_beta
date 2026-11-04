@@ -409,11 +409,23 @@ function PickupLocationMap() {
 
 export function Track({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
+  const [receiptBusy, setReceiptBusy] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState('');
+  const receiptCall = async (fn: 'goodies_customer_confirm_received' | 'goodies_customer_dispute_delivery', args: any, okMessage: string) => {
+    setReceiptBusy(true);
+    const {error} = await supabase.rpc(fn, args);
+    setReceiptBusy(false);
+    if (error) {console.warn('Receipt action failed', error.message); toast(/24-hour|already|reported/i.test(error.message) ? error.message : 'Could not send this. Please try again.'); return;}
+    toast(okMessage); setReportOpen(false); setReportText('');
+    if (fn === 'goodies_customer_confirm_received') {o.serverStatus = 'completed'; o.st = require('../store').stage(o);} else o.deliveryDispute = 'open';
+    save(); emit();
+  };
   useEffect(() => {
     if (!o?.backendId) return;
     let active = true;
     const sync = async () => {
-      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref,store_latitude,store_longitude,delivery_latitude,delivery_longitude,delivery_route,courier_id').eq('id', o.backendId).maybeSingle();
+      const {data, error} = await supabase.from('goodies_orders').select('status,scheduled_for,acceptance_deadline_at,decline_reason_public,payment_status,payment_method,payment_provider_ref,store_latitude,store_longitude,delivery_latitude,delivery_longitude,delivery_route,courier_id,self_delivery,self_driver_name,self_driver_phone,delivery_proof_url,vendor_delivered_at,receipt_deadline_at,delivery_dispute_status').eq('id', o.backendId).maybeSingle();
       if (!active || error || !data) return;
       o.serverStatus = data.status;
       o.acceptanceDeadlineAt = data.acceptance_deadline_at;
@@ -425,6 +437,8 @@ export function Track({id}: {id: string}) {
       o.deliveryLongitude = data.delivery_longitude == null ? null : Number(data.delivery_longitude);
       o.deliveryRoute = data.delivery_route || null;
       o.courierId = data.courier_id || null;
+      o.selfDelivery = !!data.self_delivery; o.selfDriverName = data.self_driver_name || ''; o.selfDriverPhone = data.self_driver_phone || '';
+      o.proofUrl = data.delivery_proof_url || ''; o.vendorDeliveredAt = data.vendor_delivered_at || null; o.receiptDeadlineAt = data.receipt_deadline_at || null; o.deliveryDispute = data.delivery_dispute_status || null;
       if (data.payment_method === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && ['paid','refund_pending'].includes(data.payment_status) && !o.refundRequested) {
         o.refundRequested = true;
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
@@ -453,6 +467,20 @@ export function Track({id}: {id: string}) {
         <Card>
           <Row><Tile e={s.e} bg={s.bg} photo={s.thumbnail || s.cover || s.logo} /><View style={{flex: 1}}><T weight="600">{s.n}</T><T size={13} color={th.mut}>{o.pk ? label('lbl.orderPickupShort', 'Pickup') : label('lbl.orderToAddress', 'To {address}').replace('{address}', o.ad ? o.ad.t + (o.ad.apt ? ', ' + o.ad.apt : '') : o.addr)}</T></View></Row>
           <View style={{marginTop: 10}}><Badge green={!!(dn && !o.cx)} label={eta} /></View>
+          {o.selfDelivery && serverStatus === 'picked_up' ? <View style={{marginTop: 14}}>
+            <T size={13} color={th.mut}>Delivered by the store · {o.selfDriverName}{o.selfDriverPhone ? ' · ' + o.selfDriverPhone : ''}</T>
+            {o.vendorDeliveredAt ? <View style={{marginTop: 10}}>
+              {o.proofUrl ? <Image source={{uri: o.proofUrl}} style={{width: '100%', height: 190, borderRadius: 14, backgroundColor: th.soft}} resizeMode="cover" /> : null}
+              {o.deliveryDispute === 'open' ? <T size={13.5} weight="600" style={{marginTop: 10}}>Your report was sent. Our team is reviewing it.</T> : <>
+                <T size={13.5} style={{marginTop: 10}}>The store says this order was delivered. Please confirm, or report a problem before {o.receiptDeadlineAt ? new Date(o.receiptDeadlineAt).toLocaleString() : 'the deadline'}.</T>
+                <View style={{marginTop: 10}}><Cta label={receiptBusy ? 'Please wait…' : 'I received my order'} disabled={receiptBusy} onPress={() => void receiptCall('goodies_customer_confirm_received', {p_order_id: o.backendId}, 'Thanks for confirming.')} /></View>
+                {reportOpen ? <View style={{marginTop: 10}}>
+                  <Input value={reportText} onChange={setReportText} placeholder="What went wrong?" />
+                  <View style={{marginTop: 10}}><Cta ghost label="Send report" disabled={receiptBusy || reportText.trim().length < 3} onPress={() => void receiptCall('goodies_customer_dispute_delivery', {p_order_id: o.backendId, p_reason: reportText}, 'Your report was sent.')} /></View>
+                </View> : <Pressable onPress={() => setReportOpen(true)} style={{marginTop: 12, alignItems: 'center'}}><T size={13.5} weight="600" color={th.red}>I have a problem with this order</T></Pressable>}
+              </>}
+            </View> : <T size={13} color={th.mut} style={{marginTop: 6}}>Your order is on its way.</T>}
+          </View> : null}
           {o.cx ? <T size={14} color={th.mut} style={{marginTop: 12}}>{o.declined ? label('lbl.orderDeclinedMessage', 'The store could not accept your order. {reason}').replace('{reason}', o.declineReasonPublic || label('lbl.orderDeclinedFallback', 'Please try another store.')) : o.expired ? label('lbl.orderExpiredMessage', 'The store did not respond within 15 minutes. Your order was cancelled.') : label('lbl.orderCancelledMessage', 'This order was cancelled')}{o.pay === 'card' ? (o.paymentStatus === 'refunded' ? ' Your card refund has been submitted. It may take a few business days to appear.' : ' Your card refund is being processed. It may take a few business days to appear.') : o.paymentStatus === 'refunded' || o.pay === 'wallet' ? ' Any applicable refund will be shown in your Wantiss wallet activity.' : ' You were not charged for this order.'}</T> : (<>
             <View style={{flexDirection: 'row', gap: 6, marginVertical: 14}}>{T_.map((x, i) => <View key={i} style={{flex: 1, height: 6, borderRadius: 3, backgroundColor: i <= o.st ? th.br : th.line}} />)}</View>
             {T_.map((x, i) => <View key={i} style={{flexDirection: 'row', gap: 12, marginVertical: 12, alignItems: 'center'}}><View style={{width: 22, height: 22, borderRadius: 11, borderWidth: 2, borderColor: i <= o.st ? th.br : th.line, backgroundColor: i <= o.st ? th.br : 'transparent', alignItems: 'center', justifyContent: 'center'}}>{i <= o.st ? <Icon name="check" size={12} color="#fff" /> : null}</View><T size={14} color={i <= o.st ? th.ink : th.mut} weight={i <= o.st ? '700' : undefined}>{x}</T></View>)}
