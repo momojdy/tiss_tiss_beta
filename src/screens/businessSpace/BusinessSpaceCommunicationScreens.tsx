@@ -18,14 +18,25 @@ import { supabase } from '../../lib/supabase';
 import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, q } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
-  const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
+  const app = useApp(), s = useS(), t = useTheme(), [statusFilter, setStatusFilter] = useState('All'), [featureFilter, setFeatureFilter] = useState('All');
   const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
-  const rows = (c.d ?? []).filter(x => f === 'All' || x.feature === f);
+  useEffect(() => {
+    const channel = supabase.channel('business-goodies-messages-' + app.biz.id)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'conversations', filter: 'business_id=eq.' + app.biz.id}, () => app.bump())
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.biz.id]);
+  const rows = (c.d ?? []).filter(x => {
+    const statusMatches = statusFilter === 'All' || (statusFilter === 'Needs reply' ? x.status === 'pending_vendor' : statusFilter === 'Active' ? x.status === 'active' : x.status === 'closed');
+    const featureMatches = featureFilter === 'All' || x.feature === featureFilter;
+    return statusMatches && featureMatches;
+  });
   return (
     <Pg title="Messages" onBack={app.back} refreshing={c.l && !!c.d} onRefresh={app.bump}>
-      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={f} onChange={setF} />
+      <Chips items={['All', 'Needs reply', 'Active', 'Closed'].map(k => ({k, l:k}))} value={statusFilter} onChange={setStatusFilter} />
+      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={featureFilter} onChange={setFeatureFilter} />
       {c.e ? <ErrBox e={c.e} retry={c.reload} /> : c.l && !c.d ? <Loading /> : rows.length ? (
-        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · awaiting your reply · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
+        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · Needs reply · ' : x.status === 'closed' ? 'Closed · ' : 'Active · '}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
       ) : <View style={s.card}><Empty icon="chat-outline" title="No conversations yet" hint="Customer messages about your listings and orders appear here." /></View>}
     </Pg>
   );
@@ -39,7 +50,7 @@ export function ConversationPage() {
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
     setSending(true);
-    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
+    try { if (conv.d?.feature === 'goodies') await q(supabase.rpc('goodies_vendor_reply', {p_conversation_id: id, p_body: body})); else await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(conv.d?.feature === 'goodies' ? 'Message could not be sent. Please try again.' : errText(e)); } finally { setSending(false); }
   };
   const c = conv.d;
   return (
