@@ -64,7 +64,11 @@ begin
   if not exists(select 1 from public.business_members bm where bm.business_id = v_o.business_id and bm.user_id = v_uid and bm.role in ('owner','admin')) then
     raise exception 'Not allowed' using errcode='42501'; end if;
   if v_o.status <> 'picked_up' or v_o.vendor_delivered_at is not null then raise exception 'This order cannot be marked delivered now' using errcode='P0001'; end if;
-  if nullif(trim(coalesce(p_proof_url,'')), '') is null then raise exception 'Add a delivery photo first' using errcode='P0001'; end if;
+  if nullif(trim(coalesce(p_proof_url,'')), '') is null
+    or position('/storage/v1/object/public/listing-photos/' || v_o.business_id::text || '/delivery-proofs/' in p_proof_url) = 0
+    or lower(regexp_replace(split_part(p_proof_url, '?', 1), '^.*\\.', '')) not in ('jpg','jpeg','png','webp') then
+    raise exception 'Upload a valid delivery photo for this store first' using errcode='P0001';
+  end if;
   update public.goodies_orders set delivery_proof_url = trim(p_proof_url), vendor_delivered_at = now(),
     receipt_deadline_at = now() + interval '24 hours', updated_at = now() where id = p_order_id;
   perform public.goodies_order_notify(v_o.customer_id, 'Did you receive your order?',
@@ -93,7 +97,7 @@ begin
   select * into v_o from public.goodies_orders where id = p_order_id for update;
   if not found or v_o.customer_id <> auth.uid() or not v_o.self_delivery then raise exception 'Order not found' using errcode='P0002'; end if;
   if v_o.status <> 'picked_up' or v_o.vendor_delivered_at is null then raise exception 'This order cannot be reported now' using errcode='P0001'; end if;
-  if now() > v_o.receipt_deadline_at then raise exception 'The 24-hour window to report a problem has closed' using errcode='P0001'; end if;
+  if v_o.receipt_deadline_at is null or now() >= v_o.receipt_deadline_at then raise exception 'The 24-hour window to report a problem has closed' using errcode='P0001'; end if;
   if v_o.delivery_dispute_status is not null then raise exception 'A report was already sent for this order' using errcode='P0001'; end if;
   if length(trim(coalesce(p_reason,''))) < 3 then raise exception 'Tell us what went wrong' using errcode='P0001'; end if;
   update public.goodies_orders set delivery_dispute_status = 'open', delivery_dispute_reason = left(trim(p_reason), 500),
@@ -105,15 +109,28 @@ end $$;
 
 -- 5) Undisputed orders complete on their own after the 24-hour window (runs every minute).
 create or replace function public.goodies_auto_complete_self_deliveries()
-returns integer language plpgsql security definer set search_path = public, pg_temp as $$
-declare v_n integer;
+returns integer language plpgsql security definer set search_path = public, pg_temp as $
+declare v_n integer := 0; v_o public.goodies_orders%rowtype;
 begin
-  update public.goodies_orders set status = 'completed', delivered_at = coalesce(vendor_delivered_at, now()), updated_at = now()
-  where self_delivery and status = 'picked_up' and vendor_delivered_at is not null and nullif(delivery_proof_url,'') is not null
-    and receipt_deadline_at <= now() and delivery_dispute_status is null;
-  get diagnostics v_n = row_count;
+  for v_o in
+    select * from public.goodies_orders
+    where self_delivery and status = 'picked_up' and vendor_delivered_at is not null
+      and nullif(delivery_proof_url,'') is not null and receipt_deadline_at <= now()
+      and delivery_dispute_status is null
+    order by receipt_deadline_at
+    for update skip locked
+  loop
+    update public.goodies_orders set status = 'completed', delivered_at = coalesce(v_o.vendor_delivered_at, now()), updated_at = now()
+      where id = v_o.id and status = 'picked_up' and delivery_dispute_status is null;
+    if found then
+      v_n := v_n + 1;
+      perform public.goodies_order_notify(v_o.customer_id, 'Goodies order completed',
+        'Order ' || v_o.order_code || ' was automatically completed because no delivery report was received within 24 hours.',
+        v_o.id, v_o.order_code, 'completed', null);
+    end if;
+  end loop;
   return v_n;
-end $$;
+end $;
 do $$ begin
   if not exists (select 1 from cron.job where jobname = 'goodies-auto-complete-self-deliveries') then
     perform cron.schedule('goodies-auto-complete-self-deliveries', '* * * * *', 'select public.goodies_auto_complete_self_deliveries();');
@@ -125,7 +142,7 @@ create or replace function public.goodies_admin_resolve_delivery_dispute(p_order
 returns void language plpgsql security definer set search_path = public, pg_temp as $$
 declare v_o public.goodies_orders%rowtype;
 begin
-  if auth.uid() is null or not exists(select 1 from public.profiles p where p.id = auth.uid() and lower(coalesce(p.role,'')) in ('admin','super_admin')) then
+  if auth.uid() is null or not public.wantiss_has_permission('operations', 'manage') then
     raise exception 'Not allowed' using errcode='42501'; end if;
   if p_resolution not in ('release','refund') then raise exception 'Invalid resolution' using errcode='P0001'; end if;
   select * into v_o from public.goodies_orders where id = p_order_id for update;
