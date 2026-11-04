@@ -10,6 +10,7 @@ import {back, createWallet} from '../actions';
 import {push} from '../store';
 import {label} from '../content';
 import {supabase} from '../../../lib/supabase';
+import {friendlyError} from '../friendlyError';
 
 type LoadState = 'loading' | 'ready' | 'error' | 'signedout';
 
@@ -68,7 +69,7 @@ export function LivePayments() {
       loaded.current = true; setProblem(''); setState('ready');
     } catch (e: any) {
       if (!mounted.current) return;
-      const msg = e?.message || 'Could not load your wallet and cards.';
+      const msg = friendlyError(e, 'Could not load your wallet and cards.');
       if (loaded.current) {toast(msg); return;} /* keep showing the last good data */
       setProblem(msg); setState('error');
     }
@@ -83,10 +84,10 @@ export function LivePayments() {
     let ok = false;
     try {
       const {data, error} = await call();
-      if (error || data === false) toast(error?.message || failMsg);
+      if (error || data === false) toast(friendlyError(error, failMsg));
       else {toast(okMsg); ok = true;}
     } catch (e: any) {
-      toast(e?.message || failMsg);
+      toast(friendlyError(e, failMsg));
     } finally {
       busyRef.current = false;
       if (mounted.current) setBusyId('');

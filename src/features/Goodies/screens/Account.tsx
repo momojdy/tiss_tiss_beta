@@ -13,6 +13,7 @@ import {Home} from './Browse';
 import {LivePayments} from './Payments';
 import {supabase} from '../../../lib/supabase';
 import {legalDoc, supportTopics, label} from '../content';
+import {friendlyError} from '../friendlyError';
 
 const POL: Record<string, [string, string]> = {
   terms: ['Terms of use', 'legal.terms'],
@@ -89,12 +90,12 @@ function Addresses() {
       const street = [place.streetNumber, place.street].filter(Boolean).join(' ').trim() || place.name || '';
       const city = place.city || place.subregion || place.district || '';
       S.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude, capturedAt: Date.now(), addressText: [street, city, place.region || '', place.country || ''].filter(Boolean).join(', ')};
-      setEdit((prev: any) => prev ? {...prev, t: street || prev.t, city: city || prev.city, department: place.region || prev.department, country: place.country || prev.country} : prev);
+      setEdit((prev: any) => prev ? {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude, t: street || prev.t, city: city || prev.city, department: place.region || prev.department, country: place.country || prev.country} : prev);
       toast('Address filled from your current location. Check the details before saving.');
-    } catch (e: any) {toast(e?.message || 'Could not get your current location.');}
+    } catch (e: any) {toast(friendlyError(e, 'Could not get your current location.'));}
     finally {setLocating(false);}
   };
-  useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(e?.message || 'Could not load saved addresses.')); }, []);
+  useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(friendlyError(e, 'Could not load saved addresses.'))); }, []);
   const rows = S.addr || [];
   const countryName = (cc: string, fallback?: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || (fallback && fallback !== 'Other' ? fallback : 'Other');
   const selectForGoodies = async (a: any) => {
@@ -110,7 +111,7 @@ function Addresses() {
       await refreshUserAddresses();
       save(); emit();
     } catch (e: any) {
-      toast(e?.message || 'Could not update the Goodies delivery address.');
+      toast(friendlyError(e, 'Could not update the Goodies delivery address.'));
     } finally { setBusy(false); }
   };
   const saveAddr = async () => {
@@ -131,6 +132,7 @@ function Addresses() {
         street_address: street,
         apartment: String(edit.apt || '').trim(),
         postal_code: String(edit.postal_code || '').trim(),
+        ...(Number.isFinite(Number(edit.latitude)) && Number.isFinite(Number(edit.longitude)) && edit.latitude != null && edit.longitude != null ? {latitude: Number(edit.latitude), longitude: Number(edit.longitude)} : {}),
         delivery_notes: String(edit.inst || '').trim(),
         updated_at: new Date().toISOString(),
       };
@@ -152,7 +154,7 @@ function Addresses() {
       toast(isNew ? 'Address saved to your Wantiss account.' : 'Address updated.');
       save(); emit();
     } catch (e: any) {
-      toast(e?.message || 'Could not save this address.');
+      toast(friendlyError(e, 'Could not save this address.'));
     } finally { setBusy(false); }
   };
   const removeAddr = (a: any) => ui.sheet({kind: 'remove-address', addressLabel: a.l, onConfirm: () => {
@@ -165,7 +167,7 @@ function Addresses() {
         await refreshUserAddresses(); save(); emit();
         ui.close();
         toast('Address deleted.');
-      } catch (e: any) { toast(e?.message || 'Could not delete this address.'); }
+      } catch (e: any) { toast(friendlyError(e, 'Could not delete this address.')); }
       finally { setBusy(false); }
     })();
   }});
@@ -189,7 +191,7 @@ function Addresses() {
           <T size={17} weight="600">{edit.id && typeof edit.id === 'string' ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={label('lbl.accountAddressType' + x, x)} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
           <View style={{marginBottom: 12}}><Cta ghost small label={locating ? 'Locating…' : 'Use my current location'} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
-          <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v})} />
+          <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v, latitude: null, longitude: null})} />
           <Input label="City" value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
@@ -231,14 +233,14 @@ function StoreChat({id}: {id: string}) {
         if (!active) return;
         setConversationId(String(cid));
         await loadMessages(String(cid));
-      } catch (e: any) { if (active) setProblem(e?.message || label('lbl.chatErrOpen', 'Could not open this store conversation.')); }
+      } catch (e: any) { if (active) setProblem(friendlyError(e, label('lbl.chatErrOpen', 'Could not open this store conversation.'))); }
       finally { if (active) setLoading(false); }
     })();
     return () => { active = false; };
   }, [id, attempt]);
   useEffect(() => {
     if (!conversationId) return;
-    const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(e?.message || label('lbl.chatErrRefresh', 'Could not refresh messages.'))); }).subscribe();
+    const channel = supabase.channel('goodies-store-chat-' + conversationId).on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + conversationId}, () => { loadMessages(conversationId).catch(e => setProblem(friendlyError(e, label('lbl.chatErrRefresh', 'Could not refresh messages.')))); }).subscribe();
     return () => { void supabase.removeChannel(channel); };
   }, [conversationId]);
   const send = async () => {
@@ -251,7 +253,7 @@ function StoreChat({id}: {id: string}) {
       // metadata failure cannot lead the customer to accidentally resend the same message.
       setDraft('');
       await loadMessages(conversationId);
-    } catch (e: any) { setProblem(e?.message || label('lbl.chatErrSend', 'Message could not be sent.')); }
+    } catch (e: any) { setProblem(friendlyError(e, label('lbl.chatErrSend', 'Message could not be sent.'))); }
     finally { setSending(false); }
   };
   const chatActivated = messages.some(m => m.sender_id !== userId);
@@ -324,7 +326,7 @@ function Contact({p}: {p: any}) {
       S.stack.pop();
       push('supdone', {ticket, storeId: store ? storeId : '', conversationId, topic, orderId: oid});
     } catch (e: any) {
-      toast(e?.message || label('lbl.accountSendMessageFailed', 'Could not send your message. Please try again.'));
+      toast(friendlyError(e, label('lbl.accountSendMessageFailed', 'Could not send your message. Please try again.')));
     } finally {setSending(false);}
   };
   return (<View>

@@ -6,7 +6,7 @@ import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponde
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
-import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess} from './store';
+import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess, validateActiveGroup} from './store';
 import * as A from './actions';
 import {startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, FlashDeals, Notifs, Explore} from './screens/Browse';
@@ -35,14 +35,15 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   useEffect(() => {
     if (!goodiesLoaded) return;
     let active = true;
+    /* Drop a group that ended or expired while the app was closed, so it cannot interfere with personal orders. */
+    void validateActiveGroup();
     const openInvite = (url: string | null) => {
       if (!url) return;
       const match = url.match(/wantiss:\/\/goodies\/group\?code=([^&]+)/i);
       if (!match) return;
       try {(S as any).pendingGroupInviteCode = decodeURIComponent(match[1]).trim().toUpperCase();}
       catch {return;}
-      S.stack.push({r: 'grouporder', p: undefined, u: Date.now()});
-      emit();
+      ui.sheet({kind: 'group-order'});
     };
     void Linking.getInitialURL().then(url => {if (active) openInvite(url);});
     const subscription = Linking.addEventListener('url', ({url}) => openInvite(url));

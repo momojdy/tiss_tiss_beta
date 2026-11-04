@@ -52,7 +52,7 @@ export function Store({id}: {id: string}) {
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 10}}>
           <Cta small ghost label={label('lbl.storeInfo', 'Store info')} onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
           <Cta small ghost label={label('lbl.messageStore', 'Message store')} onPress={() => go('contact', {storeContact: true, storeId: id})} />
-          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => go('grouporder', id)} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={21} color={th.br} /></Pressable>
+          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind: 'group-order', storeId: id})} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={21} color={th.br} /></Pressable>
         </View>
         <View style={{marginTop: 14}}><Input value={S.ss[id] || ''} onChange={v => {S.ss[id] = v; emit();}} placeholder={label('lbl.storeSearch', 'Search in ' + s.n)} /></View>
       </View>
@@ -173,7 +173,6 @@ export function Cart() {
       <View style={{paddingHorizontal: 16}}>
         {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
         <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="600">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
-        <View style={{marginBottom:10}}><Cta ghost small label={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} /></View>
                 {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="600">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
         <View style={{marginTop:14,marginBottom:8,paddingVertical:10,borderBottomWidth:0.5,borderBottomColor:th.line}}>
           <Row sp>
@@ -204,6 +203,11 @@ export function Cart() {
           );
         })}
         <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 0.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="600" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartStartGroup', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} style={{flexDirection:'row',alignItems:'center',gap:12,marginTop:10,padding:14,borderWidth:1,borderColor:th.br,borderRadius:16,backgroundColor:th.brt}}>
+          <View style={{width:42,height:42,borderRadius:13,backgroundColor:th.card,alignItems:'center',justifyContent:'center'}}><Icon name="user-plus" size={21} color={th.br}/></View>
+          <View style={{flex:1}}><T weight="600">{label('lbl.cartGroupOrder', 'Start a group order')}</T><T size={12.5} color={th.mut} style={{marginTop:3}}>{label('lbl.cartGroupOrderDesc', 'Invite friends and coordinate a shared cart')}</T></View>
+          <Icon name="chevR" size={17} color={th.br}/>
+        </Pressable>
         
         {hasAlcohol() ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 14}}><T weight="600">{label('lbl.cartAlcoholHeading', 'Your order includes alcohol')}</T><T size={13} color={th.mut} style={{marginTop: 3}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', alcAge(c.sid).age)}</T></Card> : null}
         <Ttl>{label('lbl.cartPromoTitle', 'Promo code')}</Ttl>

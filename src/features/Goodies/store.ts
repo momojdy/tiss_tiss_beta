@@ -6,6 +6,7 @@ import {providerInfo} from './providers';
 import {label} from './content';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
+import {friendlyError} from './friendlyError';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
 
@@ -196,7 +197,7 @@ export async function refreshLiveSchedules() {
     S.catalogError = '';
     applyZone();
   } catch (e: any) {
-    S.catalogError = String(e?.message || e || 'Could not load stores');
+    S.catalogError = friendlyError(e, 'Could not load stores');
   }
   if (!liveTimer) {
     liveTimer = setInterval(() => {
@@ -240,7 +241,7 @@ export async function refreshUserAddresses() {
   const {data: auth, error: authError} = await supabase.auth.getUser();
   if (authError || !auth.user) return S.addr;
   const {data, error} = await supabase.from('user_addresses')
-    .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at')
+    .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at,latitude,longitude')
     .eq('user_id', auth.user.id).order('is_default', {ascending: false}).order('created_at', {ascending: true});
   if (error) throw error;
   const metadataAddressId = String(auth.user.user_metadata?.goodies_default_address_id || '');
@@ -252,6 +253,7 @@ export async function refreshUserAddresses() {
     z: 0, cc: row.country === 'Dominican Republic' ? 'DO' : row.country === 'United States' ? 'US' : row.country === 'Haiti' ? 'HT' : 'XX',
     city: String(row.city || ''), department: String(row.department || ''), country: String(row.country || ''),
     phone: String(row.phone_number || ''), createdAt: row.created_at,
+    latitude: row.latitude == null ? null : Number(row.latitude), longitude: row.longitude == null ? null : Number(row.longitude),
   }));
   S.addr = rows;
   const selected = rows.find((row: any) => row.id === metadataAddressId) || rows.find((row: any) => row.def) || rows[0];
@@ -377,10 +379,12 @@ export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
 export const first = () => S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
+/** Exact coordinates saved with the address (captured with "Use my current location"); more precise than geocoding the text. */
+export const savedPoint = (address: any): [number, number] | null => {const la = Number(address?.latitude), lo = Number(address?.longitude); return address?.latitude != null && address?.longitude != null && Number.isFinite(la) && Number.isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? [la, lo] : null;};
 const distanceAddressKey = (address: Address) => JSON.stringify({
   t: address.t, apt: address.apt, inst: address.inst,
   city: address.city, department: address.department, country: address.country,
-  location: S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? [S.currentLocation.latitude, S.currentLocation.longitude] : null,
+  location: savedPoint(address) || (S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? [S.currentLocation.latitude, S.currentLocation.longitude] : null),
 });
 const currentDistanceAddressKey = () => {
   const current = addr();
@@ -393,7 +397,8 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     store?.live && (!store.distanceReady || store.distanceAddressKey !== addressKey));
   if (!pending.length) return Object.fromEntries(storeIds.map(id => [id, STB[id]?.km ?? null]));
   pending.forEach(store => { store.distanceError = ''; });
-  const location = S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? S.currentLocation : null;
+  const pinned = savedPoint(address);
+  const location = pinned ? {latitude: pinned[0], longitude: pinned[1]} : S.currentLocation && S.currentLocation.addressText === address.t && Date.now() - Number(S.currentLocation.capturedAt || 0) < 30 * 60 * 1000 ? S.currentLocation : null;
   const payloadAddress = {
     t: address.t, apt: address.apt, inst: address.inst,
     city: address.city, department: address.department, country: address.country,
@@ -407,7 +412,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     });
     if (currentDistanceAddressKey() !== addressKey) return distances;
     if (error) {
-      batch.forEach(store => { store.distanceError = error.message || 'Distance is unavailable for this address.'; });
+      batch.forEach(store => { store.distanceError = friendlyError(error, 'Distance is unavailable for this address.'); });
       emit();
       throw error;
     }
@@ -530,6 +535,42 @@ export async function syncGroupOrderCartLine(groupId: string, line: CartLine) {
     p_note: line.nt || null,
   });
 }
+/** Forget a saved group that has ended, expired or no longer includes this user, so it cannot block personal orders. */
+export function clearActiveGroup() {
+  S.groupOrder = {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
+  save(); emit();
+}
+export async function validateActiveGroup(): Promise<boolean> {
+  const g = S.groupOrder;
+  if (!g?.serverBacked || !g.groupId) return false;
+  if (g.expiresAt && new Date(g.expiresAt).getTime() <= Date.now()) {clearActiveGroup(); return false;}
+  try {
+    const {data, error} = await supabase.rpc('goodies_group_order_get_status', {p_group_id: g.groupId});
+    if (error) {
+      /* Only a definite "gone / not a member / closed" answer drops the group; a network error keeps it. */
+      if (['P0002', '42501', 'P0001'].includes(String((error as any).code))) {clearActiveGroup(); return false;}
+      console.warn('[Goodies] group status check failed', error);
+      return true;
+    }
+    const row: any = Array.isArray(data) ? data[0] : data;
+    if (!row || row.status !== 'open' || (row.expires_at && new Date(row.expires_at).getTime() <= Date.now())) {clearActiveGroup(); return false;}
+    return true;
+  } catch (e) {
+    console.warn('[Goodies] group status check failed', e);
+    return true;
+  }
+}
+/** Mirror a personal-cart change into the active group. A failure is a plain, non-blocking notice and never stops the personal order. */
+export async function syncActiveGroup(op: {line?: CartLine; removeKey?: string}) {
+  const g = S.groupOrder;
+  if (!g?.serverBacked || !g.groupId) return;
+  if (!(await validateActiveGroup())) return;
+  const r: any = op.removeKey ? await removeGroupOrderCartLine(g.groupId, op.removeKey) : op.line ? await syncGroupOrderCartLine(g.groupId, op.line) : null;
+  if (r?.error) {
+    console.warn('[Goodies] group sync failed', r.error);
+    toast('Saved to your cart. It could not be shared with the group just now.');
+  }
+}
 export async function removeGroupOrderCartLine(groupId: string, lineKey: string) {
   return supabase.rpc('goodies_group_order_remove_item', {p_group_id: groupId, p_line_key: lineKey});
 }
@@ -549,9 +590,7 @@ export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; o
   const activeGroup = S.groupOrder;
   if (activeGroup?.serverBacked && activeGroup?.groupId && activeGroup?.storeId === i.s) {
     const groupLine = c.lines.find((x: CartLine) => x.k === k);
-    if (groupLine) void syncGroupOrderCartLine(activeGroup.groupId, groupLine).then(({error}) => {
-      if (error) toast('Could not sync this item to the group cart: ' + error.message);
-    });
+    if (groupLine) void syncActiveGroup({line: {...groupLine}});
   }
   toast(label('lbl.actionAddedToCart', 'Added {item} to your cart').replace('{item}', i.n)); save(); emit();
 }

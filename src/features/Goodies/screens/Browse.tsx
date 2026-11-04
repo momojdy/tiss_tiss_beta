@@ -12,6 +12,7 @@ import {fetchGoodiesOrderForNotification} from '../serverSync';
 import {t as tr, tx} from '../i18n';
 import {MODE1, PROMO} from '../theme';
 import {supabase} from '../../../lib/supabase';
+import {friendlyError} from '../friendlyError';
 
 const cname = (id: string) => catName(id);
 
@@ -244,11 +245,6 @@ export function Explore() {
         {products.length ? <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12}}>
           {products.map(i => <Dish key={i.id} i={i} grid />)}
         </View> : <T size={13} color={th.mut}>{label('lbl.browseNoProducts', 'No in-stock products match these filters.')}</T>}
-        <View style={{alignItems: 'center', paddingVertical: 24, gap: 5}}>
-          <View style={{width: 36, height: 3, borderRadius: 2, backgroundColor: th.line}} />
-          <T size={12} color={th.mut}>{label('lbl.browseEndOfResults', 'You\'ve reached the end of the currently available options.')}</T>
-          <T size={11} color={th.mut}>{label('lbl.browseMoreCatalog', 'More stores and products will appear here as the catalog grows.')}</T>
-        </View>
       </View>
     </View>
   );
@@ -427,7 +423,7 @@ export function Notifs() {
       .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
-    if (error) { setServerError(error.message); return; }
+    if (error) { setServerError(friendlyError(error, 'Something went wrong. Please try again.')); return; }
     setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
@@ -476,7 +472,7 @@ export function Notifs() {
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
         .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').eq('read', false);
-      if (error) setServerError(error.message);
+      if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
       else await loadServer();
     }
   };
@@ -487,7 +483,7 @@ export function Notifs() {
       if (auth.user) {
         const {error} = await supabase.from('notifications').update({read: true})
           .eq('id', n.id).eq('user_id', auth.user.id);
-        if (error) setServerError(error.message);
+        if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
         else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
       }
     }
@@ -501,7 +497,7 @@ export function Notifs() {
           const id = await fetchGoodiesOrderForNotification(metadata.order_id, metadata.order_code);
           if (id) order = S.orders.find((o: any) => o.id === id);
         } catch (e: any) {
-          toast(e?.message || 'Could not load this order.');
+          toast(friendlyError(e, 'Could not load this order.'));
           return;
         }
       }

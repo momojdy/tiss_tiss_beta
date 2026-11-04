@@ -2,8 +2,9 @@
 import {providerInfo} from './providers';
 import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
+import {friendlyError} from './friendlyError';
 import {
-  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt, syncGroupOrderCartLine, removeGroupOrderCartLine,
+  hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt, syncGroupOrderCartLine, removeGroupOrderCartLine, savedPoint, syncActiveGroup, validateActiveGroup, clearActiveGroup,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -81,10 +82,7 @@ export function qty(k: string, v: number) {
     if (n < 1) l.splice(i, 1);
     const activeGroup = S.groupOrder;
     if (activeGroup?.serverBacked && activeGroup?.groupId && activeGroup?.storeId === S.cart.sid) {
-      const sync = n < 1
-        ? removeGroupOrderCartLine(activeGroup.groupId, changedLine.k)
-        : syncGroupOrderCartLine(activeGroup.groupId, changedLine);
-      void sync.then(({error}: any) => {if (error) toast('Could not update the group cart: ' + error.message);});
+      void syncActiveGroup(n < 1 ? {removeKey: changedLine.k} : {line: changedLine});
     }
     break;
   }
@@ -172,7 +170,8 @@ export async function placeOrder() {
   }
   let deliveryQuoteId: string | null = null;
   if (!providerInfo.demo && !pk) {
-    const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country};
+    const pin = savedPoint(a);
+    const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(pin ? {latitude: pin[0], longitude: pin[1]} : {})};
     const addressKey = JSON.stringify(addressPayload);
     let quote = (S as any).deliveryFeeQuote;
     const quoteIsCurrent = quote?.storeId === S.cart.sid && quote?.addressKey === addressKey && Number(quote?.expiresAt) > Date.now();
@@ -193,7 +192,7 @@ export async function placeOrder() {
           if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + '). Check the delivery address and try again.';
         }
         S.busy = 0;
-        let checkoutMessage = detail || quoteResult.error?.message || 'Could not calculate the road distance. Please check the delivery address.';
+        let checkoutMessage = friendlyError(detail ? {message: detail} : quoteResult.error, 'Could not calculate the road distance. Please check the delivery address.');
         if (S.pay === 'wallet') {
           const verified = await refreshPaymentOptions();
           if (verified && (!S.hasWallet || S.wallet < t.total)) {
@@ -254,7 +253,7 @@ export async function placeOrder() {
       p_store_id: S.cart.sid,
       p_order_type: pk ? 'pickup' : 'delivery',
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
-      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
+      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(savedPoint(a) ? {latitude: savedPoint(a)![0], longitude: savedPoint(a)![1]} : {}), ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
       p_contact_phone: ct.ph,
       p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo, options: l.byo ? undefined : (l.options || (() => {const parts = String(l.k || '').split('|'); const category = STB[S.cart.sid!]?.c; return {size: CHOOSE_SIZE_CATS.includes(category) ? (parts[1] === '1' ? 'large' : 'regular') : null, drink: parts[2] === '1', discount_pct: Number(parts[3] || 0)};})())})),
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
@@ -277,7 +276,7 @@ export async function placeOrder() {
         attempt = await getGoodiesCheckoutAttempt(fingerprint);
       } catch (storageError: any) {
         S.busy = 0;
-        toast(storageError?.message || 'Could not securely save this checkout attempt. Please try again.');
+        toast(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));
         emit();
         return;
       }
@@ -298,10 +297,10 @@ export async function placeOrder() {
         if (/insufficient|not enough|balance too low/i.test(detail) || (verified && (!S.hasWallet || S.wallet < t.total))) {
           toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
         } else {
-          toast(detail ? 'Wantiss Wallet payment failed: ' + detail + '. Your cart is still saved.' : 'Wantiss Wallet could not complete this payment' + (error?.code ? ' (' + error.code + ')' : '') + '. Your cart is still saved. Please retry or choose another payment method.');
+          toast(friendlyError(detail ? {message: detail} : error, 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.'));
         }
       } else {
-        toast(detail || label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.'));
+        toast(friendlyError(detail ? {message: detail} : error, label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')));
       }
       emit(); return;
     }
@@ -353,7 +352,7 @@ export async function completeCardOrder() {
     S.busy = 0; toast(label('lbl.actionOrderSent', 'Order sent to the store')); save(); emit();
     void refreshLiveSchedules();
   } catch (e: any) {
-    S.busy = 0; toast(e?.message || 'Card payment could not be completed. Your order has not been confirmed.'); emit();
+    S.busy = 0; toast(friendlyError(e, 'Card payment could not be completed. Your order has not been confirmed.')); emit();
   }
 }
 
@@ -367,7 +366,7 @@ export async function cancelPendingCardOrder() {
     if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'The card payment could not be cancelled yet.');
     S.cardPending = null; navBack();
   } catch (e: any) {
-    toast(e?.message || 'The card payment could not be cancelled yet. Please retry.');
+    toast(friendlyError(e, 'The card payment could not be cancelled yet. Please retry.'));
   } finally {
     S.busy = 0; emit();
   }
@@ -379,7 +378,7 @@ export async function cancelOrder(id: string) {
   if (!o || done(o) || o.st > 2) {toast(label('lbl.actionCannotCancel', 'This order can no longer be cancelled')); emit(); return;}
   if (o.backendId) {
     const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: o.backendId, p_status: 'cancelled'});
-    if (error) {toast(error.message || label('lbl.actionCannotCancel', 'This order can no longer be cancelled')); emit(); return;}
+    if (error) {toast(friendlyError(error, label('lbl.actionCannotCancel', 'This order can no longer be cancelled'))); emit(); return;}
     if (o.pay === 'card') {
       const refund = await supabase.functions.invoke('refund-goodies-card-order', {body: {order_id: o.backendId}});
       if (refund.error || refund.data?.error) toast(label('lbl.actionRefundPending', 'Order cancelled. Your card refund is pending and may need support follow-up.'));
@@ -407,7 +406,7 @@ export const togglePref = (k: 'orders' | 'promos') => {S.np[k] = S.np[k] ? 0 : 1
 export const selectAddr = async (id: string | number) => {
   if (!providerInfo.demo) {
     const {error} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(id)}});
-    if (error) { toast(error.message || 'Could not update the Goodies delivery address.'); return; }
+    if (error) { toast(friendlyError(error, 'Could not update the Goodies delivery address.')); return; }
   }
   S.as = id; save(); ui.close(); emit();
   const selected = addr();
@@ -463,7 +462,7 @@ export async function createWallet() {
     toast(label('lbl.actionWalletReady', 'Wantiss wallet is ready'));
     emit();
   } catch (e: any) {
-    toast(e?.message || label('lbl.actionWalletCreateFailed', 'Could not create your Wantiss wallet. Please try again.'));
+    toast(friendlyError(e, label('lbl.actionWalletCreateFailed', 'Could not create your Wantiss wallet. Please try again.')));
   }
 }
 /* DEMO ONLY: in production the courier app (delivery) or the Vendor Dashboard (pickup) records this result. */
