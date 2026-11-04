@@ -4,14 +4,14 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
 const PINK='#FBE8EF',MAGENTA='#BF008E',INK='#302631',MUTED='#827783';
 type Message={id:string;conversation_id:string;sender_id:string;body:string;created_at:string;read_at:string|null};
-type Conversation={id:string;title:string|null;participant_ids:string[];updated_at:string;feature?:string|null;ref_id?:string|null;business_id?:string|null};
+type Conversation={id:string;title:string|null;participant_ids:string[];updated_at:string;feature?:string|null;ref_id?:string|null;business_id?:string|null;customer_id?:string|null;status?:string};
 export default function MessagesScreen({onBack}:{onBack:()=>void}) {
  const [currentUserId,setCurrentUserId]=useState('');const [items,setItems]=useState<Conversation[]>([]),[unread,setUnread]=useState<Record<string,number>>({}),[storeCovers,setStoreCovers]=useState<Record<string,string>>({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[activeConversation,setActiveConversation]=useState<Conversation|null>(null),[messages,setMessages]=useState<Message[]>([]),[draft,setDraft]=useState(''),[sending,setSending]=useState(false);
  const load=useCallback(async()=>{
   const {data:auth}=await supabase.auth.getUser();
   if(!auth.user){setItems([]);setUnread({});setCurrentUserId('');setLoading(false);return;}setCurrentUserId(auth.user.id);
-  const {data,error:queryError}=await supabase.from('conversations').select('id,title,participant_ids,updated_at,feature,ref_id,business_id').contains('participant_ids',[auth.user.id]).order('updated_at',{ascending:false});
-  if(queryError){setError(queryError.message);setLoading(false);return;}
+  const {data,error:queryError}=await supabase.from('conversations').select('id,title,participant_ids,updated_at,feature,ref_id,business_id,customer_id,status').contains('participant_ids',[auth.user.id]).order('updated_at',{ascending:false});
+  if(queryError){setError('Could not load your messages. Please try again.');setLoading(false);return;}
   const rows=(data||[]) as Conversation[];setItems(rows);setError('');
   const storeIds=Array.from(new Set(rows.filter(c=>c.feature==='goodies'&&c.ref_id).map(c=>c.ref_id as string)));
   if(storeIds.length){const {data:stores,error:storeError}=await supabase.from('goodies_store_schedules').select('store_id,cover_url,thumbnail_url,logo_url').in('store_id',storeIds);if(storeError)console.warn('Store cover photos could not load:',storeError.message);const covers:Record<string,string>={};(stores||[]).forEach((s:any)=>{const uri=s.thumbnail_url||s.logo_url||s.cover_url;if(uri)covers[s.store_id]=uri;});setStoreCovers(covers);}else setStoreCovers({});
@@ -22,17 +22,19 @@ export default function MessagesScreen({onBack}:{onBack:()=>void}) {
   setActiveConversation(c);
   const {data:auth}=await supabase.auth.getUser();if(!auth.user)return;
   const {data,error:queryError}=await supabase.from('messages').select('id,conversation_id,sender_id,body,created_at,read_at').eq('conversation_id',c.id).order('created_at',{ascending:true}).limit(300);
-  if(queryError){setError(queryError.message);return;}
+  if(queryError){setError('Could not open this conversation. Please try again.');return;}
   const rows=(data||[]) as Message[];setMessages(rows);setError('');
   const unreadIds=rows.filter(m=>m.sender_id!==auth.user!.id&&!m.read_at).map(m=>m.id);
-  if(unreadIds.length){await supabase.from('messages').update({read_at:new Date().toISOString()}).in('id',unreadIds);setMessages(prev=>prev.map(m=>unreadIds.includes(m.id)?{...m,read_at:new Date().toISOString()}:m));void load();}
+  if(unreadIds.length){if(c.feature==='goodies'){await supabase.rpc('mark_conversation_read',{p_conv:c.id});}else{await supabase.from('messages').update({read_at:new Date().toISOString()}).in('id',unreadIds);}setMessages(prev=>prev.map(m=>unreadIds.includes(m.id)?{...m,read_at:new Date().toISOString()}:m));void load();}
  };
  const sendMessage=async()=>{
   const body=draft.trim();if(!body||!activeConversation||sending)return;
   const {data:auth}=await supabase.auth.getUser();if(!auth.user)return;
   setSending(true);
-  const {error:sendError}=await supabase.from('messages').insert({conversation_id:activeConversation.id,sender_id:auth.user.id,body});
-  if(sendError)setError(sendError.message);else{setDraft('');const now=new Date().toISOString();await supabase.from('conversations').update({updated_at:now}).eq('id',activeConversation.id);const {data}=await supabase.from('messages').select('id,conversation_id,sender_id,body,created_at,read_at').eq('conversation_id',activeConversation.id).order('created_at',{ascending:true}).limit(300);setMessages((data||[]) as Message[]);}
+  const result=activeConversation.feature==='goodies'
+   ? await supabase.rpc(activeConversation.customer_id===auth.user.id?'goodies_send_store_message':'goodies_vendor_reply',{p_conversation_id:activeConversation.id,p_body:body})
+   : await supabase.from('messages').insert({conversation_id:activeConversation.id,sender_id:auth.user.id,body});
+  if(result.error)setError('Message could not be sent. Please try again.');else{setDraft('');const {data}=await supabase.from('messages').select('id,conversation_id,sender_id,body,created_at,read_at').eq('conversation_id',activeConversation.id).order('created_at',{ascending:true}).limit(300);setMessages((data||[]) as Message[]);void load();}
   setSending(false);
  };
  useEffect(()=>{let alive=true;let channel:ReturnType<typeof supabase.channel>|undefined;void (async()=>{await load();const {data:auth}=await supabase.auth.getUser();if(!alive||!auth.user)return;channel=supabase.channel('customer-messages-'+auth.user.id).on('postgres_changes',{event:'*',schema:'public',table:'messages'},()=>{void load()}).on('postgres_changes',{event:'*',schema:'public',table:'conversations'},()=>{void load()}).subscribe();})();return()=>{alive=false;if(channel)void supabase.removeChannel(channel)};},[load]);
