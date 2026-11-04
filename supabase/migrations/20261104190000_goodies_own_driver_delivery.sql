@@ -110,7 +110,7 @@ end $$;
 
 -- 5) Undisputed orders complete on their own after the 24-hour window (runs every minute).
 create or replace function public.goodies_auto_complete_self_deliveries()
-returns integer language plpgsql security definer set search_path = public, pg_temp as $
+returns integer language plpgsql security definer set search_path = public, pg_temp as $own_driver_auto_complete$
 declare v_n integer := 0; v_o public.goodies_orders%rowtype;
 begin
   for v_o in
@@ -131,12 +131,12 @@ begin
     end if;
   end loop;
   return v_n;
-end $;
-do $ begin
+end $own_driver_auto_complete$;
+do $own_driver_cron$ begin
   if not exists (select 1 from cron.job where jobname = 'goodies-auto-complete-self-deliveries') then
     perform cron.schedule('goodies-auto-complete-self-deliveries', '* * * * *', 'select public.goodies_auto_complete_self_deliveries();');
   end if;
-end $$;
+end $own_driver_cron$;
 
 -- 6) Admin decides an open report: release the order as delivered, or refund the customer.
 create or replace function public.goodies_admin_resolve_delivery_dispute(p_order_id uuid, p_resolution text)
