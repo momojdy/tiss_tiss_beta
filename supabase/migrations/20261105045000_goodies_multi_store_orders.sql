@@ -193,7 +193,7 @@ returns void
 language plpgsql
 security definer
 set search_path = public, pg_temp
-as $
+as $multi_store_admin$
 begin
   perform public.goodies_admin_assert();
   if p_enabled is null
@@ -207,6 +207,6 @@ begin
   );
   perform public.goodies_admin_update_max_stops(p_max_stops);
 end
-$;
+$multi_store_admin$;
 revoke all on function public.goodies_admin_update_multi_store_policy(boolean,numeric,numeric,integer) from public, anon;
 grant execute on function public.goodies_admin_update_multi_store_policy(boolean,numeric,numeric,integer) to authenticated;
