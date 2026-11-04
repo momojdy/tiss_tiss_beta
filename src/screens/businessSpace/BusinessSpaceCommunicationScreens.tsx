@@ -70,15 +70,27 @@ export function ConversationPage() {
 /* ---------- notifications ---------- */
 export function NotificationsPage() {
   const app = useApp(), s = useS(), t = useTheme();
-  const n = useQ(() => q<any[]>(supabase.from('notifications').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
+  const n = useQ(() => q<any[]>(supabase.from('notifications').select('*')
+    .eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id })
+    .order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.userId, app.tick]);
   const open = async (x: any) => {
-    if (!x.read_at) { try { await rpc('mark_notification_read', { p_id: x.id }); app.bump(); } catch { /* read state is not critical */ } }
+    if (!x.read) {
+      try {
+        await q(supabase.from('notifications').update({ read: true }).eq('id', x.id).eq('user_id', app.userId));
+        app.bump();
+      } catch { /* read state is not critical */ }
+    }
+    const metadata = x.metadata ?? {};
+    if (x.notification_type === 'store_message' && metadata.conversation_id) {
+      app.go('conversation', { id: String(metadata.conversation_id) });
+      return;
+    }
     const l = x.link ?? {};
-    if (l.view === 'feat' && l.arg) app.go('feature', { k: l.arg }); else if (l.view === 'wallet') app.panel('payouts'); else if (l.view === 'onboard') app.go('registration'); else if (l.view === 'promo') app.go('promotions');
+    if (l.view === 'feat' && l.arg) app.go('feature', { k: l.arg, focus: l.arg }); else if (l.view === 'wallet') app.panel('payouts'); else if (l.view === 'onboard') app.go('registration'); else if (l.view === 'promo') app.go('promotions');
   };
   return (
-    <Pg title="Notifications" onBack={app.back} refreshing={n.l && !!n.d} onRefresh={app.bump} right={app.meta.unreadN > 0 ? <Pressable onPress={async () => { try { await rpc('mark_notifications_read', { p_business: app.biz.id }); app.bump(); } catch (e) { app.toast(errText(e)); } }}><Text style={s.link}>Mark all as read</Text></Pressable> : null}>
-      {n.e ? <ErrBox e={n.e} retry={n.reload} /> : n.l && !n.d ? <Loading /> : (n.d ?? []).length ? <View style={s.cardFlat}><Divided>{(n.d ?? []).map(x => <Row key={x.id} onPress={() => open(x)} left={x.feature ? <FIcon k={x.feature} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name="bell-outline" size={18} color={t.blue} /></View>} title={x.title} sub={ago(x.created_at)} right={!x.read_at ? <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: t.blue }} /> : null} />)}</Divided></View>
+    <Pg title="Notifications" onBack={app.back} refreshing={n.l && !!n.d} onRefresh={app.bump} right={n.d?.some(x => !x.read) ? <Pressable onPress={async () => { try { await q(supabase.from('notifications').update({ read: true }).eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id }).eq('read', false)); app.bump(); } catch (e) { app.toast(errText(e)); } }}><Text style={s.link}>Mark all as read</Text></Pressable> : null}>
+      {n.e ? <ErrBox e={n.e} retry={n.reload} /> : n.l && !n.d ? <Loading /> : (n.d ?? []).length ? <View style={s.cardFlat}><Divided>{(n.d ?? []).map(x => <Row key={x.id} onPress={() => open(x)} left={x.feature ? <FIcon k={x.feature} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name="bell-outline" size={18} color={t.blue} /></View>} title={x.title} sub={ago(x.created_at)} right={!x.read ? <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: t.blue }} /> : null} />)}</Divided></View>
         : <View style={s.card}><Empty icon="bell-outline" title="No notifications yet" /></View>}
     </Pg>
   );
