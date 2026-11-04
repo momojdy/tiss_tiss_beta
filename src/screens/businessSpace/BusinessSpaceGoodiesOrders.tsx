@@ -13,7 +13,7 @@ type GoodiesOrder = {
   commissionable_subtotal: number; platform_commission_rate: number; platform_commission_amount: number; vendor_net_amount: number;
   notes: string | null; address?: Record<string, any> | null; contact_phone?: string | null;
   ready_at?: string | null; updated_at?: string | null; self_delivery?: boolean | null; self_driver_name?: string | null; self_driver_phone?: string | null;
-  vendor_delivered_at?: string | null; receipt_deadline_at?: string | null; delivery_dispute_status?: string | null;
+  vendor_delivered_at?: string | null; receipt_deadline_at?: string | null; delivery_proof_url?: string | null; delivery_dispute_status?: string | null;
 };
 const reasons = [
   { id: 'out_of_stock', label: 'Item unavailable' },
@@ -95,7 +95,7 @@ export function GoodiesOrdersPage() {
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
-      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,payment_refunded_amount,courier_id,ready_at,updated_at,self_delivery,self_driver_name,self_driver_phone,vendor_delivered_at,receipt_deadline_at,delivery_dispute_status')
+      .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,payment_refunded_amount,courier_id,ready_at,updated_at,self_delivery,self_driver_name,self_driver_phone,vendor_delivered_at,receipt_deadline_at,delivery_proof_url,delivery_dispute_status')
       .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
@@ -288,7 +288,7 @@ export function GoodiesOrdersPage() {
                   ? <Btn label="Mark delivered with photo" busy={ownBusy === order.id} disabled={!!ownBusy} onPress={() => void markOwnDelivered(order)} />
                   : order.delivery_dispute_status === 'open'
                     ? <Text style={{fontSize:12,fontWeight:'700',color:'#A33D3D'}}>The customer reported a problem. Our team is reviewing it.</Text>
-                    : <Text style={{fontSize:12,color:'#5F6B5A'}}>Waiting for the customer to confirm. It completes automatically after {new Date(order.receipt_deadline_at || '').toLocaleString()} if there is no report.</Text>}
+                    : <View style={{gap:6}}>{order.delivery_proof_url ? <Image source={{uri:order.delivery_proof_url}} style={{width:'100%',height:150,borderRadius:10,backgroundColor:'#F1F2EF'}} resizeMode="cover" /> : null}<Text style={{fontSize:12,color:'#5F6B5A'}}>Delivery photo saved. Waiting for the customer to confirm. It completes automatically after {new Date(order.receipt_deadline_at || '').toLocaleString()} if there is no report.</Text></View>}
               </View> : null}
               {order.status === 'accepted' || order.status === 'preparing' || (order.status === 'ready' && order.order_type === 'pickup') ? <Btn label={order.status === 'accepted' ? 'Start preparing' : order.status === 'preparing' ? 'Mark ready' : 'Complete order'} busy={busyId === order.id} disabled={!!busyId} onPress={() => void act(order, order.status === 'accepted' ? 'preparing' : order.status === 'preparing' ? 'ready' : 'completed')} /> : null}
               {canRespond ? <View style={{ flexDirection: 'row', gap: 8 }}>
