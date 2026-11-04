@@ -6,7 +6,7 @@ const PINK='#FBE8EF',MAGENTA='#BF008E',INK='#302631',MUTED='#827783';
 type Message={id:string;conversation_id:string;sender_id:string;body:string;created_at:string;read_at:string|null};
 type Conversation={id:string;title:string|null;participant_ids:string[];updated_at:string;feature?:string|null;ref_id?:string|null;business_id?:string|null;customer_id?:string|null;status?:string};
 export default function MessagesScreen({onBack}:{onBack:()=>void}) {
- const [currentUserId,setCurrentUserId]=useState('');const [items,setItems]=useState<Conversation[]>([]),[unread,setUnread]=useState<Record<string,number>>({}),[storeMedia,setStoreMedia]=useState<Record<string,string>>({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[activeConversation,setActiveConversation]=useState<Conversation|null>(null),[messages,setMessages]=useState<Message[]>([]),[draft,setDraft]=useState(''),[sending,setSending]=useState(false);
+ const [currentUserId,setCurrentUserId]=useState('');const [items,setItems]=useState<Conversation[]>([]),[unread,setUnread]=useState<Record<string,number>>({}),[storeMedia,setStoreMedia]=useState<Record<string,{cover:string|null;thumb:string|null}>>({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[activeConversation,setActiveConversation]=useState<Conversation|null>(null),[messages,setMessages]=useState<Message[]>([]),[draft,setDraft]=useState(''),[sending,setSending]=useState(false);
  const load=useCallback(async()=>{
   const {data:auth}=await supabase.auth.getUser();
   if(!auth.user){setItems([]);setUnread({});setCurrentUserId('');setLoading(false);return;}setCurrentUserId(auth.user.id);
