@@ -137,9 +137,12 @@ function Addresses() {
         updated_at: new Date().toISOString(),
       };
       const isNew = !edit.id || typeof edit.id === 'number';
-      const result = isNew
-        ? await supabase.from('user_addresses').insert({...payload, user_id: auth.user.id, is_default: rows.length === 0}).select('id').single()
-        : await supabase.from('user_addresses').update(payload).eq('id', String(edit.id)).eq('user_id', auth.user.id).select('id').single();
+      const write = (body: any) => isNew
+        ? supabase.from('user_addresses').insert({...body, user_id: auth.user.id, is_default: rows.length === 0}).select('id').single()
+        : supabase.from('user_addresses').update(body).eq('id', String(edit.id)).eq('user_id', auth.user.id).select('id').single();
+      let result = await write(payload);
+      /* Until the coordinates migration is applied, save the address without them instead of failing. */
+      if (result.error && /latitude|longitude/i.test(String(result.error.message))) {const {latitude, longitude, ...plain} = payload as any; result = await write(plain);}
       if (result.error) throw result.error;
       if (isNew && rows.length === 0) {
         const {error: defaultError} = await supabase.rpc('set_default_user_address', {p_address_id: result.data.id});

@@ -130,3 +130,11 @@ begin
     end loop;
   end loop;
 end $$;
+
+-- 5) Exact customer address coordinates (captured with "Use my current location") so distance does not depend on geocoding text.
+alter table public.user_addresses add column if not exists latitude double precision;
+alter table public.user_addresses add column if not exists longitude double precision;
+alter table public.user_addresses drop constraint if exists user_addresses_latitude_range;
+alter table public.user_addresses add constraint user_addresses_latitude_range check (latitude is null or (latitude between -90 and 90));
+alter table public.user_addresses drop constraint if exists user_addresses_longitude_range;
+alter table public.user_addresses add constraint user_addresses_longitude_range check (longitude is null or (longitude between -180 and 180));

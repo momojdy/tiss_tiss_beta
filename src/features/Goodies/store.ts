@@ -240,9 +240,12 @@ export async function refreshUserAddresses() {
   if (providerInfo.demo) return S.addr;
   const {data: auth, error: authError} = await supabase.auth.getUser();
   if (authError || !auth.user) return S.addr;
-  const {data, error} = await supabase.from('user_addresses')
-    .select('id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at,latitude,longitude')
+  const baseColumns = 'id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at';
+  const read = (columns: string) => supabase.from('user_addresses').select(columns)
     .eq('user_id', auth.user.id).order('is_default', {ascending: false}).order('created_at', {ascending: true});
+  /* Coordinates need the latitude/longitude columns; fall back cleanly until the migration is applied. */
+  let {data, error} = await read(baseColumns + ',latitude,longitude');
+  if (error && /latitude|longitude/i.test(String(error.message))) ({data, error} = await read(baseColumns));
   if (error) throw error;
   const metadataAddressId = String(auth.user.user_metadata?.goodies_default_address_id || '');
   const rows = (data || []).map((row: any) => ({
