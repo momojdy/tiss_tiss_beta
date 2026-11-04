@@ -28,35 +28,8 @@ create index if not exists conversations_goodies_business_status_updated_idx
   on public.conversations (business_id, status, updated_at desc)
   where feature = 'goodies';
 
--- Only the start RPC may create a Goodies conversation.
-drop policy if exists "Customers can start Goodies store conversations" on public.conversations;
-
--- Only the role-checked send RPCs may insert Goodies messages. Preserve direct
--- participant inserts for the other Wantiss conversation features.
-drop policy if exists "Goodies chat participants send only as customer or store member" on public.messages;
-create policy "Non-Goodies participants send messages"
-on public.messages
-for insert
-to authenticated
-with check (
-  sender_id = (select auth.uid())
-  and exists (
-    select 1
-    from public.conversations c
-    where c.id = messages.conversation_id
-      and coalesce(c.feature, '') <> 'goodies'
-      and (
-        (select auth.uid()) = any(c.participant_ids)
-        or exists (
-          select 1
-          from public.business_members bm
-          where bm.business_id = c.business_id
-            and bm.user_id = (select auth.uid())
-        )
-      )
-  )
-);
-
+-- Existing RLS remains in place for backward compatibility with already-installed
+-- app versions. The new client routes Goodies sends through the role-checked RPCs.
 create or replace function public.goodies_start_store_conversation(
   p_store_id text,
   p_customer_name text default null
