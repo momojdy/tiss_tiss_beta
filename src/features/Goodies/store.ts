@@ -492,7 +492,10 @@ export function pChk(code: string, sub: number, sid: string | null) {
 /** The store a cart line belongs to. Older saved lines fall back to the product's store. */
 export const lineStore = (l: CartLine): string => l.s || IT[l.id]?.s || S.cart.sid || '';
 /** Stores in the cart, in the order they were added. */
-export const cartStoreIds = (): string[] => [...new Set(S.cart.lines.map(lineStore).filter(Boolean))];
+export const cartStoreIds = (): string[] => {
+  const ids = S.cart.lines.map(lineStore).filter((id): id is string => typeof id === 'string' && id.length > 0);
+  return Array.from(new Set<string>(ids));
+};
 /** How many stores one order may include (set in tiss-admin). */
 export const maxStops = (): number => Math.max(1, Math.min(8, Number((feesNow() as any).maxStops) || 3));
 /** Cart subtotal for one store. */
