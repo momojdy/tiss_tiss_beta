@@ -192,7 +192,7 @@ export async function refreshLiveSchedules() {
       if (current?.photo) line.photo = current.photo;
     });
     stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
-    (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn);});
+    (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn); if (o && Array.isArray(o.lines)) o.lines = o.lines.map((line: any) => ({...line, photo: line.photo || IT[String(line.id || '')]?.photo || null}));});
     if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
     S.catalogError = '';
     applyZone();
@@ -607,7 +607,7 @@ export function reorderLines(o: Order) {
     }
     const i = IT[l.id];
     if (!i || i.oos || !s.open || i.stock < 1) miss.push(l.n);
-    else ok.push({k: l.k, id: l.id, n: l.n, e: l.e, p: l.p, q: Math.min(l.q, i.stock), d: l.d});
+    else ok.push({k: l.k, id: l.id, n: l.n, e: l.e, photo: i.photo || l.photo || null, p: l.p, q: Math.min(l.q, i.stock), d: l.d});
   });
   return {ok, miss};
 }

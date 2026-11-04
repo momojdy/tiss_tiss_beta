@@ -1,6 +1,6 @@
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
-import { S, STB, emit, save } from './store';
+import { S, STB, IT, emit, save } from './store';
 
 type ServerOrder = {
   id: string;
@@ -49,7 +49,7 @@ function mapOrder(row: ServerOrder) {
     serverStatus: String(row.status || 'placed').toLowerCase(),
     serverUpdatedAt: row.updated_at,
     sid,
-    lines: items,
+    lines: items.map((item: any) => ({...item, photo: item?.photo || IT[String(item?.id || '')]?.photo || null})),
     sn: STB[sid]?.n || 'Store',
     sub: Number(row.subtotal || 0),
     fee: Number(row.delivery_fee || 0),

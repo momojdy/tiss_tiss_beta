@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Text, View, Pressable } from 'react-native';
+import { Text, View, Pressable, Image } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
@@ -40,6 +40,7 @@ export function GoodiesOrdersPage() {
   const [couriers, setCouriers] = useState<any[]>([]);
   const [dispatchBusy, setDispatchBusy] = useState('');
   const [assignmentStates, setAssignmentStates] = useState<Record<string,string>>({});
+  const [productPhotos, setProductPhotos] = useState<Record<string,string>>({});
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
@@ -65,6 +66,17 @@ export function GoodiesOrdersPage() {
     return()=>{active=false;void supabase.removeChannel(channel);};
   },[app.biz.id,orders.d]);
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
+  useEffect(() => {
+    const ids = [...new Set((orders.d || []).flatMap(order => (Array.isArray(order.items) ? order.items : []).map((item: any) => String(item?.id || '')).filter(Boolean)))];
+    if (!ids.length) { setProductPhotos({}); return; }
+    let active = true;
+    void supabase.from('goodies_products').select('id,photo_url,photo_urls').eq('business_id', app.biz.id).in('id', ids)
+      .then(({data,error}) => {
+        if (!active || error) return;
+        setProductPhotos(Object.fromEntries((data || []).map((product: any) => [String(product.id), (Array.isArray(product.photo_urls) ? product.photo_urls[0] : null) || product.photo_url || '']).filter((entry: any) => !!entry[1])));
+      });
+    return () => { active = false; };
+  }, [app.biz.id, orders.d]);
   useEffect(() => {
     let active = true;
     void supabase.from('goodies_store_schedules').select('store_id,accept_cash_on_delivery').eq('business_id', app.biz.id).maybeSingle()
@@ -153,12 +165,12 @@ export function GoodiesOrdersPage() {
         <View style={{ gap: 10 }}>
           <View style={{padding:14,borderRadius:14,borderWidth:1,borderColor:'#DCE4D7',backgroundColor:'#fff',gap:7}}>
             <Text style={{fontWeight:'800',fontSize:14,color:'#1A2517'}}>Cash on delivery</Text>
-            <Text style={{fontSize:12,lineHeight:18,color:'#5F6B5A'}}>Wantiss Wallet remains the customer's default. Cash appears only when your store enables it and an available courier has also opted in to accepting cash.</Text>
+            <Text style={{fontSize:12,lineHeight:18,color:'#5F6B5A'}}>Wantiss Wallet is the default payment method. Cash on delivery is available when your store and an eligible courier both enable it.</Text>
             <Btn label={cashBusy ? 'Saving…' : cashEnabled ? 'Disable cash on delivery' : 'Enable cash on delivery'} busy={cashBusy} disabled={!storeId || cashBusy} onPress={() => void toggleCash()} />
           </View>
           <View style={{ padding: 14, borderRadius: 16, backgroundColor: '#EAF4E5', gap: 4 }}>
             <Text style={{ fontWeight: '800', fontSize: 15, color: '#234A25' }}>{pending.length} awaiting response</Text>
-            <Text style={{ fontSize: 12, lineHeight: 18, color: '#38583A' }}>Accept or decline each new order within 15 minutes. If the deadline expires, the order is marked expired and stock is restored by the scheduled server job.</Text>
+            <Text style={{ fontSize: 12, lineHeight: 18, color: '#38583A' }}>Please accept or decline each new order within 15 minutes. Orders not answered in time are automatically cancelled and the items are returned to your available stock.</Text>
           </View>
           {orders.l && !orders.d ? <><Skel h={110} /><Skel h={110} /></> : null}
           {orders.e ? <ErrBox e={orders.e} retry={orders.reload} /> : null}
@@ -176,7 +188,16 @@ export function GoodiesOrdersPage() {
                 <Text style={{ color: '#1A2517', fontSize: 13 }}>Delivery address: {String(order.address?.t || order.address?.label || order.address?.address || 'Address not provided')}</Text>
                 <Text style={{ color: '#1A2517', fontSize: 13 }}>Customer phone: {String(order.contact_phone || 'Not provided')}</Text>
               </> : null}
-              <Text style={{ fontSize: 13, color: '#1A2517' }}>{(Array.isArray(order.items) ? order.items : []).map(i => (i.q || 1) + '× ' + (i.n || 'Item')).join(' · ') || 'Order items'}</Text>
+              <View style={{gap:8}}>
+                {(Array.isArray(order.items) ? order.items : []).map((item:any,index:number) => {
+                  const photo = item.photo || item.photo_url || productPhotos[String(item.id || '')] || '';
+                  return <View key={String(item.k || item.id || index)} style={{flexDirection:'row',alignItems:'center',gap:10}}>
+                    {photo ? <Image source={{uri:String(photo)}} style={{width:52,height:52,borderRadius:10,backgroundColor:'#EEF1EB'}} resizeMode="cover" /> : <View style={{width:52,height:52,borderRadius:10,backgroundColor:'#EEF1EB',alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:24}}>{item.e || '🛍️'}</Text></View>}
+                    <View style={{flex:1}}><Text style={{fontSize:13,fontWeight:'700',color:'#1A2517'}}>{(item.q || 1) + '× ' + (item.n || 'Item')}</Text>{item.d ? <Text style={{fontSize:11,color:'#5F6B5A',marginTop:2}}>{item.d}</Text> : null}</View>
+                    <Text style={{fontSize:12,fontWeight:'700',color:'#1A2517'}}>{money(Number(item.p || 0) * Number(item.q || 1))}</Text>
+                  </View>;
+                })}
+              </View>
               <View style={{ borderTopWidth: 1, borderTopColor: '#E7ECE3', paddingTop: 8, gap: 4 }}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 8 }}>
                   <Text style={{ color: '#5F6B5A', fontSize: 12 }}>Product subtotal</Text>

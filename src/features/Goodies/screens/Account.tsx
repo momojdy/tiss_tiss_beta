@@ -138,19 +138,16 @@ function Addresses() {
       };
       const isNew = !edit.id || typeof edit.id === 'number';
       const write = (body: any) => isNew
-        ? supabase.from('user_addresses').insert({...body, user_id: auth.user.id, is_default: rows.length === 0}).select('id').single()
+        ? supabase.from('user_addresses').insert({...body, user_id: auth.user.id, is_default: false}).select('id').single()
         : supabase.from('user_addresses').update(body).eq('id', String(edit.id)).eq('user_id', auth.user.id).select('id').single();
       let result = await write(payload);
       /* Until the coordinates migration is applied, save the address without them instead of failing. */
       if (result.error && /latitude|longitude/i.test(String(result.error.message))) {const {latitude, longitude, ...plain} = payload as any; result = await write(plain);}
       if (result.error) throw result.error;
-      if (isNew && rows.length === 0) {
-        const {error: defaultError} = await supabase.rpc('set_default_user_address', {p_address_id: result.data.id});
-        if (defaultError) throw defaultError;
-      }
-      if (isNew && !rows.some((a: any) => a.goodiesDefault)) {
+      if (isNew) {
         const {error: preferenceError} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(result.data.id)}});
         if (preferenceError) throw preferenceError;
+        S.as = String(result.data.id);
       }
       setEdit(null);
       await refreshUserAddresses();
@@ -193,7 +190,7 @@ function Addresses() {
         <Card>
           <T size={17} weight="600">{edit.id && typeof edit.id === 'string' ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={label('lbl.accountAddressType' + x, x)} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
-          <View style={{marginBottom: 12}}><Cta ghost small label={locating ? 'Locating…' : 'Use my current location'} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
+          <View style={{marginTop: 8, marginBottom: 12}}><Cta ghost small label={locating ? 'Locating…' : 'Use my current location'} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
           <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v, latitude: null, longitude: null})} />
           <Input label="City" value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
           <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />

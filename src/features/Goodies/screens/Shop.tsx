@@ -451,7 +451,7 @@ export function Track({id}: {id: string}) {
       <Bar title={'Order ' + o.id} onBack={back} />
       <View style={{paddingHorizontal: 16}}>
         <Card>
-          <Row><Tile e={s.e} bg={s.bg} /><View style={{flex: 1}}><T weight="600">{s.n}</T><T size={13} color={th.mut}>{o.pk ? label('lbl.orderPickupShort', 'Pickup') : label('lbl.orderToAddress', 'To {address}').replace('{address}', o.ad ? o.ad.t + (o.ad.apt ? ', ' + o.ad.apt : '') : o.addr)}</T></View></Row>
+          <Row><Tile e={s.e} bg={s.bg} photo={s.thumbnail || s.cover || s.logo} /><View style={{flex: 1}}><T weight="600">{s.n}</T><T size={13} color={th.mut}>{o.pk ? label('lbl.orderPickupShort', 'Pickup') : label('lbl.orderToAddress', 'To {address}').replace('{address}', o.ad ? o.ad.t + (o.ad.apt ? ', ' + o.ad.apt : '') : o.addr)}</T></View></Row>
           <View style={{marginTop: 10}}><Badge green={!!(dn && !o.cx)} label={eta} /></View>
           {o.cx ? <T size={14} color={th.mut} style={{marginTop: 12}}>{o.declined ? label('lbl.orderDeclinedMessage', 'The store could not accept your order. {reason}').replace('{reason}', o.declineReasonPublic || label('lbl.orderDeclinedFallback', 'Please try another store.')) : o.expired ? label('lbl.orderExpiredMessage', 'The store did not respond within 15 minutes. Your order was cancelled.') : label('lbl.orderCancelledMessage', 'This order was cancelled')}{o.pay === 'card' ? (o.paymentStatus === 'refunded' ? ' Your card refund has been submitted. It may take a few business days to appear.' : ' Your card refund is being processed. It may take a few business days to appear.') : o.paymentStatus === 'refunded' || o.pay === 'wallet' ? ' Any applicable refund will be shown in your Wantiss wallet activity.' : ' You were not charged for this order.'}</T> : (<>
             <View style={{flexDirection: 'row', gap: 6, marginVertical: 14}}>{T_.map((x, i) => <View key={i} style={{flex: 1, height: 6, borderRadius: 3, backgroundColor: i <= o.st ? th.br : th.line}} />)}</View>
@@ -468,7 +468,7 @@ export function Track({id}: {id: string}) {
           {o.orderReview?.t ? <T size={12.5} color={th.mut} style={{marginTop:8}}>Your shop/order comment: “{o.orderReview.t}”</T> : null}
           {o.driverReview?.t ? <T size={12.5} color={th.mut} style={{marginTop:6}}>Your driver comment: “{o.driverReview.t}”</T> : null}
         </Card> : null}
-        <Sum rows={[...o.lines.map((l: any) => [l.q + '× ' + l.n, money(l.p * l.q)] as any), ['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
+        <Card style={{padding:12}}><T size={14} weight="600" style={{marginBottom:8}}>Items</T>{o.lines.map((l:any,index:number)=><Row key={l.k || l.id || index} style={{alignItems:'center',paddingVertical:6}}><Tile e={l.e || '🛍️'} bg={s?.bg || 'bg0'} photo={l.photo || IT[l.id]?.photo} size={46}/><View style={{flex:1}}><T weight="600">{l.q}× {l.n}</T>{l.d ? <T size={11.5} color={th.mut}>{l.d}</T> : null}</View><T weight="600">{money(l.p*l.q)}</T></Row>)}</Card><Sum rows={ [['Fees', money(o.fee + o.svc)], ...(o.disc ? [['Discount', '-' + money(o.disc), 'g'] as any] : []), ...(o.tip ? [['Tip', money(o.tip)] as any] : []), ['Contact', (o.ph || 'n/a') + (o.phl ? ' (' + o.phl + ')' : '')], ...(o.ad && o.ad.inst ? [['Instructions', o.ad.inst] as any] : []), ...(o.note ? [['Note', o.note] as any] : [])]} total={['Total · ' + o.payl, money(o.total)]} />
         {!dn && o.st <= 2 ? <><Card style={{padding: 0, borderWidth: 0}}><Pressable onPress={() => cancelAsk(o.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color={th.red}>{label('lbl.orderCancelAction', 'Cancel order')}</T></Pressable></Card></> : null}
         <Cta ghost label={label('lbl.orderAgain', 'Order again')} onPress={() => reorder(o.id)} /><View style={{height: 10}} />
         {!o.cx ? <><Cta ghost label={label('lbl.orderMessageStore', 'Message store')} onPress={() => go('storechat', o.sid)} /><View style={{height: 10}} /></> : null}
@@ -532,7 +532,7 @@ export function Orders() {
           return (
             <Card key={o.id}>
               <Pressable onPress={() => go('track', o.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
-                <Tile e={s.e} bg={s.bg} />
+                <Tile e={s.e} bg={s.bg} photo={s.thumbnail || s.cover || s.logo} />
                 <View style={{flex: 1}}><T weight="600">{s.n}</T><T size={12.5} color={th.mut}>{o.id} · {fmtDay(d)} · {money(o.total)}</T><View style={{marginTop: 5}}><Badge green={!!(done(o) && !o.cx)} label={stTxt(o)} /></View></View>
                 <Icon name="chevR" size={16} color={th.ink} />
               </Pressable>
