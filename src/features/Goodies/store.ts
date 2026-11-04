@@ -493,7 +493,7 @@ export function pChk(code: string, sub: number, sid: string | null) {
 export const lineStore = (l: CartLine): string => l.s || IT[l.id]?.s || S.cart.sid || '';
 /** Stores in the cart, in the order they were added. */
 export const cartStoreIds = (): string[] => {
-  const ids = S.cart.lines.map(lineStore).filter((id): id is string => typeof id === 'string' && id.length > 0);
+  const ids = S.cart.lines.map(lineStore).filter((id: string): id is string => typeof id === 'string' && id.length > 0);
   return Array.from(new Set<string>(ids));
 };
 /** How many stores one order may include (set in tiss-admin). */
