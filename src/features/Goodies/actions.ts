@@ -511,6 +511,14 @@ async function placeMultiOrder() {
   if (ids.length > maxStops()) return stop('You can order from up to ' + maxStops() + ' stores at once.');
   if (isPk()) return stop('Ordering from several stores is available for delivery only.');
   if (!['wallet', 'cash'].includes(S.pay)) return stop('Choose Wantiss Wallet or cash to order from several stores.', 2);
+  if (S.pay === 'cash') {
+    const checks = await Promise.all(ids.map(async sid => {
+      const {data, error} = await supabase.rpc('goodies_cash_on_delivery_available', {p_store_id: sid});
+      return {sid, available: !error && data === true};
+    }));
+    const unavailable = checks.find(result => !result.available);
+    if (unavailable) return stop((STB[unavailable.sid]?.n || 'A store') + ': cash on delivery is not currently available. Choose Wantiss Wallet or try again later.', 2);
+  }
   if (hasAlcohol()) return stop('Alcohol orders are not available yet.');
   if (S.sch && S.sch <= Date.now() + 2 * 60_000) return stop('That scheduled time is too close or has passed. Please choose a later time.', 1);
   for (const sid of ids) {
