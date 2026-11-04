@@ -14,7 +14,7 @@ export interface Store {
 }
 export interface Promo {c: string; t: string; d: string; min: number; ty: 'pct' | 'ship'; v?: number; st?: string}
 export interface Address {id: string | number; l: string; t: string; apt: string; inst: string; def: number; goodiesDefault?: number; z: number; cc?: string; city?: string; department?: string; country?: string; phone?: string; latitude?: number | null; longitude?: number | null}
-export interface CartLine {k: string; id: string; n: string; e: string; photo?: string | null; p: number; q: number; d: string; byo?: any; nt?: string; options?: {size: 'regular' | 'large' | null; drink: boolean; discount_pct: number}}
+export interface CartLine {k: string; s?: string; id: string; n: string; e: string; photo?: string | null; p: number; q: number; d: string; byo?: any; nt?: string; options?: {size: 'regular' | 'large' | null; drink: boolean; discount_pct: number}}
 export interface Order {
-  id: string; sid: string; lines: CartLine[]; t0: number; pk?: boolean; cx?: boolean; st?: number; sch?: number; [k: string]: any;
+  id: string; sid: string; parentId?: string; stop?: number; lines: CartLine[]; t0: number; pk?: boolean; cx?: boolean; st?: number; sch?: number; [k: string]: any;
 }

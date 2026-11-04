@@ -102,7 +102,7 @@ export function coupons() {
 }
 export const fees = () => {
   const f = C ? C.fees : null;
-  return {svc: Number(f?.svc ?? 0), firstFree: !!f?.first, tips: f ? String(f.tips ?? '').split(',').filter(Boolean).map(Number) : [], lead: Number(f?.lead ?? 0), step: Number(f?.step ?? 0), slots: Number(f?.slots ?? 0), far: Number(f?.far ?? 0), pay: f?.pay ?? {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: !!f?.rfSvc, rfTip: !!f?.rfTip};
+  return {svc: Number(f?.svc ?? 0), firstFree: !!f?.first, tips: f ? String(f.tips ?? '').split(',').filter(Boolean).map(Number) : [], lead: Number(f?.lead ?? 0), step: Number(f?.step ?? 0), slots: Number(f?.slots ?? 0), far: Number(f?.far ?? 0), maxStops: Number(f?.maxStops ?? 3), pay: f?.pay ?? {Wallet: 0, MonCash: 0, Card: 0, Cash: 0}, rfSvc: !!f?.rfSvc, rfTip: !!f?.rfTip};
 };
 export function minAge(cc: string | null | undefined): number {
   if (!C) return cc === 'HT' || cc === 'DO' ? 18 : 21;

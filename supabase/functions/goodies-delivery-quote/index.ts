@@ -247,14 +247,17 @@ Deno.serve(async (req: Request) => {
     const perKm = Math.max(0, Number(policy.extraDistancePerKm) || 0);
     const extraKm = routes.slice(1).reduce((total, route) => total + route.distance_m / 1000, 0);
     const additionalStoreFee = surchargeEnabled ? flatFee * Math.max(0, routes.length - 1) : 0;
-    const extraDistanceFee = surchargeEnabled ? perKm * extraKm : 0;
+    const extraDistanceFee = surchargeEnabled ? Math.round(perKm * extraKm * 100) / 100 : 0;
     const baseTotal = routes.reduce((total, route) => total + route.base_fee, 0);
-    const deliveryTotal = Math.round((baseTotal + additionalStoreFee + extraDistanceFee) * 100) / 100;
+    const surchargeCents = Math.round((additionalStoreFee + extraDistanceFee) * 100);
+    const surchargeBase = Math.floor(surchargeCents / routes.length);
+    const surchargeRemainder = surchargeCents - surchargeBase * routes.length;
+    const deliveryTotal = Math.round((baseTotal + surchargeCents / 100) * 100) / 100;
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000).toISOString();
-    const inserts = routes.map(route => ({
+    const inserts = routes.map((route, index) => ({
       customer_id: auth.user.id, store_id: route.store_id, address_payload: address,
       distance_m: route.distance_m,
-      fee: route.base_fee + (surchargeEnabled ? (additionalStoreFee + extraDistanceFee) / routes.length : 0),
+      fee: Math.round((route.base_fee + (surchargeBase + (index < surchargeRemainder ? 1 : 0)) / 100) * 100) / 100,
       expires_at: expiresAt, origin_latitude: route.origin.lat, origin_longitude: route.origin.lon,
       destination_latitude: destination.lat, destination_longitude: destination.lon,
       route_geometry: route.geometry,

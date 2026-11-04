@@ -323,6 +323,7 @@ export async function load() {
   if (!c || !Array.isArray(c.lines)) S.cart = {sid: null, lines: []};
   S.cart.lines = S.cart.lines.filter((l: any) => l && ((l.byo && l.byo.bid && l.byo.sel && l.byo.lines) || IT[l.id]) && l.q > 0);
   if (!S.cart.lines.length) S.cart.sid = null;
+  else if (!cartStoreIds().includes(String(S.cart.sid))) S.cart.sid = cartStoreIds()[0] || null;
   if (S.checkoutAttempt && !S.cart.lines.length && !S.checkoutAttempt.completed) {
     S.checkoutAttempt = {...S.checkoutAttempt, completed: true};
     try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
@@ -488,6 +489,20 @@ export function pChk(code: string, sub: number, sid: string | null) {
   if (sub < p.min) return {e: label('lbl.cartPromoMinimum', 'Spend {amount} more to use {code}').replace('{amount}', money(p.min - sub)).replace('{code}', code)} as any;
   return {p} as any;
 }
+/** The store a cart line belongs to. Older saved lines fall back to the product's store. */
+export const lineStore = (l: CartLine): string => l.s || IT[l.id]?.s || S.cart.sid || '';
+/** Stores in the cart, in the order they were added. */
+export const cartStoreIds = (): string[] => [...new Set(S.cart.lines.map(lineStore).filter(Boolean))];
+/** How many stores one order may include (set in tiss-admin). */
+export const maxStops = (): number => Math.max(1, Math.min(8, Number((feesNow() as any).maxStops) || 3));
+/** Cart subtotal for one store. */
+export const storeSub = (storeId: string): number => S.cart.lines.filter((l: CartLine) => lineStore(l) === storeId).reduce((a: number, l: CartLine) => a + l.p * l.q, 0);
+export const canAddStop = (storeId: string): boolean => {
+  const ids = cartStoreIds();
+  if (!ids.length || ids.includes(storeId)) return true;
+  const target = STB[storeId];
+  return ids.length < maxStops() && S.mode !== 'pickup' && !!target?.live && !target?.far && ids.every(id => STB[id]?.live && !STB[id]?.far) && !hasAlcohol();
+};
 export function totals() {
   const st = S.cart.sid ? STB[S.cart.sid] : null;
   const sub = S.cart.lines.reduce((a: number, l: CartLine) => a + l.p * l.q, 0), pk = isPk();
@@ -497,9 +512,18 @@ export function totals() {
   const quote = (S as any).deliveryFeeQuote;
   const quoteAddressKey = selectedAddress ? JSON.stringify({l: selectedAddress.l, t: selectedAddress.t, apt: selectedAddress.apt, inst: selectedAddress.inst, city: selectedAddress.city, department: selectedAddress.department, country: selectedAddress.country}) : '';
   const quoteValid = !!st && st.deliveryPricingMode === 'distance' && quote?.storeId === st.id && quote?.addressKey === quoteAddressKey && Number(quote?.expiresAt) > Date.now();
+  const stops = cartStoreIds();
+  if (stops.length > 1) {
+    /* Several stores: one combined delivery fee (the extra-store surcharge is added on the server and not itemised), one service fee, no promo code. */
+    const mq = (S as any).deliveryFeeQuote;
+    const mqValid = !!mq?.multi && mq.storeKey === stops.join(',') && String(mq.addressId) === String(S.as) && Number(mq.expiresAt) > Date.now();
+    const mFee = pk ? 0 : first() && F.firstFree ? 0 : mqValid ? Number(mq.fee) : stops.reduce((a: number, id: string) => a + (Number(STB[id]?.fee) || 0), 0);
+    const mSvc = sub ? F.svc : 0, mTip = pk ? 0 : S.tip;
+    return {st, sub, fee: mFee, svc: mSvc, disc: 0, tip: mTip, total: sub + mFee + mSvc + mTip, free: false, perr: '', pok: false, stops};
+  }
   const fee = !st || pk ? 0 : (first() && F.firstFree) || ship ? 0 : quoteValid ? Number(quote.fee) : st.fee === 0 ? 0 : st.fee, svc = sub ? F.svc : 0;
   const disc = p && p.ty === 'pct' ? Math.round(sub * p.v) / 100 : 0, tip = pk ? 0 : S.tip;
-  return {st, sub, fee, svc, disc, tip, total: sub + fee + svc - disc + tip, free: !!st && !pk && st.fee > 0 && fee === 0, perr: S.promo && sub && pc.e ? pc.e : '', pok: !!p};
+  return {st, sub, fee, svc, disc, tip, total: sub + fee + svc - disc + tip, free: !!st && !pk && st.fee > 0 && fee === 0, perr: S.promo && sub && pc.e ? pc.e : '', pok: !!p, stops};
 }
 export const qtyIn = (id: string) => S.cart.lines.filter((l: CartLine) => l.id === id).reduce((a: number, l: CartLine) => a + l.q, 0);
 export function canBuy(i: Item) {
@@ -578,17 +602,18 @@ export async function removeGroupOrderCartLine(groupId: string, lineKey: string)
   return supabase.rpc('goodies_group_order_remove_item', {p_group_id: groupId, p_line_key: lineKey});
 }
 
-export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; off?: number; note?: string}) {
+export function cartAdd(i: Item, o: {q: number; size?: number; drink?: number; off?: number; note?: string}, addStop = false) {
   if (!canBuy(i)) return;
   const c = S.cart;
-  if (c.sid && c.sid !== i.s && c.lines.length) {S.pend = [i, o]; ui.sheet({kind: 'newcart', from: STB[c.sid].n, to: STB[i.s].n}); return;}
+  if (!addStop && c.sid && c.lines.length && !cartStoreIds().includes(i.s)) {S.pend = [i, o]; ui.sheet({kind: 'newcart', from: STB[c.sid].n, to: STB[i.s].n, canMerge: canAddStop(i.s), stops: cartStoreIds().length, max: maxStops()}); return;}
   if (qtyIn(i.id) + o.q > i.stock) {toast(label('lbl.actionOnlyAvailable', 'Only {count} available').replace('{count}', String(i.stock))); return;}
   if ((i as any).restriction === 'alcohol' && !S.alcAck) {S.pend = [i, o]; ui.sheet({kind: 'alcrules'}); return;}
-  c.sid = i.s;
+  if (!c.sid || !c.lines.length) c.sid = i.s;
   const base = o.off ? dp(i, o.off) : i.p, unit = base + ((o.size || 0) > 0 ? 1.5 : 0) + (o.drink ? 1 : 0);
   const k = [i.id, o.size, o.drink, o.off || 0, o.note || ''].join('|'), l = c.lines.filter((x: CartLine) => x.k === k)[0];
   if (l) { l.q += o.q; if (!l.photo && i.photo) l.photo = i.photo; }
-  else c.lines.push({k, id: i.id, n: i.n, e: i.e, photo: i.photo || null, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', '), options: {size: ['restaurants', 'bakery', 'beverages'].includes(STB[i.s].c) ? ((o.size || 0) > 0 ? 'large' : 'regular') : null, drink: !!o.drink, discount_pct: Number(o.off || 0)}});
+  else c.lines.push({k, s: i.s, id: i.id, n: i.n, e: i.e, photo: i.photo || null, p: unit, q: o.q, d: [(o.size || 0) > 0 ? 'Large' : o.size === 0 && ['restaurants', 'bakery', 'beverages'].indexOf(STB[i.s].c) > -1 ? 'Regular' : '', o.drink ? '+ drink' : '', o.note || ''].filter(Boolean).join(', '), options: {size: ['restaurants', 'bakery', 'beverages'].includes(STB[i.s].c) ? ((o.size || 0) > 0 ? 'large' : 'regular') : null, drink: !!o.drink, discount_pct: Number(o.off || 0)}});
+  {const order = cartStoreIds(); c.lines.sort((x: CartLine, y: CartLine) => order.indexOf(lineStore(x)) - order.indexOf(lineStore(y)));}
   S.bump = 1;
   const activeGroup = S.groupOrder;
   if (activeGroup?.serverBacked && activeGroup?.groupId && activeGroup?.storeId === i.s) {

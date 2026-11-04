@@ -3,7 +3,7 @@ import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'rea
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
-import {fmtTime, fmtDay, fmtStoreTime, fmtStoreDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
+import {storeSub, lineStore, fmtTime, fmtDay, fmtStoreTime, fmtStoreDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
 import {go, tab, back, browse, heart, favp, setSize, toggleDrink, productQty, productAdd, qty, clearAsk, promoApply, promoClear, goCheckout, checkoutNext, setMode, setTip, setSch, setPay, setCard, placeOrder, cancelAsk, reorder, setOrdersTab, refreshPaymentOptions} from '../actions';
 import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
@@ -166,14 +166,14 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || ''), [scheduleOpen, setScheduleOpen] = useState(false);
   if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={23} color={th.br} /></Pressable>} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
-  const t = totals(), st = t.st!, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = t.sub < st.min || badLine;
+  const t = totals(), st = t.st!, stops: string[] = (t as any).stops || [], multi = stops.length > 1, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = (multi ? stops.some((id: string) => storeSub(id) < (STB[id]?.min || 0)) : t.sub < st.min) || badLine;
   return (
     <View>
       <Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="trash" label={label('lbl.cartClearAction', 'Clear cart')} onPress={clearAsk} />} />
       <View style={{paddingHorizontal: 16}}>
-        {st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
-        <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="600">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>
-                {!st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="600">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
+        {!multi && st.cover ? <Image source={{uri: st.cover}} style={{width: '100%', height: 112, borderRadius: 14, marginBottom: 10}} resizeMode="cover" /> : null}
+        {multi ? null : <Row style={{marginBottom: 8}}><Tile e={st.e} bg={st.bg} size={44} photo={st.thumbnail || st.logo} /><View style={{flex: 1}}><T weight="600">{st.n}</T><T size={13} color={th.mut}>{label('lbl.cartStoreOrder', 'Your order from this store')} · {st.eta} min</T></View></Row>}
+                {!multi && !st.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br}}><T weight="600">{st.n} is closed</T><T size={13} color={th.mut}>{st.acceptScheduledOrders ? st.nx + '. Scheduled orders are available. The earliest time is set by this shop.' : st.nx + '. This store does not currently accept scheduled orders.'}</T></Card> : null}
         <View style={{marginTop:14,marginBottom:8,paddingVertical:10,borderBottomWidth:0.5,borderBottomColor:th.line}}>
           <Row sp>
             <View style={{flex:1}}>
@@ -185,10 +185,13 @@ export function Cart() {
           {S.sch > Date.now() ? <Pressable onPress={() => {setSch(0);setScheduleOpen(false);}} style={{alignSelf:'flex-start',marginTop:8}}><T size={12.5} weight="600" color={th.br}>Switch to ASAP</T></Pressable> : null}
           {scheduleOpen ? <ScheduleInline close={() => setScheduleOpen(false)} /> : null}
         </View>
-        {c.lines.map((l: any) => {
+        {c.lines.map((l: any, index: number) => {
           const bad = l.byo ? lineBad(l) : '';
+          const lineSid = require('../store').lineStore(l), prevSid = index > 0 ? require('../store').lineStore(c.lines[index - 1]) : '';
           return (
-            <View key={l.k} style={{flexDirection: 'row', gap: 12, alignItems: 'flex-start', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: th.line}}>
+            <React.Fragment key={l.k}>
+            {multi && lineSid !== prevSid ? <View style={{marginTop: index ? 18 : 6, paddingBottom: 6}}><Row><Tile e={STB[lineSid]?.e} bg={STB[lineSid]?.bg} size={36} photo={STB[lineSid]?.thumbnail || STB[lineSid]?.logo} /><View style={{flex: 1}}><T weight="600">{STB[lineSid]?.n}</T>{!STB[lineSid]?.open ? <T size={12} color={th.red}>Closed</T> : storeSub(lineSid) < (STB[lineSid]?.min || 0) ? <T size={12} color={th.red}>Add {money((STB[lineSid]?.min || 0) - storeSub(lineSid))} more to reach the minimum</T> : null}</View></Row></View> : null}
+            <View style={{flexDirection: 'row', gap: 12, alignItems: 'flex-start', paddingVertical: 14, borderBottomWidth: 1, borderBottomColor: th.line}}>
               <Tile e={l.e} bg="bg0" size={48} photo={l.photo} />
               <View style={{flex: 1}}>
                 <T size={14.5} weight="600">{l.n}</T>
@@ -200,6 +203,7 @@ export function Cart() {
               </View>
               <Stepper q={l.q} onMinus={() => l.q > 1 ? qty(l.k, -1) : require('../store').ui.sheet({kind: 'remove-item', lineKey: l.k, itemName: l.n})} onPlus={() => qty(l.k, 1)} />
             </View>
+            </React.Fragment>
           );
         })}
         <Pressable onPress={() => go('store', st.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, padding: 14, borderWidth: 0.5, borderStyle: 'dashed', borderColor: th.line, borderRadius: 16}}><T weight="600" style={{flex: 1}}>{'+ ' + label('lbl.cartContinueShopping', 'Continue shopping')}</T><Icon name="chevR" size={16} color={th.ink} /></Pressable>
@@ -250,7 +254,8 @@ export function Checkout() {
     }
     return () => { active = false; };
   }, [st?.id, pk]);
-  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
+  const stops: string[] = (t as any).stops || [], multi = stops.length > 1;
+  const PAYON: any = fees().pay, allPays: [string, string, string, string][] = [['wallet', label('lbl.checkoutWallet', 'Wantiss Wallet'), S.hasWallet ? 'Balance ' + money(S.wallet) : 'Wallet not created', 'wallet'], ['moncash', label('lbl.checkoutMoncash', 'MonCash'), 'Not available for live Goodies orders', 'phone'], ['card', label('lbl.checkoutCard', 'Credit / debit card'), S.cards.length ? S.cards.length + ' saved card' + (S.cards.length === 1 ? '' : 's') : 'Add a card', 'card'], ['cash', label('lbl.checkoutCash', 'Cash on') + ' ' + label('lbl.checkoutDelivery', 'delivery'), 'Only when this store and an available courier accept cash on delivery', 'bag']], pays = allPays.filter(p => PAYON[({wallet: 'Wallet', moncash: 'MonCash', card: 'Card', cash: 'Cash'} as any)[p[0]]] && !(multi && p[0] === 'card') && (providerInfo.demo ? p[0] !== 'moncash' : p[0] !== 'moncash' && (p[0] !== 'cash' || cashEligible)));
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf() || {ph: S.pf?.ph || '', l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
@@ -323,7 +328,7 @@ export function Checkout() {
     {!providerInfo.demo ? <T size={12} color={th.mut}>{S.pay === 'card' ? 'Your payment is processed securely.' : 'Wantiss Wallet payments debit your available balance.'}</T> : <T size={12} color={th.mut}>{label("lbl.shopAuto12HC9JV", "Demo only. No real payment is taken.")}</T>}
   </>);
   if (S.cs === 3) body = (<>
-    <Card>{st.cover ? <Image source={{uri:st.cover}} style={{width:"100%",height:100,borderRadius:12,marginBottom:10}} resizeMode="cover" /> : null}<Row style={{gap:10, alignItems:"center"}}><Tile e={st.e} bg={st.bg} size={46} photo={st.thumbnail || st.logo} /><View style={{flex:1}}><T weight="600">{st.n}</T><T size={12} color={th.mut}>Your order from this store</T></View></Row>{S.cart.lines.map((l: any) => <Row key={l.k} sp style={{marginTop: 10, alignItems: "center"}}><Row style={{flex:1, gap:9, alignItems:"center"}}><Tile e={l.e} bg="bg0" size={42} photo={l.photo} /><View style={{flex:1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View></Row><T size={14}>{money(l.p * l.q)}</T></Row>)}</Card>
+    <Card>{!multi && st.cover ? <Image source={{uri:st.cover}} style={{width:"100%",height:100,borderRadius:12,marginBottom:10}} resizeMode="cover" /> : null}{multi ? <T weight="600">{stops.length} stores · one delivery</T> : <Row style={{gap:10, alignItems:"center"}}><Tile e={st.e} bg={st.bg} size={46} photo={st.thumbnail || st.logo} /><View style={{flex:1}}><T weight="600">{st.n}</T><T size={12} color={th.mut}>Your order from this store</T></View></Row>}{S.cart.lines.map((l: any, li: number) => <React.Fragment key={l.k}>{multi && (li === 0 || lineStore(l) !== lineStore(S.cart.lines[li - 1])) ? <T size={12.5} weight="600" color={th.mut} style={{marginTop: 14}}>{STB[lineStore(l)]?.n}</T> : null}<Row sp style={{marginTop: 10, alignItems: "center"}}><Row style={{flex:1, gap:9, alignItems:"center"}}><Tile e={l.e} bg="bg0" size={42} photo={l.photo} /><View style={{flex:1}}><T size={14}>{l.q}× {l.n}</T>{l.d ? <T size={12} color={th.mut}>{l.d}</T> : null}</View></Row><T size={14}>{money(l.p * l.q)}</T></Row></React.Fragment>)}</Card>
     {S.pay === 'wallet' && !providerInfo.demo && (!S.hasWallet || S.wallet < t.total) ? <View style={{paddingVertical:10}}>
       <T size={14} weight="600" color={th.red}>{!S.hasWallet ? 'Wantiss Wallet is not available.' : 'Insufficient Wantiss Wallet balance.'}</T>
       <T size={12.5} color={th.mut} style={{marginTop:3}}>{!S.hasWallet ? 'Create a wallet or choose another payment method.' : 'Your balance is ' + money(S.wallet) + '. Add ' + money(Math.max(0,t.total-S.wallet)) + ' or choose another payment method.'}</T>
