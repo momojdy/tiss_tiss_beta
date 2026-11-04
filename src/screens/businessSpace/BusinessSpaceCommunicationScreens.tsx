@@ -20,6 +20,12 @@ import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All'), [statusFilter, setStatusFilter] = useState('All');
   const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
+  useEffect(() => {
+    const channel = supabase.channel('business-goodies-conversations-' + app.biz.id)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'conversations', filter: 'business_id=eq.' + app.biz.id}, () => app.bump())
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.biz.id, app.bump]);
   const rows = (c.d ?? []).filter(x =>
     (statusFilter === 'All' || (statusFilter === 'Needs reply' && x.status === 'pending_vendor') ||
       (statusFilter === 'Active' && x.status === 'active') || (statusFilter === 'Closed' && x.status === 'closed')) &&
@@ -40,6 +46,12 @@ export function ConversationPage() {
   const [text, setText] = useState(''), [sending, setSending] = useState(false), ref = useRef<ScrollView>(null);
   const conv = useQ(() => q<any>(supabase.from('conversations').select('*').eq('id', id).single()), [id]);
   const ms = useQ(() => q<any[]>(supabase.from('messages').select('*').eq('conversation_id', id).order('created_at')), [id, app.tick]);
+  useEffect(() => {
+    const channel = supabase.channel('business-goodies-thread-' + id)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'messages', filter: 'conversation_id=eq.' + id}, () => app.bump())
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [id, app.bump]);
   useEffect(() => { rpc('mark_conversation_read', { p_conv: id }).then(app.bump).catch(() => undefined); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
@@ -73,6 +85,12 @@ export function NotificationsPage() {
   const n = useQ(() => q<any[]>(supabase.from('notifications').select('*')
     .eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id })
     .order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.userId, app.tick]);
+  useEffect(() => {
+    const channel = supabase.channel('business-goodies-notifications-' + app.userId)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + app.userId}, () => app.bump())
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.userId, app.bump]);
   const open = async (x: any) => {
     if (!x.read) {
       try {
