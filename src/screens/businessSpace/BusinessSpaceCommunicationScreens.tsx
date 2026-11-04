@@ -18,14 +18,25 @@ import { supabase } from '../../lib/supabase';
 import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, Btn, Chips, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, q } from "./BusinessSpaceShared";
 
 export function MessagesPage() {
-  const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All');
+  const app = useApp(), s = useS(), t = useTheme(), [statusFilter, setStatusFilter] = useState('All'), [featureFilter, setFeatureFilter] = useState('All');
   const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
-  const rows = (c.d ?? []).filter(x => f === 'All' || x.feature === f);
+  useEffect(() => {
+    const channel = supabase.channel('business-goodies-messages-' + app.biz.id)
+      .on('postgres_changes', {event: '*', schema: 'public', table: 'conversations', filter: 'business_id=eq.' + app.biz.id}, () => app.bump())
+      .subscribe();
+    return () => { void supabase.removeChannel(channel); };
+  }, [app.biz.id]);
+  const rows = (c.d ?? []).filter(x => {
+    const statusMatches = statusFilter === 'All' || (statusFilter === 'Needs reply' ? x.status === 'pending_vendor' : statusFilter === 'Active' ? x.status === 'active' : x.status === 'closed');
+    const featureMatches = featureFilter === 'All' || x.feature === featureFilter;
+    return statusMatches && featureMatches;
+  });
   return (
     <Pg title="Messages" onBack={app.back} refreshing={c.l && !!c.d} onRefresh={app.bump}>
-      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={f} onChange={setF} />
+      <Chips items={['All', 'Needs reply', 'Active', 'Closed'].map(k => ({k, l:k}))} value={statusFilter} onChange={setStatusFilter} />
+      <Chips items={['All', ...app.meta.feats.map(x => x.feature)].map(k => ({ k, l: k === 'All' ? 'All' : FX.FM[k]?.name }))} value={featureFilter} onChange={setFeatureFilter} />
       {c.e ? <ErrBox e={c.e} retry={c.reload} /> : c.l && !c.d ? <Loading /> : rows.length ? (
-        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · awaiting your reply · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
+        <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEW · Needs reply · ' : x.status === 'closed' ? 'Closed · ' : 'Active · '}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
       ) : <View style={s.card}><Empty icon="chat-outline" title="No conversations yet" hint="Customer messages about your listings and orders appear here." /></View>}
     </Pg>
   );
@@ -39,7 +50,7 @@ export function ConversationPage() {
   const send = async () => {
     const body = text.trim(); if (!body || sending) return;
     setSending(true);
-    try { await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(errText(e)); } finally { setSending(false); }
+    try { if (conv.d?.feature === 'goodies') await q(supabase.rpc('goodies_vendor_reply', {p_conversation_id: id, p_body: body})); else await q(supabase.from('messages').insert({ conversation_id: id, sender_id: app.userId, body })); setText(''); ms.reload(); app.bump(); } catch (e) { app.toast(conv.d?.feature === 'goodies' ? 'Message could not be sent. Please try again.' : errText(e)); } finally { setSending(false); }
   };
   const c = conv.d;
   return (
@@ -58,15 +69,18 @@ export function ConversationPage() {
 /* ---------- notifications ---------- */
 export function NotificationsPage() {
   const app = useApp(), s = useS(), t = useTheme();
-  const n = useQ(() => q<any[]>(supabase.from('notifications').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
+  const n = useQ(() => q<any[]>(supabase.from('notifications').select('*').eq('user_id', app.userId).eq('feature_name', 'goodies').order('created_at', { ascending: false }).limit(80)), [app.userId, app.tick]);
   const open = async (x: any) => {
-    if (!x.read_at) { try { await rpc('mark_notification_read', { p_id: x.id }); app.bump(); } catch { /* read state is not critical */ } }
+    if (!x.read) { try { await q(supabase.from('notifications').update({read: true}).eq('id', x.id).eq('user_id', app.userId)); app.bump(); } catch { /* read state is not critical */ } }
+    const conversationId = x.metadata?.conversation_id;
+    if (x.notification_type === 'store_message' && conversationId) { app.go('conversation', {id: conversationId}); return; }
+    if (x.destination === 'messages') { app.go('messages'); return; }
     const l = x.link ?? {};
     if (l.view === 'feat' && l.arg) app.go('feature', { k: l.arg }); else if (l.view === 'wallet') app.panel('payouts'); else if (l.view === 'onboard') app.go('registration'); else if (l.view === 'promo') app.go('promotions');
   };
   return (
-    <Pg title="Notifications" onBack={app.back} refreshing={n.l && !!n.d} onRefresh={app.bump} right={app.meta.unreadN > 0 ? <Pressable onPress={async () => { try { await rpc('mark_notifications_read', { p_business: app.biz.id }); app.bump(); } catch (e) { app.toast(errText(e)); } }}><Text style={s.link}>Mark all as read</Text></Pressable> : null}>
-      {n.e ? <ErrBox e={n.e} retry={n.reload} /> : n.l && !n.d ? <Loading /> : (n.d ?? []).length ? <View style={s.cardFlat}><Divided>{(n.d ?? []).map(x => <Row key={x.id} onPress={() => open(x)} left={x.feature ? <FIcon k={x.feature} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name="bell-outline" size={18} color={t.blue} /></View>} title={x.title} sub={ago(x.created_at)} right={!x.read_at ? <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: t.blue }} /> : null} />)}</Divided></View>
+    <Pg title="Notifications" onBack={app.back} refreshing={n.l && !!n.d} onRefresh={app.bump} right={(n.d ?? []).some(x => !x.read) ? <Pressable onPress={async () => { try { await q(supabase.from('notifications').update({read: true}).eq('user_id', app.userId).eq('feature_name', 'goodies').eq('read', false)); app.bump(); } catch (e) { app.toast(errText(e)); } }}><Text style={s.link}>Mark all as read</Text></Pressable> : null}>
+      {n.e ? <ErrBox e={n.e} retry={n.reload} /> : n.l && !n.d ? <Loading /> : (n.d ?? []).length ? <View style={s.cardFlat}><Divided>{(n.d ?? []).map(x => <Row key={x.id} onPress={() => open(x)} left={x.feature_name ? <FIcon k={x.feature_name} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name="bell-outline" size={18} color={t.blue} /></View>} title={x.title} sub={ago(x.created_at)} right={!x.read ? <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: t.blue }} /> : null} />)}</Divided></View>
         : <View style={s.card}><Empty icon="bell-outline" title="No notifications yet" /></View>}
     </Pg>
   );

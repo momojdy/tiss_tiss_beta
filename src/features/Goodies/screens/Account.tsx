@@ -247,7 +247,7 @@ function StoreChat({id}: {id: string}) {
     const body = draft.trim(); if (!body || !conversationId || !userId || sending) return;
     setSending(true);
     try {
-      const {error} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: userId, body});
+      const {error} = await supabase.rpc('goodies_send_store_message', {p_conversation_id: conversationId, p_body: body});
       if (error) throw error;
       // The message is persisted now. Clear it before best-effort thread metadata so a
       // metadata failure cannot lead the customer to accidentally resend the same message.
@@ -261,7 +261,7 @@ function StoreChat({id}: {id: string}) {
   return (
     <View style={{flex: 1, minHeight: 430}}>
       <Bar title={store ? store.n : label('lbl.chatTitle', 'Message store')} onBack={back} />
-      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card style={{overflow: 'hidden', padding: 0}}><View style={{padding: 12}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo || store.cover} /><View style={{flex: 1}}><T weight="600">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></View></Card></View> : null}
+      {store ? <View style={{paddingHorizontal: 16, paddingBottom: 10}}><Card style={{overflow: 'hidden', padding: 0}}>{store.cover ? <Image source={{uri: store.cover}} style={{width: '100%', height: 112}} resizeMode="cover" /> : null}<View style={{padding: 12}}><Row style={{gap: 10, alignItems: 'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo || store.cover} /><View style={{flex: 1}}><T weight="600">{store.n}</T><T size={12} color={th.mut}>{chatActivated ? label('lbl.chatActive', 'Chat with the store') : label('lbl.chatTitle', 'Message store')}</T></View><Badge label={label("lbl.accountAuto1AABD31", "Goodies")} /></Row></View></Card></View> : null}
       {problem ? <View style={{marginHorizontal: 16, marginBottom: 8}}><Card style={{borderColor: th.red}}><T size={13} color={th.red}>{problem}</T><Pressable onPress={() => {setProblem(''); setLoading(true); setConversationId(''); setAttempt(v => v + 1);}}><T size={13} weight="600" color={th.br} style={{marginTop: 8}}>{label('lbl.chatTryAgain', 'Try again')}</T></Pressable></Card></View> : null}
       {loading ? <View style={{padding: 24, alignItems: 'center'}}><T color={th.mut}>{label('lbl.chatOpening', 'Opening conversation…')}</T></View> : <KeyboardAvoidingView style={{flex: 1}} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <ScrollView ref={listRef} style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 16, paddingVertical: 10, gap: 8, flexGrow: 1, justifyContent: chatActivated && messages.length ? 'flex-end' : 'flex-start'}} keyboardShouldPersistTaps="handled" onContentSizeChange={() => listRef.current?.scrollToEnd({animated: true})}>
@@ -302,11 +302,11 @@ function Contact({p}: {p: any}) {
           p_customer_name: S.pf.n || 'Customer',
         });
         if (conversationError) throw conversationError;
-        if (!createdConversation) throw new Error(label('lbl.contactErrNoVendor', 'We could not find the vendor account linked to this store. Your message has not been sent.'));
+        if (!createdConversation) throw new Error(label('lbl.contactErrNoVendor', 'Could not open this store conversation. Please try again.'));
         conversationId = String(createdConversation);
         ticket = 'GS-' + conversationId.replace(/-/g, '').slice(0, 8).toUpperCase();
         const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
-        const {error: messageError} = await supabase.from('messages').insert({conversation_id: conversationId, sender_id: auth.user.id, body: ticketBody});
+        const {error: messageError} = await supabase.rpc('goodies_send_store_message', {p_conversation_id: conversationId, p_body: ticketBody});
         if (messageError) throw messageError;
       } else {
         const {data: auth, error: authError} = await supabase.auth.getUser();
