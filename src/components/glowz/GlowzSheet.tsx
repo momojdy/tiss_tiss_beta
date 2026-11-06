@@ -1,5 +1,5 @@
-import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { KeyboardAvoidingView, Modal, PanResponder, Platform, Pressable, ScrollView, View } from 'react-native';
 import { useGlowzTheme } from '../../styles/Glowz/ThemeContext';
 import { useGutter, useInsets } from '../../styles/Glowz/LayoutContext';
 import { radius, size } from '../../styles/Glowz/tokens';
@@ -22,6 +22,11 @@ export function GlowzSheet({ title, onClose, children, hideClose }: Props) {
   const { c } = useGlowzTheme();
   const insets = useInsets();
   const g = useGutter();
+  const pan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, gesture: any) => gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+    onPanResponderRelease: (_: any, gesture: any) => { if (gesture.dy > 65 || gesture.vy > 1.1) onClose(); },
+  }), [onClose]);
   return (
     <Modal visible transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent supportedOrientations={['portrait', 'landscape']}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1, backgroundColor: c.scrim, justifyContent: 'flex-end' }}>
@@ -30,7 +35,8 @@ export function GlowzSheet({ title, onClose, children, hideClose }: Props) {
           accessibilityViewIsModal
           style={{ backgroundColor: c.bg, borderTopLeftRadius: radius.sheet, borderTopRightRadius: radius.sheet, maxHeight: '88%', width: '100%', maxWidth: size.contentMaxWidth, alignSelf: 'center' }}
         >
-          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: 22, paddingBottom: 22 + insets.bottom, paddingLeft: g.left, paddingRight: g.right, gap: 14 }}>
+          <View {...pan.panHandlers} style={{ height: 22 }} />
+          <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingTop: 0, paddingBottom: 22 + insets.bottom, paddingLeft: g.left, paddingRight: g.right, gap: 14 }}>
             {title || !hideClose ? (
               <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }}>
                 <View style={{ flex: 1 }}>{title ? <GlowzText kind="display" size={24} numberOfLines={1} accessibilityRole="header">{title}</GlowzText> : null}</View>
