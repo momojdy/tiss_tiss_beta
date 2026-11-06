@@ -1,5 +1,5 @@
-import React from 'react';
-import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import React, { useMemo } from 'react';
+import { KeyboardAvoidingView, Modal, PanResponder, Platform, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStayzTheme } from './stayzThemeContext';
 import { StayzTxt } from './stayzTxt';
@@ -14,12 +14,17 @@ interface Props {
 export const StayzSheet = ({ visible, title, onClose, children }: Props) => {
   const { colors } = useStayzTheme();
   const insets = useSafeAreaInsets();
+  const pan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, gesture: any) => gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+    onPanResponderRelease: (_: any, gesture: any) => { if (gesture.dy > 65 || gesture.vy > 1.1) onClose(); },
+  }), [onClose]);
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.fill}>
         <Pressable style={[styles.fill, { backgroundColor: colors.overlay }]} onPress={onClose} accessibilityLabel="Close" />
         <View style={[styles.sheet, { backgroundColor: colors.bg, paddingBottom: insets.bottom + 12 }]}>
-          <View style={[styles.grab, { backgroundColor: colors.line }]} />
+          <View {...pan.panHandlers} style={[styles.grab, { backgroundColor: colors.line }]} />
           <StayzTxt v="h2" style={styles.title}>
             {title}
           </StayzTxt>
