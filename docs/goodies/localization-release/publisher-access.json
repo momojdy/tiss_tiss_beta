@@ -1,0 +1,9 @@
+{
+  "project": "ycbirmgppwavorwudlrv",
+  "authenticated_actor": null,
+  "may_publish": false,
+  "may_edit": false,
+  "observation": "Read-only auth.uid() and wantiss_has_permission checks on the connected SQL session",
+  "productionWritesPerformed": false,
+  "userPublicationAuthorization": "Granted in conversation; missing authenticated CMS session, not missing user consent"
+}

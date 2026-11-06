@@ -1,0 +1,18 @@
+{
+  "status": "PREPARED_NOT_PUBLISHED",
+  "contentKey": "goodies.content",
+  "baselineId": "da301ba8-15b8-4092-a37f-5da73d721c2f",
+  "baselineVersion": 5,
+  "baselinePayloadSha256": "774528704c23644cfc2ad3e0580659b0aa3d73a4bc44aa48e9d834aeb4cadfed",
+  "payloadSha256": "06cd22d3f281ca5b16c8c528e5a5013bc9d56b53c89cfd2454bc3affc2bb5565",
+  "authorizedLocales": [
+    "en",
+    "fr",
+    "es",
+    "zh-Hans"
+  ],
+  "haitianCreole": "Existing entries preserved; super admin owns review",
+  "humanReviewClaim": false,
+  "provider": "Google Translate public machine translation endpoint; existing CMS translations preserved",
+  "fields": 1430
+}

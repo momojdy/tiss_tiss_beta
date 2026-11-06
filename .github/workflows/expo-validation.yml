@@ -22,6 +22,8 @@ jobs:
         run: node scripts/check-goodies-cms.cjs && node tests/goodies-cms.test.cjs
       - name: Verify Goodies review isolation and refresh
         run: node tests/goodies-reviews.test.cjs
+      - name: Verify authorized Goodies translation payload
+        run: node tests/goodies-translation-release.test.cjs
       - name: Verify unique migration versions
         run: node scripts/check-migration-versions.cjs
       - name: Lint
