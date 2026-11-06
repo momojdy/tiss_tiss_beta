@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react';
-import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions} from 'react-native';
+import React, {useEffect, useMemo, useState} from 'react';
+import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions, PanResponder} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
 import {Icon} from './Icon';
@@ -207,9 +207,14 @@ function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) 
 export function GroupOrderModal({close, storeId = ''}: {close: () => void; storeId?: string}) {
   const th = useTheme(), insets = useSafeAreaInsets(), {height: windowHeight} = useWindowDimensions();
   const height = Math.round(Math.min(windowHeight - insets.top - 8, windowHeight * 0.94));
+  const handlePan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, g: any) => g.dy > 8 && Math.abs(g.dy) > Math.abs(g.dx),
+    onPanResponderRelease: (_: any, g: any) => { if (g.dy > 65 || g.vy > 1.1) close(); },
+  }), [close]);
   return <BottomSheet visible onClose={close} dismissOnBackdrop={false} keyboardAware maxHeight={height}>
     <View style={{height, backgroundColor: th.card, borderTopLeftRadius: 26, borderTopRightRadius: 26, overflow: 'hidden'}}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Close group order" onPress={close} hitSlop={{top: 8, bottom: 14, left: 80, right: 80}} style={{alignItems: 'center', paddingTop: 10, paddingBottom: 6}}>
+      <Pressable {...handlePan.panHandlers} accessibilityRole="button" accessibilityLabel="Close group order" onPress={close} hitSlop={{top: 8, bottom: 14, left: 80, right: 80}} style={{alignItems: 'center', paddingTop: 10, paddingBottom: 6}}>
         <View style={{width: 44, height: 5, borderRadius: 3, backgroundColor: th.line}} />
       </Pressable>
       <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, paddingTop: 8, paddingBottom: 14}}>
