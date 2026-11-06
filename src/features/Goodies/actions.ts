@@ -276,26 +276,26 @@ export async function placeOrder() {
       p_notes: String(S.note || '').trim() || null,
       p_promo_code: S.promo || null,
     };
+    const fingerprintAddress = orderPayload.p_address
+      ? Object.fromEntries(Object.entries(orderPayload.p_address).filter(([key]) => key !== 'delivery_quote_id'))
+      : null;
+    const fingerprint = JSON.stringify({...orderPayload, p_address: fingerprintAddress, p_payment_method: S.pay});
+    let attempt: {key: string; fingerprint: string};
+    try {
+      attempt = await getGoodiesCheckoutAttempt(fingerprint);
+    } catch (storageError: any) {
+      S.busy = 0;
+      toast(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));
+      emit();
+      return;
+    }
     let data: any = null, error: any = null;
     if (S.pay === 'card') {
       const result = await supabase.functions.invoke('place-goodies-card-order', {
-        body: { payment_method_id: (S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id, idempotency_key: 'goodies-' + Date.now() + '-' + Math.random().toString(36).slice(2), order: orderPayload },
+        body: { payment_method_id: (S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id, idempotency_key: attempt.key, order: orderPayload },
       });
       data = result.data; error = result.error;
     } else {
-      const fingerprintAddress = orderPayload.p_address
-        ? Object.fromEntries(Object.entries(orderPayload.p_address).filter(([key]) => key !== 'delivery_quote_id'))
-        : null;
-      const fingerprint = JSON.stringify({...orderPayload, p_address: fingerprintAddress, p_payment_method: S.pay});
-      let attempt: {key: string; fingerprint: string};
-      try {
-        attempt = await getGoodiesCheckoutAttempt(fingerprint);
-      } catch (storageError: any) {
-        S.busy = 0;
-        toast(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));
-        emit();
-        return;
-      }
       const result = await supabase.rpc('place_goodies_order_with_payment_once', {
         p_idempotency_key: attempt.key,
         p_payment_method: S.pay,
@@ -341,7 +341,7 @@ export async function placeOrder() {
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
   S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!'));
   await save();
-  if (backendOrderId && (S.pay === 'wallet' || S.pay === 'cash')) await completeGoodiesCheckoutAttempt(backendOrderId);
+  if (backendOrderId) await completeGoodiesCheckoutAttempt(backendOrderId);
   emit();
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
@@ -365,7 +365,9 @@ export async function completeCardOrder() {
     S.orders.unshift(o);
     S.cardPending = null; S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
     S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
-    S.busy = 0; toast(label('lbl.actionOrderSent', 'Order sent to the store')); save(); emit();
+    S.busy = 0; toast(label('lbl.actionOrderSent', 'Order sent to the store')); await save();
+    await completeGoodiesCheckoutAttempt(String(pending.id));
+    emit();
     void refreshLiveSchedules();
   } catch (e: any) {
     S.busy = 0; toast(friendlyError(e, 'Card payment could not be completed. Your order has not been confirmed.')); emit();
@@ -380,7 +382,9 @@ export async function cancelPendingCardOrder() {
   try {
     const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
     if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'The card payment could not be cancelled yet.');
-    S.cardPending = null; navBack();
+    S.cardPending = null;
+    await completeGoodiesCheckoutAttempt(String(pending.id));
+    navBack();
   } catch (e: any) {
     toast(friendlyError(e, 'The card payment could not be cancelled yet. Please retry.'));
   } finally {
