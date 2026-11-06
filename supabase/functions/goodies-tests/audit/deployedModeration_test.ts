@@ -4,8 +4,8 @@ import {PGlite} from 'npm:@electric-sql/pglite@0.3.14';
 Deno.test('CONFIRMED DEFECT: deployed moderation trigger erases an authorized rejection and reason',async()=>{
  const db=new PGlite();const admin='30000000-0000-4000-8000-000000000001',business='30000000-0000-4000-8000-000000000002',product='30000000-0000-4000-8000-000000000003';
  try{
-  await db.exec(await Deno.readTextFile(new URL('../supabase/functions/goodies-tests/fixtures/goodies-core.sql',import.meta.url)));
-  const live=JSON.parse(await Deno.readTextFile(new URL('../docs/goodies/audit-live-moderation.json',import.meta.url)));
+  await db.exec(await Deno.readTextFile(new URL('../fixtures/goodies-core.sql',import.meta.url)));
+  const live=JSON.parse(await Deno.readTextFile(new URL('../../../../docs/goodies/audit-live-moderation.json',import.meta.url)));
   await db.exec(live.moderation);await db.exec(live.review_product);
   await db.query('insert into auth.users(id,email_confirmed_at) values($1,now())',[admin]);
   await db.query("insert into public.wantiss_admin_staff(user_id,display_name,role,status) values($1,'Synthetic administrator','super_admin','active')",[admin]);

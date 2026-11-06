@@ -55,6 +55,9 @@ Deno.test('wallet checkout, authorization, fulfillment and cancellation stay ato
     const cancelled=(await db.query<{id:string}>(checkout,['synthetic-checkout-2',cart])).rows[0];
     await db.query('select public.set_goodies_order_status($1,$2)',[cancelled.id,'cancelled']);
     await denied('select public.set_goodies_order_status($1,$2)',[cancelled.id,'cancelled']);
+    await as(admin);await db.query("select public.goodies_admin_review_product($1,'rejected','Synthetic policy rejection')",[product]);
+    await as(vendor);await db.query('update public.goodies_products set is_available=true where id=$1',[product]);
+    await as(customer);await denied(checkout,['synthetic-rejected-product-checkout',cart]);
     await db.exec('reset role');
     const balance=Number((await db.query<{balance:string}>('select balance from public.wallets where user_id=$1',[customer])).rows[0].balance);
     check(balance===89,'Only the fulfilled order remains charged');

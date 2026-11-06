@@ -23,6 +23,7 @@ begin
     raise exception 'Alcohol products are prohibited on Wantiss' using errcode='22023';
   end if;
   new.review_status:='pending';new.review_note:=null;new.reviewed_by:=null;new.reviewed_at:=null;
+  new.is_available:=false;
   return new;
 end $moderation$;
 
@@ -71,4 +72,30 @@ begin
 end $review$;
 revoke all on function public.goodies_admin_review_product(uuid,text,text) from public,anon;
 grant execute on function public.goodies_admin_review_product(uuid,text,text) to authenticated;
+-- The newly writable gallery receives the same merchant-folder validation as
+-- the primary photo. Existing unchanged legacy photos are not rewritten.
+create or replace function public.goodies_products_validate_photo_url()
+returns trigger language plpgsql set search_path='' as $photos$
+declare v_base text;v_prefix text;v_urls text[]:='{}';v_image jsonb;v_url text;
+begin
+ if auth.uid() is null then return new;end if;
+ if tg_op='UPDATE' and new.photo_url is not distinct from old.photo_url and new.photo_urls is not distinct from old.photo_urls then return new;end if;
+ if jsonb_typeof(new.photo_urls) is distinct from 'array' or jsonb_array_length(new.photo_urls)>5 then
+  raise exception 'Choose at most five product photos' using errcode='22023';end if;
+ if new.photo_url is not null and (tg_op='INSERT' or new.photo_url is distinct from old.photo_url) then v_urls:=array_append(v_urls,new.photo_url);end if;
+ for v_image in select value from jsonb_array_elements(new.photo_urls) loop
+  if tg_op='UPDATE' and old.photo_urls @> jsonb_build_array(v_image) then continue;end if;
+  if jsonb_typeof(v_image)<>'string' then raise exception 'Invalid product photo' using errcode='22023';end if;
+  v_urls:=array_append(v_urls,v_image#>>'{}');
+ end loop;
+ v_base:=regexp_replace(coalesce(auth.jwt()->>'iss',''),'/auth/v1/?$','');
+ v_prefix:=v_base||'/storage/v1/object/public/listing-photos/'||new.business_id::text||'/goodies/products/';
+ foreach v_url in array v_urls loop
+  if v_base='' or left(v_url,length(v_prefix))<>v_prefix or length(v_url)>1000
+    or substring(v_url from length(v_prefix)+1) !~* '^[A-Za-z0-9_-]+\.(jpg|jpeg|png|webp)$' then
+   raise exception 'Upload product photos to this business photo folder' using errcode='42501';end if;
+ end loop;
+ return new;
+end $photos$;
+revoke all on function public.goodies_products_validate_photo_url() from public,anon,authenticated;
 commit;

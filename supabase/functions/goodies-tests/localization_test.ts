@@ -20,3 +20,9 @@ Deno.test('empty and legacy text have predictable fallbacks',()=>{
   equal(resolveGoodiesText(null,'en'),'');equal(resolveGoodiesText('Legacy text','fr'),'Legacy text');
   equal(resolveGoodiesText({en:{v:'English',s:'reviewed'},es:{v:'',s:'reviewed'}},'es'),'English');
 });
+
+Deno.test('unreviewed English cannot bypass review by becoming the production fallback',()=>{
+  const draft:Txt={en:{v:'Unreviewed critical text',s:'draft'},ht:{v:'Unreviewed Creole',s:'draft'}};
+  equal(resolveGoodiesText(draft,'en'),'');equal(resolveGoodiesText(draft,'ht'),'');
+  equal(resolveGoodiesText(draft,'en',true),'Unreviewed critical text');
+});

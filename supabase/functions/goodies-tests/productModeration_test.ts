@@ -16,10 +16,18 @@ Deno.test('vendors can maintain their catalog while administrator rejection rema
     await db.query("insert into public.business_members(business_id,user_id,role) values($1,$2,'owner'),($3,$4,'owner')",[business,vendor,otherBusiness,otherVendor]);
     await db.query("insert into public.goodies_store_schedules(business_id,store_id,category,is_live) values($1,'synthetic-store','groceries',true)",[business]);
     await as(vendor);
-    const created=(await db.query<{id:string}>("insert into public.goodies_products(business_id,name,price,stock,is_available) values($1,'Synthetic product',10,10,true) returning id",[business])).rows[0];
+    const created=(await db.query<{id:string}>("insert into public.goodies_products(business_id,name,price,stock,is_available,photo_urls) values($1,'Synthetic product',10,10,true,'[]'::jsonb) returning id",[business])).rows[0];
     const own=(await db.query<{review_status:string}>('select review_status from public.goodies_products where id=$1',[created.id])).rows[0];
     check(own.review_status==='pending','New products await review');
+    check(!(await db.query<{is_available:boolean}>('select is_available from public.goodies_products where id=$1',[created.id])).rows[0].is_available,'Pending products cannot be offered');
+    await db.query("update public.goodies_products set photo_urls='[]'::jsonb where id=$1",[created.id]);
     await db.query('update public.goodies_products set price=12,stock=20 where id=$1',[created.id]);
+    await db.query("select set_config('request.jwt.claims',$1,false)",[JSON.stringify({iss:'https://ycbirmgppwavorwudlrv.supabase.co/auth/v1'})]);
+    const photo=`https://ycbirmgppwavorwudlrv.supabase.co/storage/v1/object/public/listing-photos/${business}/goodies/products/synthetic.jpg`;
+    await db.query('update public.goodies_products set photo_url=$1,photo_urls=$2::jsonb where id=$3',[photo,JSON.stringify([photo]),created.id]);
+    await denied('update public.goodies_products set photo_urls=$1::jsonb where id=$2',[JSON.stringify([photo.replace(business,otherBusiness)]),created.id]);
+    await denied('update public.goodies_products set photo_urls=$1::jsonb where id=$2',[JSON.stringify(['https://untrusted.example/photo.jpg']),created.id]);
+
     await denied("update public.goodies_products set review_status='approved' where id=$1",[created.id]);
     await denied("insert into public.goodies_products(business_id,name,price) values($1,'Cross merchant',10)",[otherBusiness]);
     await as(customer);
