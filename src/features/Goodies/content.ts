@@ -76,7 +76,7 @@ export function loadContent(): Promise<void> {
   contentLoad = tracked;
   return tracked;
 }
-export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(j)); } catch { /* Optional persistence. */ } }
+
 export async function clearContent() { C = null; setInterfaceContent(); hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
 export const hasContent = () => !!C;
 

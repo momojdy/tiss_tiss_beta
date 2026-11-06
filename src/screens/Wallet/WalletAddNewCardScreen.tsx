@@ -30,7 +30,7 @@ function makeStripeHtml(clientSecret: string, publishableKey: string, cardText: 
   return `<!doctype html><html><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://js.stripe.com/v3/"></script>
+<script>window.addEventListener("error",()=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:"load_error"})));</script><script src="https://js.stripe.com/v3/" onerror='window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:"load_error"}))'></script>
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:transparent;font-family:Manrope,-apple-system,sans-serif}
@@ -177,6 +177,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey, contentLa
   const [focused, setFocused] = useState<'' | 'num' | 'exp' | 'cvv' | 'name'>('');
   const [name, setName] = useState('');
   const [err, setErr] = useState('');
+  const [webFailed, setWebFailed] = useState(false), [webAttempt, setWebAttempt] = useState(0);
+  const webFailure = () => {setWebFailed(true);setProcessing(false);setErr(cardText('lbl.addcard.networkFailed', 'The secure card form could not load. Check your connection and try again.'));};
   const [bad, setBad] = useState({ card: false, name: false });
   const [processing, setProcessing] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -260,6 +262,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey, contentLa
     try { m = JSON.parse(ev.nativeEvent.data); } catch { return; }
     if (m.type === 'focus') onFocus(m.field);
     else if (m.type === 'blur') onBlurCard();
+    else if (m.type === 'load_error') webFailure();
     else if (m.type === 'change') onCardChange(m.data);
     else if (m.type === 'result') {
       if (m.error) {
@@ -451,8 +454,11 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey, contentLa
             <Animated.View style={{ transform: [{ translateX: shakeCard }], marginTop: 16, marginHorizontal: 20 }} pointerEvents="auto">
               {clientSecret && publishableKey ? (
                 <WebView<{}>
+                  key={webAttempt}
                   ref={webRef}
                   source={webSource}
+                  onError={webFailure}
+                  onHttpError={webFailure}
                   onMessage={onWebMessage}
                   onLoadEnd={() => webRef.current?.injectJavaScript("window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify({type:'ready'}));true;")}
                   originWhitelist={['*']}
@@ -514,6 +520,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey, contentLa
             </View>
 
             <Text style={{ marginTop: 14, marginHorizontal: 2, color: C.danger, fontFamily: FW[600], fontSize: 13, minHeight: 16 }}>{err}</Text>
+            {webFailed ? <Pressable accessibilityRole="button" onPress={() => {setWebFailed(false);setErr('');setWebAttempt(n=>n+1);}}><Text style={{color:C.olive,fontFamily:FW[600],paddingVertical:10}}>{cardText('lbl.addcard.retry', 'Try again')}</Text></Pressable> : null}
           </Animated.View>
         </ScrollView>
 

@@ -85,7 +85,7 @@ export function ChartsPage() {
   return (
     <Pg title="Sales by feature" onBack={app.back} refreshing={sum.l && !!d} onRefresh={app.bump}>
       <RangeBar />
-      {sum.e && !d ? <ErrBox e={sum.e} retry={sum.reload} /> : sum.l && !d ? <Loading n={3} h={160} /> : (
+      {sum.e ? <ErrBox e={sum.e} retry={sum.reload} /> : sum.l && !d ? <Loading n={3} h={160} /> : (
         <>
           <View style={s.card}>
             <View style={s.row}><View style={s.g}><Text style={s.mut}>Net revenue · {range.label}</Text><Text style={[s.big, { fontSize: 26 }]}>{money(rev)}</Text></View><View style={{ alignItems: 'flex-end' }}><Text style={{ fontWeight: '800', fontSize: 13, color: growth !== null && growth < 0 ? t.bad : t.good }}>{growth === null ? '—' : `${growth >= 0 ? '↑' : '↓'} ${Math.abs(growth).toFixed(1)}%`}</Text><Text style={s.mut}>vs previous period</Text></View></View>

@@ -81,21 +81,23 @@ export function FeaturesPanel() {
 }
 export function OrdersPanel() {
   const app = useApp(), [f, setF] = useState('Open');
-  const o = useQ(() => q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
-  const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
+  const [page, setPage] = useState(0), [busyId, setBusyId] = useState('');
+  const o = useQ(() => q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
+  const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
-  const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));
+  const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled','declined','expired'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));
   const nextGoodiesStatus: Record<string,string> = {accepted:'preparing',preparing:'ready',ready:'completed'};
   const advanceGoodies = async (x: any) => {
     const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
     if (!due) {app.toast('This order is scheduled for ' + new Date(x.scheduled_for).toLocaleString()); return;}
     const next = nextGoodiesStatus[String(x.status).toLowerCase()];
     if (!next) return;
+    if (busyId) return;setBusyId(x.id);
     try {
       const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: x.id, p_status: next});
       if (error) throw error;
       app.bump(); app.toast('Goodies order updated');
-    } catch (e: any) {app.toast(e?.message || 'Could not update order');}
+    } catch (e: any) {app.toast('Could not update order. Please try again.');} finally {setBusyId('');}
   };
   return (
     <View style={{ gap: 10 }}>
@@ -105,14 +107,15 @@ export function OrdersPanel() {
       {goodies.e ? <ErrBox e={goodies.e} retry={goodies.reload} /> : goodies.l && !goodies.d ? <Loading /> : grows.length ? <View style={{gap:8}}>{grows.map(x => {
         const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
         const next = nextGoodiesStatus[String(x.status).toLowerCase()];
-        const items = Array.isArray(x.items) ? x.items.map((i: any) => (i.quantity || 1) + '× ' + i.name).join(', ') : 'Order items';
+        const items = Array.isArray(x.items) ? x.items.map((i: any) => (i.q ?? i.quantity ?? 1) + '× ' + (i.n ?? i.name ?? 'Item')).join(', ') : 'Order items';
         return <View key={x.id} style={{padding:13,borderRadius:14,borderWidth:1,borderColor:LIGHT.line,gap:7}}>
           <View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1}}><Text style={{fontSize:14,fontWeight:'800',color:LIGHT.ink}}>Order {x.order_code}</Text><Text style={{fontSize:12,color:LIGHT.mute,marginTop:3}}>{items}</Text></View><Pill tone={String(x.status).toLowerCase()==='completed'?'good':String(x.status).toLowerCase()==='cancelled'?'bad':'warn'}>{String(x.status).replace('_',' ')}</Pill></View>
           <Text style={{fontSize:12,color:LIGHT.mute}}>{x.scheduled_for ? (due ? 'Scheduled time reached · ' : 'Scheduled for · ') + new Date(x.scheduled_for).toLocaleString() : 'Order received'} · {money(Number(x.total))}</Text>
           <Text style={{fontSize:11,color:LIGHT.mute}}>Payment: {x.payment_status === 'demo' ? 'Demo payment (not charged)' : x.payment_status}</Text>
-          {next && due ? <View style={{alignSelf:'flex-end'}}><Btn small label={next === 'accepted' ? 'Accept order' : next === 'preparing' ? 'Start preparing' : next === 'ready' ? 'Mark ready' : 'Complete order'} onPress={() => advanceGoodies(x)} /></View> : null}
+          {next && due && !(next==='completed' && x.order_type==='delivery') ? <View style={{alignSelf:'flex-end'}}><Btn small busy={busyId===x.id} disabled={!!busyId} label={next === 'accepted' ? 'Accept order' : next === 'preparing' ? 'Start preparing' : next === 'ready' ? 'Mark ready' : 'Complete order'} onPress={() => advanceGoodies(x)} /></View> : null}
         </View>;
       })}</View> : <Empty icon="clipboard-text-outline" title="No Goodies orders yet" hint="Scheduled orders from mapped Goodies stores appear here." />}
+      <View style={{flexDirection:'row',gap:8}}><Btn label="Previous page" kind="soft" disabled={page===0 || goodies.l} onPress={() => setPage(p=>p-1)} /><Btn label="Next page" kind="soft" disabled={goodies.l || (goodies.d || []).length<80} onPress={() => setPage(p=>p+1)} /></View>
       <Section title="Other orders" right={String(rows.length)} />
       {o.e ? <ErrBox e={o.e} retry={o.reload} /> : o.l && !o.d ? <Loading /> : rows.length ? <Divided>{rows.map(x => <OrderRow key={x.id} o={x} />)}</Divided> : <Empty icon="clipboard-text-outline" title={(o.d ?? []).length ? 'No orders here' : 'No orders yet'} hint="Other feature orders appear here when customers buy or book." />}
     </View>
@@ -135,16 +138,19 @@ export function PayoutsPanel() {
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: b.id, p_from: app.range.from, p_to: app.range.to, p_feature: null }), [b.id, app.tick]);
   const typeMap: Record<string, string | null> = { All: null, Sales: 'sale', Fees: 'fee', Refunds: 'refund', Payouts: 'payout' };
   const led = useQ(() => q<any[]>((() => { let r = supabase.from('wallet_ledger').select('*').eq('business_id', b.id).order('created_at', { ascending: false }).range(0, pg_ * 15 - 1); const ty = tab === 'Payout history' ? 'payout' : typeMap[f]; if (ty) r = r.eq('type', ty); return r; })()), [b.id, tab, f, pg_, app.tick]); // eslint-disable-line react-hooks/exhaustive-deps
-  const av = Number(sum.d?.available ?? 0), pe = Number(sum.d?.pending ?? 0), payOK = app.meta.payout?.status === 'verified';
+  const validAmount = (v: unknown) => (typeof v === 'number' || (typeof v === 'string' && !!v.trim())) && Number.isFinite(Number(v));
+  const summaryReady = !sum.e && validAmount(sum.d?.available) && validAmount(sum.d?.pending);
+  const av = Number(sum.d?.available), pe = Number(sum.d?.pending), payOK = app.meta.payout?.status === 'verified';
   const tone = (st: string) => st === 'completed' || st === 'posted' ? 'good' : st === 'failed' || st === 'reversed' ? 'bad' : 'warn';
   return (
     <View style={{ gap: 12 }}>
       <View style={{ borderRadius: 22, backgroundColor: LIGHT.blue, padding: 16 }}>
         <Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 1.2, color: '#DDE5FF' }}>AVAILABLE</Text>
-        <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff', marginTop: 6 }}>{money(av)}</Text>
-        <Text style={{ color: '#DDE5FF', marginTop: 6, fontSize: 12 }}>Pending {money(pe)} · Payout method {payOK ? `•••• ${app.meta.payout?.last4 ?? ''}` : 'not set'}</Text>
+        <Text style={{ fontSize: 28, fontWeight: '800', color: '#fff', marginTop: 6 }}>{sum.l ? 'Loading…' : !summaryReady ? 'Unavailable' : money(av)}</Text>
+        <Text style={{ color: '#DDE5FF', marginTop: 6, fontSize: 12 }}>Pending {sum.l ? 'Loading…' : !summaryReady ? 'Unavailable' : money(pe)} · Payout method {payOK ? `•••• ${app.meta.payout?.last4 ?? ''}` : 'not set'}</Text>
       </View>
-      <Btn label={payOK ? 'Request payout' : 'Set up payouts'} disabled={b.verification === 'restricted'} onPress={() => app.sheet(payOK ? 'request' : 'payout')} />
+      {!sum.l && !summaryReady ? <ErrBox e="Payout summary unavailable." retry={sum.reload} /> : null}
+      <Btn label={payOK ? 'Request payout' : 'Set up payouts'} disabled={b.verification === 'restricted' || (payOK && (sum.l || !summaryReady || av <= 0))} onPress={() => app.sheet(payOK ? 'request' : 'payout')} />
       <Seg items={['Ledger', 'Payout history']} value={tab} onChange={(x: string) => { setTab(x); setPg(1); }} />
       {tab === 'Ledger' ? <Chips items={Object.keys(typeMap)} value={f} onChange={(x: string) => { setF(x); setPg(1); }} /> : null}
       {led.e ? <ErrBox e={led.e} retry={led.reload} /> : led.l && !led.d ? <Loading /> : (led.d ?? []).length ? (

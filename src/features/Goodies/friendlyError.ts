@@ -7,7 +7,7 @@ export function friendlyError(error: any, fallback: string): string {
   const raw = String((error && (error.message ?? error.error ?? error)) ?? '').trim();
   if (raw) {
     const code = error && typeof error === 'object' && error.code ? String(error.code) : '';
-    console.warn('[Goodies] Request failed:', fallback, code ? '(' + code + ')' : '', raw);
+    console.warn('[Goodies] Request failed:', code || 'request_unavailable');
   }
 
   // Translate the one known actionable server condition into app-owned copy.

@@ -5,7 +5,7 @@ import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, Refre
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
-import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistances} from '../store';
+import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshLiveSchedules, refreshStoreDistances} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent, onContent, hasContent} from '../content';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo as applyPromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
@@ -139,6 +139,8 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
       </View>
+      {S.catalogLoading ? <View style={{paddingHorizontal:16,paddingVertical:12}}><View style={{height:72,borderRadius:14,backgroundColor:th.soft}} /><T color={th.mut}>{label('lbl.catalogLoading', 'Loading stores…')}</T></View> : null}
+      {S.catalogError ? <Empty title={label('lbl.catalogFailed', 'Could not load stores')} text={label('lbl.catalogRetryHint', 'Check your connection and try again.')} button={label('lbl.retry', 'Try again')} onPress={() => void refreshLiveSchedules()} /> : null}
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
       </Pressable>
@@ -165,7 +167,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       {os.length ? (<>
         <Sh title={label('lbl.again', tr('orderAgain'))} link={label("lbl.homeHistory", "History")} onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
-          const s = STB[o.sid];
+          const s = STB[o.sid] || {n: o.sn || label('lbl.storeNotFound', 'Store not found'), e: '🏪', bg: 0};
           return (
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
               <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br}}>
@@ -279,7 +281,7 @@ export function CatList({p}: {p: string}) {
   return (
     <View>
       <View style={{paddingHorizontal: 16}}>
-        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? label('lbl.catEverythingNear', 'Everything near you') : cname(p)} sub={(l.length === 1 ? label('lbl.catStoreOne', '{n} store') : label('lbl.catStoreMany', '{n} stores')).replace('{n}', String(l.length)) + ' · ' + label('lbl.catProducts', '{n} products').replace('{n}', String(its.length))} emoji={c ? c.emoji : '🏪'} onPress={() => {}} /></View>
+        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? label('lbl.catEverythingNear', 'Everything near you') : cname(p)} sub={(l.length === 1 ? label('lbl.catStoreOne', '{n} store') : label('lbl.catStoreMany', '{n} stores')).replace('{n}', String(l.length)) + ' · ' + label('lbl.catProducts', '{n} products').replace('{n}', String(its.length))} emoji={c ? c.emoji : '🏪'} onPress={() => go('search')} /></View>
       </View>
       {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="600" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>{label('lbl.browseSubcategories', 'SUBCATEGORIES')}</T><Chips list={[['', label('lbl.filterAll', 'All')], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
       <Chips list={FCH()} on={S.f} onPick={setFilter} />

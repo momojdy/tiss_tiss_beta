@@ -150,8 +150,17 @@ export function setCard(id: string) {
   if (!S.cards.some((card: any) => card.id === id)) return;
   S.selectedCardId = id; save(); emit();
 }
+const placingOrders = new Set<string | null>();
 export async function placeOrder() {
-  if (S.busy) return;
+  const accountId = S.accountId;
+  if (S.busy || placingOrders.has(accountId)) return;
+  placingOrders.add(accountId);S.busy = 1;emit();
+  try {await placeOrderWork();}
+  catch (error) {if (S.accountId === accountId) toast(friendlyError(error,label('lbl.checkoutRequestFailed', 'Could not confirm the order. Check your order history before trying again.')));}
+  finally {placingOrders.delete(accountId);if(S.accountId === accountId){S.busy=0;emit();}}
+}
+
+async function placeOrderWork() {
   const accountId = S.accountId;
   const access = await refreshGoodiesAccess();
   if (S.accountId !== accountId) return;
@@ -431,7 +440,18 @@ export const runReorder = () => {if (S.ro) S.ro();};
 export const setOrdersTab = (t: string) => {S.ot = t; emit();};
 export function openNotif(id: any) {const n = S.notifs.filter((x: any) => x.id == id)[0]; if (!n) return; n.u = 0; push('ndetail', n.id);}
 export const readAll = () => {S.notifs.forEach((n: any) => (n.u = 0)); emit();};
-export const togglePref = (k: 'orders' | 'promos') => {S.np[k] = S.np[k] ? 0 : 1; save(); emit();};
+const preferenceSaving = new Set<string>();
+export const togglePref = async (k: 'orders' | 'promos') => {
+  if (preferenceSaving.has(k)) return;
+  const account = S.accountId, enabled = !S.np[k];preferenceSaving.add(k);
+  try {
+    const {error} = await supabase.rpc('goodies_set_notification_preference', {p_kind: k, p_enabled: enabled});
+    if (error) throw error;
+    if (S.accountId !== account) return;
+    S.np[k] = enabled ? 1 : 0;save();emit();
+  } catch {toast(label('lbl.preferenceSaveFailed', 'Could not save notification preferences. Please try again.'));}
+  finally {preferenceSaving.delete(k);}
+};
 export const selectAddr = async (id: string | number) => {
   if (!providerInfo.demo) {
     const {error} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(id)}});

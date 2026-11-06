@@ -12,7 +12,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Range, DEFAULT_RULES, presetRange, rpc, q, useQ, App, AppCtx, ArgCtx, useAct, Btn, Field, Skel, ErrBox, PanelSheet, ListingWizard } from "./BusinessSpaceShared";
-import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage } from "./BusinessSpaceGoodies";
+import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage, GoodiesReviewsPage } from "./BusinessSpaceGoodies";
 import { GoodiesOrdersPage } from "./BusinessSpaceGoodiesOrders";
 import { Home } from "./BusinessSpaceHomeScreen";
 import { ActionsPage, ActivityPage, ExplorePage, ChartsPage } from "./BusinessSpaceActivityScreens";
@@ -40,7 +40,7 @@ const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
-  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage,
+  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage, goodiesReviews: GoodiesReviewsPage,
 };
 const TABS: [string, string, string | null][] = [['Overview', 'view-dashboard-outline', null], ['Features', 'apps', 'features'], ['Orders', 'clipboard-list-outline', 'orders'], ['Listings', 'format-list-bulleted', 'listings'], ['Payouts', 'bank-transfer-out', 'payouts']];
 
@@ -221,7 +221,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     range, setRange: r => setRange(r),
     selectBiz: id => { setBizId(id); AsyncStorage.setItem('bs.biz', id).catch(() => undefined); setStack([]); setPanel(null); setSheet(null); bump(); },
     reloadBiz, onBuyer, onSignOut, dark, setDark, lang, setLang: l => { setLangS(l); AsyncStorage.setItem('bs.lang', l).catch(() => undefined); supabase.from('profiles').upsert({ id: user.id, language: l }).then(() => undefined); },
-    pref, setPref: p => { setPrefS(p); supabase.from('notification_prefs').upsert({ user_id: user.id, ...p }).then(r => { if (r.error) toast(r.error.message); }); },
+    pref, setPref: p => { setPrefS(p); supabase.from('notification_prefs').upsert({ user_id: user.id, ...p }).then(r => { if (r.error) toast('Could not save notification preferences. Please try again.'); }); },
     regDismissed, dismissReg: () => setRegDismissed(true),
   };
 

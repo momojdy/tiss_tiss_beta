@@ -48,6 +48,7 @@ const WDEF = () => ({
   addr: [] as Address[],
 });
 const GDEF = () => ({
+  ordersError: '', ordersLoading: true, ordersPaging: false, ordersHasMore: false, ordersPageBoundary: '', ordersCursor: null as {createdAt:string;id:string}|null,
   serverUnread: 0, checkoutAttempt: null as any,
   goodiesAccess: {status: 'active', reason: '', endsAt: null as string | null},
   notifs: [] as any[],
@@ -154,13 +155,14 @@ function liveStore(r: any, items: Item[]): Store {
 
 function placeholderStore(sid: string, _name: string): Store {
   return {
-    id: sid, n: 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
+    id: sid, n: _name || 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
     open: 0, h: '', nx: label("lbl.page.store.4f45fc13d6", "No longer taking orders"), far: false, acceptScheduledOrders: false,
   };
 }
 
 let liveTimer: any = null;
 export async function refreshLiveSchedules() {
+  S.catalogLoading = true;emit();
   try {
     const {data: rows, error} = await supabase.from('goodies_store_schedules')
       .select('business_id,store_id,description,phone,email,website,address,city,country,store_latitude,store_longitude,delivery_modes,logo_url,thumbnail_url,store_name,hours,accept_scheduled_orders,scheduled_order_start_time,scheduled_order_timezone,category,kind,min_order,delivery_fee,delivery_pricing_mode,delivery_max_distance_km,accept_cash_on_delivery,eta_min,eta_max,promo,names,cover_url')
@@ -180,24 +182,12 @@ export async function refreshLiveSchedules() {
         if ((pr.data || []).length < 1000) break;
       }
     }
+    let ratingsAvailable = true;
     const ratingByBiz: Record<string, {sum: number; count: number}> = {};
-    if (prods.length) {
-      const productBusiness = new Map(prods.map(p => [String(p.id), String(p.business_id)]));
-      try {
-        for (let from = 0; ; from += 1000) {
-          const rr = await supabase.from('reviews').select('product_id,rating')
-            .in('product_id', prods.map(p => p.id)).gte('rating', 1).lte('rating', 5)
-            .range(from, from + 999);
-          if (rr.error) break;
-          for (const review of rr.data || []) {
-            const businessId = productBusiness.get(String(review.product_id));
-            if (!businessId) continue;
-            const acc = ratingByBiz[businessId] || (ratingByBiz[businessId] = {sum: 0, count: 0});
-            acc.sum += Number(review.rating); acc.count += 1;
-          }
-          if ((rr.data || []).length < 1000) break;
-        }
-      } catch (e) {}
+    if (stores.length) {
+      const {data: ratings, error: ratingError} = await supabase.rpc('goodies_store_review_summaries', {p_business_ids: stores.map(r => r.business_id)});
+      ratingsAvailable = !ratingError;
+      if (!ratingError) for (const row of ratings || []) ratingByBiz[row.business_id] = {sum: Number(row.rating) * Number(row.review_count), count: Number(row.review_count)};
     }
     Object.keys(IT).forEach(k => delete IT[k]); Object.keys(STB).forEach(k => delete STB[k]); ST.length = 0;
     const byBiz: Record<string, Item[]> = {};
@@ -212,7 +202,7 @@ export async function refreshLiveSchedules() {
       const current = IT[line.id];
       if (current?.photo) line.photo = current.photo;
     });
-    stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []); const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
+    stores.forEach(r => {const s = liveStore(r, byBiz[r.business_id] || []);s.ratingsAvailable=ratingsAvailable; const rating = ratingByBiz[String(r.business_id)]; if (rating?.count) { s.r = Math.round((rating.sum / rating.count) * 10) / 10; s.rv = rating.count; } STB[s.id] = s; ST.push(s);});
     (S.orders || []).forEach((o: any) => {if (o && o.sid && !STB[o.sid]) STB[o.sid] = placeholderStore(o.sid, o.sn); if (o && Array.isArray(o.lines)) o.lines = o.lines.map((line: any) => ({...line, photo: line.photo || IT[String(line.id || '')]?.photo || null}));});
     if (S.cart && S.cart.sid && !STB[S.cart.sid]) STB[S.cart.sid] = placeholderStore(S.cart.sid, '');
     S.catalogError = '';
@@ -220,6 +210,7 @@ export async function refreshLiveSchedules() {
   } catch (e: any) {
     S.catalogError = friendlyError(e, label("lbl.page.store.a3a1fd9435", "Could not load stores"));
   }
+  S.catalogLoading = false;emit();
   if (!liveTimer) {
     liveTimer = setInterval(() => {
       let ch = false;

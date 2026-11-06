@@ -3,7 +3,7 @@
    - ingredients reference Admin library asset IDs (`assetId`) instead of v24's name-matching (`phKey`);
    - builders are configured in the Vendor Dashboard, so the seller screens are gone from this file;
    - an ingredient can also carry a per-item limit (`max`), chosen by the vendor.
-   Builder config is stored under 'goodies-byo-v4', the same key the Vendor Dashboard writes in demo mode. */
+   Local storage keeps drafts; purchasable configurations are loaded from Supabase. */
 import React from 'react';
 import {View, Pressable} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -57,8 +57,7 @@ export async function loadBuilders() {
     const r = JSON.parse((await AsyncStorage.getItem(BKEY)) || 'null');
     if (r && typeof r === 'object') {if (r.cfg && !Array.isArray(r.cfg)) BYO.cfg = r.cfg; if (r.drafts) BYO.drafts = r.drafts; if (r.store) BYO.store = r.store;}
   } catch (e) {}
-  if (!Object.keys(BYO.cfg).length) {const seed: any = {}; ['s12', 's1', 's10'].forEach(k => (seed[k] = [fromTemplate('pizza'), fromTemplate('burger')])); BYO.cfg = seed;}
-  Object.keys(BYO.cfg).forEach(k => {if (!STB[k] || !Array.isArray(BYO.cfg[k])) {delete BYO.cfg[k]; return;} BYO.cfg[k] = BYO.cfg[k].map(bClean).filter(Boolean) as Builder[];});
+  BYO.cfg = {}; // Only server-backed builders may be offered to customers.
   // Production builders come from the server, never from another user's local cache.
   try {
     const stores = Object.values(STB);

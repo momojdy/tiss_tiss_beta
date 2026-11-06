@@ -340,7 +340,7 @@ export const fmtDay = (d: Date) => d.toLocaleDateString('en', { month: 'short', 
 export const ago = (v: string) => { const s = (Date.now() - new Date(v).getTime()) / 1000; return s < 60 ? 'just now' : s < 3600 ? `${Math.floor(s / 60)} min ago` : s < 86400 ? `${Math.floor(s / 3600)} hr ago` : `${Math.floor(s / 86400)}d ago`; };
 export const dayHead = (v: string) => { const d = new Date(v), n = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(d).setHours(0, 0, 0, 0)) / 864e5); return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }); };
 export const initials = (n: string) => n.split(/\s+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-export const errText = (e: unknown) => (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e ?? 'Something went wrong'));
+export const errText = (_e: unknown) => 'Could not complete this request. Please try again.';
 export const displayText = (v: unknown): string => {
   if (v == null) return '';
   if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);

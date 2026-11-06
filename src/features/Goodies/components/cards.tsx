@@ -72,7 +72,7 @@ export function VCard({s}: {s: Store}) {
         <T size={13.5} weight="600" lines={1}>{s.n}</T>
         <T size={11.5} color={th.mut} lines={1}>{s.k}{storeDistanceLabel(s) ? ' · ' + storeDistanceLabel(s) : ''}</T>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
-          {s.live && s.rv === 0 ? <T size={11.5} color={th.mut}>{label('lbl.cardNewStore', 'New store')}</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} {label("lbl.page.components.cards.2e75737a6b", " min")}</T>
+          {(s.ratingsAvailable===false || (s.live && s.rv===0)) ? <T size={11.5} color={th.mut}>{s.ratingsAvailable===false ? label('lbl.ratingsUnavailable', 'Ratings unavailable') : label('lbl.cardNewStore', 'New store')}</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} {label("lbl.page.components.cards.2e75737a6b", " min")}</T>
         </View>
       </Pressable>
     </View>
@@ -106,7 +106,7 @@ export function StoreCard({s, showProducts = false}: {s: Store; showProducts?: b
       <Pressable onPress={() => go('store', s.id)} style={{paddingTop: 10, paddingHorizontal: 2}}>
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: 8}}>
           <T size={16.5} weight="600" style={{flexShrink: 1}}>{s.n}</T>
-          {s.live && s.rv === 0 ? <T size={12} color={th.mut}>{label('lbl.storeNoReviewsYet', 'No reviews yet')}</T> : <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>}
+          {(s.ratingsAvailable===false || (s.live && s.rv===0)) ? <T size={12} color={th.mut}>{s.ratingsAvailable===false ? label('lbl.ratingsUnavailable', 'Ratings unavailable') : label('lbl.storeNoReviewsYet', 'No reviews yet')}</T> : <View style={{flexDirection: 'row', alignItems: 'center', gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{s.r.toFixed(1)} </T><T size={13} color={th.mut}>({s.rv})</T></View>}
         </View>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{storeDistanceLabel(s) ? ' · ' + storeDistanceLabel(s) : ''}</T>
         {byoTag(s.id)}

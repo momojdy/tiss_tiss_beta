@@ -27,7 +27,7 @@ for(const repo of roots)for(const filename of [...new Set(repo.sources)]){
   if(ts.isJsxAttribute(node)){
    const event=text(node.name),initializer=node.initializer,handler=initializer&&ts.isJsxExpression(initializer)?initializer.expression:initializer;
    if(/^on[A-Z]/.test(event)){
-    const calls=handler?trace(handler,owner(node)):[],backend=calls.filter(c=>/^(rpc)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(c.callee)),nav=calls.filter(c=>/^(go|push|reset|tab|back|browse|openProduct|navBack)$|\.(go|navigate)$/.test(c.callee));
+    const calls=handler?trace(handler,owner(node)):[],backend=calls.filter(c=>/^(rpc|goodiesRequest|goodiesOrdersRequest)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(c.callee)),nav=calls.filter(c=>/^(go|push|reset|tab|back|browse|openProduct|navBack)$|\.(go|navigate)$/.test(c.callee));
     const attrs=node.parent.attributes?.properties||[],props={};for(const attr of attrs)if(ts.isJsxAttribute(attr)&&/^(label|title|accessibilityLabel|disabled|busy|loading)$/.test(text(attr.name)))props[text(attr.name)]=text(attr.initializer);
     inventory.controls.push({id:repo.repository+':'+relative+':'+line(node)+':'+event,repository:repo.repository,surface,path:relative,line:line(node),owner:owner(node),module:moduleName(node),event,eventKind:/^on(Press|Change|Submit|ValueChange|Refresh|Select|Save|Delete|Close|Complete|Cancel|Back|Cta|Link|RequestClose|Exit|Focus|Blur|AccessibilityAction)/.test(event)?'interaction':'component or lifecycle callback',props,handler:text(handler),trace:calls,backend,navigation:nav,sourceCheck:handler?'HANDLER PRESENT; TRACE RECORDED':'MISSING HANDLER',runtime:'NOT VERIFIED',findings:[]});
    }
@@ -35,7 +35,7 @@ for(const repo of roots)for(const filename of [...new Set(repo.sources)]){
   }
   if(ts.isCallExpression(node)){
    const info=callInfo(node),expr=text(node);
-   if(/^(rpc)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(info.callee))entry.backend.push(info);
+   if(/^(rpc|goodiesRequest|goodiesOrdersRequest)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(info.callee))entry.backend.push(info);
    if(/^(go|push|reset|tab|back|browse|openProduct|navBack)$|\.(go|navigate)$/.test(info.callee))entry.navigation.push(info);
    if(/(?:^|\.)(?:toast|setMsg|setErr|setLoadErr|setLoadError|setError|setNotice|setAssetNote|alert)$/i.test(info.callee)&&/\.message|errText\(/.test(expr))entry.rawErrorSinks.push({line:line(node),callee:info.callee,expression:expr,owner:owner(node)});
    if(/\.catch$/.test(info.callee)&&/=>\s*(?:\{\s*\}|\[\]|undefined|null|set\w+\(\[\]\))/.test(expr))entry.silentFailures.push({line:line(node),expression:expr,owner:owner(node)});
@@ -74,11 +74,11 @@ for(const control of inventory.controls){
  function followReferences(node){if(ts.isIdentifier(node)&&!(ts.isPropertyAccessExpression(node.parent)&&node.parent.name===node)){const name=ts.isPropertyAccessExpression(node.parent)&&node.parent.expression===node?node.parent.getText(callbackAst):node.text;const found=findDefinition(file,name,control.owner);if(found)found.definition.calls.forEach(call=>follow(call,found.file,found.definition.name));}ts.forEachChild(node,followReferences);}followReferences(callbackAst);
  if(/^[a-zA-Z_$][\w$.]*$/.test(control.handler)){const found=findDefinition(file,control.handler,control.owner);if(found)found.definition.calls.forEach(call=>follow(call,found.file,found.definition.name));}
  control.trace=[...new Map(calls.map(call=>[call.path+':'+call.line+':'+call.callee+':'+call.arguments.join('|'),call])).values()];
- control.backend=control.trace.filter(call=>/^(rpc)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(call.callee));
+ control.backend=control.trace.filter(call=>/^(rpc|goodiesRequest|goodiesOrdersRequest)$|\.(rpc|from|invoke|upload|update|insert|delete|upsert|remove)$/.test(call.callee));
  control.navigation=control.trace.filter(call=>/^(go|push|reset|tab|back|browse|openProduct|navBack)$|\.(go|navigate)$/.test(call.callee));
  control.unresolvedCalls=control.trace.filter(call=>!/^(set[A-Z]|React\.|console\.|Object\.|Array\.|String$|Number$|Math\.|supabase)/.test(call.callee)&&!findDefinition(byFile.get(call.repository+':'+call.path)||file,call.callee,control.owner)).map(call=>({callee:call.callee,path:call.path,line:call.line}));
 }
-const targets=new Map();for(const file of inventory.files)for(const call of file.backend)if(/^(rpc)$|\.(rpc|from|invoke)$/.test(call.callee))for(const target of call.targets){const kind=/rpc$/.test(call.callee)?'rpc':/invoke$/.test(call.callee)?'edge':'table',key=kind+':'+target;if(!targets.has(key))targets.set(key,{kind,target,references:[]});targets.get(key).references.push({repository:file.repository,path:file.path,line:call.line,surface:file.surface});}inventory.backendTargets=[...targets.values()];
+const targets=new Map();for(const file of inventory.files)for(const call of file.backend)if(/^(rpc|goodiesRequest|goodiesOrdersRequest)$|\.(rpc|from|invoke)$/.test(call.callee))for(const target of call.targets){const kind=/rpc$/.test(call.callee)||['goodiesRequest','goodiesOrdersRequest'].includes(call.callee)?'rpc':/invoke$/.test(call.callee)?'edge':'table',key=kind+':'+target;if(!targets.has(key))targets.set(key,{kind,target,references:[]});targets.get(key).references.push({repository:file.repository,path:file.path,line:call.line,surface:file.surface});}inventory.backendTargets=[...targets.values()];
 // Normalize repeated call-site data so every control keeps a complete trace
 // without duplicating large request arguments hundreds of times.
 const callSites=[],callIds=new Map();
@@ -86,5 +86,5 @@ function intern(call,file){const repository=call.repository||file.repository,sou
 for(const file of inventory.files){file.functions.forEach(fn=>{fn.calls=fn.calls.map(call=>intern(call,file));});file.backend=file.backend.map(call=>intern(call,file));file.navigation=file.navigation.map(call=>intern(call,file));}
 for(const control of inventory.controls){control.trace=control.trace.map(call=>intern(call,control));control.backend=control.backend.map(call=>intern(call,control));control.navigation=control.navigation.map(call=>intern(call,control));}
 inventory.callSites=callSites;
-const out=path.join(customer,'docs/goodies/audit/source-controls.json');fs.writeFileSync(out,JSON.stringify(inventory)+'\n');
+const out=process.argv[2] ? path.resolve(process.argv[2]) : path.join(customer,'docs/goodies/audit/source-controls.json');fs.writeFileSync(out,JSON.stringify(inventory)+'\n');
 console.log(JSON.stringify({files:inventory.files.length,controls:inventory.controls.length,bySurface:Object.fromEntries([...new Set(inventory.controls.map(c=>c.surface))].map(s=>[s,inventory.controls.filter(c=>c.surface===s).length])),backendTargets:inventory.backendTargets.length,errorSinks:inventory.files.reduce((n,f)=>n+f.rawErrorSinks.length,0),comments:inventory.comments.length,copyCandidates:inventory.visibleCopyCandidates.length}));

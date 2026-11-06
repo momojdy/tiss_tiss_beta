@@ -1,4 +1,4 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions, PanResponder} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
@@ -10,7 +10,7 @@ import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
-import {rgText, importContent, clearContent, hasContent, label} from '../content';
+import {rgText, label} from '../content';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 import {friendlyError} from '../friendlyError';
@@ -26,7 +26,6 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoreset') content = (<><T size={20} weight="600">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>{label("lbl.page.components.Sheets.f6157ffbc2", "• Minimum age here: ")}<T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
-  if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} bottomInset={insets.bottom} />;
   if (k === 'topup') content = (<><T size={20} weight="600">{label('lbl.sheetTopup', 'Top up wallet')}</T><T color={th.mut} style={{marginTop: 6, marginBottom: 14}}>{label('lbl.sheetDemoMoney', 'Demo: no real money moves.')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[10, 20, 50, 100].map(v => <Pressable key={v} onPress={() => {S.wallet += v; close(); toast(label('lbl.sheetWalletToppedUp', 'Wallet topped up to {amount}').replace('{amount}', money(S.wallet))); save(); emit();}} style={{paddingVertical: 10, paddingHorizontal: 16, borderRadius: 18, backgroundColor: th.soft}}><T size={14} weight="600">+{money(v)}</T></Pressable>)}</View></>);
@@ -417,7 +416,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     } finally {setGroupQuoteBusy(false);}
   };
   const checkoutGroupOrder = async () => {
-    if(!group.serverBacked||!group.groupId){toast(label("lbl.page.components.Sheets.6229019fe3", "Create a server-backed group order first."));return;}
+    if(!group.serverBacked||!group.groupId){toast(label("lbl.page.components.Sheets.6229019fe3", "Create a group order first."));return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast(label("lbl.page.components.Sheets.193104c5af", "Only the group host can check out."));return;}
     if(!checkoutPreview){toast(label("lbl.page.components.Sheets.de32faa892", "Review and validate the combined cart first."));return;}
     if(!checkoutEstimate || checkoutEstimate.group_id!==group.groupId || checkoutEstimate.order_type!==groupCheckoutType){toast(label("lbl.page.components.Sheets.f7d32cc80e", "Review the current group-order total before placing the order."));return;}
@@ -457,7 +456,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     } finally {setGroupCheckoutBusy(false);}
   };
   const reviewSharedOrder = async () => {
-    if(!group.serverBacked||!group.groupId){toast(label("lbl.page.components.Sheets.59297174fd", "Create or join a server-backed group order first."));return;}
+    if(!group.serverBacked||!group.groupId){toast(label("lbl.page.components.Sheets.59297174fd", "Create or join a group order first."));return;}
     setPreviewBusy(true); setCheckoutPreview(null);
     const {data,error}=await supabase.rpc('goodies_group_order_checkout_preview',{p_group_id:group.groupId});
     setPreviewBusy(false);
@@ -656,14 +655,27 @@ export function GroupOrderPage({onBack, storeId = ''}: {onBack: () => void; stor
 
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
   const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
+  const [saving, setSaving] = useState(false);
+  const submitLock = useRef(false);
   return (<>
     <T size={20} weight="600">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder={label('lbl.sheetReviewComment', 'Add a comment (optional)')} multiline />
     <View style={{height: 12}} />
-    <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} onPress={() => {
+    <Cta disabled={saving} label={saving ? label('lbl.reviewSaving', 'Submitting…') : label('lbl.sheetSubmitReview', 'Submit review')} onPress={async () => {
+      if (submitLock.current) return;
       const o = S.orders.filter((x: any) => x.id === id)[0];
       if (!o) {toast(label('lbl.sheetOrderNotFound', 'Order not found')); return;}
+      if (t.trim().length > 1000) {toast(label('lbl.reviewTooLong', 'Keep your review under 1,000 characters.'));return;}
       if (!n) {toast(label('lbl.sheetPickRating', 'Pick a star rating')); return;}
+      if (!o.backendId) {toast(label('lbl.sheetOrderNotFound', 'Order not found'));return;}
+      const account = S.accountId;
+      submitLock.current = true;setSaving(true);
+      try {
+        const {error} = await supabase.rpc('goodies_submit_order_review', {p_order_id: o.backendId, p_target: driver ? 'driver' : 'store', p_rating: n, p_comment: t.trim()});
+        if (error) throw error;
+        if (S.accountId !== account) return;
+      } catch {toast(label('lbl.reviewSaveFailed', 'Could not submit your review. Please try again.'));return;}
+      finally {submitLock.current = false;setSaving(false);}
       if (driver) {
         S.driverRev = S.driverRev || {};
         S.driverRev[id] = {n: S.pf.n, r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now"), orderId: id};
@@ -721,17 +733,4 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
   </View>;
-}
-
-/* DEMO: paste the JSON exported from Wantiss Admin (Goodies > Overview > Export content). Production fetches the same shape from the backend. */
-function ImportSheet({close}: {close: () => void}) {
-  const th = useTheme(), [txt, setTxt] = useState('');
-  return (<>
-    <T size={20} weight="600">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{label("lbl.page.components.Sheets.bc1e729ed8", "Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. ")}{hasContent() ? label("lbl.page.components.Sheets.2e4d2c8b07", "Admin content is currently loaded.") : label("lbl.page.components.Sheets.6832a279e5", "The built-in sample content is currently used.")}</T>
-    <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
-    <View style={{height: 12}} />
-    <Cta label={label("lbl.sheetAuto1EXCTAI", "Import")} onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
-    {hasContent() ? <><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto1U4P0PS", "Go back to sample content")} onPress={async () => {await clearContent(); close(); toast(label('lbl.sheetSampleContent', 'Using sample content')); emit();}} /></> : null}
-  </>);
 }

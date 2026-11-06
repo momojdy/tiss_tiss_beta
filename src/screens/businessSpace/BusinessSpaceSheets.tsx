@@ -205,7 +205,7 @@ export function PasswordSheet() {
 export function MfaSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct();
   const [f, setF] = useState<any>(null), [code, setCode] = useState(''), [err, setErr] = useState('');
-  useEffect(() => { (async () => { const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' }); if (error) setErr(error.message); else setF(data); })(); }, []);
+  useEffect(() => { (async () => { const { data, error } = await supabase.auth.mfa.enroll({ factorType: 'totp' }); if (error) setErr('Could not set up two-step verification. Please try again.'); else setF(data); })(); }, []);
   const xml = f?.totp?.qr_code ? (String(f.totp.qr_code).startsWith('data:') ? decodeURIComponent(String(f.totp.qr_code).split(',')[1]) : f.totp.qr_code) : null;
   const verify = () => a.run(async () => {
     const ch = await supabase.auth.mfa.challenge({ factorId: f.id }); if (ch.error) throw ch.error;

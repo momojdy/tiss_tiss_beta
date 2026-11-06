@@ -6,9 +6,9 @@ import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponde
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
-import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess, validateActiveGroup} from './store';
+import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshLiveSchedules, refreshGoodiesAccess, validateActiveGroup} from './store';
 import * as A from './actions';
-import {startGoodiesSync} from './serverSync';
+import {refreshGoodiesOrders, startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, FlashDeals, Notifs, Explore} from './screens/Browse';
 import {Store, StoreReviews, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
@@ -31,6 +31,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
   const scroll = useRef<ScrollView>(null);
   const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false), [refreshing, setRefreshing] = useState(false);
   const toastT = useRef<any>(null);
+  const [startupError, setStartupError] = useState(false), [startupAttempt, setStartupAttempt] = useState(0);
 
   useEffect(() => {
     if (!goodiesLoaded) return;
@@ -61,13 +62,14 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     let active = true;
     let stopSync: (() => void) | null = null;
     void (async () => {
+      setStartupError(false);
       const contentReady = loadContent();
       await load();
-      setGoodiesLoaded(true);
+      if (active) setGoodiesLoaded(true);
       await contentReady;
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
-    })();
+    })().catch(() => {if(active)setStartupError(true);});
     if (embedded) S.stack = [{r: 'home', u: Date.now()}];
     /* order progress ticker (v24: every second) */
     const appStateSub = AppState.addEventListener('change', next => { if (next === 'active') void loadContent(); });
@@ -86,7 +88,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       if (ch) {save(); emit();}
     }, 1000);
     return () => {active = false; appStateSub.remove(); clearInterval(id); stopSync?.();};
-  }, []);
+  }, [startupAttempt]);
 
   const handleBack = () => {
     const r = navBack();
@@ -144,6 +146,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'help': body = <Help />; break;
     default: body = <Account r={r} p={c.p} />;
   }
+  if (startupError) body = <View style={{padding:20}}><Ttl>{label('lbl.startupFailed', 'Goodies could not load')}</Ttl><T>{label('lbl.catalogRetryHint', 'Check your connection and try again.')}</T><Cta label={label('lbl.retry', 'Try again')} onPress={()=>setStartupAttempt(n=>n+1)} /></View>;
   const accessBlocked = S.goodiesAccess?.status === 'suspended' || S.goodiesAccess?.status === 'banned';
   const accessRoutes = ['home', 'cats', 'cart', 'explore', 'search', 'catlist', 'store', 'product', 'checkout', 'byo', 'promos', 'favs'];
   if (accessBlocked && accessRoutes.includes(r)) {
@@ -181,7 +184,8 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={{flex: 1}} edges={[]}>
-        {r === 'byo' || r === 'storechat' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} refreshControl={r === 'flashdeals' ? <RefreshControl refreshing={refreshing} onRefresh={() => {if (refreshing) return; setRefreshing(true); void loadContent().finally(() => setRefreshing(false));}} /> : undefined} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
+        {r === 'byo' || r === 'storechat' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} refreshControl={['home','cats','orders','explore','search','catlist','store','flashdeals'].includes(r) ? <RefreshControl refreshing={refreshing} onRefresh={() => {if (refreshing) return; setRefreshing(true); void Promise.all([loadContent(), refreshLiveSchedules(), refreshGoodiesOrders()]).finally(() => setRefreshing(false));}} /> : undefined} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
+          {S.catalogError && ['cats','explore','search','catlist','store','product'].includes(r) ? <Card><T>{label('lbl.catalogFailed', 'Could not load stores')}</T><Cta ghost label={label('lbl.retry', 'Try again')} onPress={()=>void refreshLiveSchedules()} /></Card> : null}
           {body}
         </ScrollView>}
       </SafeAreaView>

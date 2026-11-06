@@ -12,3 +12,7 @@ for(const rel of files){const filename=path.join(root,rel),ast=ts.createSourceFi
 assert.deepEqual(missing,[],'Hardcoded display text bypasses the CMS');
 console.log(`PASS: ${current.entries.length} registered fields; ${current.routes.length} discovered routes; no direct JSX text/label bypass in customer screens and shared Goodies components.`);
 console.log('Scope: source coverage. Hosted publication, full visual behavior and provider-owned UI require separate verification.');
+const criticalKeys=require('../../tiss-admin/src/features/admin/goodiesConsumer/criticalContentKeys.json');
+const reviewMigration=fs.readFileSync(path.resolve(__dirname,'../supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql'),'utf8');
+for(const key of criticalKeys)assert.ok(reviewMigration.includes("'"+key+"'"),'Add this critical field to a versioned publication-review guard migration: '+key);
+console.log(`PASS: ${criticalKeys.length} critical fields covered by the candidate server publication guard.`);

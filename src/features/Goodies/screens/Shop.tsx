@@ -1,3 +1,5 @@
+import {loadOlderGoodiesOrders} from '../serverSync';
+import {useStoreReviews} from '../reviews';
 import {coordinate, courierLocation, routeSegments, trackingRegion} from '../deliveryTracking';
 import {resolveGoodiesDeliveryProof} from '../../../services/goodiesDeliveryProof';
 import React, {useState, useEffect} from 'react';
@@ -11,7 +13,6 @@ import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
 import {providerInfo} from '../providers';
 import {byoRows, byoOn, lineBad, bzEdit, bzRemove} from '../builders/engine';
-import {SEED_REVIEWS} from '../data/seed';
 import {ScheduleInline} from '../components/Sheets';
 import {t as tr} from '../i18n';
 import {supabase} from '../../../lib/supabase';
@@ -29,6 +30,7 @@ const Hero = ({s, onBack, right}: any) => (
 
 export function Store({id}: {id: string}) {
   const th = useTheme(), s = STB[id], address = addr(), t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
+  const reviewState = useStoreReviews(id);
   useEffect(() => {
     let active = true;
     void refreshLiveSchedules().then(() => {
@@ -36,10 +38,11 @@ export function Store({id}: {id: string}) {
     });
     return () => { active = false; };
   }, [id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
+  if (!s) return <View><Bar title={label('lbl.storeInfo', 'Store info')} onBack={back} /><Empty title={label('lbl.storeNotFound', 'Store not found')} button={label('lbl.storeBackToStores', 'Back to stores')} onPress={browse} /></View>;
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
-  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews = reviewState.rows;
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
@@ -49,7 +52,7 @@ export function Store({id}: {id: string}) {
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + (Math.round(s.km * 1000) < 1000 ? Math.round(s.km * 1000) + ' m' : s.km.toFixed(1) + label('lbl.unitKilometers', ' km')) + (S.currentLocation && S.currentLocation.addressText === address?.t ? label("lbl.page.screens.Shop.5cb0a4c374", " from your location") : label("lbl.page.screens.Shop.1f818d2105", " from your address")) : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : s.live && s.distanceError ? label("lbl.page.screens.Shop.a99655473b", " · Distance unavailable") : ''}</T>
         {!s.open ? <Card style={{backgroundColor: th.brt, borderColor: th.br, marginTop: 12}}><T weight="600">{label('lbl.storeClosed', 'Closed right now')}</T><T size={13} color={th.mut}>{s.acceptScheduledOrders ? s.nx + label("lbl.page.screens.Shop.d09ce7384e", ". Scheduled orders are available for future opening-time slots.") : s.nx + label("lbl.page.screens.Shop.0ea0a77ce2", ". Ordering is paused until then.")}</T></Card> : null}
         <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12, marginBottom: 4}}>
-          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeReadReviews', 'Read store reviews')} onPress={() => go('reviews', id)}><Badge green label={s.live && s.rv === 0 ? label('lbl.storeNewNoReviews', 'New · No reviews yet') : '★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + label('lbl.unitMinutes', ' min')} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={label("lbl.page.screens.Shop.9d5203d6d7", "Min. ") + money(s.min)} /><Badge label={label("lbl.shopAuto18E4IBZ", "Delivery + pickup")} />{s.pr ? <Badge label={s.pr} /> : null}
+          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.storeReadReviews', 'Read store reviews')} onPress={() => go('reviews', id)}><Badge green label={s.ratingsAvailable===false ? label('lbl.ratingsUnavailable', 'Ratings unavailable') : s.live && s.rv === 0 ? label('lbl.storeNewNoReviews', 'New · No reviews yet') : '★ ' + s.r.toFixed(1) + ' (' + s.rv + ')'} /></Pressable><Badge label={s.eta + label('lbl.unitMinutes', ' min')} /><Badge label={s.fee === 0 ? tr('freeDelivery') : money(s.fee) + ' ' + tr('delivery')} /><Badge label={label("lbl.page.screens.Shop.9d5203d6d7", "Min. ") + money(s.min)} /><Badge label={label("lbl.shopAuto18E4IBZ", "Delivery + pickup")} />{s.pr ? <Badge label={s.pr} /> : null}
         </View>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 10}}>
           <Cta small ghost label={label('lbl.storeInfo', 'Store info')} onPress={() => require('../store').ui.sheet({kind: 'sinfo', id})} />
@@ -66,10 +69,13 @@ export function Store({id}: {id: string}) {
           <Card key={k} style={{marginBottom: 8}}>
             <Row sp><Row style={{gap: 6}}><T weight="600">{v.n}</T>{v.you ? <Badge label={label('lbl.storeYourReview', 'Your review')} /> : null}</Row><Row style={{gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{v.r}</T></Row></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 4}}>{v.t || label('lbl.storeNoComment', 'No comment')}</T>
-            <T size={11.5} color={th.mut} style={{marginTop: 4}}>{v.d}{v.you ? '' : ' · ' + label('lbl.storeSampleReview', 'sample review')}</T>
+            <T size={11.5} color={th.mut} style={{marginTop: 4}}>{v.d}</T>
           </Card>
         ))}
-        {!reviews.length ? <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} /> : null}
+        {reviewState.loading ? <T color={th.mut}>{label('lbl.reviewsLoading', 'Loading reviews…')}</T> : null}
+        {reviewState.error ? <Empty title={label('lbl.reviewsFailed', 'Could not load reviews')} button={label('lbl.retry', 'Try again')} onPress={reviewState.reload} /> : null}
+        {reviewState.hasMore ? <Cta ghost disabled={reviewState.loading} label={label('lbl.loadMore', 'Load more')} onPress={reviewState.more} /> : null}
+        {!reviews.length && !reviewState.loading && !reviewState.error ? <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} /> : null}
       </View>
     </View>
   );
@@ -77,8 +83,9 @@ export function Store({id}: {id: string}) {
 
 export function StoreReviews({id}: {id: string}) {
   const th = useTheme(), s = STB[id];
+  const reviewState = useStoreReviews(id);
   if (!s) return <View><Bar title={label('lbl.storeReviewsTitle', 'Store reviews')} onBack={back} /><Empty emoji="⭐" title={label('lbl.storeNotFound', 'Store not found')} button={label('lbl.storeBackToStores', 'Back to stores')} onPress={browse} /></View>;
-  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews = reviewState.rows;
   return (
     <View>
       <Bar title={label('lbl.storeReviews', 'Reviews')} onBack={back} />
@@ -87,14 +94,17 @@ export function StoreReviews({id}: {id: string}) {
           <Row style={{alignItems: 'center', gap: 12}}>
             <View style={{width: 54, height: 54, borderRadius: 16, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Text style={{fontSize: 30}}>{s.e}</Text></View>
             <View style={{flex: 1}}><T size={18} weight="600">{s.n}</T><T size={13} color={th.mut}>{label('lbl.storeCustomerReviews', 'Customer reviews')}</T></View>
-            <View style={{alignItems: 'flex-end'}}>{s.rv > 0 ? <><T size={22} weight="600">★ {s.r.toFixed(1)}</T><T size={11.5} color={th.mut}>{s.rv} {label("lbl.page.screens.Shop.a03800365a", " reviews")}</T></> : <T size={12} color={th.mut}>{label('lbl.storeNoReviewsYet', 'No reviews yet')}</T>}</View>
+            <View style={{alignItems: 'flex-end'}}>{s.ratingsAvailable===false ? <T size={12} color={th.mut}>{label('lbl.ratingsUnavailable', 'Ratings unavailable')}</T> : s.rv > 0 ? <><T size={22} weight="600">★ {s.r.toFixed(1)}</T><T size={11.5} color={th.mut}>{s.rv} {label("lbl.page.screens.Shop.a03800365a", " reviews")}</T></> : <T size={12} color={th.mut}>{label('lbl.storeNoReviewsYet', 'No reviews yet')}</T>}</View>
           </Row>
         </Card>
+        {reviewState.loading ? <T color={th.mut}>{label('lbl.reviewsLoading', 'Loading reviews…')}</T> : null}
+        {reviewState.error ? <Empty title={label('lbl.reviewsFailed', 'Could not load reviews')} button={label('lbl.retry', 'Try again')} onPress={reviewState.reload} /> : null}
         {reviews.length ? reviews.map((v: any, k: number) => <Card key={k} style={{marginBottom: 10}}>
           <Row sp><Row style={{gap: 6}}><T weight="600">{v.n}</T>{v.you ? <Badge label={label('lbl.storeYourReview', 'Your review')} /> : null}</Row><Row style={{gap: 4}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{v.r}</T></Row></Row>
           <T size={13.5} style={{marginTop: 6}}>{v.t || label('lbl.storeNoComment', 'No comment')}</T>
-          <T size={11.5} color={th.mut} style={{marginTop: 5}}>{v.d}{v.you ? '' : ' · ' + label('lbl.storeSampleReview', 'sample review')}</T>
-        </Card>) : <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} />}
+          <T size={11.5} color={th.mut} style={{marginTop: 5}}>{v.d}</T>
+        </Card>) : !reviewState.loading && !reviewState.error ? <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} /> : null}
+        {reviewState.hasMore ? <Cta ghost disabled={reviewState.loading} label={label('lbl.loadMore', 'Load more')} onPress={reviewState.more} /> : null}
         <Cta ghost label={label('lbl.storeBack', 'Back to store')} onPress={() => go('store', id)} />
       </View>
     </View>
@@ -123,7 +133,7 @@ export function Product() {
       </> : <Grad idx={bgIdx(s.bg)} style={{width, height:210}} />}
       <View style={{paddingHorizontal: 16}}>
         <T size={23} weight="600" style={{marginTop: 10}}>{i.n}</T>
-        <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="600" color={th.br}>{s.n}{s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : label("lbl.page.screens.Shop.2c2b814e01", " · New store")}</T></Pressable>
+        <Pressable onPress={() => go('store', s.id)}><T size={13.5} weight="600" color={th.br}>{s.n}{s.ratingsAvailable===false ? ' · '+label('lbl.ratingsUnavailable', 'Ratings unavailable') : s.rv > 0 ? ' · ★ ' + s.r.toFixed(1) : label("lbl.page.screens.Shop.2c2b814e01", " · New store")}</T></Pressable>
         <View style={{flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8}}>
           <T size={24} weight="600" color={th.br}>{money(base)}</T>
           {h.off ? <><T size={15} color={th.mut} style={{textDecorationLine: 'line-through'}}>{money(i.p)}</T><Badge label={'-' + h.off + '%'} /></> : null}
@@ -355,7 +365,7 @@ export function Checkout() {
     </View>
   );
 }
-export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={(S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;};
+export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.busy ? label('lbl.checkoutSubmitting', 'Placing order…') : S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={!!S.busy || (S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;};
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
@@ -429,8 +439,9 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
   </Card>;
 }
 
-function PickupLocationMap() {
-  return <Card style={{padding: 12}}><T size={15} weight="600">{label('lbl.orderPickupLocation', 'Pickup location')}</T><Empty title={label('lbl.orderPickupUnavailable', 'Live location unavailable')} text={label("lbl.shopAuto1WOHU9O", "Pickup coordinates have not been provided by the store.")} /></Card>;
+function PickupLocationMap({origin}: {origin: unknown}) {
+  const point = coordinate(origin);
+  return <Card style={{padding: 12}}><T size={15} weight="600">{label('lbl.orderPickupLocation', 'Pickup location')}</T>{point ? <MapView style={{height: 200, marginTop: 8, borderRadius: 12}} initialRegion={{...point, latitudeDelta: 0.01, longitudeDelta: 0.01}}><Marker coordinate={point} title={label('lbl.orderPickupLocation', 'Pickup location')} /></MapView> : <Empty title={label('lbl.orderPickupUnavailable', 'Live location unavailable')} text={label("lbl.shopAuto1WOHU9O", "Pickup coordinates have not been provided by the store.")} />}</Card>;
 }
 
 export function Track({id}: {id: string}) {
@@ -440,9 +451,11 @@ export function Track({id}: {id: string}) {
   const [reportText, setReportText] = useState('');
   const receiptCall = async (fn: 'goodies_customer_confirm_received' | 'goodies_customer_dispute_delivery', args: any, okMessage: string) => {
     setReceiptBusy(true);
-    const {error} = await supabase.rpc(fn, args);
-    setReceiptBusy(false);
-    if (error) {console.warn('Receipt action failed', error.message); toast(/24-hour|already|reported/i.test(error.message) ? error.message : label("lbl.page.screens.Shop.e35432e497", "Could not send this. Please try again.")); return;}
+    let error: any;
+    try {({error} = await supabase.rpc(fn, args));}
+    catch {error = {message: 'Request unavailable'};}
+    finally {setReceiptBusy(false);}
+    if (error) {console.warn('Receipt action failed'); toast(label("lbl.page.screens.Shop.e35432e497", "Could not send this. Please try again.")); return;}
     toast(okMessage); setReportOpen(false); setReportText('');
     if (fn === 'goodies_customer_confirm_received') {o.serverStatus = 'completed'; o.st = require('../store').stage(o);} else o.deliveryDispute = 'open';
     save(); emit();
@@ -488,7 +501,7 @@ export function Track({id}: {id: string}) {
     return () => { active = false; void supabase.removeChannel(channel); };
   }, [o?.backendId]);
   if (!o) return <View><Bar title={label("lbl.shopAuto15CA8YK", "Order")} onBack={back} /><Empty emoji="📦" title={label('lbl.orderNotFound', 'Order not found')} button={label('lbl.orderGoHome', 'Go home')} onPress={browse} /></View>;
-  const s = STB[o.sid], T_: string[] = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
+  const s = STB[o.sid] || {n: o.sn || label('lbl.storeNotFound', 'Store not found'), e: '🏪', bg: 0}, T_: string[] = stageLabels(!!o.pk, o.pk ? TP : TL), dn = done(o);
   const serverStatus = String(o.serverStatus || '').toLowerCase();
   const eta = o.declined ? label('lbl.orderStoreDeclined', 'Store declined the order') : o.expired ? label('lbl.orderExpired', 'Response window expired') : o.cx ? label('lbl.orderCancelled', 'Cancelled') : dn ? (o.pk ? label('lbl.orderPickedUp', 'Picked up') : label('lbl.orderDelivered', 'Delivered')) : o.backendId ? (serverStatus === 'scheduled' && o.sch && Date.now() < o.sch ? label('lbl.orderScheduledFor', 'Scheduled for {time}').replace('{time}', fmtTime(new Date(o.sch))) : serverStatus === 'scheduled' || serverStatus === 'placed' ? label('lbl.orderWaitingStore', 'Waiting for store to accept') : serverStatus === 'accepted' ? label('lbl.orderAccepted', 'Order accepted by store') : serverStatus === 'preparing' ? label('lbl.orderPreparing', 'Store is preparing your order') : serverStatus === 'ready' ? (o.pk ? label('lbl.orderReadyPickup', 'Ready for pickup') : label('lbl.orderReadyCourier', 'Ready for courier pickup')) : serverStatus === 'courier_assigned' ? label('lbl.orderCourierAssigned', 'A courier has been assigned') : serverStatus === 'picked_up' ? label('lbl.orderCourierPickedUp', 'Your courier has picked up the order') : label('lbl.orderUpdated', 'Order update')) : o.sch && Date.now() < o.sch ? label('lbl.orderScheduledFor', 'Scheduled for {time}').replace('{time}', fmtTime(new Date(o.sch))) : label('lbl.orderUpdated', 'Order update');
   return (
@@ -519,7 +532,7 @@ export function Track({id}: {id: string}) {
           </>)}
           <T size={11.5} color={th.mut}>{label('lbl.orderStatusHeading', 'Order status is provided by the live order service.')}</T>
         </Card>
-        {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap /> : null}
+        {o.pk && o.st >= 3 && !o.cx ? <PickupLocationMap origin={{latitude: o.storeLatitude, longitude: o.storeLongitude}} /> : null}
         {!o.pk && o.st >= 4 && !dn && o.backendId ? <DeliveryRouteMap orderId={o.backendId} origin={{latitude:o.storeLatitude,longitude:o.storeLongitude}} destination={{latitude:o.deliveryLatitude,longitude:o.deliveryLongitude}} route={o.deliveryRoute} /> : null}
         {o.alc ? <Card style={{borderColor: o.alc.status === 'failed' ? th.red : th.br}}><Row><Text style={{fontSize: 26}}>🪪</Text><View style={{flex: 1}}><T weight="600">{label("lbl.page.screens.Shop.87430c1e7b", "ID check · ")}{o.alc.age}+ ({o.alc.who === 'shop' ? label("lbl.page.screens.Shop.3eb41a2796", "checked by the shop") : label("lbl.page.screens.Shop.45e8333e64", "checked by the courier")})</T><T size={13} color={th.mut}>{o.alc.status === 'pending' ? label("lbl.page.screens.Shop.318a2ff45b", "Have your valid government photo ID ready. The order is completed only after it is checked.") : o.alc.status === 'passed' ? label("lbl.page.screens.Shop.8fed394996", "ID checked.") : (o.pay === 'cash' ? label("lbl.page.screens.Shop.3e7df6b427", "ID check failed. You were not charged.") : label("lbl.page.screens.Shop.d53fb280b7", "ID check failed. ") + money(o.refund || 0) + label("lbl.page.screens.Shop.e13f05dc32", " was refunded to your Wantiss wallet. The delivery fee is not refunded."))}</T></View></Row>{providerInfo.demo && o.alc.status === 'pending' && o.st >= (o.pk ? 3 : 5) ? <View style={{flexDirection: 'row', gap: 8, marginTop: 10}}><Cta small ghost label={label("lbl.shopAuto1RR9Q6U", "Demo: ID valid")} onPress={() => idResult(o.id, true)} /><Cta small ghost label={label("lbl.shopAuto2L0NX5", "Demo: ID failed")} onPress={() => idResult(o.id, false)} /></View> : null}</Card> : null}
         {dn && !o.cx && (!o.rated || (!o.pk && !o.driverRated)) ? <Card><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="600">{label('lbl.orderRate', 'Rate your order')}</T><T size={12} color={th.mut}>{label('lbl.orderFeedback', 'Order and delivery feedback')}</T></View><View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateOrder', 'Rate order {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color={o.rated>=k?'#FFB400':th.line} fill /></Pressable>)}</View></Row>{o.rated ? <T size={12} color={th.mut} style={{marginTop:5}}>{label('lbl.orderYourRating', 'Your rating: {n} ★').replace('{n}', String(o.rated))}</T> : null}{!o.pk ? <><View style={{height:1,backgroundColor:th.line,marginVertical:10}}/><Row sp style={{alignItems:'center'}}><View style={{flex:1}}><T weight="600">{label('lbl.orderRateDriver', 'Rate your driver')}</T><T size={12} color={th.mut}>{label('lbl.orderDeliveryExperience', 'Delivery experience')}</T></View>{o.driverRated ? <T weight="600">{o.driverRated} ★</T> : <View style={{flexDirection:'row',gap:3}}>{[1,2,3,4,5].map(k=><Pressable key={k} accessibilityRole="button" accessibilityLabel={label('lbl.a11yRateDriver', 'Rate driver {n} stars').replace('{n}', String(k))} onPress={()=>{S.rt=k;require('../store').ui.sheet({kind:'driver-review',id:o.id,initialStars:k});}}><Icon name="star" size={23} color="#FFB400" fill /></Pressable>)}</View>}</Row></> : null}</Card> : null}
@@ -587,8 +600,10 @@ export function Orders() {
       <View style={{paddingHorizontal: 16}}>
         <Seg list={[['active', label('lbl.ordersActive', 'Active')], ['past', label('lbl.ordersPast', 'Past')]]} on={S.ot} onPick={setOrdersTab} />
         <View style={{height: 14}} />
+        {S.ordersLoading && !S.orders.length ? <Card><View style={{height:64,borderRadius:12,backgroundColor:th.soft}} /><T color={th.mut}>{label('lbl.ordersLoading', 'Loading orders…')}</T></Card> : null}
+        {S.ordersError ? <T color={th.red}>{label('lbl.ordersRefreshFailed', 'Could not refresh orders. Pull down to try again.')}</T> : null}
         {a.length ? a.map((o: any) => {
-          const s = STB[o.sid], d = new Date(o.t0);
+          const s = STB[o.sid] || {e: '🏪', bg: 0, n: o.sn || label('lbl.storeNotFound', 'Store not found')}, d = new Date(o.t0);
           return (
             <Card key={o.id}>
               <Pressable onPress={() => go('track', o.id)} style={{flexDirection: 'row', alignItems: 'center', gap: 12}}>
@@ -599,7 +614,8 @@ export function Orders() {
               <Row style={{marginTop: 12}}><Cta small ghost label={label('lbl.ordersReorder', 'Reorder')} onPress={() => reorder(o.id)} /><Cta small label={done(o) ? label('lbl.ordersDetails', 'Details') : label('lbl.ordersTrack', 'Track')} onPress={() => go('track', o.id)} /></Row>
             </Card>
           );
-        }) : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? label('lbl.ordersNoActive', 'No active orders') : label('lbl.ordersNoPast', 'No past orders yet')} text={label('lbl.ordersEmptyText', 'Your orders will show up here.')} button={label('lbl.ordersBrowse', 'Browse stores')} onPress={() => go('explore')} />}
+        }) : S.ordersError || S.ordersLoading ? null : <Empty emoji={S.ot === 'active' ? '🍽️' : '🧾'} title={S.ot === 'active' ? label('lbl.ordersNoActive', 'No active orders') : label('lbl.ordersNoPast', 'No past orders yet')} text={label('lbl.ordersEmptyText', 'Your orders will show up here.')} button={label('lbl.ordersBrowse', 'Browse stores')} onPress={() => go('explore')} />}
+        {S.ordersHasMore ? <Cta ghost disabled={S.ordersPaging} label={S.ordersPaging ? label('lbl.ordersLoadingMore', 'Loading orders…') : label('lbl.loadMore', 'Load more')} onPress={() => void loadOlderGoodiesOrders()} /> : null}
       </View>
     </View>
   );

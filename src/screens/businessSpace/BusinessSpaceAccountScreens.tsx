@@ -15,7 +15,6 @@ import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
-import { RAW_STORES } from '../../features/Goodies/data/seed';
 
 import { useTheme, useS, money, ago, initials, uuid, Status, DAYS, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist, q } from "./BusinessSpaceShared";
 
@@ -195,6 +194,7 @@ export function BusinessInfoPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
   const [f, setF] = useState(() => ({ name: b.name, description: b.description ?? '', phone_country: b.phone_country ?? 'NG', phone: b.phone ?? '', email: b.email ?? '', website: b.website ?? '', address: b.address ?? '', city: b.city ?? '', country: b.country ?? 'NG', delivery_modes: b.delivery_modes ?? [], hours: (b.hours && Object.keys(b.hours).length ? b.hours : defaultHours()) as Record<string, any>, logo_url: b.logo_url, accept_scheduled_orders: !!b.accept_scheduled_orders, scheduled_order_start_minutes: Number(b.scheduled_order_start_minutes ?? 60), goodies_store_id: b.goodies_store_id ?? '' }));
   const [picker, setPicker] = useState<null | 'phone' | 'country'>(null), [cq, setCq] = useState('');
+  const stores = useQ(() => q<any[]>(supabase.from('goodies_store_schedules').select('store_id,store_name,business_name').eq('business_id', b.id).order('store_id')), [b.id]);
   const [vendorQr, setVendorQr] = useState<any>(null);
   useEffect(() => {
     let active = true;
@@ -223,7 +223,7 @@ export function BusinessInfoPage() {
     if (f.name.trim().length < 2) { app.toast('Enter your business name'); return; }
     if (f.phone && (f.phone.length < 6 || f.phone.length > 14)) { app.toast('Enter a valid phone number'); return; }
     if (f.email && !/^\S+@\S+\.\S+$/.test(f.email)) { app.toast('Enter a valid email'); return; }
-    a.run(async () => { await q(supabase.rpc('update_my_business_info', { p_business: b.id, p_fields: { name: f.name.trim(), description: f.description || null, phone: f.phone || null, phone_country: f.phone_country, email: f.email || null, website: f.website || null, address: f.address || null, city: f.city || null, country: f.country, delivery_modes: f.delivery_modes, hours: f.hours, logo_url: f.logo_url, accept_scheduled_orders: !!f.accept_scheduled_orders, scheduled_order_start_minutes: Math.max(0, Math.min(1440, Number(f.scheduled_order_start_minutes) || 0)) } }) as any); app.reloadBiz(); app.back(); }, 'Business information saved');
+    a.run(async () => { await q(supabase.rpc('update_my_business_info', { p_business: b.id, p_fields: { ...(f.goodies_store_id !== (b.goodies_store_id ?? '') ? {goodies_store_id: f.goodies_store_id || null} : {}), name: f.name.trim(), description: f.description || null, phone: f.phone || null, phone_country: f.phone_country, email: f.email || null, website: f.website || null, address: f.address || null, city: f.city || null, country: f.country, delivery_modes: f.delivery_modes, hours: f.hours, logo_url: f.logo_url, accept_scheduled_orders: !!f.accept_scheduled_orders, scheduled_order_start_minutes: Math.max(0, Math.min(1440, Number(f.scheduled_order_start_minutes) || 0)) } }) as any); app.reloadBiz(); app.back(); }, 'Business information saved');
   };
   const pc = countryOf(f.phone_country), list = COUNTRIES.filter(c => !cq || `${c.name}${c.dial}${c.code}`.toLowerCase().includes(cq.toLowerCase()));
   const tfield = (k: string, label: string, extra: any = {}) => <Field label={label} value={(f as any)[k]} onChangeText={(v: string) => set(k, v)} {...extra} />;
@@ -265,7 +265,7 @@ export function BusinessInfoPage() {
           <Text style={s.label}>Country</Text>
           <Pressable onPress={() => setPicker('country')} style={[s.fld, { flexDirection: 'row', alignItems: 'center', gap: 8 }]}><Text style={{ fontSize: 20 }}>{flagOf(countryOf(f.country).code)}</Text><Text style={{ color: t.ink, flex: 1 }}>{countryOf(f.country).name}</Text><Icon name="chevron-down" size={14} color={t.mute} /></Pressable>
         </View>
-        <View style={s.card}><Text style={s.title}>Wantiss Goodies store link</Text><Text style={[s.mut, { marginTop: 4, marginBottom: 10 }]}>Choose which Goodies storefront uses this business's opening hours and scheduled-order settings.</Text><View style={{ gap: 8 }}>{[{id:'',n:'Not linked to Goodies'},...RAW_STORES.map((x: any)=>({id:x.id,n:x.n}))].map((x: any)=><Pressable key={x.id || 'none'} onPress={()=>set('goodies_store_id',x.id)} style={[s.row,{padding:10,borderRadius:10,borderWidth:1,borderColor:f.goodies_store_id===x.id?t.blue:t.line,backgroundColor:f.goodies_store_id===x.id?t.soft:'transparent'}]}><Text style={{color:t.ink,flex:1,fontWeight:f.goodies_store_id===x.id?'700':'500'}}>{x.n}</Text>{f.goodies_store_id===x.id?<Icon name="check-circle" size={18} color={t.blue}/>:null}</Pressable>)}</View></View>
+        <View style={s.card}><Text style={s.title}>Wantiss Goodies store link</Text><Text style={[s.mut, { marginTop: 4, marginBottom: 10 }]}>Choose which Goodies storefront uses this business's opening hours and scheduled-order settings.</Text>{stores.l ? <Loading /> : stores.e ? <ErrBox e={stores.e} retry={stores.reload} /> : null}<View style={{ gap: 8 }}>{[{id:'',n:'Not linked to Goodies'},...(stores.d || []).map((x: any)=>({id:x.store_id,n:x.store_name || x.business_name || b.name}))].map((x: any)=><Pressable key={x.id || 'none'} onPress={()=>set('goodies_store_id',x.id)} style={[s.row,{padding:10,borderRadius:10,borderWidth:1,borderColor:f.goodies_store_id===x.id?t.blue:t.line,backgroundColor:f.goodies_store_id===x.id?t.soft:'transparent'}]}><Text style={{color:t.ink,flex:1,fontWeight:f.goodies_store_id===x.id?'700':'500'}}>{x.n}</Text>{f.goodies_store_id===x.id?<Icon name="check-circle" size={18} color={t.blue}/>:null}</Pressable>)}</View></View>
       <View style={s.card}><Text style={s.title}>Fulfilment</Text><View style={{ marginTop: 10 }}><Wrap multi items={['Delivery', 'Pickup']} value={f.delivery_modes} onChange={(v: string[]) => set('delivery_modes', v)} /></View><View style={[s.row, { marginTop: 16, paddingTop: 12, borderTopWidth: 1, borderTopColor: t.line }]}><View style={{ flex: 1, paddingRight: 12 }}><Text style={s.rt}>Accept scheduled orders while closed</Text><Text style={[s.mut, { marginTop: 4 }]}>Customers can place an order for a future opening-time slot. Orders must not be prepared until the scheduled time.</Text></View><Toggle value={!!f.accept_scheduled_orders} onValueChange={(v: boolean) => set('accept_scheduled_orders', v)} /></View>{f.accept_scheduled_orders ? <View style={{ marginTop: 12 }}><Text style={s.label}>Earliest order after opening (minutes)</Text><Text style={[s.mut, { marginBottom: 8 }]}>Example: open at 9:00 AM + 60 minutes means the first selectable order is 10:00 AM.</Text><TextInput style={s.fld} keyboardType="number-pad" value={String(f.scheduled_order_start_minutes)} onChangeText={(v: string) => set('scheduled_order_start_minutes', v.replace(/[^0-9]/g, ''))} placeholder="60 minutes" placeholderTextColor={t.mute} /></View> : null}</View>
         <View style={s.cardFlat}>
           <View style={[s.row, { paddingTop: 14 }]}><Text style={[s.title, { flex: 1 }]}>Opening hours</Text><Pressable onPress={() => { const m = f.hours.Monday; set('hours', Object.fromEntries(DAYS.map(d => [d, { ...m }]))); }}><Text style={s.link}>Copy Monday to all</Text></Pressable></View>
@@ -276,7 +276,7 @@ export function BusinessInfoPage() {
               <Toggle value={!h.closed} onValueChange={() => up({ closed: !h.closed })} />
             </View>); })}</Divided>
         </View>
-        <Btn label="Save changes" busy={a.busy} onPress={save} />
+        <Btn label="Save changes" disabled={stores.l || !!stores.e} busy={a.busy} onPress={save} />
         <Btn kind="danger" label="Delete business" onPress={() => app.sheet('delete')} />
       </Pg>
       {picker ? (
