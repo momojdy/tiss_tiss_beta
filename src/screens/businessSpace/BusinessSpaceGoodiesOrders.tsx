@@ -5,6 +5,7 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../lib/supabase';
+import {GOODIES_DELIVERY_PROOF_BUCKET} from '../../services/goodiesDeliveryProof';
 import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
@@ -75,11 +76,10 @@ export function GoodiesOrdersPage() {
       const asset = result.assets[0];
       const m = await ImageManipulator.manipulateAsync(asset.uri, asset.width && asset.width > 1400 ? [{ resize: { width: 1400 } }] : [], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
       const b64 = await FileSystem.readAsStringAsync(m.uri, { encoding: FileSystem.EncodingType.Base64 });
-      const path = app.biz.id + '/delivery-proofs/' + order.id + '-' + Date.now() + '.jpg';
-      const {error: uploadError} = await supabase.storage.from('listing-photos').upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '31536000' });
+      const path = app.biz.id + '/' + order.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
+      const {error: uploadError} = await supabase.storage.from(GOODIES_DELIVERY_PROOF_BUCKET).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
       if (uploadError) throw uploadError;
-      const url = supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
-      const {error} = await supabase.rpc('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: url});
+      const {error} = await supabase.rpc('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: path});
       if (error) throw error;
       app.toast('Marked as delivered. The customer has 24 hours to confirm or report a problem.');
       await orders.reload();

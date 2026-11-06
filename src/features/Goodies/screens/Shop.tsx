@@ -1,3 +1,5 @@
+import {coordinate, courierLocation, routeSegments, trackingRegion} from '../deliveryTracking';
+import {resolveGoodiesDeliveryProof} from '../../../services/goodiesDeliveryProof';
 import React, {useState, useEffect} from 'react';
 import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'react-native';
 import {Icon} from '../components/Icon';
@@ -376,42 +378,54 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
   const [courier, setCourier] = useState<any>(null);
   const [assignmentStatus, setAssignmentStatus] = useState('');
   const [locationStale, setLocationStale] = useState(false);
+  const [trackingError, setTrackingError] = useState(false);
   useEffect(() => {
     let active = true;
+    let request = 0;
+    setCourier(null); setAssignmentStatus(''); setLocationStale(false);
     const load = async () => {
-      const {data, error} = await supabase.from('goodies_delivery_assignments')
-        .select('latitude,longitude,status,location_updated_at')
-        .eq('order_id', orderId).maybeSingle();
-      if (active && !error && data) {
-        setAssignmentStatus(String(data.status || ''));
-        const fresh=!!data.location_updated_at && Date.now()-new Date(data.location_updated_at).getTime()<=120000;
-        setLocationStale(!!data.location_updated_at&&!fresh);
-        if (fresh && Number.isFinite(Number(data.latitude)) && Number.isFinite(Number(data.longitude)) && data.latitude != null && data.longitude != null) {
-          setCourier({latitude: Number(data.latitude), longitude: Number(data.longitude), updatedAt: data.location_updated_at});
-        } else setCourier(null);
+      const current = ++request;
+      try {
+        const {data, error} = await supabase.from('goodies_delivery_assignments')
+          .select('latitude,longitude,status,location_updated_at')
+          .eq('order_id', orderId).maybeSingle();
+        if (!active || current !== request) return;
+        if (error) throw error;
+        const location = courierLocation(data);
+        setAssignmentStatus(String(data?.status || ''));
+        setLocationStale(!!data?.location_updated_at && !location && ['accepted', 'picked_up'].includes(data.status));
+        setCourier(location);
+        setTrackingError(false);
+      } catch {
+        if (!active || current !== request) return;
+        setCourier(null); setTrackingError(true);
       }
     };
     void load();
     // Recheck freshness even when no realtime event arrives (for example, if GPS stops).
-    const freshnessTimer = setInterval(() => { void load(); }, 30000);
+    const freshnessTimer = setInterval(() => {
+      // Expire locally even if the network request never settles while offline.
+      setCourier((previous: any) => previous && courierLocation({...previous, status: 'accepted', location_updated_at: previous.updatedAt}));
+      void load();
+    }, 30000);
     const channel = supabase.channel('goodies-courier-map-' + orderId)
       .on('postgres_changes', {event: '*', schema: 'public', table: 'goodies_delivery_assignments', filter: 'order_id=eq.' + orderId}, () => { void load(); })
       .subscribe();
     return () => { active = false; clearInterval(freshnessTimer); void supabase.removeChannel(channel); };
   }, [orderId]);
-  const valid = (p: any) => p && p.latitude != null && p.longitude != null && Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude));
-  const routeCoords = Array.isArray(route?.coordinates) ? (route.type === 'MultiLineString' ? route.coordinates.flat(1) : route.coordinates).map((p:any)=>({latitude:Number(p[1]),longitude:Number(p[0])})).filter((p:any)=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)) : [];
-  const points = [origin, destination, courier].filter(valid);
-  const center = points.length ? {latitude: points.reduce((n,p)=>n+Number(p.latitude),0)/points.length, longitude: points.reduce((n,p)=>n+Number(p.longitude),0)/points.length} : null;
+  const valid = (point: any) => !!coordinate(point);
+  const segments = routeSegments(route);
+  const region = trackingRegion([origin, destination, courier, ...segments.flat()]);
   return <Card style={{padding: 12}}>
     <T size={15} weight="600">{label('lbl.orderLiveTracking', 'Live delivery route')}</T>
-    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} region={{...center,latitudeDelta:0.04,longitudeDelta:0.04}} showsCompass>
+    {region ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} region={region} showsCompass>
       {valid(origin) ? <Marker coordinate={origin} title={label('lbl.orderStoreOrigin','Store')} pinColor="#2E8B57" /> : null}
       {valid(destination) ? <Marker coordinate={destination} title={label('lbl.orderDeliveryDestination','Delivery address')} pinColor="#D97706" /> : null}
       {valid(courier) ? <Marker coordinate={courier} title={label('lbl.orderCourierLocation','Courier')} description={courier.updatedAt ? label('lbl.orderCourierUpdated','Updated {time}').replace('{time}',new Date(courier.updatedAt).toLocaleTimeString()) : ''} /> : null}
-      {routeCoords.length > 1 ? <Polyline coordinates={routeCoords} strokeWidth={4} strokeColor={th.br} /> : valid(origin) && valid(destination) ? <Polyline coordinates={[origin,destination]} strokeWidth={3} strokeColor={th.br} lineDashPattern={[5,5]} /> : null}
+      {segments.map((points, index) => <Polyline key={index} coordinates={points} strokeWidth={4} strokeColor={th.br} />)}
     </MapView> : <Empty title={label('lbl.orderMapPreparing','Preparing delivery map')} text={label('lbl.orderMapPreparingHint','The map appears when the delivery address has been geocoded.')} />}
-    <T size={12} color={th.mut} style={{marginTop:8}}>{valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : locationStale ? 'The courier GPS signal is temporarily stale. Waiting for a fresh location update.' : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : assignmentStatus === 'accepted' || assignmentStatus === 'picked_up' ? 'Courier accepted. Waiting for the first GPS location.' : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
+    {!segments.length && region ? <T size={12} color={th.mut} style={{marginTop:8}}>{label('lbl.orderRoadRouteUnavailable', 'Road route unavailable. The map shows known locations only.')}</T> : null}
+    <T size={12} color={th.mut} style={{marginTop:8}}>{trackingError ? label('lbl.orderCourierRefreshFailed', 'Courier tracking is temporarily unavailable. Retrying automatically.') : valid(courier) ? label('lbl.orderCourierLive','Courier GPS location is updating live.') : locationStale ? label('lbl.orderCourierStale', 'The courier GPS signal is temporarily stale. Waiting for a fresh location update.') : assignmentStatus === 'offered' ? label('lbl.orderCourierOffer','Waiting for the courier to accept the delivery.') : assignmentStatus === 'accepted' || assignmentStatus === 'picked_up' ? label('lbl.orderCourierAwaitingGps', 'Courier accepted. Waiting for the first GPS location.') : label('lbl.orderCourierPending','Waiting for courier assignment. The map will update when a courier starts sharing GPS.')}</T>
   </Card>;
 }
 
@@ -450,7 +464,12 @@ export function Track({id}: {id: string}) {
       o.deliveryRoute = data.delivery_route || null;
       o.courierId = data.courier_id || null;
       o.selfDelivery = !!data.self_delivery; o.selfDriverName = data.self_driver_name || ''; o.selfDriverPhone = data.self_driver_phone || '';
-      o.proofUrl = data.delivery_proof_url || ''; o.vendorDeliveredAt = data.vendor_delivered_at || null; o.receiptDeadlineAt = data.receipt_deadline_at || null; o.deliveryDispute = data.delivery_dispute_status || null;
+      try {
+        o.proofUrl = await resolveGoodiesDeliveryProof(data.delivery_proof_url || '');
+        o.proofError = '';
+      } catch {o.proofUrl = ''; o.proofError = label('lbl.orderProofUnavailable', 'Delivery photo unavailable. Please try again later.');}
+      if (!active) return;
+      o.vendorDeliveredAt = data.vendor_delivered_at || null; o.receiptDeadlineAt = data.receipt_deadline_at || null; o.deliveryDispute = data.delivery_dispute_status || null;
       if (data.payment_method === 'card' && ['declined','expired','cancelled'].includes(String(data.status)) && ['paid','refund_pending'].includes(data.payment_status) && !o.refundRequested) {
         o.refundRequested = true;
         const refund = await supabase.functions.invoke('refund-goodies-card-order', { body: { order_id: o.backendId } });
@@ -483,6 +502,7 @@ export function Track({id}: {id: string}) {
             <T size={13} color={th.mut}>Delivered by the store · {o.selfDriverName}{o.selfDriverPhone ? ' · ' + o.selfDriverPhone : ''}</T>
             {o.vendorDeliveredAt ? <View style={{marginTop: 10}}>
               {o.proofUrl ? <Image source={{uri: o.proofUrl}} style={{width: '100%', height: 190, borderRadius: 14, backgroundColor: th.soft}} resizeMode="cover" /> : null}
+              {o.proofError ? <T size={12} color={th.mut}>{o.proofError}</T> : null}
               {o.deliveryDispute === 'open' ? <T size={13.5} weight="600" style={{marginTop: 10}}>Your report was sent. Our team is reviewing it.</T> : <>
                 <T size={13.5} style={{marginTop: 10}}>The store says this order was delivered. Please confirm, or report a problem before {o.receiptDeadlineAt ? new Date(o.receiptDeadlineAt).toLocaleString() : 'the deadline'}.</T>
                 <View style={{marginTop: 10}}><Cta label={receiptBusy ? 'Please wait…' : 'I received my order'} disabled={receiptBusy} onPress={() => void receiptCall('goodies_customer_confirm_received', {p_order_id: o.backendId}, 'Thanks for confirming.')} /></View>

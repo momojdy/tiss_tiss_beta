@@ -1,6 +1,7 @@
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import {supabase} from '../../lib/supabase';
+import {freshGpsSample} from './deliveryTracking';
 
 export const GOODIES_COURIER_LOCATION_TASK = 'wantiss-goodies-courier-background-location';
 
@@ -35,7 +36,8 @@ TaskManager.defineTask<LocationTaskData>(GOODIES_COURIER_LOCATION_TASK, async ({
     return;
   }
 
-  const latest = data.locations[data.locations.length - 1];
+  const latest = data.locations.reduce((newest, sample) => sample.timestamp > newest.timestamp ? sample : newest);
+  if (!freshGpsSample(latest)) return;
   const {latitude, longitude, accuracy, heading, speed} = latest.coords;
   const {error: updateError} = await supabase.rpc('goodies_courier_update_location', {
     p_order_id: activeOrderId,

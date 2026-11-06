@@ -1,10 +1,11 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import {ActivityIndicator, Alert, Pressable, ScrollView, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, AppState, Pressable, ScrollView, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import {GOODIES_COURIER_LOCATION_TASK} from './goodiesCourierBackgroundLocation';
 import {supabase} from '../../lib/supabase';
 import {friendlyError} from './friendlyError';
+import {freshGpsSample} from './deliveryTracking';
 
 type Delivery = {
   id:string; order_id:string; status:string; order_code:string; address:any; contact_phone:string|null;
@@ -23,26 +24,22 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
 
   const load=useCallback(async()=>{
     const {data:user}=await supabase.auth.getUser();
-    if(!user.user)return;
+    if(!user.user){setUid('');setDeliveries([]);setAvailable(false);setAcceptsCash(false);return;}
     setUid(user.user.id);
-    const {data:presence}=await supabase.from('goodies_courier_presence').select('is_available,accepts_cash_on_delivery').eq('courier_id',user.user.id).maybeSingle();
+    const {data:presence,error:presenceError}=await supabase.from('goodies_courier_presence').select('is_available,accepts_cash_on_delivery').eq('courier_id',user.user.id).maybeSingle();
+    if (presenceError) throw presenceError;
     setAvailable(!!presence?.is_available);setAcceptsCash(!!presence?.accepts_cash_on_delivery);
-    const {data:assignments,error}=await supabase.from('goodies_delivery_assignments').select('id,order_id,status').eq('courier_id',user.user.id).in('status',['offered','accepted','picked_up']).order('offered_at',{ascending:false}).limit(30);
+    const {data:orders,error}=await supabase.rpc('goodies_courier_orders');
     if(error)throw error;
-    const ids=(assignments||[]).map((a:any)=>a.order_id);
-    if(!ids.length){setDeliveries([]);return;}
-    const {data:orders,error:orderError}=await supabase.from('goodies_orders').select('id,order_code,address,contact_phone,items,total,payment_method,payment_status,business_id').in('id',ids);
-    if(orderError)throw orderError;
-    const next=(assignments||[]).flatMap((a:any)=>{const o=(orders||[]).find((x:any)=>x.id===a.order_id);return o?[{...o,id:a.id,order_id:a.order_id,status:a.status}]:[];});
-    setDeliveries(previous=>{
-      const signature=(items:Delivery[])=>items.map(d=>d.order_id+':'+d.status).sort().join('|');
-      return signature(previous)===signature(next)?previous:next;
-    });
+    setDeliveries((orders || []) as Delivery[]);
   },[]);
 
   useEffect(()=>{let active=true;void load().catch(e=>Alert.alert('Could not load deliveries',friendlyError(e,'Please try again.'))).finally(()=>{if(active)setLoading(false);});
-    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.new?.status!==payload.old?.status)void load();}).subscribe();
-    return()=>{active=false;void supabase.removeChannel(ch);};
+    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.eventType==='DELETE'||payload.new?.status!==payload.old?.status)void load().catch(e=>Alert.alert('Could not refresh deliveries',friendlyError(e,'Please try again.')));}).subscribe();
+    const refresh=()=>{void load().catch(e=>{if(active)Alert.alert('Could not refresh deliveries',friendlyError(e,'Please try again.'));});};
+    const poll=setInterval(()=>{if(AppState.currentState==='active')refresh();},30000);
+    const appState=AppState.addEventListener('change',state=>{if(state==='active')refresh();});
+    return()=>{active=false;clearInterval(poll);appState.remove();void supabase.removeChannel(ch);};
   },[load,uid]);
 
   const activeOrderId = deliveries.find(d=>d.status==='accepted'||d.status==='picked_up')?.order_id || '';
@@ -63,18 +60,22 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     const startTracking=async()=>{
       if(!activeOrderId){await stopWhenNoActiveDelivery();return;}
       const foreground=await Location.requestForegroundPermissionsAsync();
+      if(cancelled)return;
       if(!foreground.granted){
         if(!cancelled)setLocationStatus('Allow location access to track your active delivery.');
         return;
       }
 
       const taskAvailable=await TaskManager.isAvailableAsync();
+      if(cancelled)return;
       let backgroundStarted=false;
       if(taskAvailable){
         try {
           const background=await Location.requestBackgroundPermissionsAsync();
+          if(cancelled)return;
           if(background.granted){
             const started=await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
+            if(cancelled)return;
             if(!started){
               await Location.startLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK,{
                 accuracy:Location.Accuracy.High,
@@ -105,11 +106,14 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
         return;
       }
 
+      if(cancelled)return;
       foregroundSubscription=await Location.watchPositionAsync({
         accuracy:Location.Accuracy.High,
         timeInterval:5000,
         distanceInterval:15,
       },position=>{
+        if(cancelled)return;
+        if(!freshGpsSample(position)){setLocationStatus('Waiting for a fresh GPS location.');return;}
         void supabase.rpc('goodies_courier_update_location',{
           p_order_id:activeOrderId,
           p_latitude:position.coords.latitude,
@@ -121,6 +125,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
           if(error&&!cancelled)setLocationStatus(friendlyError(error,'GPS update failed.'));
         });
       });
+      if(cancelled)foregroundSubscription.remove();
     };
 
     void startTracking().catch(error=>{
@@ -164,15 +169,21 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   };
   const respond=async(orderId:string,accept:boolean)=>{
     setBusy(orderId);
-    const {error}=await supabase.rpc('goodies_courier_respond_assignment',{p_order_id:orderId,p_accept:accept});
-    if(error)Alert.alert('Could not respond',friendlyError(error,'Please try again.'));else await load();
-    setBusy('');
+    try {
+      const {error}=await supabase.rpc('goodies_courier_respond_assignment',{p_order_id:orderId,p_accept:accept});
+      if(error)throw error;
+      await load();
+    } catch(error) {Alert.alert('Could not refresh delivery response',friendlyError(error,'The response may have been saved. Refresh before retrying.'));}
+    finally {setBusy('');}
   };
   const advance=async(orderId:string,status:'picked_up'|'delivered')=>{
     setBusy(orderId);
-    const {error}=await supabase.rpc('goodies_courier_update_delivery_status',{p_order_id:orderId,p_status:status});
-    if(error)Alert.alert('Could not update delivery',friendlyError(error,'Please try again.'));else await load();
-    setBusy('');
+    try {
+      const {error}=await supabase.rpc('goodies_courier_update_delivery_status',{p_order_id:orderId,p_status:status});
+      if(error)throw error;
+      await load();
+    } catch(error) {Alert.alert('Could not refresh delivery status',friendlyError(error,'The update may have been saved. Refresh before retrying.'));}
+    finally {setBusy('');}
   };
 
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
