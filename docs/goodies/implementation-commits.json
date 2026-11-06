@@ -142,6 +142,57 @@
         "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
         "src/screens/businessSpace/BusinessSpaceScreen.tsx"
       ]
+    },
+    {
+      "commit": "e6a66a8d35374396d912ab1cc9ba6e09a6ef30f5",
+      "subject": "Record expanded Goodies integration tests and current release gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/customer-android-next.log",
+        "docs/goodies/evidence/customer-ios-next.log",
+        "docs/goodies/evidence/customer-lint-next.log",
+        "docs/goodies/evidence/customer-modified-lint-next.log",
+        "docs/goodies/evidence/customer-typecheck-next.log",
+        "docs/goodies/evidence/customer-web-next.log",
+        "docs/goodies/evidence/edge-tests-next.log",
+        "docs/goodies/evidence/migration-version-check.log",
+        "docs/goodies/implementation-commits.json",
+        "docs/goodies/source-inventory.json"
+      ]
+    },
+    {
+      "commit": "e532bb56d118e6c0d8e87ed3fb59a942224e1b08",
+      "subject": "Connect Goodies screen copy and shared card labels to the existing CMS",
+      "files": [
+        ".github/workflows/expo-validation.yml",
+        "docs/goodies/cms-field-coverage.json",
+        "scripts/check-goodies-cms.cjs",
+        "scripts/goodies-cms-source.cjs",
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "scripts/verify-goodies-visual-attributes.cjs",
+        "src/features/Goodies/GoodiesApp.tsx",
+        "src/features/Goodies/GoodiesCourierScreen.tsx",
+        "src/features/Goodies/actions.ts",
+        "src/features/Goodies/builders/Builder.tsx",
+        "src/features/Goodies/builders/engine.tsx",
+        "src/features/Goodies/components/Overlays.tsx",
+        "src/features/Goodies/components/Sheets.tsx",
+        "src/features/Goodies/components/cards.tsx",
+        "src/features/Goodies/components/ui.tsx",
+        "src/features/Goodies/content.ts",
+        "src/features/Goodies/data/promoText.ts",
+        "src/features/Goodies/friendlyError.ts",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/interfaceContent.ts",
+        "src/features/Goodies/screens/Account.tsx",
+        "src/features/Goodies/screens/Browse.tsx",
+        "src/features/Goodies/screens/CardAuthentication.tsx",
+        "src/features/Goodies/screens/Payments.tsx",
+        "src/features/Goodies/screens/Shop.tsx",
+        "src/features/Goodies/store.ts",
+        "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+        "tests/goodies-cms.test.cjs"
+      ]
     }
   ],
   "tiss-admin": [
@@ -213,6 +264,52 @@
         "src/features/admin/screens/content/GoodiesEditor.tsx",
         "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
         "src/features/admin/shell/NotificationsSheet.tsx"
+      ]
+    },
+    {
+      "commit": "f7431c600f7a6a9479f03d372b36cbe6aa5dc078",
+      "subject": "Record passing admin checks and remaining hosted verification gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/admin-access-tests.log",
+        "docs/goodies/evidence/admin-android-next.log",
+        "docs/goodies/evidence/admin-ios-next.log",
+        "docs/goodies/evidence/admin-typecheck-next.log"
+      ]
+    },
+    {
+      "commit": "86b11e9b3a564c5ea22bc2a137c228464062b0ad",
+      "subject": "Complete manual Goodies page fields, policy content and artwork editing",
+      "files": [
+        "package.json",
+        "src/features/admin/goodiesConsumer/GoodiesApp.tsx",
+        "src/features/admin/goodiesConsumer/builders/Builder.tsx",
+        "src/features/admin/goodiesConsumer/builders/engine.tsx",
+        "src/features/admin/goodiesConsumer/components/Overlays.tsx",
+        "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+        "src/features/admin/goodiesConsumer/components/cards.tsx",
+        "src/features/admin/goodiesConsumer/components/ui.tsx",
+        "src/features/admin/goodiesConsumer/content.ts",
+        "src/features/admin/goodiesConsumer/contentEditing.ts",
+        "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+        "src/features/admin/goodiesConsumer/customerPageCatalog.json",
+        "src/features/admin/goodiesConsumer/customerRestrictionCatalog.json",
+        "src/features/admin/goodiesConsumer/draft.ts",
+        "src/features/admin/goodiesConsumer/editContext.tsx",
+        "src/features/admin/goodiesConsumer/i18n/index.ts",
+        "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+        "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+        "src/features/admin/goodiesConsumer/screens/Account.tsx",
+        "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+        "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+        "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+        "src/features/admin/goodiesConsumer/store.ts",
+        "src/features/admin/lib/adminBackend.ts",
+        "src/features/admin/lib/cmsAssetPagination.ts",
+        "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+        "src/features/admin/screens/content/GoodiesEditor.tsx",
+        "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+        "tests/cms.test.cjs"
       ]
     }
   ]

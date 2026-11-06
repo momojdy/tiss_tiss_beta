@@ -9,6 +9,15 @@ check or inspection established a defect. NOT VERIFIED means the required runtim
 test or supporting environment was unavailable or has not been executed. A unit
 test does not establish the corresponding complete customer workflow.
 
+## Current CMS follow-up
+
+See [CMS coverage and limitations](CMS-COVERAGE.md) and the complete
+[field/source register](cms-field-coverage.json). All 33 customer route cases are
+represented with 1,246 text keys and additional structured content sections.
+Four customer CMS tests, ten admin CMS tests and four admin access tests pass;
+47 backend regression tests pass. Hosted publication and complete phone-preview
+parity remain NOT VERIFIED. No main-project content/schema mutation was made.
+
 ## Baseline and traceability
 
 - Customer/vendor branch: `goodies/production-readiness`, initially `75857548e48594429eb229d105412f2ee41fcacf`.
