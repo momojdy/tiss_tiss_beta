@@ -1,3 +1,5 @@
+> Historical baseline audit. Subsequent candidate implementation and verification are documented in [IMPLEMENTATION-STATUS.md](IMPLEMENTATION-STATUS.md). Production deployment and full acceptance remain outstanding.
+
 # Goodies production-readiness audit — 6 November 2026
 
 **Verdict: NOT PRODUCTION READY.** Reproduced defects affect the consumer, vendor and admin applications. Full release acceptance also remains NOT VERIFIED. No production records, secrets, charges, migrations or published content were changed by this audit. No application UI was changed.

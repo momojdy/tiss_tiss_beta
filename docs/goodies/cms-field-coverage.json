@@ -15497,526 +15497,540 @@
       "id": "lbl.interface.settings",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 45,
+      "line": 44,
       "fallback": "Settings"
     },
     {
       "id": "lbl.notifsTitle",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 47,
+      "line": 46,
       "fallback": "Notifications"
     },
     {
       "id": "lbl.settingsOrderUpdates",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 48,
+      "line": 47,
       "fallback": "Order updates"
     },
     {
       "id": "lbl.settingsOrderUpdates",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 48,
+      "line": 47,
       "fallback": "Order updates"
     },
     {
       "id": "lbl.settingsOffers",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 49,
+      "line": 48,
       "fallback": "Offers and deals"
     },
     {
       "id": "lbl.settingsOffers",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 49,
+      "line": 48,
       "fallback": "Offers and deals"
     },
     {
       "id": "lbl.settingsAccount",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 50,
+      "line": 49,
       "fallback": "Account"
     },
     {
       "id": "lbl.settingsAddresses",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 51,
+      "line": 50,
       "fallback": "Saved addresses"
     },
     {
       "id": "lbl.settingsAddressDefault",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 51,
+      "line": 50,
       "fallback": "{address} · Wantiss default"
     },
     {
       "id": "lbl.settingsAddAddressHint",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 51,
+      "line": 50,
       "fallback": "Add a delivery address"
     },
     {
       "id": "lbl.settingsFavorites",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 52,
+      "line": 51,
       "fallback": "Favorites"
     },
     {
       "id": "lbl.accountSavedCount",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 52,
+      "line": 51,
       "fallback": "{count} saved"
     },
     {
       "id": "lbl.settingsCoupons",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 53,
+      "line": 52,
       "fallback": "Coupons and offers"
     },
     {
       "id": "lbl.settingsDarkMode",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 55,
+      "line": 54,
       "fallback": "Dark mode"
     },
     {
       "id": "lbl.accountDarkModeHint",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 55,
+      "line": 54,
       "fallback": "Goodies only. Other Wantiss features keep their theme."
     },
     {
       "id": "lbl.settingsDarkMode",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 55,
+      "line": 54,
       "fallback": "Dark mode"
     },
     {
       "id": "lbl.settingsHelp",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 56,
+      "line": 55,
       "fallback": "Help center"
     },
     {
       "id": "lbl.accountFaqSupportHint",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 56,
+      "line": 55,
       "fallback": "FAQs and support"
     },
     {
       "id": "lbl.profileTitle",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 65,
+      "line": 64,
       "fallback": "Profile"
     },
     {
       "id": "lbl.profileShared",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 67,
+      "line": 66,
       "fallback": "Shared Wantiss account"
     },
     {
       "id": "lbl.settingsAddresses",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 68,
+      "line": 67,
       "fallback": "Saved addresses"
     },
     {
       "id": "lbl.profileOrderHistory",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 69,
+      "line": 68,
       "fallback": "Order history"
     },
     {
       "id": "lbl.accountOrderCountOne",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 69,
+      "line": 68,
       "fallback": "{count} order"
     },
     {
       "id": "lbl.accountOrderCountMany",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 69,
+      "line": 68,
       "fallback": "{count} orders"
     },
     {
       "id": "lbl.settingsFavorites",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 70,
+      "line": 69,
       "fallback": "Favorites"
     },
     {
       "id": "lbl.accountNotificationPreferences",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 71,
+      "line": 70,
       "fallback": "Notification preferences"
     },
     {
       "id": "lbl.accountHelpSupport",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 72,
+      "line": 71,
       "fallback": "Help and support"
     },
     {
       "id": "lbl.profilePolicies",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 73,
+      "line": 72,
       "fallback": "Terms and policies"
     },
     {
       "id": "lbl.page.screens.Account.c38650a85d",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 86,
+      "line": 85,
       "fallback": "Allow location access to fill your address from where you are."
     },
     {
       "id": "lbl.page.screens.Account.193092a58d",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 89,
+      "line": 88,
       "fallback": "We could not turn your location into an address. Please type it in."
     },
     {
       "id": "lbl.page.screens.Account.795413196e",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 94,
+      "line": 93,
       "fallback": "Address filled from your current location. Check the details before saving."
     },
     {
       "id": "lbl.page.screens.Account.3a65b007c6",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 95,
+      "line": 94,
       "fallback": "Could not get your current location."
     },
     {
       "id": "lbl.page.screens.Account.39f9c51533",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 98,
+      "line": 97,
       "fallback": "Could not load saved addresses."
     },
     {
       "id": "lbl.page.screens.Account.81e884cb2e",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 100,
+      "line": 99,
       "fallback": "Dominican Republic"
     },
     {
       "id": "lbl.page.screens.Account.49dca65f36",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 100,
+      "line": 99,
       "fallback": "United States"
     },
     {
       "id": "lbl.page.screens.Account.f97e9da0e3",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 100,
+      "line": 99,
       "fallback": "Other"
     },
     {
       "id": "lbl.page.screens.Account.2e1d18330b",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 107,
+      "line": 106,
       "fallback": "Please sign in again."
     },
     {
       "id": "lbl.page.screens.Account.a4a7e583d4",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 114,
+      "line": 113,
       "fallback": "Could not update the Goodies delivery address."
     },
     {
       "id": "lbl.page.screens.Account.805fcf17d8",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 119,
+      "line": 118,
       "fallback": "Enter the street address, city and country."
     },
     {
       "id": "lbl.page.screens.Account.2e1d18330b",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 125,
+      "line": 124,
       "fallback": "Please sign in again."
     },
     {
       "id": "lbl.page.screens.Account.2617eebd60",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 154,
+      "line": 153,
       "fallback": "Address saved to your Wantiss account."
     },
     {
       "id": "lbl.page.screens.Account.1695cb0894",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 154,
+      "line": 153,
       "fallback": "Address updated."
     },
     {
       "id": "lbl.page.screens.Account.7458ba1a75",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 157,
+      "line": 156,
       "fallback": "Could not save this address."
     },
     {
       "id": "lbl.page.screens.Account.1bad0328df",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 169,
+      "line": 168,
       "fallback": "Address deleted."
     },
     {
       "id": "lbl.page.screens.Account.ceab8c71ca",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 170,
+      "line": 169,
       "fallback": "Could not delete this address."
     },
     {
       "id": "lbl.settingsAddresses",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 175,
+      "line": 174,
       "fallback": "Saved addresses"
     },
     {
       "id": "lbl.accountWantissDefault",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 179,
+      "line": 178,
       "fallback": "Wantiss default"
     },
     {
       "id": "lbl.page.screens.Account.7208bf1efb",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 179,
+      "line": 178,
       "fallback": "GOODIES"
     },
     {
       "id": "lbl.accountAddressNote",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 180,
+      "line": 179,
       "fallback": "Note:"
     },
     {
       "id": "lbl.accountEdit",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 182,
+      "line": 181,
       "fallback": "Edit"
     },
     {
       "id": "lbl.accountUseForGoodies",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 183,
+      "line": 182,
       "fallback": "Use for Goodies"
     },
     {
       "id": "lbl.page.screens.Account.b8bf594a54",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 184,
+      "line": 183,
       "fallback": "Wantiss default"
     },
     {
       "id": "lbl.page.screens.Account.73ec2a8b0d",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 184,
+      "line": 183,
       "fallback": "Change your main Wantiss default address in Me → Settings → Saved addresses."
     },
     {
       "id": "lbl.page.screens.Account.04715e8c64",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 184,
+      "line": 183,
       "fallback": "Main default"
     },
     {
       "id": "lbl.accountDeleteAddress",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 185,
+      "line": 184,
       "fallback": "Delete"
     },
     {
       "id": "lbl.accountEditAddress",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 191,
+      "line": 190,
       "fallback": "Edit address"
     },
     {
       "id": "lbl.accountNewAddress",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 191,
+      "line": 190,
       "fallback": "New address"
     },
     {
       "id": "lbl.page.screens.Account.ac56027a0b",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 193,
+      "line": 192,
       "fallback": "Locating…"
     },
     {
       "id": "lbl.page.screens.Account.dc9080f6a5",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 193,
+      "line": 192,
       "fallback": "Use my current location"
     },
     {
       "id": "lbl.accountStreetArea",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 194,
+      "line": 193,
       "fallback": "Street and area"
     },
     {
       "id": "lbl.page.screens.Account.fc33f73246",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 195,
+      "line": 194,
       "fallback": "City"
     },
     {
       "id": "lbl.page.screens.Account.c53e87ea8b",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 196,
+      "line": 195,
       "fallback": "Department / State"
     },
     {
       "id": "lbl.accountApartment",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 197,
+      "line": 196,
       "fallback": "Apartment, building, floor or landmark"
     },
     {
       "id": "lbl.accountDeliveryInstructions",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 198,
+      "line": 197,
       "fallback": "Delivery instructions"
     },
     {
       "id": "lbl.accountCountry",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 199,
+      "line": 198,
       "fallback": "Country"
     },
     {
       "id": "lbl.page.screens.Account.898782e5f6",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 199,
+      "line": 198,
       "fallback": "Country name (e.g. Philippines)"
     },
     {
       "id": "lbl.page.screens.Account.23e39291d6",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 200,
+      "line": 199,
       "fallback": "Saving…"
     },
     {
       "id": "lbl.accountSaveAddress",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 200,
+      "line": 199,
       "fallback": "Save address"
     },
     {
       "id": "lbl.accountAddAddress",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 202,
+      "line": 201,
       "fallback": "+ Add new address"
     },
     {
       "id": "lbl.chatErrSignIn",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 224,
+      "line": 223,
       "fallback": "Sign in to message this store. Your conversation will appear here after you sign in."
     },
     {
       "id": "lbl.accountCustomerFallback",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 229,
+      "line": 228,
       "fallback": "Customer"
     },
     {
       "id": "lbl.chatErrOpen",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 232,
+      "line": 231,
       "fallback": "Could not open this store conversation."
     },
     {
       "id": "lbl.chatErrOpen",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 236,
+      "line": 235,
       "fallback": "Could not open this store conversation."
     },
     {
       "id": "lbl.chatErrRefresh",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 243,
+      "line": 242,
       "fallback": "Could not refresh messages."
     },
     {
       "id": "lbl.chatErrSend",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 256,
+      "line": 255,
       "fallback": "Message could not be sent."
+    },
+    {
+      "id": "lbl.chatTitle",
+      "page": "Store conversation",
+      "source": "screens/Account.tsx",
+      "line": 262,
+      "fallback": "Message store"
+    },
+    {
+      "id": "lbl.chatActive",
+      "page": "Store conversation",
+      "source": "screens/Account.tsx",
+      "line": 263,
+      "fallback": "Chat with the store"
     },
     {
       "id": "lbl.chatTitle",
@@ -16026,388 +16040,374 @@
       "fallback": "Message store"
     },
     {
-      "id": "lbl.chatActive",
-      "page": "Store conversation",
-      "source": "screens/Account.tsx",
-      "line": 264,
-      "fallback": "Chat with the store"
-    },
-    {
-      "id": "lbl.chatTitle",
-      "page": "Store conversation",
-      "source": "screens/Account.tsx",
-      "line": 264,
-      "fallback": "Message store"
-    },
-    {
       "id": "lbl.accountAuto1AABD31",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 264,
+      "line": 263,
       "fallback": "Goodies"
     },
     {
       "id": "lbl.chatTryAgain",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 265,
+      "line": 264,
       "fallback": "Try again"
     },
     {
       "id": "lbl.chatOpening",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 266,
+      "line": 265,
       "fallback": "Opening conversation…"
     },
     {
       "id": "lbl.chatContactStore",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 269,
+      "line": 268,
       "fallback": "Contact the store"
     },
     {
       "id": "lbl.chatFirstMessageHint",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 269,
+      "line": 268,
       "fallback": "Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies."
     },
     {
       "id": "lbl.chatWaitingStore",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 270,
+      "line": 269,
       "fallback": "Waiting for the store to reply. The chat opens here as soon as they respond."
     },
     {
       "id": "lbl.chatMessagesSent",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 270,
+      "line": 269,
       "fallback": "Messages sent"
     },
     {
       "id": "lbl.chatComposer",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 274,
+      "line": 273,
       "fallback": "Write a message…"
     },
     {
       "id": "lbl.chatSend",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 275,
+      "line": 274,
       "fallback": "Send message"
     },
     {
       "id": "lbl.chatSend",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 275,
+      "line": 274,
       "fallback": "Send"
     },
     {
       "id": "lbl.page.screens.Account.71a14bea90",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 284,
+      "line": 283,
       "fallback": "Order problem"
     },
     {
       "id": "lbl.page.screens.Account.f97e9da0e3",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 284,
+      "line": 283,
       "fallback": "Other"
     },
     {
       "id": "lbl.page.screens.Account.f97e9da0e3",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 284,
+      "line": 283,
       "fallback": "Other"
     },
     {
       "id": "lbl.accountMessageMinLength",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 290,
+      "line": 289,
       "fallback": "Please write at least 10 characters"
     },
     {
       "id": "lbl.contactErrSignInStore",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 299,
+      "line": 298,
       "fallback": "Sign in to contact this store. Your message has not been sent."
     },
     {
       "id": "lbl.accountCustomerFallback",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 302,
+      "line": 301,
       "fallback": "Customer"
     },
     {
       "id": "lbl.contactErrNoVendor",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 305,
+      "line": 304,
       "fallback": "We could not find the vendor account linked to this store. Your message has not been sent."
     },
     {
       "id": "lbl.page.screens.Account.1a09f5e12f",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 308,
+      "line": 307,
       "fallback": "Support ticket "
     },
     {
       "id": "lbl.page.screens.Account.289cf25261",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 308,
+      "line": 307,
       "fallback": " · Order "
     },
     {
       "id": "lbl.contactErrSignInSupport",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 314,
+      "line": 313,
       "fallback": "Sign in to contact support. Your ticket has not been created."
     },
     {
       "id": "lbl.contactErrNotConfirmed",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 322,
+      "line": 321,
       "fallback": "Support did not confirm the ticket. Please retry before leaving this screen."
     },
     {
       "id": "lbl.contactErrServerNotConfirmed",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 325,
+      "line": 324,
       "fallback": "The server did not confirm your support ticket. Please retry."
     },
     {
       "id": "lbl.accountSendMessageFailed",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 329,
+      "line": 328,
       "fallback": "Could not send your message. Please try again."
     },
     {
       "id": "lbl.contactStoreTitle",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 333,
+      "line": 332,
       "fallback": "Contact store"
     },
     {
       "id": "lbl.contactSupportTitle",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 333,
+      "line": 332,
       "fallback": "Contact support"
     },
     {
       "id": "lbl.accountAuto11BPHFG",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 335,
+      "line": 334,
       "fallback": "Your message will be sent to this store."
     },
     {
       "id": "lbl.accountSupportTopic",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 336,
+      "line": 335,
       "fallback": "Topic"
     },
     {
       "id": "lbl.accountOptionalOrder",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 339,
+      "line": 338,
       "fallback": "Order (optional)"
     },
     {
       "id": "lbl.accountNone",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 340,
+      "line": 339,
       "fallback": "None"
     },
     {
       "id": "lbl.accountStoreFallback",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 340,
+      "line": 339,
       "fallback": "Store"
     },
     {
       "id": "lbl.accountMessage",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 342,
+      "line": 341,
       "fallback": "Message"
     },
     {
       "id": "lbl.accountSupportMessagePlaceholder",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 342,
+      "line": 341,
       "fallback": "Tell us what happened (at least 10 characters)"
     },
     {
       "id": "lbl.contactSending",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 343,
+      "line": 342,
       "fallback": "Sending…"
     },
     {
       "id": "lbl.contactSend",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 343,
+      "line": 342,
       "fallback": "Send message"
     },
     {
       "id": "lbl.contactStoreNote",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 344,
+      "line": 343,
       "fallback": "We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies."
     },
     {
       "id": "lbl.contactSupportNote",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 344,
+      "line": 343,
       "fallback": "Support messages are tracked with a ticket number."
     },
     {
       "id": "lbl.accountSupportSentTitle",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 358,
+      "line": 357,
       "fallback": "Message sent"
     },
     {
       "id": "lbl.accountStoreTicketSent",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 358,
+      "line": 357,
       "fallback": "Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply."
     },
     {
       "id": "lbl.accountSupportTicketSent",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 358,
+      "line": 357,
       "fallback": "Your support request {ticket} has been sent. Keep this reference if you contact us again."
     },
     {
       "id": "lbl.accountOpenStoreConversation",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 358,
+      "line": 357,
       "fallback": "Open store conversation"
     },
     {
       "id": "lbl.accountBackGoodies",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 358,
+      "line": 357,
       "fallback": "Back to Goodies"
     },
     {
       "id": "lbl.profilePolicies",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 359,
+      "line": 358,
       "fallback": "Terms and policies"
     },
     {
       "id": "lbl.legalUnavailableTitle",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 360,
+      "line": 359,
       "fallback": "This policy is not available yet"
     },
     {
       "id": "lbl.legalUnavailableBody",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 360,
+      "line": 359,
       "fallback": "An approved, published version of this policy is not currently available. Please check back later or contact support if you need help."
     },
     {
       "id": "lbl.legalPolicyTitle",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 360,
+      "line": 359,
       "fallback": "Policy"
     },
     {
       "id": "lbl.accountPageNotFound",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 360,
+      "line": 359,
       "fallback": "Page not found"
     },
     {
       "id": "lbl.accountBack",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 360,
+      "line": 359,
       "fallback": "Back"
     },
     {
       "id": "lbl.accountNotificationTitle",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "Notification"
     },
     {
       "id": "lbl.accountViewOrder",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "View order"
     },
     {
       "id": "lbl.accountSeeDetails",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "See details"
     },
     {
       "id": "lbl.accountNotificationTitle",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "Notification"
     },
     {
       "id": "lbl.accountNotificationNotFound",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "Notification not found"
     },
     {
       "id": "lbl.accountBackGoodies",
       "page": "Account subpages",
       "source": "screens/Account.tsx",
-      "line": 361,
+      "line": 360,
       "fallback": "Back to Goodies"
     },
     {
@@ -21461,61 +21461,61 @@
       "route": "settings",
       "page": "Settings",
       "source": "screens/Account.tsx",
-      "line": 352
+      "line": 351
     },
     {
       "route": "profile",
       "page": "Profile",
       "source": "screens/Account.tsx",
-      "line": 353
+      "line": 352
     },
     {
       "route": "addresses",
       "page": "Addresses",
       "source": "screens/Account.tsx",
-      "line": 354
+      "line": 353
     },
     {
       "route": "payments",
       "page": "Payment methods",
       "source": "screens/Account.tsx",
-      "line": 355
+      "line": 354
     },
     {
       "route": "contact",
       "page": "Contact support",
       "source": "screens/Account.tsx",
-      "line": 356
+      "line": 355
     },
     {
       "route": "storechat",
       "page": "Store conversation",
       "source": "screens/Account.tsx",
-      "line": 357
+      "line": 356
     },
     {
       "route": "supdone",
       "page": "Support confirmation",
       "source": "screens/Account.tsx",
-      "line": 358
+      "line": 357
     },
     {
       "route": "policies",
       "page": "Policies",
       "source": "screens/Account.tsx",
-      "line": 359
+      "line": 358
     },
     {
       "route": "policy",
       "page": "Policy document",
       "source": "screens/Account.tsx",
-      "line": 360
+      "line": 359
     },
     {
       "route": "ndetail",
       "page": "Notification detail",
       "source": "screens/Account.tsx",
-      "line": 361
+      "line": 360
     }
   ]
 }

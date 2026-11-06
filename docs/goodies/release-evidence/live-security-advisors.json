@@ -1,0 +1,1027 @@
+{
+  "inspectedAt": "2026-11-06",
+  "project": "ycbirmgppwavorwudlrv",
+  "scope": "Read-only main advisories; candidate migrations are not deployed; findings require authorization review, not blanket public policies.",
+  "groups": [
+    {
+      "name": "rls_enabled_no_policy",
+      "title": "RLS Enabled No Policy",
+      "level": "INFO",
+      "facing": "EXTERNAL",
+      "categories": [
+        "SECURITY"
+      ],
+      "description": "Detects cases where row level security (RLS) has been enabled on a table but no RLS policies have been created.",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+      "count": 10,
+      "findings": [
+        {
+          "detail": "Table \\`public.goodies_card_checkout_attempts\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_card_checkout_attempts",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_card_refund_queue\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_card_refund_queue",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_checkout_attempts\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_checkout_attempts",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_delivery_quotes\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_delivery_quotes",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_geocode_cache\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_geocode_cache",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_ingredient_requests\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_ingredient_requests",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_ingredient_rules\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_ingredient_rules",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_promotions\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_promotions",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_route_cache\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_route_cache",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Table \\`public.goodies_stripe_webhook_events\\` has RLS enabled, but no policies exist",
+          "metadata": {
+            "name": "goodies_stripe_webhook_events",
+            "type": "table",
+            "schema": "public"
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        }
+      ]
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "title": "Signed-In Users Can Execute SECURITY DEFINER Function",
+      "level": "WARN",
+      "facing": "EXTERNAL",
+      "categories": [
+        "SECURITY"
+      ],
+      "description": "Detects `SECURITY DEFINER` functions that are callable by signed-in users. Revoke `EXECUTE`, switch the function to `SECURITY INVOKER`, or move it out of your exposed API schema if signed-in users should not call it.",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+      "count": 82,
+      "findings": [
+        {
+          "detail": "Function `public.accept_goodies_order(p_order_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/accept_goodies_order`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "accept_goodies_order",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.cancel_goodies_order_by_store(p_order_id uuid, p_reason_code text, p_reason_detail text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/cancel_goodies_order_by_store`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "cancel_goodies_order_by_store",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.decline_goodies_order(p_order_id uuid, p_reason_code text, p_reason_detail text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/decline_goodies_order`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "decline_goodies_order",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.get_my_goodies_access_status()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/get_my_goodies_access_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "get_my_goodies_access_status",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_add_courier(p_courier_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_add_courier`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_add_courier",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_courier_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_analytics()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_analytics`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_analytics",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_cancel_order(p_order_id uuid, p_reason text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_cancel_order`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_cancel_order",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_reason text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_dashboard()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_dashboard`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_dashboard",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_list_courier_candidates()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_list_courier_candidates`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_list_courier_candidates",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_list_delivery_reports()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_list_delivery_reports`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_list_delivery_reports",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_remove_courier(p_courier_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_remove_courier`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_remove_courier",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_courier_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_resolve_delivery_dispute(p_order_id uuid, p_resolution text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_resolve_delivery_dispute`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_resolve_delivery_dispute",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_resolution text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_review_product(p_product_id uuid, p_status text, p_note text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_review_product`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_review_product",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_product_id uuid, p_status text, p_note text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_set_merchant_status(p_business_id uuid, p_live boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_set_merchant_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_set_merchant_status",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business_id uuid, p_live boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_update_delivery_surcharge_policy(p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_update_delivery_surcharge_policy`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_update_delivery_surcharge_policy",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_update_fee_policy(p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[])` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_update_fee_policy`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_update_fee_policy",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[]",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_update_max_stops(p_max_stops integer)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_update_max_stops`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_update_max_stops",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_max_stops integer",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_admin_update_multi_store_policy(p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_update_multi_store_policy`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_admin_update_multi_store_policy",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_assign_courier(p_order_id uuid, p_courier_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_assign_courier`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_assign_courier",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_courier_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_assign_own_driver(p_order_id uuid, p_driver_name text, p_driver_phone text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_assign_own_driver`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_assign_own_driver",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_driver_name text, p_driver_phone text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_cash_global_enabled()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_cash_global_enabled`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_cash_global_enabled",
+            "schema": "public",
+            "language": "sql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_cash_on_delivery_available(p_store_id text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_cash_on_delivery_available`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_cash_on_delivery_available",
+            "schema": "public",
+            "language": "sql",
+            "arguments": "p_store_id text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_courier_respond_assignment(p_order_id uuid, p_accept boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_courier_respond_assignment`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_courier_respond_assignment",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_accept boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_courier_update_delivery_status(p_order_id uuid, p_status text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_courier_update_delivery_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_courier_update_delivery_status",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_status text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_courier_update_location(p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision, p_heading double precision, p_speed_mps double precision)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_courier_update_location`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_courier_update_location",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision, p_heading double precision, p_speed_mps double precision",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_customer_confirm_received(p_order_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_customer_confirm_received`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_customer_confirm_received",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_customer_dispute_delivery(p_order_id uuid, p_reason text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_customer_dispute_delivery`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_customer_dispute_delivery",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_reason text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_get_ingredient_rules()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_get_ingredient_rules`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_get_ingredient_rules",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_add_item(p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_add_item`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_add_item",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_close(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_close`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_close",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_create(p_store_id text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_create`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_create",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_store_id text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_join(p_invite_code text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_join`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_join",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_invite_code text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_checkout(p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric, p_notes text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_checkout`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_checkout",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric, p_notes text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_checkout_estimate(p_group_id uuid, p_order_type text, p_address jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_checkout_estimate`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_checkout_estimate",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid, p_order_type text, p_address jsonb",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_checkout_preview(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_checkout_preview`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_checkout_preview",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_create(p_store_id text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_create`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_create",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_store_id text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_decline_invite(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_decline_invite`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_decline_invite",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_end(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_end`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_end",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_get_status(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_get_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_get_status",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_invite_friends(p_group_id uuid, p_user_ids uuid[])` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_invite_friends`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_invite_friends",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid, p_user_ids uuid[]",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_join(p_invite_code text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_join`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_join",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_invite_code text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_list_friends(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_list_friends`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_list_friends",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_list_members(p_group_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_list_members`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_list_members",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_my_invites()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_my_invites`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_my_invites",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_remove_item(p_group_id uuid, p_line_key text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_remove_item`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_remove_item",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid, p_line_key text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_order_upsert_item(p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_order_upsert_item`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_order_upsert_item",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_group_remove_item(p_item_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_group_remove_item`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_group_remove_item",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_item_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_list_dispatch_couriers(p_order_id uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_list_dispatch_couriers`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_list_dispatch_couriers",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_list_ingredient_requests(p_business uuid)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_list_ingredient_requests`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_list_ingredient_requests",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_list_library_ingredients()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_list_library_ingredients`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_list_library_ingredients",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_place_multi_order(p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_place_multi_order`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_place_multi_order",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_builder_configs(p_business uuid, p_configs jsonb)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_builder_configs`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_builder_configs",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_configs jsonb",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_cover(p_business uuid, p_cover_url text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_cover`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_cover",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_cover_url text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_location(p_business uuid, p_latitude double precision, p_longitude double precision)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_location`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_location",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_latitude double precision, p_longitude double precision",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_setup(p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_setup`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_setup",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_save_store_thumbnail(p_business uuid, p_thumbnail_url text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_save_store_thumbnail`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_save_store_thumbnail",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_thumbnail_url text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_self_delivery_mark_delivered(p_order_id uuid, p_proof_url text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_self_delivery_mark_delivered`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_self_delivery_mark_delivered",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_proof_url text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_send_store_message(p_conversation_id uuid, p_body text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_send_store_message`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_send_store_message",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_conversation_id uuid, p_body text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_set_courier_availability(p_is_available boolean, p_accepts_cash_on_delivery boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_set_courier_availability`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_set_courier_availability",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_is_available boolean, p_accepts_cash_on_delivery boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_set_store_cash_policy(p_store_id text, p_enabled boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_set_store_cash_policy`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_set_store_cash_policy",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_store_id text, p_enabled boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_set_store_live(p_business uuid, p_live boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_set_store_live`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_set_store_live",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_live boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_start_store_conversation(p_store_id text, p_customer_name text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_start_store_conversation`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_start_store_conversation",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_store_id text, p_customer_name text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_submit_ingredient_request(p_business uuid, p_name text, p_builder text, p_role text, p_note text, p_image_path text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_submit_ingredient_request`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_submit_ingredient_request",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business uuid, p_name text, p_builder text, p_role text, p_note text, p_image_path text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.goodies_vendor_reply(p_conversation_id uuid, p_body text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_vendor_reply`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "goodies_vendor_reply",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_conversation_id uuid, p_body text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.place_goodies_card_order_once(p_idempotency_key text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/place_goodies_card_order_once`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "place_goodies_card_order_once",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_idempotency_key text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.place_goodies_order_with_payment_once(p_idempotency_key text, p_payment_method text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/place_goodies_order_with_payment_once`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "place_goodies_order_with_payment_once",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_idempotency_key text, p_payment_method text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.set_goodies_order_status(p_order_id uuid, p_status text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/set_goodies_order_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "set_goodies_order_status",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_order_id uuid, p_status text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_list_goodies_builder_businesses()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_list_goodies_builder_businesses`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_list_goodies_builder_businesses",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_list_goodies_builder_configs()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_list_goodies_builder_configs`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_list_goodies_builder_configs",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_list_ingredient_requests(p_status text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_list_ingredient_requests`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_list_ingredient_requests",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_status text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_list_library_ingredients()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_list_library_ingredients`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_list_library_ingredients",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_requeue_goodies_card_refund(p_queue_id uuid, p_reason text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_requeue_goodies_card_refund`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_requeue_goodies_card_refund",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_queue_id uuid, p_reason text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_review_ingredient_request(p_request_id uuid, p_status text, p_review_note text, p_admin_asset_key text, p_role text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_review_ingredient_request`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_review_ingredient_request",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_request_id uuid, p_status text, p_review_note text, p_admin_asset_key text, p_role text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_save_goodies_builder_config(p_business_id uuid, p_builder_id text, p_config jsonb, p_enabled boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_save_goodies_builder_config`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_save_goodies_builder_config",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_business_id uuid, p_builder_id text, p_config jsonb, p_enabled boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_save_library_ingredient(p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_save_library_ingredient`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_save_library_ingredient",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        },
+        {
+          "detail": "Function `public.wantiss_admin_set_ingredient_rules(p_rules text)` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/wantiss_admin_set_ingredient_rules`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+          "metadata": {
+            "name": "wantiss_admin_set_ingredient_rules",
+            "schema": "public",
+            "language": "plpgsql",
+            "arguments": "p_rules text",
+            "security_definer": true
+          },
+          "observed_at": "2026-11-06T11:38:48.760Z"
+        }
+      ]
+    }
+  ]
+}

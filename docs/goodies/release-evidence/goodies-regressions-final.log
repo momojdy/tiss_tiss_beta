@@ -1,0 +1,32 @@
+Receipt action failed
+✔ REGRESSION A01: vendor errors never render raw database detail (143.553127ms)
+✔ REGRESSION A02: receipt errors use safe app-owned copy (48.223786ms)
+✔ REGRESSION A03: admin Reject requires and sends a reason (19.133115ms)
+✔ REGRESSION A04: rating Submit claims success only after backend success (45.719894ms)
+✔ REGRESSION A05: support confirmation truthfully acknowledges submission (49.76175ms)
+✔ REGRESSION A06: historical stores never acquire sample reviews (42.083399ms)
+✔ REGRESSION A07: missing store renders a safe fallback (58.163968ms)
+✔ REGRESSION A08: historical orders render without a catalog store (35.884771ms)
+✔ REGRESSION A09: pickup map uses valid coordinates and otherwise shows unavailable state (34.742364ms)
+✔ LIVE SNAPSHOT A10 (deployment pending): live product photo-array grants disagree with the vendor save payload (0.720686ms)
+✔ REGRESSION A11: fee save refuses unloaded defaults (12.127147ms)
+✔ REGRESSION A12: notification switches persist backend preference before local success (20.903829ms)
+✔ REGRESSION A13: business storefront selection is included in save (20.271852ms)
+✔ REGRESSION A14: secondary orders render canonical quantities and names (19.335409ms)
+✔ REGRESSION A15: admin analytics failures have a safe persistent error (11.196565ms)
+✔ REGRESSION A16: failed payout summary displays unavailable instead of zero (14.613064ms)
+✔ REGRESSION A17: placeholder catalogs cannot offer seeded builders (14.561676ms)
+✔ admin transport failures return a safe failure and do not expose exception details (9.749854ms)
+✔ failed review persistence cannot produce a success toast or local review (50.49807ms)
+✔ history paging merges cached rows, advances its server cursor and prevents concurrent duplicate reads (21.77078ms)
+✔ history paging cannot overwrite a newer refresh cursor or expose a prior account response (6.563993ms)
+✔ checkout locks before asynchronous validation and always releases after transport failure (12.585597ms)
+✔ vendor overview never renders a zero wallet or no-revenue claim after a failed summary request (18.687964ms)
+ℹ tests 23
+ℹ suites 0
+ℹ pass 23
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 719.4393

@@ -1,0 +1,42 @@
+
+> wantiss-admin-rn@0.12.0 test
+> node tests/access.test.cjs && node tests/cms.test.cjs
+
+✔ signed-out and revoked sessions never inherit prototype permissions (121.068099ms)
+✔ CMS and account controls use canonical server keys and required manage level (36.6196ms)
+✔ expired and revoked grants cannot authorize controls (39.989989ms)
+✔ permanent bans remain Super Admin only despite arbitrary granted labels (25.600586ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 250.365767
+✔ every registered source field is manually editable in all five locales and survives save serialization (82.361811ms)
+✔ opening an existing draft preserves all edited content, translations and protected configuration (8.054925ms)
+✔ every discovered route has a page entry and every referenced label exists in the starter (8.539594ms)
+✔ FAQ, support topics and policy edits preserve all locales through serialization (11.698997ms)
+✔ required dynamic placeholders cannot disappear on save and edits never promote human review (20.026767ms)
+✔ real structured editor controls save edits and honor read-only access (52.668299ms)
+✔ editing legacy string content preserves its English wording (0.263486ms)
+✔ the existing starter draft remains valid without requiring unrelated text changes (17.708916ms)
+✔ CMS wording never replaces internal payment configuration keys (24.600782ms)
+✔ asset listing reaches beyond the legacy 500-row cap and never reports partial results as complete (15.076968ms)
+✔ critical publication requires explicit review and never promotes translation status (18.590162ms)
+✔ all registered fields complete a local edit-save-review-serialization-consumer lookup round trip (36.870422ms)
+✔ store preview preserves the actual consumer hero geometry and asset behavior (40.314237ms)
+ℹ tests 13
+ℹ suites 0
+ℹ pass 13
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 344.013253
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice

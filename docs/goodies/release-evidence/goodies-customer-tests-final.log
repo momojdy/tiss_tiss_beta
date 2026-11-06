@@ -1,0 +1,12 @@
+✔ every source CMS field resolves manually edited published text in each configured locale (47.722985ms)
+✔ review boundaries, structured content, formatting and content refresh remain intact (1.391053ms)
+✔ generated source register remains synchronized with every literal call and interface key (18.272683ms)
+✔ Goodies card-form copy is editable and safely escaped without changing the shared default flow (15.675185ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 104.172241

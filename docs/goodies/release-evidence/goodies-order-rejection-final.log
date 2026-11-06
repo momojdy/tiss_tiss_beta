@@ -1,0 +1,6 @@
+Check supabase/functions/goodies-tests/orderLifecycle_test.ts
+running 1 test from ./supabase/functions/goodies-tests/orderLifecycle_test.ts
+wallet checkout, authorization, fulfillment and cancellation stay atomic and synchronized ... ok (2s)
+
+ok | 1 passed | 0 failed (2s)
+
