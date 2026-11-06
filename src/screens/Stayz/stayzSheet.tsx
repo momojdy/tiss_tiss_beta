@@ -24,10 +24,17 @@ export const StayzSheet = ({ visible, title, onClose, children }: Props) => {
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.fill}>
         <Pressable style={[styles.fill, { backgroundColor: colors.overlay }]} onPress={onClose} accessibilityLabel="Close" />
         <View style={[styles.sheet, { backgroundColor: colors.bg, paddingBottom: insets.bottom + 12 }]}>
-          <View {...pan.panHandlers} style={[styles.grab, { backgroundColor: colors.line }]} />
-          <StayzTxt v="h2" style={styles.title}>
-            {title}
-          </StayzTxt>
+          <View {...pan.panHandlers}>
+          <View style={[styles.grab, { backgroundColor: colors.line }]} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <StayzTxt v="h2" style={[styles.title, { flex: 1 }]}>
+              {title}
+            </StayzTxt>
+            <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={onClose} hitSlop={12} style={{ width: 32, height: 32, alignItems: 'center', justifyContent: 'center' }}>
+              <StayzTxt v="h2">×</StayzTxt>
+            </Pressable>
+          </View>
+        </View>
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.body}>
             {children}
           </ScrollView>
