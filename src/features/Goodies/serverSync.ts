@@ -1,6 +1,6 @@
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
-import { S, STB, IT, emit, save } from './store';
+import { S, STB, IT, emit, save, switchGoodiesAccount, refreshUserAddresses } from './store';
 
 type ServerOrder = {
   id: string;
@@ -90,6 +90,7 @@ export async function fetchGoodiesOrderForNotification(orderId?: string, orderCo
   const {data, error} = await query.maybeSingle();
   if (error) throw error;
   if (!data) return null;
+  if (S.accountId !== auth.user.id) return null;
   const mapped = mapOrder(data as ServerOrder);
   const cached = (S.orders || []).find((order: any) => order?.backendId === mapped.backendId);
   const order = {...cached, ...mapped};
@@ -141,7 +142,7 @@ export function startGoodiesSync() {
         refreshAgain = false;
         const requestUserId: string = userId;
         const requestGeneration = generation;
-        const [unreadResult, ordersResult, walletResult] = await Promise.all([
+        const [unreadResult, ordersResult, walletResult, profileResult] = await Promise.all([
           supabase.from('notifications')
             .select('id', { count: 'exact', head: true })
             .eq('user_id', requestUserId)
@@ -154,10 +155,16 @@ export function startGoodiesSync() {
             .order('created_at', { ascending: false })
             .limit(100),
           supabase.from('wallets').select('id,balance').eq('user_id', requestUserId).maybeSingle(),
+          supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', requestUserId).maybeSingle(),
         ]);
         if (stopped || requestGeneration !== generation || requestUserId !== userId) continue;
 
         let changed = false;
+        if (!profileResult.error && profileResult.data) {
+          const profile = profileResult.data;
+          S.pf = {n: profile.full_name || '', e: profile.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
+          changed = true;
+        }
         if (!unreadResult.error) {
           const nextUnread = Number(unreadResult.count || 0);
           if (S.serverUnread !== nextUnread) {
@@ -203,6 +210,7 @@ export function startGoodiesSync() {
     }
     generation++;
     userId = nextUserId;
+    switchGoodiesAccount(nextUserId);
     clearChannel();
     if (poll) {
       clearInterval(poll);
@@ -210,6 +218,7 @@ export function startGoodiesSync() {
     }
     clearAccountState();
     if (!userId) return;
+    void refreshUserAddresses().catch(() => {});
 
     const subscribedUserId = userId;
     const subscribedGeneration = generation;

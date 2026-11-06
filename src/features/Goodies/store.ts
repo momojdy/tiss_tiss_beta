@@ -7,6 +7,7 @@ import {label} from './content';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
 import {friendlyError} from './friendlyError';
+import {ownedCache, cacheEnvelope} from './accountCache';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
 
@@ -56,6 +57,16 @@ export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp
 
 export interface Route {r: string; p?: any; u: number; sy?: number}
 export const S: any = Object.assign(WDEF(), GDEF());
+S.accountId = null;
+export function switchGoodiesAccount(userId: string | null) {
+  if (S.accountId === userId) return;
+  Object.assign(S, WDEF(), GDEF(), {accountId: userId, cardPending: null, pendingGroupInviteCode: '',
+    cs: 0, sch: 0, note: '', sh: null, pend: null, ro: null, busy: 0, currentLocation: null,
+    pin: '', alcConsent: false, alcAck: 0});
+  S.stack = [{r: 'home', u: Date.now()}];
+  ui.close?.();
+  emit();
+}
 let uid = 0;
 S.stack = [{r: 'home', u: ++uid}] as Route[];
 Object.assign(S, {f: '', sub: '', ot: 'active', ft: 'stores', sh: null, pend: null, bump: 0, cs: 0, time: 'ASAP', sch: 0, note: '', pin: '', busy: 0, ss: {}, srt: 'rel', sr: {q: '', sort: 'rel', f: {}}, theme: 'light', lang: 'en', ready: false});
@@ -224,12 +235,14 @@ export async function refreshLiveSchedules() {
 
 /* ---------- persistence ---------- */
 export async function refreshGoodiesAccess() {
+  const accountId = S.accountId;
   if (providerInfo.demo) {
     S.goodiesAccess = {status: 'active', reason: '', endsAt: null};
     emit();
     return S.goodiesAccess;
   }
   const {data, error} = await supabase.rpc('get_my_goodies_access_status');
+  if (S.accountId !== accountId) return S.goodiesAccess;
   if (error) {
     S.goodiesAccess = {status: 'unknown', reason: '', endsAt: null};
     emit();
@@ -248,7 +261,9 @@ export async function refreshGoodiesAccess() {
 export async function refreshUserAddresses() {
   if (providerInfo.demo) return S.addr;
   const {data: auth, error: authError} = await supabase.auth.getUser();
-  if (authError || !auth.user) return S.addr;
+  if (authError) throw authError;
+  if (!auth.user) {S.addr = []; S.as = 0; emit(); return S.addr;}
+  const addressUserId = auth.user.id;
   const baseColumns = 'id,recipient_name,phone_number,country,department,city,street_address,apartment,delivery_notes,is_default,created_at';
   const read = (columns: string) => supabase.from('user_addresses').select(columns)
     .eq('user_id', auth.user.id).order('is_default', {ascending: false}).order('created_at', {ascending: true});
@@ -267,6 +282,7 @@ export async function refreshUserAddresses() {
     phone: String(row.phone_number || ''), createdAt: row.created_at,
     latitude: row.latitude == null ? null : Number(row.latitude), longitude: row.longitude == null ? null : Number(row.longitude),
   }));
+  if (S.accountId !== addressUserId) return S.addr;
   S.addr = rows;
   const selected = rows.find((row: any) => row.id === metadataAddressId) || rows.find((row: any) => row.def) || rows[0];
   S.as = selected?.id ?? 0;
@@ -278,23 +294,27 @@ export async function refreshUserAddresses() {
 }
 
 export async function load() {
+  const {data: cachedSession} = await supabase.auth.getSession();
+  switchGoodiesAccount(cachedSession.session?.user.id || null);
+  const ownerId = S.accountId;
   const merge = async (key: string, D: any) => {
     try {
-      const raw = JSON.parse((await AsyncStorage.getItem(key)) || 'null');
+      const raw = ownedCache(JSON.parse((await AsyncStorage.getItem(key)) || 'null'), ownerId);
+      if (S.accountId !== ownerId) return;
       if (raw && typeof raw === 'object') for (const k in D) if (raw[k] !== undefined && typeof raw[k] === typeof D[k] && Array.isArray(raw[k]) === Array.isArray(D[k])) S[k] = raw[k];
     } catch (e) {}
   };
   await merge(WKEY, WDEF()); await merge(KEY, GDEF());
   try {
     const attempt = JSON.parse((await AsyncStorage.getItem('goodies-checkout-attempt-v1')) || 'null');
-    if (attempt && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
+    if (S.accountId === ownerId && attempt?.ownerId === ownerId && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
   } catch (e) {}
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
   try {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {data: profile} = await supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', auth.user.id).maybeSingle();
-      if (profile) S.pf = {n: profile.full_name || '', e: profile.email || auth.user.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
+      if (profile && S.accountId === auth.user.id) S.pf = {n: profile.full_name || '', e: profile.email || auth.user.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
       await refreshUserAddresses();
     }
   } catch (e) {}
@@ -308,11 +328,11 @@ export async function load() {
           supabase.from('wallets').select('balance').eq('user_id', userId).maybeSingle(),
           supabase.rpc('get_my_payment_methods'),
         ]);
-        if (!walletResult.error) {
+        if (!walletResult.error && S.accountId === userId) {
           S.hasWallet = !!walletResult.data;
           S.wallet = Number(walletResult.data?.balance ?? 0);
         }
-        if (!methodsResult.error && Array.isArray(methodsResult.data)) {
+        if (!methodsResult.error && S.accountId === userId && Array.isArray(methodsResult.data)) {
           S.cards = methodsResult.data.map((pm: any) => ({
             id: String(pm.id), b: String(pm.brand || 'Card'), l4: String(pm.last4 || ''),
             expiryMonth: pm.expiry_month, expiryYear: pm.expiry_year, isDefault: !!pm.is_default,
@@ -353,8 +373,8 @@ export function save(): Promise<void> {
     const w: any = {}, g: any = {};
     WP.forEach(k => (w[k] = S[k])); GP.forEach(k => (g[k] = S[k]));
     return Promise.all([
-      AsyncStorage.setItem(WKEY, JSON.stringify(w)),
-      AsyncStorage.setItem(KEY, JSON.stringify(g)),
+      AsyncStorage.setItem(WKEY, JSON.stringify(cacheEnvelope(S.accountId, w))),
+      AsyncStorage.setItem(KEY, JSON.stringify(cacheEnvelope(S.accountId, g))),
     ]).then(() => undefined).catch(() => undefined);
   } catch (e) {
     return Promise.resolve();
@@ -367,6 +387,7 @@ export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{k
     return {key: current.key, fingerprint: current.fingerprint};
   }
   const attempt = {
+    ownerId: S.accountId,
     key: 'goodies-checkout-' + Date.now() + '-' + Math.random().toString(36).slice(2),
     fingerprint,
     completed: false,

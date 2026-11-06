@@ -152,7 +152,9 @@ export function setCard(id: string) {
 }
 export async function placeOrder() {
   if (S.busy) return;
+  const accountId = S.accountId;
   const access = await refreshGoodiesAccess();
+  if (S.accountId !== accountId) return;
   if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? 'Your access to Goodies has been permanently restricted.' : 'Your access to Goodies is temporarily suspended.'); return;}
   if (cartStoreIds().length > 1) return placeMultiOrder();
   const t = totals(), st = t.st!;
@@ -289,6 +291,7 @@ export async function placeOrder() {
       emit();
       return;
     }
+    if (S.accountId !== accountId) return;
     let data: any = null, error: any = null;
     if (S.pay === 'card') {
       const result = await supabase.functions.invoke('place-goodies-card-order', {
@@ -303,6 +306,7 @@ export async function placeOrder() {
       });
       data = result.data; error = result.error;
     }
+    if (S.accountId !== accountId) return;
     const row: any = Array.isArray(data) ? data[0] : data;
     if (error || !row?.id) {
       S.busy = 0;
@@ -327,6 +331,7 @@ export async function placeOrder() {
     backendOrderId = row.id; id = row.order_code || id;
     if (S.pay === 'wallet') await refreshPaymentOptions();
   }
+  if (S.accountId !== accountId) return;
   if (providerInfo.demo && S.pay === 'wallet') S.wallet -= t.total;
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, photo: l.photo || IT[l.id]?.photo || null, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
@@ -346,11 +351,13 @@ export async function placeOrder() {
   if (backendOrderId) void refreshLiveSchedules(); /* stock was reserved on the server */
 }
 export async function completeCardOrder() {
+  const accountId = S.accountId;
   const pending = S.cardPending;
   if (!pending || S.busy) return;
   S.busy = 1; emit();
   try {
     const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'capture', order_id: pending.id}});
+    if (S.accountId !== accountId) return;
     if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'Card payment could not be completed.');
     const t = totals(), st = t.st!, pk = isPk(), a = addr(), ct = ctOf(), alc = hasAlcohol();
     const selectedCard: any = S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0];
@@ -375,12 +382,14 @@ export async function completeCardOrder() {
 }
 
 export async function cancelPendingCardOrder() {
+  const accountId = S.accountId;
   const pending = S.cardPending;
   if (!pending) {navBack();return;}
   if (S.busy) return;
   S.busy = 1; emit();
   try {
     const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
+    if (S.accountId !== accountId) return;
     if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'The card payment could not be cancelled yet.');
     S.cardPending = null;
     await completeGoodiesCheckoutAttempt(String(pending.id));
@@ -448,7 +457,7 @@ export async function refreshPaymentOptions(): Promise<boolean> {
       supabase.from('wallets').select('id,balance').eq('user_id', userId).maybeSingle(),
       supabase.rpc('get_my_payment_methods'),
     ]);
-    if (walletResult.error) return false;
+    if (walletResult.error || S.accountId !== userId) return false;
     S.hasWallet = !!walletResult.data?.id;
     S.wallet = Number(walletResult.data?.balance || 0);
     if (!cardsResult.error) {
@@ -476,6 +485,7 @@ export async function createWallet() {
       .select('id,balance').eq('user_id', auth.user.id).maybeSingle();
     if (verifyError) throw verifyError;
     if (!wallet?.id) throw new Error('Wallet creation was not confirmed by the server. Please retry.');
+    if (S.accountId !== auth.user.id) return;
     S.hasWallet = true;
     S.wallet = Number(wallet.balance || 0);
     await refreshPaymentOptions();
@@ -508,6 +518,7 @@ const stopItems = (sid: string) => S.cart.lines.filter((l: any) => lineStore(l) 
   options: l.byo ? undefined : (l.options || (() => {const parts = String(l.k || '').split('|'); const category = STB[sid]?.c; return {size: CHOOSE_SIZE_CATS.includes(category) ? (parts[1] === '1' ? 'large' : 'regular') : null, drink: parts[2] === '1', discount_pct: Number(parts[3] || 0)};})()),
 }));
 async function placeMultiOrder() {
+  const accountId = S.accountId;
   const ids = cartStoreIds();
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const stop = (message: string, step?: number) => {S.busy = 0; if (step != null) S.cs = step; toast(message); emit();};
@@ -580,7 +591,9 @@ async function placeMultiOrder() {
   let attempt: {key: string; fingerprint: string};
   try {attempt = await getGoodiesCheckoutAttempt(JSON.stringify({...payload, p_address: {...addressPayload}, multi: true}));}
   catch (storageError: any) {return stop(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));}
+  if (S.accountId !== accountId) return;
   const {data, error} = await supabase.rpc('goodies_place_multi_order', {p_idempotency_key: attempt.key, ...payload});
+  if (S.accountId !== accountId) return;
   const rows: any[] = Array.isArray(data) ? data : [];
   if (error || rows.length !== ids.length) {
     console.warn('Multi-store checkout failed', {error, rows});
@@ -592,6 +605,7 @@ async function placeMultiOrder() {
     return stop(friendlyError(detail ? {message: detail} : error, 'Could not place the order. Please try again.'));
   }
   if (S.pay === 'wallet') await refreshPaymentOptions();
+  if (S.accountId !== accountId) return;
   const pl = S.pay === 'wallet' ? 'Wallet' : 'Cash';
   const orders = rows.sort((x, y) => Number(x.stop_index) - Number(y.stop_index)).map((row: any, index: number) => {
     const sid = String(row.store_id), st = STB[sid], first1 = index === 0;

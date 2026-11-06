@@ -60,7 +60,7 @@ export function LivePayments() {
       ]);
       if (wallet.error) throw wallet.error;
       if (methods.error) throw methods.error;
-      if (!mounted.current) return;
+      if (!mounted.current || S.accountId !== auth.user.id) return;
       S.hasWallet = !!wallet.data?.id;
       S.wallet = Number(wallet.data?.balance || 0);
       S.cards = (methods.data || []).map(normalizeCard);
