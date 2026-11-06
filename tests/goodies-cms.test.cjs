@@ -45,3 +45,15 @@ test('Goodies card-form copy is editable and safely escaped without changing the
  const attack='</label><script>untrusted()</script>',edited=makeHtml('synthetic-secret','pk_test_synthetic',()=>attack);
  assert.ok(!edited.includes(attack));assert.ok(edited.includes('&lt;script&gt;untrusted()&lt;/script&gt;'));
 });
+
+test('unfinished Creole stays unavailable in production and falls back to reviewed English across app text and content',()=>{
+ for(const status of ['draft','missing',undefined,'unknown']){
+  const ht={v:'Synthetic unfinished Creole',...(status?{s:status}:{})},text={en:{v:'Reviewed English',s:'reviewed'},fr:{v:'Français',s:'reviewed'},es:{v:'Español',s:'reviewed'},'zh-Hans':{v:'中文',s:'reviewed'},ht};
+  const before=JSON.stringify(text);state.S.lang='ht';
+  content.applyContent({v:5,labels:[{id:'lbl.interface.back',t:text}],faq:[{q:text,a:text}],topics:[{t:text}],legal:[{id:'legal.terms',st:'Live',t:text}],modes:[{id:'mode.food',title:text,sub:text}]});
+  assert.equal(content.label('lbl.interface.back','Source fallback'),'Reviewed English');assert.equal(i18n.t('back'),'Reviewed English');
+  assert.deepEqual(content.faq([]),[['Reviewed English','Reviewed English']]);assert.deepEqual(content.supportTopics([]),['Reviewed English']);assert.equal(content.legalDoc('legal.terms'),'Reviewed English');
+  assert.equal(JSON.stringify(text),before);
+ }
+ const text={en:{v:'Reviewed English',s:'reviewed'},ht:{v:'Synthetic reviewed Creole',s:'reviewed'}};content.applyContent({v:5,labels:[{id:'lbl.interface.back',t:text}]});assert.equal(content.label('lbl.interface.back','fallback'),'Synthetic reviewed Creole');
+});

@@ -1,0 +1,37 @@
+Starting Metro Bundler
+
+| (node:28287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+| (node:28287) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+| (Use `node --trace-warnings ...` to show where the warning was created)
+Android Bundled 16619ms index.ts (1187 modules)
+iOS Bundled 32632ms index.ts (1189 modules)
+
+› Assets (16):
+node_modules/@expo-google-fonts/manrope/200ExtraLight/Manrope_200ExtraLight.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/300Light/Manrope_300Light.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/400Regular/Manrope_400Regular.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/500Medium/Manrope_500Medium.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/600SemiBold/Manrope_600SemiBold.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/700Bold/Manrope_700Bold.ttf (97KB)
+node_modules/@expo-google-fonts/manrope/800ExtraBold/Manrope_800ExtraBold.ttf (98KB)
+node_modules/@expo-google-fonts/outfit/Outfit_100Thin.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_200ExtraLight.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_300Light.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_400Regular.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_500Medium.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_600SemiBold.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_700Bold.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_800ExtraBold.ttf (36KB)
+node_modules/@expo-google-fonts/outfit/Outfit_900Black.ttf (36KB)
+
+› android bundles (1):
+_expo/static/js/android/index-f0ce4806e26b8b2eb80e9a899f7d232d.hbc (4.8MB)
+
+› ios bundles (1):
+_expo/static/js/ios/index-02fb6213615a148937183f7f188fca0f.hbc (4.8MB)
+
+› Files (1):
+metadata.json (2.3KB)
+
+Exported: /tmp/goodies-creole-admin

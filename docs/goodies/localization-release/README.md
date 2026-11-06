@@ -17,13 +17,13 @@
 
 **BLOCKED** — the connected SQL session has `auth.uid() = null`, and both `content.edit` and `content.publish` permission checks are false. The existing authenticated save/publish RPCs require a real signed-in admin actor and record that actor in the audit log. No identity was fabricated, no direct table write was used to bypass those checks, and no production draft or publication was created.
 
-**Additional existing CMS validation failures** — the local editor's publication check flags 52 unchanged, non-empty Haitian Creole entries still awaiting review, and five unchanged English FAQ placeholder answers. Full details are in `verification.json`. Those checks were not weakened or bypassed. The candidate server review guard is still undeployed; this is a local editor check, not a claim that the current live RPC enforces it.
+**Remaining existing CMS validation failures** — after the approved Creole fallback change, the editor no longer blocks publication for unchanged pending Creole when reviewed English is present. Five unchanged English FAQ placeholder answers still fail the independent FAQ check. Full details are in `verification.json`; see [fallback verification](../creole-fallback/README.md). The candidate server guard and its forward refinement remain undeployed.
 
 **NOT VERIFIED** — authenticated CMS save/publish, public-endpoint reload, installed customer-app rendering and human linguistic quality. The main published record was not changed.
 
 ## Applying the release
 
-An authenticated publisher session is required. In the existing Goodies content editor, import the prepared payload through its JSON editor and inspect the four language previews. Resolve the existing Creole/FAQ publication-gate findings through the editor's normal workflow before publishing; do not falsely mark Creole reviewed merely to pass validation. Save/publish through the existing guarded RPCs, which archive the prior version and write the actor audit. Re-read the published record/public endpoint and check consumer lookup after cache refresh.
+An authenticated publisher session is required. In the existing Goodies content editor, import the prepared payload through its JSON editor and inspect the four language previews. Resolve the independent FAQ publication-gate findings before publishing. Pending Creole no longer blocks the updated editor when reviewed English is present; do not falsely mark Creole reviewed merely to pass validation. Save/publish through the existing guarded RPCs, which archive the prior version and write the actor audit. Re-read the published record/public endpoint and check consumer lookup after cache refresh.
 
 Before importing, compare the current published ID/version/payload hash with `manifest.json`; if another editor has changed the content, regenerate/merge against that new baseline rather than overwriting their work. `baseline.json` preserves the original payload for review/recovery; do not overwrite fee changes or restore an entire old financial configuration during recovery.
 

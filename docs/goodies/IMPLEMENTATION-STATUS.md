@@ -78,3 +78,7 @@ No claim of 100% completion or production readiness is supported. See [DEPLOYMEN
 ## Step 2 follow-up — customer/vendor connections
 
 Review account/store isolation, post-save refresh, authoritative summary refresh and persisted history comments received additional fixes and local tests. Existing storefront, sample removal, vendor item, removed-store and pickup-map regressions were rerun. [Step 2 evidence](step2/README.md) separates candidate PASS results from main's confirmed missing review contracts/storefront save behavior and unverified device/hosted acceptance. No production schema or content changed.
+
+## Approved-language publication with pending Creole
+
+The editor and a forward backend migration now permit pending Creole to remain unavailable while reviewed English supplies fallback. Four-locale approval and normal publisher authorization remain enforced; FAQ placeholders still block publication independently. See [Creole fallback evidence](creole-fallback/README.md). Candidate/local PASS does not establish deployed or authenticated publication acceptance.

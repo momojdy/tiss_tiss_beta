@@ -20,6 +20,7 @@ Main still reports `20261104211532` as its latest migration. Apply only the revi
 10. [20261106081225_goodies_reviews_preferences_and_store_link.sql](../../supabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql) — SHA-256 `d7461538209e3b9fee3c37702db34efe68a7e56b8ee73376b582ca73e0ecb876`
 11. [20261106082226_goodies_admin_operational_pagination.sql](../../supabase/migrations/20261106082226_goodies_admin_operational_pagination.sql) — SHA-256 `55db6451804d987409998f02d4a7d0d4a5e6a6bc1b7575f39883a175ba81319b`
 12. [20261106084303_goodies_cms_publication_review_guard.sql](../../supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql) — SHA-256 `8ef4cfabc3197c62fc4266111ffc7fd85bac1257bef92dbc55ddd4af8b7bb962`
+13. [20261106144811_goodies_creole_reviewed_english_fallback.sql](../../supabase/migrations/20261106144811_goodies_creole_reviewed_english_fallback.sql) — SHA-256 `7590e0905f0534c43c55454e3a731340dfd23303710451592ad70a68e4698d5a`. Forward refinement of item 12: unfinished Creole stays unavailable and uses explicitly reviewed English. Requires the base guard; changes no publisher permissions or review states.
 
 The moderation migration was amended because read-only main metadata confirms it is undeployed there. Never alter an applied environment’s migration history; use a forward migration if a different environment has already applied an earlier version.
 
