@@ -58,6 +58,90 @@
         "supabase/functions/goodies-tests/builders_test.ts",
         "supabase/migrations/20261106022200_goodies_builder_selection_contract.sql"
       ]
+    },
+    {
+      "commit": "fcc1909fd0fa82e6a0a394328edeca2c7da859f1",
+      "subject": "docs(goodies): record source inventory, verification evidence and release gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/SCREEN-VERIFICATION.md",
+        "docs/goodies/edge-deployment-comparison.json",
+        "docs/goodies/evidence/admin-typecheck-after.log",
+        "docs/goodies/evidence/admin-typecheck.log",
+        "docs/goodies/evidence/changed-files-lint.log",
+        "docs/goodies/evidence/client-secret-scan.json",
+        "docs/goodies/evidence/customer-lint.log",
+        "docs/goodies/evidence/customer-typecheck.log",
+        "docs/goodies/evidence/customer-web-export.log",
+        "docs/goodies/evidence/edge-tests.log",
+        "docs/goodies/evidence/edge-typecheck.log",
+        "docs/goodies/evidence/tiss-admin-android-final.log",
+        "docs/goodies/evidence/tiss-admin-doctor.log",
+        "docs/goodies/evidence/tiss-admin-ios-final.log",
+        "docs/goodies/evidence/tiss_tiss_beta-android-final.log",
+        "docs/goodies/evidence/tiss_tiss_beta-doctor.log",
+        "docs/goodies/evidence/tiss_tiss_beta-ios-final.log",
+        "docs/goodies/implementation-commits.json",
+        "docs/goodies/migration-history-comparison.json",
+        "docs/goodies/source-inventory.json",
+        "scripts/goodies-inventory.cjs",
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "src/features/Goodies/README.md"
+      ]
+    },
+    {
+      "commit": "4563fbeefbdef73f94f2d8220776c5570f0ba50b",
+      "subject": "Secure Goodies moderation, appeals, role notifications and proof rollout",
+      "files": [
+        ".github/workflows/expo-validation.yml",
+        "docs/goodies/migration-version-reconciliation.json",
+        "scripts/check-migration-versions.cjs",
+        "supabase/functions/goodies-tests/adminRestrictions_test.ts",
+        "supabase/functions/goodies-tests/deliveryProofAccess_test.ts",
+        "supabase/functions/goodies-tests/fixtures/README.md",
+        "supabase/functions/goodies-tests/fixtures/goodies-core.sql",
+        "supabase/functions/goodies-tests/notificationLocalization_test.ts",
+        "supabase/functions/goodies-tests/notificationRouting_test.ts",
+        "supabase/functions/goodies-tests/orderLifecycle_test.ts",
+        "supabase/functions/goodies-tests/productModeration_test.ts",
+        "supabase/migrations/202611010001_goodies_card_acceptance_requires_paid.sql",
+        "supabase/migrations/202611010001_goodies_card_retry_persistence.sql",
+        "supabase/migrations/20261101045432_goodies_card_acceptance_requires_paid.sql",
+        "supabase/migrations/20261101045813_202611010001_goodies_card_retry_persistence.sql",
+        "supabase/migrations/20261101080500_goodies_merchant_restrictions.sql",
+        "supabase/migrations/20261101080500_goodies_product_rejection_reason_required.sql",
+        "supabase/migrations/20261101111833_goodies_merchant_restrictions.sql",
+        "supabase/migrations/20261101112204_goodies_product_rejection_reason_required.sql",
+        "supabase/migrations/20261103163450_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+        "supabase/migrations/20261104085513_goodies_group_order_friend_invites.sql",
+        "supabase/migrations/20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+        "supabase/migrations/20261104130000_goodies_group_order_friend_invites.sql",
+        "supabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+        "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+        "supabase/migrations/20261106030151_goodies_role_notifications.sql",
+        "supabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+        "supabase/migrations/20261106031210_goodies_notification_localization.sql"
+      ]
+    },
+    {
+      "commit": "f31ae1d5d6fc99418e58466926a8692a2b07337c",
+      "subject": "Connect Goodies role notifications, account locale and staged proof uploads",
+      "files": [
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/notificationCatalog.json",
+        "src/features/Goodies/notifications.ts",
+        "src/features/Goodies/screens/Browse.tsx",
+        "src/features/Goodies/serverSync.ts",
+        "src/features/Goodies/store.ts",
+        "src/lib/locales.ts",
+        "src/screens/Main/mainNotificationsScreen.tsx",
+        "src/screens/Main/mainSettingsDetailScreen.tsx",
+        "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+        "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+        "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+        "src/screens/businessSpace/BusinessSpaceScreen.tsx"
+      ]
     }
   ],
   "tiss-admin": [
@@ -92,6 +176,43 @@
       "subject": "fix(goodies): isolate order fixtures for tracking and confirmation preview",
       "files": [
         "src/features/admin/screens/content/GoodiesConsumerPreview.tsx"
+      ]
+    },
+    {
+      "commit": "ea2f4426477b6ff2591bec2b230007176d122109",
+      "subject": "docs(goodies): record admin verification and coordinated rollout requirements",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/admin-typecheck-after.log",
+        "docs/goodies/evidence/admin-typecheck.log",
+        "docs/goodies/evidence/tiss-admin-android-final.log",
+        "docs/goodies/evidence/tiss-admin-doctor.log",
+        "docs/goodies/evidence/tiss-admin-ios-final.log"
+      ]
+    },
+    {
+      "commit": "a230d5082efb8b454d78620109c2e01f9579e538",
+      "subject": "Enforce canonical admin permissions and persist restriction appeals",
+      "files": [
+        ".github/workflows/admin-validation.yml",
+        "package.json",
+        "src/features/admin/lib/adminBackend.ts",
+        "src/features/admin/lib/hydrateAdminState.ts",
+        "src/features/admin/overlays/PeopleDrawers.tsx",
+        "src/features/admin/state/access.ts",
+        "src/features/admin/state/people.ts",
+        "src/features/admin/state/permissionKeys.ts",
+        "tests/access.test.cjs"
+      ]
+    },
+    {
+      "commit": "543ebaf5cb8db5a026065ae7a8010dd7a9175394",
+      "subject": "Connect Goodies moderation alerts and editable notification templates",
+      "files": [
+        "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+        "src/features/admin/screens/content/GoodiesEditor.tsx",
+        "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+        "src/features/admin/shell/NotificationsSheet.tsx"
       ]
     }
   ]

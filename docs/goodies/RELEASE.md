@@ -21,7 +21,7 @@ test does not establish the corresponding complete customer workflow.
 - Vault **names only** were inspected. Edge secret values and configuration were
   not available for verification. No credential values are included here.
 - [Implementation commits and changed files](implementation-commits.json).
-- [Machine-readable source inventory](source-inventory.json): 51 customer/vendor/shared
+- [Machine-readable source inventory](source-inventory.json): 53 customer/vendor/shared
   source files and 56 admin/shared/preview source files; 608 and 498 interaction
   handlers respectively. Preview controls are explicitly distinguished from live
   admin controls. This is an inventory, not a certification of those interactions.
@@ -113,12 +113,16 @@ No text was falsely marked human-reviewed or published. Production fallback and
 Haitian Creole review requirements have dedicated regression tests. New CMS keys
 still require editorial review, translation, saving and controlled publication.
 
+Latest application exports were rerun after the new changes: customer Android,
+iOS and web, and admin Android and iOS all succeeded. These remain JavaScript/
+Hermes bundles, not signed native builds. Current logs end in `-next.log`.
+
 ## Executed verification
 
 | Check | Result | Evidence and limitation |
 | --- | --- | --- |
 | Original GPS commit present | PASS | Git ancestry verified before edits |
-| Deno test suite | PASS | 40 tests, 0 failures; `evidence/edge-tests.log` |
+| Deno test suite | PASS | 47 tests, 0 failures; `evidence/edge-tests-next.log` |
 | Scoped courier authorization and rollback | PASS | Synthetic PostgreSQL fixtures; actual new migration executed |
 | Private evidence upload/read and submission rules | PASS | Synthetic PostgreSQL RLS and real migration; existing admin assertion and notification transport are fixtures |
 | Standard price/options/promotions/tips | PASS | Existing SQL validators executed in isolated PostgreSQL |
@@ -136,9 +140,9 @@ still require editorial review, translation, saving and controlled publication.
 | Customer web export | PASS | Existing CI export command, successful static bundle; not browser interaction verification |
 | Admin Android/iOS JS/Hermes exports | PASS | Separate successful platform exports; evidence tails included |
 | Expo Doctor, both repositories | PASS | 20/20 each; admin SDK-compatible dependencies aligned with Expo tooling |
-| Admin TypeScript | FAIL | Same 31 baseline errors in people/staff code; before/after diagnostics retained |
+| Admin TypeScript | PASS | Shared people/staff errors repaired; current typecheck exits 0 |
 | Client source secret-pattern check | PASS | No matching secret Stripe/Supabase keys or service-role JWTs; not an exhaustive secret audit |
-| Repository migration version uniqueness | FAIL | Three duplicate version prefixes; comparison artifact included |
+| Repository migration version uniqueness | PASS | 219 unique versions; five SQL-preserving renames and one identical duplicate consolidated |
 | Five-language content coverage | FAIL | Published payload counts above; human review is incomplete |
 | Full screen/control/end-to-end matrix | NOT VERIFIED | See screen register; no synthetic unit test is substituted for UI execution |
 | Complete customer/vendor/staff/courier authorization matrix | NOT VERIFIED | Targeted new boundaries passed; full live role suite needs staging identities |
@@ -157,9 +161,11 @@ still require editorial review, translation, saving and controlled publication.
 name/version matches, matching names with different deployed versions, and
 unmatched repository names. Unmatched names are **not** automatically classified
 as undeployed: several changes were applied under different migration names.
-The pre-existing duplicate prefixes are `202611010001`, `20261101080500`, and
-`20261104130000`. No existing migration was renamed and no production migration
-history was repaired. A full clean Supabase replay/baseline reconciliation remains
+The pre-existing duplicate prefixes `202611010001`, `20261101080500`, and
+`20261104130000` were reconciled using deployed metadata. Five files were renamed
+without SQL changes; one executable-SQL-identical duplicate was consolidated.
+See [reconciliation manifest](migration-version-reconciliation.json). Production
+migration history was not modified. A full clean Supabase replay/baseline reconciliation remains
 required before a blanket `db push` or new-environment bootstrap.
 
 [Edge source comparison](edge-deployment-comparison.json) found the selected live
@@ -178,12 +184,52 @@ authorization verdict. Server-only queues/caches with RLS and no public policies
 were preserved. Remaining advisor findings and all existing SECURITY DEFINER
 authorization paths have not received a complete adversarial role test.
 
+
+## Additional implementation and verified contracts
+
+- **Vendor/catalog:** grant only intended product columns, enforce existing merchant
+  restrictions/ownership on writes, submit new/content-edited products for review,
+  retain admin rejection decisions. Existing approved rows are not rewritten.
+- **Admin:** canonical permission keys, signed-out/revoked/expired grant denial,
+  Super Admin-only permanent-ban handling, real persisted appeal receive/uphold
+  actions and audited reinstatement. Existing shared TypeScript failures are fixed.
+- **Role integration:** vendor order/product-review notifications reach their real
+  business destination; customer counters exclude role-owned notices. Submission
+  notices reach the admin product review module. Read failures are surfaced.
+- **Account/localization:** use existing `user_settings.language` for the exact five
+  configured locales; add Chinese to the existing account-language list. Backend
+  notification templates use only reviewed CMS translations. Draft templates are
+  editable in the existing CMS; no translation is falsely marked reviewed.
+- **Private evidence:** default-off, audited Super Admin rollout switch uses the
+  protected existing CMS configuration. Compatible viewers must be distributed
+  before enabling. Tests verify disabling uploads preserves private reads and
+  unrelated financial settings. Legacy evidence remains public until switched;
+  enabling requires an explicit coordinated rollout, not just shipping this code.
+- **Migration integrity:** unique-version check added to CI; full clean bootstrap
+  and production drift resolution are still NOT VERIFIED.
+
+| Targeted check | Result | Evidence / limits |
+| --- | --- | --- |
+| Synthetic wallet checkout → vendor fulfillment | PASS | Actual schema/routines, authoritative price rejection, duplicate-key protection, debit, stock, notifications, valid/invalid transitions |
+| Synthetic cancellation/refund | PASS | Real wallet routines, one refund on retry, ledger/balance/stock assertions; not provider card settlement |
+| Product ownership/moderation | PASS | Actual RLS/ACL/triggers plus candidate migration; other-vendor and restricted-vendor writes denied |
+| Permanent-ban/appeal authorization | PASS | Actual permission helper, synthetic identities; customer/scoped staff/expired/unconfirmed denied; Super Admin audited/idempotent |
+| Admin permission regression tests | PASS | Four Node tests against real permission module; UI control rendering not established |
+| Notification destination contracts | PASS | Two pure route tests; hosted PostgREST filter/push delivery still NOT VERIFIED |
+| Reviewed notification locale resolution | PASS | Actual SQL and insertion trigger; human completeness still FAIL |
+| Hosted full lifecycle, concurrency and recovery | NOT VERIFIED | Existing test project inactive; restore/compute approval requested, not yet received |
+
+The schema-only fixture's [limitations](../../supabase/functions/goodies-tests/fixtures/README.md)
+are deliberate: no real rows/secrets, no full Auth/Storage/PostgREST/provider stack,
+no unrelated-domain foreign keys/shared triggers, no multi-connection race claim.
+Tests are stronger than pure mocks but cannot substitute for hosted service E2E.
+
 ## Controlled rollout and recovery
 
 1. Obtain an approved isolated Supabase staging project and role accounts, Stripe
    test mode, notification test recipients and routing configuration. The existing
    `Wantiss Security Test` project was inactive; it was not resumed or modified.
-2. Reconcile the migration baseline in isolation. Apply the four new migrations
+2. Reconcile the migration baseline in isolation. Apply the reviewed new migrations
    in timestamp order, then run the full cross-role/financial E2E and race suite.
    PGlite tests cover the targeted contracts, not the entire Supabase platform.
 3. Review the private-proof mixed-client protocol gate. Deploy compatible viewers
