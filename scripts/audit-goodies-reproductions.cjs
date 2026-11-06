@@ -6,7 +6,7 @@ function extract(repo,file,name){const filename=path.join(repo,file),ast=ts.crea
  const code=ts.isFunctionDeclaration(found)?found.getText(ast)+'\nmodule.exports='+name+';':'module.exports='+found.initializer.getText(ast)+';';
  const javascript=ts.transpileModule(code,{fileName:filename,compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React}}).outputText;
  const tags=new Set();function tag(node){if(ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node))tags.add(node.tagName.getText(ast));ts.forEachChild(node,tag);}tag(found);
- return context=>{const module={exports:{}};const env={module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
+ return context=>{const module={exports:{}};const env={module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),notifyStoreReviewsChanged(){},readOrderReviews:async()=>{},...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
 }
 const label=(_id,fallback)=>fallback;function flatten(node){if(Array.isArray(node))return node.map(flatten).join(' ');if(node==null||typeof node==='boolean')return '';if(typeof node!=='object')return String(node);return flatten(node.props?.children);}function elements(node,out=[]){if(Array.isArray(node))node.forEach(x=>elements(x,out));else if(node&&typeof node==='object'){out.push(node);elements(node.props?.children,out);}return out;}
 test('REGRESSION A01: vendor errors never render raw database detail',()=>{
@@ -124,4 +124,25 @@ test('vendor overview never renders a zero wallet or no-revenue claim after a fa
  let query=0;const app={biz:{id:'business',verification:'verified'},meta:{feats:[],payout:{status:'verified'}},range:{from:'2026-11-01',to:'2026-11-06'},tick:0,bump(){}};
  const Home=extract(root,'src/screens/businessSpace/BusinessSpaceHomeScreen.tsx','Home')({useApp:()=>app,useS:()=>({}),useTheme:()=>({}),useSafeAreaInsets:()=>({top:0}),useQ:()=>query++===0?{d:null,e:'Private server error',l:false,reload(){}}:{d:[],e:null,l:false,reload(){}}});
  const tree=Home();assert.ok(!elements(tree).some(e=>e.type==='WalletCard'));assert.ok(!elements(tree).some(e=>e.type==='Empty'&&e.props.title==='No revenue yet'));assert.ok(elements(tree).some(e=>e.type==='ErrBox'&&e.props.e==='Financial summary unavailable.'));
+});
+
+test('review retries replace the local order review and refresh the matching public store only after persistence',async()=>{
+ const S={accountId:'customer',orders:[{id:'REVIEW-RETRY',backendId:'order-uuid',sid:'store'}],pf:{n:'Customer'},rev:{},rt:0},changed=[];
+ const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({useRef:value=>({current:value}),useState:value=>[value,()=>{}],S,label,toast(){},ui:{close(){}},save(){},emit(){},notifyStoreReviewsChanged:store=>changed.push(store),supabase:{rpc:async()=>({error:null})}});
+ const handler=elements(ReviewSheet({id:'REVIEW-RETRY',stars:()=>null,initialStars:5})).find(e=>e.type==='Cta').props.onPress;
+ await handler();await handler();assert.equal(S.rev.store.length,1);assert.equal(S.rev.store[0].orderId,'REVIEW-RETRY');assert.deepEqual(changed,['store','store']);
+});
+test('older-order review hydration cannot commit across an account switch',async()=>{
+ const S={accountId:'customer',ordersCursor:{createdAt:'2026-11-06T00:00:00Z',id:'cursor'},ordersPaging:false,orders:[],ordersHasMore:true};let saves=0;
+ const query={select(){return this;},eq(){return this;},or(){return this;},order(){return this;},async limit(){return{data:[{id:'old',created_at:'2026-11-05T00:00:00Z'}],error:null};}};
+ const load=extract(root,'src/features/Goodies/serverSync.ts','loadOlderGoodiesOrders')({S,supabase:{from:()=>query},mapOrder:row=>({backendId:row.id,t0:1}),readOrderReviews:async()=>{S.accountId='another-customer';S.orders=[];},save(){saves++;},emit(){}});
+ await load();assert.equal(S.orders.length,0);assert.equal(saves,0);
+});
+
+test('review hydration queries only the current customer and page and preserves cache on backend failure',async()=>{
+ const filters=[],applied=[],orders=[{backendId:'order-one',orderReview:{t:'cached'}}];let fail=false;
+ const query={select(){return this;},eq(key,value){filters.push([key,value]);return this;},async in(key,value){filters.push([key,value]);return fail?{data:null,error:{message:'private error'}}:{data:[{order_id:'order-one',target:'store'}],error:null};}};
+ const read=extract(root,'src/features/Goodies/serverSync.ts','readOrderReviews')({S:{lang:'ht'},supabase:{from:table=>{assert.equal(table,'goodies_order_reviews');return query;}},applyOrderReviews:(...args)=>applied.push(args)});
+ await read(orders,'current-customer');assert.deepEqual(filters,[['customer_id','current-customer'],['order_id',['order-one']]]);assert.equal(applied.length,1);assert.equal(applied[0][2],'ht');
+ fail=true;await read(orders,'current-customer');assert.equal(applied.length,1);assert.equal(orders[0].orderReview.t,'cached');
 });

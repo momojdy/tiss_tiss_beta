@@ -12893,1527 +12893,1506 @@
       "id": "lbl.sheetStartCart",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Start a new cart?"
     },
     {
       "id": "lbl.page.components.Sheets.863cefd3c6",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Your cart has items from "
     },
     {
       "id": "lbl.page.components.Sheets.da9bdcfb48",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": ". Add "
     },
     {
       "id": "lbl.page.components.Sheets.40c28c7b9e",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": " to the same order, or start a new cart."
     },
     {
       "id": "lbl.page.components.Sheets.863cefd3c6",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Your cart has items from "
     },
     {
       "id": "lbl.page.components.Sheets.61c62bcb1a",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": ". One order can include up to "
     },
     {
       "id": "lbl.page.components.Sheets.db6e29127b",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": " stores, so adding from "
     },
     {
       "id": "lbl.page.components.Sheets.b9790d0477",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": " replaces them."
     },
     {
       "id": "lbl.page.components.Sheets.863cefd3c6",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Your cart has items from "
     },
     {
       "id": "lbl.page.components.Sheets.0723a03ae5",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": ". Adding from "
     },
     {
       "id": "lbl.page.components.Sheets.b9790d0477",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": " replaces them."
     },
     {
       "id": "lbl.page.components.Sheets.95570ad892",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Add to this order"
     },
     {
       "id": "lbl.page.components.Sheets.1bf05743ab",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Start a new cart"
     },
     {
       "id": "lbl.sheetReplace",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Replace and add"
     },
     {
       "id": "lbl.sheetKeepCart",
       "page": "Sheets · newcart",
       "source": "components/Sheets.tsx",
-      "line": 24,
+      "line": 25,
       "fallback": "Keep current cart"
     },
     {
       "id": "lbl.sheetDiscardTitle",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Discard your changes?"
     },
     {
       "id": "lbl.sheetLeaveTitle",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Leave this builder?"
     },
     {
       "id": "lbl.sheetDiscardText",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "The item in your cart stays as it was."
     },
     {
       "id": "lbl.sheetLeaveText",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Your choices can be saved as a draft so you can pick up where you left off."
     },
     {
       "id": "lbl.sheetBuilderSave",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Save draft and leave"
     },
     {
       "id": "lbl.sheetDiscard",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Discard"
     },
     {
       "id": "lbl.sheetKeepEditing",
       "page": "Sheets · byoleave",
       "source": "components/Sheets.tsx",
-      "line": 25,
+      "line": 26,
       "fallback": "Keep editing"
     },
     {
       "id": "lbl.sheetStartOver",
       "page": "Sheets · byoreset",
       "source": "components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "fallback": "Start over?"
     },
     {
       "id": "lbl.sheetAuto1DTRBEO",
       "page": "Sheets · byoreset",
       "source": "components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "fallback": "This clears your current choices. Items already in your cart are not affected."
     },
     {
       "id": "lbl.sheetAutoT5109D",
       "page": "Sheets · byoreset",
       "source": "components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "fallback": "Start over"
     },
     {
       "id": "lbl.sheetKeepEditing",
       "page": "Sheets · byoreset",
       "source": "components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "fallback": "Keep editing"
     },
     {
       "id": "lbl.sheetAlcoholRules",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "Alcohol rules"
     },
     {
       "id": "lbl.page.components.Sheets.f6157ffbc2",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "• Minimum age here: "
     },
     {
       "id": "lbl.sheetAuto9O43A9",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "• The courier checks your ID at the door. At a pickup, the shop checks it."
     },
     {
       "id": "lbl.sheetAuto1JBCM1P",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee."
     },
     {
       "id": "lbl.sheetAlcoholAccept",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "I understand"
     },
     {
       "id": "lbl.sheetAutoWFRFF9",
       "page": "Sheets · alcrules",
       "source": "components/Sheets.tsx",
-      "line": 27,
+      "line": 28,
       "fallback": "Cancel"
     },
     {
       "id": "lbl.sheetTopup",
       "page": "Sheets · topup",
       "source": "components/Sheets.tsx",
-      "line": 31,
+      "line": 32,
       "fallback": "Top up wallet"
     },
     {
       "id": "lbl.sheetDemoMoney",
       "page": "Sheets · topup",
       "source": "components/Sheets.tsx",
-      "line": 31,
+      "line": 32,
       "fallback": "Demo: no real money moves."
     },
     {
       "id": "lbl.sheetWalletToppedUp",
       "page": "Sheets · topup",
       "source": "components/Sheets.tsx",
-      "line": 31,
+      "line": 32,
       "fallback": "Wallet topped up to {amount}"
     },
     {
       "id": "lbl.sheetReplaceCart",
       "page": "Sheets · replace",
       "source": "components/Sheets.tsx",
-      "line": 32,
+      "line": 33,
       "fallback": "Replace your cart?"
     },
     {
       "id": "lbl.page.components.Sheets.863cefd3c6",
       "page": "Sheets · replace",
       "source": "components/Sheets.tsx",
-      "line": 32,
+      "line": 33,
       "fallback": "Your cart has items from "
     },
     {
       "id": "lbl.sheetReorder",
       "page": "Sheets · replace",
       "source": "components/Sheets.tsx",
-      "line": 32,
+      "line": 33,
       "fallback": "Replace and reorder"
     },
     {
       "id": "lbl.sheetKeepCart",
       "page": "Sheets · replace",
       "source": "components/Sheets.tsx",
-      "line": 32,
+      "line": 33,
       "fallback": "Keep current cart"
     },
     {
       "id": "lbl.sheetRemoveNumberTitle",
       "page": "Sheets · remove-number",
       "source": "components/Sheets.tsx",
-      "line": 34,
+      "line": 35,
       "fallback": "Remove this contact number?"
     },
     {
       "id": "lbl.sheetRemoveNumberBody",
       "page": "Sheets · remove-number",
       "source": "components/Sheets.tsx",
-      "line": 35,
+      "line": 36,
       "fallback": "Remove {number} from your Goodies checkout contacts?"
     },
     {
       "id": "lbl.sheetNumberFallback",
       "page": "Sheets · remove-number",
       "source": "components/Sheets.tsx",
-      "line": 35,
+      "line": 36,
       "fallback": "this number"
     },
     {
       "id": "lbl.sheetRemoveNumberConfirm",
       "page": "Sheets · remove-number",
       "source": "components/Sheets.tsx",
-      "line": 36,
+      "line": 37,
       "fallback": "Remove number"
     },
     {
       "id": "lbl.sheetKeepNumber",
       "page": "Sheets · remove-number",
       "source": "components/Sheets.tsx",
-      "line": 38,
+      "line": 39,
       "fallback": "Keep number"
     },
     {
       "id": "lbl.sheetDeleteAddressTitle",
       "page": "Sheets · remove-address",
       "source": "components/Sheets.tsx",
-      "line": 41,
+      "line": 42,
       "fallback": "Delete this address?"
     },
     {
       "id": "lbl.sheetDeleteAddressBody",
       "page": "Sheets · remove-address",
       "source": "components/Sheets.tsx",
-      "line": 42,
+      "line": 43,
       "fallback": "Remove {address} from your saved addresses?"
     },
     {
       "id": "lbl.sheetAddressFallback",
       "page": "Sheets · remove-address",
       "source": "components/Sheets.tsx",
-      "line": 42,
+      "line": 43,
       "fallback": "this address"
     },
     {
       "id": "lbl.sheetDeleteAddressConfirm",
       "page": "Sheets · remove-address",
       "source": "components/Sheets.tsx",
-      "line": 43,
+      "line": 44,
       "fallback": "Delete address"
     },
     {
       "id": "lbl.sheetKeepAddress",
       "page": "Sheets · remove-address",
       "source": "components/Sheets.tsx",
-      "line": 45,
+      "line": 46,
       "fallback": "Keep address"
     },
     {
       "id": "lbl.sheetRemoveItemTitle",
       "page": "Sheets · remove-item",
       "source": "components/Sheets.tsx",
-      "line": 47,
+      "line": 48,
       "fallback": "Remove this item?"
     },
     {
       "id": "lbl.sheetRemoveItemBody",
       "page": "Sheets · remove-item",
       "source": "components/Sheets.tsx",
-      "line": 47,
+      "line": 48,
       "fallback": "Remove {item} from your cart?"
     },
     {
       "id": "lbl.sheetItemFallback",
       "page": "Sheets · remove-item",
       "source": "components/Sheets.tsx",
-      "line": 47,
+      "line": 48,
       "fallback": "this item"
     },
     {
       "id": "lbl.sheetRemoveItemConfirm",
       "page": "Sheets · remove-item",
       "source": "components/Sheets.tsx",
-      "line": 47,
+      "line": 48,
       "fallback": "Remove item"
     },
     {
       "id": "lbl.sheetKeepItem",
       "page": "Sheets · remove-item",
       "source": "components/Sheets.tsx",
-      "line": 47,
+      "line": 48,
       "fallback": "Keep item"
     },
     {
       "id": "lbl.sheetClearCart",
       "page": "Sheets · clear",
       "source": "components/Sheets.tsx",
-      "line": 48,
+      "line": 49,
       "fallback": "Clear your cart?"
     },
     {
       "id": "lbl.sheetAuto1K2QIKR",
       "page": "Sheets · clear",
       "source": "components/Sheets.tsx",
-      "line": 48,
+      "line": 49,
       "fallback": "All items will be removed."
     },
     {
       "id": "lbl.sheetClearCartAction",
       "page": "Sheets · clear",
       "source": "components/Sheets.tsx",
-      "line": 48,
+      "line": 49,
       "fallback": "Clear cart"
     },
     {
       "id": "lbl.sheetAutoWFRFF9",
       "page": "Sheets · clear",
       "source": "components/Sheets.tsx",
-      "line": 48,
+      "line": 49,
       "fallback": "Cancel"
     },
     {
       "id": "lbl.sheetCancelOrder",
       "page": "Sheets · cancel",
       "source": "components/Sheets.tsx",
-      "line": 49,
+      "line": 50,
       "fallback": "Cancel this order?"
     },
     {
       "id": "lbl.sheetAutoFMXIAY",
       "page": "Sheets · cancel",
       "source": "components/Sheets.tsx",
-      "line": 49,
+      "line": 50,
       "fallback": "You can cancel until the store finishes preparing it."
     },
     {
       "id": "lbl.sheetCancelConfirm",
       "page": "Sheets · cancel",
       "source": "components/Sheets.tsx",
-      "line": 49,
+      "line": 50,
       "fallback": "Yes, cancel order"
     },
     {
       "id": "lbl.sheetAuto81YEJ2",
       "page": "Sheets · cancel",
       "source": "components/Sheets.tsx",
-      "line": 49,
+      "line": 50,
       "fallback": "Keep order"
     },
     {
       "id": "lbl.promoDetailsUnavailable",
       "page": "Sheets · promo",
       "source": "components/Sheets.tsx",
-      "line": 54,
+      "line": 55,
       "fallback": "Offer details are unavailable"
     },
     {
       "id": "lbl.promoDetailsUnavailableBody",
       "page": "Sheets · promo",
       "source": "components/Sheets.tsx",
-      "line": 55,
+      "line": 56,
       "fallback": "Browse the current offers for up-to-date details."
     },
     {
       "id": "lbl.promoBrowseOffers",
       "page": "Sheets · promo",
       "source": "components/Sheets.tsx",
-      "line": 56,
+      "line": 57,
       "fallback": "Browse offers"
     },
     {
       "id": "lbl.sheetAutoC0Z21F",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 74,
+      "line": 75,
       "fallback": "Read store reviews"
     },
     {
       "id": "lbl.storeCustomerReviews",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 74,
+      "line": 75,
       "fallback": "Customer reviews"
     },
     {
       "id": "lbl.sheetRatingSummary",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 74,
+      "line": 75,
       "fallback": "★ {rating} ({n} reviews)"
     },
     {
       "id": "lbl.storeNoReviewsYet",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 74,
+      "line": 75,
       "fallback": "No reviews yet"
     },
     {
       "id": "lbl.sheetOpenNow",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 75,
+      "line": 76,
       "fallback": "Open now"
     },
     {
       "id": "lbl.sheetClosedNow",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 75,
+      "line": 76,
       "fallback": "Closed now"
     },
     {
       "id": "lbl.storeOpeningHours",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 77,
+      "line": 78,
       "fallback": "Opening hours"
     },
     {
       "id": "lbl.storeCurrentStatus",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 78,
+      "line": 79,
       "fallback": "Current status"
     },
     {
       "id": "lbl.sheetAcceptingOrders",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 78,
+      "line": 79,
       "fallback": "Accepting orders"
     },
     {
       "id": "lbl.storeCurrentlyClosed",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 78,
+      "line": 79,
       "fallback": "Currently closed"
     },
     {
       "id": "lbl.storeAddress",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 79,
+      "line": 80,
       "fallback": "Address"
     },
     {
       "id": "lbl.storePhone",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 80,
+      "line": 81,
       "fallback": "Phone"
     },
     {
       "id": "lbl.storeEmail",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 81,
+      "line": 82,
       "fallback": "Email"
     },
     {
       "id": "lbl.storeWebsite",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 82,
+      "line": 83,
       "fallback": "Website"
     },
     {
       "id": "lbl.storeServices",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 83,
+      "line": 84,
       "fallback": "Available services"
     },
     {
       "id": "lbl.storeDeliveryFee",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 84,
+      "line": 85,
       "fallback": "Delivery fee"
     },
     {
       "id": "lbl.filterFree",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 84,
+      "line": 85,
       "fallback": "Free delivery"
     },
     {
       "id": "lbl.storeMinimumOrder",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 85,
+      "line": 86,
       "fallback": "Minimum order"
     },
     {
       "id": "lbl.storeDistance",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "Distance"
     },
     {
       "id": "lbl.storeDistanceFromAddress",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "{km} km from your address"
     },
     {
       "id": "lbl.storeDistance",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "Distance"
     },
     {
       "id": "lbl.storeAddAddressForDistance",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "Add address to see distance"
     },
     {
       "id": "lbl.storeDistance",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "Distance"
     },
     {
       "id": "lbl.sheetKmAway",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 86,
+      "line": 87,
       "fallback": "{km} km away"
     },
     {
       "id": "lbl.storeEstimatedDelivery",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 87,
+      "line": 88,
       "fallback": "Estimated delivery"
     },
     {
       "id": "lbl.unitMinutes",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 87,
+      "line": 88,
       "fallback": " min"
     },
     {
       "id": "lbl.storeOrderMethods",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 88,
+      "line": 89,
       "fallback": "Order methods"
     },
     {
       "id": "lbl.sheetDeliveryAndPickup",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 88,
+      "line": 89,
       "fallback": "Delivery and pickup"
     },
     {
       "id": "lbl.storeScheduledOrders",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 89,
+      "line": 90,
       "fallback": "Scheduled orders"
     },
     {
       "id": "lbl.sheetScheduledAvailable",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 89,
+      "line": 90,
       "fallback": "Available while closed"
     },
     {
       "id": "lbl.sheetScheduledOnlyOpen",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 89,
+      "line": 90,
       "fallback": "Only while open"
     },
     {
       "id": "lbl.storeAdvanceTime",
       "page": "Sheets · sinfo",
       "source": "components/Sheets.tsx",
-      "line": 90,
+      "line": 91,
       "fallback": "Earliest order time"
     },
     {
       "id": "lbl.sheetCourierTitle",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "Message courier"
     },
     {
       "id": "lbl.sheetCourierAtGate",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "I am at the gate"
     },
     {
       "id": "lbl.sheetCourierCall",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "Please call me"
     },
     {
       "id": "lbl.sheetCourierDoor",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "Leave it at the door"
     },
     {
       "id": "lbl.sheetCourierLate",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "Running 5 min late"
     },
     {
       "id": "lbl.sheetCourierSent",
       "page": "Sheets · msg",
       "source": "components/Sheets.tsx",
-      "line": 94,
+      "line": 95,
       "fallback": "Sent: {message}"
     },
     {
       "id": "lbl.sheetDeliverToTitle",
       "page": "Sheets · addr",
       "source": "components/Sheets.tsx",
-      "line": 96,
+      "line": 97,
       "fallback": "Deliver to"
     },
     {
       "id": "lbl.sheetAddressScope",
       "page": "Sheets · addr",
       "source": "components/Sheets.tsx",
-      "line": 96,
+      "line": 97,
       "fallback": "Choosing an address here only changes Goodies. Your Wantiss default stays the same."
     },
     {
       "id": "lbl.sheetAutoCKTN2B",
       "page": "Sheets · addr",
       "source": "components/Sheets.tsx",
-      "line": 96,
+      "line": 97,
       "fallback": "Wantiss default"
     },
     {
       "id": "lbl.page.components.Sheets.7208bf1efb",
       "page": "Sheets · addr",
       "source": "components/Sheets.tsx",
-      "line": 96,
+      "line": 97,
       "fallback": "GOODIES"
     },
     {
       "id": "lbl.sheetAuto16NJT2W",
       "page": "Sheets · addr",
       "source": "components/Sheets.tsx",
-      "line": 96,
+      "line": 97,
       "fallback": "Manage addresses"
     },
     {
       "id": "lbl.sheetAutoKDBKGE",
       "page": "Sheets and bottom sheets",
       "source": "components/Sheets.tsx",
-      "line": 107,
+      "line": 108,
       "fallback": "Close dialog"
     },
     {
       "id": "lbl.sheetClosedDayReason",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 167,
+      "line": 168,
       "fallback": "This store has no remaining scheduled times on that day. Choose another day."
     },
     {
       "id": "lbl.sheetClampEarliest",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 167,
+      "line": 168,
       "fallback": "Choose the minimum available time or a later available time."
     },
     {
       "id": "lbl.sheetChooseStore",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 170,
+      "line": 171,
       "fallback": "Choose a store before scheduling."
     },
     {
       "id": "lbl.sheetNoScheduleClosed",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 171,
+      "line": 172,
       "fallback": "This store does not accept scheduled orders."
     },
     {
       "id": "lbl.sheetChooseDay",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 172,
+      "line": 173,
       "fallback": "Choose an available day."
     },
     {
       "id": "lbl.sheetScheduledFor",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 174,
+      "line": 175,
       "fallback": "Scheduled for {day}, {time}"
     },
     {
       "id": "lbl.sheetScheduleTitle",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 178,
+      "line": 179,
       "fallback": "Schedule your order"
     },
     {
       "id": "lbl.sheetChooseDay",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 180,
+      "line": 181,
       "fallback": "Choose a day"
     },
     {
       "id": "lbl.page.components.Sheets.2b065c7c9c",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 183,
+      "line": 184,
       "fallback": "Today"
     },
     {
       "id": "lbl.page.components.Sheets.456a73bbce",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 183,
+      "line": 184,
       "fallback": "Tomorrow"
     },
     {
       "id": "lbl.sheetScheduledMinimum",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 186,
+      "line": 187,
       "fallback": "Earliest available time"
     },
     {
       "id": "lbl.sheetExactTime",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 187,
+      "line": 188,
       "fallback": "Choose a time"
     },
     {
       "id": "lbl.page.components.Sheets.1f153fd182",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 192,
+      "line": 193,
       "fallback": "Selected: "
     },
     {
       "id": "lbl.sheetApply",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 193,
+      "line": 194,
       "fallback": "Apply"
     },
     {
       "id": "lbl.page.components.Sheets.52bfe584a5",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 201,
+      "line": 202,
       "fallback": "Delivery"
     },
     {
       "id": "lbl.sheetPickup",
       "page": "Scheduling",
       "source": "components/Sheets.tsx",
-      "line": 201,
+      "line": 202,
       "fallback": "Pick-up"
     },
     {
       "id": "lbl.page.components.Sheets.956f47dc7b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 216,
+      "line": 217,
       "fallback": "Close group order"
     },
     {
       "id": "lbl.sheetGroupTitle",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 220,
+      "line": 221,
       "fallback": "Group order"
     },
     {
       "id": "lbl.page.components.Sheets.7d9eb7acb1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 221,
+      "line": 222,
       "fallback": "Close"
     },
     {
       "id": "lbl.page.components.Sheets.e3054424ff",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 253,
+      "line": 254,
       "fallback": "Could not load saved delivery addresses."
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 260,
+      "line": 261,
       "fallback": "You"
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 263,
+      "line": 264,
       "fallback": "You"
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 271,
+      "line": 272,
       "fallback": "You"
     },
     {
       "id": "lbl.page.components.Sheets.b6d2157f1e",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 276,
+      "line": 277,
       "fallback": "Open a store first to create its group invitation."
     },
     {
       "id": "lbl.page.components.Sheets.5e802e59aa",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 277,
+      "line": 278,
       "fallback": "Your current cart belongs to another store. Clear it before creating this group."
     },
     {
       "id": "lbl.page.components.Sheets.a686a8f76f",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 282,
+      "line": 283,
       "fallback": "Could not create the group invitation."
     },
     {
       "id": "lbl.page.components.Sheets.90433e8a89",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 286,
+      "line": 287,
       "fallback": "Group created, but one or more cart items could not be shared."
     },
     {
       "id": "lbl.page.components.Sheets.3b6c997a6c",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 287,
+      "line": 288,
       "fallback": "A new group invitation is ready."
     },
     {
       "id": "lbl.page.components.Sheets.b6366a98bf",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 289,
+      "line": 290,
       "fallback": "Could not create the group invitation. Please try again."
     },
     {
       "id": "lbl.page.components.Sheets.750142fd7b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 296,
+      "line": 297,
       "fallback": "Enter a group invite code."
     },
     {
       "id": "lbl.page.components.Sheets.e947050714",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 301,
+      "line": 302,
       "fallback": "Could not join this group order."
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 302,
+      "line": 303,
       "fallback": "You"
     },
     {
       "id": "lbl.page.components.Sheets.978f65f1a2",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 303,
+      "line": 304,
       "fallback": "You joined the group order."
     },
     {
       "id": "lbl.page.components.Sheets.f0399558ec",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 305,
+      "line": 306,
       "fallback": "Could not join this group order. Check the invite code and try again."
     },
     {
       "id": "lbl.page.components.Sheets.6b56548836",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 318,
+      "line": 319,
       "fallback": "Could not refresh the shared cart."
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 329,
+      "line": 330,
       "fallback": "You"
     },
     {
       "id": "lbl.page.components.Sheets.c6c43c2040",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 331,
+      "line": 332,
       "fallback": "The group host ended this group order."
     },
     {
       "id": "lbl.page.components.Sheets.85aff5963b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 331,
+      "line": 332,
       "fallback": "This group order has closed or expired."
     },
     {
       "id": "lbl.page.components.Sheets.6fee6a0fc1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 363,
+      "line": 364,
       "fallback": "Could not load your friends. Please try again."
     },
     {
       "id": "lbl.page.components.Sheets.3800ed2d6b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 371,
+      "line": 372,
       "fallback": "Could not send the invitations. Please try again."
     },
     {
       "id": "lbl.page.components.Sheets.b413595d29",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 372,
+      "line": 373,
       "fallback": "Invitation sent."
     },
     {
       "id": "lbl.page.components.Sheets.8270c30be3",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 372,
+      "line": 373,
       "fallback": "Nothing to send."
     },
     {
       "id": "lbl.groupYou",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 382,
+      "line": 383,
       "fallback": "You"
     },
     {
       "id": "lbl.page.components.Sheets.978f65f1a2",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 383,
+      "line": 384,
       "fallback": "You joined the group order."
     },
     {
       "id": "lbl.page.components.Sheets.5a41af2061",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 385,
+      "line": 386,
       "fallback": "Could not join this group order. It may have closed."
     },
     {
       "id": "lbl.page.components.Sheets.0811ec1314",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 394,
+      "line": 395,
       "fallback": "Create a group invitation first."
     },
     {
       "id": "lbl.page.components.Sheets.a54b07b29c",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 396,
+      "line": 397,
       "fallback": "Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: "
     },
     {
       "id": "lbl.page.components.Sheets.c4af5f55a9",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 396,
+      "line": 397,
       "fallback": "\n\nOr enter invite code: "
     },
     {
       "id": "lbl.page.components.Sheets.4e91232d16",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 397,
+      "line": 398,
       "fallback": "Invite code: "
     },
     {
       "id": "lbl.page.components.Sheets.643b4b1b09",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 403,
+      "line": 404,
       "fallback": "Add or select a complete delivery address first."
     },
     {
       "id": "lbl.page.components.Sheets.df94e75495",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 408,
+      "line": 409,
       "fallback": "Could not calculate delivery for this address."
     },
     {
       "id": "lbl.page.components.Sheets.4e14597cc5",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 412,
+      "line": 413,
       "fallback": "Could not calculate the final estimate."
     },
     {
       "id": "lbl.page.components.Sheets.2690b0f645",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 415,
+      "line": 416,
       "fallback": "Could not calculate delivery."
     },
     {
       "id": "lbl.page.components.Sheets.6229019fe3",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 419,
+      "line": 420,
       "fallback": "Create a group order first."
     },
     {
       "id": "lbl.page.components.Sheets.193104c5af",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 420,
+      "line": 421,
       "fallback": "Only the group host can check out."
     },
     {
       "id": "lbl.page.components.Sheets.de32faa892",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 421,
+      "line": 422,
       "fallback": "Review and validate the combined cart first."
     },
     {
       "id": "lbl.page.components.Sheets.f7d32cc80e",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 422,
+      "line": 423,
       "fallback": "Review the current group-order total before placing the order."
     },
     {
       "id": "lbl.page.components.Sheets.635efc6be8",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 423,
+      "line": 424,
       "fallback": "Add a valid contact phone number in your profile before checkout."
     },
     {
       "id": "lbl.page.components.Sheets.df131bafe6",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 427,
+      "line": 428,
       "fallback": "Could not verify your live Wantiss Wallet balance. Please retry."
     },
     {
       "id": "lbl.page.components.Sheets.eeffda6b88",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 428,
+      "line": 429,
       "fallback": "Your Wantiss Wallet is not available. Create a wallet before placing this group order."
     },
     {
       "id": "lbl.page.components.Sheets.ec7a80c04e",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 430,
+      "line": 431,
       "fallback": "Insufficient Wantiss Wallet balance. Add "
     },
     {
       "id": "lbl.page.components.Sheets.e726b3a2e1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 430,
+      "line": 431,
       "fallback": " or choose another payment method."
     },
     {
       "id": "lbl.page.components.Sheets.643b4b1b09",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 434,
+      "line": 435,
       "fallback": "Add or select a complete delivery address first."
     },
     {
       "id": "lbl.page.components.Sheets.abb2ce699c",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 436,
+      "line": 437,
       "fallback": "Calculate the delivery fee and review it before placing the order."
     },
     {
       "id": "lbl.page.components.Sheets.8bace9f05d",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 451,
+      "line": 452,
       "fallback": "Group order checkout failed."
     },
     {
       "id": "lbl.page.components.Sheets.da76e925b9",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 452,
+      "line": 453,
       "fallback": "Group order placed. Order "
     },
     {
       "id": "lbl.page.components.Sheets.3aacffa21b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 452,
+      "line": 453,
       "fallback": ". Paid with Wantiss Wallet."
     },
     {
       "id": "lbl.page.components.Sheets.065d351ca1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 455,
+      "line": 456,
       "fallback": "Could not complete group order checkout."
     },
     {
       "id": "lbl.page.components.Sheets.59297174fd",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 459,
+      "line": 460,
       "fallback": "Create or join a group order first."
     },
     {
       "id": "lbl.page.components.Sheets.ef2ac87b85",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 463,
+      "line": 464,
       "fallback": "Could not validate the shared cart."
     },
     {
       "id": "lbl.page.components.Sheets.1829f5ca62",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 467,
+      "line": 468,
       "fallback": "Could not calculate the payment estimate."
     },
     {
       "id": "lbl.sheetGroupTitle",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 472,
+      "line": 473,
       "fallback": "Group order"
     },
     {
       "id": "lbl.page.components.Sheets.1ee37e2b92",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 475,
+      "line": 476,
       "fallback": "Invitations from friends"
     },
     {
       "id": "lbl.page.components.Sheets.e9f9b556b3",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 477,
+      "line": 478,
       "fallback": "invited you to a group order"
     },
     {
       "id": "lbl.page.components.Sheets.a2d285b352",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 478,
+      "line": 479,
       "fallback": "Decline"
     },
     {
       "id": "lbl.page.components.Sheets.fd30fe681b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 479,
+      "line": 480,
       "fallback": "Join"
     },
     {
       "id": "lbl.sheetJoinGroup",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 482,
+      "line": 483,
       "fallback": "Join a group order"
     },
     {
       "id": "lbl.sheetJoinGroupHint",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 483,
+      "line": 484,
       "fallback": "Enter the invite code, or scan the QR code your friend shared."
     },
     {
       "id": "lbl.page.components.Sheets.b90c53624b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 484,
+      "line": 485,
       "fallback": "Enter group invite code"
     },
     {
       "id": "lbl.page.components.Sheets.0668ef4e17",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 486,
+      "line": 487,
       "fallback": "Scan group invite QR code"
     },
     {
       "id": "lbl.page.components.Sheets.1187d6f386",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 487,
+      "line": 488,
       "fallback": "Camera permission is needed to scan a group QR code."
     },
     {
       "id": "lbl.page.components.Sheets.6bbb89ee5d",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 492,
+      "line": 493,
       "fallback": "Joining…"
     },
     {
       "id": "lbl.page.components.Sheets.6969947d59",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 492,
+      "line": 493,
       "fallback": "Join group order"
     },
     {
       "id": "lbl.sheetGroupOr",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 495,
+      "line": 496,
       "fallback": "or start your own"
     },
     {
       "id": "lbl.sheetStartGroupTitle",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 497,
+      "line": 498,
       "fallback": "Start a group order"
     },
     {
       "id": "lbl.sheetStartGroupHint",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 498,
+      "line": 499,
       "fallback": "You pay for the whole order. Friends add their items from their own phones."
     },
     {
       "id": "lbl.page.components.Sheets.4660a98336",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 499,
+      "line": 500,
       "fallback": "Please wait…"
     },
     {
       "id": "lbl.page.components.Sheets.2476ffa1fc",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 499,
+      "line": 500,
       "fallback": "Create group invite"
     },
     {
       "id": "lbl.sheetSharedCart",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 501,
+      "line": 502,
       "fallback": "Items in this group"
     },
     {
       "id": "lbl.sheetSubtotal",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 503,
+      "line": 504,
       "fallback": "Subtotal"
     },
     {
       "id": "lbl.sheetInviteCode",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 509,
+      "line": 510,
       "fallback": "GROUP INVITE CODE"
     },
     {
       "id": "lbl.sheetInvitePeople",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 509,
+      "line": 510,
       "fallback": "Invite people"
     },
     {
       "id": "lbl.page.components.Sheets.442c2f9f22",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 512,
+      "line": 513,
       "fallback": "Scan to join this group"
     },
     {
       "id": "lbl.page.components.Sheets.4e91232d16",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 513,
+      "line": 514,
       "fallback": "Invite code: "
     },
     {
       "id": "lbl.page.components.Sheets.e59b319bc6",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 516,
+      "line": 517,
       "fallback": "Share invite code"
     },
     {
       "id": "lbl.page.components.Sheets.81c74ad51a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 518,
+      "line": 519,
       "fallback": "Hide friends"
     },
     {
       "id": "lbl.page.components.Sheets.2614b42d84",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 518,
+      "line": 519,
       "fallback": "Invite friends"
     },
     {
       "id": "lbl.page.components.Sheets.f988388b0a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 520,
+      "line": 521,
       "fallback": "Loading friends…"
     },
     {
       "id": "lbl.page.components.Sheets.62341af7ad",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 521,
+      "line": 522,
       "fallback": "No friends to invite yet."
     },
     {
       "id": "lbl.page.components.Sheets.69318b0c6a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 526,
+      "line": 527,
       "fallback": "Joined"
     },
     {
       "id": "lbl.page.components.Sheets.63b17becd8",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 526,
+      "line": 527,
       "fallback": "Invited"
     },
     {
       "id": "lbl.page.components.Sheets.dce083a2c4",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 526,
+      "line": 527,
       "fallback": "Declined"
     },
     {
       "id": "lbl.page.components.Sheets.b8ed5279e8",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 530,
+      "line": 531,
       "fallback": "Sending…"
     },
     {
       "id": "lbl.page.components.Sheets.dba4038b65",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 530,
+      "line": 531,
       "fallback": "Send invitation"
     },
     {
       "id": "lbl.sheetGroupMembers",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 536,
+      "line": 537,
       "fallback": "Group members"
     },
     {
       "id": "lbl.page.components.Sheets.41302166cd",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 538,
+      "line": 539,
       "fallback": "Could not load group members. Try again."
-    },
-    {
-      "id": "lbl.page.components.Sheets.08b0419357",
-      "page": "Group orders",
-      "source": "components/Sheets.tsx",
-      "line": 544,
-      "fallback": "You"
-    },
-    {
-      "id": "lbl.page.components.Sheets.4a823118b9",
-      "page": "Group orders",
-      "source": "components/Sheets.tsx",
-      "line": 544,
-      "fallback": "Host"
-    },
-    {
-      "id": "lbl.page.components.Sheets.6e9d22d742",
-      "page": "Group orders",
-      "source": "components/Sheets.tsx",
-      "line": 544,
-      "fallback": "Joined group order"
     },
     {
       "id": "lbl.page.components.Sheets.08b0419357",
@@ -14423,556 +14402,577 @@
       "fallback": "You"
     },
     {
+      "id": "lbl.page.components.Sheets.4a823118b9",
+      "page": "Group orders",
+      "source": "components/Sheets.tsx",
+      "line": 545,
+      "fallback": "Host"
+    },
+    {
+      "id": "lbl.page.components.Sheets.6e9d22d742",
+      "page": "Group orders",
+      "source": "components/Sheets.tsx",
+      "line": 545,
+      "fallback": "Joined group order"
+    },
+    {
+      "id": "lbl.page.components.Sheets.08b0419357",
+      "page": "Group orders",
+      "source": "components/Sheets.tsx",
+      "line": 546,
+      "fallback": "You"
+    },
+    {
       "id": "lbl.page.components.Sheets.605489301a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 551,
+      "line": 552,
       "fallback": "Shared items"
     },
     {
       "id": "lbl.page.components.Sheets.2510c9813e",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 556,
+      "line": 557,
       "fallback": "Unavailable product"
     },
     {
       "id": "lbl.page.components.Sheets.6b224fa66b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 559,
+      "line": 560,
       "fallback": "Remove my shared cart item"
     },
     {
       "id": "lbl.page.components.Sheets.69d011432c",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 561,
+      "line": 562,
       "fallback": "Could not remove this shared item."
     },
     {
       "id": "lbl.page.components.Sheets.1d4382b0ce",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 569,
+      "line": 570,
       "fallback": "Items subtotal"
     },
     {
       "id": "lbl.page.components.Sheets.006ba8aa66",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 573,
+      "line": 574,
       "fallback": "Checking shared cart…"
     },
     {
       "id": "lbl.page.components.Sheets.13f51efe4a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 573,
+      "line": 574,
       "fallback": "Review combined cart"
     },
     {
       "id": "lbl.page.components.Sheets.32e5ca77d4",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 578,
+      "line": 579,
       "fallback": "Combined cart"
     },
     {
       "id": "lbl.page.components.Sheets.757fe06863",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 579,
+      "line": 580,
       "fallback": " items from everyone"
     },
     {
       "id": "lbl.page.components.Sheets.1d4382b0ce",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 581,
+      "line": 582,
       "fallback": "Items subtotal"
     },
     {
       "id": "lbl.page.components.Sheets.99e71f48c4",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 585,
+      "line": 586,
       "fallback": "Checkout"
     },
     {
       "id": "lbl.groupPickup",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 588,
+      "line": 589,
       "fallback": "Pickup"
     },
     {
       "id": "lbl.groupDelivery",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 588,
+      "line": 589,
       "fallback": "Delivery"
     },
     {
       "id": "lbl.page.components.Sheets.1829f5ca62",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 588,
+      "line": 589,
       "fallback": "Could not calculate the payment estimate."
     },
     {
       "id": "lbl.page.components.Sheets.cf61d62271",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 590,
+      "line": 591,
       "fallback": "Deliver to"
     },
     {
       "id": "lbl.page.components.Sheets.2a7e0b7b20",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 592,
+      "line": 593,
       "fallback": " · Default"
     },
     {
       "id": "lbl.page.components.Sheets.4217c6bd6f",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 594,
+      "line": 595,
       "fallback": "No saved addresses found. Add a delivery address to your profile first."
     },
     {
       "id": "lbl.page.components.Sheets.e4c3ab5e53",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 595,
+      "line": 596,
       "fallback": "Calculating delivery…"
     },
     {
       "id": "lbl.page.components.Sheets.282141c747",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 595,
+      "line": 596,
       "fallback": "Calculate delivery fee"
     },
     {
       "id": "lbl.page.components.Sheets.43131a04c8",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 597,
+      "line": 598,
       "fallback": "Delivery fee"
     },
     {
       "id": "lbl.page.components.Sheets.cb0ebdd2b1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 601,
+      "line": 602,
       "fallback": "Manage delivery addresses"
     },
     {
       "id": "lbl.page.components.Sheets.334cde1b42",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 604,
+      "line": 605,
       "fallback": "Payment estimate"
     },
     {
       "id": "lbl.page.components.Sheets.b0f3f8e79a",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 605,
+      "line": 606,
       "fallback": "Combined cart subtotal"
     },
     {
       "id": "lbl.page.components.Sheets.43131a04c8",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 606,
+      "line": 607,
       "fallback": "Delivery fee"
     },
     {
       "id": "lbl.page.components.Sheets.c1f39f767e",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 607,
+      "line": 608,
       "fallback": "Service fee"
     },
     {
       "id": "lbl.page.components.Sheets.8019400caf",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 609,
+      "line": 610,
       "fallback": "Estimated total"
     },
     {
       "id": "lbl.page.components.Sheets.ab861d056b",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 613,
+      "line": 614,
       "fallback": "Host Wallet balance"
     },
     {
       "id": "lbl.page.components.Sheets.dd2d63c395",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 616,
+      "line": 617,
       "fallback": "Placing group order…"
     },
     {
       "id": "lbl.page.components.Sheets.641ef0cb57",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 616,
+      "line": 617,
       "fallback": "Place group order · Wallet"
     },
     {
       "id": "lbl.sheetDone",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 618,
+      "line": 619,
       "fallback": "Done"
     },
     {
       "id": "lbl.sheetEndGroup",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 619,
+      "line": 620,
       "fallback": "End group order"
     },
     {
       "id": "lbl.page.components.Sheets.fdf059eee1",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 620,
+      "line": 621,
       "fallback": "This group invitation is not server-backed."
     },
     {
       "id": "lbl.page.components.Sheets.9f49507ffd",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 624,
+      "line": 625,
       "fallback": "Could not end this group order."
     },
     {
       "id": "lbl.page.components.Sheets.9a5aa0d4b6",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 626,
+      "line": 627,
       "fallback": "Group order ended."
     },
     {
       "id": "lbl.page.components.Sheets.5347926989",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 637,
+      "line": 638,
       "fallback": "QR code scanned. Tap Join group order to continue."
     },
     {
       "id": "lbl.page.components.Sheets.fbe99c2534",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 640,
+      "line": 641,
       "fallback": "Scan a Wantiss group invite QR code"
     },
     {
       "id": "lbl.page.components.Sheets.929d4aafa6",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 641,
+      "line": 642,
       "fallback": "Close scanner"
     },
     {
       "id": "lbl.sheetGroupTitle",
       "page": "Group orders",
       "source": "components/Sheets.tsx",
-      "line": 651,
+      "line": 652,
       "fallback": "Group order"
     },
     {
       "id": "lbl.orderRateDriver",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 661,
+      "line": 662,
       "fallback": "Rate your driver"
     },
     {
       "id": "lbl.orderRate",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 661,
+      "line": 662,
       "fallback": "Rate your order"
     },
     {
       "id": "lbl.sheetReviewComment",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 662,
+      "line": 663,
       "fallback": "Add a comment (optional)"
     },
     {
       "id": "lbl.reviewSaving",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 664,
+      "line": 665,
       "fallback": "Submitting…"
     },
     {
       "id": "lbl.sheetSubmitReview",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 664,
+      "line": 665,
       "fallback": "Submit review"
     },
     {
       "id": "lbl.sheetOrderNotFound",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 667,
+      "line": 668,
       "fallback": "Order not found"
     },
     {
       "id": "lbl.reviewTooLong",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 668,
+      "line": 669,
       "fallback": "Keep your review under 1,000 characters."
     },
     {
       "id": "lbl.sheetPickRating",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 669,
+      "line": 670,
       "fallback": "Pick a star rating"
     },
     {
       "id": "lbl.sheetOrderNotFound",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 670,
+      "line": 671,
       "fallback": "Order not found"
     },
     {
       "id": "lbl.reviewSaveFailed",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 677,
+      "line": 678,
       "fallback": "Could not submit your review. Please try again."
     },
     {
       "id": "lbl.page.components.Sheets.66f53417d3",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 681,
+      "line": 682,
       "fallback": "Just now"
     },
     {
       "id": "lbl.page.components.Sheets.66f53417d3",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 683,
+      "line": 684,
       "fallback": "Just now"
     },
     {
       "id": "lbl.page.components.Sheets.66f53417d3",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 686,
+      "line": 687,
       "fallback": "Just now"
     },
     {
       "id": "lbl.page.components.Sheets.66f53417d3",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 688,
+      "line": 689,
       "fallback": "Just now"
     },
     {
       "id": "lbl.sheetDriverReviewThanks",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 690,
+      "line": 692,
       "fallback": "Thanks for rating your driver!"
     },
     {
       "id": "lbl.sheetReviewThanks",
       "page": "Review sheet",
       "source": "components/Sheets.tsx",
-      "line": 690,
+      "line": 692,
       "fallback": "Thanks for your review!"
     },
     {
       "id": "lbl.sheetDefaultNumber",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 697,
+      "line": 699,
       "fallback": "Default Wantiss number"
     },
     {
       "id": "lbl.sheetGoodiesNumber",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 697,
+      "line": 699,
       "fallback": "Goodies number"
     },
     {
       "id": "lbl.sheetContactNumber",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 699,
+      "line": 701,
       "fallback": "Contact number"
     },
     {
       "id": "lbl.sheetContactNumberHint",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 700,
+      "line": 702,
       "fallback": "We use this number for this order only. Your Wantiss account number is never changed here."
     },
     {
       "id": "lbl.sheetAuto1UP0O00",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 703,
+      "line": 705,
       "fallback": "Default Wantiss number"
     },
     {
       "id": "lbl.page.components.Sheets.a3e540df30",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 703,
+      "line": 705,
       "fallback": "Goodies checkout number · "
     },
     {
       "id": "lbl.sheetEditNumber",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 704,
+      "line": 706,
       "fallback": "Edit number"
     },
     {
       "id": "lbl.sheetAuto1CISXZJ",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 704,
+      "line": 706,
       "fallback": "Edit"
     },
     {
       "id": "lbl.sheetRemoveNumber",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 705,
+      "line": 707,
       "fallback": "Remove number"
     },
     {
       "id": "lbl.sheetPhoneInUse",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 705,
+      "line": 707,
       "fallback": "This number is used by an active order"
     },
     {
       "id": "lbl.sheetNumberRemoved",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 705,
+      "line": 707,
       "fallback": "Number removed"
     },
     {
       "id": "lbl.sheetAutoQWFBNT",
       "page": "Contact numbers sheet",
       "source": "components/Sheets.tsx",
-      "line": 708,
+      "line": 710,
       "fallback": "+ Add another number"
     },
     {
       "id": "lbl.sheetPhoneInvalid",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 716,
+      "line": 718,
       "fallback": "Enter a valid phone number (8 to 15 digits)"
     },
     {
       "id": "lbl.sheetSameWantissPhone",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 718,
+      "line": 720,
       "fallback": "That is already your Wantiss number"
     },
     {
       "id": "lbl.sheetDuplicateNumber",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 719,
+      "line": 721,
       "fallback": "You already saved that number"
     },
     {
       "id": "lbl.sheetNumberSaved",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 722,
+      "line": 724,
       "fallback": "Number saved for Goodies checkout"
     },
     {
       "id": "lbl.sheetEditContactNumber",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 726,
+      "line": 728,
       "fallback": "Edit contact number"
     },
     {
       "id": "lbl.sheetAddContactNumber",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 726,
+      "line": 728,
       "fallback": "Add contact number"
     },
     {
       "id": "lbl.sheetAutoLZBAF5",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 727,
+      "line": 729,
       "fallback": "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings."
     },
     {
       "id": "lbl.sheetAuto5601C6",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 728,
+      "line": 730,
       "fallback": "Label (optional)"
     },
     {
       "id": "lbl.sheetAutoBBS3LN",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 728,
+      "line": 730,
       "fallback": "e.g. Partner, Office"
     },
     {
       "id": "lbl.sheetAutoSTYZV6",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 729,
+      "line": 731,
       "fallback": "Phone number"
     },
     {
       "id": "lbl.sheetAuto1JJXA6W",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 729,
+      "line": 731,
       "fallback": "Enter phone number"
     },
     {
       "id": "lbl.sheetAuto9HY80N",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 732,
+      "line": 734,
       "fallback": "Save number"
     },
     {
       "id": "lbl.sheetAuto1LJ92XO",
       "page": "Contact number form",
       "source": "components/Sheets.tsx",
-      "line": 733,
+      "line": 735,
       "fallback": "Back"
     },
     {
@@ -15483,14 +15483,14 @@
       "id": "lbl.reviewYou",
       "page": "Shared components",
       "source": "reviews.ts",
-      "line": 34,
+      "line": 60,
       "fallback": "You"
     },
     {
       "id": "lbl.reviewCustomer",
       "page": "Shared components",
       "source": "reviews.ts",
-      "line": 34,
+      "line": 60,
       "fallback": "Customer"
     },
     {

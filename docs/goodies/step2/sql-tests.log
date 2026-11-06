@@ -1,0 +1,7 @@
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/reviewsPreferences_test.ts
+running 2 tests from ./supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Goodies reviews enforce completed-order ownership, isolate participants and deduplicate retries ... ok (3s)
+review migration failure rolls back partial schema changes and can be retried cleanly ... ok (1s)
+
+ok | 2 passed | 0 failed (5s)
+

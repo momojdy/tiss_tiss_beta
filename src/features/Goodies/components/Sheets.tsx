@@ -1,3 +1,4 @@
+import {notifyStoreReviewsChanged} from '../reviews';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions, PanResponder} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -682,11 +683,12 @@ function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string;
         o.driverRated = n;
         o.driverReview = {r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now")};
       } else {
-        S.rev[o.sid] = S.rev[o.sid] || [];
+        S.rev[o.sid] = (S.rev[o.sid] || []).filter((review: any) => review.orderId !== id);
         S.rev[o.sid].unshift({n: S.pf.n, r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now"), you: 1, orderId: id});
         o.rated = n;
         o.orderReview = {r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now")};
       }
+      if (!driver) void notifyStoreReviewsChanged(o.sid);
       S.rt = 0; ui.close(); toast(driver ? label('lbl.sheetDriverReviewThanks', 'Thanks for rating your driver!') : label('lbl.sheetReviewThanks', 'Thanks for your review!')); save(); emit();
     }} />
   </>);

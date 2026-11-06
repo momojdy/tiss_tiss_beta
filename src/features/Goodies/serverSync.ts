@@ -1,3 +1,4 @@
+import {applyOrderReviews} from './orderReviews';
 import {wantissLocale} from '../../lib/locales';
 import {CUSTOMER_NOTIFICATION_FILTER} from './notifications';
 import { AppState, type AppStateStatus } from 'react-native';
@@ -80,6 +81,13 @@ function mapOrder(row: ServerOrder) {
   };
 }
 
+async function readOrderReviews(orders: any[], account: string) {
+  if (!orders.length) return;
+  const {data, error} = await supabase.from('goodies_order_reviews').select('order_id,target,rating,comment,created_at')
+    .eq('customer_id', account).in('order_id', orders.map(order => order.backendId));
+  if (!error && Array.isArray(data)) applyOrderReviews(orders, data, S.lang);
+}
+
 export async function fetchGoodiesOrderForNotification(orderId?: string, orderCode?: string) {
   const {data: auth, error: authError} = await supabase.auth.getUser();
   if (authError) throw authError;
@@ -97,6 +105,8 @@ export async function fetchGoodiesOrderForNotification(orderId?: string, orderCo
   const mapped = mapOrder(data as ServerOrder);
   const cached = (S.orders || []).find((order: any) => order?.backendId === mapped.backendId);
   const order = {...cached, ...mapped};
+  await readOrderReviews([order], auth.user.id);
+  if (S.accountId !== auth.user.id) return null;
   S.orders = [order, ...(S.orders || []).filter((item: any) => item?.backendId !== mapped.backendId)];
   save(); emit();
   return order.id;
@@ -203,15 +213,8 @@ export function startGoodiesSync() {
             ...(cached.get(String(row.id)) || {}),
             ...mapOrder(row),
           }));
-          if (serverOrders.length) {
-            const reviews = await supabase.from('goodies_order_reviews').select('order_id,target,rating,comment,created_at').eq('customer_id',requestUserId).in('order_id',serverOrders.map(o=>o.backendId));
-            if(stopped || requestGeneration!==generation || requestUserId!==userId)continue;
-            if(!reviews.error) for(const order of serverOrders as any[]) {
-              const storeReview=(reviews.data || []).find((r:any)=>r.order_id===order.backendId && r.target==='store');
-              const driverReview=(reviews.data || []).find((r:any)=>r.order_id===order.backendId && r.target==='driver');
-              order.rated=storeReview?.rating || 0;order.driverRated=driverReview?.rating || 0;
-            }
-          }
+          await readOrderReviews(serverOrders, requestUserId);
+          if(stopped || requestGeneration!==generation || requestUserId!==userId)continue;
           S.ordersError = '';
           const lastRow = ordersResult.data?.[ordersResult.data.length - 1];
           const boundary = lastRow ? `${lastRow.created_at}:${lastRow.id}` : '';
@@ -333,6 +336,8 @@ export async function loadOlderGoodiesOrders() {
     if (S.accountId !== account) return;
     const cache = new Map<string,any>(S.orders.map((o:any)=>[o.backendId,o]));
     const page = (data || []).map(row=>({...cache.get(row.id),...mapOrder(row as ServerOrder)}));
+    await readOrderReviews(page, account);
+    if (S.accountId !== account) return;
     const ids = new Set(page.map(o=>o.backendId));
     S.orders = [...S.orders.filter((o:any)=>!ids.has(o.backendId)),...page].sort((a:any,b:any)=>b.t0-a.t0);
     if(S.ordersCursor===cursor) {

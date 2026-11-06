@@ -1,0 +1,14 @@
+{
+  "project": "ycbirmgppwavorwudlrv",
+  "scope": "Read-only catalog checks; not production backup or rollout certification",
+  "confirmedExisting": [
+    "public.user_settings",
+    "public.goodies_orders",
+    "public.goodies_store_schedules",
+    "public.goodies_admin_assert()",
+    "private.goodies_merchant_can_operate(uuid)",
+    "public.goodies_sync_store_from_business(uuid)"
+  ],
+  "preferenceTriggerAlreadyExists": false,
+  "productionWritesPerformed": false
+}
