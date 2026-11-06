@@ -8,6 +8,7 @@ import type {Store, Item, Address, CartLine, Order} from './data/types';
 import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
 import {friendlyError} from './friendlyError';
 import {ownedCache, cacheEnvelope} from './accountCache';
+import {wantissLocale, WANTISS_LANGUAGES} from '../../lib/locales';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
 
@@ -297,6 +298,7 @@ export async function load() {
   const {data: cachedSession} = await supabase.auth.getSession();
   switchGoodiesAccount(cachedSession.session?.user.id || null);
   const ownerId = S.accountId;
+  let accountLanguageLoaded = false;
   const merge = async (key: string, D: any) => {
     try {
       const raw = ownedCache(JSON.parse((await AsyncStorage.getItem(key)) || 'null'), ownerId);
@@ -315,6 +317,8 @@ export async function load() {
     if (auth.user) {
       const {data: profile} = await supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', auth.user.id).maybeSingle();
       if (profile && S.accountId === auth.user.id) S.pf = {n: profile.full_name || '', e: profile.email || auth.user.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
+      const {data: settings,error: settingsError} = await supabase.from('user_settings').select('language').eq('user_id',auth.user.id).maybeSingle();
+      if (!settingsError && S.accountId === auth.user.id) {S.lang=wantissLocale(settings?.language);accountLanguageLoaded=true;}
       await refreshUserAddresses();
     }
   } catch (e) {}
@@ -344,7 +348,7 @@ export async function load() {
     }
   }
   try {const t = await AsyncStorage.getItem('goodies-theme'); if (t === 'light' || t === 'dark') S.theme = t;} catch (e) {}
-  try {const l = await AsyncStorage.getItem('goodies-lang'); if (l) S.lang = l;} catch (e) {}
+  try {const l = await AsyncStorage.getItem('goodies-lang'); if (l && !accountLanguageLoaded) S.lang = wantissLocale(l);} catch (e) {}
   /* The catalog must be loaded before the cart, favorites and orders are checked against it. */
   await refreshLiveSchedules();
   /* sanitise exactly like v24 */
@@ -403,7 +407,14 @@ export async function completeGoodiesCheckoutAttempt(orderId: string): Promise<v
   try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
 }
 export const setTheme = (t: 'light' | 'dark') => {S.theme = t; AsyncStorage.setItem('goodies-theme', t); emit();};
-export const setLang = (l: string) => {S.lang = l; AsyncStorage.setItem('goodies-lang', l); emit();};
+export const setLang = async (l: string) => {
+  const locale=wantissLocale(l), owner=S.accountId;
+  S.lang=locale;emit();await AsyncStorage.setItem('goodies-lang',locale);
+  if (!owner) return;
+  const language=WANTISS_LANGUAGES.find(entry=>entry.code===locale)!.label;
+  const {error}=await supabase.from('user_settings').upsert({user_id:owner,language,updated_at:new Date().toISOString()},{onConflict:'user_id'});
+  if(error && S.accountId===owner)toast(label('lbl.languageSyncFailed','Language changed on this device, but your account preference could not be saved. Please retry in Wantiss Settings.'));
+};
 
 /* ---------- derived ---------- */
 export const defAddr = (): Address => S.addr.filter((a: Address) => a.def)[0] || S.addr[0];

@@ -1,3 +1,5 @@
+import {wantissLocale} from '../../lib/locales';
+import {CUSTOMER_NOTIFICATION_FILTER} from './notifications';
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { S, STB, IT, emit, save, switchGoodiesAccount, refreshUserAddresses } from './store';
@@ -142,12 +144,12 @@ export function startGoodiesSync() {
         refreshAgain = false;
         const requestUserId: string = userId;
         const requestGeneration = generation;
-        const [unreadResult, ordersResult, walletResult, profileResult] = await Promise.all([
+        const [unreadResult, ordersResult, walletResult, profileResult, settingsResult] = await Promise.all([
           supabase.from('notifications')
             .select('id', { count: 'exact', head: true })
             .eq('user_id', requestUserId)
             .ilike('feature_name', 'goodies')
-            .or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
+            .or(CUSTOMER_NOTIFICATION_FILTER)
             .eq('read', false),
           supabase.from('goodies_orders')
             .select('id,order_code,parent_id,stop_index,store_id,status,created_at,scheduled_for,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,notes,address,contact_phone,payment_method,payment_status,promo_code,updated_at')
@@ -156,10 +158,12 @@ export function startGoodiesSync() {
             .limit(100),
           supabase.from('wallets').select('id,balance').eq('user_id', requestUserId).maybeSingle(),
           supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', requestUserId).maybeSingle(),
+          supabase.from('user_settings').select('language').eq('user_id',requestUserId).maybeSingle(),
         ]);
         if (stopped || requestGeneration !== generation || requestUserId !== userId) continue;
 
         let changed = false;
+        if (!settingsResult.error) {const locale=wantissLocale(settingsResult.data?.language);if(S.lang!==locale){S.lang=locale;changed=true;}}
         if (!profileResult.error && profileResult.data) {
           const profile = profileResult.data;
           S.pf = {n: profile.full_name || '', e: profile.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};

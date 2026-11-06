@@ -7,10 +7,9 @@ import {S} from '../store';
 import type {LangCode, Txt} from '../data/types';
 import {DICT} from './dict';
 import {resolveGoodiesText} from './resolveText';
+import {WANTISS_LANGUAGES} from '../../../lib/locales';
 
-export const LANGS: {code: LangCode; label: string}[] = [
-  {code: 'en', label: 'English'}, {code: 'fr', label: 'Français'}, {code: 'ht', label: 'Kreyòl ayisyen'}, {code: 'es', label: 'Español'}, {code: 'zh-Hans', label: '简体中文'},
-];
+export const LANGS: ReadonlyArray<{code: LangCode; label: string}> = WANTISS_LANGUAGES;
 export const DEFAULT_LANG: LangCode = 'en';
 export const cfg = {showMachineDrafts: false};
 

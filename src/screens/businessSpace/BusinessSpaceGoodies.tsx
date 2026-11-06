@@ -79,7 +79,6 @@ export const goodiesApi = {
     if (p.emoji !== undefined) f.emoji = p.emoji.trim() || '🛍️';
     if (p.stock !== undefined) f.stock = p.stock;
     if (p.available !== undefined) f.is_available = p.available;
-    if (!p.id) { f.review_status = 'approved'; f.review_note = null; }
     if (p.restriction !== undefined) f.restriction = p.restriction;
     if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
     if ('photoUrls' in p) f.photo_urls = (p.photoUrls || []).slice(0, 5);

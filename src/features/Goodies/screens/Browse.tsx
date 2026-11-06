@@ -1,3 +1,4 @@
+import {CUSTOMER_NOTIFICATION_FILTER} from '../notifications';
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl, Image} from 'react-native';
@@ -420,7 +421,7 @@ export function Notifs() {
     serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name,destination')
-      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
+      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or(CUSTOMER_NOTIFICATION_FILTER)
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
     if (error) { setServerError(friendlyError(error, 'Something went wrong. Please try again.')); return; }
@@ -471,7 +472,7 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
-        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').eq('read', false);
+        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or(CUSTOMER_NOTIFICATION_FILTER).eq('read', false);
       if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
       else await loadServer();
     }

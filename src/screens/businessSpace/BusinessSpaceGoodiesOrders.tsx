@@ -63,6 +63,8 @@ export function GoodiesOrdersPage() {
   };
   const markOwnDelivered = async (order: GoodiesOrder) => {
     try {
+      const {data: privateUploads, error: policyError} = await supabase.rpc('goodies_private_delivery_proof_uploads_enabled');
+      if (policyError) throw policyError;
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       let result: ImagePicker.ImagePickerResult;
       if (perm.granted) result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 });
@@ -76,10 +78,13 @@ export function GoodiesOrdersPage() {
       const asset = result.assets[0];
       const m = await ImageManipulator.manipulateAsync(asset.uri, asset.width && asset.width > 1400 ? [{ resize: { width: 1400 } }] : [], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
       const b64 = await FileSystem.readAsStringAsync(m.uri, { encoding: FileSystem.EncodingType.Base64 });
-      const path = app.biz.id + '/' + order.id + '/' + Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
-      const {error: uploadError} = await supabase.storage.from(GOODIES_DELIVERY_PROOF_BUCKET).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
+      const suffix = Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
+      const path = privateUploads ? app.biz.id + '/' + order.id + '/' + suffix : app.biz.id + '/delivery-proofs/' + order.id + '-' + suffix;
+      const bucket = privateUploads ? GOODIES_DELIVERY_PROOF_BUCKET : 'listing-photos';
+      const {error: uploadError} = await supabase.storage.from(bucket).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
       if (uploadError) throw uploadError;
-      const {error} = await supabase.rpc('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: path});
+      const reference = privateUploads ? path : supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+      const {error} = await supabase.rpc('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: reference});
       if (error) throw error;
       app.toast('Marked as delivered. The customer has 24 hours to confirm or report a problem.');
       await orders.reload();

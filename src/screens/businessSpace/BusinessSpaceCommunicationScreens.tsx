@@ -1,3 +1,4 @@
+import {goodiesBusinessNotificationTarget} from '../../features/Goodies/notifications';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -103,6 +104,8 @@ export function NotificationsPage() {
       app.go('conversation', { id: String(metadata.conversation_id) });
       return;
     }
+    const goodiesTarget = goodiesBusinessNotificationTarget(x, app.biz.id);
+    if (goodiesTarget) {app.go(goodiesTarget.page, goodiesTarget.arg); return;}
     const l = x.link ?? {};
     if (l.view === 'feat' && l.arg) app.go('feature', { k: l.arg, focus: l.arg }); else if (l.view === 'wallet') app.panel('payouts'); else if (l.view === 'onboard') app.go('registration'); else if (l.view === 'promo') app.go('promotions');
   };

@@ -1,3 +1,4 @@
+import {goodiesBusinessNotificationTarget} from '../../features/Goodies/notifications';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -156,8 +157,8 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods', 'goodies_products', 'goodies_builder_configs'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
     ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
       const notice: any = payload.new;
-      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_')) {
-        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: notice.metadata || {} }, trigger: null });
+      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_')) {
+        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: {...(notice.metadata || {}), notification_type: notice.notification_type, destination: notice.destination} }, trigger: null });
       }
     });
     ch.on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'messages' }, kick);
@@ -183,10 +184,12 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(r => {
       const d: any = r.notification.request.content.data ?? {};
+      const target = goodiesBusinessNotificationTarget(d, biz.id);
+      if (target) {nav.go(target.page, target.arg); return;}
       if (d.feature) nav.go('feature', { k: d.feature, focus: d.order }); else if (d.page) nav.go(d.page);
     });
     return () => sub.remove();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [biz.id]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handle = (url: string | null) => { if (url && url.includes('/business/payouts')) { WebBrowser.dismissBrowser(); bump(); setPanel({ name: 'payouts' }); } };
     Linking.getInitialURL().then(handle).catch(() => undefined);

@@ -1,3 +1,4 @@
+import {CUSTOMER_NOTIFICATION_FILTER} from '../../features/Goodies/notifications';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -31,7 +32,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
     if (!auth.user) { setItems([]); setLoading(false); setError('Sign in to view your notifications.'); return; }
     const { data, error: queryError } = await supabase.from('notifications')
       .select('id,title,body,read,feature_name,notification_type,destination,metadata,created_at')
-      .eq('user_id', auth.user.id).or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').order('created_at', { ascending: false }).limit(100);
+      .eq('user_id', auth.user.id).or(CUSTOMER_NOTIFICATION_FILTER).order('created_at', { ascending: false }).limit(100);
     if (queryError) setError(queryError.message);
     else { setItems((data || []) as NotificationRow[]); setError(''); }
     setLoading(false);
@@ -62,7 +63,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
   const markAll = async () => {
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user || unread === 0) return;
-    const { error: updateError } = await supabase.from('notifications').update({ read: true, updated_at: new Date().toISOString() }).eq('user_id', auth.user.id).eq('read', false).or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%');
+    const { error: updateError } = await supabase.from('notifications').update({ read: true, updated_at: new Date().toISOString() }).eq('user_id', auth.user.id).eq('read', false).or(CUSTOMER_NOTIFICATION_FILTER);
     if (updateError) setError(updateError.message);
     else setItems(prev => prev.map(n => ({ ...n, read: true })));
   };

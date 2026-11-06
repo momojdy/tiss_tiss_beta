@@ -28,6 +28,7 @@ for (const filename of files(sourceRoot)) {
   }
   visit(ast);
 }
+for (const entry of JSON.parse(fs.readFileSync(path.join(sourceRoot,'i18n/notificationCatalog.json'),'utf8'))) entries.set(entry.id,entry);
 const output = path.join(adminRoot,'src/features/admin/goodiesConsumer/customerLabelCatalog.json');
 fs.writeFileSync(output,JSON.stringify([...entries.values()].sort((a,b)=>a.id.localeCompare(b.id)),null,2)+'\n');
 console.log(`Synchronized ${entries.size} customer CMS labels. Nothing was published.`);
