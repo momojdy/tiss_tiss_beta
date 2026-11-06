@@ -2,7 +2,7 @@ name: Expo validation
 
 on:
   push:
-    branches: [main]
+    branches: [main, goodies/production-readiness]
   pull_request:
     branches: [main]
 
@@ -36,6 +36,6 @@ jobs:
         with:
           deno-version: v2.x
       - name: Type-check deployed edge functions
-        run: deno check --node-modules-dir=auto supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts
+        run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts supabase/functions/refund-goodies-card-order/index.ts supabase/functions/expire-goodies-card-auth/index.ts
       - name: Test Goodies refund and webhook decision logic
-        run: deno test supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
+        run: deno test --allow-read --allow-env --config supabase/functions/deno.json supabase/functions/goodies-tests/ supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
