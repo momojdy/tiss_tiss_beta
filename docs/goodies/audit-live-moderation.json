@@ -1,0 +1,101 @@
+{
+  "moderation": "CREATE OR REPLACE FUNCTION public.goodies_products_enforce_update_moderation()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'auth', 'pg_temp'\nAS $function$\ndeclare v_is_admin boolean := false;\nbegin\n  if auth.uid() is null then return new; end if;\n  if coalesce(new.restriction, 'none') = 'alcohol'\n     or concat_ws(' ', new.name, new.description) ~*\n       '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\mbeer|bi[èe]re|\\mwine|champagne|cocktail)' then\n    raise exception 'Alcohol products are prohibited on Wantiss' using errcode = 'P0001';\n  end if;\n  begin\n    perform public.goodies_admin_assert();\n    v_is_admin := true;\n  exception when insufficient_privilege then\n    v_is_admin := false;\n  end;\n  if new.review_status is distinct from old.review_status\n     or new.review_note is distinct from old.review_note\n     or new.reviewed_by is distinct from old.reviewed_by\n     or new.reviewed_at is distinct from old.reviewed_at then\n    if not v_is_admin then raise exception 'Only Wantiss administrators can change product review metadata' using errcode = '42501'; end if;\n  end if;\n  new.review_status := 'approved';\n  new.review_note := null;\n  new.reviewed_by := null;\n  new.reviewed_at := null;\n  return new;\nend $function$\n",
+  "review_product": "CREATE OR REPLACE FUNCTION public.goodies_admin_review_product(p_product_id uuid, p_status text, p_note text DEFAULT NULL::text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\nbegin\n perform public.goodies_admin_assert();\n if p_status not in ('approved','rejected') then\n   raise exception 'Invalid product review status' using errcode='22023';\n end if;\n if p_status = 'rejected' and nullif(trim(p_note),'') is null then\n   raise exception 'A rejection reason is required' using errcode='22023';\n end if;\n update public.goodies_products\n    set review_status=p_status,\n        review_note=left(nullif(trim(p_note),''),500),\n        reviewed_by=auth.uid(),\n        reviewed_at=now(),\n        is_available=(p_status='approved'),\n        updated_at=now()\n  where id=p_product_id;\n if not found then\n   raise exception 'Product not found' using errcode='P0002';\n end if;\nend\n$function$\n",
+  "product_columns": [
+    {
+      "column": "id",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "business_id",
+      "insert": true,
+      "update": false
+    },
+    {
+      "column": "name",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "description",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "price",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "emoji",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "aisle",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "stock",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "is_available",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "restriction",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "photo_url",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "sort_order",
+      "insert": true,
+      "update": true
+    },
+    {
+      "column": "created_at",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "updated_at",
+      "insert": false,
+      "update": true
+    },
+    {
+      "column": "review_status",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "review_note",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "reviewed_by",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "reviewed_at",
+      "insert": false,
+      "update": false
+    },
+    {
+      "column": "photo_urls",
+      "insert": false,
+      "update": false
+    }
+  ]
+}
