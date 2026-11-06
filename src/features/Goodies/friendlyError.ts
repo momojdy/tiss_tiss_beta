@@ -1,3 +1,4 @@
+import {label} from "./content";
 /**
  * Never render raw server errors in customer-facing UI.
  * Technical details stay in the console; callers provide the customer-safe fallback.
@@ -11,7 +12,7 @@ export function friendlyError(error: any, fallback: string): string {
 
   // Translate the one known actionable server condition into app-owned copy.
   if (/insufficient(?:\s+funds?|\s+balance)?/i.test(raw)) {
-    return 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.';
+    return label("lbl.page.friendlyError.944eae3a6c", "Insufficient Wantiss wallet balance. Add funds or choose another payment method.");
   }
 
   // Do not pass through even apparently human-readable server messages: they can

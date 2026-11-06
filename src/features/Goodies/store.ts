@@ -30,7 +30,7 @@ export const money = (n: number) => {
   try {return new Intl.NumberFormat(LOC[S.lang] || 'en-US', {style: 'currency', currency: 'USD', currencyDisplay: 'narrowSymbol'}).format(n);} catch (e) {return '$' + n.toFixed(2);}
 };
 export const fmtTime = (d: Date) => {
-  try {return new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {hour: 'numeric', minute: '2-digit'}).format(d);} catch (e) {let h = d.getHours(); const m = String(d.getMinutes()).padStart(2, '0'); return (h % 12 || 12) + ':' + m + ' ' + (h >= 12 ? 'PM' : 'AM');}
+  try {return new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {hour: 'numeric', minute: '2-digit'}).format(d);} catch (e) {let h = d.getHours(); const m = String(d.getMinutes()).padStart(2, '0'); return (h % 12 || 12) + ':' + m + ' ' + (h >= 12 ? label("lbl.page.store.6b987654a4", "PM") : label("lbl.page.store.c8f48a6864", "AM"));}
 };
 export const fmtDay = (d: Date) => {
   try {return new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {month: 'short', day: 'numeric'}).format(d);} catch (e) {return ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()] + ' ' + d.getDate();}
@@ -38,7 +38,7 @@ export const fmtDay = (d: Date) => {
 export const fmtStoreDay = (_sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, month: 'short', day: 'numeric'}).format(new Date(timestamp));
 export const fmtStoreTime = (_sid: string, timestamp: number) => new Intl.DateTimeFormat(LOC[S.lang] || 'en-US', {timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, hour: 'numeric', minute: '2-digit', timeZoneName: 'short'}).format(new Date(timestamp));
 export const dp = (i: Item, off: number) => Math.round(i.p * (100 - off)) / 100;
-export const cname = (id: string, cats: {id: string; name: any}[]) => (cats.find(c => c.id === id) as any)?.name || 'All stores';
+export const cname = (id: string, cats: {id: string; name: any}[]) => (cats.find(c => c.id === id) as any)?.name || label("lbl.page.store.21bd4a6572", "All stores");
 const zoneOf = (t: string) => {let x = 0; for (let i = 0; i < t.length; i++) x = (x * 31 + t.charCodeAt(i)) % 97; return Math.round((x % 5) * 9) / 10;};
 export const phoneOK = (s: string) => {s = String(s || '').trim(); const d = s.replace(/\D/g, ''); return /^[+\d][\d\s().-]*$/.test(s) && d.length >= 8 && d.length <= 15;};
 
@@ -155,7 +155,7 @@ function liveStore(r: any, items: Item[]): Store {
 function placeholderStore(sid: string, _name: string): Store {
   return {
     id: sid, n: 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
-    open: 0, h: '', nx: 'No longer taking orders', far: false, acceptScheduledOrders: false,
+    open: 0, h: '', nx: label("lbl.page.store.4f45fc13d6", "No longer taking orders"), far: false, acceptScheduledOrders: false,
   };
 }
 
@@ -218,7 +218,7 @@ export async function refreshLiveSchedules() {
     S.catalogError = '';
     applyZone();
   } catch (e: any) {
-    S.catalogError = friendlyError(e, 'Could not load stores');
+    S.catalogError = friendlyError(e, label("lbl.page.store.a3a1fd9435", "Could not load stores"));
   }
   if (!liveTimer) {
     liveTimer = setInterval(() => {
@@ -278,7 +278,7 @@ export async function refreshUserAddresses() {
     t: [row.street_address, row.city, row.department, row.country].filter(Boolean).join(', '),
     apt: String(row.apartment || ''), inst: String(row.delivery_notes || ''),
     def: row.is_default ? 1 : 0, goodiesDefault: String(row.id) === metadataAddressId ? 1 : 0,
-    z: 0, cc: row.country === 'Dominican Republic' ? 'DO' : row.country === 'United States' ? 'US' : row.country === 'Haiti' ? 'HT' : 'XX',
+    z: 0, cc: row.country === 'Dominican Republic' ? "DO" : row.country === 'United States' ? "US" : row.country === 'Haiti' ? "HT" : "XX",
     city: String(row.city || ''), department: String(row.department || ''), country: String(row.country || ''),
     phone: String(row.phone_number || ''), createdAt: row.created_at,
     latitude: row.latitude == null ? null : Number(row.latitude), longitude: row.longitude == null ? null : Number(row.longitude),
@@ -457,7 +457,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     });
     if (currentDistanceAddressKey() !== addressKey) return distances;
     if (error) {
-      batch.forEach(store => { store.distanceError = friendlyError(error, 'Distance is unavailable for this address.'); });
+      batch.forEach(store => { store.distanceError = friendlyError(error, label("lbl.page.store.de2732f02d", "Distance is unavailable for this address.")); });
       emit();
       throw error;
     }
@@ -467,7 +467,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
       const row: any = byId.get(store.id);
       const meters = row?.distance_m == null ? NaN : Number(row.distance_m);
       if (!Number.isFinite(meters) || meters < 0) {
-        store.distanceError = row?.error || 'Distance is unavailable for this address.';
+        store.distanceError = row?.error || label("lbl.page.store.de2732f02d", "Distance is unavailable for this address.");
         distances[store.id] = null;
         return;
       }
@@ -596,7 +596,7 @@ export function navBack(): 'exit' | void {
 /* ---------- cart ops ---------- */
 export async function syncGroupOrderCartLine(groupId: string, line: CartLine) {
   const productId = IT[line.id] ? line.id : '';
-  if (!productId) return {error: new Error('This cart item is not linked to a live catalogue product.')};
+  if (!productId) return {error: new Error(label("lbl.page.store.d8aea5db73", "This cart item is not linked to a live catalogue product."))};
   return supabase.rpc('goodies_group_order_upsert_item', {
     p_group_id: groupId,
     p_product_id: productId,
@@ -639,7 +639,7 @@ export async function syncActiveGroup(op: {line?: CartLine; removeKey?: string})
   const r: any = op.removeKey ? await removeGroupOrderCartLine(g.groupId, op.removeKey) : op.line ? await syncGroupOrderCartLine(g.groupId, op.line) : null;
   if (r?.error) {
     console.warn('[Goodies] group sync failed', r.error);
-    toast('Saved to your cart. It could not be shared with the group just now.');
+    toast(label("lbl.page.store.712e4a17d1", "Saved to your cart. It could not be shared with the group just now."));
   }
 }
 export async function removeGroupOrderCartLine(groupId: string, lineKey: string) {
@@ -690,12 +690,12 @@ export function filt(list: Store[]) {
   if (f === 'near') l.sort((a, b) => (a.live && !a.distanceReady ? Number.POSITIVE_INFINITY : a.km) - (b.live && !b.distanceReady ? Number.POSITIVE_INFINITY : b.km));
   return l;
 }
-export const FCH: [string, string][] = [['', 'All'], ['offers', 'Offers'], ['free', 'Free delivery'], ['top', 'Rating 4.5+'], ['fast', 'Under 30 min'], ['open', 'Open now'], ['near', 'Nearest']];
+export const FCH = (): [string, string][] => [['', label('lbl.filterAll', 'All')], ['offers', label('lbl.filterOffers', 'Offers')], ['free', label('lbl.filterFree', 'Free delivery')], ['top', label('lbl.filterTop', 'Rating 4.5+')], ['fast', label('lbl.filterFast', 'Under 30 min')], ['open', label('lbl.filterOpen', 'Open now')], ['near', label('lbl.filterNearest', 'Nearest')]];
 
 /* demo only: wipes local data */
 export async function resetDemo() {
   const {assertDemoOnly} = require('./providers');
-  assertDemoOnly('Reset demo data');
+  assertDemoOnly(label("lbl.page.store.fb54363a03", "Reset demo data"));
   await AsyncStorage.multiRemove([KEY, WKEY, 'goodies-checkout-attempt-v1']);
   Object.assign(S, WDEF(), GDEF());
   S.stack = [{r: 'home', u: ++uid}];

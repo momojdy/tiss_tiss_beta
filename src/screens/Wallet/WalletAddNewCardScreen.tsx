@@ -23,7 +23,8 @@ import { functionErrorMessage } from '../../lib/functionError';
 // import { supabase } from './supabase';   // <- your client
 
 /* ───────────── Backend hook: replace with your create-card-setup-intent call ───────────── */
-function makeStripeHtml(clientSecret: string, publishableKey: string) {
+function makeStripeHtml(clientSecret: string, publishableKey: string, cardText: CardContentLabel = defaultCardLabel) {
+  const htmlText = (text: string) => text.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
   const secret = JSON.stringify(clientSecret);
   const key = JSON.stringify(publishableKey);
   return `<!doctype html><html><head><meta charset="utf-8">
@@ -40,10 +41,10 @@ label{display:block;font-size:13px;font-weight:600;color:#5C6B57;margin:0 0 7px 
 .box>div{width:100%}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 </style></head><body>
-<div class="field"><label>Card Number</label><div class="box" id="b-num"><div id="num"></div></div></div>
+<div class="field"><label>${htmlText(cardText('lbl.addcard.cardNumber', 'Card Number'))}</label><div class="box" id="b-num"><div id="num"></div></div></div>
 <div class="row">
-  <div class="field"><label>Expiry Date</label><div class="box" id="b-exp"><div id="exp"></div></div></div>
-  <div class="field"><label>CVV</label><div class="box" id="b-cvv"><div id="cvv"></div></div></div>
+  <div class="field"><label>${htmlText(cardText('lbl.addcard.expiryDate', 'Expiry Date'))}</label><div class="box" id="b-exp"><div id="exp"></div></div></div>
+  <div class="field"><label>${htmlText(cardText('lbl.addcard.securityCode', 'CVV'))}</label><div class="box" id="b-cvv"><div id="cvv"></div></div></div>
 </div>
 <script>
 const send=x=>window.ReactNativeWebView&&window.ReactNativeWebView.postMessage(JSON.stringify(x));
@@ -156,7 +157,10 @@ function Dotted({ phase, pulse, children, style }: { phase: Phase; pulse: Animat
 }
 
 /* ───────────── Screen ───────────── */
-function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBack?: () => void; onDone?: () => void; clientSecret: string; publishableKey: string }) {
+type CardContentLabel = (id: string, fallback: string) => string;
+const defaultCardLabel: CardContentLabel = (_id, fallback) => fallback;
+
+function AddCardScreen({ onBack, onDone, clientSecret, publishableKey, contentLabel: cardText = defaultCardLabel }: { contentLabel?: CardContentLabel; onBack?: () => void; onDone?: () => void; clientSecret: string; publishableKey: string }) {
   const insets = useSafeAreaInsets();
   const [fontsLoaded] = useFonts({ Manrope_500Medium, Manrope_600SemiBold, Manrope_700Bold, Manrope_800ExtraBold });
 
@@ -181,7 +185,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
   const isBackRef = useRef(false);
 
   const webRef = useRef<WebView>(null);
-  const webSource = useMemo(() => ({ html: makeStripeHtml(clientSecret, publishableKey), baseUrl: 'https://wantiss.app' }), [clientSecret, publishableKey]);
+  const webSource = useMemo(() => ({ html: makeStripeHtml(clientSecret, publishableKey, cardText), baseUrl: 'https://wantiss.app' }), [clientSecret, publishableKey, cardText]);
   const focusCard = (f: 'num' | 'exp' | 'cvv') => webRef.current?.injectJavaScript("window.focusCard&&window.focusCard('" + f + "');true;");
   const blurCard = () => webRef.current?.injectJavaScript('window.blurCard&&window.blurCard();true;');
   const nameRef = useRef<TextInput>(null);
@@ -260,7 +264,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
     else if (m.type === 'result') {
       if (m.error) {
         Animated.timing(proc, { toValue: 0, duration: 500, useNativeDriver: true }).start(() => setProcessing(false));
-        glow.setValue(0); setErr(m.error); return;
+        glow.setValue(0); setErr(cardText === defaultCardLabel ? m.error : cardText('lbl.addcard.saveFailed', 'Your card could not be saved. Please check the details and try again.')); return;
       }
       // setup_intent.succeeded webhook writes user_payment_methods server-side.
       setSuccess(true);
@@ -299,12 +303,12 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
     const problems = { card: !(det.complete), name: name.trim().length < 2 };
     if (problems.card || problems.name) {
       setBad(problems); if (problems.card) shake(shakeCard); if (problems.name) shake(shakeName);
-      setErr('Please complete all fields.'); return;
+      setErr(cardText("lbl.addcard.8bb79a16ce", "Please complete all fields.")); return;
     }
     Keyboard.dismiss(); setErr(''); flipTo(0);
     scrollRef.current?.scrollTo({ y: 0, animated: false });
     if (!clientSecret || !publishableKey) {
-      setErr('Preparing the secure card form…');
+      setErr(cardText("lbl.addcard.a0df07b3b0", "Preparing the secure card form…"));
       return;
     }
     setProcessing(true);
@@ -342,10 +346,10 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
             <Animated.View style={[{ height: 100, paddingHorizontal: 10, paddingBottom: 4, justifyContent: 'flex-end' }, barStyle]}>
               <View style={{ width: '100%', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Pressable onPress={onBack} accessibilityLabel="Back" style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' }}>
+                  <Pressable onPress={onBack} accessibilityLabel={cardText("lbl.addcard.76900f1bfd", "Back")} style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: C.sageTint, alignItems: 'center', justifyContent: 'center' }}>
                     <Svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke={C.olive} strokeWidth={2.4} strokeLinecap="round" strokeLinejoin="round"><Path d="M15 5l-7 7 7 7" /></Svg>
                   </Pressable>
-                  <Text style={{ marginLeft: 12, fontFamily: 'Inter_600SemiBold', fontSize: 19, lineHeight: 23, color: C.olive, transform: [{ translateY: 1 }] }}>Add New Card</Text>
+                  <Text style={{ marginLeft: 12, fontFamily: 'Inter_600SemiBold', fontSize: 19, lineHeight: 23, color: C.olive, transform: [{ translateY: 1 }] }}>{cardText("lbl.addcard.dbb87a7e89", "Add New Card")}</Text>
                 </View>
               </View>
             </Animated.View>
@@ -381,8 +385,8 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 
                       <Pressable onPress={() => nameRef.current?.focus()} style={{ marginTop: 5 * u }}>
                         <View pointerEvents="none" style={[slotRing, ring(focused === 'name')]} />
-                        <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Card holder</Text>
-                        <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 1.2 * 4 * u }}>{nameVal || 'FULL NAME'}</Text>
+                        <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>{cardText("lbl.addcard.1120d5f61a", "Card holder")}</Text>
+                        <Text numberOfLines={1} style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: nameVal ? 1 : 0.4, minHeight: 1.2 * 4 * u }}>{nameVal || cardText('lbl.addcard.fullName', 'FULL NAME')}</Text>
                       </Pressable>
 
                       <Pressable onPress={() => focusCard('num')} style={{ alignSelf: 'flex-start', marginTop: 4 * u }}>
@@ -401,9 +405,9 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                       <View style={{ flexDirection: 'row', alignItems: 'flex-end' }}>
                         <Pressable onPress={() => focusCard('exp')}>
                           <View pointerEvents="none" style={[slotRing, ring(focused === 'exp')]} />
-                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>Expires</Text>
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginBottom: 1 * u }]}>{cardText("lbl.addcard.f6725f3af0", "Expires")}</Text>
                           {expPhase === 'empty'
-                            ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: 0.4 }}>MM/YY</Text>
+                            ? <Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage, opacity: 0.4 }}>{cardText("lbl.addcard.1b5f68f875", "MM/YY")}</Text>
                             : <Dotted phase={expPhase} pulse={pulse}><Text style={{ fontFamily: FW[700], fontSize: 4 * u, lineHeight: 5 * u, includeFontPadding: false, letterSpacing: 0.05 * 4 * u, color: C.sage }}>••/••</Text></Dotted>}
                         </Pressable>
                       </View>
@@ -418,7 +422,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                       <View style={{ position: 'absolute', left: 7 * u, right: 7 * u, top: '38%', flexDirection: 'row', gap: 3 * u, alignItems: 'flex-start' }}>
                         <View style={{ flex: 1 }}>
                           <View style={{ height: 12 * u, borderRadius: 1.2 * u, backgroundColor: C.sageTint }} />
-                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>Authorized signature</Text>
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>{cardText("lbl.addcard.bb62f38afd", "Authorized signature")}</Text>
                         </View>
                         <View style={{ width: 22 * u }}>
                           <Pressable onPress={() => focusCard('cvv')}
@@ -429,7 +433,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                               ))}
                             </Dotted>
                           </Pressable>
-                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>CVV</Text>
+                          <Text style={[s.lbl, { fontSize: 2.5 * u, lineHeight: 3.2 * u, includeFontPadding: false, marginTop: 1.4 * u }]}>{cardText("lbl.addcard.07f548c871", "CVV")}</Text>
                         </View>
                       </View>
                       <View style={{ position: 'absolute', right: 7 * u, bottom: 5 * u, width: 11 * u, height: 6 * u, alignItems: 'flex-end', justifyContent: 'center' }}>
@@ -476,18 +480,17 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
                     }}
                   />
                   <Text style={{ marginTop: 12, color: C.muted, fontFamily: FW[500], fontSize: 13 }}>
-                    Preparing secure card form…
-                  </Text>
+                    {cardText("lbl.addcard.b465f953a8", "Preparing secure card form…")}</Text>
                 </View>
               )}
             </Animated.View>
 
             <Animated.View style={[{ paddingTop: 6, paddingHorizontal: 20, paddingBottom: 8 }, formStyle]} pointerEvents={processing ? 'none' : 'auto'}>
               <View style={{ marginBottom: 16 }}>
-              <Text style={s.label}>Name on Card</Text>
+              <Text style={s.label}>{cardText("lbl.addcard.c08eb70f1a", "Name on Card")}</Text>
               <Animated.View style={{ transform: [{ translateX: shakeName }], height: 54, borderRadius: 15, backgroundColor: bad.name ? C.invalid : focused === 'name' ? C.focus : C.sageTint, justifyContent: 'center' }}>
                 <TextInput
-                  ref={nameRef} value={name} placeholder="Full name" placeholderTextColor="#9AA595"
+                  ref={nameRef} value={name} placeholder={cardText("lbl.addcard.f13a64ba2f", "Full name")} placeholderTextColor="#9AA595"
                   autoComplete="off" textContentType="none" importantForAutofill="no" spellCheck={false} maxLength={26} returnKeyType="done"
                   autoCapitalize="characters" autoCorrect={false}
                   onChangeText={t => { setName(t.replace(/[^\p{L} .'-]/gu, '')); setBad(b => ({ ...b, name: false })); }}
@@ -500,7 +503,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
             </View>
 
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8, marginHorizontal: 2 }}>
-              <Text style={{ fontFamily: FW[600], fontSize: 13, color: C.muted }}>We accept</Text>
+              <Text style={{ fontFamily: FW[600], fontSize: 13, color: C.muted }}>{cardText("lbl.addcard.f520fe9010", "We accept")}</Text>
               <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                 {(['visa', 'mc', 'amex', 'discover'] as const).map(b => (
                   <View key={b} style={{ opacity: brand === b ? 1 : 0.4 }}>
@@ -518,7 +521,7 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
         {!compact && (
           <Animated.View style={[s.paybar, { paddingBottom: 12 + insets.bottom }, payStyle]} pointerEvents={processing ? 'none' : 'auto'}>
             <Pressable onPress={onSave} disabled={processing} style={({ pressed }) => [s.pay, pressed && { transform: [{ scale: 0.97 }] }]}>
-              <Text style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}>Save Card</Text>
+              <Text style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}>{cardText("lbl.addcard.39d561254a", "Save Card")}</Text>
               <Svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.6} strokeLinecap="round" strokeLinejoin="round"><Path d="M5 12h14M13 6l6 6-6 6" /></Svg>
             </Pressable>
           </Animated.View>
@@ -535,14 +538,14 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
           </Animated.View>
         </View>
         <View style={{ marginTop: 22, alignItems: 'center' }}>
-          <Text style={{ fontFamily: FW[800], fontSize: 20, color: C.ink, letterSpacing: -0.2, marginBottom: 6 }}>{success ? 'Card Saved' : 'Saving Card…'}</Text>
+          <Text style={{ fontFamily: FW[800], fontSize: 20, color: C.ink, letterSpacing: -0.2, marginBottom: 6 }}>{success ? cardText("lbl.addcard.a2cd15933f", "Card Saved") : cardText("lbl.addcard.e6f60d31e2", "Saving Card…")}</Text>
           <Text style={{ fontFamily: FW[500], fontSize: 14.5, lineHeight: 21.75, color: C.muted, textAlign: 'center' }}>
-            {success ? 'Your card has been saved for future payments.' : 'This only takes a moment.'}
+            {success ? cardText("lbl.addcard.6085111fd3", "Your card has been saved for future payments.") : cardText("lbl.addcard.2fe82d1748", "This only takes a moment.")}
           </Text>
         </View>
         <Pressable onPress={onDone} disabled={!success}
           style={{ marginTop: 26, height: 48, paddingHorizontal: 30, borderRadius: 14, backgroundColor: C.sageTint, justifyContent: 'center', opacity: success ? 1 : 0 }}>
-          <Text style={{ fontFamily: FW[700], fontSize: 15, color: C.ink }}>Done</Text>
+          <Text style={{ fontFamily: FW[700], fontSize: 15, color: C.ink }}>{cardText("lbl.addcard.11a6767d56", "Done")}</Text>
         </Pressable>
       </Animated.View>
     </View>
@@ -550,15 +553,16 @@ function AddCardScreen({ onBack, onDone, clientSecret, publishableKey }: { onBac
 }
 
 /* ───────────── Exported screen (matches your router: <WalletAddNewCardScreen onBack=... />) ───────────── */
-export default function WalletAddNewCardScreen({ onBack, onSaved }: { onBack?: () => void; onSaved?: () => void }) {
+export default function WalletAddNewCardScreen({ onBack, onSaved, contentLabel }: { contentLabel?: CardContentLabel; onBack?: () => void; onSaved?: () => void }) {
   const [si, setSi] = useState<{ client_secret: string; publishable_key: string } | null>(null);
   const [fail, setFail] = useState('');
-  useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(String(e?.message || e))); }, []);
+  useEffect(() => { getSetupIntent().then(setSi).catch(e => setFail(contentLabel ? contentLabel('lbl.addcard.setupFailed', 'Could not prepare the secure card form. Please try again.') : String(e?.message || e))); }, []);
 
   return (
     // Render the Add Card UI immediately. Stripe setup happens in the background so navigation never waits on the network.
     <SafeAreaProvider>
       <AddCardScreen
+        contentLabel={contentLabel}
         clientSecret={si?.client_secret ?? ''}
         publishableKey={si?.publishable_key ?? ''}
         onBack={onBack}

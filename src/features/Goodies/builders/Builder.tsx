@@ -110,7 +110,7 @@ function BurgerFallback({b}: {b: Builder}) {
   L.forEach(it => {const a = artOfBurger(it), h = H[a] || 10; cur -= h; const y = cur;
     if (a === 'patty') o += `<rect x="14" y="${y}" width="222" height="${h}" rx="14" fill="${it.col}"/><path d="M30 ${y + 10}h40M100 ${y + 18}h50M170 ${y + 9}h40" stroke="#000" stroke-opacity=".18" stroke-width="3" stroke-linecap="round"/>`;
     else if (a === 'cheese') o += `<path d="M10 ${y}H240V${y + 5}L205 ${y + 5}L195 ${y + h + 3}L184 ${y + 5}H66L55 ${y + h + 3}L45 ${y + 5}H10Z" fill="${it.col}"/>`;
-    else if (a === 'lettuce') {let d = `M10 ${y + h}V${y + 5}`; for (let i = 0; i < 14; i++) d += 'q8.5 -9 17 0'; o += `<path d="${d}V${y + h}Z" fill="#5FAE3C"/><path d="M14 ${y + h - 3}H236" stroke="#8ED45F" stroke-width="2" opacity=".6"/>`;}
+    else if (a === 'lettuce') {let d = `M10 ${y + h}V${y + 5}`; for (let i = 0; i < 14; i++) d += "q8.5 -9 17 0"; o += `<path d="${d}V${y + h}Z" fill="#5FAE3C"/><path d="M14 ${y + h - 3}H236" stroke="#8ED45F" stroke-width="2" opacity=".6"/>`;}
     else if (a === 'tomato') o += `<rect x="18" y="${y}" width="214" height="${h}" rx="6" fill="#D8412E"/><path d="M40 ${y + 4}h30M120 ${y + 4}h40M190 ${y + 4}h24" stroke="#F58B7A" stroke-width="3" stroke-linecap="round"/>`;
     else if (a === 'onion') o += `<rect x="22" y="${y}" width="206" height="${h}" rx="4" fill="#C98AD0"/><path d="M30 ${y + h / 2}H220" stroke="#F2DCF4" stroke-width="2"/>`;
     else if (a === 'pickle') o += `<rect x="20" y="${y}" width="210" height="${h}" rx="4" fill="#6C9B3A"/><path d="M36 ${y + 4}h6M90 ${y + 5}h6M150 ${y + 4}h6M200 ${y + 5}h6" stroke="#B8DB86" stroke-width="2.5" stroke-linecap="round"/>`;
@@ -183,10 +183,10 @@ function TileIcon({it, type}: {it: BItem; type: string}) {
   return <View style={{width: 26, height: 26, borderRadius: 13, backgroundColor: it.col, borderWidth: 2, borderColor: 'rgba(0,0,0,.12)'}} />;
 }
 function OptTile({b, g, it}: {b: Builder; g: any; it: BItem}) {
-  const th = useTheme(), us = units(g, BD), q = us.filter(x => x === it.id).length, on = q > 0, free = it.free || it.price === 0, lab = !it.avail ? label('lbl.byoUnavailableOption', label('lbl.byoUnavailableOption', 'Unavailable')) : free ? label('lbl.byoFree', 'Free') : g.kind === 'many' && us.length < g.inc ? label('lbl.byoFree', 'Free') : '+' + money(it.price);
+  const th = useTheme(), us = units(g, BD), q = us.filter(x => x === it.id).length, on = q > 0, free = it.free || it.price === 0, lab = !it.avail ? label('lbl.byoUnavailableOption', 'Unavailable') : free ? label('lbl.byoFree', 'Free') : g.kind === 'many' && us.length < g.inc ? label('lbl.byoFree', 'Free') : '+' + money(it.price);
   return (
     <View style={{width: 96, opacity: it.avail ? 1 : 0.45}}>
-      <Pressable accessibilityRole="button" accessibilityLabel={it.name + ', ' + lab + (on ? ', selected ' + q : '')} accessibilityState={{selected: on, disabled: !it.avail}} disabled={!it.avail} onPress={() => bzAdd(g.id, it.id)} style={{alignItems: 'center', gap: 4, paddingTop: 10, paddingBottom: 8, paddingHorizontal: 4, borderRadius: 16, borderWidth: 2, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, minHeight: 100}}>
+      <Pressable accessibilityRole="button" accessibilityLabel={it.name + ', ' + lab + (on ? label("lbl.page.builders.Builder.93cf1314ca", ", selected ") + q : '')} accessibilityState={{selected: on, disabled: !it.avail}} disabled={!it.avail} onPress={() => bzAdd(g.id, it.id)} style={{alignItems: 'center', gap: 4, paddingTop: 10, paddingBottom: 8, paddingHorizontal: 4, borderRadius: 16, borderWidth: 2, borderColor: on ? th.br : th.line, backgroundColor: on ? th.brt : th.card, minHeight: 100}}>
         <View style={{width: 46, height: 46, borderRadius: 23, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><TileIcon it={it} type={b.type} /></View>
         <T size={12.5} weight="600" align="center" style={{lineHeight: 14}}>{it.name}</T>
         <T size={11.5} color={on ? th.brd : th.mut} weight={on ? '700' : undefined}>{lab}</T>
@@ -229,7 +229,7 @@ function Review({b}: {b: Builder}) {
       {R(b.name + (br.size ? ' — ' + br.size.name : ''), money(b.base + (br.size ? br.size.add : 0)))}
       {br.lines.map((L: any) => <View key={L.gid}><T size={11.5} weight="600" color={th.mut} style={{marginTop: 8, letterSpacing: 0.4}}>{String(L.gname).toUpperCase()}</T>{L.items.map((i: any) => <View key={i.id}>{R((i.qty > 1 ? i.qty + '× ' : '') + i.name, i.charge > 0 ? '+' + money(i.charge) : i.inc ? label('lbl.byoIncluded', 'Included') : label('lbl.byoFree', 'Free'))}</View>)}</View>)}
       {R(label('lbl.byoItemPrice', 'Item price'), money(br.total), true)}
-      {BD.edit && BD.snap != null && br.total !== BD.snap ? <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13}>{label('lbl.byoPriceChanged', 'Prices changed since you added this item')} (was {money(BD.snap)}, now {money(br.total)}). Saving applies the new price.</T></View> : null}
+      {BD.edit && BD.snap != null && br.total !== BD.snap ? <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13}>{label('lbl.byoPriceChanged', 'Prices changed since you added this item')} {label("lbl.page.builders.Builder.80833997e8", " (was ")}{money(BD.snap)}{label("lbl.page.builders.Builder.d133a1257f", ", now ")}{money(br.total)}{label("lbl.page.builders.Builder.28ba08f1d3", "). Saving applies the new price.")}</T></View> : null}
       {ck.conf.length ? <View style={{backgroundColor: th.brt, borderWidth: 0.5, borderColor: th.br, borderRadius: 12, padding: 10, marginTop: 10}}><T size={13} weight="600">{label('lbl.byoChoicesChanged', 'Some choices changed')}</T>{ck.conf.map(x => <T key={x} size={13}>• {x}</T>)}<T size={13}>{label('lbl.byoReplaceChoices', 'Please remove or replace them to continue. We did not change anything for you.')}</T></View> : null}
     </View>
   );

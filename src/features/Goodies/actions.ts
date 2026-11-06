@@ -119,7 +119,7 @@ export function usePromo(c: string) {
 export function goCheckout() {
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   const stopIds = cartStoreIds();
-  if (stopIds.length > 1 && isPk()) {toast('Ordering from several stores is available for delivery only.'); return;}
+  if (stopIds.length > 1 && isPk()) {toast(label("lbl.page.actions.f16811f463", "Ordering from several stores is available for delivery only.")); return;}
   for (const sid of stopIds) {
     const s = STB[sid];
     if (!s) continue;
@@ -155,7 +155,7 @@ export async function placeOrder() {
   const accountId = S.accountId;
   const access = await refreshGoodiesAccess();
   if (S.accountId !== accountId) return;
-  if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? 'Your access to Goodies has been permanently restricted.' : 'Your access to Goodies is temporarily suspended.'); return;}
+  if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? label("lbl.page.actions.8e185933e6", "Your access to Goodies has been permanently restricted.") : label("lbl.page.actions.ad0bdbb4af", "Your access to Goodies is temporarily suspended.")); return;}
   if (cartStoreIds().length > 1) return placeMultiOrder();
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
@@ -165,7 +165,7 @@ export async function placeOrder() {
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast(label('lbl.actionAlcoholUnavailable', 'Alcohol orders are not available yet.')); return;}
   }
-  if (S.sch && S.sch <= Date.now() + 2 * 60_000) { S.busy = 0; S.cs = 1; toast('That scheduled time is too close or has passed. Please choose a later time.'); emit(); return; }
+  if (S.sch && S.sch <= Date.now() + 2 * 60_000) { S.busy = 0; S.cs = 1; toast(label("lbl.page.actions.e3520919a7", "That scheduled time is too close or has passed. Please choose a later time.")); emit(); return; }
   if (!st.open && !(st.acceptScheduledOrders && S.sch > Date.now())) {toast(label('lbl.actionStoreClosedCheckout', '{store} is closed. Choose a future pickup or delivery time if scheduling is available.').replace('{store}', st.n)); S.cs = 1; emit(); return;}
   const bad = S.cart.lines.filter((l: any) => {if (l.byo) return !!hooks.bCheck && !!(hooks as any).lineBad && !!(hooks as any).lineBad(l); const i = IT[l.id]; return !i || i.oos || l.q > i.stock;});
   if (bad.length) {toast(label('lbl.actionLineUnavailable', '{item} {reason}').replace('{item}', bad[0].n).replace('{reason}', bad[0].byo ? (hooks as any).lineBad(bad[0]) : label('lbl.actionQuantityUnavailable', 'is no longer available in that quantity'))); reset('cart'); return;}
@@ -178,7 +178,7 @@ export async function placeOrder() {
   // is explained immediately instead of being masked by an unrelated quote error.
   const walletVerified = providerInfo.demo ? true : await refreshPaymentOptions();
   if (!providerInfo.demo && S.pay === 'wallet' && !walletVerified) {
-    S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
+    S.busy = 0; toast(label("lbl.page.actions.79f6eb3d4d", "Could not verify your live Wantiss Wallet balance. Please retry before placing the order.")); emit(); return;
   }
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
     S.busy = 0; S.cs = 2; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;
@@ -207,10 +207,10 @@ export async function placeOrder() {
           } catch {
             try { detail = String(await response.clone().text()).slice(0, 360); } catch { /* retain the SDK error */ }
           }
-          if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + '). Check the delivery address and try again.';
+          if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + label("lbl.page.actions.25b66787be", "). Check the delivery address and try again.");
         }
         S.busy = 0;
-        let checkoutMessage = friendlyError(detail ? {message: detail} : quoteResult.error, 'Could not calculate the road distance. Please check the delivery address.');
+        let checkoutMessage = friendlyError(detail ? {message: detail} : quoteResult.error, label("lbl.page.actions.b6585de538", "Could not calculate the road distance. Please check the delivery address."));
         if (S.pay === 'wallet') {
           const verified = await refreshPaymentOptions();
           if (verified && (!S.hasWallet || S.wallet < t.total)) {
@@ -236,14 +236,14 @@ export async function placeOrder() {
     t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
     if (Math.abs(oldFee - fee) > 0.005) {
       S.busy = 0;
-      toast('Your road-based delivery fee is now ' + money(fee) + '. Review the updated total and place your order again.');
+      toast(label("lbl.page.actions.f0c5b93d9d", "Your road-based delivery fee is now ") + money(fee) + label("lbl.page.actions.f07e8266c3", ". Review the updated total and place your order again."));
       emit();
       return;
     }
   }
   const walletVerifiedAfterQuote = providerInfo.demo ? true : await refreshPaymentOptions();
   if (!providerInfo.demo && S.pay === 'wallet' && !walletVerifiedAfterQuote) {
-    S.busy = 0; toast('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.'); emit(); return;
+    S.busy = 0; toast(label("lbl.page.actions.79f6eb3d4d", "Could not verify your live Wantiss Wallet balance. Please retry before placing the order.")); emit(); return;
   }
   if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {S.cs = 3; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;}
   if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {S.cs = 3; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;}
@@ -260,7 +260,7 @@ export async function placeOrder() {
   /* Demo orders are local; live wallet/card orders use authenticated server payment flows below. */
   S.busy = 1; emit();
   const selectedCard: any = S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0];
-  const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: 'Card •••• ' + (selectedCard ? selectedCard.l4 : ''), cash: 'Cash'}[S.pay as string];
+  const pl: any = {wallet: 'Wallet', moncash: 'MonCash', card: label("lbl.page.actions.e7cb25f2ef", "Card •••• ") + (selectedCard ? selectedCard.l4 : ''), cash: 'Cash'}[S.pay as string];
   let id: string;
   do {id = 'GD' + Math.floor(1000 + Math.random() * 9000);} while (S.orders.some((x: any) => x.id === id));
   let backendOrderId: string | null = null;
@@ -287,7 +287,7 @@ export async function placeOrder() {
       attempt = await getGoodiesCheckoutAttempt(fingerprint);
     } catch (storageError: any) {
       S.busy = 0;
-      toast(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));
+      toast(friendlyError(storageError, label("lbl.page.actions.cdff08cd85", "Could not securely save this checkout attempt. Please try again.")));
       emit();
       return;
     }
@@ -317,7 +317,7 @@ export async function placeOrder() {
         if (/insufficient|not enough|balance too low/i.test(detail) || (verified && (!S.hasWallet || S.wallet < t.total))) {
           toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
         } else {
-          toast(friendlyError(detail ? {message: detail} : error, 'Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.'));
+          toast(friendlyError(detail ? {message: detail} : error, label("lbl.page.actions.15ac19ac40", "Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method.")));
         }
       } else {
         toast(friendlyError(detail ? {message: detail} : error, label('lbl.actionPlaceOrderFailed', 'Could not place the order. Please try again.')));
@@ -336,13 +336,13 @@ export async function placeOrder() {
   const o = {
     id, backendId: backendOrderId, serverStatus: backendOrderId ? (S.sch && S.sch > Date.now() ? 'scheduled' : 'placed') : null, sid: S.cart.sid, lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, photo: l.photo || IT[l.id]?.photo || null, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
     sn: st.n, sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
-    addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
+    addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? label("lbl.page.actions.cfb06d9224", "Wantiss number") : ct.l, cid: ct.id,
     pay: S.pay, payl: pl, note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
     alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
   };
   S.orders.unshift(o);
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
-  if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
+  if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: label("lbl.page.actions.9983301c3b", "Demo order sent to ") + st.n + label("lbl.page.actions.0e7f1cefe2", ". Tap to track it."), r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
   S.busy = 0; toast(backendOrderId ? label('lbl.actionOrderSent', 'Order sent to the store') : label('lbl.actionDemoOrderPlaced', 'Demo order placed!'));
   await save();
@@ -358,15 +358,15 @@ export async function completeCardOrder() {
   try {
     const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'capture', order_id: pending.id}});
     if (S.accountId !== accountId) return;
-    if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'Card payment could not be completed.');
+    if (error || data?.error || !data?.success) throw error || new Error(data?.error || label("lbl.page.actions.ad7e8cd3a2", "Card payment could not be completed."));
     const t = totals(), st = t.st!, pk = isPk(), a = addr(), ct = ctOf(), alc = hasAlcohol();
     const selectedCard: any = S.cards.find((card: any) => card.id === S.selectedCardId) || S.cards.find((card: any) => card.isDefault) || S.cards[0];
     const o = {
       id: pending.orderCode, backendId: pending.id, serverStatus: pending.status || 'placed', sid: S.cart.sid,
       lines: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, photo: l.photo || IT[l.id]?.photo || null, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
       sn: st.n, sub: t.sub, fee: t.fee, svc: t.svc, disc: t.disc, tip: t.tip, total: t.total, t0: Date.now(), st: 0, rated: 0, cx: 0, pk,
-      addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
-      pay: 'card', payl: 'Card •••• ' + (selectedCard ? selectedCard.l4 : ''), note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
+      addr: pk ? st.n : a.t, ad: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? label("lbl.page.actions.cfb06d9224", "Wantiss number") : ct.l, cid: ct.id,
+      pay: 'card', payl: label("lbl.page.actions.e7cb25f2ef", "Card •••• ") + (selectedCard ? selectedCard.l4 : ''), note: String(S.note || '').trim(), sch: S.sch, promo: S.promo,
       alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
     };
     S.orders.unshift(o);
@@ -377,7 +377,7 @@ export async function completeCardOrder() {
     emit();
     void refreshLiveSchedules();
   } catch (e: any) {
-    S.busy = 0; toast(friendlyError(e, 'Card payment could not be completed. Your order has not been confirmed.')); emit();
+    S.busy = 0; toast(friendlyError(e, label("lbl.page.actions.2c96cd07f5", "Card payment could not be completed. Your order has not been confirmed."))); emit();
   }
 }
 
@@ -390,12 +390,12 @@ export async function cancelPendingCardOrder() {
   try {
     const {data, error} = await supabase.functions.invoke('place-goodies-card-order', {body: {action: 'cancel', order_id: pending.id}});
     if (S.accountId !== accountId) return;
-    if (error || data?.error || !data?.success) throw error || new Error(data?.error || 'The card payment could not be cancelled yet.');
+    if (error || data?.error || !data?.success) throw error || new Error(data?.error || label("lbl.page.actions.7d44819659", "The card payment could not be cancelled yet."));
     S.cardPending = null;
     await completeGoodiesCheckoutAttempt(String(pending.id));
     navBack();
   } catch (e: any) {
-    toast(friendlyError(e, 'The card payment could not be cancelled yet. Please retry.'));
+    toast(friendlyError(e, label("lbl.page.actions.9222bf79d7", "The card payment could not be cancelled yet. Please retry.")));
   } finally {
     S.busy = 0; emit();
   }
@@ -416,7 +416,7 @@ export async function cancelOrder(id: string) {
   o.cx = 1;
   if (providerInfo.demo && o.pay === 'wallet') S.wallet += o.total;
   else if (o.backendId && o.pay === 'wallet') await refreshPaymentOptions();
-  if (providerInfo.demo) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: 'Your order was cancelled.' + (o.pay === 'wallet' ? ' The total was refunded to your wallet.' : ''), r: 'track', p: o.id, u: 1});
+  if (providerInfo.demo) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' cancelled', d: label("lbl.page.actions.c010aa83cd", "Your order was cancelled.") + (o.pay === 'wallet' ? label("lbl.page.actions.353a2b3bb1", " The total was refunded to your wallet.") : ''), r: 'track', p: o.id, u: 1});
   toast(label('lbl.actionOrderCancelled', 'Order cancelled')); save(); emit();
   if (o.backendId) void refreshLiveSchedules(); /* stock was restored on the server */
 }
@@ -435,11 +435,11 @@ export const togglePref = (k: 'orders' | 'promos') => {S.np[k] = S.np[k] ? 0 : 1
 export const selectAddr = async (id: string | number) => {
   if (!providerInfo.demo) {
     const {error} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(id)}});
-    if (error) { toast(friendlyError(error, 'Could not update the Goodies delivery address.')); return; }
+    if (error) { toast(friendlyError(error, label("lbl.page.actions.a4a7e583d4", "Could not update the Goodies delivery address."))); return; }
   }
   S.as = id; save(); ui.close(); emit();
   const selected = addr();
-  toast(label('lbl.actionDeliveringTo', 'Delivering to {address} (Wantiss default unchanged)').replace('{address}', selected?.l || selected?.t || 'your selected address'));
+  toast(label('lbl.actionDeliveringTo', 'Delivering to {address} (Wantiss default unchanged)').replace('{address}', selected?.l || selected?.t || label('lbl.addressSelectedFallback', 'your selected address')));
 };
 export const setFilter = (k: string) => {S.f = k; emit();};
 export const setSub = (k: string) => {S.sub = k; emit();};
@@ -478,13 +478,13 @@ export async function createWallet() {
   try {
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError) throw authError;
-    if (!auth.user) throw new Error('Sign in to create a Wantiss wallet.');
+    if (!auth.user) throw new Error(label("lbl.page.actions.66a268bc9d", "Sign in to create a Wantiss wallet."));
     const { error } = await supabase.rpc('ensure_my_wallet');
     if (error) throw error;
     const { data: wallet, error: verifyError } = await supabase.from('wallets')
       .select('id,balance').eq('user_id', auth.user.id).maybeSingle();
     if (verifyError) throw verifyError;
-    if (!wallet?.id) throw new Error('Wallet creation was not confirmed by the server. Please retry.');
+    if (!wallet?.id) throw new Error(label("lbl.page.actions.756aec8c65", "Wallet creation was not confirmed by the server. Please retry."));
     if (S.accountId !== auth.user.id) return;
     S.hasWallet = true;
     S.wallet = Number(wallet.balance || 0);
@@ -506,7 +506,7 @@ export function idResult(id: string, ok: boolean) {
     const refund = Math.round((o.sub - o.disc + (F.rfSvc ? o.svc : 0) + (F.rfTip ? o.tip : 0)) * 100) / 100;
     o.refund = o.pay === 'cash' ? 0 : refund;
     if (o.pay !== 'cash') S.wallet += refund;
-    S.notifs.unshift({id: Date.now() + Math.random(), t: 'ID check failed', d: o.pay === 'cash' ? 'The ID check failed, so the order was not handed over. You were not charged.' : money(refund) + ' was refunded to your Wantiss wallet. The delivery fee is not refunded.', r: 'track', p: o.id, u: 1});
+    S.notifs.unshift({id: Date.now() + Math.random(), t: label("lbl.page.actions.0316618817", "ID check failed"), d: o.pay === 'cash' ? label("lbl.page.actions.56d63db38f", "The ID check failed, so the order was not handed over. You were not charged.") : money(refund) + label("lbl.page.actions.e13f05dc32", " was refunded to your Wantiss wallet. The delivery fee is not refunded."), r: 'track', p: o.id, u: 1});
     toast(label('lbl.actionIdFailed', 'ID check failed. Order cancelled'));
   }
   save(); emit();
@@ -522,23 +522,23 @@ async function placeMultiOrder() {
   const ids = cartStoreIds();
   const r2 = (n: number) => Math.round(n * 100) / 100;
   const stop = (message: string, step?: number) => {S.busy = 0; if (step != null) S.cs = step; toast(message); emit();};
-  if (providerInfo.demo) return stop('Ordering from several stores needs a live connection.');
-  if (ids.length > maxStops()) return stop('You can order from up to ' + maxStops() + ' stores at once.');
-  if (isPk()) return stop('Ordering from several stores is available for delivery only.');
-  if (!['wallet', 'cash'].includes(S.pay)) return stop('Choose Wantiss Wallet or cash to order from several stores.', 2);
+  if (providerInfo.demo) return stop(label("lbl.page.actions.d2c68bb213", "Ordering from several stores needs a live connection."));
+  if (ids.length > maxStops()) return stop(label("lbl.page.actions.737e259f91", "You can order from up to ") + maxStops() + label("lbl.page.actions.78645fb5f6", " stores at once."));
+  if (isPk()) return stop(label("lbl.page.actions.f16811f463", "Ordering from several stores is available for delivery only."));
+  if (!['wallet', 'cash'].includes(S.pay)) return stop(label("lbl.page.actions.0e483440c6", "Choose Wantiss Wallet or cash to order from several stores."), 2);
   if (S.pay === 'cash') {
     const checks = await Promise.all(ids.map(async sid => {
       const {data, error} = await supabase.rpc('goodies_cash_on_delivery_available', {p_store_id: sid});
       return {sid, available: !error && data === true};
     }));
     const unavailable = checks.find(result => !result.available);
-    if (unavailable) return stop((STB[unavailable.sid]?.n || 'A store') + ': cash on delivery is not currently available. Choose Wantiss Wallet or try again later.', 2);
+    if (unavailable) return stop((STB[unavailable.sid]?.n || label("lbl.page.actions.cf161ce31c", "A store")) + label("lbl.page.actions.672fe60e14", ": cash on delivery is not currently available. Choose Wantiss Wallet or try again later."), 2);
   }
-  if (hasAlcohol()) return stop('Alcohol orders are not available yet.');
-  if (S.sch && S.sch <= Date.now() + 2 * 60_000) return stop('That scheduled time is too close or has passed. Please choose a later time.', 1);
+  if (hasAlcohol()) return stop(label("lbl.page.actions.7f5bcfb3c5", "Alcohol orders are not available yet."));
+  if (S.sch && S.sch <= Date.now() + 2 * 60_000) return stop(label("lbl.page.actions.e3520919a7", "That scheduled time is too close or has passed. Please choose a later time."), 1);
   for (const sid of ids) {
     const s = STB[sid];
-    if (!s?.live) return stop('One of the stores is no longer taking orders.');
+    if (!s?.live) return stop(label("lbl.page.actions.0e98e7865b", "One of the stores is no longer taking orders."));
     if (!s.open && !(s.acceptScheduledOrders && S.sch > Date.now())) return stop(label('lbl.actionStoreClosedCheckout', '{store} is closed. Choose a future pickup or delivery time if scheduling is available.').replace('{store}', s.n), 1);
     if (storeSub(sid) < s.min) {toast(s.n + ': ' + label('lbl.actionMinimumOrder', 'Minimum order is {amount}').replace('{amount}', money(s.min))); reset('cart'); return;}
   }
@@ -551,7 +551,7 @@ async function placeMultiOrder() {
   const t = totals();
   if (S.pay === 'wallet') {
     const verified = await refreshPaymentOptions();
-    if (!verified) return stop('Could not verify your live Wantiss Wallet balance. Please retry before placing the order.');
+    if (!verified) return stop(label("lbl.page.actions.79f6eb3d4d", "Could not verify your live Wantiss Wallet balance. Please retry before placing the order."));
     if (!S.hasWallet) return stop(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.'), 2);
   }
   /* One road quote covers every store; each store gets its own share, so the shares add up to the single fee shown. */
@@ -567,7 +567,7 @@ async function placeMultiOrder() {
       let detail = quoteResult.data?.error || '';
       const response = quoteResult.error?.context;
       if (!detail && response && typeof response.clone === 'function') {try {const payload = await response.clone().json(); detail = String(payload?.error || payload?.message || '');} catch { /* keep the generic message */ }}
-      return stop(friendlyError(detail ? {message: detail} : quoteResult.error, 'Could not calculate the delivery fee. Please check the delivery address.'));
+      return stop(friendlyError(detail ? {message: detail} : quoteResult.error, label("lbl.page.actions.749cc634fd", "Could not calculate the delivery fee. Please check the delivery address.")));
     }
     const perStore: Record<string, {id: string; fee: number}> = {};
     quotes.forEach((q: any) => {perStore[String(q.store_id)] = {id: String(q.id), fee: Number(q.fee)};});
@@ -577,7 +577,7 @@ async function placeMultiOrder() {
   const freeFirst = first() && !!contentHooks.fees?.().firstFree;
   const stopFee = (sid: string) => freeFirst ? 0 : r2(Number(mq.perStore[sid]?.fee || 0));
   const newFee = r2(ids.reduce((sum: number, sid: string) => sum + stopFee(sid), 0));
-  if (Math.abs(t.fee - newFee) > 0.005) {S.busy = 0; toast('Your delivery fee is now ' + money(newFee) + '. Review the updated total and place your order again.'); emit(); return;}
+  if (Math.abs(t.fee - newFee) > 0.005) {S.busy = 0; toast(label("lbl.page.actions.1d3bf68a3e", "Your delivery fee is now ") + money(newFee) + label("lbl.page.actions.f07e8266c3", ". Review the updated total and place your order again.")); emit(); return;}
   const total = r2(t.sub + newFee + t.svc + t.tip);
   if (S.pay === 'wallet' && S.wallet < total) return stop(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'), 2);
   const stops = ids.map((sid: string) => ({store_id: sid, items: stopItems(sid), subtotal: r2(storeSub(sid)), delivery_fee: stopFee(sid), delivery_quote_id: mq.perStore[sid]?.id}));
@@ -590,7 +590,7 @@ async function placeMultiOrder() {
   S.busy = 1; emit();
   let attempt: {key: string; fingerprint: string};
   try {attempt = await getGoodiesCheckoutAttempt(JSON.stringify({...payload, p_address: {...addressPayload}, multi: true}));}
-  catch (storageError: any) {return stop(friendlyError(storageError, 'Could not securely save this checkout attempt. Please try again.'));}
+  catch (storageError: any) {return stop(friendlyError(storageError, label("lbl.page.actions.cdff08cd85", "Could not securely save this checkout attempt. Please try again.")));}
   if (S.accountId !== accountId) return;
   const {data, error} = await supabase.rpc('goodies_place_multi_order', {p_idempotency_key: attempt.key, ...payload});
   if (S.accountId !== accountId) return;
@@ -602,11 +602,11 @@ async function placeMultiOrder() {
       const verified = await refreshPaymentOptions();
       if (/insufficient|not enough|balance too low/i.test(detail) || (verified && S.wallet < total)) return stop(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.'));
     }
-    return stop(friendlyError(detail ? {message: detail} : error, 'Could not place the order. Please try again.'));
+    return stop(friendlyError(detail ? {message: detail} : error, label("lbl.page.actions.9a307aeff8", "Could not place the order. Please try again.")));
   }
   if (S.pay === 'wallet') await refreshPaymentOptions();
   if (S.accountId !== accountId) return;
-  const pl = S.pay === 'wallet' ? 'Wallet' : 'Cash';
+  const pl = S.pay === 'wallet' ? label("lbl.page.actions.d1c9a01d57", "Wallet") : label("lbl.page.actions.e2da108f63", "Cash");
   const orders = rows.sort((x, y) => Number(x.stop_index) - Number(y.stop_index)).map((row: any, index: number) => {
     const sid = String(row.store_id), st = STB[sid], first1 = index === 0;
     const sub = r2(storeSub(sid)), fee = stopFee(sid), svc = first1 ? r2(t.svc) : 0, tip = first1 ? r2(t.tip) : 0;
@@ -614,7 +614,7 @@ async function placeMultiOrder() {
       id: row.order_code, backendId: row.order_id, parentId: row.group_id, stop: Number(row.stop_index),
       serverStatus: String(row.status || 'placed'), sid, lines: stopItems(sid).map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, photo: l.photo, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo})),
       sn: st?.n || 'Store', sub, fee, svc, disc: 0, tip, total: r2(sub + fee + svc + tip), t0: Date.now(), st: 0, rated: 0, cx: 0, pk: false,
-      addr: a.t, ad: {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? 'Wantiss number' : ct.l, cid: ct.id,
+      addr: a.t, ad: {l: a.l, t: a.t, apt: a.apt, inst: a.inst}, ph: ct.ph, phl: ct.w ? label("lbl.page.actions.cfb06d9224", "Wantiss number") : ct.l, cid: ct.id,
       pay: S.pay, payl: pl, note: String(S.note || '').trim(), sch: S.sch, promo: '', alc: null,
     };
   });
@@ -622,7 +622,7 @@ async function placeMultiOrder() {
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   (S as any).deliveryFeeQuote = null;
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: orders[0].id, u: Date.now() + 1}];
-  S.busy = 0; toast('Your order was sent to ' + orders.length + ' stores');
+  S.busy = 0; toast(label("lbl.page.actions.25351d6a3d", "Your order was sent to ") + orders.length + ' stores');
   await save();
   await completeGoodiesCheckoutAttempt(String(orders[0].backendId));
   emit();

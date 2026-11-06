@@ -1,6 +1,7 @@
 /* Shared published content provider. Draft content is never read by customer or vendor clients. */
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {setInterfaceContent} from './i18n/interfaceContent';
 import {tx} from './i18n';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
@@ -28,6 +29,7 @@ export const stripeColor = (): string => (C && typeof C.stripe === 'string' && /
 export function applyContent(json: any) {
   if (!json || json.v !== 5) throw new Error('This is not a Wantiss Admin Goodies export (version 5).');
   C = json;
+  setInterfaceContent(json.labels);
   Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
   (json.lib || []).forEach((a: any) => {
     LAYOUT[a.id] = {rk: a.rk, w: a.w, k: a.k, off: a.st === 'off'};
@@ -75,7 +77,7 @@ export function loadContent(): Promise<void> {
   return tracked;
 }
 export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(j)); } catch { /* Optional persistence. */ } }
-export async function clearContent() { C = null; hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
+export async function clearContent() { C = null; setInterfaceContent(); hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
 export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
@@ -83,7 +85,7 @@ export function categories(): {id: string; name: Txt; emoji: string; art?: strin
   if (!C) return [];
   return C.cats.filter((c: any) => c.st === 'on').sort((a: any, b: any) => a.ord - b.ord).map((c: any) => ({id: c.id, name: c.name, emoji: c.emoji, art: c.art ? c.art.data : null, home: c.home}));
 }
-export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? 'All stores' : id;};
+export const catName = (id: string) => {const c = categories().find(x => x.id === id); return c ? tx(c.name) : id === 'all' ? label('lbl.catAllStores', 'All stores') : id;};
 export const label = (id: string, fallback: string) => {const l = C && C.labels && C.labels.find((x: any) => x.id === id); const s = l ? tx(l.t) : ''; return s || fallback;};
 const live = (r: any) => {const n = new Date().toISOString().slice(0, 10); return r.st === 'Live' && (!r.from || r.from <= n) && (!r.to || r.to >= n);};
 export type PromoCard = {id: string; emoji: string; image?: string | null; color: string; title: string; sub: string; btn: string; target: string; newOnly: boolean};

@@ -17,7 +17,7 @@ import WalletAddNewCardScreen from '../../screens/Wallet/WalletAddNewCardScreen'
 import {CardAuthentication} from './screens/CardAuthentication';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent, label, stageLabels} from './content';
+import {loadContent, label, stageLabels, onContent, catName} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 
@@ -49,6 +49,8 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     const subscription = Linking.addEventListener('url', ({url}) => openInvite(url));
     return () => {active = false; subscription.remove();};
   }, [goodiesLoaded]);
+
+  useEffect(() => onContent(emit), []);
 
   /* bridge for store/actions */
   ui.toast = (t: string) => {setToastTxt(t); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToastTxt(''), 2300);};
@@ -125,12 +127,12 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
-    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
+    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : catName(c.p)} /><CatList p={c.p} /></>; break;
     case 'store': body = <Store id={c.p} />; break;
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
-    case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
+    case 'addcard': body = <WalletAddNewCardScreen contentLabel={label} onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
     case 'track': body = <Track id={c.p} />; break;
@@ -148,10 +150,10 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
     const banned = S.goodiesAccess.status === 'banned';
     body = <View style={{padding: 20, paddingTop: 36}}>
       <Card>
-        <Ttl>{banned ? 'Goodies access permanently restricted' : 'Goodies access temporarily suspended'}</Ttl>
-        <T size={13} style={{marginTop: 8}}>{S.goodiesAccess.reason || (banned ? 'Your account can no longer use Goodies.' : 'Your access to Goodies is currently paused.')}</T>
-        {S.goodiesAccess.endsAt ? <T size={12} style={{marginTop: 8}}>Access suspension ends {new Date(S.goodiesAccess.endsAt).toLocaleDateString()}.</T> : null}
-        <T size={12} style={{marginTop: 12}}>Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect.</T>
+        <Ttl>{banned ? label("lbl.page.GoodiesApp.3282dc390c", "Goodies access permanently restricted") : label("lbl.page.GoodiesApp.100747096f", "Goodies access temporarily suspended")}</Ttl>
+        <T size={13} style={{marginTop: 8}}>{S.goodiesAccess.reason || (banned ? label("lbl.page.GoodiesApp.7c3f38eda8", "Your account can no longer use Goodies.") : label("lbl.page.GoodiesApp.cc0104c13f", "Your access to Goodies is currently paused."))}</T>
+        {S.goodiesAccess.endsAt ? <T size={12} style={{marginTop: 8}}>{label("lbl.page.GoodiesApp.84a20cf3d1", "Access suspension ends ")}{new Date(S.goodiesAccess.endsAt).toLocaleDateString()}.</T> : null}
+        <T size={12} style={{marginTop: 12}}>{label("lbl.page.GoodiesApp.683fd075e6", "Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect.")}</T>
       </Card>
     </View>;
   }
@@ -191,7 +193,7 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
           <Animated.View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 12, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12, transform: [{translateX: cartDragX}]}}>
             <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAutoJGDJ0J", "Open cart")} onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="600" color="#fff">{cnt()}</T></View><T size={14.5} weight="600" color="#fff">{label("lbl.browseAutoEJBBC2", "Your cart")}</T></Row>
-              <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="600" color={th.brd}>View cart · {money(totals().total)}</T></View>
+              <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="600" color={th.brd}>{label("lbl.page.GoodiesApp.4af0bf2db1", "View cart · ")}{money(totals().total)}</T></View>
             </Pressable>
           </Animated.View>
           <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAuto1APR0T", "Dismiss cart banner")} onPress={() => { cartDragX.setValue(0); setDismissedCartCount(cnt()); }} hitSlop={8} style={{position: 'absolute', top: -2, right: -3, width: 24, height: 24, borderRadius: 12, backgroundColor: '#FFFFFF', borderWidth: 0.5, borderColor: th.line, alignItems: 'center', justifyContent: 'center', zIndex: 3, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5}}>
