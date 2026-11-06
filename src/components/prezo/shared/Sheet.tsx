@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   KeyboardAvoidingView,
   Modal,
+  PanResponder,
   Platform,
   Pressable,
   ScrollView,
@@ -27,6 +28,11 @@ export const Sheet = ({ visible, onClose, title, children, dismissible = true }:
   const { colors } = usePrezoTheme();
   const insets = useSafeAreaInsets();
   const { isWide, height } = useLayoutMode();
+  const pan = useMemo(() => PanResponder.create({
+    onStartShouldSetPanResponder: () => false,
+    onMoveShouldSetPanResponder: (_: any, gesture: any) => dismissible && !isWide && gesture.dy > 8 && Math.abs(gesture.dy) > Math.abs(gesture.dx),
+    onPanResponderRelease: (_: any, gesture: any) => { if (dismissible && (gesture.dy > 65 || gesture.vy > 1.1)) onClose(); },
+  }), [dismissible, isWide, onClose]);
 
   return (
     <Modal
@@ -58,10 +64,11 @@ export const Sheet = ({ visible, onClose, title, children, dismissible = true }:
             },
           ]}
         >
+          {!isWide ? <View {...pan.panHandlers} style={{ height: 26 }} /> : null}
           <ScrollView
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={{
-              paddingTop: 26,
+              paddingTop: isWide ? 26 : 0,
               paddingHorizontal: 22,
               paddingBottom: 26 + insets.bottom,
             }}
