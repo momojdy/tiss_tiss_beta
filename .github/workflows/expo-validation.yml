@@ -6,16 +6,30 @@ on:
   pull_request:
     branches: [main]
 
+defaults:
+  run:
+    working-directory: tiss_tiss_beta
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
+      - name: Checkout paired admin CMS contracts
+        uses: actions/checkout@v4
+        with:
+          repository: momojdy/tiss-admin
+          ref: bf663912102b5ef3ffb177ed65e04e670819367d
+          path: tiss-admin
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: tiss_tiss_beta/package-lock.json
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
       - name: Verify Goodies CMS source coverage
@@ -40,6 +54,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
