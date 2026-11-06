@@ -392,10 +392,12 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
       }
     };
     void load();
+    // Recheck freshness even when no realtime event arrives (for example, if GPS stops).
+    const freshnessTimer = setInterval(() => { void load(); }, 30000);
     const channel = supabase.channel('goodies-courier-map-' + orderId)
       .on('postgres_changes', {event: '*', schema: 'public', table: 'goodies_delivery_assignments', filter: 'order_id=eq.' + orderId}, () => { void load(); })
       .subscribe();
-    return () => { active = false; void supabase.removeChannel(channel); };
+    return () => { active = false; clearInterval(freshnessTimer); void supabase.removeChannel(channel); };
   }, [orderId]);
   const valid = (p: any) => p && p.latitude != null && p.longitude != null && Number.isFinite(Number(p.latitude)) && Number.isFinite(Number(p.longitude));
   const routeCoords = Array.isArray(route?.coordinates) ? (route.type === 'MultiLineString' ? route.coordinates.flat(1) : route.coordinates).map((p:any)=>({latitude:Number(p[1]),longitude:Number(p[0])})).filter((p:any)=>Number.isFinite(p.latitude)&&Number.isFinite(p.longitude)) : [];
