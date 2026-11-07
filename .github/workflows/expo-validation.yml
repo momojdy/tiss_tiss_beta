@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: momojdy/tiss-admin
-          ref: bf663912102b5ef3ffb177ed65e04e670819367d
+          ref: 0d83039f6874f59b02d4bc296c8ed7bd0bf20a83
           path: tiss-admin
           persist-credentials: false
       - uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
       - name: Verify Goodies CMS source coverage
         run: node scripts/check-goodies-cms.cjs && node tests/goodies-cms.test.cjs
       - name: Verify Goodies review isolation and refresh
-        run: node tests/goodies-reviews.test.cjs
+        run: node tests/goodies-reviews.test.cjs && node tests/goodies-recovery.test.cjs && node scripts/audit-goodies-reproductions.cjs
       - name: Verify authorized Goodies translation payload
         run: node tests/goodies-translation-release.test.cjs
       - name: Verify unique migration versions

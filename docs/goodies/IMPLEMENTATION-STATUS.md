@@ -82,3 +82,12 @@ Review account/store isolation, post-save refresh, authoritative summary refresh
 ## Approved-language publication with pending Creole
 
 The editor and a forward backend migration now permit pending Creole to remain unavailable while reviewed English supplies fallback. Four-locale approval and normal publisher authorization remain enforced; FAQ placeholders still block publication independently. See [Creole fallback evidence](creole-fallback/README.md). Candidate/local PASS does not establish deployed or authenticated publication acceptance.
+
+## Step 4 approval and deployment preflight
+
+**Deployment is paused by the subsequent user instruction.** The earlier step-4 approval is superseded. The local package now includes 14 candidate migrations; none were applied during this repair pass. Hosted role/provider/device tests, recovery-point verification and signed release targets remain outstanding.
+
+
+## 7 November recovery fixes
+
+See [verified repairs and remaining blockers](repairs-20261107/README.md). Seven source failure paths were repaired, the source CMS register now has 1,267 labels and the package includes 14 candidate migrations. Deployment remains paused. These local results do not supersede missing hosted/provider/device acceptance.

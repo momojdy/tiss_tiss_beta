@@ -6,7 +6,7 @@ function extract(repo,file,name){const filename=path.join(repo,file),ast=ts.crea
  const code=ts.isFunctionDeclaration(found)?found.getText(ast)+'\nmodule.exports='+name+';':'module.exports='+found.initializer.getText(ast)+';';
  const javascript=ts.transpileModule(code,{fileName:filename,compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React}}).outputText;
  const tags=new Set();function tag(node){if(ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node))tags.add(node.tagName.getText(ast));ts.forEachChild(node,tag);}tag(found);
- return context=>{const module={exports:{}};const env={module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),notifyStoreReviewsChanged(){},readOrderReviews:async()=>{},...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
+ return context=>{const module={exports:{}};const env={paymentOptionsGeneration:0,builderLoadGeneration:0,S:{accountId:'synthetic'},module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),notifyStoreReviewsChanged(){},readOrderReviews:async()=>{},...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
 }
 const label=(_id,fallback)=>fallback;function flatten(node){if(Array.isArray(node))return node.map(flatten).join(' ');if(node==null||typeof node==='boolean')return '';if(typeof node!=='object')return String(node);return flatten(node.props?.children);}function elements(node,out=[]){if(Array.isArray(node))node.forEach(x=>elements(x,out));else if(node&&typeof node==='object'){out.push(node);elements(node.props?.children,out);}return out;}
 test('REGRESSION A01: vendor errors never render raw database detail',()=>{
@@ -145,4 +145,21 @@ test('review hydration queries only the current customer and page and preserves 
  const read=extract(root,'src/features/Goodies/serverSync.ts','readOrderReviews')({S:{lang:'ht'},supabase:{from:table=>{assert.equal(table,'goodies_order_reviews');return query;}},applyOrderReviews:(...args)=>applied.push(args)});
  await read(orders,'current-customer');assert.deepEqual(filters,[['customer_id','current-customer'],['order_id',['order-one']]]);assert.equal(applied.length,1);assert.equal(applied[0][2],'ht');
  fail=true;await read(orders,'current-customer');assert.equal(applied.length,1);assert.equal(orders[0].orderReview.t,'cached');
+});
+
+test('REGRESSION A27: builder outages expose retryable failure instead of an empty catalog',async()=>{
+ const BYO={cfg:{s1:[{id:'old'}]},store:{},drafts:{}};
+ const load=extract(root,'src/features/Goodies/builders/engine.tsx','loadBuilders')({label,BYO,BKEY:'synthetic',AsyncStorage:{getItem:async()=>null},STB:{s1:{id:'s1',live:true,businessId:'biz'}},supabase:{from:()=>({select:()=>({in:()=>({eq:async()=>({data:null,error:{message:'private server error'}})})})})},bsave(){},emit(){}});
+ await load();assert.equal(BYO.loading,false);assert.equal(BYO.error,'Could not load custom products. Please try again.');assert.ok(!BYO.error.includes('private'));
+});
+
+test('REGRESSION A28: checkout payment outages render retry and never a false missing wallet',()=>{
+ for(const status of ['loading','error','ready']){
+  const S={accountId:'a',paymentOptionsStatus:status,hasWallet:false,wallet:0,pay:'wallet',cards:[],cs:2,cart:{sid:'s',lines:[]},sch:0};
+  let retries=0;
+  const view=extract(root,'src/features/Goodies/screens/Shop.tsx','Checkout')({S,label,useTheme:()=>({mut:'#555',red:'#f00',br:'#333',ink:'#000'}),totals:()=>({st:{id:'s',n:'Store',open:1},total:20}),isPk:()=>false,addr:()=>({t:'Synthetic address'}),ctOf:()=>null,useState:v=>[v,()=>{}],useEffect(){},fees:()=>({pay:{Wallet:true,Card:true}}),providerInfo:{demo:false},hasAlcohol:()=>false,money:v=>'$'+v,refreshPaymentOptions:()=>{retries++;},setPay(){},setSch(){},back(){},go(){},createWallet(){},setCard(){},cnt:()=>1,dp:x=>x,checkoutNext(){},placeOrder(){}});
+  const tree=view(),text=flatten(tree);const missing=text.includes('Wantiss wallet not found');assert.equal(missing,status==='ready');
+  if(status==='error'){assert.ok(text.includes('Payment details unavailable'));const retry=elements(tree).find(e=>e.type==='Cta'&&e.props.label==='Try again');assert.ok(retry);retry.props.onPress();assert.equal(retries,1);}
+  if(status==='loading')assert.ok(text.includes('Loading payment methods'));
+ }
 });

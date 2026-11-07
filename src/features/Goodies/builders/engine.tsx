@@ -51,12 +51,17 @@ export function fromTemplate(type: 'pizza' | 'burger' | 'custom'): Builder {
   }) as Builder;
 }
 
-export const BYO: {cfg: Record<string, Builder[]>; store: Record<string, boolean>; drafts: Record<string, any>} = {cfg: {}, store: {}, drafts: {}};
+let builderLoadGeneration = 0;
+export const BYO: {loading: boolean; error: string; cfg: Record<string, Builder[]>; store: Record<string, boolean>; drafts: Record<string, any>} = {loading: false, error: '', cfg: {}, store: {}, drafts: {}};
 export async function loadBuilders() {
+  const generation = ++builderLoadGeneration, owner = S.accountId;
+  const current = () => generation === builderLoadGeneration && S.accountId === owner;
+  BYO.loading = true;BYO.error = '';emit();
   try {
     const r = JSON.parse((await AsyncStorage.getItem(BKEY)) || 'null');
     if (r && typeof r === 'object') {if (r.cfg && !Array.isArray(r.cfg)) BYO.cfg = r.cfg; if (r.drafts) BYO.drafts = r.drafts; if (r.store) BYO.store = r.store;}
   } catch (e) {}
+  if (!current()) return;
   BYO.cfg = {}; // Only server-backed builders may be offered to customers.
   // Production builders come from the server, never from another user's local cache.
   try {
@@ -66,6 +71,7 @@ export async function loadBuilders() {
       const {data, error} = await supabase.from('goodies_builder_configs')
         .select('business_id,builder_id,config,enabled').in('business_id', businessIds).eq('enabled', true);
       if (error) throw error;
+      if (!current()) return;
       for (const store of stores as any[]) {
         const rows = (data || []).filter((row: any) => row.business_id === store.businessId);
         BYO.cfg[store.id] = rows.map((row: any) => bClean(row.config)).filter((b: Builder | null): b is Builder => !!b && b.enabled && b.available);
@@ -73,6 +79,7 @@ export async function loadBuilders() {
       // Ingredient pictures uploaded by Wantiss are published assets; attach their links.
       try {
         const remote = await fetchPublishedWantissContent('en');
+        if (!current()) return;
         const urlByKey = new Map(remote.assets.map((a: any) => [a.asset_key, a.url]));
         Object.values(BYO.cfg).forEach((list) => list.forEach((b) => b.groups.forEach((g) => g.items.forEach((it) => {
           const url = it.img?.assetKey ? urlByKey.get(it.img.assetKey) : undefined;
@@ -81,10 +88,12 @@ export async function loadBuilders() {
       } catch (e) {}
     }
   } catch (e) {
+    if (!current()) return;
+    BYO.error = label('lbl.buildersLoadFailed', 'Could not load custom products. Please try again.');
     // If the live builder read fails, fail closed: don't offer locally cached custom items.
     Object.values(STB).forEach((store: any) => { BYO.cfg[store.id] = []; });
   }
-  bsave(); emit();
+  if (current()) {BYO.loading = false;bsave(); emit();}
 }
 export const bsave = () => {try {AsyncStorage.setItem(BKEY, JSON.stringify(BYO));} catch (e) {}};
 export const bFor = (sid: string) => BYO.cfg[sid] || [];

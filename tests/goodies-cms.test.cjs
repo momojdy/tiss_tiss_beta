@@ -57,3 +57,11 @@ test('unfinished Creole stays unavailable in production and falls back to review
  }
  const text={en:{v:'Reviewed English',s:'reviewed'},ht:{v:'Synthetic reviewed Creole',s:'reviewed'}};content.applyContent({v:5,labels:[{id:'lbl.interface.back',t:text}]});assert.equal(content.label('lbl.interface.back','fallback'),'Synthetic reviewed Creole');
 });
+
+test('draft category names get safe source fallbacks without releasing unreviewed Creole',()=>{
+ const baseline=require('../docs/goodies/localization-release/baseline.json').payload;
+ content.applyContent(baseline);for(const locale of ['en','fr','es','zh-Hans','ht']){state.S.lang=locale;assert.equal(content.categories().length,9);for(const cat of content.categories())assert.ok(cat.name.trim(),cat.id);}
+ state.S.lang='ht';assert.equal(content.categoryDisplayName('restaurants',{en:{v:'Approved name',s:'reviewed'},ht:{v:'Unreviewed Creole',s:'draft'}}),'Approved name');
+ assert.equal(content.categoryDisplayName('unknown',{en:{v:'',s:'reviewed'}}),'Category');
+ state.S.lang='fr';assert.equal(content.categoryDisplayName('restaurants',{fr:{v:'Nom choisi',s:'reviewed'}}),'Nom choisi');
+});

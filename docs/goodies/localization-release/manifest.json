@@ -4,7 +4,7 @@
   "baselineId": "da301ba8-15b8-4092-a37f-5da73d721c2f",
   "baselineVersion": 5,
   "baselinePayloadSha256": "774528704c23644cfc2ad3e0580659b0aa3d73a4bc44aa48e9d834aeb4cadfed",
-  "payloadSha256": "06cd22d3f281ca5b16c8c528e5a5013bc9d56b53c89cfd2454bc3affc2bb5565",
+  "payloadSha256": "effa333d6440cd087313f7e544d93bc16e5ba74b05b2ed5d5e22ec5d02be00a3",
   "authorizedLocales": [
     "en",
     "fr",
@@ -13,6 +13,6 @@
   ],
   "haitianCreole": "Existing entries preserved; super admin owns review",
   "humanReviewClaim": false,
-  "provider": "Google Translate public machine translation endpoint; existing CMS translations preserved",
-  "fields": 1430
+  "provider": "Cached Google machine translations with locally assistant-translated recovery copy; existing CMS translations preserved",
+  "fields": 1444
 }

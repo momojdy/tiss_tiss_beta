@@ -1,6 +1,6 @@
 # Goodies prepared deployment package
 
-**Prepared, not deployed. Overall Goodies release is NOT READY.** The user explicitly requires approval before potentially disruptive production schema changes. Approval has not been inferred from “Continue.” No production records, secrets, charges, published content or storage objects were changed.
+**DEPLOYMENT PAUSED BY THE USER. Overall Goodies release is NOT READY.** Earlier step-4 approval has been superseded by the instruction not to deploy. The package is prepared for review only. Recovery-point confirmation, provider verification and signed application release targets remain pending. No production deployment was performed in this repair pass.
 
 Target: Wantiss, `ycbirmgppwavorwudlrv`, us-east-1. Do not restore the inactive security-test project or substitute another production backend.
 
@@ -24,10 +24,12 @@ Main still reports `20261104211532` as its latest migration. Apply only the revi
 
 The moderation migration was amended because read-only main metadata confirms it is undeployed there. Never alter an applied environment’s migration history; use a forward migration if a different environment has already applied an earlier version.
 
+14. [20261107014239_goodies_failure_state_content_review.sql](../../supabase/migrations/20261107014239_goodies_failure_state_content_review.sql) — SHA-256 `2c3fcb2f9cf500d2e9b0295fe3421fee2e5be3a64a1fadbaf341ab855e0731af`. Extends the critical-label guard to recovery messages; requires items 12–13. New candidate, not covered by the superseded deployment approval.
+
 ## Required rollout sequence
 
 1. Review [implementation status](IMPLEMENTATION-STATUS.md), migration SQL/checksums and the read-only live drift evidence. Confirm the production backup/recovery capability and operator access; production PITR/restore has NOT been tested in this environment.
-2. Obtain explicit approval for the listed production migrations. Apply them sequentially to the exact main project, preserving a deployment ledger. Each file is transactional; do not run real financial tests in production.
+2. Production approval is granted. Once recovery prerequisites are confirmed, apply the reviewed migrations sequentially to the exact main project, preserving a deployment ledger. Each file is transactional; do not run real financial tests in production.
 3. Re-read function bodies, column grants, RLS/policies and storage configuration. Verify the reviewed definitions were deployed, including rejection preservation, gallery ownership validation, reviews and publication guards. Do not certify deployment from migration names alone.
 4. Deploy the paired customer/vendor and admin code revisions together after backend availability checks. Candidate clients require RPCs absent from main today; clients alone are not a safe rollout. Source commits are listed in [code-changes.json](release-evidence/code-changes.json).
 5. Keep private-proof uploads disabled until compatible consumer/admin proof viewers are deployed and tested. Enable the existing protected rollout setting only with approval. Do not migrate/delete legacy objects blindly. The earlier audit observed zero legacy proof objects.
@@ -53,10 +55,10 @@ The moderation migration was amended because read-only main metadata confirms it
 
 ## Current blockers
 
-- Production deployment approval and recovery capability confirmation.
+- Confirmed usable production backup/recovery point and operator restore access; production deployment approval is already granted.
 - Approved legal/support content and actual human translation review.
 - Approved vendor settlement provider and business rules; missing payout implementation.
-- Complete isolated phone-preview route parity and authenticated CMS acceptance.
+- Authenticated phone-preview/CMS publication acceptance; registered preview routes are implemented and locally verified.
 - Hosted role credentials, payment sandbox, signed builds and physical devices.
 
 No production-readiness PASS is authorized by this package alone.

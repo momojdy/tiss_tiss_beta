@@ -5953,5 +5953,30 @@
     "es": "el mismo artículo",
     "zh-Hans": "the same item",
     "fr": "le même article"
+  },
+  "Category": {
+    "fr": "Catégorie",
+    "es": "Categoría",
+    "zh-Hans": "类别"
+  },
+  "Could not load custom products. Please try again.": {
+    "fr": "Impossible de charger les produits personnalisables. Veuillez réessayer.",
+    "es": "No se pudieron cargar los productos personalizables. Inténtalo de nuevo.",
+    "zh-Hans": "无法加载自定义商品。请重试。"
+  },
+  "Loading custom products…": {
+    "fr": "Chargement des produits personnalisables…",
+    "es": "Cargando productos personalizables…",
+    "zh-Hans": "正在加载自定义商品…"
+  },
+  "Loading payment methods…": {
+    "fr": "Chargement des moyens de paiement…",
+    "es": "Cargando métodos de pago…",
+    "zh-Hans": "正在加载付款方式…"
+  },
+  "Payment details unavailable. Please try again.": {
+    "fr": "Informations de paiement indisponibles. Veuillez réessayer.",
+    "es": "Los datos de pago no están disponibles. Inténtalo de nuevo.",
+    "zh-Hans": "付款信息暂不可用。请重试。"
   }
 }

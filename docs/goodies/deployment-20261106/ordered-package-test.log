@@ -1,0 +1,5 @@
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/deploymentPackage_test.ts
+running 1 test from ./supabase/functions/goodies-tests/deploymentPackage_test.ts
+approved Goodies deployment package applies in documented order and preserves final guards ... ok (3s)
+
+ok | 1 passed | 0 failed (3s)

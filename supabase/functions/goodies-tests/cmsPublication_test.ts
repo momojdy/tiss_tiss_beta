@@ -36,9 +36,14 @@ Deno.test('forward CMS guard permits unfinished Creole only with reviewed Englis
   check((await db.query<{missing:boolean}>("select to_regprocedure('private.goodies_assert_reviewed_text(jsonb)') is null as missing")).rows[0].missing,'Missing baseline must not cause a partial deployment');
   await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106084303_goodies_cms_publication_review_guard.sql',import.meta.url)));
   await db.exec(forward);
+  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261107014239_goodies_failure_state_content_review.sql',import.meta.url)));
   await db.query('insert into auth.users(id) values($1)',[admin]);
   const row=(await db.query<{id:string}>("insert into public.wantiss_cms_content(content_key,locale,version,status,payload,created_by,updated_by) values('goodies.content','en',1,'draft','{}',$1,$1) returning id",[admin])).rows[0];
   const publish=(payload:unknown)=>db.query("update public.wantiss_cms_content set payload=$1,status='published' where id=$2",[JSON.stringify(payload),row.id]);
+  for(const id of ['lbl.checkoutPaymentLoading','lbl.checkoutPaymentUnavailable','lbl.catalogFailed']) {
+   await denied(()=>publish({v:5,labels:[{id,t:{en:{v:'Synthetic recovery copy',s:'draft'}}}]}));
+   await publish({v:5,labels:[{id,t:{en:{v:'Synthetic recovery copy',s:'reviewed'},ht:{v:'Pending human review',s:'draft'}}}]});
+  }
   for(const status of ['draft','missing',undefined,'unknown']){
    const ht={v:'Synthetic Creole pending human review',...(status?{s:status}:{})},payload=copy(ht);
    await publish(payload);

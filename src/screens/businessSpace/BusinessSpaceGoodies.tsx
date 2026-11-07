@@ -11,7 +11,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../lib/supabase';
-import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
+import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel, Loading } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
@@ -501,7 +501,15 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const [busy, setBusy] = useState(false);
   const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [productMode, setProductMode] = useState<'regular' | 'custom'>('regular');
-  useEffect(() => { if (!product.id) goodiesApi.listBuilders(app.biz.id).then(rows => setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomTypes([])); }, [product.id, app.biz.id]);
+  const [customLoading, setCustomLoading] = useState(!product.id), [customError, setCustomError] = useState(false), [customAttempt, setCustomAttempt] = useState(0);
+  useEffect(() => {
+    if (product.id) return;
+    let active = true;
+    setCustomLoading(true);setCustomError(false);setCustomTypes([]);
+    void goodiesApi.listBuilders(app.biz.id).then(rows => {if (active) setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));})
+      .catch(() => {if (active) setCustomError(true);}).finally(() => {if (active) setCustomLoading(false);});
+    return () => {active = false;};
+  }, [product.id, app.biz.id, customAttempt]);
   const openCustom = (type: 'pizza' | 'burger') => {
     const existing = customTypes.find(x => x.type === type);
     onClose();
@@ -566,6 +574,8 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
         <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
+          {!product.id && customLoading ? <Loading /> : null}
+          {!product.id && customError ? <ErrBox e="Could not load custom product types. Please try again." retry={() => setCustomAttempt(value => value + 1)} /> : null}
           {!product.id && customTypes.length > 0 ? <View style={{ marginBottom: 12 }}>
             <Text style={s.label}>Product type</Text>
             <View style={{ flexDirection: 'row', gap: 8 }}>

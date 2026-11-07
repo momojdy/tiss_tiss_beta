@@ -1,3 +1,4 @@
+import {recoverShoppingSnapshots} from './cacheRecovery';
 /* Goodies state, persistence, pricing and cart logic. */
 import {useSyncExternalStore} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -53,7 +54,7 @@ const GDEF = () => ({
   goodiesAccess: {status: 'active', reason: '', endsAt: null as string | null},
   notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
-  wallet: 0, hasWallet: false, pay: 'wallet', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
+  paymentOptionsStatus: 'idle', wallet: 0, hasWallet: false, pay: 'wallet', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
 });
 export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'driverRev', 'rec', 'rv', 'groupOrder'];
 
@@ -340,20 +341,10 @@ export async function load() {
   }
   try {const t = await AsyncStorage.getItem('goodies-theme'); if (t === 'light' || t === 'dark') S.theme = t;} catch (e) {}
   try {const l = await AsyncStorage.getItem('goodies-lang'); if (l && !accountLanguageLoaded) S.lang = wantissLocale(l);} catch (e) {}
-  /* The catalog must be loaded before the cart, favorites and orders are checked against it. */
+  /* Refresh availability without using a transient catalog outage to delete owned snapshots. */
   await refreshLiveSchedules();
-  /* sanitise exactly like v24 */
-  const c = S.cart;
-  if (!c || !Array.isArray(c.lines)) S.cart = {sid: null, lines: []};
-  S.cart.lines = S.cart.lines.filter((l: any) => l && ((l.byo && l.byo.bid && l.byo.sel && l.byo.lines) || IT[l.id]) && l.q > 0);
-  if (!S.cart.lines.length) S.cart.sid = null;
-  else if (!cartStoreIds().includes(String(S.cart.sid))) S.cart.sid = cartStoreIds()[0] || null;
-  if (S.checkoutAttempt && !S.cart.lines.length && !S.checkoutAttempt.completed) {
-    S.checkoutAttempt = {...S.checkoutAttempt, completed: true};
-    try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
-  }
-  S.orders = S.orders.filter((o: any) => o && STB[o.sid] && Array.isArray(o.lines));
-  S.fav = S.fav.filter((x: string) => STB[x]); S.favp = S.favp.filter((x: string) => IT[x]);
+  if (S.accountId !== ownerId) return;
+  recoverShoppingSnapshots(S, IT, STB, placeholderStore);
   S.addr = S.addr.filter((a: any) => a && a.t); if (!S.addr.length && providerInfo.demo) S.addr = WDEF().addr;
   S.addr.forEach((a: any) => {if (typeof a.z !== 'number') a.z = zoneOf(a.t); if (!a.cc) a.cc = 'HT';});
   if (S.addr.length && !S.addr.some((a: Address) => a.def) && providerInfo.demo) S.addr[0].def = 1;
@@ -522,7 +513,7 @@ export function pChk(code: string, sub: number, sid: string | null) {
   return {p} as any;
 }
 /** The store a cart line belongs to. Older saved lines fall back to the product's store. */
-export const lineStore = (l: CartLine): string => l.s || IT[l.id]?.s || S.cart.sid || '';
+export const lineStore = (l: CartLine): string => l.s || l.byo?.sid || IT[l.id]?.s || S.cart.sid || '';
 /** Stores in the cart, in the order they were added. */
 export const cartStoreIds = (): string[] => {
   const ids = S.cart.lines.map(lineStore).filter((id: string): id is string => typeof id === 'string' && id.length > 0);

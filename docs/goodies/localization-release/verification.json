@@ -1,8 +1,8 @@
 {
   "prepared": true,
   "published": false,
-  "fields": 1430,
-  "localeLookupsVerified": 5712,
+  "fields": 1444,
+  "localeLookupsVerified": 5768,
   "existingHaitianFieldsPreserved": 775,
   "feesAndNonTextConfigurationUnchanged": true,
   "policyDocumentsUnchanged": true,
@@ -14,6 +14,6 @@
     "Replace placeholder FAQ answers before publishing.",
     "Replace placeholder FAQ answers before publishing."
   ],
-  "payloadSha256": "06cd22d3f281ca5b16c8c528e5a5013bc9d56b53c89cfd2454bc3affc2bb5565",
+  "payloadSha256": "effa333d6440cd087313f7e544d93bc16e5ba74b05b2ed5d5e22ec5d02be00a3",
   "scope": "Local payload/schema/consumer-resolver verification, not live publication or human review"
 }

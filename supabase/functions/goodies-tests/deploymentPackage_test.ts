@@ -17,6 +17,7 @@ Deno.test('approved Goodies deployment package applies in documented order and p
  '20261106082226_goodies_admin_operational_pagination.sql',
  '20261106084303_goodies_cms_publication_review_guard.sql',
  '20261106144811_goodies_creole_reviewed_english_fallback.sql',
+ '20261107014239_goodies_failure_state_content_review.sql',
  ];
  try{
   await db.exec(await Deno.readTextFile(new URL('./fixtures/goodies-core.sql',import.meta.url)));

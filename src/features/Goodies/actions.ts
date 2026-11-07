@@ -117,6 +117,7 @@ export function usePromo(c: string) {
   S.promo = c; save(); emit();
 }
 export function goCheckout() {
+  if (S.catalogError) {toast(label('lbl.catalogFailed', 'Could not load stores'));return;}
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   const stopIds = cartStoreIds();
   if (stopIds.length > 1 && isPk()) {toast(label("lbl.page.actions.f16811f463", "Ordering from several stores is available for delivery only.")); return;}
@@ -134,6 +135,7 @@ export function checkoutNext() {
   if (S.cs === 1 && S.sch && S.sch < Date.now()) {S.sch = 0; toast(label('lbl.actionTimePassed', 'That time has passed. Pick another')); emit(); return;}
   if (S.cs === 1 && cartStoreIds().some(id => !STB[id]?.open && (!STB[id]?.acceptScheduledOrders || !S.sch || S.sch <= Date.now()))) {toast(label('lbl.actionStoreClosedSchedule', 'This store is closed. Pick a time under "Schedule" and tap Apply to continue.')); emit(); return;}
   if (S.cs === 2) {
+    if (['wallet','card'].includes(S.pay) && S.paymentOptionsStatus !== 'ready') {toast(label('lbl.checkoutPaymentUnavailable', 'Payment details unavailable. Please try again.'));return;}
     const methodKey = ({wallet: 'Wallet', card: 'Card', cash: 'Cash'} as any)[S.pay];
     if (!methodKey || !fees().pay[methodKey]) {toast(label('lbl.actionPaymentUnavailable', 'This payment method is no longer available. Choose another method.')); return;}
     if (S.pay === 'card' && !S.cards.length) {push('payments'); return;}
@@ -468,32 +470,37 @@ export const clearFilters = () => {S.f = ''; S.sub = ''; emit();};
 /* ---------- alcohol: rules, consent, ID check, refund ---------- */
 export const setConsent = (v: boolean) => {S.alcConsent = v; emit();};
 export function alcAccept() {S.alcAck = 1; const p = S.pend; ui.close(); if (p && p[0] && !p[2]) cartAdd(p[0], p[1]); else if (p && p[2]) p[2]();}
+let paymentOptionsGeneration = 0;
 export async function refreshPaymentOptions(): Promise<boolean> {
+  const generation = ++paymentOptionsGeneration, owner = S.accountId;
+  const current = () => generation === paymentOptionsGeneration && S.accountId === owner;
+  S.paymentOptionsStatus = 'loading';emit();
   try {
     const {data: sessionData, error: sessionError} = await supabase.auth.getUser();
-    if (sessionError || !sessionData.user) return false;
+    if (sessionError || !sessionData.user || sessionData.user.id !== owner) throw new Error('Session unavailable');
     const userId = sessionData.user.id;
     const [walletResult, cardsResult] = await Promise.all([
       supabase.from('wallets').select('id,balance').eq('user_id', userId).maybeSingle(),
       supabase.rpc('get_my_payment_methods'),
     ]);
-    if (walletResult.error || S.accountId !== userId) return false;
+    if (!current()) return false;
+    const balance = walletResult.data?.balance;
+    if (walletResult.error || cardsResult.error || !Array.isArray(cardsResult.data) || (walletResult.data && (typeof walletResult.data.id !== 'string' || !walletResult.data.id || balance == null || String(balance).trim() === '' || !Number.isFinite(Number(balance))))) throw new Error('Payment details unavailable');
     S.hasWallet = !!walletResult.data?.id;
-    S.wallet = Number(walletResult.data?.balance || 0);
-    if (!cardsResult.error) {
-      S.cards = (cardsResult.data || []).map((card: any) => ({
-        id: card.id, b: String(card.brand || 'Card'), l4: String(card.last4 || ''),
-        expiryMonth: card.expiry_month, expiryYear: card.expiry_year, isDefault: !!card.is_default,
-      }));
-      if (!S.cards.some((card: any) => card.id === S.selectedCardId)) S.selectedCardId = (S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id || '';
-    }
-    save(); emit();
+    S.wallet = walletResult.data ? Number(balance) : 0;
+    S.cards = cardsResult.data.map((card: any) => ({
+      id: card.id, b: String(card.brand || 'Card'), l4: String(card.last4 || ''),
+      expiryMonth: card.expiry_month, expiryYear: card.expiry_year, isDefault: !!card.is_default,
+    }));
+    if (!S.cards.some((card: any) => card.id === S.selectedCardId)) S.selectedCardId = (S.cards.find((card: any) => card.isDefault) || S.cards[0])?.id || '';
+    S.paymentOptionsStatus = 'ready';save();emit();
     return true;
-  } catch (e) {
-    // Keep the last known state visible, but tell checkout it could not verify the live balance.
+  } catch {
+    if (current()) {S.paymentOptionsStatus = 'error';emit();}
     return false;
   }
 }
+
 export async function createWallet() {
   try {
     const { data: auth, error: authError } = await supabase.auth.getUser();
