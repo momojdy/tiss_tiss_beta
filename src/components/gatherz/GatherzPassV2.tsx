@@ -13,8 +13,20 @@ import type { Admission, GatherzEvent } from '../../types/gatherz';
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const STRAP_TEXT = 'GATHERZ · BY WANTISS · GATHERZ · BY WANTISS';
-const GW = 6, GH = 8;
-const GLYPH_OFFS: number[] = (() => { let o = 8; return Array.from(STRAP_TEXT).map(ch => { const at = o; o += (ch === ' ' ? 1.8 : ch === '·' ? 1.6 : 4.2) + 1.6; return at; }); })();
+const GW = 10, GH = 8;
+// Character-specific widths keep the I and S in WANTISS visually joined.
+const WID: Record<string, number> = { G: 0.72, A: 0.70, T: 0.60, H: 0.74, E: 0.60, R: 0.66, Z: 0.62, B: 0.66, Y: 0.64, W: 0.95, N: 0.74, I: 0.30, S: 0.60, '·': 0.28, ' ': 0.26 };
+const STRAP_FS = 6.5, STRAP_LS = 1.6;
+function buildOffs(L: number): number[] {
+  const chars = Array.from(STRAP_TEXT);
+  let o = 0;
+  const raw = chars.map(ch => { const at = o; o += (WID[ch] ?? 0.62) * STRAP_FS + STRAP_LS; return at; });
+  // Fit the first two letters of the repeated phrase before the bottom clip.
+  const start = 11, repeatGA = 24;
+  const endGA = raw[repeatGA] + (WID.A ?? 0.70) * STRAP_FS;
+  const scale = Math.max(0.8, Math.min(1.25, (L - 11 - start) / endGA));
+  return raw.map(v => start + v * scale);
+}
 const BLUR_OK = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) >= 31);
 function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: Animated.SharedValue<number[]>; color: string; family: string }) {
   const st = useAnimatedStyle(() => {
@@ -22,7 +34,7 @@ function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs
     const vx = -GW / 2, vy = 6.3 - GH / 2, c = Math.cos(a), sn = Math.sin(a);
     return { opacity: vis, transform: [{ translateX: x - GW / 2 - (vx * c - vy * sn) }, { translateY: y - GH / 2 - (vx * sn + vy * c) }, { rotate: a + 'rad' }] };
   });
-  return <Animated.Text style={[{ position: 'absolute', left: 0, top: 0, width: GW, height: GH, fontSize: 6.5, lineHeight: GH, fontFamily: family, color, includeFontPadding: false }, st]}>{ch}</Animated.Text>;
+  return <Animated.Text style={[{ position: 'absolute', left: 0, top: 0, width: GW, height: GH, fontSize: STRAP_FS, lineHeight: GH, fontFamily: family, color, includeFontPadding: false }, st]} numberOfLines={1} allowFontScaling={false}>{ch}</Animated.Text>;
 }
 
 const FONT = { reg: fonts.regular, med: fonts.semibold, bold: fonts.bold };
@@ -117,7 +129,8 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   const erProps = useAnimatedProps(() => ({ d: geo.value.er }) as any);
   const slProps = useAnimatedProps(() => ({ d: geo.value.sl }) as any);
   const srProps = useAnimatedProps(() => ({ d: geo.value.sr }) as any);
-  const glyphs = useDerivedValue(() => glyphLayout(rig.value.points, GLYPH_OFFS, geo.value.textOpacity));
+  const glyphOffs = useMemo(() => buildOffs(Lr), [Lr]);
+  const glyphs = useDerivedValue(() => glyphLayout(rig.value.points, glyphOffs, geo.value.textOpacity));
   const ringProps = useAnimatedProps(() => { const R = rig.value.points[N + 1]; return { cx: R.x, cy: R.y } as any; });
 
   const cardStyle = useAnimatedStyle(() => {
