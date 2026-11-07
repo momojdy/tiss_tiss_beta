@@ -202,6 +202,11 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   }, [W, H, tier.brushed]);
   const bars = useMemo(() => { const r: number[][] = []; for (let x = 0; x < inner; x += 13) { r.push([x, 2], [x + 4, 1], [x + 8, 3]); } return r; }, [inner]);
   const qrBox = inner * 0.62;
+  // Keep QR SVG stable across flip/gesture renders instead of rebuilding its path tree.
+  const qrValue = useMemo(() => qrPayload(admission), [admission]);
+  const qrGraphic = useMemo(() => (
+    <QRCode value={qrValue} size={qrBox - 24} backgroundColor="#C9C2E3" color="#0E0B1D" />
+  ), [qrValue, qrBox]);
   const gradText = cssLine(100, inner, 52);
 
   const cap = { fontFamily: FONT.reg, fontSize: 9, letterSpacing: 2.16, textTransform: 'uppercase' as const, color: tier.acc, includeFontPadding: false };
@@ -264,6 +269,20 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
           </RadialGradient>
         </Defs>
         <Rect x={0} y={0} width={vw} height={vh} fill="url(#bgfx)" />
+      </Svg>
+
+      {/* Full-width brushed-metal hanging rail, with a recessed underside and center mount. */}
+      <Svg width={vw} height={42} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
+        <Defs>
+          <SvgLinearGradient id="hangingRail" x1="0" y1="0" x2="0" y2="1">
+            <Stop offset="0" stopColor="#F0EAFB" /><Stop offset=".22" stopColor="#B8AED0" />
+            <Stop offset=".55" stopColor="#65597B" /><Stop offset=".83" stopColor="#30283E" />
+            <Stop offset="1" stopColor="#8F81AB" />
+          </SvgLinearGradient>
+        </Defs>
+        <Rect x={0} y={24} width={vw} height={9} rx={1.5} fill="url(#hangingRail)" />
+        <Rect x={0} y={24} width={vw} height={1} fill="#FFFFFF" opacity={0.65} />
+        <Rect x={0} y={32} width={vw} height={2} fill="#161122" opacity={0.75} />
       </Svg>
 
       <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
@@ -336,7 +355,7 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
                 <Logo /><Text style={cap}>Entry credential</Text>
               </View>
               <View style={{ width: qrBox, aspectRatio: 1, alignSelf: 'center', marginTop: 20, padding: 12, borderRadius: 16, backgroundColor: '#C9C2E3' }}>
-                <QRCode value={qrPayload(admission)} size={qrBox - 24} backgroundColor="#C9C2E3" color="#0E0B1D" />
+                {qrGraphic}
               </View>
               <Text style={[cap, { textAlign: 'center', marginTop: 12, fontSize: 8, letterSpacing: 1.92 }]}>Scan at the entrance</Text>
               <View style={{ marginTop: 18, gap: 8 }}>
