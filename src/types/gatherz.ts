@@ -9,10 +9,10 @@ export interface GatherzEvent {
   startsAt: string; endsAt: string; timezone: string; remaining: number; organizerName: string; art: number;
   tiers: GatherzTier[]; policy?: Partial<EventPolicy>;
 }
-export interface Admission { id: string; eventId: string; tier: TierKey; orderId: string; ownerId: string; status: AdmissionStatus; credentialCode: string; holderName?: string }
+export interface Admission { id: string; eventId: string; tier: TierKey; orderId: string; ownerId: string; status: AdmissionStatus; credentialCode: string; holderName?: string; assignedTo?: string }
 /** Everything screens read goes through this interface. Swap the demo implementation for Supabase later. */
-export interface GatherzOrder { id: string; eventId: string; tierName: string; quantity: number; admissions: number; subtotal: number; total: number; createdAt: string; status: 'demo_paid' }
-export interface GatherzTransfer { token: string; admissionId: string; recipient: string; status: 'pending' | 'claimed' | 'canceled' }
+export interface GatherzOrder { id: string; eventId: string; tierName: string; quantity: number; admissions: number; subtotal: number; total: number; createdAt: string; status: 'demo_paid' | 'partially_refunded' | 'refunded' }
+export interface GatherzTransfer { token: string; admissionId: string; recipient: string; claimedAdmissionId?: string; status: 'pending' | 'claimed' | 'canceled' }
 export interface GatherzRepository {
   readonly mode: 'demo' | 'live';
   listEvents(): Promise<GatherzEvent[]>;
@@ -24,4 +24,6 @@ export interface GatherzRepository {
   claimDemoTransfer?(token: string): Promise<void>;
   cancelDemoTransfer?(admissionId: string): Promise<void>;
   requestDemoRefund?(admissionId: string): Promise<void>;
+  assignDemoAdmission?(admissionId: string, holderName: string): Promise<void>;
+  listDemoTransfers?(): Promise<GatherzTransfer[]>;
 }
