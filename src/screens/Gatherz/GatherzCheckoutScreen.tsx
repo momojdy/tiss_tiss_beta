@@ -5,6 +5,7 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { Header, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
+import { formatWhen, policyOf, admissionText } from '../../lib/gatherz/rules';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 export default function GatherzCheckoutScreen({ id }: { id: string }) {
   const { repo, nav } = useGatherz();
@@ -23,7 +24,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
   return <Page>
     <Header title="Checkout" subtitle="Demo mode · no payment collected" onBack={nav.back} />
     <SectionTitle title={event.title} />
-    <Text style={{ color: t.mute, marginHorizontal: 20, fontFamily: fonts.regular }}>{event.venue} · {event.area}</Text>
+    <Text style={{ color: t.mute, marginHorizontal: 20, fontFamily: fonts.regular }}>{formatWhen(event, Date.now())} · {event.venue} · {event.area}</Text>
     <SectionTitle title="Choose admission" />
     <View style={{ paddingHorizontal: 20, gap: 8 }}>
       {event.tiers.map(tier => <Pressable key={tier.name} accessibilityRole="radio" accessibilityState={{ checked: selected.name === tier.name }} onPress={() => { update({ eventId: id, tierName: tier.name, quantity: 1, promo: '' }); }} style={{ borderWidth: 0.5, borderColor: selected.name === tier.name ? t.accent : t.line, borderRadius: radius.card, padding: 16, backgroundColor: selected.name === tier.name ? t.soft : t.card }}>
@@ -31,6 +32,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
         <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 4 }}>{tier.admissions} {tier.admissions === 1 ? 'admission' : 'admissions'} per package</Text>
       </Pressable>)}
     </View>
+    {event.tiers.some(tier => tier.admissions >= 5) ? <Notice title="Group admission" body="A group package contains multiple individual admissions. You can assign and transfer eligible tickets separately after checkout." /> : null}
     <SectionTitle title="Quantity" />
     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 22, paddingHorizontal: 20 }}>
       <Pressable accessibilityRole="button" accessibilityLabel="Decrease quantity" onPress={() => update({ eventId: id, quantity: Math.max(1, qty - 1) })} style={{ padding: 12, borderWidth: 0.5, borderColor: t.line, borderRadius: 16 }}><Text style={{ color: t.text, fontSize: 20 }}>−</Text></Pressable>
@@ -53,6 +55,8 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
       <Text style={{ fontFamily: fonts.bold, color: t.text, fontSize: 22, marginTop: 8 }}>Total: ${totals.total.toFixed(2)}</Text>
       <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 8 }}>This is a local demo. No money is charged and these tickets cannot be used for entry.</Text>
     </View>
+    <SectionTitle title="Admission policies" />
+    <Notice title={admissionText(policyOf(event))} body={'Transfers close ' + policyOf(event).transferCutoffHours + ' hours before the event. Refund requests close ' + policyOf(event).refundCutoffHours + ' hours before the event. Demo credentials do not grant entry.'} />
     {!allowed ? <Notice body={count > event.remaining ? 'Not enough tickets available.' : 'Checkout is not available.'} /> : null}
     <Pressable accessibilityRole="button" accessibilityState={{ disabled: !allowed }} disabled={!allowed} onPress={submit} style={{ marginHorizontal: 20, marginTop: 20, borderRadius: 999, backgroundColor: allowed ? t.accent : t.soft, minHeight: 50, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ color: allowed ? t.onAccent : t.mute, fontFamily: fonts.bold }}>Review order · ${totals.total.toFixed(2)}</Text>
