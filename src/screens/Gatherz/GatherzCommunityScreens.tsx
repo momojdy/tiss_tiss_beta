@@ -26,8 +26,7 @@ export function GatherzFavoritesScreen() {
   const { data: events, loading } = useLoadEvents(repo);
   const saved = (events ?? []).filter(e => c.savedEvents.includes(e.id) && (cat === 'All' || e.category === cat));
   return <Page><Header title="Favorites" subtitle="Events, organizers and circles you saved." />
-    <Filters values={['Events', 'Organizers', 'Circles']} selected={tab} choose={setTab} />
-    <View style={{ flexDirection: 'row', gap: 12, marginHorizontal: 20, marginBottom: 8 }}><Text style={{ color: tab === 'Events' ? t.accent : t.mute }}>Events ({c.savedEvents.length})</Text><Text style={{ color: tab === 'Organizers' ? t.accent : t.mute }}>Organizers ({c.savedOrganizers.length})</Text><Text style={{ color: tab === 'Circles' ? t.accent : t.mute }}>Circles ({c.savedCircles.length})</Text></View>
+    <View style={{ paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}><Chip label={`Events (${c.savedEvents.length})`} active={tab === 'Events'} onPress={() => setTab('Events')} /><Chip label={`Organizers (${c.savedOrganizers.length})`} active={tab === 'Organizers'} onPress={() => setTab('Organizers')} /><Chip label={`Circles (${c.savedCircles.length})`} active={tab === 'Circles'} onPress={() => setTab('Circles')} /></View>
     {tab === 'Events' ? <><Filters values={['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports']} selected={cat} choose={setCat} />{loading ? <Notice loading body="Loading saved events…" /> : saved.length ? saved.map(e => <Item key={e.id} title={e.title} detail={e.venue + ' · ' + e.area} action="View event" onPress={() => nav.push('event', e.id)} />) : <Notice title="No saved events" body="Tap the heart on any event to save it here." action="Find events" onAction={() => nav.push('explore')} />}</> : null}
     {tab === 'Organizers' ? c.savedOrganizers.map(name => <Item key={name} title={name} detail={organizerBios[name] ?? 'Event organizer'} onPress={() => nav.push('org', name)} />) : null}
     {tab === 'Organizers' && !c.savedOrganizers.length ? <Notice title="No saved organizers" body="Follow an organizer from an event page." action="Find events" onAction={() => nav.push('explore')} /> : null}
@@ -53,12 +52,13 @@ export function GatherzCirclesScreen() {
 }
 export function GatherzCircleDetailScreen({ id }: { id: string }) {
   const { nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme();
-  const [tab, setTab] = useState('Discussion'); const [draft, setDraft] = useState('');
+  const [tab, setTab] = useState('Discussion'); const [draft, setDraft] = useState(''); const [notificationsOn, setNotificationsOn] = useState(true); const [confirmLeave, setConfirmLeave] = useState(false);
   const x = demoCircles.find(x => x.id === id);
   if (!x) return <Page><Header title="Circle" onBack={nav.back} /><Notice title="Circle not found" /></Page>;
   const joined = c.joinedCircles.includes(id), requested = c.requestedCircles.includes(id);
   const accessible = joined || !x.private;
   return <Page><Header title={x.name} onBack={nav.back} subtitle={x.members + ' members · ' + x.category} />
+    <View style={{ marginHorizontal: 20, height: 108, backgroundColor: t.soft, borderRadius: radius.card, justifyContent: 'center', padding: 20 }}><Text style={{ color: t.accent, fontFamily: fonts.bold, fontSize: 23 }}>{x.name}</Text><Text style={{ color: t.mute, marginTop: 5 }}>{x.category} · {x.members} members</Text></View>
     <Filters values={['Discussion', 'Events', 'Members', 'Invite']} selected={tab} choose={setTab} />
     <Item title={x.name} detail={x.private ? 'Private circle' : 'Public circle'} action={c.savedCircles.includes(id) ? 'Saved ★' : 'Save circle'} onPress={() => c.toggleSavedCircle(id)} />
     {!joined && !x.closed ? <Item title={x.private ? requested ? 'Cancel join request' : 'Request to join' : 'Join circle'} detail={x.private ? 'Private circles require approval' : 'Join this public circle'} onPress={() => x.private ? c.requestCircle(id) : c.joinCircle(id)} /> : null}
@@ -72,10 +72,11 @@ export function GatherzCircleDetailScreen({ id }: { id: string }) {
       {c.posts.filter(p => p.circleId === id).map(p => <Item key={p.id} title={p.author} detail={p.text} action={p.replies.length + ' replies · Open discussion'} onPress={() => nav.push('pst', p.id)} />)}
       {!c.posts.some(p => p.circleId === id) ? <Notice title="No discussions yet" body="Members can start the conversation." /> : null}
     </> : null}
-    {tab === 'Events' ? <Notice title="Circle events" body="No circle-hosted events in this demo." /> : null}
+    {tab === 'Events' ? <CircleEvents category={x.category} /> : null}
     {tab === 'Members' && accessible ? <Item title="View members" detail={x.members + ' people in this circle'} onPress={() => nav.push('mem', id)} /> : null}
     {tab === 'Invite' ? <Item title="Invitations" detail="Invite another person to this circle" onPress={() => nav.push('inv', id)} /> : null}
-    {joined ? <Item title="Leave circle" detail="Stop participating in this circle" onPress={() => c.leaveCircle(id)} /> : null}
+    {joined ? <><Item title={'Notifications: ' + (notificationsOn ? 'On' : 'Off')} detail="Circle activity alerts" onPress={() => setNotificationsOn(v => !v)} /><Item title={confirmLeave ? 'Confirm leaving circle' : 'Leave circle'} detail={confirmLeave ? 'Tap again to leave this circle' : 'Stop participating in this circle'} onPress={() => { if (confirmLeave) { c.leaveCircle(id); setConfirmLeave(false); } else setConfirmLeave(true); }} /></> : null}
+    <Item title="Report circle" detail="Report a concern about this circle" onPress={() => nav.push('rp', 'circle:' + id)} />
   </Page>;
 }
 export function GatherzMomentsScreen() {
@@ -106,4 +107,11 @@ export function GatherzMomentsScreen() {
     {!shown.length ? <Notice title="No moments yet" body="Photos from checked-in attendees will appear here." /> : null}
     <Notice title="Demo only" body="Photos and check-ins are simulated locally and are not published to Wantiss." />
   </Page>;
+}
+
+function CircleEvents({ category }: { category: string }) {
+  const { repo, nav } = useGatherz();
+  const { data, loading } = useLoad(() => repo.listEvents(), [repo]);
+  const matches = (data ?? []).filter(e => e.category.toLowerCase() === category.toLowerCase());
+  return <>{loading ? <Notice loading body="Loading circle events…" /> : matches.length ? matches.map(e => <Item key={e.id} title={e.title} detail={e.venue + ' · ' + e.area} action="View event" onPress={() => nav.push('event', e.id)} />) : <Notice title="No events in this category" body="Check back for more experiences." />}</>;
 }
