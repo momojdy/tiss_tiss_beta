@@ -16,7 +16,7 @@ export default function GatherzExploreScreen() {
   return (
     <Page>
       <Header title="Explore" onBack={nav.back} />
-      <TextInput accessibilityLabel="Search events" value={q} onChangeText={setQ} placeholder="Search experiences, places…" placeholderTextColor={t.mute} returnKeyType="search" style={{ marginHorizontal: 20, height: 52, borderRadius: radius.input, borderWidth: 1, borderColor: t.line, backgroundColor: t.card, paddingHorizontal: 16, color: t.text, fontFamily: fonts.regular }} />
+      <TextInput accessibilityLabel="Search events" value={q} onChangeText={setQ} placeholder="Search experiences, places…" placeholderTextColor={t.mute} returnKeyType="search" style={{ marginHorizontal: 20, height: 52, borderRadius: radius.input, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, paddingHorizontal: 16, color: t.text, fontFamily: fonts.regular }} />
       <FlatList horizontal showsHorizontalScrollIndicator={false} data={CATEGORIES} keyExtractor={c => c} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 14, gap: 8 }} renderItem={({ item }) => <Chip label={item} on={item === cat} onPress={() => setCat(item)} />} />
       {loading ? <Notice loading body="Loading events…" /> : null}
       {error ? <Notice title="Search failed" body={error} action="Try again" onAction={reload} /> : null}
