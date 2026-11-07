@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { FlatList, View, Pressable, Text, useWindowDimensions } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { Animated } from 'react-native';
+import { View, Pressable, Text, useWindowDimensions } from 'react-native';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { splitAdmissions, type TicketRow } from '../../lib/gatherz/rules';
@@ -17,6 +18,23 @@ export default function GatherzTicketsScreen() {
   const rows: TicketRow[] = seg === 'up' ? upcoming : seg === 'past' ? done : [];
   const open = (r: TicketRow) => nav.push('ticket', r.admission.id);
   const gap = 12, cardW = Math.round(width * 0.78);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const swayCard = (r: TicketRow, index: number) => {
+    const stride = cardW + gap;
+    const rotate = scrollX.interpolate({
+      inputRange: [(index - 1) * stride, index * stride, (index + 1) * stride],
+      outputRange: ['-7deg', '0deg', '7deg'],
+      extrapolate: 'clamp',
+    });
+    const translateY = scrollX.interpolate({
+      inputRange: [(index - 1) * stride, index * stride, (index + 1) * stride],
+      outputRange: [10, 0, 10],
+      extrapolate: 'clamp',
+    });
+    return <Animated.View style={{ width: cardW, transform: [{ rotate }, { translateY }] }}>
+      <TicketFront admission={r.admission} event={r.event} width={cardW} onPress={() => open(r)} />
+    </Animated.View>;
+  };
   return (
     <Page>
       <Header title="Tickets" subtitle="Demo account" />
@@ -37,7 +55,7 @@ export default function GatherzTicketsScreen() {
       {!loading && !error && seg !== 'transferred' && rows.length === 0 ? <Notice title={seg === 'up' ? 'No upcoming tickets' : 'No past tickets'} body={seg === 'up' ? 'Find something to go to and your tickets will appear here.' : 'Tickets from events you have attended show up here.'} action={seg === 'up' ? 'Explore events' : undefined} onAction={() => nav.push('explore')} /> : null}
       {/* 0: empty state. 1-2: regular stacked layout. 3+: horizontal snapping row with the next card peeking. */}
       {seg !== 'transferred' && rows.length >= 1 && rows.length <= 2 ? <View style={{ paddingHorizontal: 20, gap }}>{rows.map(r => <TicketFront key={r.admission.id} admission={r.admission} event={r.event} width="100%" onPress={() => open(r)} />)}</View> : null}
-      {seg !== 'transferred' && rows.length >= 3 ? <FlatList horizontal data={rows} keyExtractor={r => r.admission.id} showsHorizontalScrollIndicator={false} snapToInterval={cardW + gap} decelerationRate="fast" snapToAlignment="start" contentContainerStyle={{ paddingHorizontal: 20, gap }} renderItem={({ item }) => <TicketFront admission={item.admission} event={item.event} width={cardW} onPress={() => open(item)} />} /> : null}
+      {seg !== 'transferred' && rows.length >= 3 ? <Animated.FlatList horizontal data={rows} keyExtractor={r => r.admission.id} showsHorizontalScrollIndicator={false} snapToInterval={cardW + gap} decelerationRate="fast" snapToAlignment="start" onScroll={Animated.event([{ nativeEvent: { contentOffset: { x: scrollX } } }], { useNativeDriver: true })} scrollEventThrottle={16} contentContainerStyle={{ paddingHorizontal: 20, gap }} renderItem={({ item, index }) => swayCard(item, index)} /> /> : null}
     </Page>
   );
 }
