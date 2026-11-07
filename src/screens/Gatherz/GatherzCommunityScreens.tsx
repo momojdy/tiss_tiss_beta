@@ -28,7 +28,7 @@ export function GatherzFavoritesScreen() {
   return <Page><Header title="Favorites" subtitle="Events, organizers and circles you saved." />
     <Filters values={['Events', 'Organizers', 'Circles']} selected={tab} choose={setTab} />
     {tab === 'Events' ? <><Filters values={['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports']} selected={cat} choose={setCat} />{loading ? <Notice loading body="Loading saved events…" /> : saved.length ? saved.map(e => <Item key={e.id} title={e.title} detail={e.venue + ' · ' + e.area} action="View event" onPress={() => nav.push('event', e.id)} />) : <Notice title="No saved events" body="Tap the heart on any event to save it here." action="Find events" onAction={() => nav.push('explore')} />}</> : null}
-    {tab === 'Organizers' ? organizers.filter(o => c.savedOrganizers.includes(o.name)).map(o => <Item key={o.id} title={o.name} detail="Saved organizer" onPress={() => nav.push('org', o.id)} />) : null}
+    {tab === 'Organizers' ? organizers.filter(o => c.savedOrganizers.includes(o.name)).map(o => <Item key={o.id} title={o.name} detail="Saved organizer" onPress={() => nav.push('org', o.name)} />) : null}
     {tab === 'Organizers' && !c.savedOrganizers.length ? <Notice title="No saved organizers" body="Follow an organizer from an event page." action="Find events" onAction={() => nav.push('explore')} /> : null}
     {tab === 'Circles' ? demoCircles.filter(o => c.savedCircles.includes(o.id)).map(o => <Item key={o.id} title={o.name} detail={o.members + ' members'} onPress={() => nav.push('ci', o.id)} />) : null}
     {tab === 'Circles' && !c.savedCircles.length ? <Notice title="No saved circles" body="Save a circle from its page." action="Browse circles" onAction={() => nav.tab('circles')} /> : null}
@@ -49,13 +49,30 @@ export function GatherzCirclesScreen() {
   </Page>;
 }
 export function GatherzCircleDetailScreen({ id }: { id: string }) {
-  const { nav } = useGatherz(); const c = useGatherzCommunity(); const x = demoCircles.find(x => x.id === id);
+  const { nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme();
+  const [tab, setTab] = useState('Discussion'); const [draft, setDraft] = useState('');
+  const x = demoCircles.find(x => x.id === id);
   if (!x) return <Page><Header title="Circle" onBack={nav.back} /><Notice title="Circle not found" /></Page>;
   const joined = c.joinedCircles.includes(id), requested = c.requestedCircles.includes(id);
+  const accessible = joined || !x.private;
   return <Page><Header title={x.name} onBack={nav.back} subtitle={x.members + ' members · ' + x.category} />
-    <Filters values={['Discussion', 'Events', 'Members', 'Invite']} selected="Discussion" choose={() => {}} />
+    <Filters values={['Discussion', 'Events', 'Members', 'Invite']} selected={tab} choose={setTab} />
     <Item title={x.name} detail={x.private ? 'Private circle' : 'Public circle'} action={c.savedCircles.includes(id) ? 'Saved ★' : 'Save circle'} onPress={() => c.toggleSavedCircle(id)} />
-    {x.closed ? <Notice title="Closed circle" body="This circle is read-only." /> : joined ? <><Notice title="You are a member" body="Circle discussions and invitations will be added in the next build." /><Item title="Leave circle" detail="Stop participating in this circle" onPress={() => c.leaveCircle(id)} /></> : <Item title={x.private ? requested ? 'Cancel join request' : 'Request to join' : 'Join circle'} detail={x.private ? 'Private circles require approval' : 'Join this public circle'} onPress={() => x.private ? c.requestCircle(id) : c.joinCircle(id)} />}
+    {!joined && !x.closed ? <Item title={x.private ? requested ? 'Cancel join request' : 'Request to join' : 'Join circle'} detail={x.private ? 'Private circles require approval' : 'Join this public circle'} onPress={() => x.private ? c.requestCircle(id) : c.joinCircle(id)} /> : null}
+    {x.closed ? <Notice title="Closed circle" body="This circle is read-only." /> : null}
+    {!accessible ? <Notice title="Members only" body="Join this private circle to view discussions." /> : null}
+    {tab === 'Discussion' && accessible ? <>
+      {joined && !x.closed ? <View style={{ marginHorizontal: 20, marginBottom: 16 }}>
+        <TextInput multiline value={draft} onChangeText={setDraft} placeholder="Share something with your circle…" placeholderTextColor={t.mute} style={{ minHeight: 75, color: t.text, padding: 14, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card }} />
+        <Chip label="Publish post" active={false} onPress={() => { if (!draft.trim()) return; c.addPost(id, draft.trim()); setDraft(''); }} />
+      </View> : null}
+      {c.posts.filter(p => p.circleId === id).map(p => <Item key={p.id} title={p.author} detail={p.text} action={p.replies.length + ' replies · Open discussion'} onPress={() => nav.push('pst', p.id)} />)}
+      {!c.posts.some(p => p.circleId === id) ? <Notice title="No discussions yet" body="Members can start the conversation." /> : null}
+    </> : null}
+    {tab === 'Events' ? <Notice title="Circle events" body="No circle-hosted events in this demo." /> : null}
+    {tab === 'Members' && accessible ? <Item title="View members" detail={x.members + ' people in this circle'} onPress={() => nav.push('mem', id)} /> : null}
+    {tab === 'Invite' ? <Item title="Invitations" detail="Invite another person to this circle" onPress={() => nav.push('inv', id)} /> : null}
+    {joined ? <Item title="Leave circle" detail="Stop participating in this circle" onPress={() => c.leaveCircle(id)} /> : null}
   </Page>;
 }
 export function GatherzMomentsScreen() {
@@ -69,7 +86,7 @@ export function GatherzMomentsScreen() {
     {checked.map(a => <Item key={a.id} title={'Event ' + a.eventId} detail="Checked in · eligible to add photos" action="Add photo" onPress={() => nav.push('mp', a.eventId)} />)}
     {!checked.length ? <Notice body="Check in at an event before sharing photos. Up to 3 photos per event." /> : null}
     <SectionTitle title={tab} />
-    {shown.map(m => <Item key={m.id} title={m.caption || 'Untitled'} detail={m.public ? 'Public' : 'Private'} onPress={() => nav.push('mv', m.id)} />)}
+    {shown.map(m => <Item key={m.id} title={m.caption || 'Photo moment'} detail={m.public ? 'Public' : 'Private'} onPress={() => nav.push('mv', m.id)} />)}
     {!shown.length ? <Notice title="No moments yet" body="Photos from checked-in attendees will appear here." /> : null}
   </Page>;
 }
