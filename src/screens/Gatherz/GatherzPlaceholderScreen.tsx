@@ -1,8 +1,7 @@
 import React from 'react';
 import { Header, Notice, Page } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
-/** Honest stand-in for tabs that are not built yet. Replace per milestone. */
 export default function GatherzPlaceholderScreen({ title }: { title: string }) {
   const { nav } = useGatherz();
-  return <Page><Header title={title} /><Notice title={`${title} is not built yet`} body="This tab is part of a later milestone. Everything else in Gatherz works." action="Back to Home" onAction={() => nav.tab('home')} /></Page>;
+  return <Page><Header title={title || 'Not found'} onBack={nav.back} /><Notice title="We could not open that screen." body="The requested Gatherz page is unavailable." action="Go back" onAction={nav.back} /></Page>;
 }
