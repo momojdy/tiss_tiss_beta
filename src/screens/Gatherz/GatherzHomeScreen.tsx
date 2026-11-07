@@ -7,6 +7,7 @@ import { useLoad } from '../../lib/gatherz/useLoad';
 import { eventPhase } from '../../lib/gatherz/rules';
 import { Art, Chip, EventCard, Header, IconButton, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import type { EventCategory } from '../../types/gatherz';
+import { demoCircles } from '../../data/gatherz/communityDemo';
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
   const t = useGatherzTheme(); const { repo, nav, now, toggleTheme } = useGatherz();
@@ -58,6 +59,10 @@ export default function GatherzHomeScreen() {
             })}
           </View>)}
         </View>
+      </> : null}
+      {demoCircles.length ? <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Popular Circles" /><Pressable accessibilityRole="button" onPress={() => nav.tab('circles')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
+        <FlatList horizontal showsHorizontalScrollIndicator={false} data={[...demoCircles].sort((a, b) => b.members - a.members).slice(0, 5)} keyExtractor={c => c.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <Pressable accessibilityRole="button" onPress={() => nav.push('ci', item.id)} style={{ width: 190, minHeight: 112, padding: 16, borderRadius: radius.card, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, justifyContent: 'space-between' }}><Text numberOfLines={2} style={{ color: t.text, fontFamily: fonts.semibold, fontSize: 15 }}>{item.name}</Text><Text style={{ color: t.mute, fontFamily: fonts.regular, fontSize: 12 }}>{item.members} members · {item.category}</Text></Pressable>} />
       </> : null}
       {events.length ? <><View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 20 }}><SectionTitle title="New in Your City" /><Pressable accessibilityRole="button" onPress={() => nav.push("explore")}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Explore</Text></Pressable></View><FlatList horizontal showsHorizontalScrollIndicator={false} data={[...events].sort((a, b) => Date.parse(b.startsAt) - Date.parse(a.startsAt)).slice(0, 4)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} /></> : null}
     </Page>
