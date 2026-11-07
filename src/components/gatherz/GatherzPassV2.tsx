@@ -5,6 +5,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient as SvgLinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
+import { Accelerometer } from 'expo-sensors';
 import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
 import { formatWhen, qrPayload } from '../../lib/gatherz/rules';
 import { angleOf, build, DT, glyphLayout, HO, LINK, N, step, strapGeometry } from './pass/physics';
@@ -104,6 +105,32 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   const flippedRef = useRef(false);
   const doFlip = () => { flippedRef.current = !flippedRef.current; flipT.value = flippedRef.current ? 180 : 0; };
   const doSway = () => { swayReq.value = (Math.random() < 0.5 ? -1 : 1) * 3.2; hintOp.value = withTiming(0, { duration: 600 }); };
+
+  // Phone motion gently excites the same hanging-card physics as a finger toss.
+  // Filter gravity and ignore tiny movements to prevent jitter while holding the phone.
+  useEffect(() => {
+    if (Platform.OS === 'web') return;
+    let active = true;
+    let subscription: ReturnType<typeof Accelerometer.addListener> | undefined;
+    let previousX = 0;
+    let filteredX = 0;
+    let lastImpulse = 0;
+    Accelerometer.isAvailableAsync().then(available => {
+      if (!available || !active) return;
+      Accelerometer.setUpdateInterval(50);
+      subscription = Accelerometer.addListener(({ x }) => {
+        filteredX = filteredX * 0.82 + x * 0.18;
+        const change = filteredX - previousX;
+        previousX = filteredX;
+        const now = Date.now();
+        if (Math.abs(change) < 0.025 || now - lastImpulse < 110) return;
+        lastImpulse = now;
+        // A bounded sideways impulse keeps the lanyard attached and prevents wild swings.
+        swayReq.value = Math.max(-1.8, Math.min(1.8, change * 12));
+      });
+    }).catch(() => { /* Motion sensors may be unavailable or disabled. */ });
+    return () => { active = false; subscription?.remove(); };
+  }, [swayReq]);
 
   useFrameCallback(({ timeSincePreviousFrame }) => {
     'worklet';
