@@ -55,7 +55,7 @@ export function EventCard({ event, onPress, wide }: { event: GatherzEvent; onPre
   const from = event.tiers.length ? Math.min(...event.tiers.map(x => x.price)) : 0;
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${event.title}, ${formatWhen(event, now)}`} onPress={onPress} style={[s.card, { backgroundColor: t.card, borderColor: t.line }, wide ? { width: 270 } : null]}>
-      <Art index={event.art} style={{ height: wide ? 150 : 96, borderTopLeftRadius: radius.card, borderTopRightRadius: radius.card }} />
+      <Art index={event.art} style={{ height: wide ? 146 : 92, borderTopLeftRadius: radius.card, borderTopRightRadius: radius.card }} />
       <View style={{ padding: 14 }}>
         <Text numberOfLines={2} style={{ fontFamily: fonts.bold, fontSize: 16, color: t.text }}>{event.title}</Text>
         <Text style={{ fontFamily: fonts.regular, fontSize: 13, color: t.mute, marginTop: 4 }}>{formatWhen(event, now)} · {event.venue}</Text>
@@ -73,7 +73,7 @@ export function TicketFront({ admission, event, width, onPress }: { admission: A
   const accent = admission.tier === 'general' ? '#C9C2E3' : '#8B7CC7';
   return (
     <Pressable accessibilityRole="button" accessibilityLabel={`${TIER_LABEL[admission.tier]} ticket for ${event.title}. ${badge}`} onPress={onPress} style={{ width: width as number, borderRadius: radius.card, overflow: 'hidden', borderWidth: 0.5, borderColor: admission.tier === 'general' ? '#8B7CC7' : '#8B7CC766' }}>
-      <LinearGradient colors={[g[0], g[1]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 18, minHeight: 190, justifyContent: 'space-between' }}>
+      <LinearGradient colors={[g[0], g[1]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 18, minHeight: 186, justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontFamily: fonts.bold, fontSize: 18, color: '#fff' }}>gatherz<Text style={{ color: accent }}>.</Text></Text>
           <Text style={{ fontFamily: fonts.semibold, fontSize: 11, color: accent }}>{badge.toUpperCase()}</Text>
