@@ -266,8 +266,6 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
       </Svg>
 
       <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
-        <Defs><SvgLinearGradient id="metalB" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
-        <Rect x={AX - 16} y={AY - 12} width={32} height={20} rx={4} fill="url(#metalB)" stroke="#5A3B8C" />
         <G>{Array.from({ length: N }, (_, i) => <StrapQuad key={i} i={i} geo={geo} />)}</G>
         <AnimatedPath animatedProps={elProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
         <AnimatedPath animatedProps={erProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
@@ -278,6 +276,12 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         {Array.from(STRAP_TEXT).map((ch, i) => ch === ' ' ? null : <Glyph key={i} i={i} ch={ch} glyphs={glyphs} color={th.st} family={FONT.bold} />)}
       </View>
 
+
+      {/* Draw the top mount last so the strap and its lettering enter behind the metal hardware. */}
+      <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
+        <Defs><SvgLinearGradient id="metalB" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+        <Rect x={AX - 16} y={AY - 12} width={32} height={20} rx={4} fill="url(#metalB)" stroke="#5A3B8C" />
+      </Svg>
 
       <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, width: W, height: H }, shadowStyle]}>
         <Svg width={W + 144} height={H + 144} style={{ position: 'absolute', left: -72, top: -72 }}>
