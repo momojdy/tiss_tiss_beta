@@ -1,4 +1,4 @@
-import type { Admission, GatherzEvent, GatherzRepository, GatherzTier, GatherzOrder } from '../../types/gatherz';
+import type { Admission, GatherzEvent, GatherzRepository, GatherzTier, GatherzOrder, GatherzTransfer } from '../../types/gatherz';
 const DAY = 864e5, HOUR = 36e5;
 const tiers = (base: number, backstage = false): GatherzTier[] => base === 0 ? [{ key: 'general', name: 'General', price: 0, admissions: 1 }] : [
   { key: 'general', name: 'General', price: base, admissions: 1 }, { key: 'vip', name: 'VIP', price: Math.round(base * 2.4), admissions: 1 },
@@ -19,6 +19,7 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
   const adm = (id: string, eventId: string, tier: Admission['tier'], status: Admission['status'] = 'valid'): Admission => ({ id, eventId, tier, orderId: 'ord-' + eventId, ownerId: 'me', status, credentialCode: `GZ-${tier.slice(0, 3).toUpperCase()}-${id.toUpperCase()}` });
   const mine: Admission[] = [adm('a1', 'e1', 'vip'), adm('a2', 'e1', 'general'), adm('a3', 'e3', 'general'), adm('a4', 'e4', 'backstage'), adm('a5', 'e5', 'general', 'checked_in')];
   const orders: GatherzOrder[] = [];
+  const transfers: GatherzTransfer[] = [];
   const reserved: Record<string, number> = {};
   return {
     mode: 'demo',
@@ -26,6 +27,29 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
     getEvent: async id => { const e = events.find(e => e.id === id); return e ? { ...e, remaining: Math.max(0, e.remaining - (reserved[id] ?? 0)) } : null; },
     listMyAdmissions: async () => [...mine],
     listOrders: async () => [...orders],
+    createDemoTransfer: async (admissionId, recipient) => {
+      const a = mine.find(x => x.id === admissionId), e = events.find(x => x.id === a?.eventId);
+      if (!a || !e || a.status !== 'valid' || !recipient.trim()) throw new Error('Ticket or recipient is invalid');
+      if (Date.parse(e.startsAt) <= Date.now() + (e.policy?.transferCutoffHours ?? 24) * HOUR) throw new Error('Transfer window has closed');
+      const transfer: GatherzTransfer = { token: 'DEMO-' + (transfers.length + 1) + '-' + admissionId, admissionId, recipient: recipient.trim(), status: 'pending' };
+      transfers.push(transfer); a.status = 'pending_transfer'; return transfer;
+    },
+    claimDemoTransfer: async token => {
+      const tr = transfers.find(x => x.token === token && x.status === 'pending'), a = mine.find(x => x.id === tr?.admissionId);
+      if (!tr || !a) throw new Error('Claim link is invalid or expired');
+      tr.status = 'claimed'; a.status = 'transferred'; a.credentialCode = 'REVOKED-' + a.id;
+    },
+    cancelDemoTransfer: async admissionId => {
+      const tr = transfers.find(x => x.admissionId === admissionId && x.status === 'pending'), a = mine.find(x => x.id === admissionId);
+      if (!tr || !a) throw new Error('No pending transfer');
+      tr.status = 'canceled'; a.status = 'valid';
+    },
+    requestDemoRefund: async admissionId => {
+      const a = mine.find(x => x.id === admissionId), e = events.find(x => x.id === a?.eventId);
+      if (!a || !e || a.status !== 'valid') throw new Error('This admission cannot be refunded');
+      if (Date.parse(e.startsAt) <= Date.now() + (e.policy?.refundCutoffHours ?? 48) * HOUR) throw new Error('Refund window has closed');
+      a.status = 'refunded'; a.credentialCode = 'REVOKED-' + a.id;
+    },
     placeDemoOrder: async (eventId, tierName, quantity) => {
       const e = events.find(x => x.id === eventId), tier = e?.tiers.find(x => x.name === tierName);
       if (!e || !tier || !Number.isInteger(quantity) || quantity < 1 || quantity > 10) throw new Error('Invalid ticket selection');
