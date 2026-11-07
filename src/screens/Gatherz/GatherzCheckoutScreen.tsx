@@ -1,3 +1,4 @@
+import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import React, { useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { Header, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
@@ -5,7 +6,8 @@ import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 export default function GatherzCheckoutScreen({ id }: { id: string }) {
-  const { repo, nav } = useGatherz(); const t = useGatherzTheme();
+  const { repo, nav } = useGatherz();
+  const activity = useGatherzActivity(); const t = useGatherzTheme();
   const { data: event, loading, error, reload } = useLoad(() => repo.getEvent(id), [repo, id]);
   const [tierName, setTierName] = useState(''); const [qty, setQty] = useState(1);
   const [busy, setBusy] = useState(false); const [failure, setFailure] = useState('');
@@ -17,7 +19,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
   const submit = async () => {
     if (!allowed || !repo.placeDemoOrder) return;
     setBusy(true); setFailure('');
-    try { const order = await repo.placeDemoOrder(id, selected.name, qty); nav.push('rc', order.id); }
+    try { const order = await repo.placeDemoOrder(id, selected.name, qty); activity.notify('tickets', 'Order confirmed', 'Your demo order ' + order.id + ' is ready.', 'rc', order.id); nav.push('rc', order.id); }
     catch (e) { setFailure(e instanceof Error ? e.message : 'Could not create demo order'); }
     finally { setBusy(false); }
   };
