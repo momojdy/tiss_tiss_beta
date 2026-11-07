@@ -16,7 +16,7 @@ export interface CommunityDemo {
   joinCircle(id: string): void; leaveCircle(id: string): void; requestCircle(id: string): void;
   addMoment(eventId: string, caption: string, isPublic: boolean, uri: string): void; removeMoment(id: string): void;
   setMomentVisibility(id: string, isPublic: boolean): void;
-  addPost(circleId: string, text: string): void; addReply(postId: string, text: string): void;
+  addPost(circleId: string, text: string): void; editPost(postId: string, text: string): void; addReply(postId: string, text: string): void;
   invite(circleId: string, recipient: string): void; respondInvitation(id: string, accept: boolean): void;
   report(targetType: DemoReport['targetType'], targetId: string, reason: string): void;
 }
