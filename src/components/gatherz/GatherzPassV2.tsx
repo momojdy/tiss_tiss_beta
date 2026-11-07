@@ -88,7 +88,8 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
       </Svg>
       <GestureDetector gesture={gesture}>
         <Animated.View style={[{ position: 'absolute', top: restRingY - HO, left: (width - cardWidth) / 2, width: cardWidth, height: cardHeight }, hanging]}>
-          <View style={{ position: 'absolute', left: 3, top: 5, width: cardWidth, height: cardHeight, backgroundColor: '#1B1530', borderColor: '#8B7CC7', borderWidth: 1, borderRadius: 24, opacity: .55 }} />
+          <View pointerEvents="none" style={{ position: 'absolute', left: 12, top: 28, width: cardWidth, height: cardHeight, backgroundColor: '#050309', borderRadius: 24, opacity: .42, shadowColor: '#000', shadowOpacity: .5, shadowRadius: 22, shadowOffset: { width: 12, height: 24 }, elevation: 12 }} />
+          {Array.from({ length: 6 }, (_, i) => <View key={i} pointerEvents="none" style={{ position: 'absolute', left: i * .55, top: i * .8, width: cardWidth, height: cardHeight, backgroundColor: '#1B1530', borderColor: '#8B7CC7', borderWidth: .5, borderRadius: 24 }} />)}
           <Animated.View style={[face, frontStyle]}>
             <LinearGradient colors={tier.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1, padding: 22, justifyContent: 'space-between' }}>
               <View><View style={{ alignSelf: 'center', width: 14, height: 14, borderRadius: 7, backgroundColor: '#050309', borderWidth: 0.5, borderColor: '#C9C2E3' }} />
@@ -99,6 +100,8 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
                 <Text style={{ color: tier.accent, fontSize: 10, letterSpacing: 2 }}>ADMISSION CLASS</Text><Text style={{ color: '#fff', fontFamily: fonts.bold, fontSize: admission.tier === 'backstage' ? 38 : 52, marginTop: 5 }}>{tier.label}</Text><Text style={{ color: '#C9C2E3', fontSize: 11 }}>{tier.perk}</Text>
               </View>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}><Text style={{ color: tier.accent, fontSize: 9 }}>GATHERZ BY WANTISS</Text><Text style={{ color: tier.accent, fontSize: 9 }}>{admission.id.toUpperCase()}</Text></View>
+              {admission.tier === 'backstage' ? <View pointerEvents="none" style={{ position: 'absolute', left: -40, right: -40, top: 0, bottom: 0, opacity: .06, flexDirection: 'row', justifyContent: 'space-around', overflow: 'hidden' }}>{Array.from({ length: 18 }, (_, i) => <View key={i} style={{ width: 2, height: cardHeight * 1.5, backgroundColor: '#fff', transform: [{ rotate: '25deg' }] }} />)}</View> : null}
+              <LinearGradient pointerEvents="none" colors={['transparent', 'rgba(255,255,255,0.10)', 'transparent']} start={{ x: 0, y: 0 }} end={{ x: 1, y: .35 }} style={{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }} />
             </LinearGradient>
           </Animated.View>
           <Animated.View style={[face, backStyle]}>
