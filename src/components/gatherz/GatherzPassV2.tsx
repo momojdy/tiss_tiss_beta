@@ -22,7 +22,7 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
   useEffect(() => {
     Animated.spring(spin, { toValue: flipped ? 1 : 0, useNativeDriver: true, damping: 18, stiffness: 110 }).start();
   }, [flipped, spin]);
-  const reset = () => Animated.spring(displacement, { toValue: { x: 0, y: 0 }, damping: 8, stiffness: 75, useNativeDriver: true }).start();
+  const reset = () => Animated.spring(displacement, { toValue: { x: 0, y: 0 }, damping: 8, stiffness: 75, useNativeDriver: false }).start();
   const pan = useRef(PanResponder.create({
     onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dx) + Math.abs(g.dy) > 8,
     onPanResponderMove: Animated.event([null, { dx: displacement.x, dy: displacement.y }], { useNativeDriver: false }),
@@ -38,7 +38,7 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
     <View style={{ width: 16, height: 24, borderWidth: 2, borderColor: '#8B7CC7', borderRadius: 8 }} />
     <Animated.View {...pan.panHandlers} style={{ width: cardWidth, height: cardHeight, transform: [{ translateX: displacement.x }, { translateY: displacement.y }, { rotate: sway ? displacement.x.interpolate({ inputRange: [-180, 0, 180], outputRange: ['-12deg','0deg','12deg'], extrapolate: 'clamp' }) : '0deg' }] }}>
       <Animated.View style={[face, { transform: [{ rotateY: frontRotation }] }]}>
-        <LinearGradient colors={[...tier.colors]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1, padding: 22, justifyContent: 'space-between' }}>
+        <LinearGradient colors={tier.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1, padding: 22, justifyContent: 'space-between' }}>
           <View><View style={{ alignSelf: 'center', width: 14, height: 14, borderRadius: 7, backgroundColor: '#050309', borderWidth: 0.5, borderColor: '#C9C2E3' }} />
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 14, alignItems: 'center' }}><Text style={{ color: '#fff', fontSize: 24, fontFamily: fonts.bold }}>gatherz<Text style={{ color: tier.accent }}>.</Text></Text><Text style={{ color: tier.accent, fontSize: 8, letterSpacing: 1 }}>{tier.subtitle.toUpperCase()}</Text></View>
           </View>
