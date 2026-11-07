@@ -1,0 +1,1705 @@
+{
+  "project": "ycbirmgppwavorwudlrv",
+  "inspectedAt": "2026-11-06",
+  "requested": [
+    "goodies_courier_orders",
+    "goodies_courier_update_location",
+    "goodies_set_courier_availability",
+    "goodies_courier_respond_assignment",
+    "goodies_courier_update_delivery_status",
+    "place_goodies_order_with_payment_once",
+    "set_goodies_order_status",
+    "get_my_payment_methods",
+    "ensure_my_wallet",
+    "goodies_cash_on_delivery_available",
+    "goodies_place_multi_order",
+    "goodies_group_order_create",
+    "goodies_group_order_join",
+    "goodies_group_order_list_members",
+    "goodies_group_order_get_status",
+    "goodies_group_order_my_invites",
+    "goodies_group_order_list_friends",
+    "goodies_group_order_invite_friends",
+    "goodies_group_order_decline_invite",
+    "goodies_group_order_checkout_estimate",
+    "goodies_group_order_checkout",
+    "goodies_group_order_checkout_preview",
+    "goodies_group_order_end",
+    "delete_user_address",
+    "mark_conversation_read",
+    "goodies_start_store_conversation",
+    "goodies_send_store_message",
+    "set_default_payment_method",
+    "delete_payment_method",
+    "get_my_goodies_access_status",
+    "goodies_group_order_upsert_item",
+    "goodies_group_order_remove_item",
+    "goodies_save_store_location",
+    "goodies_save_store_cover",
+    "goodies_save_store_thumbnail",
+    "goodies_save_store_setup",
+    "goodies_set_store_live",
+    "goodies_save_builder_configs",
+    "goodies_list_ingredient_requests",
+    "goodies_get_ingredient_rules",
+    "goodies_submit_ingredient_request",
+    "goodies_list_library_ingredients",
+    "goodies_assign_own_driver",
+    "goodies_private_delivery_proof_uploads_enabled",
+    "goodies_self_delivery_mark_delivered",
+    "goodies_set_store_cash_policy",
+    "goodies_list_dispatch_couriers",
+    "goodies_assign_courier",
+    "accept_goodies_order",
+    "decline_goodies_order",
+    "cancel_goodies_order_by_store",
+    "create_draft",
+    "set_draft_stock",
+    "publish_listing",
+    "go_live",
+    "advance_order",
+    "cancel_order",
+    "set_listing_status",
+    "feature_requirements_status",
+    "submit_requirement",
+    "create_business",
+    "register_push_token",
+    "goodies_vendor_reply",
+    "search_business",
+    "set_promotion_status",
+    "submit_business_application_document",
+    "submit_business_application",
+    "resubmit_business_application",
+    "submit_verification",
+    "request_data_action",
+    "issue_qr_identity",
+    "update_my_business_info",
+    "action_required",
+    "activity_feed",
+    "dashboard_range",
+    "deactivate_feature",
+    "activate_feature",
+    "delete_business_check",
+    "delete_business",
+    "adjust_stock",
+    "refund_order",
+    "payout_usage",
+    "request_payout",
+    "goodies_admin_dashboard",
+    "goodies_admin_list_courier_candidates",
+    "goodies_admin_list_delivery_reports",
+    "goodies_admin_resolve_delivery_dispute",
+    "goodies_admin_add_courier",
+    "goodies_admin_remove_courier",
+    "goodies_admin_analytics",
+    "goodies_admin_set_merchant_status",
+    "goodies_admin_cancel_order",
+    "goodies_admin_review_product",
+    "goodies_admin_update_fee_policy",
+    "goodies_admin_update_multi_store_policy",
+    "wantiss_admin_list_goodies_builder_configs",
+    "wantiss_admin_list_library_ingredients",
+    "wantiss_admin_list_ingredient_requests",
+    "wantiss_admin_save_goodies_builder_config",
+    "wantiss_admin_list_cms_assets",
+    "wantiss_admin_review_ingredient_request",
+    "wantiss_admin_save_library_ingredient",
+    "wantiss_admin_set_ingredient_rules",
+    "wallet",
+    "place_goodies_order_with_wallet",
+    "place_goodies_order",
+    "wantiss_admin_dashboard_snapshot",
+    "wantiss_admin_application_businesses",
+    "wantiss_admin_assign_business_application",
+    "wantiss_admin_review_business_application",
+    "wantiss_admin_set_application_document_status",
+    "wantiss_admin_set_business_verification",
+    "wantiss_admin_save_cms_draft",
+    "wantiss_admin_upsert_asset",
+    "wantiss_admin_publish_cms_version",
+    "wantiss_admin_archive_cms_version",
+    "wantiss_admin_set_cms_asset_status",
+    "wantiss_admin_apply_account_restriction",
+    "wantiss_admin_lift_account_restriction",
+    "wantiss_admin_update_account_restriction",
+    "wantiss_admin_request_financial_action",
+    "wantiss_admin_review_financial_action",
+    "wantiss_admin_record_restriction_appeal"
+  ],
+  "routines": [
+    {
+      "name": "accept_goodies_order",
+      "arguments": "p_order_id uuid",
+      "argument_names": [
+        "p_order_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "activate_feature",
+      "arguments": "p_business uuid, p_feature text",
+      "argument_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "cancel_goodies_order_by_store",
+      "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text DEFAULT NULL::text",
+      "argument_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "create_business",
+      "arguments": "p_name text",
+      "argument_names": [
+        "p_name"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "deactivate_feature",
+      "arguments": "p_business uuid, p_feature text",
+      "argument_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "decline_goodies_order",
+      "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text DEFAULT NULL::text",
+      "argument_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "delete_payment_method",
+      "arguments": "p_payment_method_id uuid",
+      "argument_names": [
+        "p_payment_method_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "delete_user_address",
+      "arguments": "p_address_id uuid",
+      "argument_names": [
+        "p_address_id"
+      ],
+      "argument_count": 1,
+      "security_definer": false,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "ensure_my_wallet",
+      "arguments": "",
+      "argument_names": null,
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "get_my_goodies_access_status",
+      "arguments": "",
+      "argument_names": [
+        "status",
+        "reason",
+        "ends_at",
+        "restriction_kind"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "get_my_payment_methods",
+      "arguments": "",
+      "argument_names": [
+        "id",
+        "type",
+        "brand",
+        "last4",
+        "expiry_month",
+        "expiry_year",
+        "is_default",
+        "created_at"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_add_courier",
+      "arguments": "p_courier_id uuid",
+      "argument_names": [
+        "p_courier_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_analytics",
+      "arguments": "",
+      "argument_names": null,
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_cancel_order",
+      "arguments": "p_order_id uuid, p_reason text DEFAULT NULL::text",
+      "argument_names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_dashboard",
+      "arguments": "",
+      "argument_names": null,
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_list_courier_candidates",
+      "arguments": "",
+      "argument_names": [
+        "courier_id",
+        "full_name",
+        "phone_number",
+        "already_added"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_list_delivery_reports",
+      "arguments": "",
+      "argument_names": [
+        "order_id",
+        "order_code",
+        "store_name",
+        "customer_name",
+        "customer_phone",
+        "total",
+        "payment_method",
+        "payment_status",
+        "driver_name",
+        "driver_phone",
+        "proof_url",
+        "reason",
+        "delivered_at",
+        "opened_at",
+        "report_status"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_remove_courier",
+      "arguments": "p_courier_id uuid",
+      "argument_names": [
+        "p_courier_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_resolve_delivery_dispute",
+      "arguments": "p_order_id uuid, p_resolution text",
+      "argument_names": [
+        "p_order_id",
+        "p_resolution"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_review_product",
+      "arguments": "p_product_id uuid, p_status text, p_note text DEFAULT NULL::text",
+      "argument_names": [
+        "p_product_id",
+        "p_status",
+        "p_note"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_set_merchant_status",
+      "arguments": "p_business_id uuid, p_live boolean",
+      "argument_names": [
+        "p_business_id",
+        "p_live"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_update_fee_policy",
+      "arguments": "p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[]",
+      "argument_names": [
+        "p_service_fee",
+        "p_first_order_free",
+        "p_wallet_enabled",
+        "p_card_enabled",
+        "p_cash_enabled",
+        "p_tips"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_admin_update_multi_store_policy",
+      "arguments": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer",
+      "argument_names": [
+        "p_enabled",
+        "p_additional_store_fee",
+        "p_extra_distance_per_km",
+        "p_max_stops"
+      ],
+      "argument_count": 4,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_assign_courier",
+      "arguments": "p_order_id uuid, p_courier_id uuid",
+      "argument_names": [
+        "p_order_id",
+        "p_courier_id"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_assign_own_driver",
+      "arguments": "p_order_id uuid, p_driver_name text, p_driver_phone text",
+      "argument_names": [
+        "p_order_id",
+        "p_driver_name",
+        "p_driver_phone"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_cash_on_delivery_available",
+      "arguments": "p_store_id text",
+      "argument_names": [
+        "p_store_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_courier_respond_assignment",
+      "arguments": "p_order_id uuid, p_accept boolean",
+      "argument_names": [
+        "p_order_id",
+        "p_accept"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_courier_update_delivery_status",
+      "arguments": "p_order_id uuid, p_status text",
+      "argument_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_courier_update_location",
+      "arguments": "p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision DEFAULT NULL::double precision, p_heading double precision DEFAULT NULL::double precision, p_speed_mps double precision DEFAULT NULL::double precision",
+      "argument_names": [
+        "p_order_id",
+        "p_latitude",
+        "p_longitude",
+        "p_accuracy_m",
+        "p_heading",
+        "p_speed_mps"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_get_ingredient_rules",
+      "arguments": "",
+      "argument_names": null,
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_checkout",
+      "arguments": "p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric DEFAULT 0, p_notes text DEFAULT NULL::text",
+      "argument_names": [
+        "p_idempotency_key",
+        "p_group_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_tip",
+        "p_notes",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "argument_count": 8,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_checkout_estimate",
+      "arguments": "p_group_id uuid, p_order_type text, p_address jsonb DEFAULT '{}'::jsonb",
+      "argument_names": [
+        "p_group_id",
+        "p_order_type",
+        "p_address"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_checkout_preview",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_create",
+      "arguments": "p_store_id text",
+      "argument_names": [
+        "p_store_id",
+        "group_id",
+        "invite_code",
+        "expires_at"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_decline_invite",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_end",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id",
+        "group_id",
+        "status"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_get_status",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id",
+        "group_id",
+        "status",
+        "expires_at"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_invite_friends",
+      "arguments": "p_group_id uuid, p_user_ids uuid[]",
+      "argument_names": [
+        "p_group_id",
+        "p_user_ids"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_join",
+      "arguments": "p_invite_code text",
+      "argument_names": [
+        "p_invite_code",
+        "group_id",
+        "invite_code",
+        "store_id",
+        "expires_at",
+        "member_count"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_list_friends",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id",
+        "user_id",
+        "display_name",
+        "avatar_url",
+        "already_member",
+        "already_invited",
+        "invite_status"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_list_members",
+      "arguments": "p_group_id uuid",
+      "argument_names": [
+        "p_group_id",
+        "user_id",
+        "display_name",
+        "role",
+        "is_host",
+        "joined_at"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_my_invites",
+      "arguments": "",
+      "argument_names": [
+        "group_id",
+        "invite_code",
+        "store_id",
+        "host_name",
+        "expires_at"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_remove_item",
+      "arguments": "p_group_id uuid, p_line_key text",
+      "argument_names": [
+        "p_group_id",
+        "p_line_key"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_group_order_upsert_item",
+      "arguments": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb DEFAULT '{}'::jsonb, p_note text DEFAULT NULL::text",
+      "argument_names": [
+        "p_group_id",
+        "p_product_id",
+        "p_line_key",
+        "p_quantity",
+        "p_options",
+        "p_note",
+        "item_id",
+        "product_name",
+        "quantity",
+        "unit_price",
+        "photo_url",
+        "contributed_by"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_list_dispatch_couriers",
+      "arguments": "p_order_id uuid",
+      "argument_names": [
+        "p_order_id",
+        "courier_id",
+        "full_name",
+        "phone_number",
+        "accepts_cash_on_delivery",
+        "last_seen",
+        "distance_km"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_list_ingredient_requests",
+      "arguments": "p_business uuid",
+      "argument_names": [
+        "p_business",
+        "id",
+        "name",
+        "builder",
+        "role",
+        "note",
+        "status",
+        "review_note",
+        "created_at",
+        "image_path",
+        "library_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_list_library_ingredients",
+      "arguments": "",
+      "argument_names": [
+        "id",
+        "builder",
+        "role",
+        "name",
+        "asset_key"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_place_multi_order",
+      "arguments": "p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text",
+      "argument_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_stops",
+        "p_service_fee",
+        "p_tip",
+        "p_notes",
+        "group_id",
+        "order_id",
+        "order_code",
+        "status",
+        "stop_index",
+        "store_id"
+      ],
+      "argument_count": 10,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_builder_configs",
+      "arguments": "p_business uuid, p_configs jsonb",
+      "argument_names": [
+        "p_business",
+        "p_configs"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_cover",
+      "arguments": "p_business uuid, p_cover_url text",
+      "argument_names": [
+        "p_business",
+        "p_cover_url"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_location",
+      "arguments": "p_business uuid, p_latitude double precision, p_longitude double precision",
+      "argument_names": [
+        "p_business",
+        "p_latitude",
+        "p_longitude"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup"
+      ],
+      "argument_count": 11,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km"
+      ],
+      "argument_count": 17,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country"
+      ],
+      "argument_count": 20,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_minutes"
+      ],
+      "argument_count": 22,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time"
+      ],
+      "argument_count": 22,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone"
+      ],
+      "argument_count": 23,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text",
+      "argument_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone",
+        "p_store_name"
+      ],
+      "argument_count": 24,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_save_store_thumbnail",
+      "arguments": "p_business uuid, p_thumbnail_url text",
+      "argument_names": [
+        "p_business",
+        "p_thumbnail_url"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_self_delivery_mark_delivered",
+      "arguments": "p_order_id uuid, p_proof_url text",
+      "argument_names": [
+        "p_order_id",
+        "p_proof_url"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_send_store_message",
+      "arguments": "p_conversation_id uuid, p_body text",
+      "argument_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_set_courier_availability",
+      "arguments": "p_is_available boolean, p_accepts_cash_on_delivery boolean DEFAULT false",
+      "argument_names": [
+        "p_is_available",
+        "p_accepts_cash_on_delivery"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_set_store_cash_policy",
+      "arguments": "p_store_id text, p_enabled boolean",
+      "argument_names": [
+        "p_store_id",
+        "p_enabled"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_set_store_live",
+      "arguments": "p_business uuid, p_live boolean",
+      "argument_names": [
+        "p_business",
+        "p_live"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_start_store_conversation",
+      "arguments": "p_store_id text, p_customer_name text DEFAULT NULL::text",
+      "argument_names": [
+        "p_store_id",
+        "p_customer_name"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_submit_ingredient_request",
+      "arguments": "p_business uuid, p_name text, p_builder text, p_role text DEFAULT NULL::text, p_note text DEFAULT NULL::text, p_image_path text DEFAULT NULL::text",
+      "argument_names": [
+        "p_business",
+        "p_name",
+        "p_builder",
+        "p_role",
+        "p_note",
+        "p_image_path"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_vendor_reply",
+      "arguments": "p_conversation_id uuid, p_body text",
+      "argument_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "issue_qr_identity",
+      "arguments": "p_qr_type text, p_business_id uuid DEFAULT NULL::uuid",
+      "argument_names": [
+        "p_qr_type",
+        "p_business_id"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "mark_conversation_read",
+      "arguments": "p_conv uuid",
+      "argument_names": [
+        "p_conv"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "place_goodies_order",
+      "arguments": "p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text",
+      "argument_names": [
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "argument_count": 14,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": false
+    },
+    {
+      "name": "place_goodies_order_with_payment_once",
+      "arguments": "p_idempotency_key text, p_payment_method text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text",
+      "argument_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "argument_count": 16,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "place_goodies_order_with_wallet",
+      "arguments": "p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text",
+      "argument_names": [
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "argument_count": 14,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": false
+    },
+    {
+      "name": "resubmit_business_application",
+      "arguments": "p_application_id uuid",
+      "argument_names": [
+        "p_application_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "set_default_payment_method",
+      "arguments": "p_payment_method_id uuid",
+      "argument_names": [
+        "p_payment_method_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "set_goodies_order_status",
+      "arguments": "p_order_id uuid, p_status text",
+      "argument_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "submit_business_application",
+      "arguments": "p_business_name text",
+      "argument_names": [
+        "p_business_name"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "submit_business_application",
+      "arguments": "p_business_name text, p_business_id uuid",
+      "argument_names": [
+        "p_business_name",
+        "p_business_id"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "submit_business_application_document",
+      "arguments": "p_application_id uuid, p_document_type text, p_storage_path text",
+      "argument_names": [
+        "p_application_id",
+        "p_document_type",
+        "p_storage_path"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "update_my_business_info",
+      "arguments": "p_business uuid, p_fields jsonb",
+      "argument_names": [
+        "p_business",
+        "p_fields"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_application_businesses",
+      "arguments": "p_application_id uuid",
+      "argument_names": [
+        "p_application_id",
+        "business_id",
+        "business_name",
+        "member_role"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_apply_account_restriction",
+      "arguments": "p_user_id uuid, p_kind text, p_scope text, p_reason text, p_notes text, p_starts_at timestamp with time zone, p_ends_at timestamp with time zone, p_notify_user boolean DEFAULT false",
+      "argument_names": [
+        "p_user_id",
+        "p_kind",
+        "p_scope",
+        "p_reason",
+        "p_notes",
+        "p_starts_at",
+        "p_ends_at",
+        "p_notify_user"
+      ],
+      "argument_count": 8,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_archive_cms_version",
+      "arguments": "p_content_id uuid",
+      "argument_names": [
+        "p_content_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_assign_business_application",
+      "arguments": "p_application_id uuid, p_business_id uuid",
+      "argument_names": [
+        "p_application_id",
+        "p_business_id"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_dashboard_snapshot",
+      "arguments": "p_domain text",
+      "argument_names": [
+        "p_domain"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_lift_account_restriction",
+      "arguments": "p_restriction_id uuid, p_reason text",
+      "argument_names": [
+        "p_restriction_id",
+        "p_reason"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_list_cms_assets",
+      "arguments": "",
+      "argument_names": null,
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_list_goodies_builder_configs",
+      "arguments": "",
+      "argument_names": [
+        "business_id",
+        "business_name",
+        "builder_id",
+        "config",
+        "enabled",
+        "updated_at"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_list_ingredient_requests",
+      "arguments": "p_status text DEFAULT NULL::text",
+      "argument_names": [
+        "p_status",
+        "id",
+        "business_id",
+        "business_name",
+        "name",
+        "builder",
+        "role",
+        "note",
+        "status",
+        "review_note",
+        "created_at",
+        "reviewed_at",
+        "image_path",
+        "admin_asset_key",
+        "library_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_list_library_ingredients",
+      "arguments": "",
+      "argument_names": [
+        "id",
+        "builder",
+        "role",
+        "name",
+        "asset_key",
+        "active",
+        "request_id"
+      ],
+      "argument_count": 0,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_publish_cms_version",
+      "arguments": "p_content_id uuid",
+      "argument_names": [
+        "p_content_id"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_request_financial_action",
+      "arguments": "p_action_type text, p_transaction_id uuid, p_target_user_id uuid, p_amount numeric, p_direction text, p_reason text",
+      "argument_names": [
+        "p_action_type",
+        "p_transaction_id",
+        "p_target_user_id",
+        "p_amount",
+        "p_direction",
+        "p_reason"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_review_business_application",
+      "arguments": "p_application_id uuid, p_status text, p_review_note text DEFAULT NULL::text, p_final_rejection boolean DEFAULT false",
+      "argument_names": [
+        "p_application_id",
+        "p_status",
+        "p_review_note",
+        "p_final_rejection"
+      ],
+      "argument_count": 4,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_review_financial_action",
+      "arguments": "p_action_id uuid, p_decision text, p_reason text",
+      "argument_names": [
+        "p_action_id",
+        "p_decision",
+        "p_reason"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_review_ingredient_request",
+      "arguments": "p_request_id uuid, p_status text, p_review_note text DEFAULT NULL::text, p_admin_asset_key text DEFAULT NULL::text, p_role text DEFAULT NULL::text",
+      "argument_names": [
+        "p_request_id",
+        "p_status",
+        "p_review_note",
+        "p_admin_asset_key",
+        "p_role"
+      ],
+      "argument_count": 5,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_save_cms_draft",
+      "arguments": "p_content_key text, p_locale text, p_payload jsonb",
+      "argument_names": [
+        "p_content_key",
+        "p_locale",
+        "p_payload"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_save_goodies_builder_config",
+      "arguments": "p_business_id uuid, p_builder_id text, p_config jsonb, p_enabled boolean",
+      "argument_names": [
+        "p_business_id",
+        "p_builder_id",
+        "p_config",
+        "p_enabled"
+      ],
+      "argument_count": 4,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_save_library_ingredient",
+      "arguments": "p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean DEFAULT true",
+      "argument_names": [
+        "p_id",
+        "p_builder",
+        "p_role",
+        "p_name",
+        "p_asset_key",
+        "p_active"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_set_application_document_status",
+      "arguments": "p_document_id uuid, p_status text, p_review_note text DEFAULT NULL::text",
+      "argument_names": [
+        "p_document_id",
+        "p_status",
+        "p_review_note"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_set_business_verification",
+      "arguments": "p_business uuid, p_status text, p_reason text DEFAULT NULL::text",
+      "argument_names": [
+        "p_business",
+        "p_status",
+        "p_reason"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_set_cms_asset_status",
+      "arguments": "p_asset_id uuid, p_status text",
+      "argument_names": [
+        "p_asset_id",
+        "p_status"
+      ],
+      "argument_count": 2,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_set_ingredient_rules",
+      "arguments": "p_rules text",
+      "argument_names": [
+        "p_rules"
+      ],
+      "argument_count": 1,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_update_account_restriction",
+      "arguments": "p_restriction_id uuid, p_ends_at timestamp with time zone, p_reason text",
+      "argument_names": [
+        "p_restriction_id",
+        "p_ends_at",
+        "p_reason"
+      ],
+      "argument_count": 3,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "name": "wantiss_admin_upsert_asset",
+      "arguments": "p_asset_key text, p_storage_path text, p_content_type text, p_byte_size bigint, p_alt_text jsonb DEFAULT '{}'::jsonb, p_status text DEFAULT 'draft'::text",
+      "argument_names": [
+        "p_asset_key",
+        "p_storage_path",
+        "p_content_type",
+        "p_byte_size",
+        "p_alt_text",
+        "p_status"
+      ],
+      "argument_count": 6,
+      "security_definer": true,
+      "anon_execute": false,
+      "authenticated_execute": true
+    }
+  ],
+  "missing": [
+    "goodies_courier_orders",
+    "goodies_private_delivery_proof_uploads_enabled",
+    "create_draft",
+    "set_draft_stock",
+    "publish_listing",
+    "go_live",
+    "advance_order",
+    "cancel_order",
+    "set_listing_status",
+    "feature_requirements_status",
+    "submit_requirement",
+    "register_push_token",
+    "search_business",
+    "set_promotion_status",
+    "submit_verification",
+    "request_data_action",
+    "action_required",
+    "activity_feed",
+    "dashboard_range",
+    "delete_business_check",
+    "delete_business",
+    "adjust_stock",
+    "refund_order",
+    "payout_usage",
+    "request_payout",
+    "wallet",
+    "wantiss_admin_record_restriction_appeal"
+  ]
+}

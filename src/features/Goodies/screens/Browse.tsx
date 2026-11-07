@@ -1,10 +1,11 @@
+import {CUSTOMER_NOTIFICATION_FILTER} from '../notifications';
 import React, {useEffect, useRef, useState} from 'react';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {View, Text, Pressable, ScrollView, TextInput, useWindowDimensions, RefreshControl, Image} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Mut, Grad, Circ, Bar, Sh, Rail, Chip, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, bgIdx, useTheme, heartBtn} from '../components/ui';
 import {Dish, VCard, StoreCard, ItemRow} from '../components/cards';
-import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshStoreDistances} from '../store';
+import {S, ST, STB, IT, DEALS, PR, money, addr, cnt, unread, first, filt, FCH, emit, save, toast, ui, refreshLiveSchedules, refreshStoreDistances} from '../store';
 import {categories, catName, label, promoCards, deals, dealEnd, coupons, modes, stripeColor, loadContent, onContent, hasContent} from '../content';
 import {go, tab, back, browse, setFilter, setSub, clearFilters, usePromo as applyPromo, openNotif, readAll, heart} from '../actions';
 import {byoNames} from '../builders/engine';
@@ -138,6 +139,8 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
       </View>
+      {S.catalogLoading ? <View style={{paddingHorizontal:16,paddingVertical:12}}><View style={{height:72,borderRadius:14,backgroundColor:th.soft}} /><T color={th.mut}>{label('lbl.catalogLoading', 'Loading stores…')}</T></View> : null}
+      {S.catalogError ? <Empty title={label('lbl.catalogFailed', 'Could not load stores')} text={label('lbl.catalogRetryHint', 'Check your connection and try again.')} button={label('lbl.retry', 'Try again')} onPress={() => void refreshLiveSchedules()} /> : null}
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
         <Icon name="search" size={18} color={th.mut} /><T size={14.5} color={th.mut}>{label('lbl.search', tr('searchPh'))}</T>
       </Pressable>
@@ -162,9 +165,9 @@ export function Home({onExit}: {onExit?: () => void}) {
       </View>
       <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Row style={{gap:10}}><Countdown /><Pressable accessibilityRole="button" onPress={() => go('flashdeals')}><T size={13} weight="600" color={th.br}>{tr('seeAll')}</T></Pressable></Row>} />{activeDeals.length ? <Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail> : null}
       {os.length ? (<>
-        <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
+        <Sh title={label('lbl.again', tr('orderAgain'))} link={label("lbl.homeHistory", "History")} onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
-          const s = STB[o.sid];
+          const s = STB[o.sid] || {n: o.sn || label('lbl.storeNotFound', 'Store not found'), e: '🏪', bg: 0};
           return (
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
               <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br}}>
@@ -185,7 +188,7 @@ export function Home({onExit}: {onExit?: () => void}) {
       <Rail>{cat('haitian').map(i => <Dish key={i.id} i={i} />)}</Rail>
       {(() => {const trending = ['s1_1', 's4_0', 's5_0', 's6_0'].map(id => IT[id]).filter(Boolean); return trending.length ? <><Sh title={'🔥 ' + label('lbl.trending', tr('trending'))} /><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 12, paddingHorizontal: 16}}>{trending.map(i => <Dish key={i.id} i={i} grid />)}</View></> : null;})()}
       <Sh title={tr('restaurantsNear')} link={tr('seeAll')} onLink={() => go('catlist', 'all')} />
-      <Chips list={FCH} on={S.f} onPick={setFilter} />
+      <Chips list={FCH()} on={S.f} onPick={setFilter} />
       <View style={{gap: 22, paddingTop: 12, paddingHorizontal: 16}}>{filt(ST).slice(0, 5).map(s => <StoreCard key={s.id} s={s} />)}</View>
     </View>
   );
@@ -234,7 +237,7 @@ export function Explore() {
         </View>
         <Row sp style={{marginTop: 16, marginBottom: 8}}>
           <T size={16} weight="600">{scope === 'open' ? label('lbl.browseTitleOpen', 'Open near you') : scope === 'closest' ? label('lbl.browseTitleClosest', 'Closest to you') : label('lbl.browseTitleAll', 'All available stores')}</T>
-          <T size={11.5} color={th.mut}>{visible.length} stores</T>
+          <T size={11.5} color={th.mut}>{visible.length} {label("lbl.page.screens.Browse.bf9949f8b7", " stores")}</T>
         </Row>
       </View>
       {visible.length ? <View style={{paddingHorizontal: 16, gap: 14}}>
@@ -278,10 +281,10 @@ export function CatList({p}: {p: string}) {
   return (
     <View>
       <View style={{paddingHorizontal: 16}}>
-        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? label('lbl.catEverythingNear', 'Everything near you') : cname(p)} sub={(l.length === 1 ? label('lbl.catStoreOne', '{n} store') : label('lbl.catStoreMany', '{n} stores')).replace('{n}', String(l.length)) + ' · ' + label('lbl.catProducts', '{n} products').replace('{n}', String(its.length))} emoji={c ? c.emoji : '🏪'} onPress={() => {}} /></View>
+        <View style={{marginBottom: 12}}><Mode grad small={false} title={p === 'all' ? label('lbl.catEverythingNear', 'Everything near you') : cname(p)} sub={(l.length === 1 ? label('lbl.catStoreOne', '{n} store') : label('lbl.catStoreMany', '{n} stores')).replace('{n}', String(l.length)) + ' · ' + label('lbl.catProducts', '{n} products').replace('{n}', String(its.length))} emoji={c ? c.emoji : '🏪'} onPress={() => go('search')} /></View>
       </View>
-      {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="600" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>{label('lbl.browseSubcategories', 'SUBCATEGORIES')}</T><Chips list={[['', 'All'], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
-      <Chips list={FCH} on={S.f} onPick={setFilter} />
+      {p !== 'all' && kinds.length > 1 ? (<><T size={12.5} weight="600" color={th.mut} style={{paddingHorizontal: 16, paddingBottom: 6}}>{label('lbl.browseSubcategories', 'SUBCATEGORIES')}</T><Chips list={[['', label('lbl.filterAll', 'All')], ...kinds.map(k => [k, k] as [string, string])]} on={S.sub} onPick={setSub} /></>) : null}
+      <Chips list={FCH()} on={S.f} onPick={setFilter} />
       {l.length ? (<>
         {l.length > 1 ? (<><Sh title={label('lbl.browseFeaturedVendors', 'Featured vendors')} /><Rail>{l.slice().sort((a, b) => b.r - a.r).slice(0, 4).map(s => <VCard key={s.id} s={s} />)}</Rail></>) : null}
         <Sh title={label('lbl.browseAllStores', 'All stores')} />
@@ -329,7 +332,7 @@ export function Search() {
     if (q) ST.forEach(s => {if (s.n.toLowerCase().indexOf(q) === 0 && set.indexOf(s.n) < 0) set.push(s.n); s.it.forEach(i => {const w = i.n.toLowerCase(); if ((w.indexOf(q) === 0 || w.indexOf(' ' + q) > -1) && set.indexOf(i.n) < 0) set.push(i.n);});});
     const sug = set.filter(x => x.toLowerCase() !== q).slice(0, 5);
     body = (!ss.length && !is.length && !cs.length)
-      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? label('lbl.searchClearFilters', 'Clear filters') : label('lbl.searchClearSearch', 'Clear search')} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
+      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? label("lbl.page.screens.Browse.da1efe0af5", " for \"") + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? label('lbl.searchClearFilters', 'Clear filters') : label('lbl.searchClearSearch', 'Clear search')} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
       : (
         <View style={{paddingHorizontal: 16}}>
           {sug.length ? (<><Ttl>{label('lbl.browseSuggestions', 'Suggestions')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
@@ -338,10 +341,10 @@ export function Search() {
             <View key={s.id} style={{flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line}}>
               <Pressable accessibilityRole="link" onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
                 <Tile e={s.e} bg={s.bg} />
-                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="600">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · {s.rv > 0 ? '★ ' + s.r.toFixed(1) : label('lbl.cardNewStore', 'New store')}</T></View>
+                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="600">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} {label("lbl.page.screens.Browse.46e2a1c0fa", " min · ")}{s.rv > 0 ? '★ ' + s.r.toFixed(1) : label('lbl.cardNewStore', 'New store')}</T></View>
               </Pressable>
-              {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
-              <Pressable accessibilityRole="link" accessibilityLabel={'Open ' + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+              {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? label('lbl.a11yRemoveStoreFavorite', 'Remove {store}').replace('{store}', s.n) + label("lbl.page.screens.Browse.a9d3b30ba1", " from favorites") : label('lbl.a11ySaveStoreFavorite', 'Save {store}').replace('{store}', s.n) + label("lbl.page.screens.Browse.1280456fb9", " to favorites"))}
+              <Pressable accessibilityRole="link" accessibilityLabel={label('lbl.a11yOpenStore', 'Open {store}').replace('{store}', s.n)} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
             </View>))}</>) : null}
           {is.length ? (<><Ttl>{label("lbl.browseAuto100SEII", "Products")}</Ttl>{is.map(i => <ItemRow key={i.id} i={i} />)}</>) : null}
         </View>
@@ -398,7 +401,7 @@ export function Promos() {
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
             <Row><Cta small ghost label={label('lbl.promosDetails', 'Details')} onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? label('lbl.cartApplied', 'Applied') : label('lbl.promosUse', 'Use this code')} onPress={() => applyPromo(p.c)} /></Row>
           </Card>
-        )) : <Empty title="No coupons or offers" />}
+        )) : <Empty title={label("lbl.page.screens.Browse.701f371e2b", "No coupons or offers")} />}
       </View>
     </View>
   );
@@ -420,10 +423,10 @@ export function Notifs() {
     serverUserId.current = auth.user.id;
     const {data, error} = await supabase.from('notifications')
       .select('id,title,body,read,metadata,created_at,notification_type,feature_name,destination')
-      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
+      .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or(CUSTOMER_NOTIFICATION_FILTER)
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
-    if (error) { setServerError(friendlyError(error, 'Something went wrong. Please try again.')); return; }
+    if (error) { setServerError(friendlyError(error, label("lbl.page.screens.Browse.3ccd9d6586", "Something went wrong. Please try again."))); return; }
     setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: n.notification_type === 'store_message' ? 'chat' : String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
@@ -471,8 +474,8 @@ export function Notifs() {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
-        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').eq('read', false);
-      if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
+        .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or(CUSTOMER_NOTIFICATION_FILTER).eq('read', false);
+      if (error) setServerError(friendlyError(error, label("lbl.page.screens.Browse.3ccd9d6586", "Something went wrong. Please try again.")));
       else await loadServer();
     }
   };
@@ -483,7 +486,7 @@ export function Notifs() {
       if (auth.user) {
         const {error} = await supabase.from('notifications').update({read: true})
           .eq('id', n.id).eq('user_id', auth.user.id);
-        if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
+        if (error) setServerError(friendlyError(error, label("lbl.page.screens.Browse.3ccd9d6586", "Something went wrong. Please try again.")));
         else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
       }
     }
@@ -493,7 +496,7 @@ export function Notifs() {
       let storeId = metadata.store_id || metadata.storeId;
       if (!storeId && metadata.conversation_id) {
         const {data, error} = await supabase.from('conversations').select('ref_id').eq('id', metadata.conversation_id).maybeSingle();
-        if (error) { setServerError(friendlyError(error, 'Could not open this store conversation.')); return; }
+        if (error) { setServerError(friendlyError(error, label("lbl.page.screens.Browse.afe1592021", "Could not open this store conversation."))); return; }
         storeId = data?.ref_id;
       }
       if (storeId) { go('storechat', String(storeId)); return; }
@@ -506,12 +509,12 @@ export function Notifs() {
           const id = await fetchGoodiesOrderForNotification(metadata.order_id, metadata.order_code);
           if (id) order = S.orders.find((o: any) => o.id === id);
         } catch (e: any) {
-          toast(friendlyError(e, 'Could not load this order.'));
+          toast(friendlyError(e, label("lbl.page.screens.Browse.4b6dc71a97", "Could not load this order.")));
           return;
         }
       }
       if (order) go('track', order.id);
-      else { toast('This order could not be found.'); go('notifs'); }
+      else { toast(label("lbl.page.screens.Browse.559d98ce87", "This order could not be found.")); go('notifs'); }
       return;
     }
     if (destination.includes('promos') || destination.includes('promotion') || destination.includes('coupon')) { go('promos'); return; }

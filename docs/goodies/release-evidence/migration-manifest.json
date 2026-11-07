@@ -1,0 +1,55 @@
+{
+  "project": "ycbirmgppwavorwudlrv",
+  "mode": "PREPARED ONLY \u2014 no deployment performed",
+  "last_observed_deployed_version": "20261104211532",
+  "migrations": [
+    {
+      "file": "supabase/migrations/20261106015226_goodies_courier_scoped_order_read.sql",
+      "sha256": "d38b5bf2370b565c9a1ec7d5f49af7cb947e61d7410968870835bc2cf3c4f52b"
+    },
+    {
+      "file": "supabase/migrations/20261106020705_goodies_private_delivery_proofs.sql",
+      "sha256": "c669f61d6ae38f3a8549632c30dc94d877b2de80d0235032fbfabd352f34cd49"
+    },
+    {
+      "file": "supabase/migrations/20261106021033_goodies_truthful_dispute_refund_notification.sql",
+      "sha256": "c5c7fd714e736223c0850baa4ab9db5ae5e94d50a1b36824433b052079997fd9"
+    },
+    {
+      "file": "supabase/migrations/20261106022200_goodies_builder_selection_contract.sql",
+      "sha256": "f809e0fd7062c19037992a9798299cbf72f2e8bf3a0f93f5fa7009ddc2407776"
+    },
+    {
+      "file": "supabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+      "sha256": "bc47351292222483fdee4f861542efd2a874036da4a304bf035f87dd3439826e"
+    },
+    {
+      "file": "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+      "sha256": "60f409e077432c57fdd48f1d11c54fc991b46bcbc7d5f688edb07be264b88e67"
+    },
+    {
+      "file": "supabase/migrations/20261106030151_goodies_role_notifications.sql",
+      "sha256": "3c23574c010e9755c73bb9841f30ae7a529114346460b3a59f91923f6caf366a"
+    },
+    {
+      "file": "supabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+      "sha256": "cb753eeef67cc7985426152b6a76352394cd058648a2f6b60309bf3d78fe2019"
+    },
+    {
+      "file": "supabase/migrations/20261106031210_goodies_notification_localization.sql",
+      "sha256": "0765a19f4e5990466ac6159d23420cb76c14073201a5dd50bcf3d69283d14c2e"
+    },
+    {
+      "file": "supabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+      "sha256": "d7461538209e3b9fee3c37702db34efe68a7e56b8ee73376b582ca73e0ecb876"
+    },
+    {
+      "file": "supabase/migrations/20261106082226_goodies_admin_operational_pagination.sql",
+      "sha256": "55db6451804d987409998f02d4a7d0d4a5e6a6bc1b7575f39883a175ba81319b"
+    },
+    {
+      "file": "supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql",
+      "sha256": "8ef4cfabc3197c62fc4266111ffc7fd85bac1257bef92dbc55ddd4af8b7bb962"
+    }
+  ]
+}

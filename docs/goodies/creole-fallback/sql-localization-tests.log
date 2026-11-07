@@ -1,0 +1,13 @@
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/cmsPublication_test.ts
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/localization_test.ts
+running 2 tests from ./supabase/functions/goodies-tests/cmsPublication_test.ts
+CMS publication rejects unreviewed critical English/Creole and placeholder FAQs without blocking fee-only updates ... ok (3s)
+forward CMS guard permits unfinished Creole only with reviewed English and preserves every review state ... ok (1s)
+running 5 tests from ./supabase/functions/goodies-tests/localization_test.ts
+production falls back to English for missing and unreviewed translations in all five locales ... ok (0ms)
+Haitian Creole is available in production only after explicit human review ... ok (0ms)
+draft preview is explicit and never changes review metadata ... ok (0ms)
+empty and legacy text have predictable fallbacks ... ok (0ms)
+unreviewed English cannot bypass review by becoming the production fallback ... ok (0ms)
+
+ok | 7 passed | 0 failed (4s)

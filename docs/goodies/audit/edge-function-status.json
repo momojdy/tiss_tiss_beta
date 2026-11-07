@@ -1,0 +1,98 @@
+[
+  {
+    "name": "create-money-request-payment",
+    "status": "ACTIVE",
+    "version": 8,
+    "verify_jwt": true
+  },
+  {
+    "name": "rapid-api",
+    "status": "ACTIVE",
+    "version": 19,
+    "verify_jwt": false
+  },
+  {
+    "name": "create-money-request-checkout",
+    "status": "ACTIVE",
+    "version": 9,
+    "verify_jwt": true
+  },
+  {
+    "name": "create-card-setup-intent",
+    "status": "ACTIVE",
+    "version": 3,
+    "verify_jwt": true
+  },
+  {
+    "name": "serve-card-setup-page",
+    "status": "ACTIVE",
+    "version": 7,
+    "verify_jwt": false
+  },
+  {
+    "name": "deactivate-my-account",
+    "status": "ACTIVE",
+    "version": 2,
+    "verify_jwt": true
+  },
+  {
+    "name": "wantiss-admin-staff",
+    "status": "ACTIVE",
+    "version": 7,
+    "verify_jwt": true
+  },
+  {
+    "name": "wantiss-cms-public",
+    "status": "ACTIVE",
+    "version": 5,
+    "verify_jwt": false
+  },
+  {
+    "name": "wantiss-public-content",
+    "status": "ACTIVE",
+    "version": 6,
+    "verify_jwt": false
+  },
+  {
+    "name": "wantiss-admin-bootstrap",
+    "status": "ACTIVE",
+    "version": 3,
+    "verify_jwt": true
+  },
+  {
+    "name": "place-goodies-card-order",
+    "status": "ACTIVE",
+    "version": 14,
+    "verify_jwt": true
+  },
+  {
+    "name": "refund-goodies-card-order",
+    "status": "ACTIVE",
+    "version": 6,
+    "verify_jwt": false
+  },
+  {
+    "name": "process-goodies-card-refunds",
+    "status": "ACTIVE",
+    "version": 17,
+    "verify_jwt": false
+  },
+  {
+    "name": "geoapify-connection-test",
+    "status": "ACTIVE",
+    "version": 1,
+    "verify_jwt": true
+  },
+  {
+    "name": "goodies-delivery-quote",
+    "status": "ACTIVE",
+    "version": 21,
+    "verify_jwt": true
+  },
+  {
+    "name": "expire-goodies-card-auth",
+    "status": "ACTIVE",
+    "version": 1,
+    "verify_jwt": false
+  }
+]

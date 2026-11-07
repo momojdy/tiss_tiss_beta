@@ -1,0 +1,254 @@
+[
+  {
+    "id": "A01",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Vendor raw server errors",
+    "source": "BusinessSpaceShared.tsx:343",
+    "evidence": "errText returns database error text; ErrBox renders it.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A02",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Customer receipt error disclosure",
+    "source": "Shop.tsx:445",
+    "evidence": "Receipt errors containing allowed words can still include arbitrary server details.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A03",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Admin product Reject cannot succeed",
+    "source": "GoodiesAdminScreen.tsx:138",
+    "evidence": "Reject sends null reason; deployed RPC requires a reason.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A04",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Reviews persist only locally",
+    "source": "Sheets.tsx:657",
+    "evidence": "Review submission changes local state/cache; no backend write or vendor/admin synchronization.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A05",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Support success falsely says demo",
+    "source": "Account.tsx:358",
+    "evidence": "Actual support insert can succeed, then confirmation says the ticket is demo/disconnected.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A06",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Historical store displays sample reviews",
+    "source": "Shop.tsx:78",
+    "evidence": "Placeholder store enters seeded-review branch; real stores have no written-review integration.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A07",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Missing store route crashes",
+    "source": "Shop.tsx:30",
+    "evidence": "Store dereferences missing STB entry without a guard.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A08",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Historical order can crash initial render",
+    "source": "Shop.tsx:588",
+    "evidence": "Newly synchronized historical order can reference a store absent from the live catalog.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A09",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Pickup map always unavailable",
+    "source": "Shop.tsx:432",
+    "evidence": "PickupLocationMap ignores available store coordinates and always displays unavailable copy.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A10",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Vendor product save incompatible with main grants",
+    "source": "BusinessSpaceGoodies.tsx:550",
+    "evidence": "Save includes photo_urls; main denies INSERT and UPDATE on that column.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A11",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Fee defaults can be saved before load",
+    "source": "GoodiesAdminScreen.tsx:144",
+    "evidence": "Save lacks load guard; CMS read errors ignored; initial zero defaults are saveable.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A12",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Notification preference is local only",
+    "source": "actions.ts:434",
+    "evidence": "Toggle changes local/cache preferences; no server preference update for backend delivery.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A13",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Vendor storefront selector is disconnected",
+    "source": "BusinessSpaceAccountScreens.tsx:268",
+    "evidence": "Selector uses RAW_STORES demo options; selected goodies_store_id omitted from save payload.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A14",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Secondary vendor orders use wrong item contract",
+    "source": "BusinessSpaceMarketplaceScreens.tsx:108",
+    "evidence": "Reads quantity/name instead of canonical q/n; can render 1\u00d7 undefined.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A15",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Admin analytics leaks server errors",
+    "source": "GoodiesAdminScreen.tsx:117",
+    "evidence": "Raw SQL error can be rendered in toast.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A16",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Payout failure appears as zero funds",
+    "source": "BusinessSpaceMarketplaceScreens.tsx:135",
+    "evidence": "Summary errors ignored; missing available/pending values become $0.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "A17",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Legacy-only catalog retains seeded builders",
+    "source": "engine.ts:55",
+    "evidence": "Unconditional sample builder seeding survives when only legacy placeholder stores exist.",
+    "verification": "synthetic source-function reproduction"
+  },
+  {
+    "id": "B01",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Main trigger erases moderation rejection",
+    "source": "goodies_products_enforce_update_moderation",
+    "evidence": "Actual main trigger resets review_status to approved and clears review metadata even after authorized rejection. is_available remains false; rejection does not alone expose the product.",
+    "verification": "isolated main-function SQL reproduction"
+  },
+  {
+    "id": "B02",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Required candidate RPCs are not deployed",
+    "source": "backend-final-routines.json",
+    "evidence": "Main lacks courier-order/private-proof capability RPCs required by candidate clients. Other missing names include shared or preview-only routes; inspect references before treating each as a Goodies blocker.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "B03",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Delivery proof privacy rollout incomplete",
+    "source": "security-metadata.json",
+    "evidence": "Main has public listing-photos and no private Goodies proof bucket. Zero legacy proof objects observed; no actual customer-photo leak established.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "C01",
+    "severity": "HIGH",
+    "status": "FAIL",
+    "title": "Published support and locale coverage incomplete",
+    "source": "published-content.json",
+    "evidence": "Five FAQ answers are Answer coming soon; no live policies/support topics. Published payload has en647 reviewed labels, fr/ht/es/zh-Hans zero reviewed labels. Local defaults/fallbacks exist; these are not five missing CMS records.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S01",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Catalog failures are not presented",
+    "source": "store.ts:221",
+    "evidence": "catalogError is recorded but not rendered; catalog failure can resemble empty/stale data. Home skeleton follows CMS, not catalog readiness.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S02",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Vendor request and settings errors hidden",
+    "source": "BusinessSpaceGoodies.tsx",
+    "evidence": "Ingredient requests lack initial loading/retry state; library/rules/settings queries can collapse errors into empty/default values.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S03",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Admin failure states misleading",
+    "source": "GoodiesAdminScreen.tsx",
+    "evidence": "Dashboard errors leave stale/default summaries; analytics can remain Loading after failure; courier/report lists can look empty during errors/loading.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S04",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Financial and history visibility capped",
+    "source": "serverSync.ts",
+    "evidence": "Consumer history100, specialized vendor orders100, secondary orders80, admin orders150, courier candidates200; no relevant paging controls. Payout ledger has pagination.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S05",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Embedded card webviews lack recovery states",
+    "source": "Payments.tsx",
+    "evidence": "Card authentication/form WebViews lack onError/onHttpError recovery. Provider/device verification outstanding.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S06",
+    "severity": "LOW",
+    "status": "FAIL",
+    "title": "Disabled production controls and developer jargon",
+    "source": "Browse.tsx:282",
+    "evidence": "Category banner has no-op onPress; top-up only says unavailable; group copy says server-backed. Preview demo notices are necessary and should remain.",
+    "verification": "read-only source/live metadata inspection"
+  },
+  {
+    "id": "S07",
+    "severity": "MEDIUM",
+    "status": "FAIL",
+    "title": "Admin editor permission and publishing mismatch",
+    "source": "GoodiesEditorScreen.tsx",
+    "evidence": "Builder editor inherits content edit access but live RPC requires operations/edit; builder save writes live table outside outer CMS draft/publication. Not an authorization bypass.",
+    "verification": "read-only source/live metadata inspection"
+  }
+]

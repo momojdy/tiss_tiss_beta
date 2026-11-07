@@ -5,11 +5,12 @@
    Machine drafts are never shown in production; the demo may show them so all five languages can be exercised. */
 import {S} from '../store';
 import type {LangCode, Txt} from '../data/types';
+import {interfaceText} from './interfaceContent';
 import {DICT} from './dict';
+import {resolveGoodiesText} from './resolveText';
+import {WANTISS_LANGUAGES} from '../../../lib/locales';
 
-export const LANGS: {code: LangCode; label: string}[] = [
-  {code: 'en', label: 'English'}, {code: 'fr', label: 'Français'}, {code: 'ht', label: 'Kreyòl ayisyen'}, {code: 'es', label: 'Español'}, {code: 'zh-Hans', label: '简体中文'},
-];
+export const LANGS: ReadonlyArray<{code: LangCode; label: string}> = WANTISS_LANGUAGES;
 export const DEFAULT_LANG: LangCode = 'en';
 export const cfg = {showMachineDrafts: false};
 
@@ -36,19 +37,14 @@ export function t(key: string, vars?: Record<string, string | number>): string {
   const l: string = S.lang || DEFAULT_LANG;
   let s: string | undefined = l !== 'en' && allowed(l) ? drafts[l]?.[key] : undefined;
   if (l === 'ht' && !REVIEWED.includes('ht') && !cfg.showMachineDrafts) s = undefined; /* Creole needs human review */
-  s = s || en[key] || key;
+  s = interfaceText(key, l as LangCode, cfg.showMachineDrafts) || s || en[key] || key;
   if (vars) Object.keys(vars).forEach(k => (s = (s as string).replace(new RegExp('\\{' + k + '\\}', 'g'), String(vars[k]))));
   return s as string;
 }
 
 /* admin-managed text with fallback. Never returns an empty string when English exists. */
 export function tx(v: Txt | undefined | null): string {
-  if (v == null) return '';
-  if (typeof v === 'string') return v;
-  const l = (S.lang || DEFAULT_LANG) as LangCode, e = v[l];
-  const ok = e && e.v && (e.s === 'reviewed' || (cfg.showMachineDrafts && l !== 'ht') || (cfg.showMachineDrafts && l === 'ht' && e.s !== 'missing'));
-  if (l === 'ht' && e && e.s !== 'reviewed' && !cfg.showMachineDrafts) return v[DEFAULT_LANG]?.v || '';
-  return ok ? (e as any).v : v[DEFAULT_LANG]?.v || '';
+  return resolveGoodiesText(v, (S.lang || DEFAULT_LANG) as LangCode, cfg.showMachineDrafts);
 }
 
 /* Broad coverage without editing every screen: <T> passes its text through here. Exact English match, otherwise unchanged. */

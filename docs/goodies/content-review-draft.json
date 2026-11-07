@@ -1,0 +1,372 @@
+{
+  "status": "DRAFT — NOT APPROVED OR PUBLISHED",
+  "provenance": "Assistant-authored suggestions. No text is represented as human-reviewed, including English or Haitian Creole. This is not a complete CMS payload and must not overwrite live configuration.",
+  "faq": [
+    {
+      "q": {
+        "en": {
+          "v": "How do I track my order?",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Comment suivre ma commande ?",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Kijan pou m suiv kòmand mwen an?",
+          "s": "draft"
+        },
+        "es": {
+          "v": "¿Cómo sigo mi pedido?",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "如何跟踪我的订单？",
+          "s": "draft"
+        }
+      },
+      "a": {
+        "en": {
+          "v": "Open Orders and select your order to see its latest status. Courier location appears when an assigned courier is sharing a fresh GPS location.",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Ouvrez Commandes et sélectionnez votre commande pour voir son statut. La position du livreur apparaît lorsqu’un livreur affecté partage une position GPS récente.",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Louvri Kòmand yo epi chwazi kòmand ou a pou wè dènye estati li. Pozisyon livre a parèt lè yon livre ki asiyen ap pataje yon pozisyon GPS resan.",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Abre Pedidos y selecciona tu pedido para ver su estado. La ubicación del repartidor aparece cuando el repartidor asignado comparte una posición GPS reciente.",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "打开“订单”并选择订单，查看最新状态。已分配的配送员分享最新 GPS 位置时，地图会显示其位置。",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "q": {
+        "en": {
+          "v": "Delivery information",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Informations de livraison",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Enfòmasyon sou livrezon",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Información de entrega",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "配送信息",
+          "s": "draft"
+        }
+      },
+      "a": {
+        "en": {
+          "v": "Choose delivery or pickup from the options offered by the store. Check your address and the fees shown at checkout before confirming.",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Choisissez la livraison ou le retrait parmi les options du magasin. Vérifiez votre adresse et les frais affichés avant de confirmer.",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Chwazi livrezon oswa vin pran kòmand lan pami opsyon magazen an ofri yo. Verifye adrès ou ak frè ki parèt nan kesye a anvan ou konfime.",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Elige entrega o recogida entre las opciones de la tienda. Revisa tu dirección y los cargos al finalizar la compra antes de confirmar.",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "从店铺提供的选项中选择配送或自取。确认前，请核对地址和结账页面显示的费用。",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "q": {
+        "en": {
+          "v": "Payment information",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Informations de paiement",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Enfòmasyon sou peman",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Información de pago",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "付款信息",
+          "s": "draft"
+        }
+      },
+      "a": {
+        "en": {
+          "v": "Use a payment method offered at checkout and review the total before confirming. Open your order details to check its payment status.",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Utilisez un moyen de paiement proposé et vérifiez le total avant de confirmer. Consultez les détails de votre commande pour vérifier le statut du paiement.",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Sèvi ak youn nan mwayen peman ki disponib nan kesye a epi verifye total la anvan ou konfime. Louvri detay kòmand ou a pou verifye estati peman an.",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Usa un método de pago disponible y revisa el total antes de confirmar. Consulta los detalles del pedido para comprobar el estado del pago.",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "使用结账页面提供的付款方式，并在确认前核对总额。可在订单详情中查看付款状态。",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "q": {
+        "en": {
+          "v": "Refunds and cancellation",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Remboursements et annulation",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Ranbousman ak anilasyon",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Reembolsos y cancelación",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "退款与取消",
+          "s": "draft"
+        }
+      },
+      "a": {
+        "en": {
+          "v": "Open your order details to see whether cancellation is available. If a refund is approved, check the payment status for updates or contact support with your order reference.",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Ouvrez les détails de votre commande pour voir si l’annulation est possible. Si un remboursement est approuvé, consultez le statut du paiement ou contactez l’assistance avec votre référence.",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Louvri detay kòmand ou a pou wè si ou ka anile li. Si yo apwouve yon ranbousman, verifye estati peman an oswa kontakte sipò avèk referans kòmand ou a.",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Abre los detalles del pedido para ver si puedes cancelarlo. Si se aprueba un reembolso, consulta el estado del pago o contacta con soporte indicando la referencia del pedido.",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "打开订单详情，查看是否可以取消。如退款获批，请查看付款状态，或提供订单编号联系支持。",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "q": {
+        "en": {
+          "v": "What if an item is missing?",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Que faire si un article manque ?",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Kisa pou m fè si yon atik manke?",
+          "s": "draft"
+        },
+        "es": {
+          "v": "¿Qué hago si falta un artículo?",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "如果缺少商品怎么办？",
+          "s": "draft"
+        }
+      },
+      "a": {
+        "en": {
+          "v": "Contact the store or Wantiss support and include your order reference and a description of the missing item. If order details offer a delivery-problem report, use that action for delivery issues.",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Contactez le magasin ou l’assistance Wantiss avec la référence de commande et une description de l’article manquant. Pour un problème de livraison, utilisez le signalement proposé dans les détails, s’il est disponible.",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Kontakte magazen an oswa sipò Wantiss avèk referans kòmand ou a ak yon deskripsyon atik ki manke a. Pou yon pwoblèm livrezon, sèvi ak opsyon rapò ki nan detay kòmand lan si li disponib.",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Contacta con la tienda o con soporte de Wantiss e incluye la referencia del pedido y una descripción del artículo que falta. Para problemas de entrega, usa la opción de informar en los detalles si está disponible.",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "联系店铺或 Wantiss 支持，并提供订单编号及缺少商品的说明。如订单详情提供配送问题反馈选项，请使用该选项报告配送问题。",
+          "s": "draft"
+        }
+      }
+    }
+  ],
+  "support_topics": [
+    {
+      "id": "topic.1",
+      "t": {
+        "en": {
+          "v": "Order",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Commande",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Kòmand",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Pedido",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "订单",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "id": "topic.2",
+      "t": {
+        "en": {
+          "v": "Payment",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Paiement",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Peman",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Pago",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "付款",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "id": "topic.3",
+      "t": {
+        "en": {
+          "v": "Delivery",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Livraison",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Livrezon",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Entrega",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "配送",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "id": "topic.4",
+      "t": {
+        "en": {
+          "v": "Missing or incorrect item",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Article manquant ou incorrect",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Atik ki manke oswa ki pa kòrèk",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Artículo que falta o incorrecto",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "商品缺失或错误",
+          "s": "draft"
+        }
+      }
+    },
+    {
+      "id": "topic.5",
+      "t": {
+        "en": {
+          "v": "Other",
+          "s": "draft"
+        },
+        "fr": {
+          "v": "Autre",
+          "s": "draft"
+        },
+        "ht": {
+          "v": "Lòt",
+          "s": "draft"
+        },
+        "es": {
+          "v": "Otro",
+          "s": "draft"
+        },
+        "zh-Hans": {
+          "v": "其他",
+          "s": "draft"
+        }
+      }
+    }
+  ],
+  "policies": {
+    "status": "BLOCKED — approved business/legal text required",
+    "required_documents": [
+      "Terms",
+      "Privacy",
+      "Refund and cancellation policy"
+    ],
+    "content": null
+  }
+}

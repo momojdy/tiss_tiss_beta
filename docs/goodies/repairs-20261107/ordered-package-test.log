@@ -1,0 +1,10 @@
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/cmsPublication_test.ts
+Check file:///workspace/tiss_tiss_beta/supabase/functions/goodies-tests/deploymentPackage_test.ts
+running 2 tests from ./supabase/functions/goodies-tests/cmsPublication_test.ts
+CMS publication rejects unreviewed critical English/Creole and placeholder FAQs without blocking fee-only updates ... ok (2s)
+forward CMS guard permits unfinished Creole only with reviewed English and preserves every review state ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/deploymentPackage_test.ts
+approved Goodies deployment package applies in documented order and preserves final guards ... ok (2s)
+
+ok | 3 passed | 0 failed (6s)
+

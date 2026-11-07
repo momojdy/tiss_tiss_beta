@@ -1,0 +1,35 @@
+{
+  "scope": "Customer/vendor item 2; no production changes",
+  "features": [
+    {
+      "requirement": "reviews",
+      "candidate": "PASS",
+      "hosted": "FAIL"
+    },
+    {
+      "requirement": "production sample removal",
+      "candidate": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "requirement": "vendor storefront persistence",
+      "candidate": "PASS",
+      "hosted": "FAIL"
+    },
+    {
+      "requirement": "vendor order item snapshots",
+      "candidate": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "requirement": "historical and removed stores",
+      "candidate": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "requirement": "pickup maps",
+      "candidate": "PASS",
+      "hosted": "NOT VERIFIED"
+    }
+  ]
+}

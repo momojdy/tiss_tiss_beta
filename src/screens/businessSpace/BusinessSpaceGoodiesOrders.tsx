@@ -1,3 +1,5 @@
+import {setGoodiesCashAcceptance} from '../../services/goodiesSettlement';
+import {label as cmsLabel} from '../../features/Goodies/content';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View, Pressable, Image } from 'react-native';
 import { decode } from 'base64-arraybuffer';
@@ -5,7 +7,8 @@ import * as FileSystem from 'expo-file-system/legacy';
 import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../lib/supabase';
-import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
+import {GOODIES_DELIVERY_PROOF_BUCKET} from '../../services/goodiesDeliveryProof';
+import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill,errText } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; payment_refunded_amount?: number | null; courier_id?: string | null;
@@ -31,8 +34,14 @@ const remaining = (deadline: string | null, now: number) => {
   return sec ? Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0') + ' left to respond' : 'Response deadline passed';
 };
 
+async function goodiesOrdersRequest(name:string,args?:Record<string,unknown>) {
+  try {return await supabase.rpc(name,args);}
+  catch {return {data:null,error:{message:'Request unavailable'}};}
+}
+
 export function GoodiesOrdersPage() {
   const app = useApp();
+  const [page, setPage] = useState(0);
   const [decline, setDecline] = useState<GoodiesOrder | null>(null);
   const [cancel, setCancel] = useState<GoodiesOrder | null>(null);
   const [reason, setReason] = useState('out_of_stock');
@@ -41,27 +50,29 @@ export function GoodiesOrdersPage() {
   const [now, setNow] = useState(Date.now());
   const [storeId, setStoreId] = useState('');
   const [cashEnabled, setCashEnabled] = useState(false);
+  const [cashLoadError, setCashLoadError] = useState(false), [cashLoading, setCashLoading] = useState(true), [cashAttempt, setCashAttempt] = useState(0);
+  const [assignmentError, setAssignmentError] = useState(false);
   const [cashBusy, setCashBusy] = useState(false);
   const [dispatchOrder, setDispatchOrder] = useState<GoodiesOrder | null>(null);
   const [ownDriverOrder, setOwnDriverOrder] = useState<GoodiesOrder | null>(null);
   const [driverName, setDriverName] = useState('');
   const [driverPhone, setDriverPhone] = useState('');
   const [ownBusy, setOwnBusy] = useState('');
-  const OWN_DRIVER_WAIT_MS = 20 * 60 * 1000;
-  const ownDriverReadyAt = (order: GoodiesOrder) => new Date(order.ready_at || order.updated_at || order.created_at).getTime();
-  const ownDriverWaitLeft = (order: GoodiesOrder) => Math.max(0, ownDriverReadyAt(order) + OWN_DRIVER_WAIT_MS - now);
+  const ownDriverWaitLeft = (order: GoodiesOrder) => dispatchWaits.d?.businessId===app.biz.id&&!dispatchWaits.e&&Number.isFinite(dispatchWaits.d.waits[order.id])?Math.max(0,dispatchWaits.d.waits[order.id]*1000-Math.max(0,now-dispatchWaits.d.receivedAt)):null;
   const canUseOwnDriver = (order: GoodiesOrder) => order.order_type === 'delivery' && (order.status === 'ready' || order.status === 'courier_assigned') && !['accepted', 'picked_up'].includes(assignmentStates[order.id] || '');
   const submitOwnDriver = async () => {
     if (!ownDriverOrder) return;
     setOwnBusy('assign');
-    const {error} = await supabase.rpc('goodies_assign_own_driver', {p_order_id: ownDriverOrder.id, p_driver_name: driverName, p_driver_phone: driverPhone});
+    const {error} = await goodiesOrdersRequest('goodies_assign_own_driver', {p_order_id: ownDriverOrder.id, p_driver_name: driverName, p_driver_phone: driverPhone});
     setOwnBusy('');
-    if (error) { console.warn('Own driver assignment failed', error.message); app.toast(/20 minutes|name|phone|accepted|ready/i.test(error.message) ? error.message : 'Could not assign your driver. Please try again.'); return; }
+    if (error) { console.warn('Own driver assignment failed'); app.toast('Could not assign your driver. Check the order status and driver details, then try again.'); return; }
     app.toast('Your driver is assigned. Mark the order delivered with a photo once it arrives.');
     setOwnDriverOrder(null); setDriverName(''); setDriverPhone(''); await orders.reload();
   };
   const markOwnDelivered = async (order: GoodiesOrder) => {
     try {
+      const {data: privateUploads, error: policyError} = await goodiesOrdersRequest('goodies_private_delivery_proof_uploads_enabled');
+      if (policyError) throw policyError;
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       let result: ImagePicker.ImagePickerResult;
       if (perm.granted) result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 });
@@ -75,11 +86,13 @@ export function GoodiesOrdersPage() {
       const asset = result.assets[0];
       const m = await ImageManipulator.manipulateAsync(asset.uri, asset.width && asset.width > 1400 ? [{ resize: { width: 1400 } }] : [], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
       const b64 = await FileSystem.readAsStringAsync(m.uri, { encoding: FileSystem.EncodingType.Base64 });
-      const path = app.biz.id + '/delivery-proofs/' + order.id + '-' + Date.now() + '.jpg';
-      const {error: uploadError} = await supabase.storage.from('listing-photos').upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '31536000' });
+      const suffix = Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
+      const path = privateUploads ? app.biz.id + '/' + order.id + '/' + suffix : app.biz.id + '/delivery-proofs/' + order.id + '-' + suffix;
+      const bucket = privateUploads ? GOODIES_DELIVERY_PROOF_BUCKET : 'listing-photos';
+      const {error: uploadError} = await supabase.storage.from(bucket).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
       if (uploadError) throw uploadError;
-      const url = supabase.storage.from('listing-photos').getPublicUrl(path).data.publicUrl;
-      const {error} = await supabase.rpc('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: url});
+      const reference = privateUploads ? path : supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+      const {error} = await goodiesOrdersRequest('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: reference});
       if (error) throw error;
       app.toast('Marked as delivered. The customer has 24 hours to confirm or report a problem.');
       await orders.reload();
@@ -96,10 +109,10 @@ export function GoodiesOrdersPage() {
   const orders = useQ(async () => {
     const { data, error } = await supabase.from('goodies_orders')
       .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,payment_refunded_amount,courier_id,ready_at,updated_at,self_delivery,self_driver_name,self_driver_phone,vendor_delivered_at,receipt_deadline_at,delivery_proof_url,delivery_dispute_status')
-      .eq('business_id', app.biz.id).order('created_at', { ascending: false }).limit(100);
+      .eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending: false}).range(page * 100, page * 100 + 99);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
-  }, [app.biz.id, app.tick]);
+  }, [app.biz.id, app.tick, page]);
 
   useEffect(() => {
     const orderIds=(orders.d||[]).filter(o=>o.order_type==='delivery').map(o=>o.id);
@@ -108,6 +121,7 @@ export function GoodiesOrdersPage() {
     const sync=async()=>{
       const {data,error}=await supabase.from('goodies_delivery_assignments')
         .select('order_id,status').eq('business_id',app.biz.id).in('order_id',orderIds);
+      if(active)setAssignmentError(!!error);
       if(active&&!error)setAssignmentStates(Object.fromEntries((data||[]).map((a:any)=>[a.order_id,a.status])));
     };
     void sync();
@@ -116,6 +130,7 @@ export function GoodiesOrdersPage() {
       .subscribe();
     return()=>{active=false;void supabase.removeChannel(channel);};
   },[app.biz.id,orders.d]);
+  const dispatchWaits=useQ(async()=>{const {data,error}=await goodiesOrdersRequest('goodies_vendor_dispatch_waits',{p_business:app.biz.id});if(error||!data||typeof data.waits!=='object'||Object.values(data.waits).some(value=>typeof value!=='number'||!Number.isFinite(value)))throw new Error('Delivery options unavailable');return{businessId:app.biz.id,waits:data.waits as Record<string,number>,receivedAt:Date.now()};},[app.biz.id,orders.d,Math.floor(now/30000)]);
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
   useEffect(() => {
     const ids = [...new Set((orders.d || []).flatMap(order => (Array.isArray(order.items) ? order.items : []).map((item: any) => String(item?.id || '')).filter(Boolean)))];
@@ -129,36 +144,36 @@ export function GoodiesOrdersPage() {
     return () => { active = false; };
   }, [app.biz.id, orders.d]);
   useEffect(() => {
-    let active = true;
-    void supabase.from('goodies_store_schedules').select('store_id,accept_cash_on_delivery').eq('business_id', app.biz.id).maybeSingle()
-      .then(({data,error}) => { if (active && !error && data) { setStoreId(data.store_id); setCashEnabled(!!data.accept_cash_on_delivery); } });
+    let active = true;setCashLoading(true);setCashLoadError(false);
+    void Promise.resolve(supabase.from('goodies_store_schedules').select('store_id,accept_cash_on_delivery').eq('business_id', app.biz.id).maybeSingle())
+      .then(({data,error}) => {if(error || !data)throw new Error('Store settings unavailable'); if (active) { setStoreId(data.store_id); setCashEnabled(!!data.accept_cash_on_delivery); } })
+      .catch(()=>{if(active)setCashLoadError(true);}).finally(()=>{if(active)setCashLoading(false);});
     return () => { active = false; };
-  }, [app.biz.id]);
+  }, [app.biz.id,cashAttempt]);
   const toggleCash = async () => {
     if (!storeId || cashBusy) return;
     setCashBusy(true);
     try {
       const next = !cashEnabled;
-      const {error} = await supabase.rpc('goodies_set_store_cash_policy', {p_store_id:storeId,p_enabled:next});
-      if (error) throw error;
+      await setGoodiesCashAcceptance(app.biz.id,next);
       setCashEnabled(next);
-      app.toast(next ? 'Cash on delivery enabled. It is still shown only when an available courier accepts COD.' : 'Cash on delivery disabled.');
-    } catch (e:any) { app.toast(e?.message || 'Could not update cash-on-delivery settings.'); }
+      app.toast(next ? cmsLabel('lbl.settlement.cashEnabled','Cash on delivery enabled for your store.') : 'Cash on delivery disabled.');
+    } catch (e:any) { app.toast('Could not update cash-on-delivery settings. Please try again.'); }
     finally { setCashBusy(false); }
   };
   const openDispatch = async (order: GoodiesOrder) => {
     setDispatchOrder(order); setCouriers([]); setDispatchBusy('loading');
-    const {data,error} = await supabase.rpc('goodies_list_dispatch_couriers',{p_order_id:order.id});
+    const {data,error} = await goodiesOrdersRequest('goodies_list_dispatch_couriers',{p_order_id:order.id});
     setDispatchBusy('');
-    if (error) { app.toast(error.message); setDispatchOrder(null); return; }
+    if (error) { app.toast('Could not load available couriers. Please try again.'); setDispatchOrder(null); return; }
     setCouriers(data || []);
   };
   const assignCourier = async (courierId:string) => {
     if (!dispatchOrder) return;
     setDispatchBusy(courierId);
-    const {error} = await supabase.rpc('goodies_assign_courier',{p_order_id:dispatchOrder.id,p_courier_id:courierId});
+    const {error} = await goodiesOrdersRequest('goodies_assign_courier',{p_order_id:dispatchOrder.id,p_courier_id:courierId});
     setDispatchBusy('');
-    if (error) { app.toast(error.message); return; }
+    if (error) { app.toast('Could not assign this courier. Please refresh and try again.'); return; }
     app.toast('Courier offer sent. The courier must accept before pickup.');
     setDispatchOrder(null); await orders.reload();
   };
@@ -188,12 +203,12 @@ export function GoodiesOrdersPage() {
     setBusyId(order.id);
     try {
       const { error } = action === 'accept'
-        ? await supabase.rpc('accept_goodies_order', { p_order_id: order.id })
+        ? await goodiesOrdersRequest('accept_goodies_order', { p_order_id: order.id })
         : action === 'decline'
-          ? await supabase.rpc('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
+          ? await goodiesOrdersRequest('decline_goodies_order', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
           : action === 'cancel'
-            ? await supabase.rpc('cancel_goodies_order_by_store', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
-            : await supabase.rpc('set_goodies_order_status', { p_order_id: order.id, p_status: action });
+            ? await goodiesOrdersRequest('cancel_goodies_order_by_store', { p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) })
+            : await goodiesOrdersRequest('set_goodies_order_status', { p_order_id: order.id, p_status: action });
       if (error) throw error;
       setDecline(null); setCancel(null); setDetail('');
       let refundWarning = '';
@@ -205,7 +220,7 @@ export function GoodiesOrdersPage() {
       await orders.reload();
       app.bump();
     } catch (e: any) {
-      app.toast(e?.message || 'Could not update this order. Refresh and try again.');
+      app.toast(e?.code==='P4201'||e?.code==='P4202'?errText(e):'Could not update this order. Refresh and try again.');
       await orders.reload();
     } finally { setBusyId(''); }
   };
@@ -214,13 +229,15 @@ export function GoodiesOrdersPage() {
     <>
       <Pg title="Goodies orders" onBack={app.back} refreshing={orders.l} onRefresh={orders.reload}>
         <View style={{ gap: 10 }}>
+          {assignmentError ? <Text style={{color:'#8D3932'}}>Courier assignments could not refresh. Pull down to try again.</Text> : null}
           <View style={{padding:14,borderRadius:14,borderWidth:1,borderColor:'#DCE4D7',backgroundColor:'#fff',gap:7}}>
             <Text style={{fontWeight:'800',fontSize:14,color:'#1A2517'}}>Cash on delivery</Text>
             <Text style={{fontSize:12,lineHeight:18,color:'#5F6B5A'}}>Wantiss Wallet is the default payment method. Cash on delivery is available when your store and an eligible courier both enable it.</Text>
-            <Btn label={cashBusy ? 'Saving…' : cashEnabled ? 'Disable cash on delivery' : 'Enable cash on delivery'} busy={cashBusy} disabled={!storeId || cashBusy} onPress={() => void toggleCash()} />
+            {cashLoading ? <Text>Loading cash settings…</Text> : cashLoadError ? <ErrBox e="Could not load cash settings." retry={()=>setCashAttempt(n=>n+1)} /> : null}
+            <Btn label={cashBusy ? 'Saving…' : cashEnabled ? 'Disable cash on delivery' : 'Enable cash on delivery'} busy={cashBusy} disabled={!storeId || cashBusy || cashLoading || cashLoadError} onPress={() => void toggleCash()} />
           </View>
           <View style={{ padding: 14, borderRadius: 16, backgroundColor: '#EAF4E5', gap: 4 }}>
-            <Text style={{ fontWeight: '800', fontSize: 15, color: '#234A25' }}>{pending.length} awaiting response</Text>
+            <Text style={{ fontWeight: '800', fontSize: 15, color: '#234A25' }}>{pending.length} awaiting response on this page</Text>
             <Text style={{ fontSize: 12, lineHeight: 18, color: '#38583A' }}>Please accept or decline each new order within 15 minutes. Orders not answered in time are automatically cancelled and the items are returned to your available stock.</Text>
           </View>
           {orders.l && !orders.d ? <><Skel h={110} /><Skel h={110} /></> : null}
@@ -279,8 +296,8 @@ export function GoodiesOrdersPage() {
               {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
               {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>{assignmentStates[order.id]==='accepted' ? 'Courier accepted the offer. Live GPS tracking starts now.' : assignmentStates[order.id]==='picked_up' ? 'Courier picked up this order.' : 'Delivery offer sent. Waiting for courier acceptance.'}</Text> : null}
               {(order.status === 'ready' || (order.status === 'courier_assigned' && (!assignmentStates[order.id] || assignmentStates[order.id]==='offered' || assignmentStates[order.id]==='declined'))) && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
-              {canUseOwnDriver(order) ? (ownDriverWaitLeft(order) > 0
-                ? <Text style={{fontSize:12,color:'#5F6B5A'}}>No courier yet? You can use your own driver in {Math.ceil(ownDriverWaitLeft(order) / 60000)} min.</Text>
+              {canUseOwnDriver(order) ? (dispatchWaits.l&&!dispatchWaits.d?<Text style={{fontSize:12,color:'#5F6B5A'}}>{cmsLabel('lbl.settlement.dispatchLoading','Checking delivery options…')}</Text>:dispatchWaits.e||ownDriverWaitLeft(order)===null?<ErrBox e={cmsLabel('lbl.settlement.dispatchFailed','Could not check delivery options.')} retry={dispatchWaits.reload}/>:ownDriverWaitLeft(order)! > 0
+                ? <Text style={{fontSize:12,color:'#5F6B5A'}}>No courier yet? You can use your own driver in {Math.ceil(ownDriverWaitLeft(order)! / 60000)} min.</Text>
                 : <Btn label="Use my own driver" kind="secondary" disabled={!!busyId || !!ownBusy} onPress={() => { setOwnDriverOrder(order); setDriverName(''); setDriverPhone(''); }} />) : null}
               {order.self_delivery && order.status === 'picked_up' ? <View style={{gap:6}}>
                 <Text style={{fontSize:12,color:'#5F6B5A'}}>Your driver: {order.self_driver_name} · {order.self_driver_phone}</Text>
@@ -299,6 +316,7 @@ export function GoodiesOrdersPage() {
             </View>;
           })}
         </View>
+        <View style={{flexDirection:'row',gap:8,marginTop:14}}><Btn label="Previous page" kind="soft" disabled={page===0 || orders.l} onPress={() => setPage(p=>p-1)} /><Btn label="Next page" kind="soft" disabled={orders.l || (orders.d || []).length<100} onPress={() => setPage(p=>p+1)} /></View>
       </Pg>
       {ownDriverOrder ? <SheetShell title={'Your own driver · ' + ownDriverOrder.order_code} onClose={() => { if (!ownBusy) setOwnDriverOrder(null); }}>
         <Text style={{color:'#5F6B5A',fontSize:13,lineHeight:19,marginBottom:10}}>Live tracking is not available for your own driver. Add a delivery photo when the order arrives.</Text>

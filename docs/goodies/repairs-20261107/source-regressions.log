@@ -1,0 +1,37 @@
+Receipt action failed
+✔ REGRESSION A01: vendor errors never render raw database detail (231.218196ms)
+✔ REGRESSION A02: receipt errors use safe app-owned copy (64.681643ms)
+✔ REGRESSION A03: admin Reject requires and sends a reason (21.819492ms)
+✔ REGRESSION A04: rating Submit claims success only after backend success (63.549063ms)
+✔ REGRESSION A05: support confirmation truthfully acknowledges submission (47.142056ms)
+✔ REGRESSION A06: historical stores never acquire sample reviews (54.948456ms)
+✔ REGRESSION A07: missing store renders a safe fallback (64.725278ms)
+✔ REGRESSION A08: historical orders render without a catalog store (56.534238ms)
+✔ REGRESSION A09: pickup map uses valid coordinates and otherwise shows unavailable state (44.189219ms)
+✔ LIVE SNAPSHOT A10 (deployment pending): live product photo-array grants disagree with the vendor save payload (1.29487ms)
+✔ REGRESSION A11: fee save refuses unloaded defaults (20.399306ms)
+✔ REGRESSION A12: notification switches persist backend preference before local success (24.627124ms)
+✔ REGRESSION A13: business storefront selection is included in save (21.846291ms)
+✔ REGRESSION A14: secondary orders render canonical quantities and names (24.230506ms)
+✔ REGRESSION A15: admin analytics failures have a safe persistent error (20.157118ms)
+✔ REGRESSION A16: failed payout summary displays unavailable instead of zero (23.341688ms)
+✔ REGRESSION A17: placeholder catalogs cannot offer seeded builders (22.112656ms)
+✔ admin transport failures return a safe failure and do not expose exception details (20.245609ms)
+✔ failed review persistence cannot produce a success toast or local review (59.500259ms)
+✔ history paging merges cached rows, advances its server cursor and prevents concurrent duplicate reads (23.509897ms)
+✔ history paging cannot overwrite a newer refresh cursor or expose a prior account response (7.993187ms)
+✔ checkout locks before asynchronous validation and always releases after transport failure (10.461146ms)
+✔ vendor overview never renders a zero wallet or no-revenue claim after a failed summary request (23.048654ms)
+✔ review retries replace the local order review and refresh the matching public store only after persistence (33.894589ms)
+✔ older-order review hydration cannot commit across an account switch (12.964327ms)
+✔ review hydration queries only the current customer and page and preserves cache on backend failure (9.58052ms)
+✔ REGRESSION A27: builder outages expose retryable failure instead of an empty catalog (20.275884ms)
+✔ REGRESSION A28: checkout payment outages render retry and never a false missing wallet (222.257069ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1260.606859

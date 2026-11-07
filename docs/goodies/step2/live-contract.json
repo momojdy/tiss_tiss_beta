@@ -1,0 +1,17 @@
+{
+  "project": "ycbirmgppwavorwudlrv",
+  "scope": "Read-only production catalog inspection; no customer records or production writes",
+  "observations": [
+    {
+      "checked_at": "2026-11-06 13:35:23.929714+00",
+      "reviews_table": null,
+      "store_reviews_rpc": null,
+      "review_save_rpc": null,
+      "rating_summary_rpc": null,
+      "business_store_link_column": true,
+      "existing_save_handles_store_link": false,
+      "existing_save_definition_md5": "440577d85b4357c1ee32a5f875c7b86f",
+      "latest_migration": "20261104211532"
+    }
+  ]
+}

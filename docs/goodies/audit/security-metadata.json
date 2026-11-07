@@ -1,0 +1,107 @@
+{
+  "buckets": [
+    {
+      "id": "listing-photos",
+      "public": true
+    }
+  ],
+  "goodies_rls": [
+    {
+      "rls": true,
+      "table": "goodies_checkout_attempts"
+    },
+    {
+      "rls": true,
+      "table": "goodies_stripe_webhook_events"
+    },
+    {
+      "rls": true,
+      "table": "goodies_group_order_invites"
+    },
+    {
+      "rls": true,
+      "table": "goodies_order_cancellation_private"
+    },
+    {
+      "rls": true,
+      "table": "goodies_orders"
+    },
+    {
+      "rls": true,
+      "table": "goodies_order_groups"
+    },
+    {
+      "rls": true,
+      "table": "goodies_group_order_items"
+    },
+    {
+      "rls": true,
+      "table": "goodies_group_orders"
+    },
+    {
+      "rls": true,
+      "table": "goodies_group_order_members"
+    },
+    {
+      "rls": true,
+      "table": "goodies_geocode_cache"
+    },
+    {
+      "rls": true,
+      "table": "goodies_route_cache"
+    },
+    {
+      "rls": true,
+      "table": "goodies_store_schedules"
+    },
+    {
+      "rls": true,
+      "table": "goodies_card_refund_queue"
+    },
+    {
+      "rls": true,
+      "table": "goodies_promotions"
+    },
+    {
+      "rls": true,
+      "table": "goodies_builder_configs"
+    },
+    {
+      "rls": true,
+      "table": "goodies_ingredient_requests"
+    },
+    {
+      "rls": true,
+      "table": "goodies_delivery_assignments"
+    },
+    {
+      "rls": true,
+      "table": "goodies_courier_presence"
+    },
+    {
+      "rls": true,
+      "table": "goodies_courier_roster"
+    },
+    {
+      "rls": true,
+      "table": "goodies_library_ingredients"
+    },
+    {
+      "rls": true,
+      "table": "goodies_products"
+    },
+    {
+      "rls": true,
+      "table": "goodies_delivery_quotes"
+    },
+    {
+      "rls": true,
+      "table": "goodies_ingredient_rules"
+    },
+    {
+      "rls": true,
+      "table": "goodies_card_checkout_attempts"
+    }
+  ],
+  "legacy_proof_objects": 0
+}

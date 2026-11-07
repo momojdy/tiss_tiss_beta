@@ -297,7 +297,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     return <GoodiesCourierScreen onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated && appMode === 'vendor') {
-    return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+    return <BusinessSpaceScreen onOpenWallet={() => {setAppMode('buyer');setBuyerScreen('wallet');}} onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onSignOut={async () => { await supabase.auth.signOut(); setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated) {
     try {
