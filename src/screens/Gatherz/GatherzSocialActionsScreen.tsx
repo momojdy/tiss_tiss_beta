@@ -53,7 +53,13 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
     {mode === 'inv' ? circle ? <>
       <Notice title={circle.name} body="Create a demo invitation. No external message is sent." />
       {joined ? <>{input('Invitee name or email')}{button('Create invitation', () => { if (!text.trim()) return; c.invite(id, text.trim()); setText(''); setNotice('Invitation created locally.'); }, !text.trim())}</> : <Notice title="Members only" body="Join this circle to invite someone." />}
-      {c.invitations.filter(i => i.circleId === id).map(i => <Notice key={i.id} title={i.recipient} body={'Invitation ' + i.status} />)}
+      {c.invitations.filter(i => i.circleId === id).map(i => <View key={i.id}>
+        <Notice title={i.recipient} body={'Invitation ' + i.status} />
+        {i.status === 'pending' ? <View style={{ flexDirection: 'row', gap: 8 }}>
+          <Pressable accessibilityRole="button" onPress={() => c.respondInvitation(i.id, true)} style={{ padding: 12, borderRadius: 999, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text }}>Accept (demo)</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={() => c.respondInvitation(i.id, false)} style={{ padding: 12, borderRadius: 999, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text }}>Decline (demo)</Text></Pressable>
+        </View> : null}
+      </View>)}
     </> : <Notice title="Circle not found" /> : null}
     {mode === 'mem' ? circle ? <>
       <Notice title={circle.name} body={circle.members + ' members · Demo member directory'} />
