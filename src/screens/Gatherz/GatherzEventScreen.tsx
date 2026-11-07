@@ -56,7 +56,8 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       <SectionTitle title="Tickets" />
       {e.tiers.map(x => <Pressable key={x.name} accessibilityRole="button" accessibilityState={{ disabled: sold || phase === 'past' }} disabled={sold || phase === 'past'} onPress={() => nav.push('buy', e.id)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <View style={{ flex: 1 }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{x.name}</Text><Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>{x.admissions} {x.admissions === 1 ? 'admission' : 'admissions'} · {sold ? 'Sold out' : phase === 'past' ? 'Event ended' : 'Available'}</Text></View>
-        <Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{x.price === 0 ? 'Free' : '
+        <Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{x.price === 0 ? 'Free' : '$' + x.price.toFixed(2)}</Text>
+      </Pressable>)}
       <SectionTitle title="Organizer" />
       <Pressable accessibilityRole="button" onPress={() => nav.push('org', e.organizerName)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{e.organizerName}</Text><Text style={{ fontFamily: fonts.semibold, color: t.accent, marginTop: 4 }}>View organizer profile</Text></Pressable>
       <SectionTitle title="Policies" />
