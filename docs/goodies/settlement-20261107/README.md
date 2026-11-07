@@ -1,6 +1,6 @@
 # Goodies settlement implementation — 7 November 2026
 
-**Implemented and locally verified. NOT production ready as a complete deployed ecosystem. Deployment remains paused.** No migrations, secrets, charges, real wallet movements, external transfers or CMS publication were performed. Both pull requests remain drafts. This supersedes the earlier missing-settlement candidate finding; the live backend remains unchanged.
+**Implemented; local checks and paired GitHub CI passed. NOT production ready as a complete deployed ecosystem. Deployment remains paused.** No migrations, secrets, charges, real wallet movements, external transfers or CMS publication were performed. Both pull requests remain drafts. This supersedes the earlier missing-settlement candidate finding; the live backend remains unchanged.
 
 ## Approved rules implemented
 
@@ -35,7 +35,7 @@ Backend: migration 15 creates private RLS accounting/destination/payout/event re
 | Ordered 15-migration package | PASS | Applied to a synthetic captured-schema database; rollback/retry coverage remains in the prior suite. No production restore test. |
 | Settlement authorization, hold, cap, FX, payout and cash commission | PASS | 17 isolated SQL scenarios in [backend-tests.log](backend-tests.log), including anonymous/cross-business/staff denials, private tables, refunds/disputes, pause/recovery and dispatch/calendar rules. |
 | Full backend regression suite | PASS | 58 tests plus 17 steps. Includes an intentional reproduction of the **defective captured deployed moderation function**; that passing reproduction is evidence of a live defect, not a readiness pass. Provider transports are synthetic/mocked. |
-| True concurrent financial requests | PASS, local financial logic | Four native PostgreSQL 17.6 races: cash cap, competing payouts, duplicate credit and duplicate commission debit. Actual overlapping lock contention checked. [Local log](earlier-native-postgres-races.log) precedes final own-driver/calendar additions; the CI job reruns the final exact package. |
+| True concurrent financial requests | PASS, final package in CI | Four native PostgreSQL 17.6 races: cash cap, competing payouts, duplicate credit and duplicate commission debit. Actual overlapping lock contention checked. [Local log](earlier-native-postgres-races.log) precedes final own-driver/calendar additions; [customer CI](customer-github-ci.json) then passed the final exact package, including the financial concurrency job. |
 | Customer/vendor source/component regression checks | PASS | 64 tests (12 settlement, 28 prior reproductions, 7 reviews, 6 recovery, 6 CMS, 5 translation). One legacy gallery-grant reproduction confirms a deployed defect; candidate grants are tested separately. |
 | Admin tests | PASS | 26 access/CMS/preview/settlement tests, including exact destination-currency amount/receipt validation and safe server-error handling. |
 | TypeScript and lint | PASS | Both repositories typecheck; configured customer lint and new settlement-file lint pass. |
@@ -46,6 +46,12 @@ Backend: migration 15 creates private RLS accounting/destination/payout/event re
 | Real provider, installed cross-role lifecycle, signed builds, GPS/background/push | NOT VERIFIED | Approved sandbox/hosted role access, signing credentials and physical devices are unavailable here. No real transaction was used. |
 
 The read-only [security advisor snapshot](live-security-advisor.json) is preserved. Intentionally private RLS tables without policies and gated SECURITY DEFINER APIs are not automatically vulnerabilities. New candidate permissions were tested in isolation; this does not certify all deployed role boundaries. Existing unrelated advisor findings were not indiscriminately changed.
+
+## Paired GitHub verification
+
+PASS — customer run [42347539126](https://github.com/momojdy/tiss_tiss_beta/actions/runs/42347539126) at head `d1bec27ab3451d61b249cd211a5a57e9eedc7e7b`: validation (CMS/source regressions, TypeScript, lint, web export, Expo Doctor), Edge Function checks/tests, and final PostgreSQL financial concurrency. Both push and PR runs passed.
+
+PASS — admin run [42347520202](https://github.com/momojdy/tiss-admin/actions/runs/42347520202) at `1f50ec03c23421c5971e248a553e2592a5743bb1`: tests, TypeScript, Android/iOS bundles. Both push and PR runs passed. Companion source revisions are pinned explicitly. The final follow-up changes only evidence/docs, not executable source. Workflow job/step outcomes are preserved in the adjacent JSON files; the runner retains bundle/race artifacts. Local artifact retrieval was blocked by its download host, so no downloaded artifact is represented here.
 
 ## Screen/control inventory
 

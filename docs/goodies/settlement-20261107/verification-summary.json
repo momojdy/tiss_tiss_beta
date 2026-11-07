@@ -24,7 +24,7 @@
       "status": "PASS",
       "cases": 4,
       "environment": "network-isolated PostgreSQL 17.6",
-      "limit": "local run preceded final own-driver/calendar additions; latest exact migration is rerun in GitHub CI"
+      "limit": "Final exact 15-migration package and all four races passed in customer GitHub CI"
     },
     "typecheck": {
       "status": "PASS",
@@ -70,5 +70,23 @@
     "signedBuilds": "NOT VERIFIED",
     "physicalGpsAndPush": "NOT VERIFIED",
     "productionDeployment": "NOT VERIFIED"
+  },
+  "githubCi": {
+    "customer": {
+      "status": "PASS",
+      "head": "d1bec27ab3451d61b249cd211a5a57e9eedc7e7b",
+      "run": 42347539126,
+      "jobs": [
+        "validate",
+        "edge-functions",
+        "settlement-concurrency"
+      ]
+    },
+    "admin": {
+      "status": "PASS",
+      "head": "1f50ec03c23421c5971e248a553e2592a5743bb1",
+      "run": 42347520202
+    },
+    "followupScope": "evidence/documentation only"
   }
 }
