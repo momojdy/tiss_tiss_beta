@@ -26,6 +26,7 @@ export function GatherzCommunityProvider({ children }: { children: React.ReactNo
     }),
     setMomentVisibility: (id, isPublic) => setMoments(v => v.map(m => m.id === id ? { ...m, public: isPublic } : m)),
     addPost: (circleId, text) => setPosts(v => [{ id: 'post-' + Date.now() + '-' + v.length, circleId, author: 'me', text, createdAt: new Date().toISOString(), replies: [] }, ...v]),
+    editPost: (postId, text) => setPosts(v => v.map(p => p.id === postId && p.author === 'me' && text.trim() ? { ...p, text: text.trim() } : p)),
     addReply: (postId, text) => setPosts(v => v.map(p => p.id === postId ? { ...p, replies: [...p.replies, { id: 'reply-' + Date.now() + '-' + p.replies.length, author: 'me', text }] } : p)),
     invite: (circleId, recipient) => setInvitations(v => [{ id: 'invite-' + Date.now() + '-' + v.length, circleId, recipient, status: 'pending' }, ...v]),
     respondInvitation: (id, accept) => {
