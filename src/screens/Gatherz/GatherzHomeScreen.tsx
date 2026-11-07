@@ -19,7 +19,7 @@ export default function GatherzHomeScreen() {
   return (
     <Page>
       <Header title="gatherz." onBack={nav.back} right={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><IconButton name="help-circle-outline" label="Help" onPress={() => nav.push('help')} /><IconButton name={t.name === 'dark' ? 'white-balance-sunny' : 'weather-night'} label="Toggle theme" onPress={toggleTheme} /><IconButton name="bell-outline" label="Notifications" onPress={() => nav.push('notif')} /></View>} />
-      <Text style={{ fontFamily: fonts.bold, fontSize: 24, color: t.text, paddingHorizontal: 20 }}>Find your people.{'\n'}Live the experience.</Text>
+      <View style={{ paddingHorizontal: 20, paddingTop: 12 }}><Text style={{ fontFamily: fonts.semibold, fontSize: 28, letterSpacing: -0.8, color: t.text }}>Make moments happen.</Text><Text style={{ fontFamily: fonts.regular, fontSize: 15, color: t.mute, marginTop: 6 }}>Find your people. Live the experience.</Text></View>
       <Pressable accessibilityRole="button" accessibilityLabel="Search experiences and places" onPress={() => nav.push('explore')} style={{ marginHorizontal: 20, marginTop: 16, height: 52, borderRadius: radius.input, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16 }}>
         <MaterialCommunityIcons name="magnify" size={22} color={t.mute} /><Text style={{ fontFamily: fonts.regular, color: t.mute }}>Search experiences, places…</Text>
       </Pressable>
@@ -28,7 +28,7 @@ export default function GatherzHomeScreen() {
       {error ? <Notice title="Events could not load" body="Please check your connection and try again." action="Try again" onAction={reload} /> : null}
       {!loading && !error && !events.length ? <Notice title="No events in this category" body="Try another category or check back soon." action="Show all" onAction={() => setCat('All')} /> : null}
       {events.length ? <>
-        <SectionTitle title="Featured" />
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 20 }}><SectionTitle title="Featured" /><MaterialCommunityIcons name="arrow-right" size={20} color={t.accent} accessibilityLabel="Swipe featured events" /></View>
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={events.slice(0, 3)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <View><EventCard wide event={item} onPress={() => open(item.id)} /><View pointerEvents="none" style={{ position: 'absolute', top: 12, left: 12, borderRadius: 99, backgroundColor: t.accent, paddingHorizontal: 10, paddingVertical: 5 }}><Text style={{ color: t.onAccent, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1 }}>FEATURED</Text></View></View>} />
       </> : null}
       {events.length ? <Pressable accessibilityRole="button" onPress={() => nav.push('prefs')} style={{ marginHorizontal: 20, marginTop: 20, padding: 16, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10 }}><MaterialCommunityIcons name="creation-outline" size={22} color={t.accent} /><View style={{ flex: 1 }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Recommended for you</Text><Text style={{ color: t.mute, marginTop: 4, fontSize: 12 }}>Choose your interests to personalize events.</Text></View><MaterialCommunityIcons name="chevron-right" size={22} color={t.mute} /></Pressable> : null}
@@ -59,6 +59,7 @@ export default function GatherzHomeScreen() {
           </View>)}
         </View>
       </> : null}
+      {events.length ? <><View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingRight: 20 }}><SectionTitle title="New in Your City" /><Pressable accessibilityRole="button" onPress={() => nav.push("explore")}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Explore</Text></Pressable></View><FlatList horizontal showsHorizontalScrollIndicator={false} data={[...events].sort((a, b) => Date.parse(b.startsAt) - Date.parse(a.startsAt)).slice(0, 4)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} /></> : null}
     </Page>
   );
 }
