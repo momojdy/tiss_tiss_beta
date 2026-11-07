@@ -110,6 +110,24 @@ function mix(a: number[], b: number[], t: number): string {
   return 'rgb(' + Math.round(a[0] + (b[0] - a[0]) * t) + ',' + Math.round(a[1] + (b[1] - a[1]) * t) + ',' + Math.round(a[2] + (b[2] - a[2]) * t) + ')';
 }
 
+/** Position each strap glyph along the moving centre line. */
+export function glyphLayout(pts: Point[], offs: number[], opacity: number): number[] {
+  'worklet';
+  const cum: number[] = [0];
+  for (let i = 1; i <= N; i++) cum[i] = cum[i - 1] + Math.sqrt((pts[i].x - pts[i - 1].x) ** 2 + (pts[i].y - pts[i - 1].y) ** 2);
+  const out: number[] = [];
+  for (let k = 0; k < offs.length; k++) {
+    const s = offs[k];
+    if (s < 0 || s > cum[N]) { out.push(0, 0, 0, 0); continue; }
+    let j = 0;
+    while (j < N - 1 && cum[j + 1] < s) j++;
+    const seg = cum[j + 1] - cum[j] || 1, t = (s - cum[j]) / seg;
+    const dx = pts[j + 1].x - pts[j].x, dy = pts[j + 1].y - pts[j].y;
+    out.push(pts[j].x + dx * t, pts[j].y + dy * t, Math.atan2(dy, dx), opacity);
+  }
+  return out;
+}
+
 export function strapGeometry(pts: Point[], phi: number, dark: boolean): Geo {
   'worklet';
   const F = dark ? [20, 16, 42] : [14, 11, 29];
