@@ -19,7 +19,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
   const count = qty * selected.admissions;
   const allowed = !!repo.placeDemoOrder && count <= event.remaining && Date.parse(event.startsAt) > Date.now();
   const totals = checkoutTotals(selected.price, qty, checkout.eventId === id ? checkout.promo : '');
-  const submit = () => { if (!allowed) return; update({ eventId: id, tierName: selected.name, quantity: qty }); nav.push('rv', id); };
+  const submit = () => { if (!allowed) return; update({ eventId: id, tierName: selected.name, quantity: qty, orderId: '', failure: '' }); nav.push('rv', id); };
   return <Page>
     <Header title="Checkout" subtitle="Demo mode · no payment collected" onBack={nav.back} />
     <SectionTitle title={event.title} />
