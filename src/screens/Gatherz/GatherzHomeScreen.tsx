@@ -54,11 +54,7 @@ export default function GatherzHomeScreen() {
                 <View style={{ padding: 12, gap: 5 }}>
                   <Text numberOfLines={2} style={{ color: t.text, fontFamily: fonts.bold, fontSize: 15 }}>{e.title}</Text>
                   <Text numberOfLines={2} style={{ color: t.mute, fontFamily: fonts.regular, fontSize: 12 }}>{e.venue} · {e.area}</Text>
-                  <Text style={{ color: t.accent, fontFamily: fonts.semibold, fontSize: 12 }}>{price === 0 ? 'Free' : 'From 
-      </> : null}
-    </Page>
-  );
-} + price}</Text>
+                  <Text style={{ color: t.accent, fontFamily: fonts.semibold, fontSize: 12 }}>{price === 0 ? 'Free' : `From ${price}`}</Text>
                 </View>
               </Pressable>;
             })}
