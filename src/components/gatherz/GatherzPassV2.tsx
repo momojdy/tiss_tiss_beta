@@ -461,17 +461,6 @@ export default function GatherzPassV2({ admission, event, viewportHeight, scanMo
         </View>
       ) : null}
 
-      {!scanMode && <Animated.Text pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, bottom: 70, textAlign: 'center', fontSize: 11, color: th.dtx, fontFamily: FONT.reg }, hintStyle]}>
-        Drag the card to toss · tap to flip
-      </Animated.Text>}
-      {!scanMode && <View style={{ position: 'absolute', left: 0, right: 0, bottom: 14, flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 12, flexWrap: 'wrap' }}>
-        {([['Flip', doFlip], ['Sway', doSway]] as const).map(([label, fn]) => (
-          <Pressable key={label} accessibilityRole="button" onPress={fn}
-            style={{ minHeight: 44, paddingHorizontal: 15, borderRadius: 99, borderWidth: 1, borderColor: 'rgba(139,124,199,.4)', backgroundColor: th.dockbg, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontFamily: FONT.med, fontSize: 12, color: th.dtx }}>{label}</Text>
-          </Pressable>
-        ))}
-      </View>}
     </View>
   );
 }
