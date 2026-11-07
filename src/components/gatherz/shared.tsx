@@ -10,11 +10,13 @@ import { useGatherz } from '../../features/gatherz/GatherzContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 export const NAV_HEIGHT = 96;
 const HEADER_HEIGHT = 100;
+const STRIPE_HEIGHT = 20;
 
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
   const t = useGatherzTheme(); const { nav, root } = useGatherz();
-  return <View style={{ marginBottom: 0 }}>
+  const showStripe = !(root && title === 'gatherz.');
+  return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
       {(!root || title === 'gatherz.') ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="chevron-left" size={30} color={t.text} />
@@ -24,6 +26,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
       </View>
       {right}
     </View>
+    {showStripe ? <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} /> : null}
   </View>;
 }
 export function IconButton({ name, label, onPress }: { name: React.ComponentProps<typeof MaterialCommunityIcons>['name']; label: string; onPress: () => void }) {
