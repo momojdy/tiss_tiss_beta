@@ -14,8 +14,7 @@ const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const STRAP_TEXT = 'GATHERZ · BY WANTISS · GATHERZ · BY WANTISS';
 const GW = 6, GH = 8;
-// Use consistent glyph advances; WANTISS must remain one uninterrupted word.
-const GLYPH_OFFS: number[] = (() => { let o = 8; return Array.from(STRAP_TEXT).map(ch => { const at = o; o += ch === ' ' ? 3.4 : ch === '·' ? 3.8 : 5.3; return at; }); })();
+const GLYPH_OFFS: number[] = (() => { let o = 8; return Array.from(STRAP_TEXT).map(ch => { const at = o; o += (ch === ' ' ? 1.8 : ch === '·' ? 1.6 : 4.2) + 2.2; return at; }); })();
 const BLUR_OK = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) >= 31);
 function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: Animated.SharedValue<number[]>; color: string; family: string }) {
   const st = useAnimatedStyle(() => {
@@ -340,10 +339,8 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         <Animated.View style={[{ position: 'absolute', left: -12, top: -22, width: 24, height: 44 }, clipStyle]}>
           <Svg width={24} height={44} viewBox="-12 -22 24 44">
             <Defs><SvgLinearGradient id="metalC" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
-            {/* A closed clamp covers the ribbon at the attachment point; no exposed white loop over the cord. */}
             <Rect x={-8} y={-15} width={16} height={11} rx={2.5} fill="url(#metalC)" stroke="#5A3B8C" />
-            <Rect x={-5} y={-5} width={10} height={18} rx={3} fill="#8B7CC7" stroke="#5A3B8C" strokeWidth={1.2} />
-            <Rect x={-2.5} y={-3} width={5} height={14} rx={1.5} fill="#251C40" opacity={0.8} />
+            <Rect x={-4} y={-5} width={8} height={24} rx={4} fill="none" stroke="url(#metalC)" strokeWidth={2.6} />
           </Svg>
         </Animated.View>
       </View>
