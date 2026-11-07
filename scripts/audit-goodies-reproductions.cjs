@@ -6,7 +6,7 @@ function extract(repo,file,name){const filename=path.join(repo,file),ast=ts.crea
  const code=ts.isFunctionDeclaration(found)?found.getText(ast)+'\nmodule.exports='+name+';':'module.exports='+found.initializer.getText(ast)+';';
  const javascript=ts.transpileModule(code,{fileName:filename,compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React}}).outputText;
  const tags=new Set();function tag(node){if(ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node))tags.add(node.tagName.getText(ast));ts.forEachChild(node,tag);}tag(found);
- return context=>{const module={exports:{}};const env={paymentOptionsGeneration:0,builderLoadGeneration:0,S:{accountId:'synthetic'},module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),notifyStoreReviewsChanged(){},readOrderReviews:async()=>{},...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
+ return context=>{const module={exports:{}};const env={isGoodiesOnlyBusiness:()=>false,paymentOptionsGeneration:0,builderLoadGeneration:0,S:{accountId:'synthetic'},module,exports:module.exports,React,Date,console,require,...Object.fromEntries([...tags].filter(x=>!x.includes('.')).map(x=>[x,x])),goodiesRequest:(...args)=>context.supabase.rpc(...args),notifyStoreReviewsChanged(){},readOrderReviews:async()=>{},...context};vm.runInNewContext(javascript,env,{filename});return module.exports;};
 }
 const label=(_id,fallback)=>fallback;function flatten(node){if(Array.isArray(node))return node.map(flatten).join(' ');if(node==null||typeof node==='boolean')return '';if(typeof node!=='object')return String(node);return flatten(node.props?.children);}function elements(node,out=[]){if(Array.isArray(node))node.forEach(x=>elements(x,out));else if(node&&typeof node==='object'){out.push(node);elements(node.props?.children,out);}return out;}
 test('REGRESSION A01: vendor errors never render raw database detail',()=>{
@@ -75,7 +75,7 @@ test('REGRESSION A15: admin analytics failures have a safe persistent error',asy
 });
 test('REGRESSION A16: failed payout summary displays unavailable instead of zero',()=>{
  let query=0;const app={biz:{id:'synthetic-business'},tick:0,range:{from:'2026-11-01',to:'2026-11-06'},meta:{payout:null,rules:[],minWithdrawal:5}};
- const PayoutsPanel=extract(root,'src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx','PayoutsPanel')({useApp:()=>app,useS:()=>({}),useTheme:()=>({}),useState:value=>[value,()=>{}],useQ:()=>query++===0?{d:null,l:false,e:'Summary request failed'}:{d:[],l:false,e:null},LIGHT:{blue:'#00f'},money:v=>'$'+v});
+ const PayoutsPanel=extract(root,'src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx','LegacyPayoutsPanel')({useApp:()=>app,useS:()=>({}),useTheme:()=>({}),useState:value=>[value,()=>{}],useQ:()=>query++===0?{d:null,l:false,e:'Summary request failed'}:{d:[],l:false,e:null},LIGHT:{blue:'#00f'},money:v=>'$'+v});
  const text=flatten(PayoutsPanel());assert.ok(!text.includes('$0'));assert.ok(text.includes('Unavailable'));
 });
 test('REGRESSION A17: placeholder catalogs cannot offer seeded builders',async()=>{

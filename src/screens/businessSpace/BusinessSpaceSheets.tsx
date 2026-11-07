@@ -1,3 +1,6 @@
+import {WANTISS_LANGUAGES} from '../../lib/locales';
+import {isGoodiesBusiness} from '../../services/goodiesSettlement';
+import {GoodiesPayoutSetupSheet,GoodiesPayoutRequestSheet} from './BusinessSpaceGoodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -87,7 +90,7 @@ export function DeleteBusinessSheet() {
 }
 export function LanguageSheet() {
   const app = useApp(), t = useTheme();
-  return <SheetShell title="Language" onClose={() => app.sheet('profile')}><Divided>{LANGUAGES.map(l => <Row key={l} onPress={() => { app.setLang(l); app.sheet('profile'); app.toast(`Language set to ${l}`); }} title={l} right={app.lang === l ? <Icon name="check" size={20} color={t.blue} /> : null} />)}</Divided></SheetShell>;
+  return <SheetShell title="Language" onClose={() => app.sheet('profile')}><Divided>{(isGoodiesBusiness(app)?WANTISS_LANGUAGES.map(row=>row.label):LANGUAGES).map(l => <Row key={l} onPress={() => { app.setLang(l); app.sheet('profile'); app.toast(`Language set to ${l}`); }} title={l} right={app.lang === l ? <Icon name="check" size={20} color={t.blue} /> : null} />)}</Divided></SheetShell>;
 }
 export function CustomRangeSheet() {
   const app = useApp(), s = useS();
@@ -145,7 +148,8 @@ export function PromoSheet() {
     </SheetShell>
   );
 }
-export function PayoutSetupSheet() {
+export function PayoutSetupSheet() {const app=useApp();return isGoodiesBusiness(app)?<GoodiesPayoutSetupSheet key={app.biz.id+app.userId}/>:<LegacyPayoutSetupSheet/>;}
+function LegacyPayoutSetupSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), p = app.meta.payout;
   const start = () => a.run(async () => {
     const { data, error } = await supabase.functions.invoke('payout-onboarding', { body: { business_id: app.biz.id, return_url: Linking.createURL('/business/payouts') } });
@@ -163,7 +167,8 @@ export function PayoutSetupSheet() {
     </SheetShell>
   );
 }
-export function PayoutRequestSheet() {
+export function PayoutRequestSheet() {const app=useApp();return isGoodiesBusiness(app)?<GoodiesPayoutRequestSheet key={app.biz.id+app.userId}/>:<LegacyPayoutRequestSheet/>;}
+function LegacyPayoutRequestSheet() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz, rules = app.meta.rules, payOK = app.meta.payout?.status === 'verified', min = app.meta.minWithdrawal;
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: b.id, p_from: app.range.from, p_to: app.range.to, p_feature: null }), [b.id]);
   const usage = useQ(() => rpc<Record<string, number>>('payout_usage', { p_business: b.id }), [b.id]);

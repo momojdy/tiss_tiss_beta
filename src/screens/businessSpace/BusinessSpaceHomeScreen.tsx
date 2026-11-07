@@ -1,3 +1,4 @@
+import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import QRCode from 'react-native-qrcode-svg';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -21,7 +22,7 @@ import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, S
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
-  const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
+  const sum = useQ(() => getBusinessFinancialSummary(app), [biz.id, range.from, range.to, app.tick,isGoodiesOnlyBusiness(app)]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
   const cnt = useQ(async () => ({
@@ -32,7 +33,7 @@ export function Home() {
     o: await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id))
   }), [biz.id, app.tick]);
   const validMoney = (value:unknown) => (typeof value==='number'||(typeof value==='string'&&!!value.trim()))&&Number.isFinite(Number(value));
-  const summaryValid = !!sum.d && validMoney(sum.d.available) && validMoney(sum.d.pending) && validMoney(sum.d.revenue);
+  const summaryValid = !!sum.d && (!isGoodiesOnlyBusiness(app)||sum.d.business_id===biz.id) && validMoney(sum.d.available) && validMoney(sum.d.pending) && validMoney(sum.d.revenue);
   const d = summaryValid ? sum.d : null, refreshing = !!d && (sum.l || act.l);
   const payOK = meta.payout?.status === 'verified', hasF = meta.feats.length > 0;
   const top = (d?.features ?? []).filter((x: any) => Number(x.amount) > 0).sort((a: any, b: any) => b.amount - a.amount);
@@ -51,8 +52,8 @@ export function Home() {
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
       {biz.verification === 'restricted' ? <Banner tone="bad" icon="alert-circle-outline" text="Your business is restricted. View details" onPress={() => app.go('registration')} /> : null}
-      {!payOK && biz.verification !== 'restricted' ? <Banner text={meta.payout ? 'Payout setup is in review' : 'Add a payout method to receive earnings'} onPress={() => app.sheet('payout')} /> : null}
-      {sum.l&&!d ? <Skel h={140} /> : sum.e||!d ? <ErrBox e="Financial summary unavailable." retry={() => { sum.reload(); app.bump(); }} /> : <WalletCard available={d.available} pending={d.pending} />}
+      {!isGoodiesOnlyBusiness(app) && !payOK && biz.verification !== 'restricted' ? <Banner text={meta.payout ? 'Payout setup is in review' : 'Add a payout method to receive earnings'} onPress={() => app.sheet('payout')} /> : null}
+      {sum.l&&!d ? <Skel h={140} /> : sum.e||!d ? <ErrBox e="Financial summary unavailable." retry={() => { sum.reload(); app.bump(); }} /> : <WalletCard available={d.available} pending={d.pending} title={isGoodiesOnlyBusiness(app)?"GOODIES AVAILABLE":undefined} payoutLabel={isGoodiesOnlyBusiness(app)?d.wallet_ready?"Wantiss Wallet":"Create Wantiss Wallet":undefined} />}
       {act.e ? <ErrBox e={act.e} retry={act.reload} /> : act.l&&!act.d ? <Skel h={65} /> : null}
       {cnt.e ? <ErrBox e={cnt.e} retry={cnt.reload} /> : null}
       {!hasF ? (

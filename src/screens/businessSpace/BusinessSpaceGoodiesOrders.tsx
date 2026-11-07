@@ -1,3 +1,5 @@
+import {setGoodiesCashAcceptance} from '../../services/goodiesSettlement';
+import {label as cmsLabel} from '../../features/Goodies/content';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Text, View, Pressable, Image } from 'react-native';
 import { decode } from 'base64-arraybuffer';
@@ -6,7 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../lib/supabase';
 import {GOODIES_DELIVERY_PROOF_BUCKET} from '../../services/goodiesDeliveryProof';
-import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill } from './BusinessSpaceShared';
+import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill,errText } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; payment_refunded_amount?: number | null; courier_id?: string | null;
@@ -56,9 +58,7 @@ export function GoodiesOrdersPage() {
   const [driverName, setDriverName] = useState('');
   const [driverPhone, setDriverPhone] = useState('');
   const [ownBusy, setOwnBusy] = useState('');
-  const OWN_DRIVER_WAIT_MS = 20 * 60 * 1000;
-  const ownDriverReadyAt = (order: GoodiesOrder) => new Date(order.ready_at || order.updated_at || order.created_at).getTime();
-  const ownDriverWaitLeft = (order: GoodiesOrder) => Math.max(0, ownDriverReadyAt(order) + OWN_DRIVER_WAIT_MS - now);
+  const ownDriverWaitLeft = (order: GoodiesOrder) => dispatchWaits.d?.businessId===app.biz.id&&!dispatchWaits.e&&Number.isFinite(dispatchWaits.d.waits[order.id])?Math.max(0,dispatchWaits.d.waits[order.id]*1000-Math.max(0,now-dispatchWaits.d.receivedAt)):null;
   const canUseOwnDriver = (order: GoodiesOrder) => order.order_type === 'delivery' && (order.status === 'ready' || order.status === 'courier_assigned') && !['accepted', 'picked_up'].includes(assignmentStates[order.id] || '');
   const submitOwnDriver = async () => {
     if (!ownDriverOrder) return;
@@ -130,6 +130,7 @@ export function GoodiesOrdersPage() {
       .subscribe();
     return()=>{active=false;void supabase.removeChannel(channel);};
   },[app.biz.id,orders.d]);
+  const dispatchWaits=useQ(async()=>{const {data,error}=await goodiesOrdersRequest('goodies_vendor_dispatch_waits',{p_business:app.biz.id});if(error||!data||typeof data.waits!=='object'||Object.values(data.waits).some(value=>typeof value!=='number'||!Number.isFinite(value)))throw new Error('Delivery options unavailable');return{businessId:app.biz.id,waits:data.waits as Record<string,number>,receivedAt:Date.now()};},[app.biz.id,orders.d,Math.floor(now/30000)]);
   const pending = useMemo(() => (orders.d || []).filter(o => o.status === 'placed'), [orders.d]);
   useEffect(() => {
     const ids = [...new Set((orders.d || []).flatMap(order => (Array.isArray(order.items) ? order.items : []).map((item: any) => String(item?.id || '')).filter(Boolean)))];
@@ -154,10 +155,9 @@ export function GoodiesOrdersPage() {
     setCashBusy(true);
     try {
       const next = !cashEnabled;
-      const {error} = await goodiesOrdersRequest('goodies_set_store_cash_policy', {p_store_id:storeId,p_enabled:next});
-      if (error) throw error;
+      await setGoodiesCashAcceptance(app.biz.id,next);
       setCashEnabled(next);
-      app.toast(next ? 'Cash on delivery enabled. It is still shown only when an available courier accepts COD.' : 'Cash on delivery disabled.');
+      app.toast(next ? cmsLabel('lbl.settlement.cashEnabled','Cash on delivery enabled for your store.') : 'Cash on delivery disabled.');
     } catch (e:any) { app.toast('Could not update cash-on-delivery settings. Please try again.'); }
     finally { setCashBusy(false); }
   };
@@ -220,7 +220,7 @@ export function GoodiesOrdersPage() {
       await orders.reload();
       app.bump();
     } catch (e: any) {
-      app.toast('Could not update this order. Refresh and try again.');
+      app.toast(e?.code==='P4201'||e?.code==='P4202'?errText(e):'Could not update this order. Refresh and try again.');
       await orders.reload();
     } finally { setBusyId(''); }
   };
@@ -296,8 +296,8 @@ export function GoodiesOrdersPage() {
               {order.status === 'placed' ? <Text style={{ color: canRespond ? '#A15B13' : '#A33D3D', fontWeight: '700', fontSize: 12 }}>{remaining(order.acceptance_deadline_at, now)}</Text> : null}
               {order.status === 'courier_assigned' ? <Text style={{fontSize:12,color:'#5F6B5A'}}>{assignmentStates[order.id]==='accepted' ? 'Courier accepted the offer. Live GPS tracking starts now.' : assignmentStates[order.id]==='picked_up' ? 'Courier picked up this order.' : 'Delivery offer sent. Waiting for courier acceptance.'}</Text> : null}
               {(order.status === 'ready' || (order.status === 'courier_assigned' && (!assignmentStates[order.id] || assignmentStates[order.id]==='offered' || assignmentStates[order.id]==='declined'))) && order.order_type === 'delivery' ? <Btn label={order.courier_id ? 'Reassign courier' : 'Assign courier'} disabled={!!busyId} onPress={() => void openDispatch(order)} /> : null}
-              {canUseOwnDriver(order) ? (ownDriverWaitLeft(order) > 0
-                ? <Text style={{fontSize:12,color:'#5F6B5A'}}>No courier yet? You can use your own driver in {Math.ceil(ownDriverWaitLeft(order) / 60000)} min.</Text>
+              {canUseOwnDriver(order) ? (dispatchWaits.l&&!dispatchWaits.d?<Text style={{fontSize:12,color:'#5F6B5A'}}>{cmsLabel('lbl.settlement.dispatchLoading','Checking delivery options…')}</Text>:dispatchWaits.e||ownDriverWaitLeft(order)===null?<ErrBox e={cmsLabel('lbl.settlement.dispatchFailed','Could not check delivery options.')} retry={dispatchWaits.reload}/>:ownDriverWaitLeft(order)! > 0
+                ? <Text style={{fontSize:12,color:'#5F6B5A'}}>No courier yet? You can use your own driver in {Math.ceil(ownDriverWaitLeft(order)! / 60000)} min.</Text>
                 : <Btn label="Use my own driver" kind="secondary" disabled={!!busyId || !!ownBusy} onPress={() => { setOwnDriverOrder(order); setDriverName(''); setDriverPhone(''); }} />) : null}
               {order.self_delivery && order.status === 'picked_up' ? <View style={{gap:6}}>
                 <Text style={{fontSize:12,color:'#5F6B5A'}}>Your driver: {order.self_driver_name} · {order.self_driver_phone}</Text>

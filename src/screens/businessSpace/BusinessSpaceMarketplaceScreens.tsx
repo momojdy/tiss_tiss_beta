@@ -1,3 +1,5 @@
+import {isGoodiesBusiness} from '../../services/goodiesSettlement';
+import {GoodiesPayoutsPanel} from './BusinessSpaceGoodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -132,7 +134,8 @@ export function ListingsPanel() {
     </View>
   );
 }
-export function PayoutsPanel() {
+export function PayoutsPanel() {const app=useApp();return isGoodiesBusiness(app)?<GoodiesPayoutsPanel key={app.biz.id+app.userId}/>:<LegacyPayoutsPanel/>;}
+function LegacyPayoutsPanel() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
   const [tab, setTab] = useState('Ledger'), [f, setF] = useState('All'), [pg_, setPg] = useState(1);
   const sum = useQ(() => rpc<any>('dashboard_range', { p_business: b.id, p_from: app.range.from, p_to: app.range.to, p_feature: null }), [b.id, app.tick]);

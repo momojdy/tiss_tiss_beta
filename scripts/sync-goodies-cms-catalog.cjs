@@ -3,7 +3,7 @@ const fs=require('node:fs'),path=require('node:path');
 const {analyze}=require('./goodies-cms-source.cjs');
 const adminRoot=path.resolve(process.argv[2]||path.resolve(__dirname,'../../tiss-admin'));
 const result=analyze();
-const criticalPages=new Set(['Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation']);
+const criticalPages=new Set(['Vendor settlement','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation']);
 const criticalKeys=[...new Set([...result.pages.filter(p=>criticalPages.has(p.name)).flatMap(p=>p.fields),...result.restrictionTexts.map(r=>r.id),...result.entries.filter(e=>/^lbl\.(checkout|orders?|payments?|card|addcard|notifications?)/i.test(e.id)).map(e=>e.id),...result.references.filter(r=>['actions.ts','friendlyError.ts','serverSync.ts'].includes(r.source)).map(r=>r.id)])].sort();
 const target=path.join(adminRoot,'src/features/admin/goodiesConsumer');
 fs.writeFileSync(path.join(target,'criticalContentKeys.json'),JSON.stringify(criticalKeys,null,2)+'\n');

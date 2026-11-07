@@ -3433,6 +3433,146 @@
       ]
     },
     {
+      "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.body",
+      "text": "Courier cash remittance was confirmed. Open payouts to review your balance.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.body",
+      "text": "Your weekly Goodies commission settlement is due within 24 hours.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due.body",
+      "text": "Your weekly Goodies commission settlement is due. Open payouts to review the amount.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_paid.body",
+      "text": "Your Goodies cash-order commission payment is completed.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_paid.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.body",
+      "text": "Your Goodies settlement details were updated. Open payouts to review them.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_verified.body",
+      "text": "Your Goodies settlement details were updated. Open payouts to review them.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_verified.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_completed.body",
+      "text": "Your Goodies payout is completed.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_completed.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_failed.body",
+      "text": "Your Goodies payout could not be completed. Open payouts to review it.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_failed.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_processing.body",
+      "text": "Your Goodies settlement details were updated. Open payouts to review them.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_processing.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_requested.body",
+      "text": "Your Goodies payout request was recorded. Open payouts to check its status.",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_requested.title",
+      "text": "Goodies settlement update",
+      "pages": [
+        "Notification templates"
+      ]
+    },
+    {
       "id": "lbl.notification.newVendorOrder.body",
       "text": "{details}",
       "pages": [
@@ -7573,6 +7713,559 @@
       ]
     },
     {
+      "id": "lbl.settlement.account",
+      "text": "Account number",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.all",
+      "text": "All",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.amount",
+      "text": "Amount (USD)",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.available",
+      "text": "GOODIES AVAILABLE",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.bank",
+      "text": "Bank transfer",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.bankName",
+      "text": "Bank name",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.bankTiming",
+      "text": "7–14 business days",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.cashCommission",
+      "text": "Cash-order commission",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.cashEnabled",
+      "text": "Cash on delivery enabled for your store.",
+      "pages": [
+        "Vendor orders"
+      ]
+    },
+    {
+      "id": "lbl.settlement.cashLimit",
+      "text": "Settle Goodies cash-order commission to accept more cash orders.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.cashSales",
+      "text": "Cash sales awaiting settlement",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.cashUnavailable",
+      "text": "Cash ordering is temporarily unavailable. Please try again later.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.checkHistory",
+      "text": "Check payout history before changing an unresolved request.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.confirm",
+      "text": "Confirm payout",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.countryHT",
+      "text": "Haiti",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.countryPH",
+      "text": "Philippines",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.countryUS",
+      "text": "United States",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.createWallet",
+      "text": "Create Wantiss Wallet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.destinationReview",
+      "text": "External payout details require verification before use.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.digitalTiming",
+      "text": "2 days",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.dispatchFailed",
+      "text": "Could not check delivery options.",
+      "pages": [
+        "Vendor orders"
+      ]
+    },
+    {
+      "id": "lbl.settlement.dispatchLoading",
+      "text": "Checking delivery options…",
+      "pages": [
+        "Vendor orders"
+      ]
+    },
+    {
+      "id": "lbl.settlement.due",
+      "text": "Settle by",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entryCommissionPaid",
+      "text": "Commission paid",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entryFee",
+      "text": "Commission owed",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entryOther",
+      "text": "Settlement",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entryPayout",
+      "text": "Payout",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entryRefund",
+      "text": "Refund",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.entrySale",
+      "text": "Sale",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.failed",
+      "text": "Could not complete this request. Check your history and try again.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.fees",
+      "text": "Fees",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.history",
+      "text": "Payout history",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.historyFailed",
+      "text": "Could not load settlement history.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.hold",
+      "text": "Earnings become available 24 hours after confirmed delivery. Disputed amounts remain held.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.holder",
+      "text": "Account holder",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.instant",
+      "text": "Instant once earnings are available",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.ledger",
+      "text": "Ledger",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.loading",
+      "text": "Loading…",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.methods",
+      "text": "Manage payout methods",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.methodUnavailable",
+      "text": "Currently unavailable",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.next",
+      "text": "Next page",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.noHistory",
+      "text": "No settlement transactions yet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.openWallet",
+      "text": "Open Wantiss Wallet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.optionsFailed",
+      "text": "Payout methods are unavailable.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.owed",
+      "text": "Commission and platform fees owed",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.ownerRequired",
+      "text": "Only a business owner can request payouts or manage payout details.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.paused",
+      "text": "New cash orders are paused until settlement. Accepted orders continue.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.payCommission",
+      "text": "Pay commission with Wantiss Wallet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.payouts",
+      "text": "Payouts",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.pending",
+      "text": "Pending",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.phone",
+      "text": "Wallet phone number",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.previous",
+      "text": "Previous page",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.quoteExpired",
+      "text": "Refresh payout methods to get a current exchange quote.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.receive",
+      "text": "You receive",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.recovery",
+      "text": "Balance requiring review",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.refunds",
+      "text": "Refunds",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.request",
+      "text": "Request payout",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.requested",
+      "text": "Payout requested. Check history for its status.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.reviewPending",
+      "text": "Payout details submitted for verification.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.routing",
+      "text": "Routing / SWIFT code",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.sales",
+      "text": "Sales",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.save",
+      "text": "Submit for verification",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.saveFailed",
+      "text": "Could not save payout details. Check the fields and try again.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusCompleted",
+      "text": "Completed",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusFailed",
+      "text": "Failed",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusHeld",
+      "text": "On hold",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusProcessing",
+      "text": "Processing",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusRecorded",
+      "text": "Recorded",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusRejected",
+      "text": "Rejected",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusRequested",
+      "text": "Requested",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusReversed",
+      "text": "Reversed",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusReview",
+      "text": "Under review",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.statusVerified",
+      "text": "Verified",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.summaryFailed",
+      "text": "Goodies settlement details are unavailable.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.unavailable",
+      "text": "Unavailable",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.wallet",
+      "text": "Wantiss Wallet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.walletAutomatic",
+      "text": "Wantiss Wallet is available without an external payout account.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.walletFunds",
+      "text": "Add funds to your Wantiss Wallet before paying commission.",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
+      "id": "lbl.settlement.walletSent",
+      "text": "Sent to your Wantiss Wallet",
+      "pages": [
+        "Vendor settlement"
+      ]
+    },
+    {
       "id": "lbl.sheetAcceptingOrders",
       "text": "Accepting orders",
       "pages": [
@@ -10906,6 +11599,99 @@
       ]
     },
     {
+      "name": "Vendor settlement",
+      "collections": [],
+      "routes": [],
+      "fields": [
+        "lbl.settlement.wallet",
+        "lbl.settlement.bank",
+        "lbl.settlement.instant",
+        "lbl.settlement.bankTiming",
+        "lbl.settlement.digitalTiming",
+        "lbl.settlement.walletFunds",
+        "lbl.settlement.methodUnavailable",
+        "lbl.settlement.quoteExpired",
+        "lbl.settlement.failed",
+        "lbl.settlement.statusCompleted",
+        "lbl.settlement.statusRecorded",
+        "lbl.settlement.pending",
+        "lbl.settlement.statusRequested",
+        "lbl.settlement.statusProcessing",
+        "lbl.settlement.statusHeld",
+        "lbl.settlement.statusFailed",
+        "lbl.settlement.statusReversed",
+        "lbl.settlement.statusVerified",
+        "lbl.settlement.statusRejected",
+        "lbl.settlement.statusReview",
+        "lbl.settlement.entrySale",
+        "lbl.settlement.entryFee",
+        "lbl.settlement.entryCommissionPaid",
+        "lbl.settlement.entryRefund",
+        "lbl.settlement.entryPayout",
+        "lbl.settlement.entryOther",
+        "lbl.settlement.all",
+        "lbl.settlement.sales",
+        "lbl.settlement.fees",
+        "lbl.settlement.refunds",
+        "lbl.settlement.payouts",
+        "lbl.settlement.available",
+        "lbl.settlement.loading",
+        "lbl.settlement.unavailable",
+        "lbl.settlement.summaryFailed",
+        "lbl.settlement.createWallet",
+        "lbl.settlement.hold",
+        "lbl.settlement.recovery",
+        "lbl.settlement.cashCommission",
+        "lbl.settlement.cashSales",
+        "lbl.settlement.owed",
+        "lbl.settlement.due",
+        "lbl.settlement.paused",
+        "lbl.settlement.openWallet",
+        "lbl.settlement.payCommission",
+        "lbl.settlement.request",
+        "lbl.settlement.methods",
+        "lbl.settlement.ledger",
+        "lbl.settlement.history",
+        "lbl.settlement.historyFailed",
+        "lbl.settlement.noHistory",
+        "lbl.settlement.previous",
+        "lbl.settlement.next",
+        "lbl.settlement.checkHistory",
+        "lbl.settlement.walletSent",
+        "lbl.settlement.requested",
+        "lbl.settlement.amount",
+        "lbl.settlement.receive",
+        "lbl.settlement.confirm",
+        "lbl.settlement.countryHT",
+        "lbl.settlement.countryPH",
+        "lbl.settlement.countryUS",
+        "lbl.settlement.reviewPending",
+        "lbl.settlement.saveFailed",
+        "lbl.settlement.optionsFailed",
+        "lbl.settlement.ownerRequired",
+        "lbl.settlement.walletAutomatic",
+        "lbl.settlement.holder",
+        "lbl.settlement.account",
+        "lbl.settlement.phone",
+        "lbl.settlement.bankName",
+        "lbl.settlement.routing",
+        "lbl.settlement.destinationReview",
+        "lbl.settlement.save",
+        "lbl.settlement.cashLimit",
+        "lbl.settlement.cashUnavailable"
+      ]
+    },
+    {
+      "name": "Vendor orders",
+      "collections": [],
+      "routes": [],
+      "fields": [
+        "lbl.settlement.cashEnabled",
+        "lbl.settlement.dispatchLoading",
+        "lbl.settlement.dispatchFailed"
+      ]
+    },
+    {
       "name": "Notification templates",
       "collections": [],
       "routes": [],
@@ -10957,7 +11743,27 @@
         "lbl.notification.goodies_vendor_product_review.title",
         "lbl.notification.goodies_vendor_product_review.body",
         "lbl.notification.goodies_admin_product_submission.title",
-        "lbl.notification.goodies_admin_product_submission.body"
+        "lbl.notification.goodies_admin_product_submission.body",
+        "lbl.notification.goodies_vendor_settlement_payout_requested.title",
+        "lbl.notification.goodies_vendor_settlement_payout_requested.body",
+        "lbl.notification.goodies_vendor_settlement_payout_processing.title",
+        "lbl.notification.goodies_vendor_settlement_payout_processing.body",
+        "lbl.notification.goodies_vendor_settlement_payout_completed.title",
+        "lbl.notification.goodies_vendor_settlement_payout_completed.body",
+        "lbl.notification.goodies_vendor_settlement_payout_failed.title",
+        "lbl.notification.goodies_vendor_settlement_payout_failed.body",
+        "lbl.notification.goodies_vendor_settlement_commission_paid.title",
+        "lbl.notification.goodies_vendor_settlement_commission_paid.body",
+        "lbl.notification.goodies_vendor_settlement_destination_verified.title",
+        "lbl.notification.goodies_vendor_settlement_destination_verified.body",
+        "lbl.notification.goodies_vendor_settlement_destination_rejected.title",
+        "lbl.notification.goodies_vendor_settlement_destination_rejected.body",
+        "lbl.notification.goodies_vendor_settlement_cash_remittance_received.title",
+        "lbl.notification.goodies_vendor_settlement_cash_remittance_received.body",
+        "lbl.notification.goodies_vendor_settlement_commission_due.title",
+        "lbl.notification.goodies_vendor_settlement_commission_due.body",
+        "lbl.notification.goodies_vendor_settlement_commission_due_soon.title",
+        "lbl.notification.goodies_vendor_settlement_commission_due_soon.body"
       ]
     }
   ],
@@ -21155,6 +21961,678 @@
       "fallback": "Done"
     },
     {
+      "id": "lbl.settlement.wallet",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 8,
+      "fallback": "Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.bank",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 8,
+      "fallback": "Bank transfer"
+    },
+    {
+      "id": "lbl.settlement.instant",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 9,
+      "fallback": "Instant once earnings are available"
+    },
+    {
+      "id": "lbl.settlement.bankTiming",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 9,
+      "fallback": "7–14 business days"
+    },
+    {
+      "id": "lbl.settlement.digitalTiming",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 9,
+      "fallback": "2 days"
+    },
+    {
+      "id": "lbl.settlement.walletFunds",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 11,
+      "fallback": "Add funds to your Wantiss Wallet before paying commission."
+    },
+    {
+      "id": "lbl.settlement.methodUnavailable",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 11,
+      "fallback": "Currently unavailable"
+    },
+    {
+      "id": "lbl.settlement.quoteExpired",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 11,
+      "fallback": "Refresh payout methods to get a current exchange quote."
+    },
+    {
+      "id": "lbl.settlement.failed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 11,
+      "fallback": "Could not complete this request. Check your history and try again."
+    },
+    {
+      "id": "lbl.settlement.statusCompleted",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Completed"
+    },
+    {
+      "id": "lbl.settlement.statusRecorded",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Recorded"
+    },
+    {
+      "id": "lbl.settlement.pending",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Pending"
+    },
+    {
+      "id": "lbl.settlement.statusRequested",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Requested"
+    },
+    {
+      "id": "lbl.settlement.statusProcessing",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Processing"
+    },
+    {
+      "id": "lbl.settlement.statusHeld",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "On hold"
+    },
+    {
+      "id": "lbl.settlement.statusFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Failed"
+    },
+    {
+      "id": "lbl.settlement.statusReversed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Reversed"
+    },
+    {
+      "id": "lbl.settlement.statusVerified",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Verified"
+    },
+    {
+      "id": "lbl.settlement.statusRejected",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Rejected"
+    },
+    {
+      "id": "lbl.settlement.statusReview",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 13,
+      "fallback": "Under review"
+    },
+    {
+      "id": "lbl.settlement.entrySale",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Sale"
+    },
+    {
+      "id": "lbl.settlement.entryFee",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Commission owed"
+    },
+    {
+      "id": "lbl.settlement.entryCommissionPaid",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Commission paid"
+    },
+    {
+      "id": "lbl.settlement.entryRefund",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Refund"
+    },
+    {
+      "id": "lbl.settlement.entryPayout",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Payout"
+    },
+    {
+      "id": "lbl.settlement.entryOther",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 14,
+      "fallback": "Settlement"
+    },
+    {
+      "id": "lbl.settlement.all",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 30,
+      "fallback": "All"
+    },
+    {
+      "id": "lbl.settlement.sales",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 30,
+      "fallback": "Sales"
+    },
+    {
+      "id": "lbl.settlement.fees",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 30,
+      "fallback": "Fees"
+    },
+    {
+      "id": "lbl.settlement.refunds",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 30,
+      "fallback": "Refunds"
+    },
+    {
+      "id": "lbl.settlement.payouts",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 30,
+      "fallback": "Payouts"
+    },
+    {
+      "id": "lbl.settlement.available",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 33,
+      "fallback": "GOODIES AVAILABLE"
+    },
+    {
+      "id": "lbl.settlement.loading",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 33,
+      "fallback": "Loading…"
+    },
+    {
+      "id": "lbl.settlement.unavailable",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 33,
+      "fallback": "Unavailable"
+    },
+    {
+      "id": "lbl.settlement.pending",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 33,
+      "fallback": "Pending"
+    },
+    {
+      "id": "lbl.settlement.summaryFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 34,
+      "fallback": "Goodies settlement details are unavailable."
+    },
+    {
+      "id": "lbl.settlement.createWallet",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 36,
+      "fallback": "Create Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.hold",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 37,
+      "fallback": "Earnings become available 24 hours after confirmed delivery. Disputed amounts remain held."
+    },
+    {
+      "id": "lbl.settlement.recovery",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 38,
+      "fallback": "Balance requiring review"
+    },
+    {
+      "id": "lbl.settlement.cashCommission",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 39,
+      "fallback": "Cash-order commission"
+    },
+    {
+      "id": "lbl.settlement.cashSales",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 39,
+      "fallback": "Cash sales awaiting settlement"
+    },
+    {
+      "id": "lbl.settlement.owed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 39,
+      "fallback": "Commission and platform fees owed"
+    },
+    {
+      "id": "lbl.settlement.due",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 39,
+      "fallback": "Settle by"
+    },
+    {
+      "id": "lbl.settlement.paused",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 39,
+      "fallback": "New cash orders are paused until settlement. Accepted orders continue."
+    },
+    {
+      "id": "lbl.settlement.openWallet",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 40,
+      "fallback": "Open Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.payCommission",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 40,
+      "fallback": "Pay commission with Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.request",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 43,
+      "fallback": "Request payout"
+    },
+    {
+      "id": "lbl.settlement.methods",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 44,
+      "fallback": "Manage payout methods"
+    },
+    {
+      "id": "lbl.settlement.ledger",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 45,
+      "fallback": "Ledger"
+    },
+    {
+      "id": "lbl.settlement.history",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 45,
+      "fallback": "Payout history"
+    },
+    {
+      "id": "lbl.settlement.ledger",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 45,
+      "fallback": "Ledger"
+    },
+    {
+      "id": "lbl.settlement.history",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 45,
+      "fallback": "Payout history"
+    },
+    {
+      "id": "lbl.settlement.ledger",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 45,
+      "fallback": "Ledger"
+    },
+    {
+      "id": "lbl.settlement.historyFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 47,
+      "fallback": "Could not load settlement history."
+    },
+    {
+      "id": "lbl.settlement.entryPayout",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 47,
+      "fallback": "Payout"
+    },
+    {
+      "id": "lbl.settlement.entryCommissionPaid",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 47,
+      "fallback": "Commission paid"
+    },
+    {
+      "id": "lbl.settlement.noHistory",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 47,
+      "fallback": "No settlement transactions yet"
+    },
+    {
+      "id": "lbl.settlement.previous",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 48,
+      "fallback": "Previous page"
+    },
+    {
+      "id": "lbl.settlement.next",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 48,
+      "fallback": "Next page"
+    },
+    {
+      "id": "lbl.settlement.checkHistory",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 69,
+      "fallback": "Check payout history before changing an unresolved request."
+    },
+    {
+      "id": "lbl.settlement.walletSent",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 71,
+      "fallback": "Sent to your Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.requested",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 71,
+      "fallback": "Payout requested. Check history for its status."
+    },
+    {
+      "id": "lbl.settlement.failed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 72,
+      "fallback": "Could not complete this request. Check your history and try again."
+    },
+    {
+      "id": "lbl.settlement.request",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 75,
+      "fallback": "Request payout"
+    },
+    {
+      "id": "lbl.settlement.summaryFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 76,
+      "fallback": "Goodies settlement details are unavailable."
+    },
+    {
+      "id": "lbl.settlement.available",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 77,
+      "fallback": "GOODIES AVAILABLE"
+    },
+    {
+      "id": "lbl.settlement.methodUnavailable",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 78,
+      "fallback": "Currently unavailable"
+    },
+    {
+      "id": "lbl.settlement.methodUnavailable",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 79,
+      "fallback": "Currently unavailable"
+    },
+    {
+      "id": "lbl.settlement.amount",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 80,
+      "fallback": "Amount (USD)"
+    },
+    {
+      "id": "lbl.settlement.quoteExpired",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 81,
+      "fallback": "Refresh payout methods to get a current exchange quote."
+    },
+    {
+      "id": "lbl.settlement.receive",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 82,
+      "fallback": "You receive"
+    },
+    {
+      "id": "lbl.settlement.methods",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 83,
+      "fallback": "Manage payout methods"
+    },
+    {
+      "id": "lbl.settlement.history",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 84,
+      "fallback": "Payout history"
+    },
+    {
+      "id": "lbl.settlement.createWallet",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 85,
+      "fallback": "Create Wantiss Wallet"
+    },
+    {
+      "id": "lbl.settlement.confirm",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 86,
+      "fallback": "Confirm payout"
+    },
+    {
+      "id": "lbl.settlement.countryHT",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 93,
+      "fallback": "Haiti"
+    },
+    {
+      "id": "lbl.settlement.countryPH",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 93,
+      "fallback": "Philippines"
+    },
+    {
+      "id": "lbl.settlement.countryUS",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 93,
+      "fallback": "United States"
+    },
+    {
+      "id": "lbl.settlement.reviewPending",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 94,
+      "fallback": "Payout details submitted for verification."
+    },
+    {
+      "id": "lbl.settlement.saveFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 94,
+      "fallback": "Could not save payout details. Check the fields and try again."
+    },
+    {
+      "id": "lbl.settlement.methods",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 95,
+      "fallback": "Manage payout methods"
+    },
+    {
+      "id": "lbl.settlement.optionsFailed",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 96,
+      "fallback": "Payout methods are unavailable."
+    },
+    {
+      "id": "lbl.settlement.ownerRequired",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 97,
+      "fallback": "Only a business owner can request payouts or manage payout details."
+    },
+    {
+      "id": "lbl.settlement.walletAutomatic",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 98,
+      "fallback": "Wantiss Wallet is available without an external payout account."
+    },
+    {
+      "id": "lbl.settlement.holder",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 102,
+      "fallback": "Account holder"
+    },
+    {
+      "id": "lbl.settlement.account",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 103,
+      "fallback": "Account number"
+    },
+    {
+      "id": "lbl.settlement.phone",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 103,
+      "fallback": "Wallet phone number"
+    },
+    {
+      "id": "lbl.settlement.bankName",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 104,
+      "fallback": "Bank name"
+    },
+    {
+      "id": "lbl.settlement.routing",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 104,
+      "fallback": "Routing / SWIFT code"
+    },
+    {
+      "id": "lbl.settlement.destinationReview",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 105,
+      "fallback": "External payout details require verification before use."
+    },
+    {
+      "id": "lbl.settlement.save",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "line": 107,
+      "fallback": "Submit for verification"
+    },
+    {
+      "id": "lbl.settlement.cashLimit",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 344,
+      "fallback": "Settle Goodies cash-order commission to accept more cash orders."
+    },
+    {
+      "id": "lbl.settlement.cashUnavailable",
+      "page": "Vendor settlement",
+      "source": "../../screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 344,
+      "fallback": "Cash ordering is temporarily unavailable. Please try again later."
+    },
+    {
+      "id": "lbl.settlement.cashEnabled",
+      "page": "Vendor orders",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 160,
+      "fallback": "Cash on delivery enabled for your store."
+    },
+    {
+      "id": "lbl.settlement.dispatchLoading",
+      "page": "Vendor orders",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 299,
+      "fallback": "Checking delivery options…"
+    },
+    {
+      "id": "lbl.settlement.dispatchFailed",
+      "page": "Vendor orders",
+      "source": "../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 299,
+      "fallback": "Could not check delivery options."
+    },
+    {
       "id": "lbl.notification.orderAccepted.title",
       "page": "Notification templates",
       "source": "i18n/notificationCatalog.json",
@@ -21489,6 +22967,146 @@
       "source": "i18n/notificationCatalog.json",
       "line": 1,
       "fallback": "{details}"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_requested.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_requested.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies payout request was recorded. Open payouts to check its status."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_processing.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_processing.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies settlement details were updated. Open payouts to review them."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_completed.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_completed.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies payout is completed."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_failed.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_payout_failed.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies payout could not be completed. Open payouts to review it."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_paid.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_paid.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies cash-order commission payment is completed."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_verified.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_verified.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies settlement details were updated. Open payouts to review them."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your Goodies settlement details were updated. Open payouts to review them."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Courier cash remittance was confirmed. Open payouts to review your balance."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your weekly Goodies commission settlement is due. Open payouts to review the amount."
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.title",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Goodies settlement update"
+    },
+    {
+      "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.body",
+      "page": "Notification templates",
+      "source": "i18n/notificationCatalog.json",
+      "line": 1,
+      "fallback": "Your weekly Goodies commission settlement is due within 24 hours."
     },
     {
       "id": "lbl.legalTermsTitle",

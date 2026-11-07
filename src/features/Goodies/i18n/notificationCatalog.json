@@ -190,5 +190,85 @@
   {
     "id": "lbl.notification.goodies_admin_product_submission.body",
     "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_requested.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_requested.body",
+    "text": "Your Goodies payout request was recorded. Open payouts to check its status."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_processing.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_processing.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_completed.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_completed.body",
+    "text": "Your Goodies payout is completed."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_failed.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_failed.body",
+    "text": "Your Goodies payout could not be completed. Open payouts to review it."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_paid.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_paid.body",
+    "text": "Your Goodies cash-order commission payment is completed."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_verified.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_verified.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.body",
+    "text": "Courier cash remittance was confirmed. Open payouts to review your balance."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due.body",
+    "text": "Your weekly Goodies commission settlement is due. Open payouts to review the amount."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.body",
+    "text": "Your weekly Goodies commission settlement is due within 24 hours."
   }
 ]

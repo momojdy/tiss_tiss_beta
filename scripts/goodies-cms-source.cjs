@@ -5,6 +5,8 @@ const root = path.resolve(__dirname, '../src/features/Goodies');
 const pageNames = {WantissEntry:'Wantiss entry',GroupOrderSheet:'Group orders',GroupOrderModal:'Group orders',ScheduleSheet:'Scheduling',ScheduleInline:'Scheduling',SegSchedule:'Scheduling',ReviewSheet:'Review sheet',ContactsSheet:'Contact numbers sheet',CtForm:'Contact number form',Home:'Home',Cats:'Categories',CatList:'Category / store results',Explore:'Explore',Search:'Search',Promos:'Promotions',FlashDeals:'Flash deals',Notifs:'Notifications',Store:'Store',StoreReviews:'Store reviews',Product:'Product',ProductFoot:'Product',Cart:'Cart',Checkout:'Checkout',CheckoutFoot:'Checkout',Confirm:'Order confirmation',Track:'Order tracking',Orders:'Order history',Favs:'Favorites',Help:'Help / FAQs',Settings:'Settings',Profile:'Profile',Addresses:'Addresses',Contact:'Contact support',StoreChat:'Store conversation',LivePayments:'Payment methods',CardAuthentication:'Card verification',ByoScreen:'Build Your Own',ByoFoot:'Build Your Own',GoodiesCourierScreen:'Courier',GroupOrderPage:'Group orders',ImportSheet:'Preview import',Sheets:'Sheets and bottom sheets',GoodiesApp:'Shared navigation and access states',Account:'Account subpages',WalletAddNewCardScreen:'Add card'};
 function files(dir) { return fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry => entry.isDirectory()?files(path.join(dir,entry.name)):/\.tsx?$/.test(entry.name)?[path.join(dir,entry.name)]:[]); }
 function pageFor(node, ast, rel) {
+  if(rel.endsWith('BusinessSpaceGoodiesOrders.tsx'))return 'Vendor orders';
+  if(rel.includes('businessSpace/')) return 'Vendor settlement';
   for(let ancestor=node.parent;ancestor;ancestor=ancestor.parent) if(ts.isIfStatement(ancestor)&&rel==='components/Sheets.tsx'){const kind=/^k === ['"]([^'"]+)['"]$/.exec(ancestor.expression.getText(ast));if(kind) return 'Sheets · '+kind[1];}
   if(rel.endsWith('WalletAddNewCardScreen.tsx')) return 'Add card';
   let name='';
@@ -21,7 +23,7 @@ function analyze() {
   const entry=entries.get(id);if(!entry.pages.includes(page))entry.pages.push(page);
   references.push({id,page,source,line,fallback:text});
  };
- for(const filename of [...files(root),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx')]){
+ for(const filename of [...files(root),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
   const source=fs.readFileSync(filename,'utf8'),ast=ts.createSourceFile(filename,source,99,true),rel=path.relative(root,filename);
   function visit(node){
    const line=ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1;

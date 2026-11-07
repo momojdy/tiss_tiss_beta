@@ -1,4 +1,4 @@
-import {goodiesBusinessNotificationTarget} from '../../../src/features/Goodies/notifications.ts';
+import {goodiesBusinessNotificationTarget,goodiesNotificationWorkspace} from '../../../src/features/Goodies/notifications.ts';
 function equal(actual:unknown,expected:unknown){if(JSON.stringify(actual)!==JSON.stringify(expected))throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);}
 Deno.test('vendor order, moderation, ingredient and message notices open their established pages',()=>{
   equal(goodiesBusinessNotificationTarget({destination:'business_goodies_orders',metadata:{business_id:'store-a',order_id:'order-a'}},'store-a'),{page:'goodiesOrders',arg:{focus:'order-a'}});
@@ -11,3 +11,7 @@ Deno.test('push payloads cannot navigate another business or an unrelated page',
   equal(goodiesBusinessNotificationTarget({page:'finance',business_id:'store-a'},'store-a'),null);
   equal(goodiesBusinessNotificationTarget({page:'goodiesProducts',business_id:'store-a'},'store-a'),{page:'goodiesProducts'});
 });
+
+Deno.test('settlement notices open the scoped vendor payout panel',()=>{equal(goodiesBusinessNotificationTarget({notification_type:'goodies_vendor_settlement_payout_completed',destination:'business_goodies_payouts',metadata:{business_id:'store-a'}},'store-a'),{page:'payouts'});equal(goodiesBusinessNotificationTarget({destination:'business_goodies_payouts',metadata:{business_id:'store-b'}},'store-a'),null);});
+
+Deno.test('notification workspace switches are limited to the vendor owned business list',()=>{equal(goodiesNotificationWorkspace({metadata:{business_id:'store-b'}},'store-a',['store-a','store-b']),'store-b');equal(goodiesNotificationWorkspace({metadata:{business_id:'stranger'}},'store-a',['store-a']),null);equal(goodiesNotificationWorkspace({},'store-a',['store-a']),'store-a');});

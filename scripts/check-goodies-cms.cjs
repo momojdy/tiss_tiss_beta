@@ -14,5 +14,6 @@ console.log(`PASS: ${current.entries.length} registered fields; ${current.routes
 console.log('Scope: source coverage. Hosted publication, full visual behavior and provider-owned UI require separate verification.');
 const criticalKeys=require('../../tiss-admin/src/features/admin/goodiesConsumer/criticalContentKeys.json');
 const reviewMigration=fs.readFileSync(path.resolve(__dirname,'../supabase/migrations/20261107014239_goodies_failure_state_content_review.sql'),'utf8');
-for(const key of criticalKeys)assert.ok(reviewMigration.includes("'"+key+"'"),'Add this critical field to a versioned publication-review guard migration: '+key);
+const settlementGuard=fs.readFileSync(path.resolve(__dirname,'../supabase/migrations/20261107021612_goodies_vendor_settlement.sql'),'utf8');
+for(const key of criticalKeys)assert.ok(reviewMigration.includes("'"+key+"'")||(key.startsWith('lbl.settlement.')&&settlementGuard.includes('lbl.settlement.%'))||(key.startsWith('lbl.notification.goodies_vendor_settlement_')&&settlementGuard.includes('lbl.notification.goodies_vendor_settlement_%')),'Add this critical field to a versioned publication-review guard migration: '+key);
 console.log(`PASS: ${criticalKeys.length} critical fields covered by the candidate server publication guard.`);
