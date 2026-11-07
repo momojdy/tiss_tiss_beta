@@ -16,7 +16,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
   if (loading) return <Page><Header title="Checkout" onBack={nav.back} /><Notice loading body="Loading ticket options…" /></Page>;
   if (error || !event) return <Page><Header title="Checkout" onBack={nav.back} /><Notice title="Checkout unavailable" body={error || 'Event not found'} action="Try again" onAction={reload} /></Page>;
   const selected = event.tiers.find(x => x.name === tierName) ?? event.tiers[0];
-  const count = qty * selected.admissions, total = qty * selected.price;
+  const count = qty * selected.admissions;
   const allowed = !!repo.placeDemoOrder && count <= event.remaining && Date.parse(event.startsAt) > Date.now();
   const totals = checkoutTotals(selected.price, qty, checkout.eventId === id ? checkout.promo : '');
   const submit = () => { if (!allowed) return; update({ eventId: id, tierName: selected.name, quantity: qty }); nav.push('rv', id); };
@@ -49,7 +49,7 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
       <Text style={{ fontFamily: fonts.bold, color: t.text, fontSize: 22, marginTop: 8 }}>Total: ${totals.total.toFixed(2)}</Text>
       <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 8 }}>This is a local demo. No money is charged and these tickets cannot be used for entry.</Text>
     </View>
-    {!allowed && !busy ? <Notice body={count > event.remaining ? 'Not enough tickets available.' : 'Checkout is not available.'} /> : null}
+    {!allowed ? <Notice body={count > event.remaining ? 'Not enough tickets available.' : 'Checkout is not available.'} /> : null}
     <Pressable accessibilityRole="button" accessibilityState={{ disabled: !allowed }} disabled={!allowed} onPress={submit} style={{ marginHorizontal: 20, marginTop: 20, borderRadius: 999, backgroundColor: allowed ? t.accent : t.soft, minHeight: 50, alignItems: 'center', justifyContent: 'center' }}>
       <Text style={{ color: allowed ? t.onAccent : t.mute, fontFamily: fonts.bold }}>Review order · ${totals.total.toFixed(2)}</Text>
     </Pressable>
