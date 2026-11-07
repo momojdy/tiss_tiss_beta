@@ -1,3 +1,5 @@
+**7 November settlement update:** the earlier missing-settlement finding below is superseded for the candidate source by [the implemented settlement package and evidence](settlement-20261107/README.md). The complete prepared package now has 15 migrations. Production is unchanged and deployment remains paused. Historical figures below describe earlier evidence, not the latest suite.
+
 # Goodies implementation status — 6 November 2026
 
 **NOT PRODUCTION READY. Candidate fixes are implemented and locally verified; production remains unchanged.** This is not a completed release acceptance or a claim that every control has been authenticated-click-tested.
@@ -57,7 +59,7 @@ Logs and checksums are under [release-evidence](release-evidence/). No real cust
 
 Read-only main inspection still reports migration `20261104211532` as latest. Ten candidate RPCs and the new reviews table are absent; private proof storage is absent. See [live-deployment-contracts.json](release-evidence/live-deployment-contracts.json). Therefore candidate backend fixes are **not yet live**, and deploying clients alone is unsafe.
 
-**FAIL — vendor settlement remains unimplemented in the referenced live flow.** `wallet_ledger`, `dashboard_range` and payout RPCs referenced by Business Space are absent. Order commission snapshots do not establish a spendable payout balance. An approved provider, recipient/hold policy and cash-commission treatment are required before settlement can be implemented and tested. Other missing generic Business Space RPCs still affect shared activity/registration/promotion/search paths; they are not all Goodies-specific and were not fabricated as compatibility shims.
+**Historical/live-baseline FAIL — vendor settlement is absent from the referenced deployed flow.** `wallet_ledger`, `dashboard_range` and payout RPCs referenced by Business Space are absent. Order commission snapshots do not establish a spendable payout balance. An approved provider, recipient/hold policy and cash-commission treatment are required before settlement can be implemented and tested. Other missing generic Business Space RPCs still affect shared activity/registration/promotion/search paths; they are not all Goodies-specific and were not fabricated as compatibility shims.
 
 **PASS — local preview route implementation and regression checks.** The preview now derives all 33 routes from the source catalog and mirrors the current group-order/add-card/card-authentication components behind isolated local transports. Field identities handle duplicate/dynamic text. **NOT VERIFIED — authenticated visual interaction and hosted edit → publish → customer reload.** External bank/camera surfaces have explicit preview boundaries. See the admin repository `docs/goodies/step1/README.md`; no production content or schema was changed.
 

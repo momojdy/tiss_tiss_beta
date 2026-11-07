@@ -26,16 +26,18 @@ The moderation migration was amended because read-only main metadata confirms it
 
 14. [20261107014239_goodies_failure_state_content_review.sql](../../supabase/migrations/20261107014239_goodies_failure_state_content_review.sql) — SHA-256 `2c3fcb2f9cf500d2e9b0295fe3421fee2e5be3a64a1fadbaf341ab855e0731af`. Extends the critical-label guard to recovery messages; requires items 12–13. New candidate, not covered by the superseded deployment approval.
 
+15. [20261107021612_goodies_vendor_settlement.sql](../../supabase/migrations/20261107021612_goodies_vendor_settlement.sql) — SHA-256 `2b4ae31efcb908983928c6b8ea38d250c6a3a9e3d10394df9337aa4005362398`. Scoped Goodies settlement, the 5,000 HTG cash-sales cap, 24-hour hold, audited manual payout operations, financial notifications and critical settlement copy. Requires items 1–14. Defaults disabled; historical opening reconciliation and a separately approved activation are mandatory. See [settlement evidence](settlement-20261107/README.md).
+
 ## Required rollout sequence
 
 1. Review [implementation status](IMPLEMENTATION-STATUS.md), migration SQL/checksums and the read-only live drift evidence. Confirm the production backup/recovery capability and operator access; production PITR/restore has NOT been tested in this environment.
-2. Production approval is granted. Once recovery prerequisites are confirmed, apply the reviewed migrations sequentially to the exact main project, preserving a deployment ledger. Each file is transactional; do not run real financial tests in production.
+2. Only after renewed production deployment approval and recovery prerequisites are confirmed, apply the reviewed migrations sequentially to the exact main project, preserving a deployment ledger. Each file is transactional; do not run real financial tests in production.
 3. Re-read function bodies, column grants, RLS/policies and storage configuration. Verify the reviewed definitions were deployed, including rejection preservation, gallery ownership validation, reviews and publication guards. Do not certify deployment from migration names alone.
 4. Deploy the paired customer/vendor and admin code revisions together after backend availability checks. Candidate clients require RPCs absent from main today; clients alone are not a safe rollout. Source commits are listed in [code-changes.json](release-evidence/code-changes.json).
 5. Keep private-proof uploads disabled until compatible consumer/admin proof viewers are deployed and tested. Enable the existing protected rollout setting only with approval. Do not migrate/delete legacy objects blindly. The earlier audit observed zero legacy proof objects.
 6. Use approved synthetic role accounts and an approved payment sandbox for hosted acceptance. Confirm checkout → vendor fulfillment → courier → customer receipt → admin oversight, cancellation/refunds, duplicate retries, offline recovery and notifications. Fixture-based SQL and mocked Stripe tests do not replace these checks.
 7. Complete phone-preview route parity, the hosted CMS draft/edit/preview/publish/reload checks and human content review. Draft FAQ/support suggestions must not overwrite the complete CMS payload or financial settings.
-8. Implement approved vendor settlement once provider/recipient/hold/cash-commission requirements are supplied. Do not infer available payout funds from order snapshots.
+8. Review the implemented settlement package, reconcile historical opening balances, destinations, currencies and existing liabilities, then separately approve activation. New settlement defaults off; `starts_at` must not be backdated without audited reconciliation. Verify real wallet funding and synthetic hosted acceptance before activation. External routes default disabled and require a verified manual operating process or a separately implemented provider integration. Bank routes require reviewed country holidays/calendars. Never infer historical spendable funds from order snapshots alone.
 9. Produce/install signed Android/iOS builds and verify real GPS/background/reassignment, map routing and push on physical devices. Only then reassess full release acceptance.
 
 ## Authorization and compatibility impact
@@ -48,6 +50,8 @@ The moderation migration was amended because read-only main metadata confirms it
 
 ## Recovery
 
+- Settlement recovery: stop new financial writes by disabling the settlement config, retain `starts_at`, and keep all payout, commission and audit records. The candidate preserves read access and accounting for accepted orders while paused. Investigate in-flight external transfers before releasing reservations; an uncertain transfer must remain processing. Do not delete posted wallet transactions or backdate activation to credit old orders. Use an audited forward correction and reconcile real transfers before resuming.
+
 - An injected migration failure was verified to roll back the newly created review schema, and a clean retry succeeded in the isolated database. This demonstrates transaction atomicity, not production backup restoration.
 - If an approved migration fails, capture the error internally, verify rollback and stop the sequence. Do not stamp a migration successful or retry without identifying the cause.
 - If a deployed release needs recovery, pause that rollout and issue a reviewed forward fix. Do not restore the broken moderation trigger, reopen public delivery evidence or drop customer review data as a routine rollback. Retain private evidence and audit records.
@@ -55,9 +59,9 @@ The moderation migration was amended because read-only main metadata confirms it
 
 ## Current blockers
 
-- Confirmed usable production backup/recovery point and operator restore access; production deployment approval is already granted.
-- Approved legal/support content and actual human translation review.
-- Approved vendor settlement provider and business rules; missing payout implementation.
+- Confirmed usable production backup/recovery point, operator restore access and renewed approval; deployment remains paused.
+- Approved legal/support content remains deferred by the user. Four languages are locally prepared under explicit machine-publication authorization; Haitian Creole remains owned by the super admin. Hosted publication is unverified.
+- Settlement is implemented locally. Historical reconciliation, approved activation, real provider/manual transfer operating access and sandbox/hosted acceptance remain unverified.
 - Authenticated phone-preview/CMS publication acceptance; registered preview routes are implemented and locally verified.
 - Hosted role credentials, payment sandbox, signed builds and physical devices.
 

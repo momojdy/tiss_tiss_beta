@@ -1,8 +1,8 @@
-✔ machine publication preparation requires explicit authorization (1.61945ms)
-✔ four-locale release preserves fees, legal documents, policy bodies, Haitian Creole and existing manual text (2.99288ms)
-✔ missing translations and missing dynamic placeholders prevent a complete release (0.448556ms)
-✔ registered fields are added without replacing old copy, non-text configuration or Haitian Creole (0.473163ms)
-✔ prepared live-baseline release preserves all existing Creole entries and every registered app field (37.624041ms)
+✔ machine publication preparation requires explicit authorization (1.4091ms)
+✔ four-locale release preserves fees, legal documents, policy bodies, Haitian Creole and existing manual text (2.459398ms)
+✔ missing translations and missing dynamic placeholders prevent a complete release (0.504809ms)
+✔ registered fields are added without replacing old copy, non-text configuration or Haitian Creole (0.37054ms)
+✔ prepared live-baseline release preserves all existing Creole entries and every registered app field (149.908645ms)
 ℹ tests 5
 ℹ suites 0
 ℹ pass 5
@@ -10,4 +10,4 @@
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 53.742147
+ℹ duration_ms 170.093623

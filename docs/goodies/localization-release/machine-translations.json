@@ -5978,5 +5978,415 @@
     "fr": "Informations de paiement indisponibles. Veuillez réessayer.",
     "es": "Los datos de pago no están disponibles. Inténtalo de nuevo.",
     "zh-Hans": "付款信息暂不可用。请重试。"
+  },
+  "2 days": {
+    "fr": "2 jours",
+    "es": "2 días",
+    "zh-Hans": "2天"
+  },
+  "7–14 business days": {
+    "fr": "7 à 14 jours ouvrés",
+    "es": "De 7 a 14 días hábiles",
+    "zh-Hans": "7至14个工作日"
+  },
+  "Accept cash with your delivery service": {
+    "fr": "Accepter les espèces avec votre service de livraison",
+    "es": "Aceptar efectivo con tu servicio de entrega",
+    "zh-Hans": "接受使用自有配送服务的现金付款"
+  },
+  "Account holder": {
+    "fr": "Titulaire du compte",
+    "es": "Titular de la cuenta",
+    "zh-Hans": "账户持有人"
+  },
+  "Account number": {
+    "fr": "Numéro de compte",
+    "es": "Número de cuenta",
+    "zh-Hans": "账号"
+  },
+  "Add funds to your Wantiss Wallet before paying commission.": {
+    "fr": "Ajoutez des fonds à votre Wantiss Wallet avant de payer la commission.",
+    "es": "Añade fondos a tu Wantiss Wallet antes de pagar la comisión.",
+    "zh-Hans": "请先为 Wantiss Wallet 充值，再支付佣金。"
+  },
+  "Amount (USD)": {
+    "fr": "Montant (USD)",
+    "es": "Importe (USD)",
+    "zh-Hans": "金额（美元）"
+  },
+  "Balance requiring review": {
+    "fr": "Solde à examiner",
+    "es": "Saldo pendiente de revisión",
+    "zh-Hans": "待审核余额"
+  },
+  "Bank name": {
+    "fr": "Nom de la banque",
+    "es": "Nombre del banco",
+    "zh-Hans": "银行名称"
+  },
+  "Bank transfer": {
+    "fr": "Virement bancaire",
+    "es": "Transferencia bancaria",
+    "zh-Hans": "银行转账"
+  },
+  "Cash sales awaiting settlement": {
+    "fr": "Ventes en espèces en attente de règlement",
+    "es": "Ventas en efectivo pendientes de liquidación",
+    "zh-Hans": "尚未结清佣金的现金销售额"
+  },
+  "Cash-order commission": {
+    "fr": "Commission des commandes payées en espèces",
+    "es": "Comisión de pedidos en efectivo",
+    "zh-Hans": "现金订单佣金"
+  },
+  "Check payout history before changing an unresolved request.": {
+    "fr": "Consultez l’historique des versements avant de modifier une demande non résolue.",
+    "es": "Consulta el historial de pagos antes de cambiar una solicitud sin resolver.",
+    "zh-Hans": "更改尚未处理完毕的申请前，请先查看提现记录。"
+  },
+  "Commission and platform fees owed": {
+    "fr": "Commission et frais de plateforme dus",
+    "es": "Comisión y tarifas de plataforma pendientes",
+    "zh-Hans": "待付佣金及平台服务费"
+  },
+  "Commission owed": {
+    "fr": "Commission due",
+    "es": "Comisión pendiente",
+    "zh-Hans": "待付佣金"
+  },
+  "Commission paid": {
+    "fr": "Commission payée",
+    "es": "Comisión pagada",
+    "zh-Hans": "已付佣金"
+  },
+  "Completed": {
+    "fr": "Terminé",
+    "es": "Completado",
+    "zh-Hans": "已完成"
+  },
+  "Confirm payout": {
+    "fr": "Confirmer le versement",
+    "es": "Confirmar retiro",
+    "zh-Hans": "确认提现"
+  },
+  "Could not complete this request. Check your history and try again.": {
+    "fr": "Impossible de terminer cette demande. Consultez votre historique, puis réessayez.",
+    "es": "No se pudo completar esta solicitud. Consulta tu historial e inténtalo de nuevo.",
+    "zh-Hans": "无法完成此申请。请查看记录后重试。"
+  },
+  "Could not load settlement history.": {
+    "fr": "Impossible de charger l’historique des règlements.",
+    "es": "No se pudo cargar el historial de liquidaciones.",
+    "zh-Hans": "无法加载结算记录。"
+  },
+  "Could not save payout details. Check the fields and try again.": {
+    "fr": "Impossible d’enregistrer les coordonnées de versement. Vérifiez les champs et réessayez.",
+    "es": "No se pudieron guardar los datos de retiro. Revisa los campos e inténtalo de nuevo.",
+    "zh-Hans": "无法保存提现信息。请检查各项内容后重试。"
+  },
+  "Courier cash remittance was confirmed. Open payouts to review your balance.": {
+    "fr": "Le reversement des espèces du livreur a été confirmé. Ouvrez les versements pour consulter votre solde.",
+    "es": "Se confirmó la entrega del efectivo del repartidor. Abre los retiros para consultar tu saldo.",
+    "zh-Hans": "配送员的现金上缴已确认。请打开提现页面查看余额。"
+  },
+  "Create Wantiss Wallet": {
+    "fr": "Créer un Wantiss Wallet",
+    "es": "Crear Wantiss Wallet",
+    "zh-Hans": "创建 Wantiss Wallet"
+  },
+  "Earnings become available 24 hours after confirmed delivery. Disputed amounts remain held.": {
+    "fr": "Les gains deviennent disponibles 24 heures après la confirmation de livraison. Les montants contestés restent bloqués.",
+    "es": "Las ganancias están disponibles 24 horas después de confirmar la entrega. Los importes en disputa siguen retenidos.",
+    "zh-Hans": "确认送达24小时后，收益即可使用。有争议的款项将继续冻结。"
+  },
+  "External payout details require verification before use.": {
+    "fr": "Les coordonnées de versement externe doivent être vérifiées avant utilisation.",
+    "es": "Los datos de retiro externo deben verificarse antes de usarlos.",
+    "zh-Hans": "外部收款信息必须经过验证后才能使用。"
+  },
+  "Failed": {
+    "fr": "Échec",
+    "es": "Fallido",
+    "zh-Hans": "失败"
+  },
+  "GOODIES AVAILABLE": {
+    "fr": "SOLDE GOODIES DISPONIBLE",
+    "es": "SALDO GOODIES DISPONIBLE",
+    "zh-Hans": "GOODIES 可用余额"
+  },
+  "Goodies settlement details are unavailable.": {
+    "fr": "Les informations de règlement Goodies sont indisponibles.",
+    "es": "Los detalles de liquidación de Goodies no están disponibles.",
+    "zh-Hans": "Goodies 结算信息暂不可用。"
+  },
+  "Goodies settlement update": {
+    "fr": "Mise à jour du règlement Goodies",
+    "es": "Actualización de liquidación de Goodies",
+    "zh-Hans": "Goodies 结算更新"
+  },
+  "Instant once earnings are available": {
+    "fr": "Instantané dès que les gains sont disponibles",
+    "es": "Instantáneo cuando las ganancias estén disponibles",
+    "zh-Hans": "收益可用后即时到账"
+  },
+  "Ledger": {
+    "fr": "Registre",
+    "es": "Libro de movimientos",
+    "zh-Hans": "明细账"
+  },
+  "Loading…": {
+    "fr": "Chargement…",
+    "es": "Cargando…",
+    "zh-Hans": "正在加载…"
+  },
+  "Manage payout methods": {
+    "fr": "Gérer les moyens de versement",
+    "es": "Gestionar métodos de retiro",
+    "zh-Hans": "管理提现方式"
+  },
+  "New cash orders are paused until settlement. Accepted orders continue.": {
+    "fr": "Les nouvelles commandes en espèces sont suspendues jusqu’au règlement. Les commandes acceptées continuent.",
+    "es": "Los nuevos pedidos en efectivo están pausados hasta la liquidación. Los pedidos aceptados continúan.",
+    "zh-Hans": "结清佣金前将暂停接受新的现金订单。已接单的订单继续履行。"
+  },
+  "Next page": {
+    "fr": "Page suivante",
+    "es": "Página siguiente",
+    "zh-Hans": "下一页"
+  },
+  "No settlement transactions yet": {
+    "fr": "Aucune opération de règlement pour le moment",
+    "es": "Aún no hay movimientos de liquidación",
+    "zh-Hans": "暂无结算记录"
+  },
+  "On hold": {
+    "fr": "Bloqué",
+    "es": "Retenido",
+    "zh-Hans": "已冻结"
+  },
+  "Pay commission with Wantiss Wallet": {
+    "fr": "Payer la commission avec Wantiss Wallet",
+    "es": "Pagar comisión con Wantiss Wallet",
+    "zh-Hans": "使用 Wantiss Wallet 支付佣金"
+  },
+  "Payout": {
+    "fr": "Versement",
+    "es": "Retiro",
+    "zh-Hans": "提现"
+  },
+  "Payout details submitted for verification.": {
+    "fr": "Coordonnées de versement soumises à vérification.",
+    "es": "Datos de retiro enviados para verificación.",
+    "zh-Hans": "提现信息已提交验证。"
+  },
+  "Payout history": {
+    "fr": "Historique des versements",
+    "es": "Historial de retiros",
+    "zh-Hans": "提现记录"
+  },
+  "Payout methods are unavailable.": {
+    "fr": "Les moyens de versement sont indisponibles.",
+    "es": "Los métodos de retiro no están disponibles.",
+    "zh-Hans": "提现方式暂不可用。"
+  },
+  "Payout requested. Check history for its status.": {
+    "fr": "Versement demandé. Consultez son statut dans l’historique.",
+    "es": "Retiro solicitado. Consulta su estado en el historial.",
+    "zh-Hans": "提现申请已提交。请在记录中查看状态。"
+  },
+  "Payouts": {
+    "fr": "Versements",
+    "es": "Retiros",
+    "zh-Hans": "提现"
+  },
+  "Pending": {
+    "fr": "En attente",
+    "es": "Pendiente",
+    "zh-Hans": "待处理"
+  },
+  "Previous page": {
+    "fr": "Page précédente",
+    "es": "Página anterior",
+    "zh-Hans": "上一页"
+  },
+  "Processing": {
+    "fr": "En cours de traitement",
+    "es": "En proceso",
+    "zh-Hans": "处理中"
+  },
+  "Recorded": {
+    "fr": "Enregistré",
+    "es": "Registrado",
+    "zh-Hans": "已记录"
+  },
+  "Refresh payout methods to get a current exchange quote.": {
+    "fr": "Actualisez les moyens de versement pour obtenir un taux de change à jour.",
+    "es": "Actualiza los métodos de retiro para obtener una cotización de cambio vigente.",
+    "zh-Hans": "请刷新提现方式以获取最新汇率报价。"
+  },
+  "Refund": {
+    "fr": "Remboursement",
+    "es": "Reembolso",
+    "zh-Hans": "退款"
+  },
+  "Refunds": {
+    "fr": "Remboursements",
+    "es": "Reembolsos",
+    "zh-Hans": "退款"
+  },
+  "Rejected": {
+    "fr": "Refusé",
+    "es": "Rechazado",
+    "zh-Hans": "已拒绝"
+  },
+  "Request payout": {
+    "fr": "Demander un versement",
+    "es": "Solicitar retiro",
+    "zh-Hans": "申请提现"
+  },
+  "Requested": {
+    "fr": "Demandé",
+    "es": "Solicitado",
+    "zh-Hans": "已申请"
+  },
+  "Reversed": {
+    "fr": "Contrepassé",
+    "es": "Revertido",
+    "zh-Hans": "已冲销"
+  },
+  "Routing / SWIFT code": {
+    "fr": "Code de routage / SWIFT",
+    "es": "Código de ruta / SWIFT",
+    "zh-Hans": "银行路由号码／SWIFT 代码"
+  },
+  "Sale": {
+    "fr": "Vente",
+    "es": "Venta",
+    "zh-Hans": "销售"
+  },
+  "Sales": {
+    "fr": "Ventes",
+    "es": "Ventas",
+    "zh-Hans": "销售"
+  },
+  "Sent to your Wantiss Wallet": {
+    "fr": "Envoyé vers votre Wantiss Wallet",
+    "es": "Enviado a tu Wantiss Wallet",
+    "zh-Hans": "已转入你的 Wantiss Wallet"
+  },
+  "Settle by": {
+    "fr": "À régler avant le",
+    "es": "Liquidar antes del",
+    "zh-Hans": "结算截止时间"
+  },
+  "Settlement": {
+    "fr": "Règlement",
+    "es": "Liquidación",
+    "zh-Hans": "结算"
+  },
+  "Submit for verification": {
+    "fr": "Soumettre à vérification",
+    "es": "Enviar para verificación",
+    "zh-Hans": "提交验证"
+  },
+  "Under review": {
+    "fr": "En cours d’examen",
+    "es": "En revisión",
+    "zh-Hans": "审核中"
+  },
+  "Verified": {
+    "fr": "Vérifié",
+    "es": "Verificado",
+    "zh-Hans": "已验证"
+  },
+  "Wallet phone number": {
+    "fr": "Numéro de téléphone du portefeuille",
+    "es": "Número de teléfono de la billetera",
+    "zh-Hans": "钱包绑定手机号"
+  },
+  "Wantiss Wallet is available without an external payout account.": {
+    "fr": "Wantiss Wallet peut être utilisé sans compte de versement externe.",
+    "es": "Wantiss Wallet se puede usar sin una cuenta de retiro externa.",
+    "zh-Hans": "无需外部收款账户即可使用 Wantiss Wallet。"
+  },
+  "You receive": {
+    "fr": "Vous recevez",
+    "es": "Recibes",
+    "zh-Hans": "你将收到"
+  },
+  "Your Goodies cash-order commission payment is completed.": {
+    "fr": "Le paiement de votre commission Goodies sur les commandes en espèces est terminé.",
+    "es": "Se completó tu pago de comisión de pedidos de Goodies en efectivo.",
+    "zh-Hans": "你的 Goodies 现金订单佣金已支付完成。"
+  },
+  "Your Goodies payout could not be completed. Open payouts to review it.": {
+    "fr": "Votre versement Goodies n’a pas pu être effectué. Ouvrez les versements pour le consulter.",
+    "es": "No se pudo completar tu retiro de Goodies. Abre los retiros para revisarlo.",
+    "zh-Hans": "你的 Goodies 提现未能完成。请打开提现页面查看。"
+  },
+  "Your Goodies payout is completed.": {
+    "fr": "Votre versement Goodies est terminé.",
+    "es": "Tu retiro de Goodies se completó.",
+    "zh-Hans": "你的 Goodies 提现已完成。"
+  },
+  "Your Goodies payout request was recorded. Open payouts to check its status.": {
+    "fr": "Votre demande de versement Goodies a été enregistrée. Ouvrez les versements pour consulter son statut.",
+    "es": "Se registró tu solicitud de retiro de Goodies. Abre los retiros para consultar su estado.",
+    "zh-Hans": "你的 Goodies 提现申请已记录。请打开提现页面查看状态。"
+  },
+  "Your Goodies settlement details were updated. Open payouts to review them.": {
+    "fr": "Vos informations de règlement Goodies ont été mises à jour. Ouvrez les versements pour les consulter.",
+    "es": "Se actualizaron tus datos de liquidación de Goodies. Abre los retiros para revisarlos.",
+    "zh-Hans": "你的 Goodies 结算信息已更新。请打开提现页面查看。"
+  },
+  "Your weekly Goodies commission settlement is due within 24 hours.": {
+    "fr": "Votre règlement hebdomadaire de commission Goodies arrive à échéance dans les prochaines 24 heures.",
+    "es": "Tu liquidación semanal de comisión de Goodies vence dentro de 24 horas.",
+    "zh-Hans": "你的 Goodies 每周佣金结算将在24小时内到期。"
+  },
+  "Your weekly Goodies commission settlement is due. Open payouts to review the amount.": {
+    "fr": "Votre règlement hebdomadaire de commission Goodies est arrivé à échéance. Ouvrez les versements pour consulter le montant.",
+    "es": "Tu liquidación semanal de comisión de Goodies ha vencido. Abre los retiros para consultar el importe.",
+    "zh-Hans": "你的 Goodies 每周佣金结算已到期。请打开提现页面查看金额。"
+  },
+  "Philippines": {
+    "fr": "Philippines",
+    "es": "Filipinas",
+    "zh-Hans": "菲律宾"
+  },
+  "Settle Goodies cash-order commission to accept more cash orders.": {
+    "fr": "Réglez la commission Goodies des commandes en espèces pour accepter de nouvelles commandes en espèces.",
+    "es": "Liquida la comisión de pedidos de Goodies en efectivo para aceptar más pedidos en efectivo.",
+    "zh-Hans": "请结清 Goodies 现金订单佣金，以接受更多现金订单。"
+  },
+  "Cash ordering is temporarily unavailable. Please try again later.": {
+    "fr": "Les commandes en espèces sont temporairement indisponibles. Veuillez réessayer plus tard.",
+    "es": "Los pedidos en efectivo no están disponibles temporalmente. Inténtalo de nuevo más tarde.",
+    "zh-Hans": "现金订单暂不可用。请稍后重试。"
+  },
+  "Cash on delivery enabled for your store.": {
+    "fr": "Le paiement en espèces à la livraison est activé pour votre boutique.",
+    "es": "El pago en efectivo contra entrega está habilitado para tu tienda.",
+    "zh-Hans": "你的店铺已启用货到现金付款。"
+  },
+  "Checking delivery options…": {
+    "fr": "Vérification des options de livraison…",
+    "es": "Comprobando opciones de entrega…",
+    "zh-Hans": "正在检查配送选项…"
+  },
+  "Could not check delivery options.": {
+    "fr": "Impossible de vérifier les options de livraison.",
+    "es": "No se pudieron comprobar las opciones de entrega.",
+    "zh-Hans": "无法检查配送选项。"
+  },
+  "Open Wantiss Wallet": {
+    "fr": "Ouvrir Wantiss Wallet",
+    "es": "Abrir Wantiss Wallet",
+    "zh-Hans": "打开 Wantiss Wallet"
+  },
+  "Only a business owner can request payouts or manage payout details.": {
+    "fr": "Seul un propriétaire de l’entreprise peut demander des versements ou gérer les coordonnées de versement.",
+    "es": "Solo el propietario del negocio puede solicitar retiros o gestionar los datos de retiro.",
+    "zh-Hans": "只有商家所有者才能申请提现或管理提现信息。"
   }
 }

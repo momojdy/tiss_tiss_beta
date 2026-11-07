@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: momojdy/tiss-admin
-          ref: 0d83039f6874f59b02d4bc296c8ed7bd0bf20a83
+          ref: 1f50ec03c23421c5971e248a553e2592a5743bb1
           path: tiss-admin
           persist-credentials: false
       - uses: actions/setup-node@v4
@@ -35,7 +35,7 @@ jobs:
       - name: Verify Goodies CMS source coverage
         run: node scripts/check-goodies-cms.cjs && node tests/goodies-cms.test.cjs
       - name: Verify Goodies review isolation and refresh
-        run: node tests/goodies-reviews.test.cjs && node tests/goodies-recovery.test.cjs && node scripts/audit-goodies-reproductions.cjs
+        run: node tests/goodies-reviews.test.cjs && node tests/goodies-recovery.test.cjs && node tests/goodies-settlement.test.cjs && node scripts/audit-goodies-reproductions.cjs
       - name: Verify authorized Goodies translation payload
         run: node tests/goodies-translation-release.test.cjs
       - name: Verify unique migration versions
@@ -69,3 +69,31 @@ jobs:
         run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts supabase/functions/refund-goodies-card-order/index.ts supabase/functions/expire-goodies-card-auth/index.ts
       - name: Test Goodies refund and webhook decision logic
         run: deno test --allow-read --allow-env --config supabase/functions/deno.json supabase/functions/goodies-tests/ supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
+
+  settlement-concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOODIES_TEST_CONTAINER: wantiss-goodies-settlement-ci-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Start isolated PostgreSQL matching the observed production version
+        run: docker run --name "$GOODIES_TEST_CONTAINER" --network none -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+      - name: Verify Goodies financial concurrency using synthetic data
+        shell: bash
+        run: node scripts/test-goodies-settlement-postgres.cjs --container "$GOODIES_TEST_CONTAINER" | tee goodies-settlement-races.log
+      - name: Upload financial race evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-settlement-races-${{ github.sha }}
+          path: tiss_tiss_beta/goodies-settlement-races.log
+          if-no-files-found: warn
+      - name: Remove this test container
+        if: always()
+        run: docker rm -f "$GOODIES_TEST_CONTAINER"

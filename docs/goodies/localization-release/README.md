@@ -1,4 +1,4 @@
-**2026-11-07: deployment/publication remains paused.** The recovery-state additions are prepared locally only. Five new source strings were translated locally by the assistant in French, Spanish and Simplified Chinese; no human review is claimed.
+**2026-11-07: deployment/publication remains paused.** The recovery and settlement additions are prepared locally only. New source strings were translated locally by the assistant in French, Spanish and Simplified Chinese; no human review is claimed.
 
 # Authorized four-language Goodies translation release
 
@@ -7,7 +7,7 @@
 ## Prepared content
 
 - `publish-payload.json` is a complete v5 payload based on the currently published English Goodies record, version 5, ID `da301ba8-15b8-4092-a37f-5da73d721c2f`. The architecture stores all language variants in that existing English CMS row; separate locale records would not reach the current customer reader.
-- All 1,267 current app label keys are included. Existing/obsolete CMS labels were retained for compatibility: 1,408 label rows in total. The pack has 1,444 text fields; two optional empty fields remain empty. The 1,442 non-empty fields resolve in all four authorized locales (5,768 verified lookups).
+- All 1,366 current app label keys are included. Existing/obsolete CMS labels were retained for compatibility: 1,507 label rows in total. The pack has 1,543 text fields; two optional empty fields remain empty. The 1,541 non-empty fields resolve in all four authorized locales (6,164 verified lookups).
 - Existing non-empty translations are preserved. Missing French/Spanish/Simplified Chinese text was machine translated using Google Translate's public endpoint, with assistant-authored corrections for failed batches and age-consent grammar. `assistant-corrections.json` records those corrections. This does not certify human linguistic review.
 - The existing CMS `reviewed` eligibility state is used for the four authorized languages so the customer resolver can serve them after publication. Each changed locale entry explicitly records machine/existing-copy provenance, super-admin publication authorization and `human_reviewed: false`. English wording was preserved; no new business/legal promises were authored.
 - Existing Haitian Creole entries are unchanged, including all original review states. The release does not publish them as newly reviewed or introduce machine Creole.
@@ -15,7 +15,7 @@
 
 ## Verification
 
-**PASS** — v5 schema validation, all registered app keys, 5,768 consumer-resolver/placeholder checks, preservation of all 775 existing Creole entries (including empty/missing entries), unchanged financial/non-text/legal values, five release regressions, configured lint and TypeScript.
+**PASS** — v5 schema validation, all registered app keys, 6,164 consumer-resolver/placeholder checks, preservation of all 775 existing Creole entries (including empty/missing entries), unchanged financial/non-text/legal values, five release regressions, configured lint and TypeScript.
 
 **BLOCKED** — the connected SQL session has `auth.uid() = null`, and both `content.edit` and `content.publish` permission checks are false. The existing authenticated save/publish RPCs require a real signed-in admin actor and record that actor in the audit log. No identity was fabricated, no direct table write was used to bypass those checks, and no production draft or publication was created.
 
