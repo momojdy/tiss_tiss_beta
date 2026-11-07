@@ -26,7 +26,7 @@ export function build(ax: number, ay: number, height: number, segment = LINK): R
   }
   const y = ay + N * segment;
   points.push(P(ax, y + segment, 0.25));
-  points.push(P(ax + HO, y + segment + height - HO, 0.07));
+  points.push(P(ax, y + segment + height - HO, 0.07));
   links.push({ a: N, b: N + 1, length: segment, stiffness: 1 });
   links.push({ a: N + 1, b: N + 2, length: height - HO, stiffness: 1 });
   return { points, links, ax, ay, height };
