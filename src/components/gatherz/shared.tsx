@@ -15,7 +15,7 @@ const STRIPE_HEIGHT = 20;
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
   const t = useGatherzTheme(); const { nav } = useGatherz();
-  return <View>
+  return <View style={{ marginBottom: 15 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
       <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="arrow-left" size={24} color={t.text} />
