@@ -5,7 +5,7 @@ import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 
-import { Header, Notice, Page, TicketFront } from '../../components/gatherz/shared';
+import { Header, Notice, Page } from '../../components/gatherz/shared';
 export default function GatherzTicketScreen({ id }: { id: string }) {
   const t = useGatherzTheme(); const { repo, nav } = useGatherz();
   const [details, setDetails] = useState(false);
@@ -17,7 +17,7 @@ export default function GatherzTicketScreen({ id }: { id: string }) {
   return (
     <Page>
       <Header title="Ticket Details" onBack={nav.back} />
-      <View style={{ paddingHorizontal: 20 }}><TicketFront admission={a} event={e} width="100%" onPress={() => setDetails(v => !v)} /></View>
+
       <View style={{ marginHorizontal: 20, marginTop: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card, gap: 6 }}>
         <Text style={{ color: t.text, fontFamily: fonts.bold }}>{e.title}</Text>
         <Text style={{ color: t.mute }}>{e.venue}, {e.area}</Text>
