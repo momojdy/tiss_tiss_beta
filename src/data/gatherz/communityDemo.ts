@@ -8,7 +8,7 @@ export const demoCircles: DemoCircle[] = [
 ];
 export interface DemoPost { id: string; circleId: string; author: string; text: string; createdAt: string; replies: { id: string; author: string; text: string }[] }
 export interface DemoInvitation { id: string; circleId: string; recipient: string; status: 'pending' | 'accepted' | 'declined' }
-export interface DemoReport { id: string; targetType: 'post' | 'member' | 'moment'; targetId: string; reason: string }
+export interface DemoReport { id: string; targetType: 'post' | 'member' | 'moment' | 'event' | 'organizer' | 'circle'; targetId: string; reason: string }
 export interface CommunityDemo {
   savedEvents: string[]; savedOrganizers: string[]; savedCircles: string[];
   joinedCircles: string[]; requestedCircles: string[]; moments: DemoMoment[]; posts: DemoPost[]; invitations: DemoInvitation[]; reports: DemoReport[];
