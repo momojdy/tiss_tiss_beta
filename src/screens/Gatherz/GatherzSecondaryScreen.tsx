@@ -6,22 +6,24 @@ import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 type Mode = 'all' | 'msgs' | 'bs';
-export default function GatherzSecondaryScreen({ mode }: { mode: Mode }) {
+export default function GatherzSecondaryScreen({ mode, section }: { mode: Mode; section?: string }) {
  const { repo, nav } = useGatherz(); const t = useGatherzTheme();
  const activity = useGatherzActivity(); const [code, setCode] = useState(''); const [scanResult, setScanResult] = useState(''); const [gate, setGate] = useState('Gate A'); const [log, setLog] = useState<string[]>([]);
  const { data: transfers, reload: reloadTransfers } = useLoad(async () => await repo.listDemoTransfers?.() ?? [], [repo]);
  const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
  const scan = () => { const admission = (admissions ?? []).find(a => a.credentialCode.toUpperCase() === code.trim().toUpperCase()); const result = !code.trim() ? 'Enter a demo credential code.' : !admission ? 'Credential not found in this demo account.' : admission.status !== 'valid' ? 'Credential unavailable: ' + admission.status.replace(/_/g, ' ') : 'Demo credential found. This does not authorize entry.'; setScanResult(result); setLog(v => [gate + ': ' + result, ...v].slice(0, 10)); };
  const { data: events, loading } = useLoad(() => repo.listEvents(), [repo]);
- const title = mode === 'all' ? 'All events' : mode === 'msgs' ? 'Messages' : 'Ticket scanner';
+ const sectionTitle: Record<string,string> = { week:'Happening This Week',near:'Events Near You',trend:'Trending Now',friends:"Friends’ Plans",last:'Last-Minute Deals',new:'New in Your City',circ:'Popular Circles',rec:'Recommended for You' };
+ const filtered = (events ?? []).filter(e => section === 'week' ? new Date(e.startsAt).getTime() - Date.now() <= 7 * 864e5 : section === 'trend' ? e.remaining > 0 : true);
+ const title = mode === 'all' ? (sectionTitle[section ?? ''] ?? 'All events') : mode === 'msgs' ? 'Messages' : 'Ticket scanner';
  return <Page><Header title={title} onBack={nav.back} />
   {mode === 'all' ? <>
    {loading ? <Notice loading body="Loading events…" /> : null}
-   {(events ?? []).map(e => <Pressable key={e.id} accessibilityRole="button" onPress={() => nav.push('event', e.id)} style={{ marginHorizontal: 20, marginBottom: 10, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card, padding: 15 }}>
+   {filtered.map(e => <Pressable key={e.id} accessibilityRole="button" onPress={() => nav.push('event', e.id)} style={{ marginHorizontal: 20, marginBottom: 10, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card, padding: 15 }}>
     <Text style={{ color: t.text, fontFamily: fonts.bold }}>{e.title}</Text>
     <Text style={{ color: t.mute, marginTop: 5 }}>{e.venue} · {e.area}</Text>
    </Pressable>)}
-   {!loading && !events?.length ? <Notice title="No events found" /> : null}
+   {!loading && !filtered.length ? <Notice title="Nothing here right now." /> : null}
   </> : mode === 'msgs' ? <>
    <Notice title="Gatherz messages · demo" body="Incoming transfer requests and shared events are simulated here. No real Wantiss messages are sent." />
    {(transfers ?? []).length ? (transfers ?? []).map(tr => <View key={tr.token} style={{ marginHorizontal: 20, marginBottom: 12, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card, padding: 16, gap: 8 }}>
