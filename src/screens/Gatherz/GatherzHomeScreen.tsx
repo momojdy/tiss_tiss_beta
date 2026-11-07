@@ -14,11 +14,11 @@ export default function GatherzHomeScreen() {
   const [cat, setCat] = useState<'All' | EventCategory>('All');
   const events = (data ?? []).filter(e => cat === 'All' || e.category === cat);
   const week = events.filter(e => Date.parse(e.startsAt) - now < 7 * 864e5 && eventPhase(e, now) !== 'past');
-  const trending = [...events].sort((a, b) => a.remaining - b.remaining).filter(e => e.remaining > 0).slice(0, 4);
+  const trending = [...events].sort((a, b) => a.remaining - b.remaining).filter(e => e.remaining > 0).slice(0, 5);
   const open = (id: string) => nav.push('event', id);
   return (
     <Page>
-      <Header title="gatherz." subtitle="Make moments happen." right={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><IconButton name="help-circle-outline" label="Help" onPress={() => nav.push('help')} /><IconButton name="bell-outline" label="Notifications" onPress={() => nav.push('notif')} /><IconButton name={t.name === 'dark' ? 'white-balance-sunny' : 'weather-night'} label="Toggle theme" onPress={toggleTheme} /></View>} />
+      <Header title="gatherz."  right={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><IconButton name="help-circle-outline" label="Help" onPress={() => nav.push('help')} /><IconButton name="bell-outline" label="Notifications" onPress={() => nav.push('notif')} /><IconButton name={t.name === 'dark' ? 'white-balance-sunny' : 'weather-night'} label="Toggle theme" onPress={toggleTheme} /></View>} />
       <Text style={{ fontFamily: fonts.bold, fontSize: 24, color: t.text, paddingHorizontal: 20 }}>Find your people.{'\n'}Live the experience.</Text>
       <Pressable accessibilityRole="button" accessibilityLabel="Search experiences and places" onPress={() => nav.push('explore')} style={{ marginHorizontal: 20, marginTop: 16, height: 52, borderRadius: radius.input, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16 }}>
         <MaterialCommunityIcons name="magnify" size={22} color={t.mute} /><Text style={{ fontFamily: fonts.regular, color: t.mute }}>Search experiences, places…</Text>
@@ -29,15 +29,16 @@ export default function GatherzHomeScreen() {
       {!loading && !error && !events.length ? <Notice title="No events in this category" body="Try another category or check back soon." action="Show all" onAction={() => setCat('All')} /> : null}
       {events.length ? <>
         <SectionTitle title="Featured" />
-        <FlatList horizontal showsHorizontalScrollIndicator={false} data={events.slice(0, 3)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} />
+        <FlatList horizontal showsHorizontalScrollIndicator={false} data={events.slice(0, 3)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <View><EventCard wide event={item} onPress={() => open(item.id)} /><View pointerEvents="none" style={{ position: 'absolute', top: 12, left: 12, borderRadius: 99, backgroundColor: t.accent, paddingHorizontal: 10, paddingVertical: 5 }}><Text style={{ color: t.onAccent, fontFamily: fonts.bold, fontSize: 10, letterSpacing: 1 }}>FEATURED</Text></View></View>} />
       </> : null}
+      {events.length ? <Pressable accessibilityRole="button" onPress={() => nav.push('prefs')} style={{ marginHorizontal: 20, marginTop: 20, padding: 16, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10 }}><MaterialCommunityIcons name="creation-outline" size={22} color={t.accent} /><View style={{ flex: 1 }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Recommended for you</Text><Text style={{ color: t.mute, marginTop: 4, fontSize: 12 }}>Choose your interests to personalize events.</Text></View><MaterialCommunityIcons name="chevron-right" size={22} color={t.mute} /></Pressable> : null}
       {week.length ? <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Happening This Week" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'week')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={week} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} />
       </> : null}
       {events.length ? <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Events Near You" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'near')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
-        <View style={{ paddingHorizontal: 20, gap: 12 }}>{events.map(e => <EventCard key={e.id} event={e} onPress={() => open(e.id)} />)}</View>
+        <View style={{ paddingHorizontal: 20, gap: 12 }}>{events.slice(0, 4).map(e => <EventCard key={e.id} event={e} onPress={() => open(e.id)} />)}</View>
       </> : null}
       {trending.length ? <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Trending Now" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'trend')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
