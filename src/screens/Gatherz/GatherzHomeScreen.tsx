@@ -28,22 +28,22 @@ export default function GatherzHomeScreen() {
       </Pressable>
       <FlatList horizontal showsHorizontalScrollIndicator={false} data={CATEGORIES} keyExtractor={c => c} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 14, gap: 8 }} renderItem={({ item }) => <Chip label={item} on={item === cat} onPress={() => setCat(item)} />} />
       {loading ? <Notice loading body="Loading events…" /> : null}
-      {error ? <Notice title="Events could not load" body={error} action="Try again" onAction={reload} /> : null}
+      {error ? <Notice title="Events could not load" body="Please check your connection and try again." action="Try again" onAction={reload} /> : null}
       {!loading && !error && !events.length ? <Notice title="No events in this category" body="Try another category or check back soon." action="Show all" onAction={() => setCat('All')} /> : null}
       {events.length ? <>
         <SectionTitle title="Featured" />
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={events.slice(0, 3)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} />
       </> : null}
       {week.length ? <>
-        <SectionTitle title="Happening This Week" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Happening This Week" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'week')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={week} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <EventCard wide event={item} onPress={() => open(item.id)} />} />
       </> : null}
       {events.length ? <>
-        <SectionTitle title="Events Near You" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Events Near You" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'near')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
         <View style={{ paddingHorizontal: 20, gap: 12 }}>{events.map(e => <EventCard key={e.id} event={e} onPress={() => open(e.id)} />)}</View>
       </> : null}
       {trending.length ? <>
-        <SectionTitle title="Trending Now" />
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Trending Now" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'trend')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
         <View style={{ paddingHorizontal: 20, gap: 12 }}>{trending.map(e => <EventCard key={e.id} event={e} onPress={() => open(e.id)} />)}</View>
       </> : null}
     </Page>
