@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
@@ -34,7 +34,7 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       <Box title="Refunds" body={`Accepted until ${p.refundCutoffHours} hours before start.`} />
       <Box title="Age and entry" body={`${p.age}. ${p.reentry}.`} />
       <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-        <View accessibilityRole="button" accessibilityState={{ disabled: true }} style={[styles.btn, { backgroundColor: t.soft, opacity: 0.8 }]}><Text style={{ fontFamily: fonts.semibold, color: t.mute }}>{phase === 'past' ? 'Event ended' : sold ? 'Sold out' : 'Checkout opens in the next build'}</Text></View>
+        <Pressable accessibilityRole="button" accessibilityState={{ disabled: phase === 'past' || sold }} disabled={phase === 'past' || sold} onPress={() => nav.push('buy', e.id)} style={[styles.btn, { backgroundColor: phase === 'past' || sold ? t.soft : t.accent }]}><Text style={{ fontFamily: fonts.semibold, color: phase === 'past' || sold ? t.mute : t.onAccent }}>{phase === 'past' ? 'Event ended' : sold ? 'Sold out' : 'Get tickets'}</Text></Pressable>
       </View>
     </Page>
   );
