@@ -82,14 +82,28 @@ export function GatherzMomentsScreen() {
   const { repo, nav } = useGatherz(); const c = useGatherzCommunity(); const [tab, setTab] = useState('Discover');
   const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
   const checked = (admissions ?? []).filter(a => a.status === 'checked_in');
+  const { data: events } = useLoad(() => repo.listEvents(), [repo]);
+  const t = useGatherzTheme();
+  const eventName = (id: string) => events?.find(e => e.id === id)?.title ?? id;
+  const checkedIds = [...new Set(checked.map(a => a.eventId))];
+  const waitingIds = [...new Set((admissions ?? []).filter(a => a.status === 'valid').map(a => a.eventId))].filter(id => !checkedIds.includes(id));
   const shown = c.moments.filter(m => tab === 'My Moments' ? m.owner === 'me' : tab === 'Host highlights' ? m.official && m.public : m.public && !m.official);
   return <Page><Header title="Moments" subtitle="Photos from events people attended. Photos only." />
     <Filters values={['Discover', 'My Moments', 'Host highlights']} selected={tab} choose={setTab} />
     <SectionTitle title="Add to your events" />
-    {checked.map(a => <Item key={a.id} title={'Event ' + a.eventId} detail="Checked in · eligible to add photos" action="Add photo" onPress={() => nav.push('mp', a.eventId)} />)}
+    {checkedIds.map(id => <Item key={id} title={eventName(id)} detail={c.moments.filter(m => m.eventId === id && m.owner === 'me').length + ' of 3 photos used'} action="Add photo" onPress={() => nav.push('mp', id)} />)}
+    {waitingIds.map(id => <Item key={id} title={eventName(id)} detail="Not checked in yet. Photos unlock after check-in." onPress={() => nav.push('event', id)} />)}
     {!checked.length ? <Notice body="Check in at an event before sharing photos. Up to 3 photos per event." /> : null}
     <SectionTitle title={tab} />
-    {shown.map(m => <Item key={m.id} title={m.caption || 'Photo moment'} detail={m.public ? 'Public' : 'Private'} onPress={() => nav.push('mv', m.id)} />)}
+    <View style={{ flexDirection: 'row', paddingHorizontal: 20, gap: 12 }}>
+      {[0, 1].map(col => <View key={col} style={{ flex: 1, gap: 12 }}>
+        {shown.filter((_, index) => index % 2 === col).map(m => <Pressable key={m.id} accessibilityRole="button" onPress={() => nav.push('mv', m.id)} style={{ backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, overflow: 'hidden' }}>
+          {m.uri ? <Image source={{ uri: m.uri }} style={{ width: '100%', height: 148 }} resizeMode="cover" /> : <View style={{ height: 148, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: t.mute }}>Photo</Text></View>}
+          <View style={{ padding: 12, gap: 5 }}><Text numberOfLines={2} style={{ color: t.text, fontFamily: fonts.semibold }}>{m.caption || 'Photo moment'}</Text><Text style={{ color: t.mute, fontSize: 12 }}>{m.official ? 'Official · ' : ''}{m.public ? 'Public' : 'Private'}</Text></View>
+        </Pressable>)}
+      </View>)}
+    </View>
     {!shown.length ? <Notice title="No moments yet" body="Photos from checked-in attendees will appear here." /> : null}
+    <Notice title="Demo only" body="Photos and check-ins are simulated locally and are not published to Wantiss." />
   </Page>;
 }
