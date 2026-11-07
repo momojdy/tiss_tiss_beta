@@ -29,7 +29,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
       <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
-    <SectionTitle title="Admissions ({admissions.length})" />
+    <SectionTitle title={`Admissions (${admissions.length})`} />
     {admissions.length ? admissions.map((admission, index) => <Pressable key={admission.id} accessibilityRole="button" onPress={() => nav.push('ticket', admission.id)} style={{ marginHorizontal: 20, marginBottom: 10, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
       <View><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Admission {index + 1}</Text><Text style={{ color: t.mute, marginTop: 4 }}>{admission.status.replace(/_/g, ' ')} · {admission.holderName || 'Ticket holder'}</Text></View>
       <Text style={{ color: t.accent, fontFamily: fonts.semibold }}>View ticket ›</Text>
