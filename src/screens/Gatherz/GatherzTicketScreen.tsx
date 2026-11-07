@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import GatherzPassV2 from '../../components/gatherz/GatherzPassV2';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
@@ -18,6 +18,10 @@ export default function GatherzTicketScreen({ id }: { id: string }) {
       <Header title="Ticket Details" onBack={nav.back} />
       <View style={{ paddingHorizontal: 20 }}><TicketFront admission={a} event={e} width="100%" onPress={() => undefined} /></View>
       {usable ? <GatherzPassV2 admission={a} event={e} /> : <Notice title="This ticket cannot be used for entry" body={`Status: ${a.status.replace('_', ' ')}`} />}
+      <View style={{ paddingHorizontal: 20, marginTop: 18, gap: 10 }}>
+        {(['send', 'rf', 'dl'] as const).map(route => <Pressable key={route} accessibilityRole="button" onPress={() => nav.push(route, a.id)} style={{ padding: 15, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>{route === 'send' ? a.status === 'pending_transfer' ? 'Manage pending transfer' : 'Transfer ticket' : route === 'rf' ? 'Request refund' : 'Download options'}</Text></Pressable>)}
+        <Pressable accessibilityRole="button" onPress={() => nav.push('grp', a.orderId)} style={{ padding: 15, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>View order admissions</Text></Pressable>
+      </View>
     </Page>
   );
 }
