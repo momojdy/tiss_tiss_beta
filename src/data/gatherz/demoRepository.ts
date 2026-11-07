@@ -5,6 +5,7 @@ const tiers = (base: number, backstage = false): GatherzTier[] => base === 0 ? [
   ...(backstage ? [{ key: 'backstage' as const, name: 'Backstage', price: base * 5, admissions: 1 }] : []),
   { key: 'general', name: 'Group of 5', price: base * 4, admissions: 5 },
 ];
+/** Dates are relative to "now" so the demo never goes stale. */
 export function createDemoRepository(now = Date.now()): GatherzRepository {
   const at = (d: number, h: number, len = 3) => ({ startsAt: new Date(now + d * DAY + h * HOUR).toISOString(), endsAt: new Date(now + d * DAY + (h + len) * HOUR).toISOString() });
   const base = { timezone: 'Asia/Manila' };
