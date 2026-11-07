@@ -26,6 +26,10 @@ export default function GatherzEventScreen({ id }: { id: string }) {
         <Art index={e.art} style={{ height: 196, borderRadius: 26 }} />
         {sold || e.remaining <= 10 ? <View pointerEvents="none" style={{ position: 'absolute', top: 12, left: 12, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: t.accent }}><Text style={{ color: t.onAccent, fontFamily: fonts.semibold, fontSize: 11 }}>{sold ? 'SOLD OUT' : 'ALMOST GONE'}</Text></View> : null}
       </View>
+      <SectionTitle title="Event gallery" />
+      <View style={{ flexDirection: 'row', marginHorizontal: 20, gap: 8 }}>
+        {[0, 1, 2].map((offset) => <Pressable key={offset} accessibilityRole="button" accessibilityLabel={'View event gallery image ' + (offset + 1)} onPress={() => nav.push('sh', e.id)} style={{ flex: 1, overflow: 'hidden', borderRadius: 14 }}><Art index={e.art + offset} style={{ height: 92, borderRadius: 14 }} /></Pressable>)}
+      </View>
       <View style={{ flexDirection: 'row', gap: 10, marginHorizontal: 20, marginTop: 12 }}>
         <Pressable accessibilityRole="button" onPress={() => { void Share.share({ message: `${e.title} — ${e.venue}, ${e.area}. Find it on Gatherz by Wantiss.` }); }} style={{ flexDirection: 'row', gap: 6, alignItems: 'center', borderWidth: 0.5, borderColor: t.line, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 10, backgroundColor: t.card }}><MaterialCommunityIcons name="share-variant-outline" size={18} color={t.accent} /><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Share</Text></Pressable>
         <Pressable accessibilityRole="button" onPress={() => nav.push('rp', 'event:' + e.id)} style={{ flexDirection: 'row', gap: 6, alignItems: 'center', borderWidth: 0.5, borderColor: t.line, borderRadius: 999, paddingHorizontal: 14, paddingVertical: 10, backgroundColor: t.card }}><MaterialCommunityIcons name="flag-outline" size={18} color={t.mute} /><Text style={{ color: t.text }}>Report</Text></Pressable>
@@ -53,6 +57,8 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       <SectionTitle title="Schedule & lineup" />
       <Box title="Event starts" body={formatWhen(e, now)} />
       <Box title="Event ends" body={new Date(e.endsAt).toLocaleString()} />
+      <SectionTitle title="Moments from this event" />
+      {community.moments.filter(m => m.eventId === e.id && m.public).length ? community.moments.filter(m => m.eventId === e.id && m.public).slice(0, 3).map(m => <Pressable key={m.id} accessibilityRole="button" onPress={() => nav.push('mv', m.id)} style={{ marginHorizontal: 20, marginBottom: 8, padding: 14, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card }}><Text style={{ color: t.text }}>{m.caption || 'Event moment'}</Text><Text style={{ color: t.mute, marginTop: 4 }}>{m.official ? 'Official' : 'Community'} moment</Text></Pressable>) : <Notice body="No public moments shared for this event yet." />}
       <SectionTitle title="Tickets" />
       {e.tiers.map(x => <Pressable key={x.name} accessibilityRole="button" accessibilityState={{ disabled: sold || phase === 'past' }} disabled={sold || phase === 'past'} onPress={() => nav.push('buy', e.id)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <View style={{ flex: 1 }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{x.name}</Text><Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>{x.admissions} {x.admissions === 1 ? 'admission' : 'admissions'} · {sold ? 'Sold out' : phase === 'past' ? 'Event ended' : 'Available'}</Text></View>
