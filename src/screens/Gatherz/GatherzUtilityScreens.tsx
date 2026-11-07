@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Header, Notice, Page } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
+import { useGatherzActivity, type ActivityCategory } from '../../features/gatherz/GatherzActivityContext';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 
 const articles = [
@@ -58,26 +59,30 @@ export function GatherzSupportScreen({ id }: { id?: string }) {
   </Page>;
 }
 export function GatherzPreferencesScreen() {
-  const { nav, toggleTheme } = useGatherz(); const [interests, setInterests] = useState<string[]>([]); const [area, setArea] = useState('Makati'); const [enabled, setEnabled] = useState<string[]>(notificationPrefs); const [visibility, setVisibility] = useState('Public'); const [reducedMotion, setReducedMotion] = useState(false);
-  const toggle = (items: string[], set: (v: string[]) => void, id: string) => set(items.includes(id) ? items.filter(x => x !== id) : [...items, id]);
-  return <Page><Header title="Preferences" onBack={nav.back} /><Notice body="Gatherz preferences. Account, wallet and messaging settings stay in your Wantiss account." />
+  const { nav, toggleTheme } = useGatherz(); const { preferences: p, setPreferences } = useGatherzActivity();
+  const update = (patch: Partial<typeof p>) => setPreferences({ ...p, ...patch });
+  const toggle = (items: string[], id: string) => items.includes(id) ? items.filter(x => x !== id) : [...items, id];
+  return <Page><Header title="Preferences" onBack={nav.back} /><Notice body="These preferences are shared across Gatherz screens for this session. Account and wallet settings stay in Wantiss." />
     <Action title="Switch light / dark theme" onPress={toggleTheme} />
-    <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Interests · Recommended for you</Text>
-    {['Music','Nightlife','Culture','Food','Sports'].map(x => <Action key={x} title={(interests.includes(x) ? '✓ ' : '') + x} selected={interests.includes(x)} onPress={() => toggle(interests, setInterests, x)} />)}
+    <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Interests</Text>
+    {['Music','Nightlife','Culture','Food','Sports'].map(x => <Action key={x} title={x} selected={p.interests.includes(x)} onPress={() => update({ interests: toggle(p.interests, x) })} />)}
     <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Discovery area</Text>
-    {['Makati','BGC','Pasig'].map(x => <Action key={x} title={x} selected={area === x} onPress={() => setArea(x)} />)}
-    <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Notifications</Text>
-    {notificationPrefs.map(x => <Action key={x} title={x + ': ' + (enabled.includes(x) ? 'on' : 'off')} selected={enabled.includes(x)} onPress={() => toggle(enabled, setEnabled, x)} />)}
+    {['Makati','BGC','Pasig'].map(x => <Action key={x} title={x} selected={p.area === x} onPress={() => update({ area: x })} />)}
+    <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Notification categories</Text>
+    {notificationPrefs.map(x => <Action key={x} title={x + ': ' + (p.enabled.includes(x as ActivityCategory) ? 'on' : 'off')} selected={p.enabled.includes(x as ActivityCategory)} onPress={() => update({ enabled: toggle(p.enabled, x) as ActivityCategory[] })} />)}
     <Text style={{ marginHorizontal: 20, marginTop: 20 }}>Moments default visibility</Text>
-    {['Public','Private'].map(x => <Action key={x} title={x} selected={visibility === x} onPress={() => setVisibility(x)} />)}
-    <Action title={'Reduce motion: ' + (reducedMotion ? 'on' : 'off')} onPress={() => setReducedMotion(v => !v)} selected={reducedMotion} />
+    {(['Public','Private'] as const).map(x => <Action key={x} title={x} selected={p.visibility === x} onPress={() => update({ visibility: x })} />)}
+    <Action title={'Reduce motion: ' + (p.reducedMotion ? 'on' : 'off')} onPress={() => update({ reducedMotion: !p.reducedMotion })} selected={p.reducedMotion} />
   </Page>;
 }
 export function GatherzNotificationsScreen() {
-  const { nav } = useGatherz(); const [filter, setFilter] = useState('All');
+  const { nav } = useGatherz(); const t = useGatherzTheme(); const { items, preferences, markRead, markAllRead } = useGatherzActivity(); const [filter, setFilter] = useState('All');
+  const shown = items.filter(n => preferences.enabled.includes(n.category) && (filter === 'All' || filter === 'Unread' && !n.read || n.category === filter.toLowerCase()));
   return <Page><Header title="Notifications" onBack={nav.back} />
-    <View style={{ paddingHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{['All','Unread','Tickets','Transfers','Events','Circles','Moments'].map(x => <Pressable key={x} accessibilityRole="button" onPress={() => setFilter(x)} style={{ padding: 10, borderWidth: 0.5, borderRadius: 99, borderColor: filter === x ? '#8B7CC7' : '#999' }}><Text>{x}</Text></Pressable>)}</View>
-    <Action title="Preferences" onPress={() => nav.push('prefs')} />
-    <Notice title={filter === 'All' ? 'You are all caught up.' : 'Nothing in this filter.'} body="Demo notifications will appear here as Gatherz activity is connected." />
+    <View style={{ paddingHorizontal: 20, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>{['All','Unread','Tickets','Transfers','Events','Circles','Moments'].map(x => <Pressable key={x} accessibilityRole="button" onPress={() => setFilter(x)} style={{ padding: 10, borderWidth: 0.5, borderRadius: 99, borderColor: filter === x ? t.accent : t.line, backgroundColor: t.card }}><Text style={{ color: t.text }}>{x}</Text></Pressable>)}</View>
+    <Action title="Mark all as read" onPress={markAllRead} />
+    <Action title="Notification preferences" onPress={() => nav.push('prefs')} />
+    {shown.map(n => <Action key={n.id} title={(n.read ? '' : '● ') + n.title} description={n.body + ' · ' + new Date(n.createdAt).toLocaleString()} onPress={() => { markRead(n.id); if (n.route && n.route in { event: 1, ticket: 1, ci: 1, mv: 1, rc: 1, grp: 1, ords: 1 }) nav.push(n.route as 'event' | 'ticket' | 'ci' | 'mv' | 'rc' | 'grp' | 'ords', n.targetId); }} />)}
+    {!shown.length ? <Notice title="No notifications in this filter" body="Activity from demo actions will appear here." /> : null}
   </Page>;
 }
