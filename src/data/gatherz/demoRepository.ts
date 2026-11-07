@@ -20,13 +20,25 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
   const mine: Admission[] = [adm('a1', 'e1', 'vip'), adm('a2', 'e1', 'general'), adm('a3', 'e3', 'general'), adm('a4', 'e4', 'backstage'), adm('a5', 'e5', 'general', 'checked_in')];
   const orders: GatherzOrder[] = [];
   const transfers: GatherzTransfer[] = [];
+  const received: Admission[] = [];
   const reserved: Record<string, number> = {};
   return {
     mode: 'demo',
     listEvents: async () => events.filter(e => Date.parse(e.endsAt) > now).map(e => ({ ...e, remaining: Math.max(0, e.remaining - (reserved[e.id] ?? 0)) })),
     getEvent: async id => { const e = events.find(e => e.id === id); return e ? { ...e, remaining: Math.max(0, e.remaining - (reserved[id] ?? 0)) } : null; },
     listMyAdmissions: async () => [...mine],
-    listOrders: async () => [...orders],
+    listOrders: async () => orders.map(o => {
+      const admissions = mine.filter(a => a.orderId === o.id);
+      const refunded = admissions.filter(a => a.status === 'refunded').length;
+      return { ...o, status: refunded === admissions.length && admissions.length ? 'refunded' as const : refunded ? 'partially_refunded' as const : 'demo_paid' as const };
+    }),
+    listDemoTransfers: async () => [...transfers],
+    assignDemoAdmission: async (admissionId, holderName) => {
+      const a = mine.find(x => x.id === admissionId);
+      if (!a || a.status !== 'valid') throw new Error('Only valid owned admissions can be assigned.');
+      if (!holderName.trim()) throw new Error('Enter an attendee name.');
+      a.holderName = holderName.trim();
+    },
     createDemoTransfer: async (admissionId, recipient) => {
       const a = mine.find(x => x.id === admissionId), e = events.find(x => x.id === a?.eventId);
       if (!a || !e || a.status !== 'valid' || !recipient.trim()) throw new Error('Ticket or recipient is invalid');
@@ -38,6 +50,10 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
       const tr = transfers.find(x => x.token === token && x.status === 'pending'), a = mine.find(x => x.id === tr?.admissionId);
       if (!tr || !a) throw new Error('Claim link is invalid or expired');
       tr.status = 'claimed'; a.status = 'transferred'; a.credentialCode = 'REVOKED-' + a.id;
+      const recipientAdmission: Admission = { ...a, id: 'claimed-' + a.id, ownerId: tr.recipient, status: 'valid', holderName: tr.recipient, credentialCode: 'GZ-DEMO-CLAIM-' + a.id };
+      tr.claimedAdmissionId = recipientAdmission.id;
+      // The sender's ticket is revoked. Recipient admission is tracked separately and not shown as sender-owned.
+      received.push(recipientAdmission);
     },
     cancelDemoTransfer: async admissionId => {
       const tr = transfers.find(x => x.admissionId === admissionId && x.status === 'pending'), a = mine.find(x => x.id === admissionId);
