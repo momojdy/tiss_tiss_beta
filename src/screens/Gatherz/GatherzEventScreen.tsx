@@ -11,6 +11,8 @@ export default function GatherzEventScreen({ id }: { id: string }) {
   const t = useGatherzTheme(); const { repo, nav, now } = useGatherz(); const community = useGatherzCommunity();
   const [expanded, setExpanded] = useState(false);
   const [waitlisted, setWaitlisted] = useState(false);
+  const { data: myAdmissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
+  const { data: relatedEvents } = useLoad(() => repo.listEvents(), [repo]);
   const { data: e, error, loading, reload } = useLoad(() => repo.getEvent(id), [repo, id]);
   if (loading) return <Page><Header title="Event" onBack={nav.back} /><Notice loading body="Loading event…" /></Page>;
   if (error) return <Page><Header title="Event" onBack={nav.back} /><Notice title="Event could not load" body="Please try again." action="Try again" onAction={reload} /></Page>;
@@ -40,6 +42,7 @@ export default function GatherzEventScreen({ id }: { id: string }) {
         <Pressable accessibilityRole="button" onPress={() => community.toggleSavedOrganizer(e.organizerName)} style={{ borderWidth: 0.5, borderColor: t.line, borderRadius: 999, padding: 12, backgroundColor: t.card }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{community.savedOrganizers.includes(e.organizerName) ? 'Following organizer' : 'Follow organizer'}</Text></Pressable>
       </View>
       {sold && phase !== 'past' ? <Pressable accessibilityRole="button" onPress={() => setWaitlisted(v => !v)} style={{ marginHorizontal: 20, marginTop: 12, padding: 14, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{waitlisted ? 'On the waitlist · Tap to leave' : 'Join waitlist (demo)'}</Text></Pressable> : null}
+      {(myAdmissions ?? []).some(a => a.eventId === e.id) ? <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, marginTop: 12, padding: 16, backgroundColor: t.card, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>You have {(myAdmissions ?? []).filter(a => a.eventId === e.id && a.status !== 'refunded' && a.status !== 'transferred').length} tickets for this event</Text><Text style={{ color: t.accent, marginTop: 5 }}>View my tickets ›</Text></Pressable> : null}
       <SectionTitle title="About this event" />
       <View style={{ marginHorizontal: 20, padding: 16, backgroundColor: t.card, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line }}>
         <Text style={{ color: t.text, lineHeight: 21 }}>{e.tagline}{expanded ? '\n\nJoin the experience at ' + e.venue + ' in ' + e.area + '. Check the event policies before purchasing.' : ''}</Text>
@@ -47,6 +50,9 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       </View>
       <SectionTitle title="Date & location" />
       <Box title={formatWhen(e, now)} body={e.venue + ', ' + e.area + ' · ' + e.timezone} />
+      <SectionTitle title="Schedule & lineup" />
+      <Box title="Event starts" body={formatWhen(e, now)} />
+      <Box title="Event ends" body={new Date(e.endsAt).toLocaleString()} />
       <SectionTitle title="Tickets" />
       {e.tiers.map(x => <Pressable key={x.name} accessibilityRole="button" accessibilityState={{ disabled: sold || phase === 'past' }} disabled={sold || phase === 'past'} onPress={() => nav.push('buy', e.id)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
         <View style={{ flex: 1 }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{x.name}</Text><Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>{x.admissions} {x.admissions === 1 ? 'admission' : 'admissions'} · {sold ? 'Sold out' : phase === 'past' ? 'Event ended' : 'Available'}</Text></View>
@@ -58,6 +64,10 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       <Box title="Transfers" body={`Allowed until ${p.transferCutoffHours} hours before start. The recipient must accept first.`} />
       <Box title="Refunds" body={`Accepted until ${p.refundCutoffHours} hours before start.`} />
       <Box title="Age and entry" body={`${p.age}. ${p.reentry}.`} />
+      {(relatedEvents ?? []).some(other => other.id !== e.id && other.category === e.category) ? <>
+        <SectionTitle title="Related events" />
+        {(relatedEvents ?? []).filter(other => other.id !== e.id && other.category === e.category).slice(0, 3).map(other => <Pressable key={other.id} accessibilityRole="button" onPress={() => nav.push('event', other.id)} style={{ marginHorizontal: 20, marginBottom: 10, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, backgroundColor: t.card }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>{other.title}</Text><Text style={{ color: t.mute, marginTop: 4 }}>{other.venue} · {other.area}</Text></Pressable>)}
+      </> : null}
       <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
         <Pressable accessibilityRole="button" accessibilityState={{ disabled: phase === 'past' || sold }} disabled={phase === 'past' || sold} onPress={() => nav.push('buy', e.id)} style={[styles.btn, { backgroundColor: phase === 'past' || sold ? t.soft : t.accent }]}><Text style={{ fontFamily: fonts.semibold, color: phase === 'past' || sold ? t.mute : t.onAccent }}>{phase === 'past' ? 'Event ended' : sold ? 'Sold out' : 'Get tickets'}</Text></Pressable>
       </View>
