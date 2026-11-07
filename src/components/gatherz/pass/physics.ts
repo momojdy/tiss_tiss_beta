@@ -15,19 +15,19 @@ export function P(x: number, y: number, inv = 1): Point {
   'worklet';
   return { x, y, px: x, py: y, inv };
 }
-export function build(ax: number, ay: number, height: number): Rig {
+export function build(ax: number, ay: number, height: number, segment = LINK): Rig {
   'worklet';
   const points: Point[] = [];
   const links: Constraint[] = [];
   for (let i = 0; i <= N; i++) {
-    points.push(P(ax, ay + i * LINK, i === 0 ? 0 : 1));
-    if (i) links.push({ a: i - 1, b: i, length: LINK, stiffness: 1 });
-    if (i > 1) links.push({ a: i - 2, b: i, length: 2 * LINK * 0.9925, stiffness: 0.2 });
+    points.push(P(ax, ay + i * segment, i === 0 ? 0 : 1));
+    if (i) links.push({ a: i - 1, b: i, length: segment, stiffness: 1 });
+    if (i > 1) links.push({ a: i - 2, b: i, length: 2 * segment * 0.9925, stiffness: 0.2 });
   }
-  const y = ay + N * LINK;
-  points.push(P(ax, y + LINK, 0.25));
-  points.push(P(ax + HO, y + LINK + height - HO, 0.07));
-  links.push({ a: N, b: N + 1, length: LINK, stiffness: 1 });
+  const y = ay + N * segment;
+  points.push(P(ax, y + segment, 0.25));
+  points.push(P(ax + HO, y + segment + height - HO, 0.07));
+  links.push({ a: N, b: N + 1, length: segment, stiffness: 1 });
   links.push({ a: N + 1, b: N + 2, length: height - HO, stiffness: 1 });
   return { points, links, ax, ay, height };
 }
