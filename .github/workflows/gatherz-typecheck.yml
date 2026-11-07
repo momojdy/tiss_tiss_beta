@@ -1,0 +1,26 @@
+name: Gatherz TypeScript validation
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**/gatherz/**'
+      - 'src/**/Gatherz/**'
+      - 'src/components/gatherz/**'
+      - 'src/features/gatherz/**'
+      - 'src/data/gatherz/**'
+      - 'src/theme/gatherzTheme.ts'
+      - 'src/types/gatherz.ts'
+      - '.github/workflows/gatherz-typecheck.yml'
+  workflow_dispatch:
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+      - run: npm ci
+      - name: TypeScript check
+        run: npx tsc --noEmit
