@@ -85,23 +85,21 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   H = Math.max(H, 300);
   const W = H / 1.5;
   const AX = vw / 2, AY = 34;
-  // Anchor the flexible ribbon at the bottom of the mount's retaining lip, not behind its top edge.
-  // The first free Verlet segment then bends naturally as the card swings.
-  const STRAP_EXIT_Y = AY + 11;
+  // The ribbon is fixed inside the mount; the metal housing occludes the concealed segment.
   const inner = W - 44;
 
   const th = dark
     ? { rail: '#3A3A52', se: '#5A3B8C', sg: '#C9C2E3', st: '#8B7CC7', sh: '#000000', dockbg: '#2A1E4Dcc', dtx: '#C9C2E3' }
     : { rail: '#C9C2E3', se: '#3A3A52', sg: '#8B7CC7', st: '#C9C2E3', sh: '#2A1E4D', dockbg: '#FFFFFFcc', dtx: '#2A1E4D' };
 
-  const rig = useSharedValue(build(AX, STRAP_EXIT_Y, Lr, H));
+  const rig = useSharedValue(build(AX, AY, Lr, H));
   const flipA = useSharedValue(0), flipT = useSharedValue(0), ty = useSharedValue(0), pth = useSharedValue(0);
   const acc = useSharedValue(0), elapsed = useSharedValue(0), nudged = useSharedValue(false), swayReq = useSharedValue(0);
   const dragOn = useSharedValue(false), dragX = useSharedValue(0), dragY = useSharedValue(0), dragT = useSharedValue(1), moved = useSharedValue(0);
   const mx = useSharedValue(50), my = useSharedValue(45);
   const hintOp = useSharedValue(0.6);
 
-  useEffect(() => { rig.value = build(AX, STRAP_EXIT_Y, Lr, H); }, [AX, Lr, H]);
+  useEffect(() => { rig.value = build(AX, AY, Lr, H); }, [AX, Lr, H]);
 
   const flippedRef = useRef(false);
   const doFlip = () => { flippedRef.current = !flippedRef.current; flipT.value = flippedRef.current ? 180 : 0; };
