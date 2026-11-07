@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { FlatList, View, useWindowDimensions } from 'react-native';
+import { FlatList, View, Pressable, Text, useWindowDimensions } from 'react-native';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { splitAdmissions, type TicketRow } from '../../lib/gatherz/rules';
+import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
 import { Chip, Header, Notice, Page, TicketFront } from '../../components/gatherz/shared';
 export default function GatherzTicketsScreen() {
-  const { repo, nav, now } = useGatherz(); const { width } = useWindowDimensions();
+  const { repo, nav, now } = useGatherz(); const { width } = useWindowDimensions(); const t = useGatherzTheme();
   const { data, error, loading, reload } = useLoad(async () => { const [a, e] = await Promise.all([repo.listMyAdmissions(), repo.listEvents()]); return { a, e }; }, [repo]);
   const [seg, setSeg] = useState<'up' | 'past'>('up');
   // Past events are not in listEvents(); load them individually so past tickets still resolve.
@@ -18,6 +19,10 @@ export default function GatherzTicketsScreen() {
   return (
     <Page>
       <Header title="My Tickets" subtitle="Your admissions in one place" />
+      <View style={{ flexDirection: 'row', gap: 8, marginHorizontal: 20, marginBottom: 12 }}>
+        <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Order history</Text></Pressable>
+        <Pressable accessibilityRole="button" onPress={() => nav.push('claim')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Claim ticket</Text></Pressable>
+      </View>
       <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 20, paddingBottom: 14 }}>
         <Chip label={`Upcoming (${upcoming.length})`} on={seg === 'up'} onPress={() => setSeg('up')} />
         <Chip label={`Past (${done.length})`} on={seg === 'past'} onPress={() => setSeg('past')} />
