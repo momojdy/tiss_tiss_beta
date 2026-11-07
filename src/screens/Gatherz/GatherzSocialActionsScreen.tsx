@@ -1,3 +1,4 @@
+import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import React, { useState } from 'react';
 import { Alert, Image, Pressable, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,7 +10,8 @@ import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useLoad } from '../../lib/gatherz/useLoad';
 type Mode = 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem';
 export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; id: string }) {
-  const { repo, nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme();
+  const { repo, nav } = useGatherz();
+  const activity = useGatherzActivity(); const c = useGatherzCommunity(); const t = useGatherzTheme();
   const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
   const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
   const moment = c.moments.find(m => m.id === id), post = c.posts.find(p => p.id === id), circle = demoCircles.find(x => x.id === id);
@@ -32,7 +34,7 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
         {button(uri ? 'Change photo' : 'Select photo', pick)}
         {input('Optional caption')}
         {button(publicPhoto ? 'Visibility: Public' : 'Visibility: Private', () => setPublicPhoto(v => !v))}
-        {button('Publish photo', () => { if (!uri || count >= 3) return; c.addMoment(id, text.trim(), publicPhoto, uri); nav.tab('moments'); }, !uri)}
+        {button('Publish photo', () => { if (!uri || count >= 3) return; c.addMoment(id, text.trim(), publicPhoto, uri); activity.notify('moments', 'Moment added', 'Your photo was added to this event.'); nav.tab('moments'); }, !uri)}
       </> : <Notice title="Photo limit reached" body="Delete one of your three photos to add another." />}
     </> : <Notice title="Check-in required" body="Only checked-in attendees can publish event photos." /> : null}
     {mode === 'mv' ? moment ? <>
