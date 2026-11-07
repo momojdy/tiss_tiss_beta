@@ -13,22 +13,8 @@ import type { Admission, GatherzEvent } from '../../types/gatherz';
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const STRAP_TEXT = 'GATHERZ · BY WANTISS · GATHERZ · BY WANTISS';
-const GW = 10, GH = 8;
-const WID: Record<string, number> = { G: 0.72, A: 0.70, T: 0.60, H: 0.74, E: 0.60, R: 0.66, Z: 0.62, B: 0.66, Y: 0.64, W: 0.95, N: 0.74, I: 0.30, S: 0.60, '·': 0.28, ' ': 0.26 };
-const STRAP_FS = 6.5, STRAP_LS = 1.6;
-function buildOffs(L: number): number[] {
-  const chars = Array.from(STRAP_TEXT);
-  let o = 0;
-  const raw = chars.map(ch => { const at = o; o += (WID[ch] ?? 0.62) * STRAP_FS + STRAP_LS; return at; });
-  const s0 = 11, idxA = 24;
-  const endA = raw[idxA] + WID.A * STRAP_FS;
-  const k = Math.max(0.8, Math.min(1.25, (L - 11 - s0) / endA));
-  return raw.map(v => s0 + v * k);
-}
-const metalStops = () => [
-  <Stop key="m0" offset="0" stopColor="#F1EAFF" />, <Stop key="m1" offset=".2" stopColor="#B8A6EE" />, <Stop key="m2" offset=".46" stopColor="#5E43A8" />,
-  <Stop key="m3" offset=".64" stopColor="#8D74D6" />, <Stop key="m4" offset=".84" stopColor="#CDBDF7" />, <Stop key="m5" offset="1" stopColor="#4A2F86" />,
-];
+const GW = 6, GH = 8;
+const GLYPH_OFFS: number[] = (() => { let o = 8; return Array.from(STRAP_TEXT).map(ch => { const at = o; o += (ch === ' ' ? 1.8 : ch === '·' ? 1.6 : 4.2) + 1.6; return at; }); })();
 const BLUR_OK = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) >= 31);
 function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: Animated.SharedValue<number[]>; color: string; family: string }) {
   const st = useAnimatedStyle(() => {
@@ -36,7 +22,7 @@ function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs
     const vx = -GW / 2, vy = 6.3 - GH / 2, c = Math.cos(a), sn = Math.sin(a);
     return { opacity: vis, transform: [{ translateX: x - GW / 2 - (vx * c - vy * sn) }, { translateY: y - GH / 2 - (vx * sn + vy * c) }, { rotate: a + 'rad' }] };
   });
-  return <Animated.Text style={[{ position: 'absolute', left: 0, top: 0, width: GW, height: GH, fontSize: STRAP_FS, lineHeight: GH, fontFamily: family, color, includeFontPadding: false }, st]} numberOfLines={1} allowFontScaling={false}>{ch}</Animated.Text>;
+  return <Animated.Text style={[{ position: 'absolute', left: 0, top: 0, width: GW, height: GH, fontSize: 6.5, lineHeight: GH, fontFamily: family, color, includeFontPadding: false }, st]}>{ch}</Animated.Text>;
 }
 
 const FONT = { reg: fonts.regular, med: fonts.semibold, bold: fonts.bold };
@@ -131,8 +117,7 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   const erProps = useAnimatedProps(() => ({ d: geo.value.er }) as any);
   const slProps = useAnimatedProps(() => ({ d: geo.value.sl }) as any);
   const srProps = useAnimatedProps(() => ({ d: geo.value.sr }) as any);
-  const glyphOffs = useMemo(() => buildOffs(Lr), [Lr]);
-  const glyphs = useDerivedValue(() => glyphLayout(rig.value.points, glyphOffs, geo.value.textOpacity));
+  const glyphs = useDerivedValue(() => glyphLayout(rig.value.points, GLYPH_OFFS, geo.value.textOpacity));
   const ringProps = useAnimatedProps(() => { const R = rig.value.points[N + 1]; return { cx: R.x, cy: R.y } as any; });
 
   const cardStyle = useAnimatedStyle(() => {
@@ -241,13 +226,7 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         <Hole />
         {children}
       </View>
-      {/* Mount is in front of ribbon and lettering. */}
-      <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
-        <Defs><SvgLinearGradient id="metalB" x1="0" y1="0" x2="1" y2="1">{metalStops()}</SvgLinearGradient></Defs>
-        <Rect x={AX - 17} y={AY - 12} width={34} height={20} rx={5} fill="url(#metalB)" stroke="#3E2A75" strokeWidth={1} />
-        <Rect x={AX - 14} y={AY - 10} width={28} height={3} rx={1.5} fill="#fff" opacity={0.35} />
-        <Rect x={AX - 17} y={AY + 3} width={34} height={2} fill="#3E2A75" opacity={0.35} />
-      </Svg>
+
 
     </Animated.View>
   );
@@ -274,6 +253,8 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
       </Svg>
 
       <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
+        <Defs><SvgLinearGradient id="metalB" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+        <Rect x={AX - 16} y={AY - 12} width={32} height={20} rx={4} fill="url(#metalB)" stroke="#5A3B8C" />
         <G>{Array.from({ length: N }, (_, i) => <StrapQuad key={i} i={i} geo={geo} />)}</G>
         <AnimatedPath animatedProps={elProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
         <AnimatedPath animatedProps={erProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
@@ -350,16 +331,14 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
 
       <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width: vw, height: vh }}>
         <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }}>
-          <Defs><SvgLinearGradient id="metalF" x1="0" y1="0" x2="1" y2="1">{metalStops()}</SvgLinearGradient></Defs>
-          <AnimatedCircle animatedProps={ringProps} r={9.5} fill="none" stroke="url(#metalF)" strokeWidth={2.8} />
+          <Defs><SvgLinearGradient id="metalF" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+          <AnimatedCircle animatedProps={ringProps} r={9.5} fill="none" stroke="url(#metalF)" strokeWidth={2.6} />
         </Svg>
-        <Animated.View style={[{ position: 'absolute', left: -16, top: -24, width: 32, height: 48 }, clipStyle]}>
-          <Svg width={32} height={48} viewBox="-16 -24 32 48">
-            <Defs><SvgLinearGradient id="metalC" x1="0" y1="0" x2="1" y2="1">{metalStops()}</SvgLinearGradient></Defs>
-            <Rect x={-4} y={-4} width={8} height={25} rx={4} fill="none" stroke="url(#metalC)" strokeWidth={2.8} />
-            <Rect x={-14} y={-22} width={28} height={21} rx={5} fill="url(#metalC)" stroke="#3E2A75" strokeWidth={1} />
-            <Rect x={-11.5} y={-20} width={23} height={3} rx={1.5} fill="#fff" opacity={0.35} />
-            <Rect x={-14} y={-8} width={28} height={2} fill="#3E2A75" opacity={0.35} />
+        <Animated.View style={[{ position: 'absolute', left: -12, top: -22, width: 24, height: 44 }, clipStyle]}>
+          <Svg width={24} height={44} viewBox="-12 -22 24 44">
+            <Defs><SvgLinearGradient id="metalC" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+            <Rect x={-8} y={-15} width={16} height={11} rx={2.5} fill="url(#metalC)" stroke="#5A3B8C" />
+            <Rect x={-4} y={-5} width={8} height={24} rx={4} fill="none" stroke="url(#metalC)" strokeWidth={2.6} />
           </Svg>
         </Animated.View>
       </View>
