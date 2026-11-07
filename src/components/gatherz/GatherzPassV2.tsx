@@ -1,18 +1,29 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedProps, useAnimatedStyle, useDerivedValue, useFrameCallback, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import Svg, { Circle, Defs, G, LinearGradient as SvgLinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText, TextPath } from 'react-native-svg';
+import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient as SvgLinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
 import QRCode from 'react-native-qrcode-svg';
 import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
 import { formatWhen, qrPayload } from '../../lib/gatherz/rules';
-import { angleOf, build, DT, HO, LINK, N, step, strapGeometry } from './pass/physics';
+import { angleOf, build, DT, glyphLayout, HO, LINK, N, step, strapGeometry } from './pass/physics';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
-const AnimatedG = Animated.createAnimatedComponent(G);
+const STRAP_TEXT = 'GATHERZ · BY WANTISS · GATHERZ · BY WANTISS';
+const GW = 6, GH = 8;
+const GLYPH_OFFS: number[] = (() => { let o = 8; return Array.from(STRAP_TEXT).map(ch => { const at = o; o += (ch === ' ' ? 1.8 : ch === '·' ? 1.6 : 4.2) + 2.2; return at; }); })();
+const BLUR_OK = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) >= 31);
+function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: Animated.SharedValue<number[]>; color: string; family: string }) {
+  const st = useAnimatedStyle(() => {
+    const g = glyphs.value, x = g[i * 4], y = g[i * 4 + 1], a = g[i * 4 + 2], vis = g[i * 4 + 3];
+    const vx = -GW / 2, vy = 6.3 - GH / 2, c = Math.cos(a), sn = Math.sin(a);
+    return { opacity: vis, transform: [{ translateX: x - GW / 2 - (vx * c - vy * sn) }, { translateY: y - GH / 2 - (vx * sn + vy * c) }, { rotate: a + 'rad' }] };
+  });
+  return <Animated.Text style={[{ position: 'absolute', left: 0, top: 0, width: GW, height: GH, fontSize: 6.5, lineHeight: GH, fontFamily: family, color, includeFontPadding: false }, st]}>{ch}</Animated.Text>;
+}
 
 const FONT = { reg: fonts.regular, med: fonts.semibold, bold: fonts.bold };
 
@@ -102,12 +113,11 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
 
   const geo = useDerivedValue(() => strapGeometry(rig.value.points, flipA.value + ty.value * 2, dark));
 
-  const tpProps = useAnimatedProps(() => ({ d: geo.value.tp }) as any);
   const elProps = useAnimatedProps(() => ({ d: geo.value.el }) as any);
   const erProps = useAnimatedProps(() => ({ d: geo.value.er }) as any);
   const slProps = useAnimatedProps(() => ({ d: geo.value.sl }) as any);
   const srProps = useAnimatedProps(() => ({ d: geo.value.sr }) as any);
-  const txtProps = useAnimatedProps(() => ({ opacity: geo.value.textOpacity }) as any);
+  const glyphs = useDerivedValue(() => glyphLayout(rig.value.points, GLYPH_OFFS, geo.value.textOpacity));
   const ringProps = useAnimatedProps(() => { const R = rig.value.points[N + 1]; return { cx: R.x, cy: R.y } as any; });
 
   const cardStyle = useAnimatedStyle(() => {
@@ -246,21 +256,25 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         </Defs>
         <Rect x={0} y={26} width={vw} height={5} fill={th.rail} />
         <Rect x={AX - 16} y={AY - 12} width={32} height={20} rx={4} fill="url(#metalB)" stroke="#5A3B8C" />
-        <AnimatedPath id="tp" animatedProps={tpProps} fill="none" />
+
         <G>{Array.from({ length: N }, (_, i) => <StrapQuad key={i} i={i} geo={geo} />)}</G>
         <AnimatedPath animatedProps={elProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
         <AnimatedPath animatedProps={erProps} fill="none" stroke={th.se} strokeWidth={1.8} strokeLinejoin="round" />
         <AnimatedPath animatedProps={slProps} fill="none" stroke={th.sg} strokeWidth={1} strokeDasharray="3 3" opacity={0.5} />
         <AnimatedPath animatedProps={srProps} fill="none" stroke={th.sg} strokeWidth={1} strokeDasharray="3 3" opacity={0.5} />
-        <AnimatedG animatedProps={txtProps}>
-          <SvgText fill={th.st} fontSize={6.5} fontWeight="700" letterSpacing={2.2}>
-            <TextPath href="#tp" startOffset={8}>GATHERZ · BY WANTISS · GATHERZ · BY WANTISS</TextPath>
-          </SvgText>
-        </AnimatedG>
       </Svg>
+      <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width: vw, height: vh }}>
+        {Array.from(STRAP_TEXT).map((ch, i) => ch === ' ' ? null : <Glyph key={i} i={i} ch={ch} glyphs={glyphs} color={th.st} family={FONT.bold} />)}
+      </View>
+
 
       <Animated.View pointerEvents="none" style={[{ position: 'absolute', left: 0, top: 0, width: W, height: H }, shadowStyle]}>
-        {[5, 4, 3, 2, 1, 0].map(k => <View key={k} style={{ position: 'absolute', left: -k * 9, right: -k * 9, top: -k * 9, bottom: -k * 9, borderRadius: 24 + k * 9, backgroundColor: th.sh, opacity: 0.09 }} />)}
+        <Svg width={W + 144} height={H + 144} style={{ position: 'absolute', left: -72, top: -72 }}>
+          {BLUR_OK ? <>
+            <Defs><Filter id="shb" x="-50%" y="-50%" width="200%" height="200%"><FeGaussianBlur stdDeviation={24} /></Filter></Defs>
+            <Rect x={72} y={72} width={W} height={H} rx={24} fill={th.sh} opacity={0.5} filter="url(#shb)" />
+          </> : <Rect x={72} y={72} width={W} height={H} rx={24} fill={th.sh} opacity={0.16} />}
+        </Svg>
       </Animated.View>
 
       <GestureDetector gesture={pan}>
