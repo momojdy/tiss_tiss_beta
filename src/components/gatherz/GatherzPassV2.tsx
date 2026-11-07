@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Pressable, Text, View, useWindowDimensions, useReducedMotion } from 'react-native';
 import Animated, { useAnimatedProps, useAnimatedStyle, useFrameCallback, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Svg, { Path, Line, Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
@@ -9,32 +9,40 @@ import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
 import { formatWhen, qrPayload } from '../../lib/gatherz/rules';
 import { build, step, frame, N, DT, HO } from './pass/physics';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
+const AnimatedPath = Animated.createAnimatedComponent(Path);
+const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 const TIER = {
   general: { label: 'GENERAL', subtitle: 'Standard Experience', perk: 'Standard Entry · Main Floor', colors: ['#6B47AB','#3A2670','#1A1233'] as const, accent: '#C9C2E3' },
   vip: { label: 'VIP', subtitle: 'Exclusive Experience', perk: 'Priority Entry · Exclusive Lounge', colors: ['#1B1724','#0C0A14','#050309'] as const, accent: '#8B7CC7' },
   backstage: { label: 'BACKSTAGE', subtitle: 'Artist Access', perk: 'All Access · Artist Meet & Greet', colors: ['#2B2635','#0E0C16','#050309'] as const, accent: '#D8D0F2' },
 };
 export default function GatherzPassV2({ admission, event }: { admission: Admission; event: GatherzEvent }) {
-  const t = useGatherzTheme(); const { width } = useWindowDimensions(); const tier = TIER[admission.tier];
+  const t = useGatherzTheme(); const { width, height } = useWindowDimensions(); const tier = TIER[admission.tier];
+  const reducedMotion = useReducedMotion();
 
   const [flipped, setFlipped] = useState(false);
   const [hintVisible, setHintVisible] = useState(true);
-  const cardWidth = Math.min(width * .74, 300), cardHeight = cardWidth * 1.5 - 4;
-  const stageHeight = Math.max(720, cardHeight + 420);
+  const stageHeight = Math.max(510, height - 235);
+  const strapLength = Math.max(78, Math.min(130, height * .15));
+  const cardHeight = Math.max(300, Math.min(stageHeight - strapLength - 34, Math.min(300, width * .74) * 1.5 - 4));
+  const cardWidth = cardHeight / 1.5;
+  const segment = strapLength / (N + 1);
+  const restRingY = 9 + strapLength;
   const anchorX = width / 2, anchorY = 9;
-  const rig = useSharedValue(build(anchorX, anchorY, cardHeight));
+  const rig = useSharedValue(build(anchorX, anchorY, cardHeight, segment));
   const dragX = useSharedValue(0), dragY = useSharedValue(0), dragging = useSharedValue(false);
-  const flip = useSharedValue(0), angle = useSharedValue(0), ringX = useSharedValue(anchorX), ringY = useSharedValue(anchorY + N * 22 + 22);
+  const flip = useSharedValue(0), angle = useSharedValue(0), ringX = useSharedValue(anchorX), ringY = useSharedValue(restRingY);
   const tilt = useSharedValue(0), elapsed = useSharedValue(0), nudgePending = useSharedValue(true);
-  const toggle = () => { setFlipped(v => { flip.value = withTiming(v ? 0 : 180, { duration: 650 }); return !v; }); };
+  const toggle = () => { flip.value = withTiming(flipped ? 0 : 180, { duration: reducedMotion ? 0 : 650 }); setFlipped(!flipped); };
   const onGestureTap = () => { setHintVisible(false); toggle(); };
   const onGestureDrag = () => setHintVisible(false);
-  useEffect(() => { rig.value = build(anchorX, anchorY, cardHeight); }, [anchorX, cardHeight]);
+  useEffect(() => { rig.value = build(anchorX, anchorY, cardHeight, segment); }, [anchorX, cardHeight, segment]);
   useFrameCallback(({ timeSincePreviousFrame }) => {
     'worklet';
     const dt = Math.min(.05, (timeSincePreviousFrame ?? 16.67) / 1000);
+    if (reducedMotion) return;
     elapsed.value += dt;
-    const next = rig.value;
+    const next = { ...rig.value, points: rig.value.points.map(p => ({ ...p })) };
     if (nudgePending.value && elapsed.value > .3) { next.points[N + 2].px -= 2.5; nudgePending.value = false; }
     const steps = Math.min(16, Math.max(1, Math.ceil(dt / DT)));
     for (let i = 0; i < steps; i++) step(next, dragging.value ? dragX.value : undefined, dragging.value ? dragY.value : undefined);
@@ -42,7 +50,7 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
     tilt.value = Math.max(-11, Math.min(11, (f.angle - angle.value) * 85));
     angle.value = f.angle;
     ringX.value = f.x; ringY.value = f.y;
-    rig.value = { ...next, points: next.points.map(p => ({ ...p })) };
+    rig.value = next;
   });
   const rope = useAnimatedProps(() => {
     const points = rig.value.points;
@@ -54,20 +62,19 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
   });
   const ring = useAnimatedProps(() => ({ cx: ringX.value, cy: ringY.value }));
   const hanging = useAnimatedStyle(() => ({
-    transform: [{ translateX: ringX.value - anchorX }, { translateY: ringY.value - (anchorY + N * 22 + 22) }, { rotate: (-angle.value) + 'rad' }],
+    transform: [{ translateX: ringX.value - anchorX }, { translateY: ringY.value - restRingY }, { translateY: cardHeight / 2 - HO }, { rotate: (-angle.value) + 'rad' }, { translateY: HO - cardHeight / 2 }],
   }));
   const frontStyle = useAnimatedStyle(() => ({ transform: [{ perspective: 1200 }, { rotateY: (flip.value + tilt.value) + 'deg' }] }));
   const backStyle = useAnimatedStyle(() => ({ transform: [{ perspective: 1200 }, { rotateY: (flip.value + 180 + tilt.value) + 'deg' }] }));
-  const pan = Gesture.Pan().minDistance(10).onBegin(e => { runOnJS(onGestureDrag)(); dragging.value = true; dragX.value = e.x + (width - cardWidth) / 2; dragY.value = e.y + N * 22 + 22; }).onUpdate(e => {
-    dragX.value = e.x + (width - cardWidth) / 2;
-    dragY.value = e.y + N * 22 + 22;
+  const startX = useSharedValue(0), startY = useSharedValue(0);
+  const pan = Gesture.Pan().minDistance(10).onBegin(() => { runOnJS(onGestureDrag)(); dragging.value = true; startX.value = rig.value.points[N + 2].x; startY.value = rig.value.points[N + 2].y; dragX.value = startX.value; dragY.value = startY.value; }).onUpdate(e => {
+    dragX.value = startX.value + e.translationX;
+    dragY.value = startY.value + e.translationY;
   }).onEnd(() => { dragging.value = false; }).onFinalize(() => { dragging.value = false; });
   const tap = Gesture.Tap().onEnd(() => { runOnJS(onGestureTap)(); });
   const gesture = Gesture.Race(pan, tap);
-  const nudge = () => { const next = rig.value; next.points[N + 2].px -= 3.2; rig.value = { ...next, points: next.points.map(p => ({ ...p })) }; setHintVisible(false); };
+  const nudge = () => { const next = { ...rig.value, points: rig.value.points.map(p => ({ ...p })) }; next.points[N + 2].px -= 3.2; rig.value = next; setHintVisible(false); };
   const face = { position: 'absolute' as const, width: cardWidth, height: cardHeight, borderRadius: 24, borderWidth: 0.5, borderColor: '#C9C2E355', backfaceVisibility: 'hidden' as const, overflow: 'hidden' as const };
-  const AnimatedPath = Animated.createAnimatedComponent(Path);
-  const AnimatedCircle = Animated.createAnimatedComponent(Circle);
   return <View style={{ minHeight: stageHeight + 95, alignItems: 'center' }}>
     <LinearGradient colors={t.name === 'dark' ? ['#241A45', '#150F2C', '#0E0B1D'] : ['#FFFFFF', '#EFEBF9', '#DCD5F0']} style={{ position: 'absolute', top: 0, left: 0, right: 0, height: stageHeight + 95 }} />
     <View style={{ width, height: stageHeight }}>
@@ -80,7 +87,7 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
         <AnimatedCircle animatedProps={ring} r={13} fill="none" stroke="#C9C2E3" strokeWidth={5} />
       </Svg>
       <GestureDetector gesture={gesture}>
-        <Animated.View style={[{ position: 'absolute', top: anchorY + N * 22 + 22 - HO, left: (width - cardWidth) / 2, width: cardWidth, height: cardHeight }, hanging]}>
+        <Animated.View style={[{ position: 'absolute', top: restRingY - HO, left: (width - cardWidth) / 2, width: cardWidth, height: cardHeight }, hanging]}>
           <View style={{ position: 'absolute', left: 3, top: 5, width: cardWidth, height: cardHeight, backgroundColor: '#1B1530', borderColor: '#8B7CC7', borderWidth: 1, borderRadius: 24, opacity: .55 }} />
           <Animated.View style={[face, frontStyle]}>
             <LinearGradient colors={tier.colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1, padding: 22, justifyContent: 'space-between' }}>
