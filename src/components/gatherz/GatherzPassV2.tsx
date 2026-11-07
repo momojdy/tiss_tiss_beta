@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Pressable, Text, View, useWindowDimensions, useReducedMotion } from 'react-native';
-import Animated, { useAnimatedProps, useAnimatedStyle, useFrameCallback, useSharedValue, withTiming, runOnJS } from 'react-native-reanimated';
+import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import Animated, { useAnimatedProps, useAnimatedStyle, useFrameCallback, useSharedValue, withTiming, runOnJS, useReducedMotion } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Svg, { Path, Line, Circle, Defs, LinearGradient as SvgGradient, Stop } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
