@@ -302,12 +302,12 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         <Defs>
           {/* Brushed purple steel: brighter bevel, deep metallic core, and lavender reflection. */}
           <SvgLinearGradient id="metalB" x1="0" y1="0" x2="0.18" y2="1">
-            <Stop offset="0" stopColor="#F0EAFB" />
-            <Stop offset=".16" stopColor="#C8B8E8" />
-            <Stop offset=".39" stopColor="#8B7CC7" />
-            <Stop offset=".65" stopColor="#554477" />
-            <Stop offset=".84" stopColor="#352A4B" />
-            <Stop offset="1" stopColor="#A796D2" />
+            <Stop offset="0" stopColor="#C5B7DE" />
+            <Stop offset=".16" stopColor="#9583BB" />
+            <Stop offset=".39" stopColor="#69568F" />
+            <Stop offset=".65" stopColor="#3D3158" />
+            <Stop offset=".84" stopColor="#241C35" />
+            <Stop offset="1" stopColor="#78679D" />
           </SvgLinearGradient>
         </Defs>
         {/* Solid upper housing; the ribbon enters a recessed socket at its lower edge. */}
@@ -388,12 +388,26 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
 
       <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width: vw, height: vh }}>
         <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }}>
-          <Defs><SvgLinearGradient id="metalF" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+          <Defs><SvgLinearGradient id="metalF" x1="0" y1="0" x2="0.18" y2="1"><Stop offset="0" stopColor="#C5B7DE" />
+            <Stop offset=".16" stopColor="#9583BB" />
+            <Stop offset=".39" stopColor="#69568F" />
+            <Stop offset=".65" stopColor="#3D3158" />
+            <Stop offset=".84" stopColor="#241C35" />
+            <Stop offset="1" stopColor="#78679D" /></SvgLinearGradient></Defs>
           <AnimatedCircle animatedProps={ringProps} r={9.5} fill="none" stroke="url(#metalF)" strokeWidth={2.6} />
         </Svg>
         <Animated.View style={[{ position: 'absolute', left: -12, top: -22, width: 24, height: 44 }, clipStyle]}>
           <Svg width={24} height={44} viewBox="-12 -22 24 44">
-            <Defs><SvgLinearGradient id="metalC" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+            <Defs>
+              <SvgLinearGradient id="metalC" x1="0" y1="0" x2="0.18" y2="1">
+                <Stop offset="0" stopColor="#C5B7DE" />
+            <Stop offset=".16" stopColor="#9583BB" />
+            <Stop offset=".39" stopColor="#69568F" />
+            <Stop offset=".65" stopColor="#3D3158" />
+            <Stop offset=".84" stopColor="#241C35" />
+            <Stop offset="1" stopColor="#78679D" />
+              </SvgLinearGradient>
+            </Defs>
             <Rect x={-8} y={-15} width={16} height={11} rx={2.5} fill="url(#metalC)" stroke="#5A3B8C" />
             <Rect x={-4} y={-5} width={8} height={24} rx={4} fill="none" stroke="url(#metalC)" strokeWidth={2.6} />
           </Svg>
