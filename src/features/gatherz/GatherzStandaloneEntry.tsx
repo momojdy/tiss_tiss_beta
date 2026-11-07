@@ -26,6 +26,8 @@ import GatherzPlaceholderScreen from '../../screens/Gatherz/GatherzPlaceholderSc
 import { GatherzHelpScreen, GatherzHelpArticleScreen, GatherzSupportScreen, GatherzPreferencesScreen, GatherzNotificationsScreen } from '../../screens/Gatherz/GatherzUtilityScreens';
 import { GatherzCommunityProvider } from './GatherzCommunityContext';
 import { GatherzActivityProvider } from './GatherzActivityContext';
+import { GatherzCheckoutProvider } from './GatherzCheckoutContext';
+import { GatherzReviewScreen, GatherzPaymentScreen, GatherzPaymentFailedScreen, GatherzConfirmationScreen } from '../../screens/Gatherz/GatherzCheckoutSteps';
 import { GatherzFavoritesScreen, GatherzMomentsScreen, GatherzCirclesScreen, GatherzCircleDetailScreen } from '../../screens/Gatherz/GatherzCommunityScreens';
 export interface GatherzEntryProps { repository?: GatherzRepository; initialTheme?: 'light' | 'dark'; onExit?: () => void }
 /** Mounts like Prezo/Goodies: it owns its internal stack and calls onExit when Back is pressed on the first screen. */
@@ -42,18 +44,18 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
   const goBack = useCallback(() => { if (stack.length > 1) dispatch({ type: 'back' }); else onExit?.(); }, [stack.length, onExit]);
   const ctx = useMemo(() => ({ repo, now: Date.now(), root, nav: { push, back: goBack, tab: (route: RouteName) => dispatch({ type: 'tab', route }) }, toggleTheme: () => setDark(d => !d) }), [repo, root, push, goBack]);
   const id = top.params?.id ?? '';
-  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : (top.route === 'ticket' || top.route === 'tk') ? <GatherzTicketScreen id={id} /> : (['buy','rv','pm','pf'].includes(top.route)) ? <GatherzCheckoutScreen id={id} /> : (['rc','ok'].includes(top.route)) ? <GatherzReceiptScreen id={id} /> : top.route === 'ords' ? <GatherzOrdersScreen /> : top.route === 'dc' ? <GatherzDemoControlsScreen /> : ['all','msgs','bs'].includes(top.route) ? <GatherzSecondaryScreen mode={top.route as 'all' | 'msgs' | 'bs'} /> : top.route === 'grp' ? <GatherzGroupScreen id={id} /> : top.route === 'favorites' ? <GatherzFavoritesScreen /> : top.route === 'moments' ? <GatherzMomentsScreen /> : top.route === 'circles' ? <GatherzCirclesScreen /> : top.route === 'ci' ? <GatherzCircleDetailScreen id={id} /> : top.route === 'org' ? <GatherzOrganizerScreen id={id} /> : ['mp', 'mv', 'pst', 'inv', 'rp', 'mem'].includes(top.route) ? <GatherzSocialActionsScreen mode={top.route as 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem'} id={id} /> : top.route === 'help' ? <GatherzHelpScreen /> : top.route === 'ha' ? <GatherzHelpArticleScreen id={id} /> : top.route === 'cs' ? <GatherzSupportScreen /> : top.route === 'sc' ? <GatherzSupportScreen id={id} /> : top.route === 'prefs' ? <GatherzPreferencesScreen /> : top.route === 'notif' ? <GatherzNotificationsScreen /> : ['send', 'claim', 'rf', 'dl', 'sh'].includes(top.route) ? <GatherzTicketActionsScreen id={id} action={(top.route === 'sh' ? 'dl' : top.route) as 'send' | 'claim' | 'rf' | 'dl'} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
+  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : (top.route === 'ticket' || top.route === 'tk') ? <GatherzTicketScreen id={id} /> : top.route === 'buy' ? <GatherzCheckoutScreen id={id} /> : top.route === 'rv' ? <GatherzReviewScreen id={id} /> : top.route === 'pm' ? <GatherzPaymentScreen id={id} /> : top.route === 'pf' ? <GatherzPaymentFailedScreen id={id} /> : top.route === 'ok' ? <GatherzConfirmationScreen id={id} /> : top.route === 'rc' ? <GatherzReceiptScreen id={id} /> : top.route === 'ords' ? <GatherzOrdersScreen /> : top.route === 'dc' ? <GatherzDemoControlsScreen /> : ['all','msgs','bs'].includes(top.route) ? <GatherzSecondaryScreen mode={top.route as 'all' | 'msgs' | 'bs'} /> : top.route === 'grp' ? <GatherzGroupScreen id={id} /> : top.route === 'favorites' ? <GatherzFavoritesScreen /> : top.route === 'moments' ? <GatherzMomentsScreen /> : top.route === 'circles' ? <GatherzCirclesScreen /> : top.route === 'ci' ? <GatherzCircleDetailScreen id={id} /> : top.route === 'org' ? <GatherzOrganizerScreen id={id} /> : ['mp', 'mv', 'pst', 'inv', 'rp', 'mem'].includes(top.route) ? <GatherzSocialActionsScreen mode={top.route as 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem'} id={id} /> : top.route === 'help' ? <GatherzHelpScreen /> : top.route === 'ha' ? <GatherzHelpArticleScreen id={id} /> : top.route === 'cs' ? <GatherzSupportScreen /> : top.route === 'sc' ? <GatherzSupportScreen id={id} /> : top.route === 'prefs' ? <GatherzPreferencesScreen /> : top.route === 'notif' ? <GatherzNotificationsScreen /> : ['send', 'claim', 'rf', 'dl', 'sh'].includes(top.route) ? <GatherzTicketActionsScreen id={id} action={(top.route === 'sh' ? 'dl' : top.route) as 'send' | 'claim' | 'rf' | 'dl'} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
   return (
     <SafeAreaProvider>
       <ThemeContext.Provider value={dark ? darkTheme : lightTheme}>
         <GatherzContext.Provider value={ctx}>
-          <GatherzActivityProvider><GatherzCommunityProvider>
+          <GatherzActivityProvider><GatherzCheckoutProvider><GatherzCommunityProvider>
           <View style={{ flex: 1 }}>
             <StatusBar style={dark ? 'light' : 'dark'} />
             {screen}
             {root ? <BottomNav active={top.route} onTab={r => ctx.nav.tab(r)} /> : null}
           </View>
-          </GatherzCommunityProvider></GatherzActivityProvider>
+          </GatherzCommunityProvider></GatherzCheckoutProvider></GatherzActivityProvider>
         </GatherzContext.Provider>
       </ThemeContext.Provider>
     </SafeAreaProvider>
