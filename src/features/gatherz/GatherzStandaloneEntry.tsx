@@ -13,6 +13,8 @@ import GatherzExploreScreen from '../../screens/Gatherz/GatherzExploreScreen';
 import GatherzEventScreen from '../../screens/Gatherz/GatherzEventScreen';
 import GatherzTicketsScreen from '../../screens/Gatherz/GatherzTicketsScreen';
 import GatherzTicketScreen from '../../screens/Gatherz/GatherzTicketScreen';
+import GatherzCheckoutScreen from '../../screens/Gatherz/GatherzCheckoutScreen';
+import GatherzReceiptScreen from '../../screens/Gatherz/GatherzReceiptScreen';
 import GatherzPlaceholderScreen from '../../screens/Gatherz/GatherzPlaceholderScreen';
 export interface GatherzEntryProps { repository?: GatherzRepository; initialTheme?: 'light' | 'dark'; onExit?: () => void }
 /** Mounts like Prezo/Goodies: it owns its internal stack and calls onExit when Back is pressed on the first screen. */
@@ -28,7 +30,7 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
   const push = useCallback((route: RouteName, id?: string) => dispatch({ type: 'push', entry: { route, params: id ? { id } : undefined } }), []);
   const ctx = useMemo(() => ({ repo, now: Date.now(), root, nav: { push, back: () => dispatch({ type: 'back' }), tab: (route: RouteName) => dispatch({ type: 'tab', route }) }, toggleTheme: () => setDark(d => !d) }), [repo, root, push, top]);
   const id = top.params?.id ?? '';
-  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : top.route === 'ticket' ? <GatherzTicketScreen id={id} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
+  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : top.route === 'ticket' ? <GatherzTicketScreen id={id} /> : top.route === 'buy' ? <GatherzCheckoutScreen id={id} /> : top.route === 'rc' ? <GatherzReceiptScreen id={id} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
   return (
     <SafeAreaProvider>
       <ThemeContext.Provider value={dark ? darkTheme : lightTheme}>
