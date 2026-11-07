@@ -25,6 +25,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
     <SectionTitle title="Next steps" />
+    {order.admissions > 1 ? <Pressable accessibilityRole="button" onPress={() => nav.push('grp', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, padding: 16, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Manage {order.admissions} group tickets</Text></Pressable> : null}
     <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, backgroundColor: t.accent, padding: 16, borderRadius: 999, alignItems: 'center' }}>
       <Text style={{ color: t.onAccent, fontFamily: fonts.bold }}>View my tickets</Text>
     </Pressable>
