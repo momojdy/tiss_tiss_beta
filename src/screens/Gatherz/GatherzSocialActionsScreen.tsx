@@ -13,7 +13,7 @@ type Mode = 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem';
 export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; id: string }) {
   const { repo, nav } = useGatherz();
   const activity = useGatherzActivity(); const c = useGatherzCommunity(); const t = useGatherzTheme();
-  const [uploadBusy, setUploadBusy] = useState(false); const [uploadError, setUploadError] = useState(''); const [photoSize, setPhotoSize] = useState(''); const [reportDetails, setReportDetails] = useState(''); const [reportReason, setReportReason] = useState(''); const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
+  const [editingPost, setEditingPost] = useState(false); const [uploadBusy, setUploadBusy] = useState(false); const [uploadError, setUploadError] = useState(''); const [photoSize, setPhotoSize] = useState(''); const [reportDetails, setReportDetails] = useState(''); const [reportReason, setReportReason] = useState(''); const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
   const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
   const moment = c.moments.find(m => m.id === id), post = c.posts.find(p => p.id === id), circle = demoCircles.find(x => x.id === id);
   const eligible = (admissions ?? []).some(a => a.eventId === id && a.status === 'checked_in');
