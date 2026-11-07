@@ -1,5 +1,6 @@
 export type RouteName = 'home' | 'favorites' | 'moments' | 'tickets' | 'circles' | 'explore' | 'event' | 'ticket';
 export interface RouteDef { title: string; root: boolean }
+/** Single source of truth: only root routes show the bottom navigation. */
 export const ROUTES: Record<RouteName, RouteDef> = {
   home: { title: 'Home', root: true }, favorites: { title: 'Favorites', root: true }, moments: { title: 'Moments', root: true }, tickets: { title: 'My Tickets', root: true }, circles: { title: 'Circles', root: true },
   explore: { title: 'Explore', root: false }, event: { title: 'Event', root: false }, ticket: { title: 'Ticket Details', root: false },
