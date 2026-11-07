@@ -9,20 +9,25 @@ import { formatWhen } from '../../lib/gatherz/rules';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 export const NAV_HEIGHT = 96;
+const HEADER_HEIGHT = 100;
+const STRIPE_HEIGHT = 20;
 
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
-  const t = useGatherzTheme();
-  return (
-    <View style={s.header}>
-      {onBack ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack} hitSlop={8} style={[s.iconBtn, { borderColor: t.line, backgroundColor: t.card }]}><MaterialCommunityIcons name="arrow-left" size={22} color={t.text} /></Pressable> : null}
-      <View style={{ flex: 1, minWidth: 0 }}>
-        <Text numberOfLines={1} style={{ fontFamily: fonts.bold, fontSize: onBack ? 18 : 28, color: t.text }}>{title}</Text>
-        {subtitle ? <Text style={{ fontFamily: fonts.regular, fontSize: 13, color: t.mute, marginTop: 2 }}>{subtitle}</Text> : null}
+  const t = useGatherzTheme(); const { nav } = useGatherz();
+  return <View>
+    <View style={[s.header, { backgroundColor: t.bg }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
+        <MaterialCommunityIcons name="arrow-left" size={24} color={t.text} />
+      </Pressable>
+      <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
+        <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
+        {subtitle ? <Text numberOfLines={1} style={{ fontFamily: fonts.regular, fontSize: 12, color: t.mute }}>{subtitle}</Text> : null}
       </View>
       {right}
     </View>
-  );
+    <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} />
+  </View>;
 }
 export function IconButton({ name, label, onPress }: { name: React.ComponentProps<typeof MaterialCommunityIcons>['name']; label: string; onPress: () => void }) {
   const t = useGatherzTheme();
@@ -30,7 +35,7 @@ export function IconButton({ name, label, onPress }: { name: React.ComponentProp
 }
 export function Page({ children }: { children: React.ReactNode }) {
   const t = useGatherzTheme(); const ins = useSafeAreaInsets(); const { root } = useGatherz();
-  return <ScrollView style={{ flex: 1, backgroundColor: t.bg }} contentContainerStyle={{ paddingTop: ins.top + 8, paddingBottom: (root ? NAV_HEIGHT + ins.bottom : ins.bottom) + 24 }} keyboardShouldPersistTaps="handled">{children}</ScrollView>;
+  return <ScrollView style={{ flex: 1, backgroundColor: t.bg }} contentContainerStyle={{ paddingTop: 0, paddingBottom: (root ? NAV_HEIGHT + ins.bottom : ins.bottom) + 24 }} keyboardShouldPersistTaps="handled">{children}</ScrollView>;
 }
 export function Art({ index, style, children }: { index: number; style?: object; children?: React.ReactNode }) {
   const g = artGradients[index % artGradients.length];
@@ -92,23 +97,24 @@ const NAV_LABEL: Record<string, string> = { home: 'Home', favorites: 'Favorites'
 export function BottomNav({ active, onTab }: { active: RouteName; onTab: (r: RouteName) => void }) {
   const t = useGatherzTheme(); const ins = useSafeAreaInsets();
   return (
-    <View accessibilityRole="tablist" style={[s.nav, { bottom: ins.bottom + 12, backgroundColor: t.card, borderColor: t.line }]}>
+    <View accessibilityRole="tablist" style={[s.nav, { bottom: ins.bottom + 18, backgroundColor: t.navBg, borderColor: t.navBorder }]}>
       {TABS.map(r => { const on = r === active; return (
-        <Pressable key={r} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={ROUTES[r].title} onPress={() => onTab(r)} style={[s.tab, on ? { backgroundColor: t.accent } : null]}>
-          <MaterialCommunityIcons name={ICONS[r]} size={22} color={on ? t.onAccent : t.mute} />
-          <Text style={{ fontFamily: fonts.semibold, fontSize: 10, color: on ? t.onAccent : t.mute }}>{NAV_LABEL[r]}</Text>
+        <Pressable key={r} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={ROUTES[r].title} onPress={() => onTab(r)} style={s.tab}>
+          <MaterialCommunityIcons name={ICONS[r]} size={24} color={on ? t.accent : t.mute} />
+          <Text style={{ fontFamily: fonts.semibold, fontSize: 10, color: on ? t.text : t.mute }}>{NAV_LABEL[r]}</Text>{on ? <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: t.accent, marginTop: 2 }} /> : null}
         </Pressable>); })}
     </View>
   );
 }
 const s = StyleSheet.create({
-  header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingBottom: 12 },
+  header: { width: '100%', height: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'flex-end', gap: 12, paddingHorizontal: 10, paddingBottom: 4 },
+  headerBack: { width: 36, height: 36, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
   iconBtn: { width: 44, height: 44, borderRadius: 22, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
   chip: { height: 38, paddingHorizontal: 16, borderRadius: radius.pill, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
   card: { borderRadius: radius.card, borderWidth: 0.5, overflow: 'hidden' },
   btn: { height: 50, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 22 },
   notice: { marginHorizontal: 20, marginTop: 12, padding: 16, borderRadius: radius.card, borderWidth: 0.5 },
-  nav: { position: 'absolute', left: 12, right: 12, minHeight: 66, borderRadius: 26, borderWidth: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 6, elevation: 6 },
-  tab: { flex: 1, minHeight: 52, borderRadius: 20, alignItems: 'center', justifyContent: 'center', gap: 2, marginHorizontal: 2 },
+  nav: { position: 'absolute', left: 14, right: 14, height: 65, borderRadius: 18, borderWidth: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-evenly', elevation: 5, shadowColor: '#000', shadowOpacity: 0.13, shadowRadius: 5, shadowOffset: { width: 0, height: 2 } },
+  tab: { flex: 1, minWidth: 0, height: 50, alignItems: 'center', justifyContent: 'center', gap: 2 },
 });
 export const styles = s;
