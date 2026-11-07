@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import Animated, { runOnJS, useAnimatedProps, useAnimatedStyle, useDerivedValue, useFrameCallback, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
@@ -74,7 +74,7 @@ function Hole() {
   );
 }
 
-export default function GatherzPassV2({ admission, event, viewportHeight }: { admission: Admission; event: GatherzEvent; viewportHeight?: number }) {
+export default function GatherzPassV2({ admission, event, viewportHeight, scanMode = false, onCloseScan }: { admission: Admission; event: GatherzEvent; viewportHeight?: number; scanMode?: boolean; onCloseScan?: () => void }) {
   const t = useGatherzTheme();
   const dark = t.name === 'dark';
   const { width: vw, height: winH } = useWindowDimensions();
@@ -93,6 +93,8 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
     ? { rail: '#3A3A52', se: '#5A3B8C', sg: '#C9C2E3', st: '#8B7CC7', sh: '#000000', dockbg: '#2A1E4Dcc', dtx: '#C9C2E3' }
     : { rail: '#C9C2E3', se: '#3A3A52', sg: '#8B7CC7', st: '#C9C2E3', sh: '#2A1E4D', dockbg: '#FFFFFFcc', dtx: '#2A1E4D' };
 
+  const scanActive = useSharedValue(scanMode);
+  useEffect(() => { scanActive.value = scanMode; }, [scanMode, scanActive]);
   const rig = useSharedValue(build(AX, AY, Lr, H));
   const flipA = useSharedValue(0), flipT = useSharedValue(0), ty = useSharedValue(0), pth = useSharedValue(0);
   const acc = useSharedValue(0), elapsed = useSharedValue(0), nudged = useSharedValue(false), swayReq = useSharedValue(0);
@@ -103,13 +105,13 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   useEffect(() => { rig.value = build(AX, AY, Lr, H); }, [AX, Lr, H]);
 
   const flippedRef = useRef(false);
-  const doFlip = () => { flippedRef.current = !flippedRef.current; flipT.value = flippedRef.current ? 180 : 0; };
-  const doSway = () => { swayReq.value = (Math.random() < 0.5 ? -1 : 1) * 3.2; hintOp.value = withTiming(0, { duration: 600 }); };
+  const doFlip = () => { if (scanMode) return; flippedRef.current = !flippedRef.current; flipT.value = flippedRef.current ? 180 : 0; };
+  const doSway = () => { if (scanMode) return; swayReq.value = (Math.random() < 0.5 ? -1 : 1) * 3.2; hintOp.value = withTiming(0, { duration: 600 }); };
 
   // Phone motion gently excites the same hanging-card physics as a finger toss.
   // Filter gravity and ignore tiny movements to prevent jitter while holding the phone.
   useEffect(() => {
-    if (Platform.OS === 'web') return;
+    if (Platform.OS === 'web' || scanMode) return;
     let active = true;
     let subscription: ReturnType<typeof Accelerometer.addListener> | undefined;
     let previousX = 0;
@@ -130,10 +132,11 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
       });
     }).catch(() => { /* Motion sensors may be unavailable or disabled. */ });
     return () => { active = false; subscription?.remove(); };
-  }, [swayReq]);
+  }, [swayReq, scanMode]);
 
   useFrameCallback(({ timeSincePreviousFrame }) => {
     'worklet';
+    if (scanActive.value) return;
     const dt = Math.min(0.05, (timeSincePreviousFrame ?? 16.67) / 1000);
     elapsed.value += dt;
     const r = rig.value;
@@ -186,7 +189,7 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
   });
   const hintStyle = useAnimatedStyle(() => ({ opacity: hintOp.value }));
 
-  const pan = Gesture.Pan().minDistance(0)
+  const pan = Gesture.Pan().enabled(!scanMode).minDistance(0)
     .onBegin(e => {
       'worklet';
       hintOp.value = withTiming(0, { duration: 600 });
@@ -441,17 +444,34 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
         </Animated.View>
       </View>
 
-      <Animated.Text pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, bottom: 70, textAlign: 'center', fontSize: 11, color: th.dtx, fontFamily: FONT.reg }, hintStyle]}>
+      {scanMode ? (
+        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: dark ? '#0E0B1D' : '#F4F0FA', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 22 }}>
+          <View style={{ width: '100%', maxWidth: 360, backgroundColor: '#191329', borderRadius: 24, borderWidth: 1, borderColor: '#66568D', padding: 22, alignItems: 'center' }}>
+            <Text style={{ fontFamily: FONT.bold, color: '#FFFFFF', fontSize: 19, marginBottom: 6 }}>Entry QR code</Text>
+            <Text style={{ fontFamily: FONT.reg, color: '#C9C2E3', fontSize: 12, marginBottom: 22, textAlign: 'center' }}>Hold this still for the door scanner</Text>
+            <View style={{ backgroundColor: '#FFFFFF', padding: 15, borderRadius: 14 }}>
+              <QRCode value={qrValue} size={Math.min(vw - 116, 270)} color="#111111" backgroundColor="#FFFFFF" />
+            </View>
+            <Text style={{ fontFamily: FONT.med, color: '#F2ECFF', fontSize: 12, marginTop: 18, textAlign: 'center' }}>{admission.credentialCode}</Text>
+            <Text style={{ fontFamily: FONT.reg, color: '#B6A9D0', fontSize: 11, marginTop: 5, textAlign: 'center' }}>{admission.holderName || 'Ticket holder'}</Text>
+            <Pressable accessibilityRole="button" accessibilityLabel="Close scan mode" onPress={onCloseScan} style={{ marginTop: 22, paddingHorizontal: 26, minHeight: 44, justifyContent: 'center', borderRadius: 24, backgroundColor: '#69568F' }}>
+              <Text style={{ fontFamily: FONT.bold, color: '#FFFFFF', fontSize: 13 }}>Close QR</Text>
+            </Pressable>
+          </View>
+        </View>
+      ) : null}
+
+      {!scanMode && <Animated.Text pointerEvents="none" style={[{ position: 'absolute', left: 0, right: 0, bottom: 70, textAlign: 'center', fontSize: 11, color: th.dtx, fontFamily: FONT.reg }, hintStyle]}>
         Drag the card to toss · tap to flip
-      </Animated.Text>
-      <View style={{ position: 'absolute', left: 0, right: 0, bottom: 14, flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 12, flexWrap: 'wrap' }}>
+      </Animated.Text>}
+      {!scanMode && <View style={{ position: 'absolute', left: 0, right: 0, bottom: 14, flexDirection: 'row', justifyContent: 'center', gap: 8, paddingHorizontal: 12, flexWrap: 'wrap' }}>
         {([['Flip', doFlip], ['Sway', doSway]] as const).map(([label, fn]) => (
           <Pressable key={label} accessibilityRole="button" onPress={fn}
             style={{ minHeight: 44, paddingHorizontal: 15, borderRadius: 99, borderWidth: 1, borderColor: 'rgba(139,124,199,.4)', backgroundColor: th.dockbg, alignItems: 'center', justifyContent: 'center' }}>
             <Text style={{ fontFamily: FONT.med, fontSize: 12, color: th.dtx }}>{label}</Text>
           </Pressable>
         ))}
-      </View>
+      </View>}
     </View>
   );
 }
