@@ -18,6 +18,7 @@ Deno.test('approved Goodies deployment package applies in documented order and p
  '20261106084303_goodies_cms_publication_review_guard.sql',
  '20261106144811_goodies_creole_reviewed_english_fallback.sql',
  '20261107014239_goodies_failure_state_content_review.sql',
+ '20261107021612_goodies_vendor_settlement.sql',
  ];
  try{
   await db.exec(await Deno.readTextFile(new URL('./fixtures/goodies-core.sql',import.meta.url)));
@@ -25,6 +26,7 @@ Deno.test('approved Goodies deployment package applies in documented order and p
   await db.exec("create schema storage; grant usage on schema storage to anon,authenticated,service_role; create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]); create table storage.objects(bucket_id text,name text,primary key(bucket_id,name)); alter table storage.objects enable row level security; grant select,insert,update,delete on storage.objects to authenticated;");
   // Shared baseline objects omitted by the domain-only captured fixture.
   await db.exec("create unique index synthetic_businesses_id_unique on public.businesses(id); create table public.user_settings(user_id uuid primary key references auth.users(id),language text,notification_preferences jsonb default '{}'::jsonb,updated_at timestamptz default now());");
+  await db.exec('create table public.exchange_rates(id uuid primary key default gen_random_uuid(),from_currency text,to_currency text,wantiss_rate numeric,market_rate numeric,is_active boolean,expires_at timestamptz,created_at timestamptz default now());');
   for(const file of files){try{await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));}catch(error){throw new Error(file+': '+String(error));}}
   const result=(await db.query<{private_bucket:boolean;reviews_rls:boolean;private_uploads:boolean;fallback_rule:boolean;builder_rule:boolean;dispute_rule:boolean;helper_public:boolean}>(`select
    exists(select 1 from storage.buckets where id='goodies-delivery-proofs' and not public) as private_bucket,
