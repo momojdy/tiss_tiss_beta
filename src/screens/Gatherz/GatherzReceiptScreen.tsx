@@ -24,7 +24,50 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
       <Text style={{ color: t.text, fontFamily: fonts.regular, marginTop: 16 }}>{order.quantity} × {order.tierName}</Text>
       <Text style={{ color: t.text, fontFamily: fonts.regular, marginTop: 4 }}>{order.admissions} individual admissions</Text>
       <View style={{ height: 0.5, backgroundColor: t.line, marginTop: 16 }} />
-      <Text style={{ color: t.mute, marginTop: 12 }}>Subtotal: {order.subtotal === 0 ? 'Free' : '$' + order.subtotal}</Text>
+      <Text style={{ color: t.mute, marginTop: 12 }}>Subtotal: {order.subtotal === 0 ? 'Free' : '}</Text>
+      <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
+      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '}</Text>
+      <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
+    </View>
+    <SectionTitle title="Receipt actions" />
+    <Pressable accessibilityRole="button" onPress={() => { void Share.share({ message: ['Gatherz DEMO receipt', event?.title ?? 'Event', 'Order: ' + order.id, 'Admissions: ' + order.admissions, 'Total: ' + (order.total === 0 ? 'Free' : '$' + order.total), 'No payment was processed.'].join('\n') }); }} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Share receipt</Text></Pressable>
+    <SectionTitle title="Next steps" />
+    <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>All orders</Text></Pressable>
+    {order.admissions > 1 ? <Pressable accessibilityRole="button" onPress={() => nav.push('grp', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, padding: 16, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Manage {order.admissions} group tickets</Text></Pressable> : null}
+    <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, backgroundColor: t.accent, padding: 16, borderRadius: 999, alignItems: 'center' }}>
+      <Text style={{ color: t.onAccent, fontFamily: fonts.bold }}>View my tickets</Text>
+    </Pressable>
+  </Page>;
+}
+ + order.subtotal.toFixed(2)}</Text>
+      <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
+      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total}</Text>
+      <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
+    </View>
+    <SectionTitle title="Receipt actions" />
+    <Pressable accessibilityRole="button" onPress={() => { void Share.share({ message: ['Gatherz DEMO receipt', event?.title ?? 'Event', 'Order: ' + order.id, 'Admissions: ' + order.admissions, 'Total: ' + (order.total === 0 ? 'Free' : '$' + order.total), 'No payment was processed.'].join('\n') }); }} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Share receipt</Text></Pressable>
+    <SectionTitle title="Next steps" />
+    <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>All orders</Text></Pressable>
+    {order.admissions > 1 ? <Pressable accessibilityRole="button" onPress={() => nav.push('grp', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, padding: 16, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Manage {order.admissions} group tickets</Text></Pressable> : null}
+    <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, backgroundColor: t.accent, padding: 16, borderRadius: 999, alignItems: 'center' }}>
+      <Text style={{ color: t.onAccent, fontFamily: fonts.bold }}>View my tickets</Text>
+    </Pressable>
+  </Page>;
+}
+ + order.total.toFixed(2)}</Text>
+      <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
+    </View>
+    <SectionTitle title="Receipt actions" />
+    <Pressable accessibilityRole="button" onPress={() => { void Share.share({ message: ['Gatherz DEMO receipt', event?.title ?? 'Event', 'Order: ' + order.id, 'Admissions: ' + order.admissions, 'Total: ' + (order.total === 0 ? 'Free' : '$' + order.total), 'No payment was processed.'].join('\n') }); }} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Share receipt</Text></Pressable>
+    <SectionTitle title="Next steps" />
+    <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>All orders</Text></Pressable>
+    {order.admissions > 1 ? <Pressable accessibilityRole="button" onPress={() => nav.push('grp', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, padding: 16, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Manage {order.admissions} group tickets</Text></Pressable> : null}
+    <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, backgroundColor: t.accent, padding: 16, borderRadius: 999, alignItems: 'center' }}>
+      <Text style={{ color: t.onAccent, fontFamily: fonts.bold }}>View my tickets</Text>
+    </Pressable>
+  </Page>;
+}
+ + order.subtotal.toFixed(2)}</Text>
       <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
       <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
