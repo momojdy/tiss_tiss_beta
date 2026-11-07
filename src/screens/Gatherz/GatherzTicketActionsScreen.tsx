@@ -1,3 +1,4 @@
+import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import React, { useState } from 'react';
 import { Alert, Pressable, Share, Text, TextInput, View } from 'react-native';
 import { Header, Notice, Page } from '../../components/gatherz/shared';
@@ -5,7 +6,8 @@ import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 export default function GatherzTicketActionsScreen({ id, action }: { id: string; action: 'send' | 'claim' | 'rf' | 'dl' }) {
-  const { repo, nav } = useGatherz(); const t = useGatherzTheme();
+  const { repo, nav } = useGatherz();
+  const activity = useGatherzActivity(); const t = useGatherzTheme();
   const [recipient, setRecipient] = useState(''); const [token, setToken] = useState('');
   const [busy, setBusy] = useState(false); const [message, setMessage] = useState('');
   const { data: ticket, error, loading, reload } = useLoad(async () => (await repo.listMyAdmissions()).find(a => a.id === id) ?? null, [repo, id]);
@@ -16,7 +18,7 @@ export default function GatherzTicketActionsScreen({ id, action }: { id: string;
       if (action === 'send') {
         if (!repo.createDemoTransfer) throw new Error('Transfer unavailable');
         const transfer = await repo.createDemoTransfer(id, recipient);
-        setToken(transfer.token); setMessage('Transfer created. Share the demo claim code with the recipient.');
+        setToken(transfer.token); setMessage('Transfer created. Share the demo claim code with the recipient.'); activity.notify('transfers', 'Transfer pending', 'A demo transfer is awaiting acceptance.', 'ticket', id);
       } else if (action === 'claim') {
         if (!repo.claimDemoTransfer) throw new Error('Claim unavailable');
         await repo.claimDemoTransfer(token.trim()); setMessage('Demo transfer claimed. The original credential is revoked.');
