@@ -5,7 +5,7 @@ import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { eventPhase } from '../../lib/gatherz/rules';
-import { Chip, EventCard, Header, IconButton, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
+import { Art, Chip, EventCard, Header, IconButton, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import type { EventCategory } from '../../types/gatherz';
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
@@ -44,7 +44,26 @@ export default function GatherzHomeScreen() {
       </> : null}
       {trending.length ? <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Trending Now" /><Pressable accessibilityRole="button" onPress={() => nav.push('all', 'trend')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
-        <View style={{ paddingHorizontal: 20, gap: 12 }}>{trending.map(e => <EventCard key={e.id} event={e} onPress={() => open(e.id)} />)}</View>
+        <View style={{ paddingHorizontal: 20, flexDirection: 'row', alignItems: 'flex-start', gap: 12 }}>
+          {[0, 1].map(column => <View key={column} style={{ flex: 1, gap: 12 }}>
+            {trending.filter((_, index) => index % 2 === column).map((e, index) => {
+              const tall = (column + index) % 2 === 0;
+              const price = e.tiers.length ? Math.min(...e.tiers.map(tier => tier.price)) : 0;
+              return <Pressable key={e.id} accessibilityRole="button" accessibilityLabel={e.title} onPress={() => open(e.id)} style={{ backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, overflow: 'hidden' }}>
+                <Art index={e.art} style={{ height: tall ? 174 : 122 }} />
+                <View style={{ padding: 12, gap: 5 }}>
+                  <Text numberOfLines={2} style={{ color: t.text, fontFamily: fonts.bold, fontSize: 15 }}>{e.title}</Text>
+                  <Text numberOfLines={2} style={{ color: t.mute, fontFamily: fonts.regular, fontSize: 12 }}>{e.venue} · {e.area}</Text>
+                  <Text style={{ color: t.accent, fontFamily: fonts.semibold, fontSize: 12 }}>{price === 0 ? 'Free' : 'From 
+      </> : null}
+    </Page>
+  );
+} + price}</Text>
+                </View>
+              </Pressable>;
+            })}
+          </View>)}
+        </View>
       </> : null}
     </Page>
   );
