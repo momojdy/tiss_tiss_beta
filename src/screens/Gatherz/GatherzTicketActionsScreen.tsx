@@ -47,7 +47,11 @@ export default function GatherzTicketActionsScreen({ id, action }: { id: string;
         {btn('Claim demo ticket', run, busy || !token.trim())}
       </> : null}
       {action === 'rf' && ticket?.status === 'valid' ? btn('Confirm demo refund', () => Alert.alert('Refund demo admission?', 'This revokes the demo credential. No money will be returned.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Confirm', style: 'destructive', onPress: run }]), busy) : null}
-      {action === 'dl' && ticket ? <Notice title="Demo pass" body="A valid downloadable ticket file is not available without a verified admission backend. Open Ticket Details to view the on-screen demo pass." /> : null}
+      {action === 'dl' && ticket ? <>
+        <Notice title="Share demo pass details" body="Share the event and demo admission reference. This does not transfer ownership or create a valid ticket. For a safe handoff use Transfer ticket." />
+        {btn('Share demo details', () => { Share.share({ message: 'Gatherz DEMO admission: ' + ticket.id + '\\nReference: ' + ticket.credentialCode + '\\nNOT VALID FOR ENTRY. Sharing does not transfer ownership.' }); })}
+        {btn('Transfer ticket instead', () => nav.push('send', ticket.id), ticket.status !== 'valid')}
+      </> : null}
       {token && action === 'send' ? btn('Share demo claim code', () => { Share.share({ message: 'Gatherz DEMO claim code: ' + token + '. This is not a valid ticket.' }); }) : null}
       {message ? <Notice title="Demo status" body={message} /> : null}
       <Text style={{ color: t.mute, fontSize: 12, marginTop: 18 }}>All actions are local demo simulations. No messages, payments, or real tickets are issued.</Text>
