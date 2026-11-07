@@ -15,6 +15,7 @@ import GatherzTicketsScreen from '../../screens/Gatherz/GatherzTicketsScreen';
 import GatherzTicketScreen from '../../screens/Gatherz/GatherzTicketScreen';
 import GatherzPlaceholderScreen from '../../screens/Gatherz/GatherzPlaceholderScreen';
 export interface GatherzEntryProps { repository?: GatherzRepository; initialTheme?: 'light' | 'dark'; onExit?: () => void }
+/** Mounts like Prezo/Goodies: it owns its internal stack and calls onExit when Back is pressed on the first screen. */
 export default function GatherzStandaloneEntry({ repository, initialTheme = 'light', onExit }: GatherzEntryProps) {
   const repo = useMemo(() => repository ?? createDemoRepository(), [repository]);
   const [stack, dispatch] = useReducer(navReducer, [{ route: 'home' as RouteName }]);
