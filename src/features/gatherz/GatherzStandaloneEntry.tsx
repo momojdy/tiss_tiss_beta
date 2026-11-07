@@ -23,6 +23,7 @@ import GatherzTicketActionsScreen from '../../screens/Gatherz/GatherzTicketActio
 import GatherzPlaceholderScreen from '../../screens/Gatherz/GatherzPlaceholderScreen';
 import { GatherzHelpScreen, GatherzHelpArticleScreen, GatherzSupportScreen, GatherzPreferencesScreen, GatherzNotificationsScreen } from '../../screens/Gatherz/GatherzUtilityScreens';
 import { GatherzCommunityProvider } from './GatherzCommunityContext';
+import { GatherzActivityProvider } from './GatherzActivityContext';
 import { GatherzFavoritesScreen, GatherzMomentsScreen, GatherzCirclesScreen, GatherzCircleDetailScreen } from '../../screens/Gatherz/GatherzCommunityScreens';
 export interface GatherzEntryProps { repository?: GatherzRepository; initialTheme?: 'light' | 'dark'; onExit?: () => void }
 /** Mounts like Prezo/Goodies: it owns its internal stack and calls onExit when Back is pressed on the first screen. */
@@ -43,13 +44,13 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
     <SafeAreaProvider>
       <ThemeContext.Provider value={dark ? darkTheme : lightTheme}>
         <GatherzContext.Provider value={ctx}>
-          <GatherzCommunityProvider>
+          <GatherzActivityProvider><GatherzCommunityProvider>
           <View style={{ flex: 1 }}>
             <StatusBar style={dark ? 'light' : 'dark'} />
             {screen}
             {root ? <BottomNav active={top.route} onTab={r => ctx.nav.tab(r)} /> : null}
           </View>
-          </GatherzCommunityProvider>
+          </GatherzCommunityProvider></GatherzActivityProvider>
         </GatherzContext.Provider>
       </ThemeContext.Provider>
     </SafeAreaProvider>
