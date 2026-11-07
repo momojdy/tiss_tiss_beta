@@ -11,9 +11,12 @@ export interface GatherzEvent {
 }
 export interface Admission { id: string; eventId: string; tier: TierKey; orderId: string; ownerId: string; status: AdmissionStatus; credentialCode: string; holderName?: string }
 /** Everything screens read goes through this interface. Swap the demo implementation for Supabase later. */
+export interface GatherzOrder { id: string; eventId: string; tierName: string; quantity: number; admissions: number; subtotal: number; total: number; createdAt: string; status: 'demo_paid' }
 export interface GatherzRepository {
   readonly mode: 'demo' | 'live';
   listEvents(): Promise<GatherzEvent[]>;
   getEvent(id: string): Promise<GatherzEvent | null>;
   listMyAdmissions(): Promise<Admission[]>;
+  listOrders?(): Promise<GatherzOrder[]>;
+  placeDemoOrder?(eventId: string, tierName: string, quantity: number): Promise<GatherzOrder>;
 }
