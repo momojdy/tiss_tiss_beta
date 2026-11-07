@@ -18,6 +18,8 @@ import GatherzReceiptScreen from '../../screens/Gatherz/GatherzReceiptScreen';
 import GatherzGroupScreen from '../../screens/Gatherz/GatherzGroupScreen';
 import GatherzTicketActionsScreen from '../../screens/Gatherz/GatherzTicketActionsScreen';
 import GatherzPlaceholderScreen from '../../screens/Gatherz/GatherzPlaceholderScreen';
+import { GatherzCommunityProvider } from './GatherzCommunityContext';
+import { GatherzFavoritesScreen, GatherzMomentsScreen, GatherzCirclesScreen, GatherzCircleDetailScreen } from '../../screens/Gatherz/GatherzCommunityScreens';
 export interface GatherzEntryProps { repository?: GatherzRepository; initialTheme?: 'light' | 'dark'; onExit?: () => void }
 /** Mounts like Prezo/Goodies: it owns its internal stack and calls onExit when Back is pressed on the first screen. */
 export default function GatherzStandaloneEntry({ repository, initialTheme = 'light', onExit }: GatherzEntryProps) {
@@ -32,16 +34,18 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
   const push = useCallback((route: RouteName, id?: string) => dispatch({ type: 'push', entry: { route, params: id ? { id } : undefined } }), []);
   const ctx = useMemo(() => ({ repo, now: Date.now(), root, nav: { push, back: () => dispatch({ type: 'back' }), tab: (route: RouteName) => dispatch({ type: 'tab', route }) }, toggleTheme: () => setDark(d => !d) }), [repo, root, push, top]);
   const id = top.params?.id ?? '';
-  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : top.route === 'ticket' ? <GatherzTicketScreen id={id} /> : top.route === 'buy' ? <GatherzCheckoutScreen id={id} /> : top.route === 'rc' ? <GatherzReceiptScreen id={id} /> : top.route === 'grp' ? <GatherzGroupScreen id={id} /> : ['send', 'claim', 'rf', 'dl'].includes(top.route) ? <GatherzTicketActionsScreen id={id} action={top.route as 'send' | 'claim' | 'rf' | 'dl'} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
+  const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : top.route === 'ticket' ? <GatherzTicketScreen id={id} /> : top.route === 'buy' ? <GatherzCheckoutScreen id={id} /> : top.route === 'rc' ? <GatherzReceiptScreen id={id} /> : top.route === 'grp' ? <GatherzGroupScreen id={id} /> : top.route === 'favorites' ? <GatherzFavoritesScreen /> : top.route === 'moments' ? <GatherzMomentsScreen /> : top.route === 'circles' ? <GatherzCirclesScreen /> : top.route === 'ci' ? <GatherzCircleDetailScreen id={id} /> : ['send', 'claim', 'rf', 'dl'].includes(top.route) ? <GatherzTicketActionsScreen id={id} action={top.route as 'send' | 'claim' | 'rf' | 'dl'} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
   return (
     <SafeAreaProvider>
       <ThemeContext.Provider value={dark ? darkTheme : lightTheme}>
         <GatherzContext.Provider value={ctx}>
+          <GatherzCommunityProvider>
           <View style={{ flex: 1 }}>
             <StatusBar style={dark ? 'light' : 'dark'} />
             {screen}
             {root ? <BottomNav active={top.route} onTab={r => ctx.nav.tab(r)} /> : null}
           </View>
+          </GatherzCommunityProvider>
         </GatherzContext.Provider>
       </ThemeContext.Provider>
     </SafeAreaProvider>
