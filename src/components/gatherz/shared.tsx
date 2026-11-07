@@ -9,6 +9,8 @@ import { formatWhen } from '../../lib/gatherz/rules';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 export const NAV_HEIGHT = 96;
+
+/** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
   const t = useGatherzTheme();
   return (
@@ -62,6 +64,7 @@ export function EventCard({ event, onPress, wide }: { event: GatherzEvent; onPre
     </Pressable>
   );
 }
+/** Static ticket front used in lists. The full hanging pass opens from the ticket detail. */
 const TIER_GRADIENT = { general: ['#6B47AB', '#1A1233'], vip: ['#1B1724', '#050309'], backstage: ['#2B2635', '#050309'] } as const;
 const TIER_LABEL = { general: 'General', vip: 'VIP', backstage: 'Backstage' } as const;
 export function TicketFront({ admission, event, width, onPress }: { admission: Admission; event: GatherzEvent; width?: number | string; onPress: () => void }) {
@@ -69,7 +72,7 @@ export function TicketFront({ admission, event, width, onPress }: { admission: A
   const badge = admission.status === 'checked_in' ? 'Checked in' : admission.status === 'pending_transfer' ? 'Transfer pending' : admission.status === 'refunded' ? 'Refunded' : admission.status === 'canceled' ? 'Canceled' : admission.status === 'expired' ? 'Expired' : admission.tier === 'vip' ? 'Exclusive' : admission.tier === 'backstage' ? 'Artist access' : 'Standard';
   const accent = admission.tier === 'general' ? '#C9C2E3' : '#8B7CC7';
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${TIER_LABEL[admission.tier]} ticket for ${event.title}. ${badge}`} onPress={onPress} style={{ width: width as number, borderRadius: radius.card, overflow: 'hidden', borderWidth: 1, borderColor: admission.tier === 'general' ? '#8B7CC7' : '#8B7CC766' }}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${TIER_LABEL[admission.tier]} ticket for ${event.title}. ${badge}`} onPress={onPress} style={{ width: width as number, borderRadius: radius.card, overflow: 'hidden', borderWidth: 0.5, borderColor: admission.tier === 'general' ? '#8B7CC7' : '#8B7CC766' }}>
       <LinearGradient colors={[g[0], g[1]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 18, minHeight: 190, justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontFamily: fonts.bold, fontSize: 18, color: '#fff' }}>gatherz<Text style={{ color: accent }}>.</Text></Text>
@@ -100,12 +103,12 @@ export function BottomNav({ active, onTab }: { active: RouteName; onTab: (r: Rou
 }
 const s = StyleSheet.create({
   header: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingHorizontal: 20, paddingBottom: 12 },
-  iconBtn: { width: 44, height: 44, borderRadius: 22, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  chip: { height: 38, paddingHorizontal: 16, borderRadius: radius.pill, borderWidth: 1, alignItems: 'center', justifyContent: 'center' },
-  card: { borderRadius: radius.card, borderWidth: 1, overflow: 'hidden' },
+  iconBtn: { width: 44, height: 44, borderRadius: 22, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
+  chip: { height: 38, paddingHorizontal: 16, borderRadius: radius.pill, borderWidth: 0.5, alignItems: 'center', justifyContent: 'center' },
+  card: { borderRadius: radius.card, borderWidth: 0.5, overflow: 'hidden' },
   btn: { height: 50, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 22 },
-  notice: { marginHorizontal: 20, marginTop: 12, padding: 16, borderRadius: radius.card, borderWidth: 1 },
-  nav: { position: 'absolute', left: 12, right: 12, minHeight: 66, borderRadius: 26, borderWidth: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 6, elevation: 6 },
+  notice: { marginHorizontal: 20, marginTop: 12, padding: 16, borderRadius: radius.card, borderWidth: 0.5 },
+  nav: { position: 'absolute', left: 12, right: 12, minHeight: 66, borderRadius: 26, borderWidth: 0.5, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 6, elevation: 6 },
   tab: { flex: 1, minHeight: 52, borderRadius: 20, alignItems: 'center', justifyContent: 'center', gap: 2, marginHorizontal: 2 },
 });
 export const styles = s;
