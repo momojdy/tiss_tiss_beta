@@ -12,7 +12,7 @@ export default function GatherzEventScreen({ id }: { id: string }) {
   if (error) return <Page><Header title="Event" onBack={nav.back} /><Notice title="Event could not load" body={error} action="Try again" onAction={reload} /></Page>;
   if (!e) return <Page><Header title="Event" onBack={nav.back} /><Notice title="Event not found" body="It may have been removed or the link is invalid." action="Back to Explore" onAction={() => nav.push('explore')} /></Page>;
   const p = policyOf(e), phase = eventPhase(e, now), sold = e.remaining <= 0;
-  const Box = ({ title, body }: { title: string; body: string }) => <View style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 1, borderColor: t.line, backgroundColor: t.card }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{title}</Text><Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4, fontSize: 14 }}>{body}</Text></View>;
+  const Box = ({ title, body }: { title: string; body: string }) => <View style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{title}</Text><Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4, fontSize: 14 }}>{body}</Text></View>;
   return (
     <Page>
       <Header title={e.title} onBack={nav.back} />
