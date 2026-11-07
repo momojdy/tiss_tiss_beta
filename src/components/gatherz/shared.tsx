@@ -14,8 +14,9 @@ const STRIPE_HEIGHT = 20;
 
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
-  const t = useGatherzTheme(); const { nav } = useGatherz();
-  return <View style={{ marginBottom: 15 }}>
+  const t = useGatherzTheme(); const { nav, root } = useGatherz();
+  const showStripe = !(root && title === 'gatherz.');
+  return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
       <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="arrow-left" size={24} color={t.text} />
@@ -26,7 +27,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
       </View>
       {right}
     </View>
-    <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} />
+    {showStripe ? <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} /> : null}
   </View>;
 }
 export function IconButton({ name, label, onPress }: { name: React.ComponentProps<typeof MaterialCommunityIcons>['name']; label: string; onPress: () => void }) {
@@ -97,11 +98,11 @@ const NAV_LABEL: Record<string, string> = { home: 'Home', favorites: 'Favorites'
 export function BottomNav({ active, onTab }: { active: RouteName; onTab: (r: RouteName) => void }) {
   const t = useGatherzTheme(); const ins = useSafeAreaInsets();
   return (
-    <View accessibilityRole="tablist" style={[s.nav, { bottom: ins.bottom + 18, backgroundColor: t.navBg, borderColor: t.navBorder }]}>
+    <View accessibilityRole="tablist" style={[s.nav, { bottom: 18, backgroundColor: t.navBg, borderColor: t.navBorder }]}>
       {TABS.map(r => { const on = r === active; return (
-        <Pressable key={r} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={ROUTES[r].title} onPress={() => onTab(r)} style={s.tab}>
-          <MaterialCommunityIcons name={ICONS[r]} size={24} color={on ? t.accent : t.mute} />
-          <Text style={{ fontFamily: fonts.semibold, fontSize: 10, color: on ? t.text : t.mute }}>{NAV_LABEL[r]}</Text>{on ? <View style={{ width: 3, height: 3, borderRadius: 1.5, backgroundColor: t.accent, marginTop: 2 }} /> : null}
+        <Pressable key={r} accessibilityRole="tab" accessibilityState={{ selected: on }} accessibilityLabel={ROUTES[r].title} onPress={() => onTab(r)} style={[s.tab, on ? { backgroundColor: t.accent, borderRadius: 20 } : null]}>
+          <MaterialCommunityIcons name={ICONS[r]} size={24} color={on ? t.onAccent : t.mute} />
+          <Text style={{ fontFamily: fonts.semibold, fontSize: 10, color: on ? t.onAccent : t.mute }}>{NAV_LABEL[r]}</Text>
         </Pressable>); })}
     </View>
   );
