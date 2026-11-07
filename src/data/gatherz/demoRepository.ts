@@ -1,4 +1,4 @@
-import type { Admission, GatherzEvent, GatherzRepository, GatherzTier } from '../../types/gatherz';
+import type { Admission, GatherzEvent, GatherzRepository, GatherzTier, GatherzOrder } from '../../types/gatherz';
 const DAY = 864e5, HOUR = 36e5;
 const tiers = (base: number, backstage = false): GatherzTier[] => base === 0 ? [{ key: 'general', name: 'General', price: 0, admissions: 1 }] : [
   { key: 'general', name: 'General', price: base, admissions: 1 }, { key: 'vip', name: 'VIP', price: Math.round(base * 2.4), admissions: 1 },
@@ -18,10 +18,24 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
   ];
   const adm = (id: string, eventId: string, tier: Admission['tier'], status: Admission['status'] = 'valid'): Admission => ({ id, eventId, tier, orderId: 'ord-' + eventId, ownerId: 'me', status, credentialCode: `GZ-${tier.slice(0, 3).toUpperCase()}-${id.toUpperCase()}` });
   const mine: Admission[] = [adm('a1', 'e1', 'vip'), adm('a2', 'e1', 'general'), adm('a3', 'e3', 'general'), adm('a4', 'e4', 'backstage'), adm('a5', 'e5', 'general', 'checked_in')];
+  const orders: GatherzOrder[] = [];
+  const reserved: Record<string, number> = {};
   return {
     mode: 'demo',
-    listEvents: async () => events.filter(e => Date.parse(e.endsAt) > now),
-    getEvent: async id => events.find(e => e.id === id) ?? null,
-    listMyAdmissions: async () => mine,
+    listEvents: async () => events.filter(e => Date.parse(e.endsAt) > now).map(e => ({ ...e, remaining: Math.max(0, e.remaining - (reserved[e.id] ?? 0)) })),
+    getEvent: async id => { const e = events.find(e => e.id === id); return e ? { ...e, remaining: Math.max(0, e.remaining - (reserved[id] ?? 0)) } : null; },
+    listMyAdmissions: async () => [...mine],
+    listOrders: async () => [...orders],
+    placeDemoOrder: async (eventId, tierName, quantity) => {
+      const e = events.find(x => x.id === eventId), tier = e?.tiers.find(x => x.name === tierName);
+      if (!e || !tier || !Number.isInteger(quantity) || quantity < 1 || quantity > 10) throw new Error('Invalid ticket selection');
+      if (Date.parse(e.startsAt) <= Date.now()) throw new Error('Ticket sales have closed');
+      const count = quantity * tier.admissions;
+      if (count > e.remaining - (reserved[eventId] ?? 0)) throw new Error('Not enough tickets available');
+      const order: GatherzOrder = { id: 'demo-order-' + (orders.length + 1), eventId, tierName, quantity, admissions: count, subtotal: quantity * tier.price, total: quantity * tier.price, createdAt: new Date().toISOString(), status: 'demo_paid' };
+      orders.unshift(order); reserved[eventId] = (reserved[eventId] ?? 0) + count;
+      for (let i = 0; i < count; i++) mine.unshift({ id: order.id + '-a' + (i + 1), eventId, tier: tier.key, orderId: order.id, ownerId: 'me', status: 'valid', credentialCode: 'GZ-DEMO-' + order.id + '-' + (i + 1) });
+      return order;
+    },
   };
 }
