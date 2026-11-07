@@ -30,7 +30,7 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
     createDemoTransfer: async (admissionId, recipient) => {
       const a = mine.find(x => x.id === admissionId), e = events.find(x => x.id === a?.eventId);
       if (!a || !e || a.status !== 'valid' || !recipient.trim()) throw new Error('Ticket or recipient is invalid');
-      if (Date.parse(e.startsAt) <= Date.now() + (e.policy?.transferCutoffHours ?? 24) * HOUR) throw new Error('Transfer window has closed');
+      if (Date.parse(e.startsAt) <= Date.now() + (e.policy?.transferCutoffHours ?? 2) * HOUR) throw new Error('Transfer window has closed');
       const transfer: GatherzTransfer = { token: 'DEMO-' + (transfers.length + 1) + '-' + admissionId, admissionId, recipient: recipient.trim(), status: 'pending' };
       transfers.push(transfer); a.status = 'pending_transfer'; return transfer;
     },
