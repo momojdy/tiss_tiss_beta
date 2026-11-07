@@ -18,9 +18,9 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
   const showStripe = !(root && title === 'gatherz.');
   return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
-      <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
+      {!root ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="arrow-left" size={24} color={t.text} />
-      </Pressable>
+      </Pressable> : null}
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
         <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
         {subtitle ? <Text numberOfLines={1} style={{ fontFamily: fonts.regular, fontSize: 12, color: t.mute }}>{subtitle}</Text> : null}
