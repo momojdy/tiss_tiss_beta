@@ -16,7 +16,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
   return <Page>
     <Header title="Receipt" onBack={nav.back} />
     <View style={{ marginHorizontal: 20, padding: 20, backgroundColor: t.card, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line }}>
-      <Text style={{ color: t.accent, fontFamily: fonts.bold }}>DEMO ORDER CONFIRMED</Text>
+      <Text style={{ color: t.accent, fontFamily: fonts.bold }}>DEMO ORDER · {order.status.replace(/_/g, ' ').toUpperCase()}</Text>
       <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 24, marginTop: 12 }}>{event?.title ?? 'Event'}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 8 }}>{order.id}</Text>
       <Text style={{ color: t.text, fontFamily: fonts.regular, marginTop: 16 }}>{order.quantity} × {order.tierName}</Text>
@@ -25,6 +25,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
     <SectionTitle title="Next steps" />
+    <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ marginHorizontal: 20, marginBottom: 12, padding: 14, borderWidth: 0.5, borderColor: t.line, borderRadius: 999, backgroundColor: t.card, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>All orders</Text></Pressable>
     {order.admissions > 1 ? <Pressable accessibilityRole="button" onPress={() => nav.push('grp', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, padding: 16, borderRadius: 999, alignItems: 'center' }}><Text style={{ color: t.text, fontFamily: fonts.bold }}>Manage {order.admissions} group tickets</Text></Pressable> : null}
     <Pressable accessibilityRole="button" onPress={() => nav.tab('tickets')} style={{ marginHorizontal: 20, backgroundColor: t.accent, padding: 16, borderRadius: 999, alignItems: 'center' }}>
       <Text style={{ color: t.onAccent, fontFamily: fonts.bold }}>View my tickets</Text>
