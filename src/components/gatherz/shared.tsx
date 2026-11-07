@@ -67,12 +67,12 @@ export function EventCard({ event, onPress, wide }: { event: GatherzEvent; onPre
 /** Static ticket front used in lists. The full hanging pass opens from the ticket detail. */
 const TIER_GRADIENT = { general: ['#6B47AB', '#1A1233'], vip: ['#1B1724', '#050309'], backstage: ['#2B2635', '#050309'] } as const;
 const TIER_LABEL = { general: 'General', vip: 'VIP', backstage: 'Backstage' } as const;
-export function TicketFront({ admission, event, width, onPress }: { admission: Admission; event: GatherzEvent; width?: number | string; onPress: () => void }) {
+export function TicketFront({ admission, event, width, onPress }: { admission: Admission; event: GatherzEvent; width?: number | `${number}%`; onPress: () => void }) {
   const { now } = useGatherz(); const g = TIER_GRADIENT[admission.tier];
   const badge = admission.status === 'checked_in' ? 'Checked in' : admission.status === 'pending_transfer' ? 'Transfer pending' : admission.status === 'refunded' ? 'Refunded' : admission.status === 'canceled' ? 'Canceled' : admission.status === 'expired' ? 'Expired' : admission.tier === 'vip' ? 'Exclusive' : admission.tier === 'backstage' ? 'Artist access' : 'Standard';
   const accent = admission.tier === 'general' ? '#C9C2E3' : '#8B7CC7';
   return (
-    <Pressable accessibilityRole="button" accessibilityLabel={`${TIER_LABEL[admission.tier]} ticket for ${event.title}. ${badge}`} onPress={onPress} style={{ width: width as number, borderRadius: radius.card, overflow: 'hidden', borderWidth: 0.5, borderColor: admission.tier === 'general' ? '#8B7CC7' : '#8B7CC766' }}>
+    <Pressable accessibilityRole="button" accessibilityLabel={`${TIER_LABEL[admission.tier]} ticket for ${event.title}. ${badge}`} onPress={onPress} style={{ width: width, borderRadius: radius.card, overflow: 'hidden', borderWidth: 0.5, borderColor: admission.tier === 'general' ? '#8B7CC7' : '#8B7CC766' }}>
       <LinearGradient colors={[g[0], g[1]]} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ padding: 18, minHeight: 186, justifyContent: 'space-between' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <Text style={{ fontFamily: fonts.bold, fontSize: 18, color: '#fff' }}>gatherz<Text style={{ color: accent }}>.</Text></Text>
