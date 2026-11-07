@@ -60,6 +60,18 @@ export default function GatherzHomeScreen() {
           </View>)}
         </View>
       </> : null}
+      {events.length ? <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Friends' Plans" /><Pressable accessibilityRole="button" onPress={() => nav.tab('circles')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Find your circle</Text></Pressable></View>
+        <View style={{ marginHorizontal: 20, padding: 16, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card, backgroundColor: t.card }}>
+          <Text style={{ color: t.text, fontFamily: fonts.semibold }}>Make plans together</Text>
+          <Text style={{ color: t.mute, marginTop: 6 }}>Join a circle to discover events with friends. Friends' activity is not connected in this demo.</Text>
+          <Pressable accessibilityRole="button" onPress={() => nav.tab('circles')} style={{ marginTop: 10 }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Explore circles ›</Text></Pressable>
+        </View>
+      </> : null}
+      {events.some(e => e.remaining > 0 && Date.parse(e.startsAt) >= now && Date.parse(e.startsAt) - now <= 48 * 3600000) ? <>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Last-Minute Deals" /><Pressable accessibilityRole="button" onPress={() => nav.push('explore')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Explore</Text></Pressable></View>
+        <FlatList horizontal showsHorizontalScrollIndicator={false} data={events.filter(e => e.remaining > 0 && Date.parse(e.startsAt) >= now && Date.parse(e.startsAt) - now <= 48 * 3600000)} keyExtractor={e => e.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <View><EventCard wide event={item} onPress={() => open(item.id)} /><Text style={{ color: t.mute, fontSize: 12, marginTop: 5 }}>Starting soon · Standard ticket prices apply</Text></View>} />
+      </> : null}
       {demoCircles.length ? <>
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingRight: 20 }}><SectionTitle title="Popular Circles" /><Pressable accessibilityRole="button" onPress={() => nav.tab('circles')}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>See all</Text></Pressable></View>
         <FlatList horizontal showsHorizontalScrollIndicator={false} data={[...demoCircles].sort((a, b) => b.members - a.members).slice(0, 5)} keyExtractor={c => c.id} contentContainerStyle={{ paddingHorizontal: 20, gap: 12 }} renderItem={({ item }) => <Pressable accessibilityRole="button" onPress={() => nav.push('ci', item.id)} style={{ width: 190, minHeight: 112, padding: 16, borderRadius: radius.card, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, justifyContent: 'space-between' }}><Text numberOfLines={2} style={{ color: t.text, fontFamily: fonts.semibold, fontSize: 15 }}>{item.name}</Text><Text style={{ color: t.mute, fontFamily: fonts.regular, fontSize: 12 }}>{item.members} members · {item.category}</Text></Pressable>} />
