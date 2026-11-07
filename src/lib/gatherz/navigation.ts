@@ -11,13 +11,14 @@ export const SECONDARY_ROUTES = {
   prefs: 'Preferences', pst: 'Post', mem: 'Member',
 } as const;
 export type SecondaryRoute = keyof typeof SECONDARY_ROUTES;
-export type RouteName = 'home' | 'favorites' | 'moments' | 'tickets' | 'circles' | SecondaryRoute;
+export type RouteName = 'home' | 'favorites' | 'moments' | 'tickets' | 'circles' | 'ticket' | SecondaryRoute;
 export interface RouteDef { title: string; root: boolean }
 export const ROUTES: Record<RouteName, RouteDef> = {
   home: { title: 'Home', root: true },
   favorites: { title: 'Favorites', root: true },
   moments: { title: 'Moments', root: true },
   tickets: { title: 'My Tickets', root: true },
+  ticket: { title: 'Ticket Details', root: false },
   circles: { title: 'Circles', root: true },
   ...Object.fromEntries(Object.entries(SECONDARY_ROUTES).map(([key, title]) => [key, { title, root: false }])) as Record<SecondaryRoute, RouteDef>,
 };
