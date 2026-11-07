@@ -6,7 +6,7 @@ import { useLoad } from '../../lib/gatherz/useLoad';
 import { admissionText, eventPhase, formatWhen, policyOf } from '../../lib/gatherz/rules';
 import { Art, Header, Notice, Page, SectionTitle, styles } from '../../components/gatherz/shared';
 export default function GatherzEventScreen({ id }: { id: string }) {
-  const t = useGatherzTheme(); const { repo, nav, now } = useGatherz();
+  const t = useGatherzTheme(); const { repo, nav, now } = useGatherz(); const community = useGatherzCommunity();
   const { data: e, error, loading, reload } = useLoad(() => repo.getEvent(id), [repo, id]);
   if (loading) return <Page><Header title="Event" onBack={nav.back} /><Notice loading body="Loading event…" /></Page>;
   if (error) return <Page><Header title="Event" onBack={nav.back} /><Notice title="Event could not load" body={error} action="Try again" onAction={reload} /></Page>;
@@ -23,6 +23,10 @@ export default function GatherzEventScreen({ id }: { id: string }) {
         <Text style={{ fontFamily: fonts.semibold, color: t.text, marginTop: 10 }}>{formatWhen(e, now)} · {e.timezone.split('/')[1]} time</Text>
         <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 2 }}>{e.venue}, {e.area}</Text>
         <Text style={{ fontFamily: fonts.semibold, color: t.accent, marginTop: 8 }}>{phase === 'past' ? 'This event has ended' : sold ? 'Sold out' : `${e.remaining} tickets left`}</Text>
+      </View>
+      <View style={{ flexDirection: 'row', gap: 10, marginHorizontal: 20, marginTop: 12 }}>
+        <Pressable accessibilityRole="button" onPress={() => community.toggleSavedEvent(e.id)} style={{ borderWidth: 0.5, borderColor: t.line, borderRadius: 999, padding: 12, backgroundColor: t.card }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{community.savedEvents.includes(e.id) ? '♥ Saved' : '♡ Save event'}</Text></Pressable>
+        <Pressable accessibilityRole="button" onPress={() => community.toggleSavedOrganizer(e.organizerName)} style={{ borderWidth: 0.5, borderColor: t.line, borderRadius: 999, padding: 12, backgroundColor: t.card }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>{community.savedOrganizers.includes(e.organizerName) ? 'Following organizer' : 'Follow organizer'}</Text></Pressable>
       </View>
       <SectionTitle title="Tickets" />
       {e.tiers.map(x => <Box key={x.name} title={`${x.name} · ${x.price === 0 ? 'Free' : '$' + x.price}`} body={x.admissions > 1 ? `${x.admissions} separate admissions in one purchase` : '1 admission'} />)}
