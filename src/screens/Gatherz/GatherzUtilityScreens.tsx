@@ -8,12 +8,12 @@ import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 const articles = [
   ['Buying tickets', 'Pick a tier or group package, review the total and fees, then pay with your Wantiss Wallet. In this demo no money moves.'],
   ['Sending a ticket', 'Open a ticket and tap Send ticket. Pick a Wantiss contact or create a claim link. Your copy stays locked until the recipient accepts. Then it stops working and they get a new one.'],
-  ['Downloading tickets', 'You can export your own ticket as an image. A downloaded copy can be forwarded, and forwarding does not cancel it. The first valid scan wins. Use Send ticket for a safe handoff.'],
+  ['Downloading tickets', 'The demo supports sharing reference details, not exporting a valid ticket image. Use Transfer ticket for a demo handoff.'],
   ['QR check-in', 'Show your QR at the door. Each admission admits one person once.'],
   ['Refunds', 'Organizers set refund rules, shown before checkout. Open a ticket and tap Refund when eligible.'],
   ['Moments', 'After you check in you can share up to 3 photos per event. Photos only. Keep them private or delete them anytime.'],
   ['Circles', 'Join public circles, request to join private ones, and report posts or members from the button next to them.'],
-  ['Event changes', 'If an event is canceled, postponed or rescheduled you get a notification with your options.'],
+  ['Event changes', 'Demo event changes can be simulated from Help. They do not change schedules or issue refunds.'],
 ] as const;
 type Case = { id: string; topic: string; message: string; resolved: boolean; created: string };
 const supportCases: Case[] = [];
@@ -32,7 +32,7 @@ export function GatherzHelpScreen() {
     {articles.map(([title, body], i) => ({ title, body, i })).filter(x => (x.title + x.body).toLowerCase().includes(query.toLowerCase())).map(x => <Action key={x.i} title={x.title} description={x.body.slice(0, 60) + '…'} onPress={() => nav.push('ha', String(x.i))} />)}
     {supportCases.map(c => <Action key={c.id} title={c.id + ' · ' + c.topic} description={c.resolved ? 'Resolved' : 'Open'} onPress={() => nav.push('sc', c.id)} />)}
     <Action title="Contact support" onPress={() => nav.push('cs')} />
-    <Action title="Report an event" onPress={() => nav.push('rp')} />
+    <Action title="Demo event updates" onPress={() => nav.push('dc')} />
   </Page>;
 }
 export function GatherzHelpArticleScreen({ id }: { id: string }) {
