@@ -45,7 +45,7 @@ export default function GatherzTicketScreen({ id }: { id: string }) {
             {usable && (
               <Pressable accessibilityRole="button" accessibilityLabel="Show entry QR code" onPress={() => setScanMode(true)}
                 style={{ width: 54, height: 54, alignItems: 'center', justifyContent: 'center' }}>
-                <QRCode value={qrPayload(a)} size={36} color="#171021" backgroundColor="#FFFFFF" />
+                <QRCode value={qrPayload(a)} size={36} color={t.text} backgroundColor="transparent" />
               </Pressable>
             )}
           </View>
