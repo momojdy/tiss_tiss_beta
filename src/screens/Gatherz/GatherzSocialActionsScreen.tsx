@@ -2,6 +2,7 @@ import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContex
 import React, { useState } from 'react';
 import { Alert, Image, Pressable, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import { Header, Notice, Page } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useGatherzCommunity } from '../../features/gatherz/GatherzCommunityContext';
@@ -12,7 +13,7 @@ type Mode = 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem';
 export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; id: string }) {
   const { repo, nav } = useGatherz();
   const activity = useGatherzActivity(); const c = useGatherzCommunity(); const t = useGatherzTheme();
-  const [reportDetails, setReportDetails] = useState(''); const [reportReason, setReportReason] = useState(''); const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
+  const [uploadBusy, setUploadBusy] = useState(false); const [uploadError, setUploadError] = useState(''); const [photoSize, setPhotoSize] = useState(''); const [reportDetails, setReportDetails] = useState(''); const [reportReason, setReportReason] = useState(''); const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
   const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
   const moment = c.moments.find(m => m.id === id), post = c.posts.find(p => p.id === id), circle = demoCircles.find(x => x.id === id);
   const eligible = (admissions ?? []).some(a => a.eventId === id && a.status === 'checked_in');
@@ -25,16 +26,30 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permission.granted) { setNotice('Photo library permission is required.'); return; }
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], allowsMultipleSelection: false, quality: .85 });
-    if (!result.canceled && result.assets[0]?.uri) setUri(result.assets[0].uri);
+    if (!result.canceled && result.assets[0]?.uri) {
+      setUploadError(''); setUploadBusy(true);
+      try {
+        const asset = result.assets[0];
+        const maxDimension = Math.max(asset.width ?? 0, asset.height ?? 0);
+        const actions: ImageManipulator.Action[] = maxDimension > 1600 ? [{ resize: asset.width >= asset.height ? { width: 1600 } : { height: 1600 } }] : [];
+        const compressed = await ImageManipulator.manipulateAsync(asset.uri, actions, { compress: 0.78, format: ImageManipulator.SaveFormat.JPEG });
+        setUri(compressed.uri);
+        setPhotoSize(compressed.width + ' × ' + compressed.height + ' JPEG · optimized for upload');
+      } catch {
+        setUri(''); setUploadError('Photo preparation failed. Please select the photo again.');
+      } finally { setUploadBusy(false); }
+    }
   };
   return <Page><Header title={title} onBack={nav.back} /><View style={{ marginHorizontal: 20, gap: 10 }}>
     {mode === 'mp' ? eligible ? <>
       <Notice title={'Photos: ' + count + '/3'} body="Only checked-in attendees may add photos. Images stay on this device during the demo session." />
       {count < 3 ? <>{uri ? <Image source={{ uri }} style={{ width: '100%', height: 220, borderRadius: radius.card }} /> : null}
-        {button(uri ? 'Change photo' : 'Select photo', pick)}
+        {photoSize ? <Text style={{ color: t.mute }}>{photoSize}</Text> : null}
+        {uploadError ? <Notice title="Photo error" body={uploadError} action="Try again" onAction={pick} /> : null}
+        {button(uploadBusy ? 'Preparing photo…' : uri ? 'Change photo' : 'Select photo', () => { void pick(); }, uploadBusy)}
         {input('Optional caption')}
         {button(publicPhoto ? 'Visibility: Public' : 'Visibility: Private', () => setPublicPhoto(v => !v))}
-        {button('Publish photo', () => { if (!uri || count >= 3) return; c.addMoment(id, text.trim(), publicPhoto, uri); activity.notify('moments', 'Moment added', 'Your photo was added to this event.'); nav.tab('moments'); }, !uri)}
+        {button('Publish photo', () => { if (!uri || count >= 3 || uploadBusy) return; c.addMoment(id, text.trim(), publicPhoto, uri); activity.notify('moments', 'Moment added', 'Your photo was added to this event.'); nav.tab('moments'); }, !uri || uploadBusy)}
       </> : <Notice title="Photo limit reached" body="Delete one of your three photos to add another." />}
     </> : <Notice title="Check-in required" body="Only checked-in attendees can publish event photos." /> : null}
     {mode === 'mv' ? moment ? <>
