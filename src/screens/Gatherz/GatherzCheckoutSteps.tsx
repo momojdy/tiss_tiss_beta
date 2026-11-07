@@ -29,7 +29,7 @@ function Summary({ id }: { id: string }) {
 }
 export function GatherzReviewScreen({ id }: { id: string }) {
  const { nav } = useGatherz(); const { checkout } = useGatherzCheckout();
- return <Page><Header title="Review order" /><SectionTitle title="Your order" /><Summary id={id} />
+ return <Page><Header title="Review order" onBack={nav.back} /><SectionTitle title="Your order" /><Summary id={id} />
  <Notice body="This is a demo. No real payment will be collected and tickets cannot be used for admission." />
  <Button label="Choose payment method" disabled={checkout.eventId !== id} onPress={() => nav.push('pm', id)} /></Page>;
 }
@@ -42,25 +42,25 @@ export function GatherzPaymentScreen({ id }: { id: string }) {
  const pay = async () => {
   if (locked.current || !repo.placeDemoOrder || !tier || checkout.eventId !== id) return;
   locked.current = true; setBusy(true);
-  try { const order = await repo.placeDemoOrder(id, tier.name, checkout.quantity); update({ orderId: order.id, failure: '' }); activity.notify('tickets', 'Order confirmed', 'Your demo order is ready.', 'rc', order.id); nav.push('ok', order.id); }
+  try { await new Promise(resolve => setTimeout(resolve, 900)); const order = await repo.placeDemoOrder(id, tier.name, checkout.quantity); update({ orderId: order.id, failure: '' }); activity.notify('tickets', 'Order confirmed', 'Your demo order is ready.', 'rc', order.id); nav.push('ok', order.id); }
   catch { update({ failure: 'Your demo payment could not be completed.' }); nav.push('pf', id); }
-  finally { locked.current = false; setBusy(false); }
+  finally { setBusy(false); }
  };
- return <Page><Header title="Payment" /><SectionTitle title="Choose payment method" />
+ return <Page><Header title="Payment" onBack={busy ? undefined : nav.back} /><SectionTitle title="Choose payment method" />
  {(['wallet','card'] as const).map(method => <Pressable key={method} accessibilityRole="radio" accessibilityState={{ checked: checkout.paymentMethod === method }} onPress={() => update({ paymentMethod: method })} style={{ marginHorizontal: 20, marginBottom: 10, padding: 18, borderWidth: 0.5, borderColor: checkout.paymentMethod === method ? t.accent : t.line, backgroundColor: t.card, borderRadius: radius.card }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>{method === 'wallet' ? 'Wantiss Wallet · $250 demo balance' : 'Demo card ···· 4242'}</Text></Pressable>)}
  <SectionTitle title="Order summary" /><Summary id={id} />
- <Button label={busy ? 'Processing…' : 'Pay $' + total.toFixed(2) + ' (demo)'} disabled={busy || !tier} onPress={pay} />
+ <Button label={busy ? 'Processing…' : 'Pay $' + total.toFixed(2) + ' (demo)'} disabled={busy || !tier || checkout.eventId !== id || !!checkout.orderId} onPress={pay} />
  {busy ? <ActivityIndicator color={t.accent} /> : null}
  <Button label="Cancel payment" disabled={busy} onPress={nav.back} /></Page>;
 }
 export function GatherzPaymentFailedScreen({ id }: { id: string }) {
  const { nav } = useGatherz(); const { checkout } = useGatherzCheckout();
- return <Page><Header title="Payment failed" /><Notice title="Payment not completed" body={checkout.failure || 'Please try again. No payment was collected.'} />
+ return <Page><Header title="Payment failed" onBack={nav.back} /><Notice title="Payment not completed" body={checkout.failure || 'Please try again. No payment was collected.'} />
  <Button label="Try again" onPress={() => nav.push('pm', id)} /><Button label="Cancel order" onPress={() => nav.tab('home')} /></Page>;
 }
 export function GatherzConfirmationScreen({ id }: { id: string }) {
  const { nav, repo } = useGatherz(); const { data: order } = useLoad(async () => (await repo.listOrders?.() ?? []).find(o => o.id === id), [repo, id]);
- return <Page><Header title="Order confirmed" /><Notice title="Your tickets are ready" body={order ? order.admissions + ' demo admissions have been added to your tickets.' : 'Your demo order is confirmed.'} />
+ return <Page><Header title="Order confirmed" onBack={() => nav.tab("tickets")} /><Notice title="Your tickets are ready" body={order ? order.admissions + ' demo admissions have been added to your tickets.' : 'Your demo order is confirmed.'} />
  <Button label="View my tickets" onPress={() => nav.tab('tickets')} /><Button label="View receipt" onPress={() => nav.push('rc', id)} />
  {order && order.admissions > 1 ? <Button label="Open group manager" onPress={() => nav.push('grp', id)} /> : null}</Page>;
 }
