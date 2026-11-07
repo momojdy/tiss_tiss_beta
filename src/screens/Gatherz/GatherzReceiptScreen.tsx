@@ -24,9 +24,9 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
       <Text style={{ color: t.text, fontFamily: fonts.regular, marginTop: 16 }}>{order.quantity} × {order.tierName}</Text>
       <Text style={{ color: t.text, fontFamily: fonts.regular, marginTop: 4 }}>{order.admissions} individual admissions</Text>
       <View style={{ height: 0.5, backgroundColor: t.line, marginTop: 16 }} />
-      <Text style={{ color: t.mute, marginTop: 12 }}>Subtotal: {order.subtotal === 0 ? 'Free' : '}</Text>
+      <Text style={{ color: t.mute, marginTop: 12 }}>Subtotal: {order.subtotal === 0 ? 'Free' : '$' + order.subtotal.toFixed(2)}</Text>
       <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
-      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '}</Text>
+      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total.toFixed(2)}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
     <SectionTitle title={`Admissions (${admissions.length})`} />
@@ -46,7 +46,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
 }
  + order.subtotal.toFixed(2)}</Text>
       <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
-      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total}</Text>
+      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total.toFixed(2)}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
     <SectionTitle title="Receipt actions" />
@@ -74,7 +74,7 @@ export default function GatherzReceiptScreen({ id }: { id: string }) {
 }
  + order.subtotal.toFixed(2)}</Text>
       <Text style={{ color: t.mute, marginTop: 5 }}>Payment: Demo only · no charge</Text>
-      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total}</Text>
+      <Text style={{ color: t.text, fontFamily: fonts.bold, fontSize: 20, marginTop: 16 }}>Total: {order.total === 0 ? 'Free' : '$' + order.total.toFixed(2)}</Text>
       <Text style={{ color: t.mute, fontFamily: fonts.regular, marginTop: 12 }}>No payment was processed. These demonstration credentials are not valid for event entry.</Text>
     </View>
     <SectionTitle title="Receipt actions" />
