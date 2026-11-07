@@ -62,9 +62,10 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
     </> : <Notice title="Moment not found" /> : null}
     {mode === 'pst' ? post ? <>
       <Notice title={post.author} body={post.text} />
+      {post.author === 'me' ? <>{button(editingPost ? 'Cancel edit' : 'Edit post', () => { setEditingPost(v => !v); setText(post.text); })}{editingPost ? <>{input('Edit your post')}{button('Save changes', () => { c.editPost(id, text); setEditingPost(false); setText(''); }, !text.trim())}</> : null}</> : null}
       {post.replies.map(r => <Notice key={r.id} title={r.author} body={r.text} />)}
-      {input('Write a reply')}
-      {button('Reply', () => { if (!text.trim()) return; c.addReply(id, text.trim()); setText(''); }, !text.trim())}
+      {!editingPost ? input('Write a reply') : null}
+      {!editingPost ? button('Reply', () => { if (!text.trim()) return; c.addReply(id, text.trim()); setText(''); }, !text.trim()) : null}
       {button('Report post', () => nav.push('rp', 'post:' + id))}
     </> : <Notice title="Post not found" /> : null}
     {mode === 'inv' ? <>
