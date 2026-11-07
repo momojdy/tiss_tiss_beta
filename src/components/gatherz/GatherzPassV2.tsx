@@ -50,7 +50,7 @@ export default function GatherzPassV2({ admission, event }: { admission: Admissi
         </LinearGradient>
       </Animated.View>
       <Animated.View style={[face, { transform: [{ rotateY: backRotation }] }]}>
-        <LinearGradient colors={[...tier.colors]} style={{ flex: 1, padding: 22, alignItems: 'center', justifyContent: 'space-between' }}>
+        <LinearGradient colors={tier.colors} style={{ flex: 1, padding: 22, alignItems: 'center', justifyContent: 'space-between' }}>
           <Text style={{ color: '#fff', fontFamily: fonts.bold, fontSize: 24 }}>gatherz<Text style={{ color: tier.accent }}>.</Text></Text>
           <View style={{ padding: 12, borderRadius: 16, backgroundColor: '#C9C2E3' }}><QRCode value={qrPayload(admission)} size={Math.min(cardWidth * .55, 160)} backgroundColor="#C9C2E3" color="#0E0B1D" /></View>
           <Text style={{ color: '#F2A4B7', fontFamily: fonts.bold, fontSize: 10 }}>DEMO · NOT VALID FOR ENTRY</Text>
