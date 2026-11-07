@@ -358,11 +358,32 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
           <Defs><SvgLinearGradient id="metalF" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
           <AnimatedCircle animatedProps={ringProps} r={9.5} fill="none" stroke="url(#metalF)" strokeWidth={2.6} />
         </Svg>
-        <Animated.View style={[{ position: 'absolute', left: -12, top: -22, width: 24, height: 44 }, clipStyle]}>
-          <Svg width={24} height={44} viewBox="-12 -22 24 44">
-            <Defs><SvgLinearGradient id="metalC" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
-            <Rect x={-8} y={-15} width={16} height={11} rx={2.5} fill="url(#metalC)" stroke="#5A3B8C" />
-            <Rect x={-4} y={-5} width={8} height={24} rx={4} fill="none" stroke="url(#metalC)" strokeWidth={2.6} />
+        {/* Lanyard swivel snap hook: fabric keeper, D-ring, rotating barrel and spring gate. */}
+        <Animated.View style={[{ position: 'absolute', left: -21, top: -36, width: 42, height: 72 }, clipStyle]}>
+          <Svg width={42} height={72} viewBox="-21 -36 42 72">
+            <Defs>
+              <SvgLinearGradient id="lanyardMetal" x1="0" y1="0" x2="1" y2="1">
+                <Stop offset="0" stopColor="#E8DEFF" /><Stop offset=".22" stopColor="#B6A1EC" />
+                <Stop offset=".52" stopColor="#654AAB" /><Stop offset=".76" stopColor="#D4C4FF" />
+                <Stop offset="1" stopColor="#4B327D" />
+              </SvgLinearGradient>
+            </Defs>
+            {/* Wide stitched fabric end wraps through the metal ring. */}
+            <Rect x={-11} y={-34} width={22} height={27} rx={3} fill="#201832" stroke="#625087" strokeWidth={1} />
+            <Path d="M-8 -30 L-8 -10 M8 -30 L8 -10" stroke="#9D8BBC" strokeWidth={0.8} strokeDasharray="2 2" opacity={0.7} />
+            <Path d="M-8 -16 L8 -16" stroke="#9D8BBC" strokeWidth={1} strokeDasharray="2 2" opacity={0.8} />
+            {/* D-ring: side rails surround the folded fabric, not the other way around. */}
+            <Path d="M-13 -17 C-18 -17 -18 -9 -15 -4 C-12 1 -6 4 0 4 C6 4 12 1 15 -4 C18 -9 18 -17 13 -17" fill="none" stroke="#33234F" strokeWidth={5} strokeLinecap="round" />
+            <Path d="M-13 -17 C-18 -17 -18 -9 -15 -4 C-12 1 -6 4 0 4 C6 4 12 1 15 -4 C18 -9 18 -17 13 -17" fill="none" stroke="url(#lanyardMetal)" strokeWidth={3.1} strokeLinecap="round" />
+            {/* Swivel collar and pivot rivet. */}
+            <Rect x={-5.5} y={2} width={11} height={10} rx={3} fill="url(#lanyardMetal)" stroke="#3B285F" strokeWidth={1} />
+            <Circle cx={0} cy={7} r={1.8} fill="#3A275F" stroke="#D8C8FF" strokeWidth={0.8} />
+            {/* Snap hook with a spring-loaded diagonal gate and tapered nose. */}
+            <Path d="M-4 10 C-10 13 -13 19 -13 26 C-13 33 -7 36 0 34 C7 32 11 26 10 19 L7 14" fill="none" stroke="#34244F" strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" />
+            <Path d="M-4 10 C-10 13 -13 19 -13 26 C-13 33 -7 36 0 34 C7 32 11 26 10 19 L7 14" fill="none" stroke="url(#lanyardMetal)" strokeWidth={3.8} strokeLinecap="round" strokeLinejoin="round" />
+            <Path d="M7 14 L-1 25" stroke="#34244F" strokeWidth={4.4} strokeLinecap="round" />
+            <Path d="M7 14 L-1 25" stroke="#D6C7F5" strokeWidth={2.4} strokeLinecap="round" />
+            <Circle cx={7} cy={14} r={2} fill="#7157B1" stroke="#D6C7F5" strokeWidth={0.8} />
           </Svg>
         </Animated.View>
       </View>
