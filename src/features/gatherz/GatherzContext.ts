@@ -5,6 +5,8 @@ export interface GatherzCtx {
   repo: GatherzRepository; now: number; root: boolean;
   nav: { push: (route: RouteName, id?: string) => void; back: () => void; tab: (route: RouteName) => void };
   toggleTheme: () => void;
+  demoAccount?: string;
+  switchDemoAccount?: (account: string) => void;
 }
 export const GatherzContext = createContext<GatherzCtx | null>(null);
 export const useGatherz = () => { const c = useContext(GatherzContext); if (!c) throw new Error('Gatherz context missing'); return c; };
