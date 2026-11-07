@@ -7,14 +7,21 @@ import { useLoad } from '../../lib/gatherz/useLoad';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 type Mode = 'all' | 'msgs' | 'bs';
 export default function GatherzSecondaryScreen({ mode, section }: { mode: Mode; section?: string }) {
- const { repo, nav } = useGatherz(); const t = useGatherzTheme();
+ const { repo, nav, now } = useGatherz(); const t = useGatherzTheme();
  const activity = useGatherzActivity(); const [code, setCode] = useState(''); const [scanResult, setScanResult] = useState(''); const [gate, setGate] = useState('Gate A'); const [log, setLog] = useState<string[]>([]);
  const { data: transfers, reload: reloadTransfers } = useLoad(async () => await repo.listDemoTransfers?.() ?? [], [repo]);
  const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
  const scan = () => { const admission = (admissions ?? []).find(a => a.credentialCode.toUpperCase() === code.trim().toUpperCase()); const result = !code.trim() ? 'Enter a demo credential code.' : !admission ? 'Credential not found in this demo account.' : admission.status !== 'valid' ? 'Credential unavailable: ' + admission.status.replace(/_/g, ' ') : 'Demo credential found. This does not authorize entry.'; setScanResult(result); setLog(v => [gate + ': ' + result, ...v].slice(0, 10)); };
  const { data: events, loading } = useLoad(() => repo.listEvents(), [repo]);
  const sectionTitle: Record<string,string> = { week:'Happening This Week',near:'Events Near You',trend:'Trending Now',friends:"Friends’ Plans",last:'Last-Minute Deals',new:'New in Your City',circ:'Popular Circles',rec:'Recommended for You' };
- const filtered = (events ?? []).filter(e => section === 'week' ? new Date(e.startsAt).getTime() - Date.now() <= 7 * 864e5 : section === 'trend' ? e.remaining > 0 : true);
+ const filtered = [...(events ?? [])].filter(e => {
+  const until = Date.parse(e.startsAt) - now;
+  if (section === 'week') return until >= 0 && until <= 7 * 864e5;
+  if (section === 'last') return until >= 0 && until <= 48 * 3600000 && e.remaining > 0;
+  if (section === 'trend') return until >= 0 && e.remaining > 0;
+  if (section === 'new') return until >= 0;
+  return true;
+ }).sort((a, b) => section === 'trend' ? a.remaining - b.remaining : section === 'new' ? Date.parse(b.startsAt) - Date.parse(a.startsAt) : Date.parse(a.startsAt) - Date.parse(b.startsAt));
  const title = mode === 'all' ? (sectionTitle[section ?? ''] ?? 'All events') : mode === 'msgs' ? 'Messages' : 'Ticket scanner';
  return <Page><Header title={title} onBack={nav.back} />
   {mode === 'all' ? <>
