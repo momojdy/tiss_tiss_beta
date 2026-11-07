@@ -10,6 +10,7 @@ export interface GatherzEvent {
   tiers: GatherzTier[]; policy?: Partial<EventPolicy>;
 }
 export interface Admission { id: string; eventId: string; tier: TierKey; orderId: string; ownerId: string; status: AdmissionStatus; credentialCode: string; holderName?: string }
+/** Everything screens read goes through this interface. Swap the demo implementation for Supabase later. */
 export interface GatherzRepository {
   readonly mode: 'demo' | 'live';
   listEvents(): Promise<GatherzEvent[]>;
