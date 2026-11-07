@@ -28,7 +28,7 @@ export function GatherzFavoritesScreen() {
   return <Page><Header title="Favorites" subtitle="Events, organizers and circles you saved." />
     <Filters values={['Events', 'Organizers', 'Circles']} selected={tab} choose={setTab} />
     {tab === 'Events' ? <><Filters values={['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports']} selected={cat} choose={setCat} />{loading ? <Notice loading body="Loading saved events…" /> : saved.length ? saved.map(e => <Item key={e.id} title={e.title} detail={e.venue + ' · ' + e.area} action="View event" onPress={() => nav.push('event', e.id)} />) : <Notice title="No saved events" body="Tap the heart on any event to save it here." action="Find events" onAction={() => nav.push('explore')} />}</> : null}
-    {tab === 'Organizers' ? organizers.filter(o => c.savedOrganizers.includes(o.id)).map(o => <Item key={o.id} title={o.name} detail="Saved organizer" onPress={() => nav.push('org', o.id)} />) : null}
+    {tab === 'Organizers' ? organizers.filter(o => c.savedOrganizers.includes(o.name)).map(o => <Item key={o.id} title={o.name} detail="Saved organizer" onPress={() => nav.push('org', o.id)} />) : null}
     {tab === 'Organizers' && !c.savedOrganizers.length ? <Notice title="No saved organizers" body="Follow an organizer from an event page." action="Find events" onAction={() => nav.push('explore')} /> : null}
     {tab === 'Circles' ? demoCircles.filter(o => c.savedCircles.includes(o.id)).map(o => <Item key={o.id} title={o.name} detail={o.members + ' members'} onPress={() => nav.push('ci', o.id)} />) : null}
     {tab === 'Circles' && !c.savedCircles.length ? <Notice title="No saved circles" body="Save a circle from its page." action="Browse circles" onAction={() => nav.tab('circles')} /> : null}
