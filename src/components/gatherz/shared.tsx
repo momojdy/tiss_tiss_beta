@@ -64,7 +64,7 @@ export function EventCard({ event, onPress, wide }: { event: GatherzEvent; onPre
       <View style={{ padding: 14 }}>
         <Text numberOfLines={2} style={{ fontFamily: fonts.bold, fontSize: 16, color: t.text }}>{event.title}</Text>
         <Text style={{ fontFamily: fonts.regular, fontSize: 13, color: t.mute, marginTop: 4 }}>{formatWhen(event, now)} · {event.venue}</Text>
-        <Text style={{ fontFamily: fonts.semibold, fontSize: 13, color: t.accent, marginTop: 6 }}>{event.remaining <= 0 ? 'Sold out' : from === 0 ? 'Free' : `From $${from}`}</Text>
+        <Text style={{ fontFamily: fonts.semibold, fontSize: 13, color: t.accent, marginTop: 6 }}>{event.remaining <= 0 ? 'Sold out' : from === 0 ? 'Free' : `From ${from.toFixed(2)}`}</Text>
       </View>
     </Pressable>
   );
