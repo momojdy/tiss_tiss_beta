@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, Text, TextInput, View } from 'react-native';
 import { Header, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useGatherzCommunity } from '../../features/gatherz/GatherzCommunityContext';
 import { demoCircles } from '../../data/gatherz/communityDemo';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
-const organizers = [{ id: 'o1', name: 'Skyline Collective' }, { id: 'o2', name: 'Riverside Events' }, { id: 'o3', name: 'Maison Arts' }];
+const organizerBios: Record<string, string> = { 'Skyline Collective': 'Live music, nightlife and city experiences', 'Riverside Events': 'Food festivals and community gatherings', 'Maison Arts': 'Art, culture and creative experiences' };
 function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   const t = useGatherzTheme();
   return <Pressable accessibilityRole="button" accessibilityState={{ selected: active }} onPress={onPress} style={{ borderRadius: 99, borderWidth: 0.5, borderColor: active ? t.accent : t.line, paddingHorizontal: 14, paddingVertical: 9, backgroundColor: active ? t.soft : t.card }}><Text style={{ color: active ? t.accent : t.text, fontFamily: fonts.semibold, fontSize: 12 }}>{label}</Text></Pressable>;
@@ -22,13 +22,14 @@ function Filters({ values, selected, choose }: { values: string[]; selected: str
   return <View style={{ paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>{values.map(v => <Chip key={v} label={v} active={selected === v} onPress={() => choose(v)} />)}</View>;
 }
 export function GatherzFavoritesScreen() {
-  const { repo, nav } = useGatherz(); const c = useGatherzCommunity(); const [tab, setTab] = useState('Events'); const [cat, setCat] = useState('All');
+  const { repo, nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme(); const [tab, setTab] = useState('Events'); const [cat, setCat] = useState('All');
   const { data: events, loading } = useLoadEvents(repo);
   const saved = (events ?? []).filter(e => c.savedEvents.includes(e.id) && (cat === 'All' || e.category === cat));
   return <Page><Header title="Favorites" subtitle="Events, organizers and circles you saved." />
     <Filters values={['Events', 'Organizers', 'Circles']} selected={tab} choose={setTab} />
+    <View style={{ flexDirection: 'row', gap: 12, marginHorizontal: 20, marginBottom: 8 }}><Text style={{ color: tab === 'Events' ? t.accent : t.mute }}>Events ({c.savedEvents.length})</Text><Text style={{ color: tab === 'Organizers' ? t.accent : t.mute }}>Organizers ({c.savedOrganizers.length})</Text><Text style={{ color: tab === 'Circles' ? t.accent : t.mute }}>Circles ({c.savedCircles.length})</Text></View>
     {tab === 'Events' ? <><Filters values={['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports']} selected={cat} choose={setCat} />{loading ? <Notice loading body="Loading saved events…" /> : saved.length ? saved.map(e => <Item key={e.id} title={e.title} detail={e.venue + ' · ' + e.area} action="View event" onPress={() => nav.push('event', e.id)} />) : <Notice title="No saved events" body="Tap the heart on any event to save it here." action="Find events" onAction={() => nav.push('explore')} />}</> : null}
-    {tab === 'Organizers' ? organizers.filter(o => c.savedOrganizers.includes(o.name)).map(o => <Item key={o.id} title={o.name} detail="Saved organizer" onPress={() => nav.push('org', o.name)} />) : null}
+    {tab === 'Organizers' ? c.savedOrganizers.map(name => <Item key={name} title={name} detail={organizerBios[name] ?? 'Event organizer'} onPress={() => nav.push('org', name)} />) : null}
     {tab === 'Organizers' && !c.savedOrganizers.length ? <Notice title="No saved organizers" body="Follow an organizer from an event page." action="Find events" onAction={() => nav.push('explore')} /> : null}
     {tab === 'Circles' ? demoCircles.filter(o => c.savedCircles.includes(o.id)).map(o => <Item key={o.id} title={o.name} detail={o.members + ' members'} onPress={() => nav.push('ci', o.id)} />) : null}
     {tab === 'Circles' && !c.savedCircles.length ? <Notice title="No saved circles" body="Save a circle from its page." action="Browse circles" onAction={() => nav.tab('circles')} /> : null}
@@ -41,7 +42,9 @@ export function GatherzCirclesScreen() {
   const { nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme();
   const [tab, setTab] = useState('Discover'); const [query, setQuery] = useState('');
   const list = demoCircles.filter(x => (tab === 'Discover' || c.joinedCircles.includes(x.id)) && x.name.toLowerCase().includes(query.toLowerCase()));
+  const pending = c.invitations.filter(i => i.status === 'pending').length;
   return <Page><Header title="Circles" subtitle="Groups that meet again and again." />
+    <Pressable accessibilityRole="button" onPress={() => nav.push('inv')} style={{ marginHorizontal: 20, marginTop: 12, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 999, padding: 12, alignSelf: 'flex-start' }}><Text style={{ color: t.accent, fontFamily: fonts.semibold }}>Invitations ({pending})</Text></Pressable>
     <Filters values={['Discover', 'My circles']} selected={tab} choose={setTab} />
     <TextInput value={query} onChangeText={setQuery} placeholder="Search circles" placeholderTextColor={t.mute} style={{ marginHorizontal: 20, marginBottom: 12, padding: 12, color: t.text, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card }} />
     {list.map(x => <Item key={x.id} title={x.name} detail={x.members + ' members · ' + x.category + (x.private ? ' · Private' : '') + (x.closed ? ' · Closed' : '')} action={c.joinedCircles.includes(x.id) ? 'Joined' : c.requestedCircles.includes(x.id) ? 'Request pending' : x.closed ? 'Read only' : 'View'} onPress={() => nav.push('ci', x.id)} />)}
