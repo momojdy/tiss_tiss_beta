@@ -445,7 +445,7 @@ export default function GatherzPassV2({ admission, event, viewportHeight, scanMo
       </View>
 
       {scanMode ? (
-        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: dark ? '#0E0B1D' : '#F4F0FA', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 22 }}>
+        <View style={{ position: 'absolute', left: 0, top: 0, right: 0, bottom: 0, backgroundColor: dark ? '#0E0B1D' : '#F4F0FA', alignItems: 'center', justifyContent: 'flex-start', paddingTop: 38, paddingHorizontal: 22 }}>
           <View style={{ width: '100%', maxWidth: 360, backgroundColor: '#191329', borderRadius: 24, borderWidth: 1, borderColor: '#66568D', padding: 22, alignItems: 'center' }}>
             <Text style={{ fontFamily: FONT.bold, color: '#FFFFFF', fontSize: 19, marginBottom: 6 }}>Entry QR code</Text>
             <Text style={{ fontFamily: FONT.reg, color: '#C9C2E3', fontSize: 12, marginBottom: 22, textAlign: 'center' }}>Hold this still for the door scanner</Text>
