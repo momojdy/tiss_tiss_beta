@@ -1,0 +1,3 @@
+PASS: EAS android development profile validates.
+PASS: EAS ios development profile validates.
+PASS: iOS simulator profile inherits development configuration.
