@@ -14,11 +14,7 @@ export default function GatherzOrdersScreen() {
   {data?.map(({ order, event }) => <Pressable key={order.id} accessibilityRole="button" onPress={() => nav.push('rc', order.id)} style={{ marginHorizontal: 20, marginBottom: 12, padding: 16, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: radius.card }}>
    <Text style={{ color: t.text, fontFamily: fonts.bold }}>{event?.title ?? 'Event'}</Text>
    <Text style={{ color: t.mute, marginTop: 6 }}>{new Date(order.createdAt).toLocaleString()} · {order.tierName} · {order.id}</Text>
-   <Text style={{ color: t.text, marginTop: 6 }}>{order.admissions} admissions · {order.total === 0 ? 'Free' : '}</Text>
-   <Text style={{ color: t.accent, fontFamily: fonts.semibold, marginTop: 8 }}>{order.status.replace(/_/g, ' ')} · View receipt</Text>
-  </Pressable>)}
- </Page>;
-} + order.total.toFixed(2)}</Text>
+   <Text style={{ color: t.text, marginTop: 6 }}>{order.admissions} admissions · {order.total === 0 ? 'Free' : '$' + order.total.toFixed(2)}</Text>
    <Text style={{ color: t.accent, fontFamily: fonts.semibold, marginTop: 8 }}>{order.status.replace(/_/g, ' ')} · View receipt</Text>
   </Pressable>)}
  </Page>;
