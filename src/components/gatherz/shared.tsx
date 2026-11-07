@@ -16,7 +16,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
   const t = useGatherzTheme(); const { nav, root } = useGatherz();
   return <View style={{ marginBottom: 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
-      {!root ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
+      {(!root || title === 'gatherz.') ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="chevron-left" size={30} color={t.text} />
       </Pressable> : null}
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
