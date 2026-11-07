@@ -52,17 +52,18 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
       {button('Reply', () => { if (!text.trim()) return; c.addReply(id, text.trim()); setText(''); }, !text.trim())}
       {button('Report post', () => nav.push('rp', 'post:' + id))}
     </> : <Notice title="Post not found" /> : null}
-    {mode === 'inv' ? circle ? <>
-      <Notice title={circle.name} body="Create a demo invitation. No external message is sent." />
-      {joined ? <>{input('Invitee name or email')}{button('Create invitation', () => { if (!text.trim()) return; c.invite(id, text.trim()); setText(''); setNotice('Invitation created locally.'); }, !text.trim())}</> : <Notice title="Members only" body="Join this circle to invite someone." />}
-      {c.invitations.filter(i => i.circleId === id).map(i => <View key={i.id}>
-        <Notice title={i.recipient} body={'Invitation ' + i.status} />
-        {i.status === 'pending' ? <View style={{ flexDirection: 'row', gap: 8 }}>
-          <Pressable accessibilityRole="button" onPress={() => c.respondInvitation(i.id, true)} style={{ padding: 12, borderRadius: 999, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text }}>Accept (demo)</Text></Pressable>
-          <Pressable accessibilityRole="button" onPress={() => c.respondInvitation(i.id, false)} style={{ padding: 12, borderRadius: 999, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text }}>Decline (demo)</Text></Pressable>
-        </View> : null}
-      </View>)}
-    </> : <Notice title="Circle not found" /> : null}
+    {mode === 'inv' ? <>
+      {c.invitations.length ? c.invitations.map(i => {
+        const invitedCircle = demoCircles.find(x => x.id === i.circleId);
+        return <View key={i.id}>
+          <Notice title={invitedCircle?.name ?? 'Circle invitation'} body={'Invitation for ' + i.recipient + ' · ' + i.status} />
+          {i.status === 'pending' ? <View style={{ marginHorizontal: 20, flexDirection: 'row', gap: 10 }}>
+            <Pressable accessibilityRole="button" onPress={() => { c.respondInvitation(i.id, true); activity.notify('circles','Invitation accepted','You joined ' + (invitedCircle?.name ?? 'a circle'), 'ci', i.circleId); }} style={{ padding: 12, borderRadius: 999, backgroundColor: t.accent }}><Text style={{ color: t.onAccent }}>Accept</Text></Pressable>
+            <Pressable accessibilityRole="button" onPress={() => c.respondInvitation(i.id, false)} style={{ padding: 12, borderRadius: 999, borderWidth: 0.5, borderColor: t.line }}><Text style={{ color: t.text }}>Decline</Text></Pressable>
+          </View> : null}
+        </View>;
+      }) : <Notice title="No circle invitations" body="Incoming invitations will appear here in this demo." />}
+    </> : null}
     {mode === 'mem' ? circle ? <>
       <Notice title={circle.name} body={circle.members + ' members · Demo member directory'} />
       <Notice title="Circle organizer" body="Host · Demo profile" />
