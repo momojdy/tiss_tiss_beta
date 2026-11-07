@@ -299,9 +299,22 @@ export default function GatherzPassV2({ admission, event, viewportHeight }: { ad
 
       {/* Draw the top mount last so the strap and its lettering enter behind the metal hardware. */}
       <Svg width={vw} height={vh} style={{ position: 'absolute', left: 0, top: 0 }} pointerEvents="none">
-        <Defs><SvgLinearGradient id="metalB" x1="0" y1="0" x2="1" y2="1"><Stop offset="0" stopColor="#EDE9FA" /><Stop offset=".45" stopColor="#8B7CC7" /><Stop offset="1" stopColor="#C9C2E3" /></SvgLinearGradient></Defs>
+        <Defs>
+          {/* Brushed purple steel: brighter bevel, deep metallic core, and lavender reflection. */}
+          <SvgLinearGradient id="metalB" x1="0" y1="0" x2="0.18" y2="1">
+            <Stop offset="0" stopColor="#F0EAFB" />
+            <Stop offset=".16" stopColor="#C8B8E8" />
+            <Stop offset=".39" stopColor="#8B7CC7" />
+            <Stop offset=".65" stopColor="#554477" />
+            <Stop offset=".84" stopColor="#352A4B" />
+            <Stop offset="1" stopColor="#A796D2" />
+          </SvgLinearGradient>
+        </Defs>
         {/* Solid upper housing; the ribbon enters a recessed socket at its lower edge. */}
         <Rect x={AX - 16} y={AY - 12} width={32} height={20} rx={4} fill="url(#metalB)" stroke="#5A3B8C" />
+        <Rect x={AX - 14} y={AY - 10} width={28} height={1.2} rx={0.6} fill="#FFFFFF" opacity={0.65} />
+        <Rect x={AX - 15} y={AY - 7} width={1.2} height={9} rx={0.6} fill="#D8C9F5" opacity={0.5} />
+        <Rect x={AX + 13.5} y={AY - 8} width={1} height={10} rx={0.5} fill="#241A36" opacity={0.65} />
         {/* Dark opening gives the attachment visible depth instead of a flat overlap. */}
         <Rect x={AX - 12.5} y={AY + 2} width={25} height={8} rx={3} fill="#20152F" stroke="#4A327C" strokeWidth={1} />
         {/* The ribbon remains visible in the socket, behind the front retaining lip. */}
