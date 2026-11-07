@@ -20,7 +20,6 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
   const mine: Admission[] = [adm('a1', 'e1', 'vip'), adm('a2', 'e1', 'general'), adm('a3', 'e3', 'general'), adm('a4', 'e4', 'backstage'), adm('a5', 'e5', 'general', 'checked_in')];
   const orders: GatherzOrder[] = [];
   const transfers: GatherzTransfer[] = [];
-  const received: Admission[] = [];
   const reserved: Record<string, number> = {};
   return {
     mode: 'demo',
@@ -50,10 +49,10 @@ export function createDemoRepository(now = Date.now()): GatherzRepository {
       const tr = transfers.find(x => x.token === token && x.status === 'pending'), a = mine.find(x => x.id === tr?.admissionId);
       if (!tr || !a) throw new Error('Claim link is invalid or expired');
       tr.status = 'claimed'; a.status = 'transferred'; a.credentialCode = 'REVOKED-' + a.id;
-      const recipientAdmission: Admission = { ...a, id: 'claimed-' + a.id, ownerId: tr.recipient, status: 'valid', holderName: tr.recipient, credentialCode: 'GZ-DEMO-CLAIM-' + a.id };
+      const recipientAdmission: Admission = { ...a, id: 'claimed-' + a.id, ownerId: 'me', status: 'valid', holderName: tr.recipient, credentialCode: 'GZ-DEMO-CLAIM-' + a.id };
       tr.claimedAdmissionId = recipientAdmission.id;
-      // The sender's ticket is revoked. Recipient admission is tracked separately and not shown as sender-owned.
-      received.push(recipientAdmission);
+      // Demo acceptance is simulated in this local session; the new admission replaces the revoked sender copy.
+      mine.unshift(recipientAdmission);
     },
     cancelDemoTransfer: async admissionId => {
       const tr = transfers.find(x => x.admissionId === admissionId && x.status === 'pending'), a = mine.find(x => x.id === admissionId);
