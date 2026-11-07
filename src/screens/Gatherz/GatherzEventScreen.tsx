@@ -2,6 +2,7 @@ import React from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
+import { useGatherzCommunity } from '../../features/gatherz/GatherzCommunityContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { admissionText, eventPhase, formatWhen, policyOf } from '../../lib/gatherz/rules';
 import { Art, Header, Notice, Page, SectionTitle, styles } from '../../components/gatherz/shared';
@@ -31,7 +32,7 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       <SectionTitle title="Tickets" />
       {e.tiers.map(x => <Box key={x.name} title={`${x.name} · ${x.price === 0 ? 'Free' : '$' + x.price}`} body={x.admissions > 1 ? `${x.admissions} separate admissions in one purchase` : '1 admission'} />)}
       <SectionTitle title="Organizer" />
-      <Box title={e.organizerName} body="Public organizer profile arrives with the Organizer screen." />
+      <Pressable accessibilityRole="button" onPress={() => nav.push('org', e.organizerName)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{e.organizerName}</Text><Text style={{ fontFamily: fonts.semibold, color: t.accent, marginTop: 4 }}>View organizer profile</Text></Pressable>
       <SectionTitle title="Policies" />
       <Box title="Entry" body={admissionText(p)} />
       <Box title="Transfers" body={`Allowed until ${p.transferCutoffHours} hours before start. The recipient must accept first.`} />
