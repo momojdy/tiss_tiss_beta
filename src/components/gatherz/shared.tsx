@@ -7,7 +7,6 @@ import { artGradients, fonts, radius, useGatherzTheme } from '../../theme/gather
 import { TABS, ROUTES, type RouteName } from '../../lib/gatherz/navigation';
 import { formatWhen } from '../../lib/gatherz/rules';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
-import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 export const NAV_HEIGHT = 96;
 const HEADER_HEIGHT = 100;
@@ -15,24 +14,17 @@ const STRIPE_HEIGHT = 20;
 
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
-  const t = useGatherzTheme(); const { nav, root, toggleTheme } = useGatherz();
-  const { items, preferences } = useGatherzActivity();
-  const unread = items.filter(n => !n.read && preferences.enabled.includes(n.category)).length;
+  const t = useGatherzTheme(); const { nav } = useGatherz();
   return <View style={{ marginBottom: 15 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
-      {!root ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
+      <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <MaterialCommunityIcons name="arrow-left" size={24} color={t.text} />
-      </Pressable> : null}
+      </Pressable>
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
-        {root ? <Text style={{ fontFamily: fonts.regular, fontSize: 10, letterSpacing: 1.5, color: t.mute }}>{title === "gatherz." ? "WANTISS" : "WANTISS · GATHERZ"}</Text> : null}
-        <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: root ? 27 : 19, lineHeight: root ? 33 : 24, color: t.text }}>{title}</Text>
+        <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
         {subtitle ? <Text numberOfLines={1} style={{ fontFamily: fonts.regular, fontSize: 12, color: t.mute }}>{subtitle}</Text> : null}
       </View>
-      {root ? <View style={{ flexDirection: 'row', gap: 6, alignItems: 'center' }}>
-        <IconButton name="help-circle-outline" label="Help" onPress={() => nav.push('help')} />
-        <IconButton name={t.name === 'dark' ? 'white-balance-sunny' : 'weather-night'} label="Toggle theme" onPress={toggleTheme} />
-        <View><IconButton name="bell-outline" label="Notifications" onPress={() => nav.push('notif')} />{unread > 0 ? <View style={{ position: 'absolute', top: -3, right: -3, minWidth: 17, height: 17, paddingHorizontal: 3, borderRadius: 9, backgroundColor: t.accent, alignItems: 'center', justifyContent: 'center' }}><Text style={{ color: t.onAccent, fontSize: 10 }}>{unread > 99 ? '99+' : unread}</Text></View> : null}</View>
-      </View> : right}
+      {right}
     </View>
     <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} />
   </View>;
