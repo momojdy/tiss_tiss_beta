@@ -40,10 +40,10 @@ export function GatherzPaymentScreen({ id }: { id: string }) {
  const tier = event?.tiers.find(x => x.name === checkout.tierName) ?? event?.tiers[0];
  const total = checkoutTotals(tier?.price ?? 0, checkout.quantity, checkout.promo).total;
  const pay = async () => {
-  if (locked.current || !repo.placeDemoOrder || !tier || checkout.eventId !== id) return;
+  if (locked.current || !repo.placeDemoOrder || !tier || checkout.eventId !== id || checkout.orderId) return;
   locked.current = true; setBusy(true);
-  try { await new Promise(resolve => setTimeout(resolve, 900)); const order = await repo.placeDemoOrder(id, tier.name, checkout.quantity); update({ orderId: order.id, failure: '' }); activity.notify('tickets', 'Order confirmed', 'Your demo order is ready.', 'rc', order.id); nav.push('ok', order.id); }
-  catch { update({ failure: 'Your demo payment could not be completed.' }); nav.push('pf', id); }
+  try { await new Promise(resolve => setTimeout(resolve, 900)); if (checkout.paymentMethod === 'wallet' && total > 250) { update({ failure: 'Insufficient demo wallet balance ($250). Choose demo card or a smaller order.' }); nav.push('pf', id); return; } const order = await repo.placeDemoOrder(id, tier.name, checkout.quantity); update({ orderId: order.id, failure: '' }); activity.notify('tickets', 'Order confirmed', 'Your demo order is ready.', 'rc', order.id); nav.push('ok', order.id); }
+  catch { update({ failure: 'Demo payment failed or tickets are no longer available. Please review your order and try again.' }); nav.push('pf', id); }
   finally { setBusy(false); }
  };
  return <Page><Header title="Payment" onBack={busy ? undefined : nav.back} /><SectionTitle title="Choose payment method" />
