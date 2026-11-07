@@ -12,7 +12,7 @@ type Mode = 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem';
 export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; id: string }) {
   const { repo, nav } = useGatherz();
   const activity = useGatherzActivity(); const c = useGatherzCommunity(); const t = useGatherzTheme();
-  const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
+  const [reportDetails, setReportDetails] = useState(''); const [reportReason, setReportReason] = useState(''); const [text, setText] = useState(''); const [uri, setUri] = useState(''); const [publicPhoto, setPublicPhoto] = useState(true); const [notice, setNotice] = useState('');
   const { data: admissions } = useLoad(() => repo.listMyAdmissions(), [repo]);
   const moment = c.moments.find(m => m.id === id), post = c.posts.find(p => p.id === id), circle = demoCircles.find(x => x.id === id);
   const eligible = (admissions ?? []).some(a => a.eventId === id && a.status === 'checked_in');
@@ -71,8 +71,10 @@ export default function GatherzSocialActionsScreen({ mode, id }: { mode: Mode; i
       {button('Report member', () => nav.push('rp', 'member:host-' + id))}
     </> : <Notice title="Circle not found" /> : null}
     {mode === 'rp' ? <>
-      <Notice title="Report content" body="Select a reason. This report is saved in demo memory only; it is not sent to moderators." />
-      {['Spam', 'Harassment', 'Inappropriate content', 'Other'].map(reason => button(reason, () => { const [type, ...rest] = id.split(':'); if (type !== 'post' && type !== 'member' && type !== 'moment') { setNotice('Choose a post, member, or moment to report.'); return; } c.report(type, rest.join(':'), reason); setNotice('Demo report recorded.'); }))}
+      <Notice title="Report content" body="Choose a reason and submit your report. Reports are stored in this demo session and are not sent to moderators." />
+      {['Spam', 'Harassment', 'Inappropriate content', 'Scam or fraud', 'Safety concern', 'Other'].map(reason => <Pressable key={reason} accessibilityRole="radio" accessibilityState={{ checked: reportReason === reason }} onPress={() => setReportReason(reason)} style={{ borderWidth: 0.5, borderColor: reportReason === reason ? t.accent : t.line, backgroundColor: t.card, borderRadius: radius.card, padding: 14 }}><Text style={{ color: t.text }}>{reportReason === reason ? '◉ ' : '○ '}{reason}</Text></Pressable>)}
+      <TextInput multiline value={reportDetails} onChangeText={setReportDetails} placeholder="Additional details (optional)" placeholderTextColor={t.mute} style={{ minHeight: 76, color: t.text, padding: 14, backgroundColor: t.card, borderWidth: 0.5, borderColor: t.line, borderRadius: radius.card }} />
+      {button('Submit report', () => { const [type, ...rest] = id.split(':'); if (!['post','member','moment','event','organizer','circle'].includes(type) || !rest.join(':')) { setNotice('This report target is unavailable.'); return; } c.report(type as 'post' | 'member' | 'moment' | 'event' | 'organizer' | 'circle', rest.join(':'), reportReason + (reportDetails.trim() ? ': ' + reportDetails.trim() : '')); setNotice('Report recorded in this demo session.'); }, !reportReason)}
     </> : null}
     {notice ? <Notice title="Status" body={notice} /> : null}
   </View></Page>;
