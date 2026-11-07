@@ -74,19 +74,4 @@ export default function GatherzEventScreen({ id }: { id: string }) {
       </View>
     </Page>
   );
-} + x.price.toFixed(2)}</Text>
-        <MaterialCommunityIcons name="chevron-right" size={20} color={t.mute} />
-      </Pressable>)}
-      <SectionTitle title="Organizer" />
-      <Pressable accessibilityRole="button" onPress={() => nav.push('org', e.organizerName)} style={{ marginHorizontal: 20, marginTop: 10, padding: 14, borderRadius: radius.card, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card }}><Text style={{ fontFamily: fonts.bold, color: t.text }}>{e.organizerName}</Text><Text style={{ fontFamily: fonts.semibold, color: t.accent, marginTop: 4 }}>View organizer profile</Text></Pressable>
-      <SectionTitle title="Policies" />
-      <Box title="Entry" body={admissionText(p)} />
-      <Box title="Transfers" body={`Allowed until ${p.transferCutoffHours} hours before start. The recipient must accept first.`} />
-      <Box title="Refunds" body={`Accepted until ${p.refundCutoffHours} hours before start.`} />
-      <Box title="Age and entry" body={`${p.age}. ${p.reentry}.`} />
-      <View style={{ paddingHorizontal: 20, marginTop: 20 }}>
-        <Pressable accessibilityRole="button" accessibilityState={{ disabled: phase === 'past' || sold }} disabled={phase === 'past' || sold} onPress={() => nav.push('buy', e.id)} style={[styles.btn, { backgroundColor: phase === 'past' || sold ? t.soft : t.accent }]}><Text style={{ fontFamily: fonts.semibold, color: phase === 'past' || sold ? t.mute : t.onAccent }}>{phase === 'past' ? 'Event ended' : sold ? 'Sold out' : 'Get tickets'}</Text></Pressable>
-      </View>
-    </Page>
-  );
 }
