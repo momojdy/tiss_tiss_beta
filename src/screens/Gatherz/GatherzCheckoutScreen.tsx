@@ -46,6 +46,10 @@ export default function GatherzCheckoutScreen({ id }: { id: string }) {
     <SectionTitle title="Order summary" />
     <View style={{ marginHorizontal: 20, padding: 16, borderRadius: radius.card, backgroundColor: t.card, borderColor: t.line, borderWidth: 0.5 }}>
       <Text style={{ fontFamily: fonts.regular, color: t.text }}>{qty} × {selected.name} · {count} admissions</Text>
+      <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 8 }}>Subtotal: ${totals.subtotal.toFixed(2)}</Text>
+      {totals.discount > 0 ? <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>Promo discount: −${totals.discount.toFixed(2)}</Text> : null}
+      <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>Service fee (4%): ${totals.fee.toFixed(2)}</Text>
+      <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 4 }}>Taxes: none (demo)</Text>
       <Text style={{ fontFamily: fonts.bold, color: t.text, fontSize: 22, marginTop: 8 }}>Total: ${totals.total.toFixed(2)}</Text>
       <Text style={{ fontFamily: fonts.regular, color: t.mute, marginTop: 8 }}>This is a local demo. No money is charged and these tickets cannot be used for entry.</Text>
     </View>
