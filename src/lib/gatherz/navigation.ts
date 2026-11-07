@@ -1,9 +1,25 @@
-export type RouteName = 'home' | 'favorites' | 'moments' | 'tickets' | 'circles' | 'explore' | 'event' | 'ticket';
+export const SECONDARY_ROUTES = {
+  explore: 'Explore', event: 'Event', buy: 'Tickets', tk: 'Ticket Details',
+  help: 'Help Center', notif: 'Notifications', all: 'See All',
+  send: 'Transfer Ticket', msgs: 'Messages', bs: 'Scanner',
+  mp: 'Upload Moment', claim: 'Ticket Invitation', grp: 'Group Tickets',
+  rv: 'Checkout', pm: 'Payment', pf: 'Payment', ok: 'Confirmation',
+  rc: 'Receipt', ords: 'Purchase History', rf: 'Request Refund',
+  dl: 'Download Ticket', sh: 'Share', rp: 'Report', org: 'Organizer',
+  ci: 'Circle', inv: 'Invitations', mv: 'Photo', ha: 'Help Article',
+  cs: 'Contact Support', sc: 'Support Case', dc: 'Demo Controls',
+  prefs: 'Preferences', pst: 'Post', mem: 'Member',
+} as const;
+export type SecondaryRoute = keyof typeof SECONDARY_ROUTES;
+export type RouteName = 'home' | 'favorites' | 'moments' | 'tickets' | 'circles' | SecondaryRoute;
 export interface RouteDef { title: string; root: boolean }
-/** Single source of truth: only root routes show the bottom navigation. */
 export const ROUTES: Record<RouteName, RouteDef> = {
-  home: { title: 'Home', root: true }, favorites: { title: 'Favorites', root: true }, moments: { title: 'Moments', root: true }, tickets: { title: 'My Tickets', root: true }, circles: { title: 'Circles', root: true },
-  explore: { title: 'Explore', root: false }, event: { title: 'Event', root: false }, ticket: { title: 'Ticket Details', root: false },
+  home: { title: 'Home', root: true },
+  favorites: { title: 'Favorites', root: true },
+  moments: { title: 'Moments', root: true },
+  tickets: { title: 'My Tickets', root: true },
+  circles: { title: 'Circles', root: true },
+  ...Object.fromEntries(Object.entries(SECONDARY_ROUTES).map(([key, title]) => [key, { title, root: false }])) as Record<SecondaryRoute, RouteDef>,
 };
 export const TABS: RouteName[] = ['home', 'favorites', 'moments', 'tickets', 'circles'];
 export interface NavEntry { route: RouteName; params?: { id?: string } }
