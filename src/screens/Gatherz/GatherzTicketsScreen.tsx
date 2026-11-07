@@ -38,7 +38,7 @@ export default function GatherzTicketsScreen() {
   return (
     <Page>
       <Header title="Tickets" subtitle="Demo account" />
-      <View style={{ flexDirection: 'row', gap: 8, marginHorizontal: 20, marginBottom: 12 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginHorizontal: 20, marginBottom: 12 }}>
         <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Order history</Text></Pressable>
         <Pressable accessibilityRole="button" onPress={() => nav.push('msgs')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Wantiss Messages</Text></Pressable>
         <Pressable accessibilityRole="button" onPress={() => nav.push('dc')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Demo controls</Text></Pressable>
