@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useFonts, Manrope_800ExtraBold } from '@expo-google-fonts/manrope';
 import { useFonts as useInterFonts, Inter_700Bold } from '@expo-google-fonts/inter';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Svg, {Path} from 'react-native-svg';
 import { supabase } from '../../lib/supabase';
 
 const SAGE_TINT = '#DCE8D2';
@@ -18,7 +19,7 @@ function HeaderIconButton({ icon, onPress, badgeCount = 0, label }: {
   return (
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={label} style={styles.iconButton}>
       <View style={styles.iconStack}>
-        <MaterialCommunityIcons name={icon} size={20} color={OLIVE} />
+        {icon === 'arrow-left' ? <Svg width={24} height={24} viewBox="0 0 24 24"><Path d="M15 5l-7 7 7 7" fill="none" stroke={OLIVE} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" /></Svg> : <MaterialCommunityIcons name={icon} size={20} color={OLIVE} />}
         {badgeCount > 0 && (
           <View style={styles.badge}>
             <Text style={[styles.badgeText, interLoadedStyle]}>{badgeCount >= 100 ? '99+' : String(badgeCount)}</Text>
