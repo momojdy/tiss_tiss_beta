@@ -4,7 +4,7 @@ import Svg, { Circle, Path, Rect, Line, Polyline, G } from 'react-native-svg';
 import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from './GatherzContext';
 import { supabase } from '../../lib/supabase';
-function ThinMenuIcon({ name, color }: { name: string; color: string }) {
+export function ThinMenuIcon({ name, color }: { name: string; color: string }) {
   const common = { fill: 'none' as const, stroke: color, strokeWidth: 1.25, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   const shapes: Record<string, React.ReactNode> = {
     'message-circle': <Path d="M20 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.95L3 20l.95-4.5a9 9 0 0 1-.95-4A8.5 8.5 0 0 1 11.5 3 8.5 8.5 0 0 1 20 11.5Z" />,
