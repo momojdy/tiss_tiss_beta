@@ -27,6 +27,17 @@ const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'gr
 const FOOTED = ['product', 'checkout'];
 
 export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0, initialRoute}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number; initialRoute?:string}) {
+  // Resolve Saved shortcuts before the first frame; never show an empty transition screen.
+  const initialDestination = useRef(false);
+  if (!initialDestination.current) {
+    initialDestination.current = true;
+    if (initialRoute) {
+      if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') {
+        S.ft = initialRoute.split(':')[1];
+        reset('favs');
+      } else reset(initialRoute);
+    }
+  }
   useGoodies();
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
@@ -181,8 +192,6 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
 
   // Do not render the previous Goodies route while an incoming deep link is loading.
   // The destination is applied after load() restores persisted navigation state.
-  if (initialRoute && !goodiesLoaded) return <View style={{flex: 1, backgroundColor: th.bg}} />;
-
   return (
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
