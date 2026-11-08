@@ -26,7 +26,7 @@ const TABS = ['home', 'cats', 'orders', 'cart'];
 const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
-export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number}) {
+export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0, initialRoute}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number; initialRoute?:string}) {
   useGoodies();
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
@@ -64,12 +64,13 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     void (async () => {
       const contentReady = loadContent();
       await load();
+      if (active && initialRoute) reset(initialRoute);
       setGoodiesLoaded(true);
       await contentReady;
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
     })();
-    if (embedded) S.stack = [{r: 'home', u: Date.now()}];
+    if (embedded && !initialRoute) S.stack = [{r: 'home', u: Date.now()}];
     /* order progress ticker (v24: every second) */
     const appStateSub = AppState.addEventListener('change', next => { if (next === 'active') void loadContent(); });
     const id = setInterval(() => {
