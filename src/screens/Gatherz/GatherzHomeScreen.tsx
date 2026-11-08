@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, FlatList, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Svg, { Circle, Path, Rect, Line, Polyline } from 'react-native-svg';
+import Svg, { Circle, Path, Rect, Line, Polyline, G } from 'react-native-svg';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
@@ -24,7 +24,7 @@ function ThinMenuIcon({ name, color }: { name: string; color: string }) {
     sun: <><Circle cx="12" cy="12" r="4" /><Path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></>,
     moon: <Path d="M20.5 15.8A8.8 8.8 0 0 1 8.2 3.5a8.8 8.8 0 1 0 12.3 12.3Z" />,
   };
-  return <Svg width={26} height={26} viewBox="0 0 24 24"><React.Fragment>{React.isValidElement(shapes[name]) ? React.cloneElement(shapes[name] as React.ReactElement<any>, common) : <g {...common}>{shapes[name]}</g>}</React.Fragment></Svg>;
+  return <Svg width={26} height={26} viewBox="0 0 24 24"><G {...common}>{shapes[name]}</G></Svg>;
 }
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
