@@ -316,7 +316,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'glowz') return <GlowzEntry storage={AsyncStorage} onExit={() => setBuyerScreen('home')} />;
        if (buyerScreen === 'prezo') return <PrezoStandaloneEntry onExitRequested={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'gatherz') return <GatherzStandaloneEntry onExit={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'gatherz') return <GatherzStandaloneEntry onExit={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBusinessSpacePress={() => { void handleOpenBusinessSpace(); }} />;
       if (buyerScreen === 'stayz') return <StayzGuestScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'walletQrRecipient') return walletQrRecipient ? <WalletQRRecipientScreen token={walletQrRecipient.token} recipient={walletQrRecipient.recipient} onBack={() => { setWalletQrRecipient(null); setBuyerScreen('wallet'); }} /> : <AppError title="Wallet recipient unavailable" error="Scan the wallet QR again." />;
       if (buyerScreen === 'profilePrivacy') return <ProfilePrivacyScreen onBack={() => setBuyerScreen(privacyReturnScreen)} />;
