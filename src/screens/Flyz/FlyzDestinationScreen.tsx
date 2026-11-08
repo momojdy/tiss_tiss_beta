@@ -31,7 +31,7 @@ const s=StyleSheet.create({
  bg:{flex:1},
  content:{paddingHorizontal:16,paddingTop:0,paddingBottom:30},
  header:{width:'100%',height:100,paddingHorizontal:0,paddingBottom:4,flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between',marginBottom:18},
- back:{width:44,height:44,borderRadius:22,backgroundColor:'rgba(255,255,255,.65)',alignItems:'center',justifyContent:'center'},
+ back:{width:44,height:44,borderRadius:12,backgroundColor:'rgba(255,255,255,.65)',alignItems:'center',justifyContent:'center'},
  headerTitle:{fontSize:21,fontWeight:'800',color:TEXT},
  headerSpacer:{width:44,height:44},
  hero:{height:190,borderRadius:24,alignItems:'center',justifyContent:'center'},
