@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 12,
-    backgroundColor: colors.header?.background ?? colors.pageBg,
+    backgroundColor: colors.pageBg,
     borderWidth: 1,
     borderColor: colors.textPrimary + '18',
     alignItems: 'center',
