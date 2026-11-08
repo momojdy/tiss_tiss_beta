@@ -154,6 +154,26 @@ export async function placeOrder() {
   if (S.busy) return;
   const access = await refreshGoodiesAccess();
   if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? 'Your access to Goodies has been permanently restricted.' : 'Your access to Goodies is temporarily suspended.'); return;}
+  // A first-delivery discount must be based on server-confirmed history,
+  // not on an empty local cache during account initialization.
+  if (!providerInfo.demo && contentHooks.fees?.().firstFree) {
+    const {data: auth, error: authError} = await supabase.auth.getUser();
+    if (authError || !auth.user) {
+      toast('Unable to verify first-delivery eligibility. Please retry checkout.');
+      return;
+    }
+    const {count, error: historyError} = await supabase.from('goodies_orders')
+      .select('id', {count: 'exact', head: true})
+      .eq('customer_id', auth.user.id);
+    if (historyError || count == null) {
+      S.firstOrderEligible = null;
+      emit();
+      toast('Unable to verify first-delivery eligibility. Please retry checkout.');
+      return;
+    }
+    S.firstOrderEligible = count === 0;
+    emit();
+  }
   if (cartStoreIds().length > 1) return placeMultiOrder();
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
