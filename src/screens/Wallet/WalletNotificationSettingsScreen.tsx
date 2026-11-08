@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React, { useEffect, useState } from 'react';
 import { Pressable, ScrollView, StatusBar, StyleSheet, Switch, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -41,7 +42,7 @@ export default function WalletNotificationSettingsScreen({onBack}:Props) {
 
   return <View style={styles.page}>
     <StatusBar barStyle="dark-content"/>
-    <View style={styles.header}><Pressable onPress={onBack} style={styles.headerButton} hitSlop={8} accessibilityLabel="Back"><MaterialCommunityIcons name="arrow-left" size={20} color={TEXT}/></Pressable><Text style={styles.headerTitle}>Notifications</Text></View>
+    <View style={styles.header}><Pressable onPress={onBack} style={styles.headerButton} hitSlop={8} accessibilityLabel="Back"><Icon name="chevL" size={20} color={TEXT} /></Pressable><Text style={styles.headerTitle}>Notifications</Text></View>
     <View style={styles.strip}/>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
       <View style={styles.channelControl}>
