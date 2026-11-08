@@ -28,14 +28,14 @@ function ThinMenuIcon({ name, color }: { name: string; color: string }) {
 }
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
-  const t = useGatherzTheme(); const { repo, nav, now, toggleTheme, openWallet, openBusinessSpace, openRecentActivity } = useGatherz();
+  const t = useGatherzTheme(); const { repo, nav, now, toggleTheme, openWallet, openBusinessSpace, openRecentActivity, openMainHome, openMessages, openNotifications, unreadNotifications = 0, unreadMessages = 0 } = useGatherz();
   const { data, error, loading, reload } = useLoad(() => repo.listEvents(), [repo]);
   const [cat, setCat] = useState<'All' | EventCategory>('All');
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const quickActions = [
-    { label: 'Home', icon: 'home', action: () => nav.tab('home') },
-    { label: 'Messages', icon: 'message-circle', action: () => nav.push('msgs') },
-    { label: 'Notifications', icon: 'bell', action: () => nav.push('notif') },
+    { label: 'Home', icon: 'home', action: () => openMainHome ? openMainHome() : nav.tab('home') },
+    { label: 'Messages', icon: 'message-circle', action: () => openMessages ? openMessages() : nav.push('msgs') },
+    { label: 'Notifications', icon: 'bell', action: () => openNotifications ? openNotifications() : nav.push('notif') },
     { label: 'Wallet', icon: 'credit-card', action: () => openWallet ? openWallet() : Alert.alert('Wallet', 'Available from the Wantiss main app.') },
     { label: 'Saved', icon: 'heart', action: () => nav.tab('favorites') },
     { label: 'My Orders', icon: 'package', action: () => nav.push('ords') },
@@ -59,7 +59,7 @@ export default function GatherzHomeScreen() {
           <View style={{ backgroundColor: t.name === 'dark' ? 'rgba(38,26,61,0.94)' : 'rgba(238,226,255,0.94)', borderTopLeftRadius: 26, borderTopRightRadius: 26, paddingTop: 12, paddingBottom: 28 }}>
             <View style={{ width: 38, height: 4, borderRadius: 3, backgroundColor: t.name === 'dark' ? '#806B9E' : '#BCA5D9', alignSelf: 'center', marginBottom: 22 }} />
             <View style={{ flexDirection: 'row', paddingHorizontal: 12 }}>
-              {quickActions.slice(0, 5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: '20%', alignItems: 'center', minHeight: 78, gap: 8 }}>{item.label === 'Home' ? <View style={{ width: 56, height: 56, borderRadius: 28, borderWidth: 1, borderColor: '#E8CFE0', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><Image source={{ uri: 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG' }} style={{ width: 54, height: 54, borderRadius: 27 }} resizeMode="contain" /></View> : <ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} />}{item.label !== 'Home' ? <Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text> : null}</Pressable>)}
+              {quickActions.slice(0, 5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: '20%', alignItems: 'center', minHeight: 78, gap: 8 }}>{item.label === 'Home' ? <View style={{ width: 56, height: 56, borderRadius: 28, borderWidth: 1, borderColor: '#E8CFE0', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><Image source={{ uri: 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG' }} style={{ width: 54, height: 54, borderRadius: 27 }} resizeMode="contain" /></View> : <ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} />}{item.label === 'Notifications' && unreadNotifications > 0 ? <View style={{ position: 'absolute', top: -8, right: 2, minWidth: 24, height: 19, borderRadius: 10, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center', backgroundColor: unreadNotifications > 99 ? '#BD279F' : '#9D56CE' }}><Text style={{ color: '#FFF', fontSize: 10, fontWeight: '700' }}>{unreadNotifications > 99 ? '99+' : unreadNotifications}</Text></View> : null}{item.label === 'Messages' && unreadMessages > 0 ? <View style={{ position: 'absolute', top: 0, right: 15, width: 7, height: 7, borderRadius: 4, backgroundColor: '#BD279F' }} /> : null}{item.label !== 'Home' ? <Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text> : null}</Pressable>)}
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} snapToInterval={76} decelerationRate="fast" contentContainerStyle={{ paddingLeft: 12, paddingRight: 12, paddingTop: 12 }}>
               {quickActions.slice(5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: 76, alignItems: 'center', minHeight: 78, gap: 8 }}><ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} /><Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text></Pressable>)}
