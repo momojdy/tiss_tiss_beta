@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React, { useCallback, useEffect, useState } from 'react';
 import {
   Alert,
@@ -1464,7 +1465,7 @@ export default function WalletSettingsScreen({
 
       <View style={styles.header}>
         <Pressable onPress={onBack} style={styles.headerIconButton} accessibilityLabel="Back">
-          <MaterialCommunityIcons name="arrow-left" size={20} color={TEXT} />
+          <Icon name="chevL" size={20} color={TEXT} />
         </Pressable>
         <Text style={styles.headerTitle}>Settings</Text>
         <Pressable onPress={() => setCountryPickerOpen(true)} style={styles.countryHeaderButton} accessibilityLabel="Select country">
