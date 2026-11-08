@@ -46,7 +46,7 @@ export function Bar({title, right, onBack, stripe = true}: {title: string; right
     <>
       <View style={{height: 100, justifyContent: 'flex-end', paddingTop: ins.top, paddingHorizontal: 16, paddingBottom: 10, backgroundColor: th.bg}}>
         <View style={{height: 40, flexDirection: 'row', alignItems: 'center', gap: 10}}>
-          <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 20, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
+          <Pressable accessibilityLabel={tr('back')} onPress={onBack} style={{width: 40, height: 40, borderRadius: 12, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="chevL" color={th.ink} /></Pressable>
           <Text numberOfLines={1} style={{flex:1,fontSize:19,lineHeight:19,fontWeight:"600",transform:[{translateY:1}],color:th.ink}}>{title}</Text>
           {right}
         </View>
