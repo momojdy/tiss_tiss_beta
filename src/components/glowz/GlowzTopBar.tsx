@@ -19,7 +19,7 @@ export function GlowzTopBar({ title, onBack, right, children, backLabel = 'Back'
   return (
     <View style={{ paddingLeft: g.left, paddingRight: g.right }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        {onBack ? <GlowzIconButton icon="back" label={backLabel} onPress={onBack} /> : null}
+        {onBack ? <GlowzIconButton icon="back" label={backLabel} onPress={onBack} radiusValue={12} /> : null}
         {children ?? (
           <View style={{ flex: 1 }}>
             <GlowzText kind="display" size={26} numberOfLines={1}>{title}</GlowzText>
