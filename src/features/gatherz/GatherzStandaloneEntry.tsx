@@ -8,6 +8,7 @@ import { isRoot, navReducer, ROUTES, type RouteName } from '../../lib/gatherz/na
 import type { GatherzRepository } from '../../types/gatherz';
 import { BottomNav } from '../../components/gatherz/shared';
 import { GatherzContext } from './GatherzContext';
+import GatherzQuickMenu from './GatherzQuickMenu';
 import GatherzHomeScreen from '../../screens/Gatherz/GatherzHomeScreen';
 import GatherzExploreScreen from '../../screens/Gatherz/GatherzExploreScreen';
 import GatherzEventScreen from '../../screens/Gatherz/GatherzEventScreen';
@@ -39,6 +40,7 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
   const repo = repository ?? demoRepositories[demoAccount];
   const [stack, dispatch] = useReducer(navReducer, [{ route: 'home' as RouteName }]);
   const [dark, setDark] = useState(initialTheme === 'dark');
+  const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const top = stack[stack.length - 1], root = isRoot(top);
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => { if (stack.length > 1) { dispatch({ type: 'back' }); return true; } onExit?.(); return true; });
@@ -46,7 +48,7 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
   }, [stack.length, onExit]);
   const push = useCallback((route: RouteName, id?: string) => dispatch({ type: 'push', entry: { route, params: id ? { id } : undefined } }), []);
   const goBack = useCallback(() => { if (stack.length > 1) dispatch({ type: 'back' }); else onExit?.(); }, [stack.length, onExit]);
-  const ctx = useMemo(() => ({ openMainHome: onMainHomePress, openMessages: onMessagesPress, openNotifications: onNotificationsPress, unreadNotifications, unreadMessages, openWallet: onWalletPress, openBusinessSpace: onBusinessSpacePress, openRecentActivity: onRecentActivityPress, repo, now: Date.now(), root, demoAccount, switchDemoAccount: repository ? undefined : (account: string) => { if (account in demoRepositories) { setDemoAccount(account); dispatch({ type: 'tab', route: 'home' }); } }, nav: { push, back: goBack, tab: (route: RouteName) => dispatch({ type: 'tab', route }) }, toggleTheme: () => setDark(d => !d) }), [repo, root, push, goBack, demoAccount, demoRepositories, repository, onWalletPress, onBusinessSpacePress, onRecentActivityPress, onMainHomePress, onMessagesPress, onNotificationsPress, unreadNotifications, unreadMessages]);
+  const ctx = useMemo(() => ({ openQuickMenu: () => setQuickMenuOpen(true), openMainHome: onMainHomePress, openMessages: onMessagesPress, openNotifications: onNotificationsPress, unreadNotifications, unreadMessages, openWallet: onWalletPress, openBusinessSpace: onBusinessSpacePress, openRecentActivity: onRecentActivityPress, repo, now: Date.now(), root, demoAccount, switchDemoAccount: repository ? undefined : (account: string) => { if (account in demoRepositories) { setDemoAccount(account); dispatch({ type: 'tab', route: 'home' }); } }, nav: { push, back: goBack, tab: (route: RouteName) => dispatch({ type: 'tab', route }) }, toggleTheme: () => setDark(d => !d) }), [repo, root, push, goBack, demoAccount, demoRepositories, repository, onWalletPress, onBusinessSpacePress, onRecentActivityPress, onMainHomePress, onMessagesPress, onNotificationsPress, unreadNotifications, unreadMessages]);
   const id = top.params?.id ?? '';
   const screen = top.route === 'home' ? <GatherzHomeScreen /> : top.route === 'explore' ? <GatherzExploreScreen /> : top.route === 'event' ? <GatherzEventScreen id={id} /> : top.route === 'tickets' ? <GatherzTicketsScreen /> : (top.route === 'ticket' || top.route === 'tk') ? <GatherzTicketScreen id={id} /> : top.route === 'buy' ? <GatherzCheckoutScreen id={id} /> : top.route === 'rv' ? <GatherzReviewScreen id={id} /> : top.route === 'pm' ? <GatherzPaymentScreen id={id} /> : top.route === 'pf' ? <GatherzPaymentFailedScreen id={id} /> : top.route === 'ok' ? <GatherzConfirmationScreen id={id} /> : top.route === 'rc' ? <GatherzReceiptScreen id={id} /> : top.route === 'ords' ? <GatherzOrdersScreen /> : top.route === 'dc' ? <GatherzDemoControlsScreen /> : top.route === 'bs' ? <GatherzScannerScreen /> : ['all','msgs'].includes(top.route) ? <GatherzSecondaryScreen mode={top.route as 'all' | 'msgs'} section={id} /> : top.route === 'grp' ? <GatherzGroupScreen id={id} /> : top.route === 'favorites' ? <GatherzFavoritesScreen /> : top.route === 'moments' ? <GatherzMomentsScreen /> : top.route === 'circles' ? <GatherzCirclesScreen /> : top.route === 'ci' ? <GatherzCircleDetailScreen id={id} /> : top.route === 'org' ? <GatherzOrganizerScreen id={id} /> : ['mp', 'mv', 'pst', 'inv', 'rp', 'mem'].includes(top.route) ? <GatherzSocialActionsScreen mode={top.route as 'mp' | 'mv' | 'pst' | 'inv' | 'rp' | 'mem'} id={id} /> : top.route === 'help' ? <GatherzHelpScreen /> : top.route === 'ha' ? <GatherzHelpArticleScreen id={id} /> : top.route === 'cs' ? <GatherzSupportScreen /> : top.route === 'sc' ? <GatherzSupportScreen id={id} /> : top.route === 'prefs' ? <GatherzPreferencesScreen /> : top.route === 'notif' ? <GatherzNotificationsScreen /> : top.route === 'sh' ? <GatherzShareScreen id={id} /> : ['send', 'claim', 'rf', 'dl'].includes(top.route) ? <GatherzTicketActionsScreen id={id} action={top.route as 'send' | 'claim' | 'rf' | 'dl'} /> : <GatherzPlaceholderScreen title={ROUTES[top.route].title} />;
   return (
@@ -57,6 +59,7 @@ export default function GatherzStandaloneEntry({ repository, initialTheme = 'lig
           <View style={{ flex: 1 }}>
             <StatusBar style={dark ? 'light' : 'dark'} />
             {screen}
+            <GatherzQuickMenu visible={quickMenuOpen} close={() => setQuickMenuOpen(false)} />
             {root ? <BottomNav active={top.route} onTab={r => ctx.nav.tab(r)} /> : null}
           </View>
           </GatherzCommunityProvider></GatherzCheckoutProvider></GatherzActivityProvider>
