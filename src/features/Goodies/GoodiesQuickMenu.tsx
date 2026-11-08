@@ -8,8 +8,8 @@ import * as A from './actions';
 export type GoodiesMenuAction = 'home'|'messages'|'notifications'|'wallet'|'saved'|'orders'|'activity'|'help'|'feedback'|'business';
 export default function GoodiesQuickMenu({visible, close, onUniversalAction, unreadNotifications = 0, unreadMessages = 0}: {visible:boolean;close:()=>void;onUniversalAction?: (action:GoodiesMenuAction)=>void;unreadNotifications?:number;unreadMessages?:number}) {
   const th = useTheme();
-  const top = [{key:'home',label:'',icon:'home'},{key:'messages',label:'Messages',icon:'chat'},{key:'notifications',label:'Notifications',icon:'bell'},{key:'wallet',label:'Wallet',icon:'wallet'},{key:'saved',label:'Saved',icon:'heart'}];
-  const bottom = [{key:'orders',label:'My Orders',icon:'bag'},{key:'activity',label:'Recent Activity',icon:'clock'},{key:'help',label:'Help Center',icon:'help'},{key:'feedback',label:'Feedback',icon:'edit'},{key:'business',label:'Business Space',icon:'bag'},{key:'dark',label:'Dark Mode',icon:'moon'}];
+  const top = [{key:'home',label:'',icon:'home'},{key:'messages',label:'Messages',icon:'msg'},{key:'notifications',label:'Notifications',icon:'bell'},{key:'wallet',label:'Wallet',icon:'wallet'},{key:'saved',label:'Saved',icon:'heart'}];
+  const bottom = [{key:'orders',label:'My Orders',icon:'bag'},{key:'activity',label:'Recent Activity',icon:'clock'},{key:'help',label:'Help Center',icon:'help'},{key:'feedback',label:'Feedback',icon:'pencil'},{key:'business',label:'Business Space',icon:'bag'},{key:'dark',label:'Dark Mode',icon:'moon'}];
   const activate = (key:string) => {
     close();
     if(key==='dark'){S.theme=S.theme==='dark'?'light':'dark';require('./store').emit();require('./store').save();return;}
