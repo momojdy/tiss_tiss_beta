@@ -247,7 +247,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     void load();
     channel = supabase.channel('app-unread-counts').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, () => { void load(); }).subscribe();
     return () => { alive = false; if (channel) void supabase.removeChannel(channel); };
-  }, [authenticated]);
+  }, [authenticated, buyerScreen]);
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
   const [flyzSelectedFlight, setFlyzSelectedFlight] = useState<any>(null);
