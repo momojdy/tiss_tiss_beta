@@ -252,7 +252,7 @@ export function Cats() {
   const th = useTheme(), {width} = useWindowDimensions(), w = (width - 32 - 16) / 3;
   const all = [...categories().map(c => ({id: c.id, e: c.emoji, n: tx(c.name), art: c.art})), {id: 'all', e: '🏪', n: label('lbl.catAllStores', 'All stores'), art: null as any}];
   return (
-    <View style={{paddingHorizontal: 16}}><Pressable accessibilityRole="button" onPress={() => go('favs')} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:13,marginBottom:17,borderBottomWidth:0.5,borderBottomColor:th.line}}><Icon name="heart" size={20} color={th.br}/><T size={14.5}>{label('lbl.browseFavorites', 'Saved')}</T><View style={{flex:1}}/><Icon name="chevR" size={16} color={th.mut}/></Pressable><View style={{flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
+    <View style={{paddingHorizontal: 16}}><View style={{height: 65, justifyContent: 'center', alignItems: 'flex-start'}}><Pressable accessibilityRole="button" accessibilityLabel="Favorites" onPress={() => go('favs')} hitSlop={12} style={{width: 42, height: 42, alignItems: 'center', justifyContent: 'center'}}><Icon name="heart" size={25} color={th.br}/></Pressable></View><View style={{flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
       {all.map(c => (
         <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: w, alignItems: 'center'}}>
           {c.art ? <CachedContentImage uri={c.art} style={{width: 42, height: 42}} /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
