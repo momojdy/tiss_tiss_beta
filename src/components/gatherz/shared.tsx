@@ -27,7 +27,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
     <View style={[s.header, { backgroundColor: t.bg }]}>
       {<Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <GoodiesBackChevron color={t.text} />
-      </Pressable> : null}
+      </Pressable>}
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
         <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
       </View>
