@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Alert, FlatList, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Alert, Animated, FlatList, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Circle, Path, Rect, Line, Polyline, G } from 'react-native-svg';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
@@ -9,6 +9,7 @@ import { eventPhase } from '../../lib/gatherz/rules';
 import { Art, Chip, EventCard, Header, IconButton, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import type { EventCategory } from '../../types/gatherz';
 import { demoCircles } from '../../data/gatherz/communityDemo';
+import { supabase } from '../../lib/supabase';
 function ThinMenuIcon({ name, color }: { name: string; color: string }) {
   const common = { fill: 'none' as const, stroke: color, strokeWidth: 1.25, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const };
   const shapes: Record<string, React.ReactNode> = {
@@ -32,6 +33,36 @@ export default function GatherzHomeScreen() {
   const { data, error, loading, reload } = useLoad(() => repo.listEvents(), [repo]);
   const [cat, setCat] = useState<'All' | EventCategory>('All');
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
+  const [notificationColors, setNotificationColors] = useState<string[]>([]);
+  const [messageColors, setMessageColors] = useState<string[]>([]);
+  const [pulse] = useState(() => new Animated.Value(1));
+  const [colorIndex, setColorIndex] = useState(0);
+  useEffect(() => {
+    let alive = true;
+    const palette: Record<string, string> = { goodies: '#FD802E', flyz: '#4A67B0', gatherz: '#A36BE8', wallet: '#81C56C', frenzies: '#B3DF4B', konsoliss: '#DDB52B', woulib: '#FEC509', stayz: '#579BC7', glowz: '#D49E2B' };
+    const load = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user || !alive) return;
+      const { data: notices } = await supabase.from('notifications').select('feature_name').eq('user_id', user.id).eq('read', false);
+      if (alive) setNotificationColors(Array.from(new Set((notices ?? []).map((n: any) => palette[String(n.feature_name ?? '').toLowerCase()] ?? '#BF008E'))));
+      const { data: conversations } = await supabase.from('conversations').select('id,feature_name').contains('participant_ids', [user.id]);
+      if (conversations?.length) {
+        const { data: unread } = await supabase.from('messages').select('conversation_id').in('conversation_id', conversations.map((c: any) => c.id)).is('read_at', null).neq('sender_id', user.id).limit(500);
+        const ids = new Set((unread ?? []).map((m: any) => m.conversation_id));
+        if (alive) setMessageColors(Array.from(new Set(conversations.filter((c: any) => ids.has(c.id)).map((c: any) => palette[String(c.feature_name ?? '').toLowerCase()] ?? '#BF008E'))));
+      } else if (alive) setMessageColors([]);
+    };
+    void load();
+    const channel = supabase.channel('gatherz-universal-badges').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => { void load(); }).subscribe();
+    return () => { alive = false; void supabase.removeChannel(channel); };
+  }, []);
+  useEffect(() => {
+    if (!messageColors.length) return;
+    const loop = Animated.loop(Animated.sequence([Animated.timing(pulse, { toValue: 0.2, duration: 550, useNativeDriver: true }), Animated.timing(pulse, { toValue: 1, duration: 550, useNativeDriver: true })]));
+    loop.start();
+    const timer = setInterval(() => setColorIndex(i => i + 1), 1100);
+    return () => { loop.stop(); clearInterval(timer); pulse.setValue(1); };
+  }, [messageColors.join(','), pulse]);
   const quickActions = [
     { label: 'Home', icon: 'home', action: () => openMainHome ? openMainHome() : nav.tab('home') },
     { label: 'Messages', icon: 'message-circle', action: () => openMessages ? openMessages() : nav.push('msgs') },
@@ -59,7 +90,7 @@ export default function GatherzHomeScreen() {
           <View style={{ backgroundColor: t.name === 'dark' ? 'rgba(38,26,61,0.94)' : 'rgba(238,226,255,0.94)', borderTopLeftRadius: 26, borderTopRightRadius: 26, paddingTop: 12, paddingBottom: 28 }}>
             <View style={{ width: 38, height: 4, borderRadius: 3, backgroundColor: t.name === 'dark' ? '#806B9E' : '#BCA5D9', alignSelf: 'center', marginBottom: 22 }} />
             <View style={{ flexDirection: 'row', paddingHorizontal: 12 }}>
-              {quickActions.slice(0, 5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: '20%', alignItems: 'center', minHeight: 78, gap: 8 }}>{item.label === 'Home' ? <View style={{ width: 56, height: 56, borderRadius: 28, borderWidth: 1, borderColor: '#E8CFE0', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><Image source={{ uri: 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG' }} style={{ width: 54, height: 54, borderRadius: 27 }} resizeMode="contain" /></View> : <ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} />}{item.label === 'Notifications' && unreadNotifications > 0 ? <View style={{ position: 'absolute', top: -8, right: 2, minWidth: 24, height: 19, borderRadius: 10, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center', backgroundColor: unreadNotifications > 99 ? '#BD279F' : '#9D56CE' }}><Text style={{ color: '#FFF', fontSize: 10, fontWeight: '700' }}>{unreadNotifications > 99 ? '99+' : unreadNotifications}</Text></View> : null}{item.label === 'Messages' && unreadMessages > 0 ? <View style={{ position: 'absolute', top: 0, right: 15, width: 7, height: 7, borderRadius: 4, backgroundColor: '#BD279F' }} /> : null}{item.label !== 'Home' ? <Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text> : null}</Pressable>)}
+              {quickActions.slice(0, 5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: '20%', alignItems: 'center', minHeight: 78, gap: 8 }}>{item.label === 'Home' ? <View style={{ width: 56, height: 56, borderRadius: 28, borderWidth: 1, borderColor: '#E8CFE0', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}><Image source={{ uri: 'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG' }} style={{ width: 54, height: 54, borderRadius: 27 }} resizeMode="contain" /></View> : <ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} />}{item.label === 'Notifications' && unreadNotifications > 0 ? <View style={{ position: 'absolute', top: -8, right: 2, minWidth: 24, height: 19, borderRadius: 10, paddingHorizontal: 4, alignItems: 'center', justifyContent: 'center', backgroundColor: unreadNotifications > 99 ? '#BD279F' : notificationColors.length === 1 ? notificationColors[0] : '#BD279F' }}><Text style={{ color: '#FFF', fontSize: 10, fontWeight: '700' }}>{unreadNotifications > 99 ? '99+' : unreadNotifications}</Text></View> : null}{item.label === 'Messages' && unreadMessages > 0 ? <Animated.View style={{ position: 'absolute', top: 0, right: 15, width: 7, height: 7, borderRadius: 4, backgroundColor: messageColors[colorIndex % Math.max(messageColors.length, 1)] ?? '#BD279F', opacity: pulse }} /> : null}{item.label !== 'Home' ? <Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text> : null}</Pressable>)}
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} snapToInterval={76} decelerationRate="fast" contentContainerStyle={{ paddingLeft: 12, paddingRight: 12, paddingTop: 12 }}>
               {quickActions.slice(5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: 76, alignItems: 'center', minHeight: 78, gap: 8 }}><ThinMenuIcon name={item.icon} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} /><Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text></Pressable>)}
