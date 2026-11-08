@@ -5,6 +5,7 @@ export interface GatherzCtx {
   repo: GatherzRepository; now: number; root: boolean;
   nav: { push: (route: RouteName, id?: string) => void; back: () => void; tab: (route: RouteName) => void };
   toggleTheme: () => void;
+  openQuickMenu: () => void;
   openWallet?: () => void;
   openMainHome?: () => void;
   openMessages?: () => void;
