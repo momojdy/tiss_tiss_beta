@@ -46,6 +46,7 @@ const WDEF = () => ({
   addr: [] as Address[],
 });
 const GDEF = () => ({
+  firstOrderEligible: null as boolean | null,
   serverUnread: 0, checkoutAttempt: null as any,
   goodiesAccess: {status: 'active', reason: '', endsAt: null as string | null},
   notifs: [] as any[],
@@ -390,7 +391,7 @@ export const addr = (): Address => S.addr.filter((a: Address) => a.id === S.as)[
 export const cur = (): Route => S.stack[S.stack.length - 1];
 export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q, 0);
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
-export const first = () => S.orders.length === 0;
+export const first = () => S.firstOrderEligible === true && S.orders.length === 0;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
 /** Exact coordinates saved with the address (captured with "Use my current location"); more precise than geocoding the text. */
 export const savedPoint = (address: any): [number, number] | null => {const la = Number(address?.latitude), lo = Number(address?.longitude); return address?.latitude != null && address?.longitude != null && Number.isFinite(la) && Number.isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? [la, lo] : null;};
