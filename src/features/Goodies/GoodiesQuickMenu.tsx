@@ -32,7 +32,7 @@ export default function GoodiesQuickMenu({visible, close, onUniversalAction, unr
     close();
     if(key==='dark'){S.theme=S.theme==='dark'?'light':'dark';require('./store').emit();require('./store').save();return;}
     // Goodies destinations remain inside Goodies, matching Gatherz's local navigation.
-    if(key==='saved') { A.go('favs'); return; }
+    if(key==='saved') { if(onUniversalAction) onUniversalAction('saved'); else A.go('favs'); return; }
     if(key==='orders') { A.tab('orders'); return; }
     if(key==='help') { A.go('help'); return; }
     if(key==='feedback') { A.go('contact'); return; }
