@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {supabase} from '../../lib/supabase';
 import {S, useGoodies} from '../../features/Goodies/store';
 import {Pressable, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {MaterialCommunityIcons} from '@expo/vector-icons';
@@ -14,11 +15,14 @@ const other=[
  {icon:'airplane' as const,title:'Flyz',detail:'Saved destinations and trips',count:'',color:'#4A67B0'},
  {icon:'ticket-outline' as const,title:'Gatherz',detail:'Events you want to attend',count:'',color:'#BF008E'},
  {icon:'heart-outline' as const,title:'Frenzies',detail:'Saved moments and favorites',count:'',color:'#91B834'},
- {icon:'bed-outline' as const,title:'Stayz',detail:'Places you want to stay',undefinedcolor:'#d92d36'},
+ {icon:'bed-outline' as const,title:'Stayz',detail:'Places you want to stay',color:'#d92d36'},
 ];
 export default function SavedScreen({onBack,onOpenGoodies,onOpenFeature}:{onBack:()=>void;onOpenGoodies:(route:string)=>void;onOpenFeature:(feature:string)=>void}) {
  useGoodies();
  const storeCount=S.fav.length, itemCount=S.favp.length;
+ const [counts,setCounts]=useState<Record<string,number>>({});
+ useEffect(()=>{let active=true;const refresh=async()=>{const {data:{user}}=await supabase.auth.getUser();if(!user){if(active)setCounts({});return;}const {count,error}=await supabase.from('stayz_saved').select('listing_id',{count:'exact',head:true}).eq('user_id',user.id);if(active)setCounts(error?{}:{stayz:count??0});};void refresh();const sub=supabase.auth.onAuthStateChange(()=>{void refresh();});return()=>{active=false;sub.data.subscription.unsubscribe();};},[]);
+ const sortedOther=useMemo(()=>other.map((item,index)=>({...item,index,savedCount:counts[item.title.toLowerCase()]})).sort((a,b)=>{const ac=a.savedCount,bc=b.savedCount;if(ac===undefined&&bc===undefined)return a.index-b.index;if(ac===undefined)return 1;if(bc===undefined)return -1;return bc-ac||a.index-b.index;}),[counts]);
  return <View style={s.root}>
   <View style={s.header}><Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={INK}/></Pressable><Text style={s.heading}>Saved</Text></View>
   <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
@@ -26,7 +30,7 @@ export default function SavedScreen({onBack,onOpenGoodies,onOpenFeature}:{onBack
    <View style={s.sectionHead}><Text style={s.sectionTitle}>Goodies</Text><Text style={s.sectionNote}>Food, shops & offers</Text></View>
    {goodies.map(item=><Pressable key={item.title} onPress={()=>onOpenGoodies(item.title==='Favorite stores' ? 'favs:stores' : item.title==='Saved food & drinks' ? 'favs:items' : 'promos')} style={s.item}><View style={[s.iconBox,{backgroundColor:'#FFF0E4'}]}><MaterialCommunityIcons name={item.icon} size={23} color={item.color}/></View><View style={s.itemText}><Text style={s.itemTitle}>{item.title}</Text><Text style={s.itemDetail}>{item.detail}</Text></View><Text style={s.count}>{item.title==='Favorite stores' ? storeCount : item.title==='Saved food & drinks' ? itemCount : ''}</Text><MaterialCommunityIcons name="chevron-right" size={20} color="#A79BA5"/></Pressable>)}
    <View style={s.sectionHead}><Text style={s.sectionTitle}>Other collections</Text><Text style={s.sectionNote}></Text></View>
-   <View style={s.featureGrid}>{other.map(item=><Pressable key={item.title} onPress={()=>onOpenFeature(item.title.toLowerCase())} accessibilityRole="button" accessibilityLabel={`Open ${item.title}`} style={s.featureCard}><View style={[s.featureIcon,{backgroundColor:item.color+'16'}]}><MaterialCommunityIcons name={item.icon} size={25} color={item.color}/></View><Text style={s.featureTitle} numberOfLines={1}>{item.title}</Text></Pressable>)}</View>
+   <View style={s.featureGrid}>{sortedOther.map(item=><Pressable key={item.title} onPress={()=>onOpenFeature(item.title.toLowerCase())} accessibilityRole="button" accessibilityLabel={`Open ${item.title}`} style={s.featureCard}><View style={[s.featureIcon,{backgroundColor:item.color+'16'}]}><MaterialCommunityIcons name={item.icon} size={25} color={item.color}/></View><Text style={s.featureTitle} numberOfLines={1}>{item.title}</Text>{item.savedCount!==undefined?<Text style={s.featureCount}>{item.savedCount} saved</Text>:null}</Pressable>)}</View>
 
   </ScrollView>
  </View>;
