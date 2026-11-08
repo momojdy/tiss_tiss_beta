@@ -27,6 +27,7 @@ import WalletPersonalInfoScreen from './src/screens/Wallet/WalletPersonalInfoScr
 import WalletNotificationSettingsScreen from './src/screens/Wallet/WalletNotificationSettingsScreen';
 import WalletHistoryScreen from './src/screens/Wallet/WalletHistoryScreen';
 import WalletRecentActivityScreen from './src/screens/Wallet/WalletRecentActivityScreen';
+import UniversalActivityScreen from './src/screens/Main/UniversalActivityScreen';
 import QRIdentityScreen from './src/screens/Main/mainQRIdentityScreen';
 import PublicBuyerProfileScreen from './src/screens/Main/mainPublicBuyerProfileScreen';
 import FlyzMomentsScreen from './src/screens/Flyz/FlyzMomentsScreen';
@@ -74,7 +75,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
+type BuyerScreen = 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -316,7 +317,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'glowz') return <GlowzEntry storage={AsyncStorage} onExit={() => setBuyerScreen('home')} />;
        if (buyerScreen === 'prezo') return <PrezoStandaloneEntry onExitRequested={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'gatherz') return <GatherzStandaloneEntry onExit={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBusinessSpacePress={() => { void handleOpenBusinessSpace(); }} />;
+      if (buyerScreen === 'gatherz') return <GatherzStandaloneEntry onExit={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onRecentActivityPress={() => setBuyerScreen('universalActivity')} onBusinessSpacePress={() => { void handleOpenBusinessSpace(); }} />;
       if (buyerScreen === 'stayz') return <StayzGuestScreen onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'walletQrRecipient') return walletQrRecipient ? <WalletQRRecipientScreen token={walletQrRecipient.token} recipient={walletQrRecipient.recipient} onBack={() => { setWalletQrRecipient(null); setBuyerScreen('wallet'); }} /> : <AppError title="Wallet recipient unavailable" error="Scan the wallet QR again." />;
       if (buyerScreen === 'profilePrivacy') return <ProfilePrivacyScreen onBack={() => setBuyerScreen(privacyReturnScreen)} />;
@@ -341,6 +342,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletPaymentMethods') return <WalletPaymentMethodsScreen onBack={() => setBuyerScreen('walletSettings')} onBankCardPress={() => setBuyerScreen('walletBankCards')} />;
+      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => setBuyerScreen('gatherz')} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
       if (buyerScreen === 'walletRecentActivity') return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
       if (buyerScreen === 'walletHistory') return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={(token) => { setWalletQrDisplayToken(token ?? null); setQrLaunchToken(null); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
