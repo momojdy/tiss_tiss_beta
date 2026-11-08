@@ -227,6 +227,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [notificationConversationId, setNotificationConversationId] = useState<string | undefined>(undefined);
+  const [goodiesInitialRoute, setGoodiesInitialRoute] = useState<string | undefined>(undefined);
   const [inboxReturnScreen, setInboxReturnScreen] = useState<BuyerScreen>('messageHub');
   const [quickMenuReturnScreen, setQuickMenuReturnScreen] = useState<BuyerScreen>('me');
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
@@ -300,7 +301,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     try {
       if (buyerScreen === 'businessRegistration') return <BusinessRegistrationScreen onBack={() => setBuyerScreen('gatherz')} onComplete={() => { setAppMode('vendor'); setBuyerScreen('home'); }} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('notifications'); }} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
-      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target, conversationId) => { if (target === 'goodies/orders') { const A = require('./src/features/Goodies/actions'); A.tab('orders'); setBuyerScreen('goodies'); return; } setNotificationConversationId(conversationId); setBuyerScreen(target as BuyerScreen); }} />;
+      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target, conversationId) => { if (target === 'goodies/orders') { setGoodiesInitialRoute('orders'); setBuyerScreen('goodies'); return; } setNotificationConversationId(conversationId); setBuyerScreen(target as BuyerScreen); }} />;
       if (buyerScreen === 'messages') return <MessagesScreen initialConversationId={notificationConversationId} onBack={() => { setNotificationConversationId(undefined); setBuyerScreen(inboxReturnScreen); }} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight: any) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
       if (buyerScreen === 'flyzDetails') return <FlyzDetailsScreen flight={flyzSelectedFlight} onBack={() => setBuyerScreen('flyzResults')} onContinue={() => setBuyerScreen('flyzPassengerDetails')} />;
@@ -311,7 +312,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
+      if (buyerScreen === 'goodies') return <GoodiesHomeScreen initialRoute={goodiesInitialRoute} onBack={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('home'); }} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
         if (action === 'home') setBuyerScreen('home');
         else if (action === 'messages' || action === 'notifications') { setInboxReturnScreen('goodies'); setBuyerScreen(action); }
         else if (action === 'wallet') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('wallet'); }
