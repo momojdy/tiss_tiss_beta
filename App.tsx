@@ -75,7 +75,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
+type BuyerScreen = 'businessRegistration' | 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -190,16 +190,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'Continue to registration',
-            onPress: () => {
-              void (async () => {
-                await supabase.auth.signOut();
-                setAuthenticated(false);
-                setAppMode('buyer');
-                setAuthInitialMode('business');
-                setScreen('auth');
-              })().catch(error => Alert.alert('Unable to continue', error instanceof Error ? error.message : 'Please try again.'));
-            },
-          },
+            onPress: () => { setBuyerScreen('businessRegistration'); },
         ],
       );
     } catch (error) {
@@ -302,6 +293,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (authenticated) {
     try {
+      if (buyerScreen === 'businessRegistration') return <View style={{ flex: 1, backgroundColor: '#FFF', paddingHorizontal: 24, paddingTop: 64 }}><Pressable onPress={() => setBuyerScreen('gatherz')} accessibilityRole="button" style={{ paddingVertical: 14 }}><Text style={{ color: '#BF008E', fontSize: 18 }}>‹ Back to Buyer</Text></Pressable><Text style={{ fontSize: 28, fontWeight: '700', marginTop: 26 }}>Register B&P 2P</Text><Text style={{ color: '#68606B', marginTop: 12, lineHeight: 23 }}>Add Business Space to your existing Wantiss identity. Your Buyer session stays active, and you won't need to sign in again.</Text><Pressable onPress={() => { void (async () => { try { const { error } = await supabase.rpc('register_my_account_mode', { p_mode: 'business' }); if (error) throw error; Alert.alert('Business Space ready', 'B&P 2P registration has been added to your Wantiss account.'); setAppMode('vendor'); setBuyerScreen('home'); } catch (error) { Alert.alert('Unable to register B&P 2P', error instanceof Error ? error.message : 'Please try again.'); } })(); }} style={{ marginTop: 32, borderRadius: 14, backgroundColor: '#BF008E', padding: 17, alignItems: 'center' }}><Text style={{ color: '#FFF', fontWeight: '700' }}>Register Business Space</Text></Pressable></View>;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => setBuyerScreen('messages')} onNotificationsPress={() => setBuyerScreen('notifications')} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen('messageHub')} onNavigate={(target) => setBuyerScreen(target as BuyerScreen)} />;
       if (buyerScreen === 'messages') return <MessagesScreen onBack={() => setBuyerScreen('messageHub')} />;
