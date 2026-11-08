@@ -50,7 +50,7 @@ export function WoulibHomeScreen({
                 style={{
                   width: 38,
                   height: 38,
-                  borderRadius: 19,
+                  borderRadius: 12,
                   backgroundColor: t.card,
                   borderWidth: 1,
                   borderColor: t.line,
