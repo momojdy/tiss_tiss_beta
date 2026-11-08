@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   ActivityIndicator,
@@ -567,7 +568,7 @@ export default function WalletNotificationsScreen({
       <View style={s.header}>
         <View style={s.headerLeft}>
           <Pressable onPress={onBack} style={s.backBtn} hitSlop={8}>
-            <MaterialCommunityIcons name="arrow-left" size={20} color={C.olive} />
+            <Icon name="chevL" size={20} color={C.olive} />
           </Pressable>
           <Text style={s.headerTitle}>Notifications</Text>
         </View>
