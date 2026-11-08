@@ -1,7 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { Alert, Animated, FlatList, Image, Modal, Pressable, ScrollView, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { FlatList, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import Svg, { Circle, Path, Rect, Line, Polyline, G } from 'react-native-svg';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
@@ -9,7 +8,6 @@ import { eventPhase } from '../../lib/gatherz/rules';
 import { Art, Chip, EventCard, Header, IconButton, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import type { EventCategory } from '../../types/gatherz';
 import { demoCircles } from '../../data/gatherz/communityDemo';
-import { supabase } from '../../lib/supabase';
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
   const t = useGatherzTheme(); const { repo, nav, now, toggleTheme, openWallet, openBusinessSpace, openRecentActivity, openMainHome, openMessages, openNotifications, unreadNotifications = 0, unreadMessages = 0 } = useGatherz();
