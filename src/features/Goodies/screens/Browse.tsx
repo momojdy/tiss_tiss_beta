@@ -165,8 +165,8 @@ export function Home({onExit}: {onExit?: () => void}) {
           if (!s) return null;
           return (
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
-              <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br}}>
-                <Text style={{fontSize: 30}}>{s.e}</Text>
+              <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br, overflow: 'hidden'}}>
+                {s.logo || s.thumbnail || s.cover ? <CachedContentImage uri={s.logo || s.thumbnail || s.cover} contentFit="cover" style={{width: 60, height: 60, borderRadius: 30}} /> : <Text style={{fontSize: 30}}>{s.e}</Text>}
                 <View style={{position: 'absolute', bottom: -5, backgroundColor: th.br, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2}}><T size={9.5} weight="600" color="#fff">{label('lbl.browseReorder', 'Reorder')}</T></View>
               </Grad>
               <T size={11.5} weight="600" align="center" style={{marginTop: 10}}>{s.n}</T>
