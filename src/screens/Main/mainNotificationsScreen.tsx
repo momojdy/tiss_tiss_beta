@@ -26,7 +26,7 @@ const destinationFor = (n: NotificationRow): string | null => {
     goodies:'goodies', 'pumping goodies':'goodies', frenzies:'frenzies',
     konsoliss:'konsoliss', woulib:'woulib', gatherz:'gatherz',
     stayz:'stayz', glowz:'glowz', prezo:'prezo',
-    orders:'goodies', 'my orders':'goodies'
+    orders:'goodies/orders', 'my orders':'goodies/orders', 'goodies/orders':'goodies/orders', 'goodies orders':'goodies/orders'
   };
   if (n.metadata?.conversation_id || n.notification_type === 'store_message') return 'messages';
   if (key) return routes[key] || null;
