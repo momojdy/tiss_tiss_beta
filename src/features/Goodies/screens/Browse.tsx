@@ -165,6 +165,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
           const s = STB[o.sid];
+          if (!s) return null;
           return (
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
               <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br}}>
