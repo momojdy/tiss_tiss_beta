@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
@@ -20,7 +21,7 @@ const category = (r:any): HistoryCategory => {
 };
 
 function Header({onBack}:{onBack?:()=>void}) {
-  return <><View style={s.header}><Pressable onPress={onBack} style={s.headerButton} hitSlop={8}><MaterialIcons name="arrow-back" size={20} color={C.text}/></Pressable><Text style={s.headerTitle}>History</Text></View><View style={s.strip}/></>;
+  return <><View style={s.header}><Pressable onPress={onBack} style={s.headerButton} hitSlop={8}><Icon name="chevL" size={20} color={C.text} /></Pressable><Text style={s.headerTitle}>History</Text></View><View style={s.strip}/></>;
 }
 
 function Row({item}:{item:Item}) {
