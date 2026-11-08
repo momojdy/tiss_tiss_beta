@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { Animated } from 'react-native';
-import { View, Pressable, Text, useWindowDimensions } from 'react-native';
+import { View, Pressable, Text, ScrollView, useWindowDimensions } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useLoad } from '../../lib/gatherz/useLoad';
 import { splitAdmissions, type TicketRow } from '../../lib/gatherz/rules';
 import { fonts, useGatherzTheme } from '../../theme/gatherzTheme';
-import { Chip, Header, Notice, Page, TicketFront } from '../../components/gatherz/shared';
+import { Header, Notice, Page, TicketFront } from '../../components/gatherz/shared';
 export default function GatherzTicketsScreen() {
   const { repo, nav, now } = useGatherz(); const { width } = useWindowDimensions(); const t = useGatherzTheme();
   const { data, error, loading, reload } = useLoad(async () => { const [a, e] = await Promise.all([repo.listMyAdmissions(), repo.listEvents()]); return { a, e }; }, [repo]);
@@ -38,16 +39,13 @@ export default function GatherzTicketsScreen() {
   return (
     <Page>
       <Header title="Tickets" subtitle="Demo account" />
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginHorizontal: 20, marginBottom: 12 }}>
-        <Pressable accessibilityRole="button" onPress={() => nav.push('ords')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Order history</Text></Pressable>
-        <Pressable accessibilityRole="button" onPress={() => nav.push('msgs')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Wantiss Messages</Text></Pressable>
-        <Pressable accessibilityRole="button" onPress={() => nav.push('dc')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Demo controls</Text></Pressable>
-        <Pressable accessibilityRole="button" onPress={() => nav.push('claim')} style={{ borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, borderRadius: 99, padding: 12 }}><Text style={{ color: t.text, fontFamily: fonts.semibold }}>Claim ticket</Text></Pressable>
-      </View>
-      <View style={{ flexDirection: 'row', gap: 8, paddingHorizontal: 20, paddingBottom: 14 }}>
-        <Chip label={`Upcoming (${upcoming.length})`} on={seg === 'up'} onPress={() => setSeg('up')} />
-        <Chip label={`Transferred (${transfers.data?.length ?? 0})`} on={seg === 'transferred'} onPress={() => setSeg('transferred')} />
-        <Chip label={`Past (${done.length})`} on={seg === 'past'} onPress={() => setSeg('past')} />
+      <View style={{ marginHorizontal: 20, marginBottom: 14 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', borderBottomWidth: 0.5, borderBottomColor: t.line }}>
+          {([{ key: 'up', label: 'Upcoming', count: upcoming.length }, { key: 'transferred', label: 'Transferred', count: transfers.data?.length ?? 0 }, { key: 'past', label: 'Past', count: done.length }] as const).map(item => <Pressable key={item.key} accessibilityRole="tab" accessibilityState={{ selected: seg === item.key }} onPress={() => setSeg(item.key)} style={{ flex: 1, alignItems: 'center', paddingVertical: 12, borderBottomWidth: seg === item.key ? 2 : 0, borderBottomColor: t.accent }}><Text numberOfLines={1} style={{ color: seg === item.key ? t.accent : t.mute, fontFamily: fonts.semibold, fontSize: 12 }}>{item.label} · {item.count}</Text></Pressable>)}
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ alignItems: 'center', gap: 18, paddingTop: 14, paddingBottom: 4 }}>
+          {([{ label: 'Orders', icon: 'receipt-text-outline', route: 'ords' }, { label: 'Messages', icon: 'message-outline', route: 'msgs' }, { label: 'Claim ticket', icon: 'ticket-confirmation-outline', route: 'claim' }, { label: 'Demo', icon: 'cog-outline', route: 'dc' }] as const).map(item => <Pressable key={item.route} accessibilityRole="button" onPress={() => nav.push(item.route)} style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingVertical: 5 }}><MaterialCommunityIcons name={item.icon} size={17} color={t.accent} /><Text style={{ color: t.text, fontFamily: fonts.semibold, fontSize: 12 }}>{item.label}</Text></Pressable>)}
+        </ScrollView>
       </View>
       {loading ? <Notice loading body="Loading tickets…" /> : null}
       {error ? <Notice title="Tickets could not load" body="Please try again." action="Try again" onAction={reload} /> : null}
