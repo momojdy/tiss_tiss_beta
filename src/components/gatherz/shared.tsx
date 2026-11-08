@@ -7,6 +7,7 @@ import { artGradients, fonts, radius, useGatherzTheme } from '../../theme/gather
 import { TABS, ROUTES, type RouteName } from '../../lib/gatherz/navigation';
 import { formatWhen } from '../../lib/gatherz/rules';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
+import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
 export const NAV_HEIGHT = 96;
 const HEADER_HEIGHT = 100;
@@ -14,7 +15,9 @@ const STRIPE_HEIGHT = 20;
 
 /** Header scrolls with the page (it is not sticky). Secondary pages get a back arrow and their own title. */
 export function Header({ title, subtitle, onBack, right }: { title: string; subtitle?: string; onBack?: () => void; right?: React.ReactNode }) {
-  const t = useGatherzTheme(); const { nav, root } = useGatherz();
+  const t = useGatherzTheme(); const { nav, root, openQuickMenu } = useGatherz();
+  const { items, preferences } = useGatherzActivity();
+  const gatherzUnread = items.filter(item => !item.read && preferences.enabled.includes(item.category)).length;
   const showStripe = !(root && title === 'gatherz.');
   return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
@@ -25,6 +28,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
         <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
       </View>
       {right}
+      <Pressable accessibilityRole="button" accessibilityLabel="Open Gatherz quick menu" onPress={openQuickMenu} hitSlop={8} style={{ width: 48, height: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}><View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: t.text }} /><View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: t.text }} /><View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: t.text }} />{gatherzUnread > 0 ? <View style={{ position: 'absolute', top: -4, right: -2, minWidth: 19, height: 19, paddingHorizontal: 4, borderRadius: 10, backgroundColor: t.accent, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 10, fontFamily: fonts.semibold, color: '#FFFFFF' }}>{gatherzUnread > 99 ? '99+' : gatherzUnread}</Text></View> : null}</Pressable>
     </View>
     {showStripe ? <View style={{ height: STRIPE_HEIGHT, backgroundColor: t.stripe }} /> : null}
   </View>;
