@@ -227,6 +227,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const [inboxReturnScreen, setInboxReturnScreen] = useState<BuyerScreen>('messageHub');
+  const [quickMenuReturnScreen, setQuickMenuReturnScreen] = useState<BuyerScreen>('me');
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
   const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
   useEffect(() => {
@@ -312,8 +313,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
         if (action === 'home') setBuyerScreen('home');
         else if (action === 'messages' || action === 'notifications') { setInboxReturnScreen('goodies'); setBuyerScreen(action); }
-        else if (action === 'wallet') setBuyerScreen('wallet');
-        else if (action === 'activity') setBuyerScreen('universalActivity');
+        else if (action === 'wallet') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('wallet'); }
+        else if (action === 'activity') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('universalActivity'); }
         else if (action === 'business') { void handleOpenBusinessSpace(); }
         else if (action === 'saved') { const A = require('./src/features/Goodies/actions'); A.go('favs'); }
         else if (action === 'orders') { const A = require('./src/features/Goodies/actions'); A.tab('orders'); }
@@ -346,13 +347,13 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletPaymentMethods') return <WalletPaymentMethodsScreen onBack={() => setBuyerScreen('walletSettings')} onBankCardPress={() => setBuyerScreen('walletBankCards')} />;
-      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => setBuyerScreen('gatherz')} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
+      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => { setBuyerScreen(quickMenuReturnScreen === 'goodies' ? 'goodies' : 'gatherz'); setQuickMenuReturnScreen('me'); }} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
       if (buyerScreen === 'walletRecentActivity') return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
       if (buyerScreen === 'walletHistory') return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={(token) => { setWalletQrDisplayToken(token ?? null); setQrLaunchToken(null); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
       if (buyerScreen === 'walletNotificationSettings') return <WalletNotificationSettingsScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletNotifications') return <WalletNotificationsScreen onBack={() => setBuyerScreen('wallet')} onAcceptRequest={async (requestId: string) => { const { error } = await supabase.rpc('accept_money_request', { p_request_id: requestId }); if (error) Alert.alert('Could not accept request', error.message); else Alert.alert('Money request accepted', 'The request was paid from your wallet.'); }} />;
-      if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => setBuyerScreen('me')} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onQRPress={() => { setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />;
+      if (buyerScreen === 'wallet') return <WalletHomeScreen onRecentActivityPress={() => setBuyerScreen('walletRecentActivity')} onBack={() => { setBuyerScreen(quickMenuReturnScreen); setQuickMenuReturnScreen('me'); }} onHomePress={() => setBuyerScreen('home')} onMePress={() => setBuyerScreen('walletSettings')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onQRPress={() => { setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />;
       if (buyerScreen === 'settings') return <SettingsScreen
         onBack={() => setBuyerScreen('me')}
         onOpen={(target) => {
