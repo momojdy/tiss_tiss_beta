@@ -82,7 +82,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
             <View style={{ flex: 1 }}><View style={s.cardTitleRow}><Text style={s.cardTitle}>{n.title || 'Wantiss update'}</Text>{!n.read && <View style={[s.unreadDot, { backgroundColor: featureColor(n.feature_name) }]}/>}</View>
               {!!n.body && <Text style={s.body}>{n.body}</Text>}
               <Text style={s.meta}>{(n.feature_name || 'Wantiss').replace(/^./, c => c.toUpperCase())} · {new Date(n.created_at).toLocaleString()}</Text>
-              {destinationFor(n) && <Text style={s.openLabel}>Tap to open <MaterialCommunityIcons name="chevron-right" size={13} color={MAGENTA}/></Text>}
+              
             </View>
           </Pressable>)}
       </ScrollView>}
@@ -91,7 +91,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
 const s = StyleSheet.create({
  root:{flex:1,backgroundColor:'#FFF'},header:{height:100,paddingHorizontal:18,paddingTop:0,paddingBottom:12,backgroundColor:PINK,flexDirection:'row',alignItems:'flex-end',borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:'#EDE5E9'},
  back:{width:38,height:38,alignItems:'center',justifyContent:'center',marginRight:8},title:{fontSize:19,fontWeight:'600',color:INK},subtitle:{fontSize:12,color:MUTED,marginTop:3},markAll:{color:MAGENTA,fontSize:12,fontWeight:'700',height:38,textAlignVertical:'center',paddingHorizontal:8},
- list:{padding:14,paddingBottom:30},card:{flexDirection:'row',padding:14,borderRadius:14,backgroundColor:'#FFF',borderWidth:1,borderColor:'#F0E8ED',marginBottom:10,gap:12},unreadCard:{backgroundColor:'#FFFAFC',borderColor:'#EBC9DC'},
+ list:{padding:14,paddingBottom:30},card:{flexDirection:'row',padding:14,borderRadius:14,backgroundColor:'#FFF',borderWidth:0.5,borderColor:'#F0E8ED',marginBottom:10,gap:12},unreadCard:{backgroundColor:'#FFFAFC',borderColor:'#EBC9DC'},
  featureIcon:{width:42,height:42,borderRadius:14,alignItems:'center',justifyContent:'center'},cardTitleRow:{flexDirection:'row',alignItems:'center',gap:8},cardTitle:{flex:1,fontSize:14,fontWeight:'700',color:INK},body:{fontSize:13,lineHeight:19,color:'#655B66',marginTop:5},meta:{fontSize:10,color:MUTED,marginTop:8},unreadDot:{width:7,height:7,borderRadius:4},openLabel:{fontSize:11,color:MAGENTA,fontWeight:'600',marginTop:7},
  center:{flex:1,alignItems:'center',justifyContent:'center',padding:28},emptyIcon:{width:62,height:62,borderRadius:22,backgroundColor:PINK,alignItems:'center',justifyContent:'center',marginBottom:14},emptyTitle:{fontSize:17,fontWeight:'700',color:INK},emptyText:{fontSize:13,color:MUTED,textAlign:'center',marginTop:8,lineHeight:19},retry:{marginTop:14,backgroundColor:MAGENTA,borderRadius:10,paddingHorizontal:18,paddingVertical:10},retryText:{color:'#FFF',fontWeight:'700'}
 });
