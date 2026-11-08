@@ -309,7 +309,16 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'goodies') return <GoodiesHomeScreen onBack={() => setBuyerScreen('home')} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
+        if (action === 'home') setBuyerScreen('home');
+        else if (action === 'messages' || action === 'notifications') { setInboxReturnScreen('goodies'); setBuyerScreen(action); }
+        else if (action === 'wallet') setBuyerScreen('wallet');
+        else if (action === 'activity') setBuyerScreen('universalActivity');
+        else if (action === 'business') { void handleOpenBusinessSpace(); }
+        else if (action === 'saved') { const A = require('./src/features/Goodies/actions'); A.go('favs'); }
+        else if (action === 'orders') { const A = require('./src/features/Goodies/actions'); A.tab('orders'); }
+        else if (action === 'help' || action === 'feedback') { const A = require('./src/features/Goodies/actions'); A.go(action === 'help' ? 'help' : 'contact'); }
+      }} />;
       if (buyerScreen === 'glowz') return <GlowzEntry storage={AsyncStorage} onExit={() => setBuyerScreen('home')} />;
        if (buyerScreen === 'prezo') return <PrezoStandaloneEntry onExitRequested={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'gatherz') return <GatherzStandaloneEntry onExit={() => setBuyerScreen('home')} onWalletPress={() => setBuyerScreen('wallet')} onRecentActivityPress={() => setBuyerScreen('universalActivity')} onMainHomePress={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('gatherz'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('gatherz'); setBuyerScreen('notifications'); }} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onBusinessSpacePress={() => { void handleOpenBusinessSpace(); }} />;
