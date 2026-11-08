@@ -226,6 +226,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  const [notificationConversationId, setNotificationConversationId] = useState<string | undefined>(undefined);
   const [inboxReturnScreen, setInboxReturnScreen] = useState<BuyerScreen>('messageHub');
   const [quickMenuReturnScreen, setQuickMenuReturnScreen] = useState<BuyerScreen>('me');
   const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
@@ -299,8 +300,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     try {
       if (buyerScreen === 'businessRegistration') return <BusinessRegistrationScreen onBack={() => setBuyerScreen('gatherz')} onComplete={() => { setAppMode('vendor'); setBuyerScreen('home'); }} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('notifications'); }} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
-      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target) => setBuyerScreen(target as BuyerScreen)} />;
-      if (buyerScreen === 'messages') return <MessagesScreen onBack={() => setBuyerScreen(inboxReturnScreen)} />;
+      if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target, conversationId) => { setNotificationConversationId(conversationId); setBuyerScreen(target as BuyerScreen); }} />;
+      if (buyerScreen === 'messages') return <MessagesScreen initialConversationId={notificationConversationId} onBack={() => { setNotificationConversationId(undefined); setBuyerScreen(inboxReturnScreen); }} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight: any) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
       if (buyerScreen === 'flyzDetails') return <FlyzDetailsScreen flight={flyzSelectedFlight} onBack={() => setBuyerScreen('flyzResults')} onContinue={() => setBuyerScreen('flyzPassengerDetails')} />;
       if (buyerScreen === 'flyzPassengerDetails') return <FlyzPassengerDetailsScreen onBack={() => setBuyerScreen('flyzDetails')} onContinue={() => setBuyerScreen('flyzPayment')} />;
