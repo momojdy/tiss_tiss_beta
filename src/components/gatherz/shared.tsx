@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import Svg, {Path} from 'react-native-svg';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { artGradients, fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
@@ -9,6 +10,9 @@ import { formatWhen } from '../../lib/gatherz/rules';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useGatherzActivity } from '../../features/gatherz/GatherzActivityContext';
 import type { Admission, GatherzEvent } from '../../types/gatherz';
+function GoodiesBackChevron({color}: {color: string}) {
+  return <Svg width={24} height={24} viewBox="0 0 24 24"><Path d="M15 5l-7 7 7 7" fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" /></Svg>;
+}
 export const NAV_HEIGHT = 96;
 const HEADER_HEIGHT = 100;
 const STRIPE_HEIGHT = 20;
@@ -22,7 +26,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
   return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
       {(!root || title === 'gatherz.') ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
-        <MaterialCommunityIcons name="chevron-left" size={30} color={t.text} />
+        <GoodiesBackChevron color={t.text} />
       </Pressable> : null}
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
         <Text numberOfLines={1} style={{ fontFamily: fonts.semibold, fontSize: 19, lineHeight: 24, color: t.text }}>{title}</Text>
