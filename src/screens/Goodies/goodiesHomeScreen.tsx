@@ -7,9 +7,10 @@ type GoodiesHomeScreenProps = {
   onUniversalAction?: (action:GoodiesMenuAction)=>void;
   unreadNotifications?:number;
   unreadMessages?:number;
+  initialRoute?:string;
 };
 
 /** Mounts Goodies inside Wantiss and returns to the existing home when exited. */
-export default function GoodiesHomeScreen({ onBack, onUniversalAction, unreadNotifications, unreadMessages }: GoodiesHomeScreenProps) {
-  return <GoodiesApp embedded onExit={onBack} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} />;
+export default function GoodiesHomeScreen({ onBack, onUniversalAction, unreadNotifications, unreadMessages, initialRoute }: GoodiesHomeScreenProps) {
+  return <GoodiesApp embedded onExit={onBack} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} initialRoute={initialRoute} />;
 }
