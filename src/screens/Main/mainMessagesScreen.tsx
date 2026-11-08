@@ -1,5 +1,5 @@
 import {Icon} from '../../features/Goodies/components/Icon';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Image, KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
@@ -8,7 +8,7 @@ const PINK='#FBE8EF',MAGENTA='#BF008E',INK='#302631',MUTED='#827783';
 type Message={id:string;conversation_id:string;sender_id:string;body:string;created_at:string;read_at:string|null};
 const formatConversationDate=(value:string)=>{const d=new Date(value);if(Number.isNaN(d.getTime()))return '';const now=new Date();return d.toDateString()===now.toDateString()?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([],{year:'2-digit',month:'2-digit',day:'2-digit'});};
 type Conversation={id:string;title:string|null;participant_ids:string[];updated_at:string;feature?:string|null;ref_id?:string|null;business_id?:string|null};
-export default function MessagesScreen({onBack}:{onBack:()=>void}) {
+export default function MessagesScreen({onBack,initialConversationId}:{onBack:()=>void;initialConversationId?:string}) {
  const [currentUserId,setCurrentUserId]=useState('');const [items,setItems]=useState<Conversation[]>([]),[unread,setUnread]=useState<Record<string,number>>({}),[storeCovers,setStoreCovers]=useState<Record<string,string>>({}),[loading,setLoading]=useState(true),[error,setError]=useState(''),[activeConversation,setActiveConversation]=useState<Conversation|null>(null),[messages,setMessages]=useState<Message[]>([]),[draft,setDraft]=useState(''),[sending,setSending]=useState(false),[lastMessages,setLastMessages]=useState<Record<string,Message>>({}),[drafts,setDrafts]=useState<Record<string,string>>({});
  const load=useCallback(async()=>{
   const {data:auth}=await supabase.auth.getUser();
@@ -41,6 +41,12 @@ export default function MessagesScreen({onBack}:{onBack:()=>void}) {
    setMessages(prev=>prev.map(m=>unreadIds.includes(m.id)?{...m,read_at:readAt}:m));void load();
   }
  };
+ const openedFromNotification=useRef<string|null>(null);
+ useEffect(()=>{
+  if(!initialConversationId || loading || openedFromNotification.current===initialConversationId)return;
+  const target=items.find(c=>c.id===initialConversationId);
+  if(target){openedFromNotification.current=initialConversationId;void openConversation(target);}
+ },[initialConversationId,loading,items]);
  const updateDraft=(value:string)=>{setDraft(value);if(!activeConversation)return;const next={...drafts};if(value.trim())next[activeConversation.id]=value;else delete next[activeConversation.id];setDrafts(next);if(currentUserId)void AsyncStorage.setItem('wantiss.message-drafts.'+currentUserId,JSON.stringify(next));};
  const sendMessage=async()=>{
   const body=draft.trim();if(!body||!activeConversation||sending)return;
