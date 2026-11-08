@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, Keyboard, Modal, Pressable, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
@@ -143,7 +144,7 @@ export default function WalletPersonalInfoScreen({ onBack }: Props) {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <Pressable onPress={onBack} style={styles.headerButton} accessibilityLabel="Back">
-          <MaterialCommunityIcons name="arrow-left" size={20} color={TEXT} />
+          <Icon name="chevL" size={20} color={TEXT} />
         </Pressable>
         <Text style={styles.headerTitle}>Personal info</Text>
       </View>
