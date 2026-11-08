@@ -179,6 +179,10 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
   }), [cartDragX]);
 
+  // Do not render the previous Goodies route while an incoming deep link is loading.
+  // The destination is applied after load() restores persisted navigation state.
+  if (initialRoute && !goodiesLoaded) return <View style={{flex: 1, backgroundColor: th.bg}} />;
+
   return (
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
