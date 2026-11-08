@@ -1,3 +1,4 @@
+import { Icon } from '../../features/Goodies/components/Icon';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -68,8 +69,8 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
   };
   return <View style={s.root}>
     <View style={s.header}>
-      <Pressable onPress={onBack} hitSlop={12} style={s.back}><MaterialCommunityIcons name="arrow-left" size={23} color={INK}/></Pressable>
-      <View style={{ flex: 1 }}><Text style={s.title}>Notifications</Text><Text style={s.subtitle}>{unread ? unread + ' unread updates' : 'You’re all caught up'}</Text></View>
+      <Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={INK} /></Pressable>
+      <View style={{ flex: 1, height: 38, justifyContent: "center" }}><Text style={s.title}>Notifications</Text></View>
       {unread > 0 && <Pressable onPress={markAll}><Text style={s.markAll}>Read all</Text></Pressable>}
     </View>
     {loading ? <View style={s.center}><ActivityIndicator color={MAGENTA}/><Text style={s.emptyText}>Loading your notifications…</Text></View> :
@@ -88,8 +89,8 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
   </View>;
 }
 const s = StyleSheet.create({
- root:{flex:1,backgroundColor:'#FFF'},header:{minHeight:86,paddingHorizontal:18,paddingTop:14,paddingBottom:14,backgroundColor:PINK,flexDirection:'row',alignItems:'center',borderBottomWidth:1,borderBottomColor:'#F0D7E4'},
- back:{width:38,height:38,alignItems:'center',justifyContent:'center',marginRight:8},title:{fontSize:21,fontWeight:'700',color:INK},subtitle:{fontSize:12,color:MUTED,marginTop:3},markAll:{color:MAGENTA,fontSize:12,fontWeight:'700',padding:8},
+ root:{flex:1,backgroundColor:'#FFF'},header:{height:100,paddingHorizontal:18,paddingTop:0,paddingBottom:12,backgroundColor:PINK,flexDirection:'row',alignItems:'flex-end',borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:'#EDE5E9'},
+ back:{width:38,height:38,alignItems:'center',justifyContent:'center',marginRight:8},title:{fontSize:19,fontWeight:'600',color:INK},subtitle:{fontSize:12,color:MUTED,marginTop:3},markAll:{color:MAGENTA,fontSize:12,fontWeight:'700',height:38,textAlignVertical:'center',paddingHorizontal:8},
  list:{padding:14,paddingBottom:30},card:{flexDirection:'row',padding:14,borderRadius:14,backgroundColor:'#FFF',borderWidth:1,borderColor:'#F0E8ED',marginBottom:10,gap:12},unreadCard:{backgroundColor:'#FFFAFC',borderColor:'#EBC9DC'},
  featureIcon:{width:42,height:42,borderRadius:14,alignItems:'center',justifyContent:'center'},cardTitleRow:{flexDirection:'row',alignItems:'center',gap:8},cardTitle:{flex:1,fontSize:14,fontWeight:'700',color:INK},body:{fontSize:13,lineHeight:19,color:'#655B66',marginTop:5},meta:{fontSize:10,color:MUTED,marginTop:8},unreadDot:{width:7,height:7,borderRadius:4},openLabel:{fontSize:11,color:MAGENTA,fontWeight:'600',marginTop:7},
  center:{flex:1,alignItems:'center',justifyContent:'center',padding:28},emptyIcon:{width:62,height:62,borderRadius:22,backgroundColor:PINK,alignItems:'center',justifyContent:'center',marginBottom:14},emptyTitle:{fontSize:17,fontWeight:'700',color:INK},emptyText:{fontSize:13,color:MUTED,textAlign:'center',marginTop:8,lineHeight:19},retry:{marginTop:14,backgroundColor:MAGENTA,borderRadius:10,paddingHorizontal:18,paddingVertical:10},retryText:{color:'#FFF',fontWeight:'700'}
