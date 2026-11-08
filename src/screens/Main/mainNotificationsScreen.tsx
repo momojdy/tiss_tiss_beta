@@ -17,13 +17,22 @@ const FEATURE_COLORS: Record<string, string> = {
 const featureKey = (value?: string | null) => (value || 'general').trim().toLowerCase();
 const featureColor = (value?: string | null) => FEATURE_COLORS[featureKey(value)] || MAGENTA;
 const destinationFor = (n: NotificationRow): string | null => {
-  if (n.notification_type === 'goodies_ingredient_request') return null;
-  const raw = (n.destination || String(n.metadata?.destination || '')).trim();
-  const key = raw.toLowerCase().replace(/[_-]+/g, ' ').trim() || featureKey(n.feature_name);
-  const routes: Record<string, string> = { wallet: 'wallet', flyz: 'flyz', goodies: 'goodies', 'pumping goodies': 'goodies', frenzies: 'frenzies', konsoliss: 'konsoliss', woulib: 'woulib', 'wallet notifications': 'walletNotifications', 'flyz trips': 'flyzMyTrips', 'flyz deals': 'flyzDeals' };
-  return routes[key] || routes[featureKey(n.feature_name)] || null;
+  const raw = String(n.destination || n.metadata?.destination || n.metadata?.screen || n.metadata?.route || '').trim().toLowerCase();
+  const key = raw.replace(/[_-]+/g, ' ').replace(/\s+/g, ' ');
+  const routes: Record<string,string> = {
+    messages:'messages', message:'messages', storechat:'messages', 'store chat':'messages', chat:'messages',
+    notifications:'notifications', wallet:'wallet', 'wallet notifications':'walletNotifications',
+    flyz:'flyz', 'flyz trips':'flyzMyTrips', 'flyz deals':'flyzDeals',
+    goodies:'goodies', 'pumping goodies':'goodies', frenzies:'frenzies',
+    konsoliss:'konsoliss', woulib:'woulib', gatherz:'gatherz',
+    stayz:'stayz', glowz:'glowz', prezo:'prezo',
+    orders:'goodies', 'my orders':'goodies'
+  };
+  if (n.metadata?.conversation_id || n.notification_type === 'store_message') return 'messages';
+  if (key) return routes[key] || null;
+  return routes[featureKey(n.feature_name)] || null;
 };
-export default function NotificationsScreen({ onBack, onNavigate }: { onBack: () => void; onNavigate: (screen: string) => void }) {
+export default function NotificationsScreen({ onBack, onNavigate }: { onBack: () => void; onNavigate: (screen: string, conversationId?: string) => void }) {
   const [items, setItems] = useState<NotificationRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -58,7 +67,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
       setItems(prev => prev.map(item => item.id === n.id ? { ...item, read: true } : item));
     }
     const target = destinationFor(n);
-    if (target) onNavigate(target);
+    if (target) onNavigate(target, target === 'messages' && typeof n.metadata?.conversation_id === 'string' ? n.metadata.conversation_id : undefined);
   };
   const markAll = async () => {
     const { data: auth } = await supabase.auth.getUser();
