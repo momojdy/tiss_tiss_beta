@@ -19,6 +19,7 @@ export default function SavedScreen({onBack,onOpenGoodies}:{onBack:()=>void;onOp
  return <View style={s.root}>
   <View style={s.header}><Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={INK}/></Pressable><Text style={s.heading}>Saved</Text></View>
   <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
+   <Text style={s.eyebrow}>YOUR COLLECTION</Text>
    <View style={s.preview}><Text style={s.previewText}>Your collection · Preview items</Text></View>
    <View style={s.sectionHead}><Text style={s.sectionTitle}>Goodies</Text><Text style={s.sectionNote}>Food, shops & offers</Text></View>
    {goodies.map(item=><Pressable key={item.title} onPress={onOpenGoodies} style={s.item}><View style={[s.iconBox,{backgroundColor:'#FFF0E4'}]}><MaterialCommunityIcons name={item.icon} size={23} color={item.color}/></View><View style={s.itemText}><Text style={s.itemTitle}>{item.title}</Text><Text style={s.itemDetail}>{item.detail}</Text></View><Text style={s.count}>{item.count}</Text><MaterialCommunityIcons name="chevron-right" size={20} color="#A79BA5"/></Pressable>)}
