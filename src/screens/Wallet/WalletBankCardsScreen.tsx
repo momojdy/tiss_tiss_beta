@@ -1,3 +1,4 @@
+import {Icon} from '../../features/Goodies/components/Icon';
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
@@ -14,7 +15,7 @@ function Header({ onBack }: { onBack?: () => void }) {
     <>
       <View style={styles.header}>
         <Pressable onPress={onBack} style={styles.headerButton} hitSlop={8}>
-          <MaterialIcons name="arrow-back" size={20} color={TEXT} />
+          <Icon name="chevL" size={20} color={TEXT} />
         </Pressable>
         <Text style={styles.headerTitle}>Bank cards</Text>
       </View>
