@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, TextInput, View } from 'react-native';
 import { Header, Notice, Page, SectionTitle } from '../../components/gatherz/shared';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
 import { useGatherzCommunity } from '../../features/gatherz/GatherzCommunityContext';
@@ -8,7 +8,7 @@ import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 const organizerBios: Record<string, string> = { 'Skyline Collective': 'Live music, nightlife and city experiences', 'Riverside Events': 'Food festivals and community gatherings', 'Maison Arts': 'Art, culture and creative experiences' };
 function Chip({ label, active, onPress }: { label: string; active: boolean; onPress: () => void }) {
   const t = useGatherzTheme();
-  return <Pressable accessibilityRole="button" accessibilityState={{ selected: active }} onPress={onPress} style={{ borderRadius: 99, borderWidth: 0.5, borderColor: active ? t.accent : t.line, paddingHorizontal: 14, paddingVertical: 9, backgroundColor: active ? t.soft : t.card }}><Text style={{ color: active ? t.accent : t.text, fontFamily: fonts.semibold, fontSize: 12 }}>{label}</Text></Pressable>;
+  return <Pressable accessibilityRole="button" accessibilityState={{ selected: active }} onPress={onPress} style={{ borderRadius: 99, borderWidth: 0.5, borderColor: active ? t.accent : t.line, paddingHorizontal: 12, paddingVertical: 7, backgroundColor: active ? t.soft : t.card }}><Text style={{ color: active ? t.accent : t.text, fontFamily: fonts.semibold, fontSize: 12 }}>{label}</Text></Pressable>;
 }
 function Item({ title, detail, onPress, action }: { title: string; detail: string; onPress: () => void; action?: string }) {
   const t = useGatherzTheme();
@@ -19,7 +19,7 @@ function Item({ title, detail, onPress, action }: { title: string; detail: strin
   </Pressable>;
 }
 function Filters({ values, selected, choose }: { values: string[]; selected: string; choose: (v: string) => void }) {
-  return <View style={{ paddingHorizontal: 20, paddingVertical: 12, flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>{values.map(v => <Chip key={v} label={v} active={selected === v} onPress={() => choose(v)} />)}</View>;
+  return <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 20, paddingVertical: 8, gap: 8, alignItems: 'center' }}>{values.map(v => <Chip key={v} label={v} active={selected === v} onPress={() => choose(v)} />)}</ScrollView>;
 }
 export function GatherzFavoritesScreen() {
   const { repo, nav } = useGatherz(); const c = useGatherzCommunity(); const t = useGatherzTheme(); const [tab, setTab] = useState('Events'); const [cat, setCat] = useState('All');
