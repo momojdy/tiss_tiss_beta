@@ -13,11 +13,14 @@ export default function GoodiesQuickMenu({visible, close, onUniversalAction, unr
   const activate = (key:string) => {
     close();
     if(key==='dark'){S.theme=S.theme==='dark'?'light':'dark';require('./store').emit();require('./store').save();return;}
+    // Goodies destinations remain inside Goodies, matching Gatherz's local navigation.
+    if(key==='saved') { A.go('favs'); return; }
+    if(key==='orders') { A.tab('orders'); return; }
+    if(key==='help') { A.go('help'); return; }
+    if(key==='feedback') { A.go('contact'); return; }
+    // Shared Wantiss destinations use the host navigation, as in Gatherz.
     if(onUniversalAction){onUniversalAction(key as GoodiesMenuAction);return;}
-    if(key==='saved') A.go('favs');
-    else if(key==='orders') A.tab('orders');
-    else if(key==='notifications') A.go('notifs');
-    else if(key==='help') A.go('help');
+    if(key==='notifications') A.go('notifs');
   };
   const tile = (item:{key:string;label:string;icon:string}, topRow:boolean) => <Pressable key={item.key} accessibilityRole="button" accessibilityLabel={item.label} onPress={()=>activate(item.key)} style={{width:topRow?'20%':76,alignItems:'center',minHeight:78,gap:8}}>
     {item.key==='home'?<View style={{width:56,height:56,borderRadius:28,borderWidth:1,borderColor:'#F7C6A1',alignItems:'center',justifyContent:'center',overflow:'hidden'}}><Image source={{uri:'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG'}} style={{width:54,height:54,borderRadius:27}} resizeMode="contain"/></View>:<ThinMenuIcon name={item.icon} color={S.theme==='dark'?'#FFF1E5':'#71340D'}/>}
