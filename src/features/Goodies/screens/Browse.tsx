@@ -133,9 +133,6 @@ export function Home({onExit}: {onExit?: () => void}) {
           <T size={11.5} color={th.mut}>{tr('deliverTo')}</T>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}><T size={15.5} weight="600" lines={1} style={{flexShrink: 1}}>{addr()?.t || label('lbl.browseChooseLocation', 'Choose your location')}</T><Icon name="chevD" size={14} color={th.ink} /></View>
         </Pressable>
-        <Circ icon="heart" label={label('lbl.browseFavorites', 'Customer favorites')} color="#FD802E" onPress={() => go('favs')} />
-        <Circ icon="bell" label={label('lbl.browseNotifications', 'Notifications')} dot={unread()} onPress={() => go('notifs')} />
-        <Circ icon="gear" label={tr('settings')} onPress={() => go('settings')} />
       </View>
       </View>
       <Pressable onPress={() => go('search')} style={{marginTop: 14, marginHorizontal: 16, height: 48, borderRadius: 24, backgroundColor: th.soft, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16}}>
@@ -255,14 +252,14 @@ export function Cats() {
   const th = useTheme(), {width} = useWindowDimensions(), w = (width - 32 - 16) / 3;
   const all = [...categories().map(c => ({id: c.id, e: c.emoji, n: tx(c.name), art: c.art})), {id: 'all', e: '🏪', n: label('lbl.catAllStores', 'All stores'), art: null as any}];
   return (
-    <View style={{paddingHorizontal: 16, flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
+    <View style={{paddingHorizontal: 16}}><Pressable accessibilityRole="button" onPress={() => go('favs')} style={{flexDirection:'row',alignItems:'center',gap:10,paddingVertical:13,marginBottom:17,borderBottomWidth:0.5,borderBottomColor:th.line}}><Icon name="heart" size={20} color={th.br}/><T size={14.5}>{label('lbl.browseFavorites', 'Saved')}</T><View style={{flex:1}}/><Icon name="chevR" size={16} color={th.mut}/></Pressable><View style={{flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
       {all.map(c => (
         <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: w, alignItems: 'center'}}>
           {c.art ? <CachedContentImage uri={c.art} style={{width: 42, height: 42}} /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
           <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{c.n}</T>
         </Pressable>
       ))}
-    </View>
+    </View></View>
   );
 }
 
