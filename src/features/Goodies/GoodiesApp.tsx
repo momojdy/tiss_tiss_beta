@@ -20,17 +20,19 @@ import {loadBuilders, BD} from './builders/engine';
 import {loadContent, label, stageLabels} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
+import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
 
 const TABS = ['home', 'cats', 'orders', 'cart'];
 const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
-export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embedded?: boolean}) {
+export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number}) {
   useGoodies();
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
   const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false), [refreshing, setRefreshing] = useState(false);
   const toastT = useRef<any>(null);
+  const [quickMenuOpen, setQuickMenuOpen] = useState(false);
 
   useEffect(() => {
     if (!goodiesLoaded) return;
@@ -201,6 +203,8 @@ export function GoodiesApp({onExit, embedded = true}: {onExit?: () => void; embe
       ) : null}
 
       {showTabs ? <BottomNav r={r} bottom={18} /> : null}
+      <Pressable accessibilityRole="button" accessibilityLabel="Open Goodies quick menu" onPress={() => setQuickMenuOpen(true)} style={{position:'absolute',top:ins.top+42,right:12,width:49,height:42,alignItems:'center',justifyContent:'center',flexDirection:'row',gap:4,backgroundColor:th.bg,borderRadius:22,zIndex:45}}><View style={{width:5,height:5,borderRadius:3,backgroundColor:th.ink}}/><View style={{width:7,height:7,borderRadius:4,backgroundColor:th.ink}}/><View style={{width:10,height:10,borderRadius:5,backgroundColor:th.ink}}/>{require('./store').unread()>0?<View style={{position:'absolute',right:-3,top:-7,minWidth:19,height:19,borderRadius:10,paddingHorizontal:4,backgroundColor:th.br,alignItems:'center',justifyContent:'center'}}><Text style={{color:'#FFF',fontSize:10,fontWeight:'600'}}>{require('./store').unread()>99?'99+':require('./store').unread()}</Text></View>:null}</Pressable>
+      <GoodiesQuickMenu visible={quickMenuOpen} close={() => setQuickMenuOpen(false)} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} />
       <Sheets sheet={sheet} close={() => setSheet(null)} />
       {toastTxt ? <View pointerEvents="none" style={{position: 'absolute', left: 0, right: 0, bottom: 150, alignItems: 'center', zIndex: 30}}><View style={{backgroundColor: '#1B1B1F', borderRadius: 22, paddingHorizontal: 18, paddingVertical: 11, maxWidth: '86%'}}><T size={13.5} weight="600" color="#fff" align="center">{toastTxt}</T></View></View> : null}
     </KeyboardAvoidingView>
