@@ -191,6 +191,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           {
             text: 'Continue to registration',
             onPress: () => { setBuyerScreen('businessRegistration'); },
+          },
         ],
       );
     } catch (error) {
