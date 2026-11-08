@@ -10,7 +10,7 @@ import type { EventCategory } from '../../types/gatherz';
 import { demoCircles } from '../../data/gatherz/communityDemo';
 export const CATEGORIES: ('All' | EventCategory)[] = ['All', 'Music', 'Nightlife', 'Culture', 'Food', 'Sports'];
 export default function GatherzHomeScreen() {
-  const t = useGatherzTheme(); const { repo, nav, now, toggleTheme } = useGatherz();
+  const t = useGatherzTheme(); const { repo, nav, now, toggleTheme, openWallet, openBusinessSpace, openRecentActivity } = useGatherz();
   const { data, error, loading, reload } = useLoad(() => repo.listEvents(), [repo]);
   const [cat, setCat] = useState<'All' | EventCategory>('All');
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
@@ -18,13 +18,13 @@ export default function GatherzHomeScreen() {
     { label: 'Home', icon: 'home-outline', action: () => nav.tab('home') },
     { label: 'Messages', icon: 'message-outline', action: () => nav.push('msgs') },
     { label: 'Notifications', icon: 'bell-outline', action: () => nav.push('notif') },
-    { label: 'Wallet', icon: 'wallet-outline', action: () => Alert.alert('Wallet', 'The universal Wantiss wallet is not connected to this Gatherz preview yet.') },
+    { label: 'Wallet', icon: 'wallet-outline', action: () => openWallet ? openWallet() : Alert.alert('Wallet', 'Available from the Wantiss main app.') },
     { label: 'Saved', icon: 'heart-outline', action: () => nav.tab('favorites') },
     { label: 'My Orders', icon: 'package-variant-closed', action: () => nav.push('ords') },
-    { label: 'Recent Activity', icon: 'history', action: () => Alert.alert('Recent Activity', 'Cross-feature activity history is not connected yet.') },
+    { label: 'Recent Activity', icon: 'history', action: () => openRecentActivity ? openRecentActivity() : Alert.alert('Recent Activity', 'Available from the Wantiss main app.') },
     { label: 'Help Center', icon: 'help-circle-outline', action: () => nav.push('help') },
     { label: 'Feedback', icon: 'message-text-outline', action: () => nav.push('cs') },
-    { label: 'Business Space', icon: 'storefront-outline', action: () => Alert.alert('Business Space', 'Switching to the universal Business Space is not available in this Gatherz preview.') },
+    { label: 'Business Space', icon: 'storefront-outline', action: () => openBusinessSpace ? openBusinessSpace() : Alert.alert('Business Space', 'Available from the Wantiss main app.') },
     { label: 'Dark Mode', icon: t.name === 'dark' ? 'white-balance-sunny' : 'weather-night', action: toggleTheme },
   ] as const;
   const launchQuickAction = (action: () => void) => { setQuickMenuOpen(false); action(); };
