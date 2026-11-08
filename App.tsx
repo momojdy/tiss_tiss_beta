@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/Main/mainAuthScreen';
+import BusinessRegistrationScreen from './src/screens/Main/BusinessRegistrationScreen';
 import StayzGuestScreen from './src/features/stayz/StayzGuestScreen';
 import ForgotPasswordScreen from './src/screens/Main/mainForgotPasswordScreen';
 import ResetPasswordScreen from './src/screens/Main/mainResetPasswordScreen';
@@ -295,7 +296,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }
   if (authenticated) {
     try {
-      if (buyerScreen === 'businessRegistration') return <View style={{ flex: 1, backgroundColor: '#FFF', paddingHorizontal: 24, paddingTop: 64 }}><Pressable onPress={() => setBuyerScreen('gatherz')} accessibilityRole="button" style={{ paddingVertical: 14 }}><Text style={{ color: '#BF008E', fontSize: 18 }}>‹ Back to Buyer</Text></Pressable><Text style={{ fontSize: 28, fontWeight: '700', marginTop: 26 }}>Register B&P 2P</Text><Text style={{ color: '#68606B', marginTop: 12, lineHeight: 23 }}>Add Business Space to your existing Wantiss identity. Your Buyer session stays active, and you won't need to sign in again.</Text><Pressable onPress={() => { void (async () => { try { const { error } = await supabase.rpc('register_my_account_mode', { p_mode: 'business' }); if (error) throw error; Alert.alert('Business Space ready', 'B&P 2P registration has been added to your Wantiss account.'); setAppMode('vendor'); setBuyerScreen('home'); } catch (error) { Alert.alert('Unable to register B&P 2P', error instanceof Error ? error.message : 'Please try again.'); } })(); }} style={{ marginTop: 32, borderRadius: 14, backgroundColor: '#BF008E', padding: 17, alignItems: 'center' }}><Text style={{ color: '#FFF', fontWeight: '700' }}>Register Business Space</Text></Pressable></View>;
+      if (buyerScreen === 'businessRegistration') return <BusinessRegistrationScreen onBack={() => setBuyerScreen('gatherz')} onComplete={() => { setAppMode('vendor'); setBuyerScreen('home'); }} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('notifications'); }} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target) => setBuyerScreen(target as BuyerScreen)} />;
       if (buyerScreen === 'messages') return <MessagesScreen onBack={() => setBuyerScreen(inboxReturnScreen)} />;
