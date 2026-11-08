@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { Alert, FlatList, Modal, Pressable, ScrollView, Text, View } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { fonts, radius, useGatherzTheme } from '../../theme/gatherzTheme';
 import { useGatherz } from '../../features/gatherz/GatherzContext';
@@ -13,13 +13,43 @@ export default function GatherzHomeScreen() {
   const t = useGatherzTheme(); const { repo, nav, now, toggleTheme } = useGatherz();
   const { data, error, loading, reload } = useLoad(() => repo.listEvents(), [repo]);
   const [cat, setCat] = useState<'All' | EventCategory>('All');
+  const [quickMenuOpen, setQuickMenuOpen] = useState(false);
+  const quickActions = [
+    { label: 'Home', icon: 'home-outline', action: () => nav.tab('home') },
+    { label: 'Messages', icon: 'message-outline', action: () => nav.push('msgs') },
+    { label: 'Notifications', icon: 'bell-outline', action: () => nav.push('notif') },
+    { label: 'Wallet', icon: 'wallet-outline', action: () => Alert.alert('Wallet', 'The universal Wantiss wallet is not connected to this Gatherz preview yet.') },
+    { label: 'Saved', icon: 'heart-outline', action: () => nav.tab('favorites') },
+    { label: 'My Orders', icon: 'package-variant-closed', action: () => nav.push('ords') },
+    { label: 'Recent Activity', icon: 'history', action: () => Alert.alert('Recent Activity', 'Cross-feature activity history is not connected yet.') },
+    { label: 'Help Center', icon: 'help-circle-outline', action: () => nav.push('help') },
+    { label: 'Feedback', icon: 'message-text-outline', action: () => nav.push('cs') },
+    { label: 'Business Space', icon: 'storefront-outline', action: () => Alert.alert('Business Space', 'Switching to the universal Business Space is not available in this Gatherz preview.') },
+    { label: 'Dark Mode', icon: t.name === 'dark' ? 'white-balance-sunny' : 'weather-night', action: toggleTheme },
+  ] as const;
+  const launchQuickAction = (action: () => void) => { setQuickMenuOpen(false); action(); };
   const events = (data ?? []).filter(e => cat === 'All' || e.category === cat);
   const week = events.filter(e => Date.parse(e.startsAt) - now < 7 * 864e5 && eventPhase(e, now) !== 'past');
   const trending = [...events].sort((a, b) => a.remaining - b.remaining).filter(e => e.remaining > 0).slice(0, 5);
   const open = (id: string) => nav.push('event', id);
   return (
     <Page>
-      <Header title="gatherz." onBack={nav.back} right={<View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><IconButton name="help-circle-outline" label="Help" onPress={() => nav.push('help')} /><IconButton name={t.name === 'dark' ? 'white-balance-sunny' : 'weather-night'} label="Toggle theme" onPress={toggleTheme} /><IconButton name="bell-outline" label="Notifications" onPress={() => nav.push('notif')} /></View>} />
+      <Header title="gatherz." onBack={nav.back} right={<Pressable accessibilityRole="button" accessibilityLabel="Open Wantiss menu" onPress={() => setQuickMenuOpen(true)} hitSlop={8} style={{ width: 44, height: 44, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}><View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: t.text }} /><View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: t.text }} /><View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: t.text }} /></Pressable>} />
+      <Modal visible={quickMenuOpen} transparent animationType="slide" onRequestClose={() => setQuickMenuOpen(false)}>
+        <View style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(12,8,25,0.45)' }}>
+          <Pressable accessibilityLabel="Close menu" onPress={() => setQuickMenuOpen(false)} style={{ flex: 1 }} />
+          <View style={{ backgroundColor: t.name === 'dark' ? '#261A3D' : '#EEE2FF', borderTopLeftRadius: 26, borderTopRightRadius: 26, paddingTop: 12, paddingBottom: 28 }}>
+            <View style={{ width: 38, height: 4, borderRadius: 3, backgroundColor: t.name === 'dark' ? '#806B9E' : '#BCA5D9', alignSelf: 'center', marginBottom: 22 }} />
+            <View style={{ flexDirection: 'row', paddingHorizontal: 12 }}>
+              {quickActions.slice(0, 5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: '20%', alignItems: 'center', minHeight: 78, gap: 8 }}><MaterialCommunityIcons name={item.icon} size={26} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} /><Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text></Pressable>)}
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} snapToInterval={76} decelerationRate="fast" contentContainerStyle={{ paddingLeft: 12, paddingRight: 12, paddingTop: 12 }}>
+              {quickActions.slice(5).map(item => <Pressable key={item.label} accessibilityRole="button" accessibilityLabel={item.label} onPress={() => launchQuickAction(item.action)} style={{ width: 76, alignItems: 'center', minHeight: 78, gap: 8 }}><MaterialCommunityIcons name={item.icon} size={26} color={t.name === 'dark' ? '#F3E8FF' : '#392450'} /><Text style={{ fontFamily: fonts.semibold, color: t.name === 'dark' ? '#F3E8FF' : '#392450', fontSize: 10, textAlign: 'center' }}>{item.label}</Text></Pressable>)}
+            </ScrollView>
+            <Pressable accessibilityRole="button" onPress={() => setQuickMenuOpen(false)} style={{ backgroundColor: t.name === 'dark' ? '#3B2B55' : '#FFFFFF', marginHorizontal: 16, marginTop: 14, padding: 14, borderRadius: 14, alignItems: 'center' }}><Text style={{ fontFamily: fonts.semibold, color: t.text }}>Cancel</Text></Pressable>
+          </View>
+        </View>
+      </Modal>
       <View style={{ paddingHorizontal: 20, paddingTop: 12 }}><Text style={{ fontFamily: fonts.semibold, fontSize: 28, letterSpacing: -0.8, color: t.text }}>Make moments happen.</Text><Text style={{ fontFamily: fonts.regular, fontSize: 15, color: t.mute, marginTop: 6 }}>Find your people. Live the experience.</Text></View>
       <Pressable accessibilityRole="button" accessibilityLabel="Search experiences and places" onPress={() => nav.push('explore')} style={{ marginHorizontal: 20, marginTop: 16, height: 52, borderRadius: radius.input, borderWidth: 0.5, borderColor: t.line, backgroundColor: t.card, flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16 }}>
         <MaterialCommunityIcons name="magnify" size={22} color={t.mute} /><Text style={{ fontFamily: fonts.regular, color: t.mute }}>Search experiences, places…</Text>
