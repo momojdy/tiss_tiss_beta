@@ -119,6 +119,7 @@ export function startGoodiesSync() {
   };
 
   const clearAccountState = () => {
+    S.firstOrderEligible = null;
     S.serverUnread = 0;
     S.wallet = 0;
     S.hasWallet = false;
@@ -173,6 +174,7 @@ export function startGoodiesSync() {
         }
 
         if (!ordersResult.error) {
+          S.firstOrderEligible = (ordersResult.data || []).length === 0;
           const cached = new Map<string, any>(
             (S.orders || []).filter((order: any) => order?.backendId).map((order: any) => [String(order.backendId), order]),
           );
