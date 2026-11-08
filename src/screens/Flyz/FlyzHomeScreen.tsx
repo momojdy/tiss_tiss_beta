@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   scrollContent: { paddingTop: 0, paddingHorizontal: 16, paddingBottom: 110 },
   header: { width: '100%', height: 100, paddingHorizontal: 0, paddingBottom: 4, flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'space-between' },
   headerLeft: { flexDirection: 'row', alignItems: 'center', gap: 10 },
-  backButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
+  backButton: { width: 44, height: 44, borderRadius: 12, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
   logo: { fontSize: 26, fontWeight: '800', letterSpacing: -0.6, color: BLUE },
   headerActions: { flexDirection: 'row', gap: 8 },
   roundButton: { width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,.65)', alignItems: 'center', justifyContent: 'center' },
