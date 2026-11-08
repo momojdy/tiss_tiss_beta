@@ -19,6 +19,7 @@ import AccountSecurityScreen from './src/screens/Main/mainAccountSecurityScreen'
 import WalletNotificationsScreen from './src/screens/Wallet/WalletNotificationsScreen';
 import MessageHubScreen from './src/screens/Main/mainMessageHubScreen';
 import NotificationsScreen from './src/screens/Main/mainNotificationsScreen';
+import SavedScreen from './src/screens/Main/mainSavedScreen';
 import MessagesScreen from './src/screens/Main/mainMessagesScreen';
 import WalletSettingsScreen from './src/screens/Wallet/WalletSettingsScreen';
 import WalletPaymentMethodsScreen from './src/screens/Wallet/WalletPaymentMethodsScreen';
@@ -76,7 +77,7 @@ function resolveAppMode(role: unknown): AppMode {
 
 type RequestedMode = 'buyer' | 'business';
 
-type BuyerScreen = 'businessRegistration' | 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
+type BuyerScreen = 'businessRegistration' | 'universalActivity' | 'home' | 'walletRecentActivity' | 'messageHub' | 'notifications' | 'saved' | 'messages' | 'me' | 'settings' | 'accountSecurity' | 'settingsDetail' | 'addresses' | 'personalInformation' | 'frenzies' | 'frenziesRpsLobby' | 'frenziesDemo' | 'frenziesRpsGame' | 'frenziesOnlinePlayers' | 'frenziesChallenges' | 'frenziesChallengeStatus' | 'frenziesChallengeReady' | 'frenziesRankings' | 'frenziesStreakShield' | 'frenziesGetStreakShield' | 'frenziesShieldCheckout' | 'wallet' | 'walletNotifications' | 'walletNotificationSettings' | 'walletSettings' | 'walletPersonalInfo' | 'walletPaymentMethods' | 'walletBankCards' | 'walletAddNewCard' | 'walletHistory' | 'qrIdentity' | 'vendorShop' | 'publicBuyerProfile' | 'profilePrivacy' | 'flyzMoments' | 'walletQrRecipient' | 'flyz' | 'flyzMyTrips' | 'flyzDeals' | 'flyzDestination' | 'flyzResults' | 'flyzDetails' | 'flyzPassengerDetails' | 'flyzPayment' | 'konsoliss' | 'goodies' | 'glowz' | 'prezo' | 'gatherz' | 'woulib' | 'stayz';
 
 const AUTH_REQUEST_TIMEOUT_MS = 15000;
 
@@ -301,6 +302,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     try {
       if (buyerScreen === 'businessRegistration') return <BusinessRegistrationScreen onBack={() => setBuyerScreen('gatherz')} onComplete={() => { setAppMode('vendor'); setBuyerScreen('home'); }} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onBack={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('notifications'); }} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
+      if (buyerScreen === 'saved') return <SavedScreen onBack={() => setBuyerScreen('goodies')} onOpenGoodies={() => { setGoodiesInitialRoute('favs'); setBuyerScreen('goodies'); }} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target, conversationId) => { if (target === 'goodies/orders') { setGoodiesInitialRoute('orders'); setBuyerScreen('goodies'); return; } setNotificationConversationId(conversationId); setBuyerScreen(target as BuyerScreen); }} />;
       if (buyerScreen === 'messages') return <MessagesScreen initialConversationId={notificationConversationId} onBack={() => { setNotificationConversationId(undefined); setBuyerScreen(inboxReturnScreen); }} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight: any) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
@@ -318,7 +320,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
         else if (action === 'wallet') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('wallet'); }
         else if (action === 'activity') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('universalActivity'); }
         else if (action === 'business') { void handleOpenBusinessSpace(); }
-        else if (action === 'saved') { const A = require('./src/features/Goodies/actions'); A.go('favs'); }
+        else if (action === 'saved') { setBuyerScreen('saved'); }
         else if (action === 'orders') { const A = require('./src/features/Goodies/actions'); A.tab('orders'); }
         else if (action === 'help' || action === 'feedback') { const A = require('./src/features/Goodies/actions'); A.go(action === 'help' ? 'help' : 'contact'); }
       }} />;
