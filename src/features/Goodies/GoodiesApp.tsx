@@ -64,7 +64,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     void (async () => {
       const contentReady = loadContent();
       await load();
-      if (active && initialRoute) reset(initialRoute);
+      if (active && initialRoute) { if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') { S.ft = initialRoute.split(':')[1]; reset('favs'); } else reset(initialRoute); }
       setGoodiesLoaded(true);
       await contentReady;
       await loadBuilders();
