@@ -6,6 +6,11 @@ export interface GatherzCtx {
   nav: { push: (route: RouteName, id?: string) => void; back: () => void; tab: (route: RouteName) => void };
   toggleTheme: () => void;
   openWallet?: () => void;
+  openMainHome?: () => void;
+  openMessages?: () => void;
+  openNotifications?: () => void;
+  unreadNotifications?: number;
+  unreadMessages?: number;
   openBusinessSpace?: () => void;
   openRecentActivity?: () => void;
   demoAccount?: string;
