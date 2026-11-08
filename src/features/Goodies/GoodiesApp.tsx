@@ -5,7 +5,7 @@ import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions, AppState, Linking} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
-import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme} from './components/ui';
+import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme, Bar} from './components/ui';
 import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess, validateActiveGroup} from './store';
 import * as A from './actions';
 import {startGoodiesSync} from './serverSync';
@@ -122,7 +122,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   switch (r) {
     case 'wantiss': body = <WantissEntry />; break;
     case 'home': body = <Home onExit={handleBack} />; break;
-    case 'cats': body = <><TopBar title={tr('categories')} /><Cats /></>; break;
+    case 'cats': body = <><Bar title={tr('categories')} onBack={A.back} right={<Pressable accessibilityRole="button" accessibilityLabel="Favorites" onPress={() => A.go('favs')} hitSlop={8} style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}><Icon name="heart" size={24} color={th.br} /></Pressable>} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
     case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
