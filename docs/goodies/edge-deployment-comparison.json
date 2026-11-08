@@ -1,0 +1,100 @@
+[
+  {
+    "function": "wantiss-cms-public",
+    "version": 5,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "wantiss-cms-public",
+    "version": 5,
+    "file": "deno.json",
+    "local_exists": false,
+    "identical": false
+  },
+  {
+    "function": "refund-goodies-card-order",
+    "version": 6,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "rapid-api",
+    "version": 19,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "rapid-api",
+    "version": 19,
+    "file": "goodiesStripeState.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "place-goodies-card-order",
+    "version": 14,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "process-goodies-card-refunds",
+    "version": 17,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "process-goodies-card-refunds",
+    "version": 17,
+    "file": "refundProcessor.ts",
+    "local_exists": true,
+    "identical": false
+  },
+  {
+    "function": "process-goodies-card-refunds",
+    "version": 17,
+    "file": "refundLogic.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "wantiss-public-content",
+    "version": 6,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "wantiss-public-content",
+    "version": 6,
+    "file": "deno.json",
+    "local_exists": false,
+    "identical": false
+  },
+  {
+    "function": "expire-goodies-card-auth",
+    "version": 1,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "goodies-delivery-quote",
+    "version": 21,
+    "file": "index.ts",
+    "local_exists": true,
+    "identical": true
+  },
+  {
+    "function": "goodies-delivery-quote",
+    "version": 21,
+    "file": "deno.json",
+    "local_exists": false,
+    "identical": false
+  }
+]

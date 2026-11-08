@@ -1,0 +1,618 @@
+{
+  "routines": [
+    {
+      "args": "",
+      "name": "goodies_products_validate_photo_url",
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_auto_complete_self_deliveries",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_set_delivery_offer_expiry",
+      "security_definer": false,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_accept boolean",
+      "name": "goodies_courier_respond_assignment",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_notify_store_on_payment_confirmed",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid, p_thumbnail_url text",
+      "name": "goodies_save_store_thumbnail",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_list_library_ingredients",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_get_ingredient_rules",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_name text, p_builder text, p_role text DEFAULT NULL::text, p_note text DEFAULT NULL::text, p_image_path text DEFAULT NULL::text",
+      "name": "goodies_submit_ingredient_request",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid",
+      "name": "goodies_list_ingredient_requests",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_request_id uuid, p_status text, p_review_note text DEFAULT NULL::text, p_admin_asset_key text DEFAULT NULL::text, p_role text DEFAULT NULL::text",
+      "name": "wantiss_admin_review_ingredient_request",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean DEFAULT true",
+      "name": "wantiss_admin_save_library_ingredient",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_rules text",
+      "name": "wantiss_admin_set_ingredient_rules",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_invite_code text",
+      "name": "goodies_group_join",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_close",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb DEFAULT '{}'::jsonb, p_note text DEFAULT NULL::text",
+      "name": "goodies_group_add_item",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_item_id uuid",
+      "name": "goodies_group_remove_item",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_validate_message",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_is_available boolean, p_accepts_cash_on_delivery boolean DEFAULT false",
+      "name": "goodies_set_courier_availability",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_status text",
+      "name": "goodies_courier_update_delivery_status",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_store_id text",
+      "name": "goodies_cash_on_delivery_available",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_update_conversation_summary",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid",
+      "name": "goodies_sync_store_from_business",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_store_id text, p_enabled boolean",
+      "name": "goodies_set_store_cash_policy",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_orders_capture_delivery_coordinates",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "",
+      "name": "goodies_admin_assert",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_product_id uuid, p_status text, p_note text DEFAULT NULL::text",
+      "name": "goodies_admin_review_product",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_admin_dashboard",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business_id uuid, p_live boolean",
+      "name": "goodies_admin_set_merchant_status",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[]",
+      "name": "goodies_admin_update_fee_policy",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_admin_analytics",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business_id uuid, p_status text",
+      "name": "goodies_admin_set_merchant_verification",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_order_id uuid, p_reason text DEFAULT NULL::text",
+      "name": "goodies_admin_cancel_order",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_require_cash_policy",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_courier_id uuid",
+      "name": "goodies_admin_add_courier",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_courier_id uuid",
+      "name": "goodies_admin_remove_courier",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_admin_list_courier_candidates",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric",
+      "name": "goodies_admin_update_delivery_surcharge_policy",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_live boolean",
+      "name": "goodies_set_store_live",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_cover_url text",
+      "name": "goodies_save_store_cover",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_products_default_pending_review",
+      "security_definer": false,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_ingredient_request_notifications",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid, p_latitude double precision, p_longitude double precision",
+      "name": "goodies_save_store_location",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision DEFAULT NULL::double precision, p_heading double precision DEFAULT NULL::double precision, p_speed_mps double precision DEFAULT NULL::double precision",
+      "name": "goodies_courier_update_location",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid",
+      "name": "goodies_list_dispatch_couriers",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_courier_id uuid",
+      "name": "goodies_assign_courier",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_cash_global_enabled",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_store_id text",
+      "name": "goodies_group_create",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_admin_list_delivery_reports",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_products_enforce_update_moderation",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_invite_code text",
+      "name": "goodies_group_order_join",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_set_order_commission_snapshot",
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_list_members",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid, p_line_key text",
+      "name": "goodies_group_order_remove_item",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text",
+      "name": "goodies_place_multi_order",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_tip numeric, p_choices text",
+      "name": "goodies_tip_is_allowed",
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_business uuid, p_configs jsonb",
+      "name": "goodies_save_builder_configs",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_max_stops integer",
+      "name": "goodies_admin_update_max_stops",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer",
+      "name": "goodies_admin_update_multi_store_policy",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean",
+      "name": "goodies_save_store_setup",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_checkout_preview",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_user_id uuid, p_title text, p_body text, p_order_id uuid, p_order_code text, p_status text, p_reason_code text DEFAULT NULL::text",
+      "name": "goodies_order_notify",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_end",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_list_friends",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_hours jsonb, p_timezone text, p_at timestamp with time zone",
+      "name": "goodies_hours_allow_order",
+      "security_definer": false,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_get_status",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_store_id text",
+      "name": "goodies_group_order_create",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb DEFAULT '{}'::jsonb, p_note text DEFAULT NULL::text",
+      "name": "goodies_group_order_upsert_item",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric DEFAULT 0, p_notes text DEFAULT NULL::text",
+      "name": "goodies_group_order_checkout",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid, p_order_type text, p_address jsonb DEFAULT '{}'::jsonb",
+      "name": "goodies_group_order_checkout_estimate",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_order_after_insert",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "",
+      "name": "goodies_group_order_my_invites",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid, p_user_ids uuid[]",
+      "name": "goodies_group_order_invite_friends",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_group_id uuid",
+      "name": "goodies_group_order_decline_invite",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_driver_name text, p_driver_phone text",
+      "name": "goodies_assign_own_driver",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_proof_url text",
+      "name": "goodies_self_delivery_mark_delivered",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid",
+      "name": "goodies_customer_confirm_received",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_reason text",
+      "name": "goodies_customer_dispute_delivery",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_order_id uuid, p_resolution text",
+      "name": "goodies_admin_resolve_delivery_dispute",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_store_id text, p_customer_name text DEFAULT NULL::text",
+      "name": "goodies_start_store_conversation",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "",
+      "name": "goodies_enforce_store_opening_hours",
+      "security_definer": true,
+      "authenticated_execute": false
+    },
+    {
+      "args": "p_conversation_id uuid, p_body text",
+      "name": "goodies_send_store_message",
+      "security_definer": true,
+      "authenticated_execute": true
+    },
+    {
+      "args": "p_conversation_id uuid, p_body text",
+      "name": "goodies_vendor_reply",
+      "security_definer": true,
+      "authenticated_execute": true
+    }
+  ],
+  "product_grants": {
+    "insert": false,
+    "select": true,
+    "name_insert": true,
+    "name_update": true
+  },
+  "recent_migrations": [
+    {
+      "name": "goodies_message_security_and_store_hours",
+      "version": "20261104211532"
+    },
+    {
+      "name": "goodies_multi_store_group_grants",
+      "version": "20261104210514"
+    },
+    {
+      "name": "goodies_multi_store_orders",
+      "version": "20261104210252"
+    },
+    {
+      "name": "goodies_customer_message_reopens_pending",
+      "version": "20261104133209"
+    },
+    {
+      "name": "goodies_message_notification_routing",
+      "version": "20261104132928"
+    },
+    {
+      "name": "harden_goodies_store_messaging_rpc_security",
+      "version": "20261104132518"
+    },
+    {
+      "name": "goodies_store_messaging_invoker_hardening",
+      "version": "20261104132258"
+    },
+    {
+      "name": "goodies_store_messaging_rpc",
+      "version": "20261104132244"
+    },
+    {
+      "name": "goodies_store_messaging_rpcs",
+      "version": "20261104132138"
+    },
+    {
+      "name": "goodies_delivery_report_payment_method_guard",
+      "version": "20261104121122"
+    },
+    {
+      "name": "goodies_admin_delivery_reports_hardened",
+      "version": "20261104120928"
+    },
+    {
+      "name": "harden_goodies_auto_complete_rpc",
+      "version": "20261104120223"
+    },
+    {
+      "name": "goodies_own_driver_delivery",
+      "version": "20261104120144"
+    },
+    {
+      "name": "goodies_group_order_invite_member_permissions",
+      "version": "20261104085749"
+    },
+    {
+      "name": "goodies_group_order_friend_invites",
+      "version": "20261104085513"
+    },
+    {
+      "name": "goodies_order_media_address_and_wallet_notifications",
+      "version": "20261104084859"
+    },
+    {
+      "name": "goodies_fix_wallet_cash_ambiguous_id_and_group_status",
+      "version": "20261104002317"
+    },
+    {
+      "name": "fix_goodies_store_conversation_participants",
+      "version": "20261103184123"
+    }
+  ]
+}

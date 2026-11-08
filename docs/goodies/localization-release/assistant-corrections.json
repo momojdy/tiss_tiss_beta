@@ -1,0 +1,765 @@
+[
+  {
+    "source": "\n\nOr enter invite code: ",
+    "locale": "fr",
+    "translation": "\n\nOu saisissez le code d’invitation : ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " (was ",
+    "locale": "fr",
+    "translation": " (auparavant ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " Any applicable refund will be shown in your Wantiss wallet activity.",
+    "locale": "fr",
+    "translation": " Tout remboursement applicable apparaîtra dans l’activité de votre portefeuille Wantiss.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " Minimum age ",
+    "locale": "fr",
+    "translation": " Âge minimum ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " The total was refunded to your wallet.",
+    "locale": "fr",
+    "translation": " Le montant total a été remboursé sur votre portefeuille.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " You were not charged for this order.",
+    "locale": "fr",
+    "translation": " Cette commande ne vous a pas été facturée.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " Your card refund has been submitted. It may take a few business days to appear.",
+    "locale": "fr",
+    "translation": " Votre remboursement sur carte a été envoyé. Quelques jours ouvrés peuvent être nécessaires pour qu’il apparaisse.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " Your card refund is being processed. It may take a few business days to appear.",
+    "locale": "fr",
+    "translation": " Votre remboursement sur carte est en cours. Quelques jours ouvrés peuvent être nécessaires pour qu’il apparaisse.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " ending in ",
+    "locale": "fr",
+    "translation": " se terminant par ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " for \"",
+    "locale": "fr",
+    "translation": " pour \"",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " from favorites",
+    "locale": "fr",
+    "translation": " des favoris",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " from your address",
+    "locale": "fr",
+    "translation": " de votre adresse",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " from your location",
+    "locale": "fr",
+    "translation": " de votre position",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " is ",
+    "locale": "fr",
+    "translation": " est ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " is closed",
+    "locale": "fr",
+    "translation": " est fermé",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " items from everyone",
+    "locale": "fr",
+    "translation": " articles de tous les participants",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " km",
+    "locale": "fr",
+    "translation": " km",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " km from this address, beyond delivery range. Pick another address to get delivery.",
+    "locale": "fr",
+    "translation": " km de cette adresse, au-delà de la zone de livraison. Choisissez une autre adresse pour la livraison.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " km from your address",
+    "locale": "fr",
+    "translation": " km de votre adresse",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " left",
+    "locale": "fr",
+    "translation": " restants",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " m from your address",
+    "locale": "fr",
+    "translation": " m de votre adresse",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " min",
+    "locale": "fr",
+    "translation": " min",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " min · ",
+    "locale": "fr",
+    "translation": " min · ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " minimum.",
+    "locale": "fr",
+    "translation": " minimum.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " more to reach the minimum",
+    "locale": "fr",
+    "translation": " supplémentaires pour atteindre le minimum",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " or choose another payment method.",
+    "locale": "fr",
+    "translation": " ou choisissez un autre moyen de paiement.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " replaces them.",
+    "locale": "fr",
+    "translation": " les remplace.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " reviews",
+    "locale": "fr",
+    "translation": " avis",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " stores",
+    "locale": "fr",
+    "translation": " boutiques",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " stores at once.",
+    "locale": "fr",
+    "translation": " boutiques à la fois.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " stores · one delivery",
+    "locale": "fr",
+    "translation": " boutiques · une seule livraison",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " stores, so adding from ",
+    "locale": "fr",
+    "translation": " boutiques, donc ajouter des articles de ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " to continue.",
+    "locale": "fr",
+    "translation": " pour continuer.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " to favorites",
+    "locale": "fr",
+    "translation": " aux favoris",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": " to the same order, or start a new cart.",
+    "locale": "fr",
+    "translation": " à la même commande, ou commencez un nouveau panier.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your order is on its way",
+    "locale": "fr",
+    "translation": "Votre commande est en route",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your order is on its way.",
+    "locale": "fr",
+    "translation": "Votre commande est en route.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your order was cancelled.",
+    "locale": "fr",
+    "translation": "Votre commande a été annulée.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your order was sent to ",
+    "locale": "fr",
+    "translation": "Votre commande a été envoyée à ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your orders",
+    "locale": "fr",
+    "translation": "Vos commandes",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your orders will show up here.",
+    "locale": "fr",
+    "translation": "Vos commandes apparaîtront ici.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your payment is processed securely.",
+    "locale": "fr",
+    "translation": "Votre paiement est traité de manière sécurisée.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your promo code no longer applies. Totals updated",
+    "locale": "fr",
+    "translation": "Votre code promo ne s’applique plus. Les totaux ont été mis à jour",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your rating: {n} ★",
+    "locale": "fr",
+    "translation": "Votre note : {n} ★",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your report was reviewed",
+    "locale": "fr",
+    "translation": "Votre signalement a été examiné",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your report was sent.",
+    "locale": "fr",
+    "translation": "Votre signalement a été envoyé.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your report was sent. Our team is reviewing it.",
+    "locale": "fr",
+    "translation": "Votre signalement a été envoyé. Notre équipe l’examine.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your review",
+    "locale": "fr",
+    "translation": "Votre avis",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your road-based delivery fee is now ",
+    "locale": "fr",
+    "translation": "Vos frais de livraison calculés selon le trajet routier s’élèvent désormais à ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your road-based delivery fee is now {amount}. Review the updated total and place your order again.",
+    "locale": "fr",
+    "translation": "Vos frais de livraison calculés selon le trajet routier s’élèvent désormais à {amount}. Vérifiez le nouveau total et passez à nouveau votre commande.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed.",
+    "locale": "fr",
+    "translation": "Votre carte enregistrée est autorisée et débitée de manière sécurisée par Stripe. Si l’autorisation échoue, votre commande ne sera pas passée.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your shop/order comment: “",
+    "locale": "fr",
+    "translation": "Votre commentaire sur la boutique ou la commande : « ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Your support request {ticket} has been sent. Keep this reference if you contact us again.",
+    "locale": "fr",
+    "translation": "Votre demande d’assistance {ticket} a été envoyée. Conservez cette référence pour tout nouveau contact.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "You’re all caught up",
+    "locale": "fr",
+    "translation": "Vous êtes à jour",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "checked by the courier",
+    "locale": "fr",
+    "translation": "vérifié par la personne chargée de la livraison",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "checked by the shop",
+    "locale": "fr",
+    "translation": "vérifié par la boutique",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "delivery",
+    "locale": "fr",
+    "translation": "livraison",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "demo",
+    "locale": "fr",
+    "translation": "démo",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "e.g. Partner, Office",
+    "locale": "fr",
+    "translation": "p. ex. Partenaire, Bureau",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "has a new price. Open Edit to review it",
+    "locale": "fr",
+    "translation": "a un nouveau prix. Ouvrez Modifier pour le vérifier",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "invited you to a group order",
+    "locale": "fr",
+    "translation": "vous a invité à une commande groupée",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "is no longer available in that quantity",
+    "locale": "fr",
+    "translation": "n’est plus disponible dans cette quantité",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "is no longer offered",
+    "locale": "fr",
+    "translation": "n’est plus proposé",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "more to reach the",
+    "locale": "fr",
+    "translation": "supplémentaires pour atteindre le",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "needs changes: ",
+    "locale": "fr",
+    "translation": "nécessite des modifications : ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "open {hours}",
+    "locale": "fr",
+    "translation": "ouvert {hours}",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "or start your own",
+    "locale": "fr",
+    "translation": "ou commencez la vôtre",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "sample review",
+    "locale": "fr",
+    "translation": "exemple d’avis",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "the deadline",
+    "locale": "fr",
+    "translation": "la date limite",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "the same item",
+    "locale": "fr",
+    "translation": "le même article",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Note:",
+    "locale": "zh-Hans",
+    "translation": "备注：",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Note: ",
+    "locale": "zh-Hans",
+    "translation": "备注： ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Note: {note}",
+    "locale": "zh-Hans",
+    "translation": "备注：{note}",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Nothing has been ordered yet. Add more, or review your cart when you are ready.",
+    "locale": "zh-Hans",
+    "translation": "还没有人点单。请继续添加商品，或在准备好后查看购物车。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Nothing matches",
+    "locale": "zh-Hans",
+    "translation": "没有匹配结果",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Nothing saved yet",
+    "locale": "zh-Hans",
+    "translation": "尚未收藏任何内容",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Nothing to reorder",
+    "locale": "zh-Hans",
+    "translation": "没有可再次购买的商品",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Nothing to send.",
+    "locale": "zh-Hans",
+    "translation": "没有可发送的内容。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Notification",
+    "locale": "zh-Hans",
+    "translation": "通知",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Notification not found",
+    "locale": "zh-Hans",
+    "translation": "未找到通知",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Notification preferences",
+    "locale": "zh-Hans",
+    "translation": "通知偏好设置",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Notifications",
+    "locale": "zh-Hans",
+    "translation": "通知",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Number removed",
+    "locale": "zh-Hans",
+    "translation": "号码已移除",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Number saved for Goodies checkout",
+    "locale": "zh-Hans",
+    "translation": "号码已保存，可用于 Goodies 结账",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "OFF",
+    "locale": "zh-Hans",
+    "translation": "关闭",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "ON",
+    "locale": "zh-Hans",
+    "translation": "开启",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Offer details are unavailable",
+    "locale": "zh-Hans",
+    "translation": "优惠详情暂不可用",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Offers",
+    "locale": "zh-Hans",
+    "translation": "优惠",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Offers and deals",
+    "locale": "zh-Hans",
+    "translation": "优惠与特惠",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "On sale",
+    "locale": "zh-Hans",
+    "translation": "促销中",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "On the way",
+    "locale": "zh-Hans",
+    "translation": "配送中",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "One of the stores is no longer taking orders.",
+    "locale": "zh-Hans",
+    "translation": "其中一家商店已停止接单。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only",
+    "locale": "zh-Hans",
+    "translation": "仅限",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only ",
+    "locale": "zh-Hans",
+    "translation": "仅限 ",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only for this order. Your Wantiss default is unchanged.",
+    "locale": "zh-Hans",
+    "translation": "仅用于此订单。您在 Wantiss 中的默认设置保持不变。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only the brand, last 4 digits and expiry are shown.",
+    "locale": "zh-Hans",
+    "translation": "仅显示卡组织、卡号后四位和有效期。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only the group host can check out.",
+    "locale": "zh-Hans",
+    "translation": "仅拼单发起人可以结账。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only valid at {store}",
+    "locale": "zh-Hans",
+    "translation": "仅适用于 {store}",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only when this store and an available courier accept cash on delivery",
+    "locale": "zh-Hans",
+    "translation": "仅在该商店和可接单的配送员均接受货到付款时可用",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only while open",
+    "locale": "zh-Hans",
+    "translation": "仅限营业期间",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Only {count} available",
+    "locale": "zh-Hans",
+    "translation": "仅剩 {count} 件",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Open Wallet",
+    "locale": "zh-Hans",
+    "translation": "打开钱包",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Open a store first to create its group invitation.",
+    "locale": "zh-Hans",
+    "translation": "请先打开一家商店，再创建该商店的拼单邀请。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Open cart",
+    "locale": "zh-Hans",
+    "translation": "打开购物车",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "Open near you",
+    "locale": "zh-Hans",
+    "translation": "附近正在营业",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "I am {age} or older and will show valid government photo ID on delivery or pickup.",
+    "locale": "fr",
+    "translation": "J’ai {age} ans ou plus et je présenterai une pièce d’identité officielle valide avec photo lors de la livraison ou du retrait.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "I am {age} or older and will show valid government photo ID on delivery or pickup.",
+    "locale": "es",
+    "translation": "Tengo {age} años o más y mostraré una identificación oficial válida con foto en el momento de la entrega o recogida.",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "I am {age} or older and will show valid government photo ID on delivery or pickup.",
+    "locale": "zh-Hans",
+    "translation": "我已年满 {age} 岁，将在配送或取货时出示有效的政府签发的带照片身份证件。",
+    "origin": "assistant_authored_correction",
+    "human_reviewed": false
+  },
+  {
+    "source": "MonCash",
+    "locale": "zh-Hans",
+    "translation": "MonCash",
+    "origin": "assistant_authored_brand_correction",
+    "human_reviewed": false
+  }
+]

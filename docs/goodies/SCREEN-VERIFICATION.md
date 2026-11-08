@@ -1,0 +1,76 @@
+# Goodies screen verification register
+
+This is a source-discovered register. Source discovery does not establish runtime behavior. Every route below remains NOT VERIFIED for complete interaction, failure-state, localization and cross-role end-to-end acceptance. Individual tested rules are recorded separately in RELEASE.md.
+
+| Surface | Route or screen module | Source | Complete runtime verification |
+| --- | --- | --- | --- |
+| customer | `addcard` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `byo` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `cardauth` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `cart` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `catlist` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `cats` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `checkout` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `confirm` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `explore` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `favs` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `flashdeals` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `grouporder` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `help` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `home` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `notifs` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `orders` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `product` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `promos` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `reviews` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `search` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `store` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `track` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| customer | `wantiss` | `tiss_tiss_beta/src/features/Goodies/GoodiesApp.tsx` | NOT VERIFIED |
+| courier | `GoodiesCourierScreen` | `tiss_tiss_beta/src/features/Goodies/GoodiesCourierScreen.tsx` | NOT VERIFIED |
+| courier | `goodiesCourierBackgroundLocation` | `tiss_tiss_beta/src/features/Goodies/goodiesCourierBackgroundLocation.ts` | NOT VERIFIED |
+| customer | `addresses` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `contact` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `ndetail` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `payments` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `policies` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `policy` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `profile` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `settings` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `storechat` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| customer | `supdone` | `tiss_tiss_beta/src/features/Goodies/screens/Account.tsx` | NOT VERIFIED |
+| vendor | `BusinessSpaceGoodies` | `tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodies.tsx` | NOT VERIFIED |
+| vendor | `BusinessSpaceGoodiesOrders` | `tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx` | NOT VERIFIED |
+| admin-preview | `byo` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `cart` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `catlist` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `cats` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `checkout` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `confirm` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `explore` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `favs` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `flashdeals` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `help` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `home` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `notifs` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `orders` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `product` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `promos` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `reviews` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `search` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `store` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `track` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `wantiss` | `tiss-admin/src/features/admin/goodiesConsumer/GoodiesApp.tsx` | NOT VERIFIED |
+| admin-preview | `addresses` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `contact` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `ndetail` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `payments` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `policies` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `policy` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `profile` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `settings` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `storechat` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin-preview | `supdone` | `tiss-admin/src/features/admin/goodiesConsumer/screens/Account.tsx` | NOT VERIFIED |
+| admin | `GoodiesAdminScreen` | `tiss-admin/src/features/admin/screens/goodies/GoodiesAdminScreen.tsx` | NOT VERIFIED |
+| admin | `GoodiesAssetLibrary` | `tiss-admin/src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx` | NOT VERIFIED |
+| admin | `modules` | `tiss-admin/src/features/admin/screens/goodies/modules.ts` | NOT VERIFIED |

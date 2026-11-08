@@ -1,0 +1,92 @@
+{
+  "date": "2026-11-07",
+  "deployed": false,
+  "productionReady": false,
+  "customerCode": "63659a6ff95e92616eb39dd569e9e73f66744143",
+  "backendCode": "e09ecbc71be6146c6c03249f43527b02c34906ea",
+  "adminCode": "1f50ec03c23421c5971e248a553e2592a5743bb1",
+  "tests": {
+    "backend": {
+      "status": "PASS",
+      "tests": 58,
+      "settlementSteps": 17,
+      "environment": "isolated PGlite, synthetic data; provider transports mocked"
+    },
+    "customerNode": {
+      "status": "PASS",
+      "tests": 64
+    },
+    "adminNode": {
+      "status": "PASS",
+      "tests": 26
+    },
+    "nativeFinancialRaces": {
+      "status": "PASS",
+      "cases": 4,
+      "environment": "network-isolated PostgreSQL 17.6",
+      "limit": "Final exact 15-migration package and all four races passed in customer GitHub CI"
+    },
+    "typecheck": {
+      "status": "PASS",
+      "repositories": 2
+    },
+    "lint": {
+      "status": "PASS",
+      "scope": "configured customer files plus new settlement service/component"
+    },
+    "exports": {
+      "status": "PASS",
+      "customer": [
+        "android",
+        "ios",
+        "web"
+      ],
+      "admin": [
+        "android",
+        "ios"
+      ],
+      "signed": false
+    }
+  },
+  "cms": {
+    "sourceFields": 1366,
+    "groups": 66,
+    "routes": 33,
+    "criticalKeys": 711,
+    "lookupChecks": 6164,
+    "preservedCreoleFields": 775,
+    "hostedPublication": "NOT VERIFIED",
+    "deferredFaqPlaceholders": 5
+  },
+  "inventory": {
+    "files": 111,
+    "controls": 1408,
+    "backendTargets": 189,
+    "runtimeButtonAcceptance": "NOT VERIFIED"
+  },
+  "release": {
+    "hostedRoleMatrix": "NOT VERIFIED",
+    "providerSandbox": "NOT VERIFIED",
+    "signedBuilds": "NOT VERIFIED",
+    "physicalGpsAndPush": "NOT VERIFIED",
+    "productionDeployment": "NOT VERIFIED"
+  },
+  "githubCi": {
+    "customer": {
+      "status": "PASS",
+      "head": "d1bec27ab3451d61b249cd211a5a57e9eedc7e7b",
+      "run": 42347539126,
+      "jobs": [
+        "validate",
+        "edge-functions",
+        "settlement-concurrency"
+      ]
+    },
+    "admin": {
+      "status": "PASS",
+      "head": "1f50ec03c23421c5971e248a553e2592a5743bb1",
+      "run": 42347520202
+    },
+    "followupScope": "evidence/documentation only"
+  }
+}

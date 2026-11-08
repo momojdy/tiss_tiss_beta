@@ -1,0 +1,56 @@
+{
+  "customer": {
+    "base": "6fa5c74475205a04fc22d6ab19f0316fd9c2091a",
+    "head": "63659a6ff95e92616eb39dd569e9e73f66744143",
+    "commits": [
+      "63659a6ff95e92616eb39dd569e9e73f66744143 Connect Goodies vendor payouts, cash settlement and safe financial states",
+      "e09ecbc71be6146c6c03249f43527b02c34906ea Add scoped Goodies settlement, cash-sales limits and payout accounting"
+    ],
+    "changedFiles": [
+      "App.tsx",
+      "docs/goodies/cms-field-coverage.json",
+      "scripts/audit-goodies-reproductions.cjs",
+      "scripts/audit-goodies-surfaces.cjs",
+      "scripts/check-goodies-cms.cjs",
+      "scripts/goodies-cms-source.cjs",
+      "scripts/prepare-goodies-translations.cjs",
+      "scripts/sync-goodies-cms-catalog.cjs",
+      "scripts/test-goodies-settlement-postgres.cjs",
+      "src/features/Goodies/i18n/notificationCatalog.json",
+      "src/features/Goodies/notifications.ts",
+      "src/screens/businessSpace/BusinessSpaceActivityScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "src/screens/businessSpace/BusinessSpaceHomeScreen.tsx",
+      "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "src/services/goodiesSettlement.ts",
+      "supabase/functions/goodies-tests/deploymentPackage_test.ts",
+      "supabase/functions/goodies-tests/notificationRouting_test.ts",
+      "supabase/functions/goodies-tests/vendorSettlement_test.ts",
+      "supabase/migrations/20261107021612_goodies_vendor_settlement.sql",
+      "tests/goodies-settlement.test.cjs"
+    ]
+  },
+  "admin": {
+    "base": "74e61872e02ba7779874c3550dda4808aacef38c",
+    "head": "1f50ec03c23421c5971e248a553e2592a5743bb1",
+    "commits": [
+      "1f50ec03c23421c5971e248a553e2592a5743bb1 Add permission-scoped Goodies settlement operations and verified transfer controls"
+    ],
+    "changedFiles": [
+      ".github/workflows/admin-validation.yml",
+      "package.json",
+      "src/features/admin/goodiesConsumer/criticalContentKeys.json",
+      "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+      "src/features/admin/goodiesConsumer/customerPageCatalog.json",
+      "src/features/admin/screens/finance/FinanceScreen.tsx",
+      "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "tests/settlement.test.cjs"
+    ]
+  }
+}

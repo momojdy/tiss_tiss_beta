@@ -1,0 +1,34 @@
+
+> wantiss-admin-rn@0.12.0 test
+> node tests/access.test.cjs && node tests/cms.test.cjs
+
+✔ signed-out and revoked sessions never inherit prototype permissions (320.535052ms)
+✔ CMS and account controls use canonical server keys and required manage level (63.432008ms)
+✔ expired and revoked grants cannot authorize controls (81.663092ms)
+✔ permanent bans remain Super Admin only despite arbitrary granted labels (77.255108ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 581.498207
+✔ every registered source field is manually editable in all five locales and survives save serialization (268.080047ms)
+✔ opening an existing draft preserves all edited content, translations and protected configuration (14.164438ms)
+✔ every discovered route has a page entry and every referenced label exists in the starter (10.685216ms)
+✔ FAQ, support topics and policy edits preserve all locales through serialization (23.891026ms)
+✔ required dynamic placeholders cannot disappear on save and edits never promote human review (72.926377ms)
+✔ real structured editor controls save edits and honor read-only access (83.017259ms)
+✔ editing legacy string content preserves its English wording (0.25879ms)
+✔ the existing starter draft remains valid without requiring unrelated text changes (36.77005ms)
+✔ CMS wording never replaces internal payment configuration keys (89.991463ms)
+✔ asset listing reaches beyond the legacy 500-row cap and never reports partial results as complete (20.834308ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 633.535435

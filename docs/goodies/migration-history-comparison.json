@@ -1,0 +1,293 @@
+{
+  "local_count": 215,
+  "deployed_count": 313,
+  "duplicate_versions": {
+    "20261101080500": [
+      "20261101080500_goodies_product_rejection_reason_required.sql",
+      "20261101080500_goodies_merchant_restrictions.sql"
+    ],
+    "20261104130000": [
+      "20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+      "20261104130000_goodies_group_order_friend_invites.sql"
+    ],
+    "202611010001": [
+      "202611010001_goodies_card_retry_persistence.sql",
+      "202611010001_goodies_card_acceptance_requires_paid.sql"
+    ]
+  },
+  "name_matches_with_different_versions": [
+    {
+      "file": "20261101111000_goodies_courier_availability_and_cod_capacity_guards.sql",
+      "deployed_version": "20261031164159"
+    },
+    {
+      "file": "20261104110000_fix_goodies_group_invite_random_bytes_schema.sql",
+      "deployed_version": "20261103160259"
+    },
+    {
+      "file": "20261101112000_goodies_cod_global_store_courier_consent_guard.sql",
+      "deployed_version": "20261031164726"
+    },
+    {
+      "file": "20261104210000_goodies_store_messaging_rpc.sql",
+      "deployed_version": "20261104132244"
+    },
+    {
+      "file": "20261101100000_goodies_courier_acceptance_and_cod_integrity.sql",
+      "deployed_version": "20261031163930"
+    },
+    {
+      "file": "20261101133000_persist_goodies_dispute_resolution.sql",
+      "deployed_version": "20261101001424"
+    },
+    {
+      "file": "20261031120000_goodies_ingredient_request_workflow.sql",
+      "deployed_version": "20261031113657"
+    },
+    {
+      "file": "20261031214000_goodies_persist_geoapify_route_geometry.sql",
+      "deployed_version": "20261031162145"
+    },
+    {
+      "file": "20261101160000_allow_business_application_resubmission.sql",
+      "deployed_version": "20261101004023"
+    },
+    {
+      "file": "20261101080500_goodies_product_rejection_reason_required.sql",
+      "deployed_version": "20261101112204"
+    },
+    {
+      "file": "20261031212000_goodies_publish_complete_cms_label_catalog.sql",
+      "deployed_version": "20261031161712"
+    },
+    {
+      "file": "20261031190000_goodies_geoapify_delivery_pricing_foundation.sql",
+      "deployed_version": "20261031144809"
+    },
+    {
+      "file": "20261101170000_goodies_expire_unaccepted_courier_offers.sql",
+      "deployed_version": "20261101005745"
+    },
+    {
+      "file": "20261104210500_harden_goodies_store_messaging_rpc_security.sql",
+      "deployed_version": "20261104132518"
+    },
+    {
+      "file": "20261101125000_restrict_goodies_private_cancellation_table_access.sql",
+      "deployed_version": "20261031235244"
+    },
+    {
+      "file": "20261101153000_fix_business_media_extension_validation.sql",
+      "deployed_version": "20261101003540"
+    },
+    {
+      "file": "20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+      "deployed_version": "20261103163450"
+    },
+    {
+      "file": "20261031211000_goodies_admin_merchant_verification_and_order_cancellation.sql",
+      "deployed_version": "20261031161152"
+    },
+    {
+      "file": "20261104211500_goodies_customer_message_reopens_pending.sql",
+      "deployed_version": "20261104133209"
+    },
+    {
+      "file": "20261102160000_goodies_scheduled_order_controls.sql",
+      "deployed_version": "20261101190840"
+    },
+    {
+      "file": "20261031210000_goodies_admin_live_workflows_and_product_review.sql",
+      "deployed_version": "20261031160746"
+    },
+    {
+      "file": "20261104170000_goodies_order_media_address_and_wallet_notifications.sql",
+      "deployed_version": "20261104084859"
+    },
+    {
+      "file": "20261101132000_add_goodies_card_checkout_fingerprint.sql",
+      "deployed_version": "20261101001057"
+    },
+    {
+      "file": "20261101150000_secure_business_listing_photo_storage.sql",
+      "deployed_version": "20261101003014"
+    },
+    {
+      "file": "20261102042900_goodies_product_photo_gallery.sql",
+      "deployed_version": "20261101203245"
+    },
+    {
+      "file": "20261031216000_goodies_courier_roster_admin_reapproval.sql",
+      "deployed_version": "20261031163015"
+    },
+    {
+      "file": "20261031190100_goodies_validate_geoapify_delivery_quotes.sql",
+      "deployed_version": "20261031145056"
+    },
+    {
+      "file": "20261101080500_goodies_merchant_restrictions.sql",
+      "deployed_version": "20261101111833"
+    },
+    {
+      "file": "20261031200000_goodies_courier_dispatch_live_tracking_and_cod_policy.sql",
+      "deployed_version": "20261031155239"
+    },
+    {
+      "file": "20261102180000_goodies_schedule_minimum_clock_time.sql",
+      "deployed_version": "20261101193402"
+    },
+    {
+      "file": "20261031202000_goodies_tracking_capture_quote_and_assignment_rls_fix.sql",
+      "deployed_version": "20261031160528"
+    },
+    {
+      "file": "20261101154000_fix_goodies_zero_stock_availability.sql",
+      "deployed_version": "20261101003658"
+    },
+    {
+      "file": "20261102210000_goodies_store_public_name_and_thumbnail.sql",
+      "deployed_version": "20261101200637"
+    },
+    {
+      "file": "20261101114000_tighten_goodies_cash_policy_payment_context_match.sql",
+      "deployed_version": "20261031165111"
+    },
+    {
+      "file": "20261101143000_goodies_preserve_and_restore_seeded_translations.sql",
+      "deployed_version": "20261031172800"
+    },
+    {
+      "file": "20261101152000_validate_business_media_paths.sql",
+      "deployed_version": "20261101003458"
+    },
+    {
+      "file": "20261101130500_preserve_goodies_refund_retry_backoff.sql",
+      "deployed_version": "20261101000617"
+    },
+    {
+      "file": "20261031190200_goodies_save_store_delivery_pricing.sql",
+      "deployed_version": "20261031145120"
+    },
+    {
+      "file": "20261104190100_harden_goodies_auto_complete_rpc.sql",
+      "deployed_version": "20261104120223"
+    },
+    {
+      "file": "20261101120000_harden_goodies_refund_worker_leases.sql",
+      "deployed_version": "20261031233340"
+    },
+    {
+      "file": "20261024000600_wantiss_admin_cms_security_foundation.sql",
+      "deployed_version": "20261024105634"
+    },
+    {
+      "file": "20261101131000_fix_goodies_checkout_returning_id_ambiguity.sql",
+      "deployed_version": "20261101001036"
+    },
+    {
+      "file": "20261101110000_goodies_dispatch_reassignment_and_post_accept_gps_only.sql",
+      "deployed_version": "20261031164102"
+    },
+    {
+      "file": "20261104090000_goodies_group_order_invite_member_permissions.sql",
+      "deployed_version": "20261104085749"
+    },
+    {
+      "file": "202611010001_goodies_card_acceptance_requires_paid.sql",
+      "deployed_version": "20261101045432"
+    },
+    {
+      "file": "20261101122000_guard_goodies_same_second_payment_transitions.sql",
+      "deployed_version": "20261031234245"
+    },
+    {
+      "file": "20261031201000_goodies_delivery_map_coordinates.sql",
+      "deployed_version": "20261031155854"
+    },
+    {
+      "file": "20261101113000_prevent_reassigning_accepted_goodies_delivery.sql",
+      "deployed_version": "20261031164915"
+    },
+    {
+      "file": "20261101161000_revoke_direct_goodies_store_schedule_writes.sql",
+      "deployed_version": "20261101004217"
+    },
+    {
+      "file": "20261031132600_goodies_card_order_idempotent_creation.sql",
+      "deployed_version": "20261031132355"
+    },
+    {
+      "file": "20261102173000_fix_goodies_builder_config_item_ambiguity.sql",
+      "deployed_version": "20261101193014"
+    },
+    {
+      "file": "20261101162000_prevent_final_rejection_application_bypass.sql",
+      "deployed_version": "20261101004257"
+    },
+    {
+      "file": "20261031215000_goodies_courier_roster_and_order_status_integrity.sql",
+      "deployed_version": "20261031162513"
+    },
+    {
+      "file": "20261104190000_goodies_own_driver_delivery.sql",
+      "deployed_version": "20261104120144"
+    },
+    {
+      "file": "20261031213000_goodies_seed_machine_draft_translations.sql",
+      "deployed_version": "20261031161919"
+    },
+    {
+      "file": "20261104211000_goodies_message_notification_routing.sql",
+      "deployed_version": "20261104132928"
+    },
+    {
+      "file": "20261104130000_goodies_group_order_friend_invites.sql",
+      "deployed_version": "20261104085513"
+    },
+    {
+      "file": "20261101123000_require_goodies_restaurant_cancellation_reason.sql",
+      "deployed_version": "20261031235116"
+    },
+    {
+      "file": "20261102143000_goodies_store_address_setup.sql",
+      "deployed_version": "20261101184443"
+    },
+    {
+      "file": "20261101121000_fence_goodies_stripe_webhook_event_claims.sql",
+      "deployed_version": "20261031234152"
+    },
+    {
+      "file": "20261101124000_isolate_goodies_cancellation_reason_details.sql",
+      "deployed_version": "20261031235210"
+    }
+  ],
+  "unmatched_local_names": [
+    "20261102110000_goodies_auto_publish_existing_permitted_products.sql",
+    "20261101090100_goodies_capture_delivery_quote_coordinates.sql",
+    "20261024001201_wantiss_cms_draft_only.sql",
+    "20261102100000_goodies_merchant_self_service_and_ingredient_notifications.sql",
+    "202611010002_goodies_card_retry_completed_status.sql",
+    "202610240002_business_info_fields.sql",
+    "20261026130000_serialize_admin_refund_reservations.sql",
+    "20261101090000_goodies_courier_matching_realtime_gps.sql",
+    "202611010003_goodies_refund_queue_claimability.sql",
+    "20261106020705_goodies_private_delivery_proofs.sql",
+    "202611010001_goodies_card_retry_persistence.sql",
+    "20261106021033_goodies_truthful_dispute_refund_notification.sql",
+    "20261024140000_goodies_catalog.sql",
+    "20261104140000_fix_goodies_checkout_and_group_invites.sql",
+    "20261024001001_wantiss_cms_lifecycle_rpc_privileges.sql",
+    "20261102120000_business_feature_activation_rpcs.sql",
+    "20261104200000_goodies_admin_delivery_reports.sql",
+    "20261106022200_goodies_builder_selection_contract.sql",
+    "20261026120000_harden_goodies_wallet_checkout_and_financial_action_replay.sql",
+    "20261024000700_admin_cms_asset_delivery.sql",
+    "202610100001_business_space_compatibility.sql",
+    "20261104120000_enable_pgcrypto_for_goodies_group_invites.sql",
+    "20261106015226_goodies_courier_scoped_order_read.sql",
+    "20261102195000_goodies_schedule_timezone_and_server_minimum_time.sql",
+    "20261014173000_restore_stayz_views_and_api.sql",
+    "20261024000800_admin_read_models.sql",
+    "202610240005_goodies_order_queue.sql"
+  ]
+}

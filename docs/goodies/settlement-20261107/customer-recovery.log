@@ -1,0 +1,14 @@
+✔ catalog outages preserve owned shopping snapshots and unavailable stores are never purchasable (1.780513ms)
+✔ empty cart cannot complete an unresolved checkout and builder snapshots retain their store (0.17364ms)
+✔ malformed cached quantities and prices are discarded without removing valid snapshots (0.208761ms)
+✔ failed payment reads preserve known balance, report unavailable, and retry successfully (168.215446ms)
+✔ malformed balances never become a successful zero-dollar payment result (216.751802ms)
+✔ late responses cannot overwrite another account or a newer payment refresh (22.565067ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 416.669115

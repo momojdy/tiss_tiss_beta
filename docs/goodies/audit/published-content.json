@@ -1,0 +1,44 @@
+{
+  "inspectedAt": "2026-11-06",
+  "project": "ycbirmgppwavorwudlrv",
+  "content": [
+    {
+      "content_key": "goodies.content",
+      "locale": "en",
+      "version": 5,
+      "labels": 782,
+      "faq_items": 5,
+      "support_topics": 0,
+      "live_policies": 0,
+      "reviewed_labels": {
+        "en": 647,
+        "es": 0,
+        "fr": 0,
+        "ht": 0,
+        "zh-Hans": 0
+      }
+    }
+  ],
+  "faq": [
+    {
+      "question": "How do I track my order?",
+      "answer": "Answer coming soon."
+    },
+    {
+      "question": "Delivery information",
+      "answer": "Answer coming soon."
+    },
+    {
+      "question": "Payment information",
+      "answer": "Answer coming soon."
+    },
+    {
+      "question": "Refunds and cancellation",
+      "answer": "Answer coming soon."
+    },
+    {
+      "question": "What if an item is missing?",
+      "answer": "Answer coming soon."
+    }
+  ]
+}

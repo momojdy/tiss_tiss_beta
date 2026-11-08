@@ -1,0 +1,15 @@
+✔ a failed store switch never reveals the previous store review rows (53.716251ms)
+✔ account switches hide cached rows and ignore requests from the previous account (0.777709ms)
+✔ review save refresh is scoped to its store and queues a refresh behind an in-flight page (0.496225ms)
+✔ pagination retries retain the offset and reload replaces rather than appends (1.027239ms)
+✔ malformed successful responses are errors rather than false empty review states (0.336825ms)
+✔ server review hydration restores comments and clears obsolete cached ratings without mixing orders (7.569654ms)
+✔ successful review save refreshes server rating totals and failures never fabricate zero ratings (0.407276ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 76.827796

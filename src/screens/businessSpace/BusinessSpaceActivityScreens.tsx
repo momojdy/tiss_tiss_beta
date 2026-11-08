@@ -1,3 +1,4 @@
+import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -69,10 +70,10 @@ export function ExplorePage() {
 /* ---------- charts ---------- */
 export function ChartsPage() {
   const app = useApp(), s = useS(), t = useTheme(), { range } = app;
-  const sum = useQ(() => rpc<any>('dashboard_range', { p_business: app.biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [app.biz.id, range.from, range.to, app.tick]);
+  const sum = useQ(() => getBusinessFinancialSummary(app), [app.biz.id, range.from, range.to, app.tick,isGoodiesOnlyBusiness(app)]);
   const [ci, setCi] = useState<number | null>(null);
   const { width } = useWindowDimensions();
-  const d = sum.d, cur: { d: string; v: number }[] = d?.series ?? [], pv: { d: string; v: number }[] = d?.prev_series ?? [];
+  const d = isGoodiesOnlyBusiness(app)&&sum.d?.business_id!==app.biz.id?null:sum.d, cur: { d: string; v: number }[] = d?.series ?? [], pv: { d: string; v: number }[] = d?.prev_series ?? [];
   const feats: any[] = [...(d?.features ?? [])].sort((a, b) => Number(b.amount) - Number(a.amount));
   const total = feats.reduce((a, x) => a + Number(x.amount), 0) || 1;
   const rev = Number(d?.revenue ?? 0), prev = Number(d?.prev_revenue ?? 0), growth = prev ? ((rev - prev) / Math.abs(prev)) * 100 : null;
@@ -85,7 +86,7 @@ export function ChartsPage() {
   return (
     <Pg title="Sales by feature" onBack={app.back} refreshing={sum.l && !!d} onRefresh={app.bump}>
       <RangeBar />
-      {sum.e && !d ? <ErrBox e={sum.e} retry={sum.reload} /> : sum.l && !d ? <Loading n={3} h={160} /> : (
+      {sum.e ? <ErrBox e={sum.e} retry={sum.reload} /> : sum.l && !d ? <Loading n={3} h={160} /> : (
         <>
           <View style={s.card}>
             <View style={s.row}><View style={s.g}><Text style={s.mut}>Net revenue · {range.label}</Text><Text style={[s.big, { fontSize: 26 }]}>{money(rev)}</Text></View><View style={{ alignItems: 'flex-end' }}><Text style={{ fontWeight: '800', fontSize: 13, color: growth !== null && growth < 0 ? t.bad : t.good }}>{growth === null ? '—' : `${growth >= 0 ? '↑' : '↓'} ${Math.abs(growth).toFixed(1)}%`}</Text><Text style={s.mut}>vs previous period</Text></View></View>

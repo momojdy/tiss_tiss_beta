@@ -1,0 +1,316 @@
+{
+  "tiss_tiss_beta": [
+    {
+      "commit": "dd982da35eaf5a65a526fee4f940279c8bc459ed",
+      "subject": "fix(goodies): isolate cached customer state and async results by account",
+      "files": [
+        "src/features/Goodies/accountCache.ts",
+        "src/features/Goodies/actions.ts",
+        "src/features/Goodies/screens/Payments.tsx",
+        "src/features/Goodies/serverSync.ts",
+        "src/features/Goodies/store.ts",
+        "supabase/functions/goodies-tests/accountCache_test.ts"
+      ]
+    },
+    {
+      "commit": "d841b64a8978bacdd2f24707557b660f847bb377",
+      "subject": "fix(goodies): secure courier order access, GPS expiry and delivery evidence",
+      "files": [
+        "src/features/Goodies/GoodiesCourierScreen.tsx",
+        "src/features/Goodies/deliveryTracking.ts",
+        "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+        "src/features/Goodies/screens/Shop.tsx",
+        "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+        "src/services/goodiesDeliveryProof.ts",
+        "supabase/functions/goodies-tests/courierAccess_test.ts",
+        "supabase/functions/goodies-tests/deliveryProofAccess_test.ts",
+        "supabase/functions/goodies-tests/deliveryTracking_test.ts",
+        "supabase/migrations/20261106015226_goodies_courier_scoped_order_read.sql",
+        "supabase/migrations/20261106020705_goodies_private_delivery_proofs.sql"
+      ]
+    },
+    {
+      "commit": "ffc3f77c1ad942fcc80b647915cd7dacb96f17b3",
+      "subject": "fix(goodies): report card dispute refunds accurately and align expiry worker API",
+      "files": [
+        "supabase/functions/expire-goodies-card-auth/index.ts",
+        "supabase/functions/goodies-tests/disputeNotification_test.ts",
+        "supabase/migrations/20261106021033_goodies_truthful_dispute_refund_notification.sql"
+      ]
+    },
+    {
+      "commit": "0463d740541571c2221d2bcf5d420a2e3552feb5",
+      "subject": "test(goodies): verify pricing, translation review and isolated database boundaries",
+      "files": [
+        ".github/workflows/expo-validation.yml",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/resolveText.ts",
+        "supabase/functions/deno.json",
+        "supabase/functions/deno.lock",
+        "supabase/functions/goodies-tests/localization_test.ts",
+        "supabase/functions/goodies-tests/pricing_test.ts"
+      ]
+    },
+    {
+      "commit": "7171703cd7bf1f98e1e3b0359281ee5a613b20c2",
+      "subject": "fix(goodies): reject unknown builder selections and missing prices",
+      "files": [
+        "supabase/functions/goodies-tests/builders_test.ts",
+        "supabase/migrations/20261106022200_goodies_builder_selection_contract.sql"
+      ]
+    },
+    {
+      "commit": "fcc1909fd0fa82e6a0a394328edeca2c7da859f1",
+      "subject": "docs(goodies): record source inventory, verification evidence and release gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/SCREEN-VERIFICATION.md",
+        "docs/goodies/edge-deployment-comparison.json",
+        "docs/goodies/evidence/admin-typecheck-after.log",
+        "docs/goodies/evidence/admin-typecheck.log",
+        "docs/goodies/evidence/changed-files-lint.log",
+        "docs/goodies/evidence/client-secret-scan.json",
+        "docs/goodies/evidence/customer-lint.log",
+        "docs/goodies/evidence/customer-typecheck.log",
+        "docs/goodies/evidence/customer-web-export.log",
+        "docs/goodies/evidence/edge-tests.log",
+        "docs/goodies/evidence/edge-typecheck.log",
+        "docs/goodies/evidence/tiss-admin-android-final.log",
+        "docs/goodies/evidence/tiss-admin-doctor.log",
+        "docs/goodies/evidence/tiss-admin-ios-final.log",
+        "docs/goodies/evidence/tiss_tiss_beta-android-final.log",
+        "docs/goodies/evidence/tiss_tiss_beta-doctor.log",
+        "docs/goodies/evidence/tiss_tiss_beta-ios-final.log",
+        "docs/goodies/implementation-commits.json",
+        "docs/goodies/migration-history-comparison.json",
+        "docs/goodies/source-inventory.json",
+        "scripts/goodies-inventory.cjs",
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "src/features/Goodies/README.md"
+      ]
+    },
+    {
+      "commit": "4563fbeefbdef73f94f2d8220776c5570f0ba50b",
+      "subject": "Secure Goodies moderation, appeals, role notifications and proof rollout",
+      "files": [
+        ".github/workflows/expo-validation.yml",
+        "docs/goodies/migration-version-reconciliation.json",
+        "scripts/check-migration-versions.cjs",
+        "supabase/functions/goodies-tests/adminRestrictions_test.ts",
+        "supabase/functions/goodies-tests/deliveryProofAccess_test.ts",
+        "supabase/functions/goodies-tests/fixtures/README.md",
+        "supabase/functions/goodies-tests/fixtures/goodies-core.sql",
+        "supabase/functions/goodies-tests/notificationLocalization_test.ts",
+        "supabase/functions/goodies-tests/notificationRouting_test.ts",
+        "supabase/functions/goodies-tests/orderLifecycle_test.ts",
+        "supabase/functions/goodies-tests/productModeration_test.ts",
+        "supabase/migrations/202611010001_goodies_card_acceptance_requires_paid.sql",
+        "supabase/migrations/202611010001_goodies_card_retry_persistence.sql",
+        "supabase/migrations/20261101045432_goodies_card_acceptance_requires_paid.sql",
+        "supabase/migrations/20261101045813_202611010001_goodies_card_retry_persistence.sql",
+        "supabase/migrations/20261101080500_goodies_merchant_restrictions.sql",
+        "supabase/migrations/20261101080500_goodies_product_rejection_reason_required.sql",
+        "supabase/migrations/20261101111833_goodies_merchant_restrictions.sql",
+        "supabase/migrations/20261101112204_goodies_product_rejection_reason_required.sql",
+        "supabase/migrations/20261103163450_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+        "supabase/migrations/20261104085513_goodies_group_order_friend_invites.sql",
+        "supabase/migrations/20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+        "supabase/migrations/20261104130000_goodies_group_order_friend_invites.sql",
+        "supabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+        "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+        "supabase/migrations/20261106030151_goodies_role_notifications.sql",
+        "supabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+        "supabase/migrations/20261106031210_goodies_notification_localization.sql"
+      ]
+    },
+    {
+      "commit": "f31ae1d5d6fc99418e58466926a8692a2b07337c",
+      "subject": "Connect Goodies role notifications, account locale and staged proof uploads",
+      "files": [
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/notificationCatalog.json",
+        "src/features/Goodies/notifications.ts",
+        "src/features/Goodies/screens/Browse.tsx",
+        "src/features/Goodies/serverSync.ts",
+        "src/features/Goodies/store.ts",
+        "src/lib/locales.ts",
+        "src/screens/Main/mainNotificationsScreen.tsx",
+        "src/screens/Main/mainSettingsDetailScreen.tsx",
+        "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+        "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+        "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+        "src/screens/businessSpace/BusinessSpaceScreen.tsx"
+      ]
+    },
+    {
+      "commit": "e6a66a8d35374396d912ab1cc9ba6e09a6ef30f5",
+      "subject": "Record expanded Goodies integration tests and current release gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/customer-android-next.log",
+        "docs/goodies/evidence/customer-ios-next.log",
+        "docs/goodies/evidence/customer-lint-next.log",
+        "docs/goodies/evidence/customer-modified-lint-next.log",
+        "docs/goodies/evidence/customer-typecheck-next.log",
+        "docs/goodies/evidence/customer-web-next.log",
+        "docs/goodies/evidence/edge-tests-next.log",
+        "docs/goodies/evidence/migration-version-check.log",
+        "docs/goodies/implementation-commits.json",
+        "docs/goodies/source-inventory.json"
+      ]
+    },
+    {
+      "commit": "e532bb56d118e6c0d8e87ed3fb59a942224e1b08",
+      "subject": "Connect Goodies screen copy and shared card labels to the existing CMS",
+      "files": [
+        ".github/workflows/expo-validation.yml",
+        "docs/goodies/cms-field-coverage.json",
+        "scripts/check-goodies-cms.cjs",
+        "scripts/goodies-cms-source.cjs",
+        "scripts/sync-goodies-cms-catalog.cjs",
+        "scripts/verify-goodies-visual-attributes.cjs",
+        "src/features/Goodies/GoodiesApp.tsx",
+        "src/features/Goodies/GoodiesCourierScreen.tsx",
+        "src/features/Goodies/actions.ts",
+        "src/features/Goodies/builders/Builder.tsx",
+        "src/features/Goodies/builders/engine.tsx",
+        "src/features/Goodies/components/Overlays.tsx",
+        "src/features/Goodies/components/Sheets.tsx",
+        "src/features/Goodies/components/cards.tsx",
+        "src/features/Goodies/components/ui.tsx",
+        "src/features/Goodies/content.ts",
+        "src/features/Goodies/data/promoText.ts",
+        "src/features/Goodies/friendlyError.ts",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/interfaceContent.ts",
+        "src/features/Goodies/screens/Account.tsx",
+        "src/features/Goodies/screens/Browse.tsx",
+        "src/features/Goodies/screens/CardAuthentication.tsx",
+        "src/features/Goodies/screens/Payments.tsx",
+        "src/features/Goodies/screens/Shop.tsx",
+        "src/features/Goodies/store.ts",
+        "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+        "tests/goodies-cms.test.cjs"
+      ]
+    }
+  ],
+  "tiss-admin": [
+    {
+      "commit": "7474ba44393dcc3733072c2486e1d206e730c921",
+      "subject": "fix(goodies): align admin runtime dependencies with Expo SDK 58",
+      "files": [
+        "package-lock.json",
+        "package.json"
+      ]
+    },
+    {
+      "commit": "ed3a3f7b690b8dd9c2f521f2bad2dc70ed083b1c",
+      "subject": "fix(goodies): resolve private delivery evidence in admin reports",
+      "files": [
+        "src/features/admin/lib/goodiesDeliveryProof.ts",
+        "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx"
+      ]
+    },
+    {
+      "commit": "905d87090efa95d04965c7eead37480e9e0e47ac",
+      "subject": "feat(goodies): extend CMS label coverage and draft preview controls",
+      "files": [
+        "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+        "src/features/admin/goodiesConsumer/draft.ts",
+        "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+        "src/features/admin/screens/content/PhoneFrame.tsx"
+      ]
+    },
+    {
+      "commit": "d27283559bce741cea929ceaa1d077d55658a1e5",
+      "subject": "fix(goodies): isolate order fixtures for tracking and confirmation preview",
+      "files": [
+        "src/features/admin/screens/content/GoodiesConsumerPreview.tsx"
+      ]
+    },
+    {
+      "commit": "ea2f4426477b6ff2591bec2b230007176d122109",
+      "subject": "docs(goodies): record admin verification and coordinated rollout requirements",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/admin-typecheck-after.log",
+        "docs/goodies/evidence/admin-typecheck.log",
+        "docs/goodies/evidence/tiss-admin-android-final.log",
+        "docs/goodies/evidence/tiss-admin-doctor.log",
+        "docs/goodies/evidence/tiss-admin-ios-final.log"
+      ]
+    },
+    {
+      "commit": "a230d5082efb8b454d78620109c2e01f9579e538",
+      "subject": "Enforce canonical admin permissions and persist restriction appeals",
+      "files": [
+        ".github/workflows/admin-validation.yml",
+        "package.json",
+        "src/features/admin/lib/adminBackend.ts",
+        "src/features/admin/lib/hydrateAdminState.ts",
+        "src/features/admin/overlays/PeopleDrawers.tsx",
+        "src/features/admin/state/access.ts",
+        "src/features/admin/state/people.ts",
+        "src/features/admin/state/permissionKeys.ts",
+        "tests/access.test.cjs"
+      ]
+    },
+    {
+      "commit": "543ebaf5cb8db5a026065ae7a8010dd7a9175394",
+      "subject": "Connect Goodies moderation alerts and editable notification templates",
+      "files": [
+        "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+        "src/features/admin/screens/content/GoodiesEditor.tsx",
+        "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+        "src/features/admin/shell/NotificationsSheet.tsx"
+      ]
+    },
+    {
+      "commit": "f7431c600f7a6a9479f03d372b36cbe6aa5dc078",
+      "subject": "Record passing admin checks and remaining hosted verification gates",
+      "files": [
+        "docs/goodies/RELEASE.md",
+        "docs/goodies/evidence/admin-access-tests.log",
+        "docs/goodies/evidence/admin-android-next.log",
+        "docs/goodies/evidence/admin-ios-next.log",
+        "docs/goodies/evidence/admin-typecheck-next.log"
+      ]
+    },
+    {
+      "commit": "86b11e9b3a564c5ea22bc2a137c228464062b0ad",
+      "subject": "Complete manual Goodies page fields, policy content and artwork editing",
+      "files": [
+        "package.json",
+        "src/features/admin/goodiesConsumer/GoodiesApp.tsx",
+        "src/features/admin/goodiesConsumer/builders/Builder.tsx",
+        "src/features/admin/goodiesConsumer/builders/engine.tsx",
+        "src/features/admin/goodiesConsumer/components/Overlays.tsx",
+        "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+        "src/features/admin/goodiesConsumer/components/cards.tsx",
+        "src/features/admin/goodiesConsumer/components/ui.tsx",
+        "src/features/admin/goodiesConsumer/content.ts",
+        "src/features/admin/goodiesConsumer/contentEditing.ts",
+        "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+        "src/features/admin/goodiesConsumer/customerPageCatalog.json",
+        "src/features/admin/goodiesConsumer/customerRestrictionCatalog.json",
+        "src/features/admin/goodiesConsumer/draft.ts",
+        "src/features/admin/goodiesConsumer/editContext.tsx",
+        "src/features/admin/goodiesConsumer/i18n/index.ts",
+        "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+        "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+        "src/features/admin/goodiesConsumer/screens/Account.tsx",
+        "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+        "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+        "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+        "src/features/admin/goodiesConsumer/store.ts",
+        "src/features/admin/lib/adminBackend.ts",
+        "src/features/admin/lib/cmsAssetPagination.ts",
+        "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+        "src/features/admin/screens/content/GoodiesEditor.tsx",
+        "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+        "tests/cms.test.cjs"
+      ]
+    }
+  ]
+}

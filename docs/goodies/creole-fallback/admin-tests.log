@@ -1,0 +1,43 @@
+
+> wantiss-admin-rn@0.12.0 test
+> node tests/access.test.cjs && node tests/cms.test.cjs
+
+✔ signed-out and revoked sessions never inherit prototype permissions (274.017688ms)
+✔ CMS and account controls use canonical server keys and required manage level (42.306508ms)
+✔ expired and revoked grants cannot authorize controls (79.059827ms)
+✔ permanent bans remain Super Admin only despite arbitrary granted labels (65.938911ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 494.38137
+✔ every registered source field is manually editable in all five locales and survives save serialization (202.341929ms)
+✔ opening an existing draft preserves all edited content, translations and protected configuration (11.376657ms)
+✔ every discovered route has a page entry and every referenced label exists in the starter (10.950885ms)
+✔ FAQ, support topics and policy edits preserve all locales through serialization (31.34011ms)
+✔ required dynamic placeholders cannot disappear on save and edits never promote human review (47.42656ms)
+✔ real structured editor controls save edits and honor read-only access (73.298479ms)
+✔ editing legacy string content preserves its English wording (0.45765ms)
+✔ the existing starter draft remains valid without requiring unrelated text changes (60.429799ms)
+✔ CMS wording never replaces internal payment configuration keys (33.927339ms)
+✔ asset listing reaches beyond the legacy 500-row cap and never reports partial results as complete (16.769905ms)
+✔ critical publication requires explicit review and never promotes translation status (19.999103ms)
+✔ all registered fields complete a local edit-save-review-serialization-consumer lookup round trip (63.711369ms)
+✔ store preview preserves the actual consumer hero geometry and asset behavior (77.112292ms)
+✔ every customer route is available in the preview selector, including secure card and group pages (1.069081ms)
+✔ preview backend blocks writes, checkout, publication and provider calls without any network client (26.728434ms)
+✔ preview retains customer group/card visual attributes and records source provenance (188.867307ms)
+✔ explicit field identities resolve duplicate and dynamic wording while ambiguous legacy text opens a chooser (26.868952ms)
+✔ four approved languages can publish while unfinished Creole keeps its value/status and uses reviewed English (42.196988ms)
+✔ prepared four-language payload no longer fails review checks because of preserved Creole drafts (61.602295ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1019.967843

@@ -1,0 +1,14 @@
+✔ every source CMS field resolves manually edited published text in each configured locale (115.454278ms)
+✔ review boundaries, structured content, formatting and content refresh remain intact (37.484094ms)
+✔ generated source register remains synchronized with every literal call and interface key (35.437811ms)
+✔ Goodies card-form copy is editable and safely escaped without changing the shared default flow (30.616666ms)
+✔ unfinished Creole stays unavailable in production and falls back to reviewed English across app text and content (34.198775ms)
+✔ draft category names get safe source fallbacks without releasing unreviewed Creole (5.262259ms)
+ℹ tests 6
+ℹ suites 0
+ℹ pass 6
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 305.554828

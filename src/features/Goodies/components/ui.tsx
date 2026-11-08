@@ -146,7 +146,7 @@ export function Seg({list, on, onPick}: {list: [string, string][]; on: string; o
 export function Stepper({q, onMinus, onPlus}: {q: number; onMinus: () => void; onPlus: () => void}) {
   const th = useTheme();
   const b = (icon: string, f: () => void, lb: string) => <Pressable accessibilityLabel={lb} onPress={f} style={{width: 30, height: 30, borderRadius: 15, backgroundColor: th.card, alignItems: 'center', justifyContent: 'center'}}><Icon name={icon} size={16} color={th.ink} /></Pressable>;
-  return <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: th.soft, borderRadius: 20, padding: 4}}>{b('minus', onMinus, 'Less')}<T size={14} weight="600" style={{minWidth: 16, textAlign: 'center'}}>{q}</T>{b('plus', onPlus, 'More')}</View>;
+  return <View style={{flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: th.soft, borderRadius: 20, padding: 4}}>{b('minus', onMinus, cmsLabel('lbl.a11yDecreaseQuantity', 'Less'))}<T size={14} weight="600" style={{minWidth: 16, textAlign: 'center'}}>{q}</T>{b('plus', onPlus, cmsLabel('lbl.a11yIncreaseQuantity', 'More'))}</View>;
 }
 
 export function Input({label, value, onChange, placeholder, multiline, keyboard}: {label?: string; value: string; onChange: (s: string) => void; placeholder?: string; multiline?: boolean; keyboard?: any}) {

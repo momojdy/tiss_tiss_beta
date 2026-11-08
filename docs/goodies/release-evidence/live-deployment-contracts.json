@@ -1,0 +1,27 @@
+{
+  "inspectedAt": "2026-11-06",
+  "project": "ycbirmgppwavorwudlrv",
+  "mode": "READ ONLY",
+  "rows": [
+    {
+      "deployment": {
+        "latest_migration": "20261104211532",
+        "reviews_table_exists": false,
+        "missing_candidate_rpcs": [
+          "goodies_courier_orders",
+          "goodies_private_delivery_proof_uploads_enabled",
+          "goodies_admin_set_private_delivery_proofs",
+          "wantiss_admin_record_restriction_appeal",
+          "goodies_submit_order_review",
+          "goodies_store_reviews",
+          "goodies_store_review_summaries",
+          "goodies_set_notification_preference",
+          "goodies_admin_orders_page",
+          "goodies_admin_courier_candidates_page"
+        ],
+        "private_proof_bucket_exists": false,
+        "payout_reporting_table_exists": false
+      }
+    }
+  ]
+}

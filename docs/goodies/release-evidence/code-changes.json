@@ -1,0 +1,78 @@
+{
+  "customer": {
+    "repository": "momojdy/tiss_tiss_beta",
+    "commits": [
+      "20d6418e45ef697db5b862a548aa70a3030f670b",
+      "9bf7e643d288995145a2d7a7f8923bc28a749a6f"
+    ],
+    "files": [
+      "docs/goodies/cms-field-coverage.json",
+      "scripts/audit-goodies-reproductions.cjs",
+      "scripts/audit-goodies-surfaces.cjs",
+      "scripts/check-goodies-cms.cjs",
+      "scripts/sync-goodies-cms-catalog.cjs",
+      "src/features/Goodies/GoodiesApp.tsx",
+      "src/features/Goodies/actions.ts",
+      "src/features/Goodies/builders/Builder.tsx",
+      "src/features/Goodies/builders/engine.tsx",
+      "src/features/Goodies/components/Sheets.tsx",
+      "src/features/Goodies/components/cards.tsx",
+      "src/features/Goodies/content.ts",
+      "src/features/Goodies/data/seed.ts",
+      "src/features/Goodies/data/types.ts",
+      "src/features/Goodies/friendlyError.ts",
+      "src/features/Goodies/i18n/resolveText.ts",
+      "src/features/Goodies/reviews.ts",
+      "src/features/Goodies/screens/Account.tsx",
+      "src/features/Goodies/screens/Browse.tsx",
+      "src/features/Goodies/screens/CardAuthentication.tsx",
+      "src/features/Goodies/screens/Shop.tsx",
+      "src/features/Goodies/serverSync.ts",
+      "src/features/Goodies/store.ts",
+      "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+      "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceActivityScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "src/screens/businessSpace/BusinessSpaceHomeScreen.tsx",
+      "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "supabase/functions/goodies-tests/adminPagination_test.ts",
+      "supabase/functions/goodies-tests/audit/deployedModeration_test.ts",
+      "supabase/functions/goodies-tests/cmsPublication_test.ts",
+      "supabase/functions/goodies-tests/localization_test.ts",
+      "supabase/functions/goodies-tests/orderLifecycle_test.ts",
+      "supabase/functions/goodies-tests/productModeration_test.ts",
+      "supabase/functions/goodies-tests/reviewsPreferences_test.ts",
+      "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+      "supabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+      "supabase/migrations/20261106082226_goodies_admin_operational_pagination.sql",
+      "supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql"
+    ]
+  },
+  "admin": {
+    "repository": "momojdy/tiss-admin",
+    "commits": [
+      "3825a1c368d3cd5e768ee1206a83835c3b2104da",
+      "9134139405423ccaa1158c25c6750d3b5025327e"
+    ],
+    "files": [
+      "src/features/admin/goodiesConsumer/criticalContentKeys.json",
+      "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+      "src/features/admin/goodiesConsumer/customerPageCatalog.json",
+      "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+      "src/features/admin/goodiesConsumer/publicationReview.ts",
+      "src/features/admin/goodiesConsumer/screens/Account.tsx",
+      "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+      "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "src/features/admin/screens/content/GoodiesEditor.tsx",
+      "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+      "src/features/admin/state/access.ts",
+      "tests/cms.test.cjs"
+    ]
+  }
+}

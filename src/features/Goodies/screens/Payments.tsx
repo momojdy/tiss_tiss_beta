@@ -17,7 +17,7 @@ type LoadState = 'loading' | 'ready' | 'error' | 'signedout';
 /* Same shape as refreshPaymentOptions() in actions.ts, which checkout reads (id, b, l4, expiryMonth, expiryYear, isDefault). */
 const normalizeCard = (c: any) => ({
   id: String(c.id),
-  b: String(c.brand || 'Card'),
+  b: String(c.brand || label('lbl.paymentCardFallback', 'Card')),
   l4: String(c.last4 || ''),
   expiryMonth: c.expiry_month,
   expiryYear: c.expiry_year,
@@ -60,7 +60,7 @@ export function LivePayments() {
       ]);
       if (wallet.error) throw wallet.error;
       if (methods.error) throw methods.error;
-      if (!mounted.current) return;
+      if (!mounted.current || S.accountId !== auth.user.id) return;
       S.hasWallet = !!wallet.data?.id;
       S.wallet = Number(wallet.data?.balance || 0);
       S.cards = (methods.data || []).map(normalizeCard);
@@ -69,7 +69,7 @@ export function LivePayments() {
       loaded.current = true; setProblem(''); setState('ready');
     } catch (e: any) {
       if (!mounted.current) return;
-      const msg = friendlyError(e, 'Could not load your wallet and cards.');
+      const msg = friendlyError(e, label("lbl.page.screens.Payments.85a0275eda", "Could not load your wallet and cards."));
       if (loaded.current) {toast(msg); return;} /* keep showing the last good data */
       setProblem(msg); setState('error');
     }
@@ -95,12 +95,12 @@ export function LivePayments() {
     if (ok && mounted.current) await load();
   };
   const makeDefault = (id: string) => {
-    void act(id, () => supabase.rpc('set_default_payment_method', {p_payment_method_id: id}), 'Default card updated', 'Could not change your default card.');
+    void act(id, () => supabase.rpc('set_default_payment_method', {p_payment_method_id: id}), label("lbl.page.screens.Payments.0d5c557a94", "Default card updated"), label("lbl.page.screens.Payments.5519facea3", "Could not change your default card."));
   };
   const removeCard = (id: string) => {
     if (busyRef.current) return;
     if (confirmId !== id) {setConfirmId(id); return;}
-    void act(id, () => supabase.rpc('delete_payment_method', {p_payment_method_id: id}), 'Card removed', 'Could not remove this card.');
+    void act(id, () => supabase.rpc('delete_payment_method', {p_payment_method_id: id}), label("lbl.page.screens.Payments.0e75e7b8ad", "Card removed"), label("lbl.page.screens.Payments.901ecf3e48", "Could not remove this card."));
   };
   const makeWallet = async () => {
     if (creating) return;
@@ -155,8 +155,8 @@ export function LivePayments() {
       ) : (
         <Card>
           <Row style={{gap: 10}}><Text style={{fontSize: 30}}>👛</Text><View style={{flex: 1}}><T weight="600">{label('lbl.paymentNoWallet', 'No Wantiss wallet found')}</T></View></Row>
-          <T size={13} color={th.mut} style={{marginVertical: 6, lineHeight: 19}}>You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at {money(0)}.</T>
-          <Cta small label={creating ? 'Creating…' : 'Create wallet'} disabled={creating} onPress={() => {void makeWallet();}} />
+          <T size={13} color={th.mut} style={{marginVertical: 6, lineHeight: 19}}>{label("lbl.page.screens.Payments.44a062be63", "You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at ")}{money(0)}.</T>
+          <Cta small label={creating ? label("lbl.page.screens.Payments.c79ed9492e", "Creating…") : label("lbl.page.screens.Payments.40a49ea198", "Create wallet")} disabled={creating} onPress={() => {void makeWallet();}} />
         </Card>
       )}
 
@@ -167,14 +167,14 @@ export function LivePayments() {
             <Icon name="card" size={22} color={th.ink} />
             <View style={{flex: 1}}>
               <T weight="600">{c.b} •••• {c.l4}</T>
-              <T size={12.5} color={th.mut}>{expLabel(c) ? 'Expires ' + expLabel(c) : 'Saved card'}</T>
+              <T size={12.5} color={th.mut}>{expLabel(c) ? label('lbl.paymentExpires', 'Expires {expiry}').replace('{expiry}', expLabel(c)) : label("lbl.page.screens.Payments.7e141e8f80", "Saved card")}</T>
             </View>
             {c.isDefault ? <Badge green label={label('lbl.paymentDefaultCard', 'Default')} /> : null}
             <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.paymentRemoveCard', 'Remove card')} hitSlop={12} disabled={!!busyId} onPress={() => removeCard(c.id)}><Icon name="trash" size={18} color={th.red} /></Pressable>
           </Row>
           {(!c.isDefault || confirmId === c.id) ? (
             <Row style={{marginTop: 10, gap: 16}}>
-              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="600" color={th.br}>{busyId === c.id ? 'Updating…' : 'Set as default'}</T></Pressable> : null}
+              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="600" color={th.br}>{busyId === c.id ? label("lbl.page.screens.Payments.dfe40efe92", "Updating…") : label("lbl.page.screens.Payments.d09b4dd626", "Set as default")}</T></Pressable> : null}
               {confirmId === c.id ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => removeCard(c.id)}><T size={13.5} weight="600" color={th.red}>{label('lbl.paymentTapAgainRemove', 'Tap again to remove')}</T></Pressable> : null}
               {confirmId === c.id ? <Pressable accessibilityRole="button" onPress={() => setConfirmId('')}><T size={13.5} weight="600" color={th.mut}>{label('lbl.paymentCancel', 'Cancel')}</T></Pressable> : null}
             </Row>

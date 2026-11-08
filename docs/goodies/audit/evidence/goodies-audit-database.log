@@ -1,0 +1,10 @@
+Check scripts/audit-goodies-database.test.ts
+running 1 test from ./scripts/audit-goodies-database.test.ts
+CONFIRMED DEFECT: deployed moderation trigger erases an authorized rejection and reason ...
+------- output -------
+Confirmed: rejected product becomes approved; rejection reason is erased. Availability alone remains false.
+----- output end -----
+CONFIRMED DEFECT: deployed moderation trigger erases an authorized rejection and reason ... ok (2s)
+
+ok | 1 passed | 0 failed (2s)
+

@@ -8,7 +8,6 @@ import {S, defAddr, money, emit, save, toast, ui, push, reset, STB, refreshUserA
 import {back, go, tab, togglePref} from '../actions';
 import {setTheme} from '../store';
 import {t as tr} from '../i18n';
-import {providerInfo} from '../providers';
 import {Home} from './Browse';
 import {LivePayments} from './Payments';
 import {supabase} from '../../../lib/supabase';
@@ -49,12 +48,12 @@ function Settings() {
       <Row sp style={{paddingVertical: 8, paddingHorizontal: 4}}><T>{label('lbl.settingsOffers', 'Offers and deals')}</T><Switch on={!!S.np.promos} label={label('lbl.settingsOffers', 'Offers and deals')} onPress={() => togglePref('promos')} /></Row>
       <Ttl>{label('lbl.settingsAccount', 'Account')}</Ttl>
       <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} sub={address?.t ? label('lbl.settingsAddressDefault', '{address} · Wantiss default').replace('{address}', address.t) : label('lbl.settingsAddAddressHint', 'Add a delivery address')} onPress={() => go('addresses')} />
-      <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={S.fav.length + S.favp.length + ' saved'} onPress={() => go('favs')} />
+      <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} sub={label('lbl.accountSavedCount', '{count} saved').replace('{count}', String(S.fav.length + S.favp.length))} onPress={() => go('favs')} />
       <LRow icon="tag" title={label('lbl.settingsCoupons', 'Coupons and offers')} onPress={() => go('promos')} />
 
       <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub={label('lbl.accountDarkModeHint', 'Goodies only. Other Wantiss features keep their theme.')} onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label={label('lbl.settingsDarkMode', 'Dark mode')} onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub={label('lbl.accountFaqSupportHint', 'FAQs and support')} onPress={() => go('help')} />
-      {providerInfo.demo ? (<><Ttl>{label('lbl.accountDemoHeading', 'Demo')}</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title={label('lbl.accountResetDemo', 'Reset Goodies demo data')} sub={label('lbl.accountResetDemoHint', 'Clears orders, cart and checkout numbers')} onPress={() => {require('../store').resetDemo(); toast(label('lbl.accountDemoResetDone', 'Demo data reset'));}} /></>) : null}
+
     </View>
   </View>);
 }
@@ -66,7 +65,7 @@ function Profile() {
     <View style={{paddingHorizontal: 16}}>
       <Card style={{alignItems: 'center'}}><Avatar z={76} /><T size={17} weight="600" style={{marginTop: 10}}>{p.n}</T><T size={13.5} color={th.mut} align="center" style={{lineHeight: 22}}>{p.e}{'\n'}{p.ph}</T><View style={{marginTop: 8}}><Badge label={label('lbl.profileShared', 'Shared Wantiss account')} /></View></Card>
       <LRow icon="pin" title={label('lbl.settingsAddresses', 'Saved addresses')} onPress={() => go('addresses')} />
-      <LRow icon="bag" title={label('lbl.profileOrderHistory', 'Order history')} sub={S.orders.length + ' orders'} onPress={() => tab('orders')} />
+      <LRow icon="bag" title={label('lbl.profileOrderHistory', 'Order history')} sub={(S.orders.length === 1 ? label('lbl.accountOrderCountOne', '{count} order') : label('lbl.accountOrderCountMany', '{count} orders')).replace('{count}', String(S.orders.length))} onPress={() => tab('orders')} />
       <LRow icon="heart" title={label('lbl.settingsFavorites', 'Favorites')} onPress={() => go('favs')} />
       <LRow icon="bell" title={label('lbl.accountNotificationPreferences', 'Notification preferences')} onPress={() => go('settings')} />
       <LRow icon="help" title={label('lbl.accountHelpSupport', 'Help and support')} onPress={() => go('help')} />
@@ -83,46 +82,46 @@ function Addresses() {
     setLocating(true);
     try {
       const permission = await Location.requestForegroundPermissionsAsync();
-      if (permission.status !== 'granted') {toast('Allow location access to fill your address from where you are.'); return;}
+      if (permission.status !== 'granted') {toast(label("lbl.page.screens.Account.c38650a85d", "Allow location access to fill your address from where you are.")); return;}
       const position = await Location.getCurrentPositionAsync({accuracy: Location.Accuracy.High});
       const [place] = await Location.reverseGeocodeAsync({latitude: position.coords.latitude, longitude: position.coords.longitude});
-      if (!place) {toast('We could not turn your location into an address. Please type it in.'); return;}
+      if (!place) {toast(label("lbl.page.screens.Account.193092a58d", "We could not turn your location into an address. Please type it in.")); return;}
       const street = [place.streetNumber, place.street].filter(Boolean).join(' ').trim() || place.name || '';
       const city = place.city || place.subregion || place.district || '';
       S.currentLocation = {latitude: position.coords.latitude, longitude: position.coords.longitude, capturedAt: Date.now(), addressText: [street, city, place.region || '', place.country || ''].filter(Boolean).join(', ')};
       setEdit((prev: any) => prev ? {...prev, latitude: position.coords.latitude, longitude: position.coords.longitude, t: street || prev.t, city: city || prev.city, department: place.region || prev.department, country: place.country || prev.country} : prev);
-      toast('Address filled from your current location. Check the details before saving.');
-    } catch (e: any) {toast(friendlyError(e, 'Could not get your current location.'));}
+      toast(label("lbl.page.screens.Account.795413196e", "Address filled from your current location. Check the details before saving."));
+    } catch (e: any) {toast(friendlyError(e, label("lbl.page.screens.Account.3a65b007c6", "Could not get your current location.")));}
     finally {setLocating(false);}
   };
-  useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(friendlyError(e, 'Could not load saved addresses.'))); }, []);
+  useEffect(() => { void refreshUserAddresses().catch((e: any) => toast(friendlyError(e, label("lbl.page.screens.Account.39f9c51533", "Could not load saved addresses.")))); }, []);
   const rows = S.addr || [];
-  const countryName = (cc: string, fallback?: string) => ({HT:'Haiti',DO:'Dominican Republic',US:'United States'} as any)[cc] || (fallback && fallback !== 'Other' ? fallback : 'Other');
+  const countryName = (cc: string, fallback?: string) => ({HT:'Haiti',DO:label("lbl.page.screens.Account.81e884cb2e", "Dominican Republic"),US:label("lbl.page.screens.Account.49dca65f36", "United States")} as any)[cc] || (fallback && fallback !== 'Other' ? fallback : label("lbl.page.screens.Account.f97e9da0e3", "Other"));
   const selectForGoodies = async (a: any) => {
     if (busy) return;
     setBusy(true);
     try {
       const {data: auth, error: authError} = await supabase.auth.getUser();
       if (authError) throw authError;
-      if (!auth.user) throw new Error('Please sign in again.');
+      if (!auth.user) throw new Error(label("lbl.page.screens.Account.2e1d18330b", "Please sign in again."));
       const {error} = await supabase.auth.updateUser({data: {goodies_default_address_id: String(a.id)}});
       if (error) throw error;
       S.as = a.id;
       await refreshUserAddresses();
       save(); emit();
     } catch (e: any) {
-      toast(friendlyError(e, 'Could not update the Goodies delivery address.'));
+      toast(friendlyError(e, label("lbl.page.screens.Account.a4a7e583d4", "Could not update the Goodies delivery address.")));
     } finally { setBusy(false); }
   };
   const saveAddr = async () => {
     const street = String(edit.t || '').trim(), city = String(edit.city || '').trim();
-    if (street.length < 4 || !city || !String(edit.country || '').trim()) { toast('Enter the street address, city and country.'); return; }
+    if (street.length < 4 || !city || !String(edit.country || '').trim()) { toast(label("lbl.page.screens.Account.805fcf17d8", "Enter the street address, city and country.")); return; }
     if (busy) return;
     setBusy(true);
     try {
       const {data: auth, error: authError} = await supabase.auth.getUser();
       if (authError) throw authError;
-      if (!auth.user) throw new Error('Please sign in again.');
+      if (!auth.user) throw new Error(label("lbl.page.screens.Account.2e1d18330b", "Please sign in again."));
       const payload = {
         recipient_name: String(edit.l || 'Home').trim().slice(0, 80) || 'Home',
         phone_number: String(edit.phone || S.pf.ph || '').trim(),
@@ -151,10 +150,10 @@ function Addresses() {
       }
       setEdit(null);
       await refreshUserAddresses();
-      toast(isNew ? 'Address saved to your Wantiss account.' : 'Address updated.');
+      toast(isNew ? label("lbl.page.screens.Account.2617eebd60", "Address saved to your Wantiss account.") : label("lbl.page.screens.Account.1695cb0894", "Address updated."));
       save(); emit();
     } catch (e: any) {
-      toast(friendlyError(e, 'Could not save this address.'));
+      toast(friendlyError(e, label("lbl.page.screens.Account.7458ba1a75", "Could not save this address.")));
     } finally { setBusy(false); }
   };
   const removeAddr = (a: any) => ui.sheet({kind: 'remove-address', addressLabel: a.l, onConfirm: () => {
@@ -166,8 +165,8 @@ function Addresses() {
         if (error) throw error;
         await refreshUserAddresses(); save(); emit();
         ui.close();
-        toast('Address deleted.');
-      } catch (e: any) { toast(friendlyError(e, 'Could not delete this address.')); }
+        toast(label("lbl.page.screens.Account.1bad0328df", "Address deleted."));
+      } catch (e: any) { toast(friendlyError(e, label("lbl.page.screens.Account.ceab8c71ca", "Could not delete this address."))); }
       finally { setBusy(false); }
     })();
   }});
@@ -176,12 +175,12 @@ function Addresses() {
     <View style={{paddingHorizontal: 16}}>
       {rows.map((a: any) => (
         <Card key={a.id}>
-          <Row sp style={{flexWrap: 'wrap'}}><T weight="600">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="600" color="#fff">GOODIES</T></View> : null}</Row></Row>
+          <Row sp style={{flexWrap: 'wrap'}}><T weight="600">{a.l}</T><Row style={{gap: 6, flexWrap: 'wrap'}}>{a.def ? <Badge green label={label('lbl.accountWantissDefault', 'Wantiss default')} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="600" color="#fff">{label("lbl.page.screens.Account.7208bf1efb", "GOODIES")}</T></View> : null}</Row></Row>
           <T size={14} style={{marginTop: 6}}>{a.t}{a.apt ? ', ' + a.apt : ''}</T>{a.inst ? <T size={12.5} color={th.mut}>{label('lbl.accountAddressNote', 'Note:')} {a.inst}</T> : null}
           <Row style={{marginTop: 10, gap: 14, flexWrap: 'wrap'}}>
             <Pressable onPress={() => setEdit({...a})}><T size={13.5} weight="600" color={th.br}>{label('lbl.accountEdit', 'Edit')}</T></Pressable>
             {String(a.id) !== String(S.as) ? <Pressable disabled={busy} onPress={() => void selectForGoodies(a)}><T size={13.5} weight="600" color={th.br}>{label('lbl.accountUseForGoodies', 'Use for Goodies')}</T></Pressable> : null}
-            {!a.def ? <Pressable onPress={() => Alert.alert('Wantiss default', 'Change your main Wantiss default address in Me → Settings → Saved addresses.')}><T size={13.5} weight="600" color={th.mut}>Main default</T></Pressable> : null}
+            {!a.def ? <Pressable onPress={() => Alert.alert(label("lbl.page.screens.Account.b8bf594a54", "Wantiss default"), label("lbl.page.screens.Account.73ec2a8b0d", "Change your main Wantiss default address in Me → Settings → Saved addresses."))}><T size={13.5} weight="600" color={th.mut}>{label("lbl.page.screens.Account.04715e8c64", "Main default")}</T></Pressable> : null}
             {rows.length > 1 ? <Pressable disabled={busy} onPress={() => removeAddr(a)}><T size={13.5} weight="600" color={th.red}>{label('lbl.accountDeleteAddress', 'Delete')}</T></Pressable> : null}
           </Row>
         </Card>
@@ -190,14 +189,14 @@ function Addresses() {
         <Card>
           <T size={17} weight="600">{edit.id && typeof edit.id === 'string' ? label('lbl.accountEditAddress', 'Edit address') : label('lbl.accountNewAddress', 'New address')}</T>
           <Row style={{marginTop: 10, gap: 8}}>{['Home', 'Work', 'Other'].map(x => <Chip key={x} label={label('lbl.accountAddressType' + x, x)} on={edit.l === x} onPress={() => setEdit({...edit, l: x})} />)}</Row>
-          <View style={{marginTop: 8, marginBottom: 12}}><Cta ghost small label={locating ? 'Locating…' : 'Use my current location'} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
+          <View style={{marginTop: 8, marginBottom: 12}}><Cta ghost small label={locating ? label("lbl.page.screens.Account.ac56027a0b", "Locating…") : label("lbl.page.screens.Account.dc9080f6a5", "Use my current location")} disabled={locating} onPress={() => void fillFromCurrentLocation()} /></View>
           <Input label={label('lbl.accountStreetArea', 'Street and area')} value={edit.t || ''} onChange={v => setEdit({...edit, t: v, latitude: null, longitude: null})} />
-          <Input label="City" value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
-          <Input label="Department / State" value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
+          <Input label={label("lbl.page.screens.Account.fc33f73246", "City")} value={edit.city || ''} onChange={v => setEdit({...edit, city: v})} />
+          <Input label={label("lbl.page.screens.Account.c53e87ea8b", "Department / State")} value={edit.department || ''} onChange={v => setEdit({...edit, department: v})} />
           <Input label={label('lbl.accountApartment', 'Apartment, building, floor or landmark')} value={edit.apt || ''} onChange={v => setEdit({...edit, apt: v})} />
           <Input label={label('lbl.accountDeliveryInstructions', 'Delivery instructions')} value={edit.inst || ''} onChange={v => setEdit({...edit, inst: v})} />
-          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country ?? countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v})} placeholder="Country name (e.g. Philippines)" />
-          <View style={{marginTop: 14}}><Cta label={busy ? 'Saving…' : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
+          <Input label={label('lbl.accountCountry', 'Country')} value={edit.country ?? countryName(edit.cc || 'HT')} onChange={v => setEdit({...edit, country: v})} placeholder={label("lbl.page.screens.Account.898782e5f6", "Country name (e.g. Philippines)")} />
+          <View style={{marginTop: 14}}><Cta label={busy ? label("lbl.page.screens.Account.23e39291d6", "Saving…") : label('lbl.accountSaveAddress', 'Save address')} disabled={busy} onPress={() => void saveAddr()} /></View>
         </Card>
       ) : <Cta label={label('lbl.accountAddAddress', '+ Add new address')} onPress={() => setEdit({id: 0, l: 'Home', t: '', city: '', department: '', apt: '', inst: '', def: 0, cc: '', country: '', phone: S.pf.ph || ''})} />}
     </View>
@@ -226,7 +225,7 @@ function StoreChat({id}: {id: string}) {
         setUserId(user.id); userIdRef.current = user.id;
         const {data: cid, error: conversationError} = await supabase.rpc('goodies_start_store_conversation', {
           p_store_id: id,
-          p_customer_name: S.pf.n || 'Customer',
+          p_customer_name: S.pf.n || label('lbl.accountCustomerFallback', 'Customer'),
         });
         if (conversationError) throw conversationError;
         if (!cid) throw new Error(label('lbl.chatErrOpen', 'Could not open this store conversation.'));
@@ -281,7 +280,7 @@ function StoreChat({id}: {id: string}) {
 
 function Contact({p}: {p: any}) {
   const th = useTheme(), storeId = p && p.storeContact ? String(p.storeId || '') : '', store = storeId ? STB[storeId] : null;
-  const [topic, setTopic] = useState(p && p.o ? 'Order problem' : store ? 'Other' : 'Other');
+  const [topic, setTopic] = useState(p && p.o ? label("lbl.page.screens.Account.71a14bea90", "Order problem") : store ? label("lbl.page.screens.Account.f97e9da0e3", "Other") : label("lbl.page.screens.Account.f97e9da0e3", "Other"));
   const [oid, setOid] = useState(p && p.oid ? p.oid : '');
   const [msg, setMsg] = useState('');
   const [sending, setSending] = useState(false);
@@ -299,13 +298,13 @@ function Contact({p}: {p: any}) {
         if (!auth.user) throw new Error(label('lbl.contactErrSignInStore', 'Sign in to contact this store. Your message has not been sent.'));
         const {data: createdConversation, error: conversationError} = await supabase.rpc('goodies_start_store_conversation', {
           p_store_id: storeId,
-          p_customer_name: S.pf.n || 'Customer',
+          p_customer_name: S.pf.n || label('lbl.accountCustomerFallback', 'Customer'),
         });
         if (conversationError) throw conversationError;
         if (!createdConversation) throw new Error(label('lbl.contactErrNoVendor', 'We could not find the vendor account linked to this store. Your message has not been sent.'));
         conversationId = String(createdConversation);
         ticket = 'GS-' + conversationId.replace(/-/g, '').slice(0, 8).toUpperCase();
-        const ticketBody = 'Support ticket ' + ticket + ' · ' + topic + (oid ? ' · Order ' + oid : '') + '\n\n' + body;
+        const ticketBody = label("lbl.page.screens.Account.1a09f5e12f", "Support ticket ") + ticket + ' · ' + topic + (oid ? label("lbl.page.screens.Account.289cf25261", " · Order ") + oid : '') + '\n\n' + body;
         const {error: messageError} = await supabase.rpc('goodies_send_store_message', {p_conversation_id: conversationId, p_body: ticketBody});
         if (messageError) throw messageError;
       } else {
@@ -334,10 +333,10 @@ function Contact({p}: {p: any}) {
     <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={{paddingHorizontal: 16, paddingBottom: 28}}>
       {store ? <Card style={{marginTop: 4, marginBottom: 8, overflow:'hidden', padding:0}}><View style={{padding:12}}><Row style={{gap:10,alignItems:'center'}}><Tile e={store.e} bg={store.bg} size={42} photo={store.thumbnail || store.logo || store.cover} /><View style={{flex:1}}><T weight="600">{store.n}</T><T size={12.5} color={th.mut}>{label("lbl.accountAuto11BPHFG", "Your message will be sent to this store.")}</T></View></Row></View></Card> : null}
       <T size={13} weight="600" style={{marginTop: 6, marginBottom: 8}}>{label('lbl.accountSupportTopic', 'Topic')}</T>
-      <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics(['Order problem', 'Payment', 'Account', 'Other']).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
+      <Row style={{flexWrap: 'wrap', gap: 8}}>{supportTopics([]).map((x: string) => <Chip key={x} label={x} on={topic === x} onPress={() => setTopic(x)} />)}</Row>
       {!store ? <>
         <T size={13} weight="600" style={{marginTop: 14, marginBottom: 8}}>{label('lbl.accountOptionalOrder', 'Order (optional)')}</T>
-        <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label={label('lbl.accountNone', 'None')} on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || 'Store')} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
+        <Row style={{flexWrap: 'wrap', gap: 8}}><Chip label={label('lbl.accountNone', 'None')} on={!oid} onPress={() => setOid('')} />{S.orders.map((o: any) => <Chip key={o.id} label={o.id + ' · ' + (STB[o.sid]?.n || label('lbl.accountStoreFallback', 'Store'))} on={oid === o.id} onPress={() => setOid(o.id)} />)}</Row>
       </> : null}
       <Input label={label('lbl.accountMessage', 'Message')} value={msg} onChange={setMsg} placeholder={label('lbl.accountSupportMessagePlaceholder', 'Tell us what happened (at least 10 characters)')} multiline />
       <View style={{marginTop: 14}}><Cta label={sending ? label('lbl.contactSending', 'Sending…') : label('lbl.contactSend', 'Send message')} disabled={sending} onPress={() => {void submit();}} /></View>
@@ -355,7 +354,7 @@ export function Account({r, p}: {r: string; p: any}): any {
     case 'payments': return <LivePayments />;
     case 'contact': return <Contact p={p} />;
     case 'storechat': return <StoreChat id={String(p || '')} />;
-    case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="600" style={{marginTop: 10}}>{label('lbl.accountSupportSentTitle', 'Message sent')}</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? label('lbl.accountStoreTicketSent', 'Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply.').replace('{ticket}', String(result.ticket)).replace('{store}', store.n) : label('lbl.accountDemoTicketSent', 'Ticket {ticket} (demo). Your support request is not connected to a live support inbox yet.').replace('{ticket}', String(result.ticket))}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label={label('lbl.accountOpenStoreConversation', 'Open store conversation')} onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View></View>; }
+    case 'supdone': { const result = p && typeof p === 'object' ? p : {ticket: p}; const store = result.storeId ? STB[result.storeId] : null; return <View style={{padding: 16, paddingTop: 50, alignItems: 'center'}}><Text style={{fontSize: 64}}>💬</Text><T size={22} weight="600" style={{marginTop: 10}}>{label('lbl.accountSupportSentTitle', 'Message sent')}</T><T color={th.mut} align="center" style={{marginVertical: 8, marginBottom: 20}}>{store ? label('lbl.accountStoreTicketSent', 'Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply.').replace('{ticket}', String(result.ticket)).replace('{store}', store.n) : label('lbl.accountSupportTicketSent', 'Your support request {ticket} has been sent. Keep this reference if you contact us again.').replace('{ticket}', String(result.ticket))}</T><View style={{alignSelf: 'stretch'}}>{store ? <><Cta label={label('lbl.accountOpenStoreConversation', 'Open store conversation')} onPress={() => go('storechat', result.storeId)} /><View style={{height: 10}} /></> : null}<Cta ghost label={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View></View>; }
     case 'policies': return <View><Bar title={label('lbl.profilePolicies', 'Terms and policies')} onBack={back} /><View style={{paddingHorizontal: 16}}>{Object.keys(POL).map(k => <LRow key={k} icon="help" title={label(POL_LABELS[k][0], POL[k][0])} onPress={() => go('policy', k)} />)}</View></View>;
     case 'policy': { const policy = POL[p]; const publishedText = policy ? legalDoc(policy[1]) : null; return policy ? <View><Bar title={label(POL_LABELS[p][0], policy[0])} onBack={back} /><View style={{paddingHorizontal: 16}}>{publishedText ? <Card><T size={14.5} style={{lineHeight: 23}}>{publishedText}</T></Card> : <Card><T weight="600">{label('lbl.legalUnavailableTitle', 'This policy is not available yet')}</T><T size={13} color={th.mut} style={{lineHeight: 21, marginTop: 6}}>{label('lbl.legalUnavailableBody', 'An approved, published version of this policy is not currently available. Please check back later or contact support if you need help.')}</T></Card>}</View></View> : <View><Bar title={label('lbl.legalPolicyTitle', 'Policy')} onBack={back} /><Empty emoji="📄" title={label('lbl.accountPageNotFound', 'Page not found')} button={label('lbl.accountBack', 'Back')} onPress={() => tab('home')} /></View>; }
     case 'ndetail': { const n = S.notifs.filter((x: any) => x.id == p)[0]; return n ? <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><View style={{paddingHorizontal: 16}}><Card><T size={17} weight="600">{n.t}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{n.d}</T></Card><Cta label={n.r === 'track' ? label('lbl.accountViewOrder', 'View order') : label('lbl.accountSeeDetails', 'See details')} onPress={() => (n.r === 'track' ? go('track', n.p) : n.r === 'promos' ? go('promos') : go('catlist', n.p || 'all'))} /></View></View> : <View><Bar title={label('lbl.accountNotificationTitle', 'Notification')} onBack={back} /><Empty emoji="🔔" title={label('lbl.accountNotificationNotFound', 'Notification not found')} button={label('lbl.accountBackGoodies', 'Back to Goodies')} onPress={() => tab('home')} /></View>; }

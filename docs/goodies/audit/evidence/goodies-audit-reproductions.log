@@ -1,0 +1,26 @@
+Receipt action failed already reported; SQLSTATE 42501 private.internal_queue
+✔ CONFIRMED DEFECT A01: vendor errText returns raw database/server detail (387.383281ms)
+✔ CONFIRMED DEFECT A02: consumer receipt error keyword check allows arbitrary server detail (95.267267ms)
+✔ CONFIRMED DEFECT A03: admin Reject supplies no backend-required reason and displays raw error (24.516153ms)
+✔ CONFIRMED DEFECT A04: rating Submit claims success with only local mutations (84.402204ms)
+✔ CONFIRMED DEFECT A05: genuine platform support confirmation is labelled demo/disconnected (91.705299ms)
+✔ CONFIRMED DEFECT A06: unavailable historical stores acquire sample reviews in production (74.55812ms)
+✔ CONFIRMED DEFECT A07: Store route crashes when the supplied store is missing (87.021687ms)
+✔ CONFIRMED DEFECT A08: newly synchronized historical order can crash without a catalog store (33.889933ms)
+✔ CONFIRMED DEFECT A09: pickup map always says coordinates missing even with known coordinates (20.16769ms)
+✔ CONFIRMED DEFECT A10: live product photo-array grants disagree with the vendor save payload (0.721127ms)
+✔ CONFIRMED DEFECT A11: fee save can submit defaults without waiting for configuration to load (15.966509ms)
+✔ CONFIRMED DEFECT A12: notification switches persist only a local preference (29.022674ms)
+✔ CONFIRMED DEFECT A13: business Goodies storefront selector is omitted from the actual save request (23.247317ms)
+✔ CONFIRMED DEFECT A14: secondary vendor orders panel misreads canonical q/n item snapshots (35.145941ms)
+✔ CONFIRMED DEFECT A15: admin analytics errors expose raw SQL details (15.085142ms)
+✔ CONFIRMED DEFECT A16: vendor payout summary shows zero funds when its summary request failed (21.011232ms)
+✔ CONFIRMED DEFECT A17: legacy placeholder-only catalogs retain demo builders in production loader (16.075573ms)
+ℹ tests 17
+ℹ suites 0
+ℹ pass 17
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1075.244854

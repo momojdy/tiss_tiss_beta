@@ -1,0 +1,37 @@
+[
+  {
+    "from": "20261101080500_goodies_product_rejection_reason_required.sql",
+    "to": "20261101112204_goodies_product_rejection_reason_required.sql",
+    "unchanged_sha256": "ea98ab0c6262f8020895e6b9933f4597ec271a36591edbdfe43bcffdd3938a88",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261101080500_goodies_merchant_restrictions.sql",
+    "to": "20261101111833_goodies_merchant_restrictions.sql",
+    "unchanged_sha256": "a96acf771bde78da636983ff0e7d19c14a4cfb6554ddb561a6edc8de497a6b7a",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261104130000_goodies_group_order_friend_invites.sql",
+    "to": "20261104085513_goodies_group_order_friend_invites.sql",
+    "unchanged_sha256": "d637fd715519cd18d04b74063fdcdea002d2c75717112083eb8e965e99c66eef",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "202611010001_goodies_card_retry_persistence.sql",
+    "to": "20261101045813_202611010001_goodies_card_retry_persistence.sql",
+    "unchanged_sha256": "c56ae1a27be39e04196ba8ac7afcf5e346433b48df5ae77b87a813d330d7b69f",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "202611010001_goodies_card_acceptance_requires_paid.sql",
+    "to": "20261101045432_goodies_card_acceptance_requires_paid.sql",
+    "unchanged_sha256": "8d6d3df78ddc3332e515b510b7c9cb06958934d7e8e33b06e637615b594fdb0c",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+    "canonical": "20261103163450_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+    "reason": "Duplicate executable SQL; preserve its explanatory comment in the deployed canonical file"
+  }
+]
