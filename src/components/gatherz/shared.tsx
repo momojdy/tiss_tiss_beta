@@ -25,7 +25,7 @@ export function Header({ title, subtitle, onBack, right }: { title: string; subt
   const showStripe = !(root && title === 'gatherz.');
   return <View style={{ marginBottom: showStripe ? 15 : 0 }}>
     <View style={[s.header, { backgroundColor: t.bg }]}>
-      {(!root || title === 'gatherz.') ? <Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
+      {<Pressable accessibilityRole="button" accessibilityLabel="Back" onPress={onBack ?? nav.back} hitSlop={8} style={[s.headerBack, { backgroundColor: t.soft }]}>
         <GoodiesBackChevron color={t.text} />
       </Pressable> : null}
       <View style={{ flex: 1, minWidth: 0, justifyContent: 'center' }}>
