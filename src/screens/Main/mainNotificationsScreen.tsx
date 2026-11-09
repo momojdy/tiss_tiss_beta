@@ -79,7 +79,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
   };
   return <View style={s.root}>
     <View style={s.header}>
-      <Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={INK} /></Pressable>
+      <Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={MAGENTA} /></Pressable>
       <View style={{ flex: 1, height: 38, justifyContent: "center" }}><Text style={s.title}>Notifications</Text></View>
       {unread > 0 && <Pressable onPress={markAll} style={s.markAllButton} hitSlop={8}><Text style={s.markAll}>Read all</Text></Pressable>}
     </View>
