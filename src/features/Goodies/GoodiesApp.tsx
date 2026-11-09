@@ -2,7 +2,7 @@
      <GoodiesApp onExit={() => navigation.goBack()} />
    Navigation is an internal stack that mirrors v24 (S.stack). Native back (Android) and left-edge swipe (iOS and Android) both call navBack(). */
 import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponder, BackHandler, Platform, StatusBar, KeyboardAvoidingView, Dimensions, AppState, Linking} from 'react-native';
+import {View, Text, Pressable, ScrollView, RefreshControl, Animated, PanResponder, BackHandler, Platform, ActivityIndicator, StatusBar, KeyboardAvoidingView, Dimensions, AppState, Linking} from 'react-native';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme, Bar} from './components/ui';
@@ -197,7 +197,15 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
   }), [cartDragX]);
 
-  if (!goodiesLoaded) return <View style={{flex:1,backgroundColor:th.bg}} />;
+  if (!goodiesLoaded) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?'Opening store':'Loading Goodies'}>
+    <StatusBar barStyle={th.dark?'light-content':'dark-content'} />
+    <View style={{alignItems:'center',gap:16}}>
+      <View style={{width:64,height:64,borderRadius:22,backgroundColor:'#FBE8EF',alignItems:'center',justifyContent:'center'}}><Icon name="store" size={30} color="#BF008E" /></View>
+      <Text style={{fontSize:20,fontWeight:'700',color:th.txt}}>Goodies</Text>
+      <ActivityIndicator size="small" color="#BF008E" />
+      <Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>{initialRoute?.startsWith('store:')?'Opening store…':'Getting everything ready…'}</Text>
+    </View>
+  </View>;
 
   // Do not render the previous Goodies route while an incoming deep link is loading.
   // The destination is applied after load() restores persisted navigation state.
