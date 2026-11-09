@@ -239,7 +239,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     const load = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) { if (alive) { setUnreadNotificationsCount(0); setUnreadMessagesCount(0); } return; }
-      const { count: notificationCount, error: notificationError } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false).is('vendor_id',null).or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
+      const { count: notificationCount, error: notificationError } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false).or('vendor_id.is.null,notification_type.in.(friend_request,friend_accepted)').or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
       if (!notificationError && alive) setUnreadNotificationsCount(notificationCount ?? 0);
       const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [user.id]);
       if (conversations?.length) {
@@ -273,7 +273,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     const load = async () => {
       const { data: authData } = await supabase.auth.getUser();
       if (!authData.user) { if (active) setUnreadNotificationsCount(0); return; }
-      const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', authData.user.id).eq('read', false).is('vendor_id',null).or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
+      const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', authData.user.id).eq('read', false).or('vendor_id.is.null,notification_type.in.(friend_request,friend_accepted)').or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
       if (!error && active) setUnreadNotificationsCount(count || 0);
       const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [authData.user.id]);
       if (conversations?.length) {
