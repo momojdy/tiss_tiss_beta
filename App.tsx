@@ -365,6 +365,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           if (target === 'accountSecurity') setBuyerScreen('accountSecurity');
           else if (target === 'addresses') setBuyerScreen('addresses');
           else if (target === 'personalInformation') setBuyerScreen('personalInformation');
+          else if (target === 'privacy') { setPrivacyReturnScreen('settings'); setBuyerScreen('profilePrivacy'); }
           else { setSettingsDetail(target); setBuyerScreen('settingsDetail'); }
         }}
         onSwitchAccount={async (destination: 'vendor' | 'buyer') => {
