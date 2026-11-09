@@ -12,18 +12,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import MessageGroupManager from './MessageGroupManager';
 import MessageMarketingManager from './MessageMarketingManager';
 const ATTACHMENT_PREFIX='[wantiss-attachment-v1]';
-type SharedAttachment={kind:'image'|'video'|'document'|'contact'|'product';path?:string;name:string;mime?:string;reference?:string;price?:number;image?:string};
-const decodeAttachment=(body:string):SharedAttachment|null=>{if(!body.startsWith(ATTACHMENT_PREFIX))return null;try{const v=JSON.parse(body.slice(ATTACHMENT_PREFIX.length));return ['image','video','document','contact','product'].includes(v.kind)?v:null;}catch{return null;}};
+type SharedAttachment={kind:'image'|'video'|'document'|'contact'|'product'|'store';path?:string;name:string;mime?:string;reference?:string;price?:number;image?:string};
+const decodeAttachment=(body:string):SharedAttachment|null=>{if(!body.startsWith(ATTACHMENT_PREFIX))return null;try{const v=JSON.parse(body.slice(ATTACHMENT_PREFIX.length));return ['image','video','document','contact','product','store'].includes(v.kind)?v:null;}catch{return null;}};
 function AttachmentMessage({body}:{body:string}){
  const item=decodeAttachment(body);
  const [url,setUrl]=useState('');
  useEffect(()=>{let live=true;if(!item?.path)return;void supabase.storage.from('wantiss-message-files').createSignedUrl(item.path,3600).then(({data})=>{if(live)setUrl(data?.signedUrl||'');});return()=>{live=false;};},[item?.path]);
  if(!item)return <Text style={s.bubbleText}>{body}</Text>;
  return <Pressable disabled={!url&&!item.reference} onPress={()=>{const target=url||item.reference;if(target&&item.kind!=='contact')void Linking.openURL(target);}} style={{minWidth:140,maxWidth:245,gap:5}}>
- {item.kind==='product'&&item.image?<Image source={{uri:item.image}} style={{width:215,height:130,borderRadius:10}} resizeMode="cover"/>:null}
+ {(item.kind==='product'||item.kind==='store')&&item.image?<Image source={{uri:item.image}} style={{width:215,height:130,borderRadius:10}} resizeMode="cover"/>:null}
  {item.kind==='product'&&typeof item.price==='number'?<Text style={{color:'#BF008E',fontWeight:'700'}}>₱{item.price.toFixed(2)}</Text>:null}
  {item.kind==='image'&&url?<Image source={{uri:url}} style={{width:215,height:175,borderRadius:10}} resizeMode="cover"/>:null}
- <Text style={s.bubbleText}>{item.kind==='image'?'📷 ':item.kind==='video'?'🎬 ':item.kind==='document'?'📄 ':item.kind==='contact'?'👤 ':'🛍️ '}{item.name}</Text>
+ <Text style={s.bubbleText}>{item.kind==='image'?'📷 ':item.kind==='video'?'🎬 ':item.kind==='document'?'📄 ':item.kind==='contact'?'👤 ':item.kind==='store'?'🏬 ':'🛍️ '}{item.name}</Text>
  {item.path&&!url?<Text style={{fontSize:11,color:MUTED}}>Loading attachment…</Text>:null}
  </Pressable>;
 }
