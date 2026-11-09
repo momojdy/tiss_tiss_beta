@@ -197,7 +197,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
   }), [cartDragX]);
 
-  if (!goodiesLoaded) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?'Opening store':'Loading Goodies'}>
+  if (!goodiesLoaded && initialRoute?.startsWith('store:')) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?'Opening store':'Loading Goodies'}>
     <StatusBar barStyle={th.dark?'light-content':'dark-content'} />
     <View style={{alignItems:'center',gap:16}}>
       <Image source={{uri:"https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/Goodies.PNG"}} style={{width:112,height:112}} resizeMode="contain" accessibilityLabel="Goodies" />
