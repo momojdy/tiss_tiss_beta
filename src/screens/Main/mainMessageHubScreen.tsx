@@ -45,7 +45,7 @@ const s=StyleSheet.create({
   back:{width:38,height:38,alignItems:'center',justifyContent:'center',marginRight:8},
   title:{fontSize:19,fontWeight:'600',color:MAGENTA,marginBottom:6},
   tabs:{flexDirection:'row',backgroundColor:'#FFFFFF',borderBottomWidth:1,borderBottomColor:'#F0E8ED',paddingHorizontal:16},
-  tab:{flex:1,alignItems:'center',justifyContent:'center',paddingVertical:15,borderBottomWidth:2,borderBottomColor:'transparent'},
+  tab:{flex:1,alignItems:'center',justifyContent:'center',paddingVertical:15,borderBottomWidth:StyleSheet.hairlineWidth,borderBottomColor:'transparent'},
   selected:{borderBottomColor:MAGENTA},
   tabText:{fontSize:14,fontWeight:'500',color:'#827783'},
   selectedText:{color:MAGENTA,fontWeight:'700'},
