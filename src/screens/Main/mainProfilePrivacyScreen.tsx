@@ -2,6 +2,7 @@ import React,{useEffect,useState} from 'react';
 import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Switch,Text,View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
 import {Icon} from '../../features/Goodies/components/Icon';
+import {Ionicons} from '@expo/vector-icons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {supabase} from '../../lib/supabase';
 
