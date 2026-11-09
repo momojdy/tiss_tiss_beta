@@ -243,7 +243,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (!notificationError && alive) setUnreadNotificationsCount(notificationCount ?? 0);
       const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [user.id]);
       if (conversations?.length) {
-        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.map((conversation: { id: string }) => conversation.id)).is('read_at', null).neq('sender_id', user.id);
+        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.filter((conversation: { id: string; business_id: string | null; customer_id: string | null }) => !conversation.business_id || conversation.customer_id === user.id).map(conversation => conversation.id)).is('read_at', null).neq('sender_id', user.id);
         if (alive) setUnreadMessagesCount(messageCount ?? 0);
       } else if (alive) setUnreadMessagesCount(0);
     };
@@ -277,7 +277,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (!error && active) setUnreadNotificationsCount(count || 0);
       const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [authData.user.id]);
       if (conversations?.length) {
-        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.map((conversation: { id: string }) => conversation.id)).is('read_at', null).neq('sender_id', authData.user.id);
+        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.filter((conversation: { id: string; business_id: string | null; customer_id: string | null }) => !conversation.business_id || conversation.customer_id === authData.user.id).map(conversation => conversation.id)).is('read_at', null).neq('sender_id', authData.user.id);
         if (active) setUnreadMessagesCount(messageCount || 0);
       } else if (active) setUnreadMessagesCount(0);
     };
