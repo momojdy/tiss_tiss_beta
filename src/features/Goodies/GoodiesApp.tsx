@@ -33,7 +33,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   if (!initialDestination.current) {
     initialDestination.current = true;
     if (initialRoute) {
-      if (initialRoute.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); } else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') {
+      if (initialRoute.startsWith('product:')) { reset('home'); const productId=initialRoute.slice(8); if(productId in require('./store').IT) A.openProduct(productId); } else if (initialRoute.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); } else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') {
         S.ft = initialRoute.split(':')[1];
         reset('favs');
       } else reset(initialRoute);
@@ -54,6 +54,8 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     void validateActiveGroup();
     const openInvite = (url: string | null) => {
       if (!url) return;
+      const productMatch=url.match(/^wantiss:\/\/goodies\/product\/([^?#]+)/i);
+      if(productMatch){try{const productId=decodeURIComponent(productMatch[1]);if(productId in require('./store').IT)A.openProduct(productId);}catch{}return;}
       const storeMatch=url.match(/^wantiss:\/\/goodies\/store\/([^?#]+)/i);
       if(storeMatch){try{const storeId=decodeURIComponent(storeMatch[1]);if(STB[storeId])push('store',storeId);}catch{}return;}
       const match = url.match(/wantiss:\/\/goodies\/group\?code=([^&]+)/i);
