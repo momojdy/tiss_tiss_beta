@@ -201,7 +201,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     <StatusBar barStyle={th.dark?'light-content':'dark-content'} />
     <View style={{alignItems:'center',gap:16}}>
       <Image source={{uri:"https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/Goodies.PNG"}} style={{width:112,height:112}} resizeMode="contain" accessibilityLabel="Goodies" />
-      <Text style={{fontSize:20,fontWeight:'500',color:'#FF7518'}}>Goodies</Text>
+      <Text style={{fontSize:20,fontWeight:'500',color:'#000000'}}>Goodies</Text>
       <ActivityIndicator size="small" color="#BF008E" />
       <Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>{initialRoute?.startsWith('store:')?'Opening store…':'Getting everything ready…'}</Text>
     </View>
