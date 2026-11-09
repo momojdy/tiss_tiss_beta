@@ -76,8 +76,15 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
       const contentReady = loadContent();
       await load();
       // Initial destination is applied synchronously before first render; never replay it after loading.
-      setGoodiesLoaded(true);
       await contentReady;
+      if (active) {
+        // Restore the requested destination after persistence/catalog hydration, before exposing the screen.
+        if (initialRoute?.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); }
+        else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') { S.ft = initialRoute.split(':')[1]; reset('favs'); }
+        else if (initialRoute) reset(initialRoute);
+        else if (embedded) reset('home');
+        setGoodiesLoaded(true);
+      }
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
     })();
@@ -189,6 +196,8 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     },
     onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
   }), [cartDragX]);
+
+  if (!goodiesLoaded) return <View style={{flex:1,backgroundColor:th.bg}} />;
 
   // Do not render the previous Goodies route while an incoming deep link is loading.
   // The destination is applied after load() restores persisted navigation state.
