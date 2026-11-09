@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Icon } from '../../features/Goodies/components/Icon';
 import MessagesScreen from './mainMessagesScreen';
 import NotificationsScreen from './mainNotificationsScreen';
@@ -14,10 +15,13 @@ export default function MessageHubScreen({ onBack, onMessagesPress, onNotificati
   onNotificationNavigate?: (screen: string, conversationId?: string) => void;
 }) {
   const [tab, setTab] = useState<'messages' | 'notifications'>('messages');
+  const [actions,setActions] = useState<{contacts:()=>void;search:()=>void;menu:()=>void}|null>(null);
+  const receiveActions = useCallback((next:{contacts:()=>void;search:()=>void;menu:()=>void})=>setActions(next),[]);
   return <View style={s.root}>
     <View style={s.header}>
       <Pressable onPress={onBack} hitSlop={12} style={s.back} accessibilityLabel="Back"><Icon name="chevL" size={20} color={MAGENTA}/></Pressable>
-      <Text style={s.title}>My Activity</Text>
+      <Text style={[s.title,{flex:1}]}>My Activity</Text>
+      {tab==='messages'&&actions&&<><Pressable accessibilityLabel="Contacts" onPress={actions.contacts} style={s.action}><MaterialCommunityIcons name="card-account-details-outline" size={22} color="#302631"/></Pressable><Pressable accessibilityLabel="Search conversations" onPress={actions.search} style={s.action}><MaterialCommunityIcons name="magnify" size={23} color="#302631"/></Pressable><Pressable accessibilityLabel="Message actions" onPress={actions.menu} style={s.action}><MaterialCommunityIcons name="plus" size={24} color="#302631"/></Pressable></>}
     </View>
     <View style={s.tabs} accessibilityRole="tablist">
       <Pressable accessibilityRole="tab" accessibilityState={{selected:tab==='messages'}} onPress={()=>setTab('messages')} style={[s.tab,tab==='messages'&&s.selected]}>
@@ -29,7 +33,7 @@ export default function MessageHubScreen({ onBack, onMessagesPress, onNotificati
     </View>
     <View style={s.content}>
       {tab==='messages'
-        ? <MessagesScreen onBack={onMessagesPress} />
+        ? <MessagesScreen embedded onHeaderActions={receiveActions} onBack={onMessagesPress} />
         : <NotificationsScreen embedded onBack={onNotificationsPress} onNavigate={onNotificationNavigate || ((screen)=>{if(screen==='messages')onMessagesPress();else onNotificationsPress();})}/>}
     </View>
   </View>;
@@ -44,5 +48,6 @@ const s=StyleSheet.create({
   selected:{borderBottomColor:MAGENTA},
   tabText:{fontSize:14,fontWeight:'500',color:'#827783'},
   selectedText:{color:MAGENTA,fontWeight:'700'},
+  action:{width:38,height:38,alignItems:'center',justifyContent:'center'},
   content:{flex:1}
 });
