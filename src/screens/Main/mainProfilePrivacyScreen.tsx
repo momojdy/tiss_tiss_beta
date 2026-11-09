@@ -1,8 +1,6 @@
 import React,{useEffect,useState} from 'react';
 import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Switch,Text,View} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
 import {Icon} from '../../features/Goodies/components/Icon';
-import {Ionicons} from '@expo/vector-icons';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {supabase} from '../../lib/supabase';
 
@@ -15,7 +13,7 @@ export default function ProfilePrivacyScreen({onBack}:{onBack:()=>void}){
  const update=<K extends keyof Prefs>(key:K,value:Prefs[K])=>setPrefs(prev=>({...prev,[key]:value}));
  const save=async()=>{setSaving(true);try{const {data:{user}}=await supabase.auth.getUser();if(!user)throw Error('Sign in again');const {error}=await supabase.from('user_profile_visibility').upsert({...prefs,user_id:user.id,membership_visibility_confirmed:true,updated_at:new Date().toISOString()},{onConflict:'user_id'});if(error)throw error;Alert.alert('Saved','Your permissions have been updated.');}catch(e){Alert.alert('Could not save',e instanceof Error?e.message:'Try again');}finally{setSaving(false)}};
  const toggle=(key:keyof Pick<Prefs,'discover_phone'|'discover_wantiss_id'|'discover_email'|'discover_qr'|'show_last_seen'|'show_read_receipts'>,title:string,detail:string)=><View style={styles.row}><View style={{flex:1}}><Text style={styles.rowTitle}>{title}</Text><Text style={styles.detail}>{detail}</Text></View><Switch value={prefs[key]} onValueChange={v=>update(key,v)} trackColor={{false:'#DAD8DE',true:'#E9B5DD'}} thumbColor={prefs[key]?'#BF008E':'#FFFFFF'}/></View>;
- const choices=(key:'moments_visibility'|'membership_visibility',items:{value:string;label:string}[])=><View>{items.map(o=><Pressable key={o.value} onPress={()=>update(key,o.value as never)} style={styles.row}><Text style={styles.rowTitle}>{o.label}</Text><Ionicons name={prefs[key]===o.value?'radio-button-on':'radio-button-off'} color={prefs[key]===o.value?'#BF008E':'#AAA'} size={22}/></Pressable>)}</View>;
+ const choices=(key:'moments_visibility'|'membership_visibility',items:{value:string;label:string}[])=><View>{items.map(o=><Pressable key={o.value} onPress={()=>update(key,o.value as never)} style={styles.row}><Text style={styles.rowTitle}>{o.label}</Text><Text style={{fontSize:22,color:prefs[key]===o.value?'#BF008E':'#AAA'}}>{prefs[key]===o.value?'◉':'○'}</Text></Pressable>)}</View>;
  return <View style={styles.page}><View style={[styles.header,{paddingTop:insets.top+8}]}><Pressable onPress={onBack} hitSlop={12} style={styles.back}><Icon name="chevL" size={20} color="#111"/></Pressable><Text style={styles.title}>Permissions & Privacy</Text></View><ScrollView contentContainerStyle={styles.content}>{loading?<ActivityIndicator color="#BF008E" style={{marginTop:40}}/>:<>
  <Text style={styles.heading}>Account discovery</Text><Text style={styles.subtitle}>Choose how other Wantiss members can find you.</Text>
  {toggle('discover_phone','Phone number','Allow people to find you by phone')}
