@@ -229,8 +229,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     let active = true;
     const heartbeat = async () => {
       if (!active || AppState.currentState !== 'active') return;
-      const {data:{user}} = await supabase.auth.getUser();
-      if (!active || !user) return;
       const {error} = await supabase.rpc('wantiss_message_heartbeat');
       if (error) console.warn('Wantiss presence heartbeat failed:',error.message);
     };
