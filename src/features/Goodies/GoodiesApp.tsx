@@ -15,6 +15,7 @@ import {Account} from './screens/Account';
 import {Sheets, GroupOrderPage} from './components/Sheets';
 import WalletAddNewCardScreen from '../../screens/Wallet/WalletAddNewCardScreen';
 import {CardAuthentication} from './screens/CardAuthentication';
+import {HelpPayPreview} from './screens/HelpPayPreview';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
 import {loadContent, label, stageLabels} from './content';
@@ -152,6 +153,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
+    case 'help-pay-preview': body = <HelpPayPreview />; break;
     case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
