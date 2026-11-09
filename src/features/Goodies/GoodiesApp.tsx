@@ -200,7 +200,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   if (!goodiesLoaded) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?'Opening store':'Loading Goodies'}>
     <StatusBar barStyle={th.dark?'light-content':'dark-content'} />
     <View style={{alignItems:'center',gap:16}}>
-      <View style={{width:64,height:64,borderRadius:22,backgroundColor:'#FBE8EF',alignItems:'center',justifyContent:'center'}}><Icon name="store" size={30} color="#BF008E" /></View>
+      <View style={{width:64,height:64,borderRadius:22,backgroundColor:'#FBE8EF',alignItems:'center',justifyContent:'center'}}><Icon name="bag" size={30} color="#BF008E" /></View>
       <Text style={{fontSize:20,fontWeight:'700',color:th.txt}}>Goodies</Text>
       <ActivityIndicator size="small" color="#BF008E" />
       <Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>{initialRoute?.startsWith('store:')?'Opening store…':'Getting everything ready…'}</Text>
