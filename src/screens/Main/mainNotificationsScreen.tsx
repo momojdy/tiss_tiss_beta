@@ -66,6 +66,7 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
       if (updateError) { setError(updateError.message); return; }
       setItems(prev => prev.map(item => item.id === n.id ? { ...item, read: true } : item));
     }
+    if ((n.notification_type === 'friend_accepted' || n.notification_type === 'friend_request') && typeof n.metadata?.sender_id === 'string') { onNavigate('messages/profile', n.metadata.sender_id); return; }
     const target = destinationFor(n);
     if (target) onNavigate(target, target === 'messages' && typeof n.metadata?.conversation_id === 'string' ? n.metadata.conversation_id : undefined);
   };
