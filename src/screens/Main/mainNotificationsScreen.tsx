@@ -32,7 +32,7 @@ const destinationFor = (n: NotificationRow): string | null => {
   if (key) return routes[key] || null;
   return routes[featureKey(n.feature_name)] || null;
 };
-export default function NotificationsScreen({ onBack, onNavigate }: { onBack: () => void; onNavigate: (screen: string, conversationId?: string) => void }) {
+export default function NotificationsScreen({ onBack, onNavigate, embedded = false }: { onBack: () => void; onNavigate: (screen: string, conversationId?: string) => void; embedded?: boolean }) {
   const [items, setItems] = useState<NotificationRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -78,11 +78,12 @@ export default function NotificationsScreen({ onBack, onNavigate }: { onBack: ()
     else setItems(prev => prev.map(n => ({ ...n, read: true })));
   };
   return <View style={s.root}>
-    <View style={s.header}>
+    {!embedded && <View style={s.header}>
       <Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={MAGENTA} /></Pressable>
       <View style={{ flex: 1, height: 38, justifyContent: "center" }}><Text style={s.title}>Notifications</Text></View>
       {unread > 0 && <Pressable onPress={markAll} style={s.markAllButton} hitSlop={8}><Text style={s.markAll}>Read all</Text></Pressable>}
-    </View>
+    </View>}
+    {embedded && unread > 0 && <Pressable onPress={markAll} style={[s.markAllButton,{alignSelf:'flex-end',marginRight:18,marginTop:12}]}><Text style={s.markAll}>Read all</Text></Pressable>}
     {loading ? <View style={s.center}><ActivityIndicator color={MAGENTA}/><Text style={s.emptyText}>Loading your notifications…</Text></View> :
       error ? <View style={s.center}><MaterialCommunityIcons name="alert-circle-outline" size={32} color={MAGENTA}/><Text style={s.emptyText}>{error}</Text><Pressable onPress={() => { setLoading(true); void load(); }} style={s.retry}><Text style={s.retryText}>Try again</Text></Pressable></View> :
       <ScrollView contentContainerStyle={s.list}>
