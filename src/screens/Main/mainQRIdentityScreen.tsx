@@ -20,6 +20,7 @@ type Props = {
   initialToken?: string | null;
   displayToken?: string | null;
 };
+const DEFAULT_AVATAR='https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/MainDefaultAvatar.PNG';
 const THEMES = {
   buyer_identity: { title: 'My Wantiss ID', subtitle: 'Scan to connect on Wantiss', color: '#BF008E', pale: '#FFFFFF' },
   wallet_receive: { title: 'Add me', subtitle: '', color: '#438C53', pale: '#EFF8EF' },
@@ -31,6 +32,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [record, setRecord] = useState<any>(null);
   const [busy, setBusy] = useState(true);
   const [wantissNumber, setWantissNumber] = useState('');
+  const [profileName,setProfileName]=useState('');
+  const [profileAvatar,setProfileAvatar]=useState<string|null>(null);
   const [walletId, setWalletId] = useState<string | null>(null);
   const [tokenInput, setTokenInput] = useState('');
   const [resolved, setResolved] = useState<any>(null);
@@ -82,8 +85,8 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     void (async () => {
       const { data: auth } = await supabase.auth.getUser();
       if (!auth.user) return;
-      const { data } = await supabase.from('profiles').select('wantiss_number').eq('id', auth.user.id).maybeSingle();
-      if (active) setWantissNumber(data?.wantiss_number ?? '');
+      const { data } = await supabase.from('profiles').select('wantiss_number,full_name,avatar_url').eq('id', auth.user.id).maybeSingle();
+      if (active) {setWantissNumber(data?.wantiss_number ?? '');setProfileName(data?.full_name?.trim()||'Wantiss member');setProfileAvatar(data?.avatar_url||null);}
     })().catch(() => undefined);
     return () => { active = false; };
   }, [kind]);
@@ -214,6 +217,7 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
         {!initialToken && kind !== 'buyer_identity' ? <Text style={[styles.eyebrow, { color: theme.color }]}>{kind === 'wallet_receive' ? 'WALLET RECEIVING QR' : 'PUBLIC SHOP'}</Text> : null}
         {kind !== 'wallet_receive' && kind !== 'buyer_identity' ? <Text style={styles.title}>{theme.title}</Text> : null}
         {!initialToken && kind !== 'buyer_identity' && theme.subtitle ? <Text style={styles.subtitle}>{theme.subtitle}</Text> : null}
+        {kind==='buyer_identity'&&!initialToken?<View style={styles.buyerIdentity}><Image source={{uri:profileAvatar||DEFAULT_AVATAR}} style={styles.buyerAvatar}/><Text style={styles.buyerName}>{profileName||'Wantiss member'}</Text></View>:null}
         <View style={styles.qrFrame}>
           {busy || (Boolean(initialToken) && resolving && !resolved) ? <View style={styles.qrLoading}><ActivityIndicator size="large" color={theme.color} /><Text style={[styles.qrLoadingText, { color: theme.color }]}>{initialToken ? 'Opening secure Wantiss QR…' : 'Preparing your secure Wantiss QR…'}</Text></View> : initialToken ? <Text style={styles.recipientName}>{resolved?.display_name ?? resolved?.shop_name ?? 'Opening Wantiss…'}</Text> : (record?.token ?? displayToken) ? <QRCode value={`wantiss://qr?token=${record?.token ?? displayToken}`} size={210} color={theme.color} backgroundColor="#FFFFFF" /> : <View style={styles.qrLoading}><MaterialCommunityIcons name="qrcode-remove" size={38} color={theme.color} /><Text style={styles.qrLoadingText}>Your QR is not available yet. Try refreshing.</Text></View>}
         </View>
@@ -266,6 +270,7 @@ function makeRequestId() {
   });
 }
 const styles = StyleSheet.create({
+  buyerIdentity:{alignItems:'center',gap:16,marginBottom:18},buyerAvatar:{width:80,height:80,borderRadius:40,backgroundColor:'#F5F1F5'},buyerName:{fontSize:21,fontWeight:'600',color:'#201D22',textAlign:'center'},
   buyerHero:{backgroundColor:'#FFFFFF',paddingTop:54,paddingHorizontal:8,borderRadius:0},buyerHint:{fontSize:12,color:'#9B96A0',textAlign:'center',marginTop:22},buyerActions:{width:'100%',flexDirection:'row',justifyContent:'space-around',marginTop:66,paddingHorizontal:8},buyerAction:{minWidth:80,alignItems:'center',gap:12,paddingVertical:8},buyerActionLabel:{fontSize:12,color:'#68626D',fontWeight:'400'},buyerCamera:{width:'100%',marginTop:20},buyerClose:{alignSelf:'center',padding:12},buyerRefresh:{marginTop:28,padding:12},buyerRefreshText:{fontSize:12,color:'#A39BA5'},
   page: { flex: 1, backgroundColor: '#FFFFFF' }, header: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: 10, borderBottomWidth: 1, borderBottomColor: '#ECEEF2', backgroundColor: '#FFF' }, back: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 12, flexShrink: 0 }, buyerBack: { backgroundColor: 'transparent' }, walletBack: { backgroundColor: '#DCE8D2' }, headerTitle: { fontSize: 19, fontWeight: '600', color: '#1A2517', marginLeft: 12, lineHeight: 19, transform: [{ translateY: 1 }] }, content: { padding: 16, paddingBottom: 38, gap: 14 }, hero: { borderRadius: 16, borderWidth: 0, padding: 18, alignItems: 'center' }, eyebrow: { fontSize: 10, fontWeight: '800', letterSpacing: 1.3, alignSelf: 'flex-start' }, title: { fontSize: 24, fontWeight: '500', color: '#202735', marginTop: 8 }, subtitle: { fontSize: 13, color: '#707887', textAlign: 'center', marginTop: 5, lineHeight: 19 }, qrFrame: { backgroundColor: '#FFF', padding: 14, borderRadius: 18, marginTop: 20, minHeight: 236, minWidth: 236, alignItems: 'center', justifyContent: 'center' }, qrLoading: { minHeight: 208, width: 208, alignItems: 'center', justifyContent: 'center', gap: 12, paddingHorizontal: 10 }, qrLoadingText: { fontSize: 12, lineHeight: 18, fontWeight: '700', textAlign: 'center' }, scanState: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, padding: 12, borderRadius: 14, borderWidth: 1, marginBottom: 4 }, caption: { fontSize: 12, color: '#6D7582', textAlign: 'center', marginTop: 14, lineHeight: 18 }, primary: { minHeight: 46, borderRadius: 13, paddingHorizontal: 18, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 9, marginTop: 18, width: '100%' }, primaryText: { fontSize: 14, fontWeight: '700', color: '#FFF' }, idLabel: { fontSize: 10, fontWeight: '500', letterSpacing: 0.8, color: '#8C7790', marginTop: 15 }, idValue: { fontSize: 17, fontWeight: '500', color: '#35253A', marginTop: 5 }, muted: { fontSize: 12, color: '#747C8B', lineHeight: 18 }, scannerCard: { padding: 16, borderRadius: 18, backgroundColor: '#FFF', gap: 10 }, sectionTitle: { fontSize: 16, fontWeight: '800', color: '#202735' }, input: { minHeight: 46, borderWidth: 1, borderColor: '#E1E5EB', borderRadius: 12, paddingHorizontal: 13, fontSize: 14, color: '#202735', backgroundColor: '#FFF' }, outline: { minHeight: 44, borderWidth: 1.3, borderRadius: 12, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }, outlineText: { fontSize: 13, fontWeight: '700' }, recipientIdentity: { flexDirection: 'row', alignItems: 'center', gap: 12 }, recipientAvatar: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF' }, recipientAvatarFallback: { width: 48, height: 48, borderRadius: 24, backgroundColor: '#FFF', alignItems: 'center', justifyContent: 'center' }, recipient: { borderTopWidth: 1, borderTopColor: '#ECEEF2', paddingTop: 14, marginTop: 4, gap: 8 }, recipientName: { fontSize: 18, fontWeight: '800', color: '#202735' }, cameraWrap: { gap: 10 }, camera: { height: 300, borderRadius: 14, overflow: 'hidden' }, permissionBox: { minHeight: 140, alignItems: 'center', justifyContent: 'center', gap: 8 }, revokeButton: { paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginTop: 12, borderWidth: 1, borderColor: '#E1A6B2' }, revokeText: { color: '#B4455B', fontWeight: '800', fontSize: 12 }
 });
