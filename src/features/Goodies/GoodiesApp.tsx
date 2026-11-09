@@ -16,7 +16,6 @@ import {Sheets, GroupOrderPage} from './components/Sheets';
 import WalletAddNewCardScreen from '../../screens/Wallet/WalletAddNewCardScreen';
 import {CardAuthentication} from './screens/CardAuthentication';
 import {HelpPayPreview} from './screens/HelpPayPreview';
-import {HelpPayPreview} from './screens/HelpPayPreview';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
 import {loadContent, label, stageLabels} from './content';
@@ -55,6 +54,8 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     void validateActiveGroup();
     const openInvite = (url: string | null) => {
       if (!url) return;
+      const storeMatch=url.match(/^wantiss:\/\/goodies\/store\/([^?#]+)/i);
+      if(storeMatch){try{const storeId=decodeURIComponent(storeMatch[1]);if(STB[storeId])push('store',storeId);}catch{}return;}
       const match = url.match(/wantiss:\/\/goodies\/group\?code=([^&]+)/i);
       if (!match) return;
       try {(S as any).pendingGroupInviteCode = decodeURIComponent(match[1]).trim().toUpperCase();}
