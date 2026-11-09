@@ -15,25 +15,26 @@ export default function MessageHubScreen({ onBack, onMessagesPress, onNotificati
   onNotificationNavigate?: (screen: string, conversationId?: string) => void;
 }) {
   const [tab, setTab] = useState<'messages' | 'notifications'>('messages');
+  const [detailOpen,setDetailOpen] = useState(false);
   const [actions,setActions] = useState<{contacts:()=>void;search:()=>void;menu:()=>void}|null>(null);
   const receiveActions = useCallback((next:{contacts:()=>void;search:()=>void;menu:()=>void})=>setActions(next),[]);
   return <View style={s.root}>
-    <View style={s.header}>
+    {!(tab==='messages'&&detailOpen)&&<View style={s.header}>
       <Pressable onPress={onBack} hitSlop={12} style={s.back} accessibilityLabel="Back"><Icon name="chevL" size={20} color={MAGENTA}/></Pressable>
       <Text style={[s.title,{flex:1}]}>My Activity</Text>
       {tab==='messages'&&actions&&<><Pressable accessibilityLabel="Contacts" onPress={actions.contacts} style={s.action}><MaterialCommunityIcons name="card-account-details-outline" size={22} color="#302631"/></Pressable><Pressable accessibilityLabel="Search conversations" onPress={actions.search} style={s.action}><MaterialCommunityIcons name="magnify" size={23} color="#302631"/></Pressable><Pressable accessibilityLabel="Message actions" onPress={actions.menu} style={s.action}><MaterialCommunityIcons name="plus" size={24} color="#302631"/></Pressable></>}
-    </View>
-    <View style={s.tabs} accessibilityRole="tablist">
+    </View>}
+    {!(tab==='messages'&&detailOpen)&&<View style={s.tabs} accessibilityRole="tablist">
       <Pressable accessibilityRole="tab" accessibilityState={{selected:tab==='messages'}} onPress={()=>setTab('messages')} style={[s.tab,tab==='messages'&&s.selected]}>
         <Text style={[s.tabText,tab==='messages'&&s.selectedText]}>Messages{unreadMessages>0?' ('+(unreadMessages>99?'99+':unreadMessages)+')':''}</Text>
       </Pressable>
       <Pressable accessibilityRole="tab" accessibilityState={{selected:tab==='notifications'}} onPress={()=>setTab('notifications')} style={[s.tab,tab==='notifications'&&s.selected]}>
         <Text style={[s.tabText,tab==='notifications'&&s.selectedText]}>Notifications{unreadNotifications>0?' ('+(unreadNotifications>99?'99+':unreadNotifications)+')':''}</Text>
       </Pressable>
-    </View>
+    </View>}
     <View style={s.content}>
       {tab==='messages'
-        ? <MessagesScreen embedded onHeaderActions={receiveActions} onBack={onMessagesPress} />
+        ? <MessagesScreen embedded onDetailChange={setDetailOpen} onHeaderActions={receiveActions} onBack={onMessagesPress} />
         : <NotificationsScreen embedded onBack={onNotificationsPress} onNavigate={onNotificationNavigate || ((screen)=>{if(screen==='messages')onMessagesPress();else onNotificationsPress();})}/>}
     </View>
   </View>;
