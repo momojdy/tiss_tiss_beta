@@ -34,6 +34,7 @@ export function Store({id}: {id: string}) {
     });
     return () => { active = false; };
   }, [id, address?.t, address?.apt, address?.inst, address?.city, address?.department, address?.country]);
+  if (!s) return <View style={{flex:1,padding:24,alignItems:'center',justifyContent:'center',gap:12}}><Text style={{fontSize:17,fontWeight:'600',color:th.txt}}>Store unavailable</Text><Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>This store is not available in the Goodies catalog right now.</Text><Pressable onPress={back} style={{padding:12}}><Text style={{color:'#BF008E',fontSize:14}}>Go back</Text></Pressable></View>;
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
