@@ -55,6 +55,8 @@ export default function MessagesScreen({onBack,onOpenShop,initialConversationId,
   setLoading(false);
  },[]);
  const [peerPrivacy,setPeerPrivacy]=useState<{show_last_seen:boolean;show_read_receipts:boolean;last_active_at:string|null}|null>(null);
+ useEffect(()=>{if(!activeConversation)return;void supabase.rpc('wantiss_message_heartbeat');const interval=setInterval(()=>{void supabase.rpc('wantiss_message_heartbeat');},60000);return()=>clearInterval(interval);},[activeConversation?.id]);
+
  const openConversation=async(c:Conversation)=>{
   setActiveConversation(c);setMessages([]);setDraft(drafts[c.id]||'');setPeerPrivacy(null);void supabase.rpc('wantiss_message_heartbeat');const peerId=c.feature==='friends'?c.participant_ids?.find(id=>id!==currentUserId):null;if(peerId){void (async()=>{const {data}=await supabase.rpc('wantiss_message_peer_privacy',{p_user_id:peerId});if(data?.[0])setPeerPrivacy(data[0]);})();}
   const viewerId=currentUserId||(await supabase.auth.getUser()).data.user?.id;if(!viewerId)return;
