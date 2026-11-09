@@ -156,7 +156,6 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
     case 'help-pay-preview': body = <HelpPayPreview />; break;
-    case 'help-pay-preview': body = <HelpPayPreview />; break;
     case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
