@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, Pressable, ScrollView, useWindowDimensions, Image} from 'react-native';
+import * as Clipboard from 'expo-clipboard';
+import {MaterialCommunityIcons} from '@expo/vector-icons';
+import {View, Text, Pressable, ScrollView, useWindowDimensions, Image, TextInput, ActivityIndicator, Alert} from 'react-native';
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
@@ -26,6 +28,46 @@ const Hero = ({s, onBack, right}: any) => (
 );
 
 export function Store({id}: {id: string}) {
+  const [shareOpen,setShareOpen]=useState(false);
+  const [shareLoading,setShareLoading]=useState(false);
+  const [shareSending,setShareSending]=useState<string|null>(null);
+  const [shareQuery,setShareQuery]=useState('');
+  const [shareFriends,setShareFriends]=useState<Array<{id:string;name:string;avatar:string|null}>>([]);
+  const storeShareUrl='wantiss://goodies/store/'+encodeURIComponent(id);
+  const openStoreShare=async()=>{
+    setShareOpen(true);setShareLoading(true);
+    try{
+      const {data:{user}}=await supabase.auth.getUser();
+      if(!user){setShareFriends([]);return;}
+      const [{data:friendships,error:friendError},{data:profiles,error:profileError}]=await Promise.all([
+        supabase.from('user_friendships').select('requester_id,recipient_id').eq('status','accepted').or('requester_id.eq.'+user.id+',recipient_id.eq.'+user.id),
+        supabase.rpc('wantiss_message_contact_profiles')
+      ]);
+      if(friendError||profileError)throw friendError||profileError;
+      const ids=new Set((friendships||[]).map(f=>f.requester_id===user.id?f.recipient_id:f.requester_id));
+      setShareFriends((profiles||[]).filter((p:any)=>ids.has(p.id)).map((p:any)=>({id:p.id,name:p.full_name||p.wantiss_number||'Wantiss friend',avatar:p.avatar_url||null})));
+    }catch(e){Alert.alert('Friends unavailable',e instanceof Error?e.message:'Could not load friends.');}
+    finally{setShareLoading(false);}
+  };
+  const sendStoreToFriend=async(friendId:string)=>{
+    if(shareSending)return;setShareSending(friendId);
+    try{
+      const {data:{user}}=await supabase.auth.getUser();if(!user)throw new Error('Please sign in.');
+      const {data:existing,error:findError}=await supabase.from('conversations').select('id').eq('feature','friends').contains('participant_ids',[user.id,friendId]).limit(1).maybeSingle();
+      if(findError)throw findError;
+      let conversationId=existing?.id;
+      if(!conversationId){
+        const {data:created,error:createError}=await supabase.from('conversations').insert({participant_ids:[user.id,friendId],customer_id:user.id,feature:'friends',status:'active',title:'Wantiss conversation'}).select('id').single();
+        if(createError)throw createError;conversationId=created.id;
+      }
+      const body='[wantiss-attachment-v1]'+JSON.stringify({kind:'store',name:STB[id]?.n||'Goodies store',reference:storeShareUrl,image:STB[id]?.cover||STB[id]?.thumbnail||STB[id]?.logo||undefined});
+      const {error:sendError}=await supabase.from('messages').insert({conversation_id:conversationId,sender_id:user.id,body});
+      if(sendError)throw sendError;
+      await supabase.from('conversations').update({updated_at:new Date().toISOString()}).eq('id',conversationId);
+      setShareOpen(false);toast('Store shared in Wantiss Messages');
+    }catch(e){Alert.alert('Could not share store',e instanceof Error?e.message:'Please try again.');}
+    finally{setShareSending(null);}
+  };
   const th = useTheme(), s = STB[id], address = addr(), t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
   useEffect(() => {
     let active = true;
@@ -42,7 +84,15 @@ export function Store({id}: {id: string}) {
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
-      <Hero s={s} onBack={back} right={<Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} />} />
+      <Hero s={s} onBack={back} right={<View style={{flexDirection:'row',gap:8,alignItems:'center'}}><Pressable accessibilityLabel="Share store" onPress={()=>void openStoreShare()} style={{width:40,height:40,borderRadius:20,backgroundColor:'#FFFFFF',alignItems:'center',justifyContent:'center'}}><MaterialCommunityIcons name="share-variant-outline" size={22} color="#BF008E"/></Pressable><Circ icon="heart" label={label('lbl.storeSave', 'Save store')} color={S.fav.indexOf(id) > -1 ? '#FD802E' : undefined} fill={S.fav.indexOf(id) > -1} onPress={() => heart(id)} /></View>} />
+      {shareOpen?<View style={{margin:14,padding:14,borderRadius:18,backgroundColor:'#FFF7FB',borderWidth:1,borderColor:'#F0D9E9',gap:12}}>
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}><Text style={{fontSize:17,fontWeight:'700',color:'#302631'}}>Share this store</Text><Pressable onPress={()=>setShareOpen(false)} accessibilityLabel="Close share panel"><MaterialCommunityIcons name="close" size={22} color="#302631"/></Pressable></View>
+        <View style={{flexDirection:'row',alignItems:'center',gap:10}}>{s.cover||s.thumbnail||s.logo?<Image source={{uri:s.cover||s.thumbnail||s.logo}} style={{width:58,height:58,borderRadius:12}}/>:null}<View style={{flex:1}}><Text style={{color:'#302631',fontWeight:'700'}} numberOfLines={1}>{s.n}</Text><Text style={{color:'#827783',fontSize:12}}>Goodies store</Text></View></View>
+        <Pressable onPress={async()=>{await Clipboard.setStringAsync(storeShareUrl);toast('Store link copied');}} style={{padding:12,borderRadius:12,backgroundColor:'#FFFFFF',flexDirection:'row',gap:9,alignItems:'center'}}><MaterialCommunityIcons name="content-copy" size={19} color="#BF008E"/><Text style={{color:'#BF008E',fontWeight:'700'}}>Copy store link</Text></Pressable>
+        <Text style={{fontSize:14,fontWeight:'700',color:'#302631'}}>Send to a Wantiss friend</Text>
+        <TextInput value={shareQuery} onChangeText={setShareQuery} placeholder="Search friends" style={{backgroundColor:'#FFFFFF',borderRadius:11,paddingHorizontal:12,paddingVertical:10,color:'#302631'}}/>
+        {shareLoading?<ActivityIndicator color="#BF008E"/>:<ScrollView style={{maxHeight:205}} keyboardShouldPersistTaps="handled">{shareFriends.filter(friend=>friend.name.toLowerCase().includes(shareQuery.trim().toLowerCase())).map(friend=><Pressable key={friend.id} disabled={!!shareSending} onPress={()=>void sendStoreToFriend(friend.id)} style={{paddingVertical:10,flexDirection:'row',alignItems:'center',gap:10}}>{friend.avatar?<Image source={{uri:friend.avatar}} style={{width:38,height:38,borderRadius:19}}/>:<View style={{width:38,height:38,borderRadius:19,backgroundColor:'#EBD7E7',alignItems:'center',justifyContent:'center'}}><MaterialCommunityIcons name="account" size={20} color="#BF008E"/></View>}<Text style={{color:'#302631',flex:1}} numberOfLines={1}>{friend.name}</Text>{shareSending===friend.id?<ActivityIndicator size="small" color="#BF008E"/>:<MaterialCommunityIcons name="send-outline" size={20} color="#BF008E"/>}</Pressable>)}{!shareFriends.length?<Text style={{color:'#827783',padding:8}}>No accepted friends to show yet.</Text>:null}</ScrollView>}
+      </View>:null}
       <View style={{paddingHorizontal: 16}}>
         <T size={24} weight="600" style={{marginTop: 16}}>{s.n}</T>
         <T size={13} color={th.mut} style={{marginTop: 3}}>{s.k}{s.live && s.distanceReady ? ' · ' + (Math.round(s.km * 1000) < 1000 ? Math.round(s.km * 1000) + ' m' : s.km.toFixed(1) + ' km') + (S.currentLocation && S.currentLocation.addressText === address?.t ? ' from your location' : ' from your address') : !s.live ? ' · ' + label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)) : s.live && s.distanceError ? ' · Distance unavailable' : ''}</T>
