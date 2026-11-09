@@ -59,8 +59,8 @@ export default function MessagesScreen({onBack,onOpenShop,initialConversationId,
   const {data,error:queryError}=await supabase.from('messages').select('id,conversation_id,sender_id,body,created_at,read_at').eq('conversation_id',c.id).order('created_at',{ascending:true}).limit(300);
   if(queryError){setError(queryError.message);return;}
   const rows=(data||[]) as Message[];setMessages(rows);setError('');
-  if(c.feature==='group'){const {error:cursorError}=await supabase.from('message_participant_state').upsert({conversation_id:c.id,user_id:auth.user.id,last_read_at:new Date().toISOString(),updated_at:new Date().toISOString()},{onConflict:'conversation_id,user_id'});if(cursorError)setError(cursorError.message);void load();return;}
-  const unreadIds=rows.filter(m=>m.sender_id!==auth.user!.id&&!m.read_at).map(m=>m.id);
+  if(c.feature==='group'){const {error:cursorError}=await supabase.from('message_participant_state').upsert({conversation_id:c.id,user_id:viewerId,last_read_at:new Date().toISOString(),updated_at:new Date().toISOString()},{onConflict:'conversation_id,user_id'});if(cursorError)setError(cursorError.message);void load();return;}
+  const unreadIds=rows.filter(m=>m.sender_id!==viewerId&&!m.read_at).map(m=>m.id);
   if(unreadIds.length){
    const readAt=new Date().toISOString();
    if(c.feature==='goodies'){
