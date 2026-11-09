@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert, Pressable, Text, View } from 'react-native';
+import { Alert, AppState, Pressable, Text, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
@@ -224,6 +224,21 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       listener.subscription.unsubscribe();
     };
   }, []);
+  useEffect(() => {
+    if (!authenticated) return;
+    let active = true;
+    const heartbeat = async () => {
+      if (!active || AppState.currentState !== 'active') return;
+      const {data:{user}} = await supabase.auth.getUser();
+      if (!active || !user) return;
+      const {error} = await supabase.rpc('wantiss_message_heartbeat');
+      if (error) console.warn('Wantiss presence heartbeat failed:',error.message);
+    };
+    void heartbeat();
+    const interval = setInterval(() => {void heartbeat();},60000);
+    const subscription = AppState.addEventListener('change',state => {if(state==='active') void heartbeat();});
+    return () => {active=false;clearInterval(interval);subscription.remove();};
+  }, [authenticated]);
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
