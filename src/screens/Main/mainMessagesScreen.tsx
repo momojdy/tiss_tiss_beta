@@ -55,6 +55,7 @@ export default function MessagesScreen({onBack,onOpenShop,initialConversationId,
   setLoading(false);
  },[]);
  const [peerPrivacy,setPeerPrivacy]=useState<{show_last_seen:boolean;show_read_receipts:boolean;last_active_at:string|null}|null>(null);
+ useEffect(()=>{if(!activeConversation||activeConversation.feature!=='friends'||!currentUserId)return;const peer=activeConversation.participant_ids?.find(id=>id!==currentUserId);if(!peer)return;let active=true;const refresh=async()=>{const {data}=await supabase.rpc('wantiss_message_peer_privacy',{p_user_id:peer});if(active)setPeerPrivacy(data?.[0]||null);};void refresh();const interval=setInterval(()=>{void refresh();},15000);return()=>{active=false;clearInterval(interval);};},[activeConversation?.id,currentUserId]);
  useEffect(()=>{if(!activeConversation)return;void supabase.rpc('wantiss_message_heartbeat');const interval=setInterval(()=>{void supabase.rpc('wantiss_message_heartbeat');},60000);return()=>clearInterval(interval);},[activeConversation?.id]);
 
  const openConversation=async(c:Conversation)=>{
