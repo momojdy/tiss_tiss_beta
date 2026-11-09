@@ -21,7 +21,7 @@ export default function ProfilePrivacyScreen({onBack}:{onBack:()=>void}){
  {toggle('discover_email','Email address','Allow people to find you by email')}
  {toggle('discover_qr','Personal QR code','Allow others to discover you by scanning')}
  <Text style={styles.heading}>Moments privacy</Text><Text style={styles.subtitle}>Control who can see your posts and Moments.</Text>
- {choices('moments_visibility',[{value:'public',label:'Public — Everyone on Wantiss'},{value:'friends',label:'Friends only'},{value:'private',label:'Private — Only me'}])}
+ {choices('moments_visibility',[{value:'public',label:'Public: Everyone on Wantiss'},{value:'friends',label:'Friends only'},{value:'private',label:'Private: Only me'}])}
  <Text style={styles.heading}>Membership privacy</Text>
  {choices('membership_visibility',[{value:'public',label:'Show membership status'},{value:'private',label:'Keep membership private'}])}
  <Text style={styles.heading}>Messages</Text>
