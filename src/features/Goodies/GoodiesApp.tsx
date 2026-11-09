@@ -32,7 +32,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   if (!initialDestination.current) {
     initialDestination.current = true;
     if (initialRoute) {
-      if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') {
+      if (initialRoute.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); } else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') {
         S.ft = initialRoute.split(':')[1];
         reset('favs');
       } else reset(initialRoute);
@@ -75,7 +75,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     void (async () => {
       const contentReady = loadContent();
       await load();
-      if (active && initialRoute) { if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') { S.ft = initialRoute.split(':')[1]; reset('favs'); } else reset(initialRoute); }
+      if (active && initialRoute) { if (initialRoute.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); } else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') { S.ft = initialRoute.split(':')[1]; reset('favs'); } else reset(initialRoute); }
       setGoodiesLoaded(true);
       await contentReady;
       await loadBuilders();
