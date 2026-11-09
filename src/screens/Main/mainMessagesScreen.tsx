@@ -46,7 +46,7 @@ export default function MessagesScreen({onBack,onOpenShop,initialConversationId,
   try{const saved=await AsyncStorage.getItem('wantiss.message-drafts.'+auth.user.id);setDrafts(saved?JSON.parse(saved):{});}catch{setDrafts({});}
   const {data,error:queryError}=await supabase.from('conversations').select('id,title,participant_ids,updated_at,feature,ref_id,business_id,customer_id').contains('participant_ids',[auth.user.id]).order('updated_at',{ascending:false});
   if(queryError){setError(queryError.message);setLoading(false);return;}
-  const rows=((data||[]) as Conversation[]).filter(c=>!c.business_id||c.customer_id===auth.user.id);setItems(rows);setError('');
+  const rows=((data||[]) as Conversation[]).filter(c=>!c.business_id||c.customer_id===auth.user.id);setItems(rows);setError('');setLoading(false);
   const friendIds=Array.from(new Set(rows.filter(c=>c.feature==='friends').flatMap(c=>c.participant_ids||[]).filter(id=>id!==auth.user.id)));if(friendIds.length){const {data:profiles,error:profileError}=await supabase.rpc('wantiss_message_contact_profiles');if(profileError)console.warn('Friend profiles could not load:',profileError.message);else setContactProfiles(prev=>({...prev,...Object.fromEntries((profiles||[]).map(p=>[p.id,{full_name:p.full_name,avatar_url:p.avatar_url,wantiss_number:p.wantiss_number}]))}));}
   const storeIds=Array.from(new Set(rows.filter(c=>c.feature==='goodies'&&c.ref_id).map(c=>c.ref_id as string)));
   if(storeIds.length){const {data:stores,error:storeError}=await supabase.from('goodies_store_schedules').select('store_id,cover_url,thumbnail_url,logo_url').in('store_id',storeIds);if(storeError)console.warn('Store cover photos could not load:',storeError.message);const covers:Record<string,string>={};(stores||[]).forEach((s:any)=>{const uri=s.thumbnail_url||s.logo_url||s.cover_url;if(uri)covers[s.store_id]=uri;});setStoreCovers(covers);}else setStoreCovers({});
@@ -55,7 +55,7 @@ export default function MessagesScreen({onBack,onOpenShop,initialConversationId,
  },[]);
  const openConversation=async(c:Conversation)=>{
   setActiveConversation(c);setMessages([]);setDraft(drafts[c.id]||'');
-  const {data:auth}=await supabase.auth.getUser();if(!auth.user)return;
+  const viewerId=currentUserId||(await supabase.auth.getUser()).data.user?.id;if(!viewerId)return;
   const {data,error:queryError}=await supabase.from('messages').select('id,conversation_id,sender_id,body,created_at,read_at').eq('conversation_id',c.id).order('created_at',{ascending:true}).limit(300);
   if(queryError){setError(queryError.message);return;}
   const rows=(data||[]) as Message[];setMessages(rows);setError('');
