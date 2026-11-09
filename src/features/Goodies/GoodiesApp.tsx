@@ -25,7 +25,7 @@ import {t as tr} from './i18n';
 import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
 
 const TABS = ['home', 'cats', 'orders', 'cart'];
-const NOCB = ['cart', 'checkout', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
+const NOCB = ['cart', 'checkout', 'help-pay-preview', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
 export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0, initialRoute}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number; initialRoute?:string}) {
