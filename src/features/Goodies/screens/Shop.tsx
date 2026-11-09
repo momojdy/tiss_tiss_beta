@@ -360,6 +360,7 @@ export function Checkout() {
       <Pressable onPress={() => go('payments')} style={{alignSelf:'flex-start',paddingVertical:7}}><T size={13} weight="600" color={th.br}>{label('lbl.checkoutOpenWallet', 'Open Wallet')}</T></Pressable>
     </View> : null}
     <Pressable accessibilityRole="button" onPress={() => go('help-pay-preview')} style={{paddingVertical: 13, marginTop: 8}}><T size={14} weight="600" color={th.br}>Help Pay / Share Bill · Preview</T><T size={12} color={th.mut}>Explore the flow without sending a request or charging anyone</T></Pressable>
+    <Pressable accessibilityRole="button" onPress={() => go('help-pay-preview')} style={{paddingVertical: 13, marginTop: 8}}><T size={14} weight="600" color={th.br}>Help Pay / Share Bill · Preview</T><T size={12} color={th.mut}>Explore the flow without sending a request or charging anyone</T></Pressable>
     {S.pay === 'card' ? <Card style={{marginTop: 10, padding: 12}}>
       <T weight="600" style={{marginBottom: 10}}>{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
       {S.cards.length ? S.cards.map((card: any) => <Pressable key={card.id} accessibilityRole="radio" accessibilityState={{checked:S.selectedCardId === card.id}} onPress={() => setCard(card.id)} style={{marginBottom:10,borderRadius:16,borderWidth:S.selectedCardId === card.id ? 2 : 1,borderColor:S.selectedCardId === card.id ? '#8FAF84' : th.line,overflow:'hidden'}}>
