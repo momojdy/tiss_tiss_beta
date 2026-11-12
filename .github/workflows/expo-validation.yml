@@ -36,6 +36,8 @@ jobs:
         run: npm run check:goodies-cms && npm run test:goodies
       - name: Verify Goodies review isolation and refresh
         run: npm run test:goodies-cross-role
+      - name: Check privileged client credentials
+        run: npm run check:goodies-client-secrets -- --paired
       - name: Verify unique migration versions
         run: node scripts/check-migration-versions.cjs
       - name: Lint

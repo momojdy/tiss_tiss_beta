@@ -76,7 +76,8 @@
     "test:goodies": "node scripts/run-goodies-tests.cjs",
     "test:goodies-cross-role": "node scripts/audit-goodies-reproductions.cjs",
     "check:migrations": "node scripts/check-migration-versions.cjs",
-    "check:goodies-native-config": "node scripts/check-goodies-native-config.cjs"
+    "check:goodies-native-config": "node scripts/check-goodies-native-config.cjs",
+    "check:goodies-client-secrets": "node scripts/check-goodies-client-secrets.cjs"
   },
   "private": true,
   "engines": {
