@@ -7,6 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as ExpoLinking from 'expo-linking';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { supabase } from '../../lib/supabase';
+import {helpPayIdFromLink} from '../../features/Goodies/helpPayApi';
 
 type QRKind = 'buyer_identity' | 'wallet_receive' | 'vendor_shop';
 type Props = {
@@ -15,6 +16,8 @@ type Props = {
   businessId?: string;
   onOpenShop?: (vendorId: string, shopName: string) => void;
   onOpenWallet?: (token: string, recipient: any) => void;
+  onOpenHelpPay?: (id:string) => void;
+  autoScan?: boolean;
   onOpenBuyer?: (recipient?: any) => void;
   onPrivacyPress?: () => void;
   initialToken?: string | null;
@@ -26,7 +29,7 @@ const THEMES = {
   wallet_receive: { title: 'Add me', subtitle: '', color: '#438C53', pale: '#EFF8EF' },
   vendor_shop: { title: 'Your shop QR', subtitle: 'Let customers open your public shop', color: '#397BC6', pale: '#EEF5FF' },
 };
-export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenBuyer, onPrivacyPress, initialToken, displayToken }: Props) {
+export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop, onOpenWallet, onOpenHelpPay, autoScan=false, onOpenBuyer, onPrivacyPress, initialToken, displayToken }: Props) {
   const theme = THEMES[kind];
   const insets = useSafeAreaInsets();
   const [record, setRecord] = useState<any>(null);
@@ -47,6 +50,11 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const resolveLock = useRef(false);
   const scrollRef = useRef<ScrollView>(null);
+  useEffect(()=>{if(!autoScan||kind!=='wallet_receive')return;let active=true;
+    if(cameraPermission?.granted)setCameraOpen(true);
+    else void requestCameraPermission().then(p=>{if(active&&p.granted)setCameraOpen(true);});
+    return()=>{active=false;};
+  },[autoScan,kind]);
 
   const issue = useCallback(async () => {
     setBusy(true);
@@ -139,6 +147,11 @@ export default function QRIdentityScreen({ kind, onBack, businessId, onOpenShop,
     if (resolveLock.current || resolving) return;
     resolveLock.current = true;
     const raw = (scannedValue ?? tokenInput).trim();
+    const helpPayId=helpPayIdFromLink(raw);
+    if(helpPayId){setCameraOpen(false);setTokenInput('');resolveLock.current=false;
+      if(onOpenHelpPay)onOpenHelpPay(helpPayId);else Alert.alert('Open Help Pay','Open the Wallet to pay this Goodies request.');
+      return;
+    }
     let token = raw;
     if (/^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) {
       const parsed = ExpoLinking.parse(raw);
