@@ -2,12 +2,13 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const root = path.resolve(__dirname, '../src/features/Goodies');
-const pageNames = {WantissEntry:'Wantiss entry',GroupOrderSheet:'Group orders',GroupOrderModal:'Group orders',ScheduleSheet:'Scheduling',ScheduleInline:'Scheduling',SegSchedule:'Scheduling',ReviewSheet:'Review sheet',ContactsSheet:'Contact numbers sheet',CtForm:'Contact number form',Home:'Home',Cats:'Categories',CatList:'Category / store results',Explore:'Explore',Search:'Search',Promos:'Promotions',FlashDeals:'Flash deals',Notifs:'Notifications',Store:'Store',StoreReviews:'Store reviews',Product:'Product',ProductFoot:'Product',Cart:'Cart',Checkout:'Checkout',CheckoutFoot:'Checkout',Confirm:'Order confirmation',Track:'Order tracking',Orders:'Order history',Favs:'Favorites',Help:'Help / FAQs',Settings:'Settings',Profile:'Profile',Addresses:'Addresses',Contact:'Contact support',StoreChat:'Store conversation',LivePayments:'Payment methods',CardAuthentication:'Card verification',ByoScreen:'Build Your Own',ByoFoot:'Build Your Own',GoodiesCourierScreen:'Courier',GroupOrderPage:'Group orders',ImportSheet:'Preview import',Sheets:'Sheets and bottom sheets',GoodiesApp:'Shared navigation and access states',Account:'Account subpages',WalletAddNewCardScreen:'Add card',HelpPayPreview:'Help Pay walkthrough'};
+const pageNames = {WantissEntry:'Wantiss entry',GroupOrderSheet:'Group orders',GroupOrderModal:'Group orders',ScheduleSheet:'Scheduling',ScheduleInline:'Scheduling',SegSchedule:'Scheduling',ReviewSheet:'Review sheet',ContactsSheet:'Contact numbers sheet',CtForm:'Contact number form',Home:'Home',Cats:'Categories',CatList:'Category / store results',Explore:'Explore',Search:'Search',Promos:'Promotions',FlashDeals:'Flash deals',Notifs:'Notifications',Store:'Store',StoreReviews:'Store reviews',Product:'Product',ProductFoot:'Product',Cart:'Cart',Checkout:'Checkout',CheckoutFoot:'Checkout',Confirm:'Order confirmation',Track:'Order tracking',Orders:'Order history',Favs:'Favorites',Help:'Help / FAQs',Settings:'Settings',Profile:'Profile',Addresses:'Addresses',Contact:'Contact support',StoreChat:'Store conversation',LivePayments:'Payment methods',CardAuthentication:'Card verification',ByoScreen:'Build Your Own',ByoFoot:'Build Your Own',GoodiesCourierScreen:'Courier',GroupOrderPage:'Group orders',ImportSheet:'Preview import',Sheets:'Sheets and bottom sheets',GoodiesApp:'Shared navigation and access states',Account:'Account subpages',WalletAddNewCardScreen:'Add card',HelpPayPreview:'Shared Bill requests'};
 function files(dir) { if(!fs.existsSync(dir))return [];return fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry => entry.isDirectory()?files(path.join(dir,entry.name)):/\.tsx?$/.test(entry.name)?[path.join(dir,entry.name)]:[]); }
 function pageFor(node, ast, rel) {
   if(rel.endsWith('BusinessSpaceGoodiesOrders.tsx'))return 'Vendor orders';
   if(rel.includes('businessSpace/')) return 'Vendor settlement';
   for(let ancestor=node.parent;ancestor;ancestor=ancestor.parent) if(ts.isIfStatement(ancestor)&&rel==='components/Sheets.tsx'){const kind=/^k === ['"]([^'"]+)['"]$/.exec(ancestor.expression.getText(ast));if(kind) return 'Sheets · '+kind[1];}
+  if(rel.endsWith('WalletHelpPayScreen.tsx'))return 'Shared Bill contribution';
   if(rel.endsWith('WalletBalance.tsx'))return 'Payment methods';
   if(rel.endsWith('WalletAddNewCardScreen.tsx')) return 'Add card';
   let name='';
@@ -24,7 +25,7 @@ function analyze() {
   const entry=entries.get(id);if(!entry.pages.includes(page))entry.pages.push(page);
   references.push({id,page,source,line,fallback:text});
  };
- for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
+ for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/Wallet/WalletHelpPayScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
   if(!fs.existsSync(filename))continue;const source=fs.readFileSync(filename,'utf8'),ast=ts.createSourceFile(filename,source,99,true),rel=path.relative(root,filename);
   function visit(node){
    const line=ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1;
@@ -45,8 +46,12 @@ function analyze() {
  const pages=[...new Set([...routes.map(r=>r.page),...references.map(r=>r.page),'Support confirmation','Policies','Policy document','Notification detail'])].map(name=>({name,collections:collections[name]||[],routes:routes.filter(r=>r.page===name).map(r=>r.route),fields:[...entries.values()].filter(e=>e.pages.includes(name)).map(e=>e.id)}));
  // Inline Account switch subpages share the same rendering function; explicitly
  // associate their existing dynamic label keys with each actual route.
- const accountSubpages={Policies:['lbl.profilePolicies','lbl.legalTermsTitle','lbl.legalPrivacyTitle','lbl.legalRefundTitle'], 'Policy document':['lbl.legalTermsTitle','lbl.legalPrivacyTitle','lbl.legalRefundTitle','lbl.legalUnavailableTitle','lbl.legalUnavailableBody','lbl.legalPolicyTitle'], 'Notification detail':['lbl.accountNotificationTitle','lbl.accountViewOrder','lbl.accountSeeDetails'], 'Support confirmation':['lbl.accountSupportSentTitle','lbl.accountStoreTicketSent','lbl.accountDemoTicketSent','lbl.accountOpenStoreConversation','lbl.accountBackGoodies']};
+ const accountSubpages={Policies:['lbl.profilePolicies','lbl.legalTermsTitle','lbl.legalPrivacyTitle','lbl.legalRefundTitle'], 'Policy document':['lbl.legalTermsTitle','lbl.legalPrivacyTitle','lbl.legalRefundTitle','lbl.legalUnavailableTitle','lbl.legalUnavailableBody','lbl.legalPolicyTitle'], 'Notification detail':['lbl.accountNotificationTitle','lbl.accountViewOrder','lbl.accountSeeDetails'], 'Support confirmation':['lbl.accountSupportSentTitle','lbl.accountStoreTicketSent','lbl.accountSupportTicketSent','lbl.accountOpenStoreConversation','lbl.accountBackGoodies']};
  for(const [name,ids] of Object.entries(accountSubpages)){const page=pages.find(p=>p.name===name);if(page)page.fields=[...new Set([...page.fields,...ids])];}
  return {restrictionTexts:[...restrictionTexts.values()],entries:[...entries.values()].sort((a,b)=>a.id.localeCompare(b.id)),pages,references,routes};
 }
-module.exports={analyze,root};
+function criticalKeys(result){
+ const pages=new Set(['Vendor settlement','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation','Shared Bill requests','Shared Bill contribution']);
+ return [...new Set([...result.pages.filter(p=>pages.has(p.name)).flatMap(p=>p.fields),...result.restrictionTexts.map(r=>r.id),...result.entries.filter(e=>/^lbl\.(checkout|orders?|payments?|card|addcard|notifications?)/i.test(e.id)).map(e=>e.id),...result.references.filter(r=>['actions.ts','friendlyError.ts','serverSync.ts'].includes(r.source)).map(r=>r.id)])].sort();
+}
+module.exports={analyze,root,criticalKeys};
