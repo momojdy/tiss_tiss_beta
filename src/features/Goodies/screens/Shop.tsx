@@ -11,7 +11,6 @@ import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
 import {providerInfo} from '../providers';
 import {byoRows, byoOn, lineBad, bzEdit, bzRemove} from '../builders/engine';
-import {SEED_REVIEWS} from '../data/seed';
 import {ScheduleInline} from '../components/Sheets';
 import {t as tr} from '../i18n';
 import {supabase} from '../../../lib/supabase';
