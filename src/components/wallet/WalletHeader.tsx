@@ -11,7 +11,7 @@ const OLIVE = '#1A2517';
 const BACKGROUND = '#F5F8F3';
 const BADGE = '#C2148A';
 
-type IconName = 'arrow-left' | 'bell-outline' | 'help-circle-outline';
+type IconName = 'arrow-left' | 'bell-outline' | 'help-circle-outline' | 'qrcode-scan';
 
 function HeaderIconButton({ icon, onPress, badgeCount = 0, label }: {
   icon: IconName; onPress: () => void; badgeCount?: number; label: string;
@@ -32,8 +32,8 @@ function HeaderIconButton({ icon, onPress, badgeCount = 0, label }: {
 
 const interLoadedStyle = { fontFamily: 'Inter_600SemiBold' as const };
 
-export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress }: {
-  onBack: () => void; onNotificationsPress?: () => void; onHelpPress?: () => void;
+export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress, onScanPress }: {
+  onBack: () => void; onNotificationsPress?: () => void; onHelpPress?: () => void; onScanPress?: () => void;
 }) {
   const [unreadCount, setUnreadCount] = useState(0);
   const [manropeLoaded] = useFonts({ Manrope_800ExtraBold });
@@ -62,6 +62,7 @@ export default function WalletHeader({ onBack, onNotificationsPress, onHelpPress
             <Text style={styles.title}>Wallet</Text>
           </View>
           <View style={styles.rightSide}>
+            <HeaderIconButton icon="qrcode-scan" label="Scan Help Pay QR" onPress={onScanPress ?? (() => {})} />
             <HeaderIconButton icon="bell-outline" label="Notifications" badgeCount={unreadCount} onPress={onNotificationsPress ?? (() => {})} />
             <HeaderIconButton icon="help-circle-outline" label="Help" onPress={onHelpPress ?? (() => {})} />
           </View>
