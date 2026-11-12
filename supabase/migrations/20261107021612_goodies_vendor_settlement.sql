@@ -483,3 +483,21 @@ do $$ declare r record;begin
  end loop;
 end $$;
 commit;
+
+-- Shared Bill funding is excluded from this release. The public API boundary
+-- enforces that decision as well as the client gate. Preserve status/cancel
+-- access so previously created requests can still be inspected and refunded.
+do $shared_bill_release_gate$
+declare v_signature text; v_function regprocedure;
+begin
+ foreach v_signature in array array[
+  'public.help_pay_create_request(text,bigint,text,jsonb)',
+  'public.help_pay_contribute_wallet(uuid,bigint,text)'
+ ] loop
+  v_function:=to_regprocedure(v_signature);
+  if v_function is not null then
+   execute format('revoke all on function %s from public,anon,authenticated',v_function);
+  end if;
+ end loop;
+end;
+$shared_bill_release_gate$;

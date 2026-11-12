@@ -13,7 +13,12 @@ Deno.test('server builder rules enforce availability, required groups, limits an
     const source=await Deno.readTextFile(new URL('../../migrations/20261025115651_validate_goodies_custom_builder_orders.sql',import.meta.url));
     const marker=source.indexOf('AS $function$');
     await db.exec(source.slice(0,source.indexOf('$function$',marker+13)+11)+';');
-    await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106022200_goodies_builder_selection_contract.sql',import.meta.url)));
+    // Keep this builder-only fixture minimal; full migration/group coverage runs
+    // in deploymentPackage_test and groupCheckoutConsent_test.
+    const selectionContract=await Deno.readTextFile(new URL('../../migrations/20261106022200_goodies_builder_selection_contract.sql',import.meta.url));
+    const builderGuard=selectionContract.match(/do \$migration\$[\s\S]*?\$migration\$;/)?.[0];
+    check(!!builderGuard,'Builder migration block must be present');
+    await db.exec(builderGuard!);
     for(const builder of ['pizza','burger','custom']){
       await db.query('insert into public.goodies_builder_configs values($1,$2,true,$3::jsonb)',[business,builder,JSON.stringify(config)]);
       const valid={id:'byo:'+builder,p:15,q:1,byo:{sid:'synthetic-store',bid:builder,size:'large',sel:{base:['standard'],extras:['a','b']}}};
