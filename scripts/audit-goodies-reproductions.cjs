@@ -161,15 +161,15 @@ test('REGRESSION A28: checkout payment outages render retry and never a false mi
 });
 
 test('store sharing never displays private friend-list or message transport errors',async()=>{
- const messages=[],set=()=>{},S={accountId:'customer'},failure=new Error('private relation SQLSTATE 42501 connection token');
+ const messages=[],problems=[],set=()=>{},S={accountId:'customer'},failure=new Error('private relation SQLSTATE 42501 connection token');
  const query={select(){return this;},eq(){return this;},or:async()=>({error:failure}),contains(){return this;},limit(){return this;},maybeSingle:async()=>({error:failure})};
- const context={S,setShareOpen:set,setShareLoading:set,setShareFriends:set,setShareSending:set,shareSending:null,label,Alert:{alert:(_title,message)=>messages.push(message)},friendlyError:(_e,fallback)=>fallback,supabase:{auth:{getUser:async()=>({data:{user:{id:'customer'}}})},from:()=>query,rpc:async()=>({data:[]})}};
+ const context={S,setShareOpen:set,setShareLoading:set,setShareProblem:value=>problems.push(value),setShareFriends:set,setShareSending:set,shareSending:null,label,Alert:{alert:(_title,message)=>messages.push(message)},friendlyError:(_e,fallback)=>fallback,supabase:{auth:{getUser:async()=>({data:{user:{id:'customer'}}})},from:()=>query,rpc:async()=>({data:[]})}};
  await extract(root,'src/features/Goodies/screens/Shop.tsx','openStoreShare')(context)();
  await extract(root,'src/features/Goodies/screens/Shop.tsx','sendStoreToFriend')(context)('friend');
- assert.deepEqual(messages,['Could not load friends.','Please try again.']);
+ assert.deepEqual(messages,['Could not load friends.','Please try again.']);assert.equal(problems.at(-1),'Could not load friends.');
 });
 test('store sharing never starts a write for a replacement account',async()=>{
  const S={accountId:'customer'};let calls=0;
- const send=extract(root,'src/features/Goodies/screens/Shop.tsx','sendStoreToFriend')({S,shareSending:null,setShareSending(){},supabase:{auth:{getUser:async()=>{S.accountId='other';return{data:{user:{id:'other'}}};}},from:()=>{calls++;throw Error('Must not query');}},label,Alert:{alert(){throw Error('Must not alert the replacement account');}},friendlyError:(_e,fallback)=>fallback});
+ const send=extract(root,'src/features/Goodies/screens/Shop.tsx','sendStoreToFriend')({S,shareSending:null,setShareProblem(){},setShareSending(){},supabase:{auth:{getUser:async()=>{S.accountId='other';return{data:{user:{id:'other'}}};}},from:()=>{calls++;throw Error('Must not query');}},label,Alert:{alert(){throw Error('Must not alert the replacement account');}},friendlyError:(_e,fallback)=>fallback});
  await send('friend');assert.equal(calls,0);
 });

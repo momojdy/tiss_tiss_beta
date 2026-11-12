@@ -7243,5 +7243,10 @@
     "fr": "Contact pour la commande",
     "es": "Contacto del pedido",
     "zh-Hans": "订单联系人"
+  },
+  "The group cart or total changed. Review it again before paying.": {
+    "fr": "Le panier groupé ou son total a changé. Vérifiez-le de nouveau avant de payer.",
+    "es": "El carrito grupal o el total cambió. Revísalo de nuevo antes de pagar.",
+    "zh-Hans": "拼单购物车或总额已更改。请重新核对后再付款。"
   }
 }
