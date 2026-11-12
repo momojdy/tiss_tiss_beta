@@ -246,6 +246,37 @@ export async function refreshGoodiesAccess() {
   return S.goodiesAccess;
 }
 
+export async function refreshGoodiesContactNumbers() {
+  if (providerInfo.demo) return S.gc;
+  const {data:{user}} = await supabase.auth.getUser();
+  if (!user) return S.gc;
+  const {data,error} = await supabase.from('goodies_contact_numbers').select('id,phone_number,label').eq('user_id',user.id).order('created_at',{ascending:true});
+  if (error) throw error;
+  const previousPhone = S.gc.find((entry:any)=>entry.id===S.cc)?.ph;
+  S.gc = (data||[]).map((entry:any)=>({id:entry.id,ph:entry.phone_number,l:entry.label}));
+  S.cc = S.gc.find((entry:any)=>entry.ph===previousPhone)?.id || (S.cc==='w'?'w':S.gc[0]?.id||'w');
+  emit();
+  return S.gc;
+}
+export async function persistGoodiesContactNumber(phone:string,name:string,id?:string) {
+  const {data:{user}} = await supabase.auth.getUser();
+  if (!user) throw new Error('Sign in to save this number.');
+  const payload = {user_id:user.id,phone_number:phone,label:name};
+  const {data,error} = id
+    ? await supabase.from('goodies_contact_numbers').update(payload).eq('id',id).eq('user_id',user.id).select('id').single()
+    : await supabase.from('goodies_contact_numbers').insert(payload).select('id').single();
+  if(error) throw error;
+  await refreshGoodiesContactNumbers();
+  S.cc = data.id; await save();emit();
+}
+export async function removeGoodiesContactNumber(id:string) {
+  const {data:{user}}=await supabase.auth.getUser();
+  if(!user) throw new Error('Sign in to remove this number.');
+  const {error}=await supabase.from('goodies_contact_numbers').delete().eq('id',id).eq('user_id',user.id);
+  if(error) throw error;
+  if(S.cc===id) S.cc='w';
+  await refreshGoodiesContactNumbers();await save();
+}
 export async function refreshUserAddresses() {
   if (providerInfo.demo) return S.addr;
   const {data: auth, error: authError} = await supabase.auth.getUser();
@@ -297,6 +328,7 @@ export async function load() {
       const {data: profile} = await supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', auth.user.id).maybeSingle();
       if (profile) S.pf = {n: profile.full_name || '', e: profile.email || auth.user.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
       await refreshUserAddresses();
+      await refreshGoodiesContactNumbers().catch(()=>undefined);
     }
   } catch (e) {}
   if (!providerInfo.demo) {
