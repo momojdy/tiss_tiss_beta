@@ -359,7 +359,7 @@ export function Checkout() {
       <T size={12.5} color={th.mut} style={{marginTop:4}}>{!S.hasWallet ? label("lbl.cms.cbbfe5f88c2e", "Create a Wantiss wallet or choose another payment method.") : label("lbl.cms.181c95d39d9a", "Balance: ") + money(S.wallet) + label("lbl.cms.b11cd484018f", " · Add at least ") + money(Math.max(0, t.total - S.wallet)) + label("lbl.cms.e0b12ec3af49", " to continue.")}</T>
       <Pressable onPress={() => go('payments')} style={{alignSelf:'flex-start',paddingVertical:7}}><T size={13} weight="600" color={th.br}>{label('lbl.checkoutOpenWallet', 'Open Wallet')}</T></Pressable>
     </View> : null}
-    <Pressable accessibilityRole="button" onPress={() => go('help-pay')} style={{paddingVertical: 13, marginTop: 8}}><T size={14} weight="600" color={th.br}>{label("lbl.cms.42b822c31c92", "Help Pay / Share Bill")}</T><T size={12} color={th.mut}>{label("lbl.cms.d0b078223c9e", "Create a verified payment request and share it with friends anyone")}</T></Pressable>
+    <Pressable accessibilityRole="button" onPress={() => go('help-pay')} style={{paddingVertical: 13, marginTop: 8}}><T size={14} weight="600" color={th.br}>{label("lbl.cms.42b822c31c92", "Help Pay / Share Bill")}</T><T size={12} color={th.mut}>{label("lbl.cms.d0b078223c9e", "Create a verified payment request and share it with friends")}</T></Pressable>
     {S.pay === 'card' ? <Card style={{marginTop: 10, padding: 12}}>
       <T weight="600" style={{marginBottom: 10}}>{label('lbl.checkoutSavedCard', 'Choose a saved card')}</T>
       {S.cards.length ? S.cards.map((card: any) => <Pressable key={card.id} accessibilityRole="radio" accessibilityState={{checked:S.selectedCardId === card.id}} onPress={() => setCard(card.id)} style={{marginBottom:10,borderRadius:16,borderWidth:S.selectedCardId === card.id ? 2 : 1,borderColor:S.selectedCardId === card.id ? '#8FAF84' : th.line,overflow:'hidden'}}>
@@ -405,7 +405,7 @@ export function Checkout() {
     </View>
   );
 }
-export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={(S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? placeOrder : checkoutNext} />;};
+export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={(S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? () => {void placeOrder();} : checkoutNext} />;};
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
