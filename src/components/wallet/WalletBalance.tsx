@@ -148,11 +148,17 @@ function CurrencyDropdown({
   );
 }
 
-export default function WalletBalance({ height = 170 }: { height?: number }) {
+export default function WalletBalance({ height = 170, contentLabel = (_id: string, fallback: string) => fallback }: { height?: number; contentLabel?: (id: string, fallback: string) => string }) {
   const [selectedCurrency, setSelectedCurrency] = useState('USD');
   const [showBalance, setShowBalance] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const walletText = contentLabel;
+  const [errorMessage, setErrorMessage] = useState<'signIn'|'missing'|'loadFailed'|null>(null);
+  const walletErrors = {
+    signIn:walletText('lbl.wallet.signIn','Sign in to view your wallet.'),
+    missing:walletText('lbl.wallet.missing','No wallet found for this account.'),
+    loadFailed:walletText('lbl.wallet.loadFailed','Could not load wallet. Tap to retry.'),
+  };
   const [wantissNumber, setWantissNumber] = useState<string | null>(null);
   const [usdBalance, setUsdBalance] = useState(0);
   const [rates, setRates] = useState<Record<string, number>>({ USD: 1 });
@@ -178,7 +184,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
       if (!user) {
         if (!mounted.current) return;
         setIsLoading(false);
-        setErrorMessage('Sign in to view your wallet.');
+        setErrorMessage('signIn');
         return;
       }
 
@@ -192,7 +198,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
       if (!walletRow) {
         if (!mounted.current) return;
         setIsLoading(false);
-        setErrorMessage('No wallet found for this account.');
+        setErrorMessage('missing');
         return;
       }
 
@@ -249,7 +255,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
       console.warn('WalletBalance error:', error);
       if (!mounted.current) return;
       setIsLoading(false);
-      setErrorMessage('Could not load wallet. Tap to retry.');
+      setErrorMessage('loadFailed');
     } finally {
       isFetching.current = false;
     }
@@ -338,7 +344,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
               ellipsizeMode="clip"
               allowFontScaling={false}
             >
-              Wantiss Crédité
+              {walletText('lbl.wallet.title','Wantiss Crédité')}
             </Text>
             <Pressable
               hitSlop={6}
@@ -382,7 +388,7 @@ export default function WalletBalance({ height = 170 }: { height?: number }) {
         {errorMessage ? (
           <View style={styles.centerRow}>
             <MaterialIcon d={INFO_OUTLINE} size={13} opacity={0.8} />
-            <Text style={styles.error}>{errorMessage}</Text>
+            <Text style={styles.error}>{walletErrors[errorMessage]}</Text>
           </View>
         ) : (
           <View style={[styles.centerRow, styles.footerRow]}>

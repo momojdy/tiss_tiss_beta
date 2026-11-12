@@ -1,3 +1,4 @@
+import {label} from './content';
 import React, {useCallback, useEffect, useState} from 'react';
 import {ActivityIndicator, Alert, Pressable, ScrollView, Text, View} from 'react-native';
 import * as Location from 'expo-location';
@@ -40,7 +41,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     });
   },[]);
 
-  useEffect(()=>{let active=true;void load().catch(e=>Alert.alert('Could not load deliveries',friendlyError(e,'Please try again.'))).finally(()=>{if(active)setLoading(false);});
+  useEffect(()=>{let active=true;void load().catch(e=>Alert.alert(label("lbl.cms.ce9c4301c916", "Could not load deliveries"),friendlyError(e,label("lbl.cms.89e524601f0d", "Please try again.")))).finally(()=>{if(active)setLoading(false);});
     const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.new?.status!==payload.old?.status)void load();}).subscribe();
     return()=>{active=false;void supabase.removeChannel(ch);};
   },[load,uid]);
@@ -118,13 +119,13 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
           p_heading:position.coords.heading,
           p_speed_mps:position.coords.speed,
         }).then(({error})=>{
-          if(error&&!cancelled)setLocationStatus(friendlyError(error,'GPS update failed.'));
+          if(error&&!cancelled)setLocationStatus(friendlyError(error,label("lbl.cms.809e99644369", "GPS update failed.")));
         });
       });
     };
 
     void startTracking().catch(error=>{
-      if(!cancelled)setLocationStatus(friendlyError(error,'Unable to start background GPS'));
+      if(!cancelled)setLocationStatus(friendlyError(error,label("lbl.cms.87e2d9bf2774", "Unable to start background GPS")));
     });
     return()=>{
       cancelled=true;
@@ -143,11 +144,11 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
 
   const signOut=async()=>{
     if(activeOrderId){
-      Alert.alert('Delivery in progress','Complete the active delivery before signing out so customer tracking is not interrupted.');
+      Alert.alert(label("lbl.cms.a56cc2117fd5", "Delivery in progress"),label("lbl.cms.9694ac7e3bc7", "Complete the active delivery before signing out so customer tracking is not interrupted."));
       return;
     }
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:false,p_accepts_cash_on_delivery:acceptsCash});
-    if(error){Alert.alert('Could not go offline',friendlyError(error,'Please try again.'));return;}
+    if(error){Alert.alert(label("lbl.cms.2e6f98d92bd3", "Could not go offline"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));return;}
     try {
       if(await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK)){
         await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
@@ -159,50 +160,50 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
     setBusy('presence');
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
-    if(error)Alert.alert('Availability not updated',friendlyError(error,'Please try again.'));else{setAvailable(next);setAcceptsCash(cash);}
+    if(error)Alert.alert(label("lbl.cms.0de16b1a1542", "Availability not updated"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));else{setAvailable(next);setAcceptsCash(cash);}
     setBusy('');
   };
   const respond=async(orderId:string,accept:boolean)=>{
     setBusy(orderId);
     const {error}=await supabase.rpc('goodies_courier_respond_assignment',{p_order_id:orderId,p_accept:accept});
-    if(error)Alert.alert('Could not respond',friendlyError(error,'Please try again.'));else await load();
+    if(error)Alert.alert(label("lbl.cms.e8f8942d465d", "Could not respond"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));else await load();
     setBusy('');
   };
   const advance=async(orderId:string,status:'picked_up'|'delivered')=>{
     setBusy(orderId);
     const {error}=await supabase.rpc('goodies_courier_update_delivery_status',{p_order_id:orderId,p_status:status});
-    if(error)Alert.alert('Could not update delivery',friendlyError(error,'Please try again.'));else await load();
+    if(error)Alert.alert(label("lbl.cms.7c6ce6c610f1", "Could not update delivery"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));else await load();
     setBusy('');
   };
 
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
     <View style={{height:100,paddingHorizontal:20,paddingBottom:12,backgroundColor:'#fff',borderBottomWidth:1,borderBottomColor:'#E3E8DF',flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'}}>
-      <View><Text style={{fontSize:20,fontWeight: "600",color:'#172316'}}>Goodies Courier</Text><Text style={{fontSize:11,color:'#667064'}}>Delivery assignments and live GPS</Text></View>
-      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight: "600",color:'#52634F'}}>Sign out</Text></Pressable>
+      <View><Text style={{fontSize:20,fontWeight: "600",color:'#172316'}}>{label("lbl.cms.1c37cd1c523e", "Goodies Courier")}</Text><Text style={{fontSize:11,color:'#667064'}}>{label("lbl.cms.7961892a1ae8", "Delivery assignments and live GPS")}</Text></View>
+      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight: "600",color:'#52634F'}}>{label("lbl.cms.7169f4af4373", "Sign out")}</Text></Pressable>
     </View>
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
-        <Text style={{fontSize:15,fontWeight: "600",color:'#1A2517'}}>Availability</Text>
-        <Text style={{fontSize:12,color:'#5F6B5A'}}>Go online to receive Goodies delivery offers. GPS sharing starts after you accept and continues in the background while the delivery is active.</Text>
+        <Text style={{fontSize:15,fontWeight: "600",color:'#1A2517'}}>{label("lbl.cms.4670a8753b97", "Availability")}</Text>
+        <Text style={{fontSize:12,color:'#5F6B5A'}}>{label("lbl.cms.923b004405b0", "Go online to receive Goodies delivery offers. GPS sharing starts after you accept and continues in the background while the delivery is active.")}</Text>
         <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
-          <Text style={{fontWeight: "600",color:available?'#286A35':'#465044'}}>{busy==='presence'?'Saving…':activeOrderId?'Delivery in progress · GPS tracking active':available?'You are online · Tap to go offline':'Go online'}</Text>
+          <Text style={{fontWeight: "600",color:available?'#286A35':'#465044'}}>{busy==='presence'?label("lbl.cms.ea052535e65e", "Saving…"):activeOrderId?label("lbl.cms.e2cafebf4b38", "Delivery in progress · GPS tracking active"):available?label("lbl.cms.e0c1f42dae8c", "You are online · Tap to go offline"):label("lbl.cms.d3055d65ac25", "Go online")}</Text>
         </Pressable>
         <Pressable disabled={!!busy||!available||!!activeOrderId} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
-          <Text style={{fontSize:13,color:'#263324'}}>I accept cash on delivery</Text><Text style={{fontSize:13,fontWeight: "600",color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?'ON':'OFF'}</Text>
+          <Text style={{fontSize:13,color:'#263324'}}>{label("lbl.cms.09ae3d36c166", "I accept cash on delivery")}</Text><Text style={{fontSize:13,fontWeight: "600",color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?label("lbl.cms.8f4b0527a23c", "ON"):label("lbl.cms.6cde4afa422f", "OFF")}</Text>
         </Pressable>
         <Text style={{fontSize:11,color:'#697567'}}>{locationStatus}</Text>
       </View>
-      <Text style={{fontSize:17,fontWeight: "600",color:'#1A2517'}}>My deliveries</Text>
+      <Text style={{fontSize:17,fontWeight: "600",color:'#1A2517'}}>{label("lbl.cms.9ed6a2aa1cf9", "My deliveries")}</Text>
       {loading?<ActivityIndicator/>:null}
-      {!loading&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>No active delivery offers</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>New offers will appear here when a store assigns you.</Text></View>:null}
+      {!loading&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>{label("lbl.cms.6ddb87eb71b2", "No active delivery offers")}</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>{label("lbl.cms.4b8df09e4dfe", "New offers will appear here when a store assigns you.")}</Text></View>:null}
       {deliveries.map(d=><View key={d.id} style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:8}}>
         <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight: "600",color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight: "600",color:'#426B39'}}>{d.status}</Text></View>
         <Text style={{fontSize:13,color:'#263324'}}> {String(d.address?.t||d.address?.address||'Delivery address unavailable')} </Text>
-        <Text style={{fontSize:12,color:'#687264'}}>Customer: {d.contact_phone||'No phone'} · {d.payment_method==='cash'?'Cash on delivery':'Prepaid'}</Text>
+        <Text style={{fontSize:12,color:'#687264'}}>{label("lbl.cms.1e2ac2ca5391", "Customer: ")}{d.contact_phone||label("lbl.cms.846f347b830b", "No phone")} · {d.payment_method==='cash'?label("lbl.cms.3942099232a3", "Cash on delivery"):label("lbl.cms.74ebf31a8487", "Prepaid")}</Text>
         <Text style={{fontSize:13,fontWeight: "600",color:'#1A2517'}}>{money(d.total)}</Text>
-        {d.status==='offered'?<View style={{flexDirection:'row',gap:8}}><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,true)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{busy===d.order_id?'Saving…':'Accept delivery'}</Text></Pressable><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,false)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#F7ECEA',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#9B4036'}}>Decline</Text></Pressable></View>:null}
-        {d.status==='accepted'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'picked_up')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>Picked up order</Text></Pressable>:null}
-        {d.status==='picked_up'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'delivered')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>Mark delivered</Text></Pressable>:null}
+        {d.status==='offered'?<View style={{flexDirection:'row',gap:8}}><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,true)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{busy===d.order_id?label("lbl.cms.ea052535e65e", "Saving…"):label("lbl.cms.3e82f7a82e08", "Accept delivery")}</Text></Pressable><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,false)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#F7ECEA',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#9B4036'}}>{label("lbl.cms.19a9e614842b", "Decline")}</Text></Pressable></View>:null}
+        {d.status==='accepted'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'picked_up')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{label("lbl.cms.2ca6e6a547c5", "Picked up order")}</Text></Pressable>:null}
+        {d.status==='picked_up'?<Pressable disabled={!!busy} onPress={()=>void advance(d.order_id,'delivered')} style={{padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{label("lbl.cms.af35acfc4f83", "Mark delivered")}</Text></Pressable>:null}
       </View>)}
     </ScrollView>
   </View>;

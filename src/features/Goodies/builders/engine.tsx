@@ -132,10 +132,10 @@ export function bLine(b: Builder, d: any, q: number) {
   return {k: 'byo|' + b.id + '|' + hs(JSON.stringify([d.size, sel, note, br.total])), id: 'byo:' + b.id, n: b.name + (br.size ? ' — ' + br.size.name : ''), e: b.emoji, p: br.total, q, d: bFlat(br), nt: note, byo: {sid: d.sid, bid: b.id, type: b.type, size: d.size, sel, lines: br.lines}};
 }
 export function lineBad(l: any): string {
-  if (!l.byo) return ''; const b = bGet(l.byo.sid, l.byo.bid); if (!b) return 'is no longer offered';
+  if (!l.byo) return ''; const b = bGet(l.byo.sid, l.byo.bid); if (!b) return label('lbl.byoLineRemoved','is no longer offered');
   const d = {sid: l.byo.sid, size: l.byo.size, sel: l.byo.sel}, ck = bCheck(b, d);
-  if (!ck.ok) return 'needs changes: ' + (ck.errs[0] || ck.conf[0]);
-  if (bBreak(b, d).total !== l.p) return 'has a new price. Open Edit to review it'; return '';
+  if (!ck.ok) return label('lbl.byoLineNeedsChanges','needs changes: ') + (ck.errs[0] || ck.conf[0]);
+  if (bBreak(b, d).total !== l.p) return label('lbl.byoLinePriceChanged','has a new price. Open Edit to review it'); return '';
 }
 hooks.bGet = bGet; hooks.bCheck = bCheck; hooks.bLine = bLine; (hooks as any).lineBad = lineBad;
 

@@ -1,0 +1,9 @@
+src/components/gatherz/GatherzPassV2.tsx(8,31): error TS2307: Cannot find module 'expo-sensors' or its corresponding type declarations.
+src/components/gatherz/GatherzPassV2.tsx(32,92): error TS2694: Namespace '"/workspace/tiss_tiss_beta/node_modules/react-native-reanimated/lib/typescript/Animated"' has no exported member 'SharedValue'.
+src/components/gatherz/GatherzPassV2.tsx(56,92): error TS2694: Namespace '"/workspace/tiss_tiss_beta/node_modules/react-native-reanimated/lib/typescript/Animated"' has no exported member 'SharedValue'.
+src/components/gatherz/GatherzPassV2.tsx(56,126): error TS2694: Namespace '"/workspace/tiss_tiss_beta/node_modules/react-native-reanimated/lib/typescript/Animated"' has no exported member 'SharedValue'.
+src/components/gatherz/GatherzPassV2.tsx(64,59): error TS2694: Namespace '"/workspace/tiss_tiss_beta/node_modules/react-native-reanimated/lib/typescript/Animated"' has no exported member 'SharedValue'.
+src/components/gatherz/GatherzPassV2.tsx(120,43): error TS7006: Parameter 'available' implicitly has an 'any' type.
+src/components/gatherz/GatherzPassV2.tsx(123,51): error TS7031: Binding element 'x' implicitly has an 'any' type.
+src/screens/Main/mainMessagesScreen.tsx(43,714): error TS7006: Parameter 'p' implicitly has an 'any' type.
+src/screens/Main/mainMessagesScreen.tsx(238,5649): error TS2551: Property 'absoluteFillObject' does not exist on type 'typeof StyleSheet'. Did you mean 'absoluteFill'?

@@ -18,6 +18,8 @@ jobs:
           cache: npm
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Goodies CMS source coverage and regression tests
+        run: npm run check:goodies-cms && npm run test:goodies-cms
       - name: Lint
         run: npm run lint
       - name: Type-check

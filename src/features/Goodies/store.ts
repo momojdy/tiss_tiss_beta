@@ -207,7 +207,7 @@ export async function refreshLiveSchedules() {
     S.catalogError = '';
     applyZone();
   } catch (e: any) {
-    S.catalogError = friendlyError(e, 'Could not load stores');
+    S.catalogError = friendlyError(e, label("lbl.cms.ce62eda09faa", "Could not load stores"));
   }
   if (!liveTimer) {
     liveTimer = setInterval(() => {
@@ -426,7 +426,7 @@ export async function refreshStoreDistances(storeIds: string[], address: Address
     });
     if (currentDistanceAddressKey() !== addressKey) return distances;
     if (error) {
-      batch.forEach(store => { store.distanceError = friendlyError(error, 'Distance is unavailable for this address.'); });
+      batch.forEach(store => { store.distanceError = friendlyError(error, label("lbl.cms.5abb6f216652", "Distance is unavailable for this address.")); });
       emit();
       throw error;
     }
@@ -608,7 +608,7 @@ export async function syncActiveGroup(op: {line?: CartLine; removeKey?: string})
   const r: any = op.removeKey ? await removeGroupOrderCartLine(g.groupId, op.removeKey) : op.line ? await syncGroupOrderCartLine(g.groupId, op.line) : null;
   if (r?.error) {
     console.warn('[Goodies] group sync failed', r.error);
-    toast('Saved to your cart. It could not be shared with the group just now.');
+    toast(label("lbl.cms.b0b30ad199f5", "Saved to your cart. It could not be shared with the group just now."));
   }
 }
 export async function removeGroupOrderCartLine(groupId: string, lineKey: string) {
@@ -659,7 +659,20 @@ export function filt(list: Store[]) {
   if (f === 'near') l.sort((a, b) => (a.live && !a.distanceReady ? Number.POSITIVE_INFINITY : a.km) - (b.live && !b.distanceReady ? Number.POSITIVE_INFINITY : b.km));
   return l;
 }
-export const FCH: [string, string][] = [['', 'All'], ['offers', 'Offers'], ['free', 'Free delivery'], ['top', 'Rating 4.5+'], ['fast', 'Under 30 min'], ['open', 'Open now'], ['near', 'Nearest']];
+const filterChoice = (key:string, text:()=>string):[string,string] => {
+  const row:[string,string]=[key,''];
+  Object.defineProperty(row,1,{enumerable:true,get:text});
+  return row;
+};
+export const FCH:[string,string][] = [
+  filterChoice('',()=>label('lbl.filterAll','All')),
+  filterChoice('offers',()=>label('lbl.filterOffers','Offers')),
+  filterChoice('free',()=>label('lbl.filterFree','Free delivery')),
+  filterChoice('top',()=>label('lbl.filterTop','Rating 4.5+')),
+  filterChoice('fast',()=>label('lbl.filterFast','Under 30 min')),
+  filterChoice('open',()=>label('lbl.filterOpen','Open now')),
+  filterChoice('near',()=>label('lbl.filterNearest','Nearest')),
+];
 
 /* demo only: wipes local data */
 export async function resetDemo() {

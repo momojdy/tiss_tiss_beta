@@ -1,0 +1,123 @@
+{
+  "base": "267e2286c0e074e0c55e794092297fa61e75a4b5",
+  "total": 2200,
+  "results": [
+    {
+      "file": "src/components/wallet/WalletBalance.tsx",
+      "equal": true,
+      "before": 32,
+      "after": 32
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "equal": true,
+      "before": 88,
+      "after": 88
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "equal": true,
+      "before": 35,
+      "after": 35
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "equal": true,
+      "before": 16,
+      "after": 16
+    },
+    {
+      "file": "src/features/Goodies/builders/Builder.tsx",
+      "equal": true,
+      "before": 157,
+      "after": 157
+    },
+    {
+      "file": "src/features/Goodies/builders/engine.tsx",
+      "equal": true,
+      "before": 18,
+      "after": 18
+    },
+    {
+      "file": "src/features/Goodies/components/Overlays.tsx",
+      "equal": true,
+      "before": 7,
+      "after": 7
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "equal": true,
+      "before": 399,
+      "after": 399
+    },
+    {
+      "file": "src/features/Goodies/components/cards.tsx",
+      "equal": true,
+      "before": 124,
+      "after": 124
+    },
+    {
+      "file": "src/features/Goodies/components/ui.tsx",
+      "equal": true,
+      "before": 88,
+      "after": 88
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "equal": true,
+      "before": 158,
+      "after": 158
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "equal": true,
+      "before": 195,
+      "after": 195
+    },
+    {
+      "file": "src/features/Goodies/screens/CardAuthentication.tsx",
+      "equal": true,
+      "before": 9,
+      "after": 9
+    },
+    {
+      "file": "src/features/Goodies/screens/HelpPayPreview.tsx",
+      "equal": true,
+      "before": 103,
+      "after": 103
+    },
+    {
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "equal": true,
+      "before": 62,
+      "after": 62
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "equal": false,
+      "before": 611,
+      "after": 611,
+      "changes": [
+        "style={{fontSize:17,fontWeight:'600',color:th.ink}}"
+      ]
+    },
+    {
+      "file": "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+      "equal": false,
+      "before": 98,
+      "after": 99,
+      "changes": [
+        "style={{color:C.olive,fontFamily:FW[600],paddingVertical:10}}",
+        "style={[s.paybar, { paddingBottom: 12 + insets.bottom }, payStyle]}",
+        "style={({ pressed }) => [s.pay, pressed && { transform: [{ scale: 0.97 }] }]}",
+        "style={{ color: '#fff', fontFamily: FW[800], fontSize: 16 }}",
+        "width={18}",
+        "height={18}",
+        "style={{ position: 'absolute', left: 0, right: 0, top: targetCenter + (sceneH * 1.06) / 2 + 34, paddingHorizontal: 32, alignItems: 'center', opacity: statusOpacity, zIndex: 6 }}",
+        "style={{ width: 54, height: 54 }}",
+        "style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, borderWidth: 4, borderColor: 'rgba(26,37,23,.14)', borderTopColor: C.olive, opacity: success ? 0 : 1, transform: [{ rotate: spin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] }) }] }}",
+        "style={{ position: 'absolute', width: 54, height: 54, borderRadius: 27, backgroundColor: C.ok, alignItems: 'center', justifyContent: 'center', opacity: okAnim, transform: [{ scale: okAnim.interpolate({ inputRange: [0, 1], outputRange: [0.4, 1] }) }] }}"
+      ]
+    }
+  ]
+}

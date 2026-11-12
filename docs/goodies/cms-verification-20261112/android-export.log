@@ -1,0 +1,64 @@
+Starting Metro Bundler
+
+Android Bundling failed 7123ms index.ts (2532 modules)
+Unable to resolve "expo-sensors" from "src/components/gatherz/GatherzPassV2.tsx"
+[0m [90m  6 |[39m [36mimport[39m { [33mLinearGradient[39m } [36mfrom[39m [32m'expo-linear-gradient'[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mQRCode[39m [36mfrom[39m [32m'react-native-qrcode-svg'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mAccelerometer[39m } [36mfrom[39m [32m'expo-sensors'[39m[33m;[39m
+ [90m    |[39m                                [31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { fonts[33m,[39m useGatherzTheme } [36mfrom[39m [32m'../../theme/gatherzTheme'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { formatWhen[33m,[39m qrPayload } [36mfrom[39m [32m'../../lib/gatherz/rules'[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m { angleOf[33m,[39m build[33m,[39m [33mDT[39m[33m,[39m glyphLayout[33m,[39m [33mHO[39m[33m,[39m [33mLINK[39m[33m,[39m [33mN[39m[33m,[39m step[33m,[39m strapGeometry } [36mfrom[39m [32m'./pass/physics'[39m[33m;[39m[0m
+
+Import stack:
+
+ src/components/gatherz/GatherzPassV2.tsx
+ | import "expo-sensors"
+
+ src/screens/Gatherz/GatherzTicketScreen.tsx
+ | import "../../components/gatherz/GatherzPassV2"
+
+ src/features/gatherz/GatherzStandaloneEntry.tsx
+ | import "../../screens/Gatherz/GatherzTicketScreen"
+
+ App.tsx
+ | import "./src/features/gatherz/GatherzStandaloneEntry"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+
+
+Error: Unable to resolve module expo-sensors from /workspace/goodies-cms-completion/tiss_tiss_beta/src/components/gatherz/GatherzPassV2.tsx: expo-sensors could not be found within the project or in these directories:
+  node_modules
+  ../node_modules
+[0m [90m  6 |[39m [36mimport[39m { [33mLinearGradient[39m } [36mfrom[39m [32m'expo-linear-gradient'[39m[33m;[39m
+ [90m  7 |[39m [36mimport[39m [33mQRCode[39m [36mfrom[39m [32m'react-native-qrcode-svg'[39m[33m;[39m
+[31m[1m>[22m[39m[90m  8 |[39m [36mimport[39m { [33mAccelerometer[39m } [36mfrom[39m [32m'expo-sensors'[39m[33m;[39m
+ [90m    |[39m                                [31m[1m^[22m[39m
+ [90m  9 |[39m [36mimport[39m { fonts[33m,[39m useGatherzTheme } [36mfrom[39m [32m'../../theme/gatherzTheme'[39m[33m;[39m
+ [90m 10 |[39m [36mimport[39m { formatWhen[33m,[39m qrPayload } [36mfrom[39m [32m'../../lib/gatherz/rules'[39m[33m;[39m
+ [90m 11 |[39m [36mimport[39m { angleOf[33m,[39m build[33m,[39m [33mDT[39m[33m,[39m glyphLayout[33m,[39m [33mHO[39m[33m,[39m [33mLINK[39m[33m,[39m [33mN[39m[33m,[39m step[33m,[39m strapGeometry } [36mfrom[39m [32m'./pass/physics'[39m[33m;[39m[0m
+
+Import stack:
+
+ src/components/gatherz/GatherzPassV2.tsx
+ | import "expo-sensors"
+
+ src/screens/Gatherz/GatherzTicketScreen.tsx
+ | import "../../components/gatherz/GatherzPassV2"
+
+ src/features/gatherz/GatherzStandaloneEntry.tsx
+ | import "../../screens/Gatherz/GatherzTicketScreen"
+
+ App.tsx
+ | import "./src/features/gatherz/GatherzStandaloneEntry"
+
+ index.ts
+ | import "./App"
+
+ 
+ | import "./index.ts"
+

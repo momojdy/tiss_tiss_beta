@@ -6,6 +6,7 @@
 import {S} from '../store';
 import type {LangCode, Txt} from '../data/types';
 import {DICT} from './dict';
+import {interfaceText} from './interfaceContent';
 
 export const LANGS: {code: LangCode; label: string}[] = [
   {code: 'en', label: 'English'}, {code: 'fr', label: 'Français'}, {code: 'ht', label: 'Kreyòl ayisyen'}, {code: 'es', label: 'Español'}, {code: 'zh-Hans', label: '简体中文'},
@@ -36,7 +37,7 @@ export function t(key: string, vars?: Record<string, string | number>): string {
   const l: string = S.lang || DEFAULT_LANG;
   let s: string | undefined = l !== 'en' && allowed(l) ? drafts[l]?.[key] : undefined;
   if (l === 'ht' && !REVIEWED.includes('ht') && !cfg.showMachineDrafts) s = undefined; /* Creole needs human review */
-  s = s || en[key] || key;
+  s = interfaceText(key, l as LangCode, cfg.showMachineDrafts) || s || en[key] || key;
   if (vars) Object.keys(vars).forEach(k => (s = (s as string).replace(new RegExp('\\{' + k + '\\}', 'g'), String(vars[k]))));
   return s as string;
 }

@@ -1,0 +1,19 @@
+
+> tiss_tiss_beta@1.10.0 test:goodies-cms
+> node tests/goodies-cms.test.cjs
+
+✔ every source CMS field resolves manually edited published text in each configured locale (54.499331ms)
+✔ review boundaries, structured content, formatting and content refresh remain intact (0.983241ms)
+✔ generated source register remains synchronized with every literal call and interface key (19.966221ms)
+✔ Goodies card-form copy is editable and safely escaped without changing the shared default flow (9.835893ms)
+✔ unfinished Creole stays unavailable in production and falls back to reviewed English across app text and content (0.402437ms)
+✔ filter labels update with CMS content while selection keys remain stable (17.604184ms)
+✔ card verification errors show app-owned editable copy instead of provider details (6.014548ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 115.868218

@@ -18,7 +18,7 @@ import {CardAuthentication} from './screens/CardAuthentication';
 import {HelpPayPreview} from './screens/HelpPayPreview';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent, label, stageLabels} from './content';
+import {loadContent, onContent, label, stageLabels} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
@@ -40,6 +40,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     }
   }
   useGoodies();
+  useEffect(() => onContent(() => emit()), []);
   const th = useTheme(), ins = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
   const [sheet, setSheet] = useState<any>(null), [toastTxt, setToastTxt] = useState(''), [goodiesLoaded, setGoodiesLoaded] = useState(false), [refreshing, setRefreshing] = useState(false);
@@ -146,7 +147,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   switch (r) {
     case 'wantiss': body = <WantissEntry />; break;
     case 'home': body = <Home onExit={handleBack} />; break;
-    case 'cats': body = <><Bar title={tr('categories')} onBack={A.back} right={<Pressable accessibilityRole="button" accessibilityLabel="Favorites" onPress={() => A.go('favs')} hitSlop={8} style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}><Icon name="heart" size={24} color={th.br} /></Pressable>} /><Cats /></>; break;
+    case 'cats': body = <><Bar title={tr('categories')} onBack={A.back} right={<Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.3ad6a1d313d9", "Favorites")} onPress={() => A.go('favs')} hitSlop={8} style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}><Icon name="heart" size={24} color={th.br} /></Pressable>} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
     case 'cart': body = <Cart />; break;
     case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
@@ -158,7 +159,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
     case 'help-pay-preview': body = <HelpPayPreview />; break;
-    case 'addcard': body = <WalletAddNewCardScreen onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
+    case 'addcard': body = <WalletAddNewCardScreen contentLabel={label} onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
     case 'track': body = <Track id={c.p} />; break;
@@ -176,10 +177,10 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     const banned = S.goodiesAccess.status === 'banned';
     body = <View style={{padding: 20, paddingTop: 36}}>
       <Card>
-        <Ttl>{banned ? 'Goodies access permanently restricted' : 'Goodies access temporarily suspended'}</Ttl>
-        <T size={13} style={{marginTop: 8}}>{S.goodiesAccess.reason || (banned ? 'Your account can no longer use Goodies.' : 'Your access to Goodies is currently paused.')}</T>
-        {S.goodiesAccess.endsAt ? <T size={12} style={{marginTop: 8}}>Access suspension ends {new Date(S.goodiesAccess.endsAt).toLocaleDateString()}.</T> : null}
-        <T size={12} style={{marginTop: 12}}>Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect.</T>
+        <Ttl>{banned ? label("lbl.cms.77f13132a763", "Goodies access permanently restricted") : label("lbl.cms.8f441d23a479", "Goodies access temporarily suspended")}</Ttl>
+        <T size={13} style={{marginTop: 8}}>{S.goodiesAccess.reason || (banned ? label("lbl.cms.53af57ba3af5", "Your account can no longer use Goodies.") : label("lbl.cms.870d2ecc0e14", "Your access to Goodies is currently paused."))}</T>
+        {S.goodiesAccess.endsAt ? <T size={12} style={{marginTop: 8}}>{label("lbl.cms.cdd2f4e6592f", "Access suspension ends ")}{new Date(S.goodiesAccess.endsAt).toLocaleDateString()}.</T> : null}
+        <T size={12} style={{marginTop: 12}}>{label("lbl.cms.392c62d5ae01", "Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect.")}</T>
       </Card>
     </View>;
   }
@@ -203,13 +204,13 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     onPanResponderTerminate: () => Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start(),
   }), [cartDragX]);
 
-  if (!goodiesLoaded && initialRoute?.startsWith('store:')) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?'Opening store':'Loading Goodies'}>
+  if (!goodiesLoaded && initialRoute?.startsWith('store:')) return <View style={{flex:1,backgroundColor:th.bg,alignItems:'center',justifyContent:'center',paddingHorizontal:28}} accessibilityRole="progressbar" accessibilityLabel={initialRoute?.startsWith('store:')?label("lbl.cms.6bc6c58f3cfb", "Opening store"):label("lbl.cms.a256d1f083f5", "Loading Goodies")}>
     <StatusBar barStyle={th.dark?'light-content':'dark-content'} />
     <View style={{alignItems:'center',gap:16}}>
-      <Image source={{uri:"https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/Goodies.PNG"}} style={{width:112,height:112}} resizeMode="contain" accessibilityLabel="Goodies" />
-      <Text style={{fontSize:20,fontWeight:'500',color:'#000000'}}>Goodies</Text>
+      <Image source={{uri:"https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/Goodies.PNG"}} style={{width:112,height:112}} resizeMode="contain" accessibilityLabel={label("lbl.cms.9c6764b3fb4b", "Goodies")} />
+      <Text style={{fontSize:20,fontWeight:'500',color:'#000000'}}>{label("lbl.cms.9c6764b3fb4b", "Goodies")}</Text>
       <ActivityIndicator size="small" color="#BF008E" />
-      <Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>{initialRoute?.startsWith('store:')?'Opening store…':'Getting everything ready…'}</Text>
+      <Text style={{fontSize:13,color:th.mut,textAlign:'center'}}>{initialRoute?.startsWith('store:')?label("lbl.cms.e161497dcb67", "Opening store…"):label("lbl.cms.2da7d46cf638", "Getting everything ready…")}</Text>
     </View>
   </View>;
 
@@ -231,7 +232,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
           <Animated.View {...cartBannerPan.panHandlers} style={{position: 'absolute', left: 0, right: 0, bottom: 0, height: 54, borderRadius: 16, backgroundColor: th.br, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingLeft: 14, paddingRight: 12, shadowColor: th.br, shadowOpacity: 0.45, shadowRadius: 24, shadowOffset: {width: 0, height: 10}, elevation: 12, transform: [{translateX: cartDragX}]}}>
             <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAutoJGDJ0J", "Open cart")} onPress={() => A.tab('cart')} style={{flex: 1, height: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between'}}>
               <Row style={{gap: 10}}><View style={{minWidth: 26, height: 26, borderRadius: 13, backgroundColor: 'rgba(255,255,255,.25)', alignItems: 'center', justifyContent: 'center', paddingHorizontal: 6}}><T size={13} weight="600" color="#fff">{cnt()}</T></View><T size={14.5} weight="600" color="#fff">{label("lbl.browseAutoEJBBC2", "Your cart")}</T></Row>
-              <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="600" color={th.brd}>View cart · {money(totals().total)}</T></View>
+              <View style={{backgroundColor: '#fff', height: 38, paddingHorizontal: 13, borderRadius: 12, justifyContent: 'center'}}><T size={13.5} weight="600" color={th.brd}>{label("lbl.cms.11da7c9c425f", "View cart · ")}{money(totals().total)}</T></View>
             </Pressable>
           </Animated.View>
           <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.browseAuto1APR0T", "Dismiss cart banner")} onPress={() => { cartDragX.setValue(0); setDismissedCartCount(cnt()); }} hitSlop={8} style={{position: 'absolute', top: -2, right: -3, width: 24, height: 24, borderRadius: 12, backgroundColor: '#FFFFFF', borderWidth: 0.5, borderColor: th.line, alignItems: 'center', justifyContent: 'center', zIndex: 3, shadowColor: '#000', shadowOpacity: 0.12, shadowRadius: 5, shadowOffset: {width: 0, height: 2}, elevation: 5}}>
@@ -241,7 +242,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
       ) : null}
 
       {showTabs ? <BottomNav r={r} bottom={18} /> : null}
-      <Pressable accessibilityRole="button" accessibilityLabel="Open Goodies quick menu" onPress={() => setQuickMenuOpen(true)} style={{position:'absolute',top:ins.top+42,right:12,width:49,height:42,alignItems:'center',justifyContent:'center',flexDirection: 'row',gap:3,backgroundColor:th.bg,borderRadius:22,zIndex:45}}><View style={{width:5,height:5,borderRadius:3,backgroundColor:th.ink}}/><View style={{width:7,height:7,borderRadius:4,backgroundColor:th.ink}}/><View style={{width:10,height:10,borderRadius:5,backgroundColor:th.ink}}/>{goodiesUnreadCount>0?<View style={{position:'absolute',right:-3,top:-7,minWidth:19,height:19,borderRadius:10,paddingHorizontal:4,backgroundColor:th.br,alignItems:'center',justifyContent:'center'}}><Text style={{color:'#FFF',fontSize:10,fontWeight:'600'}}>{goodiesUnreadCount>99?'99+':goodiesUnreadCount}</Text></View>:null}</Pressable>
+      <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.94924a30e5ac", "Open Goodies quick menu")} onPress={() => setQuickMenuOpen(true)} style={{position:'absolute',top:ins.top+42,right:12,width:49,height:42,alignItems:'center',justifyContent:'center',flexDirection: 'row',gap:3,backgroundColor:th.bg,borderRadius:22,zIndex:45}}><View style={{width:5,height:5,borderRadius:3,backgroundColor:th.ink}}/><View style={{width:7,height:7,borderRadius:4,backgroundColor:th.ink}}/><View style={{width:10,height:10,borderRadius:5,backgroundColor:th.ink}}/>{goodiesUnreadCount>0?<View style={{position:'absolute',right:-3,top:-7,minWidth:19,height:19,borderRadius:10,paddingHorizontal:4,backgroundColor:th.br,alignItems:'center',justifyContent:'center'}}><Text style={{color:'#FFF',fontSize:10,fontWeight:'600'}}>{goodiesUnreadCount>99?'99+':goodiesUnreadCount}</Text></View>:null}</Pressable>
       <GoodiesQuickMenu visible={quickMenuOpen} close={() => setQuickMenuOpen(false)} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} />
       <Sheets sheet={sheet} close={() => setSheet(null)} />
       {toastTxt ? <View pointerEvents="none" style={{position: 'absolute', left: 0, right: 0, bottom: 150, alignItems: 'center', zIndex: 30}}><View style={{backgroundColor: '#1B1B1F', borderRadius: 22, paddingHorizontal: 18, paddingVertical: 11, maxWidth: '86%'}}><T size={13.5} weight="600" color="#fff" align="center">{toastTxt}</T></View></View> : null}

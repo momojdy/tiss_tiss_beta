@@ -159,14 +159,14 @@ export function Home({onExit}: {onExit?: () => void}) {
       </View>
       <Sh title={'⚡ ' + label('lbl.flash', tr('flashDeals'))} right={<Row style={{gap:10}}><Countdown /><Pressable accessibilityRole="button" onPress={() => go('flashdeals')}><T size={13} weight="600" color={th.br}>{tr('seeAll')}</T></Pressable></Row>} />{activeDeals.length ? <Rail>{activeDeals.map(d => <Dish key={d[0]} i={IT[d[0]]} off={d[1]} left={d[2]} />)}</Rail> : null}
       {os.length ? (<>
-        <Sh title={label('lbl.again', tr('orderAgain'))} link="History" onLink={() => tab('orders')} />
+        <Sh title={label('lbl.again', tr('orderAgain'))} link={label("lbl.cms.1be106e7ef9c", "History")} onLink={() => tab('orders')} />
         <Rail>{os.map((o: any) => {
           const s = STB[o.sid];
           if (!s) return null;
           return (
             <Pressable key={o.id} onPress={() => require('../actions').reorder(o.id)} style={{width: 76, alignItems: 'center'}}>
               <Grad idx={bgIdx(s.bg)} style={{width: 64, height: 64, borderRadius: 32, alignItems: 'center', justifyContent: 'center', borderWidth: 2, borderColor: th.br, overflow: 'hidden'}}>
-                {s.logo || s.thumbnail || s.cover ? <CachedContentImage uri={s.logo || s.thumbnail || s.cover} contentFit="cover" style={{width: 60, height: 60, borderRadius: 30}} /> : <Text style={{fontSize: 30}}>{s.e}</Text>}
+                {s.logo || s.thumbnail || s.cover ? <CachedContentImage uri={s.logo || s.thumbnail || s.cover || ''} contentFit="cover" style={{width: 60, height: 60, borderRadius: 30}} /> : <Text style={{fontSize: 30}}>{s.e}</Text>}
                 <View style={{position: 'absolute', bottom: -5, backgroundColor: th.br, borderRadius: 8, paddingHorizontal: 6, paddingVertical: 2}}><T size={9.5} weight="600" color="#fff">{label('lbl.browseReorder', 'Reorder')}</T></View>
               </Grad>
               <T size={11.5} weight="600" align="center" style={{marginTop: 10}}>{s.n}</T>
@@ -232,7 +232,7 @@ export function Explore() {
         </View>
         <Row sp style={{marginTop: 16, marginBottom: 8}}>
           <T size={16} weight="600">{scope === 'open' ? label('lbl.browseTitleOpen', 'Open near you') : scope === 'closest' ? label('lbl.browseTitleClosest', 'Closest to you') : label('lbl.browseTitleAll', 'All available stores')}</T>
-          <T size={11.5} color={th.mut}>{visible.length} stores</T>
+          <T size={11.5} color={th.mut}>{visible.length} {label("lbl.cms.bf089c2685f9", "stores")}</T>
         </Row>
       </View>
       {visible.length ? <View style={{paddingHorizontal: 16, gap: 14}}>
@@ -327,7 +327,7 @@ export function Search() {
     if (q) ST.forEach(s => {if (s.n.toLowerCase().indexOf(q) === 0 && set.indexOf(s.n) < 0) set.push(s.n); s.it.forEach(i => {const w = i.n.toLowerCase(); if ((w.indexOf(q) === 0 || w.indexOf(' ' + q) > -1) && set.indexOf(i.n) < 0) set.push(i.n);});});
     const sug = set.filter(x => x.toLowerCase() !== q).slice(0, 5);
     body = (!ss.length && !is.length && !cs.length)
-      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? ' for "' + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? label('lbl.searchClearFilters', 'Clear filters') : label('lbl.searchClearSearch', 'Clear search')} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
+      ? <Empty emoji="🤷" title={label('lbl.searchEmpty', 'No results found') + (q ? label("lbl.cms.e3168f3cd560", " for \"") + r.q + '"' : '')} text={label('lbl.searchEmptyText', 'Try another search or category.')} button={any ? label('lbl.searchClearFilters', 'Clear filters') : label('lbl.searchClearSearch', 'Clear search')} onPress={() => {if (any) S.sr.f = {}; else S.sr.q = ''; emit();}} />
       : (
         <View style={{paddingHorizontal: 16}}>
           {sug.length ? (<><Ttl>{label('lbl.browseSuggestions', 'Suggestions')}</Ttl><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{sug.map(x => <Chip key={x} label={x} onPress={() => setQ(x)} />)}</View></>) : null}
@@ -336,10 +336,10 @@ export function Search() {
             <View key={s.id} style={{flexDirection: 'row', gap: 10, alignItems: 'center', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: th.line}}>
               <Pressable accessibilityRole="link" onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}} style={{flex: 1, flexDirection: 'row', gap: 12, alignItems: 'center', minWidth: 0}}>
                 <Tile e={s.e} bg={s.bg} />
-                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="600">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} min · {s.rv > 0 ? '★ ' + s.r.toFixed(1) : label('lbl.cardNewStore', 'New store')}</T></View>
+                <View style={{flex: 1, minWidth: 0}}><View style={{flexDirection: 'row', gap: 6, alignItems: 'center', flexWrap: 'wrap'}}><T weight="600">{s.n}</T>{!s.open ? <Badge red label={tr('closed')} /> : null}</View><T size={13} color={th.mut}>{s.k} · {s.eta} {label("lbl.cms.29ce74d8129d", "min · ")}{s.rv > 0 ? '★ ' + s.r.toFixed(1) : label('lbl.cardNewStore', 'New store')}</T></View>
               </Pressable>
               {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), S.fav.indexOf(s.id) > -1 ? 'Remove ' + s.n + ' from favorites' : 'Save ' + s.n + ' to favorites')}
-              <Pressable accessibilityRole="link" accessibilityLabel={'Open ' + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
+              <Pressable accessibilityRole="link" accessibilityLabel={label("lbl.cms.22d1e84f1755", "Open ") + s.n} onPress={() => {if (q) rec(r.q.trim()); go('store', s.id);}}><Icon name="chevR" size={16} color={th.ink} /></Pressable>
             </View>))}</>) : null}
           {is.length ? (<><Ttl>{label("lbl.browseAuto100SEII", "Products")}</Ttl>{is.map(i => <ItemRow key={i.id} i={i} />)}</>) : null}
         </View>
@@ -396,7 +396,7 @@ export function Promos() {
             <T size={13.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{p.d}</T>
             <Row><Cta small ghost label={label('lbl.promosDetails', 'Details')} onPress={() => toast(p.d)} /><Cta small ghost={S.promo === p.c} label={S.promo === p.c ? label('lbl.cartApplied', 'Applied') : label('lbl.promosUse', 'Use this code')} onPress={() => applyPromo(p.c)} /></Row>
           </Card>
-        )) : <Empty title="No coupons or offers" />}
+        )) : <Empty title={label("lbl.cms.163d8660f0f6", "No coupons or offers")} />}
       </View>
     </View>
   );
@@ -421,7 +421,7 @@ export function Notifs() {
       .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%')
       .order('created_at', {ascending: false}).limit(50);
     if (!serverMounted.current || requestId !== serverLoadId.current || serverUserId.current !== auth.user.id) return;
-    if (error) { setServerError(friendlyError(error, 'Something went wrong. Please try again.')); return; }
+    if (error) { setServerError(friendlyError(error, label("lbl.cms.ce2855382c78", "Something went wrong. Please try again."))); return; }
     setServerItems((data || []).map((n: any) => ({...n, server: true, t: n.title || label('lbl.notifDefaultTitle', 'Goodies update'), d: n.body || '', u: !n.read, r: n.notification_type === 'store_message' ? 'chat' : String(n.destination || '').toLowerCase().includes('order') ? 'track' : 'other', p: n.metadata?.order_id || n.metadata?.order_code || ''})));
     setServerError('');
   };
@@ -470,7 +470,7 @@ export function Notifs() {
     if (auth.user) {
       const {error} = await supabase.from('notifications').update({read: true})
         .eq('user_id', auth.user.id).ilike('feature_name', 'goodies').or('notification_type.is.null,notification_type.not.like.goodies_ingredient_%').eq('read', false);
-      if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
+      if (error) setServerError(friendlyError(error, label("lbl.cms.ce2855382c78", "Something went wrong. Please try again.")));
       else await loadServer();
     }
   };
@@ -481,7 +481,7 @@ export function Notifs() {
       if (auth.user) {
         const {error} = await supabase.from('notifications').update({read: true})
           .eq('id', n.id).eq('user_id', auth.user.id);
-        if (error) setServerError(friendlyError(error, 'Something went wrong. Please try again.'));
+        if (error) setServerError(friendlyError(error, label("lbl.cms.ce2855382c78", "Something went wrong. Please try again.")));
         else setServerItems((prev: any[]) => prev.map((x: any) => x.id === n.id ? {...x, read: true, u: false} : x));
       }
     }
@@ -491,7 +491,7 @@ export function Notifs() {
       let storeId = metadata.store_id || metadata.storeId;
       if (!storeId && metadata.conversation_id) {
         const {data, error} = await supabase.from('conversations').select('ref_id').eq('id', metadata.conversation_id).maybeSingle();
-        if (error) { setServerError(friendlyError(error, 'Could not open this store conversation.')); return; }
+        if (error) { setServerError(friendlyError(error, label("lbl.cms.5152d56536a7", "Could not open this store conversation."))); return; }
         storeId = data?.ref_id;
       }
       if (storeId) { go('storechat', String(storeId)); return; }
@@ -504,12 +504,12 @@ export function Notifs() {
           const id = await fetchGoodiesOrderForNotification(metadata.order_id, metadata.order_code);
           if (id) order = S.orders.find((o: any) => o.id === id);
         } catch (e: any) {
-          toast(friendlyError(e, 'Could not load this order.'));
+          toast(friendlyError(e, label("lbl.cms.6905493e11ff", "Could not load this order.")));
           return;
         }
       }
       if (order) go('track', order.id);
-      else { toast('This order could not be found.'); go('notifs'); }
+      else { toast(label("lbl.cms.713a54f8696b", "This order could not be found.")); go('notifs'); }
       return;
     }
     if (destination.includes('promos') || destination.includes('promotion') || destination.includes('coupon')) { go('promos'); return; }

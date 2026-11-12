@@ -2,6 +2,7 @@
 import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {tx} from './i18n';
+import {setInterfaceContent} from './i18n/interfaceContent';
 import {contentHooks} from './store';
 import type {Txt} from './data/types';
 
@@ -28,6 +29,7 @@ export const stripeColor = (): string => (C && typeof C.stripe === 'string' && /
 export function applyContent(json: any) {
   if (!json || json.v !== 5) throw new Error('This is not a Wantiss Admin Goodies export (version 5).');
   C = json;
+  setInterfaceContent(json.labels || []);
   Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]);
   (json.lib || []).forEach((a: any) => {
     LAYOUT[a.id] = {rk: a.rk, w: a.w, k: a.k, off: a.st === 'off'};
@@ -75,7 +77,7 @@ export function loadContent(): Promise<void> {
   return tracked;
 }
 export async function importContent(text: string) { const j = JSON.parse(text); applyContent(j); try { await AsyncStorage.setItem(CONTENT_CACHE_KEY, JSON.stringify(j)); } catch { /* Optional persistence. */ } }
-export async function clearContent() { C = null; hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
+export async function clearContent() { C = null; setInterfaceContent([]); hydration = null; try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Ignore cache cleanup errors. */ } Object.keys(ASSETS).forEach(k => delete ASSETS[k]); Object.keys(LAYOUT).forEach(k => delete LAYOUT[k]); subs.forEach(f => f()); }
 export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */

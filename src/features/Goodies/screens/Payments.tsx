@@ -69,7 +69,7 @@ export function LivePayments() {
       loaded.current = true; setProblem(''); setState('ready');
     } catch (e: any) {
       if (!mounted.current) return;
-      const msg = friendlyError(e, 'Could not load your wallet and cards.');
+      const msg = friendlyError(e, label("lbl.cms.cd891775350a", "Could not load your wallet and cards."));
       if (loaded.current) {toast(msg); return;} /* keep showing the last good data */
       setProblem(msg); setState('error');
     }
@@ -147,7 +147,7 @@ export function LivePayments() {
       {S.hasWallet ? (
         <View style={{marginBottom: 12}}>
           {/* Same green wallet card as the Wallet feature home; it loads its own balance and stays live. */}
-          <View style={{marginHorizontal: -16, marginTop: -13}}><WalletBalance /></View>
+          <View style={{marginHorizontal: -16, marginTop: -13}}><WalletBalance contentLabel={label} /></View>
           <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.paymentTopup', 'Top up')} hitSlop={10} onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{alignSelf: 'flex-start', marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 6}}>
             <Icon name="plus" size={16} color={th.br} /><T size={13.5} weight="600" color={th.br}>{label('lbl.paymentTopup', 'Top up')}</T>
           </Pressable>
@@ -155,8 +155,8 @@ export function LivePayments() {
       ) : (
         <Card>
           <Row style={{gap: 10}}><Text style={{fontSize: 30}}>👛</Text><View style={{flex: 1}}><T weight="600">{label('lbl.paymentNoWallet', 'No Wantiss wallet found')}</T></View></Row>
-          <T size={13} color={th.mut} style={{marginVertical: 6, lineHeight: 19}}>You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at {money(0)}.</T>
-          <Cta small label={creating ? 'Creating…' : 'Create wallet'} disabled={creating} onPress={() => {void makeWallet();}} />
+          <T size={13} color={th.mut} style={{marginVertical: 6, lineHeight: 19}}>{label("lbl.cms.f8cd04d16d2c", "You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at ")}{money(0)}.</T>
+          <Cta small label={creating ? label("lbl.cms.7ac9ab914a13", "Creating…") : label("lbl.cms.f94093c65ad4", "Create wallet")} disabled={creating} onPress={() => {void makeWallet();}} />
         </Card>
       )}
 
@@ -167,14 +167,14 @@ export function LivePayments() {
             <Icon name="card" size={22} color={th.ink} />
             <View style={{flex: 1}}>
               <T weight="600">{c.b} •••• {c.l4}</T>
-              <T size={12.5} color={th.mut}>{expLabel(c) ? 'Expires ' + expLabel(c) : 'Saved card'}</T>
+              <T size={12.5} color={th.mut}>{expLabel(c) ? label("lbl.cms.832feb1f5f0c", "Expires ") + expLabel(c) : label("lbl.cms.b4fe1f1f9202", "Saved card")}</T>
             </View>
             {c.isDefault ? <Badge green label={label('lbl.paymentDefaultCard', 'Default')} /> : null}
             <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.paymentRemoveCard', 'Remove card')} hitSlop={12} disabled={!!busyId} onPress={() => removeCard(c.id)}><Icon name="trash" size={18} color={th.red} /></Pressable>
           </Row>
           {(!c.isDefault || confirmId === c.id) ? (
             <Row style={{marginTop: 10, gap: 16}}>
-              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="600" color={th.br}>{busyId === c.id ? 'Updating…' : 'Set as default'}</T></Pressable> : null}
+              {!c.isDefault ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => makeDefault(c.id)}><T size={13.5} weight="600" color={th.br}>{busyId === c.id ? label("lbl.cms.ce5c2af83377", "Updating…") : label("lbl.cms.eeb9fe67ea00", "Set as default")}</T></Pressable> : null}
               {confirmId === c.id ? <Pressable accessibilityRole="button" disabled={!!busyId} onPress={() => removeCard(c.id)}><T size={13.5} weight="600" color={th.red}>{label('lbl.paymentTapAgainRemove', 'Tap again to remove')}</T></Pressable> : null}
               {confirmId === c.id ? <Pressable accessibilityRole="button" onPress={() => setConfirmId('')}><T size={13.5} weight="600" color={th.mut}>{label('lbl.paymentCancel', 'Cancel')}</T></Pressable> : null}
             </Row>

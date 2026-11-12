@@ -36,7 +36,7 @@ export function Dish({i, off = 0, left, grid}: {i: Item; off?: number; left?: nu
         <Pressable accessibilityRole="link" onPress={() => openProduct(i.id, off)}>
           <T size={13.5} weight="600" lines={1}>{i.n}</T>
           <T size={11.5} color={th.mut} lines={1} style={{marginTop: 1}}>{s.n}</T>
-          {off && !i.oos ? <T size={11} weight="600" color={th.red} style={{marginTop: 5}}>Only {left} left</T> : null}
+          {off && !i.oos ? <T size={11} weight="600" color={th.red} style={{marginTop: 5}}>{label("lbl.cms.6536f08ae072", "Only ")}{left} {label("lbl.cms.5621f99abe47", "left")}</T> : null}
         </Pressable>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
           <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
@@ -72,7 +72,7 @@ export function VCard({s}: {s: Store}) {
         <T size={13.5} weight="600" lines={1}>{s.n}</T>
         <T size={11.5} color={th.mut} lines={1}>{s.k}{storeDistanceLabel(s) ? ' · ' + storeDistanceLabel(s) : ''}</T>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 8}}>
-          {s.live && s.rv === 0 ? <T size={11.5} color={th.mut}>{label('lbl.cardNewStore', 'New store')}</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} min</T>
+          {s.live && s.rv === 0 ? <T size={11.5} color={th.mut}>{label('lbl.cardNewStore', 'New store')}</T> : <Stars n={s.r.toFixed(1)} />}<T size={11.5} color={th.mut}>{s.eta} {label("lbl.cms.cf6143006f14", "min")}</T>
         </View>
       </Pressable>
     </View>
@@ -89,7 +89,7 @@ export function StoreCard({s, showProducts = false}: {s: Store; showProducts?: b
           {s.pr ? <View style={{position: 'absolute', left: 0, top: 14, backgroundColor: th.br, borderTopRightRadius: 8, borderBottomRightRadius: 8, paddingVertical: 5, paddingLeft: 12, paddingRight: 10}}><T size={12} weight="600" color="#fff">{s.pr}</T></View> : null}
           {heartBtn(s.id, S.fav.indexOf(s.id) > -1, () => heart(s.id), (S.fav.indexOf(s.id) > -1 ? label('lbl.a11yRemoveFavorite', 'Remove {name} from favorites') : label('lbl.a11ySaveFavorite', 'Save {name} to favorites')).replace('{name}', s.n))}
           {!s.open ? pill(tr('closed') + ' · ' + s.nx) : s.far && !s.live ? pill(label('lbl.cardPickupOnly', 'Pickup only at this address')) : null}
-          <View style={{position: 'absolute', right: 10, bottom: 10, backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={12} weight="600" color="#1B1B1F">{s.eta} min</T></View>
+          <View style={{position: 'absolute', right: 10, bottom: 10, backgroundColor: '#fff', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 5}}><T size={12} weight="600" color="#1B1B1F">{s.eta} {label("lbl.cms.cf6143006f14", "min")}</T></View>
         </Grad>
       </Pressable>
       {PV[s.id] || showProducts ? (

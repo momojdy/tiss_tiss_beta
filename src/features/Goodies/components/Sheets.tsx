@@ -21,16 +21,16 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const k = sheet.kind;
   const stars = (n: number, on: (v: number) => void) => <View style={{flexDirection: 'row', justifyContent: 'center', gap: 6, marginVertical: 10}}>{[1, 2, 3, 4, 5].map(v => <Pressable key={v} onPress={() => on(v)}><Icon name="star" size={32} color={n >= v ? '#FFB400' : th.line} fill /></Pressable>)}</View>;
   let content: any = null;
-  if (k === 'newcart') content = (<><T size={20} weight="600">{label('lbl.sheetStartCart', 'Start a new cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.canMerge ? 'Your cart has items from ' + sheet.from + '. Add ' + sheet.to + ' to the same order, or start a new cart.' : sheet.stops >= sheet.max ? 'Your cart has items from ' + sheet.from + '. One order can include up to ' + sheet.max + ' stores, so adding from ' + sheet.to + ' replaces them.' : 'Your cart has items from ' + sheet.from + '. Adding from ' + sheet.to + ' replaces them.'}</T>{sheet.canMerge ? <><Cta label="Add to this order" onPress={A.addStop} /><View style={{height: 10}} /></> : null}<Cta ghost={!!sheet.canMerge} label={sheet.canMerge ? 'Start a new cart' : label('lbl.sheetReplace', 'Replace and add')} onPress={A.newCart} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
+  if (k === 'newcart') content = (<><T size={20} weight="600">{label('lbl.sheetStartCart', 'Start a new cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.canMerge ? label("lbl.cms.adf8a6e98991", "Your cart has items from ") + sheet.from + label("lbl.cms.5a754caad741", ". Add ") + sheet.to + label("lbl.cms.936aefb39183", " to the same order, or start a new cart.") : sheet.stops >= sheet.max ? label("lbl.cms.adf8a6e98991", "Your cart has items from ") + sheet.from + label("lbl.cms.516f8e8c1f07", ". One order can include up to ") + sheet.max + label("lbl.cms.1a5decb44df8", " stores, so adding from ") + sheet.to + label("lbl.cms.3402664551ea", " replaces them.") : label("lbl.cms.adf8a6e98991", "Your cart has items from ") + sheet.from + label("lbl.cms.dd7415008f6b", ". Adding from ") + sheet.to + label("lbl.cms.3402664551ea", " replaces them.")}</T>{sheet.canMerge ? <><Cta label={label("lbl.cms.ec46b728216f", "Add to this order")} onPress={A.addStop} /><View style={{height: 10}} /></> : null}<Cta ghost={!!sheet.canMerge} label={sheet.canMerge ? label("lbl.cms.31fdc2bc7366", "Start a new cart") : label('lbl.sheetReplace', 'Replace and add')} onPress={A.newCart} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
   if (k === 'byoleave') content = (<><T size={20} weight="600">{sheet.edit ? label('lbl.sheetDiscardTitle', 'Discard your changes?') : label('lbl.sheetLeaveTitle', 'Leave this builder?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{sheet.edit ? label('lbl.sheetDiscardText', 'The item in your cart stays as it was.') : label('lbl.sheetLeaveText', 'Your choices can be saved as a draft so you can pick up where you left off.')}</T>{sheet.edit ? null : <><Cta label={label('lbl.sheetBuilderSave', 'Save draft and leave')} onPress={bzLeave} /><View style={{height: 10}} /></>}<Pressable onPress={bzDiscard} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetDiscard', 'Discard')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'byoreset') content = (<><T size={20} weight="600">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
-  if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>• Minimum age here: <T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
+  if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>{label("lbl.cms.06e2931ac98c", "• Minimum age here: ")}<T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
   if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} bottomInset={insets.bottom} />;
   if (k === 'topup') content = (<><T size={20} weight="600">{label('lbl.sheetTopup', 'Top up wallet')}</T><T color={th.mut} style={{marginTop: 6, marginBottom: 14}}>{label('lbl.sheetDemoMoney', 'Demo: no real money moves.')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[10, 20, 50, 100].map(v => <Pressable key={v} onPress={() => {S.wallet += v; close(); toast(label('lbl.sheetWalletToppedUp', 'Wallet topped up to {amount}').replace('{amount}', money(S.wallet))); save(); emit();}} style={{paddingVertical: 10, paddingHorizontal: 16, borderRadius: 18, backgroundColor: th.soft}}><T size={14} weight="600">+{money(v)}</T></Pressable>)}</View></>);
-  if (k === 'replace') content = (<><T size={20} weight="600">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>Your cart has items from {sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
+  if (k === 'replace') content = (<><T size={20} weight="600">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.cms.adf8a6e98991", "Your cart has items from ")}{sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
   if (k === 'remove-number') content = (<>
     <T size={20} weight="600">{label('lbl.sheetRemoveNumberTitle', 'Remove this contact number?')}</T>
     <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveNumberBody', 'Remove {number} from your Goodies checkout contacts?').replace('{number}', String(sheet.numberLabel || 'this number'))}</T>
@@ -94,7 +94,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   }
   if (k === 'msg') content = (<><T size={20} weight="600" style={{marginBottom: 14}}>{label('lbl.sheetCourierTitle', 'Message courier')}</T><View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8}}>{[{id: 'lbl.sheetCourierAtGate', text: label('lbl.sheetCourierAtGate', 'I am at the gate')}, {id: 'lbl.sheetCourierCall', text: label('lbl.sheetCourierCall', 'Please call me')}, {id: 'lbl.sheetCourierDoor', text: label('lbl.sheetCourierDoor', 'Leave it at the door')}, {id: 'lbl.sheetCourierLate', text: label('lbl.sheetCourierLate', 'Running 5 min late')}].map(x => <Pressable key={x.id} onPress={() => {close(); toast(label('lbl.sheetCourierSent', 'Sent: {message}').replace('{message}', x.text));}} style={{paddingVertical: 9, paddingHorizontal: 14, borderRadius: 18, backgroundColor: th.soft}}><T size={13.5} weight="600">{x.text}</T></Pressable>)}</View></>);
   if (k === 'review' || k === 'driver-review') content = <ReviewSheet key={String(sheet.id) + ':' + k} id={sheet.id} stars={stars} driver={k === 'driver-review'} initialStars={sheet.initialStars} />;
-  if (k === 'addr') content = (<><T size={20} weight="600" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="600">{a.l}</T>{a.def ? <Badge green label={label("lbl.sheetAutoCKTN2B", "Wantiss default")} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="600" color="#fff">GOODIES</T></View> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label={label("lbl.sheetAuto16NJT2W", "Manage addresses")} onPress={() => {close(); A.go('addresses');}} /></>);
+  if (k === 'addr') content = (<><T size={20} weight="600" style={{marginBottom: 4}}>{label('lbl.sheetDeliverToTitle', 'Deliver to')}</T><T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetAddressScope', 'Choosing an address here only changes Goodies. Your Wantiss default stays the same.')}</T>{S.addr.map((a: any) => <Radio key={a.id} on={a.id === S.as} onPress={() => A.selectAddr(a.id)}><Row style={{gap: 6}}><T weight="600">{a.l}</T>{a.def ? <Badge green label={label("lbl.sheetAutoCKTN2B", "Wantiss default")} /> : null}{a.goodiesDefault ? <View style={{backgroundColor: '#FD802E', borderRadius: 8, paddingHorizontal: 8, paddingVertical: 3}}><T size={10} weight="600" color="#fff">{label("lbl.cms.7f7b502a8d5a", "GOODIES")}</T></View> : null}</Row><T size={12.5} color={th.mut}>{a.t}</T></Radio>)}<Cta ghost label={label("lbl.sheetAuto16NJT2W", "Manage addresses")} onPress={() => {close(); A.go('addresses');}} /></>);
 
   if (k === 'group-order') return <GroupOrderModal close={close} storeId={String(sheet.storeId || '')} />;
   const isRatingSheet = k === 'review' || k === 'driver-review';
@@ -181,7 +181,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
     <T size={14} weight='600' style={{marginTop:12,marginBottom:8}}>{label('lbl.sheetChooseDay','Choose a day')}</T>
     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:8,paddingBottom:8}}>
       {Array.from({length:7},(_,i)=>{const d=customerDayStart(i),active=dayOffset===i;return <Pressable key={i} onPress={()=>{setDayOffset(i);const first=slotsForDay(i)[0];if(first){setCustomHour(String(first.getHours()).padStart(2,'0'));setCustomMinute(String(first.getMinutes()).padStart(2,'0'));}}} style={{minWidth:74,paddingVertical:10,paddingHorizontal:10,borderRadius:14,backgroundColor:active?th.br:th.soft,alignItems:'center',borderWidth:0.5,borderColor:active?th.br:th.line}}>
-        <T size={11.5} weight='600' color={active?'#fff':th.mut}>{i===0?'Today':i===1?'Tomorrow':dayNames[d.getDay()].slice(0,3)}</T><T size={15} weight='600' color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(undefined,{month:'short'})}</T>
+        <T size={11.5} weight='600' color={active?'#fff':th.mut}>{i===0?label("lbl.cms.acf78f33a391", "Today"):i===1?label("lbl.cms.8548c22a9780", "Tomorrow"):d.toLocaleDateString(S.lang,{weekday:'short'})}</T><T size={15} weight='600' color={active?'#fff':th.ink}>{d.getDate()}</T><T size={10.5} color={active?'#fff':th.mut}>{d.toLocaleDateString(S.lang,{month:'short'})}</T>
       </Pressable>;})}
     </ScrollView>
     {store?.acceptScheduledOrders?<T size={12} color={th.mut} style={{marginTop:8,marginBottom:4}}>{label('lbl.sheetScheduledMinimum','Earliest available time')}: {earliestInstant?formatCustomer(earliestInstant.getTime(),{hour:'numeric',minute:'2-digit',timeZoneName:'short'}):'—'} · {customerZone}</T>:null}
@@ -190,7 +190,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
       {availableSlots.filter((_,i)=>i%3===0 || availableSlots.length<24).map(slot=>{const key=String(slot.getHours()).padStart(2,'0')+':'+String(slot.getMinutes()).padStart(2,'0'),active=customHour===String(slot.getHours()).padStart(2,'0')&&customMinute===String(slot.getMinutes()).padStart(2,'0');return <Pressable key={slot.getTime()} onPress={()=>{setCustomHour(String(slot.getHours()).padStart(2,'0'));setCustomMinute(String(slot.getMinutes()).padStart(2,'0'));}} style={{width:'23%',minHeight:38,borderRadius:10,alignItems:'center',justifyContent:'center',backgroundColor:active?th.br:th.soft,borderWidth:active?0.5:0,borderColor:th.br}}><T size={12.5} weight='600' color={active?'#fff':th.ink}>{key}</T></Pressable>;})}
     </ScrollView>}
     {reason?<T size={12.5} color={th.red} style={{marginTop:6}}>{reason}</T>:null}
-    {selected?<T size={12.5} color={th.br} style={{marginTop:8}}>Selected: {formatCustomer(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatCustomer(selected,{hour:'numeric',minute:'2-digit',timeZoneName:'short'})}</T>:null}
+    {selected?<T size={12.5} color={th.br} style={{marginTop:8}}>{label("lbl.cms.6646922f6eaf", "Selected: ")}{formatCustomer(selected,{weekday:'short',month:'short',day:'numeric'})}, {formatCustomer(selected,{hour:'numeric',minute:'2-digit',timeZoneName:'short'})}</T>:null}
     <View style={{height:12}}/><Cta label={label('lbl.sheetApply','Apply')} disabled={!selected} onPress={choose}/>
   </View>;
 }
@@ -199,7 +199,7 @@ export function ScheduleInline({close}: {close: () => void}) { return <ScheduleS
 function SegSchedule({value,onChange}:{value:string;onChange:(v:string)=>void}) {
   const th=useTheme();
   return <View style={{flexDirection:'row',gap:8}}>
-    {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="600" color={value===v?th.br:th.ink}>{v==='delivery'?'Delivery':'Pick-up'}</T></Pressable>)}
+    {(['delivery','pickup'] as const).map(v=><Pressable key={v} onPress={()=>onChange(v)} style={{flex:1,paddingVertical:11,borderRadius:13,alignItems:'center',backgroundColor:value===v?th.brt:th.soft,borderWidth:value===v?1:0,borderColor:th.br}}><T weight="600" color={value===v?th.br:th.ink}>{v==='delivery'?label("lbl.cms.481e4a34263a", "Delivery"):label("lbl.cms.cc823e1a0b52", "Pick-up")}</T></Pressable>)}
   </View>;
 }
 
@@ -214,12 +214,12 @@ export function GroupOrderModal({close, storeId = ''}: {close: () => void; store
   }), [close]);
   return <BottomSheet visible onClose={close} dismissOnBackdrop={false} keyboardAware maxHeight={height}>
     <View style={{height, backgroundColor: th.card, borderTopLeftRadius: 26, borderTopRightRadius: 26, overflow: 'hidden'}}>
-      <Pressable {...handlePan.panHandlers} accessibilityRole="button" accessibilityLabel="Close group order" onPress={close} hitSlop={{top: 8, bottom: 14, left: 80, right: 80}} style={{alignItems: 'center', paddingTop: 10, paddingBottom: 6}}>
+      <Pressable {...handlePan.panHandlers} accessibilityRole="button" accessibilityLabel={label("lbl.cms.262630160acf", "Close group order")} onPress={close} hitSlop={{top: 8, bottom: 14, left: 80, right: 80}} style={{alignItems: 'center', paddingTop: 10, paddingBottom: 6}}>
         <View style={{width: 44, height: 5, borderRadius: 3, backgroundColor: th.line}} />
       </Pressable>
       <View style={{flexDirection: 'row', alignItems: 'center', paddingHorizontal: 22, paddingTop: 8, paddingBottom: 14}}>
         <T size={22} weight="800" style={{flex: 1}}>{label('lbl.sheetGroupTitle', 'Group order')}</T>
-        <Pressable accessibilityRole="button" accessibilityLabel="Close" onPress={close} hitSlop={12} style={{width: 36, height: 36, borderRadius: 18, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="x" size={18} color={th.ink} /></Pressable>
+        <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.4895f0308d1a", "Close")} onPress={close} hitSlop={12} style={{width: 36, height: 36, borderRadius: 18, backgroundColor: th.soft, alignItems: 'center', justifyContent: 'center'}}><Icon name="x" size={18} color={th.ink} /></Pressable>
       </View>
       <ScrollView style={{flex: 1}} contentContainerStyle={{paddingHorizontal: 22, paddingTop: 4, paddingBottom: insets.bottom + 28}} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
         <GroupOrderSheet close={close} showTitle={false} showDone storeId={storeId} />
@@ -251,7 +251,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     void refreshUserAddresses().then((addresses:any[])=>{
       if(!active||!addresses?.length) return;
       setGroupAddressId((current:any)=>addresses.some((item:any)=>String(item.id)===String(current))?current:addresses.find((item:any)=>item.def)?.id??addresses[0].id);
-    }).catch((error:any)=>{if(active)toast(friendlyError(error, 'Could not load saved delivery addresses.'));});
+    }).catch((error:any)=>{if(active)toast(friendlyError(error, label("lbl.cms.0f3e6a48b781", "Could not load saved delivery addresses.")));});
     return ()=>{active=false;};
   },[groupCheckoutType]);
   const [currentUserId, setCurrentUserId] = useState('');
@@ -274,8 +274,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   }, []);
   const createServerGroup = async () => {
     const targetStoreId = storeId || S.cart.sid || group.storeId || '';
-    if (!targetStoreId) {toast('Open a store first to create its group invitation.');return;}
-    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast('Your current cart belongs to another store. Clear it before creating this group.');return;}
+    if (!targetStoreId) {toast(label("lbl.cms.9ad0840772c3", "Open a store first to create its group invitation."));return;}
+    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast(label("lbl.cms.a6b2201002c6", "Your current cart belongs to another store. Clear it before creating this group."));return;}
     setGroupBusy(true);
     try {
       const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:targetStoreId});
@@ -284,26 +284,26 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:targetStoreId,expiresAt:row.expires_at,serverBacked:true});
       const synced=await Promise.all((S.cart.sid === targetStoreId ? S.cart.lines : []).map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
       const failed=synced.find((result:any)=>result.error);
-      if(failed)toast(friendlyError(failed.error, 'Group created, but one or more cart items could not be shared.'));
-      toast('A new group invitation is ready.');
+      if(failed)toast(friendlyError(failed.error, label("lbl.cms.184f5c8af282", "Group created, but one or more cart items could not be shared.")));
+      toast(label("lbl.cms.9e385df54370", "A new group invitation is ready."));
     } catch(error:any) {
-      toast(friendlyError(error, 'Could not create the group invitation. Please try again.'));
+      toast(friendlyError(error, label("lbl.cms.a9d496a784b4", "Could not create the group invitation. Please try again.")));
     } finally {
       setGroupBusy(false);
     }
   };
   const joinServerGroup = async () => {
     const code=inviteCode.trim().toUpperCase();
-    if(!code){toast('Enter a group invite code.');return;}
+    if(!code){toast(label("lbl.cms.949b8e0d1bea", "Enter a group invite code."));return;}
     setGroupBusy(true);
     try {
       const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
       const row=Array.isArray(data)?data[0]:data;
       if(error||!row?.group_id) throw error || new Error('Could not join this group order.');
       saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
-      toast('You joined the group order.');
+      toast(label("lbl.cms.9d2f3e3ff6a8", "You joined the group order."));
     } catch(error:any) {
-      toast(friendlyError(error, 'Could not join this group order. Check the invite code and try again.'));
+      toast(friendlyError(error, label("lbl.cms.b7c7f9985055", "Could not join this group order. Check the invite code and try again.")));
     } finally {
       setGroupBusy(false);
     }
@@ -316,7 +316,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       const {data,error}=await supabase.from('goodies_group_order_items')
         .select('id,user_id,line_key,quantity,options,note,product:goodies_products(name,price,photo_url,emoji)')
         .eq('group_id',group.groupId).order('created_at',{ascending:true});
-      if(active){if(error)toast(friendlyError(error, 'Could not refresh the shared cart.'));else {setSharedItems(data||[]);setCheckoutPreview(null);setCheckoutEstimate(null);}}
+      if(active){if(error)toast(friendlyError(error, label("lbl.cms.725f5d75b162", "Could not refresh the shared cart.")));else {setSharedItems(data||[]);setCheckoutPreview(null);setCheckoutEstimate(null);}}
     };
     const loadMembers=async () => {
       const {data,error}=await supabase.rpc('goodies_group_order_list_members',{p_group_id:group.groupId});
@@ -329,7 +329,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       if(!statusRow||statusRow.status!=='open'||new Date(statusRow.expires_at).getTime()<=Date.now()){
         S.groupOrder=null; save(); emit(); setGroup({code:'',host:S.pf.n||'You',members:[],serverBacked:false});
         setSharedItems([]);setGroupMembers([]);setCheckoutPreview(null);
-        toast(statusRow?.status==='cancelled'?'The group host ended this group order.':'This group order has closed or expired.');
+        toast(statusRow?.status==='cancelled'?label("lbl.cms.7c7eb6fad354", "The group host ended this group order."):label("lbl.cms.984dfaf4f0b3", "This group order has closed or expired."));
       }
     };
     void loadItems(); void loadMembers(); void refreshGroupStatus();
@@ -361,7 +361,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     setFriendsOpen(true); setFriendsBusy(true);
     const {data, error} = await supabase.rpc('goodies_group_order_list_friends', {p_group_id: group.groupId});
     setFriendsBusy(false);
-    if (error) {setFriends([]); toast(friendlyError(error, 'Could not load your friends. Please try again.')); return;}
+    if (error) {setFriends([]); toast(friendlyError(error, label("lbl.cms.fee6cf252c06", "Could not load your friends. Please try again."))); return;}
     setFriends(Array.isArray(data) ? data : []); setPickedFriends([]);
   };
   const sendFriendInvites = async () => {
@@ -369,8 +369,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     setFriendsBusy(true);
     const {data, error} = await supabase.rpc('goodies_group_order_invite_friends', {p_group_id: group.groupId, p_user_ids: pickedFriends});
     setFriendsBusy(false);
-    if (error) {toast(friendlyError(error, 'Could not send the invitations. Please try again.')); return;}
-    toast(Number(data) > 0 ? 'Invitation sent.' : 'Nothing to send.');
+    if (error) {toast(friendlyError(error, label("lbl.cms.e1b4808b8c09", "Could not send the invitations. Please try again."))); return;}
+    toast(Number(data) > 0 ? label("lbl.cms.9cf703554060", "Invitation sent.") : label("lbl.cms.c8c0ebe1e4a9", "Nothing to send."));
     setFriendsOpen(false); setPickedFriends([]);
   };
   const joinFromInvite = async (code: string) => {
@@ -381,9 +381,9 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       const row = Array.isArray(data) ? data[0] : data;
       if (error || !row?.group_id) throw error || new Error('join failed');
       saveGroup({code: row.invite_code, groupId: row.group_id, storeId: row.store_id, expiresAt: row.expires_at, host: S.pf.n || 'You', members: [], serverBacked: true});
-      toast('You joined the group order.');
+      toast(label("lbl.cms.9d2f3e3ff6a8", "You joined the group order."));
     } catch (error: any) {
-      toast(friendlyError(error, 'Could not join this group order. It may have closed.'));
+      toast(friendlyError(error, label("lbl.cms.d37983f61070", "Could not join this group order. It may have closed.")));
     } finally {setGroupBusy(false);}
   };
   const declineInvite = async (groupId: string) => {
@@ -392,49 +392,49 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     if (error) console.warn('Decline invite failed', error.message);
   };
   const invite = async () => {
-    if(!group.serverBacked||!group.code){toast('Create a group invitation first.');return;}
+    if(!group.serverBacked||!group.code){toast(label("lbl.cms.e0747408b56f", "Create a group invitation first."));return;}
     const inviteLink='wantiss://goodies/group?code='+encodeURIComponent(group.code);
     try {await Share.share({message:'Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: '+inviteLink+'\n\nOr enter invite code: '+group.code});}
-    catch (_) {toast('Invite code: '+group.code);}
+    catch (_) {toast(label("lbl.cms.2299e372cc22", "Invite code: ")+group.code);}
   };
   const calculateGroupDeliveryQuote = async () => {
     let addresses=S.addr||[];
     if(!addresses.length) addresses=await refreshUserAddresses();
     const selected=addresses.find((item:any)=>String(item.id)===String(groupAddressId))||addresses.find((item:any)=>item.id===S.as)||addresses[0];
-    if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
+    if(!selected?.t){toast(label("lbl.cms.0a46732ca884", "Add or select a complete delivery address first."));return;}
     setGroupQuoteBusy(true);
     try {
       const addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||''};
       const quote=await supabase.functions.invoke('goodies-delivery-quote',{body:{store_id:group.storeId||checkoutPreview?.store_id,address:addressPayload}});
-      if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(friendlyError(quote.data?.error ? {message: quote.data.error} : quote.error, 'Could not calculate delivery for this address.'));return;}
+      if(quote.error||!quote.data?.quote_id){setGroupDeliveryQuote(null);toast(friendlyError(quote.data?.error ? {message: quote.data.error} : quote.error, label("lbl.cms.9957e5f281b7", "Could not calculate delivery for this address.")));return;}
       const quoteState={addressId:String(selected.id),quoteId:String(quote.data.quote_id),fee:Number(quote.data.fee||0),distanceKm:Number(quote.data.distance_km||0),expiresAt:Date.now()+4*60*1000};
       setGroupDeliveryQuote(quoteState);
       const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'delivery',p_address:{...addressPayload,delivery_quote_id:quoteState.quoteId}});
-      if(estimate.error) {setCheckoutEstimate(null);toast(friendlyError(estimate.error, 'Could not calculate the final estimate.'));}
+      if(estimate.error) {setCheckoutEstimate(null);toast(friendlyError(estimate.error, label("lbl.cms.8e4755e555e1", "Could not calculate the final estimate.")));}
       else setCheckoutEstimate(estimate.data);
     } catch(e:any) {
-      setGroupDeliveryQuote(null);toast(friendlyError(e, 'Could not calculate delivery.'));
+      setGroupDeliveryQuote(null);toast(friendlyError(e, label("lbl.cms.fa36fe77f660", "Could not calculate delivery.")));
     } finally {setGroupQuoteBusy(false);}
   };
   const checkoutGroupOrder = async () => {
-    if(!group.serverBacked||!group.groupId){toast('Create a server-backed group order first.');return;}
-    if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast('Only the group host can check out.');return;}
-    if(!checkoutPreview){toast('Review and validate the combined cart first.');return;}
-    if(!checkoutEstimate || checkoutEstimate.group_id!==group.groupId || checkoutEstimate.order_type!==groupCheckoutType){toast('Review the current group-order total before placing the order.');return;}
-    if(!S.pf.ph||!phoneOK(S.pf.ph)){toast('Add a valid contact phone number in your profile before checkout.');return;}
+    if(!group.serverBacked||!group.groupId){toast(label("lbl.cms.123b3ed119bc", "Create a server-backed group order first."));return;}
+    if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast(label("lbl.cms.540c5531f480", "Only the group host can check out."));return;}
+    if(!checkoutPreview){toast(label("lbl.cms.6e9eb3a9a0bb", "Review and validate the combined cart first."));return;}
+    if(!checkoutEstimate || checkoutEstimate.group_id!==group.groupId || checkoutEstimate.order_type!==groupCheckoutType){toast(label("lbl.cms.d2905bdbca8c", "Review the current group-order total before placing the order."));return;}
+    if(!S.pf.ph||!phoneOK(S.pf.ph)){toast(label("lbl.cms.fdc79fde4a45", "Add a valid contact phone number in your profile before checkout."));return;}
     setGroupCheckoutBusy(true);
     try {
       const walletVerified=await A.refreshPaymentOptions();
-      if(!walletVerified){toast('Could not verify your live Wantiss Wallet balance. Please retry.');return;}
-      if(!S.hasWallet){toast('Your Wantiss Wallet is not available. Create a wallet before placing this group order.');return;}
+      if(!walletVerified){toast(label("lbl.cms.c21b6431da9c", "Could not verify your live Wantiss Wallet balance. Please retry."));return;}
+      if(!S.hasWallet){toast(label("lbl.cms.fa32c0873181", "Your Wantiss Wallet is not available. Create a wallet before placing this group order."));return;}
       const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
-      if(estimatedTotal>0&&S.wallet<estimatedTotal){toast('Insufficient Wantiss Wallet balance. Add '+money(estimatedTotal-S.wallet)+' or choose another payment method.');return;}
+      if(estimatedTotal>0&&S.wallet<estimatedTotal){toast(label("lbl.cms.9da7b95cc86d", "Insufficient Wantiss Wallet balance. Add ")+money(estimatedTotal-S.wallet)+label("lbl.cms.66e750d050b2", " or choose another payment method."));return;}
       let addressPayload:any=null;
       if(groupCheckoutType==='delivery'){
         const selected=(S.addr||[]).find((item:any)=>String(item.id)===String(groupAddressId))||(S.addr||[]).find((item:any)=>item.id===S.as)||(S.addr||[])[0];
-        if(!selected?.t){toast('Add or select a complete delivery address first.');return;}
+        if(!selected?.t){toast(label("lbl.cms.0a46732ca884", "Add or select a complete delivery address first."));return;}
         if(!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(selected.id)||groupDeliveryQuote.expiresAt<=Date.now()){
-          toast('Calculate the delivery fee and review it before placing the order.');return;
+          toast(label("lbl.cms.ce7c584db7be", "Calculate the delivery fee and review it before placing the order."));return;
         }
         addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||'',delivery_quote_id:groupDeliveryQuote.quoteId};
       }
@@ -449,23 +449,23 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
         p_notes:null
       });
       const order=Array.isArray(data)?data[0]:data;
-      if(error||!order?.id){toast(friendlyError(error, 'Group order checkout failed.'));return;}
-      toast('Group order placed. Order '+(order.order_code||order.id)+'. Paid with Wantiss Wallet.');
+      if(error||!order?.id){toast(friendlyError(error, label("lbl.cms.1be63d4ce4d0", "Group order checkout failed.")));return;}
+      toast(label("lbl.cms.29fb7a3efa6b", "Group order placed. Order ")+(order.order_code||order.id)+label("lbl.cms.df836d557f92", ". Paid with Wantiss Wallet."));
       S.groupOrder=null;save();emit();close();
     } catch(e:any) {
-      toast(friendlyError(e, 'Could not complete group order checkout.'));
+      toast(friendlyError(e, label("lbl.cms.8eeb9fd8177f", "Could not complete group order checkout.")));
     } finally {setGroupCheckoutBusy(false);}
   };
   const reviewSharedOrder = async () => {
-    if(!group.serverBacked||!group.groupId){toast('Create or join a server-backed group order first.');return;}
+    if(!group.serverBacked||!group.groupId){toast(label("lbl.cms.315075ecf41e", "Create or join a server-backed group order first."));return;}
     setPreviewBusy(true); setCheckoutPreview(null);
     const {data,error}=await supabase.rpc('goodies_group_order_checkout_preview',{p_group_id:group.groupId});
     setPreviewBusy(false);
-    if(error){toast(friendlyError(error, 'Could not validate the shared cart.'));return;}
+    if(error){toast(friendlyError(error, label("lbl.cms.7143ec373461", "Could not validate the shared cart.")));return;}
     setCheckoutPreview(data);
     if(groupCheckoutType==='pickup'){
       const estimate=await supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}});
-      if(estimate.error){setCheckoutEstimate(null);toast(friendlyError(estimate.error, 'Could not calculate the payment estimate.'));}
+      if(estimate.error){setCheckoutEstimate(null);toast(friendlyError(estimate.error, label("lbl.cms.a8b8e5886e88", "Could not calculate the payment estimate.")));}
       else setCheckoutEstimate(estimate.data);
     }
   };
@@ -473,31 +473,31 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     {showTitle ? <T size={19} weight="600">{label('lbl.sheetGroupTitle', 'Group order')}</T> : null}
     {!group.serverBacked ? <View>
       {myInvites.length ? <View style={{marginBottom:22}}>
-        <T size={16} weight="800">Invitations from friends</T>
+        <T size={16} weight="800">{label("lbl.cms.48ba64bb290c", "Invitations from friends")}</T>
         {myInvites.map((inv:any)=><Row key={inv.group_id} style={{gap:10,alignItems:'center',marginTop:12,padding:12,borderRadius:14,backgroundColor:th.soft}}>
-          <View style={{flex:1}}><T weight="600">{inv.host_name}</T><T size={12} color={th.mut}>invited you to a group order</T></View>
-          <Pressable accessibilityRole="button" onPress={()=>void declineInvite(inv.group_id)} hitSlop={8}><T size={13} color={th.mut}>Decline</T></Pressable>
-          <Cta small label="Join" onPress={()=>void joinFromInvite(inv.invite_code)} disabled={groupBusy} />
+          <View style={{flex:1}}><T weight="600">{inv.host_name}</T><T size={12} color={th.mut}>{label("lbl.cms.374da0d6b308", "invited you to a group order")}</T></View>
+          <Pressable accessibilityRole="button" onPress={()=>void declineInvite(inv.group_id)} hitSlop={8}><T size={13} color={th.mut}>{label("lbl.cms.fbab10af6bec", "Decline")}</T></Pressable>
+          <Cta small label={label("lbl.cms.f889c94501e8", "Join")} onPress={()=>void joinFromInvite(inv.invite_code)} disabled={groupBusy} />
         </Row>)}
       </View> : null}
       <T size={16} weight="800">{label('lbl.sheetJoinGroup', 'Join a group order')}</T>
       <T size={13} color={th.mut} style={{marginTop:6,marginBottom:16,lineHeight:19}}>{label('lbl.sheetJoinGroupHint', 'Enter the invite code, or scan the QR code your friend shared.')}</T>
-      <Input value={inviteCode} onChange={setInviteCode} placeholder="Enter group invite code" />
+      <Input value={inviteCode} onChange={setInviteCode} placeholder={label("lbl.cms.84b73ab53834", "Enter group invite code")} />
       <Row style={{gap:12,marginTop:16}}>
-        <Pressable accessibilityRole="button" accessibilityLabel="Scan group invite QR code" disabled={groupBusy} onPress={async()=>{
-          if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast('Camera permission is needed to scan a group QR code.');return;}}
+        <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.8f0e0fdf8784", "Scan group invite QR code")} disabled={groupBusy} onPress={async()=>{
+          if(!cameraPermission?.granted){const result=await requestCameraPermission();if(!result.granted){toast(label("lbl.cms.0f8d0013465b", "Camera permission is needed to scan a group QR code."));return;}}
           setScannerOpen(true);
         }} style={{width:52,height:48,borderRadius:14,alignItems:'center',justifyContent:'center',backgroundColor:th.soft,opacity:groupBusy?0.45:1}}>
           <Icon name="scan" size={22} color={th.ink}/>
         </Pressable>
-        <View style={{flex:1}}><Cta label={groupBusy?'Joining…':'Join group order'} onPress={()=>void joinServerGroup()} disabled={groupBusy} /></View>
+        <View style={{flex:1}}><Cta label={groupBusy?label("lbl.cms.0d7c6ad747ae", "Joining…"):label("lbl.cms.4d1a2e311885", "Join group order")} onPress={()=>void joinServerGroup()} disabled={groupBusy} /></View>
       </Row>
       <View style={{flexDirection:'row',alignItems:'center',gap:12,marginTop:30,marginBottom:26}}>
         <View style={{flex:1,height:1,backgroundColor:th.line}} /><T size={12} color={th.mut}>{label('lbl.sheetGroupOr', 'or start your own')}</T><View style={{flex:1,height:1,backgroundColor:th.line}} />
       </View>
       <T size={16} weight="800">{label('lbl.sheetStartGroupTitle', 'Start a group order')}</T>
       <T size={13} color={th.mut} style={{marginTop:6,marginBottom:16,lineHeight:19}}>{label('lbl.sheetStartGroupHint', 'You pay for the whole order. Friends add their items from their own phones.')}</T>
-      <Cta label={groupBusy?'Please wait…':'Create group invite'} onPress={()=>void createServerGroup()} disabled={groupBusy} />
+      <Cta label={groupBusy?label("lbl.cms.f61a88208368", "Please wait…"):label("lbl.cms.430e970103b4", "Create group invite")} onPress={()=>void createServerGroup()} disabled={groupBusy} />
     {S.cart.lines.length > 0 && !group.serverBacked ? <View>
       <T size={14} weight="600" style={{marginTop:24}}>{label('lbl.sheetSharedCart', 'Items in this group')}</T>
       {S.cart.lines.length ? S.cart.lines.map((line:any)=><Row key={line.k} sp style={{marginTop:8,alignItems:'flex-start'}}><View style={{flex:1}}><T size={13} weight="600">{line.q}× {line.n}</T>{line.d ? <T size={11.5} color={th.mut}>{line.d}</T> : null}</View><T size={13} weight="600">{money(line.p*line.q)}</T></Row>) : null}
@@ -510,25 +510,25 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       <Row sp><View style={{flex:1}}><T size={11.5} weight="600" color={th.mut}>{label('lbl.sheetInviteCode', 'GROUP INVITE CODE')}</T><T size={24} weight="800" style={{marginTop:4}}>{group.code}</T></View><Cta small label={label('lbl.sheetInvitePeople', 'Invite people')} onPress={invite} /></Row>
       {group.code ? <View style={{alignItems:'center',paddingVertical:20,marginTop:18,marginBottom:8,borderRadius:18,backgroundColor:th.soft}}>
         <QRCode value={'wantiss://goodies/group?code='+encodeURIComponent(group.code)} size={168} backgroundColor="#FFFFFF" color="#111111"/>
-        <T size={12.5} weight="600" style={{marginTop:12}}>Scan to join this group</T>
-        <T size={12} color={th.mut} style={{marginTop:4}}>Invite code: {group.code}</T>
+        <T size={12.5} weight="600" style={{marginTop:12}}>{label("lbl.cms.93357aaf2861", "Scan to join this group")}</T>
+        <T size={12} color={th.mut} style={{marginTop:4}}>{label("lbl.cms.2299e372cc22", "Invite code: ")}{group.code}</T>
       </View> : null}
       <View style={{height:14}}/>
-      <Cta small ghost label="Share invite code" onPress={()=>void invite()} />
+      <Cta small ghost label={label("lbl.cms.90a979b54f01", "Share invite code")} onPress={()=>void invite()} />
       {groupMembers.some((member:any)=>member.user_id===currentUserId) ? <View style={{marginTop:12}}>
-        <Cta small ghost label={friendsOpen?'Hide friends':'Invite friends'} onPress={()=>{if(friendsOpen)setFriendsOpen(false);else void openFriends();}} />
+        <Cta small ghost label={friendsOpen?label("lbl.cms.843cf2cc36fc", "Hide friends"):label("lbl.cms.6bb993f5d3e9", "Invite friends")} onPress={()=>{if(friendsOpen)setFriendsOpen(false);else void openFriends();}} />
         {friendsOpen ? <View style={{marginTop:10}}>
-          {friendsBusy&&!friends.length ? <T size={13} color={th.mut}>Loading friends…</T> : null}
-          {!friendsBusy&&!friends.length ? <T size={13} color={th.mut}>No friends to invite yet.</T> : null}
+          {friendsBusy&&!friends.length ? <T size={13} color={th.mut}>{label("lbl.cms.5bebcc4de709", "Loading friends…")}</T> : null}
+          {!friendsBusy&&!friends.length ? <T size={13} color={th.mut}>{label("lbl.cms.0ba8a61c181a", "No friends to invite yet.")}</T> : null}
           {friends.map((f:any)=>{
             const uid=String(f.user_id), blocked=!!f.already_member || !!f.already_invited, picked=pickedFriends.includes(uid);
             return <Pressable key={uid} disabled={blocked} accessibilityRole="checkbox" accessibilityState={{checked:picked,disabled:blocked}} onPress={()=>setPickedFriends(list=>picked?list.filter(x=>x!==uid):[...list,uid])} style={{flexDirection:'row',alignItems:'center',gap:12,paddingVertical:9,opacity:blocked?0.5:1}}>
               <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center',overflow:'hidden'}}>{f.avatar_url?<Image source={{uri:f.avatar_url}} style={{width:38,height:38}} />:<Icon name="user" color={th.mut}/>}</View>
-              <View style={{flex:1}}><T weight="600">{f.display_name}</T>{f.already_member?<T size={12} color={th.mut}>Joined</T>:f.already_invited?<T size={12} color={th.mut}>Invited</T>:f.invite_status==='declined'?<T size={12} color={th.mut}>Declined</T>:null}</View>
+              <View style={{flex:1}}><T weight="600">{f.display_name}</T>{f.already_member?<T size={12} color={th.mut}>{label("lbl.cms.ce694de2c6e7", "Joined")}</T>:f.already_invited?<T size={12} color={th.mut}>{label("lbl.cms.409175174430", "Invited")}</T>:f.invite_status==='declined'?<T size={12} color={th.mut}>{label("lbl.cms.c123cfeda157", "Declined")}</T>:null}</View>
               <View style={{width:22,height:22,borderRadius:7,borderWidth:1.5,borderColor:picked?th.br:th.line,backgroundColor:picked?th.br:'transparent',alignItems:'center',justifyContent:'center'}}>{picked?<Icon name="check" size={14} color="#FFF"/>:null}</View>
             </Pressable>;
           })}
-          {friends.length ? <View style={{marginTop:10}}><Cta label={friendsBusy?'Sending…':'Send invitation'+(pickedFriends.length?' ('+pickedFriends.length+')':'')} onPress={()=>void sendFriendInvites()} disabled={friendsBusy||!pickedFriends.length} /></View> : null}
+          {friends.length ? <View style={{marginTop:10}}><Cta label={friendsBusy?label("lbl.cms.3cb5b5afda95", "Sending…"):label("lbl.cms.9a867e4ff86a", "Send invitation")+(pickedFriends.length?' ('+pickedFriends.length+')':'')} onPress={()=>void sendFriendInvites()} disabled={friendsBusy||!pickedFriends.length} /></View> : null}
         </View> : null}
       </View> : null}
       <View style={{height:24}}/>
@@ -536,30 +536,30 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     {group.serverBacked ? <>
     <T size={15} weight="600" style={{marginBottom:7}}>{label('lbl.sheetGroupMembers', 'Group members')}</T>
     <View>
-      {membershipError ? <T size={12} color={th.red}>Could not load group members. Try again.</T> : null}
+      {membershipError ? <T size={12} color={th.red}>{label("lbl.cms.91ec9baa31db", "Could not load group members. Try again.")}</T> : null}
       {groupMembers.map((member:any)=>{
         const uid=String(member.user_id||'');
         const isYou=uid===currentUserId;
         return <Row key={uid} style={{gap:10,alignItems:'center',paddingVertical:9}}>
           <View style={{width:38,height:38,borderRadius:19,backgroundColor:th.soft,alignItems:'center',justifyContent:'center'}}><Icon name="user" color={th.mut}/></View>
-          <View style={{flex:1}}><T weight="600">{isYou?'You':member.display_name}</T><T size={12} color={th.mut}>{member.is_host?'Host':'Joined group order'}</T></View>
-          {isYou?<Badge green label="You"/>:null}
+          <View style={{flex:1}}><T weight="600">{isYou?label("lbl.cms.72a4f8f6ae2b", "You"):member.display_name}</T><T size={12} color={th.mut}>{member.is_host?label("lbl.cms.e1d2a0acc58b", "Host"):label("lbl.cms.a643f4c6e0ad", "Joined group order")}</T></View>
+          {isYou?<Badge green label={label("lbl.cms.72a4f8f6ae2b", "You")}/>:null}
         </Row>;
       })}
 
     </View>
     <View style={{height:12}}/>
-    <T size={15} weight="600" style={{marginBottom:7}}>Shared items</T>
+    <T size={15} weight="600" style={{marginBottom:7}}>{label("lbl.cms.6e3098d0c1da", "Shared items")}</T>
     <View>
       {sharedItems.length ? sharedItems.map((item:any)=>{
         const product=Array.isArray(item.product)?item.product[0]:item.product;
         return <Row key={item.id} sp style={{paddingVertical:8,alignItems:'flex-start'}}>
-          <View style={{flex:1}}><T weight="600">{item.quantity}× {product?.name || 'Unavailable product'}</T>{item.note ? <T size={11.5} color={th.mut}>{item.note}</T> : null}</View>
+          <View style={{flex:1}}><T weight="600">{item.quantity}× {product?.name || label("lbl.cms.3ff260e4c8e9", "Unavailable product")}</T>{item.note ? <T size={11.5} color={th.mut}>{item.note}</T> : null}</View>
           <View style={{alignItems:'flex-end',gap:7}}>
             <T weight="600">{product?.price!=null?money(Number(product.price)*Number(item.quantity)):'—'}</T>
-            {group.serverBacked && String(item.user_id)===currentUserId ? <Pressable accessibilityRole="button" accessibilityLabel="Remove my shared cart item" onPress={async()=>{
+            {group.serverBacked && String(item.user_id)===currentUserId ? <Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.678971e91d3f", "Remove my shared cart item")} onPress={async()=>{
               const {error}=await removeGroupOrderCartLine(group.groupId,item.line_key);
-              if(error){toast(friendlyError(error, 'Could not remove this shared item.'));return;}
+              if(error){toast(friendlyError(error, label("lbl.cms.5954ff29d7a5", "Could not remove this shared item.")));return;}
               const ownLine=S.cart.lines.find((line:any)=>line.k===item.line_key);
               if(ownLine){S.cart.lines=S.cart.lines.filter((line:any)=>line.k!==item.line_key);if(!S.cart.lines.length)S.cart.sid=null;save();emit();}
             }}><Icon name="trash-2" size={17} color={th.red}/></Pressable> : null}
@@ -567,64 +567,64 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
         </Row>;
       }) : null}
       <View style={{borderTopWidth: 0.5,borderTopColor:th.line,marginTop:5,paddingTop:10}}>
-        <Row sp><T weight="600">Items subtotal</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
+        <Row sp><T weight="600">{label("lbl.cms.2eb3747e6fda", "Items subtotal")}</T><T weight="600">{money(sharedItems.reduce((sum:number,item:any)=>{const product=Array.isArray(item.product)?item.product[0]:item.product;return sum+Number(product?.price||0)*Number(item.quantity||0);},0))}</T></Row>
        </View>
       <View style={{height:10}}/>
       {groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')
-        ? <Cta label={previewBusy?'Checking shared cart…':'Review combined cart'} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
+        ? <Cta label={previewBusy?label("lbl.cms.c18a37461b0a", "Checking shared cart…"):label("lbl.cms.15aa7cafd092", "Review combined cart")} onPress={()=>void reviewSharedOrder()} disabled={previewBusy||!group.serverBacked}/>
         : null}
     </View>
     </> : null}
     {checkoutPreview ? <View>
-      <T size={15} weight="600">Combined cart</T>
-      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} items from everyone</T>
+      <T size={15} weight="600">{label("lbl.cms.f2e22e470687", "Combined cart")}</T>
+      <T size={12} color={th.mut} style={{marginTop:4}}>{checkoutPreview.store_name} · {checkoutPreview.item_count} {label("lbl.cms.4f071bdfe18b", "items from everyone")}</T>
       
-      <Row sp style={{borderTopWidth: 0.5,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">Items subtotal</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
+      <Row sp style={{borderTopWidth: 0.5,borderTopColor:th.line,paddingTop:10,marginTop:4}}><T weight="600">{label("lbl.cms.2eb3747e6fda", "Items subtotal")}</T><T weight="600">{money(Number(checkoutPreview.subtotal||0))}</T></Row>
  
     </View>:null}
     {checkoutPreview && groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host') ? <View>
-      <T size={15} weight="600">Checkout</T>
+      <T size={15} weight="600">{label("lbl.cms.365120540556", "Checkout")}</T>
 
       <View style={{height:10}}/>
-      <Seg list={[["pickup","Pickup"],["delivery","Delivery"]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(friendlyError(error, 'Could not calculate the payment estimate.'));}else setCheckoutEstimate(data);});}} />
+      <Seg list={[['pickup',label('lbl.checkoutPickup','Pickup')],['delivery',label('lbl.checkoutDelivery','Delivery')]]} on={groupCheckoutType} onPick={value=>{setGroupCheckoutType(value as 'pickup'|'delivery');setGroupDeliveryQuote(null);setCheckoutEstimate(null);if(value==='pickup')void supabase.rpc('goodies_group_order_checkout_estimate',{p_group_id:group.groupId,p_order_type:'pickup',p_address:{}}).then(({data,error}:any)=>{if(error){setCheckoutEstimate(null);toast(friendlyError(error, label("lbl.cms.a8b8e5886e88", "Could not calculate the payment estimate.")));}else setCheckoutEstimate(data);});}} />
       {groupCheckoutType==='delivery' ? <View style={{marginTop:10}}>
-        <T size={12} weight="600" style={{marginBottom:6}}>Deliver to</T>
+        <T size={12} weight="600" style={{marginBottom:6}}>{label("lbl.cms.d1be960df332", "Deliver to")}</T>
         {S.addr.map((item:any)=><Radio key={String(item.id)} on={String(groupAddressId)===String(item.id)} onPress={()=>{setGroupAddressId(item.id);setGroupDeliveryQuote(null);setCheckoutEstimate(null);}}>
-          <View style={{flex:1}}><T size={13} weight="600">{item.l}{item.def?' · Default':''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
+          <View style={{flex:1}}><T size={13} weight="600">{item.l}{item.def?label("lbl.cms.85133da20cde", " · Default"):''}</T><T size={11.5} color={th.mut}>{item.t}</T></View>
         </Radio>)}
-        {!S.addr.length ? <T size={12} color={th.mut}>No saved addresses found. Add a delivery address to your profile first.</T> : null}
-        <Cta ghost small label={groupQuoteBusy?'Calculating delivery…':'Calculate delivery fee'} onPress={()=>void calculateGroupDeliveryQuote()} disabled={groupQuoteBusy||!S.addr.length}/>
+        {!S.addr.length ? <T size={12} color={th.mut}>{label("lbl.cms.7bb9755afe95", "No saved addresses found. Add a delivery address to your profile first.")}</T> : null}
+        <Cta ghost small label={groupQuoteBusy?label("lbl.cms.cbc60fe888d9", "Calculating delivery…"):label("lbl.cms.92e9fad36618", "Calculate delivery fee")} onPress={()=>void calculateGroupDeliveryQuote()} disabled={groupQuoteBusy||!S.addr.length}/>
         {groupDeliveryQuote&&groupDeliveryQuote.addressId===String(groupAddressId)&&groupDeliveryQuote.expiresAt>Date.now() ? <View style={{marginTop:8,padding:10,borderRadius:10,backgroundColor:th.soft}}>
-          <Row sp><T size={12} color={th.mut}>Delivery fee</T><T size={13} weight="600">{money(groupDeliveryQuote.fee)}</T></Row>
+          <Row sp><T size={12} color={th.mut}>{label("lbl.cms.580cf27d049f", "Delivery fee")}</T><T size={13} weight="600">{money(groupDeliveryQuote.fee)}</T></Row>
 
 
         </View> : null}
-        <Cta ghost small label="Manage delivery addresses" onPress={()=>{close();A.go('addresses');}}/>
+        <Cta ghost small label={label("lbl.cms.80852e133373", "Manage delivery addresses")} onPress={()=>{close();A.go('addresses');}}/>
       </View> : null}
       {checkoutEstimate ? <View style={{marginTop:12,padding:11,borderRadius:11,backgroundColor:th.soft}}>
-        <T size={12} weight="600" style={{marginBottom:7}}>Payment estimate</T>
-        <Row sp><T size={12} color={th.mut}>Combined cart subtotal</T><T size={12} weight="600">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
-        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Delivery fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
-        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>Service fee</T><T size={12} weight="600">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
+        <T size={12} weight="600" style={{marginBottom:7}}>{label("lbl.cms.8299ae70ae45", "Payment estimate")}</T>
+        <Row sp><T size={12} color={th.mut}>{label("lbl.cms.a55fd7ae1c97", "Combined cart subtotal")}</T><T size={12} weight="600">{money(Number(checkoutEstimate.subtotal||0))}</T></Row>
+        {groupCheckoutType==='delivery' ? <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>{label("lbl.cms.580cf27d049f", "Delivery fee")}</T><T size={12} weight="600">{money(Number(checkoutEstimate.delivery_fee||0))}</T></Row> : null}
+        <Row sp style={{marginTop:5}}><T size={12} color={th.mut}>{label("lbl.cms.e25611cb9017", "Service fee")}</T><T size={12} weight="600">{money(Number(checkoutEstimate.service_fee||0))}</T></Row>
         <View style={{height:1,backgroundColor:th.line,marginVertical:8}}/>
-        <Row sp><T size={13} weight="600">Estimated total</T><T size={15} weight="600">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
+        <Row sp><T size={13} weight="600">{label("lbl.cms.58f9d30aae7a", "Estimated total")}</T><T size={15} weight="600">{money(Number(checkoutEstimate.estimated_total||0))}</T></Row>
 
 
       </View> : null}
-      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>Host Wallet balance</T><T weight="600">{money(Number(S.wallet||0))}</T></Row>
+      <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>{label("lbl.cms.d15afce772c7", "Host Wallet balance")}</T><T weight="600">{money(Number(S.wallet||0))}</T></Row>
 
       <View style={{height:9}}/>
-      <Cta label={groupCheckoutBusy?'Placing group order…':'Place group order · Wallet'} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
+      <Cta label={groupCheckoutBusy?label("lbl.cms.5763c91a2cc0", "Placing group order…"):label("lbl.cms.91e196e0db97", "Place group order · Wallet")} onPress={()=>void checkoutGroupOrder()} disabled={groupCheckoutBusy||(groupCheckoutType==='delivery'&&(!S.addr.length||!groupDeliveryQuote||groupDeliveryQuote.addressId!==String(groupAddressId)||groupDeliveryQuote.expiresAt<=Date.now()))}/>
     </View> : null}
     {showDone ? <><View style={{height:12}} /><Cta label={label('lbl.sheetDone', 'Done')} onPress={close} /><View style={{height:8}} /></> : null}
     {group.serverBacked && group.groupId ? <Cta ghost label={label('lbl.sheetEndGroup', 'End group order')} onPress={async () => {
-      if (!group.serverBacked || !group.groupId) {toast('This group invitation is not server-backed.');return;}
+      if (!group.serverBacked || !group.groupId) {toast(label("lbl.cms.3d7a9de0260e", "This group invitation is not server-backed."));return;}
       setGroupBusy(true);
       const {data,error}=await supabase.rpc('goodies_group_order_end',{p_group_id:group.groupId});
       setGroupBusy(false);
-      if(error){toast(friendlyError(error, 'Could not end this group order.'));return;}
+      if(error){toast(friendlyError(error, label("lbl.cms.5c58c7dec596", "Could not end this group order.")));return;}
       clearActiveGroup(); close();
-      toast('Group order ended.');
+      toast(label("lbl.cms.e12b8e635219", "Group order ended."));
     }} /> : null}
     <Modal visible={scannerOpen} animationType="slide" onRequestClose={()=>setScannerOpen(false)}>
       <View style={{flex:1,backgroundColor:'#000000'}}>
@@ -635,11 +635,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
           let code=linkCode ? decodeURIComponent(linkCode) : scanned;
           code=code.trim().toUpperCase();
           setInviteCode(code);
-          toast('QR code scanned. Tap Join group order to continue.');
+          toast(label("lbl.cms.c90943bbdf87", "QR code scanned. Tap Join group order to continue."));
         }}/>
         <View style={{padding:18,backgroundColor:'#111111'}}>
-          <T color="#FFFFFF" weight="600" align="center">Scan a Wantiss group invite QR code</T>
-          <Cta label="Close scanner" onPress={()=>setScannerOpen(false)}/>
+          <T color="#FFFFFF" weight="600" align="center">{label("lbl.cms.45162ba8dd3a", "Scan a Wantiss group invite QR code")}</T>
+          <Cta label={label("lbl.cms.b5e1b0b2d344", "Close scanner")} onPress={()=>setScannerOpen(false)}/>
         </View>
       </View>
     </Modal>
@@ -688,7 +688,7 @@ function ContactsSheet({close}: {close: () => void}) {
     <T size={12.5} color={th.mut} style={{marginBottom: 12}}>{label('lbl.sheetContactNumberHint', 'We use this number for this order only. Your Wantiss account number is never changed here.')}</T>
     {rows.map((r: any) => (
       <View key={r.id} style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
-        <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="600">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>Goodies checkout number · {r.l}</T>}</View></Radio></View>
+        <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="600">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>{label("lbl.cms.a230877fe597", "Goodies checkout number · ")}{r.l}</T>}</View></Radio></View>
         {r.w ? null : <><Pressable accessibilityLabel={label('lbl.sheetEditNumber', 'Edit number')} onPress={() => ui.sheet({kind: 'ctform', id: r.id})}><T size={13} weight="600" color={th.br}>{label("lbl.sheetAuto1CISXZJ", "Edit")}</T></Pressable>
         <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {S.gc = S.gc.filter((c: any) => c.id !== r.id); if (S.cc === r.id) S.cc = 'w'; toast(label('lbl.sheetNumberRemoved', 'Number removed')); save(); emit(); ui.sheet({kind: 'contacts'});}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
       </View>
@@ -728,7 +728,7 @@ function ImportSheet({close}: {close: () => void}) {
   const th = useTheme(), [txt, setTxt] = useState('');
   return (<>
     <T size={20} weight="600">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. {hasContent() ? 'Admin content is currently loaded.' : 'The built-in sample content is currently used.'}</T>
+    <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{label("lbl.cms.51de0d274565", "Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. ")}{hasContent() ? label("lbl.cms.c73acc89640b", "Admin content is currently loaded.") : label("lbl.cms.40b928d70f8f", "The built-in sample content is currently used.")}</T>
     <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
     <View style={{height: 12}} />
     <Cta label={label("lbl.sheetAuto1EXCTAI", "Import")} onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
