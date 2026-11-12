@@ -2289,3386 +2289,3402 @@
   },
   {
     "id": "K0572",
-    "text": "Help pay a Goodies bill"
+    "text": "Help me pay for my Goodies order on Wantiss. {amount} remaining. {link}"
   },
   {
     "id": "K0573",
-    "text": "Hide friends"
+    "text": "Help pay a Goodies bill"
   },
   {
     "id": "K0574",
-    "text": "Highest rating"
+    "text": "Hide friends"
   },
   {
     "id": "K0575",
-    "text": "History"
+    "text": "Highest rating"
   },
   {
     "id": "K0576",
-    "text": "Home"
+    "text": "History"
   },
   {
     "id": "K0577",
-    "text": "Host"
+    "text": "Home"
   },
   {
     "id": "K0578",
-    "text": "Host Wallet balance"
+    "text": "Host"
   },
   {
     "id": "K0579",
-    "text": "Hot and fresh to you"
+    "text": "Host Wallet balance"
   },
   {
     "id": "K0580",
-    "text": "Hour (00–23)"
+    "text": "Hot and fresh to you"
   },
   {
     "id": "K0581",
-    "text": "How do I track my order?"
+    "text": "Hour (00–23)"
   },
   {
     "id": "K0582",
-    "text": "I accept cash on delivery"
+    "text": "How do I track my order?"
   },
   {
     "id": "K0583",
-    "text": "I am at the gate"
+    "text": "I accept cash on delivery"
   },
   {
     "id": "K0584",
-    "text": "I am {age} or older and will show valid government photo ID on delivery or pickup."
+    "text": "I am at the gate"
   },
   {
     "id": "K0585",
-    "text": "I have a problem with this order"
+    "text": "I am {age} or older and will show valid government photo ID on delivery or pickup."
   },
   {
     "id": "K0586",
-    "text": "I received my order"
+    "text": "I have a problem with this order"
   },
   {
     "id": "K0587",
-    "text": "I understand"
+    "text": "I received my order"
   },
   {
     "id": "K0588",
-    "text": "ID check failed"
+    "text": "I understand"
   },
   {
     "id": "K0589",
-    "text": "ID check failed. "
+    "text": "ID check failed"
   },
   {
     "id": "K0590",
-    "text": "ID check failed. Order cancelled"
+    "text": "ID check failed. "
   },
   {
     "id": "K0591",
-    "text": "ID check failed. You were not charged."
+    "text": "ID check failed. Order cancelled"
   },
   {
     "id": "K0592",
-    "text": "ID check failed. {amount} was refunded to your Wantiss wallet. The delivery fee is not refunded."
+    "text": "ID check failed. You were not charged."
   },
   {
     "id": "K0593",
-    "text": "ID check · "
+    "text": "ID check failed. {amount} was refunded to your Wantiss wallet. The delivery fee is not refunded."
   },
   {
     "id": "K0594",
-    "text": "ID checked."
+    "text": "ID check · "
   },
   {
     "id": "K0595",
-    "text": "ID checked. Order can be completed"
+    "text": "ID checked."
   },
   {
     "id": "K0596",
-    "text": "If the ID check fails, the alcohol returns to the store and you are refunded to your Wantiss wallet minus the delivery fee."
+    "text": "ID checked. Order can be completed"
   },
   {
     "id": "K0597",
-    "text": "Import"
+    "text": "If the ID check fails, the alcohol returns to the store and you are refunded to your Wantiss wallet minus the delivery fee."
   },
   {
     "id": "K0598",
-    "text": "Import Admin content"
+    "text": "Import"
   },
   {
     "id": "K0599",
-    "text": "In stock"
+    "text": "Import Admin content"
   },
   {
     "id": "K0600",
-    "text": "Included"
+    "text": "In stock"
   },
   {
     "id": "K0601",
-    "text": "Instant once earnings are available"
+    "text": "Included"
   },
   {
     "id": "K0602",
-    "text": "Instructions"
+    "text": "Instant once earnings are available"
   },
   {
     "id": "K0603",
-    "text": "Insufficient Wallet balance"
+    "text": "Instructions"
   },
   {
     "id": "K0604",
-    "text": "Insufficient Wantiss Wallet balance."
+    "text": "Insufficient Wallet balance"
   },
   {
     "id": "K0605",
-    "text": "Insufficient Wantiss Wallet balance. Add "
+    "text": "Insufficient Wantiss Wallet balance."
   },
   {
     "id": "K0606",
-    "text": "Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash."
+    "text": "Insufficient Wantiss Wallet balance. Add "
   },
   {
     "id": "K0607",
-    "text": "Insufficient wallet balance"
+    "text": "Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash."
   },
   {
     "id": "K0608",
-    "text": "Invalid Wantiss payment link"
+    "text": "Insufficient wallet balance"
   },
   {
     "id": "K0609",
-    "text": "Invitation sent."
+    "text": "Invalid Wantiss payment link"
   },
   {
     "id": "K0610",
-    "text": "Invitations from friends"
+    "text": "Invitation sent."
   },
   {
     "id": "K0611",
-    "text": "Invite code: "
+    "text": "Invitations from friends"
   },
   {
     "id": "K0612",
-    "text": "Invite code: {code}"
+    "text": "Invite code: "
   },
   {
     "id": "K0613",
-    "text": "Invite friends"
+    "text": "Invite code: {code}"
   },
   {
     "id": "K0614",
-    "text": "Invite friends and coordinate a shared cart"
+    "text": "Invite friends"
   },
   {
     "id": "K0615",
-    "text": "Invite people"
+    "text": "Invite friends and coordinate a shared cart"
   },
   {
     "id": "K0616",
-    "text": "Invited"
+    "text": "Invite people"
   },
   {
     "id": "K0617",
-    "text": "Item price"
+    "text": "Invited"
   },
   {
     "id": "K0618",
-    "text": "Item updated"
+    "text": "Item price"
   },
   {
     "id": "K0619",
-    "text": "Items"
+    "text": "Item updated"
   },
   {
     "id": "K0620",
-    "text": "Items ({n})"
+    "text": "Items"
   },
   {
     "id": "K0621",
-    "text": "Items added to your cart"
+    "text": "Items ({n})"
   },
   {
     "id": "K0622",
-    "text": "Items subtotal"
+    "text": "Items added to your cart"
   },
   {
     "id": "K0623",
-    "text": "Join"
+    "text": "Items subtotal"
   },
   {
     "id": "K0624",
-    "text": "Join a group order"
+    "text": "Join"
   },
   {
     "id": "K0625",
-    "text": "Join group order"
+    "text": "Join a group order"
   },
   {
     "id": "K0626",
-    "text": "Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: "
+    "text": "Join group order"
   },
   {
     "id": "K0627",
-    "text": "Joined"
+    "text": "Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: "
   },
   {
     "id": "K0628",
-    "text": "Joined group order"
+    "text": "Joined"
   },
   {
     "id": "K0629",
-    "text": "Joining…"
+    "text": "Joined group order"
   },
   {
     "id": "K0630",
-    "text": "Just now"
+    "text": "Joining…"
   },
   {
     "id": "K0631",
-    "text": "Keep address"
+    "text": "Just now"
   },
   {
     "id": "K0632",
-    "text": "Keep current cart"
+    "text": "Keep address"
   },
   {
     "id": "K0633",
-    "text": "Keep editing"
+    "text": "Keep current cart"
   },
   {
     "id": "K0634",
-    "text": "Keep item"
+    "text": "Keep editing"
   },
   {
     "id": "K0635",
-    "text": "Keep number"
+    "text": "Keep item"
   },
   {
     "id": "K0636",
-    "text": "Keep order"
+    "text": "Keep number"
   },
   {
     "id": "K0637",
-    "text": "Keep request"
+    "text": "Keep order"
   },
   {
     "id": "K0638",
-    "text": "Keep your review under 1,000 characters."
+    "text": "Keep request"
   },
   {
     "id": "K0639",
-    "text": "Label (optional)"
+    "text": "Keep your review under 1,000 characters."
   },
   {
     "id": "K0640",
-    "text": "Language"
+    "text": "Label (optional)"
   },
   {
     "id": "K0641",
-    "text": "Language changed on this device, but your account preference could not be saved. Please retry in Wantiss Settings."
+    "text": "Language"
   },
   {
     "id": "K0642",
-    "text": "Large"
+    "text": "Language changed on this device, but your account preference could not be saved. Please retry in Wantiss Settings."
   },
   {
     "id": "K0643",
-    "text": "Leave it at the door"
+    "text": "Large"
   },
   {
     "id": "K0644",
-    "text": "Leave this builder?"
+    "text": "Leave it at the door"
   },
   {
     "id": "K0645",
-    "text": "Ledger"
+    "text": "Leave this builder?"
   },
   {
     "id": "K0646",
-    "text": "Less"
+    "text": "Ledger"
   },
   {
     "id": "K0647",
-    "text": "Limited-time offers"
+    "text": "Less"
   },
   {
     "id": "K0648",
-    "text": "Live delivery route"
+    "text": "Limited-time offers"
   },
   {
     "id": "K0649",
-    "text": "Live location unavailable"
+    "text": "Live delivery route"
   },
   {
     "id": "K0650",
-    "text": "Live tracking unavailable"
+    "text": "Live location unavailable"
   },
   {
     "id": "K0651",
-    "text": "Load more"
+    "text": "Live tracking unavailable"
   },
   {
     "id": "K0652",
-    "text": "Loading Goodies"
+    "text": "Load more"
   },
   {
     "id": "K0653",
-    "text": "Loading custom products…"
+    "text": "Loading Goodies"
   },
   {
     "id": "K0654",
-    "text": "Loading friends…"
+    "text": "Loading custom products…"
   },
   {
     "id": "K0655",
-    "text": "Loading orders…"
+    "text": "Loading friends…"
   },
   {
     "id": "K0656",
-    "text": "Loading payment methods…"
+    "text": "Loading orders…"
   },
   {
     "id": "K0657",
-    "text": "Loading reviews…"
+    "text": "Loading payment methods…"
   },
   {
     "id": "K0658",
-    "text": "Loading stores…"
+    "text": "Loading request…"
   },
   {
     "id": "K0659",
-    "text": "Loading…"
+    "text": "Loading reviews…"
   },
   {
     "id": "K0660",
-    "text": "Locating…"
+    "text": "Loading stores…"
   },
   {
     "id": "K0661",
-    "text": "Location sharing is off"
+    "text": "Loading…"
   },
   {
     "id": "K0662",
-    "text": "Location sharing stops when no delivery is active"
+    "text": "Locating…"
   },
   {
     "id": "K0663",
-    "text": "MM/YY"
+    "text": "Location sharing is off"
   },
   {
     "id": "K0664",
-    "text": "Main default"
+    "text": "Location sharing stops when no delivery is active"
   },
   {
     "id": "K0665",
-    "text": "Make this my default Wantiss address"
+    "text": "MM/YY"
   },
   {
     "id": "K0666",
-    "text": "Manage addresses"
+    "text": "Main default"
   },
   {
     "id": "K0667",
-    "text": "Manage delivery addresses"
+    "text": "Make this my default Wantiss address"
   },
   {
     "id": "K0668",
-    "text": "Manage payout methods"
+    "text": "Manage addresses"
   },
   {
     "id": "K0669",
-    "text": "Mark all as read"
+    "text": "Manage delivery addresses"
   },
   {
     "id": "K0670",
-    "text": "Mark delivered"
+    "text": "Manage payout methods"
   },
   {
     "id": "K0671",
-    "text": "Meat & seafood"
+    "text": "Mark all as read"
   },
   {
     "id": "K0672",
-    "text": "Message"
+    "text": "Mark delivered"
   },
   {
     "id": "K0673",
-    "text": "Message could not be sent."
+    "text": "Meat & seafood"
   },
   {
     "id": "K0674",
-    "text": "Message courier"
+    "text": "Message"
   },
   {
     "id": "K0675",
-    "text": "Message sent"
+    "text": "Message could not be sent."
   },
   {
     "id": "K0676",
-    "text": "Message store"
+    "text": "Message courier"
   },
   {
     "id": "K0677",
-    "text": "Messages"
+    "text": "Message sent"
   },
   {
     "id": "K0678",
-    "text": "Messages sent"
+    "text": "Message store"
   },
   {
     "id": "K0679",
-    "text": "Min. "
+    "text": "Messages"
   },
   {
     "id": "K0680",
-    "text": "Min. order"
+    "text": "Messages sent"
   },
   {
     "id": "K0681",
-    "text": "Minimum advance time"
+    "text": "Min. "
   },
   {
     "id": "K0682",
-    "text": "Minimum advance time: {lead} minutes."
+    "text": "Min. order"
   },
   {
     "id": "K0683",
-    "text": "Minimum age "
+    "text": "Minimum advance time"
   },
   {
     "id": "K0684",
-    "text": "Minimum order"
+    "text": "Minimum advance time: {lead} minutes."
   },
   {
     "id": "K0685",
-    "text": "Minimum order is {amount}"
+    "text": "Minimum age "
   },
   {
     "id": "K0686",
-    "text": "Minors may not purchase alcohol."
+    "text": "Minimum order"
   },
   {
     "id": "K0687",
-    "text": "Minute (00–59)"
+    "text": "Minimum order is {amount}"
   },
   {
     "id": "K0688",
-    "text": "MonCash"
+    "text": "Minors may not purchase alcohol."
   },
   {
     "id": "K0689",
-    "text": "More"
+    "text": "Minute (00–59)"
   },
   {
     "id": "K0690",
-    "text": "More stores and products will appear here as the catalog grows."
+    "text": "MonCash"
   },
   {
     "id": "K0691",
-    "text": "My Orders"
+    "text": "More"
   },
   {
     "id": "K0692",
-    "text": "My deliveries"
+    "text": "More stores and products will appear here as the catalog grows."
   },
   {
     "id": "K0693",
-    "text": "Name on Card"
+    "text": "My Orders"
   },
   {
     "id": "K0694",
-    "text": "Nearest"
+    "text": "My deliveries"
   },
   {
     "id": "K0695",
-    "text": "New Goodies order"
+    "text": "Name on Card"
   },
   {
     "id": "K0696",
-    "text": "New address"
+    "text": "Nearest"
   },
   {
     "id": "K0697",
-    "text": "New cash orders are paused until settlement. Accepted orders continue."
+    "text": "New Goodies order"
   },
   {
     "id": "K0698",
-    "text": "New offers will appear here when a store assigns you."
+    "text": "New address"
   },
   {
     "id": "K0699",
-    "text": "New store"
+    "text": "New cash orders are paused until settlement. Accepted orders continue."
   },
   {
     "id": "K0700",
-    "text": "New · No reviews yet"
+    "text": "New offers will appear here when a store assigns you."
   },
   {
     "id": "K0701",
-    "text": "Next page"
+    "text": "New store"
   },
   {
     "id": "K0702",
-    "text": "No Wantiss wallet found"
+    "text": "New · No reviews yet"
   },
   {
     "id": "K0703",
-    "text": "No accepted friends to show yet."
+    "text": "Next page"
   },
   {
     "id": "K0704",
-    "text": "No accepted friends yet. Add friends in Wantiss Messages, or share the payment link above."
+    "text": "No Wantiss wallet found"
   },
   {
     "id": "K0705",
-    "text": "No active delivery offers"
+    "text": "No accepted friends to show yet."
   },
   {
     "id": "K0706",
-    "text": "No active orders"
+    "text": "No accepted friends yet. Add friends in Wantiss Messages, or share the payment link above."
   },
   {
     "id": "K0707",
-    "text": "No comment"
+    "text": "No active delivery offers"
   },
   {
     "id": "K0708",
-    "text": "No coupons or offers"
+    "text": "No active orders"
   },
   {
     "id": "K0709",
-    "text": "No flash deals available"
+    "text": "No comment"
   },
   {
     "id": "K0710",
-    "text": "No friends to invite yet."
+    "text": "No coupons or offers"
   },
   {
     "id": "K0711",
-    "text": "No in-stock products match these filters."
+    "text": "No flash deals available"
   },
   {
     "id": "K0712",
-    "text": "No items found"
+    "text": "No friends to invite yet."
   },
   {
     "id": "K0713",
-    "text": "No longer taking orders"
+    "text": "No in-stock products match these filters."
   },
   {
     "id": "K0714",
-    "text": "No members yet. Invite friends or add their names to plan the group."
+    "text": "No items found"
   },
   {
     "id": "K0715",
-    "text": "No new payments can be accepted. Any expired or cancelled contributions are returned to their original Wallets."
+    "text": "No longer taking orders"
   },
   {
     "id": "K0716",
-    "text": "No past orders yet"
+    "text": "No members yet. Invite friends or add their names to plan the group."
   },
   {
     "id": "K0717",
-    "text": "No phone"
+    "text": "No new payments can be accepted. Any expired or cancelled contributions are returned to their original Wallets."
   },
   {
     "id": "K0718",
-    "text": "No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it."
+    "text": "No past orders yet"
   },
   {
     "id": "K0719",
-    "text": "No results found"
+    "text": "No phone"
   },
   {
     "id": "K0720",
-    "text": "No reviews yet"
+    "text": "No preset times are available on this date. You can still enter an exact time below if the store’s hours allow it."
   },
   {
     "id": "K0721",
-    "text": "No saved addresses found. Add a delivery address to your profile first."
+    "text": "No results found"
   },
   {
     "id": "K0722",
-    "text": "No saved cards"
+    "text": "No reviews yet"
   },
   {
     "id": "K0723",
-    "text": "No saved cards yet"
+    "text": "No saved addresses found. Add a delivery address to your profile first."
   },
   {
     "id": "K0724",
-    "text": "No settlement transactions yet"
+    "text": "No saved cards"
   },
   {
     "id": "K0725",
-    "text": "No stores match right now"
+    "text": "No saved cards yet"
   },
   {
     "id": "K0726",
-    "text": "No tip"
+    "text": "No settlement transactions yet"
   },
   {
     "id": "K0727",
-    "text": "No wallet found for this account."
+    "text": "No stores match right now"
   },
   {
     "id": "K0728",
-    "text": "None"
+    "text": "No tip"
   },
   {
     "id": "K0729",
-    "text": "Not accepting payments"
+    "text": "No wallet found for this account."
   },
   {
     "id": "K0730",
-    "text": "Not available for live Goodies orders"
+    "text": "None"
   },
   {
     "id": "K0731",
-    "text": "Not now"
+    "text": "Not accepting payments"
   },
   {
     "id": "K0732",
-    "text": "Not valid"
+    "text": "Not available for live Goodies orders"
   },
   {
     "id": "K0733",
-    "text": "Note"
+    "text": "Not now"
   },
   {
     "id": "K0734",
-    "text": "Note for the store"
+    "text": "Not valid"
   },
   {
     "id": "K0735",
-    "text": "Note:"
+    "text": "Note"
   },
   {
     "id": "K0736",
-    "text": "Note: "
+    "text": "Note for the store"
   },
   {
     "id": "K0737",
-    "text": "Note: {note}"
+    "text": "Note:"
   },
   {
     "id": "K0738",
-    "text": "Nothing has been ordered yet. Add more, or review your cart when you are ready."
+    "text": "Note: "
   },
   {
     "id": "K0739",
-    "text": "Nothing matches"
+    "text": "Note: {note}"
   },
   {
     "id": "K0740",
-    "text": "Nothing saved yet"
+    "text": "Nothing has been ordered yet. Add more, or review your cart when you are ready."
   },
   {
     "id": "K0741",
-    "text": "Nothing to reorder"
+    "text": "Nothing matches"
   },
   {
     "id": "K0742",
-    "text": "Nothing to send."
+    "text": "Nothing saved yet"
   },
   {
     "id": "K0743",
-    "text": "Notification"
+    "text": "Nothing to reorder"
   },
   {
     "id": "K0744",
-    "text": "Notification not found"
+    "text": "Nothing to send."
   },
   {
     "id": "K0745",
-    "text": "Notification preferences"
+    "text": "Notification"
   },
   {
     "id": "K0746",
-    "text": "Notifications"
+    "text": "Notification not found"
   },
   {
     "id": "K0747",
-    "text": "Number removed"
+    "text": "Notification preferences"
   },
   {
     "id": "K0748",
-    "text": "Number saved for Goodies checkout"
+    "text": "Notifications"
   },
   {
     "id": "K0749",
-    "text": "OFF"
+    "text": "Number removed"
   },
   {
     "id": "K0750",
-    "text": "ON"
+    "text": "Number saved for Goodies checkout"
   },
   {
     "id": "K0751",
-    "text": "Offer details are unavailable"
+    "text": "OFF"
   },
   {
     "id": "K0752",
-    "text": "Offers"
+    "text": "ON"
   },
   {
     "id": "K0753",
-    "text": "Offers and deals"
+    "text": "Offer details are unavailable"
   },
   {
     "id": "K0754",
-    "text": "On hold"
+    "text": "Offers"
   },
   {
     "id": "K0755",
-    "text": "On sale"
+    "text": "Offers and deals"
   },
   {
     "id": "K0756",
-    "text": "On the way"
+    "text": "On hold"
   },
   {
     "id": "K0757",
-    "text": "One friend pays the full remaining bill through Wantiss Wallet."
+    "text": "On sale"
   },
   {
     "id": "K0758",
-    "text": "One of the stores is no longer taking orders."
+    "text": "On the way"
   },
   {
     "id": "K0759",
-    "text": "Only"
+    "text": "One friend pays the full remaining bill through Wantiss Wallet."
   },
   {
     "id": "K0760",
-    "text": "Only "
+    "text": "One of the stores is no longer taking orders."
   },
   {
     "id": "K0761",
-    "text": "Only a business owner can request payouts or manage payout details."
+    "text": "Only"
   },
   {
     "id": "K0762",
-    "text": "Only for this order. Your Wantiss default is unchanged."
+    "text": "Only "
   },
   {
     "id": "K0763",
-    "text": "Only the brand, last 4 digits and expiry are shown."
+    "text": "Only a business owner can request payouts or manage payout details."
   },
   {
     "id": "K0764",
-    "text": "Only the group host can check out."
+    "text": "Only for this order. Your Wantiss default is unchanged."
   },
   {
     "id": "K0765",
-    "text": "Only valid at {store}"
+    "text": "Only the brand, last 4 digits and expiry are shown."
   },
   {
     "id": "K0766",
-    "text": "Only when this store and an available courier accept cash on delivery"
+    "text": "Only the group host can check out."
   },
   {
     "id": "K0767",
-    "text": "Only while open"
+    "text": "Only valid at {store}"
   },
   {
     "id": "K0768",
-    "text": "Only {count} available"
+    "text": "Only when this store and an available courier accept cash on delivery"
   },
   {
     "id": "K0769",
-    "text": "Open Goodies quick menu"
+    "text": "Only while open"
   },
   {
     "id": "K0770",
-    "text": "Open Wallet"
+    "text": "Only {count} available"
   },
   {
     "id": "K0771",
-    "text": "Open Wantiss Wallet"
+    "text": "Open Goodies quick menu"
   },
   {
     "id": "K0772",
-    "text": "Open Wantiss Wallet from the main menu to add funds."
+    "text": "Open Wallet"
   },
   {
     "id": "K0773",
-    "text": "Open a store first to create its group invitation."
+    "text": "Open Wantiss Wallet"
   },
   {
     "id": "K0774",
-    "text": "Open cart"
+    "text": "Open Wantiss Wallet from the main menu to add funds."
   },
   {
     "id": "K0775",
-    "text": "Open near you"
+    "text": "Open a store first to create its group invitation."
   },
   {
     "id": "K0776",
-    "text": "Open now"
+    "text": "Open cart"
   },
   {
     "id": "K0777",
-    "text": "Open store conversation"
+    "text": "Open near you"
   },
   {
     "id": "K0778",
-    "text": "Open until {time}"
+    "text": "Open now"
   },
   {
     "id": "K0779",
-    "text": "Open {store}"
+    "text": "Open store conversation"
   },
   {
     "id": "K0780",
-    "text": "Opening conversation…"
+    "text": "Open until {time}"
   },
   {
     "id": "K0781",
-    "text": "Opening hours"
+    "text": "Open {store}"
   },
   {
     "id": "K0782",
-    "text": "Opening hours not set"
+    "text": "Opening conversation…"
   },
   {
     "id": "K0783",
-    "text": "Opening hours unavailable"
+    "text": "Opening hours"
   },
   {
     "id": "K0784",
-    "text": "Opening store"
+    "text": "Opening hours not set"
   },
   {
     "id": "K0785",
-    "text": "Opening store…"
+    "text": "Opening hours unavailable"
   },
   {
     "id": "K0786",
-    "text": "Opening {opening} · {lead} minutes advance time. Only times after the minimum are selectable."
+    "text": "Opening store"
   },
   {
     "id": "K0787",
-    "text": "Opens {time} today"
+    "text": "Opening store…"
   },
   {
     "id": "K0788",
-    "text": "Opens {time} tomorrow"
+    "text": "Opening {opening} · {lead} minutes advance time. Only times after the minimum are selectable."
   },
   {
     "id": "K0789",
-    "text": "Opens {time} {day}"
+    "text": "Opens {time} today"
   },
   {
     "id": "K0790",
-    "text": "Optional"
+    "text": "Opens {time} tomorrow"
   },
   {
     "id": "K0791",
-    "text": "Or enter an exact time"
+    "text": "Opens {time} {day}"
   },
   {
     "id": "K0792",
-    "text": "Or exact amount (USD)"
+    "text": "Optional"
   },
   {
     "id": "K0793",
-    "text": "Order"
+    "text": "Or enter an exact time"
   },
   {
     "id": "K0794",
-    "text": "Order "
+    "text": "Or exact amount (USD)"
   },
   {
     "id": "K0795",
-    "text": "Order (optional)"
+    "text": "Order"
   },
   {
     "id": "K0796",
-    "text": "Order accepted by store"
+    "text": "Order "
   },
   {
     "id": "K0797",
-    "text": "Order again"
+    "text": "Order (optional)"
   },
   {
     "id": "K0798",
-    "text": "Order and delivery feedback"
+    "text": "Order accepted by store"
   },
   {
     "id": "K0799",
-    "text": "Order cancelled"
+    "text": "Order again"
   },
   {
     "id": "K0800",
-    "text": "Order cancelled. Your card refund is pending and may need support follow-up."
+    "text": "Order and delivery feedback"
   },
   {
     "id": "K0801",
-    "text": "Order delivered"
+    "text": "Order cancelled"
   },
   {
     "id": "K0802",
-    "text": "Order fully funded"
+    "text": "Order cancelled. Your card refund is pending and may need support follow-up."
   },
   {
     "id": "K0803",
-    "text": "Order funded"
+    "text": "Order delivered"
   },
   {
     "id": "K0804",
-    "text": "Order history"
+    "text": "Order fully funded"
   },
   {
     "id": "K0805",
-    "text": "Order methods"
+    "text": "Order funded"
   },
   {
     "id": "K0806",
-    "text": "Order not found"
+    "text": "Order history"
   },
   {
     "id": "K0807",
-    "text": "Order now"
+    "text": "Order methods"
   },
   {
     "id": "K0808",
-    "text": "Order picked up"
+    "text": "Order not found"
   },
   {
     "id": "K0809",
-    "text": "Order placed"
+    "text": "Order now"
   },
   {
     "id": "K0810",
-    "text": "Order problem"
+    "text": "Order picked up"
   },
   {
     "id": "K0811",
-    "text": "Order sent to the store"
+    "text": "Order placed"
   },
   {
     "id": "K0812",
-    "text": "Order status is provided by the live order service."
+    "text": "Order problem"
   },
   {
     "id": "K0813",
-    "text": "Order time"
+    "text": "Order sent to the store"
   },
   {
     "id": "K0814",
-    "text": "Order unavailable"
+    "text": "Order status is provided by the live order service."
   },
   {
     "id": "K0815",
-    "text": "Order update"
+    "text": "Order time"
   },
   {
     "id": "K0816",
-    "text": "Order updates"
+    "text": "Order unavailable"
   },
   {
     "id": "K0817",
-    "text": "Order updates and offers will appear here."
+    "text": "Order update"
   },
   {
     "id": "K0818",
-    "text": "Order {id} delivered 🎉"
+    "text": "Order updates"
   },
   {
     "id": "K0819",
-    "text": "Order {id} picked up 🎉"
+    "text": "Order updates and offers will appear here."
   },
   {
     "id": "K0820",
-    "text": "Ordering from several stores is available for delivery only."
+    "text": "Order {id} delivered 🎉"
   },
   {
     "id": "K0821",
-    "text": "Ordering from several stores needs a live connection."
+    "text": "Order {id} picked up 🎉"
   },
   {
     "id": "K0822",
-    "text": "Orders"
+    "text": "Ordering from several stores is available for delivery only."
   },
   {
     "id": "K0823",
-    "text": "Other"
+    "text": "Ordering from several stores needs a live connection."
   },
   {
     "id": "K0824",
-    "text": "Out of stock"
+    "text": "Orders"
   },
   {
     "id": "K0825",
-    "text": "Over-the-counter product. Read the label and use as directed."
+    "text": "Other"
   },
   {
     "id": "K0826",
-    "text": "Owns the group cart"
+    "text": "Out of stock"
   },
   {
     "id": "K0827",
-    "text": "PM"
+    "text": "Over-the-counter product. Read the label and use as directed."
   },
   {
     "id": "K0828",
-    "text": "Page not found"
+    "text": "Owns the group cart"
   },
   {
     "id": "K0829",
-    "text": "Past"
+    "text": "PM"
   },
   {
     "id": "K0830",
-    "text": "Paste JSON here"
+    "text": "Page not found"
   },
   {
     "id": "K0831",
-    "text": "Paste the export from Wantiss Admin"
+    "text": "Past"
   },
   {
     "id": "K0832",
-    "text": "Pay "
+    "text": "Paste JSON here"
   },
   {
     "id": "K0833",
-    "text": "Pay commission with Wantiss Wallet"
+    "text": "Paste the export from Wantiss Admin"
   },
   {
     "id": "K0834",
-    "text": "Pay in cash when you receive your order."
+    "text": "Pay "
   },
   {
     "id": "K0835",
-    "text": "Pay together."
+    "text": "Pay commission with Wantiss Wallet"
   },
   {
     "id": "K0836",
-    "text": "Pay with Wallet on any order."
+    "text": "Pay in cash when you receive your order."
   },
   {
     "id": "K0837",
-    "text": "Payment"
+    "text": "Pay together."
   },
   {
     "id": "K0838",
-    "text": "Payment confirmed · Order placed"
+    "text": "Pay with Wallet on any order."
   },
   {
     "id": "K0839",
-    "text": "Payment details unavailable. Please try again."
+    "text": "Pay {amount} and create request"
   },
   {
     "id": "K0840",
-    "text": "Payment estimate"
+    "text": "Payment"
   },
   {
     "id": "K0841",
-    "text": "Payment information"
+    "text": "Payment confirmed · Order placed"
   },
   {
     "id": "K0842",
-    "text": "Payment method"
+    "text": "Payment details unavailable. Please try again."
   },
   {
     "id": "K0843",
-    "text": "Payment not confirmed"
+    "text": "Payment estimate"
   },
   {
     "id": "K0844",
-    "text": "Payment not confirmed. Check Wallet activity before trying again."
+    "text": "Payment information"
   },
   {
     "id": "K0845",
-    "text": "Payment refunded"
+    "text": "Payment method"
   },
   {
     "id": "K0846",
-    "text": "Payments are debited exactly once and automatically refunded if the order cannot be fulfilled."
+    "text": "Payment not confirmed"
   },
   {
     "id": "K0847",
-    "text": "Payout"
+    "text": "Payment not confirmed. Check Wallet activity before trying again."
   },
   {
     "id": "K0848",
-    "text": "Payout details submitted for verification."
+    "text": "Payment refunded"
   },
   {
     "id": "K0849",
-    "text": "Payout history"
+    "text": "Payments are debited exactly once and automatically refunded if the order cannot be fulfilled."
   },
   {
     "id": "K0850",
-    "text": "Payout methods are unavailable."
+    "text": "Payout"
   },
   {
     "id": "K0851",
-    "text": "Payout requested. Check history for its status."
+    "text": "Payout details submitted for verification."
   },
   {
     "id": "K0852",
-    "text": "Payouts"
+    "text": "Payout history"
   },
   {
     "id": "K0853",
-    "text": "Pending"
+    "text": "Payout methods are unavailable."
   },
   {
     "id": "K0854",
-    "text": "Personal care"
+    "text": "Payout requested. Check history for its status."
   },
   {
     "id": "K0855",
-    "text": "Philippines"
+    "text": "Payouts"
   },
   {
     "id": "K0856",
-    "text": "Phone"
+    "text": "Pending"
   },
   {
     "id": "K0857",
-    "text": "Phone number"
+    "text": "Personal care"
   },
   {
     "id": "K0858",
-    "text": "Pick a star rating"
+    "text": "Philippines"
   },
   {
     "id": "K0859",
-    "text": "Pick your options below"
+    "text": "Phone"
   },
   {
     "id": "K0860",
-    "text": "Pick-up"
+    "text": "Phone number"
   },
   {
     "id": "K0861",
-    "text": "Picked up"
+    "text": "Pick a star rating"
   },
   {
     "id": "K0862",
-    "text": "Picked up order"
+    "text": "Pick your options below"
   },
   {
     "id": "K0863",
-    "text": "Pickup"
+    "text": "Pick-up"
   },
   {
     "id": "K0864",
-    "text": "Pickup coordinates have not been provided by the store."
+    "text": "Picked up"
   },
   {
     "id": "K0865",
-    "text": "Pickup from"
+    "text": "Picked up order"
   },
   {
     "id": "K0866",
-    "text": "Pickup location"
+    "text": "Pickup"
   },
   {
     "id": "K0867",
-    "text": "Pickup only"
+    "text": "Pickup coordinates have not been provided by the store."
   },
   {
     "id": "K0868",
-    "text": "Pickup only at this address"
+    "text": "Pickup from"
   },
   {
     "id": "K0869",
-    "text": "Place group order · Wallet"
+    "text": "Pickup location"
   },
   {
     "id": "K0870",
-    "text": "Place order"
+    "text": "Pickup only"
   },
   {
     "id": "K0871",
-    "text": "Placing group order…"
+    "text": "Pickup only at this address"
   },
   {
     "id": "K0872",
-    "text": "Placing order…"
+    "text": "Place group order · Wallet"
   },
   {
     "id": "K0873",
-    "text": "Please call me"
+    "text": "Place order"
   },
   {
     "id": "K0874",
-    "text": "Please complete all fields."
+    "text": "Placing group order…"
   },
   {
     "id": "K0875",
-    "text": "Please confirm the alcohol rules to continue"
+    "text": "Placing order…"
   },
   {
     "id": "K0876",
-    "text": "Please remove or replace them to continue. We did not change anything for you."
+    "text": "Please call me"
   },
   {
     "id": "K0877",
-    "text": "Please select the product again and retry."
+    "text": "Please complete all fields."
   },
   {
     "id": "K0878",
-    "text": "Please sign in again."
+    "text": "Please confirm the alcohol rules to continue"
   },
   {
     "id": "K0879",
-    "text": "Please try again."
+    "text": "Please remove or replace them to continue. We did not change anything for you."
   },
   {
     "id": "K0880",
-    "text": "Please try another store."
+    "text": "Please select the product again and retry."
   },
   {
     "id": "K0881",
-    "text": "Please wait…"
+    "text": "Please sign in again."
   },
   {
     "id": "K0882",
-    "text": "Please write at least 10 characters"
+    "text": "Please try again."
   },
   {
     "id": "K0883",
-    "text": "Policy"
+    "text": "Please try another store."
   },
   {
     "id": "K0884",
-    "text": "Popular"
+    "text": "Please wait…"
   },
   {
     "id": "K0885",
-    "text": "Popular products"
+    "text": "Please write at least 10 characters"
   },
   {
     "id": "K0886",
-    "text": "Popular vendors"
+    "text": "Policy"
   },
   {
     "id": "K0887",
-    "text": "Popularity"
+    "text": "Popular"
   },
   {
     "id": "K0888",
-    "text": "Prepaid"
+    "text": "Popular products"
   },
   {
     "id": "K0889",
-    "text": "Preparing delivery map"
+    "text": "Popular vendors"
   },
   {
     "id": "K0890",
-    "text": "Preparing order"
+    "text": "Popularity"
   },
   {
     "id": "K0891",
-    "text": "Preparing secure card form…"
+    "text": "Prepaid"
   },
   {
     "id": "K0892",
-    "text": "Preparing secure request…"
+    "text": "Preparing delivery map"
   },
   {
     "id": "K0893",
-    "text": "Preparing the secure card form…"
+    "text": "Preparing order"
   },
   {
     "id": "K0894",
-    "text": "Preview drawing. Photo layers appear once uploaded in Admin."
+    "text": "Preparing secure card form…"
   },
   {
     "id": "K0895",
-    "text": "Previous page"
+    "text": "Preparing secure request…"
   },
   {
     "id": "K0896",
-    "text": "Price: high to low"
+    "text": "Preparing the secure card form…"
   },
   {
     "id": "K0897",
-    "text": "Price: low to high"
+    "text": "Preview drawing. Photo layers appear once uploaded in Admin."
   },
   {
     "id": "K0898",
-    "text": "Prices changed since you added this item"
+    "text": "Previous page"
   },
   {
     "id": "K0899",
-    "text": "Privacy policy"
+    "text": "Price: high to low"
   },
   {
     "id": "K0900",
-    "text": "Processing"
+    "text": "Price: low to high"
   },
   {
     "id": "K0901",
-    "text": "Product"
+    "text": "Prices changed since you added this item"
   },
   {
     "id": "K0902",
-    "text": "Product not found"
+    "text": "Privacy policy"
   },
   {
     "id": "K0903",
-    "text": "Products"
+    "text": "Processing"
   },
   {
     "id": "K0904",
-    "text": "Products to explore"
+    "text": "Product"
   },
   {
     "id": "K0905",
-    "text": "Profile"
+    "text": "Product not found"
   },
   {
     "id": "K0906",
-    "text": "Promo code"
+    "text": "Products"
   },
   {
     "id": "K0907",
-    "text": "QR code scanned. Tap Join group order to continue."
+    "text": "Products to explore"
   },
   {
     "id": "K0908",
-    "text": "Rate driver {n} stars"
+    "text": "Profile"
   },
   {
     "id": "K0909",
-    "text": "Rate order {n} stars"
+    "text": "Promo code"
   },
   {
     "id": "K0910",
-    "text": "Rate your driver"
+    "text": "QR code scanned. Tap Join group order to continue."
   },
   {
     "id": "K0911",
-    "text": "Rate your order"
+    "text": "Rate driver {n} stars"
   },
   {
     "id": "K0912",
-    "text": "Rating 4.5+"
+    "text": "Rate order {n} stars"
   },
   {
     "id": "K0913",
-    "text": "Ratings are available, but written review details are not available here yet."
+    "text": "Rate your driver"
   },
   {
     "id": "K0914",
-    "text": "Ratings unavailable"
+    "text": "Rate your order"
   },
   {
     "id": "K0915",
-    "text": "Read store reviews"
+    "text": "Rating 4.5+"
   },
   {
     "id": "K0916",
-    "text": "Ready for courier pickup"
+    "text": "Ratings are available, but written review details are not available here yet."
   },
   {
     "id": "K0917",
-    "text": "Ready for pickup"
+    "text": "Ratings unavailable"
   },
   {
     "id": "K0918",
-    "text": "Recent Activity"
+    "text": "Read store reviews"
   },
   {
     "id": "K0919",
-    "text": "Recent searches"
+    "text": "Ready for courier pickup"
   },
   {
     "id": "K0920",
-    "text": "Recently viewed"
+    "text": "Ready for pickup"
   },
   {
     "id": "K0921",
-    "text": "Recorded"
+    "text": "Recent Activity"
   },
   {
     "id": "K0922",
-    "text": "Refresh payout methods to get a current exchange quote."
+    "text": "Recent searches"
   },
   {
     "id": "K0923",
-    "text": "Refund"
+    "text": "Recently viewed"
   },
   {
     "id": "K0924",
-    "text": "Refund and cancellation policy"
+    "text": "Recorded"
   },
   {
     "id": "K0925",
-    "text": "Refunds"
+    "text": "Refresh payout methods to get a current exchange quote."
   },
   {
     "id": "K0926",
-    "text": "Refunds and cancellation"
+    "text": "Refund"
   },
   {
     "id": "K0927",
-    "text": "Regular"
+    "text": "Refund and cancellation policy"
   },
   {
     "id": "K0928",
-    "text": "Rejected"
+    "text": "Refunds"
   },
   {
     "id": "K0929",
-    "text": "Relevance"
+    "text": "Refunds and cancellation"
   },
   {
     "id": "K0930",
-    "text": "Remove"
+    "text": "Regular"
   },
   {
     "id": "K0931",
-    "text": "Remove card"
+    "text": "Rejected"
   },
   {
     "id": "K0932",
-    "text": "Remove from favorites"
+    "text": "Relevance"
   },
   {
     "id": "K0933",
-    "text": "Remove item"
+    "text": "Remove"
   },
   {
     "id": "K0934",
-    "text": "Remove my shared cart item"
+    "text": "Remove card"
   },
   {
     "id": "K0935",
-    "text": "Remove number"
+    "text": "Remove from favorites"
   },
   {
     "id": "K0936",
-    "text": "Remove one {item}"
+    "text": "Remove item"
   },
   {
     "id": "K0937",
-    "text": "Remove this contact number?"
+    "text": "Remove my shared cart item"
   },
   {
     "id": "K0938",
-    "text": "Remove this item?"
+    "text": "Remove number"
   },
   {
     "id": "K0939",
-    "text": "Remove {address} from your saved addresses?"
+    "text": "Remove one {item}"
   },
   {
     "id": "K0940",
-    "text": "Remove {item} from your cart?"
+    "text": "Remove this contact number?"
   },
   {
     "id": "K0941",
-    "text": "Remove {name} from favorites"
+    "text": "Remove this item?"
   },
   {
     "id": "K0942",
-    "text": "Remove {number} from your Goodies checkout contacts?"
+    "text": "Remove {address} from your saved addresses?"
   },
   {
     "id": "K0943",
-    "text": "Remove {store}"
+    "text": "Remove {item} from your cart?"
   },
   {
     "id": "K0944",
-    "text": "Removed from favorites"
+    "text": "Remove {name} from favorites"
   },
   {
     "id": "K0945",
-    "text": "Removed from your cart"
+    "text": "Remove {number} from your Goodies checkout contacts?"
   },
   {
     "id": "K0946",
-    "text": "Reorder"
+    "text": "Remove {store}"
   },
   {
     "id": "K0947",
-    "text": "Replace and add"
+    "text": "Removed from favorites"
   },
   {
     "id": "K0948",
-    "text": "Replace and reorder"
+    "text": "Removed from your cart"
   },
   {
     "id": "K0949",
-    "text": "Replace your cart?"
+    "text": "Reorder"
   },
   {
     "id": "K0950",
-    "text": "Report an order problem"
+    "text": "Replace and add"
   },
   {
     "id": "K0951",
-    "text": "Request cancelled"
+    "text": "Replace and reorder"
   },
   {
     "id": "K0952",
-    "text": "Request expired"
+    "text": "Replace your cart?"
   },
   {
     "id": "K0953",
-    "text": "Request payout"
+    "text": "Report an order problem"
   },
   {
     "id": "K0954",
-    "text": "Requested"
+    "text": "Request cancelled"
   },
   {
     "id": "K0955",
-    "text": "Required"
+    "text": "Request expired"
   },
   {
     "id": "K0956",
-    "text": "Reset Goodies demo data"
+    "text": "Request payout"
   },
   {
     "id": "K0957",
-    "text": "Reset demo data"
+    "text": "Request unavailable"
   },
   {
     "id": "K0958",
-    "text": "Response window expired"
+    "text": "Requested"
   },
   {
     "id": "K0959",
-    "text": "Restaurant"
+    "text": "Required"
   },
   {
     "id": "K0960",
-    "text": "Restaurant cancelled your Goodies order"
+    "text": "Reset Goodies demo data"
   },
   {
     "id": "K0961",
-    "text": "Restaurants near you"
+    "text": "Reset demo data"
   },
   {
     "id": "K0962",
-    "text": "Resume"
+    "text": "Response window expired"
   },
   {
     "id": "K0963",
-    "text": "Resuming the draft you left earlier."
+    "text": "Restaurant"
   },
   {
     "id": "K0964",
-    "text": "Retry"
+    "text": "Restaurant cancelled your Goodies order"
   },
   {
     "id": "K0965",
-    "text": "Return to checkout"
+    "text": "Restaurants near you"
   },
   {
     "id": "K0966",
-    "text": "Reversed"
+    "text": "Resume"
   },
   {
     "id": "K0967",
-    "text": "Review"
+    "text": "Resuming the draft you left earlier."
   },
   {
     "id": "K0968",
-    "text": "Review and validate the combined cart first."
+    "text": "Retry"
   },
   {
     "id": "K0969",
-    "text": "Review combined cart"
+    "text": "Return to checkout"
   },
   {
     "id": "K0970",
-    "text": "Review the current group-order total before placing the order."
+    "text": "Reversed"
   },
   {
     "id": "K0971",
-    "text": "Reviews"
+    "text": "Review"
   },
   {
     "id": "K0972",
-    "text": "Road route unavailable. The map shows known locations only."
+    "text": "Review and validate the combined cart first."
   },
   {
     "id": "K0973",
-    "text": "Routing / SWIFT code"
+    "text": "Review combined cart"
   },
   {
     "id": "K0974",
-    "text": "Running 5 min late"
+    "text": "Review the current group-order total before placing the order."
   },
   {
     "id": "K0975",
-    "text": "SAVED CARD"
+    "text": "Reviews"
   },
   {
     "id": "K0976",
-    "text": "SUBCATEGORIES"
+    "text": "Road route unavailable. The map shows known locations only."
   },
   {
     "id": "K0977",
-    "text": "Sale"
+    "text": "Routing / SWIFT code"
   },
   {
     "id": "K0978",
-    "text": "Sales"
+    "text": "Running 5 min late"
   },
   {
     "id": "K0979",
-    "text": "Save Card"
+    "text": "SAVED CARD"
   },
   {
     "id": "K0980",
-    "text": "Save address"
+    "text": "SUBCATEGORIES"
   },
   {
     "id": "K0981",
-    "text": "Save changes"
+    "text": "Sale"
   },
   {
     "id": "K0982",
-    "text": "Save draft and leave"
+    "text": "Sales"
   },
   {
     "id": "K0983",
-    "text": "Save item"
+    "text": "Save Card"
   },
   {
     "id": "K0984",
-    "text": "Save number"
+    "text": "Save address"
   },
   {
     "id": "K0985",
-    "text": "Save store"
+    "text": "Save changes"
   },
   {
     "id": "K0986",
-    "text": "Save stores and products to find them here."
+    "text": "Save draft and leave"
   },
   {
     "id": "K0987",
-    "text": "Save to favorites"
+    "text": "Save item"
   },
   {
     "id": "K0988",
-    "text": "Save {name} to favorites"
+    "text": "Save number"
   },
   {
     "id": "K0989",
-    "text": "Save {store}"
+    "text": "Save store"
   },
   {
     "id": "K0990",
-    "text": "Saved"
+    "text": "Save stores and products to find them here."
   },
   {
     "id": "K0991",
-    "text": "Saved addresses"
+    "text": "Save to favorites"
   },
   {
     "id": "K0992",
-    "text": "Saved card"
+    "text": "Save {name} to favorites"
   },
   {
     "id": "K0993",
-    "text": "Saved cards"
+    "text": "Save {store}"
   },
   {
     "id": "K0994",
-    "text": "Saved cards will appear here and can be used at checkout."
+    "text": "Saved"
   },
   {
     "id": "K0995",
-    "text": "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings."
+    "text": "Saved addresses"
   },
   {
     "id": "K0996",
-    "text": "Saved securely with Stripe"
+    "text": "Saved card"
   },
   {
     "id": "K0997",
-    "text": "Saved to favorites"
+    "text": "Saved cards"
   },
   {
     "id": "K0998",
-    "text": "Saved to your cart. It could not be shared with the group just now."
+    "text": "Saved cards will appear here and can be used at checkout."
   },
   {
     "id": "K0999",
-    "text": "Saving Card…"
+    "text": "Saved for Goodies checkout only. Your Wantiss account number is not changed here. Country-code management will be handled in Wantiss settings."
   },
   {
     "id": "K1000",
-    "text": "Saving…"
+    "text": "Saved securely with Stripe"
   },
   {
     "id": "K1001",
-    "text": "Scan a Wantiss group invite QR code"
+    "text": "Saved to favorites"
   },
   {
     "id": "K1002",
-    "text": "Scan group invite QR code"
+    "text": "Saved to your cart. It could not be shared with the group just now."
   },
   {
     "id": "K1003",
-    "text": "Scan to help pay"
+    "text": "Saving Card…"
   },
   {
     "id": "K1004",
-    "text": "Scan to join this group"
+    "text": "Saving…"
   },
   {
     "id": "K1005",
-    "text": "Scan using the Wantiss Wallet scanner"
+    "text": "Scan a Wantiss group invite QR code"
   },
   {
     "id": "K1006",
-    "text": "Schedule"
+    "text": "Scan group invite QR code"
   },
   {
     "id": "K1007",
-    "text": "Schedule order"
+    "text": "Scan to help pay"
   },
   {
     "id": "K1008",
-    "text": "Schedule your order"
+    "text": "Scan to join this group"
   },
   {
     "id": "K1009",
-    "text": "Scheduled Goodies order is due"
+    "text": "Scan using the Wantiss Wallet scanner"
   },
   {
     "id": "K1010",
-    "text": "Scheduled for {day}, {time}"
+    "text": "Schedule"
   },
   {
     "id": "K1011",
-    "text": "Scheduled for {time}"
+    "text": "Schedule order"
   },
   {
     "id": "K1012",
-    "text": "Scheduled order"
+    "text": "Schedule your order"
   },
   {
     "id": "K1013",
-    "text": "Scheduled orders"
+    "text": "Scheduled Goodies order is due"
   },
   {
     "id": "K1014",
-    "text": "Scheduled-order minimum"
+    "text": "Scheduled for {day}, {time}"
   },
   {
     "id": "K1015",
-    "text": "Search"
+    "text": "Scheduled for {time}"
   },
   {
     "id": "K1016",
-    "text": "Search food, groceries, drinks"
+    "text": "Scheduled order"
   },
   {
     "id": "K1017",
-    "text": "Search friends"
+    "text": "Scheduled orders"
   },
   {
     "id": "K1018",
-    "text": "Search products in this store"
+    "text": "Scheduled-order minimum"
   },
   {
     "id": "K1019",
-    "text": "Securely verifying your card…"
+    "text": "Search"
   },
   {
     "id": "K1020",
-    "text": "See all"
+    "text": "Search food, groceries, drinks"
   },
   {
     "id": "K1021",
-    "text": "See available coupons"
+    "text": "Search friends"
   },
   {
     "id": "K1022",
-    "text": "See details"
+    "text": "Search products in this store"
   },
   {
     "id": "K1023",
-    "text": "Select"
+    "text": "Securely verifying your card…"
   },
   {
     "id": "K1024",
-    "text": "Select a saved address to continue."
+    "text": "See all"
   },
   {
     "id": "K1025",
-    "text": "Selected: "
+    "text": "See available coupons"
   },
   {
     "id": "K1026",
-    "text": "Send"
+    "text": "See details"
   },
   {
     "id": "K1027",
-    "text": "Send invitation"
+    "text": "Select"
   },
   {
     "id": "K1028",
-    "text": "Send message"
+    "text": "Select a saved address to continue."
   },
   {
     "id": "K1029",
-    "text": "Send report"
+    "text": "Selected: "
   },
   {
     "id": "K1030",
-    "text": "Send to a Wantiss friend"
+    "text": "Send"
   },
   {
     "id": "K1031",
-    "text": "Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies."
+    "text": "Send invitation"
   },
   {
     "id": "K1032",
-    "text": "Sending…"
+    "text": "Send message"
   },
   {
     "id": "K1033",
-    "text": "Sent in Wantiss"
+    "text": "Send report"
   },
   {
     "id": "K1034",
-    "text": "Sent to your Wantiss Wallet"
+    "text": "Send to a Wantiss friend"
   },
   {
     "id": "K1035",
-    "text": "Sent: {message}"
+    "text": "Send your message below. Your messages are delivered to the store; the chat conversation will activate here when the store replies."
   },
   {
     "id": "K1036",
-    "text": "Service fee"
+    "text": "Sending…"
   },
   {
     "id": "K1037",
-    "text": "Set as Wantiss default"
+    "text": "Sent in Wantiss"
   },
   {
     "id": "K1038",
-    "text": "Set as default"
+    "text": "Sent to your Wantiss Wallet"
   },
   {
     "id": "K1039",
-    "text": "Settings"
+    "text": "Sent: {message}"
   },
   {
     "id": "K1040",
-    "text": "Settle Goodies cash-order commission to accept more cash orders."
+    "text": "Service fee"
   },
   {
     "id": "K1041",
-    "text": "Settle by"
+    "text": "Set as Wantiss default"
   },
   {
     "id": "K1042",
-    "text": "Settlement"
+    "text": "Set as default"
   },
   {
     "id": "K1043",
-    "text": "Share bill · 60/40"
+    "text": "Settings"
   },
   {
     "id": "K1044",
-    "text": "Share in Wantiss Messages"
+    "text": "Settle Goodies cash-order commission to accept more cash orders."
   },
   {
     "id": "K1045",
-    "text": "Share invite code"
+    "text": "Settle by"
   },
   {
     "id": "K1046",
-    "text": "Share payment link"
+    "text": "Settlement"
   },
   {
     "id": "K1047",
-    "text": "Share store"
+    "text": "Share bill · 60/40"
   },
   {
     "id": "K1048",
-    "text": "Shared Wantiss account"
+    "text": "Share in Wantiss Messages"
   },
   {
     "id": "K1049",
-    "text": "Shared cart"
+    "text": "Share invite code"
   },
   {
     "id": "K1050",
-    "text": "Shared items"
+    "text": "Share payment link"
   },
   {
     "id": "K1051",
-    "text": "Shared payments are not available yet."
+    "text": "Share store"
   },
   {
     "id": "K1052",
-    "text": "Shared with Wantiss"
+    "text": "Shared Wantiss account"
   },
   {
     "id": "K1053",
-    "text": "Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link."
+    "text": "Shared cart"
   },
   {
     "id": "K1054",
-    "text": "Shop now"
+    "text": "Shared items"
   },
   {
     "id": "K1055",
-    "text": "Show all available"
+    "text": "Shared payments are not available yet."
   },
   {
     "id": "K1056",
-    "text": "Sign in to contact support. Your ticket has not been created."
+    "text": "Shared with Wantiss"
   },
   {
     "id": "K1057",
-    "text": "Sign in to contact this store. Your message has not been sent."
+    "text": "Sharing uses your phone’s share menu. This demo coordinates members locally; it does not create a server-hosted join link."
   },
   {
     "id": "K1058",
-    "text": "Sign in to create a Wantiss wallet."
+    "text": "Shop now"
   },
   {
     "id": "K1059",
-    "text": "Sign in to message this store. Your conversation will appear here after you sign in."
+    "text": "Show all available"
   },
   {
     "id": "K1060",
-    "text": "Sign in to see your wallet"
+    "text": "Sign in to contact support. Your ticket has not been created."
   },
   {
     "id": "K1061",
-    "text": "Sign in to view your wallet."
+    "text": "Sign in to contact this store. Your message has not been sent."
   },
   {
     "id": "K1062",
-    "text": "Sign out"
+    "text": "Sign in to create a Wantiss wallet."
   },
   {
     "id": "K1063",
-    "text": "Size"
+    "text": "Sign in to message this store. Your conversation will appear here after you sign in."
   },
   {
     "id": "K1064",
-    "text": "Sold out"
+    "text": "Sign in to see your wallet"
   },
   {
     "id": "K1065",
-    "text": "Some choices changed"
+    "text": "Sign in to view your wallet."
   },
   {
     "id": "K1066",
-    "text": "Something went wrong. Please try again."
+    "text": "Sign out"
   },
   {
     "id": "K1067",
-    "text": "Sorry, {item} is out of stock"
+    "text": "Size"
   },
   {
     "id": "K1068",
-    "text": "Special instructions"
+    "text": "Sold out"
   },
   {
     "id": "K1069",
-    "text": "Spend {amount} more to use {code}"
+    "text": "Some choices changed"
   },
   {
     "id": "K1070",
-    "text": "Start a group order"
+    "text": "Something went wrong. Please try again."
   },
   {
     "id": "K1071",
-    "text": "Start a new cart"
+    "text": "Sorry, {item} is out of stock"
   },
   {
     "id": "K1072",
-    "text": "Start a new cart?"
+    "text": "Special instructions"
   },
   {
     "id": "K1073",
-    "text": "Start a shared cart, invite friends, and coordinate everyone’s items before checkout."
+    "text": "Spend {amount} more to use {code}"
   },
   {
     "id": "K1074",
-    "text": "Start browsing"
+    "text": "Start a group order"
   },
   {
     "id": "K1075",
-    "text": "Start earning"
+    "text": "Start a new cart"
   },
   {
     "id": "K1076",
-    "text": "Start over"
+    "text": "Start a new cart?"
   },
   {
     "id": "K1077",
-    "text": "Start over?"
+    "text": "Start a shared cart, invite friends, and coordinate everyone’s items before checkout."
   },
   {
     "id": "K1078",
-    "text": "Still needed"
+    "text": "Start browsing"
   },
   {
     "id": "K1079",
-    "text": "Store"
+    "text": "Start earning"
   },
   {
     "id": "K1080",
-    "text": "Store declined the order"
+    "text": "Start over"
   },
   {
     "id": "K1081",
-    "text": "Store declined your Goodies order"
+    "text": "Start over?"
   },
   {
     "id": "K1082",
-    "text": "Store info"
+    "text": "Still needed"
   },
   {
     "id": "K1083",
-    "text": "Store is closed"
+    "text": "Store"
   },
   {
     "id": "K1084",
-    "text": "Store is preparing your Goodies order"
+    "text": "Store declined the order"
   },
   {
     "id": "K1085",
-    "text": "Store is preparing your order"
+    "text": "Store declined your Goodies order"
   },
   {
     "id": "K1086",
-    "text": "Store link copied"
+    "text": "Store info"
   },
   {
     "id": "K1087",
-    "text": "Store not found"
+    "text": "Store is closed"
   },
   {
     "id": "K1088",
-    "text": "Store reviews"
+    "text": "Store is preparing your Goodies order"
   },
   {
     "id": "K1089",
-    "text": "Store shared in Wantiss Messages"
+    "text": "Store is preparing your order"
   },
   {
     "id": "K1090",
-    "text": "Store unavailable"
+    "text": "Store link copied"
   },
   {
     "id": "K1091",
-    "text": "Stores"
+    "text": "Store not found"
   },
   {
     "id": "K1092",
-    "text": "Stores ({n})"
+    "text": "Store reviews"
   },
   {
     "id": "K1093",
-    "text": "Straight from local farms and markets."
+    "text": "Store shared in Wantiss Messages"
   },
   {
     "id": "K1094",
-    "text": "Street and area"
+    "text": "Store unavailable"
   },
   {
     "id": "K1095",
-    "text": "Submit for verification"
+    "text": "Stores"
   },
   {
     "id": "K1096",
-    "text": "Submit review"
+    "text": "Stores ({n})"
   },
   {
     "id": "K1097",
-    "text": "Submitting…"
+    "text": "Straight from local farms and markets."
   },
   {
     "id": "K1098",
-    "text": "Subtotal"
+    "text": "Street and area"
   },
   {
     "id": "K1099",
-    "text": "Suggestions"
+    "text": "Submit for verification"
   },
   {
     "id": "K1100",
-    "text": "Support did not confirm the ticket. Please retry before leaving this screen."
+    "text": "Submit review"
   },
   {
     "id": "K1101",
-    "text": "Support messages are tracked with a ticket number."
+    "text": "Submitting…"
   },
   {
     "id": "K1102",
-    "text": "Support ticket "
+    "text": "Subtotal"
   },
   {
     "id": "K1103",
-    "text": "Swipe for more photos"
+    "text": "Suggestions"
   },
   {
     "id": "K1104",
-    "text": "Switch to ASAP"
+    "text": "Support did not confirm the ticket. Please retry before leaving this screen."
   },
   {
     "id": "K1105",
-    "text": "Tap again to remove"
+    "text": "Support messages are tracked with a ticket number."
   },
   {
     "id": "K1106",
-    "text": "Tell us what happened (at least 10 characters)"
+    "text": "Support ticket "
   },
   {
     "id": "K1107",
-    "text": "Terms and policies"
+    "text": "Swipe for more photos"
   },
   {
     "id": "K1108",
-    "text": "Terms of use"
+    "text": "Switch to ASAP"
   },
   {
     "id": "K1109",
-    "text": "Thank you for your feedback!"
+    "text": "Tap again to remove"
   },
   {
     "id": "K1110",
-    "text": "Thanks for confirming."
+    "text": "Tell us what happened (at least 10 characters)"
   },
   {
     "id": "K1111",
-    "text": "Thanks for rating your driver!"
+    "text": "Terms and policies"
   },
   {
     "id": "K1112",
-    "text": "Thanks for your review!"
+    "text": "Terms of use"
   },
   {
     "id": "K1113",
-    "text": "That code is not valid"
+    "text": "Thank you for your feedback!"
   },
   {
     "id": "K1114",
-    "text": "That is already your Wantiss number"
+    "text": "Thanks for confirming."
   },
   {
     "id": "K1115",
-    "text": "That is not valid JSON"
+    "text": "Thanks for rating your driver!"
   },
   {
     "id": "K1116",
-    "text": "That item is no longer in your cart"
+    "text": "Thanks for your review!"
   },
   {
     "id": "K1117",
-    "text": "That member is already in the group"
+    "text": "That code is not valid"
   },
   {
     "id": "K1118",
-    "text": "That scheduled time is too close or has passed. Please choose a later time."
+    "text": "That is already your Wantiss number"
   },
   {
     "id": "K1119",
-    "text": "That time has passed. Pick another"
+    "text": "That is not valid JSON"
   },
   {
     "id": "K1120",
-    "text": "The Help Pay card was sent to "
+    "text": "That item is no longer in your cart"
   },
   {
     "id": "K1121",
-    "text": "The ID check failed, so the order was not handed over. You were not charged."
+    "text": "That member is already in the group"
   },
   {
     "id": "K1122",
-    "text": "The card payment could not be cancelled yet."
+    "text": "That scheduled time is too close or has passed. Please choose a later time."
   },
   {
     "id": "K1123",
-    "text": "The card payment could not be cancelled yet. Please retry."
+    "text": "That time has passed. Pick another"
   },
   {
     "id": "K1124",
-    "text": "The courier GPS signal is temporarily stale. Waiting for a fresh location update."
+    "text": "The Help Pay card was sent to "
   },
   {
     "id": "K1125",
-    "text": "The group host ended this group order."
+    "text": "The ID check failed, so the order was not handed over. You were not charged."
   },
   {
     "id": "K1126",
-    "text": "The host cart is empty. Add items from a store to start the group order."
+    "text": "The card payment could not be cancelled yet."
   },
   {
     "id": "K1127",
-    "text": "The item in your cart stays as it was."
+    "text": "The card payment could not be cancelled yet. Please retry."
   },
   {
     "id": "K1128",
-    "text": "The map appears when the delivery address has been geocoded."
+    "text": "The courier GPS signal is temporarily stale. Waiting for a fresh location update."
   },
   {
     "id": "K1129",
-    "text": "The request expires after 30 minutes. If it is not funded, every Wallet contribution is automatically refunded. The order is only created once the entire bill is paid."
+    "text": "The group host ended this group order."
   },
   {
     "id": "K1130",
-    "text": "The response may have been saved. Refresh before retrying."
+    "text": "The host cart is empty. Add items from a store to start the group order."
   },
   {
     "id": "K1131",
-    "text": "The secure card form could not load. Check your connection and try again."
+    "text": "The item in your cart stays as it was."
   },
   {
     "id": "K1132",
-    "text": "The server did not confirm your support ticket. Please retry."
+    "text": "The map appears when the delivery address has been geocoded."
   },
   {
     "id": "K1133",
-    "text": "The store could not accept your order. {reason}"
+    "text": "The request expires after 30 minutes. If it is not funded, every Wallet contribution is automatically refunded. The order is only created once the entire bill is paid."
   },
   {
     "id": "K1134",
-    "text": "The store did not respond within 15 minutes. Your order was cancelled."
+    "text": "The response may have been saved. Refresh before retrying."
   },
   {
     "id": "K1135",
-    "text": "The store has received your funded Goodies order."
+    "text": "The secure card form could not load. Check your connection and try again."
   },
   {
     "id": "K1136",
-    "text": "The store may have turned it off."
+    "text": "The server did not confirm your support ticket. Please retry."
   },
   {
     "id": "K1137",
-    "text": "The store paused this item."
+    "text": "The store could not accept your order. {reason}"
   },
   {
     "id": "K1138",
-    "text": "The store says this order was delivered. Please confirm, or report a problem before "
+    "text": "The store did not respond within 15 minutes. Your order was cancelled."
   },
   {
     "id": "K1139",
-    "text": "The store’s minimum advance time is applied automatically."
+    "text": "The store has received your funded Goodies order."
   },
   {
     "id": "K1140",
-    "text": "The update may have been saved. Refresh before retrying."
+    "text": "The store may have turned it off."
   },
   {
     "id": "K1141",
-    "text": "These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default."
+    "text": "The store paused this item."
   },
   {
     "id": "K1142",
-    "text": "This builder is currently unavailable"
+    "text": "The store says this order was delivered. Please confirm, or report a problem before "
   },
   {
     "id": "K1143",
-    "text": "This builder is not available"
+    "text": "The store’s minimum advance time is applied automatically."
   },
   {
     "id": "K1144",
-    "text": "This builder is not available right now"
+    "text": "The update may have been saved. Refresh before retrying."
   },
   {
     "id": "K1145",
-    "text": "This cart item is not linked to a live catalogue product."
+    "text": "These belong to your Wantiss account. Picking one for Goodies does not change your Wantiss default."
   },
   {
     "id": "K1146",
-    "text": "This clears your current choices. Items already in your cart are not affected."
+    "text": "This builder is currently unavailable"
   },
   {
     "id": "K1147",
-    "text": "This group invitation is not server-backed."
+    "text": "This builder is not available"
   },
   {
     "id": "K1148",
-    "text": "This group order has closed or expired."
+    "text": "This builder is not available right now"
   },
   {
     "id": "K1149",
-    "text": "This is a stand-in for the Wantiss home. Other services will appear here."
+    "text": "This cart item is not linked to a live catalogue product."
   },
   {
     "id": "K1150",
-    "text": "This is your Wantiss default address"
+    "text": "This clears your current choices. Items already in your cart are not affected."
   },
   {
     "id": "K1151",
-    "text": "This is your own request. Share your QR or message card with friends; you cannot pay yourself."
+    "text": "This group invitation is not server-backed."
   },
   {
     "id": "K1152",
-    "text": "This item can no longer be customized. You can remove it from your cart."
+    "text": "This group order has closed or expired."
   },
   {
     "id": "K1153",
-    "text": "This number is used by an active order"
+    "text": "This is a stand-in for the Wantiss home. Other services will appear here."
   },
   {
     "id": "K1154",
-    "text": "This only takes a moment."
+    "text": "This is your Wantiss default address"
   },
   {
     "id": "K1155",
-    "text": "This order can no longer be cancelled"
+    "text": "This is your own request. Share your QR or message card with friends; you cannot pay yourself."
   },
   {
     "id": "K1156",
-    "text": "This order could not be found."
+    "text": "This item can no longer be customized. You can remove it from your cart."
   },
   {
     "id": "K1157",
-    "text": "This order is not available from the live Wantiss order service."
+    "text": "This number is used by an active order"
   },
   {
     "id": "K1158",
-    "text": "This order was cancelled"
+    "text": "This only takes a moment."
   },
   {
     "id": "K1159",
-    "text": "This payment method is no longer available. Choose another method."
+    "text": "This order can no longer be cancelled"
   },
   {
     "id": "K1160",
-    "text": "This policy is not available yet"
+    "text": "This order could not be found."
   },
   {
     "id": "K1161",
-    "text": "This product is unavailable."
+    "text": "This order is not available from the live Wantiss order service."
   },
   {
     "id": "K1162",
-    "text": "This request could not be finalized. Your Wallet has been refunded."
+    "text": "This order was cancelled"
   },
   {
     "id": "K1163",
-    "text": "This request requires one person to cover the entire unpaid bill."
+    "text": "This payment method is no longer available. Choose another method."
   },
   {
     "id": "K1164",
-    "text": "This store does not accept scheduled orders while closed."
+    "text": "This policy is not available yet"
   },
   {
     "id": "K1165",
-    "text": "This store has no remaining scheduled times on that day. Choose another day."
+    "text": "This product is unavailable."
   },
   {
     "id": "K1166",
-    "text": "This store is closed. Choose a future opening-time slot to continue."
+    "text": "This request could not be finalized. Your Wallet has been refunded."
   },
   {
     "id": "K1167",
-    "text": "This store is not accepting scheduled orders while closed."
+    "text": "This request requires one person to cover the entire unpaid bill."
   },
   {
     "id": "K1168",
-    "text": "This store is not available in the Goodies catalog right now."
+    "text": "This store does not accept scheduled orders while closed."
   },
   {
     "id": "K1169",
-    "text": "This store’s earliest available time is {time}."
+    "text": "This store has no remaining scheduled times on that day. Choose another day."
   },
   {
     "id": "K1170",
-    "text": "Those items are unavailable right now"
+    "text": "This store is closed. Choose a future opening-time slot to continue."
   },
   {
     "id": "K1171",
-    "text": "Ticket {ticket} (demo). Your support request is not connected to a live support inbox yet."
+    "text": "This store is not accepting scheduled orders while closed."
   },
   {
     "id": "K1172",
-    "text": "Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply."
+    "text": "This store is not available in the Goodies catalog right now."
   },
   {
     "id": "K1173",
-    "text": "Time"
+    "text": "This store’s earliest available time is {time}."
   },
   {
     "id": "K1174",
-    "text": "Tip"
+    "text": "Those items are unavailable right now"
   },
   {
     "id": "K1175",
-    "text": "Tip your courier"
+    "text": "Ticket {ticket} (demo). Your support request is not connected to a live support inbox yet."
   },
   {
     "id": "K1176",
-    "text": "To {address}"
+    "text": "Ticket {ticket} was sent to {store}. You can return to this conversation to see the store reply."
   },
   {
     "id": "K1177",
-    "text": "Today"
+    "text": "Time"
   },
   {
     "id": "K1178",
-    "text": "Tomorrow"
+    "text": "Tip"
   },
   {
     "id": "K1179",
-    "text": "Too many in {group} (max {max})"
+    "text": "Tip your courier"
   },
   {
     "id": "K1180",
-    "text": "Top up"
+    "text": "To {address}"
   },
   {
     "id": "K1181",
-    "text": "Top up (coming soon)"
+    "text": "Today"
   },
   {
     "id": "K1182",
-    "text": "Top up wallet"
+    "text": "Tomorrow"
   },
   {
     "id": "K1183",
-    "text": "Topic"
+    "text": "Too many in {group} (max {max})"
   },
   {
     "id": "K1184",
-    "text": "Total"
+    "text": "Top up"
   },
   {
     "id": "K1185",
-    "text": "Total · "
+    "text": "Top up (coming soon)"
   },
   {
     "id": "K1186",
-    "text": "Track"
+    "text": "Top up wallet"
   },
   {
     "id": "K1187",
-    "text": "Track order"
+    "text": "Topic"
   },
   {
     "id": "K1188",
-    "text": "Trending right now"
+    "text": "Total"
   },
   {
     "id": "K1189",
-    "text": "Try GOODIES10"
+    "text": "Total · "
   },
   {
     "id": "K1190",
-    "text": "Try again"
+    "text": "Track"
   },
   {
     "id": "K1191",
-    "text": "Try another category or show all available options."
+    "text": "Track order"
   },
   {
     "id": "K1192",
-    "text": "Try another search or category."
+    "text": "Trending right now"
   },
   {
     "id": "K1193",
-    "text": "Try another word."
+    "text": "Try GOODIES10"
   },
   {
     "id": "K1194",
-    "text": "Unable to cancel"
+    "text": "Try again"
   },
   {
     "id": "K1195",
-    "text": "Unable to start background GPS"
+    "text": "Try another category or show all available options."
   },
   {
     "id": "K1196",
-    "text": "Unable to verify first-delivery eligibility. Please retry checkout."
+    "text": "Try another search or category."
   },
   {
     "id": "K1197",
-    "text": "Unavailable"
+    "text": "Try another word."
   },
   {
     "id": "K1198",
-    "text": "Unavailable product"
+    "text": "Unable to cancel"
   },
   {
     "id": "K1199",
-    "text": "Unavailable until store location is provided"
+    "text": "Unable to start background GPS"
   },
   {
     "id": "K1200",
-    "text": "Under $10"
+    "text": "Unable to verify first-delivery eligibility. Please retry checkout."
   },
   {
     "id": "K1201",
-    "text": "Under $5"
+    "text": "Unavailable"
   },
   {
     "id": "K1202",
-    "text": "Under 30 min"
+    "text": "Unavailable product"
   },
   {
     "id": "K1203",
-    "text": "Under review"
+    "text": "Unavailable until store location is provided"
   },
   {
     "id": "K1204",
-    "text": "Undo last change"
+    "text": "Under $10"
   },
   {
     "id": "K1205",
-    "text": "United States"
+    "text": "Under $5"
   },
   {
     "id": "K1206",
-    "text": "Up to"
+    "text": "Under 30 min"
   },
   {
     "id": "K1207",
-    "text": "Updated {time}"
+    "text": "Under review"
   },
   {
     "id": "K1208",
-    "text": "Updating…"
+    "text": "Undo last change"
   },
   {
     "id": "K1209",
-    "text": "Use for Goodies"
+    "text": "United States"
   },
   {
     "id": "K1210",
-    "text": "Use my current location"
+    "text": "Up to"
   },
   {
     "id": "K1211",
-    "text": "Use offer"
+    "text": "Updated {time}"
   },
   {
     "id": "K1212",
-    "text": "Using sample content"
+    "text": "Updating…"
   },
   {
     "id": "K1213",
-    "text": "Vendor confirmed"
+    "text": "Use for Goodies"
   },
   {
     "id": "K1214",
-    "text": "Verified"
+    "text": "Use my current location"
   },
   {
     "id": "K1215",
-    "text": "Verify card"
+    "text": "Use offer"
   },
   {
     "id": "K1216",
-    "text": "View Cart"
+    "text": "Using sample content"
   },
   {
     "id": "K1217",
-    "text": "View Goodies orders"
+    "text": "Vendor confirmed"
   },
   {
     "id": "K1218",
-    "text": "View cart"
+    "text": "Verified"
   },
   {
     "id": "K1219",
-    "text": "View cart · "
+    "text": "Verify card"
   },
   {
     "id": "K1220",
-    "text": "View order"
+    "text": "View Cart"
   },
   {
     "id": "K1221",
-    "text": "WANTISS"
+    "text": "View Goodies orders"
   },
   {
     "id": "K1222",
-    "text": "WANTISS · "
+    "text": "View cart"
   },
   {
     "id": "K1223",
-    "text": "Waiting for a fresh GPS location."
+    "text": "View cart · "
   },
   {
     "id": "K1224",
-    "text": "Waiting for courier assignment. The map will update when a courier starts sharing GPS."
+    "text": "View order"
   },
   {
     "id": "K1225",
-    "text": "Waiting for secure card verification…"
+    "text": "WANTISS"
   },
   {
     "id": "K1226",
-    "text": "Waiting for store to accept"
+    "text": "WANTISS · "
   },
   {
     "id": "K1227",
-    "text": "Waiting for the courier to accept the delivery."
+    "text": "Waiting for a fresh GPS location."
   },
   {
     "id": "K1228",
-    "text": "Waiting for the store to reply. The chat opens here as soon as they respond."
+    "text": "Waiting for courier assignment. The map will update when a courier starts sharing GPS."
   },
   {
     "id": "K1229",
-    "text": "Waiting to add items"
+    "text": "Waiting for secure card verification…"
   },
   {
     "id": "K1230",
-    "text": "Wallet"
+    "text": "Waiting for store to accept"
   },
   {
     "id": "K1231",
-    "text": "Wallet and payment methods"
+    "text": "Waiting for the courier to accept the delivery."
   },
   {
     "id": "K1232",
-    "text": "Wallet and payments"
+    "text": "Waiting for the store to reply. The chat opens here as soon as they respond."
   },
   {
     "id": "K1233",
-    "text": "Wallet balance"
+    "text": "Waiting to add items"
   },
   {
     "id": "K1234",
-    "text": "Wallet balance is too low. Top up or pick another method."
+    "text": "Wallet"
   },
   {
     "id": "K1235",
-    "text": "Wallet creation was not confirmed by the server. Please retry."
+    "text": "Wallet and payment methods"
   },
   {
     "id": "K1236",
-    "text": "Wallet not available"
+    "text": "Wallet and payments"
   },
   {
     "id": "K1237",
-    "text": "Wallet not created"
+    "text": "Wallet balance"
   },
   {
     "id": "K1238",
-    "text": "Wallet phone number"
+    "text": "Wallet balance is too low. Top up or pick another method."
   },
   {
     "id": "K1239",
-    "text": "Wallet required"
+    "text": "Wallet creation was not confirmed by the server. Please retry."
   },
   {
     "id": "K1240",
-    "text": "Wallet top-up is not available yet."
+    "text": "Wallet not available"
   },
   {
     "id": "K1241",
-    "text": "Wallet topped up to {amount}"
+    "text": "Wallet not created"
   },
   {
     "id": "K1242",
-    "text": "Wantiss"
+    "text": "Wallet phone number"
   },
   {
     "id": "K1243",
-    "text": "Wantiss Crédité"
+    "text": "Wallet required"
   },
   {
     "id": "K1244",
-    "text": "Wantiss Wallet"
+    "text": "Wallet top-up is not available yet."
   },
   {
     "id": "K1245",
-    "text": "Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method."
+    "text": "Wallet topped up to {amount}"
   },
   {
     "id": "K1246",
-    "text": "Wantiss Wallet is available without an external payout account."
+    "text": "Wantiss"
   },
   {
     "id": "K1247",
-    "text": "Wantiss Wallet is not available."
+    "text": "Wantiss Crédité"
   },
   {
     "id": "K1248",
-    "text": "Wantiss Wallet payments debit your available balance."
+    "text": "Wantiss Wallet"
   },
   {
     "id": "K1249",
-    "text": "Wantiss account · view profile"
+    "text": "Wantiss Wallet could not complete this payment. Your cart is still saved. Please retry or choose another payment method."
   },
   {
     "id": "K1250",
-    "text": "Wantiss default"
+    "text": "Wantiss Wallet is available without an external payout account."
   },
   {
     "id": "K1251",
-    "text": "Wantiss default address updated"
+    "text": "Wantiss Wallet is not available."
   },
   {
     "id": "K1252",
-    "text": "Wantiss delivery tracking is active"
+    "text": "Wantiss Wallet payments debit your available balance."
   },
   {
     "id": "K1253",
-    "text": "Wantiss number"
+    "text": "Wantiss account · view profile"
   },
   {
     "id": "K1254",
-    "text": "Wantiss wallet is ready"
+    "text": "Wantiss default"
   },
   {
     "id": "K1255",
-    "text": "Wantiss wallet not found"
+    "text": "Wantiss default address updated"
   },
   {
     "id": "K1256",
-    "text": "We accept"
+    "text": "Wantiss delivery tracking is active"
   },
   {
     "id": "K1257",
-    "text": "We could not find the vendor account linked to this store. Please try again later."
+    "text": "Wantiss number"
   },
   {
     "id": "K1258",
-    "text": "We could not find the vendor account linked to this store. Your message has not been sent."
+    "text": "Wantiss wallet is ready"
   },
   {
     "id": "K1259",
-    "text": "We could not turn your location into an address. Please type it in."
+    "text": "Wantiss wallet not found"
   },
   {
     "id": "K1260",
-    "text": "We couldn’t load your payment details"
+    "text": "We accept"
   },
   {
     "id": "K1261",
-    "text": "We couldn’t load your wallet"
+    "text": "We could not find the vendor account linked to this store. Please try again later."
   },
   {
     "id": "K1262",
-    "text": "We use this number for this order only. Your Wantiss account number is never changed here."
+    "text": "We could not find the vendor account linked to this store. Your message has not been sent."
   },
   {
     "id": "K1263",
-    "text": "Website"
+    "text": "We could not turn your location into an address. Please type it in."
   },
   {
     "id": "K1264",
-    "text": "Welcome to Goodies. New here? It is on us."
+    "text": "We couldn’t load your payment details"
   },
   {
     "id": "K1265",
-    "text": "We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies."
+    "text": "We couldn’t load your wallet"
   },
   {
     "id": "K1266",
-    "text": "What if an item is missing?"
+    "text": "We use this number for this order only. Your Wantiss account number is never changed here."
   },
   {
     "id": "K1267",
-    "text": "What went wrong?"
+    "text": "Website"
   },
   {
     "id": "K1268",
-    "text": "When"
+    "text": "Welcome to Goodies. New here? It is on us."
   },
   {
     "id": "K1269",
-    "text": "When do you want it?"
+    "text": "We’ll keep this ticket context with your store conversation. You can continue chatting when the store replies."
   },
   {
     "id": "K1270",
-    "text": "Who helped pay"
+    "text": "What if an item is missing?"
   },
   {
     "id": "K1271",
-    "text": "Work"
+    "text": "What went wrong?"
   },
   {
     "id": "K1272",
-    "text": "Write a message…"
+    "text": "When"
   },
   {
     "id": "K1273",
-    "text": "YOUR CONTRIBUTION"
+    "text": "When do you want it?"
   },
   {
     "id": "K1274",
-    "text": "Yes, cancel order"
+    "text": "Who helped pay"
   },
   {
     "id": "K1275",
-    "text": "You"
+    "text": "Work"
   },
   {
     "id": "K1276",
-    "text": "You already saved that number"
+    "text": "Write a message…"
   },
   {
     "id": "K1277",
-    "text": "You are online · Tap to go offline"
+    "text": "YOUR CONTRIBUTION"
   },
   {
     "id": "K1278",
-    "text": "You can cancel until the store finishes preparing it."
+    "text": "Yes, cancel order"
   },
   {
     "id": "K1279",
-    "text": "You can choose up to {max} in {group}"
+    "text": "You"
   },
   {
     "id": "K1280",
-    "text": "You can look, but it cannot be added right now."
+    "text": "You already saved that number"
   },
   {
     "id": "K1281",
-    "text": "You can order from up to "
+    "text": "You are online · Tap to go offline"
   },
   {
     "id": "K1282",
-    "text": "You have reached the end of the currently available options."
+    "text": "You can cancel until the store finishes preparing it."
   },
   {
     "id": "K1283",
-    "text": "You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at "
+    "text": "You can choose up to {max} in {group}"
   },
   {
     "id": "K1284",
-    "text": "You joined the group order."
+    "text": "You can look, but it cannot be added right now."
   },
   {
     "id": "K1285",
-    "text": "You may also like"
+    "text": "You can order from up to "
   },
   {
     "id": "K1286",
-    "text": "You pay for the whole order. Friends add their items from their own phones."
+    "text": "You have reached the end of the currently available options."
   },
   {
     "id": "K1287",
-    "text": "You pay now"
+    "text": "You haven’t created a wallet, or it was deleted. Create one to pay with it and to receive refunds. Your balance starts at "
   },
   {
     "id": "K1288",
-    "text": "You receive"
+    "text": "You joined the group order."
   },
   {
     "id": "K1289",
-    "text": "You will pay"
+    "text": "You may also like"
   },
   {
     "id": "K1290",
-    "text": "Your 60% is reserved from your Wantiss Wallet before sharing. Friends choose any amount or percentage of the remaining 40%."
+    "text": "You pay for the whole order. Friends add their items from their own phones."
   },
   {
     "id": "K1291",
-    "text": "Your Goodies bill"
+    "text": "You pay now"
   },
   {
     "id": "K1292",
-    "text": "Your Goodies cash-order commission payment is completed."
+    "text": "You receive"
   },
   {
     "id": "K1293",
-    "text": "Your Goodies payout could not be completed. Open payouts to review it."
+    "text": "You will pay"
   },
   {
     "id": "K1294",
-    "text": "Your Goodies payout is completed."
+    "text": "Your 60% is reserved from your Wantiss Wallet before sharing. Friends choose any amount or percentage of the remaining 40%."
   },
   {
     "id": "K1295",
-    "text": "Your Goodies payout request was recorded. Open payouts to check its status."
+    "text": "Your Goodies bill"
   },
   {
     "id": "K1296",
-    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+    "text": "Your Goodies cash-order commission payment is completed."
   },
   {
     "id": "K1297",
-    "text": "Your Wallet contributions:"
+    "text": "Your Goodies payout could not be completed. Open payouts to review it."
   },
   {
     "id": "K1298",
-    "text": "Your Wantiss Wallet is not available. Create a wallet before placing this group order."
+    "text": "Your Goodies payout is completed."
   },
   {
     "id": "K1299",
-    "text": "Your Wantiss Wallet is not set up yet. Create your wallet to add and use saved cards."
+    "text": "Your Goodies payout request was recorded. Open payouts to check its status."
   },
   {
     "id": "K1300",
-    "text": "Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect."
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
   },
   {
     "id": "K1301",
-    "text": "Your Wantiss wallet and saved cards are tied to your account."
+    "text": "Your Wallet contributions:"
   },
   {
     "id": "K1302",
-    "text": "Your Wantiss wallet is not available. Create a wallet or choose another payment method."
+    "text": "Your Wantiss Wallet is not available. Create a wallet before placing this group order."
   },
   {
     "id": "K1303",
-    "text": "Your access to Goodies has been permanently restricted."
+    "text": "Your Wantiss Wallet is not set up yet. Create your wallet to add and use saved cards."
   },
   {
     "id": "K1304",
-    "text": "Your access to Goodies is currently paused."
+    "text": "Your Wantiss account, wallet and existing Goodies order history remain available. Contact Wantiss Support if you believe this decision is incorrect."
   },
   {
     "id": "K1305",
-    "text": "Your access to Goodies is temporarily suspended."
+    "text": "Your Wantiss wallet and saved cards are tied to your account."
   },
   {
     "id": "K1306",
-    "text": "Your account can no longer use Goodies."
+    "text": "Your Wantiss wallet is not available. Create a wallet or choose another payment method."
   },
   {
     "id": "K1307",
-    "text": "Your balance is "
+    "text": "Your access to Goodies has been permanently restricted."
   },
   {
     "id": "K1308",
-    "text": "Your balance is {balance}. You need {needed} more to pay with your Wantiss wallet."
+    "text": "Your access to Goodies is currently paused."
   },
   {
     "id": "K1309",
-    "text": "Your bank may ask you to approve this payment"
+    "text": "Your access to Goodies is temporarily suspended."
   },
   {
     "id": "K1310",
-    "text": "Your card could not be saved. Please check the details and try again."
+    "text": "Your account can no longer use Goodies."
   },
   {
     "id": "K1311",
-    "text": "Your card could not be verified. Please try again or use another card."
+    "text": "Your balance is "
   },
   {
     "id": "K1312",
-    "text": "Your card has been saved for future payments."
+    "text": "Your balance is {balance}. You need {needed} more to pay with your Wantiss wallet."
   },
   {
     "id": "K1313",
-    "text": "Your card verification did not complete. Please try again or use another card."
+    "text": "Your bank may ask you to approve this payment"
   },
   {
     "id": "K1314",
-    "text": "Your cart"
+    "text": "Your card could not be saved. Please check the details and try again."
   },
   {
     "id": "K1315",
-    "text": "Your cart has items from "
+    "text": "Your card could not be verified. Please try again or use another card."
   },
   {
     "id": "K1316",
-    "text": "Your cart is empty"
+    "text": "Your card has been saved for future payments."
   },
   {
     "id": "K1317",
-    "text": "Your cart is unavailable"
+    "text": "Your card verification did not complete. Please try again or use another card."
   },
   {
     "id": "K1318",
-    "text": "Your choices can be saved as a draft so you can pick up where you left off."
+    "text": "Your cart"
   },
   {
     "id": "K1319",
-    "text": "Your contribution completed the order."
+    "text": "Your cart has items from "
   },
   {
     "id": "K1320",
-    "text": "Your contribution was reserved. The order will be placed when fully funded."
+    "text": "Your cart is empty"
   },
   {
     "id": "K1321",
-    "text": "Your courier has picked up the order"
+    "text": "Your cart is unavailable"
   },
   {
     "id": "K1322",
-    "text": "Your current cart belongs to another store. Clear it before creating this group."
+    "text": "Your choices can be saved as a draft so you can pick up where you left off."
   },
   {
     "id": "K1323",
-    "text": "Your delivery fee is now "
+    "text": "Your contribution completed the order."
   },
   {
     "id": "K1324",
-    "text": "Your driver comment: “"
+    "text": "Your contribution was reserved. The order will be placed when fully funded."
   },
   {
     "id": "K1325",
-    "text": "Your everyday super-app (demo entry screen)"
+    "text": "Your courier has picked up the order"
   },
   {
     "id": "K1326",
-    "text": "Your favorites"
+    "text": "Your current cart belongs to another store. Clear it before creating this group."
   },
   {
     "id": "K1327",
-    "text": "Your live location is shared with the customer for this delivery."
+    "text": "Your delivery fee is now "
   },
   {
     "id": "K1328",
-    "text": "Your message was sent, but the store conversation could not be refreshed. Please try again later."
+    "text": "Your driver comment: “"
   },
   {
     "id": "K1329",
-    "text": "Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond."
+    "text": "Your everyday super-app (demo entry screen)"
   },
   {
     "id": "K1330",
-    "text": "Your message will be sent to this store."
+    "text": "Your favorites"
   },
   {
     "id": "K1331",
-    "text": "Your order"
+    "text": "Your live location is shared with the customer for this delivery."
   },
   {
     "id": "K1332",
-    "text": "Your order from this store"
+    "text": "Your message was sent, but the store conversation could not be refreshed. Please try again later."
   },
   {
     "id": "K1333",
-    "text": "Your order includes alcohol"
+    "text": "Your message was sent, but the store inbox could not be refreshed. Please contact support if the store does not respond."
   },
   {
     "id": "K1334",
-    "text": "Your order is funded. Open Orders to reload its details."
+    "text": "Your message will be sent to this store."
   },
   {
     "id": "K1335",
-    "text": "Your order is on its way"
+    "text": "Your order"
   },
   {
     "id": "K1336",
-    "text": "Your order is on its way."
+    "text": "Your order from this store"
   },
   {
     "id": "K1337",
-    "text": "Your order was cancelled."
+    "text": "Your order includes alcohol"
   },
   {
     "id": "K1338",
-    "text": "Your order was sent to "
+    "text": "Your order is funded. Open Orders to reload its details."
   },
   {
     "id": "K1339",
-    "text": "Your orders"
+    "text": "Your order is on its way"
   },
   {
     "id": "K1340",
-    "text": "Your orders will show up here."
+    "text": "Your order is on its way."
   },
   {
     "id": "K1341",
-    "text": "Your payment is processed securely."
+    "text": "Your order was cancelled."
   },
   {
     "id": "K1342",
-    "text": "Your promo code no longer applies. Totals updated"
+    "text": "Your order was sent to "
   },
   {
     "id": "K1343",
-    "text": "Your rating: {n} ★"
+    "text": "Your orders"
   },
   {
     "id": "K1344",
-    "text": "Your report was reviewed"
+    "text": "Your orders will show up here."
   },
   {
     "id": "K1345",
-    "text": "Your report was sent."
+    "text": "Your payment is processed securely."
   },
   {
     "id": "K1346",
-    "text": "Your report was sent. Our team is reviewing it."
+    "text": "Your promo code no longer applies. Totals updated"
   },
   {
     "id": "K1347",
-    "text": "Your review"
+    "text": "Your rating: {n} ★"
   },
   {
     "id": "K1348",
-    "text": "Your road-based delivery fee is now "
+    "text": "Your report was reviewed"
   },
   {
     "id": "K1349",
-    "text": "Your road-based delivery fee is now {amount}. Review the updated total and place your order again."
+    "text": "Your report was sent."
   },
   {
     "id": "K1350",
-    "text": "Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed."
+    "text": "Your report was sent. Our team is reviewing it."
   },
   {
     "id": "K1351",
-    "text": "Your shop/order comment: “"
+    "text": "Your review"
   },
   {
     "id": "K1352",
-    "text": "Your support request {ticket} has been sent. Keep this reference if you contact us again."
+    "text": "Your road-based delivery fee is now "
   },
   {
     "id": "K1353",
-    "text": "Your upfront share"
+    "text": "Your road-based delivery fee is now {amount}. Review the updated total and place your order again."
   },
   {
     "id": "K1354",
-    "text": "Your weekly Goodies commission settlement is due within 24 hours."
+    "text": "Your saved card is authorized and charged securely by Stripe. If authorization fails, your order will not be placed."
   },
   {
     "id": "K1355",
-    "text": "Your weekly Goodies commission settlement is due. Open payouts to review the amount."
+    "text": "Your shop/order comment: “"
   },
   {
     "id": "K1356",
-    "text": "You’re all caught up"
+    "text": "Your support request {ticket} has been sent. Keep this reference if you contact us again."
   },
   {
     "id": "K1357",
-    "text": "checked by the courier"
+    "text": "Your upfront share"
   },
   {
     "id": "K1358",
-    "text": "checked by the shop"
+    "text": "Your weekly Goodies commission settlement is due within 24 hours."
   },
   {
     "id": "K1359",
-    "text": "delivery"
+    "text": "Your weekly Goodies commission settlement is due. Open payouts to review the amount."
   },
   {
     "id": "K1360",
-    "text": "demo"
+    "text": "You’re all caught up"
   },
   {
     "id": "K1361",
-    "text": "e.g. Partner, Office"
+    "text": "checked by the courier"
   },
   {
     "id": "K1362",
-    "text": "ending in "
+    "text": "checked by the shop"
   },
   {
     "id": "K1363",
-    "text": "has a new price. Open Edit to review it"
+    "text": "delivery"
   },
   {
     "id": "K1364",
-    "text": "invited you to a group order"
+    "text": "demo"
   },
   {
     "id": "K1365",
-    "text": "is "
+    "text": "e.g. Partner, Office"
   },
   {
     "id": "K1366",
-    "text": "is closed"
+    "text": "ending in "
   },
   {
     "id": "K1367",
-    "text": "is no longer available in that quantity"
+    "text": "has a new price. Open Edit to review it"
   },
   {
     "id": "K1368",
-    "text": "is no longer offered"
+    "text": "invited you to a group order"
   },
   {
     "id": "K1369",
-    "text": "items from everyone"
+    "text": "is "
   },
   {
     "id": "K1370",
-    "text": "km from this address, beyond delivery range. Pick another address to get delivery."
+    "text": "is closed"
   },
   {
     "id": "K1371",
-    "text": "left"
+    "text": "is no longer available in that quantity"
   },
   {
     "id": "K1372",
-    "text": "min"
+    "text": "is no longer offered"
   },
   {
     "id": "K1373",
-    "text": "min · "
+    "text": "items from everyone"
   },
   {
     "id": "K1374",
-    "text": "minimum."
+    "text": "km from this address, beyond delivery range. Pick another address to get delivery."
   },
   {
     "id": "K1375",
-    "text": "more to reach the"
+    "text": "left"
   },
   {
     "id": "K1376",
-    "text": "more to reach the minimum"
+    "text": "min"
   },
   {
     "id": "K1377",
-    "text": "n/a"
+    "text": "min · "
   },
   {
     "id": "K1378",
-    "text": "needs changes: "
+    "text": "minimum."
   },
   {
     "id": "K1379",
-    "text": "open {hours}"
+    "text": "more to reach the"
   },
   {
     "id": "K1380",
-    "text": "or start your own"
+    "text": "more to reach the minimum"
   },
   {
     "id": "K1381",
-    "text": "sample review"
+    "text": "n/a"
   },
   {
     "id": "K1382",
-    "text": "stores"
+    "text": "needs changes: "
   },
   {
     "id": "K1383",
-    "text": "the deadline"
+    "text": "open {hours}"
   },
   {
     "id": "K1384",
-    "text": "the same item"
+    "text": "or start your own"
   },
   {
     "id": "K1385",
-    "text": "this address"
+    "text": "sample review"
   },
   {
     "id": "K1386",
-    "text": "this item"
+    "text": "stores"
   },
   {
     "id": "K1387",
-    "text": "this number"
+    "text": "the deadline"
   },
   {
     "id": "K1388",
-    "text": "to"
+    "text": "the same item"
   },
   {
     "id": "K1389",
-    "text": "with "
+    "text": "this address"
   },
   {
     "id": "K1390",
-    "text": "your selected address"
+    "text": "this item"
   },
   {
     "id": "K1391",
-    "text": "{address} · Wantiss default"
+    "text": "this number"
   },
   {
     "id": "K1392",
-    "text": "{code} applied"
+    "text": "to"
   },
   {
     "id": "K1393",
-    "text": "{code} saved. It applies when you check out"
+    "text": "with "
   },
   {
     "id": "K1394",
-    "text": "{count} order"
+    "text": "your selected address"
   },
   {
     "id": "K1395",
-    "text": "{count} orders"
+    "text": "{address} · Wantiss default"
   },
   {
     "id": "K1396",
-    "text": "{count} saved"
+    "text": "{code} applied"
   },
   {
     "id": "K1397",
-    "text": "{count} saved card"
+    "text": "{code} saved. It applies when you check out"
   },
   {
     "id": "K1398",
-    "text": "{count} saved cards"
+    "text": "{count} order"
   },
   {
     "id": "K1399",
-    "text": "{desc} · from {price}"
+    "text": "{count} orders"
   },
   {
     "id": "K1400",
-    "text": "{details}"
+    "text": "{count} saved"
   },
   {
     "id": "K1401",
-    "text": "{item} is unavailable"
+    "text": "{count} saved card"
   },
   {
     "id": "K1402",
-    "text": "{item} {reason}"
+    "text": "{count} saved cards"
   },
   {
     "id": "K1403",
-    "text": "{km} km away"
+    "text": "{desc} · from {price}"
   },
   {
     "id": "K1404",
-    "text": "{km} km from you"
+    "text": "{details}"
   },
   {
     "id": "K1405",
-    "text": "{km} km from your address"
+    "text": "{item} is unavailable"
   },
   {
     "id": "K1406",
-    "text": "{n} products"
+    "text": "{item} {reason}"
   },
   {
     "id": "K1407",
-    "text": "{n} store"
+    "text": "{km} km away"
   },
   {
     "id": "K1408",
-    "text": "{n} stores"
+    "text": "{km} km from you"
   },
   {
     "id": "K1409",
-    "text": "{size} is no longer available. Choose another size"
+    "text": "{km} km from your address"
   },
   {
     "id": "K1410",
-    "text": "{store} is closed right now"
+    "text": "{n} products"
   },
   {
     "id": "K1411",
-    "text": "{store} is closed."
+    "text": "{n} store"
   },
   {
     "id": "K1412",
-    "text": "{store} is closed. Choose a future pickup or delivery time if scheduling is available."
+    "text": "{n} stores"
   },
   {
     "id": "K1413",
-    "text": "{store} is closed. {next}"
+    "text": "{size} is no longer available. Choose another size"
   },
   {
     "id": "K1414",
-    "text": "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee."
+    "text": "{store} is closed right now"
   },
   {
     "id": "K1415",
-    "text": "• Minimum age here: "
+    "text": "{store} is closed."
   },
   {
     "id": "K1416",
-    "text": "• The courier checks your ID at the door. At a pickup, the shop checks it."
+    "text": "{store} is closed. Choose a future pickup or delivery time if scheduling is available."
   },
   {
     "id": "K1417",
+    "text": "{store} is closed. {next}"
+  },
+  {
+    "id": "K1418",
+    "text": "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee."
+  },
+  {
+    "id": "K1419",
+    "text": "• Minimum age here: "
+  },
+  {
+    "id": "K1420",
+    "text": "• The courier checks your ID at the door. At a pickup, the shop checks it."
+  },
+  {
+    "id": "K1421",
     "text": "★ {rating} ({n} reviews)"
   }
 ]

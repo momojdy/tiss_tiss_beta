@@ -7193,5 +7193,25 @@
     "fr": "Votre part initiale",
     "es": "Tu parte inicial",
     "zh-Hans": "您的首付款"
+  },
+  "Pay {amount} and create request": {
+    "fr": "Payer {amount} et créer la demande",
+    "es": "Pagar {amount} y crear solicitud",
+    "zh-Hans": "支付 {amount} 并创建请求"
+  },
+  "Help me pay for my Goodies order on Wantiss. {amount} remaining. {link}": {
+    "fr": "Aidez-moi à payer ma commande Goodies sur Wantiss. Il reste {amount}. {link}",
+    "es": "Ayúdame a pagar mi pedido de Goodies en Wantiss. Faltan {amount}. {link}",
+    "zh-Hans": "帮我支付 Wantiss 上的 Goodies 订单。还需 {amount}。{link}"
+  },
+  "Request unavailable": {
+    "fr": "Demande indisponible",
+    "es": "Solicitud no disponible",
+    "zh-Hans": "请求暂不可用"
+  },
+  "Loading request…": {
+    "fr": "Chargement de la demande…",
+    "es": "Cargando solicitud…",
+    "zh-Hans": "正在加载请求…"
   }
 }
