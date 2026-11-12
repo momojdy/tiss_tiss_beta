@@ -43,6 +43,8 @@ jobs:
           cache: npm
       - name: Install locked npm modules for Deno's manual resolver
         run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Install Deno edge-only npm SDK
+        run: npm install --no-save --legacy-peer-deps --package-lock=false --no-audit --no-fund "openai@^4.52.5"
       - name: Type-check deployed edge functions
         run: deno check --node-modules-dir=manual supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts
       - name: Test Goodies refund and webhook decision logic
