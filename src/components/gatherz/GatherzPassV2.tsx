@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
-import Animated, { runOnJS, useAnimatedProps, useAnimatedStyle, useDerivedValue, useFrameCallback, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, { type SharedValue, runOnJS, useAnimatedProps, useAnimatedStyle, useDerivedValue, useFrameCallback, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Svg, { Circle, Defs, FeGaussianBlur, Filter, G, LinearGradient as SvgLinearGradient, Path, RadialGradient, Rect, Stop, Text as SvgText } from 'react-native-svg';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -29,7 +29,7 @@ function buildOffs(L: number): number[] {
   return raw.map(v => start + v * scale);
 }
 const BLUR_OK = Platform.OS === 'ios' || (Platform.OS === 'android' && Number(Platform.Version) >= 31);
-function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: Animated.SharedValue<number[]>; color: string; family: string }) {
+function Glyph({ i, ch, glyphs, color, family }: { i: number; ch: string; glyphs: SharedValue<number[]>; color: string; family: string }) {
   const st = useAnimatedStyle(() => {
     const g = glyphs.value, x = g[i * 4], y = g[i * 4 + 1], a = g[i * 4 + 2], vis = g[i * 4 + 3];
     const vx = -GW / 2, vy = 6.3 - GH / 2, c = Math.cos(a), sn = Math.sin(a);
@@ -53,7 +53,7 @@ function cssLine(angle: number, w: number, h: number) {
 }
 const clamp = (v: number, a: number, b: number) => { 'worklet'; return Math.max(a, Math.min(b, v)); };
 
-function Edge({ z0, w, h, flipA, ty }: { z0: number; w: number; h: number; flipA: Animated.SharedValue<number>; ty: Animated.SharedValue<number> }) {
+function Edge({ z0, w, h, flipA, ty }: { z0: number; w: number; h: number; flipA: SharedValue<number>; ty: SharedValue<number> }) {
   const s = useAnimatedStyle(() => {
     const th = flipA.value + ty.value;
     return { transform: [{ perspective: 1200 }, { translateX: -z0 * Math.sin((th * Math.PI) / 180) }, { rotateY: th + 'deg' }] };
@@ -61,7 +61,7 @@ function Edge({ z0, w, h, flipA, ty }: { z0: number; w: number; h: number; flipA
   return <Animated.View style={[{ position: 'absolute', left: 0, top: 0, width: w, height: h, borderRadius: 24, backgroundColor: '#1B1530', borderWidth: 1, borderColor: '#8B7CC7' }, s]} />;
 }
 
-function StrapQuad({ i, geo }: { i: number; geo: Animated.SharedValue<any> }) {
+function StrapQuad({ i, geo }: { i: number; geo: SharedValue<any> }) {
   const p = useAnimatedProps(() => ({ d: geo.value.quads[i], fill: geo.value.fills[i], stroke: geo.value.fills[i] }) as any);
   return <AnimatedPath animatedProps={p} strokeWidth={0.9} strokeLinejoin="round" />;
 }
