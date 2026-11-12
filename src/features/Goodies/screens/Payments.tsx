@@ -148,9 +148,6 @@ export function LivePayments() {
         <View style={{marginBottom: 12}}>
           {/* Same green wallet card as the Wallet feature home; it loads its own balance and stays live. */}
           <View style={{marginHorizontal: -16, marginTop: -13}}><WalletBalance contentLabel={label} /></View>
-          <Pressable accessibilityRole="button" accessibilityLabel={label('lbl.paymentTopup', 'Top up')} hitSlop={10} onPress={() => toast(label('lbl.paymentTopupUnavailable', 'Wallet top-up is not available yet.'))} style={{alignSelf: 'flex-start', marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 6}}>
-            <Icon name="plus" size={16} color={th.br} /><T size={13.5} weight="600" color={th.br}>{label('lbl.paymentTopup', 'Top up')}</T>
-          </Pressable>
         </View>
       ) : (
         <Card>
