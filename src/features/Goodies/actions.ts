@@ -150,7 +150,9 @@ export function setCard(id: string) {
   if (!S.cards.some((card: any) => card.id === id)) return;
   S.selectedCardId = id; save(); emit();
 }
-export async function placeOrder() {
+export async function placeOrder(helpPayMode?: 'share' | 'full') {
+  const helpPay = helpPayMode === 'share' || helpPayMode === 'full';
+  const helpPayUpfront = (n: number) => helpPayMode === 'share' ? Math.ceil(Math.round(n * 100) * 0.6) / 100 : 0;
   if (S.busy) return;
   const access = await refreshGoodiesAccess();
   if (access.status === 'suspended' || access.status === 'banned') {toast(access.status === 'banned' ? label("lbl.cms.3282b7d2663b", "Your access to Goodies has been permanently restricted.") : label("lbl.cms.b66a41c46241", "Your access to Goodies is temporarily suspended.")); return;}
@@ -174,12 +176,12 @@ export async function placeOrder() {
     S.firstOrderEligible = count === 0;
     emit();
   }
-  if (cartStoreIds().length > 1) return placeMultiOrder();
+  if (cartStoreIds().length > 1) {if(helpPay){toast('Help Pay requests must contain items from one store.');return;}return placeMultiOrder();}
   const t = totals(), st = t.st!;
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   if (!providerInfo.demo) {
-    if (!['cash', 'wallet', 'card'].includes(S.pay)) {toast(label('lbl.actionChoosePayment', 'Choose Wantiss Wallet, a saved card, or cash.')); S.cs = 2; emit(); return;}
-    if (S.pay === 'card' && !S.cards.length) {toast(label('lbl.actionAddSavedCard', 'Add a saved card before checking out.')); push('payments'); return;}
+    if (!helpPay && !['cash', 'wallet', 'card'].includes(S.pay)) {toast(label('lbl.actionChoosePayment', 'Choose Wantiss Wallet, a saved card, or cash.')); S.cs = 2; emit(); return;}
+    if (!helpPay && S.pay === 'card' && !S.cards.length) {toast(label('lbl.actionAddSavedCard', 'Add a saved card before checking out.')); push('payments'); return;}
     // The ID check result cannot be recorded yet, so age-restricted orders stay blocked in live mode.
     if (hasAlcohol()) {toast(label('lbl.actionAlcoholUnavailable', 'Alcohol orders are not available yet.')); return;}
   }
@@ -195,13 +197,13 @@ export async function placeOrder() {
   // Refresh the wallet before doing delivery routing so an insufficient balance
   // is explained immediately instead of being masked by an unrelated quote error.
   const walletVerified = providerInfo.demo ? true : await refreshPaymentOptions();
-  if (!providerInfo.demo && S.pay === 'wallet' && !walletVerified) {
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && !walletVerified) {
     S.busy = 0; toast(label("lbl.cms.9e67ba6cf31c", "Could not verify your live Wantiss Wallet balance. Please retry before placing the order.")); emit(); return;
   }
-  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && !S.hasWallet) {
     S.busy = 0; S.cs = 2; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;
   }
-  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && S.wallet < (helpPay ? helpPayUpfront(t.total) : t.total)) {
     S.busy = 0; S.cs = 2; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;
   }
   let deliveryQuoteId: string | null = null;
@@ -260,11 +262,11 @@ export async function placeOrder() {
     }
   }
   const walletVerifiedAfterQuote = providerInfo.demo ? true : await refreshPaymentOptions();
-  if (!providerInfo.demo && S.pay === 'wallet' && !walletVerifiedAfterQuote) {
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && !walletVerifiedAfterQuote) {
     S.busy = 0; toast(label("lbl.cms.9e67ba6cf31c", "Could not verify your live Wantiss Wallet balance. Please retry before placing the order.")); emit(); return;
   }
-  if (!providerInfo.demo && S.pay === 'wallet' && !S.hasWallet) {S.cs = 3; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;}
-  if (!providerInfo.demo && S.pay === 'wallet' && S.wallet < t.total) {S.cs = 3; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;}
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && !S.hasWallet) {S.cs = 3; toast(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.')); emit(); return;}
+  if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && S.wallet < (helpPay ? helpPayUpfront(t.total) : t.total)) {S.cs = 3; toast(label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose a saved card or cash.')); emit(); return;}
   const alc = hasAlcohol();
   if (alc && !S.alcConsent) {toast(label('lbl.actionConfirmAlcohol', 'Please confirm the alcohol rules to continue')); return;}
   if (alc && !S.hasWallet) {toast(label('lbl.actionCreateWalletAlcohol', 'Create your Wantiss wallet first. Refunds for alcohol orders go there.')); push('payments'); return;}
@@ -296,6 +298,22 @@ export async function placeOrder() {
       p_notes: String(S.note || '').trim() || null,
       p_promo_code: S.promo || null,
     };
+    if (helpPay && helpPayMode) {
+      const snapshotFingerprint = JSON.stringify({...orderPayload,payment_method:'help-pay',mode:helpPayMode});
+      try {
+        const attempt = await getGoodiesCheckoutAttempt(snapshotFingerprint);
+        const {createHelpPayDraft} = await import('./helpPayApi');
+        const requestId = await createHelpPayDraft(helpPayMode,Math.round(orderPayload.p_total*100),attempt.key,orderPayload);
+        (S as any).helpPayRequestId=requestId;
+        S.busy=0;
+        push('help-pay');
+        await save();emit();
+      } catch (error: any) {
+        S.busy=0;emit();
+        toast(friendlyError(error,'Could not create this Help Pay request. No payment has been confirmed.'));
+      }
+      return;
+    }
     const fingerprintAddress = orderPayload.p_address
       ? Object.fromEntries(Object.entries(orderPayload.p_address).filter(([key]) => key !== 'delivery_quote_id'))
       : null;
