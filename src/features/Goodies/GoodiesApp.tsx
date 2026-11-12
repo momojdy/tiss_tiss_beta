@@ -24,7 +24,7 @@ import {t as tr} from './i18n';
 import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
 
 const TABS = ['home', 'cats', 'orders', 'cart'];
-const NOCB = ['cart', 'checkout', 'help-pay-preview', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
+const NOCB = ['cart', 'checkout', 'help-pay', 'confirm', 'track', 'notifs', 'storechat', 'grouporder', 'settings', 'payments', 'help', 'contact', 'supdone', 'profile', 'addresses', 'product', 'wantiss', 'ndetail', 'policies', 'policy', 'byo', 'seller', 'sellerEdit'];
 const FOOTED = ['product', 'checkout'];
 
 export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNotifications = 0, unreadMessages = 0, initialRoute}: {onExit?: () => void; embedded?: boolean; onUniversalAction?: (action:GoodiesMenuAction)=>void; unreadNotifications?:number; unreadMessages?:number; initialRoute?:string}) {
@@ -158,7 +158,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
-    case 'help-pay-preview': body = <HelpPayPreview />; break;
+    case 'help-pay': body = <HelpPayPreview />; break;
     case 'addcard': body = <WalletAddNewCardScreen contentLabel={label} onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
     case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
@@ -283,7 +283,7 @@ function WantissEntry() {
   return (
     <View style={{padding: 16, paddingTop: 60}}>
       <T size={32} weight="600" style={{fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif'}}>{label("lbl.browseAuto1MQHTQ6", "Wantiss")}</T>
-      <T color={th.mut} style={{marginTop: 6, marginBottom: 24}}>{label("lbl.browseAutoXNYVOQ", "Your everyday super-app (demo entry screen)")}</T>
+      <T color={th.mut} style={{marginTop: 6, marginBottom: 24}}>{label("lbl.browseAutoXNYVOQ", "Your everyday super-app (Goodies)")}</T>
       <Pressable onPress={() => {S.stack = [{r: 'wantiss', u: 1}, {r: 'home', u: 2}]; emit();}} style={{height: 130, borderRadius: 18, overflow: 'hidden'}}>
         <Grad colors={['#FD802E', '#FF9F4D']} style={{flex: 1, padding: 14}}>
           <T size={22} weight="600" color="#fff">{label("lbl.browseAuto11P24TT", "Goodies")}</T><T size={12} color="#fff" style={{marginTop: 3}}>{label("lbl.browseAuto1R48A8", "Food, groceries, drinks and everyday essentials")}</T>
