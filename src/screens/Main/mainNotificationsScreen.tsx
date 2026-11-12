@@ -43,7 +43,18 @@ export default function NotificationsScreen({ onBack, onNavigate, embedded = fal
       .select('id,title,body,read,feature_name,notification_type,destination,metadata,created_at')
       .eq('user_id', auth.user.id).or('vendor_id.is.null,notification_type.in.(friend_request,friend_accepted)').or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)').order('created_at', { ascending: false }).limit(100);
     if (queryError) setError(queryError.message);
-    else { setItems((data || []) as NotificationRow[]); setError(''); }
+    else {
+      const rows = (data || []) as NotificationRow[];
+      const accepted = rows.filter(n=>n.notification_type==='friend_accepted'&&typeof n.metadata?.sender_id==='string');
+      if(accepted.length){
+        const {data:profiles}=await supabase.rpc('wantiss_message_contact_profiles');
+        const byId = new Map<string,string>((Array.isArray(profiles)?profiles:[]).map((p:any)=>[p.id,typeof p.full_name==='string'&&p.full_name.trim()?p.full_name.trim():'Wantiss member']));
+        setItems(rows.map(n=>n.notification_type==='friend_accepted'&&typeof n.metadata?.sender_id==='string'
+          ? {...n,body:(byId.get(n.metadata.sender_id)||'Wantiss member')+' accepted your friend request.'}
+          : n));
+      }else setItems(rows);
+      setError('');
+    }
     setLoading(false);
   }, []);
   useEffect(() => {
