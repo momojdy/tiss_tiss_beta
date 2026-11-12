@@ -26,6 +26,7 @@
     "expo-camera": "~58.0.12",
     "expo-clipboard": "~58.0.4",
     "expo-document-picker": "~58.0.5",
+    "expo-dev-client": "~58.0.19",
     "expo-file-system": "~58.0.12",
     "expo-font": "~58.0.12",
     "expo-image": "~58.0.16",
@@ -71,7 +72,11 @@
     "lint": "eslint src/features/Goodies/content.ts src/features/Goodies/components/Overlays.tsx",
     "test:goodies-cms": "node tests/goodies-cms.test.cjs",
     "check:goodies-cms": "node scripts/check-goodies-cms.cjs",
-    "sync:goodies-cms": "node scripts/sync-goodies-cms-catalog.cjs && node scripts/sync-goodies-preview.cjs"
+    "sync:goodies-cms": "node scripts/sync-goodies-cms-catalog.cjs && node scripts/sync-goodies-preview.cjs",
+    "test:goodies": "node scripts/run-goodies-tests.cjs",
+    "test:goodies-cross-role": "node scripts/audit-goodies-reproductions.cjs",
+    "check:migrations": "node scripts/check-migration-versions.cjs",
+    "check:goodies-native-config": "node scripts/check-goodies-native-config.cjs"
   },
   "private": true,
   "engines": {

@@ -6,20 +6,38 @@ on:
   pull_request:
     branches: [main]
 
+defaults:
+  run:
+    working-directory: tiss_tiss_beta
+
 jobs:
   validate:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
+      - name: Checkout paired admin CMS contracts
+        uses: actions/checkout@v4
+        with:
+          repository: momojdy/tiss-admin
+          ref: 29b7ded2c8e00358d3e635b53d5bff385303192e
+          path: tiss-admin
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: tiss_tiss_beta/package-lock.json
       - name: Install dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
-      - name: Goodies CMS source coverage and regression tests
-        run: npm run check:goodies-cms && npm run test:goodies-cms
+      - name: Verify Goodies CMS source coverage
+        run: npm run check:goodies-cms && npm run test:goodies
+      - name: Verify Goodies review isolation and refresh
+        run: npm run test:goodies-cross-role
+      - name: Verify unique migration versions
+        run: node scripts/check-migration-versions.cjs
       - name: Lint
         run: npm run lint
       - name: Type-check
@@ -28,24 +46,52 @@ jobs:
         run: npx expo export --platform web
       - name: Expo Doctor
         run: npx expo-doctor
+      - name: Upload customer web verification bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-customer-web-${{ github.sha }}
+          path: tiss_tiss_beta/dist
+          if-no-files-found: error
 
   edge-functions:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: v2.x
+          deno-version: v2.9.6
+      - name: Type-check deployed edge functions
+        run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts supabase/functions/refund-goodies-card-order/index.ts supabase/functions/expire-goodies-card-auth/index.ts
+      - name: Test Goodies refund and webhook decision logic
+        run: deno test --allow-read --allow-env --config supabase/functions/deno.json supabase/functions/goodies-tests/ supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
+
+  settlement-concurrency:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GOODIES_TEST_CONTAINER: wantiss-goodies-settlement-ci-${{ github.run_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
-      - name: Install locked npm modules for Deno's manual resolver
-        run: npm ci --legacy-peer-deps --no-audit --no-fund
-      - name: Install Deno edge-only npm SDK
-        run: npm install --no-save --legacy-peer-deps --package-lock=false --no-audit --no-fund "openai@^4.52.5" "stripe@18.5.0"
-      - name: Type-check deployed edge functions
-        run: deno check --node-modules-dir=manual supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts
-      - name: Test Goodies refund and webhook decision logic
-        run: deno test --node-modules-dir=manual supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
+      - name: Start isolated PostgreSQL matching the observed production version
+        run: docker run --name "$GOODIES_TEST_CONTAINER" --network none -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
+      - name: Verify Goodies financial concurrency using synthetic data
+        shell: bash
+        run: node scripts/test-goodies-settlement-postgres.cjs --container "$GOODIES_TEST_CONTAINER" | tee goodies-settlement-races.log
+      - name: Upload financial race evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-settlement-races-${{ github.sha }}
+          path: tiss_tiss_beta/goodies-settlement-races.log
+          if-no-files-found: warn
+      - name: Remove this test container
+        if: always()
+        run: docker rm -f "$GOODIES_TEST_CONTAINER"
