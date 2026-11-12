@@ -8,7 +8,6 @@ import {S, defAddr, money, emit, save, toast, ui, push, reset, STB, refreshUserA
 import {back, go, tab, togglePref} from '../actions';
 import {setTheme} from '../store';
 import {t as tr} from '../i18n';
-import {providerInfo} from '../providers';
 import {Home} from './Browse';
 import {LivePayments} from './Payments';
 import {supabase} from '../../../lib/supabase';
@@ -54,7 +53,7 @@ function Settings() {
 
       <LRow icon="moon" title={label('lbl.settingsDarkMode', 'Dark mode')} sub={label('lbl.accountDarkModeHint', 'Goodies only. Other Wantiss features keep their theme.')} onPress={() => setTheme(d ? 'light' : 'dark')} right={<Switch on={d} label={label('lbl.settingsDarkMode', 'Dark mode')} onPress={() => setTheme(d ? 'light' : 'dark')} />} />
       <LRow icon="help" title={label('lbl.settingsHelp', 'Help center')} sub={label('lbl.accountFaqSupportHint', 'FAQs and support')} onPress={() => go('help')} />
-      {providerInfo.demo ? (<><Ttl>{label('lbl.accountDemoHeading', 'Demo')}</Ttl><LRow icon="tag" title={label('lbl.accountImportContent', 'Import Admin content')} sub={label('lbl.accountPasteAdminExport', 'Paste the export from Wantiss Admin')} onPress={() => ui.sheet({kind: 'import'})} /><LRow icon="user" title={label('lbl.accountResetDemo', 'Reset Goodies demo data')} sub={label('lbl.accountResetDemoHint', 'Clears orders, cart and checkout numbers')} onPress={() => {require('../store').resetDemo(); toast(label('lbl.accountDemoResetDone', 'Demo data reset'));}} /></>) : null}
+
     </View>
   </View>);
 }
