@@ -305,6 +305,7 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
         const {createHelpPayDraft} = await import('./helpPayApi');
         const requestId = await createHelpPayDraft(helpPayMode,Math.round(orderPayload.p_total*100),attempt.key,orderPayload);
         (S as any).helpPayRequestId=requestId;
+        (S as any).helpPayRequestUserId=(await supabase.auth.getUser()).data.user?.id||null;
         S.busy=0;
         if (S.stack[S.stack.length-1]?.r !== 'help-pay') push('help-pay');
         await save();emit();
