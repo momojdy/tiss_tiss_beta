@@ -1,3 +1,5 @@
+-- Keep the legacy group-create RPC compatible with deployments where pgcrypto
+-- is installed in the extensions schema and not on the default search_path.
 create or replace function public.goodies_group_create(p_store_id text)
 returns table(group_id uuid,invite_code text)
 language plpgsql

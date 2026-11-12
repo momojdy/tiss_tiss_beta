@@ -1,0 +1,73 @@
+[
+  {
+    "from": "20261101080500_goodies_product_rejection_reason_required.sql",
+    "to": "20261101112204_goodies_product_rejection_reason_required.sql",
+    "unchanged_sha256": "ea98ab0c6262f8020895e6b9933f4597ec271a36591edbdfe43bcffdd3938a88",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261101080500_goodies_merchant_restrictions.sql",
+    "to": "20261101111833_goodies_merchant_restrictions.sql",
+    "unchanged_sha256": "a96acf771bde78da636983ff0e7d19c14a4cfb6554ddb561a6edc8de497a6b7a",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261104130000_goodies_group_order_friend_invites.sql",
+    "to": "20261104085513_goodies_group_order_friend_invites.sql",
+    "unchanged_sha256": "d637fd715519cd18d04b74063fdcdea002d2c75717112083eb8e965e99c66eef",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "202611010001_goodies_card_retry_persistence.sql",
+    "to": "20261101045813_202611010001_goodies_card_retry_persistence.sql",
+    "unchanged_sha256": "c56ae1a27be39e04196ba8ac7afcf5e346433b48df5ae77b87a813d330d7b69f",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "202611010001_goodies_card_acceptance_requires_paid.sql",
+    "to": "20261101045432_goodies_card_acceptance_requires_paid.sql",
+    "unchanged_sha256": "8d6d3df78ddc3332e515b510b7c9cb06958934d7e8e33b06e637615b594fdb0c",
+    "reason": "Match the observed deployed migration version and name"
+  },
+  {
+    "from": "20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+    "canonical": "20261103163450_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+    "reason": "Duplicate executable SQL; preserve its explanatory comment in the deployed canonical file"
+  },
+  {
+    "from": "202611120001_help_pay_canonical_checkout_validator_and_private_order_finalizer.sql",
+    "to": "20261112083831_help_pay_canonical_checkout_validator_and_private_order_finalizer.sql",
+    "unchanged_sha256": "655360bbae921b0bff291d365611ed96205e3e1df30f422c2a249b1f1b10aa0b",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  },
+  {
+    "from": "202611120002_help_pay_live_request_escrow_status_and_friend_card.sql",
+    "to": "20261112084038_help_pay_live_request_escrow_status_and_friend_card.sql",
+    "unchanged_sha256": "7e100c1fef765eb452988f0f6b5b2be9788c97595177f032e465b1714b22cf85",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  },
+  {
+    "from": "202611120003_help_pay_atomic_contributions_settlement_refunds_and_expiry.sql",
+    "to": "20261112084154_help_pay_atomic_contributions_settlement_refunds_and_expiry.sql",
+    "unchanged_sha256": "6055d331faec2d2a50f7aeff6daa95be92150ac404a83e3030f73244fcc98b7a",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  },
+  {
+    "from": "202611120004_help_pay_keep_validated_delivery_quote_until_request_expiry.sql",
+    "to": "20261112085709_help_pay_keep_validated_delivery_quote_until_request_expiry.sql",
+    "unchanged_sha256": "7d4da0f2df4e18fdfff517d891abf09ca695a4998d3d4a635b22e44c4f481adf",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  },
+  {
+    "from": "202611120006_enable_verified_help_pay_wallet_contributions.sql",
+    "to": "20261112091829_help_pay_enable_verified_authenticated_wallet_contributions.sql",
+    "unchanged_sha256": "d84f202dbc209bab5e25dcc57facab89c84e523b212f6c2f681f27dff32fdb03",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  },
+  {
+    "from": "202611120006_lock_down_friendship_notification_trigger_execute.sql",
+    "to": "20261112092820_lock_down_friendship_notification_trigger_execute.sql",
+    "unchanged_sha256": "d2038f3fe8b0c1ffd1f6d4b3f723a0cc8a1a145407b630637e8fecbda9a864f7",
+    "reason": "Match the migration name/version observed live on 2026-11-12; SQL unchanged"
+  }
+]
