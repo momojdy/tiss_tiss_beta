@@ -1,3 +1,4 @@
+import {money} from '../../features/Goodies/store';
 import {label} from '../../features/Goodies/content';
 import React,{useEffect,useRef,useState} from 'react';
 import {ActivityIndicator,Alert,Pressable,ScrollView,StyleSheet,Text,TextInput,View} from 'react-native';
@@ -8,7 +9,7 @@ import type {HelpPaySnapshot} from '../../features/Goodies/helpPayApi';
 
 type Props={requestId:string;onBack:()=>void};
 const GREEN='#438C53',INK='#1A2517',MUTED='#63745E',BG='#F6FAF5';
-const price=(cents:number)=>'$'+(Math.max(0,Number(cents)||0)/100).toFixed(2);
+const price=(cents:number)=>money(cents/100);
 const key=()=> 'help-pay-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2);
 
 export default function WalletHelpPayScreen({requestId,onBack}:Props){
@@ -105,7 +106,7 @@ export default function WalletHelpPayScreen({requestId,onBack}:Props){
        {!valid?<Text style={s.error}>{label("lbl.sharedPay.60c6b463eb3c", "Choose an amount between $0.01 and")}{price(remaining)}.</Text>:null}
        <View style={s.separator}/>
        <View style={s.row}><Text style={s.label}>{label("lbl.sharedPay.5a4a4293580d", "You will pay")}</Text><Text style={s.payAmount}>{price(valid?value:0)}</Text></View>
-       <View style={s.row}><Text style={s.label}>{label("lbl.sharedPay.2e7ab90ac60c", "Wallet balance")}</Text><Text style={s.value}>{walletBalance===null?label("lbl.sharedPay.81659570b4ae", "Wallet not available"):'$'+walletBalance.toFixed(2)}</Text></View>
+       <View style={s.row}><Text style={s.label}>{label("lbl.sharedPay.2e7ab90ac60c", "Wallet balance")}</Text><Text style={s.value}>{walletBalance===null?label("lbl.sharedPay.81659570b4ae", "Wallet not available"):money(walletBalance)}</Text></View>
        <Pressable accessibilityRole="button" disabled={!valid||busy||walletBalance===null||walletBalance*100+0.0001<value} onPress={confirm} style={[s.primary,(!valid||busy||walletBalance===null||walletBalance*100+0.0001<value)&&s.disabled]}>
          {busy?<ActivityIndicator color="#FFF"/>:<MaterialCommunityIcons name="wallet-outline" size={20} color="#FFF"/>}
          <Text style={s.primaryText}>{busy?label("lbl.sharedPay.b9378c00f9db", "Confirming…"):label("lbl.sharedPay.761d0751f5d4", "Pay ")+price(valid?value:0)}</Text>
