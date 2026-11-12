@@ -145,7 +145,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
 
   let body: any;
   switch (r) {
-    case 'wantiss': body = <WantissEntry />; break;
+    case 'wantiss': body = <Home onExit={handleBack} />; break;
     case 'home': body = <Home onExit={handleBack} />; break;
     case 'cats': body = <><Bar title={tr('categories')} onBack={A.back} right={<Pressable accessibilityRole="button" accessibilityLabel={label("lbl.cms.3ad6a1d313d9", "Favorites")} onPress={() => A.go('favs')} hitSlop={8} style={{width: 40, height: 40, alignItems: 'center', justifyContent: 'center'}}><Icon name="heart" size={24} color={th.br} /></Pressable>} /><Cats /></>; break;
     case 'orders': body = <Orders />; break;
@@ -277,20 +277,4 @@ function BottomNav({r, bottom}: {r: string; bottom: number}) {
   );
 }
 
-/* standalone demo entry only (embedded mode starts at home) */
-function WantissEntry() {
-  const th = useTheme();
-  return (
-    <View style={{padding: 16, paddingTop: 60}}>
-      <T size={32} weight="600" style={{fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif'}}>{label("lbl.browseAuto1MQHTQ6", "Wantiss")}</T>
-      <T color={th.mut} style={{marginTop: 6, marginBottom: 24}}>{label("lbl.browseAutoXNYVOQ", "Your everyday super-app (Goodies)")}</T>
-      <Pressable onPress={() => {S.stack = [{r: 'wantiss', u: 1}, {r: 'home', u: 2}]; emit();}} style={{height: 130, borderRadius: 18, overflow: 'hidden'}}>
-        <Grad colors={['#FD802E', '#FF9F4D']} style={{flex: 1, padding: 14}}>
-          <T size={22} weight="600" color="#fff">{label("lbl.browseAuto11P24TT", "Goodies")}</T><T size={12} color="#fff" style={{marginTop: 3}}>{label("lbl.browseAuto1R48A8", "Food, groceries, drinks and everyday essentials")}</T>
-          <Text style={{position: 'absolute', right: 6, bottom: -4, fontSize: 62}}>🛍️</Text>
-        </Grad>
-      </Pressable>
-      <T size={12.5} color={th.mut} align="center" style={{marginTop: 16}}>{label("lbl.browseAuto2NONO1", "This is a stand-in for the Wantiss home. Other services will appear here.")}</T>
-    </View>
-  );
-}
+
