@@ -31,3 +31,17 @@ export async function fetchHelpPayStatus(id: string): Promise<HelpPaySnapshot> {
   return data as HelpPaySnapshot;
 }
 export const HELP_PAY_PAYMENTS_ENABLED = false as const;
+
+/** Creates a pending draft only. A draft is NOT payable until the server
+ * verifies the checkout, reserves the upfront share, and activates it.
+ */
+export async function createHelpPayDraft(mode:HelpPayMode,totalCents:number,checkoutKey:string,checkoutSnapshot:Record<string,unknown>={}):Promise<string> {
+  if (!Number.isSafeInteger(totalCents)||totalCents<=0) throw new Error('Invalid total');
+  const {data,error}=await supabase.rpc('help_pay_create_request',{
+    p_mode:mode,p_total_cents:totalCents,p_checkout_key:checkoutKey,p_checkout_snapshot:checkoutSnapshot,
+  });
+  if(error) throw error;
+  if(typeof data!=='string') throw new Error('Could not create request');
+  return data;
+}
+export const helpPayQRValue=(requestId:string)=>'wantiss://help-pay/'+encodeURIComponent(requestId);
