@@ -1,6 +1,7 @@
 import {label} from '../content';
 import React, {useEffect, useState} from 'react';
-import {View, Pressable, ScrollView} from 'react-native';
+import {View, Pressable, ScrollView, TextInput} from 'react-native';
+import QRCode from 'react-native-qrcode-svg';
 import {Bar, Card, Cta, Row, T, Ttl, useTheme} from '../components/ui';
 import {S, totals, money, navBack, emit} from '../store';
 
@@ -18,6 +19,9 @@ export function HelpPayPreview() {
   const [mode, setMode] = useState<Mode>('share');
   const [step, setStep] = useState<Step>('setup');
   const [percent, setPercent] = useState(25);
+  const [customPercent, setCustomPercent] = useState('');
+  const [customAmount, setCustomAmount] = useState('');
+  const [amountMode, setAmountMode] = useState<'percent'|'amount'>('percent');
   const [paid, setPaid] = useState(0);
   const [contributions, setContributions] = useState<{name:string; cents:number}[]>([]);
   const [recipient, setRecipient] = useState(0);
@@ -33,26 +37,30 @@ export function HelpPayPreview() {
   const timerLabel = `${Math.floor(expires / 60)}:${String(expires % 60).padStart(2, '0')}`;
   // Contributor's chosen percentage is of the currently unfunded Help Pay portion.
   // One person may cover the entire remaining 40% of the original bill.
-  const chosen = mode === 'full' ? remaining : Math.min(remaining, Math.max(1, Math.round(remaining * percent / 100)));
+  const enteredPercent = customPercent.trim() === '' ? percent : Number(customPercent);
+  const selectedCents = amountMode === 'amount' ? Math.round(Number(customAmount || 0) * 100) : Math.round(remaining * enteredPercent / 100);
+  const validChoice = mode === 'full' || (Number.isFinite(selectedCents) && selectedCents > 0 && selectedCents <= remaining && (amountMode === 'amount' || (Number.isFinite(enteredPercent) && enteredPercent > 0 && enteredPercent <= 100)));
+  const chosen = mode === 'full' ? remaining : validChoice ? selectedCents : 0;
   const amount = (cents: number) => money(cents / 100);
-  const reset = (next: Mode) => {setMode(next); setStep('setup'); setPaid(0); setContributions([]); setPercent(25); setRecipient(0); setStartedAt(Date.now());};
+  const reset = (next: Mode) => {setMode(next); setStep('setup'); setPaid(0); setContributions([]); setPercent(25); setCustomPercent(''); setCustomAmount(''); setAmountMode('percent'); setRecipient(0); setStartedAt(Date.now());};
   const next = () => setStep(s => STEPS[Math.min(STEPS.length - 1, STEPS.indexOf(s) + 1)]);
   const previous = () => setStep(s => STEPS[Math.max(0, STEPS.indexOf(s) - 1)]);
   const addContribution = () => {
-    if (!remaining || !expires) return;
+    if (!remaining || !expires || !validChoice) return;
     const cents = Math.min(chosen, remaining);
     setPaid(v => Math.min(pool, v + cents));
     setContributions(v => [...v, {name: recipient === 0 ? label('lbl.helpPay.friendA','Friend A') : recipient === 1 ? label('lbl.helpPay.friendB','Friend B') : label('lbl.helpPay.friendC','Friend C'), cents}]);
     setStep(cents >= remaining ? 'complete' : 'progress');
   };
   const option = (label: string, active: boolean, onPress: () => void) =>
-    <Pressable accessibilityRole="button" onPress={onPress} style={{paddingVertical:11,paddingHorizontal:12,borderRadius:13,borderWidth:1,borderColor:active?th.br:th.line,backgroundColor:active?th.brt:th.soft}}>
+    <Pressable accessibilityRole="button" onPress={onPress} style={{paddingVertical:11,paddingHorizontal:12,borderRadius:13,borderWidth:1,borderColor:active?th.br:th.line,backgroundColor:active?th.brt:th.bg}}>
       <T size={13} weight="600" color={active?th.br:th.ink} align="center">{label}</T>
     </Pressable>;
   return <View style={{flex:1,backgroundColor:th.bg}}>
     <Bar title={label("lbl.cms.24f236576f00", "Help Pay · Walkthrough")} onBack={() => {navBack();emit();}} />
-    <ScrollView contentContainerStyle={{padding:16,paddingBottom:55,gap:13}}>
+    <ScrollView contentContainerStyle={{paddingHorizontal:20,paddingTop:20,paddingBottom:64,gap:16}}>
       <T size={12} color={th.mut}>{label("lbl.cms.78242f2aebe6", "Interactive preview · Nothing is charged, shared or ordered.")}</T>
+      <T size={24} weight="600">Pay together, effortlessly.</T>
       <Row style={{gap:8}}>
         <View style={{flex:1}}>{option(label('lbl.helpPay.shareBill','Share bill · 60/40'),mode==='share',()=>reset('share'))}</View>
         <View style={{flex:1}}>{option(label('lbl.helpPay.fullPay','Help me fully pay'),mode==='full',()=>reset('full'))}</View>
@@ -65,13 +73,21 @@ export function HelpPayPreview() {
         <View style={{height:5,width:`${(STEPS.indexOf(step)+1)*20}%`,backgroundColor:th.br}} />
       </View>
       <Ttl>{stepNames()[step]}</Ttl>
-      <Card>
+      <Card style={{borderRadius:22,padding:18}}>
         <Row sp><T weight="600">{label("lbl.cms.ec1cc0c94ace", "Goodies bill")}</T><T weight="600">{amount(total)}</T></Row>
         {S.cart.lines.map((line:any,i:number)=><Row key={String(line.k||i)} sp style={{marginTop:8}}><T size={12} color={th.mut}>{line.q}× {line.n}</T><T size={12}>{money(line.p*line.q)}</T></Row>)}
         <Row sp style={{marginTop:12}}><T size={13}>{label("lbl.cms.af5b6180fcea", "Customer's upfront share")}</T><T size={13} weight="600">{amount(initial)}</T></Row>
         <Row sp style={{marginTop:7}}><T size={13}>{label("lbl.cms.77261425ec6c", "Friends can cover")}</T><T size={13} weight="600">{amount(pool)}</T></Row>
         <Row sp style={{marginTop:7}}><T size={13}>{label("lbl.cms.5f964c1d13e4", "Still needed")}</T><T size={13} weight="600" color={th.br}>{amount(remaining)}</T></Row>
       </Card>
+      {(step==='invite'||step==='pay'||step==='progress') ? <Card style={{borderRadius:22,padding:18,alignItems:'center'}}>
+        <T size={15} weight="600">Scan to pay</T>
+        <T size={12} color={th.mut} style={{textAlign:'center',marginTop:6,marginBottom:15}}>Wallet QR · {mode==='share'?'Share bill':'Full payment'}</T>
+        <View style={{backgroundColor:'#FFFFFF',padding:14,borderRadius:18}}>
+          <QRCode value={`wantiss://help-pay/preview?mode=${mode}&amount=${remaining}`} size={166} color="#1A2517" backgroundColor="#FFFFFF" />
+        </View>
+        <T size={12} color={th.mut} style={{textAlign:'center',marginTop:13}}>Demo QR only · no live payment request</T>
+      </Card> : null}
       {step==='setup' ? <>
         <Card>
           <T weight="600">{mode==='share'?label("lbl.cms.51f5915af4ef", "How the 60/40 split works"):label("lbl.cms.c460d20229b9", "How full payment works")}</T>
@@ -104,7 +120,14 @@ export function HelpPayPreview() {
           <Row style={{gap:7,marginTop:12,flexWrap:'wrap'}}>
             {[10,25,50,75,100].map(v=><View key={v}>{option(v+'%',percent===v,()=>setPercent(v))}</View>)}
           </Row>
-          <Row sp style={{marginTop:16}}><T>{label("lbl.cms.5742239db66e", "Selected ")}{percent}%</T><T weight="600" color={th.br}>{amount(chosen)}</T></Row>
+          <Row style={{gap:8,marginTop:14}}>
+            <View style={{flex:1}}>{option('Custom %',amountMode==='percent'&&customPercent!=='',()=>{setAmountMode('percent');setCustomPercent(String(percent));})}</View>
+            <View style={{flex:1}}>{option('Custom amount',amountMode==='amount',()=>setAmountMode('amount'))}</View>
+          </Row>
+          {amountMode==='percent'&&customPercent!==''?<TextInput keyboardType="decimal-pad" accessibilityLabel="Custom percentage" value={customPercent} onChangeText={setCustomPercent} placeholder="Percentage (0–100)" placeholderTextColor={th.mut} style={{marginTop:12,borderRadius:12,borderWidth:1,borderColor:th.line,color:th.ink,padding:12}}/>:null}
+          {amountMode==='amount'?<TextInput keyboardType="decimal-pad" accessibilityLabel="Custom amount" value={customAmount} onChangeText={setCustomAmount} placeholder="Amount to contribute" placeholderTextColor={th.mut} style={{marginTop:12,borderRadius:12,borderWidth:1,borderColor:th.line,color:th.ink,padding:12}}/>:null}
+          {!validChoice?<T size={12} color={th.red} style={{marginTop:8}}>Enter a valid amount within the remaining balance.</T>:null}
+          <Row sp style={{marginTop:16}}><T>{label("lbl.cms.5742239db66e", "Selected ")}{amountMode==='percent'?enteredPercent+'%':'custom amount'}</T><T weight="600" color={th.br}>{amount(chosen)}</T></Row>
           <T size={12} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.ca05018be110", "Equivalent to ")}{total?((chosen/total)*100).toFixed(1):'0'}{label("lbl.cms.19192368f257", "% of the original bill. Wallet only.")}</T>
         </Card> : <Card><T weight="600">{label("lbl.cms.f4a87149377d", "Full bill payment")}</T><T size={13} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.666ec91f4a22", "This request requires one person to pay the entire ")}{amount(remaining)}{label("lbl.cms.6472bf2c1c5e", ". In the live flow, eligible Wallet and card payment options are offered.")}</T></Card>}
         <Cta label={label("lbl.cms.da77f6ee2ece", "Simulate paying {value0}").replace(/\{value0\}/g, String(amount(chosen)))} onPress={addContribution} />
@@ -120,7 +143,7 @@ export function HelpPayPreview() {
           {contributions.map((c,i)=><Row key={i} sp style={{marginTop:9}}><T size={13}>{c.name}</T><T size={13}>{amount(c.cents)}</T></Row>)}
           <T size={12} color={th.mut} style={{marginTop:12}}>{label("lbl.cms.84439715c11a", "Contributors cannot see this list or the number of people who paid.")}</T>
         </Card>
-        {step==='progress'? <Cta label={label("lbl.cms.091a111ce415", "Preview another friend's contribution")} onPress={()=>{setRecipient(v=>(v+1)%3);setPercent(25);setStep('pay');}} />:
+        {step==='progress'? <Cta label={label("lbl.cms.091a111ce415", "Preview another friend's contribution")} onPress={()=>{setRecipient(v=>(v+1)%3);setPercent(25);setCustomPercent('');setCustomAmount('');setAmountMode('percent');setStep('pay');}} />:
           <Card><T weight="600">{label("lbl.cms.54627b4c469e", "What happens next?")}</T><T size={13} color={th.mut} style={{marginTop:8}}>{label("lbl.cms.70ab53df00d6", "Once the server confirms all funds, checkout details and store availability must be revalidated. Only then can the real Goodies order be placed. If the request expires or fails, payments must be reversed.")}</T></Card>}
       </> : null}
       {step!=='setup' ? <Pressable onPress={previous} style={{paddingVertical:10,alignSelf:'flex-start'}}><T color={th.br} weight="600">{label("lbl.cms.5736a9bb3c88", "Previous step")}</T></Pressable> : null}
