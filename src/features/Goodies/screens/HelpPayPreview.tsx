@@ -3,7 +3,7 @@ import {label} from '../content';
 import {ActivityIndicator,Alert,Pressable,ScrollView,Share,View} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {Bar,Card,Cta,Row,T,Ttl,useTheme} from '../components/ui';
-import {S,totals,money,navBack,emit,save,completeGoodiesCheckoutAttempt} from '../store';
+import {S,STB,totals,money,navBack,emit,save,completeGoodiesCheckoutAttempt} from '../store';
 import {placeOrder,go} from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {cancelHelpPayRequest,fetchHelpPayStatus,helpPayQRValue,shareHelpPayToFriend} from '../helpPayApi';
@@ -36,6 +36,42 @@ export function HelpPayPreview(){
    return()=>{alive=false;clearInterval(timer);};
  },[id]);
  useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[]);
+ // The order is created on the server by the last contributor, not in this
+ // device's normal checkout flow. Materialize it in local Goodies Orders.
+ useEffect(()=>{
+   if(snapshot?.status!=='fulfilled'||!snapshot.order_id||S.orders.some((o:any)=>o.backendId===snapshot.order_id))return;
+   let active=true;
+   void(async()=>{
+     const {data:row,error:orderError}=await supabase.from('goodies_orders')
+       .select('id,order_code,store_id,order_type,address,contact_phone,items,subtotal,delivery_fee,service_fee,discount,tip,total,scheduled_for,created_at,status')
+       .eq('id',snapshot.order_id!).maybeSingle();
+     if(!active||orderError||!row||S.orders.some((o:any)=>o.backendId===row.id))return;
+     const store=STB[row.store_id];
+     const localOrder:any={
+       id:row.order_code,backendId:row.id,serverStatus:row.status,sid:row.store_id,
+       lines:Array.isArray(row.items)?row.items:[],
+       sn:store?.n||'Goodies store',sub:Number(row.subtotal),fee:Number(row.delivery_fee),
+       svc:Number(row.service_fee),disc:Number(row.discount),tip:Number(row.tip),
+       total:Number(row.total),t0:new Date(row.created_at).getTime(),
+       st:0,rated:0,cx:0,pk:row.order_type==='pickup',
+       addr:row.address?.t||store?.n||'Goodies',ad:row.address||null,
+       ph:row.contact_phone||'',phl:'Wantiss number',cid:'w',
+       pay:'wallet',payl:'Wantiss Wallet · Help Pay',note:'',
+       sch:row.scheduled_for?new Date(row.scheduled_for).getTime():0,promo:'',alc:null
+     };
+     S.orders.unshift(localOrder);
+     // Clear only the cart that actually matches the funded order.
+     const items=Array.isArray(row.items)?row.items:[];
+     if(S.cart.sid===row.store_id&&S.cart.lines.length===items.length&&
+       S.cart.lines.every((l:any,i:number)=>l.id===items[i]?.id&&Number(l.q)===Number(items[i]?.q))){
+       S.cart={sid:null,lines:[]};S.promo='';S.tip=0;S.note='';S.sch=0;S.cs=0;
+     }
+     await completeGoodiesCheckoutAttempt(row.id);
+     await save();emit();
+   })();
+   return()=>{active=false};
+ },[snapshot?.status,snapshot?.order_id]);
+
  useEffect(()=>{if(!id)return;let alive=true;void(async()=>{
    const {data:{user}}=await supabase.auth.getUser();if(!user)return;
    const {data:relations,error:friendsError}=await supabase.from('user_friendships').select('requester_id,recipient_id,status').eq('status','accepted')
