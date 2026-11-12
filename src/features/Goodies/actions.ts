@@ -306,7 +306,7 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
         const requestId = await createHelpPayDraft(helpPayMode,Math.round(orderPayload.p_total*100),attempt.key,orderPayload);
         (S as any).helpPayRequestId=requestId;
         S.busy=0;
-        push('help-pay');
+        if (S.stack[S.stack.length-1]?.r !== 'help-pay') push('help-pay');
         await save();emit();
       } catch (error: any) {
         S.busy=0;emit();
