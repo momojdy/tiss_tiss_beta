@@ -419,6 +419,20 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
           {authCopy.subtitle ? <Text style={styles.authSubtitle}>{authCopy.subtitle}</Text> : null}
         </View>
       </LinearGradient>
+      {Platform.OS === 'android' ? (
+        <ScrollView style={{ flex: 1 }} contentContainerStyle={{ paddingTop: keyboardVisible ? 16 : 300, paddingBottom: 32, paddingHorizontal: 15 }} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
+          <WantissAuthCard
+            initialMode={initialMode}
+            onSignInPressed={onSignInPressed}
+            onSignUpPressed={onSignUpPressed}
+            onGooglePressed={onGooglePressed}
+            onApplePressed={onApplePressed}
+            onForgotPasswordPressed={onForgotPasswordPressed}
+            onForgotPasswordScreenPressed={() => { setShowForgot(true); onForgotPasswordScreenPressed?.(); }}
+            copy={authCopy}
+          />
+        </ScrollView>
+      ) : (
       <View style={[styles.cardPosition, keyboardVisible ? styles.cardPositionKeyboard : null]}>
         <WantissAuthCard
           initialMode={initialMode}
@@ -434,6 +448,7 @@ export default function AuthScreen({ initialMode, onSignInPressed, onSignUpPress
           copy={authCopy}
         />
       </View>
+      )}
     </KeyboardAvoidingView>
   );
 }
