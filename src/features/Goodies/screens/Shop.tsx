@@ -80,7 +80,7 @@ export function Store({id}: {id: string}) {
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
-  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews: any[] = [];
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
@@ -115,7 +115,7 @@ export function Store({id}: {id: string}) {
           <Card key={k} style={{marginBottom: 8}}>
             <Row sp><Row style={{gap: 6}}><T weight="600">{v.n}</T>{v.you ? <Badge label={label('lbl.storeYourReview', 'Your review')} /> : null}</Row><Row style={{gap: 3}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{v.r}</T></Row></Row>
             <T size={13.5} color={th.mut} style={{marginTop: 4}}>{v.t || label('lbl.storeNoComment', 'No comment')}</T>
-            <T size={11.5} color={th.mut} style={{marginTop: 4}}>{v.d}{v.you ? '' : ' · ' + label('lbl.storeSampleReview', 'sample review')}</T>
+            <T size={11.5} color={th.mut} style={{marginTop: 4}}>{v.d}</T>
           </Card>
         ))}
         {!reviews.length ? <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} /> : null}
@@ -127,7 +127,7 @@ export function Store({id}: {id: string}) {
 export function StoreReviews({id}: {id: string}) {
   const th = useTheme(), s = STB[id];
   if (!s) return <View><Bar title={label('lbl.storeReviewsTitle', 'Store reviews')} onBack={back} /><Empty emoji="⭐" title={label('lbl.storeNotFound', 'Store not found')} button={label('lbl.storeBackToStores', 'Back to stores')} onPress={browse} /></View>;
-  const reviews = s.live ? [] : SEED_REVIEWS.concat(S.rev[id] || []);
+  const reviews: any[] = [];
   return (
     <View>
       <Bar title={label('lbl.storeReviews', 'Reviews')} onBack={back} />
@@ -142,7 +142,7 @@ export function StoreReviews({id}: {id: string}) {
         {reviews.length ? reviews.map((v: any, k: number) => <Card key={k} style={{marginBottom: 10}}>
           <Row sp><Row style={{gap: 6}}><T weight="600">{v.n}</T>{v.you ? <Badge label={label('lbl.storeYourReview', 'Your review')} /> : null}</Row><Row style={{gap: 4}}><Icon name="star" size={13} color="#FFB400" fill /><T size={13} weight="600">{v.r}</T></Row></Row>
           <T size={13.5} style={{marginTop: 6}}>{v.t || label('lbl.storeNoComment', 'No comment')}</T>
-          <T size={11.5} color={th.mut} style={{marginTop: 5}}>{v.d}{v.you ? '' : ' · ' + label('lbl.storeSampleReview', 'sample review')}</T>
+          <T size={11.5} color={th.mut} style={{marginTop: 5}}>{v.d}</T>
         </Card>) : <Empty emoji="⭐" title={label('lbl.storeNoReviews', 'No reviews yet')} text={s.live && s.rv > 0 ? label('lbl.storeRatingsOnly', 'Ratings are available, but written review details are not available here yet.') : label('lbl.storeBeFirstReview', 'Be the first customer to review this store.')} />}
         <Cta ghost label={label('lbl.storeBack', 'Back to store')} onPress={() => go('store', id)} />
       </View>
