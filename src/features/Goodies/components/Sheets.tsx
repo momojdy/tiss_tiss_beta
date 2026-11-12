@@ -732,6 +732,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
   const [l, setL] = useState(c.l || ''), [ph, setPh] = useState(c.ph || '');
   const [saving,setSaving]=useState(false);
   const save_ = async () => {
+    if(saving)return;
     const p = ph.trim();
     if (!phoneOK(p)) return toast(label('lbl.sheetPhoneInvalid', 'Enter a valid phone number (8 to 15 digits)'));
     const dg = p.replace(/\D/g, '');
@@ -753,7 +754,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
     </ScrollView>
     <View style={{paddingTop:8,borderTopWidth: 0.5,borderTopColor:th.line}}>
-      <Cta label={saving?label("lbl.sharedPay.23e39291d613", "Saving…"):label("lbl.sheetAuto9HY80N", "Save number")} onPress={()=>void save_()} />
+      <Cta label={saving?label("lbl.sharedPay.23e39291d613", "Saving…"):label("lbl.sheetAuto9HY80N", "Save number")} disabled={saving} onPress={()=>void save_()} />
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
   </View>;

@@ -46,3 +46,10 @@ test('successful group payment remains successful when order details are tempora
 test('group checkout stops after an account switch and never submits for the replacement account',async()=>{
  const h=groupCheckout(),request=h.run();h.S.accountId='b';h.release();await request;assert.equal(h.calls.length,0);assert.equal(h.S.cart.lines.length,2);assert.equal(h.routes.length,0);
 });
+
+test('permission failures never masquerade as insufficient wallet funds',()=>{
+ const error=compile(fs.readFileSync('src/features/Goodies/friendlyError.ts','utf8'),{require:()=>({label:(_id,text)=>text}),console:{warn(){}}}).friendlyError;
+ const fallback='Could not complete this request. Please retry.';
+ for(const message of ['insufficient privileges for private_finance','insufficient_privilege','permission denied; SQLSTATE 42501','private connection token'])assert.equal(error({message},fallback),fallback);
+ for(const message of ['Insufficient funds','Insufficient balance','Insufficient wallet balance','Insufficient Wantiss wallet balance'])assert.match(error({message},fallback),/^Insufficient Wantiss wallet balance/);
+});
