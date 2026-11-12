@@ -52,7 +52,7 @@ export default function MessagesScreen({onBack,onOpenShop,onOpenHelpPay,initialC
   if(!targetId&&!query){setFriendError('Enter a Wantiss ID, phone number, or email address.');return;}
   if(!targetId){
    const isEmail=query.includes('@');
-   const normalized=isEmail?query.toLowerCase():query.replace(/[\\s()-]/g,'');
+   const normalized=isEmail?query.toLowerCase():query.replace(/[\s()-]/g,'');
    const {data:people,error:lookupError}=isEmail
     ?await supabase.rpc('wantiss_find_friend_by_email',{p_email:normalized})
     :await supabase.rpc('wantiss_find_friend_by_identifier',{p_identifier:normalized});
