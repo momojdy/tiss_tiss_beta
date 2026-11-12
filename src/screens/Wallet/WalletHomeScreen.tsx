@@ -73,6 +73,7 @@ export default function WalletHomeScreen({
         onBack={onBack ?? (() => {})}
         onNotificationsPress={onNotificationsPress}
         onHelpPress={onHelpPress}
+        onScanPress={onQRPress}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
