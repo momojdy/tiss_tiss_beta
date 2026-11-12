@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Alert, AppState, Pressable, Text, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { Alert, AppState, Platform, Pressable, Text, View } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Linking from 'expo-linking';
 import AuthScreen from './src/screens/Main/mainAuthScreen';
@@ -481,6 +481,11 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   }} />;
 }
 
+function AndroidNavigationSafeArea({ children }: { children: React.ReactNode }) {
+  const { bottom } = useSafeAreaInsets();
+  return <View style={{ flex: 1, paddingBottom: Platform.OS === 'android' ? bottom : 0 }}>{children}</View>;
+}
+
 export default function App() {
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -493,5 +498,5 @@ export default function App() {
   const registerChallengeDismiss = React.useCallback((fn: () => void) => { challengeDismiss.current = fn; }, []);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
   const registerBuyerScreen = React.useCallback((value: BuyerScreen) => { setBuyerScreen(value); }, []);
-  return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><View style={{ flex: 1 }}><AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} registerVendorMode={registerVendorMode} registerBuyerScreen={registerBuyerScreen} />{isAuthenticated && !isVendorMode && showChallenge && buyerScreen !== 'frenziesChallengeStatus' && buyerScreen !== 'frenziesChallengeReady' && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}</View></SafeAreaProvider></GestureHandlerRootView>;
+  return <GestureHandlerRootView style={{ flex: 1 }}><SafeAreaProvider><AndroidNavigationSafeArea><AppContent registerChallengePress={registerChallengePress} registerChallengeDismiss={registerChallengeDismiss} registerAuthenticated={registerAuthenticated} registerVendorMode={registerVendorMode} registerBuyerScreen={registerBuyerScreen} />{isAuthenticated && !isVendorMode && showChallenge && buyerScreen !== 'frenziesChallengeStatus' && buyerScreen !== 'frenziesChallengeReady' && <ChallengePlaceholder count={DEMO_CHALLENGES.length} onPress={() => challengePress.current()} onDismiss={() => { setShowChallenge(false); challengeDismiss.current(); }} />}</AndroidNavigationSafeArea></SafeAreaProvider></GestureHandlerRootView>;
 }
