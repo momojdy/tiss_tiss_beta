@@ -6,13 +6,14 @@ import MessagesScreen from './mainMessagesScreen';
 import NotificationsScreen from './mainNotificationsScreen';
 
 const MAGENTA = '#BF008E';
-export default function MessageHubScreen({ onBack, onMessagesPress, onNotificationsPress, unreadMessages, unreadNotifications, onNotificationNavigate }: {
+export default function MessageHubScreen({ onBack, onMessagesPress, onNotificationsPress, unreadMessages, unreadNotifications, onNotificationNavigate, onOpenShop }: {
   onBack: () => void;
   onMessagesPress: () => void;
   onNotificationsPress: () => void;
   unreadMessages: number;
   unreadNotifications: number;
   onNotificationNavigate?: (screen: string, conversationId?: string) => void;
+  onOpenShop?: (storeId:string)=>void;
 }) {
   const [tab, setTab] = useState<'messages' | 'notifications'>('messages');
   const [detailOpen,setDetailOpen] = useState(false);
@@ -34,7 +35,7 @@ export default function MessageHubScreen({ onBack, onMessagesPress, onNotificati
     </View>}
     <View style={s.content}>
       {tab==='messages'
-        ? <MessagesScreen embedded onDetailChange={setDetailOpen} onHeaderActions={receiveActions} onBack={onMessagesPress} />
+        ? <MessagesScreen embedded onOpenShop={onOpenShop} onDetailChange={setDetailOpen} onHeaderActions={receiveActions} onBack={onMessagesPress} />
         : <NotificationsScreen embedded onBack={onNotificationsPress} onNavigate={onNotificationNavigate || ((screen)=>{if(screen==='messages')onMessagesPress();else onNotificationsPress();})}/>}
     </View>
   </View>;
