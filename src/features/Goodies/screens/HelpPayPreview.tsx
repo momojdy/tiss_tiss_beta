@@ -1,6 +1,6 @@
 import {label} from '../content';
 import React, {useEffect, useState} from 'react';
-import {View, Pressable, ScrollView, TextInput} from 'react-native';
+import {View, Pressable, ScrollView, TextInput, Alert} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
 import {Bar, Card, Cta, Row, T, Ttl, useTheme} from '../components/ui';
 import {S, totals, money, navBack, emit} from '../store';
@@ -43,6 +43,9 @@ export function HelpPayPreview() {
   const chosen = mode === 'full' ? remaining : validChoice ? selectedCents : 0;
   const amount = (cents: number) => money(cents / 100);
   const reset = (next: Mode) => {setMode(next); setStep('setup'); setPaid(0); setContributions([]); setPercent(25); setCustomPercent(''); setCustomAmount(''); setAmountMode('percent'); setRecipient(0); setStartedAt(Date.now());};
+  const shareBill = async () => {
+    Alert.alert('Payment request not active','This checkout has not created a verified Help Pay request. A payable link cannot be shared yet.');
+  };
   const next = () => setStep(s => STEPS[Math.min(STEPS.length - 1, STEPS.indexOf(s) + 1)]);
   const previous = () => setStep(s => STEPS[Math.max(0, STEPS.indexOf(s) - 1)]);
   const addContribution = () => {
@@ -87,6 +90,7 @@ export function HelpPayPreview() {
           <QRCode value={`wantiss://help-pay/preview?mode=${mode}&amount=${remaining}`} size={166} color="#1A2517" backgroundColor="#FFFFFF" />
         </View>
         <T size={12} color={th.mut} style={{textAlign:'center',marginTop:13}}>Demo QR only · no live payment request</T>
+        <Pressable accessibilityRole="button" onPress={()=>void shareBill()} style={{marginTop:15,paddingHorizontal:24,paddingVertical:12,borderRadius:14,backgroundColor:th.br}}><T weight="600" color="#FFFFFF">Share bill with friends</T></Pressable>
       </Card> : null}
       {step==='setup' ? <>
         <Card>
