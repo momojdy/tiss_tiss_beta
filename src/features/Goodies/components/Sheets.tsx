@@ -5,7 +5,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} fr
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, clearActiveGroup, validateActiveGroup} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, persistGoodiesContactNumber, removeGoodiesContactNumber, clearActiveGroup, validateActiveGroup} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -690,7 +690,7 @@ function ContactsSheet({close}: {close: () => void}) {
       <View key={r.id} style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
         <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="600">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>{label("lbl.cms.a230877fe597", "Goodies checkout number · ")}{r.l}</T>}</View></Radio></View>
         {r.w ? null : <><Pressable accessibilityLabel={label('lbl.sheetEditNumber', 'Edit number')} onPress={() => ui.sheet({kind: 'ctform', id: r.id})}><T size={13} weight="600" color={th.br}>{label("lbl.sheetAuto1CISXZJ", "Edit")}</T></Pressable>
-        <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {S.gc = S.gc.filter((c: any) => c.id !== r.id); if (S.cc === r.id) S.cc = 'w'; toast(label('lbl.sheetNumberRemoved', 'Number removed')); save(); emit(); ui.sheet({kind: 'contacts'});}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
+        <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {void removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch((e:any)=>toast(e.message||'Could not remove number'));}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
       </View>
     ))}
     <Cta ghost label={label("lbl.sheetAutoQWFBNT", "+ Add another number")} onPress={() => ui.sheet({kind: 'ctform', id: ''})} />
@@ -699,15 +699,20 @@ function ContactsSheet({close}: {close: () => void}) {
 function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
   const th = useTheme(), c = S.gc.filter((x: any) => x.id == id)[0] || {l: '', ph: ''};
   const [l, setL] = useState(c.l || ''), [ph, setPh] = useState(c.ph || '');
-  const save_ = () => {
+  const [saving,setSaving]=useState(false);
+  const save_ = async () => {
     const p = ph.trim();
     if (!phoneOK(p)) return toast(label('lbl.sheetPhoneInvalid', 'Enter a valid phone number (8 to 15 digits)'));
     const dg = p.replace(/\D/g, '');
     if (dg === S.pf.ph.replace(/\D/g, '')) return toast(label('lbl.sheetSameWantissPhone', 'That is already your Wantiss number'));
     if (S.gc.some((x: any) => x.id != id && String(x.ph).replace(/\D/g, '') === dg)) return toast(label('lbl.sheetDuplicateNumber', 'You already saved that number'));
-    const cc = S.gc.filter((x: any) => x.id == id)[0];
-    if (cc) {cc.ph = p; cc.l = l.trim();} else {const n = {id: Date.now(), ph: p, l: l.trim()}; S.gc.push(n); S.cc = n.id;}
-    toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout')); save(); emit(); ui.sheet({kind: 'contacts'});
+    setSaving(true);
+    try {
+      await persistGoodiesContactNumber(p,l.trim(),typeof id==='string'&&/^[0-9a-f-]{36}$/i.test(id)?id:undefined);
+      toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout'));
+      ui.sheet({kind:'contacts'});
+    } catch(e:any) {toast(e.message||'Could not save number');}
+    finally {setSaving(false);}
   };
   return <View style={{flex:1,minHeight:0,paddingBottom:Math.max(0,bottomInset-20)}}>
     <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:12}}>
@@ -717,7 +722,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
     </ScrollView>
     <View style={{paddingTop:8,borderTopWidth: 0.5,borderTopColor:th.line}}>
-      <Cta label={label("lbl.sheetAuto9HY80N", "Save number")} onPress={save_} />
+      <Cta label={saving?"Saving…":label("lbl.sheetAuto9HY80N", "Save number")} onPress={()=>void save_()} />
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
   </View>;
