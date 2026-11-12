@@ -14,7 +14,7 @@ jobs:
           node-version: '22'
           cache: npm
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
       - name: TypeScript check
         run: npx tsc --noEmit
       - name: Expo web export
