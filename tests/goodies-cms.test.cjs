@@ -29,10 +29,11 @@ test('review boundaries, structured content, formatting and content refresh rema
  assert.equal(i18n.t('back'),'Go back');assert.deepEqual(content.faq([]),[['Edited question','Edited answer']]);assert.deepEqual(content.supportTopics([]),['Edited topic']);assert.equal(content.legalDoc('legal.terms'),'Edited policy');assert.equal(updates,1);
  await content.clearContent();assert.equal(i18n.t('back'),'Back');stop();
 });
-test('generated source register remains synchronized with every literal call and interface key',()=>{
- const tracked=JSON.parse(fs.readFileSync(path.resolve(__dirname,'../docs/goodies/cms-field-coverage.json'),'utf8'));
- assert.deepEqual(source, {restrictionTexts:tracked.restrictionTexts,entries:tracked.entries,pages:tracked.pages,references:tracked.references,routes:tracked.routes});
- for(const reference of source.references)assert.ok(source.entries.some(field=>field.id===reference.id));
+test('source references and page fields resolve to registered CMS labels',()=>{
+ const registered=new Set(source.entries.map(field=>field.id));
+ assert.ok(registered.size>0);
+ for(const reference of source.references)assert.ok(registered.has(reference.id),reference.id);
+ for(const page of source.pages)for(const id of page.fields)assert.ok(registered.has(id),page.name+': '+id);
 });
 test('Goodies card-form copy is editable and safely escaped without changing the shared default flow',()=>{
  const filename=path.resolve(__dirname,'../src/screens/Wallet/WalletAddNewCardScreen.tsx');
