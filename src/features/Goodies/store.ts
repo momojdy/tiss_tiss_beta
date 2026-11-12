@@ -47,13 +47,13 @@ const WDEF = () => ({
 });
 const GDEF = () => ({
   firstOrderEligible: null as boolean | null,
-  serverUnread: 0, checkoutAttempt: null as any,
+  serverUnread: 0, checkoutAttempt: null as any, helpPayRequestId: null as string|null, helpPayRequestUserId: null as string|null,
   goodiesAccess: {status: 'active', reason: '', endsAt: null as string | null},
   notifs: [] as any[],
   orders: [] as Order[], cart: {sid: null as string | null, lines: [] as CartLine[]}, fav: [] as string[], favp: [] as string[], cards: [] as any[],
   wallet: 0, hasWallet: false, pay: 'wallet', selectedCardId: '', mode: 'delivery', tip: 0, promo: '', as: 0, gc: [] as any[], cc: 'w', np: {orders: 0, promos: 0}, rev: {} as any, driverRev: {} as any, rec: [] as any[], rv: [] as any[], groupOrder: null as any,
 });
-export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'driverRev', 'rec', 'rv', 'groupOrder'];
+export const WP = ['pf', 'addr'], GP = ['notifs', 'orders', 'cart', 'fav', 'favp', 'pay', 'mode', 'tip', 'promo', 'as', 'gc', 'cc', 'np', 'rev', 'driverRev', 'rec', 'rv', 'groupOrder', 'helpPayRequestId', 'helpPayRequestUserId'];
 
 export interface Route {r: string; p?: any; u: number; sy?: number}
 export const S: any = Object.assign(WDEF(), GDEF());
@@ -325,6 +325,7 @@ export async function load() {
   try {
     const {data: auth} = await supabase.auth.getUser();
     if (auth.user) {
+      if (S.helpPayRequestUserId !== auth.user.id) S.helpPayRequestId = null;
       const {data: profile} = await supabase.from('profiles').select('full_name,email,phone_number,avatar_url').eq('id', auth.user.id).maybeSingle();
       if (profile) S.pf = {n: profile.full_name || '', e: profile.email || auth.user.email || '', ph: profile.phone_number || '', av: profile.avatar_url || ''};
       await refreshUserAddresses();
