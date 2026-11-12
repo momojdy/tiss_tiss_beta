@@ -1,157 +1,136 @@
-import {label} from '../content';
-import React, {useEffect, useState} from 'react';
-import {View, Pressable, ScrollView, TextInput, Alert} from 'react-native';
+import React,{useEffect,useMemo,useState} from 'react';
+import {ActivityIndicator,Alert,Pressable,ScrollView,Share,View} from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import {Bar, Card, Cta, Row, T, Ttl, useTheme} from '../components/ui';
-import {S, totals, money, navBack, emit} from '../store';
+import {Bar,Card,Cta,Row,T,Ttl,useTheme} from '../components/ui';
+import {S,totals,money,navBack,emit,save,completeGoodiesCheckoutAttempt} from '../store';
+import {placeOrder,go} from '../actions';
+import {supabase} from '../../../lib/supabase';
+import {cancelHelpPayRequest,fetchHelpPayStatus,helpPayQRValue,shareHelpPayToFriend} from '../helpPayApi';
+import type {HelpPayMode,HelpPaySnapshot} from '../helpPayApi';
 
-/** Isolated, interactive walkthrough. No messages, wallet writes or orders are created. */
-type Mode = 'share' | 'full';
-type Step = 'setup' | 'invite' | 'pay' | 'progress' | 'complete';
-const STEPS: Step[] = ['setup', 'invite', 'pay', 'progress', 'complete'];
-const stepNames = (): Record<Step, string> => ({
-  setup: label('lbl.helpPay.step.setup','Choose how to split'), invite: label('lbl.helpPay.step.invite','Send to friends'),
-  pay: label('lbl.helpPay.step.pay','Friend chooses an amount'), progress: label('lbl.helpPay.step.progress','Track contributions'), complete: label('lbl.helpPay.step.complete','Order is fully funded'),
-});
-export function HelpPayPreview() {
-  const th = useTheme();
-  const friends=[label('lbl.helpPay.friendA','Friend A'),label('lbl.helpPay.friendB','Friend B'),label('lbl.helpPay.friendC','Friend C')];
-  const [mode, setMode] = useState<Mode>('share');
-  const [step, setStep] = useState<Step>('setup');
-  const [percent, setPercent] = useState(25);
-  const [customPercent, setCustomPercent] = useState('');
-  const [customAmount, setCustomAmount] = useState('');
-  const [amountMode, setAmountMode] = useState<'percent'|'amount'>('percent');
-  const [paid, setPaid] = useState(0);
-  const [contributions, setContributions] = useState<{name:string; cents:number}[]>([]);
-  const [recipient, setRecipient] = useState(0);
-  const [startedAt, setStartedAt] = useState(Date.now());
-  const [now, setNow] = useState(Date.now());
-  useEffect(() => {const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer);}, []);
-  const total = Math.max(0, Math.round(Number(totals().total || 0) * 100));
-  const initial = mode === 'share' ? Math.ceil(total * 0.6) : 0;
-  const pool = total - initial;
-  const remaining = Math.max(0, pool - paid);
-  const funded = initial + paid;
-  const expires = Math.max(0, Math.ceil((startedAt + 30 * 60_000 - now) / 1000));
-  const timerLabel = `${Math.floor(expires / 60)}:${String(expires % 60).padStart(2, '0')}`;
-  // Contributor's chosen percentage is of the currently unfunded Help Pay portion.
-  // One person may cover the entire remaining 40% of the original bill.
-  const enteredPercent = customPercent.trim() === '' ? percent : Number(customPercent);
-  const selectedCents = amountMode === 'amount' ? Math.round(Number(customAmount || 0) * 100) : Math.round(remaining * enteredPercent / 100);
-  const validChoice = mode === 'full' || (Number.isFinite(selectedCents) && selectedCents > 0 && selectedCents <= remaining && (amountMode === 'amount' || (Number.isFinite(enteredPercent) && enteredPercent > 0 && enteredPercent <= 100)));
-  const chosen = mode === 'full' ? remaining : validChoice ? selectedCents : 0;
-  const amount = (cents: number) => money(cents / 100);
-  const reset = (next: Mode) => {setMode(next); setStep('setup'); setPaid(0); setContributions([]); setPercent(25); setCustomPercent(''); setCustomAmount(''); setAmountMode('percent'); setRecipient(0); setStartedAt(Date.now());};
-  const shareBill = async () => {
-    Alert.alert('Payment request not active','This checkout has not created a verified Help Pay request. A payable link cannot be shared yet.');
-  };
-  const next = () => setStep(s => STEPS[Math.min(STEPS.length - 1, STEPS.indexOf(s) + 1)]);
-  const previous = () => setStep(s => STEPS[Math.max(0, STEPS.indexOf(s) - 1)]);
-  const addContribution = () => {
-    if (!remaining || !expires || !validChoice) return;
-    const cents = Math.min(chosen, remaining);
-    setPaid(v => Math.min(pool, v + cents));
-    setContributions(v => [...v, {name: recipient === 0 ? label('lbl.helpPay.friendA','Friend A') : recipient === 1 ? label('lbl.helpPay.friendB','Friend B') : label('lbl.helpPay.friendC','Friend C'), cents}]);
-    setStep(cents >= remaining ? 'complete' : 'progress');
-  };
-  const option = (label: string, active: boolean, onPress: () => void) =>
-    <Pressable accessibilityRole="button" onPress={onPress} style={{paddingVertical:11,paddingHorizontal:12,borderRadius:13,borderWidth:1,borderColor:active?th.br:th.line,backgroundColor:active?th.brt:th.bg}}>
-      <T size={13} weight="600" color={active?th.br:th.ink} align="center">{label}</T>
-    </Pressable>;
-  return <View style={{flex:1,backgroundColor:th.bg}}>
-    <Bar title={label("lbl.cms.24f236576f00", "Help Pay · Walkthrough")} onBack={() => {navBack();emit();}} />
-    <ScrollView contentContainerStyle={{paddingHorizontal:20,paddingTop:20,paddingBottom:64,gap:16}}>
-      <T size={12} color={th.mut}>{label("lbl.cms.78242f2aebe6", "Interactive preview · Nothing is charged, shared or ordered.")}</T>
-      <T size={24} weight="600">Pay together, effortlessly.</T>
-      <Row style={{gap:8}}>
-        <View style={{flex:1}}>{option(label('lbl.helpPay.shareBill','Share bill · 60/40'),mode==='share',()=>reset('share'))}</View>
-        <View style={{flex:1}}>{option(label('lbl.helpPay.fullPay','Help me fully pay'),mode==='full',()=>reset('full'))}</View>
-      </Row>
-      <Row sp>
-        <T size={12} color={th.mut}>{label("lbl.cms.2aeeb41bb682", "Step ")}{STEPS.indexOf(step)+1} {label("lbl.cms.41f4298910ce", "of ")}{STEPS.length}</T>
-        <T size={12} weight="600" color={th.br}>{label("lbl.cms.6e746ee8b4fe", "Goodies · ")}{timerLabel} {label("lbl.cms.046f168e2991", "left")}</T>
-      </Row>
-      <View style={{height:5,borderRadius:5,backgroundColor:th.soft,overflow:'hidden'}}>
-        <View style={{height:5,width:`${(STEPS.indexOf(step)+1)*20}%`,backgroundColor:th.br}} />
-      </View>
-      <Ttl>{stepNames()[step]}</Ttl>
-      <Card style={{borderRadius:22,padding:18}}>
-        <Row sp><T weight="600">{label("lbl.cms.ec1cc0c94ace", "Goodies bill")}</T><T weight="600">{amount(total)}</T></Row>
-        {S.cart.lines.map((line:any,i:number)=><Row key={String(line.k||i)} sp style={{marginTop:8}}><T size={12} color={th.mut}>{line.q}× {line.n}</T><T size={12}>{money(line.p*line.q)}</T></Row>)}
-        <Row sp style={{marginTop:12}}><T size={13}>{label("lbl.cms.af5b6180fcea", "Customer's upfront share")}</T><T size={13} weight="600">{amount(initial)}</T></Row>
-        <Row sp style={{marginTop:7}}><T size={13}>{label("lbl.cms.77261425ec6c", "Friends can cover")}</T><T size={13} weight="600">{amount(pool)}</T></Row>
-        <Row sp style={{marginTop:7}}><T size={13}>{label("lbl.cms.5f964c1d13e4", "Still needed")}</T><T size={13} weight="600" color={th.br}>{amount(remaining)}</T></Row>
-      </Card>
-      {(step==='invite'||step==='pay'||step==='progress') ? <Card style={{borderRadius:22,padding:18,alignItems:'center'}}>
-        <T size={15} weight="600">Scan to pay</T>
-        <T size={12} color={th.mut} style={{textAlign:'center',marginTop:6,marginBottom:15}}>Wallet QR · {mode==='share'?'Share bill':'Full payment'}</T>
-        <View style={{backgroundColor:'#FFFFFF',padding:14,borderRadius:18}}>
-          <QRCode value={`wantiss://help-pay/preview?mode=${mode}&amount=${remaining}`} size={166} color="#1A2517" backgroundColor="#FFFFFF" />
-        </View>
-        <T size={12} color={th.mut} style={{textAlign:'center',marginTop:13}}>Demo QR only · no live payment request</T>
-        <Pressable accessibilityRole="button" onPress={()=>void shareBill()} style={{marginTop:15,paddingHorizontal:24,paddingVertical:12,borderRadius:14,backgroundColor:th.br}}><T weight="600" color="#FFFFFF">Share bill with friends</T></Pressable>
-      </Card> : null}
-      {step==='setup' ? <>
-        <Card>
-          <T weight="600">{mode==='share'?label("lbl.cms.51f5915af4ef", "How the 60/40 split works"):label("lbl.cms.c460d20229b9", "How full payment works")}</T>
-          <T size={13} color={th.mut} style={{marginTop:9}}>{mode==='share'?label("lbl.cms.24a1b0418c6e", "You pay 60% first. Friends can contribute any percentage of the remaining 40%, until it is fully covered. One friend can pay the whole 40%."):label("lbl.cms.248fefd7effd", "You request 100% of the bill from someone else. One person pays the full amount using an eligible payment method.")}</T>
-          <T size={12} color={th.mut} style={{marginTop:9}}>{label("lbl.cms.3037855e4da5", "In the real checkout, the request is only shared after the required upfront payment is verified.")}</T>
-        </Card>
-        <Cta label={label("lbl.cms.4d841f662ff0", "Continue to friend selection")} onPress={next} />
-      </> : null}
-      {step==='invite' ? <>
-        <Card>
-          <T weight="600">{label("lbl.cms.51fd3576107d", "Choose friends · preview contacts")}</T>
-          <T size={12} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.0c815902b6b8", "The real version uses your Wantiss friend list. These are placeholders.")}</T>
-          {friends.map((name,i)=><Pressable key={name} onPress={()=>setRecipient(i)} style={{paddingVertical:13,borderBottomWidth:i<2?1:0,borderColor:th.line}}>
-            <Row sp><T weight={recipient===i?'600':undefined}>{name}</T><T color={recipient===i?th.br:th.mut}>{recipient===i?label("lbl.cms.439ba7bca2f9", "Selected"):label("lbl.cms.66d0ec6d4d70", "Select")}</T></Row>
-          </Pressable>)}
-        </Card>
-        <T size={12} color={th.mut}>{label("lbl.cms.7b6022533f4d", "Forwarding shares the same request and remaining balance. It never resets the 30-minute timer.")}</T>
-        <Cta label={label("lbl.cms.be8b08bcf8db", "Preview friend's message")} onPress={next} />
-      </> : null}
-      {step==='pay' ? <>
-        <Card>
-          <T size={12} color={th.mut}>{label("lbl.cms.421be83107c0", "Message preview · ")}{friends[recipient]}</T>
-          <T weight="600" style={{marginTop:7}}>{label("lbl.cms.cb52931e4fa7", "Help pay a Goodies order")}</T>
-          <T size={13} style={{marginTop:6}}>{amount(remaining)} {label("lbl.cms.1ffcbca434d7", "remaining · expires in ")}{timerLabel}</T>
-          <T size={12} color={th.mut} style={{marginTop:8}}>{label("lbl.cms.1b446a360546", "Friends see the aggregate progress and their own payments, never the other contributors' identities or amounts.")}</T>
-        </Card>
-        {mode==='share' ? <Card>
-          <T weight="600">{label("lbl.cms.c36ec498735d", "How much would you like to pay?")}</T>
-          <T size={12} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.38a73aeee517", "Choose a percentage of the remaining Help Pay amount.")}</T>
-          <Row style={{gap:7,marginTop:12,flexWrap:'wrap'}}>
-            {[10,25,50,75,100].map(v=><View key={v}>{option(v+'%',percent===v,()=>setPercent(v))}</View>)}
-          </Row>
-          <Row style={{gap:8,marginTop:14}}>
-            <View style={{flex:1}}>{option('Custom %',amountMode==='percent'&&customPercent!=='',()=>{setAmountMode('percent');setCustomPercent(String(percent));})}</View>
-            <View style={{flex:1}}>{option('Custom amount',amountMode==='amount',()=>setAmountMode('amount'))}</View>
-          </Row>
-          {amountMode==='percent'&&customPercent!==''?<TextInput keyboardType="decimal-pad" accessibilityLabel="Custom percentage" value={customPercent} onChangeText={setCustomPercent} placeholder="Percentage (0–100)" placeholderTextColor={th.mut} style={{marginTop:12,borderRadius:12,borderWidth:1,borderColor:th.line,color:th.ink,padding:12}}/>:null}
-          {amountMode==='amount'?<TextInput keyboardType="decimal-pad" accessibilityLabel="Custom amount" value={customAmount} onChangeText={setCustomAmount} placeholder="Amount to contribute" placeholderTextColor={th.mut} style={{marginTop:12,borderRadius:12,borderWidth:1,borderColor:th.line,color:th.ink,padding:12}}/>:null}
-          {!validChoice?<T size={12} color={th.red} style={{marginTop:8}}>Enter a valid amount within the remaining balance.</T>:null}
-          <Row sp style={{marginTop:16}}><T>{label("lbl.cms.5742239db66e", "Selected ")}{amountMode==='percent'?enteredPercent+'%':'custom amount'}</T><T weight="600" color={th.br}>{amount(chosen)}</T></Row>
-          <T size={12} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.ca05018be110", "Equivalent to ")}{total?((chosen/total)*100).toFixed(1):'0'}{label("lbl.cms.19192368f257", "% of the original bill. Wallet only.")}</T>
-        </Card> : <Card><T weight="600">{label("lbl.cms.f4a87149377d", "Full bill payment")}</T><T size={13} color={th.mut} style={{marginTop:7}}>{label("lbl.cms.666ec91f4a22", "This request requires one person to pay the entire ")}{amount(remaining)}{label("lbl.cms.6472bf2c1c5e", ". In the live flow, eligible Wallet and card payment options are offered.")}</T></Card>}
-        <Cta label={label("lbl.cms.da77f6ee2ece", "Simulate paying {value0}").replace(/\{value0\}/g, String(amount(chosen)))} onPress={addContribution} />
-      </> : null}
-      {step==='progress'||step==='complete' ? <>
-        <Card>
-          <T weight="600">{step==='complete'?label("lbl.cms.8ff661770946", "Fully funded · preview"):label("lbl.cms.099a7872e3cb", "Customer funding overview")}</T>
-          <View style={{height:9,borderRadius:9,backgroundColor:th.soft,overflow:'hidden',marginTop:15}}>
-            <View style={{height:9,width:`${total?Math.min(100,Math.round(funded/total*100)):0}%`,backgroundColor:th.br}} />
-          </View>
-          <Row sp style={{marginTop:9}}><T size={13}>{total?Math.round(funded/total*100):0}{label("lbl.cms.05521fd984d2", "% funded")}</T><T size={13} weight="600">{amount(remaining)} {label("lbl.cms.046f168e2991", "left")}</T></Row>
-          <T weight="600" style={{marginTop:17}}>{label("lbl.cms.e0f192b8b2cb", "Contributions · customer view only")}</T>
-          {contributions.map((c,i)=><Row key={i} sp style={{marginTop:9}}><T size={13}>{c.name}</T><T size={13}>{amount(c.cents)}</T></Row>)}
-          <T size={12} color={th.mut} style={{marginTop:12}}>{label("lbl.cms.84439715c11a", "Contributors cannot see this list or the number of people who paid.")}</T>
-        </Card>
-        {step==='progress'? <Cta label={label("lbl.cms.091a111ce415", "Preview another friend's contribution")} onPress={()=>{setRecipient(v=>(v+1)%3);setPercent(25);setCustomPercent('');setCustomAmount('');setAmountMode('percent');setStep('pay');}} />:
-          <Card><T weight="600">{label("lbl.cms.54627b4c469e", "What happens next?")}</T><T size={13} color={th.mut} style={{marginTop:8}}>{label("lbl.cms.70ab53df00d6", "Once the server confirms all funds, checkout details and store availability must be revalidated. Only then can the real Goodies order be placed. If the request expires or fails, payments must be reversed.")}</T></Card>}
-      </> : null}
-      {step!=='setup' ? <Pressable onPress={previous} style={{paddingVertical:10,alignSelf:'flex-start'}}><T color={th.br} weight="600">{label("lbl.cms.5736a9bb3c88", "Previous step")}</T></Pressable> : null}
-      <Pressable onPress={()=>reset(mode)} style={{paddingVertical:10,alignSelf:'flex-start'}}><T color={th.mut} size={13}>{label("lbl.cms.e5d115728d05", "Restart walkthrough")}</T></Pressable>
-    </ScrollView>
-  </View>;
+type Friend={id:string;name:string;avatar_url?:string|null};
+const cents=(n:number)=>money((Number(n)||0)/100);
+export function HelpPayPreview(){
+ const th=useTheme();
+ const id=typeof S.helpPayRequestId==='string'?S.helpPayRequestId:'';
+ const [mode,setMode]=useState<HelpPayMode>('share');
+ const [snapshot,setSnapshot]=useState<HelpPaySnapshot|null>(null);
+ const [busy,setBusy]=useState(false);
+ const [friends,setFriends]=useState<Friend[]>([]);
+ const [shareBusy,setShareBusy]=useState<string|null>(null);
+ const [now,setNow]=useState(Date.now());
+ const [error,setError]=useState('');
+ const total=Math.round(Number(totals().total||0)*100);
+ const remaining=snapshot?.remaining_cents??Math.max(0,total-(mode==='share'?Math.ceil(total*0.6):0));
+ const expires=snapshot?Math.max(0,Math.ceil((Date.parse(snapshot.expires_at)-now)/1000)):1800;
+ const clock=`${Math.floor(expires/60)}:${String(expires%60).padStart(2,'0')}`;
+ const funded=snapshot?(snapshot.initial_cents+snapshot.contributed_cents)/Math.max(1,snapshot.total_cents):0;
+ const load=async(requestId:string)=>{
+   try{const next=await fetchHelpPayStatus(requestId);setSnapshot(next);setError('');}
+   catch(e:any){setError(e?.message||'Could not load this payment request');}
+ };
+ useEffect(()=>{if(!id){setSnapshot(null);return;}let alive=true;
+   const poll=()=>{if(alive)void load(id);};
+   poll();const timer=setInterval(poll,5000);
+   return()=>{alive=false;clearInterval(timer);};
+ },[id]);
+ useEffect(()=>{const timer=setInterval(()=>setNow(Date.now()),1000);return()=>clearInterval(timer);},[]);
+ useEffect(()=>{if(!id)return;let alive=true;void(async()=>{
+   const {data:{user}}=await supabase.auth.getUser();if(!user)return;
+   const {data:relations,error:friendsError}=await supabase.from('user_friendships').select('requester_id,recipient_id,status').eq('status','accepted')
+     .or(`requester_id.eq.${user.id},recipient_id.eq.${user.id}`);
+   if(friendsError||!alive)return;
+   const ids=new Set((relations||[]).map((r:any)=>r.requester_id===user.id?r.recipient_id:r.requester_id));
+   const {data:profiles}=await supabase.rpc('wantiss_message_contact_profiles');
+   if(alive)setFriends((Array.isArray(profiles)?profiles:[]).filter((p:any)=>ids.has(p.id)).map((p:any)=>({
+     id:p.id,name:p.full_name?.trim()||'Wantiss member',avatar_url:p.avatar_url||null
+   })));
+ })();return()=>{alive=false};},[id]);
+ const create=async()=>{if(busy||total<=0)return;setBusy(true);try{await placeOrder(mode);}finally{setBusy(false);}};
+ const sendFriend=async(friend:Friend)=>{if(!snapshot||shareBusy)return;setShareBusy(friend.id);try{
+   await shareHelpPayToFriend(snapshot.id,friend.id);
+   Alert.alert('Sent in Wantiss','The Help Pay card was sent to '+friend.name+'. They can tap it in Messages to pay.');
+ }catch(e:any){Alert.alert('Could not share',e?.message||'Please try again.');}finally{setShareBusy(null);}};
+ const nativeShare=async()=>{if(!snapshot)return;try{await Share.share({
+   message:`Help me pay for my Goodies order on Wantiss. ${cents(snapshot.remaining_cents)} remaining. ${helpPayQRValue(snapshot.id)}`,
+ });}catch(e:any){Alert.alert('Could not share',e?.message||'Try again.');}};
+ const cancel=()=>{if(!snapshot)return;Alert.alert('Cancel Help Pay?','All reserved Wallet contributions, including your upfront share, will be refunded.',[
+   {text:'Keep request',style:'cancel'},{text:'Cancel and refund',style:'destructive',onPress:()=>{void(async()=>{setBusy(true);try{
+     await cancelHelpPayRequest(snapshot.id);await load(snapshot.id);
+     Alert.alert('Cancelled','All contributions have been returned to the Wallets that paid.');
+   }catch(e:any){Alert.alert('Unable to cancel',e?.message||'Please retry');}finally{setBusy(false);}})();}}
+ ]);};
+ const newCheckout=async()=>{S.helpPayRequestId=null;await completeGoodiesCheckoutAttempt('help-pay-resolved');await save();emit();go('checkout');};
+ return <View style={{flex:1,backgroundColor:th.bg}}>
+   <Bar title="Help Pay · Goodies" onBack={()=>{navBack();emit();}}/>
+   <ScrollView contentContainerStyle={{paddingHorizontal:20,paddingTop:18,paddingBottom:56,gap:15}}>
+     {!id?<><T size={24} weight="600">Pay together.</T><T color={th.mut} size={13}>
+       Create a secure Wallet request for your Goodies checkout. Friends can pay by scanning your QR code or opening your Wantiss message.
+     </T><Row style={{gap:8}}>
+       {(['share','full'] as const).map(next=><Pressable key={next} onPress={()=>setMode(next)}
+         style={{flex:1,paddingVertical:14,paddingHorizontal:10,borderRadius:14,borderWidth:1.5,
+           borderColor:mode===next?th.br:th.line,backgroundColor:mode===next?th.brt:th.bg}}>
+         <T size={13} weight="600" color={mode===next?th.br:th.ink} align="center">
+           {next==='share'?'Share bill · 60/40':'Help me fully pay'}
+         </T>
+       </Pressable>)}</Row>
+       <Card style={{borderRadius:20,padding:18}}>
+         <Row sp><T weight="600">Your Goodies bill</T><T weight="600">{cents(total)}</T></Row>
+         <Row sp style={{marginTop:12}}><T size={13}>You pay now</T><T weight="600">{cents(mode==='share'?Math.ceil(total*0.6):0)}</T></Row>
+         <Row sp style={{marginTop:9}}><T size={13}>Friends can cover</T><T weight="600" color={th.br}>{cents(remaining)}</T></Row>
+         <T size={12} color={th.mut} style={{marginTop:13}}>
+           {mode==='share'?'Your 60% is reserved from your Wantiss Wallet before sharing. Friends choose any amount or percentage of the remaining 40%.':'One friend pays the full remaining bill through Wantiss Wallet.'}
+         </T>
+       </Card>
+       <T color={th.mut} size={12}>The request expires after 30 minutes. If it is not funded, every Wallet contribution is automatically refunded. The order is only created once the entire bill is paid.</T>
+       <Cta label={busy?'Preparing secure request…':mode==='share'?`Pay ${cents(Math.ceil(total*0.6))} and create request`:'Create full-payment request'}
+         disabled={busy||total<=0} onPress={()=>void create()}/>
+       {busy?<ActivityIndicator color={th.br}/>:null}
+     </>:<><Row sp>
+       <View style={{flex:1}}><T size={23} weight="600">{snapshot?.status==='fulfilled'?'Order funded':snapshot?.status==='expired'?'Request expired':snapshot?.status==='cancelled'?'Request cancelled':'Help Pay is ready'}</T>
+         <T color={th.mut} size={12} style={{marginTop:4}}>Goodies · {snapshot?.mode==='full'?'Full bill':'Share bill · 60/40'}</T>
+       </View><T color={th.br} weight="600" size={12}>{clock} left</T>
+     </Row>
+       {error?<Card><T color={th.red}>{error}</T><Cta ghost label="Retry" onPress={()=>void load(id)}/></Card>:null}
+       {!snapshot&&!error?<ActivityIndicator color={th.br}/>:null}
+       {snapshot?<><Card style={{borderRadius:20,padding:18}}>
+         <Row sp><T weight="600">Goodies total</T><T weight="600">{cents(snapshot.total_cents)}</T></Row>
+         <Row sp style={{marginTop:11}}><T size={13}>Your upfront share</T><T size={13}>{cents(snapshot.initial_cents)}</T></Row>
+         <Row sp style={{marginTop:9}}><T size={13}>Friends contributed</T><T size={13}>{cents(snapshot.contributed_cents)}</T></Row>
+         <View style={{height:8,borderRadius:8,backgroundColor:th.soft,overflow:'hidden',marginTop:14}}>
+           <View style={{height:8,width:`${Math.min(100,Math.max(0,funded*100))}%`,backgroundColor:th.br}}/>
+         </View>
+         <Row sp style={{marginTop:10}}><T size={12} color={th.mut}>{Math.round(funded*100)}% funded</T>
+           <T size={13} weight="600" color={th.br}>{cents(snapshot.remaining_cents)} remaining</T></Row>
+       </Card>
+       {snapshot.status==='active'&&expires>0?<><Card style={{alignItems:'center',borderRadius:20,padding:18}}>
+         <T size={16} weight="600">Scan to help pay</T><T size={12} color={th.mut} style={{marginTop:5,marginBottom:14}}>Scan using the Wantiss Wallet scanner</T>
+         <View style={{backgroundColor:'#FFF',padding:15,borderRadius:14}}><QRCode value={helpPayQRValue(snapshot.id)} size={180} color="#1A2517" backgroundColor="#FFF"/></View>
+         <Pressable onPress={()=>void nativeShare()} style={{marginTop:15,paddingVertical:12,paddingHorizontal:18,borderRadius:12,backgroundColor:th.brt}}>
+           <T color={th.br} weight="600">Share payment link</T>
+         </Pressable>
+       </Card>
+       <Ttl>Share in Wantiss Messages</Ttl>
+       <Card style={{padding:12}}>{friends.length?friends.map(friend=>
+         <Pressable key={friend.id} disabled={!!shareBusy} onPress={()=>void sendFriend(friend)}
+           style={{paddingVertical:12,paddingHorizontal:6,borderBottomWidth:0.5,borderColor:th.line}}>
+           <Row sp><T weight="600">{friend.name}</T><T weight="600" color={th.br}>{shareBusy===friend.id?'Sending…':'Send'}</T></Row>
+         </Pressable>):<T color={th.mut} size={13}>No accepted friends yet. Add friends in Wantiss Messages, or share the payment link above.</T>}</Card>
+       </>:null}
+       {snapshot.is_creator&&Array.isArray(snapshot.contributors)&&snapshot.contributors.length?
+         <Card><T weight="600">Who helped pay</T>
+           {snapshot.contributors.map((person,i)=><Row key={person.user_id+'-'+i} sp style={{marginTop:11}}>
+             <T>{person.name}</T><T weight="600">{cents(person.amount_cents)}</T>
+           </Row>)}</Card>:null}
+       {snapshot.status==='fulfilled'?<Card><T weight="600" color={th.br}>Payment confirmed · Order placed</T><T size={12} color={th.mut} style={{marginTop:8}}>The store has received your funded Goodies order.</T>
+         <Cta label="View Goodies orders" onPress={()=>go('orders')}/></Card>:null}
+       {snapshot.status==='active'&&snapshot.is_creator?<Pressable disabled={busy} onPress={cancel} style={{paddingVertical:12,alignSelf:'flex-start'}}>
+         <T color={th.red} weight="600">Cancel request and refund everyone</T>
+       </Pressable>:null}
+       {(snapshot.status==='expired'||snapshot.status==='cancelled')&&snapshot.is_creator?
+         <Cta ghost label="Return to checkout" onPress={()=>void newCheckout()}/>:null}
+       </>:null}
+     </>}
+   </ScrollView>
+ </View>;
 }
