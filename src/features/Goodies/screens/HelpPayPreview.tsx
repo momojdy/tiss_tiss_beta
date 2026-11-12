@@ -4,9 +4,10 @@ import {ActivityIndicator,Alert,Pressable,ScrollView,Share,View} from 'react-nat
 import QRCode from 'react-native-qrcode-svg';
 import {Bar,Card,Cta,Row,T,Ttl,useTheme} from '../components/ui';
 import {S,STB,totals,money,navBack,emit,save,completeGoodiesCheckoutAttempt} from '../store';
+import {fetchGoodiesOrderForNotification} from '../serverSync';
 import {placeOrder,go} from '../actions';
 import {supabase} from '../../../lib/supabase';
-import {cancelHelpPayRequest,fetchHelpPayStatus,helpPayQRValue,shareHelpPayToFriend} from '../helpPayApi';
+import {GOODIES_SHARED_PAYMENTS_RELEASED,cancelHelpPayRequest,fetchHelpPayStatus,helpPayQRValue,shareHelpPayToFriend} from '../helpPayApi';
 import type {HelpPayMode,HelpPaySnapshot} from '../helpPayApi';
 
 type Friend={id:string;name:string;avatar_url?:string|null};
@@ -28,7 +29,7 @@ export function HelpPayPreview(){
  const funded=snapshot?(snapshot.initial_cents+snapshot.contributed_cents)/Math.max(1,snapshot.total_cents):0;
  const load=async(requestId:string)=>{
    try{const next=await fetchHelpPayStatus(requestId);setSnapshot(next);setError('');}
-   catch(e:any){setError(e?.message||'Could not load this payment request');}
+   catch(e:any){setError(label('lbl.helpPayLoadError','Could not load this payment request. Please retry.'));}
  };
  useEffect(()=>{if(!id){setSnapshot(null);return;}let alive=true;
    const poll=()=>{if(alive)void load(id);};
@@ -41,34 +42,21 @@ export function HelpPayPreview(){
  useEffect(()=>{
    if(snapshot?.status!=='fulfilled'||!snapshot.order_id||S.orders.some((o:any)=>o.backendId===snapshot.order_id))return;
    let active=true;
+   const accountId=S.accountId;
    void(async()=>{
-     const {data:row,error:orderError}=await supabase.from('goodies_orders')
-       .select('id,order_code,store_id,order_type,address,contact_phone,items,subtotal,delivery_fee,service_fee,discount,tip,total,scheduled_for,created_at,status')
-       .eq('id',snapshot.order_id!).maybeSingle();
-     if(!active||orderError||!row||S.orders.some((o:any)=>o.backendId===row.id))return;
-     const store=STB[row.store_id];
-     const localOrder:any={
-       id:row.order_code,backendId:row.id,serverStatus:row.status,sid:row.store_id,
-       lines:Array.isArray(row.items)?row.items:[],
-       sn:store?.n||'Goodies store',sub:Number(row.subtotal),fee:Number(row.delivery_fee),
-       svc:Number(row.service_fee),disc:Number(row.discount),tip:Number(row.tip),
-       total:Number(row.total),t0:new Date(row.created_at).getTime(),
-       st:0,rated:0,cx:0,pk:row.order_type==='pickup',
-       addr:row.address?.t||store?.n||'Goodies',ad:row.address||null,
-       ph:row.contact_phone||'',phl:'Wantiss number',cid:'w',
-       pay:'wallet',payl:'Wantiss Wallet · Help Pay',note:'',
-       sch:row.scheduled_for?new Date(row.scheduled_for).getTime():0,promo:'',alc:null
-     };
-     S.orders.unshift(localOrder);
-     // Clear only the cart that actually matches the funded order.
-     const items=Array.isArray(row.items)?row.items:[];
-     if(S.cart.sid===row.store_id&&S.cart.lines.length===items.length&&
-       S.cart.lines.every((l:any,i:number)=>l.id===items[i]?.id&&Number(l.q)===Number(items[i]?.q))){
+     const orderId=await fetchGoodiesOrderForNotification(snapshot.order_id!);
+     if(!active||S.accountId!==accountId||!orderId)return;
+     const order=S.orders.find((row:any)=>row.backendId===snapshot.order_id);
+     const items=order?.lines||[];
+     if(order&&S.cart.sid===order.sid&&S.cart.lines.length===items.length&&
+       S.cart.lines.every((line:any,i:number)=>line.id===items[i]?.id&&Number(line.q)===Number(items[i]?.q)&&
+         (line.nt||'')===(items[i]?.nt||'')&&JSON.stringify(line.byo||line.options||null)===JSON.stringify(items[i]?.byo||items[i]?.options||null))){
        S.cart={sid:null,lines:[]};S.promo='';S.tip=0;S.note='';S.sch=0;S.cs=0;
      }
-     await completeGoodiesCheckoutAttempt(row.id);
+     await completeGoodiesCheckoutAttempt(snapshot.order_id!);
+     if(!active||S.accountId!==accountId)return;
      await save();emit();
-   })();
+   })().catch(()=>{if(active)setError(label('lbl.helpPayOrderLoadError','Your order is funded. Open Orders to reload its details.'));});
    return()=>{active=false};
  },[snapshot?.status,snapshot?.order_id]);
 
@@ -86,21 +74,22 @@ export function HelpPayPreview(){
  const create=async()=>{if(busy||total<=0)return;setBusy(true);try{await placeOrder(mode);}finally{setBusy(false);}};
  const sendFriend=async(friend:Friend)=>{if(!snapshot||shareBusy)return;setShareBusy(friend.id);try{
    await shareHelpPayToFriend(snapshot.id,friend.id);
-   Alert.alert('Sent in Wantiss','The Help Pay card was sent to '+friend.name+'. They can tap it in Messages to pay.');
- }catch(e:any){Alert.alert('Could not share',e?.message||'Please try again.');}finally{setShareBusy(null);}};
+   Alert.alert(label("lbl.sharedPay.620e8c691a5e", "Sent in Wantiss"),label("lbl.sharedPay.0ea70b1eccd8", "The Help Pay card was sent to ")+friend.name+label("lbl.sharedPay.5235c824c0e8", ". They can tap it in Messages to pay."));
+ }catch(e:any){Alert.alert(label("lbl.sharedPay.88295663710d", "Could not share"),label('lbl.helpPayShareError','Could not share this request. Please retry.'));}finally{setShareBusy(null);}};
  const nativeShare=async()=>{if(!snapshot)return;try{await Share.share({
    message:`Help me pay for my Goodies order on Wantiss. ${cents(snapshot.remaining_cents)} remaining. ${helpPayQRValue(snapshot.id)}`,
- });}catch(e:any){Alert.alert('Could not share',e?.message||'Try again.');}};
- const cancel=()=>{if(!snapshot)return;Alert.alert('Cancel Help Pay?','All reserved Wallet contributions, including your upfront share, will be refunded.',[
-   {text:'Keep request',style:'cancel'},{text:'Cancel and refund',style:'destructive',onPress:()=>{void(async()=>{setBusy(true);try{
+ });}catch(e:any){Alert.alert(label("lbl.sharedPay.88295663710d", "Could not share"),label('lbl.helpPayShareError','Could not share this request. Please retry.'));}};
+ const cancel=()=>{if(!snapshot)return;Alert.alert(label("lbl.sharedPay.93ac77559da0", "Cancel Help Pay?"),label("lbl.sharedPay.e0f309639ee2", "All reserved Wallet contributions, including your upfront share, will be refunded."),[
+   {text:label("lbl.sharedPay.3259de868228", "Keep request"),style:'cancel'},{text:label("lbl.sharedPay.f95fe35ec83a", "Cancel and refund"),style:'destructive',onPress:()=>{void(async()=>{setBusy(true);try{
      await cancelHelpPayRequest(snapshot.id);await load(snapshot.id);
-     Alert.alert('Cancelled','All contributions have been returned to the Wallets that paid.');
-   }catch(e:any){Alert.alert('Unable to cancel',e?.message||'Please retry');}finally{setBusy(false);}})();}}
+     Alert.alert(label("lbl.sharedPay.d353a99eb455", "Cancelled"),label("lbl.sharedPay.d59713c10908", "All contributions have been returned to the Wallets that paid."));
+   }catch(e:any){Alert.alert(label("lbl.sharedPay.b97f77e01cbd", "Unable to cancel"),label('lbl.helpPayCancelError','Could not confirm cancellation. Check the request status and retry.'));}finally{setBusy(false);}})();}}
  ]);};
  const newCheckout=async()=>{S.helpPayRequestId=null;await completeGoodiesCheckoutAttempt('help-pay-resolved');await save();emit();go('checkout');};
  return <View style={{flex:1,backgroundColor:th.bg}}>
    <Bar title={label('lbl.helpPayTitle','Help Pay · Goodies')} onBack={()=>{navBack();emit();}}/>
    <ScrollView contentContainerStyle={{paddingHorizontal:20,paddingTop:18,paddingBottom:56,gap:15}}>
+     {!id&&!GOODIES_SHARED_PAYMENTS_RELEASED?<T color={th.mut}>{label('lbl.helpPayUnavailable','Shared payments are not available yet.')}</T>:null}
      {!id?<><T size={24} weight="600">{label('lbl.helpPayPayTogether', "Pay together.")}</T><T color={th.mut} size={13}>
        {label('lbl.helpPayExplainer', "Create a secure Wallet request for your Goodies checkout. Friends can pay by scanning your QR code or opening your Wantiss message.")}
      </T><Row style={{gap:8}}>
@@ -108,7 +97,7 @@ export function HelpPayPreview(){
          style={{flex:1,paddingVertical:14,paddingHorizontal:10,borderRadius:14,borderWidth:1.5,
            borderColor:mode===next?th.br:th.line,backgroundColor:mode===next?th.brt:th.bg}}>
          <T size={13} weight="600" color={mode===next?th.br:th.ink} align="center">
-           {next==='share'?'Share bill · 60/40':'Help me fully pay'}
+           {next==='share'?label("lbl.sharedPay.368953429e33", "Share bill · 60/40"):label("lbl.sharedPay.c6935a2cf1c3", "Help me fully pay")}
          </T>
        </Pressable>)}</Row>
        <Card style={{borderRadius:20,padding:18}}>
@@ -116,16 +105,16 @@ export function HelpPayPreview(){
          <Row sp style={{marginTop:12}}><T size={13}>{label('lbl.helpPayYouPayNow', "You pay now")}</T><T weight="600">{cents(mode==='share'?Math.ceil(total*0.6):0)}</T></Row>
          <Row sp style={{marginTop:9}}><T size={13}>{label('lbl.helpPayFriendsCanCover', "Friends can cover")}</T><T weight="600" color={th.br}>{cents(remaining)}</T></Row>
          <T size={12} color={th.mut} style={{marginTop:13}}>
-           {mode==='share'?'Your 60% is reserved from your Wantiss Wallet before sharing. Friends choose any amount or percentage of the remaining 40%.':'One friend pays the full remaining bill through Wantiss Wallet.'}
+           {mode==='share'?label("lbl.sharedPay.e7f3ef2a0caf", "Your 60% is reserved from your Wantiss Wallet before sharing. Friends choose any amount or percentage of the remaining 40%."):label("lbl.sharedPay.343e6dc6593a", "One friend pays the full remaining bill through Wantiss Wallet.")}
          </T>
        </Card>
        <T color={th.mut} size={12}>{label('lbl.helpPayExpiresExplainer', "The request expires after 30 minutes. If it is not funded, every Wallet contribution is automatically refunded. The order is only created once the entire bill is paid.")}</T>
-       <Cta label={busy?'Preparing secure request…':mode==='share'?`Pay ${cents(Math.ceil(total*0.6))} and create request`:'Create full-payment request'}
-         disabled={busy||total<=0} onPress={()=>void create()}/>
+       <Cta label={busy?label("lbl.sharedPay.443643141b0d", "Preparing secure request…"):mode==='share'?`Pay ${cents(Math.ceil(total*0.6))} and create request`:label("lbl.sharedPay.17fd54ffc83e", "Create full-payment request")}
+         disabled={!GOODIES_SHARED_PAYMENTS_RELEASED||busy||total<=0} onPress={()=>void create()}/>
        {busy?<ActivityIndicator color={th.br}/>:null}
      </>:<><Row sp>
-       <View style={{flex:1}}><T size={23} weight="600">{snapshot?.status==='fulfilled'?'Order funded':snapshot?.status==='expired'?'Request expired':snapshot?.status==='cancelled'?'Request cancelled':'Help Pay is ready'}</T>
-         <T color={th.mut} size={12} style={{marginTop:4}}>{label('lbl.helpPayGoodiesPrefix','Goodies · ')}{snapshot?.mode==='full'?'Full bill':'Share bill · 60/40'}</T>
+       <View style={{flex:1}}><T size={23} weight="600">{snapshot?.status==='fulfilled'?label("lbl.sharedPay.d82f324531d1", "Order funded"):snapshot?.status==='expired'?label("lbl.sharedPay.0ff5e16d4eb0", "Request expired"):snapshot?.status==='cancelled'?label("lbl.sharedPay.7108183f1888", "Request cancelled"):label("lbl.sharedPay.9cd2ba51b7a1", "Help Pay is ready")}</T>
+         <T color={th.mut} size={12} style={{marginTop:4}}>{label('lbl.helpPayGoodiesPrefix','Goodies · ')}{snapshot?.mode==='full'?label("lbl.sharedPay.38e31e9e9664", "Full bill"):label("lbl.sharedPay.368953429e33", "Share bill · 60/40")}</T>
        </View><T color={th.br} weight="600" size={12}>{clock}{label('lbl.helpPayLeftSuffix',' left')}</T>
      </Row>
        {error?<Card><T color={th.red}>{error}</T><Cta ghost label={label('lbl.helpPayRetry','Retry')} onPress={()=>void load(id)}/></Card>:null}
@@ -151,7 +140,7 @@ export function HelpPayPreview(){
        <Card style={{padding:12}}>{friends.length?friends.map(friend=>
          <Pressable key={friend.id} disabled={!!shareBusy} onPress={()=>void sendFriend(friend)}
            style={{paddingVertical:12,paddingHorizontal:6,borderBottomWidth:0.5,borderColor:th.line}}>
-           <Row sp><T weight="600">{friend.name}</T><T weight="600" color={th.br}>{shareBusy===friend.id?'Sending…':'Send'}</T></Row>
+           <Row sp><T weight="600">{friend.name}</T><T weight="600" color={th.br}>{shareBusy===friend.id?label("lbl.sharedPay.b8ed5279e897", "Sending…"):label("lbl.sharedPay.f6f4688ff23d", "Send")}</T></Row>
          </Pressable>):<T color={th.mut} size={13}>{label('lbl.helpPayNoFriends', "No accepted friends yet. Add friends in Wantiss Messages, or share the payment link above.")}</T>}</Card>
        </>:null}
        {snapshot.is_creator&&Array.isArray(snapshot.contributors)&&snapshot.contributors.length?

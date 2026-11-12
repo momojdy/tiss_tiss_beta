@@ -6,9 +6,9 @@ import {View, Text, Image, Pressable, ScrollView, RefreshControl, Animated, PanR
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {Icon} from './components/Icon';
 import {T, Grad, Cta, Badge, Row, Input, Card, SheetBox, Ttl, Radio, useTheme, Bar} from './components/ui';
-import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshGoodiesAccess, validateActiveGroup} from './store';
+import {S, ST, STB, load, save, emit, useGoodies, cur, cnt, totals, ui, toast, done, stage, notify, navBack, reset, applyZone, money, TL, TP, addr, push, refreshLiveSchedules, refreshGoodiesAccess, validateActiveGroup} from './store';
 import * as A from './actions';
-import {startGoodiesSync} from './serverSync';
+import {refreshGoodiesOrders, startGoodiesSync} from './serverSync';
 import {Home, Cats, CatList, Search, Promos, FlashDeals, Notifs, Explore} from './screens/Browse';
 import {Store, StoreReviews, Product, ProductFoot, Cart, Checkout, CheckoutFoot, Confirm, Track, Orders, Favs, Help} from './screens/Shop';
 import {Account} from './screens/Account';
@@ -18,7 +18,7 @@ import {CardAuthentication} from './screens/CardAuthentication';
 import {HelpPayPreview} from './screens/HelpPayPreview';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent, onContent, label, stageLabels} from './content';
+import {loadContent, label, stageLabels, onContent, catName} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
@@ -47,6 +47,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
   const toastT = useRef<any>(null);
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const goodiesUnreadCount = Math.max(Number(S.serverUnread || 0), S.notifs.filter((n: any) => n.u).length);
+  const [startupError, setStartupError] = useState(false), [startupAttempt, setStartupAttempt] = useState(0);
 
   useEffect(() => {
     if (!goodiesLoaded) return;
@@ -70,6 +71,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     return () => {active = false; subscription.remove();};
   }, [goodiesLoaded]);
 
+
   /* bridge for store/actions */
   ui.toast = (t: string) => {setToastTxt(t); clearTimeout(toastT.current); toastT.current = setTimeout(() => setToastTxt(''), 2300);};
   ui.sheet = (s: any) => setSheet(s);
@@ -79,13 +81,19 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     let active = true;
     let stopSync: (() => void) | null = null;
     void (async () => {
+      setStartupError(false);
       const contentReady = loadContent();
       await load();
       // Initial destination is applied synchronously before first render; never replay it after loading.
       await contentReady;
       if (active) {
         // Restore the requested destination after persistence/catalog hydration, before exposing the screen.
-        if (initialRoute?.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); }
+        if (initialRoute?.startsWith('product:')) {
+          reset('home');
+          const productId=initialRoute.slice(8);
+          if(productId in require('./store').IT) A.openProduct(productId);
+          else toast(label('lbl.productUnavailable','This product is unavailable.'));
+        } else if (initialRoute?.startsWith('store:')) { reset('home'); push('store', initialRoute.slice(6)); }
         else if (initialRoute === 'favs:stores' || initialRoute === 'favs:items') { S.ft = initialRoute.split(':')[1]; reset('favs'); }
         else if (initialRoute) reset(initialRoute);
         else if (embedded) reset('home');
@@ -93,7 +101,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
       }
       await loadBuilders();
       if (active) stopSync = startGoodiesSync();
-    })();
+    })().catch(() => {if(active)setStartupError(true);});
     if (embedded && !initialRoute) S.stack = [{r: 'home', u: Date.now()}];
     /* order progress ticker (v24: every second) */
     const appStateSub = AppState.addEventListener('change', next => { if (next === 'active') void loadContent(); });
@@ -112,7 +120,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
       if (ch) {save(); emit();}
     }, 1000);
     return () => {active = false; appStateSub.remove(); clearInterval(id); stopSync?.();};
-  }, []);
+  }, [startupAttempt]);
 
   const handleBack = () => {
     const r = navBack();
@@ -153,14 +161,14 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
-    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
+    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : catName(c.p)} /><CatList p={c.p} /></>; break;
     case 'store': body = <Store id={c.p} />; break;
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
     case 'checkout': body = <Checkout />; break;
     case 'help-pay': body = <HelpPayPreview />; break;
     case 'addcard': body = <WalletAddNewCardScreen contentLabel={label} onBack={A.back} onSaved={() => {void A.refreshPaymentOptions();}} />; break;
-    case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} />; break;
+    case 'cardauth': body = S.cardPending ? <CardAuthentication clientSecret={S.cardPending.clientSecret} publishableKey={S.cardPending.publishableKey} onComplete={() => {void A.completeCardOrder();}} onCancel={() => {void A.cancelPendingCardOrder();}} /> : <Account r="payments" p={undefined} onOpenWallet={onUniversalAction?()=>onUniversalAction('wallet'):undefined} />; break;
     case 'confirm': body = <Confirm id={c.p} />; break;
     case 'track': body = <Track id={c.p} />; break;
     case 'notifs': body = <Notifs />; break;
@@ -169,8 +177,9 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'favs': body = <Favs />; break;
     case 'byo': body = <ByoScreen p={c.p} />; break;
     case 'help': body = <Help />; break;
-    default: body = <Account r={r} p={c.p} />;
+    default: body = <Account r={r} p={c.p} onOpenWallet={onUniversalAction?()=>onUniversalAction('wallet'):undefined} />;
   }
+  if (startupError) body = <View style={{padding:20}}><Ttl>{label('lbl.startupFailed', 'Goodies could not load')}</Ttl><T>{label('lbl.catalogRetryHint', 'Check your connection and try again.')}</T><Cta label={label('lbl.retry', 'Try again')} onPress={()=>setStartupAttempt(n=>n+1)} /></View>;
   const accessBlocked = S.goodiesAccess?.status === 'suspended' || S.goodiesAccess?.status === 'banned';
   const accessRoutes = ['home', 'cats', 'cart', 'explore', 'search', 'catlist', 'store', 'product', 'checkout', 'byo', 'promos', 'favs'];
   if (accessBlocked && accessRoutes.includes(r)) {
@@ -220,7 +229,8 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     <KeyboardAvoidingView style={{flex: 1, backgroundColor: th.bg}} behavior={Platform.OS === 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={0} {...pan.panHandlers}>
       <StatusBar barStyle={th.dark ? 'light-content' : 'dark-content'} />
       <SafeAreaView style={{flex: 1}} edges={[]}>
-        {r === 'byo' || r === 'storechat' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} refreshControl={r === 'flashdeals' ? <RefreshControl refreshing={refreshing} onRefresh={() => {if (refreshing) return; setRefreshing(true); void loadContent().finally(() => setRefreshing(false));}} /> : undefined} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
+        {r === 'byo' || r === 'storechat' ? <View style={{flex: 1}}>{body}</View> : <ScrollView ref={scroll} keyboardShouldPersistTaps="handled" onScroll={e => {c.sy = e.nativeEvent.contentOffset.y;}} scrollEventThrottle={64} showsVerticalScrollIndicator={false} refreshControl={['home','cats','orders','explore','search','catlist','store','flashdeals'].includes(r) ? <RefreshControl refreshing={refreshing} onRefresh={() => {if (refreshing) return; setRefreshing(true); void Promise.all([loadContent(), refreshLiveSchedules(), refreshGoodiesOrders()]).finally(() => setRefreshing(false));}} /> : undefined} contentContainerStyle={{paddingBottom: showTabs ? 170 : footed ? 120 : 110}}>
+          {S.catalogError && ['cats','explore','search','catlist','store','product'].includes(r) ? <Card><T>{label('lbl.catalogFailed', 'Could not load stores')}</T><Cta ghost label={label('lbl.retry', 'Try again')} onPress={()=>void refreshLiveSchedules()} /></Card> : null}
           {body}
         </ScrollView>}
       </SafeAreaView>
@@ -276,5 +286,3 @@ function BottomNav({r, bottom}: {r: string; bottom: number}) {
     </View>
   );
 }
-
-

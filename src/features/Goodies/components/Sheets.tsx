@@ -1,4 +1,5 @@
-import React, {useEffect, useMemo, useState} from 'react';
+import {notifyStoreReviewsChanged} from '../reviews';
+import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {View, Text, Pressable, Modal, ScrollView, KeyboardAvoidingView, Share, Image, Platform, TextInput, useWindowDimensions, PanResponder} from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, useTheme} from './ui';
@@ -10,10 +11,12 @@ import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
-import {rgText, importContent, clearContent, hasContent, label} from '../content';
+import {rgText, label} from '../content';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 import {friendlyError} from '../friendlyError';
+import {fetchGoodiesOrderForNotification} from '../serverSync';
+import {push, reset} from '../store';
 
 export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   const th = useTheme(), insets = useSafeAreaInsets(), {height: windowHeight} = useWindowDimensions();
@@ -26,34 +29,33 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoreset') content = (<><T size={20} weight="600">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>{label("lbl.cms.06e2931ac98c", "• Minimum age here: ")}<T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
-  if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} bottomInset={insets.bottom} />;
   if (k === 'replace') content = (<><T size={20} weight="600">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.cms.adf8a6e98991", "Your cart has items from ")}{sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
   if (k === 'remove-number') content = (<>
     <T size={20} weight="600">{label('lbl.sheetRemoveNumberTitle', 'Remove this contact number?')}</T>
-    <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveNumberBody', 'Remove {number} from your Goodies checkout contacts?').replace('{number}', String(sheet.numberLabel || 'this number'))}</T>
+    <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveNumberBody', 'Remove {number} from your Goodies checkout contacts?').replace('{number}', String(sheet.numberLabel || label('lbl.sheetNumberFallback', 'this number')))}</T>
     <Cta label={label('lbl.sheetRemoveNumberConfirm', 'Remove number')} onPress={() => { void sheet.onConfirm?.(); }} />
     <View style={{height: 10}} />
     <Cta ghost label={label('lbl.sheetKeepNumber', 'Keep number')} onPress={close} />
   </>);
   if (k === 'remove-address') content = (<>
     <T size={20} weight="600">{label('lbl.sheetDeleteAddressTitle', 'Delete this address?')}</T>
-    <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetDeleteAddressBody', 'Remove {address} from your saved addresses?').replace('{address}', String(sheet.addressLabel || 'this address'))}</T>
+    <T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetDeleteAddressBody', 'Remove {address} from your saved addresses?').replace('{address}', String(sheet.addressLabel || label('lbl.sheetAddressFallback', 'this address')))}</T>
     <Cta label={label('lbl.sheetDeleteAddressConfirm', 'Delete address')} onPress={() => { void sheet.onConfirm?.(); }} />
     <View style={{height: 10}} />
     <Cta ghost label={label('lbl.sheetKeepAddress', 'Keep address')} onPress={close} />
   </>);
-  if (k === 'remove-item') content = (<><T size={20} weight="600">{label('lbl.sheetRemoveItemTitle', 'Remove this item?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveItemBody', 'Remove {item} from your cart?').replace('{item}', String(sheet.itemName || 'this item'))}</T><Cta label={label('lbl.sheetRemoveItemConfirm', 'Remove item')} onPress={() => { A.qty(String(sheet.lineKey), -1); close(); }} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepItem', 'Keep item')} onPress={close} /></>);
+  if (k === 'remove-item') content = (<><T size={20} weight="600">{label('lbl.sheetRemoveItemTitle', 'Remove this item?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label('lbl.sheetRemoveItemBody', 'Remove {item} from your cart?').replace('{item}', String(sheet.itemName || label('lbl.sheetItemFallback', 'this item')))}</T><Cta label={label('lbl.sheetRemoveItemConfirm', 'Remove item')} onPress={() => { A.qty(String(sheet.lineKey), -1); close(); }} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepItem', 'Keep item')} onPress={close} /></>);
   if (k === 'clear') content = (<><T size={20} weight="600">{label('lbl.sheetClearCart', 'Clear your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1K2QIKR", "All items will be removed.")}</T><Pressable onPress={A.clearCart} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetClearCartAction', 'Clear cart')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>);
   if (k === 'cancel') content = (<><T size={20} weight="600">{label('lbl.sheetCancelOrder', 'Cancel this order?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAutoFMXIAY", "You can cancel until the store finishes preparing it.")}</T><Pressable onPress={() => A.cancelOrder(sheet.id)} style={{height: 52, borderRadius: 16, backgroundColor: th.red, alignItems: 'center', justifyContent: 'center'}}><T size={15.5} weight="600" color="#fff">{label('lbl.sheetCancelConfirm', 'Yes, cancel order')}</T></Pressable><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto81YEJ2", "Keep order")} onPress={close} /></>);
   if (k === 'promo') {
     const d = PROMO_DETAIL[sheet.p as 'free' | 'points' | 'produce'], custom = sheet.custom || {};
     content = (<>
       <View style={{height: 150, borderRadius: 20, alignItems: 'center', justifyContent: 'center', backgroundColor: d.bg, marginBottom: 12}}><Text style={{fontSize: 78}}>{custom.emoji || d.e}</Text></View>
-      <T size={21} weight="600">{custom.title || d.t}</T>
-      <T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{custom.sub || d.d}</T>
-      <Cta label={custom.btn || d.b} onPress={() => {
+      <T size={21} weight="600">{custom.title ?? label('lbl.promoDetailsUnavailable', 'Offer details are unavailable')}</T>
+      <T color={th.mut} style={{marginVertical: 8, marginBottom: 18, lineHeight: 21}}>{custom.sub ?? label('lbl.promoDetailsUnavailableBody', 'Browse the current offers for up-to-date details.')}</T>
+      <Cta label={custom.btn ?? label('lbl.promoBrowseOffers', 'Browse offers')} onPress={() => {
         const target = String(custom.target || '');
         if (target.startsWith('category:')) A.promoGo(target.slice(9));
         else if (target === 'screen:wallet') {close(); A.go('payments');}
@@ -84,7 +86,7 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
         {row(label('lbl.storeDeliveryFee', 'Delivery fee'), s.fee === 0 ? label('lbl.filterFree', 'Free delivery') : money(s.fee))}
         {row(label('lbl.storeMinimumOrder', 'Minimum order'), money(s.min))}
         {s.live ? (s.distanceReady ? row(label('lbl.storeDistance', 'Distance'), label('lbl.storeDistanceFromAddress', '{km} km from your address').replace('{km}', s.km.toFixed(1))) : !addr()?.t?.trim() ? row(label('lbl.storeDistance', 'Distance'), label('lbl.storeAddAddressForDistance', 'Add address to see distance')) : null) : row(label('lbl.storeDistance', 'Distance'), label('lbl.sheetKmAway', '{km} km away').replace('{km}', s.km.toFixed(1)))}
-        {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + ' min')}
+        {row(label('lbl.storeEstimatedDelivery', 'Estimated delivery'), s.eta + label('lbl.unitMinutes', ' min'))}
         {row(label('lbl.storeOrderMethods', 'Order methods'), label('lbl.sheetDeliveryAndPickup', 'Delivery and pickup'))}
         {row(label('lbl.storeScheduledOrders', 'Scheduled orders'), s.acceptScheduledOrders ? label('lbl.sheetScheduledAvailable', 'Available while closed') : label('lbl.sheetScheduledOnlyOpen', 'Only while open'))}
         {s.acceptScheduledOrders ? row(label('lbl.storeAdvanceTime', 'Earliest order time'), String(s.scheduledOrderStartTime || '10:00').slice(0,5)) : null}
@@ -257,10 +259,10 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   const [scannerOpen, setScannerOpen] = useState(false);
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [group, setGroup] = useState(() => {
-    if (incomingInviteCode) return {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
+    if (incomingInviteCode) return {code: '', host: S.pf.n || label('lbl.groupYou', 'You'), members: [], serverBacked: false};
     const saved = S.groupOrder;
     if (saved && typeof saved.code === 'string' && Array.isArray(saved.members)) return saved;
-    const next = {code: '', host: S.pf.n || 'You', members: [], serverBacked: false};
+    const next = {code: '', host: S.pf.n || label('lbl.groupYou', 'You'), members: [], serverBacked: false};
     S.groupOrder = next; save(); return next;
   });
   const saveGroup = (next: any) => { setGroup(next); S.groupOrder = next; save(); emit(); };
@@ -268,7 +270,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   useEffect(() => {
     if (!group.serverBacked) return;
     let alive = true;
-    void validateActiveGroup().then(ok => {if (alive && !ok) setGroup({code: '', host: S.pf.n || 'You', members: [], serverBacked: false});});
+    void validateActiveGroup().then(ok => {if (alive && !ok) setGroup({code: '', host: S.pf.n || label('lbl.groupYou', 'You'), members: [], serverBacked: false});});
     return () => {alive = false;};
   }, []);
   const createServerGroup = async () => {
@@ -279,7 +281,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     try {
       const {data,error}=await supabase.rpc('goodies_group_order_create',{p_store_id:targetStoreId});
       const row=Array.isArray(data)?data[0]:data;
-      if(error||!row?.invite_code) throw error || new Error('Could not create the group invitation.');
+      if(error||!row?.invite_code) throw error || new Error(label("lbl.page.components.Sheets.a686a8f76f", "Could not create the group invitation."));
       saveGroup({...group,code:row.invite_code,groupId:row.group_id,storeId:targetStoreId,expiresAt:row.expires_at,serverBacked:true});
       const synced=await Promise.all((S.cart.sid === targetStoreId ? S.cart.lines : []).map((line:any)=>syncGroupOrderCartLine(row.group_id,line)));
       const failed=synced.find((result:any)=>result.error);
@@ -298,8 +300,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     try {
       const {data,error}=await supabase.rpc('goodies_group_order_join',{p_invite_code:code});
       const row=Array.isArray(data)?data[0]:data;
-      if(error||!row?.group_id) throw error || new Error('Could not join this group order.');
-      saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||'You',members:group.members||[],serverBacked:true});
+      if(error||!row?.group_id) throw error || new Error(label("lbl.page.components.Sheets.e947050714", "Could not join this group order."));
+      saveGroup({code:row.invite_code,groupId:row.group_id,storeId:row.store_id,expiresAt:row.expires_at,host:S.pf.n||label('lbl.groupYou', 'You'),members:group.members||[],serverBacked:true});
       toast(label("lbl.cms.9d2f3e3ff6a8", "You joined the group order."));
     } catch(error:any) {
       toast(friendlyError(error, label("lbl.cms.b7c7f9985055", "Could not join this group order. Check the invite code and try again.")));
@@ -326,7 +328,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       if(!active||error)return;
       const statusRow=Array.isArray(data)?data[0]:data;
       if(!statusRow||statusRow.status!=='open'||new Date(statusRow.expires_at).getTime()<=Date.now()){
-        S.groupOrder=null; save(); emit(); setGroup({code:'',host:S.pf.n||'You',members:[],serverBacked:false});
+        S.groupOrder=null; save(); emit(); setGroup({code:'',host:S.pf.n||label('lbl.groupYou', 'You'),members:[],serverBacked:false});
         setSharedItems([]);setGroupMembers([]);setCheckoutPreview(null);
         toast(statusRow?.status==='cancelled'?label("lbl.cms.7c7eb6fad354", "The group host ended this group order."):label("lbl.cms.984dfaf4f0b3", "This group order has closed or expired."));
       }
@@ -378,8 +380,8 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     try {
       const {data, error} = await supabase.rpc('goodies_group_order_join', {p_invite_code: code});
       const row = Array.isArray(data) ? data[0] : data;
-      if (error || !row?.group_id) throw error || new Error('join failed');
-      saveGroup({code: row.invite_code, groupId: row.group_id, storeId: row.store_id, expiresAt: row.expires_at, host: S.pf.n || 'You', members: [], serverBacked: true});
+      if (error || !row?.group_id) throw error || new Error("join failed");
+      saveGroup({code: row.invite_code, groupId: row.group_id, storeId: row.store_id, expiresAt: row.expires_at, host: S.pf.n || label('lbl.groupYou', 'You'), members: [], serverBacked: true});
       toast(label("lbl.cms.9d2f3e3ff6a8", "You joined the group order."));
     } catch (error: any) {
       toast(friendlyError(error, label("lbl.cms.d37983f61070", "Could not join this group order. It may have closed.")));
@@ -393,7 +395,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
   const invite = async () => {
     if(!group.serverBacked||!group.code){toast(label("lbl.cms.e0747408b56f", "Create a group invitation first."));return;}
     const inviteLink='wantiss://goodies/group?code='+encodeURIComponent(group.code);
-    try {await Share.share({message:'Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: '+inviteLink+'\n\nOr enter invite code: '+group.code});}
+    try {await Share.share({message:label("lbl.page.components.Sheets.a54b07b29c", "Join my Wantiss Goodies group order.\n\nOpen this invite in Wantiss: ")+inviteLink+label("lbl.page.components.Sheets.c4af5f55a9", "\n\nOr enter invite code: ")+group.code});}
     catch (_) {toast(label("lbl.cms.2299e372cc22", "Invite code: ")+group.code);}
   };
   const calculateGroupDeliveryQuote = async () => {
@@ -415,15 +417,21 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       setGroupDeliveryQuote(null);toast(friendlyError(e, label("lbl.cms.fa36fe77f660", "Could not calculate delivery.")));
     } finally {setGroupQuoteBusy(false);}
   };
+  const groupCheckoutLock=useRef(false);
   const checkoutGroupOrder = async () => {
+    if(groupCheckoutLock.current)return;
     if(!group.serverBacked||!group.groupId){toast(label("lbl.cms.123b3ed119bc", "Create a server-backed group order first."));return;}
     if(!groupMembers.some((member:any)=>member.user_id===currentUserId&&member.role==='host')){toast(label("lbl.cms.540c5531f480", "Only the group host can check out."));return;}
     if(!checkoutPreview){toast(label("lbl.cms.6e9eb3a9a0bb", "Review and validate the combined cart first."));return;}
     if(!checkoutEstimate || checkoutEstimate.group_id!==group.groupId || checkoutEstimate.order_type!==groupCheckoutType){toast(label("lbl.cms.d2905bdbca8c", "Review the current group-order total before placing the order."));return;}
     if(!S.pf.ph||!phoneOK(S.pf.ph)){toast(label("lbl.cms.fdc79fde4a45", "Add a valid contact phone number in your profile before checkout."));return;}
+    groupCheckoutLock.current=true;
+    const accountId=S.accountId;
+    const paidLines=new Map(S.cart.lines.filter((line:any)=>sharedItems.some((item:any)=>item.user_id===currentUserId&&item.line_key===line.k)).map((line:any)=>[line.k,JSON.stringify(line)]));
     setGroupCheckoutBusy(true);
     try {
       const walletVerified=await A.refreshPaymentOptions();
+      if(S.accountId!==accountId)return;
       if(!walletVerified){toast(label("lbl.cms.c21b6431da9c", "Could not verify your live Wantiss Wallet balance. Please retry."));return;}
       if(!S.hasWallet){toast(label("lbl.cms.fa32c0873181", "Your Wantiss Wallet is not available. Create a wallet before placing this group order."));return;}
       const estimatedTotal=Number(checkoutEstimate?.estimated_total||0);
@@ -438,7 +446,7 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
         addressPayload={l:selected.l,t:selected.t,apt:selected.apt||'',inst:selected.inst||'',city:selected.city||'',department:selected.department||'',country:selected.country||'',delivery_quote_id:groupDeliveryQuote.quoteId};
       }
       const {data,error}=await supabase.rpc('goodies_group_order_checkout',{
-        p_idempotency_key:'group-'+group.groupId+'-'+Date.now().toString(36),
+        p_idempotency_key:'group-'+group.groupId+'-checkout',
         p_group_id:group.groupId,
         p_order_type:groupCheckoutType,
         p_scheduled_for:null,
@@ -447,16 +455,26 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
         p_tip:0,
         p_notes:null
       });
+      if(S.accountId!==accountId)return;
       const order=Array.isArray(data)?data[0]:data;
       if(error||!order?.id){toast(friendlyError(error, label("lbl.cms.1be63d4ce4d0", "Group order checkout failed.")));return;}
+      S.cart.lines=S.cart.lines.filter((line:any)=>paidLines.get(line.k)!==JSON.stringify(line));
+      if(!S.cart.lines.length)S.cart.sid=null;
+      if(S.groupOrder?.groupId===group.groupId)clearActiveGroup();
+      save();emit();close();
+      let orderId:string|null=null;
+      try {orderId=await fetchGoodiesOrderForNotification(order.id);} catch (_) { /* The payment succeeded; order details can be retried from Orders. */ }
+      if(S.accountId!==accountId)return;
       toast(label("lbl.cms.29fb7a3efa6b", "Group order placed. Order ")+(order.order_code||order.id)+label("lbl.cms.df836d557f92", ". Paid with Wantiss Wallet."));
-      S.groupOrder=null;save();emit();close();
+      reset(orderId?'home':'orders');
+      if(orderId)push('confirm',orderId);
+      void A.refreshPaymentOptions();
     } catch(e:any) {
-      toast(friendlyError(e, label("lbl.cms.8eeb9fd8177f", "Could not complete group order checkout.")));
-    } finally {setGroupCheckoutBusy(false);}
+      if(S.accountId===accountId)toast(friendlyError(e, label("lbl.cms.8eeb9fd8177f", "Could not complete group order checkout.")));
+    } finally {groupCheckoutLock.current=false;setGroupCheckoutBusy(false);}
   };
   const reviewSharedOrder = async () => {
-    if(!group.serverBacked||!group.groupId){toast(label("lbl.cms.315075ecf41e", "Create or join a server-backed group order first."));return;}
+    if(!group.serverBacked||!group.groupId){toast(label("lbl.page.components.Sheets.59297174fd", "Create or join a group order first."));return;}
     setPreviewBusy(true); setCheckoutPreview(null);
     const {data,error}=await supabase.rpc('goodies_group_order_checkout_preview',{p_group_id:group.groupId});
     setPreviewBusy(false);
@@ -655,25 +673,39 @@ export function GroupOrderPage({onBack, storeId = ''}: {onBack: () => void; stor
 
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
   const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
+  const [saving, setSaving] = useState(false);
+  const submitLock = useRef(false);
   return (<>
     <T size={20} weight="600">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder={label('lbl.sheetReviewComment', 'Add a comment (optional)')} multiline />
     <View style={{height: 12}} />
-    <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} onPress={() => {
+    <Cta disabled={saving} label={saving ? label('lbl.reviewSaving', 'Submitting…') : label('lbl.sheetSubmitReview', 'Submit review')} onPress={async () => {
+      if (submitLock.current) return;
       const o = S.orders.filter((x: any) => x.id === id)[0];
       if (!o) {toast(label('lbl.sheetOrderNotFound', 'Order not found')); return;}
+      if (t.trim().length > 1000) {toast(label('lbl.reviewTooLong', 'Keep your review under 1,000 characters.'));return;}
       if (!n) {toast(label('lbl.sheetPickRating', 'Pick a star rating')); return;}
+      if (!o.backendId) {toast(label('lbl.sheetOrderNotFound', 'Order not found'));return;}
+      const account = S.accountId;
+      submitLock.current = true;setSaving(true);
+      try {
+        const {error} = await supabase.rpc('goodies_submit_order_review', {p_order_id: o.backendId, p_target: driver ? 'driver' : 'store', p_rating: n, p_comment: t.trim()});
+        if (error) throw error;
+        if (S.accountId !== account) return;
+      } catch {toast(label('lbl.reviewSaveFailed', 'Could not submit your review. Please try again.'));return;}
+      finally {submitLock.current = false;setSaving(false);}
       if (driver) {
         S.driverRev = S.driverRev || {};
-        S.driverRev[id] = {n: S.pf.n, r: n, t: t.trim(), d: 'Just now', orderId: id};
+        S.driverRev[id] = {n: S.pf.n, r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now"), orderId: id};
         o.driverRated = n;
-        o.driverReview = {r: n, t: t.trim(), d: 'Just now'};
+        o.driverReview = {r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now")};
       } else {
-        S.rev[o.sid] = S.rev[o.sid] || [];
-        S.rev[o.sid].unshift({n: S.pf.n, r: n, t: t.trim(), d: 'Just now', you: 1, orderId: id});
+        S.rev[o.sid] = (S.rev[o.sid] || []).filter((review: any) => review.orderId !== id);
+        S.rev[o.sid].unshift({n: S.pf.n, r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now"), you: 1, orderId: id});
         o.rated = n;
-        o.orderReview = {r: n, t: t.trim(), d: 'Just now'};
+        o.orderReview = {r: n, t: t.trim(), d: label("lbl.page.components.Sheets.66f53417d3", "Just now")};
       }
+      if (!driver) void notifyStoreReviewsChanged(o.sid);
       S.rt = 0; ui.close(); toast(driver ? label('lbl.sheetDriverReviewThanks', 'Thanks for rating your driver!') : label('lbl.sheetReviewThanks', 'Thanks for your review!')); save(); emit();
     }} />
   </>);
@@ -689,7 +721,7 @@ function ContactsSheet({close}: {close: () => void}) {
       <View key={r.id} style={{flexDirection: 'row', alignItems: 'center', gap: 8}}>
         <View style={{flex: 1}}><Radio on={S.cc === r.id} onPress={() => {S.cc = r.id; close(); save(); emit();}}><T weight="600">{r.ph}</T><View style={{marginTop: 3}}>{r.w ? <Badge green label={label("lbl.sheetAuto1UP0O00", "Default Wantiss number")} /> : <T size={12.5} color={th.mut}>{label("lbl.cms.a230877fe597", "Goodies checkout number · ")}{r.l}</T>}</View></Radio></View>
         {r.w ? null : <><Pressable accessibilityLabel={label('lbl.sheetEditNumber', 'Edit number')} onPress={() => ui.sheet({kind: 'ctform', id: r.id})}><T size={13} weight="600" color={th.br}>{label("lbl.sheetAuto1CISXZJ", "Edit")}</T></Pressable>
-        <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {void removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch((e:any)=>toast(e.message||'Could not remove number'));}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
+        <Pressable accessibilityLabel={label('lbl.sheetRemoveNumber', 'Remove number')} onPress={() => {if (S.orders.some((o: any) => !done(o) && o.cid == r.id)) {toast(label('lbl.sheetPhoneInUse', 'This number is used by an active order')); return;} ui.sheet({kind: 'remove-number', numberLabel: r.l || r.ph, onConfirm: () => {void removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch((e:any)=>toast(friendlyError(e,label('lbl.contactRemoveFailed','Could not remove this number. Please retry.'))));}});}}><Icon name="trash" size={18} color={th.red} /></Pressable></>}
       </View>
     ))}
     <Cta ghost label={label("lbl.sheetAutoQWFBNT", "+ Add another number")} onPress={() => ui.sheet({kind: 'ctform', id: ''})} />
@@ -710,7 +742,7 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       await persistGoodiesContactNumber(p,l.trim(),typeof id==='string'&&/^[0-9a-f-]{36}$/i.test(id)?id:undefined);
       toast(label('lbl.sheetNumberSaved', 'Number saved for Goodies checkout'));
       ui.sheet({kind:'contacts'});
-    } catch(e:any) {toast(e.message||'Could not save number');}
+    } catch(e:any) {toast(friendlyError(e,label('lbl.contactSaveFailed','Could not save this number. Please retry.')));}
     finally {setSaving(false);}
   };
   return <View style={{flex:1,minHeight:0,paddingBottom:Math.max(0,bottomInset-20)}}>
@@ -721,21 +753,8 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <Input label={label("lbl.sheetAutoSTYZV6", "Phone number")} value={ph} onChange={setPh} placeholder={label("lbl.sheetAuto1JJXA6W", "Enter phone number")} keyboard="phone-pad" />
     </ScrollView>
     <View style={{paddingTop:8,borderTopWidth: 0.5,borderTopColor:th.line}}>
-      <Cta label={saving?"Saving…":label("lbl.sheetAuto9HY80N", "Save number")} onPress={()=>void save_()} />
+      <Cta label={saving?label("lbl.sharedPay.23e39291d613", "Saving…"):label("lbl.sheetAuto9HY80N", "Save number")} onPress={()=>void save_()} />
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
   </View>;
-}
-
-/* DEMO: paste the JSON exported from Wantiss Admin (Goodies > Overview > Export content). Production fetches the same shape from the backend. */
-function ImportSheet({close}: {close: () => void}) {
-  const th = useTheme(), [txt, setTxt] = useState('');
-  return (<>
-    <T size={20} weight="600">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{label("lbl.cms.51de0d274565", "Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. ")}{hasContent() ? label("lbl.cms.c73acc89640b", "Admin content is currently loaded.") : label("lbl.cms.40b928d70f8f", "The built-in sample content is currently used.")}</T>
-    <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
-    <View style={{height: 12}} />
-    <Cta label={label("lbl.sheetAuto1EXCTAI", "Import")} onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
-    {hasContent() ? <><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto1U4P0PS", "Go back to sample content")} onPress={async () => {await clearContent(); close(); toast(label('lbl.sheetSampleContent', 'Using sample content')); emit();}} /></> : null}
-  </>);
 }

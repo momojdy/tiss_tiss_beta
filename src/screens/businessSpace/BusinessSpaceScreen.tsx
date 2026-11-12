@@ -1,3 +1,6 @@
+import {isGoodiesBusiness,saveGoodiesVendorLanguage} from '../../services/goodiesSettlement';
+import {WANTISS_LANGUAGES,wantissLocale} from '../../lib/locales';
+import {goodiesBusinessNotificationTarget,goodiesNotificationWorkspace} from '../../features/Goodies/notifications';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,7 +14,7 @@ import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
 
 import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Range, DEFAULT_RULES, presetRange, rpc, q, useQ, App, AppCtx, ArgCtx, useAct, Btn, Field, Skel, ErrBox, PanelSheet, ListingWizard } from "./BusinessSpaceShared";
-import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage } from "./BusinessSpaceGoodies";
+import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage, GoodiesReviewsPage } from "./BusinessSpaceGoodies";
 import { GoodiesOrdersPage } from "./BusinessSpaceGoodiesOrders";
 import { Home } from "./BusinessSpaceHomeScreen";
 import { ActionsPage, ActivityPage, ExplorePage, ChartsPage } from "./BusinessSpaceActivityScreens";
@@ -39,11 +42,11 @@ const BIZ_COLS = 'id,name,vendor_id,verification,payout_ready,is_live,created_at
 const PAGES: Record<string, () => React.ReactElement> = {
   feature: FeaturePage, explore: ExplorePage, charts: ChartsPage, actions: ActionsPage, activity: ActivityPage, messages: MessagesPage, conversation: ConversationPage,
   notifications: NotificationsPage, search: SearchPage, promotions: PromotionsPage, registration: RegistrationPage, audit: AuditPage, help: HelpPage, security: SecurityPage, businessInfo: BusinessInfoPage,
-  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage,
+  goodiesTools: GoodiesToolsPage, goodiesStore: GoodiesStorePage, goodiesProducts: GoodiesProductsPage, goodiesBuilder: GoodiesBuilderEditPage, goodiesRequests: GoodiesRequestsPage, goodiesOrders: GoodiesOrdersPage, goodiesReviews: GoodiesReviewsPage,
 };
 const TABS: [string, string, string | null][] = [['Overview', 'view-dashboard-outline', null], ['Features', 'apps', 'features'], ['Orders', 'clipboard-list-outline', 'orders'], ['Listings', 'format-list-bulleted', 'listings'], ['Payouts', 'bank-transfer-out', 'payouts']];
 
-export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { onSignOut: () => void; onSwitchToBuyer: () => void }) {
+export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpenWallet }: { onSignOut: () => void; onSwitchToBuyer: () => void; onOpenWallet?: () => void }) {
   const scheme = useColorScheme();
   const [dark, setDarkS] = useState(scheme === 'dark');
   useEffect(() => { AsyncStorage.getItem('bs.dark').then(v => { if (v != null) setDarkS(v === '1'); }).catch(() => undefined); }, []);
@@ -51,14 +54,14 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer }: { on
   return (
     <SafeAreaProvider>
       <ThemeCtx.Provider value={dark ? DARK : LIGHT}>
-        <Gate dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onSwitchToBuyer} />
+        <Gate dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} />
       </ThemeCtx.Provider>
     </SafeAreaProvider>
   );
 }
 
 /** Loads the signed-in user and their businesses, then hands over to the workspace. */
-function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
+function Gate({ dark, setDark, onSignOut, onBuyer, onWallet }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   const [user, setUser] = useState<{ id: string; email: string; name: string } | null>(null), [uerr, setUerr] = useState<string | null>(null), [tick, setTick] = useState(0);
   useEffect(() => {
@@ -82,7 +85,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer }: any) {
   if (mem.e) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={mem.e} retry={mem.reload} /></View>;
   const list = mem.d ?? [];
   if (!list.length) return <FirstBusiness user={user} onCreated={reloadBiz} onBuyer={onBuyer} />;
-  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} />;
+  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} onWallet={onWallet} />;
 }
 function FirstBusiness({ user, onCreated }: any) {
   const t = useTheme(), ins = useSafeAreaInsets();
@@ -112,7 +115,7 @@ function FirstBusiness({ user, onCreated }: any) {
 }
 
 /** Everything that needs an active business. */
-function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer }: any) {
+function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer, onWallet }: any) {
   const t = useTheme(), ins = useSafeAreaInsets(), s = useS();
   const [bizId, setBizId] = useState<string>(''), [tick, setTick] = useState(0), [range, setRange] = useState<Range>(presetRange('30D'));
   const [stack, setStack] = useState<{ page: string; arg?: any; fromProfile?: boolean }[]>([]);
@@ -149,6 +152,8 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   }, [biz.id, tick]);
   const m: Meta = meta.d ?? { feats: [], listings: 0, unreadN: 0, unreadM: 0, payout: null, rules: DEFAULT_RULES, minWithdrawal: 5 };
 
+  const goodiesWorkspace=isGoodiesBusiness({biz,meta:m});
+  useEffect(()=>{let active=true;if(goodiesWorkspace)void supabase.from('user_settings').select('language').eq('user_id',user.id).maybeSingle().then(({data,error})=>{if(active&&!error&&data?.language)setLangS(WANTISS_LANGUAGES.find(row=>row.code===wantissLocale(data.language))!.label);},()=>undefined);return()=>{active=false;};},[user.id,goodiesWorkspace]);
   /* realtime: any change to this business refreshes the screen */
   useEffect(() => {
     let h: any;
@@ -156,8 +161,8 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods', 'goodies_products', 'goodies_builder_configs'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
     ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
       const notice: any = payload.new;
-      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_')) {
-        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: notice.metadata || {} }, trigger: null });
+      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_')) {
+        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: {...(notice.metadata || {}), notification_type: notice.notification_type, destination: notice.destination} }, trigger: null });
       }
     });
     ch.on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'messages' }, kick);
@@ -183,10 +188,15 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(r => {
       const d: any = r.notification.request.content.data ?? {};
+      const targetBusiness=goodiesNotificationWorkspace(d,biz.id,bizList.map((row:Biz)=>row.id));
+      if(!targetBusiness)return;
+      if(targetBusiness!==biz.id)app.selectBiz(targetBusiness);
+      const target = goodiesBusinessNotificationTarget(d,targetBusiness);
+      if (target) {if(target.page==='payouts')setPanel({name:'payouts'});else nav.go(target.page,target.arg);return;}
       if (d.feature) nav.go('feature', { k: d.feature, focus: d.order }); else if (d.page) nav.go(d.page);
     });
     return () => sub.remove();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [biz.id,bizList]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     const handle = (url: string | null) => { if (url && url.includes('/business/payouts')) { WebBrowser.dismissBrowser(); bump(); setPanel({ name: 'payouts' }); } };
     Linking.getInitialURL().then(handle).catch(() => undefined);
@@ -217,8 +227,8 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     wizard: (feature, id) => { setWiz({ feature, id }); },
     range, setRange: r => setRange(r),
     selectBiz: id => { setBizId(id); AsyncStorage.setItem('bs.biz', id).catch(() => undefined); setStack([]); setPanel(null); setSheet(null); bump(); },
-    reloadBiz, onBuyer, onSignOut, dark, setDark, lang, setLang: l => { setLangS(l); AsyncStorage.setItem('bs.lang', l).catch(() => undefined); supabase.from('profiles').upsert({ id: user.id, language: l }).then(() => undefined); },
-    pref, setPref: p => { setPrefS(p); supabase.from('notification_prefs').upsert({ user_id: user.id, ...p }).then(r => { if (r.error) toast(r.error.message); }); },
+    reloadBiz, onBuyer, onWallet, onSignOut, dark, setDark, lang, setLang: l => { setLangS(l); AsyncStorage.setItem('bs.lang', l).catch(() => undefined); if(goodiesWorkspace)void saveGoodiesVendorLanguage(user.id,l).catch(()=>toast('Language changed on this device, but your account preference could not be saved. Please try again.'));else supabase.from('profiles').upsert({ id: user.id, language: l }).then(() => undefined); },
+    pref, setPref: p => { setPrefS(p); supabase.from('notification_prefs').upsert({ user_id: user.id, ...p }).then(r => { if (r.error) toast('Could not save notification preferences. Please try again.'); }); },
     regDismissed, dismissReg: () => setRegDismissed(true),
   };
 
@@ -228,7 +238,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   return (
     <AppCtx.Provider value={app}>
       <View style={{ flex: 1, backgroundColor: t.bg }}>
-        <Home />
+        <Home key={user.id+biz.id} />
         <View style={{ position: 'absolute', bottom: ins.bottom + 12, left: 12, right: 12, minHeight: 66, borderRadius: 20, backgroundColor: t.card, borderWidth: 1, borderColor: t.line, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 4, elevation: 6, shadowColor: '#101828', shadowOpacity: 0.1, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, zIndex: 10 }}>
           {TABS.map(([label, icon, key]) => { const on = (panel?.name ?? null) === key && !top; return (
             <Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={() => app.tab(key)} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 8 }}>
@@ -236,13 +246,13 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
             </Pressable>); })}
         </View>
         {!overlay ? <SearchHandle onOpen={() => app.go('search')} /> : null}
-        {Page ? <ArgCtx.Provider key={`${top!.page}:${stack.length}`} value={top!.arg}><Page /></ArgCtx.Provider> : null}
+        {Page ? <ArgCtx.Provider key={`${user.id}:${biz.id}:${top!.page}:${stack.length}`} value={top!.arg}><Page /></ArgCtx.Provider> : null}
         {panel ? (
           <PanelSheet title={panelTitle} onClose={closePanel}>
             {panel.name === 'features' ? <FeaturesPanel /> : panel.name === 'orders' ? <OrdersPanel /> : panel.name === 'listings' ? <ListingsPanel /> : <PayoutsPanel />}
           </PanelSheet>
         ) : null}
-        <SheetHost sheet={sheet} />
+        <SheetHost key={user.id+biz.id} sheet={sheet} />
         {wiz ? <ListingWizard biz={biz} feature={wiz.feature} listingId={wiz.id} onToast={toast} onClose={() => { setWiz(null); bump(); }} onDone={(msg: string) => { setWiz(null); toast(msg); bump(); }} /> : null}
         {toastT ? <View pointerEvents="none" style={{ position: 'absolute', left: 20, right: 20, bottom: ins.bottom + 96, backgroundColor: t.ink, borderRadius: 12, paddingHorizontal: 16, paddingVertical: 12, zIndex: 60 }}><Text style={{ color: t.bg, fontWeight: '600' }}>{toastT}</Text></View> : null}
       </View>

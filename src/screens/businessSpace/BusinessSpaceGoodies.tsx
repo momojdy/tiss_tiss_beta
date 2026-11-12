@@ -1,7 +1,7 @@
 /* Goodies tools for the Vendor Dashboard (Business Space).
    Moves the seller-side screens out of the Goodies customer app (v24 `seller` and `sellerEdit`) and adds store setup and ingredient requests.
    Store setup, products, builder configurations and publishing go through Supabase. Existing builder drafts are imported from AsyncStorage once; ingredient requests, their photos and the photo rules go through Supabase. */
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, Modal, ScrollView, Pressable, TextInput, Alert, Image, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { decode } from 'base64-arraybuffer';
@@ -11,11 +11,11 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { supabase } from '../../lib/supabase';
-import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel } from './BusinessSpaceShared';
+import { useApp, useArg, useS, useTheme, useQ, rpc, q, errText, Pg, Section, Field, Btn, Chips, Seg, Toggle, Pill, Row, Divided, Icon, SheetShell, Empty, ErrBox, Skel, Loading } from './BusinessSpaceShared';
 import { TEMPLATES, TplBuilder, TplGroup, TplItem } from './goodiesTemplates';
 import { fetchPublishedWantissContent } from '../../lib/wantissCms';
 
-/* ---------- types (PROPOSED contracts) ---------- */
+/* ---------- Goodies data contracts ---------- */
 export type GStore = { demoStoreId: string; storeName: string; coverUrl: string | null; thumbnailUrl: string | null; address: string; city: string; country: string; category: string; kind: string; minOrder: string; fee: string; pricingMode: 'fixed' | 'distance'; baseFee: string; perKmFee: string; minFee: string; maxDistanceKm: string; etaMin: string; etaMax: string; acceptScheduledOrders: boolean; scheduledOrderStartTime: string; scheduledOrderTimezone: string; promo: string; delivery: boolean; pickup: boolean; names: Record<string, string>; storeLatitude: number | null; storeLongitude: number | null };
 export type GProduct = { id: string; name: string; description: string; price: number; emoji: string; stock: number; available: boolean; restriction: 'none' | 'otc' | 'alcohol'; photoUrl: string | null; photoUrls: string[]; reviewStatus: 'pending' | 'approved' | 'rejected'; reviewNote: string | null };
 export type GItem = TplItem & { id: string; avail: boolean; assetUrl?: string | null };
@@ -67,8 +67,8 @@ export const goodiesApi = {
   },
   setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
-  listProducts: async (biz: string): Promise<GProduct[]> => {
-    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,photo_urls,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }));
+  listProducts: async (biz: string, page = 0): Promise<GProduct[]> => {
+    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,photo_urls,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }).order('id',{ascending:true}).range(page*100,page*100+99));
     return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_urls?.[0] || r.photo_url || null, photoUrls: (Array.isArray(r.photo_urls) && r.photo_urls.length ? r.photo_urls : (r.photo_url ? [r.photo_url] : [])).slice(0,5), reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
@@ -79,7 +79,6 @@ export const goodiesApi = {
     if (p.emoji !== undefined) f.emoji = p.emoji.trim() || '🛍️';
     if (p.stock !== undefined) f.stock = p.stock;
     if (p.available !== undefined) f.is_available = p.available;
-    if (!p.id) { f.review_status = 'approved'; f.review_note = null; }
     if (p.restriction !== undefined) f.restriction = p.restriction;
     if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
     if ('photoUrls' in p) f.photo_urls = (p.photoUrls || []).slice(0, 5);
@@ -154,7 +153,7 @@ export const goodiesApi = {
         return b && id ? { id, b, n: String(n), hasArt: !!key, assetKey: key } : null;
       }).filter(Boolean) as any[] : [];
       const base = [...legacy, ...contentLibrary];
-      const added = await rpc<any[]>('goodies_list_library_ingredients', {}).catch(() => [] as any[]);
+      const added = await rpc<any[]>('goodies_list_library_ingredients', {});
       const seen = new Set(base.map(x => x.id));
       const assetUrl = (key: string | null | undefined) => key ? remote.assets.find(a => a.asset_key === key || a.asset_key.endsWith('/' + key))?.url || null : null;
       const baseWithAssets = base.map(x => ({ ...x, assetUrl: assetUrl(x.assetKey || x.asset_key || x.id) }));
@@ -164,7 +163,7 @@ export const goodiesApi = {
       }));
       return [...baseWithAssets, ...extra];
     } catch {
-      return [];
+      throw new Error('Could not load the ingredient library. Please try again.');
     }
   },
 };
@@ -216,6 +215,7 @@ export function GoodiesToolsCard() {
       {R('Orders', 'Review new orders and accept or decline within 15 minutes', 'goodiesOrders')}
       {R('Store setup', 'Category, minimum order, delivery fee, time and publishing', 'goodiesStore')}
       {R('Products', 'Items, prices and stock customers can buy', 'goodiesProducts')}
+      {R('Reviews', 'Read customer feedback on fulfilled orders', 'goodiesReviews')}
       {R('Ingredient requests', 'Ask the platform to add a new ingredient', 'goodiesRequests')}
     </Divided></View>
   );
@@ -501,7 +501,15 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
   const [busy, setBusy] = useState(false);
   const [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
   const [productMode, setProductMode] = useState<'regular' | 'custom'>('regular');
-  useEffect(() => { if (!product.id) goodiesApi.listBuilders(app.biz.id).then(rows => setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled))).catch(() => setCustomTypes([])); }, [product.id, app.biz.id]);
+  const [customLoading, setCustomLoading] = useState(!product.id), [customError, setCustomError] = useState(false), [customAttempt, setCustomAttempt] = useState(0);
+  useEffect(() => {
+    if (product.id) return;
+    let active = true;
+    setCustomLoading(true);setCustomError(false);setCustomTypes([]);
+    void goodiesApi.listBuilders(app.biz.id).then(rows => {if (active) setCustomTypes(rows.filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));})
+      .catch(() => {if (active) setCustomError(true);}).finally(() => {if (active) setCustomLoading(false);});
+    return () => {active = false;};
+  }, [product.id, app.biz.id, customAttempt]);
   const openCustom = (type: 'pizza' | 'burger') => {
     const existing = customTypes.find(x => x.type === type);
     onClose();
@@ -566,6 +574,8 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
     <Modal transparent animationType="slide" onRequestClose={onClose}>
       <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
         <SheetShell title={product.id ? 'Edit product' : 'Add product'} onClose={onClose} tall>
+          {!product.id && customLoading ? <Loading /> : null}
+          {!product.id && customError ? <ErrBox e="Could not load custom product types. Please try again." retry={() => setCustomAttempt(value => value + 1)} /> : null}
           {!product.id && customTypes.length > 0 ? <View style={{ marginBottom: 12 }}>
             <Text style={s.label}>Product type</Text>
             <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -606,32 +616,44 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
 export function GoodiesProductsPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { add?: boolean } | undefined;
   const add = route?.add;
-  const lst = useQ(() => goodiesApi.listProducts(app.biz.id), [app.biz.id, app.tick]);
+  const [page,setPage]=useState(0);
+  const lst = useQ(() => goodiesApi.listProducts(app.biz.id,page), [app.biz.id, app.tick,page]);
   const builders = useQ(() => goodiesApi.listBuilders(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
   useEffect(() => { if (add) setEdit(BLANK); }, [add]);
   const items = lst.d ?? [];
   const customItems = (builders.d ?? []).filter(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled && x.productCreated !== false);
-  const toggle = async (p: GProduct, v: boolean) => { try { await goodiesApi.saveProduct(app.biz.id, { id: p.id, available: v }); lst.reload(); } catch (e) { app.toast(errText(e)); } };
+  const [availabilityBusy, setAvailabilityBusy] = useState('');
+  const availabilityLock = useRef(false);
+  const toggle = async (p: GProduct, v: boolean) => {
+    if(availabilityLock.current || p.reviewStatus!=='approved')return;
+    availabilityLock.current=true;setAvailabilityBusy(p.id);
+    try {await goodiesApi.saveProduct(app.biz.id,{id:p.id,available:v});await lst.reload();}
+    catch(e){app.toast(errText(e));}
+    finally{availabilityLock.current=false;setAvailabilityBusy('');}
+  };
   const toggleCustom = async (b: GBuilder, v: boolean) => {
+    if(availabilityLock.current)return;availabilityLock.current=true;setAvailabilityBusy(b.id);
     try {
       await goodiesApi.saveBuilders(app.biz.id, (builders.d ?? []).map(x => x.id === b.id ? { ...x, available: v } : x));
-      builders.reload(); app.bump();
-    } catch (e) { app.toast(errText(e)); }
+      await builders.reload(); app.bump();
+    } catch (e) { app.toast(errText(e)); } finally {availabilityLock.current=false;setAvailabilityBusy('');}
   };
   return (
     <Pg title="Products" onBack={app.back} refreshing={lst.l && !!lst.d} onRefresh={lst.reload}>
       <Btn label="+ Add product" onPress={() => setEdit(BLANK)} />
       <View style={{ height: 8 }} />
 
-      {lst.e && !lst.d ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
+      {lst.e ? <ErrBox e={lst.e} retry={lst.reload} /> : lst.l && !lst.d ? <Skel h={120} /> : items.length ? (
         <View style={s.cardFlat}><Divided>{items.map(p => (
           <Row key={p.id} left={(p.photoUrls?.[0] || p.photoUrl) ? <Image source={{ uri: p.photoUrls?.[0] || p.photoUrl! }} style={{ width: 48, height: 48, borderRadius: 10, marginRight: 6 }} /> : <Text style={{ fontSize: 26, marginRight: 4 }}>{p.emoji}</Text>} title={p.name} sub={`${dollars(p.price)} · ${p.stock > 0 ? p.stock + ' in stock' : 'Out of stock'}${p.restriction !== 'none' ? ' · ' + (p.restriction === 'alcohol' ? 'Alcohol' : 'Over the counter') : ''}`}
-            onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.stock <= 0} onValueChange={(v: boolean) => toggle(p, v)} />} />
+            sub2={p.reviewStatus==='rejected' ? 'Rejected'+(p.reviewNote ? ': '+p.reviewNote : '') : p.reviewStatus==='pending' ? 'Awaiting review' : availabilityBusy===p.id ? 'Saving…' : undefined} onPress={() => setEdit(p)} right={<Toggle value={p.available} disabled={p.stock <= 0 || p.reviewStatus!=='approved' || !!availabilityBusy} onValueChange={(v: boolean) => toggle(p, v)} />} />
         ))}</Divided></View>
       ) : null}
-      {customItems.length ? <><Section title="Custom products" /><View style={s.cardFlat}><Divided>{customItems.map(b => <Row key={b.id} title={b.name} sub={`${b.type === 'pizza' ? 'Pizza' : 'Burger'} · ${dollars(Number(b.base) || 0)} base price`} onPress={() => app.go('goodiesBuilder', { id: b.id })} right={<Toggle value={b.available} onValueChange={(v: boolean) => toggleCustom(b, v)} />} />)}</Divided></View></> : null}
-      {!items.length && !customItems.length && !lst.l ? <View style={s.cardFlat}><Empty icon="package-variant-closed" title="No products yet" cta="Add product" onCta={() => setEdit(BLANK)} /></View> : null}
+      {builders.e ? <ErrBox e={builders.e} retry={builders.reload} /> : builders.l && !builders.d ? <Skel h={100} /> : null}
+      {customItems.length ? <><Section title="Custom products" /><View style={s.cardFlat}><Divided>{customItems.map(b => <Row key={b.id} title={b.name} sub={`${b.type === 'pizza' ? 'Pizza' : 'Burger'} · ${dollars(Number(b.base) || 0)} base price`} onPress={() => app.go('goodiesBuilder', { id: b.id })} right={<Toggle value={b.available} disabled={!!availabilityBusy} onValueChange={(v: boolean) => toggleCustom(b, v)} />} />)}</Divided></View></> : null}
+      {!items.length && !customItems.length && !lst.l && !lst.e && !builders.l && !builders.e ? <View style={s.cardFlat}><Empty icon="package-variant-closed" title={page>0 ? "No products on this page" : "No products yet"} cta="Add product" onCta={() => setEdit(BLANK)} /></View> : null}
+      <View style={[s.row,{marginTop:12}]}><Btn label="Previous page" kind="soft" disabled={page===0||lst.l} onPress={()=>setPage(p=>p-1)} /><Btn label="Next page" kind="soft" disabled={lst.l||items.length<100} onPress={()=>setPage(p=>p+1)} /></View>
       <GoLiveCard />
       {edit ? <ProductSheet product={edit} onClose={() => setEdit(null)} onSaved={() => { setEdit(null); lst.reload(); }} /> : null}
     </Pg>
@@ -781,8 +803,14 @@ export function GoodiesRequestsPage() {
   const blank = { name: '', builder: route?.builder || 'burger' as GRequest['builder'], role: '', note: '' };
   const [f, setF] = useState(blank);
   useEffect(() => { if (route?.open) setOpen(true); if (route?.builder) setF(current => ({ ...current, builder: route.builder! })); }, [route?.open, route?.builder]);
-  const load = () => goodiesApi.listRequests(app.biz.id).then(setList).catch(e => app.toast(errText(e)));
-  useEffect(() => { void load(); goodiesApi.rules().then(setRules).catch(() => setRules('')); }, [app.biz.id]);
+  const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(false);
+  const load = async () => {
+    setLoading(true);setLoadError(false);
+    try {const [requests, photoRules] = await Promise.all([goodiesApi.listRequests(app.biz.id), goodiesApi.rules()]);setList(requests);setRules(photoRules);}
+    catch {setLoadError(true);}
+    finally {setLoading(false);}
+  };
+  useEffect(() => { void load(); }, [app.biz.id]);
   const choose = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) return app.toast('Allow photo access to add a picture');
@@ -804,9 +832,9 @@ export function GoodiesRequestsPage() {
   return (
     <Pg title="Ingredient requests" onBack={app.back} right={undefined}>
       <Text style={s.mut}>Send a request with a photo and our team will review it. If approved, the ingredient appears in the library for your selected product type. You can then choose whether to offer it, set its price and define customer limits.</Text>
-      <View style={{ height: 10 }} /><Btn label="Request an ingredient" onPress={() => setOpen(true)} />
+      <View style={{ height: 10 }} /><Btn label="Request an ingredient" disabled={loading || loadError} onPress={() => setOpen(true)} />
       <Section title="Your requests" />
-      {list.length === 0 ? <Text style={s.mut}>No requests yet.</Text> : <View style={s.cardFlat}><Divided>{list.map(r => <Row key={r.id} title={r.name} sub={`${r.builder}${r.role ? ' · ' + r.role : ''}${r.photo ? ' · photo sent' : ''}${r.reviewNote ? '\n' + r.reviewNote : ''}`} right={<Pill tone={tone(r.status)}>{label[r.status]}</Pill>} />)}</Divided></View>}
+      {loading ? <Skel h={120} /> : loadError ? <ErrBox e="Could not load ingredient requests." retry={load} /> : list.length === 0 ? <Text style={s.mut}>No requests yet.</Text> : <View style={s.cardFlat}><Divided>{list.map(r => <Row key={r.id} title={r.name} sub={`${r.builder}${r.role ? ' · ' + r.role : ''}${r.photo ? ' · photo sent' : ''}${r.reviewNote ? '\n' + r.reviewNote : ''}`} right={<Pill tone={tone(r.status)}>{label[r.status]}</Pill>} />)}</Divided></View>}
       {open ? (
         <Modal transparent animationType="slide" onRequestClose={() => setOpen(false)}>
           <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,.45)', justifyContent: 'flex-end' }}>
@@ -832,4 +860,17 @@ export function GoodiesRequestsPage() {
       ) : null}
     </Pg>
   );
+}
+
+export function GoodiesReviewsPage() {
+  const app = useApp(), s = useS();
+  const [page, setPage] = useState(0);
+  const reviews = useQ(() => q<any[]>(supabase.from('goodies_order_reviews')
+    .select('order_id,target,rating,comment,created_at').eq('business_id',app.biz.id)
+    .order('created_at',{ascending:false}).order('order_id',{ascending:false}).order('target')
+    .range(page*50,page*50+49)), [app.biz.id,app.tick,page]);
+  return <Pg title="Goodies reviews" onBack={app.back} refreshing={reviews.l} onRefresh={reviews.reload}>
+    {reviews.e ? <ErrBox e={reviews.e} retry={reviews.reload} /> : reviews.l ? <Skel h={140} /> : (reviews.d || []).length ? <View style={s.cardFlat}><Divided>{(reviews.d || []).map(r => <Row key={r.order_id+r.target} title={`${r.rating} / 5 · ${r.target==='driver'?'Delivery':'Store'}`} sub={r.comment || 'No comment'} sub2={new Date(r.created_at).toLocaleDateString()} />)}</Divided></View> : <Empty title="No reviews yet" />}
+    <View style={[s.row,{marginTop:12}]}><Btn kind="soft" label="Previous page" disabled={page===0||reviews.l} onPress={()=>setPage(p=>p-1)} /><Btn kind="soft" label="Next page" disabled={reviews.l||(reviews.d||[]).length<50} onPress={()=>setPage(p=>p+1)} /></View>
+  </Pg>;
 }

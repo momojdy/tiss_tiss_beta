@@ -1,0 +1,274 @@
+[
+  {
+    "id": "lbl.notification.orderAccepted.title",
+    "text": "Goodies order accepted"
+  },
+  {
+    "id": "lbl.notification.orderAccepted.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderPreparing.title",
+    "text": "Store is preparing your Goodies order"
+  },
+  {
+    "id": "lbl.notification.orderPreparing.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderReady.title",
+    "text": "Goodies order is ready"
+  },
+  {
+    "id": "lbl.notification.orderReady.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderCompleted.title",
+    "text": "Goodies order completed"
+  },
+  {
+    "id": "lbl.notification.orderCompleted.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderCancelled.title",
+    "text": "Goodies order cancelled"
+  },
+  {
+    "id": "lbl.notification.orderCancelled.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.ownDriverOnWay.title",
+    "text": "Your order is on its way"
+  },
+  {
+    "id": "lbl.notification.ownDriverOnWay.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.receiptConfirmation.title",
+    "text": "Did you receive your order?"
+  },
+  {
+    "id": "lbl.notification.receiptConfirmation.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.disputeResolution.title",
+    "text": "Your report was reviewed"
+  },
+  {
+    "id": "lbl.notification.disputeResolution.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.courierAccepted.title",
+    "text": "Courier accepted your order"
+  },
+  {
+    "id": "lbl.notification.courierAccepted.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.courierDeclined.title",
+    "text": "Courier declined the offer"
+  },
+  {
+    "id": "lbl.notification.courierDeclined.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.courierExpired.title",
+    "text": "Courier offer expired"
+  },
+  {
+    "id": "lbl.notification.courierExpired.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderPlaced.title",
+    "text": "Goodies order placed"
+  },
+  {
+    "id": "lbl.notification.orderPlaced.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderScheduled.title",
+    "text": "Goodies order scheduled"
+  },
+  {
+    "id": "lbl.notification.orderScheduled.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderExpired.title",
+    "text": "Goodies order expired"
+  },
+  {
+    "id": "lbl.notification.orderExpired.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.orderDeclined.title",
+    "text": "Store declined your Goodies order"
+  },
+  {
+    "id": "lbl.notification.orderDeclined.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.restaurantCancelled.title",
+    "text": "Restaurant cancelled your Goodies order"
+  },
+  {
+    "id": "lbl.notification.restaurantCancelled.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.cardVerificationExpired.title",
+    "text": "Goodies card verification expired"
+  },
+  {
+    "id": "lbl.notification.cardVerificationExpired.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.paymentFailed.title",
+    "text": "Goodies payment failed"
+  },
+  {
+    "id": "lbl.notification.paymentFailed.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.newVendorOrder.title",
+    "text": "New Goodies order"
+  },
+  {
+    "id": "lbl.notification.newVendorOrder.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.scheduledOrderDue.title",
+    "text": "Scheduled Goodies order is due"
+  },
+  {
+    "id": "lbl.notification.scheduledOrderDue.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.deliveryReported.title",
+    "text": "Delivery reported"
+  },
+  {
+    "id": "lbl.notification.deliveryReported.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.courierOffered.title",
+    "text": "Courier offer sent"
+  },
+  {
+    "id": "lbl.notification.courierOffered.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_product_review.title",
+    "text": "Goodies product review"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_product_review.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.goodies_admin_product_submission.title",
+    "text": "Goodies product awaiting review"
+  },
+  {
+    "id": "lbl.notification.goodies_admin_product_submission.body",
+    "text": "{details}"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_requested.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_requested.body",
+    "text": "Your Goodies payout request was recorded. Open payouts to check its status."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_processing.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_processing.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_completed.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_completed.body",
+    "text": "Your Goodies payout is completed."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_failed.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_payout_failed.body",
+    "text": "Your Goodies payout could not be completed. Open payouts to review it."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_paid.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_paid.body",
+    "text": "Your Goodies cash-order commission payment is completed."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_verified.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_verified.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_destination_rejected.body",
+    "text": "Your Goodies settlement details were updated. Open payouts to review them."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_cash_remittance_received.body",
+    "text": "Courier cash remittance was confirmed. Open payouts to review your balance."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due.body",
+    "text": "Your weekly Goodies commission settlement is due. Open payouts to review the amount."
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.title",
+    "text": "Goodies settlement update"
+  },
+  {
+    "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.body",
+    "text": "Your weekly Goodies commission settlement is due within 24 hours."
+  }
+]

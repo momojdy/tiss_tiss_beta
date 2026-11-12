@@ -11,7 +11,7 @@ export type SettingsDetailKey = 'language' | 'regionCurrency' | 'notifications' 
 type Props = { screen: SettingsDetailKey; onBack: () => void };
 const INK = '#1E1B3A', MUTED = '#8D8997', PINK = '#FCE4F1', LINE = '#F0EDF0';
 const TITLES: Record<SettingsDetailKey,string> = { language:'Language', regionCurrency:'Region & Currency', notifications:'Notifications', privacy:'Privacy & Permissions', help:'Help Center', about:'About Wantiss' };
-const LANGUAGES = ['English','Kreyòl Ayisyen','Français','Español'];
+const LANGUAGES = ['English','Kreyòl Ayisyen','Français','Español','简体中文'];
 const REGIONS = ['Haiti','United States','Dominican Republic','Canada','Philippines','France'];
 const CURRENCIES = ['USD','HTG','DOP'];
 

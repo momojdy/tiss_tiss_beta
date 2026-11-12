@@ -1,3 +1,4 @@
+import {label as cmsLabel} from '../../features/Goodies/content';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -340,7 +341,7 @@ export const fmtDay = (d: Date) => d.toLocaleDateString('en', { month: 'short', 
 export const ago = (v: string) => { const s = (Date.now() - new Date(v).getTime()) / 1000; return s < 60 ? 'just now' : s < 3600 ? `${Math.floor(s / 60)} min ago` : s < 86400 ? `${Math.floor(s / 3600)} hr ago` : `${Math.floor(s / 86400)}d ago`; };
 export const dayHead = (v: string) => { const d = new Date(v), n = Math.round((new Date().setHours(0, 0, 0, 0) - new Date(d).setHours(0, 0, 0, 0)) / 864e5); return n === 0 ? 'Today' : n === 1 ? 'Yesterday' : d.toLocaleDateString('en', { weekday: 'short', month: 'short', day: 'numeric' }); };
 export const initials = (n: string) => n.split(/\s+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase();
-export const errText = (e: unknown) => (e instanceof Error ? e.message : String((e as { message?: string })?.message ?? e ?? 'Something went wrong'));
+export const errText = (error: unknown) => {const code=(error as any)?.code;if(code==='P4201')return cmsLabel('lbl.settlement.cashLimit','Settle Goodies cash-order commission to accept more cash orders.');if(code==='P4202')return cmsLabel('lbl.settlement.cashUnavailable','Cash ordering is temporarily unavailable. Please try again later.');return 'Could not complete this request. Please try again.';};
 export const displayText = (v: unknown): string => {
   if (v == null) return '';
   if (typeof v === 'string' || typeof v === 'number' || typeof v === 'boolean') return String(v);
@@ -371,7 +372,7 @@ export const DEFAULT_RULES: PayRule[] = [
   { method: 'wal', name: 'Wantiss wallet', cap: 0, window_days: 0, fee: 0, eta: '', needs_bank: false },
 ];
 export const LANGUAGES = ['English', 'Français', 'Español', 'Português', 'العربية', 'Kiswahili', 'Hausa', 'Yorùbá'];
-export const COUNTRIES = ("NG|Nigeria|234;GH|Ghana|233;KE|Kenya|254;ZA|South Africa|27;EG|Egypt|20;MA|Morocco|212;TZ|Tanzania|255;UG|Uganda|256;ET|Ethiopia|251;SN|Senegal|221;CI|Côte d'Ivoire|225;CM|Cameroon|237;DZ|Algeria|213;TN|Tunisia|216;RW|Rwanda|250;ZM|Zambia|260;ZW|Zimbabwe|263;AO|Angola|244;MZ|Mozambique|258;BW|Botswana|267;NA|Namibia|264;US|United States|1;CA|Canada|1;GB|United Kingdom|44;IE|Ireland|353;FR|France|33;DE|Germany|49;ES|Spain|34;PT|Portugal|351;IT|Italy|39;NL|Netherlands|31;BE|Belgium|32;CH|Switzerland|41;SE|Sweden|46;NO|Norway|47;DK|Denmark|45;PL|Poland|48;TR|Türkiye|90;AE|United Arab Emirates|971;SA|Saudi Arabia|966;QA|Qatar|974;KW|Kuwait|965;IL|Israel|972;IN|India|91;PK|Pakistan|92;BD|Bangladesh|880;LK|Sri Lanka|94;CN|China|86;JP|Japan|81;KR|South Korea|82;SG|Singapore|65;MY|Malaysia|60;ID|Indonesia|62;PH|Philippines|63;TH|Thailand|66;VN|Vietnam|84;AU|Australia|61;NZ|New Zealand|64;BR|Brazil|55;MX|Mexico|52;AR|Argentina|54;CO|Colombia|57;CL|Chile|56;PE|Peru|51;JM|Jamaica|1876;TT|Trinidad and Tobago|1868")
+export const COUNTRIES = ("NG|Nigeria|234;GH|Ghana|233;KE|Kenya|254;ZA|South Africa|27;EG|Egypt|20;MA|Morocco|212;TZ|Tanzania|255;UG|Uganda|256;ET|Ethiopia|251;SN|Senegal|221;CI|Côte d'Ivoire|225;CM|Cameroon|237;DZ|Algeria|213;TN|Tunisia|216;RW|Rwanda|250;ZM|Zambia|260;ZW|Zimbabwe|263;AO|Angola|244;MZ|Mozambique|258;BW|Botswana|267;NA|Namibia|264;US|United States|1;CA|Canada|1;GB|United Kingdom|44;IE|Ireland|353;FR|France|33;DE|Germany|49;ES|Spain|34;PT|Portugal|351;IT|Italy|39;NL|Netherlands|31;BE|Belgium|32;CH|Switzerland|41;SE|Sweden|46;NO|Norway|47;DK|Denmark|45;PL|Poland|48;TR|Türkiye|90;AE|United Arab Emirates|971;SA|Saudi Arabia|966;QA|Qatar|974;KW|Kuwait|965;IL|Israel|972;IN|India|91;PK|Pakistan|92;BD|Bangladesh|880;LK|Sri Lanka|94;CN|China|86;JP|Japan|81;KR|South Korea|82;SG|Singapore|65;MY|Malaysia|60;ID|Indonesia|62;HT|Haiti|509;PH|Philippines|63;TH|Thailand|66;VN|Vietnam|84;AU|Australia|61;NZ|New Zealand|64;BR|Brazil|55;MX|Mexico|52;AR|Argentina|54;CO|Colombia|57;CL|Chile|56;PE|Peru|51;JM|Jamaica|1876;TT|Trinidad and Tobago|1868")
   .split(';').map(x => { const p = x.split('|'); return { code: p[0], name: p[1], dial: p[2] }; });
 export const flagOf = (c: string) => c.replace(/./g, ch => String.fromCodePoint(127397 + ch.charCodeAt(0)));
 export const countryOf = (c?: string | null) => COUNTRIES.find(x => x.code === c) ?? COUNTRIES[0];
@@ -411,7 +412,7 @@ export interface App {
   wizard: (feature: string, listingId?: string | null) => void;
   range: Range; setRange: (r: Range) => void;
   selectBiz: (id: string) => void; reloadBiz: () => void;
-  onBuyer: () => void; onSignOut: () => void;
+  onBuyer: () => void; onWallet?: () => void; onSignOut: () => void;
   dark: boolean; setDark: (d: boolean) => void; lang: string; setLang: (l: string) => void;
   pref: { push: boolean; email: boolean }; setPref: (p: { push: boolean; email: boolean }) => void;
   regDismissed: boolean; dismissReg: () => void;
@@ -468,7 +469,7 @@ export function Seg({ items, value, onChange }: any) {
   const t = useTheme();
   return <View style={{ flexDirection: 'row', backgroundColor: t.chip, borderRadius: 12, padding: 3 }}>{items.map((x: string) => <Pressable key={x} onPress={() => onChange(x)} style={{ flex: 1, paddingVertical: 8, borderRadius: 9, alignItems: 'center', backgroundColor: value === x ? t.card : 'transparent' }}><Text style={{ fontSize: 12, fontWeight: '700', color: value === x ? t.ink : t.mute }}>{x}</Text></Pressable>)}</View>;
 }
-export function Toggle({ value, onValueChange }: any) { const t = useTheme(); return <Switch value={value} onValueChange={onValueChange} trackColor={{ false: t.line, true: t.blue }} thumbColor="#fff" />; }
+export function Toggle({ value, onValueChange, disabled, accessibilityLabel }: any) { const t = useTheme(); return <Switch disabled={disabled} accessibilityLabel={accessibilityLabel} value={value} onValueChange={onValueChange} trackColor={{ false: t.line, true: t.blue }} thumbColor="#fff" />; }
 export function Section({ title, right, onRight }: any) { const s = useS(); return <View style={s.sec}><Text style={s.secT}>{displayText(title)}</Text>{right ? <Pressable onPress={onRight}><Text style={s.link}>{displayText(right)}</Text></Pressable> : null}</View>; }
 export function Field({ label, style, ...rest }: any) { const s = useS(), t = useTheme(); return <View>{label ? <Text style={s.label}>{displayText(label)}</Text> : null}<TextInput placeholderTextColor={t.mute} {...rest} style={[s.fld, style]} /></View>; }
 export function Empty({ icon = 'text-box-search-outline', title, hint, cta, onCta }: any) {
@@ -971,12 +972,12 @@ export function Banner({ icon = 'credit-card-outline', text, onPress, tone = 'so
     </Pressable>
   );
 }
-export function WalletCard({ available, pending }: any) {
+export function WalletCard({ available, pending, title, payoutLabel }: any) {
   const app = useApp(), p = app.meta.payout;
-  const setup = p?.status === 'verified' ? `•••• ${p.last4 ?? ''}` : p ? 'Verifying' : 'Not ready';
+  const setup = payoutLabel ?? (p?.status === 'verified' ? `•••• ${p.last4 ?? ''}` : p ? 'Verifying' : 'Not ready');
   return (
     <Pressable onPress={() => app.panel('payouts')} style={{ borderRadius: 22, backgroundColor: LIGHT.blue, padding: 20 }}>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}><Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 1.2, color: '#DDE5FF' }}>AVAILABLE BALANCE</Text><Icon name="shield-check-outline" size={20} color="#DDE5FF" /></View>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}><Text style={{ fontSize: 10, fontWeight: '800', letterSpacing: 1.2, color: '#DDE5FF' }}>{title || 'AVAILABLE BALANCE'}</Text><Icon name="shield-check-outline" size={20} color="#DDE5FF" /></View>
       <Text style={{ fontSize: 34, fontWeight: '800', color: '#fff', marginTop: 10 }}>{money(available)}</Text>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 20 }}>
         <View><Text style={{ fontSize: 11, color: '#DDE5FF' }}>Pending</Text><Text style={{ fontSize: 14, fontWeight: '700', color: '#fff', marginTop: 3 }}>{money(pending)}</Text></View>

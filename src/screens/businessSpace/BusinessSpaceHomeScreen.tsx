@@ -1,3 +1,4 @@
+import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import QRCode from 'react-native-qrcode-svg';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -21,23 +22,26 @@ import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, S
 
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
-  const sum = useQ(() => rpc<any>('dashboard_range', { p_business: biz.id, p_from: range.from, p_to: range.to, p_feature: null }), [biz.id, range.from, range.to, app.tick]);
+  const sum = useQ(() => getBusinessFinancialSummary(app), [biz.id, range.from, range.to, app.tick,isGoodiesOnlyBusiness(app)]);
   const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
   const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
   const cnt = useQ(async () => ({
     l: await q<any[]>(supabase.from('listings').select('feature,status').eq('business_id', biz.id)),
     p: await q<any[]>(supabase.from('goodies_products').select('id').eq('business_id', biz.id)),
     b: await q<any[]>(supabase.from('goodies_builder_configs').select('builder_id,enabled,config').eq('business_id', biz.id).eq('enabled', true)),
+    g: await (async()=>{const {count,error}=await supabase.from('goodies_orders').select('id',{count:'exact',head:true}).eq('business_id',biz.id).not('status','in','(completed,cancelled,declined,expired)');if(error)throw error;return count||0;})(),
     o: await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id))
   }), [biz.id, app.tick]);
-  const d = sum.d, refreshing = !!d && (sum.l || act.l);
+  const validMoney = (value:unknown) => (typeof value==='number'||(typeof value==='string'&&!!value.trim()))&&Number.isFinite(Number(value));
+  const summaryValid = !!sum.d && (!isGoodiesOnlyBusiness(app)||sum.d.business_id===biz.id) && validMoney(sum.d.available) && validMoney(sum.d.pending) && validMoney(sum.d.revenue);
+  const d = summaryValid ? sum.d : null, refreshing = !!d && (sum.l || act.l);
   const payOK = meta.payout?.status === 'verified', hasF = meta.feats.length > 0;
   const top = (d?.features ?? []).filter((x: any) => Number(x.amount) > 0).sort((a: any, b: any) => b.amount - a.amount);
   const total = top.reduce((a: number, x: any) => a + Number(x.amount), 0) || 1;
   const rev = Number(d?.revenue ?? 0), prev = Number(d?.prev_revenue ?? 0), growth = prev ? ((rev - prev) / Math.abs(prev)) * 100 : null;
   const ser: { d: string; v: number }[] = d?.series ?? [], mx = Math.max(1, ...ser.map(x => Math.abs(x.v))), hasSales = ser.some(x => x.v !== 0);
   const actions: any[] = act.d ?? [];
-  const open = (k: string) => (cnt.d?.o ?? []).filter((o: any) => o.feature === k && !FX.FM[k].flow.slice(-1).includes(o.status) && o.status !== 'Cancelled').length;
+  const open = (k: string) => k==='goodies' ? cnt.d?.g || 0 : (cnt.d?.o ?? []).filter((o: any) => o.feature === k && !FX.FM[k].flow.slice(-1).includes(o.status) && o.status !== 'Cancelled').length;
   const lcount = (k: string) => k === 'goodies'
     ? (cnt.d?.p ?? []).length + (cnt.d?.b ?? []).filter((row: any) => row.config?.enabled !== false && row.config?.available !== false).length
     : (cnt.d?.l ?? []).filter((l: any) => l.feature === k && l.status !== 'archived').length;
@@ -48,12 +52,14 @@ export function Home() {
       {['setup', 'action'].includes(biz.verification) && !app.regDismissed ? <Banner icon="check-decagram-outline" text={biz.verification === 'action' ? 'Update your registration documents' : 'Register your business to earn the Verified badge'} cta="Register" onPress={() => app.go('registration')} onClose={app.dismissReg} /> : null}
       {biz.verification === 'pending' ? <Banner icon="clock-outline" text="Registration is in review" onPress={() => app.go('registration')} /> : null}
       {biz.verification === 'restricted' ? <Banner tone="bad" icon="alert-circle-outline" text="Your business is restricted. View details" onPress={() => app.go('registration')} /> : null}
-      {!payOK && biz.verification !== 'restricted' ? <Banner text={meta.payout ? 'Payout setup is in review' : 'Add a payout method to receive earnings'} onPress={() => app.sheet('payout')} /> : null}
-      {sum.e && !d ? <ErrBox e={sum.e} retry={() => { sum.reload(); app.bump(); }} /> : <WalletCard available={d?.available ?? 0} pending={d?.pending ?? 0} />}
+      {!isGoodiesOnlyBusiness(app) && !payOK && biz.verification !== 'restricted' ? <Banner text={meta.payout ? 'Payout setup is in review' : 'Add a payout method to receive earnings'} onPress={() => app.sheet('payout')} /> : null}
+      {sum.l&&!d ? <Skel h={140} /> : sum.e||!d ? <ErrBox e="Financial summary unavailable." retry={() => { sum.reload(); app.bump(); }} /> : <WalletCard available={d.available} pending={d.pending} title={isGoodiesOnlyBusiness(app)?"GOODIES AVAILABLE":undefined} payoutLabel={isGoodiesOnlyBusiness(app)?d.wallet_ready?"Wantiss Wallet":"Create Wantiss Wallet":undefined} />}
+      {act.e ? <ErrBox e={act.e} retry={act.reload} /> : act.l&&!act.d ? <Skel h={65} /> : null}
+      {cnt.e ? <ErrBox e={cnt.e} retry={cnt.reload} /> : null}
       {!hasF ? (
         <>
           <Checklist />
-          <View style={s.card}><Empty icon="chart-line" title="No revenue yet" hint="Sales appear here after your first completed order." /></View>
+          {d && !sum.e && Number(d.revenue)===0 ? <View style={s.card}><Empty icon="chart-line" title="No revenue yet" hint="Sales appear here after your first completed order." /></View> : null}
           {actions.length ? <ActionCard actions={actions} /> : null}
           <View style={s.card}><Empty icon="storefront-outline" title="No features yet" hint="Set up a Goodies restaurant or explore other features." cta="Explore features" onCta={() => app.go('explore')} /></View>
         </>
@@ -61,7 +67,7 @@ export function Home() {
         <>
           <RangeBar />
           <View style={s.card}>
-            {sum.l && !d ? <Skel h={190} /> : (
+            {sum.e || (!sum.l && !d) ? <ErrBox e="Sales summary unavailable." retry={sum.reload} /> : sum.l && !d ? <Skel h={190} /> : (
               <>
                 <View style={[s.row, { alignItems: 'flex-start' }]}>
                   <View style={s.g}><Text style={s.title}>Earnings</Text><Text style={s.mut}>{range.label}</Text></View>
@@ -99,7 +105,7 @@ export function Home() {
             {meta.feats.slice(0, 5).map(f => (
               <Pressable key={f.feature} onPress={() => app.go('feature', { k: f.feature })} style={{ width: '31.5%', minHeight: 112, borderRadius: 16, padding: 11, backgroundColor: t.card, borderWidth: 1, borderColor: t.line }}>
                 <FIcon k={f.feature} size={38} /><Text style={[s.rt, { fontSize: 11, marginTop: 8 }]}>{FX.FM[f.feature]?.name}</Text>
-                <Text style={{ fontSize: 10, color: t.mute, marginTop: 3 }}>{lcount(f.feature)} listings · {open(f.feature)} open</Text>
+                <Text style={{ fontSize: 10, color: t.mute, marginTop: 3 }}>{cnt.l ? 'Loading…' : cnt.e ? 'Counts unavailable' : `${lcount(f.feature)} listings · ${open(f.feature)} open`}</Text>
                 <Text style={{ fontSize: 10, color: t.good, fontWeight: '700', marginTop: 3 }}>● Active</Text>
               </Pressable>))}
             <Pressable onPress={() => app.go('explore')} style={{ width: '31.5%', minHeight: 112, borderRadius: 16, padding: 11, backgroundColor: t.soft, justifyContent: 'space-between' }}>
@@ -109,7 +115,7 @@ export function Home() {
           </View>
           <Section title="Recent activity" right="Latest updates" onRight={() => app.go('activity')} />
           <View style={s.cardFlat}>
-            {feed.l && !feed.d ? <View style={{ padding: 12 }}><Skel h={150} /></View> : (feed.d ?? []).length ? <Divided>{(feed.d ?? []).map((a: any) => <ActivityRow key={a.id} a={a} />)}</Divided> : <Empty icon="history" title="No activity yet" hint="Orders, refunds and payouts appear here." />}
+            {feed.e ? <ErrBox e={feed.e} retry={feed.reload} /> : feed.l && !feed.d ? <View style={{ padding: 12 }}><Skel h={150} /></View> : (feed.d ?? []).length ? <Divided>{(feed.d ?? []).map((a: any) => <ActivityRow key={a.id} a={a} />)}</Divided> : <Empty icon="history" title="No activity yet" hint="Orders, refunds and payouts appear here." />}
           </View>
         </>
       )}

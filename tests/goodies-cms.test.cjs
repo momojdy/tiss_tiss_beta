@@ -1,6 +1,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript');
 const {test}=require('node:test'),{analyze}=require('../scripts/goodies-cms-source.cjs');
 const root=path.resolve(__dirname,'../src/features/Goodies'),state={S:{lang:'en'},contentHooks:{}},cache=new Map();
+let remoteContent={content:[],assets:[]};
 function load(filename){
  if(cache.has(filename))return cache.get(filename).exports;
  const module={exports:{}};cache.set(filename,module);
@@ -8,7 +9,7 @@ function load(filename){
  function local(id){
   if(id==='@react-native-async-storage/async-storage')return {getItem:async()=>null,setItem:async()=>{},removeItem:async()=>{}};
   if(id.endsWith('/store'))return state;
-  if(id.endsWith('/wantissCms'))return {fetchPublishedWantissContent:async()=>({content:[],assets:[]})};
+  if(id.endsWith('/wantissCms'))return {fetchPublishedWantissContent:async()=>remoteContent};
   if(!id.startsWith('.'))return require(id);
   const target=path.resolve(path.dirname(filename),id),resolved=[target,target+'.ts',target+'.tsx',path.join(target,'index.ts')].find(p=>fs.existsSync(p)&&fs.statSync(p).isFile());
   if(!resolved)throw Error('Missing '+target);return load(resolved);
@@ -17,6 +18,18 @@ function load(filename){
 }
 const content=load(path.join(root,'content.ts')),i18n=load(path.join(root,'i18n/index.ts'));
 const source=analyze();
+test('published FAQ placeholders never become customer answers',()=>{
+ content.applyContent({v:5,faq:[{q:{en:{v:'Placeholder'}},a:{en:{v:'Answer coming soon.'}}},{q:{en:{v:'Real question'}},a:{en:{v:'Real answer'}}}]});
+ assert.deepEqual(content.faq([]),[['Real question','Real answer']]);
+});
+test('a failed CMS refresh preserves cached content, exposes retry state, and recovers from published data',async()=>{
+ content.applyContent({v:5,labels:[{id:'lbl.synthetic',t:{en:{v:'Cached copy',s:'reviewed'}}}]});
+ const pending=content.loadContent();assert.equal(content.contentStatus,'loading');await pending;
+ assert.equal(content.contentStatus,'error');assert.equal(content.label('lbl.synthetic','fallback'),'Cached copy');
+ remoteContent={content:[{content_key:'goodies.content',payload:{v:5,labels:[{id:'lbl.synthetic',t:{en:{v:'Reloaded copy',s:'reviewed'}}}]}}],assets:[]};
+ await content.loadContent();assert.equal(content.contentStatus,'ready');assert.equal(content.label('lbl.synthetic','fallback'),'Reloaded copy');
+ remoteContent={content:[],assets:[]};
+});
 test('every source CMS field resolves manually edited published text in each configured locale',()=>{
  const labels=source.entries.map(field=>({id:field.id,t:Object.fromEntries(['en','fr','ht','es','zh-Hans'].map(locale=>[locale,{v:locale+' edited '+field.text,s:'reviewed'}]))}));
  content.applyContent({v:5,labels});

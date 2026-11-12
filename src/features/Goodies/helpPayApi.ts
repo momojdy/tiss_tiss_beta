@@ -3,6 +3,7 @@
  * request state from Supabase and leaves Wallet ledger writes inside RPCs.
  */
 import {supabase} from '../../lib/supabase';
+export const GOODIES_SHARED_PAYMENTS_RELEASED=false;
 
 export type HelpPayMode='share'|'full';
 export type HelpPayStatus='pending'|'active'|'funded'|'expired'|'cancelled'|'fulfilled'|'refund_pending';
@@ -25,14 +26,29 @@ export const helpPayIdFromLink=(value:string)=>{
  const match=value.trim().match(/^wantiss:\/\/help-pay\/([0-9a-f-]{36})(?:[?#].*)?$/i);
  return match&&validHelpPayId(match[1])?match[1]:null;
 };
+export function parseHelpPaySnapshot(data:any):HelpPaySnapshot {
+ const amounts=['total_cents','initial_cents','contributed_cents','remaining_cents','my_contributed_cents'];
+ if(!data||typeof data!=='object'||!validHelpPayId(data.id)||
+   !['share','full'].includes(data.mode)||data.service!=='goodies'||
+   !['pending','active','funded','expired','cancelled','fulfilled','refund_pending'].includes(data.status)||
+   typeof data.is_creator!=='boolean'||!Number.isFinite(Date.parse(data.expires_at))||
+   amounts.some(key=>!Number.isSafeInteger(data[key])||data[key]<0)||data.total_cents<=0||
+   data.initial_cents+data.contributed_cents>data.total_cents||
+   data.remaining_cents!==data.total_cents-data.initial_cents-data.contributed_cents){
+   throw new Error('Payment request unavailable');
+ }
+ return data as HelpPaySnapshot;
+}
 export async function fetchHelpPayStatus(id:string):Promise<HelpPaySnapshot>{
  if(!validHelpPayId(id))throw new Error('Invalid Wantiss payment link');
  const {data,error}=await supabase.rpc('help_pay_status',{p_request_id:id});
  if(error)throw error;
- if(!data||typeof data!=='object')throw new Error('Payment request unavailable');
- return data as HelpPaySnapshot;
+ const snapshot=parseHelpPaySnapshot(data);
+ if(snapshot.id!==id)throw new Error('Payment request unavailable');
+ return snapshot;
 }
 export async function createHelpPayDraft(mode:HelpPayMode,totalCents:number,checkoutKey:string,checkoutSnapshot:Record<string,unknown>={}):Promise<string>{
+ if(!GOODIES_SHARED_PAYMENTS_RELEASED)throw new Error('Shared payments are not available yet.');
  if(!Number.isSafeInteger(totalCents)||totalCents<=0)throw new Error('Invalid bill total');
  const {data,error}=await supabase.rpc('help_pay_create_request',{p_mode:mode,p_total_cents:totalCents,p_checkout_key:checkoutKey,p_checkout_snapshot:checkoutSnapshot});
  if(error)throw error;
@@ -51,6 +67,7 @@ export async function cancelHelpPayRequest(requestId:string):Promise<void>{
  if(!data?.ok)throw new Error('Could not cancel this request');
 }
 export async function contributeToHelpPay(requestId:string,amountCents:number,key:string):Promise<{ok:boolean;status:string;order_id?:string;message?:string;refunded?:boolean}>{
+ if(!GOODIES_SHARED_PAYMENTS_RELEASED)throw new Error('Shared payments are not available yet.');
  if(!validHelpPayId(requestId)||!Number.isSafeInteger(amountCents)||amountCents<1)throw new Error('Invalid contribution');
  const {data,error}=await supabase.rpc('help_pay_contribute_wallet',{p_request_id:requestId,p_amount_cents:amountCents,p_idempotency_key:key});
  if(error)throw error;
