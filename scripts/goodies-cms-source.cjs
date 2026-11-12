@@ -8,6 +8,7 @@ function pageFor(node, ast, rel) {
   if(rel.endsWith('BusinessSpaceGoodiesOrders.tsx'))return 'Vendor orders';
   if(rel.includes('businessSpace/')) return 'Vendor settlement';
   for(let ancestor=node.parent;ancestor;ancestor=ancestor.parent) if(ts.isIfStatement(ancestor)&&rel==='components/Sheets.tsx'){const kind=/^k === ['"]([^'"]+)['"]$/.exec(ancestor.expression.getText(ast));if(kind) return 'Sheets · '+kind[1];}
+  if(rel.endsWith('mainAddressesScreen.tsx'))return 'Shared account addresses';
   if(rel.endsWith('WalletHelpPayScreen.tsx'))return 'Shared Bill contribution';
   if(rel.endsWith('WalletBalance.tsx'))return 'Payment methods';
   if(rel.endsWith('WalletAddNewCardScreen.tsx')) return 'Add card';
@@ -25,7 +26,7 @@ function analyze() {
   const entry=entries.get(id);if(!entry.pages.includes(page))entry.pages.push(page);
   references.push({id,page,source,line,fallback:text});
  };
- for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/Wallet/WalletHelpPayScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
+ for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/Wallet/WalletHelpPayScreen.tsx'),path.resolve(root,'../../screens/Main/mainAddressesScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
   if(!fs.existsSync(filename))continue;const source=fs.readFileSync(filename,'utf8'),ast=ts.createSourceFile(filename,source,99,true),rel=path.relative(root,filename);
   function visit(node){
    const line=ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1;
@@ -51,7 +52,7 @@ function analyze() {
  return {restrictionTexts:[...restrictionTexts.values()],entries:[...entries.values()].sort((a,b)=>a.id.localeCompare(b.id)),pages,references,routes};
 }
 function criticalKeys(result){
- const pages=new Set(['Vendor settlement','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation','Shared Bill requests','Shared Bill contribution']);
+ const pages=new Set(['Vendor settlement','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation','Shared Bill requests','Shared Bill contribution','Shared account addresses']);
  return [...new Set([...result.pages.filter(p=>pages.has(p.name)).flatMap(p=>p.fields),...result.restrictionTexts.map(r=>r.id),...result.entries.filter(e=>/^lbl\.(checkout|orders?|payments?|card|addcard|notifications?)/i.test(e.id)).map(e=>e.id),...result.references.filter(r=>['actions.ts','friendlyError.ts','serverSync.ts'].includes(r.source)).map(r=>r.id)])].sort();
 }
 module.exports={analyze,root,criticalKeys};

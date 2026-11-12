@@ -1440,9 +1440,9 @@
     "zh-Hans": "创建群组邀请"
   },
   "Create or join a group order first.": {
-    "fr": "Créez ou rejoignez d'abord une commande de groupe.",
-    "es": "Primero crea o únete a un pedido grupal.",
-    "zh-Hans": "首先创建或加入团单。"
+    "fr": "Créez ou rejoignez d’abord une commande groupée.",
+    "es": "Primero crea un pedido grupal o únete a uno.",
+    "zh-Hans": "请先创建或加入拼单。"
   },
   "Create wallet": {
     "fr": "Créer un portefeuille",
@@ -7213,5 +7213,35 @@
     "fr": "Chargement de la demande…",
     "es": "Cargando solicitud…",
     "zh-Hans": "正在加载请求…"
+  },
+  "This group invitation is unavailable. Create or join a group order again.": {
+    "fr": "Cette invitation est indisponible. Créez ou rejoignez de nouveau une commande groupée.",
+    "es": "Esta invitación no está disponible. Crea un pedido grupal o únete a uno de nuevo.",
+    "zh-Hans": "此拼单邀请已不可用。请重新创建或加入拼单。"
+  },
+  "Could not load your saved addresses and Goodies contact numbers. Please retry.": {
+    "fr": "Impossible de charger vos adresses et numéros de contact Goodies enregistrés. Réessayez.",
+    "es": "No se pudieron cargar tus direcciones y números de contacto de Goodies guardados. Reintenta.",
+    "zh-Hans": "无法加载已保存的地址和 Goodies 联系号码。请重试。"
+  },
+  "Sign in to view your saved addresses.": {
+    "fr": "Connectez-vous pour consulter vos adresses enregistrées.",
+    "es": "Inicia sesión para ver tus direcciones guardadas.",
+    "zh-Hans": "登录以查看已保存的地址。"
+  },
+  "Goodies contact numbers": {
+    "fr": "Numéros de contact Goodies",
+    "es": "Números de contacto de Goodies",
+    "zh-Hans": "Goodies 联系号码"
+  },
+  "Use these numbers at Goodies checkout.": {
+    "fr": "Utilisez ces numéros pour vos commandes Goodies.",
+    "es": "Usa estos números al finalizar pedidos de Goodies.",
+    "zh-Hans": "结账 Goodies 订单时可使用这些号码。"
+  },
+  "Checkout contact": {
+    "fr": "Contact pour la commande",
+    "es": "Contacto del pedido",
+    "zh-Hans": "订单联系人"
   }
 }
