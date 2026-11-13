@@ -540,6 +540,7 @@ async function placeMultiOrder() {
     if (!S.hasWallet) return stop(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.'), 2);
   }
   /* One road quote covers every store; each store gets its own share, so the shares add up to the single fee shown. */
+  const addressPayload = deliveryAddressPayload(a);
   const mq = await refreshGoodiesDeliveryQuote();
   if (!mq?.multi || !deliveryQuoteReady()) {
     return stop(S.deliveryQuoteError || 'Could not calculate the delivery fee. Please check the delivery address.');
