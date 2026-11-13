@@ -583,7 +583,7 @@ export async function refreshFirstDeliveryEligibility(force = false): Promise<bo
   firstDeliveryRequestUser = userId;
   firstDeliveryRequest = (async () => {
     const {count, error: historyError} = await supabase.from('goodies_orders')
-      .select('id', {count: 'exact', head: true}).eq('customer_id', userId);
+      .select('id', {count: 'exact', head: true}).eq('customer_id', userId).eq('order_type', 'delivery');
     if (historyError || count == null) throw historyError || new Error('First-delivery eligibility could not be verified.');
     const eligible = count === 0;
     S.firstOrderEligible = eligible;
