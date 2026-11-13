@@ -4,7 +4,7 @@ import {fees, label} from './content';
 import {supabase} from '../../lib/supabase';
 import {friendlyError} from './friendlyError';
 import {
-  cartStoreIds, lineStore, storeSub, maxStops, hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt, syncGroupOrderCartLine, removeGroupOrderCartLine, savedPoint, syncActiveGroup, validateActiveGroup, clearActiveGroup,
+  cartStoreIds, lineStore, storeSub, maxStops, hasAlcohol, alcAge, S, IT, STB, ui, toast, emit, save, push, reset, navBack, cartAdd, qtyIn, cnt, totals, pChk, isPk, addr, ctOf, phoneOK, reorderLines, money, hooks, done, cur, refreshLiveSchedules, refreshGoodiesAccess, first, contentHooks, getGoodiesCheckoutAttempt, completeGoodiesCheckoutAttempt, syncGroupOrderCartLine, removeGroupOrderCartLine, savedPoint, deliveryAddressPayload, deliveryQuoteReady, refreshGoodiesDeliveryQuote, refreshFirstDeliveryEligibility, syncActiveGroup, validateActiveGroup, clearActiveGroup,
 } from './store';
 
 export const CHOOSE_SIZE_CATS = ['restaurants', 'bakery', 'beverages'];
@@ -118,6 +118,11 @@ export function usePromo(c: string) {
 }
 export function goCheckout() {
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
+  if (!isPk() && (!deliveryQuoteReady() || (fees().firstFree && S.firstOrderEligible === null))) {
+    toast(label('lbl.cms.quoteWait', 'Verifying your first-delivery offer and calculating the delivery fee. Please retry shortly.'));
+    void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
+    return;
+  }
   const stopIds = cartStoreIds();
   if (stopIds.length > 1 && isPk()) {toast(label("lbl.cms.bcfa3aa2ef5b", "Ordering from several stores is available for delivery only.")); return;}
   for (const sid of stopIds) {
@@ -159,26 +164,16 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
   // A first-delivery discount must be based on server-confirmed history,
   // not on an empty local cache during account initialization.
   if (!providerInfo.demo && contentHooks.fees?.().firstFree) {
-    const {data: auth, error: authError} = await supabase.auth.getUser();
-    if (authError || !auth.user) {
-      toast(label("lbl.cms.8b44a234e658", "Unable to verify first-delivery eligibility. Please retry checkout."));
+    const eligible = await refreshFirstDeliveryEligibility(true);
+    if (eligible === null) {
+      toast(S.firstOrderEligibilityError || label('lbl.cms.8b44a234e658', 'Unable to verify first-delivery eligibility. Please retry checkout.'));
       return;
     }
-    const {count, error: historyError} = await supabase.from('goodies_orders')
-      .select('id', {count: 'exact', head: true})
-      .eq('customer_id', auth.user.id);
-    if (historyError || count == null) {
-      S.firstOrderEligible = null;
-      emit();
-      toast(label("lbl.cms.8b44a234e658", "Unable to verify first-delivery eligibility. Please retry checkout."));
-      return;
-    }
-    S.firstOrderEligible = count === 0;
-    emit();
   }
   if (cartStoreIds().length > 1) {if(helpPay){toast('Help Pay requests must contain items from one store.');return;}return placeMultiOrder();}
-  const t = totals(), st = t.st!;
+  const t = totals(), st = t.st;
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
+  if (!st?.live) {toast('This store is no longer available. Your cart is saved.'); reset('cart'); return;}
   if (!providerInfo.demo) {
     if (!helpPay && !['cash', 'wallet', 'card'].includes(S.pay)) {toast(label('lbl.actionChoosePayment', 'Choose Wantiss Wallet, a saved card, or cash.')); S.cs = 2; emit(); return;}
     if (!helpPay && S.pay === 'card' && !S.cards.length) {toast(label('lbl.actionAddSavedCard', 'Add a saved card before checking out.')); push('payments'); return;}
@@ -208,58 +203,23 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
   }
   let deliveryQuoteId: string | null = null;
   if (!providerInfo.demo && !pk) {
-    const pin = savedPoint(a);
-    const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(pin ? {latitude: pin[0], longitude: pin[1]} : {})};
-    const addressKey = JSON.stringify(addressPayload);
-    let quote = (S as any).deliveryFeeQuote;
-    const quoteIsCurrent = quote?.storeId === S.cart.sid && quote?.addressKey === addressKey && Number(quote?.expiresAt) > Date.now();
-    if (!quoteIsCurrent) {
-      const quoteResult = await supabase.functions.invoke('goodies-delivery-quote', {
-        body: {store_id: S.cart.sid, address: addressPayload},
-      });
-      if (quoteResult.error || !quoteResult.data?.quote_id) {
-        let detail = quoteResult.data?.error || '';
-        const response = quoteResult.error?.context;
-        if (!detail && response && typeof response.clone === 'function') {
-          try {
-            const payload = await response.clone().json();
-            detail = String(payload?.error || payload?.message || payload?.details || '');
-          } catch {
-            try { detail = String(await response.clone().text()).slice(0, 360); } catch { /* retain the SDK error */ }
-          }
-          if (!detail && Number(response.status) > 0) detail = 'Delivery quote failed (HTTP ' + response.status + '). Check the delivery address and try again.';
-        }
-        S.busy = 0;
-        let checkoutMessage = friendlyError(detail ? {message: detail} : quoteResult.error, label("lbl.cms.23eaba046138", "Could not calculate the road distance. Please check the delivery address."));
-        if (S.pay === 'wallet') {
-          const verified = await refreshPaymentOptions();
-          if (verified && (!S.hasWallet || S.wallet < t.total)) {
-            checkoutMessage = label('lbl.actionWalletInsufficient', 'Insufficient Wantiss wallet balance. Add funds or choose another payment method.');
-          }
-        }
-        toast(checkoutMessage);
-        emit();
-        return;
-      }
-      quote = {
-        quoteId: String(quoteResult.data.quote_id), fee: Number(quoteResult.data.fee),
-        storeId: S.cart.sid, addressKey, expiresAt: Date.now() + 5 * 60 * 1000,
-      };
-      (S as any).deliveryFeeQuote = quote;
-    }
-    deliveryQuoteId = String(quote.quoteId);
-    const oldFee = t.fee;
-    const promoFree = !!(S.promo && pChk(S.promo, t.sub, S.cart.sid).p?.ty === 'ship');
-    const firstFree = first() && !!contentHooks.fees?.().firstFree;
-    const fee = (promoFree || firstFree) ? 0 : Number(quote.fee);
-    t.fee = fee;
-    t.total = Math.round((t.sub + t.fee + t.svc - t.disc + t.tip) * 100) / 100;
-    if (Math.abs(oldFee - fee) > 0.005) {
+    const quote = await refreshGoodiesDeliveryQuote();
+    if (!quote?.quoteId || !deliveryQuoteReady()) {
       S.busy = 0;
-      toast(label("lbl.cms.e37b9c50c397", "Your road-based delivery fee is now ") + money(fee) + label("lbl.cms.be7a6005669c", ". Review the updated total and place your order again."));
+      toast(S.deliveryQuoteError || label('lbl.cms.23eaba046138', 'Could not calculate the delivery fee. Please check your address.'));
       emit();
       return;
     }
+    deliveryQuoteId = String(quote.quoteId);
+    const updated = totals();
+    if (Math.abs(t.fee - updated.fee) > 0.005) {
+      S.busy = 0;
+      toast(label('lbl.cms.e37b9c50c397', 'Your road-based delivery fee is now ') + money(updated.fee) + label('lbl.cms.be7a6005669c', '. Review the updated total and place your order again.'));
+      emit();
+      return;
+    }
+    t.fee = updated.fee;
+    t.total = updated.total;
   }
   const walletVerifiedAfterQuote = providerInfo.demo ? true : await refreshPaymentOptions();
   if (!providerInfo.demo && (helpPay ? helpPayMode === 'share' : S.pay === 'wallet') && !walletVerifiedAfterQuote) {
@@ -291,7 +251,7 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
       p_store_id: S.cart.sid,
       p_order_type: pk ? 'pickup' : 'delivery',
       p_scheduled_for: S.sch && S.sch > Date.now() ? new Date(S.sch).toISOString() : null,
-      p_address: pk ? null : {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(savedPoint(a) ? {latitude: savedPoint(a)![0], longitude: savedPoint(a)![1]} : {}), ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
+      p_address: pk ? null : {...deliveryAddressPayload(a), ...(deliveryQuoteId ? {delivery_quote_id: deliveryQuoteId} : {})},
       p_contact_phone: ct.ph,
       p_items: S.cart.lines.map((l: any) => ({k: l.k, id: l.id, n: l.n, e: l.e, photo: l.photo || IT[l.id]?.photo || null, p: l.p, q: l.q, d: l.d, nt: l.nt, byo: l.byo, options: l.byo ? undefined : (l.options || (() => {const parts = String(l.k || '').split('|'); const category = STB[S.cart.sid!]?.c; return {size: CHOOSE_SIZE_CATS.includes(category) ? (parts[1] === '1' ? 'large' : 'regular') : null, drink: parts[2] === '1', discount_pct: Number(parts[3] || 0)};})())})),
       p_subtotal: r2(t.sub), p_delivery_fee: r2(t.fee), p_service_fee: r2(t.svc), p_discount: r2(t.disc), p_tip: r2(t.tip), p_total: r2(t.total),
@@ -583,24 +543,9 @@ async function placeMultiOrder() {
     if (!S.hasWallet) return stop(label('lbl.actionWalletUnavailable', 'Your Wantiss wallet is not available. Create a wallet or choose another payment method.'), 2);
   }
   /* One road quote covers every store; each store gets its own share, so the shares add up to the single fee shown. */
-  const pin = savedPoint(a);
-  const addressPayload = {l: a.l, t: a.t, apt: a.apt, inst: a.inst, city: a.city, department: a.department, country: a.country, ...(pin ? {latitude: pin[0], longitude: pin[1]} : {})};
-  const addressKey = JSON.stringify(addressPayload), storeKey = ids.join(',');
-  let mq = (S as any).deliveryFeeQuote;
-  if (!(mq?.multi && mq.storeKey === storeKey && mq.addressKey === addressKey && Number(mq.expiresAt) > Date.now())) {
-    S.busy = 1; emit();
-    const quoteResult = await supabase.functions.invoke('goodies-delivery-quote', {body: {store_ids: ids, address: addressPayload}});
-    const quotes = Array.isArray(quoteResult.data?.quotes) ? quoteResult.data.quotes : [];
-    if (quoteResult.error || quotes.length !== ids.length) {
-      let detail = quoteResult.data?.error || '';
-      const response = quoteResult.error?.context;
-      if (!detail && response && typeof response.clone === 'function') {try {const payload = await response.clone().json(); detail = String(payload?.error || payload?.message || '');} catch { /* keep the generic message */ }}
-      return stop(friendlyError(detail ? {message: detail} : quoteResult.error, label("lbl.cms.b054edffa0ed", "Could not calculate the delivery fee. Please check the delivery address.")));
-    }
-    const perStore: Record<string, {id: string; fee: number}> = {};
-    quotes.forEach((q: any) => {perStore[String(q.store_id)] = {id: String(q.id), fee: Number(q.fee)};});
-    mq = {multi: true, storeKey, addressId: S.as, addressKey, fee: Number(quoteResult.data.delivery_fee), perStore, expiresAt: Date.now() + 5 * 60 * 1000};
-    (S as any).deliveryFeeQuote = mq;
+  const mq = await refreshGoodiesDeliveryQuote();
+  if (!mq?.multi || !deliveryQuoteReady()) {
+    return stop(S.deliveryQuoteError || 'Could not calculate the delivery fee. Please check the delivery address.');
   }
   const freeFirst = first() && !!contentHooks.fees?.().firstFree;
   const stopFee = (sid: string) => freeFirst ? 0 : r2(Number(mq.perStore[sid]?.fee || 0));
