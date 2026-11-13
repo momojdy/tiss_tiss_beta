@@ -118,6 +118,7 @@ export function usePromo(c: string) {
 }
 export function goCheckout() {
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
+  if (!isPk() && !addr()?.t) {push('addresses'); return;}
   if (!isPk() && (!deliveryQuoteReady() || (fees().firstFree && S.firstOrderEligible === null))) {
     toast(label('lbl.cms.quoteWait', 'Verifying your first-delivery offer and calculating the delivery fee. Please retry shortly.'));
     void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
