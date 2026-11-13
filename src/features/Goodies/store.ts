@@ -364,6 +364,12 @@ export async function load() {
   /* sanitise exactly like v24 */
   const c = S.cart;
   if (!c || !Array.isArray(c.lines)) S.cart = {sid: null, lines: []};
+  // A cached eligibility from another signed-in account must never be reused.
+  S.firstOrderEligible = null;
+  S.firstOrderEligibilityUserId = null;
+  S.deliveryFeeQuote = null;
+  S.deliveryQuoteLoading = false;
+  S.deliveryQuoteError = '';
   S.cart.lines = S.cart.lines.filter((l: any) => l && ((l.byo && l.byo.bid && l.byo.sel && l.byo.lines) || IT[l.id]) && l.q > 0);
   if (!S.cart.lines.length) S.cart.sid = null;
   else if (!cartStoreIds().includes(String(S.cart.sid))) S.cart.sid = cartStoreIds()[0] || null;
@@ -424,7 +430,7 @@ export const addr = (): Address => S.addr.filter((a: Address) => a.id === S.as)[
 export const cur = (): Route => S.stack[S.stack.length - 1];
 export const cnt = () => S.cart.lines.reduce((a: number, l: CartLine) => a + l.q, 0);
 export const unread = () => Number(S.serverUnread || 0) > 0 || S.notifs.some((n: any) => n.u);
-export const first = () => S.firstOrderEligible === true && S.orders.length === 0;
+export const first = () => S.firstOrderEligible === true;
 export const isPk = () => S.mode === 'pickup' || !!(S.cart.sid && STB[S.cart.sid]?.far);
 /** Exact coordinates saved with the address (captured with "Use my current location"); more precise than geocoding the text. */
 export const savedPoint = (address: any): [number, number] | null => {const la = Number(address?.latitude), lo = Number(address?.longitude); return address?.latitude != null && address?.longitude != null && Number.isFinite(la) && Number.isFinite(lo) && Math.abs(la) <= 90 && Math.abs(lo) <= 180 ? [la, lo] : null;};
@@ -543,6 +549,118 @@ export const cartStoreIds = (): string[] => {
 export const maxStops = (): number => Math.max(1, Math.min(8, Number((feesNow() as any).maxStops) || 3));
 /** Cart subtotal for one store. */
 export const storeSub = (storeId: string): number => S.cart.lines.filter((l: CartLine) => lineStore(l) === storeId).reduce((a: number, l: CartLine) => a + l.p * l.q, 0);
+
+/* All Goodies fee calculations and checkout use the same address fingerprint.
+   Previously the cart used an address key without coordinates while checkout used
+   a key with coordinates, so a valid road quote was ignored until order submission. */
+export const deliveryAddressPayload = (address: Address) => {
+  const pin = savedPoint(address);
+  return {
+    l: address.l, t: address.t, apt: address.apt, inst: address.inst,
+    city: address.city, department: address.department, country: address.country,
+    ...(pin ? {latitude: pin[0], longitude: pin[1]} : {}),
+  };
+};
+export const deliveryAddressKey = (address: Address | null | undefined): string =>
+  address?.t?.trim() ? JSON.stringify(deliveryAddressPayload(address)) : '';
+
+let firstDeliveryRequest: Promise<boolean | null> | null = null;
+let firstDeliveryRequestUser: string | null = null;
+/** Check the authenticated customer's real order history, never local demo/history state. */
+export async function refreshFirstDeliveryEligibility(force = false): Promise<boolean | null> {
+  if (!feesNow().firstFree) return false;
+  const {data, error} = await supabase.auth.getUser();
+  const userId = data?.user?.id;
+  if (error || !userId) {
+    S.firstOrderEligible = null;
+    S.firstOrderEligibilityUserId = null;
+    S.firstOrderEligibilityError = 'Sign in to verify your first-delivery offer.';
+    emit();
+    return null;
+  }
+  if (firstDeliveryRequest && firstDeliveryRequestUser === userId) return firstDeliveryRequest;
+  if (!force && S.firstOrderEligibilityUserId === userId && typeof S.firstOrderEligible === 'boolean') return S.firstOrderEligible;
+  firstDeliveryRequestUser = userId;
+  firstDeliveryRequest = (async () => {
+    const {count, error: historyError} = await supabase.from('goodies_orders')
+      .select('id', {count: 'exact', head: true}).eq('customer_id', userId);
+    if (historyError || count == null) throw historyError || new Error('First-delivery eligibility could not be verified.');
+    const eligible = count === 0;
+    S.firstOrderEligible = eligible;
+    S.firstOrderEligibilityUserId = userId;
+    S.firstOrderEligibilityError = '';
+    emit();
+    return eligible;
+  })().catch((err: any) => {
+    S.firstOrderEligible = null;
+    S.firstOrderEligibilityUserId = userId;
+    S.firstOrderEligibilityError = friendlyError(err, 'Could not verify first-delivery eligibility.');
+    emit();
+    return null;
+  }).finally(() => {firstDeliveryRequest = null; firstDeliveryRequestUser = null;});
+  return firstDeliveryRequest;
+}
+
+let activeQuoteRequest: {key: string; promise: Promise<any>} | null = null;
+/** Only a server quote for the exact cart and address is usable for payment. */
+export function deliveryQuoteReady(): boolean {
+  if (isPk()) return true;
+  const addressKey = deliveryAddressKey(addr());
+  const ids = cartStoreIds(), q = S.deliveryFeeQuote;
+  if (!ids.length || !addressKey || !q || Number(q.expiresAt) <= Date.now()) return false;
+  return ids.length === 1
+    ? !q.multi && q.storeId === ids[0] && q.addressKey === addressKey && !!q.quoteId
+    : !!q.multi && q.storeKey === ids.join(',') && q.addressKey === addressKey &&
+      ids.every((id: string) => !!q.perStore?.[id]?.id);
+}
+/** Start road pricing when the cart is viewed, not after the customer taps Pay. */
+export async function refreshGoodiesDeliveryQuote(): Promise<any | null> {
+  const address = addr(), ids = cartStoreIds();
+  if (!address?.t?.trim() || !ids.length || isPk() || ids.some((id: string) => !STB[id]?.live)) return null;
+  const addressKey = deliveryAddressKey(address), storeKey = ids.join(',');
+  if (deliveryQuoteReady() && Number(S.deliveryFeeQuote?.expiresAt) > Date.now() + 30_000) return S.deliveryFeeQuote;
+  const key = storeKey + '|' + addressKey;
+  if (activeQuoteRequest?.key === key) return activeQuoteRequest.promise;
+  S.deliveryQuoteLoading = true; S.deliveryQuoteError = ''; emit();
+  const request = (async () => {
+    const payload = ids.length === 1
+      ? {store_id: ids[0], address: deliveryAddressPayload(address)}
+      : {store_ids: ids, address: deliveryAddressPayload(address)};
+    const {data, error} = await supabase.functions.invoke('goodies-delivery-quote', {body: payload});
+    if (error || !data) throw error || new Error('Could not calculate your delivery fee.');
+    const expiresAt = Date.now() + Math.max(30, Number(data.expires_in_seconds) || 300) * 1000;
+    let quote: any;
+    if (ids.length === 1) {
+      if (!data.quote_id || !Number.isFinite(Number(data.fee))) throw new Error(data.error || 'No valid delivery quotation was returned.');
+      quote = {quoteId: String(data.quote_id), fee: Number(data.fee), storeId: ids[0], addressKey, expiresAt};
+    } else {
+      const quotes = Array.isArray(data.quotes) ? data.quotes : [];
+      if (quotes.length !== ids.length || !Number.isFinite(Number(data.delivery_fee))) throw new Error(data.error || 'No valid multi-store delivery quotation was returned.');
+      const perStore: Record<string, {id: string; fee: number}> = {};
+      quotes.forEach((q: any) => {perStore[String(q.store_id)] = {id: String(q.id), fee: Number(q.fee)};});
+      if (ids.some((id: string) => !perStore[id]?.id || !Number.isFinite(perStore[id].fee))) throw new Error('Incomplete delivery quotation.');
+      quote = {multi: true, storeKey, addressId: S.as, addressKey, fee: Number(data.delivery_fee), perStore, expiresAt};
+    }
+    if (cartStoreIds().join(',') === storeKey && deliveryAddressKey(addr()) === addressKey && !isPk()) {
+      S.deliveryFeeQuote = quote;
+      S.deliveryQuoteError = '';
+      emit();
+    }
+    return quote;
+  })().catch((err: any) => {
+    if (cartStoreIds().join(',') === storeKey && deliveryAddressKey(addr()) === addressKey) {
+      S.deliveryQuoteError = friendlyError(err, 'Could not calculate the delivery fee. Please try again.');
+      emit();
+    }
+    return null;
+  }).finally(() => {
+    if (activeQuoteRequest?.key === key) activeQuoteRequest = null;
+    S.deliveryQuoteLoading = false; emit();
+  });
+  activeQuoteRequest = {key, promise: request};
+  return request;
+}
+
 export const canAddStop = (storeId: string): boolean => {
   const ids = cartStoreIds();
   if (!ids.length || ids.includes(storeId)) return true;
@@ -556,13 +674,13 @@ export function totals() {
   const F = feesNow();
   const selectedAddress = addr();
   const quote = (S as any).deliveryFeeQuote;
-  const quoteAddressKey = selectedAddress ? JSON.stringify({l: selectedAddress.l, t: selectedAddress.t, apt: selectedAddress.apt, inst: selectedAddress.inst, city: selectedAddress.city, department: selectedAddress.department, country: selectedAddress.country}) : '';
+  const quoteAddressKey = deliveryAddressKey(selectedAddress);
   const quoteValid = !!st && st.deliveryPricingMode === 'distance' && quote?.storeId === st.id && quote?.addressKey === quoteAddressKey && Number(quote?.expiresAt) > Date.now();
   const stops = cartStoreIds();
   if (stops.length > 1) {
     /* Several stores: one combined delivery fee (the extra-store surcharge is added on the server and not itemised), one service fee, no promo code. */
     const mq = (S as any).deliveryFeeQuote;
-    const mqValid = !!mq?.multi && mq.storeKey === stops.join(',') && String(mq.addressId) === String(S.as) && Number(mq.expiresAt) > Date.now();
+    const mqValid = !!mq?.multi && mq.storeKey === stops.join(',') && mq.addressKey === quoteAddressKey && Number(mq.expiresAt) > Date.now();
     const mFee = pk ? 0 : first() && F.firstFree ? 0 : mqValid ? Number(mq.fee) : stops.reduce((a: number, id: string) => a + (Number(STB[id]?.fee) || 0), 0);
     const mSvc = sub ? F.svc : 0, mTip = pk ? 0 : S.tip;
     return {st, sub, fee: mFee, svc: mSvc, disc: 0, tip: mTip, total: sub + mFee + mSvc + mTip, free: false, perr: '', pok: false, stops};
