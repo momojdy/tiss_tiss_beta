@@ -66,5 +66,10 @@ async function race(first,second,name){const results=Promise.all([request(first,
  assert.equal(Number(sql(`select count(*) from public.goodies_orders o join public.goodies_group_orders g on g.order_id=o.id where g.id='${group}' and o.customer_id='${uid}' and o.payment_status='paid'`)),1);
  assert.equal(Number(sql(`select stock from public.goodies_products where id='${product}'`)),19);
  console.log('PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.');
+ if(process.argv.includes('--catalog-output')){
+  const output=process.argv[process.argv.indexOf('--catalog-output')+1];
+  const catalog=JSON.parse(sql(`select jsonb_build_object('functions',(select jsonb_agg(jsonb_build_object('schema',n.nspname,'name',p.proname,'names',p.proargnames,'modes',p.proargmodes,'inputCount',p.pronargs,'defaultCount',p.pronargdefaults)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','private')),'relations',(select jsonb_agg(jsonb_build_object('schema',n.nspname,'name',c.relname,'columns',(select jsonb_agg(a.attname order by a.attnum) from pg_attribute a where a.attrelid=c.oid and a.attnum>0 and not a.attisdropped))) from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname in ('public','private') and c.relkind in ('r','v','m','p')),'buckets',(select jsonb_agg(id) from storage.buckets))`));
+  fs.writeFileSync(output,JSON.stringify(catalog,null,2)+'\n');
+ }
  console.log('All native PostgreSQL race tests passed; no production connection or real money was used.');
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(cleanupNative);
