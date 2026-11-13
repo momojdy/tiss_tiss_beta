@@ -119,11 +119,7 @@ export function usePromo(c: string) {
 export function goCheckout() {
   if (!S.cart.lines.length) {toast(label('lbl.actionCartEmpty', 'Your cart is empty')); return;}
   if (!isPk() && !addr()?.t) {push('addresses'); return;}
-  if (!isPk() && (!deliveryQuoteReady() || (fees().firstFree && S.firstOrderEligible === null))) {
-    toast(label('lbl.cms.quoteWait', 'Verifying your first-delivery offer and calculating the delivery fee. Please retry shortly.'));
-    void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
-    return;
-  }
+  if (!isPk()) void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
   const stopIds = cartStoreIds();
   if (stopIds.length > 1 && isPk()) {toast(label("lbl.cms.bcfa3aa2ef5b", "Ordering from several stores is available for delivery only.")); return;}
   for (const sid of stopIds) {
