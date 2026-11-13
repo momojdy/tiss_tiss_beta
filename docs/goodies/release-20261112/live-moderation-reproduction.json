@@ -1,0 +1,1 @@
+{"status":"FAIL","area":"Captured live moderation trigger","expected":{"review_status":"rejected","review_note":"Synthetic rejection reason"},"actual":{"review_status":"approved","review_note":null},"scope":"Live function captured read-only on 2026-11-12; defect reproduced with synthetic data in PGlite. No production mutation."}

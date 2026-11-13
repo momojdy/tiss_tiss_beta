@@ -1,0 +1,489 @@
+{
+  "tiss_tiss_beta": {
+    "branch": "main",
+    "baseline": "5f78d9c8473b64d0a9558fc0f5aa3a5b4247fefe",
+    "implementationHead": "6202f79a412c7691bf7ac4ae052eeec70a74fa60",
+    "commits": [
+      {
+        "commit": "8e1c09b3aef8247e3aafa52f9d4ff4fb6c8f6f21",
+        "subject": "Prepare Goodies authorization, moderation, delivery and settlement migrations",
+        "files": [
+          "A\tdocs/goodies/migration-version-reconciliation.json",
+          "A\tscripts/check-migration-versions.cjs",
+          "A\tscripts/test-goodies-settlement-postgres.cjs",
+          "M\tsupabase/functions/deno.json",
+          "A\tsupabase/functions/deno.lock",
+          "M\tsupabase/functions/expire-goodies-card-auth/index.ts",
+          "A\tsupabase/functions/goodies-tests/accountCache_test.ts",
+          "A\tsupabase/functions/goodies-tests/adminPagination_test.ts",
+          "A\tsupabase/functions/goodies-tests/adminRestrictions_test.ts",
+          "A\tsupabase/functions/goodies-tests/builders_test.ts",
+          "A\tsupabase/functions/goodies-tests/cmsPublication_test.ts",
+          "A\tsupabase/functions/goodies-tests/courierAccess_test.ts",
+          "A\tsupabase/functions/goodies-tests/deliveryProofAccess_test.ts",
+          "A\tsupabase/functions/goodies-tests/deliveryTracking_test.ts",
+          "A\tsupabase/functions/goodies-tests/deploymentPackage_test.ts",
+          "A\tsupabase/functions/goodies-tests/disputeNotification_test.ts",
+          "A\tsupabase/functions/goodies-tests/fixtures/README.md",
+          "A\tsupabase/functions/goodies-tests/fixtures/goodies-core.sql",
+          "A\tsupabase/functions/goodies-tests/localization_test.ts",
+          "A\tsupabase/functions/goodies-tests/notificationLocalization_test.ts",
+          "A\tsupabase/functions/goodies-tests/notificationRouting_test.ts",
+          "A\tsupabase/functions/goodies-tests/orderLifecycle_test.ts",
+          "A\tsupabase/functions/goodies-tests/pricing_test.ts",
+          "A\tsupabase/functions/goodies-tests/productModeration_test.ts",
+          "A\tsupabase/functions/goodies-tests/reviewsPreferences_test.ts",
+          "A\tsupabase/functions/goodies-tests/vendorSettlement_test.ts",
+          "D\tsupabase/migrations/202611010001_goodies_card_acceptance_requires_paid.sql",
+          "D\tsupabase/migrations/202611010001_goodies_card_retry_persistence.sql",
+          "A\tsupabase/migrations/20261101045432_goodies_card_acceptance_requires_paid.sql",
+          "A\tsupabase/migrations/20261101045813_202611010001_goodies_card_retry_persistence.sql",
+          "D\tsupabase/migrations/20261101080500_goodies_merchant_restrictions.sql",
+          "D\tsupabase/migrations/20261101080500_goodies_product_rejection_reason_required.sql",
+          "A\tsupabase/migrations/20261101111833_goodies_merchant_restrictions.sql",
+          "A\tsupabase/migrations/20261101112204_goodies_product_rejection_reason_required.sql",
+          "M\tsupabase/migrations/20261103163450_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+          "A\tsupabase/migrations/20261104085513_goodies_group_order_friend_invites.sql",
+          "D\tsupabase/migrations/20261104130000_fix_legacy_goodies_group_invite_random_bytes_schema.sql",
+          "D\tsupabase/migrations/20261104130000_goodies_group_order_friend_invites.sql",
+          "A\tsupabase/migrations/20261106015226_goodies_courier_scoped_order_read.sql",
+          "A\tsupabase/migrations/20261106020705_goodies_private_delivery_proofs.sql",
+          "A\tsupabase/migrations/20261106021033_goodies_truthful_dispute_refund_notification.sql",
+          "A\tsupabase/migrations/20261106022200_goodies_builder_selection_contract.sql",
+          "A\tsupabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+          "A\tsupabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+          "A\tsupabase/migrations/20261106030151_goodies_role_notifications.sql",
+          "A\tsupabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+          "A\tsupabase/migrations/20261106031210_goodies_notification_localization.sql",
+          "A\tsupabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+          "A\tsupabase/migrations/20261106082226_goodies_admin_operational_pagination.sql",
+          "A\tsupabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql",
+          "A\tsupabase/migrations/20261106144811_goodies_creole_reviewed_english_fallback.sql",
+          "A\tsupabase/migrations/20261107014239_goodies_failure_state_content_review.sql",
+          "A\tsupabase/migrations/20261107021612_goodies_vendor_settlement.sql",
+          "D\tsupabase/migrations/202611120001_help_pay_canonical_checkout_validator_and_private_order_finalizer.sql",
+          "D\tsupabase/migrations/202611120002_help_pay_live_request_escrow_status_and_friend_card.sql",
+          "D\tsupabase/migrations/202611120003_help_pay_atomic_contributions_settlement_refunds_and_expiry.sql",
+          "D\tsupabase/migrations/202611120004_help_pay_keep_validated_delivery_quote_until_request_expiry.sql",
+          "D\tsupabase/migrations/202611120006_enable_verified_help_pay_wallet_contributions.sql",
+          "D\tsupabase/migrations/202611120006_lock_down_friendship_notification_trigger_execute.sql",
+          "A\tsupabase/migrations/20261112081658_persist_goodies_checkout_contact_numbers.sql",
+          "A\tsupabase/migrations/20261112083831_help_pay_canonical_checkout_validator_and_private_order_finalizer.sql",
+          "A\tsupabase/migrations/20261112084038_help_pay_live_request_escrow_status_and_friend_card.sql",
+          "A\tsupabase/migrations/20261112084154_help_pay_atomic_contributions_settlement_refunds_and_expiry.sql",
+          "A\tsupabase/migrations/20261112085709_help_pay_keep_validated_delivery_quote_until_request_expiry.sql",
+          "A\tsupabase/migrations/20261112091829_help_pay_enable_verified_authenticated_wallet_contributions.sql",
+          "A\tsupabase/migrations/20261112092820_lock_down_friendship_notification_trigger_execute.sql"
+        ]
+      },
+      {
+        "commit": "d03882fb62b413b17f2e9ccf59a499da63f7c370",
+        "subject": "Connect Goodies customer, vendor and courier recovery workflows",
+        "files": [
+          "A\tscripts/audit-goodies-reproductions.cjs",
+          "A\tscripts/run-goodies-tests.cjs",
+          "M\tsrc/features/Goodies/GoodiesApp.tsx",
+          "M\tsrc/features/Goodies/GoodiesCourierScreen.tsx",
+          "A\tsrc/features/Goodies/accountCache.ts",
+          "M\tsrc/features/Goodies/actions.ts",
+          "M\tsrc/features/Goodies/builders/Builder.tsx",
+          "M\tsrc/features/Goodies/builders/engine.tsx",
+          "A\tsrc/features/Goodies/cacheRecovery.ts",
+          "M\tsrc/features/Goodies/components/Overlays.tsx",
+          "M\tsrc/features/Goodies/components/Sheets.tsx",
+          "M\tsrc/features/Goodies/components/cards.tsx",
+          "M\tsrc/features/Goodies/content.ts",
+          "M\tsrc/features/Goodies/data/promoText.ts",
+          "M\tsrc/features/Goodies/data/seed.ts",
+          "M\tsrc/features/Goodies/data/types.ts",
+          "A\tsrc/features/Goodies/deliveryTracking.ts",
+          "M\tsrc/features/Goodies/friendlyError.ts",
+          "M\tsrc/features/Goodies/goodiesCourierBackgroundLocation.ts",
+          "M\tsrc/features/Goodies/helpPayApi.ts",
+          "M\tsrc/features/Goodies/i18n/index.ts",
+          "A\tsrc/features/Goodies/i18n/notificationCatalog.json",
+          "A\tsrc/features/Goodies/notifications.ts",
+          "A\tsrc/features/Goodies/orderReviews.ts",
+          "A\tsrc/features/Goodies/reviews.ts",
+          "M\tsrc/features/Goodies/screens/Account.tsx",
+          "M\tsrc/features/Goodies/screens/Browse.tsx",
+          "M\tsrc/features/Goodies/screens/CardAuthentication.tsx",
+          "M\tsrc/features/Goodies/screens/HelpPayPreview.tsx",
+          "M\tsrc/features/Goodies/screens/Payments.tsx",
+          "M\tsrc/features/Goodies/screens/Shop.tsx",
+          "M\tsrc/features/Goodies/serverSync.ts",
+          "M\tsrc/features/Goodies/store.ts",
+          "A\tsrc/lib/locales.ts",
+          "M\tsrc/screens/Main/mainMessagesScreen.tsx",
+          "M\tsrc/screens/Main/mainNotificationsScreen.tsx",
+          "M\tsrc/screens/Main/mainSettingsDetailScreen.tsx",
+          "M\tsrc/screens/Wallet/WalletHelpPayScreen.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceActivityScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceGoodies.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+          "A\tsrc/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceHomeScreen.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceScreen.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceShared.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceSheets.tsx",
+          "A\tsrc/services/goodiesDeliveryProof.ts",
+          "A\tsrc/services/goodiesSettlement.ts",
+          "M\ttests/goodies-cms.test.cjs",
+          "A\ttests/goodies-recovery.test.cjs",
+          "A\ttests/goodies-reviews.test.cjs",
+          "A\ttests/goodies-settlement.test.cjs",
+          "A\ttests/goodies-shared-payments.test.cjs"
+        ]
+      },
+      {
+        "commit": "748d050fe0ee2d148b1a618d8f077fd857cb469d",
+        "subject": "Register repaired Goodies content and prepare unpublished four-language copy",
+        "files": [
+          "A\tdocs/goodies/content-review-draft.json",
+          "A\tdocs/goodies/localization-release/assistant-corrections.json",
+          "A\tdocs/goodies/localization-release/assistant-current-copy.json",
+          "A\tdocs/goodies/localization-release/assistant-shared-copy.json",
+          "A\tdocs/goodies/localization-release/baseline.json",
+          "A\tdocs/goodies/localization-release/machine-translations.json",
+          "A\tdocs/goodies/localization-release/manifest.json",
+          "A\tdocs/goodies/localization-release/publish-payload.json",
+          "A\tdocs/goodies/localization-release/translation-errors.json",
+          "A\tdocs/goodies/localization-release/translation-requests.json",
+          "A\tdocs/goodies/localization-release/verification.json",
+          "M\tscripts/check-goodies-cms.cjs",
+          "M\tscripts/goodies-cms-source.cjs",
+          "A\tscripts/prepare-goodies-translations.cjs",
+          "M\tscripts/sync-goodies-cms-catalog.cjs",
+          "M\tscripts/sync-goodies-preview.cjs",
+          "A\tscripts/verify-goodies-translation-release.cjs",
+          "A\ttests/goodies-translation-release.test.cjs"
+        ]
+      },
+      {
+        "commit": "db44fd7f0122ca598fad504075c1f7805557ae08",
+        "subject": "Prepare isolated Goodies device builds and repeatable release checks",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml",
+          "A\tapp.config.js",
+          "A\teas.json",
+          "M\tpackage-lock.json",
+          "M\tpackage.json",
+          "A\tscripts/check-goodies-native-config.cjs",
+          "A\ttests/goodies-build-config.test.cjs"
+        ]
+      },
+      {
+        "commit": "f8087cb52aa23d3a375711221b2a8ab28f1273d0",
+        "subject": "Keep Shared Bill recovery status and dynamic copy truthful",
+        "files": [
+          "M\tdocs/goodies/localization-release/machine-translations.json",
+          "M\tdocs/goodies/localization-release/manifest.json",
+          "M\tdocs/goodies/localization-release/publish-payload.json",
+          "M\tdocs/goodies/localization-release/translation-requests.json",
+          "M\tdocs/goodies/localization-release/verification.json",
+          "M\tsrc/features/Goodies/screens/HelpPayPreview.tsx",
+          "M\tsupabase/migrations/20261107014239_goodies_failure_state_content_review.sql"
+        ]
+      },
+      {
+        "commit": "8b7d7f5567da007ca11632b01e6fb3700001dbff",
+        "subject": "Pin final paired admin Goodies preview contracts in CI",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml"
+        ]
+      },
+      {
+        "commit": "554f37aea7e914fbc3365ec0a9e46c103eb3faad",
+        "subject": "Check paired Goodies clients for embedded privileged credentials",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml",
+          "M\tpackage.json",
+          "A\tscripts/check-goodies-client-secrets.cjs"
+        ]
+      },
+      {
+        "commit": "a1a8ad4af207f6fd591943e9eb59fc5953a95c57",
+        "subject": "Record repeatable Goodies control traces and live moderation reproduction",
+        "files": [
+          "A\tdocs/goodies/release-20261112/live-product-moderation.sql",
+          "A\tscripts/audit-goodies-surfaces.cjs",
+          "A\tsupabase/functions/goodies-tests/reproduceLiveModeration.ts"
+        ]
+      },
+      {
+        "commit": "1409fa7d9232fb4f9905162ecfc917108ade758e",
+        "subject": "Use Goodies locale-aware money formatting for shared request status",
+        "files": [
+          "M\tsrc/screens/Wallet/WalletHelpPayScreen.tsx"
+        ]
+      },
+      {
+        "commit": "52add4579061d43e36ba25d53f3143b0921593b5",
+        "subject": "Keep permission failures distinct from insufficient wallet funds",
+        "files": [
+          "M\tsrc/features/Goodies/components/Sheets.tsx",
+          "M\tsrc/features/Goodies/friendlyError.ts",
+          "M\ttests/goodies-recovery.test.cjs"
+        ]
+      },
+      {
+        "commit": "1fcdb36e951a26b73f2fb8ecb2f7f8f42a3e32cb",
+        "subject": "Pin verified final Goodies failure-state preview in CI",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml"
+        ]
+      },
+      {
+        "commit": "dd823cf24e6a94410ec579ca4c6c7526cfbea589",
+        "subject": "Protect shared Goodies address loading, errors and account changes",
+        "files": [
+          "M\tdocs/goodies/localization-release/machine-translations.json",
+          "M\tdocs/goodies/localization-release/manifest.json",
+          "M\tdocs/goodies/localization-release/publish-payload.json",
+          "M\tdocs/goodies/localization-release/translation-requests.json",
+          "M\tdocs/goodies/localization-release/verification.json",
+          "M\tscripts/audit-goodies-surfaces.cjs",
+          "M\tscripts/goodies-cms-source.cjs",
+          "M\tsrc/features/Goodies/components/Sheets.tsx",
+          "M\tsrc/screens/Main/mainAddressesScreen.tsx",
+          "M\tsupabase/migrations/20261107014239_goodies_failure_state_content_review.sql",
+          "A\ttests/goodies-addresses.test.cjs"
+        ]
+      },
+      {
+        "commit": "33d2c8d0645e87ac98e2129e2bb44766cd350f68",
+        "subject": "Keep store sharing errors private and responses account-scoped",
+        "files": [
+          "M\tscripts/audit-goodies-reproductions.cjs",
+          "M\tsrc/features/Goodies/screens/Shop.tsx"
+        ]
+      },
+      {
+        "commit": "2e17f6e1564156050c3598e2b2f265267ae141fd",
+        "subject": "Import the shared safe error mapper for Goodies store sharing",
+        "files": [
+          "M\tsrc/features/Goodies/screens/Shop.tsx"
+        ]
+      },
+      {
+        "commit": "1cf602d3165a0f5d1fa826383b614154bd8d17ef",
+        "subject": "Enforce group checkout consent and server-side Shared Bill release gates",
+        "files": [
+          "A\tscripts/goodies-postgres-client.cjs",
+          "M\tscripts/test-goodies-settlement-postgres.cjs",
+          "M\tsupabase/functions/goodies-tests/builders_test.ts",
+          "A\tsupabase/functions/goodies-tests/groupCheckoutConsent_test.ts",
+          "A\tsupabase/functions/goodies-tests/sharedBillReleaseGate_test.ts",
+          "M\tsupabase/migrations/20261106022200_goodies_builder_selection_contract.sql",
+          "M\tsupabase/migrations/20261107014239_goodies_failure_state_content_review.sql",
+          "M\tsupabase/migrations/20261107021612_goodies_vendor_settlement.sql",
+          "A\ttests/goodies-native-runner.test.cjs"
+        ]
+      },
+      {
+        "commit": "a08448a9120a6174be61d426167b82ce33837da4",
+        "subject": "Hide prior-account Goodies screens and sheets until account hydration",
+        "files": [
+          "M\tdocs/goodies/localization-release/machine-translations.json",
+          "M\tdocs/goodies/localization-release/manifest.json",
+          "M\tdocs/goodies/localization-release/publish-payload.json",
+          "M\tdocs/goodies/localization-release/translation-requests.json",
+          "M\tdocs/goodies/localization-release/verification.json",
+          "M\tscripts/audit-goodies-reproductions.cjs",
+          "M\tsrc/features/Goodies/GoodiesApp.tsx",
+          "M\tsrc/features/Goodies/components/Sheets.tsx",
+          "M\tsrc/features/Goodies/friendlyError.ts",
+          "M\tsrc/features/Goodies/screens/HelpPayPreview.tsx",
+          "M\tsrc/features/Goodies/screens/Shop.tsx",
+          "A\ttests/goodies-bootstrap.test.cjs",
+          "M\ttests/goodies-recovery.test.cjs"
+        ]
+      },
+      {
+        "commit": "85638af74c11ded864abb0413997f26e34d7466b",
+        "subject": "Pin final account-safe Goodies CMS preview contracts",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml"
+        ]
+      },
+      {
+        "commit": "aa987ca22fbd58e86774b24f30634846f7a1f224",
+        "subject": "Connect Goodies vendor workspace to deployed records and safe account workflows",
+        "files": [
+          "M\tsrc/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceActivityScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceGoodies.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceHomeScreen.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceScreen.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceShared.tsx",
+          "M\tsrc/screens/businessSpace/BusinessSpaceSheets.tsx",
+          "A\tsrc/services/goodiesWorkspace.ts",
+          "M\tsupabase/functions/goodies-tests/reviewsPreferences_test.ts",
+          "M\tsupabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+          "A\ttests/goodies-workspace.test.cjs"
+        ]
+      },
+      {
+        "commit": "6202f79a412c7691bf7ac4ae052eeec70a74fa60",
+        "subject": "Record scoped Goodies RPC contracts and pin reviewed admin checks",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml",
+          "A\tscripts/audit-goodies-contracts.cjs",
+          "M\tscripts/audit-goodies-surfaces.cjs",
+          "M\tscripts/test-goodies-settlement-postgres.cjs"
+        ]
+      }
+    ],
+    "remotePublication": "NOT VERIFIED: push blocked by automatic approval review; no source commit was pushed in this turn."
+  },
+  "tiss-admin": {
+    "branch": "main",
+    "baseline": "3cd2df9f75ee9af670982d08b5765280b56bdb61",
+    "implementationHead": "42cb1613b62826fd792e41e1c69ad61f191e7199",
+    "commits": [
+      {
+        "commit": "ddbfbcca599bb0743777ac0b249592127b4e645e",
+        "subject": "Repair Goodies moderation, operational failures and settlement administration",
+        "files": [
+          "M\t.github/workflows/admin-validation.yml",
+          "M\tpackage.json",
+          "M\tsrc/features/admin/lib/adminBackend.ts",
+          "A\tsrc/features/admin/lib/goodiesDeliveryProof.ts",
+          "M\tsrc/features/admin/lib/hydrateAdminState.ts",
+          "M\tsrc/features/admin/overlays/PeopleDrawers.tsx",
+          "M\tsrc/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+          "M\tsrc/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+          "M\tsrc/features/admin/screens/finance/FinanceScreen.tsx",
+          "M\tsrc/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+          "M\tsrc/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+          "A\tsrc/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+          "M\tsrc/features/admin/shell/NotificationsSheet.tsx",
+          "M\tsrc/features/admin/state/access.ts",
+          "M\tsrc/features/admin/state/people.ts",
+          "A\tsrc/features/admin/state/permissionKeys.ts",
+          "A\ttests/access.test.cjs",
+          "A\ttests/settlement.test.cjs"
+        ]
+      },
+      {
+        "commit": "29b7ded2c8e00358d3e635b53d5bff385303192e",
+        "subject": "Mirror current Goodies screens and editable states in isolated CMS preview",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/GoodiesApp.tsx",
+          "A\tsrc/features/admin/goodiesConsumer/accountCache.ts",
+          "M\tsrc/features/admin/goodiesConsumer/actions.ts",
+          "M\tsrc/features/admin/goodiesConsumer/builders/Builder.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/builders/engine.tsx",
+          "A\tsrc/features/admin/goodiesConsumer/cacheRecovery.ts",
+          "M\tsrc/features/admin/goodiesConsumer/components/Overlays.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/components/cards.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/content.ts",
+          "M\tsrc/features/admin/goodiesConsumer/criticalContentKeys.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerLabelCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerPageCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/data/promoText.ts",
+          "M\tsrc/features/admin/goodiesConsumer/data/seed.ts",
+          "M\tsrc/features/admin/goodiesConsumer/data/types.ts",
+          "A\tsrc/features/admin/goodiesConsumer/deliveryTracking.ts",
+          "M\tsrc/features/admin/goodiesConsumer/draft.ts",
+          "A\tsrc/features/admin/goodiesConsumer/draftCategories.ts",
+          "M\tsrc/features/admin/goodiesConsumer/friendlyError.ts",
+          "M\tsrc/features/admin/goodiesConsumer/helpPayApi.ts",
+          "M\tsrc/features/admin/goodiesConsumer/i18n/index.ts",
+          "A\tsrc/features/admin/goodiesConsumer/notifications.ts",
+          "A\tsrc/features/admin/goodiesConsumer/orderReviews.ts",
+          "A\tsrc/features/admin/goodiesConsumer/previewLocales.ts",
+          "M\tsrc/features/admin/goodiesConsumer/previewRuntime.ts",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json",
+          "A\tsrc/features/admin/goodiesConsumer/reviews.ts",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Account.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Browse.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/CardAuthentication.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/HelpPayPreview.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Payments.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Shop.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/serverSync.ts",
+          "M\tsrc/features/admin/goodiesConsumer/store.ts"
+        ]
+      },
+      {
+        "commit": "2ce12e01fe6a58b3b6381546e7cb380aad03506c",
+        "subject": "Synchronize gated Shared Bill recovery copy in CMS preview",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/criticalContentKeys.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerLabelCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerPageCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json",
+          "M\tsrc/features/admin/goodiesConsumer/screens/HelpPayPreview.tsx"
+        ]
+      },
+      {
+        "commit": "2830cecb5d2e842af40c343e17e64ebff099daf4",
+        "subject": "Keep CMS recovery preview aligned with final failure handling",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/friendlyError.ts",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json"
+        ]
+      },
+      {
+        "commit": "fc7f03c29258c2760bdf9f56c93a305fc3eab7df",
+        "subject": "Register shared-account Goodies copy and safe group errors in CMS",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/criticalContentKeys.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerLabelCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerPageCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json"
+        ]
+      },
+      {
+        "commit": "493b147081d959a44fd14574b0ee15eef30639da",
+        "subject": "Keep isolated store-sharing preview aligned with safe error handling",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Shop.tsx"
+        ]
+      },
+      {
+        "commit": "3c99ca31dfb7e10ffd3bb9ab779903212d13e832",
+        "subject": "Mirror final Goodies account protection and checkout consent states",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/GoodiesApp.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/criticalContentKeys.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerLabelCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/customerPageCatalog.json",
+          "M\tsrc/features/admin/goodiesConsumer/friendlyError.ts",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json",
+          "M\tsrc/features/admin/goodiesConsumer/screens/HelpPayPreview.tsx",
+          "M\tsrc/features/admin/goodiesConsumer/screens/Shop.tsx"
+        ]
+      },
+      {
+        "commit": "657b5c1ff5f4401131f48ae4261ac7bbfe276024",
+        "subject": "Keep shared staff permission errors safe and validate grant expiry dates",
+        "files": [
+          "M\tsrc/features/admin/overlays/PeopleDrawers.tsx",
+          "M\ttests/access.test.cjs"
+        ]
+      },
+      {
+        "commit": "42cb1613b62826fd792e41e1c69ad61f191e7199",
+        "subject": "Keep Goodies administrative guidance actionable without server details",
+        "files": [
+          "M\tsrc/features/admin/overlays/PeopleDrawers.tsx",
+          "M\tsrc/features/admin/screens/goodies/GoodiesAdminScreen.tsx"
+        ]
+      }
+    ],
+    "remotePublication": "NOT VERIFIED: push blocked by automatic approval review; no source commit was pushed in this turn."
+  }
+}

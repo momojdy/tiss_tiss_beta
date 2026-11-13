@@ -1,0 +1,5 @@
+
+> tiss_tiss_beta@1.10.0 check:migrations
+> node scripts/check-migration-versions.cjs
+
+PASS: 237 unique migration versions

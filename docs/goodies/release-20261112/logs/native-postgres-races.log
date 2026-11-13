@@ -1,0 +1,8 @@
+PASS: PostgreSQL 17.6; full 15-migration package applied in a self-created socket-only temporary cluster.
+PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.
+PASS: concurrent distinct withdrawal requests cannot spend the same earnings.
+PASS: overlapping retries return one payout and create one wallet credit.
+PASS: concurrent commission retries create one debit and release the settled sales allowance.
+PASS: a stale group quote is rejected before the real synthetic Wallet is debited.
+PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.
+All native PostgreSQL race tests passed; no production connection or real money was used.

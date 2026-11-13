@@ -1,0 +1,13 @@
+{
+  "capturedAt": "2026-11-13T09:44:58.346294+00:00",
+  "migrationHead": "20261112092820",
+  "serverVersion": "17.6",
+  "migrationCount": 353,
+  "reviewsPresent": false,
+  "settlementPresent": false,
+  "privateProofBucket": false,
+  "groupConsentPresent": false,
+  "productGalleryInsert": false,
+  "productGalleryUpdate": false,
+  "moderationDefinitionMd5": "da9cefdc117ef388a89c505e6ce9e00c"
+}

@@ -1,0 +1,18 @@
+{
+  "files": {
+    "productionAndShared": 78,
+    "isolatedPreview": 51
+  },
+  "controls": {
+    "productionAndShared": 1079,
+    "isolatedPreview": 449
+  },
+  "comments": {
+    "productionAndShared": 229,
+    "isolatedPreview": 173
+  },
+  "visibleCopyCandidates": {
+    "productionAndShared": 26,
+    "isolatedPreview": 30
+  }
+}

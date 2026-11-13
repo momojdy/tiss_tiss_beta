@@ -1,0 +1,92 @@
+[
+  {
+    "order": 1,
+    "file": "20261106015226_goodies_courier_scoped_order_read.sql",
+    "sha256": "d38b5bf2370b565c9a1ec7d5f49af7cb947e61d7410968870835bc2cf3c4f52b",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 2,
+    "file": "20261106020705_goodies_private_delivery_proofs.sql",
+    "sha256": "c669f61d6ae38f3a8549632c30dc94d877b2de80d0235032fbfabd352f34cd49",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 3,
+    "file": "20261106021033_goodies_truthful_dispute_refund_notification.sql",
+    "sha256": "c5c7fd714e736223c0850baa4ab9db5ae5e94d50a1b36824433b052079997fd9",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 4,
+    "file": "20261106022200_goodies_builder_selection_contract.sql",
+    "sha256": "5e12a9d6915f256532f7c77290cc9a095a701d283f090c81e90e6e63bde19b68",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 5,
+    "file": "20261106024100_goodies_admin_restriction_appeals.sql",
+    "sha256": "bc47351292222483fdee4f861542efd2a874036da4a304bf035f87dd3439826e",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 6,
+    "file": "20261106025454_goodies_product_moderation_enforcement.sql",
+    "sha256": "60f409e077432c57fdd48f1d11c54fc991b46bcbc7d5f688edb07be264b88e67",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 7,
+    "file": "20261106030151_goodies_role_notifications.sql",
+    "sha256": "3c23574c010e9755c73bb9841f30ae7a529114346460b3a59f91923f6caf366a",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 8,
+    "file": "20261106030829_goodies_private_proof_rollout.sql",
+    "sha256": "cb753eeef67cc7985426152b6a76352394cd058648a2f6b60309bf3d78fe2019",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 9,
+    "file": "20261106031210_goodies_notification_localization.sql",
+    "sha256": "0765a19f4e5990466ac6159d23420cb76c14073201a5dd50bcf3d69283d14c2e",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 10,
+    "file": "20261106081225_goodies_reviews_preferences_and_store_link.sql",
+    "sha256": "d05375fb7cb16a314d1dd6d585de54534e59702bc3da27183ffd5642e0582028",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 11,
+    "file": "20261106082226_goodies_admin_operational_pagination.sql",
+    "sha256": "55db6451804d987409998f02d4a7d0d4a5e6a6bc1b7575f39883a175ba81319b",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 12,
+    "file": "20261106084303_goodies_cms_publication_review_guard.sql",
+    "sha256": "8ef4cfabc3197c62fc4266111ffc7fd85bac1257bef92dbc55ddd4af8b7bb962",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 13,
+    "file": "20261106144811_goodies_creole_reviewed_english_fallback.sql",
+    "sha256": "7590e0905f0534c43c55454e3a731340dfd23303710451592ad70a68e4698d5a",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 14,
+    "file": "20261107014239_goodies_failure_state_content_review.sql",
+    "sha256": "f04a0617b0ebd7f866c12dd0197809223bd8437869f52d8347e22c43c69c7499",
+    "status": "PREPARED_NOT_DEPLOYED"
+  },
+  {
+    "order": 15,
+    "file": "20261107021612_goodies_vendor_settlement.sql",
+    "sha256": "8da9e2855478ace41f948ec2c52e1b823ffe5ead483d6cbf8773b0f204392e92",
+    "status": "PREPARED_NOT_DEPLOYED"
+  }
+]

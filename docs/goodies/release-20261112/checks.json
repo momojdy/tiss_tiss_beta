@@ -1,0 +1,97 @@
+{
+  "customer": {
+    "tests": 66,
+    "pass": 66,
+    "fail": 0,
+    "classification": "PASS"
+  },
+  "crossRoleSource": {
+    "tests": 29,
+    "pass": 29,
+    "fail": 0,
+    "classification": "PASS"
+  },
+  "admin": {
+    "tests": 28,
+    "pass": 28,
+    "fail": 0,
+    "classification": "PASS"
+  },
+  "backend": {
+    "classification": "PASS",
+    "tests": 59,
+    "steps": 23,
+    "scope": "Synthetic PostgreSQL-compatible SQL and mocked provider transports."
+  },
+  "financialRaces": {
+    "classification": "PASS",
+    "concurrentRaces": 5,
+    "staleQuoteRejections": 1,
+    "scope": "Self-created socket-only PostgreSQL 17.6, listen_addresses empty, private owned temporary data/socket directories, no database URLs accepted. Final complete migration package applied. Real synthetic group order, Wallet ledger and stock verified; no provider or production connection."
+  },
+  "typecheck": {
+    "customer": "PASS",
+    "admin": "PASS"
+  },
+  "exports": {
+    "customer-android": "PASS",
+    "customer-ios": "PASS",
+    "customer-web": "PASS",
+    "admin-android": "PASS",
+    "admin-ios": "PASS"
+  },
+  "preview": {
+    "routes": 34,
+    "failures": 0,
+    "interactions": 11,
+    "scope": "Local native-to-web draft preview with blocked external network and adapted fonts/icons/native widgets. Not hosted CMS publishing.",
+    "classification": "PASS"
+  },
+  "mapsConfiguration": {
+    "classification": "NOT VERIFIED",
+    "reason": "Android Google Maps API key absent. Build injection implemented; provider restrictions and physical map verification unavailable."
+  },
+  "rpcContracts": {
+    "PASS": 144,
+    "FAIL": 0,
+    "NOT VERIFIED": 27
+  },
+  "signedNativeBuilds": "NOT VERIFIED",
+  "hostedCrossRoleEndToEnd": "NOT VERIFIED",
+  "providerSandboxAndWebhooks": "NOT VERIFIED",
+  "physicalGpsAndPush": "NOT VERIFIED",
+  "hostedCmsPublishingAndInstalledReload": "NOT VERIFIED",
+  "deployment": "NOT VERIFIED: explicitly not performed",
+  "liveModeration": {
+    "status": "FAIL",
+    "area": "Captured live moderation trigger",
+    "expected": {
+      "review_status": "rejected",
+      "review_note": "Synthetic rejection reason"
+    },
+    "actual": {
+      "review_status": "approved",
+      "review_note": null
+    },
+    "scope": "Live function captured read-only on 2026-11-12; defect reproduced with synthetic data in PGlite. No production mutation."
+  },
+  "lint": {
+    "classification": "PASS",
+    "errors": 0,
+    "warnings": 551,
+    "scope": "Expanded Goodies and directly required shared vendor/address files; warnings are preserved."
+  },
+  "liveBaselineRecheck": {
+    "capturedAt": "2026-11-13T09:44:58.346294+00:00",
+    "migrationHead": "20261112092820",
+    "serverVersion": "17.6",
+    "migrationCount": 353,
+    "reviewsPresent": false,
+    "settlementPresent": false,
+    "privateProofBucket": false,
+    "groupConsentPresent": false,
+    "productGalleryInsert": false,
+    "productGalleryUpdate": false,
+    "moderationDefinitionMd5": "da9cefdc117ef388a89c505e6ce9e00c"
+  }
+}

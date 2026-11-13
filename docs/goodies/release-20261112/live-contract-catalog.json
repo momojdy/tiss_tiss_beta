@@ -1,0 +1,3227 @@
+{
+  "buckets": [
+    "wallet-avatars",
+    "flyz-moments",
+    "wantiss-cms-assets",
+    "business-application-documents",
+    "goodies-ingredient-requests",
+    "listing-photos",
+    "wantiss-public-assets",
+    "wantiss-moments",
+    "wantiss-message-files"
+  ],
+  "functions": [
+    {
+      "name": "accept_goodies_order",
+      "modes": null,
+      "names": [
+        "p_order_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "activate_feature",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_feature"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "cancel_goodies_order_by_store",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "create_business",
+      "modes": null,
+      "names": [
+        "p_name"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "deactivate_feature",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_feature"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "decline_goodies_order",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "delete_payment_method",
+      "modes": null,
+      "names": [
+        "p_payment_method_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "delete_user_address",
+      "modes": null,
+      "names": [
+        "p_address_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "ensure_my_wallet",
+      "modes": null,
+      "names": null,
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "get_my_goodies_access_status",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "status",
+        "reason",
+        "ends_at",
+        "restriction_kind"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "get_my_payment_methods",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "id",
+        "type",
+        "brand",
+        "last4",
+        "expiry_month",
+        "expiry_year",
+        "is_default",
+        "created_at"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_add_courier",
+      "modes": null,
+      "names": [
+        "p_courier_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_analytics",
+      "modes": null,
+      "names": null,
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_cancel_order",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 1
+    },
+    {
+      "name": "goodies_admin_dashboard",
+      "modes": null,
+      "names": null,
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_list_delivery_reports",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "order_id",
+        "order_code",
+        "store_name",
+        "customer_name",
+        "customer_phone",
+        "total",
+        "payment_method",
+        "payment_status",
+        "driver_name",
+        "driver_phone",
+        "proof_url",
+        "reason",
+        "delivered_at",
+        "opened_at",
+        "report_status"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_remove_courier",
+      "modes": null,
+      "names": [
+        "p_courier_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_resolve_delivery_dispute",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_resolution"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_review_product",
+      "modes": null,
+      "names": [
+        "p_product_id",
+        "p_status",
+        "p_note"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "goodies_admin_set_merchant_status",
+      "modes": null,
+      "names": [
+        "p_business_id",
+        "p_live"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_update_fee_policy",
+      "modes": null,
+      "names": [
+        "p_service_fee",
+        "p_first_order_free",
+        "p_wallet_enabled",
+        "p_card_enabled",
+        "p_cash_enabled",
+        "p_tips"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_admin_update_multi_store_policy",
+      "modes": null,
+      "names": [
+        "p_enabled",
+        "p_additional_store_fee",
+        "p_extra_distance_per_km",
+        "p_max_stops"
+      ],
+      "schema": "public",
+      "inputCount": 4,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_assign_courier",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_courier_id"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_assign_own_driver",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_driver_name",
+        "p_driver_phone"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_cash_on_delivery_available",
+      "modes": null,
+      "names": [
+        "p_store_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_courier_respond_assignment",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_accept"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_courier_update_delivery_status",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_courier_update_location",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_latitude",
+        "p_longitude",
+        "p_accuracy_m",
+        "p_heading",
+        "p_speed_mps"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 3
+    },
+    {
+      "name": "goodies_get_ingredient_rules",
+      "modes": null,
+      "names": null,
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_checkout",
+      "modes": [
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_idempotency_key",
+        "p_group_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_tip",
+        "p_notes",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "schema": "public",
+      "inputCount": 8,
+      "defaultCount": 2
+    },
+    {
+      "name": "goodies_group_order_checkout_estimate",
+      "modes": null,
+      "names": [
+        "p_group_id",
+        "p_order_type",
+        "p_address"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "goodies_group_order_checkout_preview",
+      "modes": null,
+      "names": [
+        "p_group_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_create",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_store_id",
+        "group_id",
+        "invite_code",
+        "expires_at"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_decline_invite",
+      "modes": null,
+      "names": [
+        "p_group_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_end",
+      "modes": [
+        "i",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_group_id",
+        "group_id",
+        "status"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_get_status",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_group_id",
+        "group_id",
+        "status",
+        "expires_at"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_invite_friends",
+      "modes": null,
+      "names": [
+        "p_group_id",
+        "p_user_ids"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_join",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_invite_code",
+        "group_id",
+        "invite_code",
+        "store_id",
+        "expires_at",
+        "member_count"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_list_friends",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_group_id",
+        "user_id",
+        "display_name",
+        "avatar_url",
+        "already_member",
+        "already_invited",
+        "invite_status"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_list_members",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_group_id",
+        "user_id",
+        "display_name",
+        "role",
+        "is_host",
+        "joined_at"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_my_invites",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "group_id",
+        "invite_code",
+        "store_id",
+        "host_name",
+        "expires_at"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_remove_item",
+      "modes": null,
+      "names": [
+        "p_group_id",
+        "p_line_key"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_group_order_upsert_item",
+      "modes": [
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_group_id",
+        "p_product_id",
+        "p_line_key",
+        "p_quantity",
+        "p_options",
+        "p_note",
+        "item_id",
+        "product_name",
+        "quantity",
+        "unit_price",
+        "photo_url",
+        "contributed_by"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 2
+    },
+    {
+      "name": "goodies_list_dispatch_couriers",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_order_id",
+        "courier_id",
+        "full_name",
+        "phone_number",
+        "accepts_cash_on_delivery",
+        "last_seen",
+        "distance_km"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_list_ingredient_requests",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_business",
+        "id",
+        "name",
+        "builder",
+        "role",
+        "note",
+        "status",
+        "review_note",
+        "created_at",
+        "image_path",
+        "library_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_list_library_ingredients",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "id",
+        "builder",
+        "role",
+        "name",
+        "asset_key"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_place_multi_order",
+      "modes": [
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_stops",
+        "p_service_fee",
+        "p_tip",
+        "p_notes",
+        "group_id",
+        "order_id",
+        "order_code",
+        "status",
+        "stop_index",
+        "store_id"
+      ],
+      "schema": "public",
+      "inputCount": 10,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_builder_configs",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_configs"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_cover",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_cover_url"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_location",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_latitude",
+        "p_longitude"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup"
+      ],
+      "schema": "public",
+      "inputCount": 11,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km"
+      ],
+      "schema": "public",
+      "inputCount": 17,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country"
+      ],
+      "schema": "public",
+      "inputCount": 20,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_minutes"
+      ],
+      "schema": "public",
+      "inputCount": 22,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time"
+      ],
+      "schema": "public",
+      "inputCount": 22,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone"
+      ],
+      "schema": "public",
+      "inputCount": 23,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone",
+        "p_store_name"
+      ],
+      "schema": "public",
+      "inputCount": 24,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_save_store_thumbnail",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_thumbnail_url"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_self_delivery_mark_delivered",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_proof_url"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_send_store_message",
+      "modes": null,
+      "names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_set_courier_availability",
+      "modes": null,
+      "names": [
+        "p_is_available",
+        "p_accepts_cash_on_delivery"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 1
+    },
+    {
+      "name": "goodies_set_store_live",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_live"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "goodies_start_store_conversation",
+      "modes": null,
+      "names": [
+        "p_store_id",
+        "p_customer_name"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 1
+    },
+    {
+      "name": "goodies_submit_ingredient_request",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_name",
+        "p_builder",
+        "p_role",
+        "p_note",
+        "p_image_path"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 3
+    },
+    {
+      "name": "goodies_vendor_reply",
+      "modes": null,
+      "names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "help_pay_cancel_request",
+      "modes": null,
+      "names": [
+        "p_request_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "help_pay_contribute_wallet",
+      "modes": null,
+      "names": [
+        "p_request_id",
+        "p_amount_cents",
+        "p_idempotency_key"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "help_pay_create_request",
+      "modes": null,
+      "names": [
+        "p_mode",
+        "p_total_cents",
+        "p_checkout_key",
+        "p_checkout_snapshot"
+      ],
+      "schema": "public",
+      "inputCount": 4,
+      "defaultCount": 1
+    },
+    {
+      "name": "help_pay_share_to_friend",
+      "modes": null,
+      "names": [
+        "p_request_id",
+        "p_friend_id"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "help_pay_status",
+      "modes": null,
+      "names": [
+        "p_request_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "issue_qr_identity",
+      "modes": null,
+      "names": [
+        "p_qr_type",
+        "p_business_id"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 1
+    },
+    {
+      "name": "mark_conversation_read",
+      "modes": null,
+      "names": [
+        "p_conv"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "place_goodies_order_with_payment_once",
+      "modes": [
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code",
+        "id",
+        "order_code",
+        "status"
+      ],
+      "schema": "public",
+      "inputCount": 16,
+      "defaultCount": 1
+    },
+    {
+      "name": "resubmit_business_application",
+      "modes": null,
+      "names": [
+        "p_application_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "set_default_payment_method",
+      "modes": null,
+      "names": [
+        "p_payment_method_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "set_default_user_address",
+      "modes": null,
+      "names": [
+        "p_address_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "set_goodies_order_status",
+      "modes": null,
+      "names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "submit_business_application",
+      "modes": null,
+      "names": [
+        "p_business_name"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "submit_business_application",
+      "modes": null,
+      "names": [
+        "p_business_name",
+        "p_business_id"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "submit_business_application_document",
+      "modes": null,
+      "names": [
+        "p_application_id",
+        "p_document_type",
+        "p_storage_path"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "update_my_business_info",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_fields"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_application_businesses",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_application_id",
+        "business_id",
+        "business_name",
+        "member_role"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_apply_account_restriction",
+      "modes": null,
+      "names": [
+        "p_user_id",
+        "p_kind",
+        "p_scope",
+        "p_reason",
+        "p_notes",
+        "p_starts_at",
+        "p_ends_at",
+        "p_notify_user"
+      ],
+      "schema": "public",
+      "inputCount": 8,
+      "defaultCount": 1
+    },
+    {
+      "name": "wantiss_admin_archive_cms_version",
+      "modes": null,
+      "names": [
+        "p_content_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_assign_business_application",
+      "modes": null,
+      "names": [
+        "p_application_id",
+        "p_business_id"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_dashboard_snapshot",
+      "modes": null,
+      "names": [
+        "p_domain"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_lift_account_restriction",
+      "modes": null,
+      "names": [
+        "p_restriction_id",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_list_goodies_builder_configs",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "business_id",
+        "business_name",
+        "builder_id",
+        "config",
+        "enabled",
+        "updated_at"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_list_ingredient_requests",
+      "modes": [
+        "i",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "p_status",
+        "id",
+        "business_id",
+        "business_name",
+        "name",
+        "builder",
+        "role",
+        "note",
+        "status",
+        "review_note",
+        "created_at",
+        "reviewed_at",
+        "image_path",
+        "admin_asset_key",
+        "library_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 1
+    },
+    {
+      "name": "wantiss_admin_list_library_ingredients",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "id",
+        "builder",
+        "role",
+        "name",
+        "asset_key",
+        "active",
+        "request_id"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_publish_cms_version",
+      "modes": null,
+      "names": [
+        "p_content_id"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_request_financial_action",
+      "modes": null,
+      "names": [
+        "p_action_type",
+        "p_transaction_id",
+        "p_target_user_id",
+        "p_amount",
+        "p_direction",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_review_business_application",
+      "modes": null,
+      "names": [
+        "p_application_id",
+        "p_status",
+        "p_review_note",
+        "p_final_rejection"
+      ],
+      "schema": "public",
+      "inputCount": 4,
+      "defaultCount": 2
+    },
+    {
+      "name": "wantiss_admin_review_financial_action",
+      "modes": null,
+      "names": [
+        "p_action_id",
+        "p_decision",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_review_ingredient_request",
+      "modes": null,
+      "names": [
+        "p_request_id",
+        "p_status",
+        "p_review_note",
+        "p_admin_asset_key",
+        "p_role"
+      ],
+      "schema": "public",
+      "inputCount": 5,
+      "defaultCount": 3
+    },
+    {
+      "name": "wantiss_admin_save_cms_draft",
+      "modes": null,
+      "names": [
+        "p_content_key",
+        "p_locale",
+        "p_payload"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_save_goodies_builder_config",
+      "modes": null,
+      "names": [
+        "p_business_id",
+        "p_builder_id",
+        "p_config",
+        "p_enabled"
+      ],
+      "schema": "public",
+      "inputCount": 4,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_save_library_ingredient",
+      "modes": null,
+      "names": [
+        "p_id",
+        "p_builder",
+        "p_role",
+        "p_name",
+        "p_asset_key",
+        "p_active"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 1
+    },
+    {
+      "name": "wantiss_admin_set_application_document_status",
+      "modes": null,
+      "names": [
+        "p_document_id",
+        "p_status",
+        "p_review_note"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "wantiss_admin_set_business_verification",
+      "modes": null,
+      "names": [
+        "p_business",
+        "p_status",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 1
+    },
+    {
+      "name": "wantiss_admin_set_cms_asset_status",
+      "modes": null,
+      "names": [
+        "p_asset_id",
+        "p_status"
+      ],
+      "schema": "public",
+      "inputCount": 2,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_set_ingredient_rules",
+      "modes": null,
+      "names": [
+        "p_rules"
+      ],
+      "schema": "public",
+      "inputCount": 1,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_update_account_restriction",
+      "modes": null,
+      "names": [
+        "p_restriction_id",
+        "p_ends_at",
+        "p_reason"
+      ],
+      "schema": "public",
+      "inputCount": 3,
+      "defaultCount": 0
+    },
+    {
+      "name": "wantiss_admin_upsert_asset",
+      "modes": null,
+      "names": [
+        "p_asset_key",
+        "p_storage_path",
+        "p_content_type",
+        "p_byte_size",
+        "p_alt_text",
+        "p_status"
+      ],
+      "schema": "public",
+      "inputCount": 6,
+      "defaultCount": 2
+    },
+    {
+      "name": "wantiss_message_contact_profiles",
+      "modes": [
+        "t",
+        "t",
+        "t",
+        "t"
+      ],
+      "names": [
+        "id",
+        "full_name",
+        "avatar_url",
+        "wantiss_number"
+      ],
+      "schema": "public",
+      "inputCount": 0,
+      "defaultCount": 0
+    }
+  ],
+  "relations": [
+    {
+      "name": "account_deletion_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "email",
+        "reason",
+        "status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "account_modes",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "mode",
+        "registered_at"
+      ]
+    },
+    {
+      "name": "account_security_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "request_type",
+        "created_at"
+      ]
+    },
+    {
+      "name": "business_application_documents",
+      "schema": "public",
+      "columns": [
+        "id",
+        "application_id",
+        "document_type",
+        "storage_path",
+        "status",
+        "review_note",
+        "submitted_at",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "business_applications",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "business_name",
+        "status",
+        "review_note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at",
+        "final_rejection",
+        "business_id"
+      ]
+    },
+    {
+      "name": "business_features",
+      "schema": "public",
+      "columns": [
+        "business_id",
+        "feature",
+        "status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "business_members",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "user_id",
+        "role",
+        "created_at"
+      ]
+    },
+    {
+      "name": "businesses",
+      "schema": "public",
+      "columns": [
+        "id",
+        "name",
+        "verification",
+        "payout_ready",
+        "is_live",
+        "created_at",
+        "vendor_id",
+        "accept_scheduled_orders",
+        "scheduled_order_start_minutes",
+        "description",
+        "phone",
+        "phone_country",
+        "email",
+        "website",
+        "address",
+        "city",
+        "country",
+        "delivery_modes",
+        "hours",
+        "logo_url",
+        "goodies_store_id"
+      ]
+    },
+    {
+      "name": "checkout_rate_locks",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "from_currency",
+        "to_currency",
+        "original_amount",
+        "converted_amount",
+        "locked_rate",
+        "market_rate",
+        "wantiss_rate",
+        "expires_at",
+        "status",
+        "created_at",
+        "used_at"
+      ]
+    },
+    {
+      "name": "conversations",
+      "schema": "public",
+      "columns": [
+        "id",
+        "participant_ids",
+        "title",
+        "created_at",
+        "updated_at",
+        "business_id",
+        "customer_id",
+        "customer_name",
+        "feature",
+        "ref_id",
+        "ref_label",
+        "last_body",
+        "unread_business",
+        "unread_customer",
+        "status",
+        "vendor_replied_at"
+      ]
+    },
+    {
+      "name": "exchange_rates",
+      "schema": "public",
+      "columns": [
+        "id",
+        "from_currency",
+        "to_currency",
+        "market_rate",
+        "wantiss_rate",
+        "created_at",
+        "expires_at",
+        "is_active"
+      ]
+    },
+    {
+      "name": "favorites",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "product_id",
+        "created_at"
+      ]
+    },
+    {
+      "name": "flyz_moments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "media_url",
+        "media_type",
+        "caption",
+        "visibility",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "frenzies_player_stats",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "lifetime_points",
+        "current_win_streak",
+        "best_win_streak",
+        "streak_shield_available",
+        "total_games_played",
+        "total_games_won",
+        "created_at",
+        "updated_at",
+        "streak_shield_owned",
+        "streak_shield_active"
+      ]
+    },
+    {
+      "name": "frenzies_tournament_entries",
+      "schema": "public",
+      "columns": [
+        "id",
+        "tournament_id",
+        "user_id",
+        "created_at"
+      ]
+    },
+    {
+      "name": "frenzies_tournament_matches",
+      "schema": "public",
+      "columns": [
+        "id",
+        "tournament_id",
+        "status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "frenzies_tournaments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "tier_key",
+        "entry_fee",
+        "capacity",
+        "status",
+        "created_at",
+        "updated_at",
+        "instance_number"
+      ]
+    },
+    {
+      "name": "goodies_builder_configs",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "builder_id",
+        "config",
+        "enabled",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_card_checkout_attempts",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "idempotency_key",
+        "order_id",
+        "created_at",
+        "request_fingerprint"
+      ]
+    },
+    {
+      "name": "goodies_card_refund_queue",
+      "schema": "public",
+      "columns": [
+        "id",
+        "order_id",
+        "status",
+        "attempts",
+        "next_attempt_at",
+        "stripe_refund_id",
+        "last_error",
+        "created_at",
+        "updated_at",
+        "lease_token"
+      ]
+    },
+    {
+      "name": "goodies_checkout_attempts",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "idempotency_key",
+        "payment_method",
+        "request_fingerprint",
+        "order_id",
+        "created_at"
+      ]
+    },
+    {
+      "name": "goodies_contact_numbers",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "phone_number",
+        "label",
+        "created_at"
+      ]
+    },
+    {
+      "name": "goodies_courier_presence",
+      "schema": "public",
+      "columns": [
+        "courier_id",
+        "is_available",
+        "accepts_cash_on_delivery",
+        "latitude",
+        "longitude",
+        "accuracy_m",
+        "heading",
+        "speed_mps",
+        "last_location_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_courier_roster",
+      "schema": "public",
+      "columns": [
+        "courier_id",
+        "is_approved",
+        "added_by",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_delivery_assignments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "order_id",
+        "business_id",
+        "courier_id",
+        "status",
+        "offered_at",
+        "accepted_at",
+        "picked_up_at",
+        "delivered_at",
+        "latitude",
+        "longitude",
+        "accuracy_m",
+        "heading",
+        "speed_mps",
+        "location_updated_at",
+        "created_at",
+        "updated_at",
+        "expires_at"
+      ]
+    },
+    {
+      "name": "goodies_delivery_quotes",
+      "schema": "public",
+      "columns": [
+        "id",
+        "customer_id",
+        "store_id",
+        "address_payload",
+        "distance_m",
+        "fee",
+        "created_at",
+        "expires_at",
+        "consumed_at",
+        "origin_latitude",
+        "origin_longitude",
+        "destination_latitude",
+        "destination_longitude",
+        "route_geometry"
+      ]
+    },
+    {
+      "name": "goodies_geocode_cache",
+      "schema": "public",
+      "columns": [
+        "address_hash",
+        "latitude",
+        "longitude",
+        "updated_at",
+        "expires_at"
+      ]
+    },
+    {
+      "name": "goodies_group_order_invites",
+      "schema": "public",
+      "columns": [
+        "id",
+        "group_id",
+        "invited_user_id",
+        "invited_by",
+        "status",
+        "created_at"
+      ]
+    },
+    {
+      "name": "goodies_group_order_items",
+      "schema": "public",
+      "columns": [
+        "id",
+        "group_id",
+        "user_id",
+        "line_key",
+        "product_id",
+        "quantity",
+        "options",
+        "note",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_group_order_members",
+      "schema": "public",
+      "columns": [
+        "group_id",
+        "user_id",
+        "role",
+        "joined_at"
+      ]
+    },
+    {
+      "name": "goodies_group_orders",
+      "schema": "public",
+      "columns": [
+        "id",
+        "invite_code",
+        "store_id",
+        "host_user_id",
+        "status",
+        "max_members",
+        "expires_at",
+        "created_at",
+        "updated_at",
+        "order_id"
+      ]
+    },
+    {
+      "name": "goodies_ingredient_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "requested_by",
+        "name",
+        "builder",
+        "role",
+        "note",
+        "status",
+        "review_note",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at",
+        "updated_at",
+        "image_path",
+        "admin_asset_key",
+        "library_id"
+      ]
+    },
+    {
+      "name": "goodies_ingredient_rules",
+      "schema": "public",
+      "columns": [
+        "id",
+        "rules",
+        "updated_by",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_library_ingredients",
+      "schema": "public",
+      "columns": [
+        "id",
+        "builder",
+        "role",
+        "name",
+        "asset_key",
+        "request_id",
+        "active",
+        "created_by",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_order_cancellation_private",
+      "schema": "public",
+      "columns": [
+        "order_id",
+        "business_id",
+        "reason_code",
+        "reason_detail",
+        "created_by",
+        "created_at"
+      ]
+    },
+    {
+      "name": "goodies_order_groups",
+      "schema": "public",
+      "columns": [
+        "id",
+        "customer_id",
+        "order_type",
+        "stop_count",
+        "subtotal",
+        "delivery_fee",
+        "service_fee",
+        "tip",
+        "total",
+        "payment_method",
+        "idempotency_key",
+        "request_fingerprint",
+        "created_at"
+      ]
+    },
+    {
+      "name": "goodies_orders",
+      "schema": "public",
+      "columns": [
+        "id",
+        "order_code",
+        "business_id",
+        "customer_id",
+        "store_id",
+        "status",
+        "scheduled_for",
+        "order_type",
+        "address",
+        "contact_phone",
+        "items",
+        "subtotal",
+        "delivery_fee",
+        "service_fee",
+        "discount",
+        "tip",
+        "total",
+        "payment_method",
+        "payment_status",
+        "notes",
+        "created_at",
+        "updated_at",
+        "acceptance_deadline_at",
+        "accepted_at",
+        "declined_at",
+        "decline_reason_code",
+        "decline_reason_internal",
+        "decline_reason_public",
+        "promo_code",
+        "payment_provider_ref",
+        "payment_refunded_at",
+        "courier_id",
+        "courier_assigned_at",
+        "picked_up_at",
+        "delivered_at",
+        "store_latitude",
+        "store_longitude",
+        "delivery_latitude",
+        "delivery_longitude",
+        "delivery_route",
+        "commissionable_subtotal",
+        "platform_commission_rate",
+        "platform_commission_amount",
+        "vendor_net_amount",
+        "delivery_commission_rate",
+        "delivery_commission_amount",
+        "courier_net_delivery_amount",
+        "payment_refunded_amount",
+        "payment_last_event_created",
+        "cancelled_at",
+        "cancelled_by",
+        "cancellation_reason_public",
+        "payment_dispute_status",
+        "ready_at",
+        "self_delivery",
+        "self_driver_name",
+        "self_driver_phone",
+        "delivery_proof_url",
+        "vendor_delivered_at",
+        "receipt_deadline_at",
+        "customer_confirmed_at",
+        "delivery_dispute_status",
+        "delivery_dispute_reason",
+        "delivery_dispute_opened_at",
+        "parent_id",
+        "stop_index"
+      ]
+    },
+    {
+      "name": "goodies_products",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "name",
+        "description",
+        "price",
+        "emoji",
+        "aisle",
+        "stock",
+        "is_available",
+        "restriction",
+        "photo_url",
+        "sort_order",
+        "created_at",
+        "updated_at",
+        "review_status",
+        "review_note",
+        "reviewed_by",
+        "reviewed_at",
+        "photo_urls"
+      ]
+    },
+    {
+      "name": "goodies_promotions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "code",
+        "discount_type",
+        "discount_value",
+        "min_subtotal",
+        "store_id",
+        "starts_at",
+        "expires_at",
+        "max_redemptions",
+        "redemption_count",
+        "is_active",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "goodies_route_cache",
+      "schema": "public",
+      "columns": [
+        "store_id",
+        "address_hash",
+        "origin_latitude",
+        "origin_longitude",
+        "distance_m",
+        "route_geometry",
+        "updated_at",
+        "expires_at"
+      ]
+    },
+    {
+      "name": "goodies_store_schedules",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "store_id",
+        "hours",
+        "accept_scheduled_orders",
+        "scheduled_order_start_minutes",
+        "is_live",
+        "updated_at",
+        "business_name",
+        "description",
+        "phone",
+        "email",
+        "website",
+        "address",
+        "city",
+        "country",
+        "delivery_modes",
+        "logo_url",
+        "category",
+        "kind",
+        "min_order",
+        "delivery_fee",
+        "eta_min",
+        "eta_max",
+        "promo",
+        "names",
+        "delivery_pricing_mode",
+        "delivery_base_fee",
+        "delivery_per_km_fee",
+        "delivery_min_fee",
+        "delivery_max_fee",
+        "delivery_max_distance_km",
+        "accept_cash_on_delivery",
+        "cover_url",
+        "scheduled_order_start_time",
+        "scheduled_order_timezone",
+        "store_name",
+        "thumbnail_url",
+        "store_latitude",
+        "store_longitude"
+      ]
+    },
+    {
+      "name": "goodies_stripe_webhook_events",
+      "schema": "public",
+      "columns": [
+        "event_id",
+        "event_type",
+        "livemode",
+        "status",
+        "attempts",
+        "locked_at",
+        "processed_at",
+        "last_error",
+        "created_at",
+        "updated_at",
+        "claim_token"
+      ]
+    },
+    {
+      "name": "help_pay_contributions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "request_id",
+        "contributor_id",
+        "amount_cents",
+        "payment_method",
+        "idempotency_key",
+        "wallet_transaction_id",
+        "status",
+        "created_at"
+      ]
+    },
+    {
+      "name": "help_pay_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "creator_id",
+        "service",
+        "mode",
+        "checkout_key",
+        "checkout_snapshot",
+        "total_cents",
+        "initial_cents",
+        "contributed_cents",
+        "currency",
+        "status",
+        "expires_at",
+        "created_at",
+        "order_id"
+      ]
+    },
+    {
+      "name": "message_business_preferences",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "business_id",
+        "muted",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "message_group_members",
+      "schema": "public",
+      "columns": [
+        "conversation_id",
+        "user_id",
+        "role",
+        "joined_at"
+      ]
+    },
+    {
+      "name": "message_participant_state",
+      "schema": "public",
+      "columns": [
+        "conversation_id",
+        "user_id",
+        "last_read_at",
+        "muted",
+        "archived",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "message_preferences",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "allow_message_requests",
+        "allow_group_invites",
+        "allow_marketing_messages",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "messages",
+      "schema": "public",
+      "columns": [
+        "id",
+        "conversation_id",
+        "sender_id",
+        "body",
+        "created_at",
+        "read_at"
+      ]
+    },
+    {
+      "name": "money_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "requester_id",
+        "payer_id",
+        "amount",
+        "currency",
+        "note",
+        "status",
+        "wallet_transaction_id",
+        "created_at",
+        "resolved_at"
+      ]
+    },
+    {
+      "name": "notifications",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "vendor_id",
+        "title",
+        "body",
+        "read",
+        "user_id",
+        "feature_name",
+        "notification_type",
+        "destination",
+        "metadata",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "points_settings",
+      "schema": "public",
+      "columns": [
+        "id",
+        "points_per_dollar",
+        "updated_at",
+        "monthly_goal",
+        "bonus_points"
+      ]
+    },
+    {
+      "name": "points_transactions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "type",
+        "source",
+        "points",
+        "description",
+        "reference_id",
+        "created_at",
+        "expires_at",
+        "metadata",
+        "is_bonus"
+      ]
+    },
+    {
+      "name": "products",
+      "schema": "public",
+      "columns": [
+        "id",
+        "title",
+        "image_url",
+        "price",
+        "sold_count",
+        "discount_label",
+        "is_active",
+        "created_at"
+      ]
+    },
+    {
+      "name": "profiles",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "role",
+        "full_name",
+        "email",
+        "business_name",
+        "wantiss_number",
+        "preferred_currency",
+        "phone_number",
+        "avatar_url",
+        "membership_tier",
+        "profile_bio"
+      ]
+    },
+    {
+      "name": "qr_identity_records",
+      "schema": "public",
+      "columns": [
+        "id",
+        "qr_type",
+        "owner_user_id",
+        "business_id",
+        "token_hash",
+        "status",
+        "created_at",
+        "updated_at",
+        "revoked_at",
+        "last_used_at",
+        "wallet_id"
+      ]
+    },
+    {
+      "name": "reviews",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "product_id",
+        "rating",
+        "comment",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "settings_support_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "email",
+        "subject",
+        "message",
+        "status",
+        "created_at",
+        "ticket_code"
+      ]
+    },
+    {
+      "name": "stayz_listings",
+      "schema": "public",
+      "columns": [
+        "id",
+        "name",
+        "type",
+        "location",
+        "description",
+        "amenities",
+        "photos",
+        "hourly_price",
+        "day_price",
+        "overnight_price",
+        "extended_price",
+        "currency",
+        "tax_percent",
+        "cleaning_fee_percent",
+        "host_fee_percent",
+        "rules",
+        "cancellation",
+        "published",
+        "business_id",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "stayz_listings_view",
+      "schema": "public",
+      "columns": [
+        "id",
+        "business_id",
+        "title",
+        "description",
+        "photos",
+        "published",
+        "rating",
+        "review_count",
+        "stays",
+        "promo",
+        "price",
+        "attributes"
+      ]
+    },
+    {
+      "name": "stayz_notices",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "title",
+        "body",
+        "read",
+        "created_at"
+      ]
+    },
+    {
+      "name": "stayz_reservations",
+      "schema": "public",
+      "columns": [
+        "id",
+        "listing_id",
+        "user_id",
+        "mode",
+        "start_at",
+        "end_at",
+        "guests",
+        "subtotal",
+        "tax",
+        "cleaning_fee",
+        "discount",
+        "total",
+        "currency",
+        "status",
+        "payment_method_id",
+        "metadata",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "stayz_reviews",
+      "schema": "public",
+      "columns": [
+        "id",
+        "reservation_id",
+        "listing_id",
+        "user_id",
+        "rating",
+        "text",
+        "created_at"
+      ]
+    },
+    {
+      "name": "stayz_reviews_view",
+      "schema": "public",
+      "columns": [
+        "id",
+        "reservation_id",
+        "listing_id",
+        "user_id",
+        "rating",
+        "body",
+        "created_at",
+        "author"
+      ]
+    },
+    {
+      "name": "stayz_saved",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "listing_id",
+        "created_at"
+      ]
+    },
+    {
+      "name": "stayz_thread_messages",
+      "schema": "public",
+      "columns": [
+        "id",
+        "thread_id",
+        "user_id",
+        "body",
+        "created_at"
+      ]
+    },
+    {
+      "name": "stayz_threads",
+      "schema": "public",
+      "columns": [
+        "id",
+        "listing_id",
+        "user_id",
+        "title",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "stripe_customers",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "stripe_customer_id",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "user_addresses",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "recipient_name",
+        "phone_number",
+        "country",
+        "department",
+        "city",
+        "street_address",
+        "apartment",
+        "postal_code",
+        "delivery_notes",
+        "is_default",
+        "created_at",
+        "updated_at",
+        "latitude",
+        "longitude"
+      ]
+    },
+    {
+      "name": "user_friendships",
+      "schema": "public",
+      "columns": [
+        "id",
+        "requester_id",
+        "recipient_id",
+        "status",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "user_payment_methods",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "stripe_customer_id",
+        "stripe_payment_method_id",
+        "type",
+        "brand",
+        "last4",
+        "expiry_month",
+        "expiry_year",
+        "is_default",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "user_profile_visibility",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "membership_visibility",
+        "moments_visibility",
+        "livestream_visibility",
+        "updated_at",
+        "membership_visibility_confirmed",
+        "discover_phone",
+        "discover_wantiss_id",
+        "discover_email",
+        "discover_qr",
+        "show_last_seen",
+        "show_read_receipts"
+      ]
+    },
+    {
+      "name": "user_settings",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "language",
+        "region",
+        "currency",
+        "notification_preferences",
+        "privacy_preferences",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "vendor_fulfillments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "vendor_id",
+        "feature_name",
+        "reference_id",
+        "completed_at"
+      ]
+    },
+    {
+      "name": "wallet_notifications",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "title",
+        "body",
+        "notification_type",
+        "read",
+        "reference_id",
+        "metadata",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wallet_payments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "money_request_id",
+        "amount",
+        "currency",
+        "payment_method",
+        "status",
+        "stripe_payment_intent_id",
+        "metadata",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wallet_point_milestones",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "milestone_number",
+        "qualifying_points_threshold",
+        "bonus_points",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wallet_point_transactions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "feature_name",
+        "description",
+        "type",
+        "points",
+        "user_id"
+      ]
+    },
+    {
+      "name": "wallet_points",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "updated_at",
+        "points_balance",
+        "user_id",
+        "points_earned_month",
+        "points_earned_today"
+      ]
+    },
+    {
+      "name": "wallet_points_settings",
+      "schema": "public",
+      "columns": [
+        "id",
+        "points_per_dollar",
+        "milestone_target",
+        "milestone_bonus",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wallet_points_transactions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "source_feature",
+        "transaction_type",
+        "direction",
+        "points_amount",
+        "status",
+        "title",
+        "subtitle",
+        "reference_id",
+        "metadata",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wallet_referrals",
+      "schema": "public",
+      "columns": [
+        "id",
+        "inviter_user_id",
+        "invited_user_id",
+        "referral_code",
+        "status",
+        "qualifying_purchase_id",
+        "reward_points",
+        "rewarded_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wallet_transactions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "status",
+        "description",
+        "amount",
+        "user_id",
+        "original_amount",
+        "original_currency",
+        "wallet_amount",
+        "wallet_currency",
+        "market_rate",
+        "wantiss_rate",
+        "rate_lock_id",
+        "exchange_rate",
+        "feature_name",
+        "counterparty_user_id",
+        "activity_type",
+        "direction",
+        "reference_id",
+        "metadata"
+      ]
+    },
+    {
+      "name": "wallets",
+      "schema": "public",
+      "columns": [
+        "id",
+        "created_at",
+        "updated_at",
+        "balance",
+        "user_id"
+      ]
+    },
+    {
+      "name": "wantiss_admin_account_restrictions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "target_user_id",
+        "kind",
+        "scope",
+        "reason",
+        "notes",
+        "starts_at",
+        "ends_at",
+        "status",
+        "created_by",
+        "lifted_by",
+        "lifted_at",
+        "lift_reason",
+        "notify_user",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_audit_log",
+      "schema": "public",
+      "columns": [
+        "id",
+        "actor_user_id",
+        "action",
+        "resource_type",
+        "resource_id",
+        "reason",
+        "before_state",
+        "after_state",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_branding",
+      "schema": "public",
+      "columns": [
+        "id",
+        "brand_name",
+        "logo_storage_path",
+        "wordmark_storage_path",
+        "updated_by",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_financial_actions",
+      "schema": "public",
+      "columns": [
+        "id",
+        "action_type",
+        "transaction_id",
+        "target_user_id",
+        "direction",
+        "amount",
+        "reason",
+        "status",
+        "requested_by",
+        "reviewed_by",
+        "reviewed_at",
+        "provider_reference",
+        "metadata",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_financial_adjustments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "transaction_id",
+        "target_user_id",
+        "adjustment_type",
+        "amount",
+        "reason",
+        "status",
+        "notes",
+        "created_by",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_permission_grants",
+      "schema": "public",
+      "columns": [
+        "id",
+        "staff_user_id",
+        "permission_key",
+        "access_level",
+        "expires_at",
+        "revoked_at",
+        "revoked_by",
+        "granted_by",
+        "reason",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_refund_requests",
+      "schema": "public",
+      "columns": [
+        "id",
+        "transaction_id",
+        "target_user_id",
+        "amount",
+        "reason",
+        "notes",
+        "status",
+        "created_by",
+        "reviewed_by",
+        "reviewed_at",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_admin_staff",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "display_name",
+        "status",
+        "role",
+        "created_by",
+        "created_at",
+        "updated_at",
+        "invited_at",
+        "invitation_expires_at",
+        "invited_by"
+      ]
+    },
+    {
+      "name": "wantiss_cms_assets",
+      "schema": "public",
+      "columns": [
+        "id",
+        "asset_key",
+        "storage_path",
+        "content_type",
+        "byte_size",
+        "width",
+        "height",
+        "alt_text",
+        "status",
+        "created_by",
+        "updated_by",
+        "published_by",
+        "published_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wantiss_cms_content",
+      "schema": "public",
+      "columns": [
+        "id",
+        "content_key",
+        "locale",
+        "version",
+        "status",
+        "payload",
+        "created_by",
+        "updated_by",
+        "published_by",
+        "published_at",
+        "created_at",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wantiss_contact_visibility",
+      "schema": "public",
+      "columns": [
+        "owner_id",
+        "contact_id",
+        "hide_my_moments",
+        "hide_their_moments",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wantiss_conversation_preferences",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "conversation_id",
+        "pinned",
+        "muted",
+        "cleared_at",
+        "blocked_peer_id",
+        "updated_at"
+      ]
+    },
+    {
+      "name": "wantiss_follows",
+      "schema": "public",
+      "columns": [
+        "follower_id",
+        "followed_id",
+        "created_at"
+      ]
+    },
+    {
+      "name": "wantiss_message_presence",
+      "schema": "public",
+      "columns": [
+        "user_id",
+        "last_active_at"
+      ]
+    },
+    {
+      "name": "wantiss_moments",
+      "schema": "public",
+      "columns": [
+        "id",
+        "user_id",
+        "body",
+        "image_url",
+        "created_at",
+        "media_path"
+      ]
+    }
+  ],
+  "capturedAt": "2026-11-13T09:31:51.099528+00:00"
+}

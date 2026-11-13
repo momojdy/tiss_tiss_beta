@@ -1,0 +1,190 @@
+Check supabase/functions/rapid-api/goodiesStripeState_test.ts
+Check supabase/functions/goodies-tests/accountCache_test.ts
+Check supabase/functions/goodies-tests/adminPagination_test.ts
+Check supabase/functions/goodies-tests/adminRestrictions_test.ts
+Check supabase/functions/goodies-tests/builders_test.ts
+Check supabase/functions/goodies-tests/cmsPublication_test.ts
+Check supabase/functions/goodies-tests/courierAccess_test.ts
+Check supabase/functions/goodies-tests/deliveryProofAccess_test.ts
+Check supabase/functions/goodies-tests/deliveryTracking_test.ts
+Check supabase/functions/goodies-tests/deploymentPackage_test.ts
+Check supabase/functions/goodies-tests/disputeNotification_test.ts
+Check supabase/functions/goodies-tests/groupCheckoutConsent_test.ts
+Check supabase/functions/goodies-tests/localization_test.ts
+Check supabase/functions/goodies-tests/notificationLocalization_test.ts
+Check supabase/functions/goodies-tests/notificationRouting_test.ts
+Check supabase/functions/goodies-tests/orderLifecycle_test.ts
+Check supabase/functions/goodies-tests/pricing_test.ts
+Check supabase/functions/goodies-tests/productModeration_test.ts
+Check supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Check supabase/functions/goodies-tests/sharedBillReleaseGate_test.ts
+Check supabase/functions/goodies-tests/vendorSettlement_test.ts
+Check supabase/functions/process-goodies-card-refunds/refundLogic_test.ts
+Check supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts
+running 5 tests from ./supabase/functions/rapid-api/goodiesStripeState_test.ts
+canonical PaymentIntent status wins over an older webhook event type ... ok (373µs)
+failed PaymentIntent is only recorded after it requires a new payment method ... ok (91µs)
+cumulative Stripe refund amount maps to pending, partial and full states ... ok (82µs)
+refund reconciliation rejects impossible Stripe totals ... ok (336µs)
+canonical dispute status preserves final outcome ... ok (165µs)
+running 3 tests from ./supabase/functions/goodies-tests/accountCache_test.ts
+private caches hydrate only for their original account ... ok (772µs)
+legacy caches with unknown owners and malformed envelopes never hydrate ... ok (81µs)
+guest cart caches cannot restore into signed-in accounts ... ok (50µs)
+running 1 test from ./supabase/functions/goodies-tests/adminPagination_test.ts
+admin paging retains access checks and reaches records beyond legacy caps ... ok (7s)
+running 1 test from ./supabase/functions/goodies-tests/adminRestrictions_test.ts
+restriction appeals persist and scoped staff cannot lift permanent Goodies bans ... ok (4s)
+running 1 test from ./supabase/functions/goodies-tests/builders_test.ts
+server builder rules enforce availability, required groups, limits and authoritative pricing ... ok (3s)
+running 2 tests from ./supabase/functions/goodies-tests/cmsPublication_test.ts
+CMS publication rejects unreviewed critical English/Creole and placeholder FAQs without blocking fee-only updates ... ok (3s)
+forward CMS guard permits unfinished Creole only with reviewed English and preserves every review state ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/courierAccess_test.ts
+courier RPC migration enforces assignment, approval, expiry and role boundaries ... ok (6s)
+running 1 test from ./supabase/functions/goodies-tests/deliveryProofAccess_test.ts
+private delivery evidence enforces customer, merchant, staff and object ownership ... ok (11s)
+running 7 tests from ./supabase/functions/goodies-tests/deliveryTracking_test.ts
+queued old GPS samples cannot be submitted as fresh positions ... ok (761µs)
+GPS expires without realtime events and accepts the freshness boundary ... ok (351µs)
+only accepted active assignments expose a courier position ... ok (382µs)
+missing, invalid and implausibly future GPS timestamps are rejected ... ok (340µs)
+coordinates reject missing, non-finite and out-of-range data while retaining zero ... ok (403µs)
+road geometry preserves disconnected segments without fabricating connecting roads ... ok (512µs)
+viewport contains distant store, customer, courier and route points ... ok (522µs)
+running 1 test from ./supabase/functions/goodies-tests/deploymentPackage_test.ts
+approved Goodies deployment package applies in documented order and preserves final guards ... ok (10s)
+running 1 test from ./supabase/functions/goodies-tests/disputeNotification_test.ts
+paid card disputes report pending or manual-review refunds without claiming no charge ... ok (6s)
+running 1 test from ./supabase/functions/goodies-tests/groupCheckoutConsent_test.ts
+group checkout compares reviewed items and totals before entering the wallet boundary ...
+  matching review reaches only the explicit unpaid test boundary ... ok (80ms)
+  tampered or stale totals cannot enter payment ... ok (5ms)
+  incomplete review metadata cannot enter payment ... ok (13ms)
+  a member cart change invalidates the approved snapshot ... ok (15ms)
+  another customer cannot check out the host wallet ... ok (5ms)
+  existing clients keep the unchanged RPC signature ... ok (28ms)
+group checkout compares reviewed items and totals before entering the wallet boundary ... ok (7s)
+running 5 tests from ./supabase/functions/goodies-tests/localization_test.ts
+production falls back to English for missing and unreviewed translations in all five locales ... ok (558µs)
+Haitian Creole is available in production only after explicit human review ... ok (80µs)
+draft preview is explicit and never changes review metadata ... ok (57µs)
+empty and legacy text have predictable fallbacks ... ok (56µs)
+unreviewed English cannot bypass review by becoming the production fallback ... ok (301µs)
+running 2 tests from ./supabase/functions/goodies-tests/notificationLocalization_test.ts
+shared Wantiss settings map to the five existing Goodies locales ... ok (460µs)
+notifications use reviewed CMS translations and preserve truthful English fallbacks ... ok (4s)
+running 4 tests from ./supabase/functions/goodies-tests/notificationRouting_test.ts
+vendor order, moderation, ingredient and message notices open their established pages ... ok (705µs)
+push payloads cannot navigate another business or an unrelated page ... ok (70µs)
+settlement notices open the scoped vendor payout panel ... ok (47µs)
+notification workspace switches are limited to the vendor owned business list ... ok (69µs)
+running 1 test from ./supabase/functions/goodies-tests/orderLifecycle_test.ts
+wallet checkout, authorization, fulfillment and cancellation stay atomic and synchronized ... ok (5s)
+running 1 test from ./supabase/functions/goodies-tests/pricing_test.ts
+server product prices, option restrictions, promotions and tip choices reject tampering ... ok (4s)
+running 1 test from ./supabase/functions/goodies-tests/productModeration_test.ts
+vendors can maintain their catalog while administrator rejection remains authoritative ... ok (5s)
+running 2 tests from ./supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Goodies reviews enforce completed-order ownership, isolate participants and deduplicate retries ... ok (5s)
+review migration failure rolls back partial schema changes and can be retried cleanly ... ok (2s)
+running 1 test from ./supabase/functions/goodies-tests/sharedBillReleaseGate_test.ts
+Shared Bill funding is denied by the backend while recovery access is preserved ... ok (3s)
+running 1 test from ./supabase/functions/goodies-tests/vendorSettlement_test.ts
+Goodies settlement enforces holds, HTG cash sales limits, weekly commission, private destinations and atomic payouts ...
+  rollout defaults off and unauthorized users cannot access private records or financial RPCs ... ok (73ms)
+  24-hour hold blocks withdrawals, then wallet payout credits exactly once and rejects changed retries ... ok (136ms)
+  cash limit is 5000 HTG of sales, including pending accepted orders, not 5000 of commission ... ok (114ms)
+  expired FX blocks new cash acceptance without deleting orders or affecting electronic checkout ... ok (10ms)
+  weekly overdue commission pauses new cash orders and wallet settlement restores the sales allowance ... ok (70ms)
+  disputes and refunds freeze earnings; post-payout loss is visible as recovery due ... ok (11ms)
+  external destinations require owner access and finance review; external payouts reserve funds and cannot fake instant success ... ok (101ms)
+  ledger filters, dashboard totals, owner cash preferences and finance details use real scoped data ... ok (94ms)
+  external completion records the exact converted amount and a unique verified receipt ... ok (28ms)
+  courier-collected cash cannot fund earnings until its real remittance is verified ... ok (37ms)
+  weekly reminders deduplicate and settlement notices stay in the vendor inbox ... ok (63ms)
+  paused writes retain history and accepted-order fulfillment while blocking new payouts and cash acceptance ... ok (7ms)
+  bank payout requires a reviewed country calendar and uses the seven-to-fourteen-business-day window ... ok (41ms)
+  clients cannot alter FX, and confirmed commission refunds create a real credit without making cash sales withdrawable ... ok (12ms)
+  every new public financial RPC denies anonymous execution and every private helper denies clients ... ok (4ms)
+  vendors can dispatch immediately without a fleet and cannot take over an accepted courier ... ok (44ms)
+  bank windows exclude weekends and configured holidays ... ok (3ms)
+Goodies settlement enforces holds, HTG cash sales limits, weekly commission, private destinations and atomic payouts ... ok (4s)
+running 7 tests from ./supabase/functions/process-goodies-card-refunds/refundLogic_test.ts
+only succeeded Stripe refunds reduce the remaining balance ... ok (409µs)
+pending and requires_action refunds block another refund creation ... ok (71µs)
+failed and canceled refunds do not block a genuine retry ... ok (39µs)
+uncertain network retries reuse the stable key when Stripe has no refund record ... ok (65µs)
+a recorded terminal refund advances the idempotency generation ... ok (149µs)
+fully refunded totals have no remaining amount ... ok (56µs)
+invalid refund totals and keys are rejected ... ok (295µs)
+running 9 tests from ./supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts
+mock Stripe full refund is finalized once ... ok (656µs)
+mock Stripe partial success creates only the remaining amount with a new key ... ok (196µs)
+existing pending Stripe refund prevents a second refund ... ok (76µs)
+requires_action Stripe refund prevents a second refund ... ok (54µs)
+uncertain Stripe network failure releases lease and retains stable retry key ...
+------- post-test output -------
+Goodies card refund failed for order order-123 Error: network timeout
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:101:43
+    at innerWrapped (ext:cli/40_test.js:300:11)
+    at exitSanitizer (ext:cli/40_test.js:201:33)
+    at outerWrapped (ext:cli/40_test.js:239:28)
+----- post-test output end -----
+uncertain Stripe network failure releases lease and retains stable retry key ... ok (1ms)
+stale lease cannot finalize a Stripe refund ...
+------- post-test output -------
+Could not release refund queue item queue-1 Error: Refund worker lease is no longer current
+    at finish (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:51:28)
+    at async processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:153:7)
+    at async file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:115:18
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund worker lease is no longer current
+    at finish (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:51:28)
+    at async processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:142:7)
+    at async file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:115:18
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+----- post-test output end -----
+stale lease cannot finalize a Stripe refund ... ok (7ms)
+already fully refunded PaymentIntent is finalized without creating another refund ... ok (119µs)
+invalid order totals are rejected before Stripe is contacted ...
+------- post-test output -------
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at innerWrapped (ext:cli/40_test.js:300:11)
+    at exitSanitizer (ext:cli/40_test.js:201:33)
+    at outerWrapped (ext:cli/40_test.js:239:28)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+----- post-test output end -----
+invalid order totals are rejected before Stripe is contacted ... ok (714µs)
+Stripe refund history pagination is exhausted before calculating the remainder ... ok (190µs)
+
+ok | 59 passed (23 steps) | 0 failed (1m49s)

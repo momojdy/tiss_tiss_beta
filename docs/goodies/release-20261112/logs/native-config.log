@@ -1,0 +1,5 @@
+
+> tiss_tiss_beta@1.10.0 check:goodies-native-config
+> node scripts/check-goodies-native-config.cjs
+
+NOT VERIFIED: Android Google Maps API key and application/signature restrictions

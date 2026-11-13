@@ -1,0 +1,13 @@
+{
+  "postgres": "17.6",
+  "binaryPackage": "@embedded-postgres/linux-x64@17.6.0-beta.15",
+  "clientPackage": "pg@8.23.1",
+  "transport": "Private temporary Unix socket; no TCP listeners",
+  "data": "Synthetic, fresh cluster; ownership and server data/socket paths verified",
+  "productionUrlsAccepted": false,
+  "concurrentRaces": 5,
+  "staleQuoteRejections": 1,
+  "clusterStoppedAndRemoved": true,
+  "runnerSha256": "5390595b9b7e20e5ddb7b50c2e95f71da21a4dab38396bc19635f3bb9abd4a30",
+  "verifiedAt": "2026-11-13"
+}

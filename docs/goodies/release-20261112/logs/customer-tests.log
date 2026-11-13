@@ -1,0 +1,158 @@
+
+> tiss_tiss_beta@1.10.0 test:goodies
+> node scripts/run-goodies-tests.cjs
+
+✔ shared account addresses load real addresses and Goodies numbers for the authenticated owner (43.920723ms)
+✔ failed address reads preserve owned snapshots and show a safe retry state instead of a fabricated empty result (7.470329ms)
+✔ late address responses cannot replace another account after logout or switching accounts (9.397889ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 66.895054
+✔ all private Goodies destinations wait for account hydration before rendering cached account screens (217.390925ms)
+✔ failed account hydration exposes retry without a previous account restriction, cart or private page (21.678574ms)
+✔ a native sheet can render only for the account that opened it (69.160975ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 331.135446
+✔ development builds retain production settings and use separate application identifiers (0.912408ms)
+✔ the native Android Maps key comes from the build environment without discarding existing native config (0.238147ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 6.57801
+✔ published FAQ placeholders never become customer answers (1.623634ms)
+✔ a failed CMS refresh preserves cached content, exposes retry state, and recovers from published data (1.02101ms)
+✔ every source CMS field resolves manually edited published text in each configured locale (115.065025ms)
+✔ review boundaries, structured content, formatting and content refresh remain intact (0.573299ms)
+✔ source references and page fields resolve to registered CMS labels (3.171243ms)
+✔ Goodies card-form copy is editable and safely escaped without changing the shared default flow (17.177297ms)
+✔ unfinished Creole stays unavailable in production and falls back to reviewed English across app text and content (0.72061ms)
+✔ filter labels update with CMS content while selection keys remain stable (45.352989ms)
+✔ card verification errors show app-owned editable copy instead of provider details (7.057544ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 204.917139
+✔ native financial tooling rejects production URLs and existing system sockets before connecting (300.767023ms)
+✔ native financial tooling rejects symlinks that escape its private temporary cluster (62.454583ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 375.863926
+✔ catalog outages preserve owned shopping snapshots and unavailable stores are never purchasable (1.630785ms)
+✔ empty cart cannot complete an unresolved checkout and builder snapshots retain their store (0.167351ms)
+✔ malformed cached quantities and prices are discarded without removing valid snapshots (0.150776ms)
+✔ failed payment reads preserve known balance, report unavailable, and retry successfully (191.726963ms)
+✔ malformed balances never become a successful zero-dollar payment result (159.670123ms)
+✔ late responses cannot overwrite another account or a newer payment refresh (15.448035ms)
+✔ group checkout prevents concurrent duplicate payment and opens the actual placed order (36.299359ms)
+✔ successful group payment remains successful when order details are temporarily unavailable (30.373327ms)
+✔ group checkout stops after an account switch and never submits for the replacement account (33.430288ms)
+✔ permission failures never masquerade as insufficient wallet funds (9.531026ms)
+ℹ tests 10
+ℹ suites 0
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 484.15631
+✔ a failed store switch never reveals the previous store review rows (16.340893ms)
+✔ account switches hide cached rows and ignore requests from the previous account (1.032298ms)
+✔ review save refresh is scoped to its store and queues a refresh behind an in-flight page (0.627721ms)
+✔ pagination retries retain the offset and reload replaces rather than appends (1.153619ms)
+✔ malformed successful responses are errors rather than false empty review states (0.395903ms)
+✔ server review hydration restores comments and clears obsolete cached ratings without mixing orders (7.826391ms)
+✔ successful review save refreshes server rating totals and failures never fabricate zero ratings (0.299749ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 34.386833
+✔ financial summaries reject malformed amounts rather than inventing zero balances (54.8271ms)
+✔ transport and backend errors never expose server details; actionable codes use owned messages (47.581199ms)
+✔ summary responses are bound to the requested business and empty successful protocols fail closed (20.685035ms)
+✔ Goodies-only businesses use the scoped dashboard while unrelated and mixed feature dashboards keep their existing API (11.596492ms)
+✔ currency quotes match positive PostgreSQL decimal rounding and reject unsupported precision (10.786257ms)
+✔ commission and payout requests retain their idempotency keys and send explicit server quote expectations (8.516045ms)
+✔ Goodies vendor language uses the main account locale codes and never writes another signed-in account (10.289482ms)
+✔ the actual payout form shows unavailable/retry instead of spendable zero on a failed summary (31.818943ms)
+✔ the actual payout form locks repeated taps until the first request resolves (49.721749ms)
+✔ new vendor copy uses its selected locale and never serves unfinished Creole (23.628497ms)
+✔ the actual Goodies balance panel never presents a failed summary as zero earnings (15.800163ms)
+✔ own-driver countdown never fabricates a wait when server eligibility is immediate and fails closed on unknown scope (13.919604ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 305.283578
+✔ invalid financial status responses fail closed instead of rendering invented zero balances (1.217565ms)
+✔ Shared Bill release gate prevents request creation and wallet debits before acceptance (0.410826ms)
+✔ existing Shared Bill cancellation remains available so reserved money can be recovered (0.161392ms)
+✔ QR parsing accepts a canonical request identifier and rejects forged amount authority (0.231417ms)
+ℹ tests 4
+ℹ suites 0
+ℹ pass 4
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 7.16531
+✔ machine publication preparation requires explicit authorization (1.000751ms)
+✔ four-locale release preserves fees, legal documents, policy bodies, Haitian Creole and existing manual text (1.997154ms)
+✔ missing translations and missing dynamic placeholders prevent a complete release (0.374261ms)
+✔ registered fields are added without replacing old copy, non-text configuration or Haitian Creole (0.390646ms)
+✔ prepared live-baseline release preserves all existing Creole entries and every registered app field (622.984158ms)
+ℹ tests 5
+ℹ suites 0
+ℹ pass 5
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 632.45965
+✔ Goodies action cards read real scoped orders, rejected products and messages without legacy RPCs (75.698403ms)
+✔ failed vendor reads reject instead of displaying an empty action list (21.080818ms)
+✔ activity uses existing notification fields, account/business scope and stable paired cursors (18.297125ms)
+✔ business search returns real Goodies destinations and escapes wildcard input (11.515971ms)
+✔ vendor preferences use an atomic main-account RPC and reject stale account writes (22.409219ms)
+✔ data requests create real support tickets without promising a completed export or deletion (22.980105ms)
+✔ the actual Goodies workspace metadata avoids unavailable legacy listing/payout APIs and retains real counts (27.141213ms)
+✔ the actual Goodies workspace rejects failed counts instead of presenting false zero badges (12.860326ms)
+✔ vendor search/notification destinations load the selected product and order within the current business (67.037012ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 285.645232

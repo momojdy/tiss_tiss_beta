@@ -1,0 +1,61 @@
+
+> wantiss-admin-rn@0.12.0 test:goodies
+> node tests/access.test.cjs && node tests/cms.test.cjs && node tests/settlement.test.cjs
+
+✔ signed-out and revoked sessions never inherit prototype permissions (126.232689ms)
+✔ CMS and account controls use canonical server keys and required manage level (32.038121ms)
+✔ expired and revoked grants cannot authorize controls (31.806113ms)
+✔ permanent bans remain Super Admin only despite arbitrary granted labels (37.080747ms)
+✔ admin invocation hides transport, exception and backend response details (30.940961ms)
+✔ staff access actions never render backend or transport exception details (66.834993ms)
+✔ invalid expiration dates are rejected before a staff permission write (70.818465ms)
+ℹ tests 7
+ℹ suites 0
+ℹ pass 7
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 415.815039
+✔ every registered source field is manually editable in all five locales and survives save serialization (126.51902ms)
+✔ opening an existing draft preserves all edited content, translations and protected configuration (8.680767ms)
+✔ every discovered route has a page entry and every referenced label exists in the starter (8.605876ms)
+✔ FAQ, support topics and policy edits preserve all locales through serialization (17.583489ms)
+✔ required dynamic placeholders cannot disappear on save and edits never promote human review (42.665518ms)
+✔ real structured editor controls save edits and honor read-only access (38.72493ms)
+✔ editing legacy string content preserves its English wording (0.14678ms)
+✔ the existing starter draft remains valid without requiring unrelated text changes (58.553786ms)
+✔ CMS wording never replaces internal payment configuration keys (44.792376ms)
+✔ asset listing reaches beyond the legacy 500-row cap and never reports partial results as complete (42.142271ms)
+✔ critical publication requires explicit review and never promotes translation status (17.139632ms)
+✔ all registered fields complete a local edit-save-review-serialization-consumer lookup round trip (40.83964ms)
+✔ store preview preserves the actual consumer hero geometry and asset behavior (155.214909ms)
+✔ every customer route is available in the preview selector, including secure card and group pages (1.26972ms)
+✔ preview backend blocks writes, checkout, publication and provider calls without any network client (32.758912ms)
+✔ preview retains customer group/card visual attributes and records source provenance (217.818132ms)
+✔ explicit field identities resolve duplicate and dynamic wording while explicit multiple identities open a chooser (78.036372ms)
+✔ four approved languages can publish while unfinished Creole keeps its value/status and uses reviewed English (18.758777ms)
+✔ every mirrored preview dependency is declared for a clean admin install (656.386496ms)
+ℹ tests 19
+ℹ suites 0
+ℹ pass 19
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 1624.809047
+✔ financial confirmation validates the transferred currency amount and requires receipt evidence (189.922164ms)
+✔ admin settlement actions send exact receipt amounts and never expose backend errors (17.439087ms)
+ℹ tests 2
+ℹ suites 0
+ℹ pass 2
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 219.248531
+npm notice
+npm notice New major version of npm available! 11.9.0 -> 12.2.2
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.2
+npm notice To update run: npm install -g npm@12.2.2
+npm notice
