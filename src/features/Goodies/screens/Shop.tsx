@@ -288,7 +288,7 @@ export function Cart() {
         <View style={{marginTop: 16}}><Sum rows={[[label('lbl.cartSubtotal', 'Subtotal'), money(t.sub)], [label('lbl.cartDeliveryFee', 'Delivery fee'), feeLabel, t.free && deliveryReady ? 'g' : undefined as any], [label('lbl.cartServiceFee', 'Service fee'), money(t.svc)], ...(t.disc ? [[label('lbl.cartDiscount', 'Discount'), '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [[label('lbl.cartCourierTip', 'Courier tip'), money(t.tip)] as any] : [])]} total={[label('lbl.cartTotal', 'Total'), money(t.total)]} /></View>
         {badLine ? <T size={13} color={th.red} align="center" style={{marginBottom: 10}}>{label('lbl.cartFixItems', 'Fix the items marked above to continue.')}</T> : t.sub < st.min ? <T size={13} color={th.mut} align="center" style={{marginBottom: 10}}>{label('lbl.cartMinMore', 'Add')} {money(st.min - t.sub)} {label('lbl.cartReachMinimum', 'more to reach the')} {money(st.min)} {label("lbl.cms.432ca9a22ed3", "minimum.")}</T> : null}
         {!deliveryReady && (S.deliveryQuoteError || S.firstOrderEligibilityError) ? <Pressable onPress={() => {void Promise.all([refreshFirstDeliveryEligibility(true), refreshGoodiesDeliveryQuote()]);}} style={{paddingVertical:10}}><T color={th.red} size={13}>{S.deliveryQuoteError || S.firstOrderEligibilityError} · Tap to retry</T></Pressable> : null}
-        <Cta label={!isPk() && !addressKey ? label('lbl.checkoutAddAddress', 'Choose delivery address') : deliveryReady ? label('lbl.cartCheckout', 'Checkout') + ' · ' + money(t.total) : label('lbl.cms.deliveryCalculating', 'Calculating delivery…')} disabled={short || (!deliveryReady && (isPk() || !!addressKey))} onPress={!isPk() && !addressKey ? () => go('addresses') : goCheckout} />
+        <Cta label={!isPk() && !addressKey ? label('lbl.checkoutAddAddress', 'Choose delivery address') : deliveryReady ? label('lbl.cartCheckout', 'Checkout') + ' · ' + money(t.total) : label('lbl.cartCheckout', 'Checkout') + ' · ' + label('lbl.cms.deliveryCalculating', 'Calculating delivery…')} disabled={short} onPress={!isPk() && !addressKey ? () => go('addresses') : goCheckout} />
       </View>
     </View>
   );
@@ -428,10 +428,10 @@ export function Checkout() {
 export const CheckoutFoot = () => {
   const pricingReady = isPk() || (deliveryQuoteReady() && (!fees().firstFree || S.firstOrderEligible !== null));
   const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total);
-  const lbl = !pricingReady ? label('lbl.cms.deliveryCalculating', 'Calculating delivery…') : S.cs === 3
+  const lbl = !pricingReady && S.cs >= 2 ? label('lbl.cms.deliveryCalculating', 'Calculating delivery…') : S.cs === 3
     ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total)
     : label('lbl.checkoutContinue', 'Continue');
-  return <Cta label={lbl} disabled={!pricingReady || (S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? () => {void placeOrder();} : checkoutNext} />;
+  return <Cta label={lbl} disabled={(!pricingReady && S.cs >= 2) || (S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? () => {void placeOrder();} : checkoutNext} />;
 };
 
 export function Confirm({id}: {id: string}) {
