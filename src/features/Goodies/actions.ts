@@ -332,6 +332,7 @@ export async function placeOrder(helpPayMode?: 'share' | 'full') {
     alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
   };
   S.orders.unshift(o);
+  if (!pk && backendOrderId) S.firstOrderEligible = false;
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   if (!backendOrderId) S.notifs.unshift({id: Date.now() + Math.random(), t: 'Order ' + o.id + ' placed', d: 'Demo order sent to ' + st.n + '. Tap to track it.', r: 'track', p: o.id, u: 1});
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
@@ -359,6 +360,7 @@ export async function completeCardOrder() {
       alc: alc ? {...alcAge(S.cart.sid), who: pk ? 'shop' : 'courier', status: 'pending'} : null,
     };
     S.orders.unshift(o);
+    if (!pk) S.firstOrderEligible = false;
     S.cardPending = null; S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
     S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: o.id, u: Date.now() + 1}];
     S.busy = 0; toast(label('lbl.actionOrderSent', 'Order sent to the store')); await save();
@@ -587,6 +589,7 @@ async function placeMultiOrder() {
     };
   });
   [...orders].reverse().forEach(o => S.orders.unshift(o));
+  S.firstOrderEligible = false;
   S.cart = {sid: null, lines: []}; S.promo = ''; S.tip = 0; S.note = ''; S.sch = 0; S.cs = 0; S.cc = 'w'; S.alcConsent = false;
   (S as any).deliveryFeeQuote = null;
   S.stack = [{r: 'home', u: Date.now()}, {r: 'confirm', p: orders[0].id, u: Date.now() + 1}];
