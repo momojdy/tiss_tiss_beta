@@ -5,7 +5,7 @@ import {View, Text, Pressable, ScrollView, useWindowDimensions, Image, TextInput
 import {Icon} from '../components/Icon';
 import {T, Grad, Circ, Bar, Sh, Rail, Chips, Cta, Card, Row, Badge, Ttl, Empty, Tile, Radio, Seg, Stepper, Input, Switch, bgIdx, useTheme} from '../components/ui';
 import {Dish, StoreCard, ItemRow} from '../components/cards';
-import {storeSub, lineStore, fmtTime, fmtDay, fmtStoreTime, fmtStoreDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance} from '../store';
+import {storeSub, lineStore, fmtTime, fmtDay, fmtStoreTime, fmtStoreDay, hasAlcohol, alcAge, S, ST, STB, IT, DEALS, money, dp, addr, cnt, first, totals, isPk, ctOf, qtyIn, done, TL, TP, defAddr, emit, save, toast, refreshLiveSchedules, refreshStoreDistance, deliveryAddressKey, deliveryQuoteReady, refreshGoodiesDeliveryQuote, refreshFirstDeliveryEligibility} from '../store';
 import {go, tab, back, browse, heart, favp, setSize, toggleDrink, productQty, productAdd, qty, clearAsk, promoApply, promoClear, goCheckout, checkoutNext, setMode, setTip, setSch, setPay, setCard, placeOrder, cancelAsk, reorder, setOrdersTab, refreshPaymentOptions} from '../actions';
 import {CHOOSE_SIZE_CATS, setConsent, createWallet, idResult} from '../actions';
 import {rgText, stageLabels, fees, faq as faqList, label} from '../content';
@@ -215,8 +215,22 @@ const Sum = ({rows, total}: {rows: [string, string, 'g'?][]; total?: [string, st
 
 export function Cart() {
   const th = useTheme(), c = S.cart, [code, setCode] = useState(S.pin || ''), [scheduleOpen, setScheduleOpen] = useState(false);
+  const storeKey = [...new Set(c.lines.map(lineStore).filter(Boolean))].join(',');
+  const addressKey = deliveryAddressKey(addr());
+  const firstOfferEnabled = fees().firstFree;
+  useEffect(() => {
+    if (!c.lines.length || !addressKey || isPk() || storeKey.split(',').some(id => !STB[id]?.live)) return;
+    void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
+  }, [storeKey, addressKey, S.mode, firstOfferEnabled]);
   if (!c.lines.length) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Pressable accessibilityRole="button" accessibilityLabel={label('lbl.cartGroupOrder', 'Start a group order')} onPress={() => require('../store').ui.sheet({kind:'group-order'})} hitSlop={10} style={{padding: 4, alignItems: 'center', justifyContent: 'center'}}><Icon name="user-plus" size={23} color={th.br} /></Pressable>} /><View style={{alignItems:'center',paddingHorizontal:28,paddingTop:76,paddingBottom:34}}><Icon name="bag" size={38} color={th.mut}/><T size={21} weight="600" style={{marginTop:18,textAlign:'center'}}>{label('lbl.cartEmptyTitle', 'Your cart is empty')}</T><T size={13} color={th.mut} align="center" style={{marginTop:7,marginBottom:22}}>{label('lbl.cartEmptyText', 'Explore nearby stores and discover products around your chosen address.')}</T><View style={{width:'100%'}}><Cta label={label('lbl.cartBrowse', 'Browse stores')} onPress={() => go('explore')} /></View></View></View>;
-  const t = totals(), st = t.st!, stops: string[] = (t as any).stops || [], multi = stops.length > 1, badLine = c.lines.some((l: any) => l.byo && lineBad(l)), short = (multi ? stops.some((id: string) => storeSub(id) < (STB[id]?.min || 0)) : t.sub < st.min) || badLine;
+  const t = totals(), st = t.st, stops: string[] = (t as any).stops || [], multi = stops.length > 1;
+  if (!st?.live || stops.some(id => !STB[id]?.live)) return <View><Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} /><Empty emoji="🛒" title="Store temporarily unavailable" text="One of the stores in your saved cart is no longer available. Your cart has not been cleared." button="Browse stores" onPress={() => go('explore')} /></View>;
+  const badLine = c.lines.some((l: any) => l.byo && lineBad(l));
+  const short = (multi ? stops.some((id: string) => storeSub(id) < (STB[id]?.min || 0)) : t.sub < st.min) || badLine;
+  const deliveryReady = isPk() || (deliveryQuoteReady() && (!firstOfferEnabled || S.firstOrderEligible !== null));
+  const feeLabel = isPk() ? label("lbl.cms.c036c1628698","Pickup") : !deliveryReady
+    ? (S.deliveryQuoteError || S.firstOrderEligibilityError ? 'Unavailable — retry' : firstOfferEnabled && S.firstOrderEligible === null ? 'Checking first-delivery offer…' : 'Calculating…')
+    : t.free ? (first() ? label("lbl.cms.a323e7a83705","Free (first order)") : label("lbl.cms.b9a67ad4232a","Free")) : money(t.fee);
   return (
     <View>
       <Bar title={label('lbl.cartTitle', 'Your cart')} onBack={back} right={<Circ icon="trash" label={label('lbl.cartClearAction', 'Clear cart')} onPress={clearAsk} />} />
@@ -271,9 +285,10 @@ export function Cart() {
           <Row><View style={{flex: 1}}><Input value={code} onChange={v => setCode(v.toUpperCase())} placeholder={label('lbl.cartPromoPlaceholder', 'Enter promo code')} /></View><View style={{width: 90}}><Cta label={label('lbl.cartApply', 'Apply')} onPress={() => promoApply(code)} /></View></Row>
           <Pressable onPress={() => go('promos')}><T size={13} weight="600" color={th.br} style={{marginTop: 8}}>{label('lbl.cartAvailableCoupons', 'See available coupons')}</T></Pressable>
         </>)}
-        <View style={{marginTop: 16}}><Sum rows={[[label('lbl.cartSubtotal', 'Subtotal'), money(t.sub)], [label('lbl.cartDeliveryFee', 'Delivery fee'), isPk() ? label("lbl.cms.c036c1628698","Pickup") : t.free ? (first() ? label("lbl.cms.a323e7a83705","Free (first order)") : label("lbl.cms.b9a67ad4232a","Free")) : money(t.fee), t.free ? 'g' : undefined as any], [label('lbl.cartServiceFee', 'Service fee'), money(t.svc)], ...(t.disc ? [[label('lbl.cartDiscount', 'Discount'), '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [[label('lbl.cartCourierTip', 'Courier tip'), money(t.tip)] as any] : [])]} total={[label('lbl.cartTotal', 'Total'), money(t.total)]} /></View>
+        <View style={{marginTop: 16}}><Sum rows={[[label('lbl.cartSubtotal', 'Subtotal'), money(t.sub)], [label('lbl.cartDeliveryFee', 'Delivery fee'), feeLabel, t.free && deliveryReady ? 'g' : undefined as any], [label('lbl.cartServiceFee', 'Service fee'), money(t.svc)], ...(t.disc ? [[label('lbl.cartDiscount', 'Discount'), '-' + money(t.disc), 'g'] as any] : []), ...(t.tip ? [[label('lbl.cartCourierTip', 'Courier tip'), money(t.tip)] as any] : [])]} total={[label('lbl.cartTotal', 'Total'), money(t.total)]} /></View>
         {badLine ? <T size={13} color={th.red} align="center" style={{marginBottom: 10}}>{label('lbl.cartFixItems', 'Fix the items marked above to continue.')}</T> : t.sub < st.min ? <T size={13} color={th.mut} align="center" style={{marginBottom: 10}}>{label('lbl.cartMinMore', 'Add')} {money(st.min - t.sub)} {label('lbl.cartReachMinimum', 'more to reach the')} {money(st.min)} {label("lbl.cms.432ca9a22ed3", "minimum.")}</T> : null}
-        <Cta label={label('lbl.cartCheckout', 'Checkout') + ' · ' + money(t.total)} disabled={short} onPress={goCheckout} />
+        {!deliveryReady && (S.deliveryQuoteError || S.firstOrderEligibilityError) ? <Pressable onPress={() => {void Promise.all([refreshFirstDeliveryEligibility(true), refreshGoodiesDeliveryQuote()]);}} style={{paddingVertical:10}}><T color={th.red} size={13}>{S.deliveryQuoteError || S.firstOrderEligibilityError} · Tap to retry</T></Pressable> : null}
+        <Cta label={deliveryReady ? label('lbl.cartCheckout', 'Checkout') + ' · ' + money(t.total) : label('lbl.cms.deliveryCalculating', 'Calculating delivery…')} disabled={short || !deliveryReady} onPress={goCheckout} />
       </View>
     </View>
   );
@@ -285,6 +300,12 @@ export function Checkout() {
   const th = useTheme(), t = totals(), pk = isPk(), a = addr() || null, st = t.st, stp = [label('lbl.checkoutDelivery', 'Delivery'), label('lbl.checkoutTime', 'Time'), label('lbl.checkoutPaymentMethod', 'Payment method'), label('lbl.checkoutReview', 'Review')];
   const stops: string[] = (t as any).stops || [], multi = stops.length > 1;
   const [cashEligible, setCashEligible] = useState(false), [scheduleOpen, setScheduleOpen] = useState(false);
+  const checkoutAddressKey = deliveryAddressKey(a);
+  useEffect(() => {
+    if (!pk && st?.live && checkoutAddressKey) {
+      void Promise.all([refreshFirstDeliveryEligibility(), refreshGoodiesDeliveryQuote()]);
+    }
+  }, [st?.id, pk, checkoutAddressKey, stops.join(','), fees().firstFree]);
   useEffect(() => {
     let active = true;
     void refreshLiveSchedules().then(() => {
@@ -314,7 +335,7 @@ export function Checkout() {
   const availablePayKey = pays.map(p => p[0]).join('|');
   useEffect(() => { if (pays.length && !pays.some(p => p[0] === S.pay)) setPay(pays[0][0]); }, [availablePayKey, S.pay]);
   const ct = ctOf() || {ph: S.pf?.ph || '', l: label('lbl.sheetDefaultNumber', 'Default Wantiss number'), w: 1};
-  if (!st) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} button={label('lbl.cartBrowse', 'Start browsing')} onPress={() => go('explore')} /></View>;
+  if (!st?.live || stops.some(id => !STB[id]?.live)) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="🛒" title={label('lbl.checkoutCartUnavailable', 'Your cart is unavailable')} text="Your saved cart includes an unavailable store. Please review it." button={label('lbl.cartTitle', 'Your cart')} onPress={() => go('cart')} /></View>;
   if (!pk && !a?.t) return <View><Bar title={label('lbl.checkoutTitle', 'Checkout')} onBack={back} /><Empty emoji="📍" title={label('lbl.checkoutAddressRequired', 'Choose a delivery address')} button={label('lbl.checkoutAddAddress', 'Add address')} onPress={() => go('addresses')} /></View>;
   let body: any = null;
   if (S.cs === 0) body = (<>
@@ -404,7 +425,14 @@ export function Checkout() {
     </View>
   );
 }
-export const CheckoutFoot = () => {const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total); return <Cta label={S.cs === 3 ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total) : label('lbl.checkoutContinue', 'Continue')} disabled={(S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? () => {void placeOrder();} : checkoutNext} />;};
+export const CheckoutFoot = () => {
+  const pricingReady = isPk() || (deliveryQuoteReady() && (!fees().firstFree || S.firstOrderEligible !== null));
+  const insufficientWallet = S.cs === 3 && !providerInfo.demo && S.pay === 'wallet' && (!S.hasWallet || S.wallet < totals().total);
+  const lbl = !pricingReady ? label('lbl.cms.deliveryCalculating', 'Calculating delivery…') : S.cs === 3
+    ? label('lbl.checkoutPlaceOrder', 'Place order') + ' · ' + money(totals().total)
+    : label('lbl.checkoutContinue', 'Continue');
+  return <Cta label={lbl} disabled={!pricingReady || (S.cs === 3 && hasAlcohol() && !S.alcConsent) || insufficientWallet} onPress={S.cs === 3 ? () => {void placeOrder();} : checkoutNext} />;
+};
 
 export function Confirm({id}: {id: string}) {
   const th = useTheme(), o = S.orders.filter((x: any) => x.id === id)[0];
