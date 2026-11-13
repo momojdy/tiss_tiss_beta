@@ -1,3 +1,5 @@
+import {isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
+import {businessActivity,requestBusinessData} from '../../services/goodiesWorkspace';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -18,7 +20,13 @@ import { supabase } from '../../lib/supabase';
 
 import { useTheme, useS, money, ago, initials, uuid, Status, DAYS, defaultHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist, q } from "./BusinessSpaceShared";
 
-export function PromotionsPage() {
+export function PromotionsPage(){const app=useApp();return isGoodiesOnlyBusiness(app)?<GoodiesPromotionsPage/>:<LegacyPromotionsPage/>;}
+function GoodiesPromotionsPage(){
+ const app=useApp(),s=useS(),[page,setPage]=useState(0);
+ const p=useQ(()=>rpc<any[]>('goodies_vendor_promotions',{p_business:app.biz.id,p_offset:page*40,p_limit:40}),[app.biz.id,app.tick,page]);
+ return <Pg title="Promotions" onBack={app.back} refreshing={p.l&&!!p.d} onRefresh={()=>{setPage(0);app.bump();}}>{p.e?<ErrBox e={p.e} retry={p.reload}/>:p.l&&!p.d?<Loading/>:p.d?.length?<View style={s.cardFlat}><Divided>{p.d.map(row=><Row key={row.id} title={row.code} sub={row.discount_type==='free_delivery'?'Free delivery':`${row.discount_value}% off`} right={<Pill tone={row.is_active?'good':'mute'}>{row.is_active?'Active':'Inactive'}</Pill>}/>)}</Divided></View>:<View style={s.card}><Empty icon="tag-outline" title="No promotions yet"/></View>}<View style={s.row}>{page>0?<Btn label="Previous" kind="soft" disabled={p.l} onPress={()=>setPage(v=>v-1)}/>:null}{p.d?.length===40?<Btn label="Next" kind="soft" disabled={p.l} onPress={()=>setPage(v=>v+1)}/>:null}</View><Btn kind="soft" label="Contact support about promotions" onPress={()=>app.go('help')}/></Pg>;
+}
+function LegacyPromotionsPage() {
   const app = useApp(), s = useS(), a = useAct();
   const p = useQ(() => q<any[]>(supabase.from('promotions').select('*').eq('business_id', app.biz.id).order('id', { ascending: false })), [app.biz.id, app.tick]);
   const tone = (st: string) => (st === 'active' ? 'good' : st === 'ended' ? 'mute' : 'warn');
@@ -35,7 +43,7 @@ export function PromotionsPage() {
 /* ---------- registration (optional business verification) ---------- */
 export function RegistrationPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
-  const r = useQ(() => rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
+  const r = useQ(() => isGoodiesOnlyBusiness(app)?Promise.resolve([]):rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
   const applicationDocs = useQ(async () => {
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError) throw authError;
@@ -139,14 +147,14 @@ export function RegistrationPage() {
       </View>
       <View style={s.row}><StatusPill s={b.verification} /></View>
       <View style={{ backgroundColor: b.verification === 'restricted' || b.verification === 'action' ? t.badBg : t.soft, borderRadius: 12, padding: 12 }}><Text style={{ color: b.verification === 'restricted' || b.verification === 'action' ? t.badFg : t.blue, fontWeight: '600', lineHeight: 20 }}>{msg[b.verification]}</Text></View>
-      <View style={s.cardFlat}>
+      {!isGoodiesOnlyBusiness(app)?<View style={s.cardFlat}>
         <Text style={[s.title, { paddingTop: 14 }]}>Documents</Text>
         {r.e ? <View style={{ paddingVertical: 12 }}><ErrBox e={r.e} retry={r.reload} /></View> : r.l && !r.d ? <View style={{ paddingVertical: 12 }}><Skel h={120} /></View> : rows.length ? (
           <Divided>{rows.map(x => <Row key={x.id} title={x.label} sub={x.file ? String(x.file).split('/').pop() : 'PDF or photo, up to 15 MB'} sub2={x.reason} right={<View style={{ alignItems: 'flex-end', gap: 6 }}>{pill(x.status)}{can && (x.status === 'missing' || x.status === 'rejected' || x.status === 'submitted') ? <Btn small kind="soft" label={x.status === 'missing' ? 'Upload' : 'Replace'} busy={a.busy} onPress={() => upload(x)} /> : null}</View>} />)}</Divided>
         ) : <Empty icon="file-document-outline" title="No documents required" />}
         {can && rows.length ? <View style={{ paddingVertical: 14 }}><Btn label={b.verification === 'action' ? 'Resubmit for review' : 'Submit for review'} disabled={!uploaded || stuck} busy={a.busy} onPress={() => a.run(() => rpc('submit_verification', { p_business: b.id, p_documents: {} }), 'Submitted for review')} /></View> : null}
         {b.verification === 'restricted' ? <View style={{ paddingVertical: 14 }}><Btn label="Contact support" onPress={() => app.go('help')} /></View> : null}
-      </View>
+      </View>:null}
       {b.verification === 'verified' || b.verification === 'pending' ? null : <Checklist />}
     </Pg>
   );
@@ -155,10 +163,12 @@ export function RegistrationPage() {
 /* ---------- audit log, help, security ---------- */
 export function AuditPage() {
   const app = useApp(), s = useS();
-  const l = useQ(() => q<any[]>(supabase.from('audit_log').select('id,action,meta,at').eq('business_id', app.biz.id).order('at', { ascending: false }).limit(80)), [app.biz.id, app.tick]);
+  const [cursors,setCursors]=useState<(string|null)[]>([null]);
+  const l = useQ(() => isGoodiesOnlyBusiness(app)?businessActivity(app,80,cursors[cursors.length-1]):q<any[]>(supabase.from('audit_log').select('id,action,meta,at').eq('business_id', app.biz.id).order('at', { ascending: false }).limit(80)), [app.biz.id, app.tick,cursors]);
   return (
-    <Pg title="Activity log" onBack={app.back} refreshing={l.l && !!l.d} onRefresh={app.bump}>
-      {l.e ? <ErrBox e={l.e} retry={l.reload} /> : l.l && !l.d ? <Loading /> : (l.d ?? []).length ? <View style={s.cardFlat}><Divided>{(l.d ?? []).map(x => <Row key={x.id} title={x.meta?.title ?? String(x.action).replace(/_/g, ' ')} sub={ago(x.at)} />)}</Divided></View> : <View style={s.card}><Empty icon="history" title="Nothing logged yet" /></View>}
+    <Pg title="Activity log" onBack={app.back} refreshing={l.l && !!l.d} onRefresh={()=>{setCursors([null]);app.bump();}}>
+      {l.e ? <ErrBox e={l.e} retry={l.reload} /> : l.l && !l.d ? <Loading /> : (l.d ?? []).length ? <View style={s.cardFlat}><Divided>{(l.d ?? []).map(x => <Row key={x.id} title={x.title ?? x.meta?.title ?? String(x.action).replace(/_/g, ' ')} sub={ago(x.at)} />)}</Divided></View> : <View style={s.card}><Empty icon="history" title="Nothing logged yet" /></View>}
+      {isGoodiesOnlyBusiness(app)?<View style={s.row}>{cursors.length>1?<Btn label="Previous" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>c.slice(0,-1))}/>:null}{l.d?.length===80?<Btn label="Next" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>[...c,l.d![l.d!.length-1].cursor])}/>:null}</View>:null}
     </Pg>
   );
 }
@@ -175,15 +185,16 @@ export function SecurityPage() {
   const factor = (f.d ?? [])[0];
   return (
     <Pg title="Security and privacy" onBack={app.back}>
+      {f.e?<ErrBox e={f.e} retry={f.reload}/>:null}
       <View style={s.cardFlat}><Divided>
         <Row title="Change password" onPress={() => app.sheet('password')} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
-        <Row title="Two-step verification" sub={f.l && !f.d ? 'Checking…' : factor ? 'On · authenticator app' : 'Add a second check when you sign in'} right={<Toggle value={!!factor} onValueChange={(v: boolean) => { if (v) app.sheet('mfa'); else if (factor) Alert.alert('Turn off two-step verification?', undefined, [{ text: 'Keep on', style: 'cancel' }, { text: 'Turn off', style: 'destructive', onPress: () => a.run(async () => { const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id }); if (error) throw error; f.reload(); }, 'Two-step verification off') }]); }} />} />
+        <Row title="Two-step verification" sub={f.l && !f.d ? 'Checking…' : factor ? 'On · authenticator app' : 'Add a second check when you sign in'} right={<Toggle disabled={!!f.e||f.l} value={!!factor} onValueChange={(v: boolean) => { if (v) app.sheet('mfa'); else if (factor) Alert.alert('Turn off two-step verification?', undefined, [{ text: 'Keep on', style: 'cancel' }, { text: 'Turn off', style: 'destructive', onPress: () => a.run(async () => { const { error } = await supabase.auth.mfa.unenroll({ factorId: factor.id }); if (error) throw error; f.reload(); }, 'Two-step verification off') }]); }} />} />
         <Row title="Sign out of other devices" onPress={() => Alert.alert('Sign out everywhere else?', 'Other devices will need to sign in again.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Sign out', onPress: () => a.run(async () => { const { error } = await supabase.auth.signOut({ scope: 'others' }); if (error) throw error; }, 'Other devices signed out') }])} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
       </Divided></View>
       <Section title="Your data" />
       <View style={s.cardFlat}><Divided>
-        <Row title="Download my data" sub="A copy of your account and business data" onPress={() => a.run(() => rpc('request_data_action', { p_kind: 'export' }), 'We will email you a download link')} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
-        <Row title={<Text style={{ color: t.badFg, fontWeight: '700' }}>Delete account</Text>} sub="Available once your orders and balances are settled" onPress={() => Alert.alert('Delete your account?', 'This cannot be undone.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Request deletion', style: 'destructive', onPress: () => a.run(() => rpc('request_data_action', { p_kind: 'delete' }), 'Deletion request received') }])} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
+        <Row title="Download my data" sub="A copy of your account and business data" onPress={() => a.run(() => requestBusinessData(app,'export'), 'Data export request received. Support will review your request.')} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
+        <Row title={<Text style={{ color: t.badFg, fontWeight: '700' }}>Delete account</Text>} sub="Available once your orders and balances are settled" onPress={() => Alert.alert('Delete your account?', 'This cannot be undone.', [{ text: 'Cancel', style: 'cancel' }, { text: 'Request deletion', style: 'destructive', onPress: () => a.run(() => requestBusinessData(app,'delete'), 'Deletion request received. Support will review your settled orders and balances.') }])} right={<Icon name="chevron-right" size={18} color={t.mute} />} />
       </Divided></View>
     </Pg>
   );

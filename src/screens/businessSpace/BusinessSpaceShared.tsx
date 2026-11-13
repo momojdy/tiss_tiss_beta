@@ -928,7 +928,8 @@ export function RangeBar() {
 }
 export function actionTarget(app: App, a: any) {
   const tg: string = a.target ?? '';
-  if (tg.startsWith('feature:')) app.go('feature', { k: tg.slice(8) });
+  if (tg==='goodiesOrders'||tg==='goodiesProducts') app.go(tg);
+  else if (tg.startsWith('feature:')) app.go('feature', { k: tg.slice(8) });
   else if (tg.startsWith('requirements:')) app.go('feature', { k: tg.slice(13) });
   else if (tg === 'payout') app.sheet('payout');
   else if (tg === 'messages') app.go('messages');
@@ -994,9 +995,9 @@ export function Checklist() {
     { l: 'Create business profile', d: true, sub: 'Name, logo, contact, location' },
     { l: 'Register your business (optional)', d: b.verification === 'verified', sub: b.verification === 'verified' ? 'Approved by Wantiss' : b.verification === 'pending' ? 'In review' : b.verification === 'restricted' ? 'Restricted' : 'Earn the Verified badge', btn: b.verification === 'setup' ? 'Register' : 'Open', on: () => app.go('registration') },
     { l: 'Activate a feature', d: nF > 0, sub: nF ? `${nF} active` : 'Choose where you sell', btn: 'Choose', on: () => app.go('explore') },
-    { l: 'Add your first listing', d: app.meta.listings > 0, sub: app.meta.listings ? `${app.meta.listings} listings` : 'Start with a draft', btn: first ? 'Add' : undefined, on: () => first && app.wizard(first) },
+    { l: 'Add your first listing', d: app.meta.listings > 0, sub: app.meta.listings ? `${app.meta.listings} listings` : 'Start with a draft', btn: first ? 'Add' : undefined, on: () => first === 'goodies' ? app.go('goodiesProducts',{add:true}) : first && app.wizard(first) },
     { l: 'Set up payouts', d: payOK, sub: payOK ? 'Ready' : 'Needed to withdraw', btn: 'Set up', on: () => app.sheet('payout') },
-    { l: 'Go live', d: b.is_live, sub: b.is_live ? 'Your business is live' : 'Needs a feature and a listing', btn: nF > 0 && app.meta.listings > 0 ? 'Go live' : undefined, on: () => a.run(() => rpc('go_live', { p_business: b.id }), 'You are live') },
+    { l: 'Go live', d: b.is_live, sub: b.is_live ? 'Your business is live' : 'Needs a feature and a listing', btn: nF > 0 && app.meta.listings > 0 ? 'Go live' : undefined, on: () => first === 'goodies' ? app.go('goodiesStore') : a.run(() => rpc('go_live', { p_business: b.id }), 'You are live') },
   ];
   const done = steps.filter(x => x.d).length;
   return (

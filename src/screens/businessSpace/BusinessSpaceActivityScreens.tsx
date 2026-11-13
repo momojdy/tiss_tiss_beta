@@ -1,3 +1,4 @@
+import {businessActions,businessActivity} from '../../services/goodiesWorkspace';
 import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -20,7 +21,7 @@ import { FX, FM, FUI, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, day
 
 export function ActionsPage() {
   const app = useApp(), s = useS();
-  const a = useQ(() => rpc<any[]>('action_required', { p_business: app.biz.id }), [app.biz.id, app.tick]);
+  const a = useQ(() => businessActions(app), [app.biz.id, app.tick,isGoodiesOnlyBusiness(app)]);
   return (
     <Pg title="Action required" onBack={app.back} refreshing={a.l && !!a.d} onRefresh={app.bump}>
       {a.e ? <ErrBox e={a.e} retry={a.reload} /> : a.l && !a.d ? <Loading /> : (a.d ?? []).length ? <View style={[s.cardFlat, { borderWidth: 2, borderStyle: 'dotted', borderColor: LIGHT.blue }]}><Divided>{(a.d ?? []).map((x: any, i: number) => <ActionRow key={i} a={x} />)}</Divided></View> : <View style={s.card}><Empty icon="check-circle-outline" title="You're all caught up" hint="Nothing needs your attention right now." /></View>}
@@ -30,15 +31,16 @@ export function ActionsPage() {
 export function ActivityPage() {
   const app = useApp(), s = useS();
   const [kind, setKind] = useState('All'), [rows, setRows] = useState<any[]>([]), [more, setMore] = useState(false), [load, setLoad] = useState(true), [err, setErr] = useState<string | null>(null);
+  const requestSequence=useRef(0);
   const kinds: Record<string, string | null> = { All: null, Earnings: 'earn', Refunds: 'refund', Orders: 'order', Payouts: 'payout' };
   const fetchPage = useCallback(async (reset: boolean, cur: any[]) => {
-    setLoad(true); setErr(null);
+    const sequence=++requestSequence.current;setLoad(true); setErr(null);if(reset)setRows([]);
     try {
-      const r = await rpc<any[]>('activity_feed', { p_business: app.biz.id, p_days: 120, p_before: reset || !cur.length ? null : cur[cur.length - 1].at, p_limit: 30, p_kind: kinds[kind] });
-      setRows(reset ? r : [...cur, ...r]); setMore(r.length === 30);
-    } catch (e) { setErr(errText(e)); } finally { setLoad(false); }
+      const r = await businessActivity(app,30,reset||!cur.length?null:cur[cur.length-1].cursor||cur[cur.length-1].at,kinds[kind]);
+      if(sequence!==requestSequence.current)return;setRows(reset ? r : [...cur, ...r]); setMore(r.length === 30);
+    } catch (e) { if(sequence===requestSequence.current)setErr(errText(e)); } finally { if(sequence===requestSequence.current)setLoad(false); }
   }, [app.biz.id, kind, app.tick]); // eslint-disable-line react-hooks/exhaustive-deps
-  useEffect(() => { void fetchPage(true, []); }, [fetchPage]);
+  useEffect(() => { void fetchPage(true, []);return()=>{requestSequence.current++;}; }, [fetchPage]);
   let lastDay = '';
   return (
     <Pg title="Recent activity" onBack={app.back} refreshing={load && rows.length > 0} onRefresh={app.bump}>

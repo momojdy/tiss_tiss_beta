@@ -67,8 +67,10 @@ export const goodiesApi = {
   },
   setLive: (biz: string, live: boolean) => rpc<boolean>('goodies_set_store_live', { p_business: biz, p_live: live }),
   /* Products (stock is set by the vendor). Row security allows owners and admins only. */
-  listProducts: async (biz: string, page = 0): Promise<GProduct[]> => {
-    const rows = await q<any[]>(supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,photo_urls,review_status,review_note').eq('business_id', biz).order('sort_order', { ascending: true }).order('created_at', { ascending: true }).order('id',{ascending:true}).range(page*100,page*100+99));
+  listProducts: async (biz: string, page = 0, focus?:string): Promise<GProduct[]> => {
+    let request=supabase.from('goodies_products').select('id,name,description,price,emoji,stock,is_available,restriction,photo_url,photo_urls,review_status,review_note').eq('business_id', biz);
+    if(focus)request=request.eq('id',focus);
+    const rows=await q<any[]>(request.order('sort_order', { ascending: true }).order('created_at', { ascending: true }).order('id',{ascending:true}).range(page*100,page*100+99));
     return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_urls?.[0] || r.photo_url || null, photoUrls: (Array.isArray(r.photo_urls) && r.photo_urls.length ? r.photo_urls : (r.photo_url ? [r.photo_url] : [])).slice(0,5), reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
@@ -614,10 +616,10 @@ function ProductSheet({ product, onClose, onSaved }: { product: GProduct; onClos
 }
 
 export function GoodiesProductsPage() {
-  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { add?: boolean } | undefined;
+  const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { add?: boolean;focus?:string } | undefined;
   const add = route?.add;
   const [page,setPage]=useState(0);
-  const lst = useQ(() => goodiesApi.listProducts(app.biz.id,page), [app.biz.id, app.tick,page]);
+  const lst = useQ(() => goodiesApi.listProducts(app.biz.id,page,route?.focus), [app.biz.id, app.tick,page,route?.focus]);
   const builders = useQ(() => goodiesApi.listBuilders(app.biz.id), [app.biz.id, app.tick]);
   const [edit, setEdit] = useState<GProduct | null>(null);
   useEffect(() => { if (add) setEdit(BLANK); }, [add]);

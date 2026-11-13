@@ -1,4 +1,4 @@
-import {isGoodiesBusiness} from '../../services/goodiesSettlement';
+import {isGoodiesBusiness,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import {GoodiesPayoutsPanel} from './BusinessSpaceGoodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -84,7 +84,7 @@ export function FeaturesPanel() {
 export function OrdersPanel() {
   const app = useApp(), [f, setF] = useState('Open');
   const [page, setPage] = useState(0), [busyId, setBusyId] = useState('');
-  const o = useQ(() => q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
+  const o = useQ(() => isGoodiesOnlyBusiness(app)?Promise.resolve([]):q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
   const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
   const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled','declined','expired'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));

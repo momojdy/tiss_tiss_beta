@@ -16,6 +16,14 @@ Deno.test('Goodies reviews enforce completed-order ownership, isolate participan
   await db.query("insert into public.business_members(business_id,user_id,role) values($1,$2,'owner'),($3,$4,'owner')",[business,vendor,otherBusiness,otherVendor]);
   await db.query("insert into public.goodies_store_schedules(business_id,store_id,is_live) values($1,'review-store',true),($2,'other-store',true)",[business,otherBusiness]);
   await db.query("update public.goodies_store_schedules set hours=$1::jsonb",[JSON.stringify(Object.fromEntries(['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'].map(d=>[d,{open:'00:00',close:'00:00',closed:false}])))]);
+  await db.query("insert into public.goodies_promotions(code,discount_type,discount_value,store_id,is_active,starts_at) values('SYNTHETIC-OWN','percent',10,'review-store',true,now()-interval '1 day'),('SYNTHETIC-FUTURE','free_delivery',0,'review-store',true,now()+interval '1 day'),('SYNTHETIC-OTHER','percent',5,'other-store',true,null)");
+  await as(otherVendor);await denied('select public.goodies_vendor_promotions($1)',[business]);
+  await as(customer);await denied('select public.goodies_vendor_promotions($1)',[business]);
+  await as(vendor);
+  const offers=(await db.query<{offers:{code:string;is_active:boolean}[]}>('select public.goodies_vendor_promotions($1) as offers',[business])).rows[0].offers;
+  check(offers.length===2&&!offers.some(offer=>offer.code==='SYNTHETIC-OTHER'),'Promotion projection must be merchant-scoped');
+  check(offers.find(offer=>offer.code==='SYNTHETIC-FUTURE')?.is_active===false&&offers.find(offer=>offer.code==='SYNTHETIC-OWN')?.is_active===true,'Future offers must not appear active');
+  await db.exec('reset role;set role anon');await denied('select public.goodies_vendor_promotions($1)',[business]);await db.exec('reset role');
   await db.query("insert into public.goodies_orders(id,order_code,business_id,customer_id,store_id,status,order_type,items,subtotal,delivery_fee,service_fee,discount,tip,total,payment_method,payment_status) values($1,'REVIEW-1',$2,$3,'review-store','placed','pickup','[]',1,0,0,0,0,1,'wallet','paid')",[order,business,customer]);
   const submit="select public.goodies_submit_order_review($1,'store',5,'Synthetic review')";
   await as(customer);await denied(submit,[order]);
@@ -52,9 +60,16 @@ Deno.test('Goodies reviews enforce completed-order ownership, isolate participan
   await as(customer);
   await db.query("select public.goodies_set_notification_preference('orders',false)");
   await db.query("select public.goodies_set_notification_preference('promos',true)");
+  await db.query("select public.goodies_set_vendor_notification_preferences(false,false)");
+  await denied("select public.goodies_set_vendor_notification_preferences(null,true)",[]);
   await db.exec('reset role');
   const prefs=(await db.query<{notification_preferences:Record<string,boolean>}>('select notification_preferences from public.user_settings where user_id=$1',[customer])).rows[0].notification_preferences;
-  check(prefs.goodies_orders===false&&prefs.goodies_promos===true&&prefs.wallet===false,'Preference merges preserve both values');
+  check(prefs.goodies_orders===false&&prefs.goodies_promos===true&&prefs.wallet===false&&prefs.goodies_vendor_push===false&&prefs.goodies_vendor_email===false,'Vendor/customer preference merges preserve all unrelated values');
+  await db.exec('set role anon');
+  await denied("select public.goodies_set_vendor_notification_preferences(true,true)",[]);
+  await as(other);await db.query("select public.goodies_set_vendor_notification_preferences(true,false)");
+  await db.exec('reset role');
+  check((await db.query<{enabled:boolean}>("select (notification_preferences->>'goodies_vendor_push')::boolean as enabled from public.user_settings where user_id=$1",[customer])).rows[0].enabled===false,'Another account cannot overwrite vendor preferences');
   const suppressed=await db.query("insert into public.notifications(user_id,title,body,notification_type,feature_name) values($1,'Order','Synthetic','goodies_order','Goodies') returning id",[customer]);
   check(suppressed.rows.length===0,'Disabled customer order notices are suppressed');
  }finally{await db.close();}

@@ -8,7 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import * as ImagePicker from 'expo-image-picker';
 import { supabase } from '../../lib/supabase';
 import {GOODIES_DELIVERY_PROOF_BUCKET} from '../../services/goodiesDeliveryProof';
-import { useApp, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill,errText } from './BusinessSpaceShared';
+import { useApp, useArg, useQ, Pg, Skel, ErrBox, Empty, Btn, Field, SheetShell, Pill,errText } from './BusinessSpaceShared';
 
 type GoodiesOrder = {
   id: string; order_code: string; status: string; created_at: string; acceptance_deadline_at: string | null; payment_method?: string | null; payment_status?: string | null; payment_refunded_amount?: number | null; courier_id?: string | null;
@@ -40,6 +40,7 @@ async function goodiesOrdersRequest(name:string,args?:Record<string,unknown>) {
 }
 
 export function GoodiesOrdersPage() {
+  const route=useArg() as {focus?:string;order?:string}|undefined,focus=route?.focus||route?.order;
   const app = useApp();
   const [page, setPage] = useState(0);
   const [decline, setDecline] = useState<GoodiesOrder | null>(null);
@@ -107,12 +108,14 @@ export function GoodiesOrdersPage() {
   const [productPhotos, setProductPhotos] = useState<Record<string,string>>({});
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
   const orders = useQ(async () => {
-    const { data, error } = await supabase.from('goodies_orders')
+    let request=supabase.from('goodies_orders')
       .select('id,order_code,status,created_at,acceptance_deadline_at,scheduled_for,order_type,items,total,subtotal,discount,commissionable_subtotal,platform_commission_rate,platform_commission_amount,vendor_net_amount,notes,address,contact_phone,payment_method,payment_status,payment_refunded_amount,courier_id,ready_at,updated_at,self_delivery,self_driver_name,self_driver_phone,vendor_delivered_at,receipt_deadline_at,delivery_proof_url,delivery_dispute_status')
-      .eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending: false}).range(page * 100, page * 100 + 99);
+      .eq('business_id', app.biz.id);
+    if(focus)request=request.eq('id',focus);
+    const {data,error}=await request.order('created_at', { ascending: false }).order('id', {ascending: false}).range(page * 100, page * 100 + 99);
     if (error) throw error;
     return (data || []) as GoodiesOrder[];
-  }, [app.biz.id, app.tick, page]);
+  }, [app.biz.id, app.tick, page,focus]);
 
   useEffect(() => {
     const orderIds=(orders.d||[]).filter(o=>o.order_type==='delivery').map(o=>o.id);

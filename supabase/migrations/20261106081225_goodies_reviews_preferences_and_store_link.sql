@@ -84,6 +84,34 @@ end $$;
 revoke all on function public.goodies_set_notification_preference(text,boolean) from public,anon;
 grant execute on function public.goodies_set_notification_preference(text,boolean) to authenticated;
 
+create or replace function public.goodies_set_vendor_notification_preferences(p_push boolean,p_email boolean)
+returns void language plpgsql security definer set search_path='' as $$
+begin
+ if auth.uid() is null then raise exception 'Sign in required' using errcode='28000';end if;
+ if p_push is null or p_email is null then raise exception 'Invalid preference' using errcode='22023';end if;
+ insert into public.user_settings(user_id) values(auth.uid()) on conflict(user_id) do nothing;
+ update public.user_settings set notification_preferences=coalesce(notification_preferences,'{}'::jsonb)||jsonb_build_object('goodies_vendor_push',p_push,'goodies_vendor_email',p_email),updated_at=now() where user_id=auth.uid();
+end $$;
+revoke all on function public.goodies_set_vendor_notification_preferences(boolean,boolean) from public,anon;
+grant execute on function public.goodies_set_vendor_notification_preferences(boolean,boolean) to authenticated;
+
+-- Promotions remain server-managed. Give members a read-only projection of
+-- their own store's offers without exposing the private promotion table.
+create or replace function public.goodies_vendor_promotions(p_business uuid,p_offset integer default 0,p_limit integer default 40)
+returns jsonb language plpgsql stable security definer set search_path='' as $$
+begin
+ if auth.uid() is null or not exists(select 1 from public.business_members where business_id=p_business and user_id=auth.uid()) then raise exception 'Business access required' using errcode='42501';end if;
+ return (select coalesce(jsonb_agg(to_jsonb(x)),'[]'::jsonb) from (
+  select p.id,p.code,p.discount_type,p.discount_value,p.starts_at,p.expires_at,
+   (p.is_active and (p.starts_at is null or p.starts_at<=now()) and (p.expires_at is null or p.expires_at>now()) and (p.max_redemptions is null or p.redemption_count<p.max_redemptions)) as is_active
+  from public.goodies_promotions p join public.goodies_store_schedules s on s.store_id=p.store_id
+  where s.business_id=p_business order by p.created_at desc,p.id
+  offset greatest(coalesce(p_offset,0),0) limit least(greatest(coalesce(p_limit,40),1),100)
+ )x);
+end $$;
+revoke all on function public.goodies_vendor_promotions(uuid,integer,integer) from public,anon;
+grant execute on function public.goodies_vendor_promotions(uuid,integer,integer) to authenticated;
+
 create or replace function private.goodies_notification_preference_filter()
 returns trigger language plpgsql security definer set search_path='' as $$
 declare v_key text;

@@ -1,3 +1,4 @@
+import {businessActions,businessActivity} from '../../services/goodiesWorkspace';
 import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
 import QRCode from 'react-native-qrcode-svg';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
@@ -23,15 +24,15 @@ import { Feature, FX, FM, FUI, useTheme, useS, money, rpc, useQ, useApp, Icon, S
 export function Home() {
   const app = useApp(), s = useS(), t = useTheme(), ins = useSafeAreaInsets(), { biz, meta, range } = app;
   const sum = useQ(() => getBusinessFinancialSummary(app), [biz.id, range.from, range.to, app.tick,isGoodiesOnlyBusiness(app)]);
-  const act = useQ(() => rpc<any[]>('action_required', { p_business: biz.id }), [biz.id, app.tick]);
-  const feed = useQ(() => rpc<any[]>('activity_feed', { p_business: biz.id, p_days: 120, p_before: null, p_limit: 5, p_kind: null }), [biz.id, app.tick]);
+  const act = useQ(() => businessActions(app), [biz.id, app.tick,isGoodiesOnlyBusiness(app)]);
+  const feed = useQ(() => businessActivity(app,5), [biz.id, app.tick,isGoodiesOnlyBusiness(app)]);
   const cnt = useQ(async () => ({
-    l: await q<any[]>(supabase.from('listings').select('feature,status').eq('business_id', biz.id)),
+    l: isGoodiesOnlyBusiness(app)?[]:await q<any[]>(supabase.from('listings').select('feature,status').eq('business_id', biz.id)),
     p: await q<any[]>(supabase.from('goodies_products').select('id').eq('business_id', biz.id)),
     b: await q<any[]>(supabase.from('goodies_builder_configs').select('builder_id,enabled,config').eq('business_id', biz.id).eq('enabled', true)),
     g: await (async()=>{const {count,error}=await supabase.from('goodies_orders').select('id',{count:'exact',head:true}).eq('business_id',biz.id).not('status','in','(completed,cancelled,declined,expired)');if(error)throw error;return count||0;})(),
-    o: await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id))
-  }), [biz.id, app.tick]);
+    o: isGoodiesOnlyBusiness(app)?[]:await q<any[]>(supabase.from('feature_orders').select('feature,status').eq('business_id', biz.id))
+  }), [biz.id, app.tick,isGoodiesOnlyBusiness(app)]);
   const validMoney = (value:unknown) => (typeof value==='number'||(typeof value==='string'&&!!value.trim()))&&Number.isFinite(Number(value));
   const summaryValid = !!sum.d && (!isGoodiesOnlyBusiness(app)||sum.d.business_id===biz.id) && validMoney(sum.d.available) && validMoney(sum.d.pending) && validMoney(sum.d.revenue);
   const d = summaryValid ? sum.d : null, refreshing = !!d && (sum.l || act.l);

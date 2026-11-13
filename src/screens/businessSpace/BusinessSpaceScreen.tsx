@@ -1,3 +1,4 @@
+import {loadBusinessPreferences,saveBusinessPreferences} from '../../services/goodiesWorkspace';
 import {isGoodiesBusiness,saveGoodiesVendorLanguage} from '../../services/goodiesSettlement';
 import {WANTISS_LANGUAGES,wantissLocale} from '../../lib/locales';
 import {goodiesBusinessNotificationTarget,goodiesNotificationWorkspace} from '../../features/Goodies/notifications';
@@ -77,7 +78,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer, onWallet }: any) {
   const mem = useQ(async () => {
     if (!user) return [] as Biz[];
     const rows = await withBusinessRequestTimeout(q<any[]>(supabase.from('business_members').select(`role,businesses(${BIZ_COLS})`).eq('user_id', user.id)), 'Loading your businesses');
-    return rows.filter(r => r.businesses).map(r => ({ ...r.businesses, logo_url: null, description: null, phone: null, phone_country: null, email: null, address: null, city: null, country: null, website: null, hours: null, delivery_modes: null, role: r.role })) as Biz[];
+    return rows.filter(r => r.businesses).map(r => ({ ...r.businesses, role: r.role })) as Biz[];
   }, [user?.id, tick]);
   const reloadBiz = useCallback(() => setTick(x => x + 1), []);
   if (uerr) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={uerr} retry={onSignOut} /></View>;
@@ -121,7 +122,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   const [stack, setStack] = useState<{ page: string; arg?: any; fromProfile?: boolean }[]>([]);
   const [panel, setPanel] = useState<{ name: string; fromProfile?: boolean } | null>(null), [sheet, setSheet] = useState<{ name: string; arg?: any } | null>(null), [wiz, setWiz] = useState<{ feature: string; id?: string | null } | null>(null);
   const [toastT, setToastT] = useState<string | null>(null), [regDismissed, setRegDismissed] = useState(false), [pref, setPrefS] = useState({ push: true, email: false }), [lang, setLangS] = useState('English');
-  const toastTimer = useRef<any>(null), bgAt = useRef(0);
+  const toastTimer = useRef<any>(null), bgAt = useRef(0),prefSaving=useRef(false);
   useEffect(() => { AsyncStorage.getItem('bs.biz').then(v => { if (v) setBizId(v); }).catch(() => undefined); AsyncStorage.getItem('bs.lang').then(v => { if (v) setLangS(v); }).catch(() => undefined); }, []);
   const biz: Biz = bizList.find((b: Biz) => b.id === bizId) ?? bizList[0];
   const bump = useCallback(() => setTick(x => x + 1), []);
@@ -134,14 +135,16 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   }, []);
 
   const meta = useQ<Meta>(async () => {
-    const [feats, lc, un, cv, pm, rules] = await Promise.all([
-      q<any[]>(supabase.from('business_features').select('feature,status').eq('business_id', biz.id)),
-      supabase.from('listings').select('id', { count: 'exact', head: true }).eq('business_id', biz.id).neq('status', 'archived'),
-      supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('business_id', biz.id).is('read_at', null),
-      q<any[]>(supabase.from('conversations').select('unread_business').eq('business_id', biz.id)),
-      supabase.from('payout_methods').select('status,last4').eq('business_id', biz.id).order('created_at', { ascending: false }).limit(1).maybeSingle(),
-      supabase.from('payout_rules').select('*').order('sort'),
+    const feats=await q<any[]>(supabase.from('business_features').select('feature,status').eq('business_id',biz.id));
+    const onlyGoodies=(!!biz.goodies_store_id||feats.some(row=>row.feature==='goodies'))&&feats.every(row=>row.feature==='goodies');
+    const [lc,un,cv,pm,rules]=await Promise.all([
+      onlyGoodies?supabase.from('goodies_products').select('id',{count:'exact',head:true}).eq('business_id',biz.id):supabase.from('listings').select('id',{count:'exact',head:true}).eq('business_id',biz.id).neq('status','archived'),
+      supabase.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',user.id).contains('metadata',{business_id:biz.id}).eq('read',false),
+      q<any[]>(supabase.from('conversations').select('unread_business').eq('business_id',biz.id)),
+      onlyGoodies?Promise.resolve({data:null,error:null}):supabase.from('payout_methods').select('status,last4').eq('business_id',biz.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
+      onlyGoodies?Promise.resolve({data:[],error:null}):supabase.from('payout_rules').select('*').order('sort'),
     ]);
+    for(const response of [lc,un,pm,rules])if(response.error)throw response.error;
     const rr: any[] = rules.data ?? [];
     return {
       feats: feats.filter(f => FX.FM[f.feature]), listings: lc.count ?? 0, unreadN: un.count ?? 0, unreadM: cv.reduce((a, c) => a + (c.unread_business ?? 0), 0),
@@ -158,20 +161,20 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => {
     let h: any;
     const ch = supabase.channel(`bs-${biz.id}`), kick = () => { clearTimeout(h); h = setTimeout(bump, 400); };
-    ['wallet_ledger', 'feature_orders', 'notifications', 'business_activity', 'listings', 'conversations', 'payout_methods', 'goodies_products', 'goodies_builder_configs'].forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
+    (goodiesWorkspace?['goodies_orders','goodies_store_schedules','conversations','goodies_products','goodies_builder_configs']:['wallet_ledger','feature_orders','business_activity','listings','conversations','payout_methods','goodies_products','goodies_builder_configs']).forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
     ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
-      const notice: any = payload.new;
-      if (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_')) {
-        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: {...(notice.metadata || {}), notification_type: notice.notification_type, destination: notice.destination} }, trigger: null });
+      const notice: any = payload.new;kick();
+      if (pref.push && (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_'))) {
+        void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: {...(notice.metadata || {}), notification_type: notice.notification_type, destination: notice.destination} }, trigger: null }).catch(()=>toast('An alert could not be shown. Check your device notification settings.'));
       }
     });
     ch.on('postgres_changes' as any, { event: 'INSERT', schema: 'public', table: 'messages' }, kick);
     ch.subscribe();
     return () => { clearTimeout(h); supabase.removeChannel(ch); };
-  }, [biz.id, bump]);
+  }, [biz.id,bump,pref.push,goodiesWorkspace,toast]);
 
   /* preferences, push token, deep links */
-  useEffect(() => { supabase.from('notification_prefs').select('push,email').eq('user_id', user.id).maybeSingle().then(r => { if (r.data) setPrefS(r.data as any); }); }, [user.id]);
+  useEffect(()=>{let active=true;void loadBusinessPreferences(user.id).then(p=>{if(active)setPrefS(p);},()=>{if(active){setPrefS({push:false,email:false});toast('Notification preferences could not load. Please try again.');}});return()=>{active=false;};},[user.id,toast]);
   const nav = { go: (page: string, arg?: any) => { setStack(st => [...st, { page, arg, fromProfile: sheet?.name === 'profile' }]); setPanel(null); setSheet(null); } };
   useEffect(() => {
     if (!pref.push || Platform.OS === 'web') return;
@@ -180,11 +183,12 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
         let { status } = await Notifications.getPermissionsAsync();
         if (status !== 'granted') status = (await Notifications.requestPermissionsAsync()).status;
         if (status !== 'granted') return;
+        if(goodiesWorkspace)return;
         const token = (await Notifications.getExpoPushTokenAsync()).data;
         await rpc('register_push_token', { p_token: token, p_platform: Platform.OS });
       } catch { /* push is optional */ }
     })();
-  }, [pref.push]);
+  }, [pref.push,goodiesWorkspace]);
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(r => {
       const d: any = r.notification.request.content.data ?? {};
@@ -221,14 +225,14 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
 
   const app: App = {
     biz, bizList, meta: m, userId: user.id, email: user.email, name: user.name, tick, bump, toast,
-    go: nav.go, back, tab: p => { setStack([]); setSheet(null); setPanel(p ? { name: p } : null); },
+    go: nav.go, back, tab: p => { if(p==='listings'&&goodiesWorkspace){nav.go('goodiesProducts');return;} setStack([]); setSheet(null); setPanel(p ? { name: p } : null); },
     sheet: (name, arg) => setSheet({ name, arg }), closeSheet: () => setSheet(null),
     panel: (p, fromProfile) => { setSheet(null); setPanel(p ? { name: p, fromProfile } : null); },
-    wizard: (feature, id) => { setWiz({ feature, id }); },
+    wizard: (feature, id) => {if(feature==='goodies'){nav.go('goodiesProducts',{add:!id,focus:id||undefined});return;} setWiz({ feature, id });},
     range, setRange: r => setRange(r),
     selectBiz: id => { setBizId(id); AsyncStorage.setItem('bs.biz', id).catch(() => undefined); setStack([]); setPanel(null); setSheet(null); bump(); },
     reloadBiz, onBuyer, onWallet, onSignOut, dark, setDark, lang, setLang: l => { setLangS(l); AsyncStorage.setItem('bs.lang', l).catch(() => undefined); if(goodiesWorkspace)void saveGoodiesVendorLanguage(user.id,l).catch(()=>toast('Language changed on this device, but your account preference could not be saved. Please try again.'));else supabase.from('profiles').upsert({ id: user.id, language: l }).then(() => undefined); },
-    pref, setPref: p => { setPrefS(p); supabase.from('notification_prefs').upsert({ user_id: user.id, ...p }).then(r => { if (r.error) toast('Could not save notification preferences. Please try again.'); }); },
+    pref, setPref: p => {if(prefSaving.current)return;prefSaving.current=true;const previous=pref;setPrefS(p);void saveBusinessPreferences(user.id,p).catch(()=>{setPrefS(previous);toast('Could not save notification preferences. Please try again.');}).finally(()=>{prefSaving.current=false;});},
     regDismissed, dismissReg: () => setRegDismissed(true),
   };
 
@@ -238,7 +242,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   return (
     <AppCtx.Provider value={app}>
       <View style={{ flex: 1, backgroundColor: t.bg }}>
-        <Home key={user.id+biz.id} />
+        {meta.e?<View style={{padding:16,paddingTop:ins.top+20}}><ErrBox e={meta.e} retry={meta.reload}/></View>:meta.l&&!meta.d?<View style={{padding:16,paddingTop:ins.top+20,gap:12}}><Skel h={90}/><Skel h={260}/></View>:<Home key={user.id+biz.id}/>}
         <View style={{ position: 'absolute', bottom: ins.bottom + 12, left: 12, right: 12, minHeight: 66, borderRadius: 20, backgroundColor: t.card, borderWidth: 1, borderColor: t.line, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', paddingHorizontal: 4, elevation: 6, shadowColor: '#101828', shadowOpacity: 0.1, shadowRadius: 12, shadowOffset: { width: 0, height: 4 }, zIndex: 10 }}>
           {TABS.map(([label, icon, key]) => { const on = (panel?.name ?? null) === key && !top; return (
             <Pressable key={label} accessibilityRole="button" accessibilityLabel={label} onPress={() => app.tab(key)} style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 4, paddingVertical: 8 }}>

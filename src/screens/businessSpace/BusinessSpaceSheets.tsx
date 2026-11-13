@@ -1,3 +1,4 @@
+import {requestBusinessData} from '../../services/goodiesWorkspace';
 import {WANTISS_LANGUAGES} from '../../lib/locales';
 import {isGoodiesBusiness} from '../../services/goodiesSettlement';
 import {GoodiesPayoutSetupSheet,GoodiesPayoutRequestSheet} from './BusinessSpaceGoodiesSettlement';
@@ -33,12 +34,12 @@ export function ProfileSheet() {
         {R('Business registration', 'Optional · earns the Verified badge', () => open('registration'))}
         {R('Manage features', 'Activate, deactivate, add listings', () => app.panel('features', true))}
         {R('Promotions', 'Vouchers and offers', () => open('promotions'))}
-        {R('Activity log', 'Every change, recorded', () => open('audit'))}
+        {R('Activity log', 'Recent business updates', () => open('audit'))}
         {R('Security and privacy', 'Password, 2-step, devices, your data', () => open('security'))}
         {R('Language', app.lang, () => app.sheet('language'))}
         {R('Help and support', undefined, () => open('help'))}
-        <Row title="Push notifications" right={<Toggle value={app.pref.push} onValueChange={(v: boolean) => app.setPref({ ...app.pref, push: v })} />} />
-        <Row title="Email notifications" sub="Separate from push" right={<Toggle value={app.pref.email} onValueChange={(v: boolean) => app.setPref({ ...app.pref, email: v })} />} />
+        <Row title={isGoodiesBusiness(app)?"In-app alerts":"Push notifications"} sub={isGoodiesBusiness(app)?"Alerts while Business Space is open":undefined} right={<Toggle value={app.pref.push} onValueChange={(v: boolean) => app.setPref({ ...app.pref, push: v })} />} />
+        <Row title="Email notifications" sub={isGoodiesBusiness(app)?"Email delivery is not available yet":"Separate from push"} right={<Toggle disabled={isGoodiesBusiness(app)} value={app.pref.email} onValueChange={(v: boolean) => app.setPref({ ...app.pref, email: v })} />} />
         <Row title="Dark mode" right={<Toggle value={app.dark} onValueChange={app.setDark} />} />
       </Divided>
       <View style={[s.row, { marginTop: 14 }]}><Btn style={{ flex: 1 }} label="Switch to Buyer" onPress={app.onBuyer} /><Btn style={{ flex: 1 }} kind="soft" label="Sign out" onPress={app.onSignOut} /></View>
@@ -65,7 +66,9 @@ export function AddBusinessSheet() {
   };
   return <SheetShell title="Add business" onClose={app.closeSheet}><Field label="Business name" value={name} onChangeText={setName} placeholder="e.g. Marie's Kitchen" autoFocus /><Btn style={{ marginTop: 16 }} label="Create business" disabled={name.trim().length < 2} busy={a.busy} onPress={create} /></SheetShell>;
 }
-export function DeleteBusinessSheet() {
+export function DeleteBusinessSheet(){const app=useApp();return isGoodiesBusiness(app)?<GoodiesClosureSheet/>:<LegacyDeleteBusinessSheet/>;}
+function GoodiesClosureSheet(){const app=useApp(),a=useAct(),s=useS();return <SheetShell title="Close business" onClose={app.closeSheet}><Text style={s.mut}>Request a review to close this business after outstanding orders, disputes and balances are settled.</Text><Btn label="Request business closure" busy={a.busy} onPress={async()=>{if(await a.run(()=>requestBusinessData(app,'close_business'),'Business closure request received. Support will review outstanding orders and balances.'))app.closeSheet();}}/></SheetShell>;}
+function LegacyDeleteBusinessSheet() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz, last = app.bizList.length === 1;
   const chk = useQ(() => rpc<{ blockers: string[] }>('delete_business_check', { p_business: b.id }), [b.id]);
   const [txt, setTxt] = useState('');

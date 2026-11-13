@@ -1,3 +1,4 @@
+import {businessSearch} from '../../services/goodiesWorkspace';
 import {goodiesBusinessNotificationTarget} from '../../features/Goodies/notifications';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -20,7 +21,8 @@ import { FX, FM, useTheme, useS, ago, errText, rpc, useQ, useApp, useArg, Icon, 
 
 export function MessagesPage() {
   const app = useApp(), s = useS(), t = useTheme(), [f, setF] = useState('All'), [statusFilter, setStatusFilter] = useState('All');
-  const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).limit(100)), [app.biz.id, app.tick]);
+  const [page,setPage]=useState(0);
+  const c = useQ(() => q<any[]>(supabase.from('conversations').select('*').eq('business_id', app.biz.id).order('updated_at', { ascending: false }).order('id',{ascending:false}).range(page*100,page*100+99)), [app.biz.id, app.tick,page]);
   useEffect(() => {
     const channel = supabase.channel('business-goodies-conversations-' + app.biz.id)
       .on('postgres_changes', {event: '*', schema: 'public', table: 'conversations', filter: 'business_id=eq.' + app.biz.id}, () => app.bump())
@@ -39,6 +41,7 @@ export function MessagesPage() {
       {c.e ? <ErrBox e={c.e} retry={c.reload} /> : c.l && !c.d ? <Loading /> : rows.length ? (
         <View style={s.cardFlat}><Divided>{rows.map(x => <Row key={x.id} onPress={() => app.go('conversation', { id: x.id })} left={<Avatar text={(x.customer_name ?? '?')[0]} size={40} radius={20} bg={t.soft} />} title={x.customer_name ?? 'Customer'} sub={x.last_body ?? 'No messages yet'} sub2={`${x.status === 'pending_vendor' ? 'NEEDS REPLY · ' : x.status === 'active' ? 'ACTIVE · ' : x.status === 'closed' ? 'CLOSED · ' : ''}${x.feature ? FX.FM[x.feature]?.name : ''}${x.ref_label ? ` · ${x.ref_label}` : ''}`} right={x.unread_business > 0 ? <View style={{ minWidth: 20, height: 20, borderRadius: 10, backgroundColor: t.blue, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 5 }}><Text style={{ color: '#fff', fontSize: 11, fontWeight: '800' }}>{x.unread_business}</Text></View> : null} />)}</Divided></View>
       ) : <View style={s.card}><Empty icon="chat-outline" title="No conversations yet" hint="Customer messages about your listings and orders appear here." /></View>}
+      <View style={s.row}>{page>0?<Btn label="Previous" kind="soft" disabled={c.l} onPress={()=>setPage(p=>p-1)}/>:null}{c.d?.length===100?<Btn label="Next" kind="soft" disabled={c.l} onPress={()=>setPage(p=>p+1)}/>:null}</View>
     </Pg>
   );
 }
@@ -70,6 +73,7 @@ export function ConversationPage() {
   return (
     <Pg title={c?.customer_name ?? 'Conversation'} onBack={app.back} scroll={false}>
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+        {conv.e?<ErrBox e={conv.e} retry={conv.reload}/>:null}
         {c ? <Pressable onPress={() => c.feature && app.go('feature', { k: c.feature, focus: c.ref_id })} style={[s.card, { padding: 12, marginBottom: 10 }]}><Text style={s.mut}>About</Text><Text style={s.rt}>{c.ref_label ?? 'Conversation'}{c.feature ? ` · ${FX.FM[c.feature]?.name} ›` : ''}</Text></Pressable> : null}
         <ScrollView ref={ref} style={{ flex: 1 }} onContentSizeChange={() => ref.current?.scrollToEnd({ animated: false })} contentContainerStyle={{ gap: 8, paddingVertical: 4 }}>
           {ms.e ? <ErrBox e={ms.e} retry={ms.reload} /> : ms.l && !ms.d ? <Loading n={3} h={44} /> : (ms.d ?? []).length ? (ms.d ?? []).map(m => { const mine = m.sender_id === app.userId; return <View key={m.id} style={{ maxWidth: '78%', alignSelf: mine ? 'flex-end' : 'flex-start', backgroundColor: mine ? t.blue : t.chip, borderRadius: 14, paddingHorizontal: 13, paddingVertical: 10 }}><Text style={{ color: mine ? '#fff' : t.ink, fontSize: 13 }}>{m.body}</Text></View>; }) : <Empty icon="message-text-outline" title="No messages yet" />}
@@ -83,9 +87,10 @@ export function ConversationPage() {
 /* ---------- notifications ---------- */
 export function NotificationsPage() {
   const app = useApp(), s = useS(), t = useTheme();
+  const [page,setPage]=useState(0);
   const n = useQ(() => q<any[]>(supabase.from('notifications').select('*')
     .eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id })
-    .order('created_at', { ascending: false }).limit(80)), [app.biz.id, app.userId, app.tick]);
+    .order('created_at', { ascending: false }).order('id',{ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.userId, app.tick,page]);
   useEffect(() => {
     const channel = supabase.channel('business-goodies-notifications-' + app.userId)
       .on('postgres_changes', {event: '*', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + app.userId}, () => app.bump())
@@ -114,6 +119,7 @@ export function NotificationsPage() {
     <Pg title="Notifications" onBack={app.back} refreshing={n.l && !!n.d} onRefresh={app.bump} right={n.d?.some(x => !x.read) ? <Pressable onPress={async () => { try { await q(supabase.from('notifications').update({ read: true }).eq('user_id', app.userId).contains('metadata', { business_id: app.biz.id }).eq('read', false)); app.bump(); } catch (e) { app.toast(errText(e)); } }}><Text style={s.link}>Mark all as read</Text></Pressable> : null}>
       {n.e ? <ErrBox e={n.e} retry={n.reload} /> : n.l && !n.d ? <Loading /> : (n.d ?? []).length ? <View style={s.cardFlat}><Divided>{(n.d ?? []).map(x => <Row key={x.id} onPress={() => open(x)} left={x.feature ? <FIcon k={x.feature} /> : <View style={{ width: 36, height: 36, borderRadius: 12, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center' }}><Icon name="bell-outline" size={18} color={t.blue} /></View>} title={x.title} sub={ago(x.created_at)} right={!x.read ? <View style={{ width: 9, height: 9, borderRadius: 5, backgroundColor: t.blue }} /> : null} />)}</Divided></View>
         : <View style={s.card}><Empty icon="bell-outline" title="No notifications yet" /></View>}
+      <View style={s.row}>{page>0?<Btn label="Previous" kind="soft" disabled={n.l} onPress={()=>setPage(p=>p-1)}/>:null}{n.d?.length===80?<Btn label="Next" kind="soft" disabled={n.l} onPress={()=>setPage(p=>p+1)}/>:null}</View>
     </Pg>
   );
 }
@@ -125,10 +131,10 @@ export function SearchPage() {
   useEffect(() => {
     if (qs.trim().length < 2) { setRes([]); setSt('idle'); return; }
     const n = ++seq.current; setSt('load');
-    const h = setTimeout(async () => { try { const r = await rpc<any[]>('search_business', { p_business: app.biz.id, p_q: qs.trim() }); if (n === seq.current) { setRes(r); setSt('idle'); } } catch { if (n === seq.current) setSt('err'); } }, 250);
+    const h = setTimeout(async () => { try { const r = await businessSearch(app,qs.trim()); if (n === seq.current) { setRes(r); setSt('idle'); } } catch { if (n === seq.current) setSt('err'); } }, 250);
     return () => clearTimeout(h);
   }, [qs, app.biz.id]);
-  const go = (r: any) => { if (r.target === 'wallet') app.panel('payouts'); else if (r.target === 'promo') app.go('promotions'); else app.go('feature', { k: r.feature, focus: r.rec_id }); };
+  const go = (r: any) => { if(r.page){app.go(r.page,{focus:r.rec_id});return;} if (r.target === 'wallet') app.panel('payouts'); else if (r.target === 'promo') app.go('promotions'); else app.go('feature', { k: r.feature, focus: r.rec_id }); };
   const L = res.filter(x => sc === 'All' || x.scope === sc);
   return (
     <Pg title="Search" onBack={app.back}>
