@@ -1,6 +1,7 @@
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
-import { S, STB, IT, emit, save } from './store';
+import { S, STB, IT, emit, save, load, currentGoodiesAccountId, clearGoodiesAccountState } from './store';
+import {loadBuilders} from './builders/engine';
 
 type ServerOrder = {
   id: string;
@@ -204,13 +205,15 @@ export function startGoodiesSync() {
       return;
     }
     generation++;
+    const accountChanged = currentGoodiesAccountId() !== nextUserId;
     userId = nextUserId;
     clearChannel();
     if (poll) {
       clearInterval(poll);
       poll = null;
     }
-    clearAccountState();
+    if (accountChanged) clearGoodiesAccountState();
+    else clearAccountState();
     if (!userId) return;
 
     const subscribedUserId = userId;
@@ -231,7 +234,14 @@ export function startGoodiesSync() {
       });
 
     poll = setInterval(() => { void refresh(); }, 60000);
-    void refresh();
+    // A new account gets only its own namespaced cache before its live orders refresh.
+    void (async () => {
+      if (accountChanged) {
+        try { await load(); await loadBuilders(); }
+        catch { clearGoodiesAccountState(); }
+      }
+      if (!stopped && generation === subscribedGeneration) await refresh();
+    })();
   };
 
   const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
