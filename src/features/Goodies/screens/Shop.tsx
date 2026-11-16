@@ -26,6 +26,27 @@ const Hero = ({s, onBack, right}: any) => (
   </View>
 );
 
+function useStoreReviews(storeId: string) {
+  const [reviews, setReviews] = useState<Array<{n: string; r: number; t: string; d: string}>>([]);
+  useEffect(() => {
+    let active = true;
+    setReviews([]);
+    if (!storeId) return () => { active = false; };
+    void supabase.rpc('goodies_public_store_reviews', {p_store_id: storeId})
+      .then(({data, error}) => {
+        if (!active) return;
+        if (error) { console.warn('Goodies reviews could not load', error.message); return; }
+        setReviews((data || []).map((review: any) => ({
+          n: String(review.author_label || 'Verified customer'),
+          r: Number(review.rating || 0), t: String(review.comment || ''),
+          d: review.created_at ? new Date(review.created_at).toLocaleDateString() : '',
+        })));
+      });
+    return () => { active = false; };
+  }, [storeId]);
+  return reviews;
+}
+
 export function Store({id}: {id: string}) {
   const [shareOpen,setShareOpen]=useState(false);
   const [shareLoading,setShareLoading]=useState(false);
@@ -68,6 +89,7 @@ export function Store({id}: {id: string}) {
     finally{setShareSending(null);}
   };
   const th = useTheme(), s = STB[id], address = addr(), t = S.ss[id + 't'] || 'all', q = (S.ss[id] || '').toLowerCase();
+  const reviews = useStoreReviews(id);
   useEffect(() => {
     let active = true;
     void refreshLiveSchedules().then(() => {
@@ -79,7 +101,6 @@ export function Store({id}: {id: string}) {
   const l = s.it.filter((i, n) => (!q || i.n.toLowerCase().indexOf(q) > -1) && (t === 'all' || (t === 'pop' && n < 2) || (t === 'deal' && DEALS.some(d => d[0] === i.id))));
   const rows = t === 'all' || t === 'custom' ? byoRows(id, q) : null;
   const items = t === 'custom' ? [] : l;
-  const reviews: any[] = [];
   const tabs: [string, string][] = [['all', label('lbl.storeAll', 'All')], ['pop', label('lbl.storePopular', 'Popular')], ['deal', label('lbl.storeDeals', 'Deals')], ...(byoOn(id) ? [['custom', label('lbl.storeCustom', 'Custom products')] as [string, string]] : [])];
   return (
     <View>
@@ -125,6 +146,7 @@ export function Store({id}: {id: string}) {
 
 export function StoreReviews({id}: {id: string}) {
   const th = useTheme(), s = STB[id];
+  const reviews = useStoreReviews(id);
   if (!s) return <View><Bar title={label('lbl.storeReviewsTitle', 'Store reviews')} onBack={back} /><Empty emoji="⭐" title={label('lbl.storeNotFound', 'Store not found')} button={label('lbl.storeBackToStores', 'Back to stores')} onPress={browse} /></View>;
   const reviews: any[] = [];
   return (
