@@ -148,7 +148,6 @@ export function StoreReviews({id}: {id: string}) {
   const th = useTheme(), s = STB[id];
   const reviews = useStoreReviews(id);
   if (!s) return <View><Bar title={label('lbl.storeReviewsTitle', 'Store reviews')} onBack={back} /><Empty emoji="⭐" title={label('lbl.storeNotFound', 'Store not found')} button={label('lbl.storeBackToStores', 'Back to stores')} onPress={browse} /></View>;
-  const reviews: any[] = [];
   return (
     <View>
       <Bar title={label('lbl.storeReviews', 'Reviews')} onBack={back} />
