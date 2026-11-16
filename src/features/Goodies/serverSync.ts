@@ -35,6 +35,8 @@ const stageByStatus: Record<string, number> = {
   accepted: 1,
   preparing: 2,
   ready: 3,
+  courier_assigned: 4,
+  picked_up: 5,
   completed: 6,
   cancelled: 0,
   declined: 0,
@@ -63,7 +65,7 @@ function mapOrder(row: ServerOrder) {
     tip: Number(row.tip || 0),
     total: Number(row.total || 0),
     t0: Date.parse(row.created_at) || Date.now(),
-    st: stageByStatus[String(row.status || '').toLowerCase()] ?? 0,
+    st: String(row.status || '').toLowerCase() === 'completed' && pk ? 4 : stageByStatus[String(row.status || '').toLowerCase()] ?? 0,
     rated: 0,
     cx: ['cancelled', 'declined', 'expired'].includes(String(row.status || '').toLowerCase()) ? 1 : 0,
     pk,
@@ -143,7 +145,7 @@ export function startGoodiesSync() {
         refreshAgain = false;
         const requestUserId: string = userId;
         const requestGeneration = generation;
-        const [unreadResult, ordersResult, walletResult] = await Promise.all([
+        const [unreadResult, ordersResult, walletResult, reviewsResult] = await Promise.all([
           supabase.from('notifications')
             .select('id', { count: 'exact', head: true })
             .eq('user_id', requestUserId)
@@ -156,6 +158,7 @@ export function startGoodiesSync() {
             .order('created_at', { ascending: false })
             .limit(100),
           supabase.from('wallets').select('id,balance').eq('user_id', requestUserId).maybeSingle(),
+          supabase.from('goodies_order_reviews').select('order_id,review_target,rating').eq('customer_id',requestUserId).limit(200),
         ]);
         if (stopped || requestGeneration !== generation || requestUserId !== userId) continue;
 
@@ -179,10 +182,24 @@ export function startGoodiesSync() {
           const cached = new Map<string, any>(
             (S.orders || []).filter((order: any) => order?.backendId).map((order: any) => [String(order.backendId), order]),
           );
-          const serverOrders = ((ordersResult.data || []) as ServerOrder[]).map(row => ({
-            ...(cached.get(String(row.id)) || {}),
-            ...mapOrder(row),
-          }));
+          const reviewsByOrder = new Map<string, {store?: number; courier?: number}>();
+          if (!reviewsResult.error) {
+            for (const review of reviewsResult.data || []) {
+              const key = String(review.order_id);
+              const previous = reviewsByOrder.get(key) || {};
+              if (review.review_target === 'store' || review.review_target === 'courier') {
+                previous[review.review_target] = Number(review.rating);
+              }
+              reviewsByOrder.set(key, previous);
+            }
+          }
+          const serverOrders = ((ordersResult.data || []) as ServerOrder[]).map(row => {
+            const cachedOrder = cached.get(String(row.id)) || {};
+            const reviews = reviewsByOrder.get(String(row.id));
+            return {...cachedOrder, ...mapOrder(row),
+              rated: reviews?.store || cachedOrder.rated || 0,
+              driverRated: reviews?.courier || cachedOrder.driverRated || 0};
+          });
           const localOrders = (S.orders || []).filter((order: any) => !order?.backendId);
           S.orders = [...serverOrders, ...localOrders].sort((a: any, b: any) => Number(b.t0 || 0) - Number(a.t0 || 0));
           changed = true;
