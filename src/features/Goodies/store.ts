@@ -147,13 +147,17 @@ function liveStore(r: any, items: Item[]): Store {
   return store;
 }
 
-function placeholderStore(sid: string, _name: string): Store {
+function placeholderStore(sid: string, name: string): Store {
   return {
-    id: sid, n: 'Store', c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
+    id: sid, n: String(name || 'Store'), c: '', e: '🛍️', bg: bgOf(sid), r: 0, rv: 0, km: 0, km0: 0, eta: '0–0', eta0: '0–0', fee: 0, min: 0, pr: '', k: '', it: [],
     open: 0, h: '', nx: 'No longer taking orders', far: false, acceptScheduledOrders: false,
   };
 }
 
+/** Preserve order-history and tracking rendering after a merchant delists the store. */
+export function ensureGoodiesOrderStore(sid: string, name = 'Store') {
+  if (sid && !STB[sid]) STB[sid] = placeholderStore(sid, name);
+}
 let liveTimer: any = null;
 export async function refreshLiveSchedules() {
   try {
