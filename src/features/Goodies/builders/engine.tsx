@@ -144,6 +144,10 @@ hooks.bGet = bGet; hooks.bCheck = bCheck; hooks.bLine = bLine; (hooks as any).li
 
 /* ---------- drafts ---------- */
 export let BD: any = null;
+export function clearBuilderSession() {
+  BYO.cfg = {}; BYO.drafts = {}; BYO.store = {};
+  BD = null;
+}
 export const setBD = (d: any) => {BD = d;};
 const dirtyOf = (d: any) => Object.keys(d.sel).some(k => d.sel[k].length) || !!d.note || d.q > 1;
 export function bDraft(b: Builder, sid: string) {
