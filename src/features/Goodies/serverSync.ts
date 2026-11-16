@@ -1,6 +1,6 @@
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
-import { S, STB, IT, emit, save, load, currentGoodiesAccountId, clearGoodiesAccountState } from './store';
+import { S, STB, IT, emit, save, load, currentGoodiesAccountId, clearGoodiesAccountState, ensureGoodiesOrderStore } from './store';
 import {loadBuilders, clearBuilderSession} from './builders/engine';
 
 type ServerOrder = {
@@ -45,6 +45,7 @@ const stageByStatus: Record<string, number> = {
 
 function mapOrder(row: ServerOrder) {
   const sid = String(row.store_id || '');
+  ensureGoodiesOrderStore(sid);
   const pk = row.order_type === 'pickup';
   const address = row.address && typeof row.address === 'object' ? row.address : null;
   const items = Array.isArray(row.items) ? row.items : [];
