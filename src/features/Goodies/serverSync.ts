@@ -1,7 +1,7 @@
 import { AppState, type AppStateStatus } from 'react-native';
 import { supabase } from '../../lib/supabase';
 import { S, STB, IT, emit, save, load, currentGoodiesAccountId, clearGoodiesAccountState } from './store';
-import {loadBuilders} from './builders/engine';
+import {loadBuilders, clearBuilderSession} from './builders/engine';
 
 type ServerOrder = {
   id: string;
@@ -212,7 +212,7 @@ export function startGoodiesSync() {
       clearInterval(poll);
       poll = null;
     }
-    if (accountChanged) clearGoodiesAccountState();
+    if (accountChanged) { clearGoodiesAccountState(); clearBuilderSession(); }
     else clearAccountState();
     if (!userId) return;
 
