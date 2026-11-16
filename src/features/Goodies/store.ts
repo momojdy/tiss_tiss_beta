@@ -9,6 +9,11 @@ import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
 import {friendlyError} from './friendlyError';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
+const CHECKOUT_KEY = 'goodies-checkout-attempt-v1';
+let activeAccountId: string | null = null;
+export const currentGoodiesAccountId = () => activeAccountId;
+const accountKey = (base: string): string | null => activeAccountId ? base + ':' + activeAccountId : null;
+
 
 /* The customer catalog is empty until published backend products are available. */
 export const IT: Record<string, Item> = {};
@@ -309,16 +314,33 @@ export async function refreshUserAddresses() {
   return S.addr;
 }
 
+export function clearGoodiesAccountState() {
+  // No owner-neutral cart, order, notification or checkout state may survive an account change.
+  activeAccountId = null;
+  Object.assign(S, WDEF(), GDEF());
+  S.currentLocation = null;
+  S.sh = null; S.pend = null; S.busy = 0; S.cs = 0;
+  S.stack = [{r: 'home', u: ++uid}];
+  S.ready = false;
+  emit();
+}
 export async function load() {
+  const {data: identity, error: identityError} = await supabase.auth.getUser();
+  activeAccountId = identityError ? null : identity.user?.id || null;
+  // Legacy owner-neutral storage is deliberately not restored: its owner cannot be verified.
+  Object.assign(S, WDEF(), GDEF());
   const merge = async (key: string, D: any) => {
     try {
       const raw = JSON.parse((await AsyncStorage.getItem(key)) || 'null');
       if (raw && typeof raw === 'object') for (const k in D) if (raw[k] !== undefined && typeof raw[k] === typeof D[k] && Array.isArray(raw[k]) === Array.isArray(D[k])) S[k] = raw[k];
     } catch (e) {}
   };
-  await merge(WKEY, WDEF()); await merge(KEY, GDEF());
+  if (activeAccountId) {
+    await merge(accountKey(WKEY)!, WDEF());
+    await merge(accountKey(KEY)!, GDEF());
+  }
   try {
-    const attempt = JSON.parse((await AsyncStorage.getItem('goodies-checkout-attempt-v1')) || 'null');
+    const attempt = JSON.parse((activeAccountId && await AsyncStorage.getItem(accountKey(CHECKOUT_KEY)!) ) || 'null');
     if (attempt && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
   } catch (e) {}
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
@@ -375,7 +397,7 @@ export async function load() {
   else if (!cartStoreIds().includes(String(S.cart.sid))) S.cart.sid = cartStoreIds()[0] || null;
   if (S.checkoutAttempt && !S.cart.lines.length && !S.checkoutAttempt.completed) {
     S.checkoutAttempt = {...S.checkoutAttempt, completed: true};
-    try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
+    try {const key = accountKey(CHECKOUT_KEY); if (key) await AsyncStorage.setItem(key, JSON.stringify(S.checkoutAttempt));} catch (e) {}
   }
   S.orders = S.orders.filter((o: any) => o && STB[o.sid] && Array.isArray(o.lines));
   S.fav = S.fav.filter((x: string) => STB[x]); S.favp = S.favp.filter((x: string) => IT[x]);
@@ -389,12 +411,14 @@ export async function load() {
   applyZone(); S.ready = true; emit();
 }
 export function save(): Promise<void> {
+  const profileKey = accountKey(WKEY), goodiesKey = accountKey(KEY);
+  if (!profileKey || !goodiesKey) return Promise.resolve();
   try {
     const w: any = {}, g: any = {};
     WP.forEach(k => (w[k] = S[k])); GP.forEach(k => (g[k] = S[k]));
     return Promise.all([
-      AsyncStorage.setItem(WKEY, JSON.stringify(w)),
-      AsyncStorage.setItem(KEY, JSON.stringify(g)),
+      AsyncStorage.setItem(profileKey, JSON.stringify(w)),
+      AsyncStorage.setItem(goodiesKey, JSON.stringify(g)),
     ]).then(() => undefined).catch(() => undefined);
   } catch (e) {
     return Promise.resolve();
@@ -402,6 +426,7 @@ export function save(): Promise<void> {
 }
 
 export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{key: string; fingerprint: string}> {
+  if (!activeAccountId) throw new Error('Sign in before starting a Goodies checkout.');
   const current = S.checkoutAttempt;
   if (current && !current.completed && current.fingerprint === fingerprint && typeof current.key === 'string') {
     return {key: current.key, fingerprint: current.fingerprint};
@@ -412,14 +437,14 @@ export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{k
     completed: false,
   };
   S.checkoutAttempt = attempt;
-  await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(attempt));
+  await AsyncStorage.setItem(accountKey(CHECKOUT_KEY)!, JSON.stringify(attempt));
   return {key: attempt.key, fingerprint: attempt.fingerprint};
 }
 
 export async function completeGoodiesCheckoutAttempt(orderId: string): Promise<void> {
   if (!S.checkoutAttempt || !orderId) return;
   S.checkoutAttempt = {...S.checkoutAttempt, completed: true, orderId};
-  try {await AsyncStorage.setItem('goodies-checkout-attempt-v1', JSON.stringify(S.checkoutAttempt));} catch (e) {}
+  try {const key = accountKey(CHECKOUT_KEY); if (key) await AsyncStorage.setItem(key, JSON.stringify(S.checkoutAttempt));} catch (e) {}
 }
 export const setTheme = (t: 'light' | 'dark') => {S.theme = t; AsyncStorage.setItem('goodies-theme', t); emit();};
 export const setLang = (l: string) => {S.lang = l; AsyncStorage.setItem('goodies-lang', l); emit();};
