@@ -10,6 +10,7 @@ import {friendlyError} from './friendlyError';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
 const CHECKOUT_KEY = 'goodies-checkout-attempt-v1';
+const LEGACY_PURGE_MARKER = 'goodies-account-isolation-v1';
 let activeAccountId: string | null = null;
 export const currentGoodiesAccountId = () => activeAccountId;
 const accountKey = (base: string): string | null => activeAccountId ? base + ':' + activeAccountId : null;
@@ -336,7 +337,14 @@ export async function load() {
   const nextAccountId = identityError ? null : identity.user?.id || null;
   if (nextAccountId !== activeAccountId) clearTransientGoodiesState();
   activeAccountId = nextAccountId;
-  // Legacy owner-neutral storage is deliberately not restored: its owner cannot be verified.
+  // Unowned legacy device data cannot be attributed safely to any signed-in account.
+  // Delete it once rather than silently migrating another customer's private state.
+  try {
+    if (!(await AsyncStorage.getItem(LEGACY_PURGE_MARKER))) {
+      await AsyncStorage.multiRemove([KEY, WKEY, CHECKOUT_KEY, 'goodies-byo-v4']);
+      await AsyncStorage.setItem(LEGACY_PURGE_MARKER, '1');
+    }
+  } catch { /* Legacy keys are never read even if secure cleanup must retry. */ }
   Object.assign(S, WDEF(), GDEF());
   const merge = async (key: string, D: any) => {
     try {
