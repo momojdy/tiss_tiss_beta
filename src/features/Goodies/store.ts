@@ -314,19 +314,28 @@ export async function refreshUserAddresses() {
   return S.addr;
 }
 
+function clearTransientGoodiesState() {
+  S.currentLocation = null;
+  S.sh = null; S.pend = null; S.busy = 0; S.cs = 0;
+  S.note = ''; S.pin = ''; S.ss = {};
+  S.sch = 0; S.time = 'ASAP'; S.f = ''; S.sub = '';
+  S.sr = {q: '', sort: 'rel', f: {}}; S.srt = 'rel';
+  S.ot = 'active'; S.ft = 'stores'; S.rt = 0;
+  S.stack = [{r: 'home', u: ++uid}];
+  S.ready = false;
+}
 export function clearGoodiesAccountState() {
   // No owner-neutral cart, order, notification or checkout state may survive an account change.
   activeAccountId = null;
   Object.assign(S, WDEF(), GDEF());
-  S.currentLocation = null;
-  S.sh = null; S.pend = null; S.busy = 0; S.cs = 0;
-  S.stack = [{r: 'home', u: ++uid}];
-  S.ready = false;
+  clearTransientGoodiesState();
   emit();
 }
 export async function load() {
   const {data: identity, error: identityError} = await supabase.auth.getUser();
-  activeAccountId = identityError ? null : identity.user?.id || null;
+  const nextAccountId = identityError ? null : identity.user?.id || null;
+  if (nextAccountId !== activeAccountId) clearTransientGoodiesState();
+  activeAccountId = nextAccountId;
   // Legacy owner-neutral storage is deliberately not restored: its owner cannot be verified.
   Object.assign(S, WDEF(), GDEF());
   const merge = async (key: string, D: any) => {
