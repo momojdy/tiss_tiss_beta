@@ -185,7 +185,7 @@ export async function refreshLiveSchedules() {
       const {data: ratings, error: ratingError} = await supabase.rpc('goodies_public_store_review_stats', {
         p_store_ids: stores.slice(offset, offset + 100).map(store => String(store.store_id)),
       });
-      if (ratingError) throw ratingError;
+      if (ratingError) { console.warn('Goodies store ratings temporarily unavailable', ratingError.message); break; }
       for (const row of ratings || []) {
         const businessId = businessByStore.get(String(row.store_id));
         const count = Number(row.review_count || 0), average = Number(row.rating || 0);
