@@ -18,7 +18,7 @@ import {CardAuthentication} from './screens/CardAuthentication';
 import {HelpPayPreview} from './screens/HelpPayPreview';
 import {ByoScreen, ByoFoot} from './builders/Builder';
 import {loadBuilders, BD} from './builders/engine';
-import {loadContent, onContent, label, stageLabels} from './content';
+import {loadContent, onContent, label, stageLabels, catName} from './content';
 import {PROMO} from './theme';
 import {t as tr} from './i18n';
 import GoodiesQuickMenu, {type GoodiesMenuAction} from './GoodiesQuickMenu';
@@ -153,7 +153,7 @@ export function GoodiesApp({onExit, embedded = true, onUniversalAction, unreadNo
     case 'grouporder': body = <GroupOrderPage onBack={handleBack} storeId={c.p} />; break;
     case 'explore': body = <Explore />; break;
     case 'search': body = <Search />; break;
-    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : String(require('./data/seed').CATS.find((x: any) => x.id === c.p)?.name || '')} /><CatList p={c.p} /></>; break;
+    case 'catlist': body = <><TopBar title={c.p === 'all' ? label('lbl.catAllStores', 'All stores') : catName(String(c.p || 'all'))} /><CatList p={c.p} /></>; break;
     case 'store': body = <Store id={c.p} />; break;
     case 'reviews': body = <StoreReviews id={c.p} />; break;
     case 'product': body = <Product />; break;
