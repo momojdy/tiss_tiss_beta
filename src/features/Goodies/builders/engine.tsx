@@ -10,11 +10,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {supabase} from '../../../lib/supabase';
 import {fetchPublishedWantissContent} from '../../../lib/wantissCms';
 import {label} from '../content';
-import {S, STB, ui, toast, emit, save, push, navBack, cur, hooks, money} from '../store';
+import {S, STB, ui, toast, emit, save, push, navBack, cur, hooks, money, currentGoodiesAccountId} from '../store';
 import {TEMPLATES} from './templates';
 import {T, useTheme, Tile} from '../components/ui';
 
 export const BKEY = 'goodies-byo-v4';
+const builderCacheKey = () => { const accountId = currentGoodiesAccountId(); return accountId ? BKEY + ':' + accountId : null; };
 const r2 = (n: number) => Math.round(n * 100) / 100;
 const cl = <X,>(o: X): X => JSON.parse(JSON.stringify(o));
 const rid = () => Math.random().toString(36).slice(2, 10);
@@ -53,11 +54,13 @@ export function fromTemplate(type: 'pizza' | 'burger' | 'custom'): Builder {
 
 export const BYO: {cfg: Record<string, Builder[]>; store: Record<string, boolean>; drafts: Record<string, any>} = {cfg: {}, store: {}, drafts: {}};
 export async function loadBuilders() {
+  // Builder drafts must never outlive or cross the authenticated customer's account.
+  BYO.cfg = {}; BYO.drafts = {}; BYO.store = {};
   try {
-    const r = JSON.parse((await AsyncStorage.getItem(BKEY)) || 'null');
+    const key = builderCacheKey();
+    const r = JSON.parse(key ? (await AsyncStorage.getItem(key)) || 'null' : 'null');
     if (r && typeof r === 'object') {if (r.cfg && !Array.isArray(r.cfg)) BYO.cfg = r.cfg; if (r.drafts) BYO.drafts = r.drafts; if (r.store) BYO.store = r.store;}
   } catch (e) {}
-  if (!Object.keys(BYO.cfg).length) {const seed: any = {}; ['s12', 's1', 's10'].forEach(k => (seed[k] = [fromTemplate('pizza'), fromTemplate('burger')])); BYO.cfg = seed;}
   Object.keys(BYO.cfg).forEach(k => {if (!STB[k] || !Array.isArray(BYO.cfg[k])) {delete BYO.cfg[k]; return;} BYO.cfg[k] = BYO.cfg[k].map(bClean).filter(Boolean) as Builder[];});
   // Production builders come from the server, never from another user's local cache.
   try {
@@ -87,7 +90,7 @@ export async function loadBuilders() {
   }
   bsave(); emit();
 }
-export const bsave = () => {try {AsyncStorage.setItem(BKEY, JSON.stringify(BYO));} catch (e) {}};
+export const bsave = () => {try {const key = builderCacheKey(); if (key) void AsyncStorage.setItem(key, JSON.stringify(BYO)).catch(() => undefined);} catch (e) {}};
 export const bFor = (sid: string) => BYO.cfg[sid] || [];
 export const bGet = (sid: string, id: string) => bFor(sid).filter(b => b.id === id)[0];
 export const units = (g: BGroup, d: any): string[] => {const a = d.sel && d.sel[g.id]; return Array.isArray(a) ? a : [];};
