@@ -504,10 +504,22 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
   const freshCourier = valid(courier) && courier.updatedAt && clock - new Date(courier.updatedAt).getTime() <= 120000 ? courier : null;
   const gpsStale = locationStale || !!(courier && !freshCourier);
   const points = [origin, destination, freshCourier].filter(valid);
-  const center = points.length ? {latitude: points.reduce((n,p)=>n+Number(p.latitude),0)/points.length, longitude: points.reduce((n,p)=>n+Number(p.longitude),0)/points.length} : null;
+  // Include every real Geoapify route vertex in the viewport, not just the two pins.
+  const mapPoints = [...routeCoords, ...points];
+  const center = mapPoints.length ? (() => {
+    const latitudes = mapPoints.map(point => Number(point.latitude));
+    const longitudes = mapPoints.map(point => Number(point.longitude));
+    const minLat = Math.min(...latitudes), maxLat = Math.max(...latitudes);
+    const minLon = Math.min(...longitudes), maxLon = Math.max(...longitudes);
+    return {
+      latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2,
+      latitudeDelta: Math.max(0.01, (maxLat - minLat) * 1.5),
+      longitudeDelta: Math.max(0.01, (maxLon - minLon) * 1.5),
+    };
+  })() : null;
   return <Card style={{padding: 12}}>
     <T size={15} weight="600">{label('lbl.orderLiveTracking', 'Live delivery route')}</T>
-    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} region={{...center,latitudeDelta:0.04,longitudeDelta:0.04}} showsCompass>
+    {center ? <MapView style={{height: 250, borderRadius: 14, marginTop: 10}} region={center} showsCompass>
       {valid(origin) ? <Marker coordinate={origin} title={label('lbl.orderStoreOrigin','Store')} pinColor="#2E8B57" /> : null}
       {valid(destination) ? <Marker coordinate={destination} title={label('lbl.orderDeliveryDestination','Delivery address')} pinColor="#D97706" /> : null}
       {valid(freshCourier) ? <Marker coordinate={freshCourier} title={label('lbl.orderCourierLocation','Courier')} description={freshCourier.updatedAt ? label('lbl.orderCourierUpdated','Updated {time}').replace('{time}',new Date(freshCourier.updatedAt).toLocaleTimeString()) : ''} /> : null}
