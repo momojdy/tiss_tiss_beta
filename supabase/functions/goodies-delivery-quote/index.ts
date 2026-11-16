@@ -20,6 +20,16 @@ const validPoint = (lat: unknown, lon: unknown): boolean =>
   lon !== null && lon !== undefined && String(lon).trim() !== "" &&
   Number.isFinite(Number(lat)) && Number(lat) >= -90 && Number(lat) <= 90 &&
   Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
+const roadGeometryValid = (geometry: any): boolean =>
+  geometry && (geometry.type === "LineString" || geometry.type === "MultiLineString") &&
+  Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1;
+function distanceBetweenMeters(first: Point, second: Point): number {
+  const radians = (degrees: number) => degrees * Math.PI / 180;
+  const dLat = radians(second.lat - first.lat), dLon = radians(second.lon - first.lon);
+  const a = Math.sin(dLat / 2) ** 2 +
+    Math.cos(radians(first.lat)) * Math.cos(radians(second.lat)) * Math.sin(dLon / 2) ** 2;
+  return 6371000 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
 function addressParts(address: AddressInput) {
   const raw = [address.t, address.city, address.department, address.country]
@@ -131,7 +141,7 @@ async function routeKm(
     .gt("expires_at", new Date().toISOString()).maybeSingle();
   if (cached && Math.abs(Number(cached.origin_latitude) - origin.lat) < 0.000001 &&
       Math.abs(Number(cached.origin_longitude) - origin.lon) < 0.000001 &&
-      Number(cached.distance_m) > 0) {
+      Number(cached.distance_m) > 0 && roadGeometryValid(cached.route_geometry)) {
     return { meters: Number(cached.distance_m), geometry: cached.route_geometry, origin, destination };
   }
 
@@ -146,6 +156,9 @@ async function routeKm(
   const meters = Number(feature?.properties?.distance);
   if (!Number.isFinite(meters) || meters <= 0) throw new Error("No driving route was found for this store and delivery address.");
   const geometry = feature?.geometry || null;
+  if (!roadGeometryValid(geometry)) {
+    throw new Error("The routing service did not provide a usable road route.");
+  }
   await service.from("goodies_route_cache").upsert({
     store_id: store.store_id, address_hash: addressHash,
     origin_latitude: origin.lat, origin_longitude: origin.lon,
@@ -190,13 +203,21 @@ Deno.serve(async (req: Request) => {
     if (storeError) throw storeError;
     if (!stores || stores.length !== storeIds.length) return reply({ error: "One or more stores are no longer accepting orders." }, 404);
 
-    const customerParts = addressParts(address);
-    const addressHash = await sha256((validPoint(address.latitude, address.longitude)
-      ? `${Number(address.latitude).toFixed(6)},${Number(address.longitude).toFixed(6)}`
-      : customerParts.join(", ")).toLocaleLowerCase());
-    const destination = validPoint(address.latitude, address.longitude)
-      ? {lat: Number(address.latitude), lon: Number(address.longitude)}
-      : await geocode(address, geoKey, service);
+    // Verify the customer-supplied GPS pin against a server-geocoded address.
+    // Numeric latitude/longitude alone must never authorize a different fee or destination.
+    const verifiedAddress = await geocode(address, geoKey, service);
+    const suppliedPoint = validPoint(address.latitude, address.longitude)
+      ? {lat: Number(address.latitude), lon: Number(address.longitude)} : null;
+    if (suppliedPoint && distanceBetweenMeters(verifiedAddress, suppliedPoint) > 2000) {
+      return reply({
+        error: "The delivery pin does not match this address. Update the street and city or choose a corrected pin.",
+      }, 422);
+    }
+    const destination = suppliedPoint || verifiedAddress;
+    const addressHash = await sha256(
+      (addressParts(address).join(", ") +
+      `|${destination.lat.toFixed(6)},${destination.lon.toFixed(6)}`).toLocaleLowerCase(),
+    );
     const routeResults = await Promise.all(stores.map(async (store: any) => {
       try {
         const route = await routeKm(store, destination, addressHash, geoKey, service);
