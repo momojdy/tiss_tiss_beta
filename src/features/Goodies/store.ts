@@ -5,7 +5,7 @@ import {supabase} from '../../lib/supabase';
 import {providerInfo} from './providers';
 import {label} from './content';
 import type {Store, Item, Address, CartLine, Order} from './data/types';
-import {STAGES_DELIVERY, STAGES_PICKUP} from './data/seed';
+import {STAGES_DELIVERY, STAGES_PICKUP} from './data/orderStages';
 import {friendlyError} from './friendlyError';
 export const KEY = 'goodies-live-v4';
 export const WKEY = 'goodies-live-profile-v2';
