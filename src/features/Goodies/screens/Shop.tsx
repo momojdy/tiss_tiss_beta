@@ -507,10 +507,12 @@ function DeliveryRouteMap({orderId, origin, destination, route}: {orderId: strin
   // Include every real Geoapify route vertex in the viewport, not just the two pins.
   const mapPoints = [...routeCoords, ...points];
   const center = mapPoints.length ? (() => {
-    const latitudes = mapPoints.map(point => Number(point.latitude));
-    const longitudes = mapPoints.map(point => Number(point.longitude));
-    const minLat = Math.min(...latitudes), maxLat = Math.max(...latitudes);
-    const minLon = Math.min(...longitudes), maxLon = Math.max(...longitudes);
+    let minLat=90, maxLat=-90, minLon=180, maxLon=-180;
+    for (const point of mapPoints) {
+      const lat=Number(point.latitude), lon=Number(point.longitude);
+      if (lat<minLat) minLat=lat; if (lat>maxLat) maxLat=lat;
+      if (lon<minLon) minLon=lon; if (lon>maxLon) maxLon=lon;
+    }
     return {
       latitude: (minLat + maxLat) / 2, longitude: (minLon + maxLon) / 2,
       latitudeDelta: Math.max(0.01, (maxLat - minLat) * 1.5),
