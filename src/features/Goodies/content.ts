@@ -76,6 +76,16 @@ export function loadContent(): Promise<void> {
   contentLoad = tracked;
   return tracked;
 }
+/** Invalidate the published-content cache so tests and future content refreshes can reload it. */
+export async function clearContent() {
+  C = null;
+  setInterfaceContent([]);
+  hydration = null;
+  try { await AsyncStorage.removeItem(CONTENT_CACHE_KEY); } catch { /* Local cache cleanup is best effort. */ }
+  Object.keys(ASSETS).forEach(key => delete ASSETS[key]);
+  Object.keys(LAYOUT).forEach(key => delete LAYOUT[key]);
+  subs.forEach(subscriber => subscriber());
+}
 export const hasContent = () => !!C;
 
 /* ---------- accessors ---------- */
