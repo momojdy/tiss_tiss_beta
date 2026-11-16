@@ -176,23 +176,19 @@ export async function refreshLiveSchedules() {
       }
     }
     const ratingByBiz: Record<string, {sum: number; count: number}> = {};
-    if (prods.length) {
-      const productBusiness = new Map(prods.map(p => [String(p.id), String(p.business_id)]));
-      try {
-        for (let from = 0; ; from += 1000) {
-          const rr = await supabase.from('reviews').select('product_id,rating')
-            .in('product_id', prods.map(p => p.id)).gte('rating', 1).lte('rating', 5)
-            .range(from, from + 999);
-          if (rr.error) break;
-          for (const review of rr.data || []) {
-            const businessId = productBusiness.get(String(review.product_id));
-            if (!businessId) continue;
-            const acc = ratingByBiz[businessId] || (ratingByBiz[businessId] = {sum: 0, count: 0});
-            acc.sum += Number(review.rating); acc.count += 1;
-          }
-          if ((rr.data || []).length < 1000) break;
+    const businessByStore = new Map(stores.map(store => [String(store.store_id), String(store.business_id)]));
+    for (let offset = 0; offset < stores.length; offset += 100) {
+      const {data: ratings, error: ratingError} = await supabase.rpc('goodies_public_store_review_stats', {
+        p_store_ids: stores.slice(offset, offset + 100).map(store => String(store.store_id)),
+      });
+      if (ratingError) throw ratingError;
+      for (const row of ratings || []) {
+        const businessId = businessByStore.get(String(row.store_id));
+        const count = Number(row.review_count || 0), average = Number(row.rating || 0);
+        if (businessId && count > 0 && Number.isFinite(average)) {
+          ratingByBiz[businessId] = {sum: average * count, count};
         }
-      } catch (e) {}
+      }
     }
     Object.keys(IT).forEach(k => delete IT[k]); Object.keys(STB).forEach(k => delete STB[k]); ST.length = 0;
     const byBiz: Record<string, Item[]> = {};
