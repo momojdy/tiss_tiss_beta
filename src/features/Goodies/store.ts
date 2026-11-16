@@ -867,16 +867,6 @@ export const FCH:[string,string][] = [
   filterChoice('near',()=>label('lbl.filterNearest','Nearest')),
 ];
 
-/* demo only: wipes local data */
-export async function resetDemo() {
-  const {assertDemoOnly} = require('./providers');
-  assertDemoOnly('Reset demo data');
-  await AsyncStorage.multiRemove([KEY, WKEY, 'goodies-checkout-attempt-v1']);
-  Object.assign(S, WDEF(), GDEF());
-  S.stack = [{r: 'home', u: ++uid}];
-  applyZone(); emit();
-}
-
 /* ---------- restricted goods (alcohol) ---------- */
 export const hasAlcohol = (lines?: CartLine[]) => (lines || S.cart.lines).some((l: any) => !l.byo && IT[l.id] && (IT[l.id] as any).restriction === 'alcohol');
 export const alcAge = (pickupStoreId?: string | null) => {
