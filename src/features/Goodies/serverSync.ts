@@ -187,9 +187,9 @@ export function startGoodiesSync() {
             for (const review of reviewsResult.data || []) {
               const key = String(review.order_id);
               const previous = reviewsByOrder.get(key) || {};
-              if (review.review_target === 'store' || review.review_target === 'courier') {
-                previous[review.review_target] = Number(review.rating);
-              }
+              const target = String(review.review_target);
+              if (target === 'store') previous.store = Number(review.rating);
+              if (target === 'courier') previous.courier = Number(review.rating);
               reviewsByOrder.set(key, previous);
             }
           }
