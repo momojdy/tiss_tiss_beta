@@ -21,8 +21,11 @@ const validPoint = (lat: unknown, lon: unknown): boolean =>
   Number.isFinite(Number(lat)) && Number(lat) >= -90 && Number(lat) <= 90 &&
   Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
 const roadGeometryValid = (geometry: any): boolean =>
-  geometry && (geometry.type === "LineString" || geometry.type === "MultiLineString") &&
-  Array.isArray(geometry.coordinates) && geometry.coordinates.length > 1;
+  !!geometry && Array.isArray(geometry.coordinates) &&
+  (geometry.type === "LineString"
+    ? geometry.coordinates.length > 1
+    : geometry.type === "MultiLineString" &&
+      geometry.coordinates.some((segment: unknown) => Array.isArray(segment) && segment.length > 1));
 function distanceBetweenMeters(first: Point, second: Point): number {
   const radians = (degrees: number) => degrees * Math.PI / 180;
   const dLat = radians(second.lat - first.lat), dLon = radians(second.lon - first.lon);
