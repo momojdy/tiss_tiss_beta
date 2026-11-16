@@ -10,7 +10,7 @@ import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
 import {bzLeave, bzDiscard, bzReset2} from '../builders/engine';
-import {rgText, importContent, clearContent, hasContent, label} from '../content';
+import {rgText, label} from '../content';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {BottomSheet, ConfirmDialog} from './Overlays';
 import {friendlyError} from '../friendlyError';
@@ -26,7 +26,6 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
   if (k === 'byoreset') content = (<><T size={20} weight="600">{label('lbl.sheetStartOver', 'Start over?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.sheetAuto1DTRBEO", "This clears your current choices. Items already in your cart are not affected.")}</T><Cta label={label("lbl.sheetAutoT5109D", "Start over")} onPress={bzReset2} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepEditing', 'Keep editing')} onPress={close} /></>);
   if (k === 'alcrules') { const a = alcAge(sheet.sid || (S.pend && S.pend[0] ? S.pend[0].s : null)); content = (<><View style={{alignItems: 'center', marginBottom: 6}}><Text style={{fontSize: 44}}>🪪</Text></View><T size={20} weight="600">{label('lbl.sheetAlcoholRules', 'Alcohol rules')}</T><T color={th.mut} style={{marginTop: 8, lineHeight: 21}}>{rgText('rg.rules', 'Alcohol is sold only to customers aged {age} or older. Minors may not buy alcohol. Valid government photo ID is required at delivery or pickup. If the ID check fails, you are refunded to your Wantiss wallet minus the delivery fee.', a.age)}</T><Card style={{marginTop: 12}}><T size={13.5}>{label("lbl.cms.06e2931ac98c", "• Minimum age here: ")}<T weight="600">{a.age}</T></T><T size={13.5}>{label("lbl.sheetAuto9O43A9", "• The courier checks your ID at the door. At a pickup, the shop checks it.")}</T><T size={13.5}>{label("lbl.sheetAuto1JBCM1P", "• If it fails, you get a refund to your Wantiss wallet minus the delivery fee.")}</T></Card><View style={{height: 6}} /><Cta label={label('lbl.sheetAlcoholAccept', 'I understand')} onPress={A.alcAccept} /><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAutoWFRFF9", "Cancel")} onPress={close} /></>); }
   if (k === 'schedule') content = <ScheduleSheet close={close} />;
-  if (k === 'import') content = <ImportSheet close={close} />;
   if (k === 'contacts') content = <ContactsSheet close={close} />;
   if (k === 'ctform') content = <CtForm key={sheet.id || 'new'} id={sheet.id} bottomInset={insets.bottom} />;
   if (k === 'replace') content = (<><T size={20} weight="600">{label('lbl.sheetReplaceCart', 'Replace your cart?')}</T><T color={th.mut} style={{marginVertical: 8, marginBottom: 18}}>{label("lbl.cms.adf8a6e98991", "Your cart has items from ")}{sheet.from}.</T><Cta label={label('lbl.sheetReorder', 'Replace and reorder')} onPress={A.runReorder} /><View style={{height: 10}} /><Cta ghost label={label('lbl.sheetKeepCart', 'Keep current cart')} onPress={close} /></>);
@@ -725,17 +724,4 @@ function CtForm({id,bottomInset=0}: {id: any; bottomInset?: number}) {
       <View style={{height:8}}/><Cta ghost label={label("lbl.sheetAuto1LJ92XO", "Back")} onPress={() => ui.sheet({kind: 'contacts'})} />
     </View>
   </View>;
-}
-
-/* DEMO: paste the JSON exported from Wantiss Admin (Goodies > Overview > Export content). Production fetches the same shape from the backend. */
-function ImportSheet({close}: {close: () => void}) {
-  const th = useTheme(), [txt, setTxt] = useState('');
-  return (<>
-    <T size={20} weight="600">{label("lbl.sheetAuto1DJ0R80", "Import Admin content")}</T>
-    <T size={12.5} color={th.mut} style={{marginTop: 6, marginBottom: 10}}>{label("lbl.cms.51de0d274565", "Paste the content exported from Wantiss Admin. It replaces promo cards, categories, labels, fees, age rules, texts and artwork in this demo. ")}{hasContent() ? label("lbl.cms.c73acc89640b", "Admin content is currently loaded.") : label("lbl.cms.40b928d70f8f", "The built-in sample content is currently used.")}</T>
-    <TextInput value={txt} onChangeText={setTxt} multiline placeholder={label("lbl.sheetAutoAED84A", "Paste JSON here")} placeholderTextColor={th.mut} style={{minHeight: 120, maxHeight: 220, fontSize: 12, color: th.ink, backgroundColor: th.soft, borderWidth: 0.5, borderColor: th.line, borderRadius: 12, padding: 10, textAlignVertical: 'top'}} />
-    <View style={{height: 12}} />
-    <Cta label={label("lbl.sheetAuto1EXCTAI", "Import")} onPress={async () => {try {await importContent(txt.trim()); close(); toast(label('lbl.sheetAdminContentLoaded', 'Admin content loaded')); emit();} catch (e: any) {toast(String(e && e.message ? e.message : label('lbl.sheetInvalidJson', 'That is not valid JSON')));}}} />
-    {hasContent() ? <><View style={{height: 10}} /><Cta ghost label={label("lbl.sheetAuto1U4P0PS", "Go back to sample content")} onPress={async () => {await clearContent(); close(); toast(label('lbl.sheetSampleContent', 'Using sample content')); emit();}} /></> : null}
-  </>);
 }
