@@ -73,12 +73,17 @@ function promoGradient(kind: string): [string, string] {
   return [kind, '#' + lighter.map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase()];
 }
 
-function PromoCard({kind, title, sub, btn, emoji, image, target}: {kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
+function PromoCard({id, kind, title, sub, btn, emoji, image, target}: {id: string; kind: string; title: string; sub: string; btn: string; emoji: string; image?: string | null; target?: string}) {
   const [imageFailed, setImageFailed] = useState(false);
   const gradient = promoGradient(kind);
   useEffect(() => setImageFailed(false), [image]);
   return (
-    <Pressable onPress={() => ui.sheet({kind: 'promo', p: kind === 'plum' ? 'free' : kind === 'orange' ? 'points' : 'produce', custom: {title, sub, btn, emoji, target}})}>
+    <Pressable onPress={() => {
+      // A CMS color is visual styling, never a promotion identifier or destination.
+      const preset = id === 'promo.free-delivery' ? 'free' : id === 'promo.double-points' ? 'points' : id === 'promo.fresh-produce' ? 'produce' : 'produce';
+      const fallback = id === 'promo.free-delivery' ? 'category:restaurants' : id === 'promo.double-points' ? 'category:all' : id === 'promo.fresh-produce' ? 'category:produce' : 'screen:promos';
+      ui.sheet({kind: 'promo', p: preset, custom: {title, sub, btn, emoji, target: target?.trim() || fallback}});
+    }}>
       <Grad colors={gradient} angle={110} style={{width: 300, height: 124, borderRadius: 18, padding: 12, overflow: 'hidden'}}>
         <T size={18} weight="600" color="#fff" lines={2} style={{width: 170, lineHeight: 21}}>{title}</T>
         <T size={11.5} color="#fff" lines={2} style={{marginTop: 3, width: 170, lineHeight: 14, opacity: 0.92}}>{sub}</T>
@@ -149,7 +154,7 @@ export function Home({onExit}: {onExit?: () => void}) {
         {contentReady ? <Rail gap={14}>{cats.map(c => <CategoryTile key={c.id} category={c} onPress={() => go('catlist', c.id)} />)}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:10,paddingHorizontal:16}}>{Array.from({length:6},(_,i)=><View key={i} style={{width:68,alignItems:'center'}}><View style={{width:42,height:42,borderRadius:24,backgroundColor:th.soft}}/><View style={{width:42,height:7,borderRadius:4,backgroundColor:th.soft,marginTop:7}}/></View>)}</ScrollView>}
       </View>
       <View style={{marginTop: 20}}>
-        {contentReady ? <Rail>{pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:12,paddingHorizontal:16}}>{[0,1].map(i=><View key={i} style={{width:300,height:124,borderRadius:18,backgroundColor:th.soft}}/>)}</ScrollView>}
+        {contentReady ? <Rail>{pc ? pc.filter(x => !x.newOnly || first()).map(x => <PromoCard key={x.id} id={x.id} kind={x.color} title={x.title} sub={x.sub} btn={x.btn} emoji={x.emoji} image={x.image} target={x.target} />) : null}</Rail> : <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{gap:12,paddingHorizontal:16}}>{[0,1].map(i=><View key={i} style={{width:300,height:124,borderRadius:18,backgroundColor:th.soft}}/>)}</ScrollView>}
       </View>
       <View style={{paddingHorizontal: 16, marginTop: 10}}>
         <Pressable onPress={() => go('promos')} style={{flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderWidth: 0.5, borderColor: th.line, borderRadius: 16}}>
