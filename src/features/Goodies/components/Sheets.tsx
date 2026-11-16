@@ -654,27 +654,42 @@ export function GroupOrderPage({onBack, storeId = ''}: {onBack: () => void; stor
 
 function ReviewSheet({id, stars, driver = false, initialStars = 0}: {id: string; stars: any; driver?: boolean; initialStars?: number}) {
   const [n, setN] = useState(initialStars || S.rt || 0), [t, setT] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const submitReview = async () => {
+    const order = S.orders.find((row: any) => row.id === id);
+    if (!order) {toast(label('lbl.sheetOrderNotFound', 'Order not found'));return;}
+    if (!n) {toast(label('lbl.sheetPickRating', 'Pick a star rating'));return;}
+    if (!order.backendId || String(order.serverStatus).toLowerCase() !== 'completed') {
+      toast('Only a completed live Goodies order can be reviewed.');return;
+    }
+    if (driver && !order.courierId) {
+      toast('This order does not have a Wantiss courier to review.');return;
+    }
+    if (submitting) return;
+    setSubmitting(true);
+    try {
+      const {data, error} = await supabase.rpc('goodies_submit_order_review', {
+        p_order_id: order.backendId, p_review_target: driver ? 'courier' : 'store',
+        p_rating: n, p_comment: t.trim(),
+      });
+      if (error) throw error;
+      if (!data) throw new Error('The review service did not confirm your submission.');
+      if (driver) order.driverRated = n;
+      else order.rated = n;
+      S.rt = 0;
+      save(); emit(); ui.close();
+      toast((driver
+        ? label('lbl.sheetDriverReviewThanks', 'Thanks for rating your driver!')
+        : label('lbl.sheetReviewThanks', 'Thanks for your review!')) + ' Your review is awaiting approval.');
+    } catch (error) {
+      toast(friendlyError(error, 'Your review could not be submitted. Please retry.'));
+    } finally {setSubmitting(false);}
+  };
   return (<>
     <T size={20} weight="600">{driver ? label('lbl.orderRateDriver', 'Rate your driver') : label('lbl.orderRate', 'Rate your order')}</T>{stars(n, setN)}
     <Input value={t} onChange={setT} placeholder={label('lbl.sheetReviewComment', 'Add a comment (optional)')} multiline />
     <View style={{height: 12}} />
-    <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} onPress={() => {
-      const o = S.orders.filter((x: any) => x.id === id)[0];
-      if (!o) {toast(label('lbl.sheetOrderNotFound', 'Order not found')); return;}
-      if (!n) {toast(label('lbl.sheetPickRating', 'Pick a star rating')); return;}
-      if (driver) {
-        S.driverRev = S.driverRev || {};
-        S.driverRev[id] = {n: S.pf.n, r: n, t: t.trim(), d: 'Just now', orderId: id};
-        o.driverRated = n;
-        o.driverReview = {r: n, t: t.trim(), d: 'Just now'};
-      } else {
-        S.rev[o.sid] = S.rev[o.sid] || [];
-        S.rev[o.sid].unshift({n: S.pf.n, r: n, t: t.trim(), d: 'Just now', you: 1, orderId: id});
-        o.rated = n;
-        o.orderReview = {r: n, t: t.trim(), d: 'Just now'};
-      }
-      S.rt = 0; ui.close(); toast(driver ? label('lbl.sheetDriverReviewThanks', 'Thanks for rating your driver!') : label('lbl.sheetReviewThanks', 'Thanks for your review!')); save(); emit();
-    }} />
+    <Cta label={label('lbl.sheetSubmitReview', 'Submit review')} disabled={submitting} onPress={() => {void submitReview();}} />
   </>);
 }
 
