@@ -1,0 +1,89 @@
+{
+  "observedAt": "2026-11-17T11:32:11.102074+00:00",
+  "productionReady": false,
+  "deployed": false,
+  "verifiedSourceCommits": {
+    "customer": "ef8720c19778c620597f384b567d86d8bfe5ba03",
+    "admin": "23fd272c6e8096f9cebc3b9e02f039102510b2a6"
+  },
+  "PASS": {
+    "tests": {
+      "customer": 89,
+      "admin": 33,
+      "crossRole": 47,
+      "deno": 63,
+      "total": 232,
+      "denoSteps": 43
+    },
+    "typechecks": [
+      "customer",
+      "admin"
+    ],
+    "expandedLint": {
+      "errors": 0,
+      "warnings": 264
+    },
+    "cmsRoutes": 34,
+    "cmsInteractions": 17,
+    "cmsFields": 1502,
+    "cmsGroups": 66,
+    "literalNavigationCalls": 131,
+    "unknownLiteralTargets": [],
+    "expoExports": {
+      "customer": [
+        "android",
+        "ios",
+        "web"
+      ],
+      "admin": [
+        "android",
+        "ios"
+      ],
+      "signedNativeBuilds": false,
+      "metadataSha256": {
+        "customer-export": "1607e7279c40e87b4359cfc4f6c17bf5bb96d83724b3fedbdff62387b3330e08",
+        "admin-android": "19cd6936bb90c80c3dd1074eb6735f783b230eec8e1a31bcbd7bc1ce218fdb74",
+        "admin-ios": "abef563e49e7cc3e00519db352895d9897b97d761553686bf5ece4ffcb5e557e"
+      }
+    },
+    "translationPreparation": {
+      "prepared": true,
+      "published": false,
+      "fields": 1706,
+      "localeLookupsVerified": 6816,
+      "existingHaitianFieldsPreserved": 775,
+      "feesAndNonTextConfigurationUnchanged": true,
+      "policyDocumentsUnchanged": true,
+      "schemaErrors": [],
+      "publicationGuardErrors": [
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing."
+      ],
+      "payloadSha256": "348dbcaa25125928c27316154fd242f8c2bd4c9f777954892c3fd69dba58b7f5",
+      "scope": "Local payload/schema/consumer-resolver verification, not live publication or human review"
+    }
+  },
+  "FAIL": [
+    {
+      "requirement": "Production backend contracts",
+      "evidence": "Read-only production catalog confirms goodies_courier_orders, account-bound Shared Bill checkout/config, settlement config and private delivery-proof bucket are absent. Candidate package remains undeployed."
+    },
+    {
+      "requirement": "Content publication",
+      "evidence": "Publication guard rejects five deferred FAQ placeholders."
+    }
+  ],
+  "NOT VERIFIED": [
+    "Authenticated hosted customer/vendor/courier/admin/staff complete journeys and every button",
+    "Hosted authorization attacks against every deployed RPC/table/storage path",
+    "Payment-provider sandbox charges/webhooks/refunds/reconciliation",
+    "Physical-device GPS/background/offline/notifications and signed Android/iOS builds",
+    "Maps key/signature restrictions and hosted routing configuration",
+    "Hosted CMS edit/draft/publish/installed-customer reload",
+    "Final policy/support content and Haitian Creole human review",
+    "Approved paired deployment, backup/recovery and rollout verification"
+  ]
+}

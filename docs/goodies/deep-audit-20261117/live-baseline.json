@@ -1,0 +1,119 @@
+{
+  "goodies_rls": [
+    {
+      "name": "goodies_checkout_attempts",
+      "enabled": true
+    },
+    {
+      "name": "goodies_stripe_webhook_events",
+      "enabled": true
+    },
+    {
+      "name": "goodies_group_order_invites",
+      "enabled": true
+    },
+    {
+      "name": "goodies_order_cancellation_private",
+      "enabled": true
+    },
+    {
+      "name": "goodies_contact_numbers",
+      "enabled": true
+    },
+    {
+      "name": "goodies_orders",
+      "enabled": true
+    },
+    {
+      "name": "goodies_order_groups",
+      "enabled": true
+    },
+    {
+      "name": "goodies_group_order_items",
+      "enabled": true
+    },
+    {
+      "name": "goodies_group_orders",
+      "enabled": true
+    },
+    {
+      "name": "goodies_group_order_members",
+      "enabled": true
+    },
+    {
+      "name": "goodies_order_reviews",
+      "enabled": true
+    },
+    {
+      "name": "goodies_geocode_cache",
+      "enabled": true
+    },
+    {
+      "name": "goodies_route_cache",
+      "enabled": true
+    },
+    {
+      "name": "goodies_store_schedules",
+      "enabled": true
+    },
+    {
+      "name": "goodies_card_refund_queue",
+      "enabled": true
+    },
+    {
+      "name": "goodies_promotions",
+      "enabled": true
+    },
+    {
+      "name": "goodies_builder_configs",
+      "enabled": true
+    },
+    {
+      "name": "goodies_ingredient_requests",
+      "enabled": true
+    },
+    {
+      "name": "goodies_delivery_assignments",
+      "enabled": true
+    },
+    {
+      "name": "goodies_courier_presence",
+      "enabled": true
+    },
+    {
+      "name": "goodies_courier_roster",
+      "enabled": true
+    },
+    {
+      "name": "help_pay_contributions",
+      "enabled": true
+    },
+    {
+      "name": "help_pay_requests",
+      "enabled": true
+    },
+    {
+      "name": "goodies_library_ingredients",
+      "enabled": true
+    },
+    {
+      "name": "goodies_products",
+      "enabled": true
+    },
+    {
+      "name": "goodies_delivery_quotes",
+      "enabled": true
+    },
+    {
+      "name": "goodies_ingredient_rules",
+      "enabled": true
+    },
+    {
+      "name": "goodies_card_checkout_attempts",
+      "enabled": true
+    }
+  ],
+  "admin_assert": "CREATE OR REPLACE FUNCTION public.goodies_admin_assert()\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'auth', 'pg_temp'\nAS $function$\ndeclare\n  v_uid uuid := auth.uid();\nbegin\n  if v_uid is null or not exists (\n    select 1\n      from public.wantiss_admin_staff s\n      join auth.users u on u.id = s.user_id\n     where s.user_id = v_uid\n       and s.status = 'active'\n       and s.role = 'super_admin'\n       and (s.invitation_expires_at is null or s.invitation_expires_at > now())\n       and u.email_confirmed_at is not null\n       and (\n         s.invited_at is null\n         or coalesce(auth.jwt()->'user_metadata'->>'wantiss_invite_accepted', 'false') = 'true'\n       )\n  ) then\n    raise exception 'Goodies administrator access required' using errcode = '42501';\n  end if;\nend\n$function$\n",
+  "migration_head": "20261116135012",
+  "migration_count": 356
+}

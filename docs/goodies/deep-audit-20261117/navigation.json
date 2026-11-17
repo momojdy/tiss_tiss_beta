@@ -1,0 +1,698 @@
+{
+  "scope": "Literal Goodies navigation targets only; source calls are not presses. Dynamic navigation and hosted behavior remain NOT VERIFIED.",
+  "registeredRoutes": [
+    "wantiss",
+    "home",
+    "cats",
+    "orders",
+    "cart",
+    "grouporder",
+    "explore",
+    "search",
+    "catlist",
+    "store",
+    "reviews",
+    "product",
+    "checkout",
+    "help-pay",
+    "addcard",
+    "cardauth",
+    "confirm",
+    "track",
+    "notifs",
+    "promos",
+    "flashdeals",
+    "favs",
+    "byo",
+    "help",
+    "settings",
+    "profile",
+    "addresses",
+    "payments",
+    "contact",
+    "storechat",
+    "supdone",
+    "policies",
+    "policy",
+    "ndetail"
+  ],
+  "literalNavigationCalls": 131,
+  "unknown": [],
+  "calls": [
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 36,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 36,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 36,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 38,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 65,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 95,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 99,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 99,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 100,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 102,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 161,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 248,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 289,
+      "target": "search"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "line": 36,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "line": 37,
+      "target": "orders"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "line": 38,
+      "target": "help"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "line": 39,
+      "target": "contact"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "line": 42,
+      "target": "notifs"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 14,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 31,
+      "target": "product"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 40,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 132,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 142,
+      "target": "checkout"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 153,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 158,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 189,
+      "target": "help-pay"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 204,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 207,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 214,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 215,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 263,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 298,
+      "target": "help-pay"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 354,
+      "target": "cardauth"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 452,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 457,
+      "target": "ndetail"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 567,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "line": 570,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/builders/Builder.tsx",
+      "line": 305,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/builders/engine.tsx",
+      "line": 170,
+      "target": "byo"
+    },
+    {
+      "file": "src/features/Goodies/builders/engine.tsx",
+      "line": 213,
+      "target": "byo"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 61,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 62,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 63,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 76,
+      "target": "reviews"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 97,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 471,
+      "target": "confirm"
+    },
+    {
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 620,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/components/cards.tsx",
+      "line": 66,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/components/cards.tsx",
+      "line": 71,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/components/cards.tsx",
+      "line": 86,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/components/cards.tsx",
+      "line": 106,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 50,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 51,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 52,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 55,
+      "target": "help"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 67,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 68,
+      "target": "orders"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 69,
+      "target": "favs"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 70,
+      "target": "settings"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 71,
+      "target": "help"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 72,
+      "target": "policies"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 326,
+      "target": "supdone"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 357,
+      "target": "storechat"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 357,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 358,
+      "target": "policy"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 359,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 360,
+      "target": "track"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 360,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 360,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 360,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 143,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 152,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 156,
+      "target": "search"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 160,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 162,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 163,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 167,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 173,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 178,
+      "target": "flashdeals"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 180,
+      "target": "orders"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 196,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 198,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 200,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 203,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 236,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 275,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 297,
+      "target": "search"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 331,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 352,
+      "target": "catlist"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 355,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 360,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 515,
+      "target": "storechat"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 529,
+      "target": "track"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 530,
+      "target": "notifs"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 533,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 534,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 535,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 536,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 537,
+      "target": "product"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 538,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "line": 539,
+      "target": "notifs"
+    },
+    {
+      "file": "src/features/Goodies/screens/HelpPay.tsx",
+      "line": 99,
+      "target": "checkout"
+    },
+    {
+      "file": "src/features/Goodies/screens/HelpPay.tsx",
+      "line": 165,
+      "target": "orders"
+    },
+    {
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "line": 190,
+      "target": "addcard"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 115,
+      "target": "reviews"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 119,
+      "target": "contact"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 170,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 198,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 249,
+      "target": "explore"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 251,
+      "target": "explore"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 298,
+      "target": "store"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 311,
+      "target": "promos"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 316,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 365,
+      "target": "cart"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 366,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 373,
+      "target": "addresses"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 408,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 410,
+      "target": "help-pay"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 430,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 441,
+      "target": "payments"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 476,
+      "target": "track"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 476,
+      "target": "home"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 678,
+      "target": "storechat"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 679,
+      "target": "contact"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 680,
+      "target": "orders"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 702,
+      "target": "track"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 707,
+      "target": "track"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 710,
+      "target": "explore"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 742,
+      "target": "contact"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 743,
+      "target": "contact"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 744,
+      "target": "policies"
+    }
+  ]
+}

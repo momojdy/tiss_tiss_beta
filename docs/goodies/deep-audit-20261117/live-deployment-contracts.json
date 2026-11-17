@@ -1,0 +1,14 @@
+{
+  "classification": "FAIL",
+  "scope": "Required prepared Goodies backend contracts are absent on production; read-only catalog/bucket checks, no application or financial records changed.",
+  "courier_orders": false,
+  "settlement_config": false,
+  "private_proof_buckets": [
+    {
+      "name": "goodies-ingredient-requests",
+      "public": false
+    }
+  ],
+  "shared_bill_account_checkout": false,
+  "shared_bill_integrity_config": false
+}

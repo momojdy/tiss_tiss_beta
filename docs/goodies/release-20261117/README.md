@@ -1,5 +1,7 @@
 # Goodies production readiness — 17 November 2026
 
+> Historical snapshot. The [follow-up audit](../deep-audit-20261117/README.md) records subsequent defects, verified repairs, approved pushes and current release blockers.
+
 **Goodies is not approved for production release.** All work available in this environment is implemented and the checks below pass. Hosted acceptance, provider/device verification, content approval and deployment remain outstanding. Nothing was deployed, no production financial rows or secrets were changed, and no commits were pushed.
 
 Verified source is on local `main` in both repositories:

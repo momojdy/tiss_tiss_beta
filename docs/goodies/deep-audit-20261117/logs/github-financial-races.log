@@ -1,0 +1,17 @@
+2026-11-17T11:30:35.6835257Z PASS: PostgreSQL 17.6; full 17-migration package applied in a network-isolated synthetic container.
+2026-11-17T11:30:36.7062926Z PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.
+2026-11-17T11:30:37.7990983Z PASS: concurrent distinct withdrawal requests cannot spend the same earnings.
+2026-11-17T11:30:39.6365565Z PASS: overlapping retries return one payout and create one wallet credit.
+2026-11-17T11:30:41.3831743Z PASS: concurrent commission retries create one debit and release the settled sales allowance.
+2026-11-17T11:30:41.7314107Z PASS: a stale group quote is rejected before the real synthetic Wallet is debited.
+2026-11-17T11:30:43.5286002Z PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.
+2026-11-17T11:30:45.3638854Z PASS: concurrent Shared Bill creation reserves the host 60% once and does not consume stock.
+2026-11-17T11:30:47.1001833Z PASS: concurrent contribution retries debit one payer once.
+2026-11-17T11:30:48.0946756Z PASS: competing final payers create one paid customer order and reserve stock once.
+2026-11-17T11:30:49.9173831Z PASS: simultaneous distinct contributions settle exactly the remaining 40%.
+2026-11-17T11:30:50.9502046Z PASS: cancellation racing a payment restores every payer without an orphan debit.
+2026-11-17T11:30:52.8371895Z PASS: overlapping cancellation retries credit each original payer exactly once.
+2026-11-17T11:30:53.9594596Z PASS: overlapping vendor rejection refunds the funded Shared Bill once and restores stock once.
+2026-11-17T11:30:58.8698777Z PASS: status polling crossing expiry waits for final funding and cannot refund a fulfilled order.
+2026-11-17T11:30:58.8699459Z All eight Shared Bill PostgreSQL races passed using synthetic Wallets only.
+2026-11-17T11:30:58.8700030Z All native PostgreSQL race tests passed; no production connection or real money was used.

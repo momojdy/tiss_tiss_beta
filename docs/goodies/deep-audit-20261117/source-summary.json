@@ -1,0 +1,18 @@
+{
+  "scope": "Static source/call graph analysis; each unexecuted control retains NOT VERIFIED runtime status. A handler being present does not prove its intended behavior.",
+  "files": 132,
+  "controls": 1554,
+  "comments": 407,
+  "bySurface": {
+    "admin": 197,
+    "consumer": 428,
+    "courier": 8,
+    "isolated-admin-preview": 459,
+    "shared-card": 27,
+    "vendor": 435
+  },
+  "missingSourceHandlers": [],
+  "uncompressedSha256": "8eff559f4eefbfc79b0dc40f1f9c25895daf89f72a1ac17d48550d6e5e525bad",
+  "rawErrorSinkCandidates": 20,
+  "rawErrorSinkReview": "All flagged sinks in this inventory were inspected: shared errText returns application-owned text; the admin dispute dialog reports safe outcomes. This is not a claim that every runtime error was exercised."
+}

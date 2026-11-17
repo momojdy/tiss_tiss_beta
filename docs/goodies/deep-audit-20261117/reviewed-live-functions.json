@@ -1,0 +1,30 @@
+{
+  "scope": "Targeted definition review only; not an executed hosted role test.",
+  "functions": [
+    {
+      "proname": "goodies_admin_assert",
+      "arguments": "",
+      "definition": "CREATE OR REPLACE FUNCTION public.goodies_admin_assert()\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'auth', 'pg_temp'\nAS $function$\ndeclare\n  v_uid uuid := auth.uid();\nbegin\n  if v_uid is null or not exists (\n    select 1\n      from public.wantiss_admin_staff s\n      join auth.users u on u.id = s.user_id\n     where s.user_id = v_uid\n       and s.status = 'active'\n       and s.role = 'super_admin'\n       and (s.invitation_expires_at is null or s.invitation_expires_at > now())\n       and u.email_confirmed_at is not null\n       and (\n         s.invited_at is null\n         or coalesce(auth.jwt()->'user_metadata'->>'wantiss_invite_accepted', 'false') = 'true'\n       )\n  ) then\n    raise exception 'Goodies administrator access required' using errcode = '42501';\n  end if;\nend\n$function$\n"
+    },
+    {
+      "proname": "goodies_customer_confirm_received",
+      "arguments": "p_order_id uuid",
+      "definition": "CREATE OR REPLACE FUNCTION public.goodies_customer_confirm_received(p_order_id uuid)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_o public.goodies_orders%rowtype;\nbegin\n  if auth.uid() is null then raise exception 'Sign in required' using errcode='28000'; end if;\n  select * into v_o from public.goodies_orders where id = p_order_id for update;\n  if not found or v_o.customer_id <> auth.uid() or not v_o.self_delivery then raise exception 'Order not found' using errcode='P0002'; end if;\n  if v_o.status <> 'picked_up' or v_o.vendor_delivered_at is null then raise exception 'This order cannot be confirmed yet' using errcode='P0001'; end if;\n  if v_o.delivery_dispute_status = 'open' then raise exception 'This order has an open report' using errcode='P0001'; end if;\n  update public.goodies_orders set status = 'completed', delivered_at = now(), customer_confirmed_at = now(), updated_at = now() where id = p_order_id;\nend $function$\n"
+    },
+    {
+      "proname": "goodies_customer_dispute_delivery",
+      "arguments": "p_order_id uuid, p_reason text",
+      "definition": "CREATE OR REPLACE FUNCTION public.goodies_customer_dispute_delivery(p_order_id uuid, p_reason text)\n RETURNS void\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_o public.goodies_orders%rowtype; r record;\nbegin\n  if auth.uid() is null then raise exception 'Sign in required' using errcode='28000'; end if;\n  select * into v_o from public.goodies_orders where id = p_order_id for update;\n  if not found or v_o.customer_id <> auth.uid() or not v_o.self_delivery then raise exception 'Order not found' using errcode='P0002'; end if;\n  if v_o.status <> 'picked_up' or v_o.vendor_delivered_at is null then raise exception 'This order cannot be reported now' using errcode='P0001'; end if;\n  if v_o.receipt_deadline_at is null or now() >= v_o.receipt_deadline_at then raise exception 'The 24-hour window to report a problem has closed' using errcode='P0001'; end if;\n  if v_o.delivery_dispute_status is not null then raise exception 'A report was already sent for this order' using errcode='P0001'; end if;\n  if length(trim(coalesce(p_reason,''))) < 3 then raise exception 'Tell us what went wrong' using errcode='P0001'; end if;\n  update public.goodies_orders set delivery_dispute_status = 'open', delivery_dispute_reason = left(trim(p_reason), 500),\n    delivery_dispute_opened_at = now(), updated_at = now() where id = p_order_id;\n  for r in select bm.user_id from public.business_members bm where bm.business_id = v_o.business_id loop\n    perform public.goodies_order_notify(r.user_id, 'Delivery reported', 'The customer reported a problem with order ' || v_o.order_code || '. Our team will review it.', v_o.id, v_o.order_code, 'picked_up', null);\n  end loop;\nend $function$\n"
+    },
+    {
+      "proname": "goodies_public_store_review_stats",
+      "arguments": "p_store_ids text[]",
+      "definition": "CREATE OR REPLACE FUNCTION public.goodies_public_store_review_stats(p_store_ids text[])\n RETURNS TABLE(store_id text, rating numeric, review_count bigint)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\nbegin\n  if p_store_ids is null or coalesce(cardinality(p_store_ids),0)>100 then\n    raise exception 'Choose up to 100 stores' using errcode='22023';\n  end if;\n  return query\n  select gs.store_id,\n         coalesce(round(avg(r.rating)::numeric,1),0) as rating,\n         count(r.id) as review_count\n    from public.goodies_store_schedules gs\n    left join public.goodies_order_reviews r\n      on r.business_id=gs.business_id and r.review_target='store'\n     and r.review_status='approved'\n   where gs.is_live and gs.store_id=any(p_store_ids)\n   group by gs.store_id;\nend;\n$function$\n"
+    },
+    {
+      "proname": "goodies_public_store_reviews",
+      "arguments": "p_store_id text",
+      "definition": "CREATE OR REPLACE FUNCTION public.goodies_public_store_reviews(p_store_id text)\n RETURNS TABLE(rating integer, comment text, created_at timestamp with time zone, author_label text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\nbegin\n  return query\n  select r.rating,r.comment,r.created_at,'Verified customer'::text\n    from public.goodies_order_reviews r\n    join public.goodies_store_schedules gs on gs.business_id=r.business_id\n   where gs.store_id=p_store_id and gs.is_live and r.review_target='store'\n     and r.review_status='approved'\n   order by r.created_at desc limit 50;\nend;\n$function$\n"
+    }
+  ]
+}

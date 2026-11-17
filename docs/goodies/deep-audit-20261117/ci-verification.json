@@ -1,0 +1,61 @@
+{
+  "scope": "GitHub checks for exact pushed source commits; no production deployment or charges.",
+  "customer": {
+    "commit": "ef8720c19778c620597f384b567d86d8bfe5ba03",
+    "runs": [
+      {
+        "id": 44074602756,
+        "name": "Expo validation",
+        "conclusion": "success",
+        "jobs": [
+          {
+            "id": 134009284448,
+            "name": "validate",
+            "conclusion": "success"
+          },
+          {
+            "id": 134009284890,
+            "name": "edge-functions",
+            "conclusion": "success"
+          },
+          {
+            "id": 134009285224,
+            "name": "settlement-concurrency",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "id": 44074602703,
+        "name": "TypeScript and Expo build checks",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "admin": {
+    "commit": "23fd272c6e8096f9cebc3b9e02f039102510b2a6",
+    "runs": [
+      {
+        "id": 44074493105,
+        "name": "Admin validation",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "financialConcurrency": {
+    "classification": "PASS",
+    "postgres": "17.6",
+    "migrationPackage": 17,
+    "races": 13,
+    "staleQuoteRejectionBeforeDebit": true,
+    "syntheticOnly": true,
+    "jobId": 134009285224
+  },
+  "resolvedFailure": {
+    "runId": 44069404248,
+    "commit": "dd03a2d40f5e53c18e4f483647f5a5e76ee52506",
+    "cause": "Docker psql command-status tags polluted a request identifier; subsequent concurrency calls could not reach the intended request lock.",
+    "fixCommit": "839fceb68a295dacd1ebb71e006ff7cac5c501a8",
+    "fixedRunId": 44070900475
+  }
+}

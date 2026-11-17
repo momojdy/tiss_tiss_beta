@@ -1,0 +1,177 @@
+{
+  "scope": "Source/test changes pushed after the earlier approved commits. Subsequent report-only commits do not change the verified app sources.",
+  "repositories": {
+    "customer": {
+      "branch": "main",
+      "baselineApprovedPush": "dd03a2d40f5e53c18e4f483647f5a5e76ee52506",
+      "sourceHead": "ef8720c19778c620597f384b567d86d8bfe5ba03",
+      "commits": [
+        {
+          "commit": "839fceb68a295dacd1ebb71e006ff7cac5c501a8",
+          "subject": "fix(goodies): keep PostgreSQL race query results free of command tags",
+          "files": [
+            [
+              "M",
+              "scripts/test-goodies-settlement-postgres.cjs"
+            ]
+          ]
+        },
+        {
+          "commit": "ef8720c19778c620597f384b567d86d8bfe5ba03",
+          "subject": "fix(goodies): guard cart confirmations and account-scoped delivery refresh",
+          "files": [
+            [
+              "M",
+              ".github/workflows/expo-validation.yml"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/assistant-shared-bill-copy.json"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/machine-translations.json"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/manifest.json"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/publish-payload.json"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/translation-requests.json"
+            ],
+            [
+              "M",
+              "docs/goodies/localization-release/verification.json"
+            ],
+            [
+              "M",
+              "scripts/audit-goodies-reproductions.cjs"
+            ],
+            [
+              "M",
+              "scripts/audit-goodies-surfaces.cjs"
+            ],
+            [
+              "M",
+              "src/features/Goodies/GoodiesCourierScreen.tsx"
+            ],
+            [
+              "M",
+              "src/features/Goodies/actions.ts"
+            ],
+            [
+              "M",
+              "src/features/Goodies/builders/engine.tsx"
+            ],
+            [
+              "M",
+              "src/features/Goodies/components/Sheets.tsx"
+            ],
+            [
+              "A",
+              "src/features/Goodies/refreshScope.ts"
+            ],
+            [
+              "M",
+              "src/features/Goodies/screens/Shop.tsx"
+            ],
+            [
+              "M",
+              "src/features/Goodies/serverSync.ts"
+            ],
+            [
+              "M",
+              "src/features/Goodies/store.ts"
+            ],
+            [
+              "M",
+              "supabase/migrations/20261107014239_goodies_failure_state_content_review.sql"
+            ],
+            [
+              "A",
+              "tests/goodies-tracking-refresh.test.cjs"
+            ]
+          ]
+        }
+      ]
+    },
+    "admin": {
+      "branch": "main",
+      "baselineApprovedPush": "9f2bf8f3ecf634c0a6174055caa25af8c439917b",
+      "sourceHead": "23fd272c6e8096f9cebc3b9e02f039102510b2a6",
+      "commits": [
+        {
+          "commit": "23fd272c6e8096f9cebc3b9e02f039102510b2a6",
+          "subject": "fix(goodies): preserve CMS navigation and mirror guarded customer workflows",
+          "files": [
+            [
+              "M",
+              "docs/goodies/release-20261112/browser-harness/interactions.cjs"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/actions.ts"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/builders/engine.tsx"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/components/Sheets.tsx"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/criticalContentKeys.json"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/customerLabelCatalog.json"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/customerPageCatalog.json"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/previewRuntime.ts"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/previewSourceManifest.json"
+            ],
+            [
+              "A",
+              "src/features/admin/goodiesConsumer/refreshScope.ts"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/screens/Shop.tsx"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/serverSync.ts"
+            ],
+            [
+              "M",
+              "src/features/admin/goodiesConsumer/store.ts"
+            ],
+            [
+              "M",
+              "src/features/admin/screens/content/GoodiesConsumerPreview.tsx"
+            ],
+            [
+              "M",
+              "tests/cms.test.cjs"
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}
