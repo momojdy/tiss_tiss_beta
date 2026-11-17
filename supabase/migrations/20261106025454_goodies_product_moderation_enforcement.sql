@@ -46,6 +46,7 @@ begin
     raise exception 'Only Wantiss administrators can change product review metadata' using errcode='42501';
   end if;
   if new.name is distinct from old.name or new.description is distinct from old.description
+    or new.price is distinct from old.price or new.emoji is distinct from old.emoji or new.aisle is distinct from old.aisle
     or new.photo_url is distinct from old.photo_url or new.photo_urls is distinct from old.photo_urls
     or new.restriction is distinct from old.restriction then
     new.review_status:='pending';new.review_note:=null;new.reviewed_by:=null;new.reviewed_at:=null;
