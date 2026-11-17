@@ -1,5 +1,7 @@
 # Goodies follow-up audit — 17 November 2026
 
+> Historical snapshot. Use the [current acceptance results and exact deployment proposal](../acceptance-20261117/README.md), which includes completed FAQ content, six Edge Function repairs and refreshed SDK validation. Production deployment remains paused.
+
 **Goodies is not 100% production-ready.** The verified fixes are pushed to `main` in both repositories. Production still lacks required backend contracts, and hosted/device/provider acceptance remains unverified. No database migrations, application releases, CMS publication, real charges or secret changes were performed.
 
 This report supersedes the earlier [release snapshot](../release-20261117/README.md). A source handler or a rendered preview does not establish that every button works in production.

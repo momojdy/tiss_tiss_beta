@@ -1,5 +1,7 @@
 # Hosted and physical acceptance — pending
 
+> Historical snapshot. Use the [current acceptance results and exact deployment proposal](../acceptance-20261117/README.md), which includes completed FAQ content, six Edge Function repairs and refreshed SDK validation. Production deployment remains paused.
+
 Use approved synthetic accounts and a provider sandbox. Do not test with real charges or destructive customer records. This plan is not a claim that these scenarios were executed.
 
 1. **Catalog:** vendor saves a real product/gallery and storefront → pending moderation → admin rejects with a reason → vendor sees the same reason → customer cannot purchase it, including after an availability toggle → content edit returns it to pending → admin approves → customer sees the real product. Another vendor/customer/courier must be denied private writes and reads.

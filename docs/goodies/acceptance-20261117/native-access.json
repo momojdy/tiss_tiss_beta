@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-17T14:07:32.126954+00:00",
+  "classification": "NOT VERIFIED",
+  "expoSessionCached": false,
+  "expoTokenConfigured": false,
+  "androidSdkConfigured": false,
+  "requiredInputs": [
+    "Registered Android application ID",
+    "Registered iOS bundle ID",
+    "Existing Expo/EAS project link",
+    "Restricted Android Maps key",
+    "Expo/EAS signing access",
+    "Physical Android and iOS devices"
+  ],
+  "scope": "Safe local configuration presence checks only; no secret values, account creation, app registration, build, signing or release."
+}

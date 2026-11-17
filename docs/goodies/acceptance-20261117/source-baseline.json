@@ -1,0 +1,22 @@
+{
+  "observedAt": "2026-11-17T14:07:32.126954+00:00",
+  "repositories": {
+    "customer": {
+      "branch": "main",
+      "sourceHead": "36147270e86a031272096ec1eb37bec42283d190"
+    },
+    "admin": {
+      "branch": "main",
+      "sourceHead": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf"
+    }
+  },
+  "gpsFix": {
+    "originalCommit": "75857548e48594429eb229d105412f2ee41fcacf",
+    "originalObjectPresent": true,
+    "originalCommitIsMainAncestor": false,
+    "behaviorPortedByMainAncestor": "feda699f96824a4bf7ed5dc5b1868f0f4aacb942",
+    "timerAndCleanupRetained": true,
+    "scope": "As previously documented, main contains the ported behavior while the original commit belongs to the preserved readiness history."
+  },
+  "productionDeploymentPerformed": false
+}

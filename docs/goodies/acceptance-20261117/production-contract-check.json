@@ -1,0 +1,18 @@
+{
+  "scope": "Production metadata-only, explicitly read-only SQL. No deployment or financial data access.",
+  "classification": "FAIL",
+  "reason": "Required release contracts remain absent until approved deployment.",
+  "results": [
+    {
+      "observed_at": "2026-11-17 14:05:51.856193+00",
+      "migration_count": 356,
+      "migration_head": "20261116135012",
+      "courier_orders_present": false,
+      "settlement_summary_present": false,
+      "shared_bill_create_present": false,
+      "shared_bill_contribute_present": false,
+      "private_proof_gate_present": false,
+      "private_proof_bucket": null
+    }
+  ]
+}

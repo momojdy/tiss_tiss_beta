@@ -1,0 +1,31 @@
+{
+  "scope": "Actual hosted negative-authentication checks with empty bodies only. No valid event, signed-in user, worker token, checkout, charge or refund was dispatched.",
+  "observedAt": "2026-11-17T13:13:08.637Z",
+  "results": [
+    {
+      "name": "webhook_missing_signature",
+      "httpStatus": 400,
+      "expectedDenial": true,
+      "classification": "PASS"
+    },
+    {
+      "name": "webhook_invalid_signature",
+      "httpStatus": 400,
+      "expectedDenial": true,
+      "classification": "PASS"
+    },
+    {
+      "name": "card_checkout_no_user",
+      "httpStatus": 401,
+      "expectedDenial": true,
+      "classification": "PASS"
+    },
+    {
+      "name": "card_refund_no_user",
+      "httpStatus": 401,
+      "expectedDenial": true,
+      "classification": "PASS"
+    }
+  ],
+  "providerSandboxLifecycle": "NOT VERIFIED"
+}

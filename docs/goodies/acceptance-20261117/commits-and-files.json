@@ -1,0 +1,221 @@
+{
+  "scope": "Verified source/test commits; subsequent report-only commits do not change the app sources.",
+  "repositories": {
+    "customer": {
+      "branch": "main",
+      "head": "36147270e86a031272096ec1eb37bec42283d190",
+      "commits": [
+        {
+          "commit": "554dc46fa4c295dfb6977d2ec5d0f0375945c76d",
+          "subject": "fix(goodies): complete FAQ release content and harden acceptance boundaries",
+          "files": [
+            [
+              "M",
+              ".github/workflows/expo-validation.yml"
+            ],
+            [
+              "M",
+              "app.config.js"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/README.md"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/baseline.json"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/faq-copy.json"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/manifest.json"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/publish-payload.json"
+            ],
+            [
+              "A",
+              "docs/goodies/content-acceptance-release/verification.json"
+            ],
+            [
+              "A",
+              "docs/goodies/localization-release/README.md"
+            ],
+            [
+              "M",
+              "eas.json"
+            ],
+            [
+              "M",
+              "package.json"
+            ],
+            [
+              "M",
+              "scripts/check-goodies-native-config.cjs"
+            ],
+            [
+              "A",
+              "scripts/prepare-goodies-acceptance-content.cjs"
+            ],
+            [
+              "A",
+              "scripts/verify-goodies-hosted-readonly.cjs"
+            ],
+            [
+              "M",
+              "scripts/verify-goodies-translation-release.cjs"
+            ],
+            [
+              "M",
+              "supabase/config.toml"
+            ],
+            [
+              "M",
+              "supabase/functions/deno.lock"
+            ],
+            [
+              "M",
+              "supabase/functions/expire-goodies-card-auth/index.ts"
+            ],
+            [
+              "M",
+              "supabase/functions/goodies-delivery-quote/index.ts"
+            ],
+            [
+              "A",
+              "supabase/functions/goodies-tests/cmsReleaseAcceptance_test.ts"
+            ],
+            [
+              "A",
+              "supabase/functions/goodies-tests/expiryStripeCompatibility_test.ts"
+            ],
+            [
+              "A",
+              "supabase/functions/goodies-tests/fixtures/goodies-shared-profile-access-20261117.sql"
+            ],
+            [
+              "A",
+              "supabase/functions/goodies-tests/releaseCourierLifecycle_test.ts"
+            ],
+            [
+              "M",
+              "supabase/functions/place-goodies-card-order/index.ts"
+            ],
+            [
+              "M",
+              "supabase/functions/process-goodies-card-refunds/index.ts"
+            ],
+            [
+              "M",
+              "supabase/functions/rapid-api/index.ts"
+            ],
+            [
+              "M",
+              "supabase/functions/refund-goodies-card-order/index.ts"
+            ],
+            [
+              "M",
+              "tests/goodies-build-config.test.cjs"
+            ],
+            [
+              "A",
+              "tests/goodies-edge-errors.test.cjs"
+            ],
+            [
+              "A",
+              "tests/goodies-faq-acceptance.test.cjs"
+            ],
+            [
+              "A",
+              "tests/goodies-hosted-readonly.test.cjs"
+            ]
+          ]
+        },
+        {
+          "commit": "36147270e86a031272096ec1eb37bec42283d190",
+          "subject": "fix(goodies): satisfy SDK 58 native release validation",
+          "files": [
+            [
+              "M",
+              ".github/workflows/expo-validation.yml"
+            ],
+            [
+              "M",
+              "app.json"
+            ],
+            [
+              "M",
+              "package-lock.json"
+            ],
+            [
+              "M",
+              "package.json"
+            ]
+          ]
+        }
+      ]
+    },
+    "admin": {
+      "branch": "main",
+      "head": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf",
+      "commits": [
+        {
+          "commit": "5e1d0428d43e8aa54ba1bcd074ef7d94a20757ef",
+          "subject": "test(goodies): verify repaired FAQ content across all five locales",
+          "files": [
+            [
+              "A",
+              "docs/goodies/acceptance-20261117/faq-preview.json"
+            ],
+            [
+              "A",
+              "docs/goodies/release-20261112/browser-harness/faq-acceptance.cjs"
+            ]
+          ]
+        },
+        {
+          "commit": "fac7a82ac10bc43ff6c82837e1a51ab1a86ffeaa",
+          "subject": "test(goodies): bind FAQ acceptance to the current content payload",
+          "files": [
+            [
+              "M",
+              "docs/goodies/acceptance-20261117/faq-preview.json"
+            ],
+            [
+              "M",
+              "docs/goodies/release-20261112/browser-harness/faq-acceptance.cjs"
+            ]
+          ]
+        },
+        {
+          "commit": "019281e49a88c858478a01acf899b8188f0b2031",
+          "subject": "fix(goodies): align admin SDK 58 dependencies for release validation",
+          "files": [
+            [
+              "M",
+              "package-lock.json"
+            ],
+            [
+              "M",
+              "package.json"
+            ]
+          ]
+        },
+        {
+          "commit": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf",
+          "subject": "fix(goodies): reconcile admin lockfile with clean CI installs",
+          "files": [
+            [
+              "M",
+              "package-lock.json"
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

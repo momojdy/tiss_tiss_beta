@@ -1,0 +1,327 @@
+{
+  "status": "PREPARED_NOT_DEPLOYED",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "projectName": "Wantiss",
+  "region": "us-east-1",
+  "liveBaseline": {
+    "head": "20261116135012",
+    "count": 356
+  },
+  "migrations": [
+    {
+      "order": 1,
+      "file": "supabase/migrations/20261106015226_goodies_courier_scoped_order_read.sql",
+      "sha256": "d38b5bf2370b565c9a1ec7d5f49af7cb947e61d7410968870835bc2cf3c4f52b",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 2,
+      "file": "supabase/migrations/20261106020705_goodies_private_delivery_proofs.sql",
+      "sha256": "c669f61d6ae38f3a8549632c30dc94d877b2de80d0235032fbfabd352f34cd49",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 3,
+      "file": "supabase/migrations/20261106021033_goodies_truthful_dispute_refund_notification.sql",
+      "sha256": "c5c7fd714e736223c0850baa4ab9db5ae5e94d50a1b36824433b052079997fd9",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 4,
+      "file": "supabase/migrations/20261106022200_goodies_builder_selection_contract.sql",
+      "sha256": "5e12a9d6915f256532f7c77290cc9a095a701d283f090c81e90e6e63bde19b68",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 5,
+      "file": "supabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+      "sha256": "bc47351292222483fdee4f861542efd2a874036da4a304bf035f87dd3439826e",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 6,
+      "file": "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+      "sha256": "742a7ff3b00239aff0e8e0950f32d16d83fb0f7cba4af808d79073fa774d29ef",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 7,
+      "file": "supabase/migrations/20261106030151_goodies_role_notifications.sql",
+      "sha256": "3c23574c010e9755c73bb9841f30ae7a529114346460b3a59f91923f6caf366a",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 8,
+      "file": "supabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+      "sha256": "cb753eeef67cc7985426152b6a76352394cd058648a2f6b60309bf3d78fe2019",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 9,
+      "file": "supabase/migrations/20261106031210_goodies_notification_localization.sql",
+      "sha256": "0765a19f4e5990466ac6159d23420cb76c14073201a5dd50bcf3d69283d14c2e",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 10,
+      "file": "supabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+      "sha256": "4179a9c8f2c2e0ca6ce3dab15099fc4038ec034b255c86d8ed5dde2cb3495508",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 11,
+      "file": "supabase/migrations/20261106082226_goodies_admin_operational_pagination.sql",
+      "sha256": "55db6451804d987409998f02d4a7d0d4a5e6a6bc1b7575f39883a175ba81319b",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 12,
+      "file": "supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql",
+      "sha256": "8ef4cfabc3197c62fc4266111ffc7fd85bac1257bef92dbc55ddd4af8b7bb962",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 13,
+      "file": "supabase/migrations/20261106144811_goodies_creole_reviewed_english_fallback.sql",
+      "sha256": "7590e0905f0534c43c55454e3a731340dfd23303710451592ad70a68e4698d5a",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 14,
+      "file": "supabase/migrations/20261107014239_goodies_failure_state_content_review.sql",
+      "sha256": "89db2f499f227f71948cf012a4b1b9655cbfca49c2342ae0ca0627c82fb403e0",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 15,
+      "file": "supabase/migrations/20261107021612_goodies_vendor_settlement.sql",
+      "sha256": "8da9e2855478ace41f948ec2c52e1b823ffe5ead483d6cbf8773b0f204392e92",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 16,
+      "file": "supabase/migrations/20261113101825_goodies_shared_bill_integrity.sql",
+      "sha256": "2ee40d491cc563b6b7a55aa93aeba883d76d05b95c87a163f29437cfd0f83d32",
+      "status": "PENDING",
+      "recorded": []
+    },
+    {
+      "order": 17,
+      "file": "supabase/migrations/20261117055744_goodies_review_moderation_compatibility.sql",
+      "sha256": "ff6d4b9ee99cfd3fa5be857174d7b7130c64e70544b87c1eea7bfed767bdd140",
+      "status": "PENDING",
+      "recorded": []
+    }
+  ],
+  "faqContent": {
+    "manifest": "docs/goodies/content-acceptance-release/manifest.json",
+    "sha256": "158305e5b8f5599a04411735f22741e6025ca734093a0b8548b922e243997d73",
+    "replacedAnswers": 5,
+    "locales": [
+      "en",
+      "fr",
+      "es",
+      "zh-Hans"
+    ],
+    "humanReviewClaim": false,
+    "haitianCreole": "Unchanged; unfinished fields fall back to English",
+    "sourceBaseline": {
+      "id": "da301ba8-15b8-4092-a37f-5da73d721c2f",
+      "version": 5,
+      "payloadSha256": "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
+    },
+    "financialPolicy": "Preserves the newer fee-only update in the actual live baseline; unrelated content/version drift stops preparation."
+  },
+  "featureActivation": "No settlement opening balances, new Shared Bill funding, private-proof upload activation or external payout channel enablement in this proposal.",
+  "beforeApply": [
+    "Explicitly lift the earlier production-deployment pause",
+    "Confirm a current production backup/restore point and recovery operator",
+    "Recheck drift and checksums immediately before applying",
+    "Use recorded migration names/versions and reconcile tool-assigned versions; never replay unrelated missing history"
+  ],
+  "afterApply": [
+    "Run postdeployment-readonly.sql and verify ACLs/functions/bucket",
+    "Verify scoped test-account flows before feature activation",
+    "Publish the FAQ payload through the existing authorized CMS lifecycle and verify the installed consumer reload"
+  ],
+  "notIncluded": [
+    "Real charges or edits to customer financial records",
+    "Production secret changes",
+    "Client release or OTA deployment",
+    "Physical-device acceptance"
+  ],
+  "edgeFunctions": [
+    {
+      "name": "rapid-api",
+      "deployedVersion": 19,
+      "deployedBundleSha256": "7925151dce4c55bbbdb4f52765cd9998e94dca0b12e55c00d5441e30f664a42f",
+      "verifyJwtBefore": false,
+      "verifyJwtProposed": false,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/rapid-api/goodiesStripeState.ts",
+          "sha256": "a026386bb349e27b4b5ccc7fa8af507d0e28c34504a238eb707976270693d0a8"
+        },
+        {
+          "file": "supabase/functions/rapid-api/index.ts",
+          "sha256": "de17e9a0c564570ce688359dc2ec1f07b0fdcdc62d4828458c68c3d77ec473ca"
+        }
+      ]
+    },
+    {
+      "name": "goodies-delivery-quote",
+      "deployedVersion": 22,
+      "deployedBundleSha256": "eb0bb7d5598daac2c40175e36e6aaafa6e591e10d9475d55953c1f752377f71a",
+      "verifyJwtBefore": true,
+      "verifyJwtProposed": true,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/goodies-delivery-quote/index.ts",
+          "sha256": "6b9fb21b67c702439d8defe43d557fc4b9d78a0adaa4b41001588c355d445ccf"
+        }
+      ]
+    },
+    {
+      "name": "place-goodies-card-order",
+      "deployedVersion": 14,
+      "deployedBundleSha256": "52994d4d71efe57c81b7aa6d0b2fbc49812dc150bf471f19e8f8004cf1d89662",
+      "verifyJwtBefore": true,
+      "verifyJwtProposed": true,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/place-goodies-card-order/index.ts",
+          "sha256": "7f25b2af6a72ceb14d1044cc5865a984c4b618f25111ef63321d5365e183703a"
+        }
+      ]
+    },
+    {
+      "name": "refund-goodies-card-order",
+      "deployedVersion": 6,
+      "deployedBundleSha256": "8c5ba0a7be297b97ec73a3c926fe3228ee15c4daa825e4151c6663f1e6d67f0c",
+      "verifyJwtBefore": false,
+      "verifyJwtProposed": true,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/refund-goodies-card-order/index.ts",
+          "sha256": "1f01e6912a2b5131def80acd5d823df57068aae626c970c133f70755c5145219"
+        }
+      ]
+    },
+    {
+      "name": "process-goodies-card-refunds",
+      "deployedVersion": 17,
+      "deployedBundleSha256": "e075955d7941449db766d2f8d135d0291a1a971c85b0fa5afb7b1438b8a4f59d",
+      "verifyJwtBefore": false,
+      "verifyJwtProposed": false,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/process-goodies-card-refunds/index.ts",
+          "sha256": "626b406b0a24e5913fdb07ee68f063c8c7359561405d193eb5d67872bf1fdd79"
+        },
+        {
+          "file": "supabase/functions/process-goodies-card-refunds/refundLogic.ts",
+          "sha256": "71d41c79ff7a548348a490a44cc863d34ff6c5e5fa1e0a33c1b520cf59323abe"
+        },
+        {
+          "file": "supabase/functions/process-goodies-card-refunds/refundProcessor.ts",
+          "sha256": "0697f7339ac044fcbcfa34440e5cbeea763d52c4bc20745c5f93fb97e3c8331e"
+        }
+      ]
+    },
+    {
+      "name": "expire-goodies-card-auth",
+      "deployedVersion": 1,
+      "deployedBundleSha256": "e838b43fb738d73479bbb5163578580e832074547aceb721f2ade8832e6eed6c",
+      "verifyJwtBefore": false,
+      "verifyJwtProposed": false,
+      "purpose": "Return safe application-owned errors; preserve worker/provider authorization and financial behavior.",
+      "files": [
+        {
+          "file": "supabase/functions/expire-goodies-card-auth/index.ts",
+          "sha256": "cc4821afd1aa47ddd44bda46e68bad299b0ef718fc442a2c1ce8796616fc42ad"
+        }
+      ]
+    }
+  ],
+  "sharedEdgeConfiguration": [
+    {
+      "file": "supabase/config.toml",
+      "sha256": "5f2df89c5b901901806fde5bf443c8124f008b6e2f0f14d11563003e8e2a144e"
+    },
+    {
+      "file": "supabase/functions/deno.json",
+      "sha256": "11fff860b83da259d1954e9c8c0b94097eafd08f0099908d4d4313fbb4a7a322"
+    },
+    {
+      "file": "supabase/functions/deno.lock",
+      "sha256": "22a4ff28a0a467a648d4be20219cb4000f1318bc3f36b0d7bf2dfc8c42c2f2bf"
+    }
+  ],
+  "reviewedSourceDrift": {
+    "refundProcessor": "Previously deployed source differs only by an exported TypeScript type; no runtime change.",
+    "expiryWorker": "Preserve deployed 2026-08-26.dahlia API contract with pinned compatible stripe@22.6.2. Mock HTTP header compatibility passes; live provider acceptance remains pending.",
+    "quoteDenoJson": "Deployed generated deno.json is an empty object; no extra import mappings.",
+    "refundGateway": "Repository already requires JWT verification; proposed deployment adds that gateway requirement while retaining in-function user/ownership validation."
+  },
+  "verifiedSourceCommits": {
+    "customer": "36147270e86a031272096ec1eb37bec42283d190",
+    "admin": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf"
+  },
+  "pairedBuildInputs": [
+    {
+      "repo": "customer",
+      "file": "package.json",
+      "sha256": "3a3704e81ce9085e0b0094d2b078db29a13b7ad1221db00f23eb3f692a4d0c84"
+    },
+    {
+      "repo": "customer",
+      "file": "package-lock.json",
+      "sha256": "6b6c184827c2a107425230af288bb7b9b2752633729c5dd2441bfcc07f0a0694"
+    },
+    {
+      "repo": "customer",
+      "file": "app.json",
+      "sha256": "01215de52ee9187015f223341f944fba9b5891663876f95ce4defd617382c67c"
+    },
+    {
+      "repo": "customer",
+      "file": "app.config.js",
+      "sha256": "036a9a1eab9905cdaeb27931c98e081b994d9f41e239d591e63576ea49fdb733"
+    },
+    {
+      "repo": "customer",
+      "file": "eas.json",
+      "sha256": "8375275400371576d6e52923d4241e6640b476123aeeb63a6374ebb5c4d6b11b"
+    },
+    {
+      "repo": "admin",
+      "file": "package.json",
+      "sha256": "915b6029f613330164ecc4352ebe5761664e94f501f9877f26c115885b6b2584"
+    },
+    {
+      "repo": "admin",
+      "file": "package-lock.json",
+      "sha256": "d7d98b0597eb69dd8527748ef05c15b3f4211dc95233f01b30301f3d5e50e1a8"
+    }
+  ]
+}

@@ -1,0 +1,110 @@
+[
+  {
+    "name": "rapid-api",
+    "version": 19,
+    "verify_jwt": false,
+    "ezbr_sha256": "7925151dce4c55bbbdb4f52765cd9998e94dca0b12e55c00d5441e30f664a42f",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "fd2f88d4c8176805886c9137e135f683001b06c61e98d89dd3c250527e008912",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      },
+      {
+        "file": "goodiesStripeState.ts",
+        "deployedSha256": "a026386bb349e27b4b5ccc7fa8af507d0e28c34504a238eb707976270693d0a8",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      }
+    ]
+  },
+  {
+    "name": "goodies-delivery-quote",
+    "version": 22,
+    "verify_jwt": true,
+    "ezbr_sha256": "eb0bb7d5598daac2c40175e36e6aaafa6e591e10d9475d55953c1f752377f71a",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "4e69670f12ffb65d4c5a13d490537b5700147dc38a7678cb74675aab0dcded0f",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      },
+      {
+        "file": "deno.json",
+        "deployedSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+        "matchesPreviouslyVerifiedSource": false,
+        "localSourceExists": false
+      }
+    ]
+  },
+  {
+    "name": "place-goodies-card-order",
+    "version": 14,
+    "verify_jwt": true,
+    "ezbr_sha256": "52994d4d71efe57c81b7aa6d0b2fbc49812dc150bf471f19e8f8004cf1d89662",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "9b6fde356659b4139b0de2b55869b4ece3344070143b801f161c6e8d7b001741",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      }
+    ]
+  },
+  {
+    "name": "refund-goodies-card-order",
+    "version": 6,
+    "verify_jwt": false,
+    "ezbr_sha256": "8c5ba0a7be297b97ec73a3c926fe3228ee15c4daa825e4151c6663f1e6d67f0c",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "288bb5431323790351590fc164d4fe33275f8aba15566282df3d9c3f0b466afe",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      }
+    ]
+  },
+  {
+    "name": "process-goodies-card-refunds",
+    "version": 17,
+    "verify_jwt": false,
+    "ezbr_sha256": "e075955d7941449db766d2f8d135d0291a1a971c85b0fa5afb7b1438b8a4f59d",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "b9f4ffe3e58d9b081a12492aada6fc7d214e04e87924124b0769ad5c9588ea1a",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      },
+      {
+        "file": "refundProcessor.ts",
+        "deployedSha256": "f14e150eac0926c2dc8f98569ab6681c0813fecbd6da345853877961363bf386",
+        "matchesPreviouslyVerifiedSource": false,
+        "localSourceExists": true
+      },
+      {
+        "file": "refundLogic.ts",
+        "deployedSha256": "71d41c79ff7a548348a490a44cc863d34ff6c5e5fa1e0a33c1b520cf59323abe",
+        "matchesPreviouslyVerifiedSource": true,
+        "localSourceExists": true
+      }
+    ]
+  },
+  {
+    "name": "expire-goodies-card-auth",
+    "version": 1,
+    "verify_jwt": false,
+    "ezbr_sha256": "e838b43fb738d73479bbb5163578580e832074547aceb721f2ade8832e6eed6c",
+    "files": [
+      {
+        "file": "index.ts",
+        "deployedSha256": "f8b82a446f997daf92a7693074ae361370d6a79754831048c58542ded3fc657b",
+        "matchesPreviouslyVerifiedSource": false,
+        "localSourceExists": true
+      }
+    ]
+  }
+]

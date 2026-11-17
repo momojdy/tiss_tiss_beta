@@ -1,0 +1,102 @@
+{
+  "observedAt": "2026-11-17T14:07:32.126954+00:00",
+  "productionReady": false,
+  "productionDeploymentPerformed": false,
+  "sourceCommits": {
+    "customer": "36147270e86a031272096ec1eb37bec42283d190",
+    "admin": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf"
+  },
+  "PASS": {
+    "automatedTests": {
+      "customer": 106,
+      "admin": 33,
+      "crossRole": 47,
+      "backend": 66,
+      "total": 252,
+      "backendSteps": 53
+    },
+    "nativePostgresRaces": 13,
+    "hostedAnonymousAndPublicReadChecks": 6,
+    "hostedNegativeAuthChecks": 4,
+    "faqLocaleBrowserCases": 25,
+    "publicationGuardErrors": 0,
+    "localeLookups": 6816,
+    "existingHaitianEntriesPreserved": 775,
+    "cmsPublishLifecycle": "Isolated actual SQL RPCs and consumer projection, including denial, audit and rollback",
+    "deliveryLifecycle": "Isolated actual customer/vendor/courier/admin SQL RPCs, quotes, stock, Wallet debit and notification records",
+    "safeEdgeErrorPaths": 7,
+    "safeEdgeFunctions": 6,
+    "typechecks": [
+      "customer",
+      "admin",
+      "six Edge Functions"
+    ],
+    "lint": [
+      "configured customer",
+      "changed JS/test files"
+    ],
+    "nativeBuildPreparation": "Registered identity inputs and EAS store profile tested; no identity invented",
+    "preparedPackageHashes": "17 migrations, six Edge Functions, shared config and FAQ payload verified",
+    "expoDoctor": {
+      "customer": "20/20",
+      "admin": "20/20"
+    },
+    "adminCleanInstallPlan": "PASS with npm 10.9.9, matching CI",
+    "bundleExports": {
+      "customer": [
+        "android",
+        "ios",
+        "web"
+      ],
+      "admin": [
+        "android",
+        "ios"
+      ],
+      "signedNativeBuilds": false
+    },
+    "githubActions": [
+      {
+        "repository": "momojdy/tiss_tiss_beta",
+        "run": 44096944215,
+        "head": "36147270e86a031272096ec1eb37bec42283d190",
+        "conclusion": "success"
+      },
+      {
+        "repository": "momojdy/tiss_tiss_beta",
+        "run": 44096944439,
+        "head": "36147270e86a031272096ec1eb37bec42283d190",
+        "conclusion": "success"
+      },
+      {
+        "repository": "momojdy/tiss-admin",
+        "run": 44098183861,
+        "head": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf",
+        "conclusion": "success"
+      }
+    ]
+  },
+  "FAIL": [
+    {
+      "scope": "Live backend contract availability",
+      "reason": "The 17 migrations remain unapplied; required courier/settlement/Shared Bill/private proof contracts absent."
+    },
+    {
+      "scope": "Live FAQ placeholder removal",
+      "reason": "The live public gateway still serves five placeholders; the repaired payload has not been published."
+    },
+    {
+      "scope": "Live API error privacy",
+      "reason": "Read-only deployed source confirms raw error responses remain until the six repaired Edge Functions are deployed."
+    }
+  ],
+  "NOT VERIFIED": [
+    "Every signed-in hosted button and cross-account/staff authorization path",
+    "Provider sandbox charge/refund/valid webhook and reconciliation lifecycles",
+    "Signed native builds: Expo account/project, registered IDs, signing access and Maps configuration unavailable",
+    "Physical Android/iOS GPS/background/offline/notification behavior",
+    "Installed-consumer draft/publish/reload acceptance",
+    "Production backup/restore point and rollout/recovery approval",
+    "Previously deferred approved legal content and user-owned Haitian review"
+  ],
+  "evidenceLimits": "PASS applies only to the stated environment and scope; it never upgrades unexecuted hosted, provider or device paths."
+}

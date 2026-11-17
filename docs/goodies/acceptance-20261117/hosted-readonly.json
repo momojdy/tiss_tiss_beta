@@ -1,0 +1,51 @@
+{
+  "scope": "Actual Wantiss public HTTP reads only. No sign-in, writes, publication, checkout, provider call, financial RPC or service-role credentials. Empty anonymous results do not verify other roles.",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "observedAt": "2026-11-17T13:29:29.902Z",
+  "results": [
+    {
+      "name": "anonymous_private_read:goodies_orders",
+      "httpStatus": 401,
+      "classification": "PASS",
+      "evidence": "Anonymous request denied."
+    },
+    {
+      "name": "anonymous_private_read:goodies_delivery_assignments",
+      "httpStatus": 401,
+      "classification": "PASS",
+      "evidence": "Anonymous request denied."
+    },
+    {
+      "name": "anonymous_private_read:goodies_card_refund_queue",
+      "httpStatus": 401,
+      "classification": "PASS",
+      "evidence": "Anonymous request denied."
+    },
+    {
+      "name": "anonymous_private_read:wallets",
+      "httpStatus": 401,
+      "classification": "PASS",
+      "evidence": "Anonymous request denied."
+    },
+    {
+      "name": "anonymous_private_read:user_settings",
+      "httpStatus": 200,
+      "classification": "PASS",
+      "evidence": "Anonymous request returned no protected rows. This does not prove access boundaries for signed-in identities."
+    },
+    {
+      "name": "published_goodies_gateway",
+      "httpStatus": 200,
+      "classification": "PASS",
+      "evidence": "Actual public content gateway serves published Goodies v5 content.",
+      "versions": [
+        5
+      ],
+      "payloadSha256": [
+        "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
+      ],
+      "faqPlaceholders": 5,
+      "publicationAcceptance": "NOT VERIFIED: no draft or publication mutation was performed."
+    }
+  ]
+}

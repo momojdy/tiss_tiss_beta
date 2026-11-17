@@ -1,5 +1,7 @@
 # Reviewed backend package — not deployed
 
+> Historical snapshot. Use the [current acceptance results and exact deployment proposal](../acceptance-20261117/README.md), which includes completed FAQ content, six Edge Function repairs and refreshed SDK validation. Production deployment remains paused.
+
 Target: existing Wantiss project `ycbirmgppwavorwudlrv`, us-east-1. No new backend was created. The 15 candidates below are absent from the observed live migration ledger. Applying them requires explicit production deployment approval and a fresh drift check. The instruction not to deploy remains in force.
 
 ## Exact application order

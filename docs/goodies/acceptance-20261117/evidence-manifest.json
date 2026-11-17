@@ -1,0 +1,268 @@
+{
+  "observedAt": "2026-11-17T14:08:38.583795+00:00",
+  "scope": "Stored evidence file hashes. The manifest excludes itself; it does not prove unexecuted acceptance paths.",
+  "classification": "PASS",
+  "decodedEvidenceSecretPatternScan": "No provider keys, Supabase secret keys, JWT credentials or private keys matched.",
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 11629,
+      "sha256": "c4cd6d3b9614841c0809fafab0af3eb0ed250e3a2542e2a46978ac73c2d60100"
+    },
+    {
+      "file": "admin-android-metadata.json",
+      "bytes": 2354,
+      "sha256": "651812e6bebe3973d84e01199c37ad0854c7dbc5658963c722e0759aff1fb5d5"
+    },
+    {
+      "file": "admin-ios-metadata.json",
+      "bytes": 2346,
+      "sha256": "3772d2459c77bb70b80fc69cd05207cc4b85b304901db0b2e07220dff24ebc34"
+    },
+    {
+      "file": "ci-verification.json",
+      "bytes": 1970,
+      "sha256": "11c2e7e53cbeb6ea99aafc16ee77c7038b278506383db9ae5ab68a1b80f9fae0"
+    },
+    {
+      "file": "cms-drift-review.json",
+      "bytes": 574,
+      "sha256": "30e06e4cb0598675deffb5aad6f2d35f3a90cfb7f2a2791687cb40c69800bd71"
+    },
+    {
+      "file": "commits-and-files.json",
+      "bytes": 6091,
+      "sha256": "b44a5d24a7bfcb45304ab3bbc51af2edb9f6d8bf55f79f3584944da28eb4f72b"
+    },
+    {
+      "file": "customer-export-metadata.json",
+      "bytes": 13157,
+      "sha256": "789b486454dfb857401a91260c56d613397535bd88d96a138851afcc4e69045d"
+    },
+    {
+      "file": "edge-source-review.json",
+      "bytes": 3441,
+      "sha256": "d3d6835e8d6b5641f79e60831e4996124f10fe5c41a99bc7a5272d67bfbde601"
+    },
+    {
+      "file": "faq-preview.json",
+      "bytes": 3053,
+      "sha256": "4fdea62b04caebc817ee1db48595d32c7a0c0e7d7778494ea0df5fe893129837"
+    },
+    {
+      "file": "hosted-edge-denials.json",
+      "bytes": 842,
+      "sha256": "d3ad2ce1360ad6bbd1b4d921035cd0dbceacf093ed851d12256735b8da35647e"
+    },
+    {
+      "file": "hosted-readonly.json",
+      "bytes": 1739,
+      "sha256": "5dd077c00afde6553dadc299287f9cc83fe73ae6337515b15542680dcf2615d5"
+    },
+    {
+      "file": "live-migration-ledger.json",
+      "bytes": 27867,
+      "sha256": "1b61780064a4dfa87240fa9ac5815123be8bb09ffc38750ef605e255bf9f849a"
+    },
+    {
+      "file": "logs/admin-android.log.gz",
+      "bytes": 773,
+      "sha256": "976475fe6c8f8bd6af5acbf3d8b6a61ac027e8c92e3161d1c48f4efdd8bf9574"
+    },
+    {
+      "file": "logs/admin-ci-npm-exact.log.gz",
+      "bytes": 342,
+      "sha256": "0362824022c06d433cb7e7f263ed3981b4d8269e5ca6cb2a2a46791ecce3d90d"
+    },
+    {
+      "file": "logs/admin-doctor.log.gz",
+      "bytes": 106,
+      "sha256": "263c0c2d5eb28fbebb6b83c465f8e4561f1352e18279b0c17fff12a79f9eaabd"
+    },
+    {
+      "file": "logs/admin-expo-install.log.gz",
+      "bytes": 135,
+      "sha256": "9831a48a10a6886d8353b51e20c70c38b70153ace99fce98299b72266ea500f7"
+    },
+    {
+      "file": "logs/admin-ios.log.gz",
+      "bytes": 766,
+      "sha256": "b08c2dedca8608956755233cb4ced8ccbf5a650b6a046a576bd210e87ec24a33"
+    },
+    {
+      "file": "logs/admin-lock-repair.log.gz",
+      "bytes": 130,
+      "sha256": "205ccbf308ddbbd4ec82d21dabe9eed1aaea6134b918897bb23273db461d32d5"
+    },
+    {
+      "file": "logs/admin-sdk-alignment.log.gz",
+      "bytes": 290,
+      "sha256": "cac5fee83155fd3bdc30ad281ce471cdd676145b7f7de8c13489d5c04edabad4"
+    },
+    {
+      "file": "logs/admin-tests.log.gz",
+      "bytes": 1824,
+      "sha256": "8bba3f39bef438962c342816df0a93a3a60055a6e566414b4cd36cbd4cf9a892"
+    },
+    {
+      "file": "logs/admin-typecheck.log.gz",
+      "bytes": 93,
+      "sha256": "2a7270d6ccb1826829f9ea3471bb01686f35a17d7a8e7676e132cb5221e0c448"
+    },
+    {
+      "file": "logs/backend-tests.log.gz",
+      "bytes": 5181,
+      "sha256": "6eee5c742a59f2a4f4f1dd1c7cefe6ecefcc3138c64a1bd42badcc43285ed86f"
+    },
+    {
+      "file": "logs/changed-lint.log.gz",
+      "bytes": 37,
+      "sha256": "e30b6f7b8d331a72b407f0166b1302172f17362ede29646f212593ebf9c69331"
+    },
+    {
+      "file": "logs/cms-coverage.log.gz",
+      "bytes": 274,
+      "sha256": "02e0b36712be836645143f7ebc060e565a758256b591cb494af8dbaa5d34add5"
+    },
+    {
+      "file": "logs/cms-sql.log.gz",
+      "bytes": 420,
+      "sha256": "f045bd9e6314f222c7ce0bee971bbab433f4011756be925d4fc45ac9a5db0e7e"
+    },
+    {
+      "file": "logs/content-validation.log.gz",
+      "bytes": 437,
+      "sha256": "194913439eb19f5e5059d01c5e0acbfa9cbf39554ed40c96646f42f014adc9eb"
+    },
+    {
+      "file": "logs/courier-sql.log.gz",
+      "bytes": 407,
+      "sha256": "aa1b70dfe79a6febc2034bbbdc60ee723df3c30468ae4e6baa7cf7a9da3856ed"
+    },
+    {
+      "file": "logs/cross-role.log.gz",
+      "bytes": 2122,
+      "sha256": "872f3096cd83b344429ebb64cfddcf2d1037ec2a39f9480711aed737c4b08a17"
+    },
+    {
+      "file": "logs/customer-doctor.log.gz",
+      "bytes": 109,
+      "sha256": "dea4186c032b3ef71042dd5fc48da347dc3a11573047a02a2df4e3d613086a56"
+    },
+    {
+      "file": "logs/customer-export.log.gz",
+      "bytes": 3831,
+      "sha256": "b839b0555bf19ad326d6d9a43f9ad8fa5ae419a97d1f1a096b800283913d2b32"
+    },
+    {
+      "file": "logs/customer-tests.log.gz",
+      "bytes": 4805,
+      "sha256": "814facee65b7137e856a343517973e011480ae78ec3996ea07e814aaad9093e6"
+    },
+    {
+      "file": "logs/customer-typecheck.log.gz",
+      "bytes": 43,
+      "sha256": "d6446e51d578b55b7effb30e3343b914f1461c1ded5292c8bc0c934e9ba8e7d0"
+    },
+    {
+      "file": "logs/edge-typecheck.log.gz",
+      "bytes": 153,
+      "sha256": "0ff74e31f7652878922d4585fbc51abf9070a0d9f69b2359056bf85a70ccd802"
+    },
+    {
+      "file": "logs/error-leak-after.log.gz",
+      "bytes": 345,
+      "sha256": "2d8758ee692868dee6d07dd1e4d3893cb4af57a450488c6043baded12e6092a2"
+    },
+    {
+      "file": "logs/error-leak-before.log.gz",
+      "bytes": 937,
+      "sha256": "f6e8a062a4f18ccb7f15103cf625e90ab5ad296e0aaec771110c9ee567a1cade"
+    },
+    {
+      "file": "logs/expo-install.log.gz",
+      "bytes": 236,
+      "sha256": "4099ece13b06fecc056f7b396bbd79133c39938bb4e91f988edaa2543b2e203c"
+    },
+    {
+      "file": "logs/faq-browser.log.gz",
+      "bytes": 137,
+      "sha256": "0512d5b43750b85d88d9fec2788b678adaaadea1df6c888c556ee7c349e0b6a1"
+    },
+    {
+      "file": "logs/lint.log.gz",
+      "bytes": 115,
+      "sha256": "347256bd8e9b38fe388544f9ac71a0d64c955190610bceb37f0d1f863679c22c"
+    },
+    {
+      "file": "logs/migrations.log.gz",
+      "bytes": 129,
+      "sha256": "affa40cc103796ee034afcf772eb1b11169326178cb2b6d20f4cf8dcbc4bc873"
+    },
+    {
+      "file": "logs/native-config.log.gz",
+      "bytes": 198,
+      "sha256": "7ee5677906abc6ac4eb97cdd5932a183c4727087d307a3ad44d35592582f1490"
+    },
+    {
+      "file": "logs/native-races.log.gz",
+      "bytes": 677,
+      "sha256": "f15b67fbbfe64e64d7285df7b7d3f74dbeada28f2857a4d941c14e74caa461ba"
+    },
+    {
+      "file": "logs/secrets.log.gz",
+      "bytes": 230,
+      "sha256": "8201eace7f37cc08df5a5c4f60558c50ba6020a7009035ee13b4c18beac62619"
+    },
+    {
+      "file": "logs/stripe-compatibility.log.gz",
+      "bytes": 274,
+      "sha256": "d1c0db6e2cb3e42d0355c8fdfe517cfdb14e3c172485ffb43fdbcbd225af01d4"
+    },
+    {
+      "file": "native-access.json",
+      "bytes": 571,
+      "sha256": "6fb5a4a51f7f80e429930e11e31a3d8313df815cfe7742048e46a382415d8930"
+    },
+    {
+      "file": "package-integrity.json",
+      "bytes": 6866,
+      "sha256": "73fb45d64a73d3d46abec503752e676cd4048e0e5fca00f4a88333c46ea23ddb"
+    },
+    {
+      "file": "postdeployment-readonly.sql",
+      "bytes": 1673,
+      "sha256": "9d846fd8dbc25be975bbbca25b55e21ff2a2afdac019cc03441d9481d8bf6938"
+    },
+    {
+      "file": "production-change-plan.json",
+      "bytes": 12584,
+      "sha256": "5b6b6e348f6bfa32fda0119c597b807c25d797b0d5e82ffbc342b98c4d9cb79d"
+    },
+    {
+      "file": "production-contract-check.json",
+      "bytes": 628,
+      "sha256": "a8da764aa2935c3247a79710b4835494a9077cbf7f9d71ffd08a106c4ca3b6e9"
+    },
+    {
+      "file": "shared-profile-acl.json",
+      "bytes": 180,
+      "sha256": "6423b9147b135af634801f36560f5f98335188457760447142f294f69375eb6b"
+    },
+    {
+      "file": "source-baseline.json",
+      "bytes": 767,
+      "sha256": "83e337eee155bd448633f994bd78acbe4fc6100c63d30271ddffb7d6a3c3bb20"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 3608,
+      "sha256": "7932c63d18267338bfd7544dfa33278b894e1617ee6769832b7d9d7f910d421a"
+    },
+    {
+      "file": "verify-edge-denials.cjs",
+      "bytes": 2398,
+      "sha256": "2cc75d97ccadcf767ca8328a55fc852ca951b3f16b5b4aa975db33f60b050385"
+    }
+  ]
+}

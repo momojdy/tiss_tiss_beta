@@ -1,0 +1,13 @@
+{
+  "oldBaselinePayloadSha256": "774528704c23644cfc2ad3e0580659b0aa3d73a4bc44aa48e9d834aeb4cadfed",
+  "currentBaseline": {
+    "id": "da301ba8-15b8-4092-a37f-5da73d721c2f",
+    "version": 5,
+    "payloadSha256": "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
+  },
+  "changedTopLevel": [
+    "fees"
+  ],
+  "resolution": "Prepared FAQ release rebased onto the current live fee settings; all other published content matched. No live change was made.",
+  "beforePublish": "Repeat baseline comparison and use the existing fee-protected draft/publish RPCs."
+}

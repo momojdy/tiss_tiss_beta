@@ -1,0 +1,52 @@
+{
+  "scope": "GitHub Actions receipts for the exact verified source commits. Later report-only commits do not change the application or tests.",
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "head": "36147270e86a031272096ec1eb37bec42283d190",
+      "id": 44096944215,
+      "name": "Expo validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44096944215",
+      "updatedAt": "2026-11-17T13:53:39Z"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "head": "36147270e86a031272096ec1eb37bec42283d190",
+      "id": 44096944439,
+      "name": "TypeScript and Expo build checks",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44096944439",
+      "updatedAt": "2026-11-17T13:52:56Z"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "head": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf",
+      "id": 44098183861,
+      "name": "Admin validation",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44098183861",
+      "updatedAt": "2026-11-17T14:00:22Z"
+    }
+  ],
+  "resolvedEarlierFailures": [
+    {
+      "scope": "Customer Expo Doctor",
+      "cause": "Three SDK 58 module patch mismatches",
+      "fixedBy": "36147270e86a031272096ec1eb37bec42283d190"
+    },
+    {
+      "scope": "Admin npm ci",
+      "cause": "A legacy-resolver lockfile differed from the normal npm 10 clean-install plan",
+      "fixedBy": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf"
+    }
+  ],
+  "pairedAdminSource": {
+    "pinnedByCustomer": "019281e49a88c858478a01acf899b8188f0b2031",
+    "verifiedAdminHead": "b59ac40eb57c32eae0b9245a61e29729f45c4eaf",
+    "difference": "Only package-lock.json clean-install reconciliation; application, permissions, CMS and financial contract sources are identical."
+  }
+}
