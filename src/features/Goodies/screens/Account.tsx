@@ -314,7 +314,8 @@ function Contact({p}: {p: any}) {
         const {data: created, error: ticketError} = await supabase.from('settings_support_requests').insert({
           user_id: auth.user.id,
           email: auth.user.email || '',
-          subject: topic + (oid ? ' · Order ' + oid : ''),
+          // Tag only Goodies-originated requests so its admin queue does not mix features.
+          subject: 'Goodies · ' + topic + (oid ? ' · Order ' + oid : ''),
           message: body,
         }).select('id,ticket_code').single();
         if (ticketError) throw ticketError;
