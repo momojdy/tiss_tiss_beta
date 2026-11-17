@@ -203,7 +203,7 @@ export function SecurityPage() {
 /* ---------- business information ---------- */
 export function BusinessInfoPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
-  const [f, setF] = useState(() => ({ name: b.name, description: b.description ?? '', phone_country: b.phone_country ?? 'NG', phone: b.phone ?? '', email: b.email ?? '', website: b.website ?? '', address: b.address ?? '', city: b.city ?? '', country: b.country ?? 'NG', delivery_modes: b.delivery_modes ?? [], hours: (b.hours && Object.keys(b.hours).length ? b.hours : defaultHours()) as Record<string, any>, logo_url: b.logo_url, accept_scheduled_orders: !!b.accept_scheduled_orders, scheduled_order_start_minutes: Number(b.scheduled_order_start_minutes ?? 60), goodies_store_id: b.goodies_store_id ?? '' }));
+  const [f, setF] = useState(() => ({ name: b.name, goodies_store_id: b.goodies_store_id ?? '', description: b.description ?? '', phone_country: b.phone_country ?? 'NG', phone: b.phone ?? '', email: b.email ?? '', website: b.website ?? '', address: b.address ?? '', city: b.city ?? '', country: b.country ?? 'NG', delivery_modes: b.delivery_modes ?? [], hours: (b.hours && Object.keys(b.hours).length ? b.hours : defaultHours()) as Record<string, any>, logo_url: b.logo_url, accept_scheduled_orders: !!b.accept_scheduled_orders, scheduled_order_start_minutes: Number(b.scheduled_order_start_minutes ?? 60) }));
   const [picker, setPicker] = useState<null | 'phone' | 'country'>(null), [cq, setCq] = useState('');
   const stores = useQ(() => q<any[]>(supabase.from('goodies_store_schedules').select('store_id,store_name,business_name').eq('business_id', b.id).order('store_id')), [b.id]);
   const [vendorQr, setVendorQr] = useState<any>(null);

@@ -90,3 +90,8 @@ test('card verification errors show app-owned editable copy instead of provider 
  module.exports({nativeEvent:{data:JSON.stringify({error:'SQL failure secret_token=do-not-show'})}});
  assert.match(shown,/^CMS /);assert.doesNotMatch(shown,/SQL|secret_token/);
 });
+test('every literal Goodies navigation target names an existing customer route',()=>{
+ const known=new Set(source.routes.map(row=>row.route)),missing=[];let checked=0;
+ function walk(dir){for(const entry of fs.readdirSync(dir,{withFileTypes:true})){const file=path.join(dir,entry.name);if(entry.isDirectory())walk(file);else if(/\.tsx?$/.test(file)){const ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true);function visit(node){if(ts.isCallExpression(node)&&['go','push','reset','tab'].includes(node.expression.getText(ast))&&node.arguments[0]&&ts.isStringLiteral(node.arguments[0])){checked++;if(!known.has(node.arguments[0].text))missing.push({source:path.relative(root,file),route:node.arguments[0].text});}ts.forEachChild(node,visit);}visit(ast);}}}
+ walk(root);assert.ok(checked>100);assert.deepEqual(missing,[]);
+});

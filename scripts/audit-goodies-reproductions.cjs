@@ -23,9 +23,9 @@ test('REGRESSION A03: admin Reject requires and sends a reason',async()=>{
  await reviewProduct({id:'synthetic-product'},'rejected','Needs a clear photo');assert.equal(calls[0].args.p_note,'Needs a clear photo');
 });
 test('REGRESSION A04: rating Submit claims success only after backend success',async()=>{
- const S={orders:[{id:'ORDER-TEST',backendId:'order-uuid',sid:'synthetic-store'}],pf:{n:'Synthetic customer'},rev:{},rt:0},messages=[];let saved=0;
- const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({supabase:{rpc:async()=>({error:null})},useRef:value=>({current:value}),useState:initial=>[initial,()=>{}],S,label,toast:m=>messages.push(m),ui:{close(){}},save(){saved++;},emit(){}});
- const tree=ReviewSheet({id:'ORDER-TEST',stars:()=>null,initialStars:5});await elements(tree).find(element=>element.type==='Cta').props.onPress();assert.equal(saved,1);assert.equal(S.rev['synthetic-store'][0].r,5);assert.equal(messages[0],'Thanks for your review!');
+ const S={orders:[{id:'ORDER-TEST',backendId:'order-uuid',serverStatus:'completed',sid:'synthetic-store'}],pf:{n:'Synthetic customer'},rev:{},rt:0},messages=[];let saved=0;
+ const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({supabase:{rpc:async()=>({data:'synthetic-review-id',error:null})},useRef:value=>({current:value}),useState:initial=>[initial,()=>{}],S,label,toast:m=>messages.push(m),ui:{close(){}},save(){saved++;},emit(){}});
+ const tree=ReviewSheet({id:'ORDER-TEST',stars:()=>null,initialStars:5});await elements(tree).find(element=>element.type==='Cta').props.onPress();assert.equal(saved,1);assert.equal(S.rev['synthetic-store'][0].r,5);assert.equal(messages[0],'Thanks for your review! Your review is awaiting approval.');
  const source=fs.readFileSync(path.join(root,'src/features/Goodies/components/Sheets.tsx'),'utf8');const body=source.slice(source.indexOf('function ReviewSheet'),source.indexOf('function ContactsSheet'));assert.ok(body.includes("supabase.rpc('goodies_submit_order_review'"));
 });
 test('REGRESSION A05: support confirmation truthfully acknowledges submission',()=>{
@@ -84,7 +84,7 @@ test('admin transport failures return a safe failure and do not expose exception
  const result=await request('synthetic');assert.equal(result.data,null);assert.equal(result.error.message,'The request could not be completed.');
 });
 test('failed review persistence cannot produce a success toast or local review',async()=>{
- const S={accountId:'synthetic',orders:[{id:'REVIEW-FAIL',backendId:'order-uuid',sid:'store'}],pf:{n:'Customer'},rev:{},rt:0},messages=[];let saves=0;
+ const S={accountId:'synthetic',orders:[{id:'REVIEW-FAIL',backendId:'order-uuid',serverStatus:'completed',sid:'store'}],pf:{n:'Customer'},rev:{},rt:0},messages=[];let saves=0;
  const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({useRef:value=>({current:value}),useState:value=>[value,()=>{}],S,label,toast:m=>messages.push(m),ui:{close(){throw new Error('Must not close on failure');}},save(){saves++;},emit(){},supabase:{rpc:async()=>({error:{message:'private SQL details'}})}});
  const tree=ReviewSheet({id:'REVIEW-FAIL',stars:()=>null,initialStars:5});await elements(tree).find(e=>e.type==='Cta').props.onPress();
  assert.equal(saves,0);assert.deepEqual(S.rev,{});assert.deepEqual(messages,['Could not submit your review. Please try again.']);
@@ -95,9 +95,10 @@ test('history paging merges cached rows, advances its server cursor and prevents
  let calls=0,condition='';
  const query={select(){return this;},eq(){return this;},or(value){condition=value;return this;},order(){return this;},async limit(){calls++;return {data:[{id:'older-order',order_code:'OLD',store_id:'removed-store',status:'completed',created_at:'2026-11-05T00:00:00Z',items:[]}],error:null};}};
  const stageByStatus=extract(root,'src/features/Goodies/serverSync.ts','stageByStatus')({});
- const mapOrder=extract(root,'src/features/Goodies/serverSync.ts','mapOrder')({STB:{},IT:{},stageByStatus});
+ const STB={},placeholderStore=extract(root,'src/features/Goodies/store.ts','placeholderStore')({label,bgOf:()=> 'green'}),ensureGoodiesOrderStore=extract(root,'src/features/Goodies/store.ts','ensureGoodiesOrderStore')({STB,placeholderStore});
+ const mapOrder=extract(root,'src/features/Goodies/serverSync.ts','mapOrder')({STB,IT:{},stageByStatus,ensureGoodiesOrderStore});
  const load=extract(root,'src/features/Goodies/serverSync.ts','loadOlderGoodiesOrders')({S,supabase:{from:()=>query},mapOrder,save(){},emit(){}});
- await Promise.all([load(),load()]);assert.equal(calls,1);assert.equal(S.orders.length,1);assert.equal(S.orders[0].serverCreatedAt,'2026-11-05T00:00:00Z');assert.equal(S.ordersCursor.id,'older-order');assert.equal(S.ordersHasMore,false);assert.ok(condition.includes('newer-order'));assert.equal(S.ordersPaging,false);
+ await Promise.all([load(),load()]);assert.equal(calls,1);assert.equal(S.orders.length,1);assert.equal(S.orders[0].serverCreatedAt,'2026-11-05T00:00:00Z');assert.equal(S.ordersCursor.id,'older-order');assert.equal(S.ordersHasMore,false);assert.ok(STB['removed-store']);assert.equal(STB['removed-store'].open,0);assert.ok(condition.includes('newer-order'));assert.equal(S.ordersPaging,false);
 });
 test('history paging cannot overwrite a newer refresh cursor or expose a prior account response',async()=>{
  const oldCursor={createdAt:'2026-11-06T00:00:00Z',id:'old-cursor'},freshCursor={createdAt:'2026-11-06T01:00:00Z',id:'fresh-cursor'};
@@ -123,8 +124,8 @@ test('vendor overview never renders a zero wallet or no-revenue claim after a fa
 });
 
 test('review retries replace the local order review and refresh the matching public store only after persistence',async()=>{
- const S={accountId:'customer',orders:[{id:'REVIEW-RETRY',backendId:'order-uuid',sid:'store'}],pf:{n:'Customer'},rev:{},rt:0},changed=[];
- const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({useRef:value=>({current:value}),useState:value=>[value,()=>{}],S,label,toast(){},ui:{close(){}},save(){},emit(){},notifyStoreReviewsChanged:store=>changed.push(store),supabase:{rpc:async()=>({error:null})}});
+ const S={accountId:'customer',orders:[{id:'REVIEW-RETRY',backendId:'order-uuid',serverStatus:'completed',sid:'store'}],pf:{n:'Customer'},rev:{},rt:0},changed=[];
+ const ReviewSheet=extract(root,'src/features/Goodies/components/Sheets.tsx','ReviewSheet')({useRef:value=>({current:value}),useState:value=>[value,()=>{}],S,label,toast(){},ui:{close(){}},save(){},emit(){},notifyStoreReviewsChanged:store=>changed.push(store),supabase:{rpc:async()=>({data:'synthetic-review-id',error:null})}});
  const handler=elements(ReviewSheet({id:'REVIEW-RETRY',stars:()=>null,initialStars:5})).find(e=>e.type==='Cta').props.onPress;
  await handler();await handler();assert.equal(S.rev.store.length,1);assert.equal(S.rev.store[0].orderId,'REVIEW-RETRY');assert.deepEqual(changed,['store','store']);
 });
@@ -153,7 +154,7 @@ test('REGRESSION A28: checkout payment outages render retry and never a false mi
  for(const status of ['loading','error','ready']){
   const S={accountId:'a',paymentOptionsStatus:status,hasWallet:false,wallet:0,pay:'wallet',cards:[],cs:2,cart:{sid:'s',lines:[]},sch:0};
   let retries=0;
-  const view=extract(root,'src/features/Goodies/screens/Shop.tsx','Checkout')({S,label,useTheme:()=>({mut:'#555',red:'#f00',br:'#333',ink:'#000'}),totals:()=>({st:{id:'s',n:'Store',open:1},total:20}),isPk:()=>false,addr:()=>({t:'Synthetic address'}),ctOf:()=>null,useState:v=>[v,()=>{}],useEffect(){},fees:()=>({pay:{Wallet:true,Card:true}}),providerInfo:{demo:false},hasAlcohol:()=>false,money:v=>'$'+v,refreshPaymentOptions:()=>{retries++;},setPay(){},setSch(){},back(){},go(){},createWallet(){},setCard(){},cnt:()=>1,dp:x=>x,checkoutNext(){},placeOrder(){}});
+  const view=extract(root,'src/features/Goodies/screens/Shop.tsx','Checkout')({S,label,useTheme:()=>({mut:'#555',red:'#f00',br:'#333',ink:'#000'}),totals:()=>({st:{id:'s',n:'Store',open:1,live:true},total:20}),isPk:()=>false,addr:()=>({t:'Synthetic address'}),ctOf:()=>null,useState:v=>[v,()=>{}],useEffect(){},deliveryAddressKey:()=> 'synthetic-address',deliveryQuoteReady:()=> true,cartStoreIds:()=> ['s'],fees:()=>({pay:{Wallet:true,Card:true}}),providerInfo:{demo:false},hasAlcohol:()=>false,money:v=>'$'+v,refreshPaymentOptions:()=>{retries++;},setPay(){},setSch(){},back(){},go(){},createWallet(){},setCard(){},cnt:()=>1,dp:x=>x,checkoutNext(){},placeOrder(){}});
   const tree=view(),text=flatten(tree);const missing=text.includes('Wantiss wallet not found');assert.equal(missing,status==='ready');
   if(status==='error'){assert.ok(text.includes('Payment details unavailable'));const retry=elements(tree).find(e=>e.type==='Cta'&&e.props.label==='Try again');assert.ok(retry);retry.props.onPress();assert.equal(retries,1);}
   if(status==='loading')assert.ok(text.includes('Loading payment methods'));

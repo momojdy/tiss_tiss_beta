@@ -1,19 +1,25 @@
 begin;
 -- Order/driver reviews are distinct from public.reviews, whose product_id points
 -- to the general marketplace products table, not goodies_products.
-create table public.goodies_order_reviews (
+create table if not exists public.goodies_order_reviews (
+  id uuid primary key default gen_random_uuid(),
   order_id uuid not null references public.goodies_orders(id) on delete cascade,
-  target text not null check(target in ('store','driver')),
   customer_id uuid not null references auth.users(id) on delete cascade,
   business_id uuid not null references public.businesses(id) on delete cascade,
-  courier_id uuid,
-  rating integer not null check(rating between 1 and 5),
-  comment text not null default '' check(char_length(comment)<=1000),
+  courier_id uuid references auth.users(id) on delete set null,
+  review_target text not null check (review_target in ('store','courier')),
+  rating integer not null check (rating between 1 and 5),
+  comment text not null default '' check (char_length(comment)<=1000),
+  review_status text not null default 'pending' check (review_status in ('pending','approved','rejected')),
+  review_note text,
+  reviewed_by uuid references auth.users(id),
+  reviewed_at timestamptz,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now(),
-  primary key(order_id,target)
+  unique(order_id,review_target),
+  constraint goodies_review_courier_target check (review_target='store' or courier_id is not null)
 );
-create index goodies_order_reviews_business_created on public.goodies_order_reviews(business_id,created_at desc,order_id);
+alter table public.goodies_order_reviews add column if not exists updated_at timestamptz not null default now();
+create index if not exists goodies_order_reviews_business_created on public.goodies_order_reviews(business_id,created_at desc,order_id);
 alter table public.goodies_order_reviews enable row level security;
 revoke all on public.goodies_order_reviews from anon,authenticated;
 grant select on public.goodies_order_reviews to authenticated;
@@ -30,21 +36,22 @@ using(customer_id=(select auth.uid()) or courier_id=(select auth.uid())
  or private.goodies_merchant_can_operate(business_id)
  or (select private.goodies_review_admin_read()));
 
-create or replace function public.goodies_submit_order_review(p_order_id uuid,p_target text,p_rating integer,p_comment text default '')
-returns void language plpgsql security definer set search_path='' as $$
-declare v_order public.goodies_orders%rowtype;v_uid uuid:=auth.uid();
+create or replace function public.goodies_submit_order_review(p_order_id uuid,p_review_target text,p_rating integer,p_comment text default '')
+returns uuid language plpgsql security definer set search_path='' as $$
+declare v_order public.goodies_orders%rowtype;v_uid uuid:=auth.uid();v_id uuid;
 begin
  if v_uid is null then raise exception 'Sign in required' using errcode='28000';end if;
- if p_target is null or p_target not in ('store','driver') or p_rating is null or p_rating not between 1 and 5
+ if p_review_target is null or p_review_target not in ('store','courier') or p_rating is null or p_rating not between 1 and 5
    or char_length(coalesce(p_comment,''))>1000 then raise exception 'Invalid review' using errcode='22023';end if;
  select * into v_order from public.goodies_orders where id=p_order_id for share;
  if not found or v_order.customer_id<>v_uid then raise exception 'Not allowed' using errcode='42501';end if;
  if v_order.status<>'completed' then raise exception 'Complete the order before reviewing' using errcode='22023';end if;
- if p_target='driver' and (v_order.order_type='pickup' or (v_order.courier_id is null and not v_order.self_delivery)) then
+ if p_review_target='courier' and (v_order.order_type='pickup' or (v_order.courier_id is null or v_order.self_delivery)) then
    raise exception 'No driver to review' using errcode='22023';end if;
- insert into public.goodies_order_reviews(order_id,target,customer_id,business_id,courier_id,rating,comment)
- values(v_order.id,p_target,v_uid,v_order.business_id,case when p_target='driver' then v_order.courier_id end,p_rating,trim(coalesce(p_comment,'')))
- on conflict(order_id,target) do update set rating=excluded.rating,comment=excluded.comment,updated_at=now();
+ insert into public.goodies_order_reviews(order_id,review_target,customer_id,business_id,courier_id,rating,comment)
+ values(v_order.id,p_review_target,v_uid,v_order.business_id,case when p_review_target='courier' then v_order.courier_id end,p_rating,trim(coalesce(p_comment,'')))
+ on conflict(order_id,review_target) do update set rating=excluded.rating,comment=excluded.comment,updated_at=now() returning id into v_id;
+ return v_id;
 end $$;
 revoke all on function public.goodies_submit_order_review(uuid,text,integer,text) from public,anon;
 grant execute on function public.goodies_submit_order_review(uuid,text,integer,text) to authenticated;
@@ -54,7 +61,7 @@ returns table(order_id uuid,rating integer,comment text,created_at timestamptz,i
 language sql stable security definer set search_path='' as $$
  select r.order_id,r.rating,r.comment,r.created_at,r.customer_id=auth.uid()
  from public.goodies_order_reviews r join public.goodies_store_schedules s on s.business_id=r.business_id
- where auth.uid() is not null and s.store_id=p_store_id and s.is_live and r.target='store'
+ where auth.uid() is not null and s.store_id=p_store_id and s.is_live and r.review_target='store' and r.review_status='approved'
  order by r.created_at desc,r.order_id offset greatest(coalesce(p_offset,0),0) limit least(greatest(coalesce(p_limit,20),1),100)
 $$;
 revoke all on function public.goodies_store_reviews(text,integer,integer) from public,anon;
@@ -64,7 +71,7 @@ create or replace function public.goodies_store_review_summaries(p_business_ids 
 returns table(business_id uuid,rating numeric,review_count bigint)
 language sql stable security definer set search_path='' as $$
  select r.business_id,avg(r.rating),count(*) from public.goodies_order_reviews r
- where auth.uid() is not null and r.target='store' and r.business_id=any(p_business_ids)
+ where auth.uid() is not null and r.review_target='store' and r.review_status='approved' and r.business_id=any(p_business_ids)
  and exists(select 1 from public.goodies_store_schedules s where s.business_id=r.business_id and s.is_live)
  group by r.business_id
 $$;

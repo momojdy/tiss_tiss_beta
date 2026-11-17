@@ -74,19 +74,28 @@ export const goodiesApi = {
     return (rows || []).map(r => ({ id: r.id, name: r.name, description: r.description || '', price: Number(r.price), emoji: r.emoji || '🛍️', stock: Number(r.stock), available: !!r.is_available, restriction: r.restriction || 'none', photoUrl: r.photo_urls?.[0] || r.photo_url || null, photoUrls: (Array.isArray(r.photo_urls) && r.photo_urls.length ? r.photo_urls : (r.photo_url ? [r.photo_url] : [])).slice(0,5), reviewStatus: r.review_status || 'approved', reviewNote: r.review_note || null }));
   },
   saveProduct: async (biz: string, p: Partial<GProduct> & { id?: string }) => {
-    const f: Record<string, unknown> = {};
-    if (p.name !== undefined) f.name = p.name.trim();
-    if (p.description !== undefined) f.description = p.description.trim() || null;
-    if (p.price !== undefined) f.price = p.price;
-    if (p.emoji !== undefined) f.emoji = p.emoji.trim() || '🛍️';
-    if (p.stock !== undefined) f.stock = p.stock;
-    if (p.available !== undefined) f.is_available = p.available;
-    if (p.restriction !== undefined) f.restriction = p.restriction;
-    if ('photoUrl' in p) f.photo_url = p.photoUrl || null;
-    if ('photoUrls' in p) f.photo_urls = (p.photoUrls || []).slice(0, 5);
-    const res = p.id ? await supabase.from('goodies_products').update({ ...f, updated_at: new Date().toISOString() }).eq('id', p.id).select('id') : await supabase.from('goodies_products').insert({ ...f, business_id: biz }).select('id');
-    if (res.error) throw res.error;
-    if (!res.data || !res.data.length) throw new Error('Not allowed. Only the owner or an admin can change products.');
+    // Direct table writes are intentionally not granted to customers or vendors.
+    // All merchant mutations pass through server-authorized, business-scoped RPCs.
+    if (p.id && typeof p.available === 'boolean' &&
+        Object.keys(p).every(key => key === 'id' || key === 'available')) {
+      const {error} = await supabase.rpc('goodies_vendor_set_product_availability', {
+        p_business: biz, p_id: p.id, p_available: p.available,
+      });
+      if (error) throw error;
+      return;
+    }
+    if (p.name == null || p.price == null || p.stock == null || p.restriction == null) {
+      throw new Error('Complete the product details before saving.');
+    }
+    const {data, error} = await supabase.rpc('goodies_vendor_save_product', {
+      p_business: biz, p_id: p.id || null,
+      p_name: p.name.trim(), p_description: (p.description || '').trim(),
+      p_price: p.price, p_emoji: (p.emoji || '🛍️').trim(),
+      p_stock: p.stock, p_restriction: p.restriction,
+      p_photo_url: p.photoUrl || null, p_photo_urls: (p.photoUrls || []).slice(0, 5),
+    });
+    if (error) throw error;
+    if (!data) throw new Error('The store did not confirm the product save.');
   },
   deleteProduct: async (id: string) => {
     const res = await supabase.from('goodies_products').delete().eq('id', id).select('id');

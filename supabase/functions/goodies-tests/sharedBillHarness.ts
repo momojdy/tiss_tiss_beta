@@ -2,7 +2,7 @@ import {PGlite} from 'npm:@electric-sql/pglite@0.3.14';
 export const sbId=(n:number)=>`a0000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 export const sbUsers={host:sbId(1),alice:sbId(2),bob:sbId(3),stranger:sbId(4),vendor:sbId(5),otherVendor:sbId(6),admin:sbId(7),business:sbId(10),otherBusiness:sbId(11),product:sbId(20)};
 export const sbCheck=(value:unknown,message:string)=>{if(!value)throw Error(message);};
-export async function sharedBillHarness(options:{integrity?:boolean}={}){
+export async function sharedBillHarness(options:{integrity?:boolean;moderation?:boolean}={}){
  const db=new PGlite();
  await db.exec(await Deno.readTextFile(new URL('./fixtures/goodies-core.sql',import.meta.url)));
  await db.exec("create unique index synthetic_businesses_id_unique on public.businesses(id); create schema storage;grant usage on schema storage to anon,authenticated,service_role;create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);create table storage.objects(bucket_id text,name text,primary key(bucket_id,name));alter table storage.objects enable row level security;grant select,insert,update,delete on storage.objects to authenticated;create table public.user_settings(user_id uuid primary key references auth.users(id),language text,notification_preferences jsonb default '{}'::jsonb,updated_at timestamptz default now());create table public.exchange_rates(id uuid primary key default gen_random_uuid(),from_currency text,to_currency text,wantiss_rate numeric,market_rate numeric,is_active boolean,expires_at timestamptz,created_at timestamptz default now());create table public.user_friendships(id uuid primary key default gen_random_uuid(),requester_id uuid,recipient_id uuid,status text);");
@@ -11,7 +11,7 @@ export async function sharedBillHarness(options:{integrity?:boolean}={}){
  const packageSource=await Deno.readTextFile(new URL('./deploymentPackage_test.ts',import.meta.url));
  const files=[...packageSource.matchAll(/'([0-9]{14}_goodies_[a-z_]+\.sql)'/g)].map(match=>match[1]);
  sbCheck(files.length===15,'Expected the original 15-migration package');
- for(const file of [...files,...(options.integrity===false?[]:['20261113101825_goodies_shared_bill_integrity.sql'])])await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
+ for(const file of [...files,...(options.integrity===false?[]:['20261113101825_goodies_shared_bill_integrity.sql',...(options.moderation===false?[]:['20261117055744_goodies_review_moderation_compatibility.sql'])])])await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
  for(const user of [sbUsers.host,sbUsers.alice,sbUsers.bob,sbUsers.stranger,sbUsers.vendor,sbUsers.otherVendor,sbUsers.admin]){
   await db.query('insert into auth.users(id,email_confirmed_at) values($1,now())',[user]);
   await db.query("insert into public.profiles(id,full_name) values($1,'Synthetic member')",[user]);

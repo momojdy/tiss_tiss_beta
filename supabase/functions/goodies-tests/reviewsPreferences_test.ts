@@ -34,12 +34,13 @@ Deno.test('Goodies reviews enforce completed-order ownership, isolate participan
   await as(vendor);await denied(submit,[order]);
   await as(customer);await db.query(submit,[order]);await db.query(submit,[order]);
   check((await db.query('select * from public.goodies_order_reviews')).rows.length===1,'Retry must update the existing review');
-  await denied("select public.goodies_submit_order_review($1,'driver',5,'')",[order]);
+  await denied("select public.goodies_submit_order_review($1,'courier',5,'')",[order]);
   await denied("select public.goodies_submit_order_review($1,'store',6,'')",[order]);
   await denied("select public.goodies_submit_order_review($1,null,5,'')",[order]);
   await denied("select public.goodies_submit_order_review($1,'store',null,'')",[order]);
   await denied("select public.goodies_submit_order_review($1,'store',5,repeat('x',1001))",[order]);
   await denied("update public.goodies_order_reviews set rating=1 where order_id=$1",[order]);
+  await db.exec('reset role');await db.query("update public.goodies_order_reviews set review_status='approved' where order_id=$1",[order]);
   await as(other);check((await db.query('select * from public.goodies_order_reviews')).rows.length===0,'Another customer cannot read private review records');
   await as(otherVendor);check((await db.query('select * from public.goodies_order_reviews')).rows.length===0,'Other vendor cannot read private review records');
   const publicRows=(await db.query<{comment:string;is_mine:boolean}>("select * from public.goodies_store_reviews('review-store',0,20)")).rows;
