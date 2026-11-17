@@ -3,6 +3,8 @@
  * This script never deploys or publishes content. */
 const fs=require('node:fs'),path=require('node:path'),crypto=require('node:crypto'),ts=require('typescript');
 const customer=path.resolve(__dirname,'..'),admin=path.resolve(customer,'../tiss-admin'),target=path.join(admin,'src/features/admin/goodiesConsumer');
+const previousManifest=path.join(target,'previewSourceManifest.json');
+const previousCopies=fs.existsSync(previousManifest)?JSON.parse(fs.readFileSync(previousManifest,'utf8')).copies||[]:[];
 const copies=[];
 function write(relative,source,origins){const file=path.join(target,relative);fs.mkdirSync(path.dirname(file),{recursive:true});fs.writeFileSync(file,source);copies.push({target:relative,origins:origins.map(origin=>({file:origin,sha256:crypto.createHash('sha256').update(fs.readFileSync(path.join(customer,origin))).digest('hex')}))});}
 function declarations(file,names){const source=fs.readFileSync(path.join(customer,file),'utf8'),ast=ts.createSourceFile(file,source,99,true);return ast.statements.filter(n=>ts.isFunctionDeclaration(n)&&names.includes(n.name?.text)).map(n=>n.getText(ast)).join('\n\n');}
@@ -16,7 +18,9 @@ function mirror(dir,rel=''){for(const entry of fs.readdirSync(dir,{withFileTypes
  if(relative==='GoodiesQuickMenu.tsx')code=code.replace("from '../gatherz/GatherzQuickMenu'","from './previewMenu'");
  write(relative,code,[origin]);
 }}}
+for(const copy of previousCopies){if(copy.origins?.length&&copy.origins.every(origin=>origin.file.startsWith('src/features/Goodies/')&&!fs.existsSync(path.join(customer,origin.file)))){const obsolete=path.resolve(target,copy.target);if(!obsolete.startsWith(target+path.sep))throw Error('Invalid generated preview path');fs.rmSync(obsolete,{force:true});}}
 mirror(path.join(customer,'src/features/Goodies'));
+const builderTemplates='src/screens/businessSpace/goodiesTemplates.ts';write('previewBuilderTemplates.ts',fs.readFileSync(path.join(customer,builderTemplates),'utf8'),[builderTemplates]);
 const locales='src/lib/locales.ts';write('previewLocales.ts',fs.readFileSync(path.join(customer,locales),'utf8'),[locales]);
 const menu='src/features/gatherz/GatherzQuickMenu.tsx';write('previewMenu.tsx',"import React from 'react';\nimport Svg,{Circle,Path,Rect,Line,Polyline,G} from 'react-native-svg';\n"+declarations(menu,['ThinMenuIcon']),[menu]);
 const balance='src/components/wallet/WalletBalance.tsx';write('screens/WalletBalance.tsx',fs.readFileSync(path.join(customer,balance),'utf8').replace("from '../../lib/supabase'","from '../previewRuntime'").replace('import { supabase }','import { previewBackend as supabase }').replace('useRef<View>','useRef<React.ElementRef<typeof View>>'),[balance]);
@@ -59,7 +63,7 @@ function instrument(file){let source=fs.readFileSync(file,'utf8'),ast=ts.createS
  if(hasText){const rel=path.relative(path.dirname(file),path.join(target,'EditableNativeText')).replaceAll(path.sep,'/');source=`import {EditableNativeText as Text} from '${rel.startsWith('.')?rel:'./'+rel}';\n`+source;}
  fs.writeFileSync(file,source);
 }
-for(const relative of ['GoodiesApp.tsx','GoodiesQuickMenu.tsx','screens/CardAuthentication.tsx','screens/AddCard.tsx','screens/Shop.tsx','screens/Account.tsx','screens/Browse.tsx','screens/Payments.tsx','screens/WalletBalance.tsx','components/Sheets.tsx','components/cards.tsx','builders/Builder.tsx'])instrument(path.join(target,relative));
+for(const relative of ['GoodiesApp.tsx','GoodiesQuickMenu.tsx','screens/CardAuthentication.tsx','screens/HelpPay.tsx','screens/AddCard.tsx','screens/Shop.tsx','screens/Account.tsx','screens/Browse.tsx','screens/Payments.tsx','screens/WalletBalance.tsx','components/Sheets.tsx','components/cards.tsx','builders/Builder.tsx'])instrument(path.join(target,relative));
 
 function structuralTargets(file){let source=fs.readFileSync(file,'utf8'),ast=ts.createSourceFile(file,source,99,true),edits=[];
  function wrap(node,target){edits.push({start:node.getStart(ast),end:node.end,text:`<Sel sel={${target}}>${node.getText(ast)}</Sel>`});}

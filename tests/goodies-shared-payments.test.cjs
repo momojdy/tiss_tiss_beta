@@ -1,6 +1,6 @@
 const {test}=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs'),vm=require('node:vm'),ts=require('typescript');
 const moduleScope={exports:{}},calls=[];
-vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/features/Goodies/helpPayApi.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:moduleScope,exports:moduleScope.exports,require:()=>({supabase:{rpc:async(...args)=>{calls.push(args);return{data:{ok:true}};}}})});
+vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/features/Goodies/helpPayApi.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{process:{env:{}},module:moduleScope,exports:moduleScope.exports,require:()=>({supabase:{rpc:async(...args)=>{calls.push(args);return{data:{ok:true,status:'cancelled',refunded:true}};}}})});
 const api=moduleScope.exports;
 test('invalid financial status responses fail closed instead of rendering invented zero balances',()=>{
  const valid={id:'00000000-0000-4000-8000-000000000001',mode:'share',service:'goodies',status:'active',is_creator:true,expires_at:'2026-12-01T00:00:00Z',total_cents:100,initial_cents:60,contributed_cents:10,remaining_cents:30,my_contributed_cents:60};

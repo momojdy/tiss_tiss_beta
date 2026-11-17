@@ -1,26 +1,11 @@
-# Goodies (React Native module)
+# Goodies
 
-Port of Goodies v24. Mount it inside the main Wantiss app:
+`src/screens/Goodies/goodiesHomeScreen.tsx` mounts the customer module in the existing Wantiss navigation. `GoodiesCourierScreen.tsx` is the assigned courier workspace. Vendor screens remain under `src/screens/businessSpace/`.
 
-```tsx
-import {GoodiesApp} from './features/Goodies/GoodiesApp';
-<GoodiesApp onExit={() => navigation.goBack()} />   // embedded = true: starts on Home, back from Home calls onExit
-// <GoodiesApp embedded={false} />                   // standalone demo with the Wantiss entry screen
-```
-Packages used: react-native-svg, expo-linear-gradient, @react-native-async-storage/async-storage, react-native-safe-area-context.
+Catalogs, builders, reviews, orders and payment states come from Supabase. Local storage holds account-owned caches, cart/builder drafts and idempotency journals. It is not a source of payment confirmation or purchasable inventory. Prices and permissions are validated on the server.
 
-## Modes
-`providers/index.ts`: demo is the default. Set `globalThis.__WANTISS_MODE__ = 'production'` before the app starts to block demo-only actions
-(simulated ID check, demo reset) and to hide machine-drafted translations (`cfg.showMachineDrafts` in `i18n/index.ts` must be set to false in production builds).
-Payment and order progress are still simulated in this module. Real payments and orders need the backend.
+Shared Bill uses Wantiss Wallet. Its client build flag defaults off and the protected backend funding flag defaults off. Status, cancellation and refund recovery remain available independently. New payments require the reviewed backend package, the approved client build flag and explicit release activation. Test fixtures live in the test directories; no sample orders or courier movement are supplied by this module.
 
-## Data flow (demo)
-- Wantiss Admin v5 > Goodies > Overview > Export content, then Goodies Settings > Import Admin content. Drives: categories + artwork, promo cards, flash deals, home labels, coupons, fees and tips, scheduling, age rules, alcohol texts, stage labels, FAQ, support topics, legal text, and builder artwork + layout.
-- Vendor Dashboard > Goodies > Store setup, Products and Go live read and write the backend (`goodies_save_store_setup`, `goodies_products`, `goodies_set_store_live`). The business is the store (store id = business id). Builders still write `goodies-byo-v4` (AsyncStorage) and custom-builder items are not orderable yet.
-- Production: the same shapes come from the backend. No screen changes.
+The admin repository's `goodiesConsumer` files form the isolated CMS draft preview. Generate them with `npm run sync:goodies-cms`; native/provider ports prevent publishing or payment execution from preview fixtures. The generator records source hashes and removes obsolete generated mirrors.
 
-## Files
-store.ts (state, pricing, cart rules, stages, alcohol helpers) · actions.ts (handlers) · content.ts (Admin content) · builders/ (engine, screen, pizza art, templates) · screens/ · components/ · i18n/ · data/
-
-## Known gaps
-See STATUS.md in the delivery folder.
+Run `npm run test:goodies`, `npm run test:goodies-cross-role`, `npm run check:goodies-cms`, `npm run check:migrations`, `npm run lint` and the full TypeScript check. Backend and native PostgreSQL commands and the remaining hosted/device acceptance requirements are documented under `docs/goodies/`.
