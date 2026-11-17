@@ -7263,5 +7263,80 @@
     "fr": "Impossible de confirmer cette demande. Rouvrez la facture partagée pour récupérer son statut avant de réessayer.",
     "es": "No se pudo confirmar esta solicitud. Vuelve a abrir la factura compartida para recuperar su estado antes de intentarlo de nuevo.",
     "zh-Hans": "无法确认此请求。请重新打开共享账单以恢复并查看状态，然后再重试。"
+  },
+  "This store is no longer available. Your cart is saved.": {
+    "fr": "Ce commerce n’est plus disponible. Votre panier est conservé.",
+    "es": "Esta tienda ya no está disponible. Tu carrito está guardado.",
+    "zh-Hans": "此店铺已不可用。您的购物车已保存。"
+  },
+  "Free (first delivery)": {
+    "fr": "Gratuit (première livraison)",
+    "es": "Gratis (primera entrega)",
+    "zh-Hans": "免费（首次配送）"
+  },
+  "Your saved cart includes an unavailable store. Please review it.": {
+    "fr": "Votre panier contient un commerce indisponible. Veuillez le vérifier.",
+    "es": "Tu carrito guardado incluye una tienda no disponible. Revísalo.",
+    "zh-Hans": "已保存的购物车中包含不可用的店铺，请检查。"
+  },
+  "One of the stores in your saved cart is no longer available. Your cart has not been cleared.": {
+    "fr": "Un des commerces de votre panier n’est plus disponible. Votre panier a été conservé.",
+    "es": "Una tienda de tu carrito guardado ya no está disponible. Tu carrito no se ha vaciado.",
+    "zh-Hans": "已保存的购物车中有一家店铺已不可用。您的购物车未被清空。"
+  },
+  "Store temporarily unavailable": {
+    "fr": "Commerce temporairement indisponible",
+    "es": "Tienda temporalmente no disponible",
+    "zh-Hans": "店铺暂时不可用"
+  },
+  " · Tap to retry": {
+    "fr": " · Appuyez pour réessayer",
+    "es": " · Toca para reintentar",
+    "zh-Hans": " · 点击重试"
+  },
+  "Choose delivery address": {
+    "fr": "Choisir l’adresse de livraison",
+    "es": "Elegir dirección de entrega",
+    "zh-Hans": "选择配送地址"
+  },
+  "Could not calculate the delivery fee. Please check your address.": {
+    "fr": "Impossible de calculer les frais de livraison. Vérifiez votre adresse.",
+    "es": "No se pudo calcular el costo de entrega. Revisa tu dirección.",
+    "zh-Hans": "无法计算配送费，请检查您的地址。"
+  },
+  "Calculating…": {
+    "fr": "Calcul en cours…",
+    "es": "Calculando…",
+    "zh-Hans": "正在计算…"
+  },
+  "Could not verify first-delivery eligibility.": {
+    "fr": "Impossible de vérifier votre admissibilité à l’offre de première livraison.",
+    "es": "No se pudo verificar si puedes acceder a la oferta de primera entrega.",
+    "zh-Hans": "无法核实您是否符合首次配送优惠条件。"
+  },
+  "Checking first-delivery offer…": {
+    "fr": "Vérification de l’offre de première livraison…",
+    "es": "Verificando la oferta de primera entrega…",
+    "zh-Hans": "正在核实首次配送优惠…"
+  },
+  "Could not calculate the delivery fee. Please try again.": {
+    "fr": "Impossible de calculer les frais de livraison. Veuillez réessayer.",
+    "es": "No se pudo calcular el costo de entrega. Vuelve a intentarlo.",
+    "zh-Hans": "无法计算配送费，请重试。"
+  },
+  "Sign in to verify your first-delivery offer.": {
+    "fr": "Connectez-vous pour vérifier votre offre de première livraison.",
+    "es": "Inicia sesión para verificar tu oferta de primera entrega.",
+    "zh-Hans": "请登录以核实您的首次配送优惠。"
+  },
+  "Unavailable — retry": {
+    "fr": "Indisponible — réessayer",
+    "es": "No disponible — reintentar",
+    "zh-Hans": "暂不可用，请重试"
+  },
+  "Your review is awaiting approval.": {
+    "fr": "Votre avis est en attente d’approbation.",
+    "es": "Tu reseña está pendiente de aprobación.",
+    "zh-Hans": "您的评价正在等待审核。"
   }
 }
