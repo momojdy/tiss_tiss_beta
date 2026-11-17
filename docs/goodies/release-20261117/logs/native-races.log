@@ -1,0 +1,17 @@
+PASS: PostgreSQL 17.6; full 17-migration package applied in a self-created socket-only temporary cluster.
+PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.
+PASS: concurrent distinct withdrawal requests cannot spend the same earnings.
+PASS: overlapping retries return one payout and create one wallet credit.
+PASS: concurrent commission retries create one debit and release the settled sales allowance.
+PASS: a stale group quote is rejected before the real synthetic Wallet is debited.
+PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.
+PASS: concurrent Shared Bill creation reserves the host 60% once and does not consume stock.
+PASS: concurrent contribution retries debit one payer once.
+PASS: competing final payers create one paid customer order and reserve stock once.
+PASS: simultaneous distinct contributions settle exactly the remaining 40%.
+PASS: cancellation racing a payment restores every payer without an orphan debit.
+PASS: overlapping cancellation retries credit each original payer exactly once.
+PASS: overlapping vendor rejection refunds the funded Shared Bill once and restores stock once.
+PASS: status polling crossing expiry waits for final funding and cannot refund a fulfilled order.
+All eight Shared Bill PostgreSQL races passed using synthetic Wallets only.
+All native PostgreSQL race tests passed; no production connection or real money was used.

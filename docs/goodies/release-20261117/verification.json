@@ -1,0 +1,128 @@
+{
+  "observedAt": "2026-11-17T06:57:20.818914+00:00",
+  "productionReady": false,
+  "productionDeploymentPerformed": false,
+  "verifiedSource": {
+    "customer": {
+      "verifiedSourceCommit": "dbb421dac5ec788d29564998249ecb3bee92aa82",
+      "mergedOriginMain": "2ff6f0836d9f835b75175a06cdb47e2c5ede688f",
+      "branch": "main",
+      "pushed": false
+    },
+    "admin": {
+      "verifiedSourceCommit": "be410637a3550ce056e9ac5a7f1ec4e9e23408a6",
+      "mergedOriginMain": "f5c0a14ad284e5ca8f37684ae6cb5c91491523b2",
+      "branch": "main",
+      "pushed": false
+    }
+  },
+  "PASS": {
+    "automatedTests": {
+      "total": 210,
+      "customer": 85,
+      "admin": 33,
+      "cross-role": 29,
+      "deno": 63,
+      "denoSteps": 43
+    },
+    "nativePostgresRaces": 13,
+    "staleGroupQuoteRejectedBeforeDebit": true,
+    "cmsCustomerRoutesRendered": 34,
+    "cmsSharedWalletContributionPreviewRenderedAndEdited": true,
+    "cmsInteractions": 14,
+    "registeredCmsFields": 1510,
+    "cmsPageAndSharedGroups": 67,
+    "literalNavigationTargets": 117,
+    "unknownLiteralNavigationTargets": 0,
+    "unhandledControlsInSource": 0,
+    "sourceControlEntries": 1549,
+    "sourceFiles": 130,
+    "comments": 405,
+    "rpcShapeAudit": {
+      "PASS": 151,
+      "FAIL": 0,
+      "NOT VERIFIED": 27
+    },
+    "typechecks": [
+      "customer",
+      "admin"
+    ],
+    "expoDoctor": "20/20",
+    "configuredLint": "passed",
+    "expandedLint": {
+      "errors": 0,
+      "warnings": 264
+    },
+    "clientSecretsScan": "passed; pattern scan only",
+    "expoExports": [
+      {
+        "role": "customer",
+        "platform": "android",
+        "status": "PASS",
+        "kind": "Expo bundle export, not a signed native build",
+        "metadataSha256": "d555d8d2da1ae18bca43532047315f20ec761326f78018000045eb0e573dcbcc"
+      },
+      {
+        "role": "customer",
+        "platform": "ios",
+        "status": "PASS",
+        "kind": "Expo bundle export, not a signed native build",
+        "metadataSha256": "62f418dc0f786b83680d86be0985d592128d41d0a6e9332a42ea476ba3b4f56d"
+      },
+      {
+        "role": "customer",
+        "platform": "web",
+        "status": "PASS",
+        "kind": "Expo bundle export, not a signed native build",
+        "metadataSha256": "aa5f19cc84d41c0f8c70ececb2bc82e863227ea1e121632aca879eb616056991"
+      },
+      {
+        "role": "admin",
+        "platform": "android",
+        "status": "PASS",
+        "kind": "Expo bundle export, not a signed native build",
+        "metadataSha256": "a66622429a2625b883c0a29597c1b31a6edb364aad760a79de44f3ef9415cec3"
+      },
+      {
+        "role": "admin",
+        "platform": "ios",
+        "status": "PASS",
+        "kind": "Expo bundle export, not a signed native build",
+        "metadataSha256": "d50952eb252665f28e3f447c5a4f82f1bbc27e17ce4838c6a4efe77bfef5996e"
+      }
+    ],
+    "preparedTranslationLocaleLookups": 6816,
+    "existingHaitianFieldsPreserved": 775,
+    "transactionalMigrationRollbackAndRetry": true,
+    "edgeFunctionTypecheck": {
+      "functions": 10,
+      "status": "PASS",
+      "evidence": "logs/edge-typecheck.log"
+    }
+  },
+  "FAIL": [
+    {
+      "requirement": "Publish the prepared content package",
+      "evidence": "Publication guard rejects five existing FAQ placeholder answers.",
+      "errors": [
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing.",
+        "Replace placeholder FAQ answers before publishing."
+      ]
+    }
+  ],
+  "NOT VERIFIED": [
+    "Hosted end-to-end ordering with approved customer/vendor/courier/admin/staff test accounts and approved test balances",
+    "Stripe/provider sandbox charges, authenticated webhook delivery and complete provider refund flows",
+    "Android Maps API key and application/signature restrictions; real Geoapify deployment configuration",
+    "Physical-device GPS/background location, offline recovery and notifications/push behavior",
+    "Signed Android/iOS builds and device installation",
+    "Hosted CMS edit/draft/publish/installed-customer-reload acceptance",
+    "Approved policy/support content and final production translation/content review; Haitian Creole remains human-owned and falls back to reviewed English",
+    "Production backup/PITR restore drill and approved migration/Edge Function/app rollout",
+    "Settlement activation, opening reconciliation and enabled external payout operations",
+    "Remote main push and GitHub CI for these local source commits"
+  ]
+}

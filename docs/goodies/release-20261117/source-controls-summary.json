@@ -1,0 +1,682 @@
+{
+  "scope": "Goodies and directly referenced shared infrastructure",
+  "uncompressedSha256": "4dd16ebda1a3b3fa53d2dc9ac891849dea8ca07b64c1d436d68b9bb9e7c9b080",
+  "fullInventory": "source-controls.json.gz",
+  "bySurface": {
+    "admin": 197,
+    "consumer": 426,
+    "courier": 7,
+    "isolated-admin-preview": 457,
+    "shared-card": 27,
+    "vendor": 435
+  },
+  "files": [
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesApp.tsx",
+      "surface": "consumer",
+      "commentCount": 12,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "surface": "courier",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesQuickMenu.tsx",
+      "surface": "consumer",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/accountCache.ts",
+      "surface": "consumer",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "surface": "consumer",
+      "commentCount": 17,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/builders/Builder.tsx",
+      "surface": "consumer",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/builders/engine.tsx",
+      "surface": "consumer",
+      "commentCount": 9,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/builders/pizzaArt.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/cacheRecovery.ts",
+      "surface": "consumer",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Icon.tsx",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Overlays.tsx",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "surface": "consumer",
+      "commentCount": 6,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/cards.tsx",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/ui.tsx",
+      "surface": "consumer",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/content.ts",
+      "surface": "consumer",
+      "commentCount": 9,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/data/orderStages.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/data/promoText.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/data/types.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/deliveryTracking.ts",
+      "surface": "consumer",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/friendlyError.ts",
+      "surface": "consumer",
+      "commentCount": 4,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+      "surface": "courier",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "surface": "consumer",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayRecovery.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/i18n/dict.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/i18n/index.ts",
+      "surface": "consumer",
+      "commentCount": 6,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/i18n/interfaceContent.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/i18n/resolveText.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/notifications.ts",
+      "surface": "consumer",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/orderReviews.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/reviews.ts",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "surface": "consumer",
+      "commentCount": 4,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Browse.tsx",
+      "surface": "consumer",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/CardAuthentication.tsx",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/HelpPay.tsx",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Payments.tsx",
+      "surface": "consumer",
+      "commentCount": 8,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Shop.tsx",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/serverSync.ts",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "surface": "consumer",
+      "commentCount": 33,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/theme.ts",
+      "surface": "consumer",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Goodies/goodiesHomeScreen.tsx",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "surface": "vendor",
+      "commentCount": 4,
+      "rawErrorCandidates": [
+        {
+          "line": 264,
+          "callee": "setLoadErr",
+          "expression": "setLoadErr(errText(e))",
+          "owner": "load"
+        },
+        {
+          "line": 302,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(x))",
+          "owner": "save"
+        },
+        {
+          "line": 320,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "captureStoreLocation"
+        },
+        {
+          "line": 338,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "saveStoreLocation"
+        },
+        {
+          "line": 362,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "chooseCover"
+        },
+        {
+          "line": 384,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "chooseThumbnail"
+        },
+        {
+          "line": 576,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(x))",
+          "owner": "save"
+        },
+        {
+          "line": 580,
+          "callee": "Alert.alert",
+          "expression": "Alert.alert('Delete this product?', 'Customers will no longer see it. Past orders are not affected.', [\n    { text: 'Cancel', style: 'cancel' },\n    { text: 'Delete', style: 'destructive', onPress: async () => { setBusy(true); try { await goodiesApi.deleteProduct(product.id); app.toast('Product deleted'); onSaved(); } catch (x) { app.toast(errText(x)); } finally { setBusy(false); } } },\n  ])",
+          "owner": "del"
+        },
+        {
+          "line": 582,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(x))",
+          "owner": "del"
+        },
+        {
+          "line": 643,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "toggle"
+        },
+        {
+          "line": 651,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "toggleCustom"
+        },
+        {
+          "line": 710,
+          "callee": "setLoadError",
+          "expression": "setLoadError(errText(e))",
+          "owner": "GoodiesBuilderEditPage"
+        },
+        {
+          "line": 730,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(error))",
+          "owner": "save"
+        },
+        {
+          "line": 839,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "send"
+        }
+      ]
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "surface": "vendor",
+      "commentCount": 0,
+      "rawErrorCandidates": [
+        {
+          "line": 226,
+          "callee": "app.toast",
+          "expression": "app.toast(e?.code==='P4201'||e?.code==='P4202'?errText(e):'Could not update this order. Refresh and try again.')",
+          "owner": "act"
+        }
+      ]
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "surface": "vendor",
+      "commentCount": 10,
+      "rawErrorCandidates": [
+        {
+          "line": 433,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "run"
+        }
+      ]
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "surface": "vendor",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "surface": "vendor",
+      "commentCount": 1,
+      "rawErrorCandidates": [
+        {
+          "line": 70,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "send"
+        },
+        {
+          "line": 119,
+          "callee": "app.toast",
+          "expression": "app.toast(errText(e))",
+          "owner": "NotificationsPage"
+        }
+      ]
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "surface": "vendor",
+      "commentCount": 4,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceActivityScreens.tsx",
+      "surface": "vendor",
+      "commentCount": 2,
+      "rawErrorCandidates": [
+        {
+          "line": 41,
+          "callee": "setErr",
+          "expression": "setErr(errText(e))",
+          "owner": "ActivityPage"
+        }
+      ]
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "surface": "vendor",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceHomeScreen.tsx",
+      "surface": "vendor",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "surface": "vendor",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/goodiesTemplates.ts",
+      "surface": "vendor",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+      "surface": "shared-card",
+      "commentCount": 4,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Wallet/WalletHelpPayScreen.tsx",
+      "surface": "shared-card",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesDeliveryProof.ts",
+      "surface": "consumer",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Main/mainAddressesScreen.tsx",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+      "surface": "vendor",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "surface": "shared-finance",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesWorkspace.ts",
+      "surface": "consumer",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "surface": "admin",
+      "commentCount": 0,
+      "rawErrorCandidates": [
+        {
+          "line": 126,
+          "callee": "Alert.alert",
+          "expression": "Alert.alert(resolution==='refund'?'Refund the customer':'Confirm delivery',\n      resolution==='refund'?'Cancel '+item.order_code+' and refund '+money(item.total)+' to the customer?':'Mark '+item.order_code+' as delivered and release it to the store?',[\n      {text:'Back',style:'cancel'},\n      {text:resolution==='refund'?'Refund':'Confirm',style:resolution==='refund'?'destructive':'default',onPress:()=>{void (async()=>{\n        setBusy(item.order_id);\n        const {error}=await goodiesRequest('goodies_admin_resolve_delivery_dispute',{p_order_id:item.order_id,p_resolution:resolution});\n        if(error){console.warn('Resolve report failed',error.message);toast('Could not save this decision. Please try again.');}\n        else{\n          const updated=await loadReports();\n          if(resolution==='release')toast('Order marked as delivered.');\n          else{\n            const latest=updated.find((r:any)=>r.order_id===item.order_id);\n            if(item.payment_method==='wallet')toast(latest?.payment_status==='refunded'?'Wallet refund completed.':'Refund decision saved. Check payment status.');\n            else if(item.payment_method==='card'){\n              if(latest?.payment_status==='refund_pending')toast('Card refund queued for processing.');\n              else if(latest?.payment_status==='refund_manual_review')toast('Card refund needs manual review.');\n              else if(latest?.payment_status==='refunded')toast('Card refund completed.');\n              else toast('Refund decision saved. Check payment status.');\n            }else toast('Refund decision saved.');\n          }\n        }\n        setBusy('');\n      })();}}\n    ])",
+          "owner": "resolveReport"
+        }
+      ]
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+      "surface": "admin",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "surface": "admin",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+      "surface": "admin",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/modules.ts",
+      "surface": "admin",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "surface": "admin",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+      "surface": "admin",
+      "commentCount": 11,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesEditor.tsx",
+      "surface": "admin",
+      "commentCount": 9,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "surface": "admin",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+      "surface": "admin",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/builderImages.ts",
+      "surface": "admin",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "surface": "admin",
+      "commentCount": 4,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/cmsAssetPagination.ts",
+      "surface": "admin",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/shell/NotificationsSheet.tsx",
+      "surface": "admin",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/state/access.ts",
+      "surface": "admin",
+      "commentCount": 12,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/state/people.ts",
+      "surface": "admin",
+      "commentCount": 3,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/overlays/PeopleDrawers.tsx",
+      "surface": "admin",
+      "commentCount": 2,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/finance/FinanceScreen.tsx",
+      "surface": "admin",
+      "commentCount": 0,
+      "rawErrorCandidates": []
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/goodiesDeliveryProof.ts",
+      "surface": "admin",
+      "commentCount": 1,
+      "rawErrorCandidates": []
+    }
+  ],
+  "rawErrorCandidateReview": "All 20 non-preview candidates use the tested errText sanitizer or contain nested safe error handling inside an Alert callback. Console diagnostics are not rendered customer messages.",
+  "runtime": "NOT VERIFIED unless linked to a named executed test; handler presence is not end-to-end acceptance."
+}

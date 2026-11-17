@@ -1,3 +1,5 @@
+> A newer verified implementation and release assessment is available in [the 17 November report](../release-20261117/README.md). This file is the archived 12 November snapshot; later Shared Bill, review-schema, CMS and cleanup results supersede its counts and exclusions.
+
 # Goodies implementation and release verification — 2026-11-13
 
 **NOT PRODUCTION-READY.** The candidate includes the repairs listed below and passes the available isolated checks. Hosted and physical acceptance remains incomplete. Nothing was deployed or published. Source commits are local on `main`; automatic approval review blocked the remote push because explicit default-branch push authorization was required.

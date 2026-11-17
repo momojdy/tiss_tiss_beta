@@ -1,0 +1,5 @@
+› Installing 1 other package using npm
+› Using ~58.0.20 instead of ~58.0.20 for expo-dev-client because this version was explicitly provided. Packages excluded from dependency validation should be listed in expo.install.exclude in package.json. Learn more: https://docs.expo.dev/more/expo-cli/#configuring-dependency-validation
+> npm install --legacy-peer-deps --ignore-scripts --no-audit --no-fund
+
+changed 2 packages in 2s

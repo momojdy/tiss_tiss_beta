@@ -1,0 +1,225 @@
+{
+  "scope": "File hashes for review/reproduction; no deployment or live financial data",
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 14800,
+      "sha256": "f18fe5e1d98b6185cb7c24e60e3279a08bb1acf0db1756b07f4d13d9c65d6b67"
+    },
+    {
+      "file": "cms-draft-preview.png",
+      "bytes": 95177,
+      "sha256": "b9860237809594ebd6e2395dc850f078e785201a361db6e0ea81efc8affe9660"
+    },
+    {
+      "file": "cms-interaction-results.json",
+      "bytes": 925,
+      "sha256": "9246217fe6005d9de8aa56911b995e105fce29cdf674a36bce32ee8a9d1e7dfc"
+    },
+    {
+      "file": "cms-route-results.json",
+      "bytes": 37270,
+      "sha256": "a599f271738749fb443d0066a7785a8debe0ff00a64ce3c73f38b2033a928ff1"
+    },
+    {
+      "file": "commits-and-files.json",
+      "bytes": 93402,
+      "sha256": "8107a4baf07ee8ba8a066781042e24bbc769cf9c3a5791ee0bf14d6131feed76"
+    },
+    {
+      "file": "live-baseline.json",
+      "bytes": 188,
+      "sha256": "fbe45165a5504eea4cd60a49efa1d2408cba51c717a831ba1b2f6a77e0324bd2"
+    },
+    {
+      "file": "live-contract-catalog.json",
+      "bytes": 113303,
+      "sha256": "db628fb874dc0c1340a58ba97d0058d5d93fcf60501b0cbf646c3f0b255a1113"
+    },
+    {
+      "file": "live-security-advisors.json",
+      "bytes": 72645,
+      "sha256": "ccad16a56d257e6924cd3069dca5818a16c3338ec5adadf4e07b05f34c0acd4c"
+    },
+    {
+      "file": "logs/admin-android-export.log",
+      "bytes": 3726,
+      "sha256": "57597cbecfa7f19a546ca247609f6a1b697733fdaf120bfa00e9c4d9f1a6ec74"
+    },
+    {
+      "file": "logs/admin-ios-export.log",
+      "bytes": 3710,
+      "sha256": "14950e67914aa87e146a6bf0c90893838e6bed81772b746e49d6b08b0ae45a46"
+    },
+    {
+      "file": "logs/admin-tests.log",
+      "bytes": 4010,
+      "sha256": "e5fe8a1c25c12f70c6706aa6f2fe3de77ff895a0900bca2983b3da96b97c86b5"
+    },
+    {
+      "file": "logs/admin-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "logs/cms-check.log",
+      "bytes": 334,
+      "sha256": "b86f89fb32937d7ed893f8856a439739b15bbc6b264ec3c140c2ec7dc7273380"
+    },
+    {
+      "file": "logs/cms-sync.log",
+      "bytes": 295,
+      "sha256": "d8723f6ce9d66daf900c4eea0d9aeb4d544124df1bb703a68372ac7b51edb7e2"
+    },
+    {
+      "file": "logs/configured-lint.log",
+      "bytes": 117,
+      "sha256": "88bef2300a0f8e4ecc0c0f452bb9f3e59d9be7af4729956d8afe781ca3b94e7b"
+    },
+    {
+      "file": "logs/cross-role-tests.log",
+      "bytes": 2945,
+      "sha256": "584176e730cd9076e90ddb7f71a2242c80477978018a3a5a0c5dd802781f0a2a"
+    },
+    {
+      "file": "logs/customer-android-export.log",
+      "bytes": 8351,
+      "sha256": "906385012419def7cc9fa4e74956b140b7da5932744ff9cddbdb4d4ddceed11a"
+    },
+    {
+      "file": "logs/customer-ios-export.log",
+      "bytes": 8335,
+      "sha256": "62ebb5fa41c286d7cba0863939e0b73a7bdd613fae7626ee8e6a7818b1f7991a"
+    },
+    {
+      "file": "logs/customer-tests.log",
+      "bytes": 10670,
+      "sha256": "6530c38bd24f258e8f2dea3774eb3073cb7bcd18ee8676f7fa7578d9c1a7ab00"
+    },
+    {
+      "file": "logs/customer-typecheck.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "logs/customer-web-export.log",
+      "bytes": 11410,
+      "sha256": "b0d39ccd2c7329f6fb5eb7061939490312f5ba6f51d794751ba90293003b2b8d"
+    },
+    {
+      "file": "logs/deno-tests.log",
+      "bytes": 19004,
+      "sha256": "1f5ab58783a54bcb898b901b1edf9595e68ccc7a2190900efdd0767048d720bd"
+    },
+    {
+      "file": "logs/edge-typecheck.log",
+      "bytes": 564,
+      "sha256": "e1d45182d6c758b381e1cd2785204de11f14d015f24e26abf9491a2cc4d04d03"
+    },
+    {
+      "file": "logs/expanded-lint.log",
+      "bytes": 502778,
+      "sha256": "6e338e8819cbb4b6ffdc99663a789e4da3f0ff1c803d449b27e5d974939269e3"
+    },
+    {
+      "file": "logs/expo-dev-client-upgrade.log",
+      "bytes": 429,
+      "sha256": "211d71904895c008e94561e2dee0639c885d5367f7a4d10c91106893bedf3da6"
+    },
+    {
+      "file": "logs/expo-doctor.log",
+      "bytes": 170,
+      "sha256": "1751f1e95a13f2d79065e1df87604038e06682fdee746fe8fdddb0c94e31fa5f"
+    },
+    {
+      "file": "logs/live-compatible-tests.log",
+      "bytes": 3284,
+      "sha256": "adf75f11655cfe0df59849a013cd64eac608c87830e2d7f09e1dc51f349577e1"
+    },
+    {
+      "file": "logs/migration-check.log",
+      "bytes": 123,
+      "sha256": "c40c136ea509cf2d6568993ef84a9cbf20fe4cd8b9bb5caf69f4a94c2595af9c"
+    },
+    {
+      "file": "logs/native-config.log",
+      "bytes": 81,
+      "sha256": "55b9593d7a91deeb06ffcf4abc2ee4ac4d52be1c83fe265c53f8d049fb43320c"
+    },
+    {
+      "file": "logs/native-races.log",
+      "bytes": 1468,
+      "sha256": "8542345d164ec08a4e77281f28cdb209367aa6d88344e8c5aea89f2c3ff6d30d"
+    },
+    {
+      "file": "logs/preview-build.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "logs/preview-interactions.log",
+      "bytes": 795,
+      "sha256": "39fcab38abc261e175421d1b3cc79c0fc6f7e4549fae71f417bf125e0b308d6b"
+    },
+    {
+      "file": "logs/preview-routes.log",
+      "bytes": 430,
+      "sha256": "3c43be040f8e34795ea5aba9c5fce43caf67f68df0fc5eddeec442d2b4cc2b8a"
+    },
+    {
+      "file": "logs/secrets-check.log",
+      "bytes": 294,
+      "sha256": "519768f3c95f978e80a08c059fe9e69fe5db9014bda16fc5403aa9f0a1a53467"
+    },
+    {
+      "file": "logs/translations-prepare.log",
+      "bytes": 60,
+      "sha256": "276d763b245f0325318e5f747145b6e081ba3c74b7ee0149a9ff96e9ba2e6dff"
+    },
+    {
+      "file": "logs/translations-verify.log",
+      "bytes": 465,
+      "sha256": "f43c484c9e93f084856daefb2e69b210743811e42e6b8577481c962deb762be5"
+    },
+    {
+      "file": "migration-package.json",
+      "bytes": 4253,
+      "sha256": "3a78f7519f47bfe4f00a246559e0cdafc3c5f310a253561b59d29dfbfb0c4798"
+    },
+    {
+      "file": "navigation.json",
+      "bytes": 155,
+      "sha256": "6babf3e0355938e1c72f6a0eeb3a753b6b2be6473cd4f215685dd9dfeadcd8ad"
+    },
+    {
+      "file": "reachability.json",
+      "bytes": 62854,
+      "sha256": "d42b9d55881f9735b8a29d845dd5e62a3b91a607d2a8a88986e2576d312016c7"
+    },
+    {
+      "file": "rpc-contract-audit.json",
+      "bytes": 89091,
+      "sha256": "22e72ff5da13a8209d94c20cf0477a1468137f3a3fcc449d2f59518279f77ee8"
+    },
+    {
+      "file": "screen-verification.json",
+      "bytes": 70248,
+      "sha256": "28051adb0b3f5fb6076ee8a32209c14f8a0017b9583817deaef903c241a863de"
+    },
+    {
+      "file": "source-controls-summary.json",
+      "bytes": 21137,
+      "sha256": "368dac725036919740180e9c57d6070db493d9f946f8c43dfd27909f4f4df819"
+    },
+    {
+      "file": "source-controls.json.gz",
+      "bytes": 836399,
+      "sha256": "3820451ae63080e688c28b476939064dd62e405466774d1fdd80fe934670b393"
+    },
+    {
+      "file": "verification.json",
+      "bytes": 4644,
+      "sha256": "ccf4144173a549fed16f760d91310ed5a18b750e9913c8af1d4ac800f8e4b8e2"
+    }
+  ]
+}

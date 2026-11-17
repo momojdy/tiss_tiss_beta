@@ -1,0 +1,6 @@
+
+> tiss_tiss_beta@1.10.0 sync:goodies-cms
+> node scripts/sync-goodies-cms-catalog.cjs && node scripts/sync-goodies-preview.cjs
+
+1510 fields, 67 page/shared groups, 34 routes; no publication.
+Mirrored customer group/card components, UI primitives and overlays; instrumented exact CMS identities.

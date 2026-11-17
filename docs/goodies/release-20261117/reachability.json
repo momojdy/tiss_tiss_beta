@@ -1,0 +1,1530 @@
+{
+  "generatedAt": "2026-11-17T06:52:11.732Z",
+  "scope": "Literal imports, exports and require/dynamic-import paths reachable from each actual application entry; no hosted runtime claim",
+  "repositories": [
+    {
+      "repository": "tiss_tiss_beta",
+      "entry": "index.ts",
+      "reachableSourceFiles": 480,
+      "scoped": [
+        {
+          "path": "src/features/Goodies/GoodiesApp.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/GoodiesQuickMenu.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/accountCache.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/actions.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/builders/Builder.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/builders/engine.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/builders/pizzaArt.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/cacheRecovery.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/components/Icon.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/components/Overlays.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/components/Sheets.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/components/cards.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/components/ui.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/content.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/data/orderStages.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/data/promoText.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/data/types.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/deliveryTracking.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/friendlyError.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/helpPayApi.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/helpPayRecovery.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/i18n/dict.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/i18n/index.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/i18n/interfaceContent.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/i18n/resolveText.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/notifications.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/orderReviews.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/reviews.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/Account.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/Browse.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/CardAuthentication.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/HelpPay.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/Payments.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/screens/Shop.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/serverSync.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/store.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/Goodies/theme.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/Goodies/goodiesHomeScreen.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/Wallet/WalletHelpPayScreen.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/screens/businessSpace/goodiesTemplates.ts",
+          "reachable": true
+        }
+      ],
+      "graph": [
+        {
+          "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+          "sha256": "ff27d90bb462a74656377338b17acc53906c3aaebe0c6b0ea9d049bb8287f1c9",
+          "imports": [
+            "src/lib/supabase.ts",
+            "src/features/Goodies/deliveryTracking.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/deliveryTracking.ts",
+          "sha256": "ffb0f3ad2aac9603dcd5d93e1997fe58c47ea09cc716a681d029e9ea15bcf796",
+          "imports": []
+        },
+        {
+          "path": "src/screens/Wallet/WalletHelpPayScreen.tsx",
+          "sha256": "f3882968b614a5c9fa1b28ac75941e0bd93ca63d6f9468826db5ecc131848a34",
+          "imports": [
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/content.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/helpPayApi.ts",
+            "src/features/Goodies/helpPayRecovery.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/helpPayApi.ts",
+          "sha256": "d10796dec56e3d3dda9558dcbd7b83f8528d6fff3c5673ca40c3d0942e7c81cb",
+          "imports": [
+            "src/lib/supabase.ts"
+          ]
+        },
+        {
+          "path": "src/screens/Goodies/goodiesHomeScreen.tsx",
+          "sha256": "523ea9bb3ebe977be13b419e94614c61474f41a7a17e9701fb73c7b2ee91a35f",
+          "imports": [
+            "src/features/Goodies/GoodiesApp.tsx",
+            "src/features/Goodies/GoodiesQuickMenu.tsx"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+          "sha256": "1d223b19af73f13fbe5f0b8a73fc9dcc4aa5d9e4b6023e19114aaa713c8a5d5d",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/store.ts",
+            "src/lib/locales.ts",
+            "src/features/Goodies/friendlyError.ts",
+            "src/features/Goodies/deliveryTracking.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/actions.ts",
+          "sha256": "d6d9c32f809e9ba618e239dd7df4699beb96b3a95572c108cbbd620a4b83cb94",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/friendlyError.ts",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/helpPayRecovery.ts",
+            "src/features/Goodies/helpPayApi.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/content.ts",
+          "sha256": "f4e50e7af6221495dc3b13b85274d2357619abb5854a79ba6985f9098a45d2e9",
+          "imports": [
+            "src/lib/wantissCms.ts",
+            "src/features/Goodies/i18n/interfaceContent.ts",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/data/types.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/store.ts",
+          "sha256": "a1581822a2a196bc7d532524ab03bc4b5f3fa9fb14cfd2bec929b123218b907c",
+          "imports": [
+            "src/features/Goodies/cacheRecovery.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/data/types.ts",
+            "src/features/Goodies/data/orderStages.ts",
+            "src/features/Goodies/friendlyError.ts",
+            "src/features/Goodies/accountCache.ts",
+            "src/lib/locales.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/components/Icon.tsx",
+          "sha256": "76efc4df504b8651474713ef9d7af3ad6939769bf2ac285292256cf2abe630d5",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/notifications.ts",
+          "sha256": "cdd3652069aef29983f930252cb28a7ebb6ce7bd81e2cbb32cefecdc19812f3e",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/helpPayRecovery.ts",
+          "sha256": "2f72e60b019a890ed441ade5e60593053acb73a4007f1f9b69d7d0552f5ac29a",
+          "imports": [
+            "src/lib/supabase.ts",
+            "src/features/Goodies/helpPayApi.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/GoodiesApp.tsx",
+          "sha256": "f8ca1ae8de621beaae2b8e3baf0379dcd9dada8ec5958bc1b842948f2ceb2e5e",
+          "imports": [
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/serverSync.ts",
+            "src/features/Goodies/screens/Browse.tsx",
+            "src/features/Goodies/screens/Shop.tsx",
+            "src/features/Goodies/screens/Account.tsx",
+            "src/features/Goodies/components/Sheets.tsx",
+            "src/screens/Wallet/WalletAddNewCardScreen.tsx",
+            "src/features/Goodies/screens/CardAuthentication.tsx",
+            "src/features/Goodies/screens/HelpPay.tsx",
+            "src/features/Goodies/builders/Builder.tsx",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/theme.ts",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/GoodiesQuickMenu.tsx"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/GoodiesQuickMenu.tsx",
+          "sha256": "5f776bd3bffa59c72b5d1d472d66b11f7024f8150d26cd3c437cce571752c18c",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/features/gatherz/GatherzQuickMenu.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/lib/supabase.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/friendlyError.ts",
+          "sha256": "eb928d87bc616bf65bf95f625f7fa4c28485e22df2fd6cca8f7faabab609225f",
+          "imports": [
+            "src/features/Goodies/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/i18n/interfaceContent.ts",
+          "sha256": "6cd44a51eaaee35094b67031668782cdf1b4c964683cc9d5ad298c1c6fc73a28",
+          "imports": [
+            "src/features/Goodies/data/types.ts",
+            "src/features/Goodies/i18n/resolveText.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/i18n/index.ts",
+          "sha256": "de4e4f10c6876a0b87c7d79cd0ec359c64e699f9b93a3d5cdb7abd2b2646e632",
+          "imports": [
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/data/types.ts",
+            "src/features/Goodies/i18n/interfaceContent.ts",
+            "src/features/Goodies/i18n/dict.ts",
+            "src/features/Goodies/i18n/resolveText.ts",
+            "src/lib/locales.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/data/types.ts",
+          "sha256": "ee1fd37ba078447a0fad9ebf073ea5869a2020303111736200c8765596ad96d7",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/cacheRecovery.ts",
+          "sha256": "3b05b17b36d39e9d911a6bd801315075b38646d99936249c4a4db92c7d80a850",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/data/orderStages.ts",
+          "sha256": "fb645eb0aa3926394461d35dcf1d8206a62dedd1a2232ac53f7358fb3dc06c24",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/accountCache.ts",
+          "sha256": "00a207e1a2617e7945fd5dea31d8b0fc81da609d6b5f37ce1f8aec8df2b63e4e",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/components/ui.tsx",
+          "sha256": "119e2df368220ada6f3b397cb9f56edd2375672ac11018174470e697fa274a3b",
+          "imports": [
+            "src/features/Goodies/theme.ts",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/serverSync.ts",
+          "sha256": "ee5ea9ed53edf65a8f7c539dff2892af2d6f92b89ac786519a57c0c07b7d1ed3",
+          "imports": [
+            "src/features/Goodies/orderReviews.ts",
+            "src/lib/locales.ts",
+            "src/features/Goodies/notifications.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/store.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/Browse.tsx",
+          "sha256": "a743dd2e0e5530f87cc87b03b5d15ff1cfc117aad7977ba1c947f0990f682f54",
+          "imports": [
+            "src/features/Goodies/notifications.ts",
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/components/cards.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/serverSync.ts",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/theme.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/Shop.tsx",
+          "sha256": "cbe8542b7e70dff4701760b617748575a976ec4c34d69196fdc407cb8b17dba9",
+          "imports": [
+            "src/features/Goodies/helpPayApi.ts",
+            "src/features/Goodies/friendlyError.ts",
+            "src/features/Goodies/serverSync.ts",
+            "src/features/Goodies/reviews.ts",
+            "src/features/Goodies/deliveryTracking.ts",
+            "src/services/goodiesDeliveryProof.ts",
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/components/cards.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/components/Sheets.tsx",
+            "src/features/Goodies/i18n/index.ts",
+            "src/lib/supabase.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/Account.tsx",
+          "sha256": "1ffe3db707f831a291f61e65fefb5e65094b809f4479839778b970a56e2ee1aa",
+          "imports": [
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/screens/Browse.tsx",
+            "src/features/Goodies/screens/Payments.tsx",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/components/Sheets.tsx",
+          "sha256": "c96176c29340e5fe4b9774017909319674789d682262394757437b7bcb13c32d",
+          "imports": [
+            "src/features/Goodies/reviews.ts",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/data/promoText.ts",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/components/Overlays.tsx",
+            "src/features/Goodies/friendlyError.ts",
+            "src/features/Goodies/serverSync.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/CardAuthentication.tsx",
+          "sha256": "dd1e09e0acfc87ade16644ee4191a51840e7fe035c95375bdc6935bae76b5e90",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/components/ui.tsx"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/HelpPay.tsx",
+          "sha256": "52d628c8f629f296089e339b7ccf7ffca3ad4629915d85e503f925e293bb4b95",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/serverSync.ts",
+            "src/features/Goodies/actions.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/helpPayApi.ts",
+            "src/features/Goodies/helpPayRecovery.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/builders/Builder.tsx",
+          "sha256": "a139b5af5c06ec04374510afe1fd2a08b1a6832d82a2e876fd273595675529c7",
+          "imports": [
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/builders/pizzaArt.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/builders/engine.tsx",
+          "sha256": "8819222d16ad2f333668c74f3eea10c8e0a6264f494fd370e2b2cab6276a1497",
+          "imports": [
+            "src/lib/supabase.ts",
+            "src/lib/wantissCms.ts",
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/components/ui.tsx"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/theme.ts",
+          "sha256": "ba5f334f32000923d74bbeac26853d2fadff7d1f22c59aa4c9109d569f9a5578",
+          "imports": []
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+          "sha256": "8c4d966abf1274076a39da24c3a9f5a9cbc26f354ec12d4513b52b2ff245b36e",
+          "imports": [
+            "src/lib/supabase.ts",
+            "src/screens/businessSpace/BusinessSpaceShared.tsx",
+            "src/screens/businessSpace/goodiesTemplates.ts",
+            "src/lib/wantissCms.ts"
+          ]
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+          "sha256": "9da12d38f91e03536ff434c50fce5886fd005fa315c976a8f3e0d757b1dc97c5",
+          "imports": [
+            "src/services/goodiesSettlement.ts",
+            "src/features/Goodies/content.ts",
+            "src/lib/supabase.ts",
+            "src/services/goodiesDeliveryProof.ts",
+            "src/screens/businessSpace/BusinessSpaceShared.tsx"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/i18n/resolveText.ts",
+          "sha256": "0de2ce224c7ee01d33eec9f72ce49288a34e007db6e580c5d7fe24812f9562a8",
+          "imports": [
+            "src/features/Goodies/data/types.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/i18n/dict.ts",
+          "sha256": "7fdff4a1da4f8dcfbd9ce7d6d67079fa4a9548ffb58b9fee5bfe710897b7081c",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/orderReviews.ts",
+          "sha256": "2adb3af728e05316c4d1a5254412142c8a03ac57b6a322e62e6129c2b870b0d5",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/components/cards.tsx",
+          "sha256": "6327a7ec2703c01dc37d03caa64cafc128886086254c7f778b6d0ef7541c28e0",
+          "imports": [
+            "src/features/Goodies/components/Icon.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/data/types.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/builders/engine.tsx",
+            "src/features/Goodies/i18n/index.ts",
+            "src/features/Goodies/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/reviews.ts",
+          "sha256": "d0d7abf3b27396dd37a976fd76f5118e6e55ff08a3a1189a4c3b53560e97cb0a",
+          "imports": [
+            "src/lib/supabase.ts",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/screens/Payments.tsx",
+          "sha256": "4fd791b79edd4d8face4908dd52cd559cb35e912ebabd264d44491b61a3f4801",
+          "imports": [
+            "src/features/Goodies/components/Icon.tsx",
+            "src/components/wallet/WalletBalance.tsx",
+            "src/features/Goodies/components/ui.tsx",
+            "src/features/Goodies/store.ts",
+            "src/features/Goodies/actions.ts",
+            "src/features/Goodies/content.ts",
+            "src/lib/supabase.ts",
+            "src/features/Goodies/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/data/promoText.ts",
+          "sha256": "8bb794bf3908447d580fcc947108bf0648663fbc38c6f715ceaf8f5fff6c919a",
+          "imports": []
+        },
+        {
+          "path": "src/features/Goodies/components/Overlays.tsx",
+          "sha256": "8034ca850578fc8a4c2da09c6264d09eb4c4ec51455b9ac63781cdccd3c11060",
+          "imports": [
+            "src/features/Goodies/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/Goodies/builders/pizzaArt.ts",
+          "sha256": "e360aeed5962642e27f21f4adb533b757b25a811f78c60bbe1d3c75ded956af8",
+          "imports": []
+        },
+        {
+          "path": "src/screens/businessSpace/goodiesTemplates.ts",
+          "sha256": "10d1d7d2574098233660e300714d4d0e7bbb7c1688bf2368359accea350cd265",
+          "imports": []
+        },
+        {
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx",
+          "sha256": "d653dcb2a82ec18a99d565f832a7f8342442f23485d5254420e53a9f0000fc43",
+          "imports": [
+            "src/features/Goodies/content.ts",
+            "src/features/Goodies/i18n/resolveText.ts",
+            "src/lib/locales.ts",
+            "src/services/goodiesSettlement.ts",
+            "src/screens/businessSpace/BusinessSpaceShared.tsx"
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "tiss-admin",
+      "entry": "index.ts",
+      "reachableSourceFiles": 149,
+      "scoped": [
+        {
+          "path": "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/GoodiesApp.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/GoodiesQuickMenu.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/accountCache.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/actions.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/Builder.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/engine.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/pizzaArt.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/cacheRecovery.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Icon.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Overlays.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/cards.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/ui.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/content.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/contentEditing.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/defaultPromos.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/orderStages.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/promoText.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/types.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/deliveryTracking.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/draft.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/draftCategories.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/editContext.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/friendlyError.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/helpPayApi.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/helpPayRecovery.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/dict.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/index.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/notifications.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/orderReviews.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewBuilderTemplates.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewBuilders.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewLocales.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewMenu.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewNative.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewRuntime.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/publicationReview.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/reviews.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Account.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/AddCard.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/CardAuthentication.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/HelpPay.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/WalletBalance.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/WalletHelpPay.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/serverSync.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/store.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/theme.ts",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesEditor.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+          "reachable": true
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+          "reachable": true
+        }
+      ],
+      "graph": [
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+          "sha256": "95d0b78c7d75fbe55376ab4d267c366de5ae448f8bf3be079ae809ca0a7fbaab",
+          "imports": [
+            "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+            "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+            "src/features/admin/state/db.ts",
+            "src/features/admin/state/access.ts",
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/shell/Nav.tsx",
+            "src/features/admin/ui/Toast.tsx",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+            "src/features/admin/lib/goodiesDeliveryProof.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+          "sha256": "97fdc23e1ab3b8fe02501d72a85a14ec42f1be31f8cd9d0ad710bb6694d2cafb",
+          "imports": [
+            "src/features/admin/state/access.ts",
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/lib/adminBackend.ts",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/ui/Card.tsx",
+            "src/features/admin/ui/Controls.tsx",
+            "src/features/admin/ui/Txt.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+          "sha256": "0265c380e80648547cec81e460c9ce1202385485e98dafa95a61bedd8c88941c",
+          "imports": [
+            "src/features/admin/state/access.ts",
+            "src/features/admin/state/db.ts",
+            "src/features/admin/lib/supabase.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+          "sha256": "5bc414728b281fb6b5b0c00e7af4d351c562685219c1d7e0db1042303d52cafd",
+          "imports": [
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/state/db.ts",
+            "src/features/admin/state/access.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/goodies/GoodiesAssetLibrary.tsx",
+          "sha256": "bc11604fd7d54fe49533b8fe28b6bd3ac6c7ddf5df608e03bc48dc24739d5c8d",
+          "imports": [
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/lib/adminBackend.ts",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/ui/Card.tsx",
+            "src/features/admin/ui/Controls.tsx",
+            "src/features/admin/ui/Txt.tsx",
+            "src/features/admin/goodiesConsumer/draft.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesEditor.tsx",
+          "sha256": "4f738119d14f66a0bfd4e8c527ae21084e21aea983f434f5bec63482c5577b14",
+          "imports": [
+            "src/features/admin/goodiesConsumer/publicationReview.ts",
+            "src/features/admin/goodiesConsumer/contentEditing.ts",
+            "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/lib/adminBackend.ts",
+            "src/features/admin/lib/wantissCms.ts",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/lib/clone.ts",
+            "src/features/admin/ui/Card.tsx",
+            "src/features/admin/ui/Controls.tsx",
+            "src/features/admin/ui/Txt.tsx",
+            "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+            "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+            "src/features/admin/goodiesConsumer/editContext.tsx",
+            "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+            "src/features/admin/screens/content/builderImages.ts",
+            "src/features/admin/screens/content/PromoColorPicker.tsx",
+            "src/features/admin/screens/content/CollapsibleColorField.tsx",
+            "src/features/admin/goodiesConsumer/draft.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/draft.ts",
+          "sha256": "c75a5a386bcdca2b06f4b34c5f25df3e281658218a2f5e1b2fd82c53f66b3b31",
+          "imports": [
+            "src/features/admin/goodiesConsumer/draftCategories.ts",
+            "src/features/admin/goodiesConsumer/data/defaultPromos.ts",
+            "src/features/admin/lib/clone.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/contentEditing.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/publicationReview.ts",
+          "sha256": "bf583bf9d667c54e71f157237ab65ce85edeb020cacc5ed3b4934f12770c3e32",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/contentEditing.ts",
+          "sha256": "a72ef89c3ce0ae8961679b0d10dd2dff9f83fef62ebe3e2998f1fb2cece1da10",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesPageContentFields.tsx",
+          "sha256": "29cd714804006106b57c74888a0c5933baebdc5aaf3d97d3e29490ae4efd92ec",
+          "imports": [
+            "src/features/admin/ui/Card.tsx",
+            "src/features/admin/ui/Txt.tsx",
+            "src/features/admin/ui/Controls.tsx",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/goodiesConsumer/contentEditing.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesConsumerPreview.tsx",
+          "sha256": "32b7eac7103c5854859b1c0b55ef728a05ffad3fed15dad2ecd6cd4917e3c03a",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/screens/WalletHelpPay.tsx",
+            "src/features/admin/goodiesConsumer/GoodiesApp.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/previewBuilders.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/draft.ts",
+            "src/features/admin/goodiesConsumer/editContext.tsx",
+            "src/features/admin/screens/content/PhoneFrame.tsx",
+            "src/features/admin/goodiesConsumer/i18n/index.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+          "sha256": "780107368670a6160cf2dda5cde7716560ca89bfea7cec70b7c77fe9244bead8",
+          "imports": [
+            "src/features/admin/state/access.ts",
+            "src/features/admin/screens/content/CollapsibleColorField.tsx",
+            "src/features/admin/lib/supabase.ts",
+            "src/features/admin/theme/ThemeContext.tsx",
+            "src/features/admin/ui/Card.tsx",
+            "src/features/admin/ui/Controls.tsx",
+            "src/features/admin/ui/Txt.tsx",
+            "src/features/admin/screens/content/PromoColorPicker.tsx",
+            "src/features/admin/screens/content/builderImages.ts",
+            "src/features/admin/goodiesConsumer/editContext.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/editContext.tsx",
+          "sha256": "5a99adf58c45dda1efb17f7ac65ff4b5bcbb48c93805dd40e4d74f06c09edbc5",
+          "imports": [
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/draftCategories.ts",
+          "sha256": "f4f75d447d33071229eda91f32c262a1eae4405be46b6a0aafde454d3707ad26",
+          "imports": [
+            "src/features/admin/goodiesConsumer/data/types.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/defaultPromos.ts",
+          "sha256": "87ec261cce2b0fcf303921c22804d0682bcf6c8788606239d2efbf61fc57c592",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/index.ts",
+          "sha256": "d0c2a250a0cb9feaf2cc1869a2878e6de787f5238d68eaf2a0ca3c7aed3b6ca7",
+          "imports": [
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/data/types.ts",
+            "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+            "src/features/admin/goodiesConsumer/i18n/dict.ts",
+            "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+            "src/features/admin/goodiesConsumer/previewLocales.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewRuntime.ts",
+          "sha256": "f5e672772a311b3ce036847422903caec929b5b2f31315c6f36ba8cdf2079d85",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/WalletHelpPay.tsx",
+          "sha256": "0ff06039ac86efa69b2ec595d51be94c795562123156a6adfb981d424ccaf55c",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/helpPayApi.ts",
+            "src/features/admin/goodiesConsumer/helpPayRecovery.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/GoodiesApp.tsx",
+          "sha256": "97683f24d828d7ea10615aaaebbafc27a3b476ea50badb9200960f6d8ec5a388",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/serverSync.ts",
+            "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+            "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+            "src/features/admin/goodiesConsumer/screens/Account.tsx",
+            "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+            "src/features/admin/goodiesConsumer/screens/AddCard.tsx",
+            "src/features/admin/goodiesConsumer/screens/CardAuthentication.tsx",
+            "src/features/admin/goodiesConsumer/screens/HelpPay.tsx",
+            "src/features/admin/goodiesConsumer/builders/Builder.tsx",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/theme.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/GoodiesQuickMenu.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/store.ts",
+          "sha256": "ad40046a75a6d84941d8d9729e8b32db6ad0de858a3d9f73afba9506800ee096",
+          "imports": [
+            "src/features/admin/goodiesConsumer/cacheRecovery.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/data/types.ts",
+            "src/features/admin/goodiesConsumer/data/orderStages.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts",
+            "src/features/admin/goodiesConsumer/accountCache.ts",
+            "src/features/admin/goodiesConsumer/previewLocales.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/engine.tsx",
+          "sha256": "9438d5c5c9fdadafabfe99e430934a2a8eb92c23b6740797abc846b497545d34",
+          "imports": [
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/components/ui.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewBuilders.ts",
+          "sha256": "d084d8d65591b37913bf13b5db95b045abf5b1c82da51d00fdfd734f7a7e7b86",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewBuilderTemplates.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/content.ts",
+          "sha256": "dba6bb17d5e123921331b9696a056249bbe04920e5113a1d61ca83056eb9d80a",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/data/types.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/types.ts",
+          "sha256": "ee1fd37ba078447a0fad9ebf073ea5869a2020303111736200c8765596ad96d7",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/interfaceContent.ts",
+          "sha256": "6cd44a51eaaee35094b67031668782cdf1b4c964683cc9d5ad298c1c6fc73a28",
+          "imports": [
+            "src/features/admin/goodiesConsumer/data/types.ts",
+            "src/features/admin/goodiesConsumer/i18n/resolveText.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/dict.ts",
+          "sha256": "7fdff4a1da4f8dcfbd9ce7d6d67079fa4a9548ffb58b9fee5bfe710897b7081c",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/i18n/resolveText.ts",
+          "sha256": "0de2ce224c7ee01d33eec9f72ce49288a34e007db6e580c5d7fe24812f9562a8",
+          "imports": [
+            "src/features/admin/goodiesConsumer/data/types.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewLocales.ts",
+          "sha256": "acddb11edb64c1febf46297ac322ea2385b1974ce62bd929d2ec7bb825a26e32",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+          "sha256": "1502c0769fd678cc2871bba4f41746fa4f9422957f5d6c2762d1877da5f35193",
+          "imports": [
+            "src/features/admin/goodiesConsumer/editContext.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/helpPayApi.ts",
+          "sha256": "4e88f4a81018c504f0102e6a90b3c0475a2864328ed992835a03152e0646c24b",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewRuntime.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/helpPayRecovery.ts",
+          "sha256": "995efadbed554c359300fd548714648b57e0537502c15084e3e6b1efb841c10b",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/helpPayApi.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewNative.tsx",
+          "sha256": "c51d92ff01118110d11f973f5de9b570c18bba2fb5729e6ce478ddbf7ed454c8",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Icon.tsx",
+          "sha256": "76efc4df504b8651474713ef9d7af3ad6939769bf2ac285292256cf2abe630d5",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/ui.tsx",
+          "sha256": "b59c73849aaf4d35bc67379e51926a4e33fedee2120b48ce06424ce9eaa3d2f6",
+          "imports": [
+            "src/features/admin/goodiesConsumer/editContext.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/theme.ts",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/actions.ts",
+          "sha256": "cd6fb40895106596ce0207fb51ec7dfec7951f3d93957f3ba78b975360110686",
+          "imports": [
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/helpPayRecovery.ts",
+            "src/features/admin/goodiesConsumer/helpPayApi.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/serverSync.ts",
+          "sha256": "a952caf2ab7fd2b6246f8403ebe79da16ba43bf2944edc4a4befeb89083f8162",
+          "imports": [
+            "src/features/admin/goodiesConsumer/orderReviews.ts",
+            "src/features/admin/goodiesConsumer/previewLocales.ts",
+            "src/features/admin/goodiesConsumer/notifications.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/store.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+          "sha256": "15566d3e57012886e9aa521be4e5abe73287829f11417edac732c234a8be4d5a",
+          "imports": [
+            "src/features/admin/goodiesConsumer/editContext.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/notifications.ts",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/components/cards.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/serverSync.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/theme.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+          "sha256": "608c612e118a5aff0af50f292b9c241e946526e647957d736246c0c4581780ea",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/helpPayApi.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts",
+            "src/features/admin/goodiesConsumer/serverSync.ts",
+            "src/features/admin/goodiesConsumer/reviews.ts",
+            "src/features/admin/goodiesConsumer/deliveryTracking.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/components/cards.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+            "src/features/admin/goodiesConsumer/i18n/index.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Account.tsx",
+          "sha256": "9b169dfce1dd0f542f45474f45cebb5c466a71ed8df1f723d8701b4adb113b71",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+            "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "sha256": "769d9ac89edb0fc05b1e5797aa6516a84e1e0e8d71ba42b973cf7b703716a7f8",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/reviews.ts",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/data/promoText.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/components/Overlays.tsx",
+            "src/features/admin/goodiesConsumer/friendlyError.ts",
+            "src/features/admin/goodiesConsumer/serverSync.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/AddCard.tsx",
+          "sha256": "fb1853d34c2c6c50fba4c9db04e41acf8c4eb552b3eccff4a6f3595d80e36eef",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/CardAuthentication.tsx",
+          "sha256": "ba66acc52fc0ef1957a3ad55e6fa0381cb15d1a25865146a28d6337bec49cdc9",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/HelpPay.tsx",
+          "sha256": "29e13aca36f6d55d7e979aa781993282fb1bde00956997e33a1c905afbebbe9e",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/serverSync.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/helpPayApi.ts",
+            "src/features/admin/goodiesConsumer/helpPayRecovery.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/Builder.tsx",
+          "sha256": "fd3f45fb97ae6cbb673a7fa68d9ac5e93672270252ff98a85cec2084b245595d",
+          "imports": [
+            "src/features/admin/goodiesConsumer/editContext.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/builders/pizzaArt.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/theme.ts",
+          "sha256": "ba5f334f32000923d74bbeac26853d2fadff7d1f22c59aa4c9109d569f9a5578",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/GoodiesQuickMenu.tsx",
+          "sha256": "05d190458a21792b8c427e67aed50a16e992c395c6f71e5499a4640e26126e8f",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewMenu.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/cacheRecovery.ts",
+          "sha256": "3b05b17b36d39e9d911a6bd801315075b38646d99936249c4a4db92c7d80a850",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/orderStages.ts",
+          "sha256": "fb645eb0aa3926394461d35dcf1d8206a62dedd1a2232ac53f7358fb3dc06c24",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/friendlyError.ts",
+          "sha256": "eb928d87bc616bf65bf95f625f7fa4c28485e22df2fd6cca8f7faabab609225f",
+          "imports": [
+            "src/features/admin/goodiesConsumer/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/accountCache.ts",
+          "sha256": "00a207e1a2617e7945fd5dea31d8b0fc81da609d6b5f37ce1f8aec8df2b63e4e",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewBuilderTemplates.ts",
+          "sha256": "10d1d7d2574098233660e300714d4d0e7bbb7c1688bf2368359accea350cd265",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/orderReviews.ts",
+          "sha256": "2adb3af728e05316c4d1a5254412142c8a03ac57b6a322e62e6129c2b870b0d5",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/notifications.ts",
+          "sha256": "cdd3652069aef29983f930252cb28a7ebb6ce7bd81e2cbb32cefecdc19812f3e",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/cards.tsx",
+          "sha256": "84ff61a79ee3e46a94d170e230b886a710866e705d8dab5d3af63184f1fc83ca",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/data/types.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/builders/engine.tsx",
+            "src/features/admin/goodiesConsumer/i18n/index.ts",
+            "src/features/admin/goodiesConsumer/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/reviews.ts",
+          "sha256": "bd20d44e7ee004f8912f037557eadcb00ff27b7c28a93ac567d30f17ec2dbcad",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/deliveryTracking.ts",
+          "sha256": "ffb0f3ad2aac9603dcd5d93e1997fe58c47ea09cc716a681d029e9ea15bcf796",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+          "sha256": "154d0712c5d8e3bb0b0ef7ba42ba9e81ddbe1812ce981280515d3c02b732b5bf",
+          "imports": [
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/components/Icon.tsx",
+            "src/features/admin/goodiesConsumer/screens/WalletBalance.tsx",
+            "src/features/admin/goodiesConsumer/components/ui.tsx",
+            "src/features/admin/goodiesConsumer/store.ts",
+            "src/features/admin/goodiesConsumer/actions.ts",
+            "src/features/admin/goodiesConsumer/content.ts",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts",
+            "src/features/admin/goodiesConsumer/friendlyError.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/data/promoText.ts",
+          "sha256": "8bb794bf3908447d580fcc947108bf0648663fbc38c6f715ceaf8f5fff6c919a",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/components/Overlays.tsx",
+          "sha256": "bae8807c051714e2ba0047ca4f33d6333ff87b380adc1974098844c1f03c0adb",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/content.ts"
+          ]
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/builders/pizzaArt.ts",
+          "sha256": "e360aeed5962642e27f21f4adb533b757b25a811f78c60bbe1d3c75ded956af8",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/previewMenu.tsx",
+          "sha256": "ccbb2a7ddde4514fcd0878a03d1de83acd2e74272f26df16f3cb79ce3528e360",
+          "imports": []
+        },
+        {
+          "path": "src/features/admin/goodiesConsumer/screens/WalletBalance.tsx",
+          "sha256": "31779ebb4956506f3cc762942699abf8c3e36fd31a73f3225ba9199ddbae3830",
+          "imports": [
+            "src/features/admin/goodiesConsumer/previewNative.tsx",
+            "src/features/admin/goodiesConsumer/EditableNativeText.tsx",
+            "src/features/admin/goodiesConsumer/previewRuntime.ts"
+          ]
+        }
+      ]
+    }
+  ]
+}

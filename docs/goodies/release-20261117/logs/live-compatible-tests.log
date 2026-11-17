@@ -1,0 +1,36 @@
+Check supabase/functions/goodies-tests/sharedBillIntegrity_test.ts
+Check supabase/functions/goodies-tests/reviewModerationCompatibility_test.ts
+Check supabase/functions/goodies-tests/reviewsPreferences_test.ts
+running 2 tests from ./supabase/functions/goodies-tests/sharedBillIntegrity_test.ts
+Shared Bill uses the final backend package for actual Wallet funding, one order, split refunds and authorization ...
+  funding is paused by default, including direct RPC calls ... ok (6ms)
+  60/40 debits the host and two contributors, with one real owner order and one stock reservation ... ok (93ms)
+  full-payment mode leaves the host untouched and requires one complete friend payment ... ok (19ms)
+  cancellation refunds every payer once and repeated cancellation remains safe ... ok (17ms)
+  scheduled expiry refunds without reopening any app ... ok (13ms)
+  changed prices or unavailable stock cancel finalization and refund all contributors ... ok (17ms)
+  anonymous calls, forged client writes and private helpers are denied ... ok (4ms)
+  exact authoritative cents reject one-cent total/subtotal tampering and fractional amounts before reservation ... ok (13ms)
+  aggregate stock is checked without reserving inventory at request creation ... ok (7ms)
+  account-bound financial RPCs reject stale confirmations after account changes ... ok (11ms)
+  refund failures stay pending and recover once with audited finance-only retry ... ok (26ms)
+  accepted-friend invitations are private, authorized and deduplicated ... ok (21ms)
+  automatic refund recovery respects backoff, escalates repeat failures and retains cancellation ... ok (34ms)
+  reused keys with a different amount/request and creator self-payment never debit a Wallet ... ok (17ms)
+  server promotions and exact discount cents are validated, consumed only upon final funding ... ok (21ms)
+  real owner-scoped delivery quotes survive the shared window and are consumed once at funding ... ok (18ms)
+  builder selections/prices stay authoritative, and a disabled builder refunds every payer ... ok (28ms)
+  the first-delivery fee rule stays authoritative after pickup orders and cannot be reused ... ok (23ms)
+  deployed vendor product RPCs remain compatible and material product edits return to moderation ... ok (14ms)
+  pausing new funding preserves participant recovery and finance activation is audited ... ok (18ms)
+Shared Bill uses the final backend package for actual Wallet funding, one order, split refunds and authorization ... ok (2s)
+Shared Bill migration rollback leaves the prior schema/checkout intact and the complete migration can be retried ... ok (1s)
+running 2 tests from ./supabase/functions/goodies-tests/reviewModerationCompatibility_test.ts
+the merged review contract uses one table, approved public feedback, private access and audited moderation ... ok (1s)
+review moderation migration failure rolls back without altering the existing review contract ... ok (1s)
+running 2 tests from ./supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Goodies reviews enforce completed-order ownership, isolate participants and deduplicate retries ... ok (1s)
+review migration failure rolls back partial schema changes and can be retried cleanly ... ok (1s)
+
+ok | 6 passed (20 steps) | 0 failed (10s)
+

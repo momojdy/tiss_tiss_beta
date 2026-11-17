@@ -1,0 +1,3093 @@
+{
+  "capturedAt": "2026-11-17T06:52:14.519Z",
+  "liveCapturedAt": "2026-11-17 06:18:56.109002+00",
+  "scope": "Production/shared source named RPC arguments against read-only deployed metadata and the tested candidate fixture. Dynamic expressions remain NOT VERIFIED. A match is not hosted runtime/authorization acceptance.",
+  "summary": {
+    "PASS": 151,
+    "FAIL": 0,
+    "NOT VERIFIED": 27
+  },
+  "calls": [
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 53,
+      "target": "goodies_courier_orders",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 138,
+      "target": "goodies_courier_update_location",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 165,
+      "target": "goodies_set_courier_availability",
+      "provided": {
+        "keys": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 175,
+      "target": "goodies_set_courier_availability",
+      "provided": {
+        "keys": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 187,
+      "target": "goodies_set_courier_availability",
+      "provided": {
+        "keys": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 194,
+      "target": "goodies_courier_respond_assignment",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_accept"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 203,
+      "target": "goodies_courier_update_delivery_status",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 316,
+      "target": "place_goodies_order_with_payment_once",
+      "provided": {
+        "keys": [
+          "p_idempotency_key",
+          "p_payment_method"
+        ],
+        "dynamic": true
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 424,
+      "target": "set_goodies_order_status",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 453,
+      "target": "goodies_set_notification_preference",
+      "provided": {
+        "keys": [
+          "p_kind",
+          "p_enabled"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 487,
+      "target": "get_my_payment_methods",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 512,
+      "target": "ensure_my_wallet",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 544,
+      "target": "goodies_cash_on_delivery_available",
+      "provided": {
+        "keys": [
+          "p_store_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/actions.ts",
+      "line": 594,
+      "target": "goodies_place_multi_order",
+      "provided": {
+        "keys": [
+          "p_idempotency_key"
+        ],
+        "dynamic": true
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 282,
+      "target": "goodies_group_order_create",
+      "provided": {
+        "keys": [
+          "p_store_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 301,
+      "target": "goodies_group_order_join",
+      "provided": {
+        "keys": [
+          "p_invite_code"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 323,
+      "target": "goodies_group_order_list_members",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 327,
+      "target": "goodies_group_order_get_status",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 354,
+      "target": "goodies_group_order_my_invites",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 363,
+      "target": "goodies_group_order_list_friends",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 371,
+      "target": "goodies_group_order_invite_friends",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_user_ids"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 381,
+      "target": "goodies_group_order_join",
+      "provided": {
+        "keys": [
+          "p_invite_code"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 392,
+      "target": "goodies_group_order_decline_invite",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 413,
+      "target": "goodies_group_order_checkout_estimate",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_order_type",
+          "p_address"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 450,
+      "target": "goodies_group_order_checkout",
+      "provided": {
+        "keys": [
+          "p_idempotency_key",
+          "p_group_id",
+          "p_order_type",
+          "p_scheduled_for",
+          "p_address",
+          "p_contact_phone",
+          "p_tip",
+          "p_notes"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 481,
+      "target": "goodies_group_order_checkout_preview",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 486,
+      "target": "goodies_group_order_checkout_estimate",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_order_type",
+          "p_address"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 608,
+      "target": "goodies_group_order_checkout_estimate",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_order_type",
+          "p_address"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 642,
+      "target": "goodies_group_order_end",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/components/Sheets.tsx",
+      "line": 694,
+      "target": "goodies_submit_order_review",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_review_target",
+          "p_rating",
+          "p_comment"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+      "line": 42,
+      "target": "goodies_courier_update_location",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 67,
+      "target": "help_pay_status",
+      "provided": {
+        "keys": [
+          "p_request_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 80,
+      "target": "help_pay_share_to_friend",
+      "provided": {
+        "keys": [
+          "p_request_id",
+          "p_friend_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 85,
+      "target": "help_pay_cancel_request",
+      "provided": {
+        "keys": [
+          "p_request_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 98,
+      "target": "help_pay_wallet_enabled",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 99,
+      "target": "help_pay_request_for_checkout",
+      "provided": {
+        "keys": [
+          "p_checkout_key"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/helpPayApi.ts",
+      "line": 100,
+      "target": "help_pay_contribution_status",
+      "provided": {
+        "keys": [
+          "p_request_id",
+          "p_idempotency_key"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/reviews.ts",
+      "line": 12,
+      "target": "goodies_store_review_summaries",
+      "provided": {
+        "keys": [
+          "p_business_ids"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/reviews.ts",
+      "line": 36,
+      "target": "goodies_store_reviews",
+      "provided": {
+        "keys": [
+          "p_store_id",
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 164,
+      "target": "delete_user_address",
+      "provided": {
+        "keys": [
+          "p_address_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 214,
+      "target": "mark_conversation_read",
+      "provided": {
+        "keys": [
+          "p_conv"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 226,
+      "target": "goodies_start_store_conversation",
+      "provided": {
+        "keys": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 249,
+      "target": "goodies_send_store_message",
+      "provided": {
+        "keys": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 299,
+      "target": "goodies_start_store_conversation",
+      "provided": {
+        "keys": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Account.tsx",
+      "line": 308,
+      "target": "goodies_send_store_message",
+      "provided": {
+        "keys": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/HelpPay.tsx",
+      "line": 79,
+      "target": "wantiss_message_contact_profiles",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Payments.tsx",
+      "line": 59,
+      "target": "get_my_payment_methods",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Payments.tsx",
+      "line": 98,
+      "target": "set_default_payment_method",
+      "provided": {
+        "keys": [
+          "p_payment_method_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Payments.tsx",
+      "line": 103,
+      "target": "delete_payment_method",
+      "provided": {
+        "keys": [
+          "p_payment_method_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Shop.tsx",
+      "line": 52,
+      "target": "wantiss_message_contact_profiles",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/screens/Shop.tsx",
+      "line": 350,
+      "target": "goodies_cash_on_delivery_available",
+      "provided": {
+        "keys": [
+          "p_store_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 192,
+      "target": "goodies_store_review_summaries",
+      "provided": {
+        "keys": [
+          "p_business_ids"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 236,
+      "target": "get_my_goodies_access_status",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 366,
+      "target": "get_my_payment_methods",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 740,
+      "target": "goodies_group_order_upsert_item",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_product_id",
+          "p_line_key",
+          "p_quantity",
+          "p_options",
+          "p_note"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 759,
+      "target": "goodies_group_order_get_status",
+      "provided": {
+        "keys": [
+          "p_group_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/features/Goodies/store.ts",
+      "line": 786,
+      "target": "goodies_group_order_remove_item",
+      "provided": {
+        "keys": [
+          "p_group_id",
+          "p_line_key"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 52,
+      "target": "goodies_save_store_location",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_latitude",
+          "p_longitude"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 53,
+      "target": "goodies_save_store_cover",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_cover_url"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 54,
+      "target": "goodies_save_store_thumbnail",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_thumbnail_url"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 57,
+      "target": "goodies_save_store_setup",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_category",
+          "p_kind",
+          "p_min_order",
+          "p_delivery_fee",
+          "p_eta_min",
+          "p_eta_max",
+          "p_promo",
+          "p_names",
+          "p_delivery",
+          "p_pickup",
+          "p_delivery_pricing_mode",
+          "p_delivery_base_fee",
+          "p_delivery_per_km_fee",
+          "p_delivery_min_fee",
+          "p_delivery_max_fee",
+          "p_delivery_max_distance_km",
+          "p_address",
+          "p_city",
+          "p_country",
+          "p_accept_scheduled_orders",
+          "p_scheduled_order_start_time",
+          "p_scheduled_order_timezone",
+          "p_store_name"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 68,
+      "target": "goodies_set_store_live",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_live"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 81,
+      "target": "goodies_vendor_set_product_availability",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_id",
+          "p_available"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 90,
+      "target": "goodies_vendor_save_product",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_id",
+          "p_name",
+          "p_description",
+          "p_price",
+          "p_emoji",
+          "p_stock",
+          "p_restriction",
+          "p_photo_url",
+          "p_photo_urls"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 128,
+      "target": "goodies_save_builder_configs",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_configs"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 136,
+      "target": "goodies_list_ingredient_requests",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 139,
+      "target": "goodies_get_ingredient_rules",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 149,
+      "target": "goodies_submit_ingredient_request",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_name",
+          "p_builder",
+          "p_role",
+          "p_note",
+          "p_image_path"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 167,
+      "target": "goodies_list_library_ingredients",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 67,
+      "target": "goodies_assign_own_driver",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_driver_name",
+          "p_driver_phone"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 75,
+      "target": "goodies_private_delivery_proof_uploads_enabled",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 96,
+      "target": "goodies_self_delivery_mark_delivered",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_proof_url"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 136,
+      "target": "goodies_vendor_dispatch_waits",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 169,
+      "target": "goodies_list_dispatch_couriers",
+      "provided": {
+        "keys": [
+          "p_order_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 177,
+      "target": "goodies_assign_courier",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_courier_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 209,
+      "target": "accept_goodies_order",
+      "provided": {
+        "keys": [
+          "p_order_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 211,
+      "target": "decline_goodies_order",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 213,
+      "target": "cancel_goodies_order_by_store",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 214,
+      "target": "set_goodies_order_status",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 691,
+      "target": "create_draft",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_feature",
+          "p_key",
+          "p_title"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 699,
+      "target": "set_draft_stock",
+      "provided": {
+        "keys": [
+          "p_listing",
+          "p_stock",
+          "p_variants"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 841,
+      "target": "publish_listing",
+      "provided": {
+        "keys": [
+          "p_listing"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1000,
+      "target": "go_live",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1038,
+      "target": "advance_order",
+      "provided": {
+        "keys": [
+          "p_order"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1041,
+      "target": "cancel_order",
+      "provided": {
+        "keys": [
+          "p_order",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1057,
+      "target": "set_listing_status",
+      "provided": {
+        "keys": [
+          "p_listing",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1058,
+      "target": "set_listing_status",
+      "provided": {
+        "keys": [
+          "p_listing",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1067,
+      "target": "feature_requirements_status",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1079,
+      "target": "submit_requirement",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_requirement",
+          "p_file",
+          "p_declared"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1090,
+      "target": "submit_requirement",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_requirement",
+          "p_file",
+          "p_declared"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 99,
+      "target": "create_business",
+      "provided": {
+        "keys": [
+          "p_name"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 188,
+      "target": "register_push_token",
+      "provided": {
+        "keys": [
+          "p_token",
+          "p_platform"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 59,
+      "target": "mark_conversation_read",
+      "provided": {
+        "keys": [
+          "p_conv"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 65,
+      "target": "goodies_vendor_reply",
+      "provided": {
+        "keys": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 26,
+      "target": "goodies_vendor_promotions",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 37,
+      "target": "set_promotion_status",
+      "provided": {
+        "keys": [
+          "p_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 46,
+      "target": "feature_requirements_status",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 83,
+      "target": "submit_business_application_document",
+      "provided": {
+        "keys": [
+          "p_application_id",
+          "p_document_type",
+          "p_storage_path"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 92,
+      "target": "submit_business_application",
+      "provided": {
+        "keys": [
+          "p_business_name",
+          "p_business_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 117,
+      "target": "submit_requirement",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_requirement",
+          "p_file",
+          "p_declared"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 142,
+      "target": "resubmit_business_application",
+      "provided": {
+        "keys": [
+          "p_application_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 155,
+      "target": "submit_verification",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_documents"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 213,
+      "target": "issue_qr_identity",
+      "provided": {
+        "keys": [
+          "p_qr_type",
+          "p_business_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 237,
+      "target": "update_my_business_info",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_fields"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 42,
+      "target": "activate_feature",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 99,
+      "target": "set_goodies_order_status",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 141,
+      "target": "dashboard_range",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_from",
+          "p_to",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 64,
+      "target": "create_business",
+      "provided": {
+        "keys": [
+          "p_name"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 73,
+      "target": "delete_business_check",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 77,
+      "target": "delete_business",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_confirm"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 128,
+      "target": "adjust_stock",
+      "provided": {
+        "keys": [
+          "p_listing",
+          "p_variant",
+          "p_delta",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 139,
+      "target": "refund_order",
+      "provided": {
+        "keys": [
+          "p_order",
+          "p_amount",
+          "p_key"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 176,
+      "target": "dashboard_range",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_from",
+          "p_to",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 177,
+      "target": "payout_usage",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 187,
+      "target": "request_payout",
+      "provided": {
+        "keys": [
+          "b",
+          "amt",
+          "key",
+          "method"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Main/mainAddressesScreen.tsx",
+      "line": 63,
+      "target": "set_default_user_address",
+      "provided": {
+        "keys": [
+          "p_address_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Main/mainAddressesScreen.tsx",
+      "line": 66,
+      "target": "set_default_user_address",
+      "provided": {
+        "keys": [
+          "p_address_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/screens/Main/mainAddressesScreen.tsx",
+      "line": 67,
+      "target": "delete_user_address",
+      "provided": {
+        "keys": [
+          "p_address_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 21,
+      "target": "goodies_vendor_settlement_summary",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 22,
+      "target": "goodies_vendor_payout_options",
+      "provided": {
+        "keys": [
+          "p_business"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 23,
+      "target": "goodies_vendor_settlement_ledger",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_offset",
+          "p_limit",
+          "p_type"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 24,
+      "target": "goodies_request_vendor_payout",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_amount",
+          "p_method",
+          "p_destination",
+          "p_key",
+          "p_expected_receive"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 25,
+      "target": "goodies_pay_cash_commission",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_key"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 26,
+      "target": "goodies_vendor_set_cash_acceptance",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_enabled"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 27,
+      "target": "goodies_register_payout_destination",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_method",
+          "p_country",
+          "p_holder",
+          "p_details"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 31,
+      "target": "goodies_vendor_dashboard_range",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_from",
+          "p_to"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 31,
+      "target": "dashboard_range",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_from",
+          "p_to",
+          "p_feature"
+        ],
+        "dynamic": false
+      },
+      "status": "NOT VERIFIED",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "NOT IN ISOLATED FIXTURE",
+      "exclusion": "Legacy/mixed marketplace branch; Goodies dispatches bypass this call. Its missing deployed contract remains an unrelated/shared limitation, not a pass."
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesSettlement.ts",
+      "line": 32,
+      "target": "ensure_my_wallet",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss_tiss_beta",
+      "path": "src/services/goodiesWorkspace.ts",
+      "line": 44,
+      "target": "goodies_set_vendor_notification_preferences",
+      "provided": {
+        "keys": [
+          "p_push",
+          "p_email"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 68,
+      "target": "goodies_admin_dashboard",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 91,
+      "target": "goodies_admin_courier_candidates_page",
+      "provided": {
+        "keys": [
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 98,
+      "target": "goodies_admin_orders_page",
+      "provided": {
+        "keys": [
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 105,
+      "target": "goodies_admin_list_delivery_reports",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 120,
+      "target": "goodies_admin_review_order_review",
+      "provided": {
+        "keys": [
+          "p_review_id",
+          "p_status",
+          "p_note"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 131,
+      "target": "goodies_admin_resolve_delivery_dispute",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_resolution"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 159,
+      "target": "goodies_admin_analytics",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 167,
+      "target": "goodies_admin_list_reviews",
+      "provided": {
+        "keys": [
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MISMATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 174,
+      "target": "goodies_admin_set_merchant_status",
+      "provided": {
+        "keys": [
+          "p_business_id",
+          "p_live"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 183,
+      "target": "goodies_admin_cancel_order",
+      "provided": {
+        "keys": [
+          "p_order_id",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 193,
+      "target": "goodies_admin_review_product",
+      "provided": {
+        "keys": [
+          "p_product_id",
+          "p_status",
+          "p_note"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 204,
+      "target": "goodies_admin_update_fee_policy",
+      "provided": {
+        "keys": [
+          "p_service_fee",
+          "p_first_order_free",
+          "p_wallet_enabled",
+          "p_card_enabled",
+          "p_cash_enabled",
+          "p_tips"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 216,
+      "target": "goodies_admin_update_multi_store_policy",
+      "provided": {
+        "keys": [
+          "p_enabled",
+          "p_additional_store_fee",
+          "p_extra_distance_per_km",
+          "p_max_stops"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 17,
+      "target": "goodies_admin_settlement_queue",
+      "provided": {
+        "keys": [
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 24,
+      "target": "goodies_admin_destination_details",
+      "provided": {
+        "keys": [
+          "p_destination",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 25,
+      "target": "goodies_admin_set_bank_calendar",
+      "provided": {
+        "keys": [
+          "p_country",
+          "p_reviewed_until",
+          "p_holidays",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 25,
+      "target": "goodies_admin_set_payout_channel",
+      "provided": {
+        "keys": [
+          "p_method",
+          "p_enabled",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 25,
+      "target": "goodies_admin_settlement_action",
+      "provided": {
+        "keys": [
+          "p_kind",
+          "p_id",
+          "p_decision",
+          "p_reference",
+          "p_reason",
+          "p_amount"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+      "line": 17,
+      "target": "help_pay_admin_refund_queue",
+      "provided": {
+        "keys": [
+          "p_offset",
+          "p_limit"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+      "line": 19,
+      "target": "help_pay_admin_retry_refund",
+      "provided": {
+        "keys": [
+          "p_request_id",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 46,
+      "target": "wantiss_admin_list_goodies_builder_configs",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 55,
+      "target": "wantiss_admin_list_library_ingredients",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 55,
+      "target": "wantiss_admin_list_ingredient_requests",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 106,
+      "target": "wantiss_admin_save_goodies_builder_config",
+      "provided": {
+        "keys": [
+          "p_business_id",
+          "p_builder_id",
+          "p_config",
+          "p_enabled"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 61,
+      "target": "wantiss_admin_list_ingredient_requests",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 62,
+      "target": "wantiss_admin_list_library_ingredients",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 63,
+      "target": "goodies_get_ingredient_rules",
+      "provided": {
+        "keys": [],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 109,
+      "target": "wantiss_admin_review_ingredient_request",
+      "provided": {
+        "keys": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 117,
+      "target": "wantiss_admin_review_ingredient_request",
+      "provided": {
+        "keys": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 124,
+      "target": "wantiss_admin_save_library_ingredient",
+      "provided": {
+        "keys": [
+          "p_id",
+          "p_builder",
+          "p_role",
+          "p_name",
+          "p_asset_key",
+          "p_active"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 130,
+      "target": "wantiss_admin_set_ingredient_rules",
+      "provided": {
+        "keys": [
+          "p_rules"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 82,
+      "target": "wantiss_admin_dashboard_snapshot",
+      "provided": {
+        "keys": [
+          "p_domain"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 88,
+      "target": "wantiss_admin_application_businesses",
+      "provided": {
+        "keys": [
+          "p_application_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 93,
+      "target": "wantiss_admin_assign_business_application",
+      "provided": {
+        "keys": [
+          "p_application_id",
+          "p_business_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 98,
+      "target": "wantiss_admin_review_business_application",
+      "provided": {
+        "keys": [
+          "p_application_id",
+          "p_status",
+          "p_review_note",
+          "p_final_rejection"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 125,
+      "target": "wantiss_admin_set_application_document_status",
+      "provided": {
+        "keys": [
+          "p_document_id",
+          "p_status",
+          "p_review_note"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 138,
+      "target": "wantiss_admin_set_business_verification",
+      "provided": {
+        "keys": [
+          "p_business",
+          "p_status",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 146,
+      "target": "wantiss_admin_save_cms_draft",
+      "provided": {
+        "keys": [
+          "p_content_key",
+          "p_locale",
+          "p_payload"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 189,
+      "target": "wantiss_admin_upsert_asset",
+      "provided": {
+        "keys": [
+          "p_asset_key",
+          "p_storage_path",
+          "p_content_type",
+          "p_byte_size",
+          "p_alt_text",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 205,
+      "target": "wantiss_admin_publish_cms_version",
+      "provided": {
+        "keys": [
+          "p_content_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 209,
+      "target": "wantiss_admin_archive_cms_version",
+      "provided": {
+        "keys": [
+          "p_content_id"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 213,
+      "target": "wantiss_admin_set_cms_asset_status",
+      "provided": {
+        "keys": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 217,
+      "target": "wantiss_admin_set_cms_asset_status",
+      "provided": {
+        "keys": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 246,
+      "target": "wantiss_admin_apply_account_restriction",
+      "provided": {
+        "keys": [
+          "p_user_id",
+          "p_kind",
+          "p_scope",
+          "p_reason",
+          "p_notes",
+          "p_starts_at",
+          "p_ends_at",
+          "p_notify_user"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 255,
+      "target": "wantiss_admin_lift_account_restriction",
+      "provided": {
+        "keys": [
+          "p_restriction_id",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "MATCH"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 262,
+      "target": "wantiss_admin_update_account_restriction",
+      "provided": {
+        "keys": [
+          "p_restriction_id",
+          "p_ends_at",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 294,
+      "target": "wantiss_admin_request_financial_action",
+      "provided": {
+        "keys": [
+          "p_action_type",
+          "p_transaction_id",
+          "p_target_user_id",
+          "p_amount",
+          "p_direction",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 303,
+      "target": "wantiss_admin_review_financial_action",
+      "provided": {
+        "keys": [
+          "p_action_id",
+          "p_decision",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "MATCH",
+      "candidate": "NOT IN ISOLATED FIXTURE"
+    },
+    {
+      "repository": "tiss-admin",
+      "path": "src/features/admin/lib/adminBackend.ts",
+      "line": 310,
+      "target": "wantiss_admin_record_restriction_appeal",
+      "provided": {
+        "keys": [
+          "p_restriction_id",
+          "p_action",
+          "p_reason"
+        ],
+        "dynamic": false
+      },
+      "status": "PASS",
+      "scope": "Static named-argument shape only; no RPC executed.",
+      "deployed": "ABSENT",
+      "candidate": "MATCH"
+    }
+  ]
+}

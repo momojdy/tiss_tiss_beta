@@ -1,0 +1,10 @@
+Check supabase/functions/wantiss-admin-bootstrap/index.ts
+Check supabase/functions/wantiss-admin-staff/index.ts
+Check supabase/functions/wantiss-public-content/index.ts
+Check supabase/functions/wantiss-cms-public/index.ts
+Check supabase/functions/goodies-delivery-quote/index.ts
+Check supabase/functions/rapid-api/index.ts
+Check supabase/functions/process-goodies-card-refunds/index.ts
+Check supabase/functions/place-goodies-card-order/index.ts
+Check supabase/functions/refund-goodies-card-order/index.ts
+Check supabase/functions/expire-goodies-card-auth/index.ts
