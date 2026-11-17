@@ -7338,5 +7338,10 @@
     "fr": "Votre avis est en attente d’approbation.",
     "es": "Tu reseña está pendiente de aprobación.",
     "zh-Hans": "您的评价正在等待审核。"
+  },
+  "Could not refresh this order. Please try again.": {
+    "fr": "Impossible d’actualiser cette commande. Veuillez réessayer.",
+    "es": "No se pudo actualizar este pedido. Vuelve a intentarlo.",
+    "zh-Hans": "无法刷新此订单，请重试。"
   }
 }

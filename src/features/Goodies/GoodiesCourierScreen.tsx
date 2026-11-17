@@ -1,5 +1,5 @@
 import {label, loadContent, onContent} from "./content";
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {ActivityIndicator, Alert, AppState, Pressable, ScrollView, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
@@ -8,6 +8,7 @@ import {supabase} from '../../lib/supabase';
 import {S, money, emit} from './store';
 import {wantissLocale} from '../../lib/locales';
 import {friendlyError} from './friendlyError';
+import {createGoodiesRefresh} from './refreshScope';
 import {freshGpsSample} from './deliveryTracking';
 
 type Delivery = {
@@ -23,6 +24,17 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   const [deliveries,setDeliveries]=useState<Delivery[]>([]);
   const [busy,setBusy]=useState('');
   const [loading,setLoading]=useState(true);
+  const [loadError,setLoadError]=useState(false);
+  const owner=useRef(''), mounted=useRef(true), mutation=useRef<object|null>(null);
+  const reader=useRef<ReturnType<typeof createGoodiesRefresh>|null>(null);
+  useEffect(()=>{
+    mounted.current=true;
+    const {data:{subscription}}=supabase.auth.onAuthStateChange((_event,session)=>{
+      const id=session?.user?.id||'';
+      if(owner.current!==id){owner.current=id;setUid(id);setDeliveries([]);setAvailable(false);setAcceptsCash(false);setLoading(true);setLoadError(false);setBusy('');mutation.current=null;}
+    });
+    return()=>{mounted.current=false;subscription.unsubscribe();};
+  },[]);
   const [locationStatus,setLocationStatus]=useState(label("lbl.page.GoodiesCourierScreen.9ea62e5a2d", "Location sharing is off"));
 
   useEffect(()=>{
@@ -37,31 +49,40 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
   useEffect(()=>{
     if(!uid)return;
     let active=true;
-    void supabase.from('user_settings').select('language').eq('user_id',uid).maybeSingle().then(({data,error})=>{
+    void Promise.resolve(supabase.from('user_settings').select('language').eq('user_id',uid).maybeSingle().then(({data,error})=>{
       if(active&&!error){S.lang=wantissLocale(data?.language);emit();refreshContent(value=>value+1);}
-    });
+    })).catch(()=>{});
     return()=>{active=false;};
   },[uid]);
 
-  const load=useCallback(async()=>{
-    const {data:user}=await supabase.auth.getUser();
-    if(!user.user){setUid('');setDeliveries([]);setAvailable(false);setAcceptsCash(false);return;}
-    setUid(user.user.id);
-    const {data:presence,error:presenceError}=await supabase.from('goodies_courier_presence').select('is_available,accepts_cash_on_delivery').eq('courier_id',user.user.id).maybeSingle();
-    if (presenceError) throw presenceError;
-    setAvailable(!!presence?.is_available);setAcceptsCash(!!presence?.accepts_cash_on_delivery);
-    const {data:orders,error}=await supabase.rpc('goodies_courier_orders');
-    if(error)throw error;
-    setDeliveries((orders || []) as Delivery[]);
-  },[]);
+  const load=useCallback(async()=>{await reader.current?.refresh();},[]);
 
-  useEffect(()=>{let active=true;void load().catch(e=>Alert.alert(label("lbl.cms.ce9c4301c916", "Could not load deliveries"),friendlyError(e,label("lbl.cms.89e524601f0d", "Please try again.")))).finally(()=>{if(active)setLoading(false);});
-    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.eventType==='DELETE'||payload.new?.status!==payload.old?.status)void load().catch(e=>Alert.alert(label("lbl.page.GoodiesCourierScreen.5f0c80ecc7", "Could not refresh deliveries"),friendlyError(e,label("lbl.cms.89e524601f0d", "Please try again."))));}).subscribe();
-    const refresh=()=>{void load().catch(e=>{if(active)Alert.alert(label("lbl.page.GoodiesCourierScreen.5f0c80ecc7", "Could not refresh deliveries"),friendlyError(e,label("lbl.cms.89e524601f0d", "Please try again.")));});};
-    const poll=setInterval(()=>{if(AppState.currentState==='active')refresh();},30000);
-    const appState=AppState.addEventListener('change',state=>{if(state==='active')refresh();});
-    return()=>{active=false;clearInterval(poll);appState.remove();void supabase.removeChannel(ch);};
-  },[load,uid]);
+  useEffect(()=>{
+    const scope=createGoodiesRefresh({
+      current:()=>mounted.current&&owner.current===uid,
+      state:status=>{setLoading(status==='loading');setLoadError(status==='error');},
+      read:async()=>{
+        const expectedOwner=owner.current;
+        const {data:user,error:authError}=await supabase.auth.getUser();
+        if(authError)throw authError;
+        if(!user.user)throw new Error('Sign in required');
+        if(!mounted.current||owner.current!==expectedOwner)return null;
+        if(owner.current!==user.user.id){owner.current=user.user.id;setUid(user.user.id);return null;}
+        const {data:presence,error:presenceError}=await supabase.from('goodies_courier_presence').select('is_available,accepts_cash_on_delivery').eq('courier_id',user.user.id).maybeSingle();
+        if(presenceError)throw presenceError;
+        if(!mounted.current||owner.current!==expectedOwner)return null;
+        const {data:orders,error}=await supabase.rpc('goodies_courier_orders');
+        if(error||!Array.isArray(orders))throw error||new Error('Deliveries unavailable');
+        return {presence,orders};
+      },
+      commit:result=>{if(result){setAvailable(!!result.presence?.is_available);setAcceptsCash(!!result.presence?.accepts_cash_on_delivery);setDeliveries((result.orders||[]) as Delivery[]);}},
+    });
+    reader.current=scope;void scope.refresh();
+    const ch=supabase.channel('goodies-courier-work-'+uid).on('postgres_changes',{event:'*',schema:'public',table:'goodies_delivery_assignments',filter:uid?'courier_id=eq.'+uid:'courier_id=eq.00000000-0000-0000-0000-000000000000'},(payload:any)=>{if(payload.eventType==='INSERT'||payload.eventType==='DELETE'||payload.new?.status!==payload.old?.status)void scope.refresh();}).subscribe();
+    const poll=setInterval(()=>{if(AppState.currentState==='active')void scope.refresh();},30000);
+    const appState=AppState.addEventListener('change',state=>{if(state==='active')void scope.refresh();});
+    return()=>{scope.stop();if(reader.current===scope)reader.current=null;clearInterval(poll);appState.remove();void supabase.removeChannel(ch);};
+  },[uid]);
 
   const activeOrderId = deliveries.find(d=>d.status==='accepted'||d.status==='picked_up')?.order_id || '';
   useEffect(()=>{
@@ -135,16 +156,16 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       },position=>{
         if(cancelled)return;
         if(!freshGpsSample(position)){setLocationStatus(label("lbl.page.GoodiesCourierScreen.01753bced3", "Waiting for a fresh GPS location."));return;}
-        void supabase.rpc('goodies_courier_update_location',{
+        void Promise.resolve(supabase.rpc('goodies_courier_update_location',{
           p_order_id:activeOrderId,
           p_latitude:position.coords.latitude,
           p_longitude:position.coords.longitude,
           p_accuracy_m:position.coords.accuracy,
           p_heading:position.coords.heading,
           p_speed_mps:position.coords.speed,
-        }).then(({error})=>{
+        })).then(({error})=>{
           if(error&&!cancelled)setLocationStatus(friendlyError(error,label("lbl.cms.809e99644369", "GPS update failed.")));
-        });
+        }).catch(()=>{if(!cancelled)setLocationStatus(label('lbl.cms.809e99644369', 'GPS update failed.'));});
       });
       if(cancelled)foregroundSubscription.remove();
     };
@@ -161,8 +182,9 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
 
   useEffect(()=>{
     if(!available||activeOrderId)return;
+    const userId=owner.current;
     const heartbeat=setInterval(()=>{
-      void supabase.rpc('goodies_set_courier_availability',{p_is_available:true,p_accepts_cash_on_delivery:acceptsCash});
+      void Promise.resolve(supabase.rpc('goodies_set_courier_availability',{p_is_available:true,p_accepts_cash_on_delivery:acceptsCash})).then(({error})=>{if(error&&mounted.current&&owner.current===userId)setLoadError(true);}).catch(()=>{if(mounted.current&&owner.current===userId)setLoadError(true);});
     },60000);
     return()=>clearInterval(heartbeat);
   },[available,acceptsCash,activeOrderId]);
@@ -172,61 +194,74 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       Alert.alert(label("lbl.cms.a56cc2117fd5", "Delivery in progress"),label("lbl.cms.9694ac7e3bc7", "Complete the active delivery before signing out so customer tracking is not interrupted."));
       return;
     }
+    if(mutation.current)return;
+    const token={},userId=owner.current;mutation.current=token;setBusy('signout');
+    try {
     const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:false,p_accepts_cash_on_delivery:acceptsCash});
+    if(!mounted.current||owner.current!==userId)return;
     if(error){Alert.alert(label("lbl.cms.2e6f98d92bd3", "Could not go offline"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));return;}
     try {
       if(await Location.hasStartedLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK)){
         await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
       }
     } catch {}
-    onSignOut();
+    if(mounted.current&&owner.current===userId)onSignOut();
+    }catch(error){if(mounted.current&&owner.current===userId)Alert.alert(label('lbl.cms.2e6f98d92bd3', 'Could not go offline'),friendlyError(error,label('lbl.cms.89e524601f0d', 'Please try again.')));}
+    finally{if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
 
   const setPresence=async(next:boolean,cash=acceptsCash)=>{
-    setBusy('presence');
-    const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
-    if(error)Alert.alert(label("lbl.cms.0de16b1a1542", "Availability not updated"),friendlyError(error,label("lbl.cms.89e524601f0d", "Please try again.")));else{setAvailable(next);setAcceptsCash(cash);}
-    setBusy('');
+    if(mutation.current)return;
+    const token={},userId=owner.current;mutation.current=token;setBusy('presence');
+    try{
+      const {error}=await supabase.rpc('goodies_set_courier_availability',{p_is_available:next,p_accepts_cash_on_delivery:cash});
+      if(error)throw error;
+      if(mounted.current&&owner.current===userId){setAvailable(next);setAcceptsCash(cash);}
+    }catch(error){if(mounted.current&&owner.current===userId)Alert.alert(label('lbl.cms.0de16b1a1542', 'Availability not updated'),friendlyError(error,label('lbl.cms.89e524601f0d', 'Please try again.')));}
+    finally{if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
   const respond=async(orderId:string,accept:boolean)=>{
-    setBusy(orderId);
+    if(mutation.current)return;
+    const token={},userId=owner.current;mutation.current=token;setBusy(orderId);
     try {
       const {error}=await supabase.rpc('goodies_courier_respond_assignment',{p_order_id:orderId,p_accept:accept});
       if(error)throw error;
-      await load();
-    } catch(error) {Alert.alert(label("lbl.page.GoodiesCourierScreen.f37119df43", "Could not refresh delivery response"),friendlyError(error,label("lbl.page.GoodiesCourierScreen.9716bbbf48", "The response may have been saved. Refresh before retrying.")));}
-    finally {setBusy('');}
+      if(mounted.current&&owner.current===userId)await load();
+    } catch(error) {if(mounted.current&&owner.current===userId)Alert.alert(label("lbl.page.GoodiesCourierScreen.f37119df43", "Could not refresh delivery response"),friendlyError(error,label("lbl.page.GoodiesCourierScreen.9716bbbf48", "The response may have been saved. Refresh before retrying.")));}
+    finally {if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
   const advance=async(orderId:string,status:'picked_up'|'delivered')=>{
-    setBusy(orderId);
+    if(mutation.current)return;
+    const token={},userId=owner.current;mutation.current=token;setBusy(orderId);
     try {
       const {error}=await supabase.rpc('goodies_courier_update_delivery_status',{p_order_id:orderId,p_status:status});
       if(error)throw error;
-      await load();
-    } catch(error) {Alert.alert(label("lbl.page.GoodiesCourierScreen.66000cc67d", "Could not refresh delivery status"),friendlyError(error,label("lbl.page.GoodiesCourierScreen.ccaf4d36ba", "The update may have been saved. Refresh before retrying.")));}
-    finally {setBusy('');}
+      if(mounted.current&&owner.current===userId)await load();
+    } catch(error) {if(mounted.current&&owner.current===userId)Alert.alert(label("lbl.page.GoodiesCourierScreen.66000cc67d", "Could not refresh delivery status"),friendlyError(error,label("lbl.page.GoodiesCourierScreen.ccaf4d36ba", "The update may have been saved. Refresh before retrying.")));}
+    finally {if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
 
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
     <View style={{height:100,paddingHorizontal:20,paddingBottom:12,backgroundColor:'#fff',borderBottomWidth:1,borderBottomColor:'#E3E8DF',flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'}}>
       <View><Text style={{fontSize:20,fontWeight: "600",color:'#172316'}}>{label("lbl.cms.1c37cd1c523e", "Goodies Courier")}</Text><Text style={{fontSize:11,color:'#667064'}}>{label("lbl.cms.7961892a1ae8", "Delivery assignments and live GPS")}</Text></View>
-      <Pressable onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight: "600",color:'#52634F'}}>{label("lbl.cms.7169f4af4373", "Sign out")}</Text></Pressable>
+      <Pressable disabled={!!busy} onPress={()=>void signOut()}><Text style={{fontSize:12,fontWeight: "600",color:'#52634F'}}>{label("lbl.cms.7169f4af4373", "Sign out")}</Text></Pressable>
     </View>
     <ScrollView contentContainerStyle={{padding:16,gap:12}}>
       <View style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:10}}>
         <Text style={{fontSize:15,fontWeight: "600",color:'#1A2517'}}>{label("lbl.cms.4670a8753b97", "Availability")}</Text>
         <Text style={{fontSize:12,color:'#5F6B5A'}}>{label("lbl.cms.923b004405b0", "Go online to receive Goodies delivery offers. GPS sharing starts after you accept and continues in the background while the delivery is active.")}</Text>
-        <Pressable disabled={!!busy || !!activeOrderId} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
-          <Text style={{fontWeight: "600",color:available?'#286A35':'#465044'}}>{busy==='presence'?label("lbl.cms.ea052535e65e", "Saving…"):activeOrderId?label("lbl.cms.e2cafebf4b38", "Delivery in progress · GPS tracking active"):available?label("lbl.cms.e0c1f42dae8c", "You are online · Tap to go offline"):label("lbl.cms.d3055d65ac25", "Go online")}</Text>
+        <Pressable disabled={!!busy || !!activeOrderId || loading || loadError} onPress={()=>void setPresence(!available)} style={{padding:13,borderRadius:12,backgroundColor:available?'#E8F4E8':'#F1F2EF',alignItems:'center'}}>
+          <Text style={{fontWeight: "600",color:available?'#286A35':'#465044'}}>{busy==='presence'?label("lbl.cms.ea052535e65e", "Saving…"):activeOrderId?label("lbl.cms.a56cc2117fd5", "Delivery in progress"):available?label("lbl.cms.e0c1f42dae8c", "You are online · Tap to go offline"):label("lbl.cms.d3055d65ac25", "Go online")}</Text>
         </Pressable>
-        <Pressable disabled={!!busy||!available||!!activeOrderId} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
+        <Pressable disabled={!!busy||!available||!!activeOrderId||loading||loadError} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
           <Text style={{fontSize:13,color:'#263324'}}>{label("lbl.cms.09ae3d36c166", "I accept cash on delivery")}</Text><Text style={{fontSize:13,fontWeight: "600",color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?label("lbl.cms.8f4b0527a23c", "ON"):label("lbl.cms.6cde4afa422f", "OFF")}</Text>
         </Pressable>
         <Text style={{fontSize:11,color:'#697567'}}>{locationStatus}</Text>
       </View>
       <Text style={{fontSize:17,fontWeight: "600",color:'#1A2517'}}>{label("lbl.cms.9ed6a2aa1cf9", "My deliveries")}</Text>
       {loading?<ActivityIndicator/>:null}
-      {!loading&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>{label("lbl.cms.6ddb87eb71b2", "No active delivery offers")}</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>{label("lbl.cms.4b8df09e4dfe", "New offers will appear here when a store assigns you.")}</Text></View>:null}
+      {loadError?<View style={{padding:16,backgroundColor:'#fff',borderRadius:16,gap:10}}><Text style={{color:'#9B4036'}}>{label('lbl.cms.ce9c4301c916', 'Could not load deliveries')}</Text><Pressable accessibilityRole="button" onPress={()=>void load()}><Text style={{fontWeight:'600',color:'#426B39'}}>{label('lbl.retry', 'Try again')}</Text></Pressable></View>:null}
+      {!loading&&!loadError&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>{label("lbl.cms.6ddb87eb71b2", "No active delivery offers")}</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>{label("lbl.cms.4b8df09e4dfe", "New offers will appear here when a store assigns you.")}</Text></View>:null}
       {deliveries.map(d=><View key={d.id} style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:8}}>
         <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight: "600",color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight: "600",color:'#426B39'}}>{d.status}</Text></View>
         <Text style={{fontSize:13,color:'#263324'}}> {String(d.address?.t||d.address?.address||label("lbl.page.GoodiesCourierScreen.c8c91e20b0", "Delivery address unavailable"))} </Text>

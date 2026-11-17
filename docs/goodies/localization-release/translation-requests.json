@@ -1317,27 +1317,27 @@
   },
   {
     "id": "K0329",
-    "text": "Could not refresh deliveries"
-  },
-  {
-    "id": "K0330",
     "text": "Could not refresh delivery response"
   },
   {
-    "id": "K0331",
+    "id": "K0330",
     "text": "Could not refresh delivery status"
   },
   {
-    "id": "K0332",
+    "id": "K0331",
     "text": "Could not refresh messages."
   },
   {
-    "id": "K0333",
+    "id": "K0332",
     "text": "Could not refresh orders. Pull down to try again."
   },
   {
-    "id": "K0334",
+    "id": "K0333",
     "text": "Could not refresh the shared cart."
+  },
+  {
+    "id": "K0334",
+    "text": "Could not refresh this order. Please try again."
   },
   {
     "id": "K0335",

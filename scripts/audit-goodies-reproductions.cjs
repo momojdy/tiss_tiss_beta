@@ -2,7 +2,7 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),ts=require('typescript'),React=require('react');
 const {test}=require('node:test'),root=path.resolve(__dirname,'..'),admin=path.resolve(root,'../tiss-admin');
 function extract(repo,file,name){const filename=path.join(repo,file),ast=ts.createSourceFile(filename,fs.readFileSync(filename,'utf8'),99,true);let found;
- function visit(node){if(ts.isFunctionDeclaration(node)&&node.name?.text===name)found=node;else if(ts.isVariableDeclaration(node)&&node.name.getText(ast)===name&&node.initializer)found=node;ts.forEachChild(node,visit);}visit(ast);assert.ok(found,'Missing '+name);
+ function visit(node){if(ts.isFunctionDeclaration(node)&&node.name?.text===name)found=node;else if(ts.isVariableDeclaration(node)&&node.name.getText(ast)===name&&node.initializer)found=node;else if(ts.isPropertyAssignment(node)&&node.name.getText(ast)===name&&ts.isArrowFunction(node.initializer))found=node;ts.forEachChild(node,visit);}visit(ast);assert.ok(found,'Missing '+name);
  const code=ts.isFunctionDeclaration(found)?found.getText(ast)+'\nmodule.exports='+name+';':'module.exports='+found.initializer.getText(ast)+';';
  const javascript=ts.transpileModule(code,{fileName:filename,compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,jsx:ts.JsxEmit.React}}).outputText;
  const tags=new Set();function tag(node){if(ts.isJsxOpeningElement(node)||ts.isJsxSelfClosingElement(node))tags.add(node.tagName.getText(ast));ts.forEachChild(node,tag);}tag(found);
@@ -14,7 +14,7 @@ test('REGRESSION A01: vendor errors never render raw database detail',()=>{
  const message='permission denied for relation goodies_orders (SQLSTATE 42501)';assert.equal(errText(new Error(message)),'Could not complete this request. Please try again.');
 });
 test('REGRESSION A02: receipt errors use safe app-owned copy',async()=>{
- const messages=[],order={backendId:'synthetic-order'};const receiptCall=extract(root,'src/features/Goodies/screens/Shop.tsx','receiptCall')({receiptBusy:false,setReceiptBusy(){},supabase:{rpc:async()=>({error:{message:'already reported; SQLSTATE 42501 private.internal_queue'}})},toast:value=>messages.push(value),label,o:order,save(){},emit(){}});
+ const messages=[],order={backendId:'synthetic-order'};const receiptCall=extract(root,'src/features/Goodies/screens/Shop.tsx','receiptCall')({receiptLock:{current:null},scopeRef:{current:{active:true}},accountId:'synthetic',setReceiptBusy(){},supabase:{rpc:async()=>({error:{message:'already reported; SQLSTATE 42501 private.internal_queue'}})},toast:value=>messages.push(value),label,o:order,save(){},emit(){}});
  await receiptCall('goodies_customer_dispute_delivery',{},'Success');assert.equal(messages[0],'Could not send this. Please try again.');
 });
 test('REGRESSION A03: admin Reject requires and sends a reason',async()=>{
@@ -173,4 +173,98 @@ test('store sharing never starts a write for a replacement account',async()=>{
  const S={accountId:'customer'};let calls=0;
  const send=extract(root,'src/features/Goodies/screens/Shop.tsx','sendStoreToFriend')({S,shareSending:null,setShareProblem(){},setShareSending(){},supabase:{auth:{getUser:async()=>{S.accountId='other';return{data:{user:{id:'other'}}};}},from:()=>{calls++;throw Error('Must not query');}},label,Alert:{alert(){throw Error('Must not alert the replacement account');}},friendlyError:(_e,fallback)=>fallback});
  await send('friend');assert.equal(calls,0);
+});
+
+function receiptHarness(){
+ const S={accountId:'customer',orders:[{backendId:'order',serverStatus:'picked_up'}]},messages=[],states=[],calls=[];let resolve;
+ const response=new Promise(done=>resolve=done),scope={active:true},context={S,accountId:'customer',scopeRef:{current:scope},receiptLock:{current:null},o:S.orders[0],label,toast:m=>messages.push(m),setReceiptBusy:v=>states.push(v),setReportOpen(){},setReportText(){},setTrackingRetry(){},supabase:{rpc:async(...args)=>{calls.push(args);return response;}},save(){},emit(){},require:()=>({stage:()=>4})};
+ return{S,messages,states,calls,scope,context,resolve,call:extract(root,'src/features/Goodies/screens/Shop.tsx','receiptCall')(context)};
+}
+test('receipt double taps send one request and update the current order record',async()=>{
+ const h=receiptHarness(),one=h.call('goodies_customer_confirm_received',{},'Confirmed');await h.call('goodies_customer_confirm_received',{},'Confirmed');assert.equal(h.calls.length,1);
+ h.S.orders=[{backendId:'order',serverStatus:'picked_up'}];h.resolve({error:null});await one;assert.equal(h.S.orders[0].serverStatus,'completed');assert.deepEqual(h.messages,['Confirmed']);assert.equal(h.context.receiptLock.current,null);
+});
+test('late receipt responses after account change or unmount cannot update another screen',async()=>{
+ for(const invalidate of [h=>h.S.accountId='other',h=>h.scope.active=false]){
+  const h=receiptHarness(),pending=h.call('goodies_customer_confirm_received',{},'Confirmed');invalidate(h);h.resolve({error:null});await pending;assert.equal(h.S.orders[0].serverStatus,'picked_up');assert.equal(h.messages.length,0);
+ }
+});
+test('stale product controls never add a removed product or crash after a store disappears',()=>{
+ for(const removedStore of [false,true])for(const name of ['openProduct','quickAdd','productQty','productAdd']){
+  const messages=[],S={sh:{id:'removed',q:1}},IT=removedStore?{removed:{id:'removed',s:'closed'}}:{};
+  const action=extract(root,'src/features/Goodies/actions.ts',name)({S,IT,STB:{},label,toast:m=>messages.push(m),cartAdd(){throw Error('Must not add');},push(){throw Error('Must not navigate');}});
+  assert.doesNotThrow(()=>action(name==='productQty'?1:'removed'));assert.deepEqual(messages,['Please select the product again and retry.']);
+ }
+});
+test('removed cart products remain removable but cannot be incremented',()=>{
+ const S={cart:{sid:'store',lines:[{id:'removed',k:'line',q:2}]}},messages=[];
+ const action=extract(root,'src/features/Goodies/actions.ts','qty')({S,IT:{},STB:{},label,toast:m=>messages.push(m),cartStoreIds:()=>['store'],save(){},emit(){}});
+ action('line',1);assert.equal(S.cart.lines[0].q,2);assert.equal(messages.length,1);action('line',-1);assert.equal(S.cart.lines[0].q,1);
+});
+test('store info sheet handles a removed store and returns to the real store browser',()=>{
+ let closed=0,browsed=0;
+ const Sheets=extract(root,'src/features/Goodies/components/Sheets.tsx','Sheets')({useTheme:()=>({}),useSafeAreaInsets:()=>({bottom:0}),useWindowDimensions:()=>({height:800}),STB:{},label,A:{browse(){browsed++;}}});
+ const tree=Sheets({sheet:{kind:'sinfo',id:'removed'},close:()=>closed++}),empty=elements(tree).find(e=>e.type==='Empty');assert.ok(empty);empty.props.onPress();assert.equal(closed,1);assert.equal(browsed,1);
+});
+function courierPresenceHarness(){
+ const calls=[],alerts=[],busy=[],owner={current:'courier'},mounted={current:true},mutation={current:null};let resolve;
+ const response=new Promise(done=>resolve=done),context={owner,mounted,mutation,acceptsCash:false,setBusy:v=>busy.push(v),supabase:{rpc:async(...args)=>{calls.push(args);return response;}},label,friendlyError:(_error,fallback)=>fallback,Alert:{alert:(...args)=>alerts.push(args)},setAvailable(){},setAcceptsCash(){}};
+ return{calls,alerts,busy,owner,mounted,mutation,resolve,run:extract(root,'src/features/Goodies/GoodiesCourierScreen.tsx','setPresence')(context)};
+}
+test('courier availability double taps dispatch once and network failures release the busy state safely',async()=>{
+ const h=courierPresenceHarness(),pending=h.run(true);await h.run(true);assert.equal(h.calls.length,1);h.resolve(Promise.reject(Error('private SQLSTATE table')));await pending;assert.equal(h.mutation.current,null);assert.equal(h.busy.at(-1),'');assert.deepEqual(h.alerts,[['Availability not updated','Please try again.']]);
+});
+test('late courier presence failures cannot alert a replacement account',async()=>{
+ const h=courierPresenceHarness(),pending=h.run(true);h.owner.current='another';h.resolve({error:{message:'private'}});await pending;assert.equal(h.alerts.length,0);assert.equal(h.mutation.current,null);
+});
+
+test('order history exposes a failed initial auth transport instead of an endless loading state',async()=>{
+ const S={ordersLoading:true},messages=[];
+ const start=extract(root,'src/features/Goodies/serverSync.ts','startGoodiesSync')({S,activeRefresh:null,emit:()=>messages.push('update'),supabase:{auth:{onAuthStateChange:()=>({data:{subscription:{unsubscribe(){}}}}),getSession:async()=>{throw Error('private transport');}}},AppState:{addEventListener:()=>({remove(){}})}});
+ const stop=start();await new Promise(resolve=>setImmediate(resolve));assert.equal(S.ordersLoading,false);assert.equal(S.ordersError,'unavailable');assert.ok(messages.length);stop();
+});
+test('removed catalog stores do not crash product rendering or hide an existing order confirmation',()=>{
+ const Product=extract(root,'src/features/Goodies/screens/Shop.tsx','Product')({S:{sh:{id:'product'}},IT:{product:{s:'removed'}},STB:{},useTheme:()=>({}),useWindowDimensions:()=>({width:390}),useState:v=>[v,()=>{}],useEffect(){},label,back(){},browse(){}});assert.equal(elements(Product()).find(e=>e.type==='Empty').props.title,'Product not found');
+ const Confirm=extract(root,'src/features/Goodies/screens/Shop.tsx','Confirm')({S:{orders:[{id:'ORDER',backendId:'uuid',sid:'removed',sn:'Historical shop',lines:[]}]},STB:{},useTheme:()=>({}),label,back(){},browse(){},money:()=>'$1'});assert.ok(flatten(Confirm({id:'ORDER'})).includes('Historical shop'));
+});
+
+test('courier reads cannot restore an old account after authentication changes mid-request',async()=>{
+ let resolve,calls=0;const owner={current:'old'},pendingAuth=new Promise(done=>resolve=done);
+ const read=extract(root,'src/features/Goodies/GoodiesCourierScreen.tsx','read')({owner,mounted:{current:true},setUid(){throw Error('Must not restore old account');},supabase:{auth:{getUser:()=>pendingAuth},from(){calls++;throw Error('Must not query an old account');}}});
+ const pending=read();owner.current='new';resolve({data:{user:{id:'old'}},error:null});assert.equal(await pending,null);assert.equal(calls,0);
+});
+test('courier account changes while presence loads cannot request the next account’s assignments',async()=>{
+ let resolve,calls=0;const owner={current:'old'},presence=new Promise(done=>resolve=done);
+ const read=extract(root,'src/features/Goodies/GoodiesCourierScreen.tsx','read')({owner,mounted:{current:true},setUid(){},supabase:{auth:{getUser:async()=>({data:{user:{id:'old'}},error:null})},from:()=>({select:()=>({eq:()=>({maybeSingle:()=>presence})})}),rpc(){calls++;throw Error('Must not query a different account');}}});
+ const pending=read();await new Promise(resolve=>setImmediate(resolve));owner.current='new';resolve({data:null,error:null});assert.equal(await pending,null);assert.equal(calls,0);
+});
+test('a failed courier load exposes retry without claiming no delivery offers exist',()=>{
+ let index=0;
+ const Courier=extract(root,'src/features/Goodies/GoodiesCourierScreen.tsx','GoodiesCourierScreen')({label,useState:initial=>[index++===6?false:index===8?true:initial,()=>{}],useEffect(){},useRef:value=>({current:value}),useCallback:fn=>fn});
+ const tree=Courier({onSignOut(){}}),text=flatten(tree);assert.ok(text.includes('Could not load deliveries'));assert.ok(text.includes('Try again'));assert.ok(!text.includes('No active delivery offers'));
+});
+test('the new-cart confirmation executes the existing builder callback exactly once',()=>{
+ let committed=0;const S={pend:[null,null,()=>committed++]},run=extract(root,'src/features/Goodies/actions.ts','newCart')({S,IT:{},STB:{},ui:{close(){}},label,toast(){}});run();assert.equal(committed,1);assert.equal(S.pend,null);
+});
+test('a pending product removed before new-cart confirmation cannot clear the saved cart',()=>{
+ const cart={sid:'old',lines:[{id:'saved'}]},S={cart,pend:[{id:'removed'},{q:1}]};const run=extract(root,'src/features/Goodies/actions.ts','newCart')({S,IT:{},STB:{},ui:{close(){}},label,toast(){}});run();assert.equal(S.cart,cart);assert.equal(S.cart.lines.length,1);assert.equal(S.pend,null);
+});
+test('builder new-cart confirmation revalidates availability and recalculates the current composition before clearing the cart',()=>{
+ for(const available of [true,false]){const cart={sid:'old',lines:[{id:'saved'}]},S={accountId:'customer',cart},BD={sid:'new',bid:'builder',q:1,busy:0},builder={id:'builder'},commits=[];let valid=true,price=10;
+  const add=extract(root,'src/features/Goodies/builders/engine.tsx','bzAddOrder')({BD,S,STB:{old:{n:'Old'},new:{n:'New'}},bGet:()=>builder,bCheck:()=>({ok:valid}),bLine:()=>({p:price}),animateCommit:(_b,line)=>commits.push(line),label,toast(){},ui:{sheet(){},close(){}}});
+  add();assert.equal(typeof S.pend[2],'function');valid=available;price=15;S.pend[2]();if(available){assert.equal(commits[0].p,15);assert.equal(S.cart.lines.length,0);}else{assert.equal(commits.length,0);assert.equal(S.cart,cart);}
+ }
+});
+test('reordering keeps product options and notes while refreshing prices, stock and promotional discounts',()=>{
+ const line={id:'meal',k:'past-key',n:'Old name',e:'',p:3,q:3,d:'Large, + drink, no onions',options:{size:'large',drink:true,discount_pct:20}},IT={meal:{id:'meal',s:'store',n:'Current meal',e:'🍔',p:12,stock:2,oos:0}};
+ const reorder=extract(root,'src/features/Goodies/store.ts','reorderLines')({IT,STB:{store:{live:true,open:1,c:'restaurants'}},hooks:{}}),result=reorder({sid:'store',lines:[line]});assert.equal(result.ok.length,1);assert.equal(result.ok[0].p,14.5);assert.equal(result.ok[0].q,2);assert.equal(result.ok[0].s,'store');assert.equal(result.ok[0].d,line.d);assert.equal(result.ok[0].options.discount_pct,0);assert.equal(result.ok[0].options.size,'large');assert.equal(result.ok[0].options.drink,true);
+ const missing=extract(root,'src/features/Goodies/store.ts','reorderLines')({IT,STB:{},hooks:{}})({sid:'removed',lines:[line]});assert.equal(missing.ok.length,0);assert.equal(missing.miss.length,1);
+});
+test('direct cart additions reject stale catalog snapshots rather than silently adding removed products',()=>{
+ const messages=[],context={IT:{},label,toast:m=>messages.push(m)},add=extract(root,'src/features/Goodies/store.ts','cartAdd')(context);add({id:'removed',s:'store'},{q:1});assert.deepEqual(messages,['Please select the product again and retry.']);
+ const canBuy=extract(root,'src/features/Goodies/store.ts','canBuy')({...context,STB:{}});assert.equal(canBuy({id:'removed',s:'store'}),false);
+});
+test('stock changes before new-cart confirmation preserve the existing cart',()=>{
+ const cart={sid:'old',lines:[{id:'saved'}]},product={id:'product',s:'new',stock:1},S={cart,pend:[product,{q:2}]},messages=[];
+ const run=extract(root,'src/features/Goodies/actions.ts','newCart')({S,IT:{product},STB:{new:{}},canBuy:()=>true,ui:{close(){}},label,toast:m=>messages.push(m)});run();assert.equal(S.cart,cart);assert.equal(messages[0],'Only 1 available');
 });

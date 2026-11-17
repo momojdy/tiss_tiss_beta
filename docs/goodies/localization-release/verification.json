@@ -14,6 +14,6 @@
     "Replace placeholder FAQ answers before publishing.",
     "Replace placeholder FAQ answers before publishing."
   ],
-  "payloadSha256": "738ed6c55a19fbf317c547cd1721c7437b2e776a9dc1044853cf6fce6159b12d",
+  "payloadSha256": "348dbcaa25125928c27316154fd242f8c2bd4c9f777954892c3fd69dba58b7f5",
   "scope": "Local payload/schema/consumer-resolver verification, not live publication or human review"
 }
