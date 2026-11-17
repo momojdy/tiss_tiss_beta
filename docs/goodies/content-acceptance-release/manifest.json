@@ -1,0 +1,65 @@
+{
+  "status": "PREPARED_NOT_PUBLISHED",
+  "sourceBaseline": {
+    "id": "da301ba8-15b8-4092-a37f-5da73d721c2f",
+    "version": 5,
+    "payloadSha256": "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
+  },
+  "sourcePayloadSha256": "348dbcaa25125928c27316154fd242f8c2bd4c9f777954892c3fd69dba58b7f5",
+  "payloadSha256": "158305e5b8f5599a04411735f22741e6025ca734093a0b8548b922e243997d73",
+  "changes": [
+    {
+      "index": 0,
+      "question": "How do I track my order?",
+      "locales": [
+        "en",
+        "fr",
+        "es",
+        "zh-Hans"
+      ]
+    },
+    {
+      "index": 1,
+      "question": "Delivery information",
+      "locales": [
+        "en",
+        "fr",
+        "es",
+        "zh-Hans"
+      ]
+    },
+    {
+      "index": 2,
+      "question": "Payment information",
+      "locales": [
+        "en",
+        "fr",
+        "es",
+        "zh-Hans"
+      ]
+    },
+    {
+      "index": 3,
+      "question": "Refunds and cancellation",
+      "locales": [
+        "en",
+        "fr",
+        "es",
+        "zh-Hans"
+      ]
+    },
+    {
+      "index": 4,
+      "question": "What if an item is missing?",
+      "locales": [
+        "en",
+        "fr",
+        "es",
+        "zh-Hans"
+      ]
+    }
+  ],
+  "unmodified": "Non-FAQ text from the authorized translation candidate, current live financial configuration, policy documents and every existing Haitian Creole entry",
+  "humanReviewClaim": false,
+  "publicationPerformed": false
+}

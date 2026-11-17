@@ -1,0 +1,13 @@
+{
+  "prepared": true,
+  "published": false,
+  "fields": 1706,
+  "localeLookupsVerified": 6816,
+  "existingHaitianFieldsPreserved": 775,
+  "feesAndNonTextConfigurationUnchanged": true,
+  "policyDocumentsUnchanged": true,
+  "schemaErrors": [],
+  "publicationGuardErrors": [],
+  "payloadSha256": "158305e5b8f5599a04411735f22741e6025ca734093a0b8548b922e243997d73",
+  "scope": "Local payload/schema/consumer-resolver verification, not live publication or human review"
+}

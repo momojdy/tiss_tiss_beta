@@ -6,7 +6,8 @@
     "npm:@supabase/supabase-js@2": "2.117.2",
     "npm:@supabase/supabase-js@2.117.2": "2.117.2",
     "npm:openai@^4.52.5": "4.104.0",
-    "npm:stripe@18.5.0": "18.5.0"
+    "npm:stripe@18.5.0": "18.5.0",
+    "npm:stripe@22.6.2": "22.6.2"
   },
   "jsr": {
     "@supabase/functions-js@2.119.0": {
@@ -309,6 +310,9 @@
       "dependencies": [
         "qs"
       ]
+    },
+    "stripe@22.6.2": {
+      "integrity": "sha512-PwRE2scocvXqDKPiskMa5vRJEAEkq46W69XyUYmAwrNSLr675lQnfqLwnsndAWizwgihOWw/irLmoFRo3ez7ew=="
     },
     "tr46@0.0.3": {
       "integrity": "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="

@@ -10,6 +10,7 @@ function load(file,cache=new Map()){
 const admin=path.resolve(__dirname,'../../tiss-admin/src/features/admin/goodiesConsumer'),{validateGoodiesDraft}=load(path.join(admin,'draft.ts')),{goodiesPublicationErrors}=load(path.join(admin,'publicationReview.ts')),{resolveGoodiesText}=load(path.resolve(__dirname,'../src/features/Goodies/i18n/resolveText.ts'));
 const schemaErrors=validateGoodiesDraft(payload,true),publicationErrors=goodiesPublicationErrors(payload),before=JSON.parse(JSON.stringify(base.payload)),after=JSON.parse(JSON.stringify(payload));
 assert.deepEqual(schemaErrors,[]);
+if(process.argv.includes('--require-publishable'))assert.deepEqual(publicationErrors,[],'Prepared content still fails publication review');
 let checked=0,ht=0;
 for(const field of fields(payload).filter(field=>field.holder[field.key]?.en?.v?.trim()))for(const locale of locales){const text=field.holder[field.key][locale];assert.ok(text?.v?.trim(),`${field.id}: ${locale}`);assert.equal(text.s,'reviewed');assert.equal(text.human_reviewed,false);assert.equal(resolveGoodiesText(field.holder[field.key],locale),text.v);assert.deepEqual(placeholders(text.v),placeholders(field.holder[field.key].en.v));checked++;}
 function at(root,parts){return parts.reduce((node,key)=>node[key],root);}

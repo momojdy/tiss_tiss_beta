@@ -1,0 +1,32 @@
+{
+  "How do I track my order?": {
+    "en": "Open Your orders in Goodies and select Track or Details for your order. The tracking screen shows its latest status. For courier deliveries, the map shows the courier when a recent location is available. If location is unavailable, check the order status and try again later.",
+    "fr": "Ouvrez Vos commandes dans Goodies, puis choisissez Suivre ou Détails pour votre commande. L’écran de suivi affiche son dernier statut. Pour les livraisons par coursier, la carte affiche le coursier lorsqu’une position récente est disponible. Si la position est indisponible, consultez le statut de la commande et réessayez plus tard.",
+    "es": "Abre Tus pedidos en Goodies y selecciona Seguimiento o Detalles para tu pedido. La pantalla de seguimiento muestra su estado más reciente. En las entregas con repartidor, el mapa muestra al repartidor cuando hay una ubicación reciente disponible. Si la ubicación no está disponible, consulta el estado del pedido e inténtalo más tarde.",
+    "zh-Hans": "在 Goodies 中打开“我的订单”，选择相应订单的“追踪”或“详情”。追踪页面会显示订单的最新状态。对于配送员配送的订单，有最近的定位信息时，地图会显示配送员的位置。如果暂时无法获取位置，请查看订单状态并稍后重试。"
+  },
+  "Delivery information": {
+    "en": "Choose delivery or pickup at checkout when offered by the store. Check your address, contact number, delivery fee and any available schedule before placing the order. Delivery availability depends on the store and your address.",
+    "fr": "Choisissez la livraison ou le retrait au moment de payer, selon les options proposées par le commerce. Vérifiez votre adresse, votre numéro de contact, les frais de livraison et les créneaux disponibles avant de commander. La disponibilité de la livraison dépend du commerce et de votre adresse.",
+    "es": "Elige entrega o recogida al finalizar la compra, según las opciones de la tienda. Revisa tu dirección, número de contacto, tarifa de entrega y horarios disponibles antes de hacer el pedido. La disponibilidad de la entrega depende de la tienda y de tu dirección.",
+    "zh-Hans": "结账时，可根据店铺提供的选项选择配送或自取。下单前，请核对地址、联系电话、配送费以及可选的预约时间。能否配送取决于店铺和您的地址。"
+  },
+  "Payment information": {
+    "en": "Checkout shows the payment methods available for your order. Review the total before confirming. If a payment is not confirmed, check Your orders and, for Wallet payments, your Wallet activity before trying again. Never share your PIN or card details in a message.",
+    "fr": "Le paiement affiche les moyens disponibles pour votre commande. Vérifiez le total avant de confirmer. Si un paiement n’est pas confirmé, consultez Vos commandes et, pour un paiement par portefeuille, l’activité de votre portefeuille avant de réessayer. Ne communiquez jamais votre code PIN ou vos données de carte dans un message.",
+    "es": "Al finalizar la compra verás los métodos de pago disponibles para tu pedido. Revisa el total antes de confirmar. Si un pago no se confirma, consulta Tus pedidos y, si pagaste con la billetera, su actividad antes de volver a intentarlo. Nunca compartas tu PIN ni los datos de tu tarjeta en un mensaje.",
+    "zh-Hans": "结账页面会显示该订单可用的付款方式。确认付款前，请核对总金额。如果付款尚未确认，请先查看“我的订单”；使用钱包付款时，也请查看钱包明细，再决定是否重试。请勿在消息中透露 PIN 码或银行卡信息。"
+  },
+  "Refunds and cancellation": {
+    "en": "Open the order details to see whether cancellation is available. If it is no longer available, select Get help with this order. Check the order’s payment status for refund updates. A refund request or pending status does not mean the refund is complete.",
+    "fr": "Ouvrez les détails de la commande pour vérifier si l’annulation est disponible. Si elle ne l’est plus, choisissez Obtenir de l’aide pour cette commande. Consultez le statut du paiement pour suivre le remboursement. Une demande de remboursement ou un statut en attente ne signifie pas que le remboursement est terminé.",
+    "es": "Abre los detalles del pedido para comprobar si se puede cancelar. Si la opción ya no está disponible, selecciona Obtener ayuda con este pedido. Consulta el estado del pago para ver las novedades del reembolso. Una solicitud de reembolso o un estado pendiente no significa que el reembolso haya finalizado.",
+    "zh-Hans": "打开订单详情，查看是否可以取消订单。如果已无法取消，请选择“获取此订单的帮助”。退款进度请查看订单的付款状态。已提交退款申请或显示“待处理”，并不表示退款已完成。"
+  },
+  "What if an item is missing?": {
+    "en": "Open the order and select Get help with this order. Include the order number and describe the missing item. You can also message the store from the order details. If the order offers a delivery problem report, submit it before the displayed deadline.",
+    "fr": "Ouvrez la commande et choisissez Obtenir de l’aide pour cette commande. Indiquez le numéro de commande et décrivez l’article manquant. Vous pouvez aussi envoyer un message au commerce depuis les détails de la commande. Si un signalement de problème de livraison est proposé, envoyez-le avant la date limite affichée.",
+    "es": "Abre el pedido y selecciona Obtener ayuda con este pedido. Incluye el número del pedido y describe el artículo que falta. También puedes enviar un mensaje a la tienda desde los detalles del pedido. Si el pedido permite informar de un problema de entrega, envía el informe antes del plazo indicado.",
+    "zh-Hans": "打开订单，选择“获取此订单的帮助”，填写订单编号并说明缺少的商品。您也可以从订单详情向店铺发送消息。如果订单提供配送问题报告功能，请在页面显示的截止时间前提交报告。"
+  }
+}

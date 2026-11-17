@@ -1,4 +1,4 @@
-import Stripe from "npm:stripe@18.5.0";
+import Stripe from "npm:stripe@22.6.2";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 
 const corsHeaders = {
@@ -31,7 +31,7 @@ Deno.serve(async (req: Request) => {
     );
     if (tokenError || tokenValid !== true) return json({ error: "Not authorized" }, 401);
 
-    const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
+    const stripe = new Stripe(stripeKey, { apiVersion: "2026-08-26.dahlia" });
     const cutoff = new Date(Date.now() - 30 * 60 * 1000).toISOString();
     const { data: orders, error: orderError } = await service
       .from("goodies_orders")
@@ -136,6 +136,6 @@ Deno.serve(async (req: Request) => {
     return json(summary, failed > 0 ? 500 : 200);
   } catch (error) {
     console.error("expire-goodies-card-auth:", error);
-    return json({ error: error instanceof Error ? error.message : "Card authentication expiry failed" }, 500);
+    return json({ error: "Could not process card authentication updates." }, 500);
   }
 });

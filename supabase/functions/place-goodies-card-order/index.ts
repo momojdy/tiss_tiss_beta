@@ -169,6 +169,6 @@ Deno.serve(async (req: Request) => {
         }
       } catch (cleanupError) { console.error("Goodies card cleanup needs reconciliation:", cleanupError); }
     }
-    return json({error: error instanceof Error ? error.message : "Card payment failed. Try another method."}, 400);
+    return json({error: "Could not confirm the payment. Check your orders before trying again."}, 400);
   }
 });

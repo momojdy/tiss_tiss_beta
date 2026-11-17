@@ -74,6 +74,6 @@ Deno.serve(async (req: Request) => {
     return json({ order_id: order.id, status: latest?.payment_status || "refund_pending", worker: workerResult });
   } catch (e) {
     console.error("refund-goodies-card-order:", e);
-    return json({ error: e instanceof Error ? e.message : "Refund processing failed" }, 500);
+    return json({ error: "Could not confirm this refund. Check the order payment status and try again." }, 500);
   }
 });

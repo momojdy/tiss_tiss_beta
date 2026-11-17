@@ -72,6 +72,8 @@
     "lint": "eslint src/features/Goodies/content.ts src/features/Goodies/components/Overlays.tsx",
     "test:goodies-cms": "node tests/goodies-cms.test.cjs",
     "check:goodies-cms": "node scripts/check-goodies-cms.cjs",
+    "prepare:goodies-acceptance-content": "node scripts/prepare-goodies-acceptance-content.cjs",
+    "check:goodies-acceptance-content": "node scripts/verify-goodies-translation-release.cjs docs/goodies/content-acceptance-release --require-publishable",
     "sync:goodies-cms": "node scripts/sync-goodies-cms-catalog.cjs && node scripts/sync-goodies-preview.cjs",
     "test:goodies": "node scripts/run-goodies-tests.cjs",
     "test:goodies-cross-role": "node scripts/audit-goodies-reproductions.cjs",

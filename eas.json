@@ -1,5 +1,20 @@
 {
   "build": {
+    "production": {
+      "developmentClient": false,
+      "distribution": "store",
+      "environment": "production",
+      "env": {
+        "APP_VARIANT": "production",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co"
+      },
+      "android": {
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
     "development": {
       "developmentClient": true,
       "distribution": "internal",

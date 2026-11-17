@@ -240,7 +240,7 @@ Deno.serve(async (req: Request) => {
         return {
           store_id: store.store_id, distance_m: null, distance_km: null, base_fee: null,
           outside_delivery_area: false, origin: null, destination: null, geometry: null,
-          error: error instanceof Error ? error.message : "Road distance is unavailable for this store.",
+          error: "Road distance is unavailable for this store.",
         };
       }
     }));
@@ -303,6 +303,6 @@ Deno.serve(async (req: Request) => {
     });
   } catch (error) {
     console.error("goodies-delivery-quote:", error);
-    return reply({ error: error instanceof Error ? error.message : "Could not calculate delivery." }, 400);
+    return reply({ error: "Could not calculate delivery. Check the address and try again." }, 400);
   }
 });

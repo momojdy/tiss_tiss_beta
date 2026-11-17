@@ -41,3 +41,11 @@ verify_jwt = false
 
 [functions.goodies-delivery-quote]
 verify_jwt = true
+
+# Stripe authenticates its webhook with Stripe-Signature; a Supabase JWT is not sent.
+[functions.rapid-api]
+verify_jwt = false
+
+# The scheduled worker validates its private worker token before processing any order.
+[functions.expire-goodies-card-auth]
+verify_jwt = false
