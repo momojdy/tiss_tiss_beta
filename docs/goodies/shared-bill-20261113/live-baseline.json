@@ -1,0 +1,639 @@
+{
+  "jobs": [
+    {
+      "name": "wantiss-help-pay-expire",
+      "active": true,
+      "schedule": "* * * * *"
+    }
+  ],
+  "grants": [
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "help_pay_contributions",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "postgres",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "YES",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "INSERT",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "UPDATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "DELETE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRUNCATE",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "REFERENCES",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "service_role",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "TRIGGER",
+      "with_hierarchy": "NO"
+    },
+    {
+      "grantee": "authenticated",
+      "grantor": "postgres",
+      "table_name": "help_pay_requests",
+      "is_grantable": "NO",
+      "table_schema": "public",
+      "table_catalog": "postgres",
+      "privilege_type": "SELECT",
+      "with_hierarchy": "YES"
+    }
+  ],
+  "tables": [
+    {
+      "rls": true,
+      "name": "help_pay_contributions",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "request_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "contributor_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "amount_cents",
+          "type": "bigint",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "payment_method",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "idempotency_key",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "wallet_transaction_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'paid'::text",
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        }
+      ],
+      "constraints": [
+        "CHECK ((amount_cents > 0))",
+        "FOREIGN KEY (contributor_id) REFERENCES auth.users(id)",
+        "UNIQUE (contributor_id, idempotency_key)",
+        "CHECK ((payment_method = ANY (ARRAY['wallet'::text, 'card'::text])))",
+        "PRIMARY KEY (id)",
+        "FOREIGN KEY (request_id) REFERENCES help_pay_requests(id)",
+        "CHECK ((status = ANY (ARRAY['paid'::text, 'refunded'::text, 'refund_pending'::text])))",
+        "FOREIGN KEY (wallet_transaction_id) REFERENCES wallet_transactions(id)"
+      ]
+    },
+    {
+      "rls": true,
+      "name": "help_pay_requests",
+      "columns": [
+        {
+          "name": "id",
+          "type": "uuid",
+          "default": "gen_random_uuid()",
+          "notNull": true
+        },
+        {
+          "name": "creator_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "service",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "mode",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "checkout_key",
+          "type": "text",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "checkout_snapshot",
+          "type": "jsonb",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "total_cents",
+          "type": "bigint",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "initial_cents",
+          "type": "bigint",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "contributed_cents",
+          "type": "bigint",
+          "default": "0",
+          "notNull": true
+        },
+        {
+          "name": "currency",
+          "type": "text",
+          "default": "'USD'::text",
+          "notNull": true
+        },
+        {
+          "name": "status",
+          "type": "text",
+          "default": "'pending'::text",
+          "notNull": true
+        },
+        {
+          "name": "expires_at",
+          "type": "timestamp with time zone",
+          "default": null,
+          "notNull": true
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "default": "now()",
+          "notNull": true
+        },
+        {
+          "name": "order_id",
+          "type": "uuid",
+          "default": null,
+          "notNull": false
+        }
+      ],
+      "constraints": [
+        "CHECK (((initial_cents + contributed_cents) <= total_cents))",
+        "CHECK ((((mode = 'share'::text) AND (initial_cents = (((total_cents * 60) + 99) / 100))) OR ((mode = 'full'::text) AND (initial_cents = 0))))",
+        "CHECK ((contributed_cents >= 0))",
+        "FOREIGN KEY (creator_id) REFERENCES auth.users(id)",
+        "CHECK ((currency = 'USD'::text))",
+        "CHECK ((initial_cents >= 0))",
+        "CHECK ((mode = ANY (ARRAY['share'::text, 'full'::text])))",
+        "FOREIGN KEY (order_id) REFERENCES goodies_orders(id)",
+        "PRIMARY KEY (id)",
+        "CHECK ((service = ANY (ARRAY['goodies'::text, 'other'::text])))",
+        "CHECK ((status = ANY (ARRAY['pending'::text, 'active'::text, 'funded'::text, 'expired'::text, 'cancelled'::text, 'fulfilled'::text, 'refund_pending'::text])))",
+        "CHECK ((total_cents > 0))"
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "cmd": "SELECT",
+      "qual": "((contributor_id = ( SELECT auth.uid() AS uid)) OR (EXISTS ( SELECT 1\n   FROM help_pay_requests r\n  WHERE ((r.id = help_pay_contributions.request_id) AND (r.creator_id = ( SELECT auth.uid() AS uid))))))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "help_pay_contributions",
+      "permissive": "PERMISSIVE",
+      "policyname": "help_pay_contribution_select",
+      "schemaname": "public",
+      "with_check": null
+    },
+    {
+      "cmd": "INSERT",
+      "qual": null,
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "help_pay_requests",
+      "permissive": "PERMISSIVE",
+      "policyname": "help_pay_creator_insert",
+      "schemaname": "public",
+      "with_check": "((creator_id = ( SELECT auth.uid() AS uid)) AND (status = 'pending'::text) AND (contributed_cents = 0))"
+    },
+    {
+      "cmd": "SELECT",
+      "qual": "(creator_id = ( SELECT auth.uid() AS uid))",
+      "roles": [
+        "authenticated"
+      ],
+      "tablename": "help_pay_requests",
+      "permissive": "PERMISSIVE",
+      "policyname": "help_pay_creator_select",
+      "schemaname": "public",
+      "with_check": null
+    }
+  ],
+  "functions": [
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_cancel_request",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_cancel_request(p_request_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_user uuid:=auth.uid(); r public.help_pay_requests%rowtype; n int;\nbegin\n if v_user is null then raise exception 'Sign in to cancel'; end if;\n select * into r from public.help_pay_requests where id=p_request_id and creator_id=v_user for update;\n if not found then raise exception 'Payment request not found'; end if;\n if r.status not in ('active','pending') then raise exception 'This request cannot be cancelled'; end if;\n n:=private.help_pay_reverse_locked(p_request_id,'cancelled');\n return jsonb_build_object('ok',true,'status','cancelled','refunded_payments',n);\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres",
+        "authenticated=X/postgres"
+      ],
+      "name": "help_pay_contribute_wallet",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_contribute_wallet(p_request_id uuid, p_amount_cents bigint, p_idempotency_key text)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_user uuid:=auth.uid(); r public.help_pay_requests%rowtype; v_prev public.help_pay_contributions%rowtype;\n  v_bal numeric; v_tx uuid; v_remaining bigint; v_s jsonb; v_order record; v_err text; v_status text;\nbegin\n if v_user is null then raise exception 'Sign in to contribute'; end if;\n if p_idempotency_key is null or length(p_idempotency_key)<8 or length(p_idempotency_key)>180 then raise exception 'Invalid payment key'; end if;\n if p_request_id is null then raise exception 'Invalid payment request'; end if;\n select * into r from public.help_pay_requests where id=p_request_id for update;\n if not found then raise exception 'Payment request not found'; end if;\n select * into v_prev from public.help_pay_contributions where contributor_id=v_user and idempotency_key=p_idempotency_key;\n if found then\n   if v_prev.request_id<>p_request_id or v_prev.amount_cents<>p_amount_cents then raise exception 'Payment key was reused for a different contribution'; end if;\n   return jsonb_build_object('ok',v_prev.status='paid','already_processed',true,'status',v_prev.status,'request_id',p_request_id);\n end if;\n if r.status<>'active' or r.expires_at<=now() then raise exception 'This payment request is no longer accepting payments'; end if;\n if v_user=r.creator_id then raise exception 'You cannot contribute to your own shared request'; end if;\n v_remaining:=r.total_cents-r.initial_cents-r.contributed_cents;\n if p_amount_cents is null or p_amount_cents<1 or p_amount_cents>v_remaining then raise exception 'Amount exceeds the remaining bill'; end if;\n if r.mode='full' and p_amount_cents<>v_remaining then raise exception 'This request requires one full payment'; end if;\n select balance into v_bal from public.wallets where user_id=v_user for update;\n if not found then raise exception 'Create a Wantiss Wallet to contribute'; end if;\n if v_bal<p_amount_cents::numeric/100 then raise exception 'Insufficient Wallet balance'; end if;\n update public.wallets set balance=balance-p_amount_cents::numeric/100,updated_at=now() where user_id=v_user and balance>=p_amount_cents::numeric/100;\n if not found then raise exception 'Insufficient Wallet balance'; end if;\n insert into public.wallet_transactions(user_id,amount,status,description,wallet_amount,wallet_currency,feature_name,activity_type,direction,reference_id,metadata)\n values(v_user,p_amount_cents::numeric/100,'completed','Help Pay contribution',p_amount_cents::numeric/100,'USD','Goodies','help_pay_contribution','debit',p_request_id::text,jsonb_build_object('request_id',p_request_id))\n returning id into v_tx;\n insert into public.help_pay_contributions(request_id,contributor_id,amount_cents,payment_method,idempotency_key,wallet_transaction_id,status)\n values(p_request_id,v_user,p_amount_cents,'wallet',p_idempotency_key,v_tx,'paid');\n v_remaining:=v_remaining-p_amount_cents;\n update public.help_pay_requests set contributed_cents=contributed_cents+p_amount_cents,status=case when v_remaining=0 then 'funded' else 'active' end where id=p_request_id;\n if v_remaining>0 then\n   return jsonb_build_object('ok',true,'status','active','request_id',p_request_id,'remaining_cents',v_remaining);\n end if;\n -- Full funding: create the actual order for its original creator, never the contributor.\n v_s:=r.checkout_snapshot;\n begin\n   perform set_config('app.goodies_payment_context','wallet',true);\n   select o.* into v_order from private.help_pay_place_goodies_order(\n     r.creator_id,v_s->>'p_store_id',v_s->>'p_order_type',\n     nullif(v_s->>'p_scheduled_for','')::timestamptz,\n     v_s->'p_address',v_s->>'p_contact_phone',v_s->'p_items',\n     (v_s->>'p_subtotal')::numeric,(v_s->>'p_delivery_fee')::numeric,\n     (v_s->>'p_service_fee')::numeric,(v_s->>'p_discount')::numeric,\n     (v_s->>'p_tip')::numeric,(v_s->>'p_total')::numeric,\n     v_s->>'p_notes',v_s->>'p_promo_code'\n   ) o limit 1;\n   if v_order.id is null then raise exception 'Order finalization failed'; end if;\n   update public.goodies_orders set payment_method='wallet',payment_status='paid',updated_at=now()\n     where id=v_order.id and customer_id=r.creator_id;\n   if not found then raise exception 'Order finalization could not verify the customer'; end if;\n   update public.help_pay_requests set order_id=v_order.id,status='fulfilled' where id=p_request_id;\n   update public.wallet_transactions set metadata=coalesce(metadata,'{}'::jsonb)||jsonb_build_object('order_id',v_order.id)\n     where id in (select wallet_transaction_id from public.help_pay_contributions where request_id=p_request_id);\n exception when others then\n   v_err:=SQLERRM;\n end;\n if v_err is not null then\n   perform private.help_pay_reverse_locked(p_request_id,'cancelled');\n   return jsonb_build_object('ok',false,'status','cancelled','refunded',true,'request_id',p_request_id,\n     'message','The Goodies checkout changed or became unavailable. All Help Pay wallet contributions were refunded. '||left(v_err,160));\n end if;\n return jsonb_build_object('ok',true,'status','fulfilled','order_id',v_order.id,'order_code',v_order.order_code,'request_id',p_request_id,'remaining_cents',0);\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_create_request",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_create_request(p_mode text, p_total_cents bigint, p_checkout_key text, p_checkout_snapshot jsonb DEFAULT '{}'::jsonb)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_user uuid:=auth.uid(); v_existing public.help_pay_requests%rowtype; v_id uuid; v_initial bigint; v_wallet numeric; v_tx uuid; v_s jsonb:=p_checkout_snapshot; v_total numeric;\nbegin\n if v_user is null then raise exception 'Sign in to create a payment request' using errcode='28000'; end if;\n if p_mode not in ('share','full') or p_total_cents is null or p_total_cents<1 or p_total_cents>100000000 then raise exception 'Invalid Help Pay amount' using errcode='22023'; end if;\n if p_checkout_key is null or length(btrim(p_checkout_key))<12 or length(p_checkout_key)>180 then raise exception 'Invalid checkout key' using errcode='22023'; end if;\n if jsonb_typeof(v_s) is distinct from 'object' or jsonb_typeof(v_s->'p_items') is distinct from 'array' then raise exception 'A live Goodies checkout is required' using errcode='22023'; end if;\n begin v_total := (v_s->>'p_total')::numeric; exception when others then raise exception 'Invalid Goodies checkout total'; end;\n if v_total is null or v_total<=0 or round(v_total*100)::bigint<>p_total_cents then raise exception 'The Help Pay total does not match the Goodies checkout'; end if;\n perform pg_advisory_xact_lock(hashtextextended('help-pay:'||v_user::text||':'||p_checkout_key,0));\n select * into v_existing from public.help_pay_requests where creator_id=v_user and checkout_key=p_checkout_key for update;\n if found then\n   if v_existing.mode<>p_mode or v_existing.total_cents<>p_total_cents or v_existing.checkout_snapshot<>v_s then raise exception 'Checkout key is already used for different details'; end if;\n   return v_existing.id;\n end if;\n -- Execute the exact store, price, options, fee, promo and delivery-quote validator.\n perform set_config('app.goodies_help_pay_validation','on',true);\n perform 1 from public.place_goodies_order(\n   v_s->>'p_store_id',v_s->>'p_order_type',nullif(v_s->>'p_scheduled_for','')::timestamptz,\n   v_s->'p_address',v_s->>'p_contact_phone',v_s->'p_items',(v_s->>'p_subtotal')::numeric,\n   (v_s->>'p_delivery_fee')::numeric,(v_s->>'p_service_fee')::numeric,(v_s->>'p_discount')::numeric,\n   (v_s->>'p_tip')::numeric,v_total,v_s->>'p_notes',v_s->>'p_promo_code'\n );\n perform set_config('app.goodies_help_pay_validation','off',true);\n -- Delivery quotes ordinarily expire in five minutes. A verified Help Pay request\n -- may take up to 30 minutes to fund, so keep its *validated* quote until\n -- the request deadline. Never change the quoted amount or address.\n if coalesce(v_s->'p_address','{}'::jsonb) ? 'delivery_quote_id' then\n   update public.goodies_delivery_quotes q\n     set expires_at=greatest(q.expires_at,now()+interval '30 minutes')\n     where q.id=(v_s->'p_address'->>'delivery_quote_id')::uuid\n       and q.customer_id=v_user and q.consumed_at is null\n       and q.expires_at>now()\n       and q.address_payload=(v_s->'p_address'-'delivery_quote_id')\n       and q.store_id=v_s->>'p_store_id';\n   if not found then raise exception 'The delivery quote expired. Refresh it before creating Help Pay.'; end if;\n end if;\n v_initial := case when p_mode='share' then (p_total_cents*60+99)/100 else 0 end;\n if v_initial>0 then\n   select balance into v_wallet from public.wallets where user_id=v_user for update;\n   if not found then raise exception 'Create a Wantiss Wallet to pay your share'; end if;\n   if v_wallet<v_initial::numeric/100 then raise exception 'Insufficient Wallet balance for your 60%% share'; end if;\n end if;\n insert into public.help_pay_requests(creator_id,service,mode,checkout_key,checkout_snapshot,total_cents,initial_cents,contributed_cents,currency,status,expires_at)\n values(v_user,'goodies',p_mode,p_checkout_key,v_s,p_total_cents,v_initial,0,'USD','active',now()+interval '30 minutes') returning id into v_id;\n if v_initial>0 then\n   update public.wallets set balance=balance-v_initial::numeric/100,updated_at=now() where user_id=v_user and balance>=v_initial::numeric/100;\n   if not found then raise exception 'Insufficient Wallet balance'; end if;\n   insert into public.wallet_transactions(user_id,amount,status,description,wallet_amount,wallet_currency,feature_name,activity_type,direction,reference_id,metadata)\n   values(v_user,v_initial::numeric/100,'completed','Help Pay upfront share',v_initial::numeric/100,'USD','Goodies','help_pay_upfront','debit',v_id::text,jsonb_build_object('request_id',v_id))\n   returning id into v_tx;\n   insert into public.help_pay_contributions(request_id,contributor_id,amount_cents,payment_method,idempotency_key,wallet_transaction_id,status)\n   values(v_id,v_user,v_initial,'wallet','help-pay-upfront-'||v_id::text,v_tx,'paid');\n end if;\n return v_id;\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_expire",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_expire()\n RETURNS integer\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_id uuid; v_count int:=0;\nbegin\n if auth.uid() is not null then raise exception 'Internal operation only'; end if;\n for v_id in select id from public.help_pay_requests\n   where status in ('active','pending','refund_pending') and (status='refund_pending' or expires_at<=now())\n   order by created_at for update skip locked loop\n   perform private.help_pay_reverse_locked(v_id,'expired');\n   v_count:=v_count+1;\n end loop;\n return v_count;\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "name": "help_pay_place_goodies_order",
+      "schema": "private",
+      "definition": "CREATE OR REPLACE FUNCTION private.help_pay_place_goodies_order(p_creator_id uuid, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text)\n RETURNS TABLE(id uuid, order_code text, status text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n#variable_conflict use_column\ndeclare\n  v_uid uuid := p_creator_id;\n  v_store public.goodies_store_schedules%rowtype;\n  v_prod public.goodies_products%rowtype;\n  v_status text; v_code text; v_id uuid;\n  v_sum numeric := 0; v_item jsonb; v_q numeric; v_p numeric; v_pid uuid; v_tries int := 0;\n  v_agg record; v_builder_price numeric;\n  v_content jsonb; v_coupon jsonb; v_promo_id uuid; v_coupon_code text := upper(trim(coalesce(p_promo_code,'')));\n  v_expected_discount numeric := 0; v_coupon_val numeric := 0; v_coupon_min numeric := 0;\n  v_coupon_store text; v_coupon_kind text; v_free_delivery boolean := false;\n  v_fee_settings jsonb := '{}'::jsonb;\n  v_expected_service_fee numeric := 0;\n  v_expected_delivery_fee numeric := 0;\n  v_first_order boolean := false;\n  v_delivery_quote public.goodies_delivery_quotes%rowtype;\nbegin\n  if v_uid is null then raise exception 'Sign in to place an order' using errcode = '28000'; end if;\n  if not private.goodies_customer_can_access() then raise exception 'Your access to Goodies is currently suspended or banned.' using errcode = '42501'; end if;\n  if exists(select 1 from public.wantiss_admin_account_restrictions r\n    where r.target_user_id=p_creator_id and r.scope in ('all','GoodiesCustomer')\n    and r.status='active' and r.starts_at<=now() and (r.ends_at is null or r.ends_at>now())) then\n    raise exception 'This customer cannot place Goodies orders' using errcode='42501';\n  end if;\n  select * into v_store from public.goodies_store_schedules s where s.store_id = p_store_id and s.is_live = true;\n  if not found then raise exception 'This store is not accepting online orders yet' using errcode = 'P0001'; end if;\n  select c.payload into v_content from public.wantiss_cms_content c\n   where c.content_key in ('goodies.content','goodies') and c.status='published'\n   order by case when c.content_key='goodies.content' then 0 else 1 end,\n            case when c.locale='en' then 0 else 1 end,c.published_at desc nulls last,c.version desc limit 1;\n  v_fee_settings:=coalesce(v_content->'fees','{}'::jsonb);\n  if nullif(v_fee_settings->>'svc','') is not null then\n    begin v_expected_service_fee:=(v_fee_settings->>'svc')::numeric;\n    exception when invalid_text_representation then raise exception 'Goodies service fee configuration is invalid' using errcode='22023'; end;\n  end if;\n  if v_expected_service_fee<0 or v_expected_service_fee>1000 then raise exception 'Goodies service fee configuration is outside the allowed range' using errcode='22023'; end if;\n  if nullif(current_setting('app.goodies_group_first_order', true), '') is not null then v_first_order := current_setting('app.goodies_group_first_order', true)::boolean; else select not exists(select 1 from public.goodies_orders o where o.customer_id=v_uid) into v_first_order; end if;\n  if p_order_type not in ('delivery','pickup') then raise exception 'Invalid order type' using errcode='22023'; end if;\n  if coalesce(array_length(v_store.delivery_modes,1),0)>0 and not exists(select 1 from unnest(v_store.delivery_modes) m where lower(m)=p_order_type) then raise exception 'This store does not offer %',p_order_type using errcode='P0001'; end if;\n  if p_order_type='delivery' and (p_address is null or jsonb_typeof(p_address)<>'object') then raise exception 'A delivery address is required' using errcode='22023'; end if;\n  if p_items is null or jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)<1 or jsonb_array_length(p_items)>100 then raise exception 'Cart must contain between 1 and 100 lines' using errcode='22023'; end if;\n  for v_item in select * from jsonb_array_elements(p_items) loop\n    if jsonb_typeof(v_item)<>'object' then raise exception 'Invalid cart line' using errcode='22023'; end if;\n    if jsonb_typeof(v_item->'byo')='object' then\n      v_builder_price:=public.validate_goodies_builder_line(v_store.business_id,p_store_id,v_item);\n      v_q:=(v_item->>'q')::numeric;\n      if v_q is null or v_q<1 or v_q>99 or v_q<>trunc(v_q) then raise exception 'Invalid cart line quantity' using errcode='22023'; end if;\n      v_sum:=v_sum+v_builder_price*v_q; continue;\n    end if;\n    begin v_pid:=(v_item->>'id')::uuid; v_q:=(v_item->>'q')::numeric; v_p:=(v_item->>'p')::numeric;\n    exception when others then raise exception 'Invalid cart line' using errcode='22023'; end;\n    if v_pid is null or v_q is null or v_p is null or v_q<1 or v_q>99 or v_q<>trunc(v_q) then raise exception 'Invalid cart line' using errcode='22023'; end if;\n    select * into v_prod from public.goodies_products gp where gp.id=v_pid and gp.business_id=v_store.business_id and gp.is_available and gp.review_status='approved' and gp.restriction<>'alcohol' and not (concat_ws(' ',gp.name,gp.description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\\\mbeer|bi[\u00e8e]re|\\\\mwine|champagne|cocktail)') for update;\n    if not found then raise exception 'An item in your cart is no longer available' using errcode='P0001'; end if;\n    if v_prod.restriction='alcohol' then raise exception 'Alcohol orders are not available yet' using errcode='P0001'; end if;\n    v_builder_price:=public.validate_goodies_standard_product_line(v_store.category,v_prod.price,v_item,coalesce(v_content->'deals','[]'::jsonb));\n    v_sum:=v_sum+v_builder_price*v_q;\n  end loop;\n  if p_delivery_fee is null or p_service_fee is null or p_discount is null or p_tip is null or p_subtotal is null or p_total is null or p_delivery_fee<0 or p_service_fee<0 or p_discount<0 or p_tip<0 then raise exception 'Invalid order totals' using errcode='22023'; end if;\n  if not public.goodies_tip_is_allowed(p_tip,coalesce(v_fee_settings->>'tips','0')) then raise exception 'Choose one of the available courier tip amounts' using errcode='22023'; end if;\n  if current_setting('app.goodies_group_waive_service_fee', true) = 'on' then v_expected_service_fee := 0; end if; if abs(p_service_fee-v_expected_service_fee)>0.005 then raise exception 'The service fee has changed. Please review your order' using errcode='P0001'; end if;\n  if v_coupon_code<>'' then\n    v_coupon:=null; v_promo_id:=null;\n    select p.id,jsonb_build_object('code',p.code,'st',case when p.is_active then 'Live' else 'Draft' end,\n      'from',case when p.starts_at is null then null else to_char(p.starts_at at time zone 'UTC','YYYY-MM-DD') end,\n      'to',case when p.expires_at is null then null else to_char(p.expires_at at time zone 'UTC','YYYY-MM-DD') end,\n      'min',p.min_subtotal,'store',coalesce(p.store_id,'All stores'),\n      'kind',case when p.discount_type='percent' then 'Percent' else 'Free delivery' end,'val',p.discount_value)\n    into v_promo_id,v_coupon from public.goodies_promotions p\n    where upper(p.code)=v_coupon_code and p.is_active and (p.starts_at is null or p.starts_at<=now())\n      and (p.expires_at is null or p.expires_at>=now()) and (p.max_redemptions is null or p.redemption_count<p.max_redemptions)\n      and (p.store_id is null or p.store_id=p_store_id) for update limit 1;\n    if v_coupon is null then\n      select c.payload into v_content from public.wantiss_cms_content c\n      where c.content_key in ('goodies.content','goodies') and c.status='published'\n      order by case when c.content_key='goodies.content' then 0 else 1 end,case when c.locale='en' then 0 else 1 end,c.published_at desc nulls last,c.version desc limit 1;\n      select c into v_coupon from jsonb_array_elements(coalesce(v_content->'coupons','[]'::jsonb)) c\n      where upper(trim(coalesce(c->>'code','')))=v_coupon_code and coalesce(c->>'st','')='Live'\n      and (nullif(c->>'from','') is null or (c->>'from')::date<=current_date)\n      and (nullif(c->>'to','') is null or (c->>'to')::date>=current_date) limit 1;\n    end if;\n    if v_coupon is null then raise exception 'That promo code is not valid or is no longer active' using errcode='P0001'; end if;\n    v_coupon_min:=coalesce(nullif(v_coupon->>'min','')::numeric,0);\n    if v_sum<v_coupon_min then raise exception 'The order does not meet this promo code minimum' using errcode='P0001'; end if;\n    v_coupon_store:=nullif(v_coupon->>'store','');\n    if v_coupon_store is not null and v_coupon_store<>'All stores' and v_coupon_store<>p_store_id then raise exception 'This promo code is not valid for this store' using errcode='P0001'; end if;\n    v_coupon_kind:=lower(coalesce(v_coupon->>'kind',''));\n    if v_coupon_kind='percent' then v_coupon_val:=coalesce(nullif(v_coupon->>'val','')::numeric,0); if v_coupon_val<=0 or v_coupon_val>100 then raise exception 'Invalid promo configuration' using errcode='22023'; end if; v_expected_discount:=round(v_sum*v_coupon_val)/100;\n    else v_free_delivery:=true; v_expected_discount:=0; end if;\n    if abs(coalesce(p_discount,0)-v_expected_discount)>0.01 then raise exception 'Promo discount does not match the active offer' using errcode='22023'; end if;\n    if v_free_delivery and p_order_type='delivery' and p_delivery_fee<>0 then raise exception 'This promo code provides free delivery' using errcode='22023'; end if;\n  elsif p_discount>0 then raise exception 'A valid promo code is required for this discount' using errcode='P0001'; end if;\n  if p_order_type='pickup' and (p_delivery_fee<>0 or p_tip<>0) then raise exception 'Invalid order totals' using errcode='22023'; end if;\n  if p_order_type='delivery' then\n    if v_store.delivery_pricing_mode='distance' then\n      if nullif(p_address->>'delivery_quote_id','') is null then raise exception 'Please refresh the delivery fee before placing your order' using errcode='P0001'; end if;\n      begin select * into v_delivery_quote from public.goodies_delivery_quotes q where q.id=(p_address->>'delivery_quote_id')::uuid and q.customer_id=v_uid and q.store_id=p_store_id and q.address_payload=(p_address-'delivery_quote_id') and q.expires_at>now() and q.consumed_at is null for update;\n      exception when invalid_text_representation then raise exception 'The delivery quote is invalid. Please refresh the delivery fee' using errcode='P0001'; end;\n      if not found then raise exception 'The delivery quote expired or no longer matches this address. Please refresh it' using errcode='P0001'; end if;\n      v_expected_delivery_fee:=v_delivery_quote.fee;\n    else v_expected_delivery_fee:=v_store.delivery_fee; end if;\n    if v_free_delivery or (v_first_order and coalesce((v_fee_settings->>'first')::boolean,false)) then v_expected_delivery_fee:=0; end if;\n    if abs(p_delivery_fee-v_expected_delivery_fee)>0.005 then raise exception 'The delivery fee has changed. Please review your order' using errcode='P0001'; end if;\n    if v_store.delivery_pricing_mode='distance' then update public.goodies_delivery_quotes set consumed_at=now() where id=v_delivery_quote.id; end if;\n  end if;\n  if abs(v_sum-p_subtotal)>0.01 or abs((p_subtotal+p_delivery_fee+p_service_fee-p_discount+p_tip)-p_total)>0.01 then raise exception 'Order totals do not match the cart' using errcode='22023'; end if;\n  if p_subtotal<v_store.min_order then raise exception 'The minimum order for this store is %',v_store.min_order using errcode='P0001'; end if;\n  if p_scheduled_for is not null then\n    if not v_store.accept_scheduled_orders then raise exception 'This store does not accept scheduled orders' using errcode='P0001'; end if;\n    if p_scheduled_for<=now() then raise exception 'Choose a future time for a scheduled order' using errcode='P0001'; end if;\n    if (p_scheduled_for at time zone coalesce(nullif(v_store.scheduled_order_timezone,''),'UTC'))::time<v_store.scheduled_order_start_time then raise exception 'Choose a time at or after the store minimum order time' using errcode='P0001'; end if;\n    if p_scheduled_for>now()+interval '30 days' then raise exception 'Scheduled time is too far ahead' using errcode='P0001'; end if;\n    v_status:='scheduled';\n  else v_status:='placed'; end if;\n  for v_agg in select (e->>'id')::uuid as pid,sum((e->>'q')::int) as qty from jsonb_array_elements(p_items) e where jsonb_typeof(e->'byo') is distinct from 'object' group by 1 loop\n    update public.goodies_products gp set stock=gp.stock-v_agg.qty,updated_at=now()\n    where gp.id=v_agg.pid and gp.business_id=v_store.business_id and gp.is_available and gp.review_status='approved' and gp.restriction<>'alcohol'\n      and not (concat_ws(' ',gp.name,gp.description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\\\mbeer|bi[\u00e8e]re|\\\\mwine|champagne|cocktail)')\n      and gp.stock>=v_agg.qty;\n    if not found then raise exception 'An item in your cart is out of stock' using errcode='P0001'; end if;\n  end loop;\n  loop\n    v_code:='GD'||lpad((floor(random()*1000000))::int::text,6,'0');\n    exit when not exists(select 1 from public.goodies_orders o where o.order_code=v_code);\n    v_tries:=v_tries+1; if v_tries>20 then raise exception 'Could not allocate an order code' using errcode='P0001'; end if;\n  end loop;\n  insert into public.goodies_orders(order_code,business_id,customer_id,store_id,status,scheduled_for,order_type,address,contact_phone,items,\n    subtotal,delivery_fee,service_fee,discount,tip,total,payment_method,payment_status,notes,promo_code)\n  values(v_code,v_store.business_id,v_uid,p_store_id,v_status,p_scheduled_for,p_order_type,\n    case when p_order_type='delivery' then (p_address-'delivery_quote_id') else null end,\n    left(nullif(trim(p_contact_phone),''),32),p_items,p_subtotal,p_delivery_fee,p_service_fee,p_discount,p_tip,p_total,\n    'cash','pay_on_receipt',left(nullif(trim(p_notes),''),500),nullif(v_coupon_code,''))\n  returning goodies_orders.id into v_id;\n  if v_promo_id is not null then update public.goodies_promotions set redemption_count=redemption_count+1,updated_at=now() where id=v_promo_id; end if;\n  return query select v_id,v_code,v_status;\nend;\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_refund_request",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_refund_request(p_request_id uuid)\n RETURNS integer\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare r public.help_pay_requests%rowtype;\nbegin\n if auth.uid() is not null then raise exception 'Internal operation only'; end if;\n select * into r from public.help_pay_requests where id=p_request_id for update;\n if not found or r.status not in ('refund_pending','expired','cancelled') then raise exception 'Not refundable'; end if;\n return private.help_pay_reverse_locked(p_request_id,case when r.status='cancelled' then 'cancelled' else 'expired' end);\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres"
+      ],
+      "name": "help_pay_reverse_locked",
+      "schema": "private",
+      "definition": "CREATE OR REPLACE FUNCTION private.help_pay_reverse_locked(p_request_id uuid, p_result text)\n RETURNS integer\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_req public.help_pay_requests%rowtype; v_con public.help_pay_contributions%rowtype; v_count int:=0; v_tx uuid;\nbegin\n if p_result not in ('expired','cancelled') then raise exception 'Invalid refund result'; end if;\n select * into v_req from public.help_pay_requests where id=p_request_id for update;\n if not found then raise exception 'Request not found'; end if;\n for v_con in select * from public.help_pay_contributions where request_id=p_request_id and status='paid' order by contributor_id,id for update loop\n   insert into public.wallets(user_id,balance) values(v_con.contributor_id,0) on conflict(user_id) do nothing;\n   update public.wallets set balance=balance+v_con.amount_cents::numeric/100,updated_at=now() where user_id=v_con.contributor_id;\n   if not found then raise exception 'Could not refund wallet'; end if;\n   insert into public.wallet_transactions(user_id,amount,status,description,wallet_amount,wallet_currency,feature_name,activity_type,direction,reference_id,metadata)\n   values(v_con.contributor_id,v_con.amount_cents::numeric/100,'completed','Help Pay refund',v_con.amount_cents::numeric/100,'USD','Goodies','help_pay_refund','credit',v_con.id::text,jsonb_build_object('request_id',p_request_id,'contribution_id',v_con.id,'order_id',v_req.order_id))\n   returning id into v_tx;\n   update public.help_pay_contributions set status='refunded' where id=v_con.id;\n   v_count:=v_count+1;\n end loop;\n update public.help_pay_requests set status=p_result,contributed_cents=0 where id=p_request_id;\n return v_count;\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_share_to_friend",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_share_to_friend(p_request_id uuid, p_friend_id uuid)\n RETURNS uuid\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_user uuid:=auth.uid(); v_req public.help_pay_requests%rowtype; v_conversation uuid; v_message text; v_name text;\nbegin\n if v_user is null then raise exception 'Sign in first'; end if;\n select * into v_req from public.help_pay_requests where id=p_request_id and creator_id=v_user for update;\n if not found or v_req.status<>'active' or v_req.expires_at<=now() then raise exception 'This Help Pay request is no longer shareable'; end if;\n if p_friend_id is null or p_friend_id=v_user or not exists(\n   select 1 from public.user_friendships where status='accepted' and\n   ((requester_id=v_user and recipient_id=p_friend_id) or (requester_id=p_friend_id and recipient_id=v_user))\n ) then raise exception 'You can only send a payment card to an accepted friend'; end if;\n perform pg_advisory_xact_lock(hashtextextended('friend-chat:'||least(v_user::text,p_friend_id::text)||':'||greatest(v_user::text,p_friend_id::text),0));\n select id into v_conversation from public.conversations where feature='friends'\n   and participant_ids @> array[v_user,p_friend_id]::uuid[] and array_length(participant_ids,1)=2\n   order by created_at limit 1;\n if v_conversation is null then\n   select coalesce(nullif(btrim(full_name),''),'Wantiss member') into v_name from public.profiles where id=p_friend_id;\n   insert into public.conversations(participant_ids,customer_id,feature,status,title)\n   values(array[v_user,p_friend_id],v_user,'friends','active',coalesce(v_name,'Wantiss member'))\n   returning id into v_conversation;\n end if;\n v_message := '[wantiss-attachment-v1]'||jsonb_build_object(\n  'kind','help-pay','name','Help pay a Goodies order','reference','wantiss://help-pay/'||p_request_id::text\n )::text;\n insert into public.messages(conversation_id,sender_id,body) values(v_conversation,v_user,v_message);\n update public.conversations set updated_at=now() where id=v_conversation;\n return v_conversation;\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "help_pay_status",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.help_pay_status(p_request_id uuid)\n RETURNS jsonb\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare r public.help_pay_requests%rowtype; caller uuid:=auth.uid(); mine bigint:=0; donors jsonb:='[]'::jsonb;\nbegin\n if caller is null then raise exception 'Sign in to view Help Pay'; end if;\n select * into r from public.help_pay_requests where id=p_request_id;\n if not found or (r.status='pending' and caller<>r.creator_id) then raise exception 'Payment request not found'; end if;\n select coalesce(sum(amount_cents),0) into mine from public.help_pay_contributions where request_id=r.id and contributor_id=caller and status='paid';\n if caller=r.creator_id then\n   select coalesce(jsonb_agg(jsonb_build_object('name',coalesce(nullif(btrim(p.full_name),''),'Wantiss member'),'amount_cents',c.amount_cents,'user_id',c.contributor_id) order by c.created_at),'[]'::jsonb)\n   into donors from public.help_pay_contributions c left join public.profiles p on p.id=c.contributor_id\n   where c.request_id=r.id and c.status='paid' and c.contributor_id<>r.creator_id;\n end if;\n return jsonb_build_object('id',r.id,'mode',r.mode,'service',r.service,\n  'status',case when r.status in ('active','pending') and r.expires_at<=now() then 'expired' else r.status end,\n  'total_cents',r.total_cents,'initial_cents',r.initial_cents,\n  'contributed_cents',r.contributed_cents,'remaining_cents',greatest(0,r.total_cents-r.initial_cents-r.contributed_cents),\n  'expires_at',r.expires_at,'is_creator',caller=r.creator_id,'my_contributed_cents',mine,'contributors',donors,'order_id',case when caller=r.creator_id then r.order_id else null end);\nend $function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "place_goodies_order",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.place_goodies_order(p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text)\n RETURNS TABLE(id uuid, order_code text, status text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\n#variable_conflict use_column\ndeclare\n  v_uid uuid := auth.uid();\n  v_store public.goodies_store_schedules%rowtype;\n  v_prod public.goodies_products%rowtype;\n  v_status text; v_code text; v_id uuid;\n  v_sum numeric := 0; v_item jsonb; v_q numeric; v_p numeric; v_pid uuid; v_tries int := 0;\n  v_agg record; v_builder_price numeric;\n  v_content jsonb; v_coupon jsonb; v_promo_id uuid; v_coupon_code text := upper(trim(coalesce(p_promo_code,'')));\n  v_expected_discount numeric := 0; v_coupon_val numeric := 0; v_coupon_min numeric := 0;\n  v_coupon_store text; v_coupon_kind text; v_free_delivery boolean := false;\n  v_fee_settings jsonb := '{}'::jsonb;\n  v_expected_service_fee numeric := 0;\n  v_expected_delivery_fee numeric := 0;\n  v_first_order boolean := false;\n  v_delivery_quote public.goodies_delivery_quotes%rowtype;\nbegin\n  if v_uid is null then raise exception 'Sign in to place an order' using errcode = '28000'; end if;\n  if not private.goodies_customer_can_access() then raise exception 'Your access to Goodies is currently suspended or banned.' using errcode = '42501'; end if;\n  select * into v_store from public.goodies_store_schedules s where s.store_id = p_store_id and s.is_live = true;\n  if not found then raise exception 'This store is not accepting online orders yet' using errcode = 'P0001'; end if;\n  select c.payload into v_content from public.wantiss_cms_content c\n   where c.content_key in ('goodies.content','goodies') and c.status='published'\n   order by case when c.content_key='goodies.content' then 0 else 1 end,\n            case when c.locale='en' then 0 else 1 end,c.published_at desc nulls last,c.version desc limit 1;\n  v_fee_settings:=coalesce(v_content->'fees','{}'::jsonb);\n  if nullif(v_fee_settings->>'svc','') is not null then\n    begin v_expected_service_fee:=(v_fee_settings->>'svc')::numeric;\n    exception when invalid_text_representation then raise exception 'Goodies service fee configuration is invalid' using errcode='22023'; end;\n  end if;\n  if v_expected_service_fee<0 or v_expected_service_fee>1000 then raise exception 'Goodies service fee configuration is outside the allowed range' using errcode='22023'; end if;\n  if nullif(current_setting('app.goodies_group_first_order', true), '') is not null then v_first_order := current_setting('app.goodies_group_first_order', true)::boolean; else select not exists(select 1 from public.goodies_orders o where o.customer_id=v_uid) into v_first_order; end if;\n  if p_order_type not in ('delivery','pickup') then raise exception 'Invalid order type' using errcode='22023'; end if;\n  if coalesce(array_length(v_store.delivery_modes,1),0)>0 and not exists(select 1 from unnest(v_store.delivery_modes) m where lower(m)=p_order_type) then raise exception 'This store does not offer %',p_order_type using errcode='P0001'; end if;\n  if p_order_type='delivery' and (p_address is null or jsonb_typeof(p_address)<>'object') then raise exception 'A delivery address is required' using errcode='22023'; end if;\n  if p_items is null or jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)<1 or jsonb_array_length(p_items)>100 then raise exception 'Cart must contain between 1 and 100 lines' using errcode='22023'; end if;\n  for v_item in select * from jsonb_array_elements(p_items) loop\n    if jsonb_typeof(v_item)<>'object' then raise exception 'Invalid cart line' using errcode='22023'; end if;\n    if jsonb_typeof(v_item->'byo')='object' then\n      v_builder_price:=public.validate_goodies_builder_line(v_store.business_id,p_store_id,v_item);\n      v_q:=(v_item->>'q')::numeric;\n      if v_q is null or v_q<1 or v_q>99 or v_q<>trunc(v_q) then raise exception 'Invalid cart line quantity' using errcode='22023'; end if;\n      v_sum:=v_sum+v_builder_price*v_q; continue;\n    end if;\n    begin v_pid:=(v_item->>'id')::uuid; v_q:=(v_item->>'q')::numeric; v_p:=(v_item->>'p')::numeric;\n    exception when others then raise exception 'Invalid cart line' using errcode='22023'; end;\n    if v_pid is null or v_q is null or v_p is null or v_q<1 or v_q>99 or v_q<>trunc(v_q) then raise exception 'Invalid cart line' using errcode='22023'; end if;\n    select * into v_prod from public.goodies_products gp where gp.id=v_pid and gp.business_id=v_store.business_id and gp.is_available and gp.review_status='approved' and gp.restriction<>'alcohol' and not (concat_ws(' ',gp.name,gp.description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\\\mbeer|bi[\u00e8e]re|\\\\mwine|champagne|cocktail)') for update;\n    if not found then raise exception 'An item in your cart is no longer available' using errcode='P0001'; end if;\n    if v_prod.restriction='alcohol' then raise exception 'Alcohol orders are not available yet' using errcode='P0001'; end if;\n    v_builder_price:=public.validate_goodies_standard_product_line(v_store.category,v_prod.price,v_item,coalesce(v_content->'deals','[]'::jsonb));\n    v_sum:=v_sum+v_builder_price*v_q;\n  end loop;\n  if p_delivery_fee is null or p_service_fee is null or p_discount is null or p_tip is null or p_subtotal is null or p_total is null or p_delivery_fee<0 or p_service_fee<0 or p_discount<0 or p_tip<0 then raise exception 'Invalid order totals' using errcode='22023'; end if;\n  if not public.goodies_tip_is_allowed(p_tip,coalesce(v_fee_settings->>'tips','0')) then raise exception 'Choose one of the available courier tip amounts' using errcode='22023'; end if;\n  if current_setting('app.goodies_group_waive_service_fee', true) = 'on' then v_expected_service_fee := 0; end if; if abs(p_service_fee-v_expected_service_fee)>0.005 then raise exception 'The service fee has changed. Please review your order' using errcode='P0001'; end if;\n  if v_coupon_code<>'' then\n    v_coupon:=null; v_promo_id:=null;\n    select p.id,jsonb_build_object('code',p.code,'st',case when p.is_active then 'Live' else 'Draft' end,\n      'from',case when p.starts_at is null then null else to_char(p.starts_at at time zone 'UTC','YYYY-MM-DD') end,\n      'to',case when p.expires_at is null then null else to_char(p.expires_at at time zone 'UTC','YYYY-MM-DD') end,\n      'min',p.min_subtotal,'store',coalesce(p.store_id,'All stores'),\n      'kind',case when p.discount_type='percent' then 'Percent' else 'Free delivery' end,'val',p.discount_value)\n    into v_promo_id,v_coupon from public.goodies_promotions p\n    where upper(p.code)=v_coupon_code and p.is_active and (p.starts_at is null or p.starts_at<=now())\n      and (p.expires_at is null or p.expires_at>=now()) and (p.max_redemptions is null or p.redemption_count<p.max_redemptions)\n      and (p.store_id is null or p.store_id=p_store_id) for update limit 1;\n    if v_coupon is null then\n      select c.payload into v_content from public.wantiss_cms_content c\n      where c.content_key in ('goodies.content','goodies') and c.status='published'\n      order by case when c.content_key='goodies.content' then 0 else 1 end,case when c.locale='en' then 0 else 1 end,c.published_at desc nulls last,c.version desc limit 1;\n      select c into v_coupon from jsonb_array_elements(coalesce(v_content->'coupons','[]'::jsonb)) c\n      where upper(trim(coalesce(c->>'code','')))=v_coupon_code and coalesce(c->>'st','')='Live'\n      and (nullif(c->>'from','') is null or (c->>'from')::date<=current_date)\n      and (nullif(c->>'to','') is null or (c->>'to')::date>=current_date) limit 1;\n    end if;\n    if v_coupon is null then raise exception 'That promo code is not valid or is no longer active' using errcode='P0001'; end if;\n    v_coupon_min:=coalesce(nullif(v_coupon->>'min','')::numeric,0);\n    if v_sum<v_coupon_min then raise exception 'The order does not meet this promo code minimum' using errcode='P0001'; end if;\n    v_coupon_store:=nullif(v_coupon->>'store','');\n    if v_coupon_store is not null and v_coupon_store<>'All stores' and v_coupon_store<>p_store_id then raise exception 'This promo code is not valid for this store' using errcode='P0001'; end if;\n    v_coupon_kind:=lower(coalesce(v_coupon->>'kind',''));\n    if v_coupon_kind='percent' then v_coupon_val:=coalesce(nullif(v_coupon->>'val','')::numeric,0); if v_coupon_val<=0 or v_coupon_val>100 then raise exception 'Invalid promo configuration' using errcode='22023'; end if; v_expected_discount:=round(v_sum*v_coupon_val)/100;\n    else v_free_delivery:=true; v_expected_discount:=0; end if;\n    if abs(coalesce(p_discount,0)-v_expected_discount)>0.01 then raise exception 'Promo discount does not match the active offer' using errcode='22023'; end if;\n    if v_free_delivery and p_order_type='delivery' and p_delivery_fee<>0 then raise exception 'This promo code provides free delivery' using errcode='22023'; end if;\n  elsif p_discount>0 then raise exception 'A valid promo code is required for this discount' using errcode='P0001'; end if;\n  if p_order_type='pickup' and (p_delivery_fee<>0 or p_tip<>0) then raise exception 'Invalid order totals' using errcode='22023'; end if;\n  if p_order_type='delivery' then\n    if v_store.delivery_pricing_mode='distance' then\n      if nullif(p_address->>'delivery_quote_id','') is null then raise exception 'Please refresh the delivery fee before placing your order' using errcode='P0001'; end if;\n      begin select * into v_delivery_quote from public.goodies_delivery_quotes q where q.id=(p_address->>'delivery_quote_id')::uuid and q.customer_id=v_uid and q.store_id=p_store_id and q.address_payload=(p_address-'delivery_quote_id') and q.expires_at>now() and q.consumed_at is null for update;\n      exception when invalid_text_representation then raise exception 'The delivery quote is invalid. Please refresh the delivery fee' using errcode='P0001'; end;\n      if not found then raise exception 'The delivery quote expired or no longer matches this address. Please refresh it' using errcode='P0001'; end if;\n      v_expected_delivery_fee:=v_delivery_quote.fee;\n    else v_expected_delivery_fee:=v_store.delivery_fee; end if;\n    if v_free_delivery or (v_first_order and coalesce((v_fee_settings->>'first')::boolean,false)) then v_expected_delivery_fee:=0; end if;\n    if abs(p_delivery_fee-v_expected_delivery_fee)>0.005 then raise exception 'The delivery fee has changed. Please review your order' using errcode='P0001'; end if;\n    if v_store.delivery_pricing_mode='distance' and current_setting('app.goodies_help_pay_validation',true) is distinct from 'on' then update public.goodies_delivery_quotes set consumed_at=now() where id=v_delivery_quote.id; end if;\n  end if;\n  if abs(v_sum-p_subtotal)>0.01 or abs((p_subtotal+p_delivery_fee+p_service_fee-p_discount+p_tip)-p_total)>0.01 then raise exception 'Order totals do not match the cart' using errcode='22023'; end if;\n  if p_subtotal<v_store.min_order then raise exception 'The minimum order for this store is %',v_store.min_order using errcode='P0001'; end if;\n  if p_scheduled_for is not null then\n    if not v_store.accept_scheduled_orders then raise exception 'This store does not accept scheduled orders' using errcode='P0001'; end if;\n    if p_scheduled_for<=now() then raise exception 'Choose a future time for a scheduled order' using errcode='P0001'; end if;\n    if (p_scheduled_for at time zone coalesce(nullif(v_store.scheduled_order_timezone,''),'UTC'))::time<v_store.scheduled_order_start_time then raise exception 'Choose a time at or after the store minimum order time' using errcode='P0001'; end if;\n    if p_scheduled_for>now()+interval '30 days' then raise exception 'Scheduled time is too far ahead' using errcode='P0001'; end if;\n    v_status:='scheduled';\n  else v_status:='placed'; end if;\n  if current_setting('app.goodies_help_pay_validation',true)='on' then return; end if;\n  for v_agg in select (e->>'id')::uuid as pid,sum((e->>'q')::int) as qty from jsonb_array_elements(p_items) e where jsonb_typeof(e->'byo') is distinct from 'object' group by 1 loop\n    update public.goodies_products gp set stock=gp.stock-v_agg.qty,updated_at=now()\n    where gp.id=v_agg.pid and gp.business_id=v_store.business_id and gp.is_available and gp.review_status='approved' and gp.restriction<>'alcohol'\n      and not (concat_ws(' ',gp.name,gp.description) ~* '(alcohol|alcool|liquor|rhum|clairin|barbancourt|whisk|vodka|tequila|cognac|brandy|\\\\mbeer|bi[\u00e8e]re|\\\\mwine|champagne|cocktail)')\n      and gp.stock>=v_agg.qty;\n    if not found then raise exception 'An item in your cart is out of stock' using errcode='P0001'; end if;\n  end loop;\n  loop\n    v_code:='GD'||lpad((floor(random()*1000000))::int::text,6,'0');\n    exit when not exists(select 1 from public.goodies_orders o where o.order_code=v_code);\n    v_tries:=v_tries+1; if v_tries>20 then raise exception 'Could not allocate an order code' using errcode='P0001'; end if;\n  end loop;\n  insert into public.goodies_orders(order_code,business_id,customer_id,store_id,status,scheduled_for,order_type,address,contact_phone,items,\n    subtotal,delivery_fee,service_fee,discount,tip,total,payment_method,payment_status,notes,promo_code)\n  values(v_code,v_store.business_id,v_uid,p_store_id,v_status,p_scheduled_for,p_order_type,\n    case when p_order_type='delivery' then (p_address-'delivery_quote_id') else null end,\n    left(nullif(trim(p_contact_phone),''),32),p_items,p_subtotal,p_delivery_fee,p_service_fee,p_discount,p_tip,p_total,\n    'cash','pay_on_receipt',left(nullif(trim(p_notes),''),500),nullif(v_coupon_code,''))\n  returning goodies_orders.id into v_id;\n  if v_promo_id is not null then update public.goodies_promotions set redemption_count=redemption_count+1,updated_at=now() where id=v_promo_id; end if;\n  return query select v_id,v_code,v_status;\nend;\n$function$\n"
+    },
+    {
+      "acl": [
+        "postgres=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "name": "refund_goodies_wallet_order",
+      "schema": "public",
+      "definition": "CREATE OR REPLACE FUNCTION public.refund_goodies_wallet_order(p_order_id uuid, p_reason text)\n RETURNS boolean\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare\n  v_o public.goodies_orders%rowtype;\n  v_wallet_id uuid;\n  v_help_id uuid;\nbegin\n  select * into v_o from public.goodies_orders where id = p_order_id for update;\n  if not found or v_o.payment_method <> 'wallet' or v_o.payment_status <> 'paid' then\n    return false;\n  end if;\n  -- Shared Help Pay orders have multiple payers: refund EACH payer, not only the order owner.\n  select id into v_help_id from public.help_pay_requests where order_id=p_order_id for update;\n  if v_help_id is not null then\n    perform private.help_pay_reverse_locked(v_help_id,'cancelled');\n    update public.goodies_orders set payment_status='refunded',payment_refunded_at=now(),updated_at=now() where id=p_order_id;\n    return true;\n  end if;\n  if exists (\n    select 1 from public.wallet_transactions\n    where reference_id = v_o.id::text\n      and activity_type = 'goodies_order_refund'\n      and direction = 'credit'\n  ) then\n    return false;\n  end if;\n\n  insert into public.wallets (user_id, balance)\n  values (v_o.customer_id, 0)\n  on conflict (user_id) do nothing;\n\n  select id into v_wallet_id\n  from public.wallets\n  where user_id = v_o.customer_id\n  for update;\n  if not found then raise exception 'Could not restore customer wallet for refund' using errcode = 'P0001'; end if;\n\n  update public.wallets\n  set balance = balance + v_o.total, updated_at = now()\n  where id = v_wallet_id;\n\n  insert into public.wallet_transactions (\n    user_id, amount, description, status, wallet_amount, wallet_currency,\n    feature_name, activity_type, direction, reference_id, metadata\n  ) values (\n    v_o.customer_id, v_o.total, 'Refund for Goodies order ' || v_o.order_code,\n    'completed', v_o.total, 'USD', 'Goodies', 'goodies_order_refund', 'credit',\n    v_o.id::text,\n    jsonb_build_object('order_id', v_o.id, 'order_code', v_o.order_code, 'reason', left(coalesce(p_reason, ''), 120))\n  );\n\n  update public.goodies_orders\n  set payment_status = 'refunded', updated_at = now()\n  where id = v_o.id;\n  return true;\nend;\n$function$\n"
+    }
+  ],
+  "capturedAt": "2026-11-13T10:14:29.966374+00:00",
+  "indexes": [
+    "CREATE UNIQUE INDEX help_pay_contributions_pkey ON public.help_pay_contributions USING btree (id)",
+    "CREATE UNIQUE INDEX help_pay_contributions_contributor_id_idempotency_key_key ON public.help_pay_contributions USING btree (contributor_id, idempotency_key)",
+    "CREATE INDEX help_pay_contribution_request ON public.help_pay_contributions USING btree (request_id)",
+    "CREATE UNIQUE INDEX help_pay_creator_checkout_key ON public.help_pay_requests USING btree (creator_id, checkout_key)",
+    "CREATE UNIQUE INDEX help_pay_order_id_unique ON public.help_pay_requests USING btree (order_id) WHERE (order_id IS NOT NULL)",
+    "CREATE UNIQUE INDEX help_pay_requests_pkey ON public.help_pay_requests USING btree (id)",
+    "CREATE UNIQUE INDEX help_pay_active_checkout ON public.help_pay_requests USING btree (creator_id, checkout_key) WHERE (status = ANY (ARRAY['pending'::text, 'active'::text, 'funded'::text, 'refund_pending'::text]))"
+  ]
+}

@@ -7248,5 +7248,20 @@
     "fr": "Le panier groupé ou son total a changé. Vérifiez-le de nouveau avant de payer.",
     "es": "El carrito grupal o el total cambió. Revísalo de nuevo antes de pagar.",
     "zh-Hans": "拼单购物车或总额已更改。请重新核对后再付款。"
+  },
+  "Could not load your friends. Please retry.": {
+    "fr": "Impossible de charger vos amis. Veuillez réessayer.",
+    "es": "No se pudieron cargar tus amigos. Vuelve a intentarlo.",
+    "zh-Hans": "无法加载好友列表，请重试。"
+  },
+  "Your Wallet refund is being processed. Check Wallet activity for confirmation.": {
+    "fr": "Le remboursement sur votre portefeuille est en cours. Consultez l’activité du portefeuille pour en vérifier la confirmation.",
+    "es": "El reembolso a tu billetera se está procesando. Consulta la actividad de la billetera para confirmar.",
+    "zh-Hans": "正在处理退回钱包的退款。请查看钱包明细以确认到账。"
+  },
+  "Could not confirm this request. Reopen Shared Bill to recover its status before trying again.": {
+    "fr": "Impossible de confirmer cette demande. Rouvrez la facture partagée pour récupérer son statut avant de réessayer.",
+    "es": "No se pudo confirmar esta solicitud. Vuelve a abrir la factura compartida para recuperar su estado antes de intentarlo de nuevo.",
+    "zh-Hans": "无法确认此请求。请重新打开共享账单以恢复并查看状态，然后再重试。"
   }
 }
