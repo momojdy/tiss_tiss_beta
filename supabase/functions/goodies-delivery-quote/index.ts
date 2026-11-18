@@ -15,17 +15,24 @@ type AddressInput = {
 };
 type Point = { lat: number; lon: number };
 type Route = { meters: number; geometry: unknown; origin: Point; destination: Point };
-const validPoint = (lat: unknown, lon: unknown): boolean =>
-  lat !== null && lat !== undefined && String(lat).trim() !== "" &&
-  lon !== null && lon !== undefined && String(lon).trim() !== "" &&
-  Number.isFinite(Number(lat)) && Number(lat) >= -90 && Number(lat) <= 90 &&
-  Number.isFinite(Number(lon)) && Number(lon) >= -180 && Number(lon) <= 180;
-const roadGeometryValid = (geometry: any): boolean =>
-  !!geometry && Array.isArray(geometry.coordinates) &&
-  (geometry.type === "LineString"
-    ? geometry.coordinates.length > 1
-    : geometry.type === "MultiLineString" &&
-      geometry.coordinates.some((segment: unknown) => Array.isArray(segment) && segment.length > 1));
+const numericValue = (value: unknown): number | null => {
+  if (typeof value !== "number" &&
+      !(typeof value === "string" && /^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:e[+-]?\d+)?$/i.test(value.trim()))) return null;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : null;
+};
+const validPoint = (lat: unknown, lon: unknown): boolean => {
+  const latitude = numericValue(lat), longitude = numericValue(lon);
+  return latitude !== null && longitude !== null && Math.abs(latitude) <= 90 && Math.abs(longitude) <= 180;
+};
+const roadGeometryValid = (geometry: any): boolean => {
+  const lines = geometry?.type === "LineString" ? [geometry.coordinates]
+    : geometry?.type === "MultiLineString" ? geometry.coordinates : null;
+  return Array.isArray(lines) && lines.length > 0 && lines.every((line: unknown) =>
+    Array.isArray(line) && line.length > 1 && line.every((point: unknown) =>
+      Array.isArray(point) && point.length >= 2 && typeof point[0] === "number" &&
+      typeof point[1] === "number" && validPoint(point[1], point[0])));
+};
 function distanceBetweenMeters(first: Point, second: Point): number {
   const radians = (degrees: number) => degrees * Math.PI / 180;
   const dLat = radians(second.lat - first.lat), dLon = radians(second.lon - first.lon);
@@ -179,7 +186,7 @@ Deno.serve(async (req: Request) => {
     const anon = Deno.env.get("SUPABASE_ANON_KEY")!;
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const geoKey = Deno.env.get("GEOAPIFY_API_KEY");
-    if (!geoKey) return reply({ error: "Delivery routing is not configured yet." }, 503);
+    if (!geoKey) return reply({ error: "Delivery estimates are temporarily unavailable. Please try again later." }, 503);
     const authorization = req.headers.get("Authorization") || "";
     if (!authorization.startsWith("Bearer ")) return reply({ error: "Sign in to calculate delivery." }, 401);
     const authClient = createClient(url, anon, { global: { headers: { Authorization: authorization } } });

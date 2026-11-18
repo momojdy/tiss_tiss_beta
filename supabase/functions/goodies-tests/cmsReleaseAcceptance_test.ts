@@ -16,6 +16,9 @@ Deno.test('Goodies FAQ content passes real draft/publication permissions and con
   check(!!wrapper,'Actual CMS draft wrapper not found');await db.exec(wrapper!);
   await db.exec(await Deno.readTextFile(new URL('../../migrations/20261031191833_protect_goodies_financial_settings_from_cms_publish.sql',import.meta.url)));
   await db.exec(await Deno.readTextFile(new URL('../../migrations/20261024110844_fix_cms_archive_visibility.sql',import.meta.url)));
+  const archive=lifecycle.match(/create or replace function public\.wantiss_admin_archive_cms_version\b[\s\S]*?grant execute on function public\.wantiss_admin_archive_cms_version\(uuid\) to authenticated;/)?.[0];
+  check(!!archive,'Actual CMS archive RPC not found');await db.exec(archive!);
+  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261118033451_goodies_scoped_staff_permissions.sql',import.meta.url)));
   await db.query("update public.wantiss_cms_content set payload=$1::jsonb where content_key='goodies.content' and locale='en' and status='published'",[JSON.stringify(payload)]);
   let draftId='';
   const edited=structuredClone(payload),label=edited.labels.find((row:any)=>row.id==='lbl.coupons');
@@ -48,6 +51,21 @@ Deno.test('Goodies FAQ content passes real draft/publication permissions and con
    await h.as(u.admin);const bad=await save(invalid);await h.denied('select public.wantiss_admin_publish_cms_version($1)',[bad]);
    const after=await published();check(after.version===before.version,'Failed publication changed the consumer version');
    check(after.payload.labels.find((row:any)=>row.id==='lbl.coupons').t.en.v==='Acceptance draft heading','Failed publication removed the previous public content');
+  });
+  await t.step('Goodies CMS uses server acceptance while other-feature authorization stays unchanged',async()=>{
+   await h.root();await db.query("insert into public.wantiss_admin_staff(user_id,display_name,role,status,invited_at,invitation_expires_at) values($1,'Synthetic pending publisher','staff','active',now(),now()+interval '1 day')",[u.bob]);
+   for(const [key,level]of [['content.manage','edit'],['content.publish','manage'],['content.archive','manage']])await db.query("insert into public.wantiss_admin_permission_grants(staff_user_id,permission_key,access_level,granted_by,reason) values($1,$2,$3,$4,'Synthetic scoped CMS acceptance')",[u.bob,key,level,u.admin]);
+   await db.query("update auth.users set raw_user_meta_data=jsonb_build_object('wantiss_invite_accepted',true) where id=$1",[u.bob]);
+   await h.as(u.bob);await h.denied("select public.wantiss_admin_save_cms_draft('goodies.content','en',$1::jsonb)",[JSON.stringify(payload)]);
+   await h.denied('select public.wantiss_admin_publish_cms_version($1)',[draftId]);await h.denied('select public.wantiss_admin_archive_cms_version($1)',[draftId]);
+   // The newer shared authorization migration also requires server acceptance
+   // for other features; the Goodies-specific patch must preserve that denial.
+   await h.denied("select public.wantiss_admin_save_cms_draft('other.synthetic.feature','en','{}'::jsonb)");
+   await h.root();await db.query("update public.wantiss_admin_staff set invitation_expires_at=null where user_id=$1",[u.bob]);await db.query("update auth.users set raw_user_meta_data='{}'::jsonb where id=$1",[u.bob]);
+   await h.as(u.bob);const accepted=await save(payload);check(!!accepted,'Server-accepted staff still depended on editable metadata');
+   const other=(await db.query<{id:string}>("select public.wantiss_admin_save_cms_draft('other.synthetic.feature','en','{}'::jsonb) id")).rows[0].id;
+   check(!!other,'Accepted staff lost existing other-feature content access');
+   await db.query('select public.wantiss_admin_publish_cms_version($1)',[accepted]);await db.query('select public.wantiss_admin_archive_cms_version($1)',[accepted]);
   });
  }finally{await db.close();}
 });

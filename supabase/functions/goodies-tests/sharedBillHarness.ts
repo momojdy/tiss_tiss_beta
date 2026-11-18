@@ -12,6 +12,7 @@ export async function sharedBillHarness(options:{integrity?:boolean;moderation?:
  const files=[...packageSource.matchAll(/'([0-9]{14}_goodies_[a-z_]+\.sql)'/g)].map(match=>match[1]);
  sbCheck(files.length===15,'Expected the original 15-migration package');
  for(const file of [...files,...(options.integrity===false?[]:['20261113101825_goodies_shared_bill_integrity.sql',...(options.moderation===false?[]:['20261117055744_goodies_review_moderation_compatibility.sql'])])])await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
+ await db.exec(await Deno.readTextFile(new URL('../../migrations/20261117155800_goodies_admin_invitation_accepted_server_side.sql',import.meta.url)));
  for(const user of [sbUsers.host,sbUsers.alice,sbUsers.bob,sbUsers.stranger,sbUsers.vendor,sbUsers.otherVendor,sbUsers.admin]){
   await db.query('insert into auth.users(id,email_confirmed_at) values($1,now())',[user]);
   await db.query("insert into public.profiles(id,full_name) values($1,'Synthetic member')",[user]);

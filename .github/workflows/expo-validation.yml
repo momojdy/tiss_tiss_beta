@@ -88,7 +88,7 @@ jobs:
         run: docker run --name "$GOODIES_TEST_CONTAINER" --network none -e POSTGRES_HOST_AUTH_METHOD=trust -d postgres:17.6-alpine@sha256:ef257d85f76e48da1c64832459b59fcaba1a4dac97bf5d7450c77753542eee94
       - name: Verify Goodies financial concurrency using synthetic data
         shell: bash
-        run: node scripts/test-goodies-settlement-postgres.cjs --container "$GOODIES_TEST_CONTAINER" --shared-bill | tee goodies-settlement-races.log
+        run: node scripts/test-goodies-settlement-postgres.cjs --container "$GOODIES_TEST_CONTAINER" --shared-bill --reaudit | tee goodies-settlement-races.log
       - name: Upload financial race evidence
         if: always()
         uses: actions/upload-artifact@v4
