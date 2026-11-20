@@ -1,0 +1,29 @@
+{
+  "observedAt": "2026-11-20T19:36:55.936489+00:00",
+  "originalCommit": "75857548e48594429eb229d105412f2ee41fcacf",
+  "preIntegrationHead": "98e206fd960432f993ece0ffbc80d33add688664",
+  "originalWasAncestorBeforeIntegration": false,
+  "sourceBehaviorAlreadyPreservedBy": "feda699f96824a4bf7ed5dc5b1868f0f4aacb942",
+  "integrationCommit": "ca11bee44f0eba30804cd95f24e1d9aa3adfe314",
+  "integrationParents": [
+    "98e206fd960432f993ece0ffbc80d33add688664",
+    "75857548e48594429eb229d105412f2ee41fcacf"
+  ],
+  "originalIsAncestorAfterIntegration": true,
+  "preAndPostIntegrationTreesIdentical": true,
+  "tree": "0e32f5a22999d2c896374711dc73f9453dcee1d2",
+  "applicationFilesChangedByIntegration": [],
+  "verification": {
+    "command": "node tests/goodies-courier-map.test.cjs",
+    "passed": 4,
+    "failed": 0,
+    "skipped": 0,
+    "scope": [
+      "Late GPS response after account replacement",
+      "Immediate marker hiding on account switch",
+      "Real pickup coordinates and absent-coordinate state",
+      "Stale marker expiry during a hung network refresh"
+    ]
+  },
+  "qualification": "The prior report incorrectly described original-commit ancestry at source 30405ad1. Its behavior was present, but original ancestry was only established by the later normal merge recorded here. No reset, force-push or application release."
+}

@@ -1,8 +1,8 @@
-# Goodies readiness — 21 November 2026
+# Goodies readiness — 20 November 2026 (UTC)
 
 **Not production-ready.** The verified source fixes are pushed and the scoped backend package is deployed. Production acceptance still contains confirmed content/Auth gaps and unverified hosted/provider/device requirements. The Wantiss app was not released.
 
-Verified code: [customer 30405ad1](https://github.com/momojdy/tiss_tiss_beta/commit/30405ad1a2c9dc467efc1b5bf7be0dd63768619e) and [admin f13f959a](https://github.com/momojdy/tiss-admin/commit/f13f959afad44f5e0fd23f2f1da0266031641be1), both on main. The [exact commits and changed files](commits-and-files.json) distinguish this pass from earlier improvements. Courier freshness commit 75857548e48594429eb229d105412f2ee41fcacf remains in the customer history.
+Verified code: [customer 30405ad1](https://github.com/momojdy/tiss_tiss_beta/commit/30405ad1a2c9dc467efc1b5bf7be0dd63768619e) and [admin f13f959a](https://github.com/momojdy/tiss-admin/commit/f13f959afad44f5e0fd23f2f1da0266031641be1), both on main. The [exact commits and changed files](commits-and-files.json) distinguish this pass from earlier improvements. The original courier fix was not an ancestor at the verified source commit, although its 30-second timer and newer protections were present. A later [normal merge](https://github.com/momojdy/tiss_tiss_beta/commit/ca11bee44f0eba30804cd95f24e1d9aa3adfe314) now retains 75857548e48594429eb229d105412f2ee41fcacf in main history with an identical before/after tree. All four behavioral map regressions pass. [Corrected history evidence](courier-freshness-history.json).
 
 | Classification | Current evidence |
 |---|---|

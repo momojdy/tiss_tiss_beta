@@ -354,7 +354,10 @@
         }
       ],
       "courierFreshnessCommit": "75857548e48594429eb229d105412f2ee41fcacf",
-      "courierFreshnessCommitIsAncestor": true
+      "courierFreshnessCommitIsAncestor": true,
+      "courierFreshnessAncestryVerifiedAt": "ca11bee44f0eba30804cd95f24e1d9aa3adfe314",
+      "courierFreshnessWasAncestorAtVerifiedCodeCommit": false,
+      "courierFreshnessHistoryEvidence": "courier-freshness-history.json"
     },
     {
       "repository": "momojdy/tiss-admin",

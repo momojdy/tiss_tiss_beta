@@ -1,6 +1,6 @@
 {
   "observedAt": "2026-11-20T19:17:24.530Z",
-  "displayDate": "21 November 2026",
+  "displayDate": "20 November 2026 (UTC)",
   "productionReady": false,
   "classification": "FAIL",
   "verifiedCodeCommits": {
@@ -118,5 +118,8 @@
   ],
   "nativeExportEvidence": "final-native-export-files.json",
   "hostedBranchCostApprovalRequired": true,
-  "localDevelopmentConfiguration": "Existing Wantiss URL and public publishable key configured in ignored .env.local; no service-role key or app release."
+  "localDevelopmentConfiguration": "Existing Wantiss URL and public publishable key configured in ignored .env.local; no service-role key or app release.",
+  "courierFreshnessHistoryEvidence": "courier-freshness-history.json",
+  "historyIntegrationCommit": "ca11bee44f0eba30804cd95f24e1d9aa3adfe314",
+  "runtimeChangedSinceVerifiedCodeCommit": false
 }
