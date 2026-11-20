@@ -1,0 +1,1308 @@
+{
+  "customer": {
+    "base": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+    "verifiedHead": "27c04e69f8aa2111d203ad6400154a0356301107",
+    "commits": [
+      {
+        "commit": "667c777b67de83af805c2b31f4f9e2ebae1edfd8",
+        "parents": [
+          "c339ce9e05f2f554b33947f2cad301cd63a3f11a"
+        ],
+        "committedAt": "2026-11-20T15:39:15+08:00",
+        "subject": "fix(goodies): validate overnight scheduled hours against server windows"
+      },
+      {
+        "commit": "89e8f8dec78a39ef25c70a65806d279e028ef35b",
+        "parents": [
+          "667c777b67de83af805c2b31f4f9e2ebae1edfd8"
+        ],
+        "committedAt": "2026-11-20T15:39:35+08:00",
+        "subject": "fix(goodies): match numeric schedule window strings"
+      },
+      {
+        "commit": "5f1c875a27da4c93be6c336b9d579dddc7b613ed",
+        "parents": [
+          "89e8f8dec78a39ef25c70a65806d279e028ef35b"
+        ],
+        "committedAt": "2026-11-20T15:40:49+08:00",
+        "subject": "test(goodies): cover overnight merchant scheduling, closed hours and store clock"
+      },
+      {
+        "commit": "fef8305fd73f0a4c15a289634d402e929bde523d",
+        "parents": [
+          "5f1c875a27da4c93be6c336b9d579dddc7b613ed"
+        ],
+        "committedAt": "2026-11-20T15:50:18+08:00",
+        "subject": "fix(goodies): expose server-aligned scheduled-store eligibility for cart stops"
+      },
+      {
+        "commit": "f19f646f33bf23aad826faa5560ae025440cdef3",
+        "parents": [
+          "fef8305fd73f0a4c15a289634d402e929bde523d"
+        ],
+        "committedAt": "2026-11-20T15:50:32+08:00",
+        "subject": "fix(goodies): correct scheduled minimum clock validation pattern"
+      },
+      {
+        "commit": "a102b63510c17d9b780e77db0843becb537daf8c",
+        "parents": [
+          "f19f646f33bf23aad826faa5560ae025440cdef3"
+        ],
+        "committedAt": "2026-11-20T15:51:01+08:00",
+        "subject": "fix(goodies): require valid scheduled slots at every merchant in a multi-store cart"
+      },
+      {
+        "commit": "c43c1f41faa4c12e44577cbcfec280fea88afcfc",
+        "parents": [
+          "a102b63510c17d9b780e77db0843becb537daf8c"
+        ],
+        "committedAt": "2026-11-20T15:51:15+08:00",
+        "subject": "fix(goodies): prevent invalid scheduled multi-store orders before payment dispatch"
+      },
+      {
+        "commit": "d5f52698a4139867cd5a2795a0f44a50d3f96235",
+        "parents": [
+          "c43c1f41faa4c12e44577cbcfec280fea88afcfc"
+        ],
+        "committedAt": "2026-11-20T15:52:28+08:00",
+        "subject": "test(goodies): cover multi-store calendar eligibility against actual merchant time zones"
+      },
+      {
+        "commit": "9705a68269d05b2824d3989958122b5494749933",
+        "parents": [
+          "d5f52698a4139867cd5a2795a0f44a50d3f96235"
+        ],
+        "committedAt": "2026-11-20T15:53:04+08:00",
+        "subject": "fix(goodies): hide scheduling when any cart merchant cannot accept a scheduled order"
+      },
+      {
+        "commit": "3059bb0ba54c997988f05f131a94ec6e83a9a8c8",
+        "parents": [
+          "9705a68269d05b2824d3989958122b5494749933"
+        ],
+        "committedAt": "2026-11-20T15:54:46+08:00",
+        "subject": "fix(goodies): retain local day reference after multi-store schedule consolidation"
+      },
+      {
+        "commit": "6112ef0c35fd91703e84bfbd44d624b31216c079",
+        "parents": [
+          "3059bb0ba54c997988f05f131a94ec6e83a9a8c8"
+        ],
+        "committedAt": "2026-11-20T15:56:04+08:00",
+        "subject": "fix(goodies): support hardened first-delivery migration contracts"
+      },
+      {
+        "commit": "20f41c470cabbbbb48ce657e835b21649a9b4a5f",
+        "parents": [
+          "6112ef0c35fd91703e84bfbd44d624b31216c079"
+        ],
+        "committedAt": "2026-11-20T16:07:27+08:00",
+        "subject": "chore(goodies): version the delivery quote Edge runtime import map"
+      },
+      {
+        "commit": "10c47891906071e82bd5eaffceea32b0fb9d9248",
+        "parents": [
+          "20f41c470cabbbbb48ce657e835b21649a9b4a5f"
+        ],
+        "committedAt": "2026-11-20T16:08:26+08:00",
+        "subject": "docs(goodies): record applied backend reconciliation and unresolved gates"
+      },
+      {
+        "commit": "439ad6d6e1153b4826988d480b366b5337862723",
+        "parents": [
+          "10c47891906071e82bd5eaffceea32b0fb9d9248"
+        ],
+        "committedAt": "2026-11-20T16:19:23+08:00",
+        "subject": "fix(goodies): display verified road distances and preserve address-scoped caches"
+      },
+      {
+        "commit": "e7994de879493c2639246c2fe2567dde7434d3e2",
+        "parents": [
+          "439ad6d6e1153b4826988d480b366b5337862723"
+        ],
+        "committedAt": "2026-11-20T16:22:54+08:00",
+        "subject": "fix(goodies): enforce customer restriction screen coverage consistently"
+      },
+      {
+        "commit": "a0d24b493c652c9d8f15eb171b8f6e0f7b9fa835",
+        "parents": [
+          "e7994de879493c2639246c2fe2567dde7434d3e2"
+        ],
+        "committedAt": "2026-11-20T16:25:15+08:00",
+        "subject": "fix(goodies): preserve isolated startup test contract for restricted routes"
+      },
+      {
+        "commit": "6ce1c979af5a2f7ad2dd4118e16c0c25fa27bf2d",
+        "parents": [
+          "a0d24b493c652c9d8f15eb171b8f6e0f7b9fa835"
+        ],
+        "committedAt": "2026-11-20T16:29:04+08:00",
+        "subject": "fix(goodies): show persisted payment method accurately in customer order history"
+      },
+      {
+        "commit": "c771e1abab2bc0145ac5209da72b19dc8e55e320",
+        "parents": [
+          "6ce1c979af5a2f7ad2dd4118e16c0c25fa27bf2d"
+        ],
+        "committedAt": "2026-11-20T16:32:16+08:00",
+        "subject": "fix(goodies): reuse translated payment label and restore refund status"
+      },
+      {
+        "commit": "aa1a257637b6dd6cbf11da86445e8bb257a2e8ff",
+        "parents": [
+          "c771e1abab2bc0145ac5209da72b19dc8e55e320"
+        ],
+        "committedAt": "2026-11-20T16:33:52+08:00",
+        "subject": "fix(goodies): require durable idempotency key before checkout requests"
+      },
+      {
+        "commit": "3d9a6422e78409c84418ba5544410bd20a24fd30",
+        "parents": [
+          "aa1a257637b6dd6cbf11da86445e8bb257a2e8ff"
+        ],
+        "committedAt": "2026-11-20T16:34:53+08:00",
+        "subject": "test(goodies): fix CommonJS sandbox variable collision in order history regression"
+      },
+      {
+        "commit": "ac31a6d799ff9aa575cecbf3edc8298f805eda41",
+        "parents": [
+          "3d9a6422e78409c84418ba5544410bd20a24fd30"
+        ],
+        "committedAt": "2026-11-20T16:36:24+08:00",
+        "subject": "test(goodies): assert restricted shopping never blocks order and refund recovery"
+      },
+      {
+        "commit": "9bcc127e6973cfe98e75f36f36d08104cc964b57",
+        "parents": [
+          "ac31a6d799ff9aa575cecbf3edc8298f805eda41"
+        ],
+        "committedAt": "2026-11-20T16:37:30+08:00",
+        "subject": "test(goodies): supply localized label dependency to order-history audit harness"
+      },
+      {
+        "commit": "6565749d95e47c79b8475c499c262761f93a1ecf",
+        "parents": [
+          "9bcc127e6973cfe98e75f36f36d08104cc964b57"
+        ],
+        "committedAt": "2026-11-20T17:01:53+08:00",
+        "subject": "fix(goodies-vendor): preserve existing builder publication and stock availability on edit"
+      },
+      {
+        "commit": "1ee76e93e19d2e110fb4aafa9f5b868b423992ce",
+        "parents": [
+          "6565749d95e47c79b8475c499c262761f93a1ecf"
+        ],
+        "committedAt": "2026-11-20T17:02:19+08:00",
+        "subject": "test(goodies-vendor): prevent disabled builder resurrection across editing"
+      },
+      {
+        "commit": "060aad65678f9e0dab5a35f06099cb5e7cf7e898",
+        "parents": [
+          "1ee76e93e19d2e110fb4aafa9f5b868b423992ce"
+        ],
+        "committedAt": "2026-11-20T17:03:09+08:00",
+        "subject": "fix(goodies-vendor): prevent public uploads of private delivery evidence"
+      },
+      {
+        "commit": "25fa625a20d23c3e175b425d4df05160135dbc74",
+        "parents": [
+          "060aad65678f9e0dab5a35f06099cb5e7cf7e898"
+        ],
+        "committedAt": "2026-11-20T17:03:50+08:00",
+        "subject": "test(goodies-vendor): verify private evidence gate and bucket isolation"
+      },
+      {
+        "commit": "56ea4d6991dded5c3db49f62631c9e802dfe56fd",
+        "parents": [
+          "25fa625a20d23c3e175b425d4df05160135dbc74"
+        ],
+        "committedAt": "2026-11-20T17:06:00+08:00",
+        "subject": "fix(goodies-vendor): synchronously lock order status actions against duplicate taps"
+      },
+      {
+        "commit": "fb4399383d8e81061afa0968184fa93a2def3ae2",
+        "parents": [
+          "56ea4d6991dded5c3db49f62631c9e802dfe56fd"
+        ],
+        "committedAt": "2026-11-20T17:06:21+08:00",
+        "subject": "test(goodies-vendor): prevent concurrent order accept/fulfillment mutations"
+      },
+      {
+        "commit": "601c7a640e3a0d8f8302fe459e02dbf0ca36e921",
+        "parents": [
+          "fb4399383d8e81061afa0968184fa93a2def3ae2"
+        ],
+        "committedAt": "2026-11-20T17:07:32+08:00",
+        "subject": "fix(goodies-vendor): prevent repeated store setup and builder saves"
+      },
+      {
+        "commit": "eb4ab202902aa212c781401b29f1628fbe55a2c1",
+        "parents": [
+          "601c7a640e3a0d8f8302fe459e02dbf0ca36e921"
+        ],
+        "committedAt": "2026-11-20T17:08:06+08:00",
+        "subject": "test(goodies-vendor): exercise store and builder save locks and recovery"
+      },
+      {
+        "commit": "7d40246254f6d99671c36026c158524fe1043259",
+        "parents": [
+          "eb4ab202902aa212c781401b29f1628fbe55a2c1"
+        ],
+        "committedAt": "2026-11-20T17:11:41+08:00",
+        "subject": "fix(goodies-vendor): preserve concurrent builder edits when saving store settings"
+      },
+      {
+        "commit": "fdac830adc36b71d9b9213affcb64c24d08c2406",
+        "parents": [
+          "7d40246254f6d99671c36026c158524fe1043259"
+        ],
+        "committedAt": "2026-11-20T17:12:21+08:00",
+        "subject": "test(goodies-vendor): protect fresher builder recipes and avoid needless saves"
+      },
+      {
+        "commit": "244129cc2ea9806213f2204f14fb4649254aca7d",
+        "parents": [
+          "fdac830adc36b71d9b9213affcb64c24d08c2406"
+        ],
+        "committedAt": "2026-11-20T17:15:00+08:00",
+        "subject": "fix(goodies-vendor): refresh authoritative builder list before edits and toggles"
+      },
+      {
+        "commit": "5d85ca66ae94f745d64e7fad795e5cc49efb84bf",
+        "parents": [
+          "244129cc2ea9806213f2204f14fb4649254aca7d"
+        ],
+        "committedAt": "2026-11-20T17:15:40+08:00",
+        "subject": "test(goodies-vendor): preserve latest custom product data across vendor writes"
+      },
+      {
+        "commit": "b03d2794f53c997b213a78febb721177d72adb64",
+        "parents": [
+          "5d85ca66ae94f745d64e7fad795e5cc49efb84bf"
+        ],
+        "committedAt": "2026-11-20T19:02:51+08:00",
+        "subject": "fix(goodies-finance): enforce ownership before card refund state disclosure"
+      },
+      {
+        "commit": "d8c6b44567957f0ca28caa55c944fec42fa50ec2",
+        "parents": [
+          "b03d2794f53c997b213a78febb721177d72adb64"
+        ],
+        "committedAt": "2026-11-20T19:06:27+08:00",
+        "subject": "fix(goodies-delivery): reject delayed GPS samples before live tracking writes"
+      },
+      {
+        "commit": "6a14c0d12cf52c8dc58e20cb4dd811acc730608e",
+        "parents": [
+          "d8c6b44567957f0ca28caa55c944fec42fa50ec2"
+        ],
+        "committedAt": "2026-11-20T19:21:14+08:00",
+        "subject": "fix(goodies-delivery): restore road routes only from unique consumed delivery quotes"
+      },
+      {
+        "commit": "81879d8f5b5a6cfb0f6dc6642c5a6b7c9f774dd1",
+        "parents": [
+          "6a14c0d12cf52c8dc58e20cb4dd811acc730608e"
+        ],
+        "committedAt": "2026-11-20T19:21:42+08:00",
+        "subject": "fix(goodies-delivery): guard GeoJSON coordinate-length check for invalid shapes"
+      },
+      {
+        "commit": "502267dd495c7b626789acd50d91db8b387d05db",
+        "parents": [
+          "81879d8f5b5a6cfb0f6dc6642c5a6b7c9f774dd1"
+        ],
+        "committedAt": "2026-11-20T19:24:40+08:00",
+        "subject": "test(goodies-delivery): isolate verified road-route backfill and ambiguous-quote rejection"
+      },
+      {
+        "commit": "d90d3e0dd2ebe7f074e423375a164badf422e3c1",
+        "parents": [
+          "502267dd495c7b626789acd50d91db8b387d05db"
+        ],
+        "committedAt": "2026-11-20T19:26:49+08:00",
+        "subject": "test(goodies-finance): run refund authorization regression in CI suite"
+      },
+      {
+        "commit": "986e7b3ebde5b377da608141c7a0c1b6e2b1daf3",
+        "parents": [
+          "d90d3e0dd2ebe7f074e423375a164badf422e3c1"
+        ],
+        "committedAt": "2026-11-20T19:54:08+08:00",
+        "subject": "fix(goodies-group): match USD group estimate to Wallet checkout and test it"
+      },
+      {
+        "commit": "d10105c90384f61f5536edff6563382ff2c19911",
+        "parents": [
+          "986e7b3ebde5b377da608141c7a0c1b6e2b1daf3"
+        ],
+        "committedAt": "2026-11-20T19:58:38+08:00",
+        "subject": "fix(goodies-group): reject non-USD or inconsistent group Wallet estimates"
+      },
+      {
+        "commit": "7425034d789395dcecf9673bbe302ee3b3454cec",
+        "parents": [
+          "d10105c90384f61f5536edff6563382ff2c19911"
+        ],
+        "committedAt": "2026-11-20T19:59:46+08:00",
+        "subject": "fix(goodies-group): refresh expiring shared orders without Realtime events"
+      },
+      {
+        "commit": "4f05f7a3ef7d6d2b6cf2d40e5910e907687269fd",
+        "parents": [
+          "7425034d789395dcecf9673bbe302ee3b3454cec"
+        ],
+        "committedAt": "2026-11-20T20:00:18+08:00",
+        "subject": "test(goodies-group): verify unobserved expiry triggers host-safe cleanup"
+      },
+      {
+        "commit": "f799c6c4e45b1760501367e31987e5eaee1b4e84",
+        "parents": [
+          "4f05f7a3ef7d6d2b6cf2d40e5910e907687269fd"
+        ],
+        "committedAt": "2026-11-20T20:03:36+08:00",
+        "subject": "fix(goodies-group): enforce store admission and approved-only group products"
+      },
+      {
+        "commit": "bbe2c28b7cbf2e4c8c08ef45c798ed2da6d28cfc",
+        "parents": [
+          "f799c6c4e45b1760501367e31987e5eaee1b4e84"
+        ],
+        "committedAt": "2026-11-20T20:05:39+08:00",
+        "subject": "test(goodies-group): supply isolated PGlite crypto stub for invite lifecycle"
+      },
+      {
+        "commit": "d5d2b4a48776804b42d91eb90ae00035edd03b21",
+        "parents": [
+          "bbe2c28b7cbf2e4c8c08ef45c798ed2da6d28cfc"
+        ],
+        "committedAt": "2026-11-20T20:06:48+08:00",
+        "subject": "fix(goodies-group): block fresh invitations during store restrictions"
+      },
+      {
+        "commit": "be1f3d7cbb7238af49189b751f1330a0a8a2f649",
+        "parents": [
+          "d5d2b4a48776804b42d91eb90ae00035edd03b21"
+        ],
+        "committedAt": "2026-11-20T20:08:52+08:00",
+        "subject": "test(goodies-group): repair isolated invite generator SQL literal"
+      },
+      {
+        "commit": "685275767b3058fbdf29da4f5e664bab1968d839",
+        "parents": [
+          "be1f3d7cbb7238af49189b751f1330a0a8a2f649"
+        ],
+        "committedAt": "2026-11-20T20:13:35+08:00",
+        "subject": "fix(goodies-group): qualify shared-cart quantity in server RPC"
+      },
+      {
+        "commit": "b2319047ae4f3413d96aeea37364e9008ca81218",
+        "parents": [
+          "685275767b3058fbdf29da4f5e664bab1968d839"
+        ],
+        "committedAt": "2026-11-20T20:15:48+08:00",
+        "subject": "fix(goodies-group): expire stale invitations with guarded cron and isolated tests"
+      },
+      {
+        "commit": "a0cc5c1cb47bebcf56893374ca26dd4e0a556f71",
+        "parents": [
+          "b2319047ae4f3413d96aeea37364e9008ca81218"
+        ],
+        "committedAt": "2026-11-20T20:17:11+08:00",
+        "subject": "fix(goodies-group): disambiguate invite-code and member lookups for join RPC"
+      },
+      {
+        "commit": "267837cb9c6f99afc0cae86fb9589e0b29370868",
+        "parents": [
+          "a0cc5c1cb47bebcf56893374ca26dd4e0a556f71"
+        ],
+        "committedAt": "2026-11-20T20:28:17+08:00",
+        "subject": "fix(goodies-group): reject unsyncable mixed-store carts before opening an invitation"
+      },
+      {
+        "commit": "a5e8be35435c3e550bfefae79a6f171b184e6bb5",
+        "parents": [
+          "267837cb9c6f99afc0cae86fb9589e0b29370868"
+        ],
+        "committedAt": "2026-11-20T20:28:48+08:00",
+        "subject": "test(goodies-group): verify no invitation created for mixed-store or unsupported lines"
+      },
+      {
+        "commit": "ab44f5a90cd76e5cc9f686f30c1f02c2978d6c94",
+        "parents": [
+          "c339ce9e05f2f554b33947f2cad301cd63a3f11a"
+        ],
+        "committedAt": "2026-11-20T12:31:24Z",
+        "subject": "docs(goodies): record verified implementation and remaining release gates"
+      },
+      {
+        "commit": "33353df76e6aae26ee1a35640441f61d41803356",
+        "parents": [
+          "ab44f5a90cd76e5cc9f686f30c1f02c2978d6c94",
+          "a5e8be35435c3e550bfefae79a6f171b184e6bb5"
+        ],
+        "committedAt": "2026-11-20T12:33:36Z",
+        "subject": "Merge remote-tracking branch 'origin/main'"
+      },
+      {
+        "commit": "d65a4afe6f538d07a643b4e76150aafc17f385f2",
+        "parents": [
+          "a5e8be35435c3e550bfefae79a6f171b184e6bb5"
+        ],
+        "committedAt": "2026-11-20T20:33:49+08:00",
+        "subject": "fix(goodies-group): reuse published message for unsupported cart sync"
+      },
+      {
+        "commit": "e1a6f4d358342936443a2bac0ef001a80fa8e99d",
+        "parents": [
+          "d65a4afe6f538d07a643b4e76150aafc17f385f2"
+        ],
+        "committedAt": "2026-11-20T20:34:05+08:00",
+        "subject": "test(goodies-group): align rejected-cart copy with published CMS catalog"
+      },
+      {
+        "commit": "09f9c0c71ce81a152b90d9c3f63139e1a9eda7ca",
+        "parents": [
+          "e1a6f4d358342936443a2bac0ef001a80fa8e99d"
+        ],
+        "committedAt": "2026-11-20T20:36:15+08:00",
+        "subject": "fix(goodies-group): route invite links through Wantiss shell after sign-in"
+      },
+      {
+        "commit": "c6a75db6e1c99546b0e01e43b3635bfab66628d8",
+        "parents": [
+          "09f9c0c71ce81a152b90d9c3f63139e1a9eda7ca"
+        ],
+        "committedAt": "2026-11-20T20:39:52+08:00",
+        "subject": "fix(goodies-group): reject encoded whitespace inside invitation codes"
+      },
+      {
+        "commit": "c67ded6e905502d600a82f9eec6c57269065976b",
+        "parents": [
+          "33353df76e6aae26ee1a35640441f61d41803356"
+        ],
+        "committedAt": "2026-11-20T12:40:14Z",
+        "subject": "fix(goodies): require review for group-cart validation content"
+      },
+      {
+        "commit": "d3ca7986cae6f648ca9cece9da9b7247c8af6105",
+        "parents": [
+          "c67ded6e905502d600a82f9eec6c57269065976b"
+        ],
+        "committedAt": "2026-11-20T12:41:08Z",
+        "subject": "docs(goodies): reconcile readiness evidence with newer main and backend rollout"
+      },
+      {
+        "commit": "a5aa004f95024cf1e9304c7486d67c5490842300",
+        "parents": [
+          "d3ca7986cae6f648ca9cece9da9b7247c8af6105",
+          "c6a75db6e1c99546b0e01e43b3635bfab66628d8"
+        ],
+        "committedAt": "2026-11-20T12:42:47Z",
+        "subject": "Merge remote-tracking branch 'origin/main'"
+      },
+      {
+        "commit": "1388cec15fa83bde5d182aa6708a49c492d70144",
+        "parents": [
+          "c6a75db6e1c99546b0e01e43b3635bfab66628d8"
+        ],
+        "committedAt": "2026-11-20T20:45:29+08:00",
+        "subject": "fix(goodies-group): safely resume hosted group on a new device"
+      },
+      {
+        "commit": "b743fe9fb3b0c6a10eae3e164158b2cfb022c98f",
+        "parents": [
+          "a5aa004f95024cf1e9304c7486d67c5490842300"
+        ],
+        "committedAt": "2026-11-20T12:46:05Z",
+        "subject": "chore(goodies): validate current contracts without redundant content migration"
+      },
+      {
+        "commit": "ff8296361f071469076251024118d86afa5d3946",
+        "parents": [
+          "b743fe9fb3b0c6a10eae3e164158b2cfb022c98f"
+        ],
+        "committedAt": "2026-11-20T12:46:58Z",
+        "subject": "docs(goodies): record current verified source and deployed contract status"
+      },
+      {
+        "commit": "5c523ac8c5628a085891a78ba260eafd1736b4d4",
+        "parents": [
+          "ff8296361f071469076251024118d86afa5d3946",
+          "1388cec15fa83bde5d182aa6708a49c492d70144"
+        ],
+        "committedAt": "2026-11-20T12:48:20Z",
+        "subject": "Merge remote-tracking branch 'origin/main'"
+      },
+      {
+        "commit": "27c04e69f8aa2111d203ad6400154a0356301107",
+        "parents": [
+          "5c523ac8c5628a085891a78ba260eafd1736b4d4"
+        ],
+        "committedAt": "2026-11-20T12:49:31Z",
+        "subject": "ci(goodies): pin synchronized hosted-group recovery preview"
+      }
+    ],
+    "netChangedFiles": [
+      {
+        "status": "M",
+        "file": ".github/workflows/expo-validation.yml"
+      },
+      {
+        "status": "M",
+        "file": "App.tsx"
+      },
+      {
+        "status": "M",
+        "file": "docs/goodies/acceptance-20261117/README.md"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/phase1-backend-reconciliation-20261120.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/README.md"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/admin-android-metadata.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/admin-ios-metadata.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/artifact-validation.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/courier-sql-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/merged-sql-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/native-21-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/native-22-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/native-lock-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/sql-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend-logs/vendor-sql-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backend.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/backup-access.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/bundle-receipts.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/ci-failure-repaired.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/ci-verification.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/commits-and-files.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/cross-role.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/expanded-lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/heartbeat-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/location-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/location-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/map-after.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/map-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/map-stale-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/navigation.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/signout-before.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier-logs/typecheck.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/courier.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-production-contracts.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-security-advisors.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-source-inventory.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-status.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-controls.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-export-metadata.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/account-notifications.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/checkout-snapshots.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/configured-lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/recovery.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/shared-payments-api.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/shared-payments-recovery.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/shared-payments-ui.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer-logs/typecheck.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/customer.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/dynamic-route-review.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/evidence-sha256.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/faq-preview.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/admin-android.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/admin-doctor-proxy.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/admin-ios.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/admin-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/admin-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/backend-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/cms.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/content-review.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/cross-role.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-admin-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-admin-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-cms-review.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-cross-role.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-customer-lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-customer-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-customer-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/current-native-29.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/customer-doctor-proxy.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/customer-export.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/customer-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/customer-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/edge-check.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/goodies-ci-native-fixed.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/goodies-repro-restriction.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/goodies-restriction-admission.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/inventory.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-admin-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-admin-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-cross-role.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-customer-lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-customer-tests.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-customer-types.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/latest-native-28.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/lint.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/migrations.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/native-24.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/preview-build.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/preview-faq.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/preview-interactions.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/preview-routes.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/secrets.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/vendor-localization.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/final-logs/vendor-readiness.log.gz"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/group-logs/handlers.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/group-logs/typecheck.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/group.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/latest-source-inventory.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/live-source-drift.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/logs/vendor-configured-lint.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/logs/vendor-readiness.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/logs/vendor-settlement.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/logs/vendor-typecheck.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/logs/vendor-workspace.log"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/postdeployment-readonly.sql"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/preexisting-app-lint.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/preview-interactions.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/preview-routes.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/production-change-plan.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/production-contract-check.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/recovery-runbook.md"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/schema-recovery-receipt.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/scoped-lint-summary.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/screen-verification.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/security-advisors.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/vendor-localization.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/vendor.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/verification.json"
+      },
+      {
+        "status": "M",
+        "file": "scripts/audit-goodies-reproductions.cjs"
+      },
+      {
+        "status": "M",
+        "file": "scripts/test-goodies-settlement-postgres.cjs"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/GoodiesApp.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/actions.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/components/Sheets.tsx"
+      },
+      {
+        "status": "A",
+        "file": "src/features/Goodies/deliveryDistance.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/deliveryTracking.ts"
+      },
+      {
+        "status": "A",
+        "file": "src/features/Goodies/groupInviteLinks.ts"
+      },
+      {
+        "status": "A",
+        "file": "src/features/Goodies/groupRecovery.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/screens/Shop.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/serverSync.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/Goodies/store.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx"
+      },
+      {
+        "status": "A",
+        "file": "supabase/functions/goodies-delivery-quote/deno.json"
+      },
+      {
+        "status": "M",
+        "file": "supabase/functions/goodies-tests/deliveryTracking_test.ts"
+      },
+      {
+        "status": "M",
+        "file": "supabase/functions/goodies-tests/groupCheckoutConsent_test.ts"
+      },
+      {
+        "status": "A",
+        "file": "supabase/functions/goodies-tests/groupExpiryWorker_test.ts"
+      },
+      {
+        "status": "A",
+        "file": "supabase/functions/goodies-tests/historicalRouteBackfill_test.ts"
+      },
+      {
+        "status": "A",
+        "file": "supabase/functions/goodies-tests/refundAuthorization_test.ts"
+      },
+      {
+        "status": "M",
+        "file": "supabase/functions/goodies-tests/storeRestrictionAdmission_test.ts"
+      },
+      {
+        "status": "A",
+        "file": "supabase/functions/goodies-tests/storeRoadDistance_test.ts"
+      },
+      {
+        "status": "M",
+        "file": "supabase/functions/refund-goodies-card-order/index.ts"
+      },
+      {
+        "status": "M",
+        "file": "supabase/migrations/20261113101825_goodies_shared_bill_integrity.sql"
+      },
+      {
+        "status": "A",
+        "file": "supabase/migrations/20261120194000_goodies_backfill_verified_delivery_routes.sql"
+      },
+      {
+        "status": "A",
+        "file": "supabase/migrations/20261120200500_goodies_group_checkout_estimate_usd.sql"
+      },
+      {
+        "status": "A",
+        "file": "supabase/migrations/20261120214000_goodies_group_store_and_product_admission.sql"
+      },
+      {
+        "status": "A",
+        "file": "supabase/migrations/20261120222000_goodies_group_expiry_worker.sql"
+      },
+      {
+        "status": "M",
+        "file": "tests/goodies-bootstrap.test.cjs"
+      },
+      {
+        "status": "M",
+        "file": "tests/goodies-checkout-snapshots.test.cjs"
+      },
+      {
+        "status": "M",
+        "file": "tests/goodies-courier-location.test.cjs"
+      },
+      {
+        "status": "M",
+        "file": "tests/goodies-group-handlers.test.cjs"
+      },
+      {
+        "status": "A",
+        "file": "tests/goodies-group-invite-links.test.cjs"
+      },
+      {
+        "status": "A",
+        "file": "tests/goodies-group-recovery.test.cjs"
+      },
+      {
+        "status": "A",
+        "file": "tests/goodies-order-history.test.cjs"
+      },
+      {
+        "status": "A",
+        "file": "tests/goodies-scheduled-hours.test.cjs"
+      },
+      {
+        "status": "M",
+        "file": "tests/goodies-vendor-readiness.test.cjs"
+      }
+    ],
+    "scope": "All exact commits and net paths in this recorded range, including preserved incoming work and documentation. Later report commits are outside the range."
+  },
+  "admin": {
+    "base": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+    "verifiedHead": "de2514968f080f0e304acc826a16bb9359066516",
+    "commits": [
+      {
+        "commit": "fb387690d168cf1835f81eb25935cf63bcf01445",
+        "parents": [
+          "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5"
+        ],
+        "committedAt": "2026-11-20T15:39:51+08:00",
+        "subject": "fix(goodies-admin): mirror overnight scheduling and avoid nonexistent merchant hours"
+      },
+      {
+        "commit": "b1297e94ccc0d576c18fc20dad656ed0ddbe1e26",
+        "parents": [
+          "fb387690d168cf1835f81eb25935cf63bcf01445"
+        ],
+        "committedAt": "2026-11-20T15:53:22+08:00",
+        "subject": "fix(goodies-admin): mirror scheduled multi-store admission helper"
+      },
+      {
+        "commit": "a6de0d80e9792ef4cd1d07dc8f2baf3afcd5de4b",
+        "parents": [
+          "b1297e94ccc0d576c18fc20dad656ed0ddbe1e26"
+        ],
+        "committedAt": "2026-11-20T15:53:35+08:00",
+        "subject": "fix(goodies-admin): mirror full-cart schedule time validation"
+      },
+      {
+        "commit": "544f2f2b7f01bbea12e8d65d3308d8028af0603e",
+        "parents": [
+          "a6de0d80e9792ef4cd1d07dc8f2baf3afcd5de4b"
+        ],
+        "committedAt": "2026-11-20T15:53:46+08:00",
+        "subject": "fix(goodies-admin): mirror guarded scheduled checkout transitions"
+      },
+      {
+        "commit": "57fce799291fa55d2893bcd4ceaa657d36736f0a",
+        "parents": [
+          "544f2f2b7f01bbea12e8d65d3308d8028af0603e"
+        ],
+        "committedAt": "2026-11-20T15:53:59+08:00",
+        "subject": "fix(goodies-admin): synchronize multi-store schedule eligibility in checkout preview"
+      },
+      {
+        "commit": "8ff72b315f7efc93ff6feee9cb5cc453af28d55a",
+        "parents": [
+          "57fce799291fa55d2893bcd4ceaa657d36736f0a"
+        ],
+        "committedAt": "2026-11-20T15:54:49+08:00",
+        "subject": "fix(goodies): retain local day reference after multi-store schedule consolidation"
+      },
+      {
+        "commit": "b5985b642f31c1ca0fed15c8769cfd2e3549e856",
+        "parents": [
+          "8ff72b315f7efc93ff6feee9cb5cc453af28d55a"
+        ],
+        "committedAt": "2026-11-20T12:38:47Z",
+        "subject": "fix(goodies-admin): synchronize current group and delivery preview contracts"
+      },
+      {
+        "commit": "d9c5c6b7f55aa82f43a8c115f1de607de10925c4",
+        "parents": [
+          "b5985b642f31c1ca0fed15c8769cfd2e3549e856"
+        ],
+        "committedAt": "2026-11-20T12:45:24Z",
+        "subject": "fix(goodies-admin): mirror current invitation entry and reviewed cart errors"
+      },
+      {
+        "commit": "de2514968f080f0e304acc826a16bb9359066516",
+        "parents": [
+          "d9c5c6b7f55aa82f43a8c115f1de607de10925c4"
+        ],
+        "committedAt": "2026-11-20T12:49:07Z",
+        "subject": "fix(goodies-admin): mirror hosted group recovery in content preview"
+      }
+    ],
+    "netChangedFiles": [
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/GoodiesApp.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/actions.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/components/Sheets.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/customerLabelCatalog.json"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/customerPageCatalog.json"
+      },
+      {
+        "status": "A",
+        "file": "src/features/admin/goodiesConsumer/deliveryDistance.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/deliveryTracking.ts"
+      },
+      {
+        "status": "A",
+        "file": "src/features/admin/goodiesConsumer/groupInviteLinks.ts"
+      },
+      {
+        "status": "A",
+        "file": "src/features/admin/goodiesConsumer/groupRecovery.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/screens/Shop.tsx"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/serverSync.ts"
+      },
+      {
+        "status": "M",
+        "file": "src/features/admin/goodiesConsumer/store.ts"
+      }
+    ],
+    "scope": "All exact commits and net paths in this recorded range, including preserved incoming work and documentation. Later report commits are outside the range."
+  },
+  "earlierImplementationManifest": "commits-and-files.json"
+}

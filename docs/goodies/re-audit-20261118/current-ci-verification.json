@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-11-20T12:51:52.434Z",
+  "scope": "Current paired source CI, no app release or database deployment",
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44739016887,
+      "name": "Expo validation",
+      "sourceCommit": "27c04e69f8aa2111d203ad6400154a0356301107",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44739016887",
+      "updatedAt": "2026-11-20T12:51:48Z"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44739017076,
+      "name": "TypeScript and Expo build checks",
+      "sourceCommit": "27c04e69f8aa2111d203ad6400154a0356301107",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44739017076",
+      "updatedAt": "2026-11-20T12:50:57Z"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "id": 44738959273,
+      "name": "Admin validation",
+      "sourceCommit": "de2514968f080f0e304acc826a16bb9359066516",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44738959273",
+      "updatedAt": "2026-11-20T12:50:31Z"
+    }
+  ],
+  "classification": "PASS"
+}

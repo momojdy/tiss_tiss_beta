@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T12:46:58.279Z",
+  "generatedAt": "2026-11-20T12:55:16.635Z",
   "classification": "SOURCE_TRACE",
   "hostedClassification": "HOSTED_NOT_VERIFIED",
   "purpose": "Reproducible inventory of current Goodies source. A binding, handler, route or contract trace is never hosted acceptance or a role authorization PASS.",
@@ -62,16 +62,16 @@
     }
   },
   "counts": {
-    "files": 106,
-    "astFiles": 94,
-    "functions": 1540,
+    "files": 107,
+    "astFiles": 95,
+    "functions": 1541,
     "interactiveBindings": 1343,
     "jsxBindings": 1200,
     "objectEventBindings": 143,
     "backendCallSites": 432,
     "serviceCallSites": 221,
     "navigationCallSites": 536,
-    "commentTokens": 255,
+    "commentTokens": 261,
     "demoReferenceLines": 265,
     "embeddedEventReferences": 9,
     "unresolvedLiteralRegistryTargets": 0,
@@ -517,7 +517,7 @@
       {
         "repository": "customer",
         "file": "src/features/Goodies/components/Sheets.tsx",
-        "line": 571,
+        "line": 586,
         "owner": "GroupOrderSheet.checkoutGroupOrder",
         "roles": [
           "customer"
@@ -827,9 +827,9 @@
       "roles": [
         "admin-preview"
       ],
-      "sha256": "6e091235158a64d85c6e121c822d381a66cd9e23db9e0649f8b96c9205448efb",
-      "bytes": 12371,
-      "lines": 456,
+      "sha256": "6cb65ab1fd2672d5d70112bd145698a45daf203561219c95c4b7d6a449553144",
+      "bytes": 12613,
+      "lines": 465,
       "commentCount": 0,
       "commentLines": 0,
       "includedFunctions": "all",
@@ -1524,11 +1524,11 @@
       "roles": [
         "customer"
       ],
-      "sha256": "37beca54ed6211d5b35e804af9d230daeb6264b7134cc19d3ac832d2e9941f9a",
-      "bytes": 87872,
-      "lines": 906,
-      "commentCount": 8,
-      "commentLines": 8,
+      "sha256": "623ae02009777990ec398bf51a94805f5b6ebb40355ef1f473c6a2cca8acd935",
+      "bytes": 88756,
+      "lines": 921,
+      "commentCount": 11,
+      "commentLines": 11,
       "includedFunctions": "all",
       "scope": "Existing customer audit scope",
       "extraction": "TYPESCRIPT_AST",
@@ -1771,6 +1771,23 @@
       "lines": 14,
       "commentCount": 2,
       "commentLines": 2,
+      "includedFunctions": "all",
+      "scope": "Dedicated Goodies source",
+      "extraction": "TYPESCRIPT_AST",
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/groupRecovery.ts",
+      "roles": [
+        "customer"
+      ],
+      "sha256": "7fc76d268907be1d27d52db091c025280ef28f0cafbe06c15d4007f7c2302375",
+      "bytes": 1512,
+      "lines": 25,
+      "commentCount": 3,
+      "commentLines": 3,
       "includedFunctions": "all",
       "scope": "Dedicated Goodies source",
       "extraction": "TYPESCRIPT_AST",
@@ -11323,7 +11340,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 22,
+      "line": 23,
       "owner": "module",
       "roles": [
         "customer"
@@ -11331,12 +11348,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "Sheets",
-      "endLine": 112
+      "endLine": 113
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -11344,12 +11361,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "stars",
-      "endLine": 26
+      "endLine": 27
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 71,
+      "line": 72,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -11357,12 +11374,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "row",
-      "endLine": 71
+      "endLine": 72
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 114,
+      "line": 115,
       "owner": "module",
       "roles": [
         "customer"
@@ -11370,12 +11387,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "ScheduleSheet",
-      "endLine": 180
+      "endLine": 181
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 118,
+      "line": 119,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
@@ -11383,19 +11400,6 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "isAvailableInstant",
-      "endLine": 121
-    },
-    {
-      "repository": "customer",
-      "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 122,
-      "owner": "ScheduleSheet",
-      "roles": [
-        "customer"
-      ],
-      "classification": "SOURCE_TRACE",
-      "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "customerDayStart",
       "endLine": 122
     },
     {
@@ -11408,21 +11412,21 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "slotsForDay",
-      "endLine": 130
+      "name": "customerDayStart",
+      "endLine": 123
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 153,
+      "line": 124,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "formatCustomer",
-      "endLine": 153
+      "name": "slotsForDay",
+      "endLine": 131
     },
     {
       "repository": "customer",
@@ -11434,13 +11438,26 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "choose",
-      "endLine": 161
+      "name": "formatCustomer",
+      "endLine": 154
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 181,
+      "line": 155,
+      "owner": "ScheduleSheet",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "choose",
+      "endLine": 162
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 182,
       "owner": "module",
       "roles": [
         "customer"
@@ -11448,12 +11465,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "ScheduleInline",
-      "endLine": 181
+      "endLine": 182
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 183,
+      "line": 184,
       "owner": "module",
       "roles": [
         "customer"
@@ -11461,12 +11478,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "SegSchedule",
-      "endLine": 188
+      "endLine": 189
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 191,
+      "line": 192,
       "owner": "module",
       "roles": [
         "customer"
@@ -11474,12 +11491,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "GroupOrderModal",
-      "endLine": 213
+      "endLine": 214
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 194,
+      "line": 195,
       "owner": "GroupOrderModal",
       "roles": [
         "customer"
@@ -11487,20 +11504,7 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "handlePan",
-      "endLine": 198
-    },
-    {
-      "repository": "customer",
-      "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 195,
-      "owner": "GroupOrderModal.handlePan",
-      "roles": [
-        "customer"
-      ],
-      "classification": "SOURCE_TRACE",
-      "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "onStartShouldSetPanResponder",
-      "endLine": 195
+      "endLine": 199
     },
     {
       "repository": "customer",
@@ -11512,7 +11516,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "onMoveShouldSetPanResponder",
+      "name": "onStartShouldSetPanResponder",
       "endLine": 196
     },
     {
@@ -11525,13 +11529,26 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "onPanResponderRelease",
+      "name": "onMoveShouldSetPanResponder",
       "endLine": 197
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 215,
+      "line": 198,
+      "owner": "GroupOrderModal.handlePan",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "onPanResponderRelease",
+      "endLine": 198
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 216,
       "owner": "module",
       "roles": [
         "customer"
@@ -11539,12 +11556,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "GroupOrderSheet",
-      "endLine": 807
+      "endLine": 822
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 235,
+      "line": 236,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11552,12 +11569,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "[groupAddressId, setGroupAddressId]",
-      "endLine": 235
+      "endLine": 236
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 251,
+      "line": 252,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11565,20 +11582,7 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "[group, setGroup]",
-      "endLine": 257
-    },
-    {
-      "repository": "customer",
-      "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 260,
-      "owner": "GroupOrderSheet",
-      "roles": [
-        "customer"
-      ],
-      "classification": "SOURCE_TRACE",
-      "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "current",
-      "endLine": 260
+      "endLine": 258
     },
     {
       "repository": "customer",
@@ -11590,20 +11594,20 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "requireAccount",
-      "endLine": 267
+      "name": "current",
+      "endLine": 261
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 268,
+      "line": 262,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "saveGroup",
+      "name": "requireAccount",
       "endLine": 268
     },
     {
@@ -11616,13 +11620,26 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "createServerGroup",
-      "endLine": 301
+      "name": "saveGroup",
+      "endLine": 269
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 293,
+      "line": 284,
+      "owner": "GroupOrderSheet",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "createServerGroup",
+      "endLine": 316
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 308,
       "owner": "GroupOrderSheet.createServerGroup",
       "roles": [
         "customer"
@@ -11630,12 +11647,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "failed",
-      "endLine": 293
+      "endLine": 308
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 302,
+      "line": 317,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11643,12 +11660,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "joinGroup",
-      "endLine": 321
+      "endLine": 336
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 322,
+      "line": 337,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11656,12 +11673,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "joinServerGroup",
-      "endLine": 322
+      "endLine": 337
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 325,
+      "line": 340,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11669,12 +11686,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "valid",
-      "endLine": 325
+      "endLine": 340
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 328,
+      "line": 343,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11682,12 +11699,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "loadItems",
-      "endLine": 340
+      "endLine": 355
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 341,
+      "line": 356,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11695,12 +11712,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "loadMembers",
-      "endLine": 351
+      "endLine": 366
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 352,
+      "line": 367,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11708,12 +11725,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "refreshGroupStatus",
-      "endLine": 368
+      "endLine": 383
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 372,
+      "line": 387,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11721,12 +11738,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "statusPoll",
-      "endLine": 372
+      "endLine": 387
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 390,
+      "line": 405,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11734,12 +11751,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "loadInvites",
-      "endLine": 402
+      "endLine": 417
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 408,
+      "line": 423,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11747,12 +11764,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "openFriends",
-      "endLine": 420
+      "endLine": 435
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 421,
+      "line": 436,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11760,12 +11777,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "sendFriendInvites",
-      "endLine": 434
+      "endLine": 449
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 435,
+      "line": 450,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11773,12 +11790,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "joinFromInvite",
-      "endLine": 438
+      "endLine": 453
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 439,
+      "line": 454,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11786,12 +11803,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "declineInvite",
-      "endLine": 451
+      "endLine": 466
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 452,
+      "line": 467,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11799,12 +11816,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "invite",
-      "endLine": 457
+      "endLine": 472
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 460,
+      "line": 475,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11812,12 +11829,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "groupAmount",
-      "endLine": 463
+      "endLine": 478
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 464,
+      "line": 479,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11825,12 +11842,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "validEstimate",
-      "endLine": 468
+      "endLine": 483
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 469,
+      "line": 484,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11838,12 +11855,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "loadGroupEstimate",
-      "endLine": 476
+      "endLine": 491
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 477,
+      "line": 492,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11851,12 +11868,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "selectGroupCheckoutType",
-      "endLine": 486
+      "endLine": 501
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 487,
+      "line": 502,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11864,12 +11881,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "calculateGroupDeliveryQuote",
-      "endLine": 509
+      "endLine": 524
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 511,
+      "line": 526,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11877,19 +11894,6 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "checkoutGroupOrder",
-      "endLine": 576
-    },
-    {
-      "repository": "customer",
-      "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 577,
-      "owner": "GroupOrderSheet",
-      "roles": [
-        "customer"
-      ],
-      "classification": "SOURCE_TRACE",
-      "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "reviewSharedOrder",
       "endLine": 591
     },
     {
@@ -11902,13 +11906,26 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "name": "endGroupOrder",
+      "name": "reviewSharedOrder",
       "endLine": 606
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 620,
+      "line": 607,
+      "owner": "GroupOrderSheet",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "endGroupOrder",
+      "endLine": 621
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 635,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -11916,12 +11933,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "removeSharedItem",
-      "endLine": 635
+      "endLine": 650
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 623,
+      "line": 638,
       "owner": "GroupOrderSheet.removeSharedItem",
       "roles": [
         "customer"
@@ -11929,12 +11946,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "line",
-      "endLine": 623
+      "endLine": 638
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 809,
+      "line": 824,
       "owner": "module",
       "roles": [
         "customer"
@@ -11942,12 +11959,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "GroupOrderPage",
-      "endLine": 815
+      "endLine": 830
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 817,
+      "line": 832,
       "owner": "module",
       "roles": [
         "customer"
@@ -11955,12 +11972,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "ReviewSheet",
-      "endLine": 855
+      "endLine": 870
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 857,
+      "line": 872,
       "owner": "module",
       "roles": [
         "customer"
@@ -11968,12 +11985,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "ContactsSheet",
-      "endLine": 872
+      "endLine": 887
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 867,
+      "line": 882,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
@@ -11981,12 +11998,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onConfirm",
-      "endLine": 867
+      "endLine": 882
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 873,
+      "line": 888,
       "owner": "module",
       "roles": [
         "customer"
@@ -11994,12 +12011,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "CtForm",
-      "endLine": 905
+      "endLine": 920
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 877,
+      "line": 892,
       "owner": "CtForm",
       "roles": [
         "customer"
@@ -12007,7 +12024,7 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "save_",
-      "endLine": 892
+      "endLine": 907
     },
     {
       "repository": "customer",
@@ -13716,6 +13733,19 @@
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "fields",
       "endLine": 6
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/groupRecovery.ts",
+      "line": 5,
+      "owner": "module",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "fetchOpenHostedGoodiesGroup",
+      "endLine": 24
     },
     {
       "repository": "customer",
@@ -43214,14 +43244,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 26,
+      "line": 27,
       "owner": "Sheets.stars",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:1886:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:1948:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -43232,7 +43262,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 26,
+            "line": 27,
             "reference": "on",
             "imported": null,
             "definitions": []
@@ -43249,14 +43279,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 28,
+      "line": 29,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:3004:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:3066:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43283,14 +43313,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 28,
+      "line": 29,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:3218:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:3280:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43317,14 +43347,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 28,
+      "line": 29,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:3336:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:3398:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43347,14 +43377,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 29,
+      "line": 30,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:3904:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:3966:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43381,14 +43411,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 29,
+      "line": 30,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:3968:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:4030:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -43413,14 +43443,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 29,
+      "line": 30,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:4289:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:4351:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43443,14 +43473,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 30,
+      "line": 31,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:4661:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:4723:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43477,14 +43507,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 30,
+      "line": 31,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:4776:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:4838:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43507,14 +43537,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 31,
+      "line": 32,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:5900:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:5962:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43541,14 +43571,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 31,
+      "line": 32,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:6011:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:6073:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43571,14 +43601,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 35,
+      "line": 36,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:6603:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:6665:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43605,14 +43635,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 35,
+      "line": 36,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:6724:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:6786:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43635,14 +43665,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 39,
+      "line": 40,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:7229:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:7291:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43653,7 +43683,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 39,
+            "line": 40,
             "reference": "sheet.onConfirm",
             "imported": null,
             "definitions": []
@@ -43672,14 +43702,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 41,
+      "line": 42,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:7379:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:7441:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43702,14 +43732,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 46,
+      "line": 47,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:7880:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:7942:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43720,7 +43750,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 46,
+            "line": 47,
             "reference": "sheet.onConfirm",
             "imported": null,
             "definitions": []
@@ -43739,14 +43769,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 48,
+      "line": 49,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:8032:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:8094:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43769,14 +43799,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 50,
+      "line": 51,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:8473:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:8535:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43787,7 +43817,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 50,
+            "line": 51,
             "reference": "A.qty",
             "imported": {
               "module": "../actions",
@@ -43797,13 +43827,13 @@
             "definitions": []
           },
           {
-            "line": 50,
+            "line": 51,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 50,
+            "line": 51,
             "reference": "close",
             "imported": null,
             "definitions": []
@@ -43822,14 +43852,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 50,
+      "line": 51,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:8626:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:8688:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43852,14 +43882,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 51,
+      "line": 52,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:8903:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:8965:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -43884,14 +43914,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 51,
+      "line": 52,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:9230:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:9292:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43914,14 +43944,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 52,
+      "line": 53,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:9538:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:9600:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -43932,7 +43962,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 52,
+            "line": 53,
             "reference": "A.cancelOrder",
             "imported": {
               "module": "../actions",
@@ -43953,14 +43983,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 52,
+      "line": 53,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:9892:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:9954:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -43983,14 +44013,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 59,
+      "line": 60,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:10667:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:10729:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -44001,19 +44031,19 @@
         "definitions": [],
         "calls": [
           {
-            "line": 60,
+            "line": 61,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 61,
+            "line": 62,
             "reference": "target.startsWith",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 61,
+            "line": 62,
             "reference": "A.promoGo",
             "imported": {
               "module": "../actions",
@@ -44023,25 +44053,9 @@
             "definitions": []
           },
           {
-            "line": 61,
+            "line": 62,
             "reference": "target.slice",
             "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 62,
-            "reference": "close",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 62,
-            "reference": "A.go",
-            "imported": {
-              "module": "../actions",
-              "resolvedFile": "src/features/Goodies/actions.ts",
-              "imported": "*"
-            },
             "definitions": []
           },
           {
@@ -44078,6 +44092,22 @@
           },
           {
             "line": 65,
+            "reference": "close",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 65,
+            "reference": "A.go",
+            "imported": {
+              "module": "../actions",
+              "resolvedFile": "src/features/Goodies/actions.ts",
+              "imported": "*"
+            },
+            "definitions": []
+          },
+          {
+            "line": 66,
             "reference": "A.promoGo",
             "imported": {
               "module": "../actions",
@@ -44100,14 +44130,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 72,
+      "line": 73,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:11588:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:11650:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Empty",
       "event": "onPress",
@@ -44118,13 +44148,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 72,
+            "line": 73,
             "reference": "close",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 72,
+            "line": 73,
             "reference": "A.browse",
             "imported": {
               "module": "../actions",
@@ -44147,14 +44177,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 77,
+      "line": 78,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:12039:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:12101:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44165,13 +44195,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 77,
+            "line": 78,
             "reference": "close",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 77,
+            "line": 78,
             "reference": "A.go",
             "imported": {
               "module": "../actions",
@@ -44205,14 +44235,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 98,
+      "line": 99,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:15299:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:15361:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Radio",
       "event": "onPress",
@@ -44223,7 +44253,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 98,
+            "line": 99,
             "reference": "A.selectAddr",
             "imported": {
               "module": "../actions",
@@ -44241,14 +44271,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 98,
+      "line": 99,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:15815:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:15877:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -44259,13 +44289,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 98,
+            "line": 99,
             "reference": "close",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 98,
+            "line": 99,
             "reference": "A.go",
             "imported": {
               "module": "../actions",
@@ -44288,14 +44318,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 105,
+      "line": 106,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:16989:onClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:17051:onClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "SheetBox",
       "event": "onClose",
@@ -44313,14 +44343,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 109,
+      "line": 110,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:17470:onClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:17532:onClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "ConfirmDialog",
       "event": "onClose",
@@ -44343,14 +44373,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 111,
+      "line": 112,
       "owner": "Sheets",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:17615:onClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:17677:onClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "BottomSheet",
       "event": "onClose",
@@ -44368,14 +44398,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 164,
+      "line": 165,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:22488:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:22550:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "SegSchedule",
       "event": "onChange",
@@ -44393,14 +44423,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 167,
+      "line": 168,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:22861:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:22923:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44411,68 +44441,68 @@
         "definitions": [],
         "calls": [
           {
-            "line": 167,
+            "line": 168,
             "reference": "setDayOffset",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "slotsForDay",
             "imported": null,
             "definitions": [
               {
                 "name": "slotsForDay",
                 "owner": "ScheduleSheet",
-                "line": 123,
-                "endLine": 130
+                "line": 124,
+                "endLine": 131
               }
             ]
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "setCustomHour",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "String(first.getHours()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "first.getHours",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "setCustomMinute",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "String(first.getMinutes()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 167,
+            "line": 168,
             "reference": "first.getMinutes",
             "imported": null,
             "definitions": []
@@ -44496,14 +44526,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 173,
+      "line": 174,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:24232:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:24294:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "DateTimePicker",
       "event": "onChange",
@@ -44514,49 +44544,49 @@
         "definitions": [],
         "calls": [
           {
-            "line": 173,
+            "line": 174,
             "reference": "setCustomHour",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "String(date.getHours()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "date.getHours",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "setCustomMinute",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "String(date.getMinutes()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 173,
+            "line": 174,
             "reference": "date.getMinutes",
             "imported": null,
             "definitions": []
@@ -44570,14 +44600,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 174,
+      "line": 175,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:24909:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:24971:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44588,49 +44618,49 @@
         "definitions": [],
         "calls": [
           {
-            "line": 174,
+            "line": 175,
             "reference": "setCustomHour",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "String(slot.getHours()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "slot.getHours",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "setCustomMinute",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "String(slot.getMinutes()).padStart",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 174,
+            "line": 175,
             "reference": "slot.getMinutes",
             "imported": null,
             "definitions": []
@@ -44648,14 +44678,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 178,
+      "line": 179,
       "owner": "ScheduleSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:25773:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:25835:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -44667,8 +44697,8 @@
           {
             "name": "choose",
             "owner": "ScheduleSheet",
-            "line": 154,
-            "endLine": 161
+            "line": 155,
+            "endLine": 162
           }
         ],
         "calls": []
@@ -44690,14 +44720,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 186,
+      "line": 187,
       "owner": "SegSchedule",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:26139:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:26201:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44708,7 +44738,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 186,
+            "line": 187,
             "reference": "onChange",
             "imported": null,
             "definitions": []
@@ -44725,14 +44755,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 195,
+      "line": 196,
       "owner": "GroupOrderModal.handlePan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:27001:onStartShouldSetPanResponder",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:27063:onStartShouldSetPanResponder",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onStartShouldSetPanResponder",
@@ -44750,14 +44780,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 196,
+      "line": 197,
       "owner": "GroupOrderModal.handlePan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:27048:onMoveShouldSetPanResponder",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:27110:onMoveShouldSetPanResponder",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onMoveShouldSetPanResponder",
@@ -44768,13 +44798,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 196,
+            "line": 197,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 196,
+            "line": 197,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
@@ -44788,14 +44818,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 197,
+      "line": 198,
       "owner": "GroupOrderModal.handlePan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:27146:onPanResponderRelease",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:27208:onPanResponderRelease",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onPanResponderRelease",
@@ -44806,7 +44836,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 197,
+            "line": 198,
             "reference": "close",
             "imported": null,
             "definitions": []
@@ -44820,14 +44850,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 199,
+      "line": 200,
       "owner": "GroupOrderModal",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:27282:onClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:27344:onClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "BottomSheet",
       "event": "onClose",
@@ -44845,14 +44875,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 201,
+      "line": 202,
       "owner": "GroupOrderModal",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:27626:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:27688:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44882,14 +44912,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 206,
+      "line": 207,
       "owner": "GroupOrderModal",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:28201:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:28263:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44920,14 +44950,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 644,
+      "line": 659,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:62227:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63111:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -44938,15 +44968,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 644,
+            "line": 659,
             "reference": "loadInvites",
             "imported": null,
             "definitions": [
               {
                 "name": "loadInvites",
                 "owner": "GroupOrderSheet",
-                "line": 390,
-                "endLine": 402
+                "line": 405,
+                "endLine": 417
               }
             ]
           }
@@ -44969,14 +44999,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 649,
+      "line": 664,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:62869:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63753:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44987,15 +45017,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 649,
+            "line": 664,
             "reference": "declineInvite",
             "imported": null,
             "definitions": [
               {
                 "name": "declineInvite",
                 "owner": "GroupOrderSheet",
-                "line": 439,
-                "endLine": 451
+                "line": 454,
+                "endLine": 466
               }
             ]
           }
@@ -45021,14 +45051,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 650,
+      "line": 665,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63082:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63966:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45039,15 +45069,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 650,
+            "line": 665,
             "reference": "joinFromInvite",
             "imported": null,
             "definitions": [
               {
                 "name": "joinFromInvite",
                 "owner": "GroupOrderSheet",
-                "line": 435,
-                "endLine": 438
+                "line": 450,
+                "endLine": 453
               }
             ]
           }
@@ -45070,14 +45100,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 655,
+      "line": 670,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63506:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:64390:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -45095,14 +45125,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 657,
+      "line": 672,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63794:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:64678:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45113,13 +45143,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 658,
+            "line": 673,
             "reference": "requestCameraPermission",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 658,
+            "line": 673,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -45129,7 +45159,7 @@
             "definitions": []
           },
           {
-            "line": 658,
+            "line": 673,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -45139,7 +45169,7 @@
             "definitions": []
           },
           {
-            "line": 659,
+            "line": 674,
             "reference": "setScannerOpen",
             "imported": null,
             "definitions": []
@@ -45170,14 +45200,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 663,
+      "line": 678,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:64427:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:65311:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45188,15 +45218,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 663,
+            "line": 678,
             "reference": "joinServerGroup",
             "imported": null,
             "definitions": [
               {
                 "name": "joinServerGroup",
                 "owner": "GroupOrderSheet",
-                "line": 322,
-                "endLine": 322
+                "line": 337,
+                "endLine": 337
               }
             ]
           }
@@ -45219,14 +45249,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 670,
+      "line": 685,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:65253:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:66137:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45237,15 +45267,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 670,
+            "line": 685,
             "reference": "createServerGroup",
             "imported": null,
             "definitions": [
               {
                 "name": "createServerGroup",
                 "owner": "GroupOrderSheet",
-                "line": 269,
-                "endLine": 301
+                "line": 284,
+                "endLine": 316
               }
             ]
           }
@@ -45268,14 +45298,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 680,
+      "line": 695,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:66361:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:67245:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45286,7 +45316,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 680,
+            "line": 695,
             "reference": "setGroupReload",
             "imported": null,
             "definitions": []
@@ -45310,14 +45340,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 681,
+      "line": 696,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:66735:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:67619:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45329,8 +45359,8 @@
           {
             "name": "invite",
             "owner": "GroupOrderSheet",
-            "line": 452,
-            "endLine": 457
+            "line": 467,
+            "endLine": 472
           }
         ],
         "calls": []
@@ -45347,14 +45377,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 688,
+      "line": 703,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:67430:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:68314:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45365,15 +45395,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 688,
+            "line": 703,
             "reference": "invite",
             "imported": null,
             "definitions": [
               {
                 "name": "invite",
                 "owner": "GroupOrderSheet",
-                "line": 452,
-                "endLine": 457
+                "line": 467,
+                "endLine": 472
               }
             ]
           }
@@ -45391,14 +45421,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 690,
+      "line": 705,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:67703:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:68587:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45409,21 +45439,21 @@
         "definitions": [],
         "calls": [
           {
-            "line": 690,
+            "line": 705,
             "reference": "setFriendsOpen",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 690,
+            "line": 705,
             "reference": "openFriends",
             "imported": null,
             "definitions": [
               {
                 "name": "openFriends",
                 "owner": "GroupOrderSheet",
-                "line": 408,
-                "endLine": 420
+                "line": 423,
+                "endLine": 435
               }
             ]
           }
@@ -45441,14 +45471,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 693,
+      "line": 708,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:68120:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:69004:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45459,15 +45489,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 693,
+            "line": 708,
             "reference": "openFriends",
             "imported": null,
             "definitions": [
               {
                 "name": "openFriends",
                 "owner": "GroupOrderSheet",
-                "line": 408,
-                "endLine": 420
+                "line": 423,
+                "endLine": 435
               }
             ]
           }
@@ -45490,14 +45520,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 697,
+      "line": 712,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:68687:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:69571:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45508,13 +45538,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 697,
+            "line": 712,
             "reference": "setPickedFriends",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 697,
+            "line": 712,
             "reference": "list.filter",
             "imported": null,
             "definitions": []
@@ -45545,14 +45575,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 703,
+      "line": 718,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:70053:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:70937:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45563,15 +45593,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 703,
+            "line": 718,
             "reference": "sendFriendInvites",
             "imported": null,
             "definitions": [
               {
                 "name": "sendFriendInvites",
                 "owner": "GroupOrderSheet",
-                "line": 421,
-                "endLine": 434
+                "line": 436,
+                "endLine": 449
               }
             ]
           }
@@ -45594,14 +45624,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 733,
+      "line": 748,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:72341:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:73225:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45612,15 +45642,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 733,
+            "line": 748,
             "reference": "removeSharedItem",
             "imported": null,
             "definitions": [
               {
                 "name": "removeSharedItem",
                 "owner": "GroupOrderSheet",
-                "line": 620,
-                "endLine": 635
+                "line": 635,
+                "endLine": 650
               }
             ]
           }
@@ -45650,14 +45680,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 742,
+      "line": 757,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:73041:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:73925:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45668,15 +45698,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 742,
+            "line": 757,
             "reference": "reviewSharedOrder",
             "imported": null,
             "definitions": [
               {
                 "name": "reviewSharedOrder",
                 "owner": "GroupOrderSheet",
-                "line": 577,
-                "endLine": 591
+                "line": 592,
+                "endLine": 606
               }
             ]
           }
@@ -45699,14 +45729,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 757,
+      "line": 772,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:74202:onPick",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:75086:onPick",
       "binding": "JSX_ATTRIBUTE",
       "element": "Seg",
       "event": "onPick",
@@ -45717,15 +45747,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 757,
+            "line": 772,
             "reference": "selectGroupCheckoutType",
             "imported": null,
             "definitions": [
               {
                 "name": "selectGroupCheckoutType",
                 "owner": "GroupOrderSheet",
-                "line": 477,
-                "endLine": 486
+                "line": 492,
+                "endLine": 501
               }
             ]
           }
@@ -45738,14 +45768,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 760,
+      "line": 775,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:74543:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:75427:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Radio",
       "event": "onPress",
@@ -45756,31 +45786,31 @@
         "definitions": [],
         "calls": [
           {
-            "line": 760,
+            "line": 775,
             "reference": "JSON.stringify",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 760,
+            "line": 775,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 760,
+            "line": 775,
             "reference": "setGroupAddressId",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 760,
+            "line": 775,
             "reference": "setGroupDeliveryQuote",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 760,
+            "line": 775,
             "reference": "setCheckoutEstimate",
             "imported": null,
             "definitions": []
@@ -45794,14 +45824,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 764,
+      "line": 779,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:75317:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:76201:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45812,15 +45842,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 764,
+            "line": 779,
             "reference": "calculateGroupDeliveryQuote",
             "imported": null,
             "definitions": [
               {
                 "name": "calculateGroupDeliveryQuote",
                 "owner": "GroupOrderSheet",
-                "line": 487,
-                "endLine": 509
+                "line": 502,
+                "endLine": 524
               }
             ]
           }
@@ -45843,14 +45873,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 770,
+      "line": 785,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:75899:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:76783:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45861,13 +45891,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 770,
+            "line": 785,
             "reference": "close",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 770,
+            "line": 785,
             "reference": "A.go",
             "imported": {
               "module": "../actions",
@@ -45890,14 +45920,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 785,
+      "line": 800,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:77533:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:78417:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45908,15 +45938,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 785,
+            "line": 800,
             "reference": "checkoutGroupOrder",
             "imported": null,
             "definitions": [
               {
                 "name": "checkoutGroupOrder",
                 "owner": "GroupOrderSheet",
-                "line": 511,
-                "endLine": 576
+                "line": 526,
+                "endLine": 591
               }
             ]
           }
@@ -45939,14 +45969,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 787,
+      "line": 802,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:77884:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:78768:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45969,14 +45999,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 788,
+      "line": 803,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78178:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:79062:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45987,15 +46017,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 788,
+            "line": 803,
             "reference": "endGroupOrder",
             "imported": null,
             "definitions": [
               {
                 "name": "endGroupOrder",
                 "owner": "GroupOrderSheet",
-                "line": 592,
-                "endLine": 606
+                "line": 607,
+                "endLine": 621
               }
             ]
           }
@@ -46018,14 +46048,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 789,
+      "line": 804,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78279:onRequestClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:79163:onRequestClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "Modal",
       "event": "onRequestClose",
@@ -46036,7 +46066,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 789,
+            "line": 804,
             "reference": "setScannerOpen",
             "imported": null,
             "definitions": []
@@ -46050,14 +46080,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 791,
+      "line": 806,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78477:onBarcodeScanned",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:79361:onBarcodeScanned",
       "binding": "JSX_ATTRIBUTE",
       "element": "CameraView",
       "event": "onBarcodeScanned",
@@ -46068,61 +46098,61 @@
         "definitions": [],
         "calls": [
           {
-            "line": 792,
+            "line": 807,
             "reference": "setScannerOpen",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 793,
+            "line": 808,
             "reference": "String(data||'').trim",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 793,
+            "line": 808,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 794,
+            "line": 809,
             "reference": "scanned.match",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 794,
+            "line": 809,
             "reference": "scanned.match",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 795,
+            "line": 810,
             "reference": "decodeURIComponent",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 796,
+            "line": 811,
             "reference": "code.trim().toUpperCase",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 796,
+            "line": 811,
             "reference": "code.trim",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 797,
+            "line": 812,
             "reference": "setInviteCode",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 798,
+            "line": 813,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46132,7 +46162,7 @@
             "definitions": []
           },
           {
-            "line": 798,
+            "line": 813,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46150,14 +46180,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 802,
+      "line": 817,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:79242:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:80126:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -46168,7 +46198,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 802,
+            "line": 817,
             "reference": "setScannerOpen",
             "imported": null,
             "definitions": []
@@ -46187,14 +46217,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 812,
+      "line": 827,
       "owner": "GroupOrderPage",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:79574:onBack",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:80458:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "Bar",
       "event": "onBack",
@@ -46217,14 +46247,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 823,
+      "line": 838,
       "owner": "ReviewSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:80386:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:81270:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -46242,14 +46272,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 825,
+      "line": 840,
       "owner": "ReviewSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:80658:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:81542:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -46260,7 +46290,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 827,
+            "line": 842,
             "reference": "S.orders.filter",
             "imported": {
               "module": "../store",
@@ -46270,7 +46300,7 @@
             "definitions": []
           },
           {
-            "line": 828,
+            "line": 843,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46280,143 +46310,7 @@
             "definitions": []
           },
           {
-            "line": 828,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 829,
-            "reference": "t.trim",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 829,
-            "reference": "toast",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "toast"
-            },
-            "definitions": []
-          },
-          {
-            "line": 829,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 830,
-            "reference": "toast",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "toast"
-            },
-            "definitions": []
-          },
-          {
-            "line": 830,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 831,
-            "reference": "toast",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "toast"
-            },
-            "definitions": []
-          },
-          {
-            "line": 831,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 833,
-            "reference": "setSaving",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 835,
-            "reference": "supabase.rpc",
-            "imported": {
-              "module": "../../../lib/supabase",
-              "resolvedFile": "src/lib/supabase.ts",
-              "imported": "supabase"
-            },
-            "definitions": []
-          },
-          {
-            "line": 835,
-            "reference": "t.trim",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 836,
-            "reference": "Error",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 838,
-            "reference": "toast",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "toast"
-            },
-            "definitions": []
-          },
-          {
-            "line": 838,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 839,
-            "reference": "setSaving",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 842,
-            "reference": "t.trim",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 842,
+            "line": 843,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46433,6 +46327,36 @@
           },
           {
             "line": 844,
+            "reference": "toast",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "toast"
+            },
+            "definitions": []
+          },
+          {
+            "line": 844,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 845,
+            "reference": "toast",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "toast"
+            },
+            "definitions": []
+          },
+          {
+            "line": 845,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46443,74 +46367,6 @@
           },
           {
             "line": 846,
-            "reference": "(S.rev[o.sid] || []).filter",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 847,
-            "reference": "S.rev[o.sid].unshift",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "S"
-            },
-            "definitions": []
-          },
-          {
-            "line": 847,
-            "reference": "t.trim",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 847,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 849,
-            "reference": "t.trim",
-            "imported": null,
-            "definitions": []
-          },
-          {
-            "line": 849,
-            "reference": "label",
-            "imported": {
-              "module": "../content",
-              "resolvedFile": "src/features/Goodies/content.ts",
-              "imported": "label"
-            },
-            "definitions": []
-          },
-          {
-            "line": 851,
-            "reference": "notifyStoreReviewsChanged",
-            "imported": {
-              "module": "../reviews",
-              "resolvedFile": "src/features/Goodies/reviews.ts",
-              "imported": "notifyStoreReviewsChanged"
-            },
-            "definitions": []
-          },
-          {
-            "line": 852,
-            "reference": "ui.close",
-            "imported": {
-              "module": "../store",
-              "resolvedFile": "src/features/Goodies/store.ts",
-              "imported": "ui"
-            },
-            "definitions": []
-          },
-          {
-            "line": 852,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46520,7 +46376,7 @@
             "definitions": []
           },
           {
-            "line": 852,
+            "line": 846,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46530,7 +46386,45 @@
             "definitions": []
           },
           {
-            "line": 852,
+            "line": 848,
+            "reference": "setSaving",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 850,
+            "reference": "supabase.rpc",
+            "imported": {
+              "module": "../../../lib/supabase",
+              "resolvedFile": "src/lib/supabase.ts",
+              "imported": "supabase"
+            },
+            "definitions": []
+          },
+          {
+            "line": 850,
+            "reference": "t.trim",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 851,
+            "reference": "Error",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 853,
+            "reference": "toast",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "toast"
+            },
+            "definitions": []
+          },
+          {
+            "line": 853,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46540,7 +46434,19 @@
             "definitions": []
           },
           {
-            "line": 852,
+            "line": 854,
+            "reference": "setSaving",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 857,
+            "reference": "t.trim",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 857,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46550,7 +46456,131 @@
             "definitions": []
           },
           {
-            "line": 852,
+            "line": 859,
+            "reference": "t.trim",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 859,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 861,
+            "reference": "(S.rev[o.sid] || []).filter",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 862,
+            "reference": "S.rev[o.sid].unshift",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "S"
+            },
+            "definitions": []
+          },
+          {
+            "line": 862,
+            "reference": "t.trim",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 862,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 864,
+            "reference": "t.trim",
+            "imported": null,
+            "definitions": []
+          },
+          {
+            "line": 864,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 866,
+            "reference": "notifyStoreReviewsChanged",
+            "imported": {
+              "module": "../reviews",
+              "resolvedFile": "src/features/Goodies/reviews.ts",
+              "imported": "notifyStoreReviewsChanged"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
+            "reference": "ui.close",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "ui"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
+            "reference": "toast",
+            "imported": {
+              "module": "../store",
+              "resolvedFile": "src/features/Goodies/store.ts",
+              "imported": "toast"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
+            "reference": "label",
+            "imported": {
+              "module": "../content",
+              "resolvedFile": "src/features/Goodies/content.ts",
+              "imported": "label"
+            },
+            "definitions": []
+          },
+          {
+            "line": 867,
             "reference": "save",
             "imported": {
               "module": "../store",
@@ -46560,7 +46590,7 @@
             "definitions": []
           },
           {
-            "line": 852,
+            "line": 867,
             "reference": "emit",
             "imported": {
               "module": "../store",
@@ -46588,14 +46618,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 865,
+      "line": 880,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:83697:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:84581:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Radio",
       "event": "onPress",
@@ -46606,13 +46636,13 @@
         "definitions": [],
         "calls": [
           {
-            "line": 865,
+            "line": 880,
             "reference": "close",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 865,
+            "line": 880,
             "reference": "save",
             "imported": {
               "module": "../store",
@@ -46622,7 +46652,7 @@
             "definitions": []
           },
           {
-            "line": 865,
+            "line": 880,
             "reference": "emit",
             "imported": {
               "module": "../store",
@@ -46640,14 +46670,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 866,
+      "line": 881,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84121:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:85005:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -46658,7 +46688,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 866,
+            "line": 881,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -46685,14 +46715,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 867,
+      "line": 882,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84358:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:85242:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -46703,7 +46733,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 867,
+            "line": 882,
             "reference": "S.orders.some",
             "imported": {
               "module": "../store",
@@ -46713,7 +46743,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "done",
             "imported": {
               "module": "../store",
@@ -46723,7 +46753,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46733,7 +46763,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46743,7 +46773,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -46753,7 +46783,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch",
             "imported": {
               "module": "../store",
@@ -46763,7 +46793,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber(String(r.id)).then",
             "imported": {
               "module": "../store",
@@ -46773,7 +46803,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber",
             "imported": {
               "module": "../store",
@@ -46783,13 +46813,13 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46799,7 +46829,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46809,7 +46839,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -46819,7 +46849,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46829,7 +46859,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "friendlyError",
             "imported": {
               "module": "../friendlyError",
@@ -46839,7 +46869,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46865,14 +46895,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 867,
+      "line": 882,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84580:onConfirm",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:85464:onConfirm",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onConfirm",
@@ -46883,7 +46913,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber(String(r.id)).then(()=>{toast(label('lbl.sheetNumberRemoved', 'Number removed'));ui.sheet({kind:'contacts'});}).catch",
             "imported": {
               "module": "../store",
@@ -46893,7 +46923,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber(String(r.id)).then",
             "imported": {
               "module": "../store",
@@ -46903,7 +46933,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "removeGoodiesContactNumber",
             "imported": {
               "module": "../store",
@@ -46913,13 +46943,13 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "String",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46929,7 +46959,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46939,7 +46969,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -46949,7 +46979,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "toast",
             "imported": {
               "module": "../store",
@@ -46959,7 +46989,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "friendlyError",
             "imported": {
               "module": "../friendlyError",
@@ -46969,7 +46999,7 @@
             "definitions": []
           },
           {
-            "line": 867,
+            "line": 882,
             "reference": "label",
             "imported": {
               "module": "../content",
@@ -46987,14 +47017,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 870,
+      "line": 885,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:85029:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:85913:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -47005,7 +47035,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 870,
+            "line": 885,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -47028,14 +47058,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 897,
+      "line": 912,
       "owner": "CtForm",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87130:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:88014:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -47058,14 +47088,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 898,
+      "line": 913,
       "owner": "CtForm",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87293:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:88177:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -47088,14 +47118,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 901,
+      "line": 916,
       "owner": "CtForm",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87630:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:88514:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -47106,15 +47136,15 @@
         "definitions": [],
         "calls": [
           {
-            "line": 901,
+            "line": 916,
             "reference": "save_",
             "imported": null,
             "definitions": [
               {
                 "name": "save_",
                 "owner": "CtForm",
-                "line": 877,
-                "endLine": 892
+                "line": 892,
+                "endLine": 907
               }
             ]
           }
@@ -47137,14 +47167,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 902,
+      "line": 917,
       "owner": "CtForm",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87749:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:88633:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -47155,7 +47185,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 902,
+            "line": 917,
             "reference": "ui.sheet",
             "imported": {
               "module": "../store",
@@ -81259,7 +81289,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 263,
+      "line": 264,
       "owner": "GroupOrderSheet.requireAccount",
       "roles": [
         "customer"
@@ -81273,7 +81303,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 285,
+      "line": 300,
       "owner": "GroupOrderSheet.createServerGroup",
       "roles": [
         "customer"
@@ -81290,7 +81320,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 310,
+      "line": 325,
       "owner": "GroupOrderSheet.joinGroup",
       "roles": [
         "customer"
@@ -81307,7 +81337,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 326,
+      "line": 341,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -81321,7 +81351,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 332,
+      "line": 347,
       "owner": "GroupOrderSheet.loadItems",
       "roles": [
         "customer"
@@ -81337,7 +81367,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 345,
+      "line": 360,
       "owner": "GroupOrderSheet.loadMembers",
       "roles": [
         "customer"
@@ -81354,7 +81384,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 356,
+      "line": 371,
       "owner": "GroupOrderSheet.refreshGroupStatus",
       "roles": [
         "customer"
@@ -81371,7 +81401,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 373,
+      "line": 388,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -81387,7 +81417,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 378,
+      "line": 393,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -81403,7 +81433,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 396,
+      "line": 411,
       "owner": "GroupOrderSheet.loadInvites",
       "roles": [
         "customer"
@@ -81419,7 +81449,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 414,
+      "line": 429,
       "owner": "GroupOrderSheet.openFriends",
       "roles": [
         "customer"
@@ -81436,7 +81466,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 427,
+      "line": 442,
       "owner": "GroupOrderSheet.sendFriendInvites",
       "roles": [
         "customer"
@@ -81453,7 +81483,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 445,
+      "line": 460,
       "owner": "GroupOrderSheet.declineInvite",
       "roles": [
         "customer"
@@ -81470,7 +81500,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 472,
+      "line": 487,
       "owner": "GroupOrderSheet.loadGroupEstimate",
       "roles": [
         "customer"
@@ -81487,7 +81517,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 499,
+      "line": 514,
       "owner": "GroupOrderSheet.calculateGroupDeliveryQuote",
       "roles": [
         "customer"
@@ -81504,7 +81534,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 544,
+      "line": 559,
       "owner": "GroupOrderSheet.checkoutGroupOrder",
       "roles": [
         "customer"
@@ -81521,7 +81551,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 584,
+      "line": 599,
       "owner": "GroupOrderSheet.reviewSharedOrder",
       "roles": [
         "customer"
@@ -81538,7 +81568,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 599,
+      "line": 614,
       "owner": "GroupOrderSheet.endGroupOrder",
       "roles": [
         "customer"
@@ -81555,7 +81585,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 835,
+      "line": 850,
       "owner": "ReviewSheet",
       "roles": [
         "customer"
@@ -88338,7 +88368,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 153,
+      "line": 154,
       "owner": "ScheduleSheet.formatCustomer",
       "roles": [
         "customer"
@@ -88358,7 +88388,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 153,
+      "line": 154,
       "owner": "ScheduleSheet.formatCustomer",
       "roles": [
         "customer"
@@ -88378,7 +88408,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 568,
+      "line": 583,
       "owner": "GroupOrderSheet.checkoutGroupOrder",
       "roles": [
         "customer"
@@ -94097,7 +94127,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 38,
+      "line": 39,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94113,7 +94143,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 45,
+      "line": 46,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94129,7 +94159,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 50,
+      "line": 51,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94145,7 +94175,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 62,
+      "line": 63,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94161,7 +94191,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 63,
+      "line": 64,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94177,7 +94207,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 64,
+      "line": 65,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94193,7 +94223,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 77,
+      "line": 78,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94209,7 +94239,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 77,
+      "line": 78,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94225,7 +94255,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 77,
+      "line": 78,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94241,7 +94271,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 89,
+      "line": 90,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94257,7 +94287,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 89,
+      "line": 90,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94273,7 +94303,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 98,
+      "line": 99,
       "owner": "Sheets",
       "roles": [
         "customer"
@@ -94289,7 +94319,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 128,
+      "line": 129,
       "owner": "ScheduleSheet.slotsForDay",
       "roles": [
         "customer"
@@ -94305,7 +94335,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 159,
+      "line": 160,
       "owner": "ScheduleSheet.choose",
       "roles": [
         "customer"
@@ -94321,7 +94351,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 159,
+      "line": 160,
       "owner": "ScheduleSheet.choose",
       "roles": [
         "customer"
@@ -94337,7 +94367,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 558,
+      "line": 573,
       "owner": "GroupOrderSheet.checkoutGroupOrder",
       "roles": [
         "customer"
@@ -94353,7 +94383,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 571,
+      "line": 586,
       "owner": "GroupOrderSheet.checkoutGroupOrder",
       "roles": [
         "customer"
@@ -94369,7 +94399,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 571,
+      "line": 586,
       "owner": "GroupOrderSheet.checkoutGroupOrder",
       "roles": [
         "customer"
@@ -94385,7 +94415,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 770,
+      "line": 785,
       "owner": "GroupOrderSheet",
       "roles": [
         "customer"
@@ -94401,7 +94431,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 866,
+      "line": 881,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
@@ -94417,7 +94447,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 867,
+      "line": 882,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
@@ -94433,7 +94463,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 867,
+      "line": 882,
       "owner": "ContactsSheet.onConfirm",
       "roles": [
         "customer"
@@ -94449,7 +94479,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 870,
+      "line": 885,
       "owner": "ContactsSheet",
       "roles": [
         "customer"
@@ -94465,7 +94495,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 881,
+      "line": 896,
       "owner": "CtForm.save_",
       "roles": [
         "customer"
@@ -94481,7 +94511,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 882,
+      "line": 897,
       "owner": "CtForm.save_",
       "roles": [
         "customer"
@@ -94497,7 +94527,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 883,
+      "line": 898,
       "owner": "CtForm.save_",
       "roles": [
         "customer"
@@ -94513,7 +94543,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 889,
+      "line": 904,
       "owner": "CtForm.save_",
       "roles": [
         "customer"
@@ -94529,7 +94559,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 902,
+      "line": 917,
       "owner": "CtForm",
       "roles": [
         "customer"
@@ -102649,6 +102679,14 @@
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
       "line": 18,
+      "module": "../groupRecovery",
+      "resolvedFile": "src/features/Goodies/groupRecovery.ts",
+      "inventoried": true
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 19,
       "module": "../serverSync",
       "resolvedFile": "src/features/Goodies/serverSync.ts",
       "inventoried": true
@@ -102656,7 +102694,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 19,
+      "line": 20,
       "module": "../store",
       "resolvedFile": "src/features/Goodies/store.ts",
       "inventoried": true
@@ -102664,7 +102702,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 20,
+      "line": 21,
       "module": "../../../lib/locales",
       "resolvedFile": "src/lib/locales.ts",
       "inventoried": false
@@ -106506,7 +106544,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 374,
+      "line": 383,
       "terms": [
         "previewBuilderTemplates"
       ],
@@ -106518,7 +106556,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 383,
+      "line": 392,
       "terms": [
         "previewLocales"
       ],
@@ -106530,7 +106568,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 392,
+      "line": 401,
       "terms": [
         "previewMenu"
       ],
@@ -108301,7 +108339,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 232,
+      "line": 233,
       "terms": [
         "previewBusy"
       ],
@@ -108313,7 +108351,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 458,
+      "line": 473,
       "terms": [
         "previewLock"
       ],
@@ -108325,7 +108363,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 512,
+      "line": 527,
       "terms": [
         "previewLock"
       ],
@@ -108337,7 +108375,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 578,
+      "line": 593,
       "terms": [
         "previewLock"
       ],
@@ -108349,7 +108387,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 581,
+      "line": 596,
       "terms": [
         "previewLock"
       ],
@@ -108361,7 +108399,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 590,
+      "line": 605,
       "terms": [
         "previewLock"
       ],
@@ -108373,7 +108411,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 655,
+      "line": 670,
       "terms": [
         "placeholder"
       ],
@@ -108385,7 +108423,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 742,
+      "line": 757,
       "terms": [
         "previewBusy"
       ],
@@ -108397,7 +108435,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 823,
+      "line": 838,
       "terms": [
         "placeholder"
       ],
@@ -108409,7 +108447,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 897,
+      "line": 912,
       "terms": [
         "placeholder"
       ],
@@ -108421,7 +108459,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/components/Sheets.tsx",
-      "line": 898,
+      "line": 913,
       "terms": [
         "placeholder"
       ],

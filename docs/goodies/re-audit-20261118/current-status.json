@@ -1,10 +1,10 @@
 {
-  "observedAt": "2026-11-20T12:46:58.405708+00:00",
+  "observedAt": "2026-11-20T12:55:17.012233+00:00",
   "classification": "NOT VERIFIED",
   "productionReady": false,
   "sourceReconciledThrough": {
-    "customer": "c6a75db6e1c99546b0e01e43b3635bfab66628d8",
-    "admin": "d9c5c6b7f55aa82f43a8c115f1de607de10925c4"
+    "customer": "1388cec15fa83bde5d182aa6708a49c492d70144",
+    "admin": "de2514968f080f0e304acc826a16bb9359066516"
   },
   "backend": {
     "classification": "PASS",
@@ -25,30 +25,32 @@
   },
   "sourceCloseout": {
     "classification": "PASS",
-    "scope": "Executed local checks only; replacement full CI pending",
-    "localCustomerTests": 239,
-    "localAdminTests": 68,
-    "localCrossRoleTests": 47,
-    "localNodeTotal": 354,
-    "backendTestsOnUnchangedPriorSource": 87,
+    "scope": "Current exact paired source CI and stated isolated checks; no hosted/device/provider sign-off",
+    "automatedTests": 445,
+    "customerNode": 243,
+    "adminNode": 68,
+    "crossRole": 47,
+    "backendDeno": 87,
+    "backendSubsteps": 71,
+    "backendSubstepsCountedAgain": false,
     "completeMigrationCandidate": 28,
     "nativeConcurrencyCases": 22,
     "typechecks": "PASS for both applications",
-    "configuredLint": "PASS",
-    "cmsSourceCoverage": "PASS;1923fields,34routes",
-    "replacementCI": "PENDING",
+    "configuredCustomerLint": "PASS",
+    "cmsSourceCoverage": "PASS;1923fields,34routes,73page/sharedgroups",
+    "ci": "current-ci-verification.json",
     "inventory": "latest-source-inventory.json",
     "inventoryCounts": {
-      "files": 106,
-      "astFiles": 94,
-      "functions": 1540,
+      "files": 107,
+      "astFiles": 95,
+      "functions": 1541,
       "interactiveBindings": 1343,
       "jsxBindings": 1200,
       "objectEventBindings": 143,
       "backendCallSites": 432,
       "serviceCallSites": 221,
       "navigationCallSites": 536,
-      "commentTokens": 255,
+      "commentTokens": 261,
       "demoReferenceLines": 265,
       "embeddedEventReferences": 9,
       "unresolvedLiteralRegistryTargets": 0,
@@ -74,8 +76,8 @@
   "financialWritesPerformed": false,
   "historicalEvidence": "Other files in this directory retain the source and timestamps of their original verification. Current totals and CI will be recorded here separately.",
   "verifiedSourceCommits": {
-    "customer": "b743fe9fb3b0c6a10eae3e164158b2cfb022c98f",
-    "admin": "d9c5c6b7f55aa82f43a8c115f1de607de10925c4"
+    "customer": "27c04e69f8aa2111d203ad6400154a0356301107",
+    "admin": "de2514968f080f0e304acc826a16bb9359066516"
   },
   "retiredIntermediateCandidate": {
     "version": "20261120223000",
@@ -87,5 +89,7 @@
     "secureEnvironmentBindings": 0,
     "fullBackupCreatedInThisCloseout": false
   },
-  "securityAdvisors": "current-security-advisors.json"
+  "securityAdvisors": "current-security-advisors.json",
+  "readableReport": "CURRENT_STATUS.md",
+  "sourceManifest": "current-commits-and-files.json"
 }

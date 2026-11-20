@@ -1,10 +1,19 @@
 {
-  "scope": "All evidence artifacts; historical files retain their original source/timestamps. Current status is current-status.json. This manifest excludes itself.",
+  "scope": "All evidence artifacts; historical files retain their original source/timestamps. Current status is CURRENT_STATUS.md and current-status.json. This self-referential manifest is excluded.",
+  "verifiedSourceCommits": {
+    "customer": "27c04e69f8aa2111d203ad6400154a0356301107",
+    "admin": "de2514968f080f0e304acc826a16bb9359066516"
+  },
   "files": [
     {
+      "file": "CURRENT_STATUS.md",
+      "bytes": 6302,
+      "sha256": "5793d463589b8ca45d1e2328fe0b469a2345437105471c1806a6fd195dccf380"
+    },
+    {
       "file": "README.md",
-      "bytes": 14719,
-      "sha256": "b76b4039ed729da432f2014e287623e28648090c6fe26e099239f112ee138be7"
+      "bytes": 14766,
+      "sha256": "be8a585aecf5bfe300f191ef0c7cd6e626639a3f5e70db00401dfc320a718a80"
     },
     {
       "file": "admin-android-metadata.json",
@@ -152,6 +161,21 @@
       "sha256": "b4b16ae9b3f85ec1a83a5eb10e7998b92b1e8d6bbe6189487f41f27ac3bcd092"
     },
     {
+      "file": "current-artifact-validation.json",
+      "bytes": 379,
+      "sha256": "098f6514d3ce1fad0711197913bc19f1766cd04563388e25be8fbc8ecaf1f865"
+    },
+    {
+      "file": "current-ci-verification.json",
+      "bytes": 1283,
+      "sha256": "651edfb5637acd0e77cc475b9ad76b503ec1e744e582b50d0c7010c30a32c4ef"
+    },
+    {
+      "file": "current-commits-and-files.json",
+      "bytes": 44085,
+      "sha256": "4a31f5ce2fba0999c2ded650141b911880513b3b0b467b0de315a2196195fc0c"
+    },
+    {
       "file": "current-production-contracts.json",
       "bytes": 521,
       "sha256": "7a32450cdc4eb883662a3e7113c845fec80d08c7ae17a42d3eba1873974cfc62"
@@ -168,8 +192,8 @@
     },
     {
       "file": "current-status.json",
-      "bytes": 3621,
-      "sha256": "2f90d28e3dafa7475381558acfe7c31dc4f732c2ff4f8068020512389fafabee"
+      "bytes": 3816,
+      "sha256": "1d5c3774dbf7b6695ae507c6a6dae5ed4edf093b089ec9ba3054d78cad393866"
     },
     {
       "file": "customer-controls.json",
@@ -468,8 +492,8 @@
     },
     {
       "file": "latest-source-inventory.json",
-      "bytes": 3134099,
-      "sha256": "055d65fada80f1ed4394d10564391daf8fcd04959e5784e814b207aec34d2bcb"
+      "bytes": 3135220,
+      "sha256": "6a764eea8a56055b45ac3a3342e7cfa4b03aca53cc0a5a90b72c4e54e8dea86e"
     },
     {
       "file": "live-source-drift.json",
