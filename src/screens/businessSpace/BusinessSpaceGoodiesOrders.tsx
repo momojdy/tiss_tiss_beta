@@ -60,6 +60,7 @@ export function GoodiesOrdersPage() {
   const [reason, setReason] = useState('out_of_stock');
   const [detail, setDetail] = useState('');
   const [busyId, setBusyId] = useState('');
+  const statusActionLock = useRef(false);
   const [now, setNow] = useState(Date.now());
   const [storeId, setStoreId] = useState('');
   const [cashEnabled, setCashEnabled] = useState(false);
@@ -224,7 +225,8 @@ export function GoodiesOrdersPage() {
   }, [app.biz.id]);
   const act = async (order: GoodiesOrder, action: 'accept' | 'decline' | 'cancel' | 'preparing' | 'ready' | 'completed') => {
     if (!requireManage()) return;
-    if (busyId) return;
+    if (statusActionLock.current || busyId) return;
+    statusActionLock.current = true;
     setBusyId(order.id);
     try {
       const { error } = action === 'accept'
@@ -247,7 +249,7 @@ export function GoodiesOrdersPage() {
     } catch (e: any) {
       app.toast(e?.code==='P4201'||e?.code==='P4202'?text(errText(e)):label("lbl.vendor.orders.b1536fb05a","Could not update this order. Refresh and try again."));
       await orders.reload();
-    } finally { setBusyId(''); }
+    } finally { statusActionLock.current = false; setBusyId(''); }
   };
 
   return (
