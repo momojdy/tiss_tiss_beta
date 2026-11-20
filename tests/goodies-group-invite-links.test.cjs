@@ -2,7 +2,7 @@ const {test}=require('node:test'),assert=require('node:assert/strict'),fs=requir
 const moduleValue={exports:{}};
 const helper=fs.readFileSync('src/features/Goodies/groupInviteLinks.ts','utf8');
 vm.runInNewContext(ts.transpileModule(helper,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module:moduleValue,exports:moduleValue.exports});
-const {groupInviteCodeFromLink}=moduleValue.exports;
+const {groupInviteCodeFromLink,groupInviteCodeFromScan}=moduleValue.exports;
 test('Goodies group QR invitation parser accepts current and historical invite codes',()=>{
  assert.equal(groupInviteCodeFromLink('wantiss://goodies/group?code=ABC12345'),'ABC12345');
  assert.equal(groupInviteCodeFromLink('wantiss://goodies/group?code=abc1234def'),'ABC1234DEF');
@@ -24,4 +24,19 @@ test('group links route through the Wantiss shell and preserve the code until Go
  assert.match(shell,/setBuyerScreen\('goodies'\)/);
  assert.match(goodies,/pendingGroupInviteCode=initialRoute\.slice\(12\)/);
  assert.match(goodies,/reset\('grouporder'\)/);
+});
+
+test('QR scan only accepts genuine Wantiss group invitations and literal group codes',()=>{
+ assert.equal(groupInviteCodeFromScan('abc12345'),'ABC12345');
+ assert.equal(groupInviteCodeFromScan(' wantiss://goodies/group?code=ABC12345 '),'ABC12345');
+ for(const input of ['https://example.com/?code=ABC12345','wantiss://goodies/store?code=ABC12345',
+   'wantiss://goodies/group?code=%0AABC12345','wantiss://goodies/group?code=%ZZ',
+   'wantiss://goodies/group?code=ABC12345&code=BBBB2222','some text',null,{}]){
+   assert.equal(groupInviteCodeFromScan(input),null,String(input));
+ }
+});
+test('scanner uses canonical parser rather than decoding arbitrary QR text',()=>{
+ const source=fs.readFileSync('src/features/Goodies/components/Sheets.tsx','utf8');
+ assert.match(source,/const code=groupInviteCodeFromScan\(data\)/);
+ assert.doesNotMatch(source,/const linkCode=scanned\.match/);
 });
