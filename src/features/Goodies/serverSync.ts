@@ -87,8 +87,9 @@ function mapOrder(row: ServerOrder) {
       : payment === 'card' ? label('lbl.checkoutCard', 'Credit / debit card')
       : payment === 'cash' ? label('lbl.cms.ffb25a7171b4', 'Cash')
       : payment === 'moncash' ? label('lbl.checkoutMoncash', 'MonCash')
-      : label('lbl.paymentMethodUnavailable', 'Payment method unavailable'),
+      : label('lbl.checkoutPaymentMethod', 'Payment method'),
     payStatus: row.payment_status || null,
+    paymentStatus: row.payment_status || null,
     note: String(row.notes || ''),
     sch: row.scheduled_for ? Date.parse(row.scheduled_for) || 0 : 0,
     promo: String(row.promo_code || ''),

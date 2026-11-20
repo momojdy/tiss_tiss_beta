@@ -41,6 +41,12 @@ test('Goodies history never fabricates Cash when payment data is absent or inval
  for(const method of [null,undefined,'other']){
   const order=mapOrder(row(method));
   assert.notEqual(order.pay,'cash');
-  assert.equal(order.payl,'Payment method unavailable');
+  assert.equal(order.payl,'Payment method');
  }
+});
+
+test('Goodies history restores payment status used by cancelled-order tracking',()=>{
+ const order=mapOrder({...row('card'),payment_status:'refunded'});
+ assert.equal(order.paymentStatus,'refunded');
+ assert.equal(order.payStatus,'refunded');
 });
