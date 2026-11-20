@@ -248,6 +248,7 @@ export function GoodiesStorePage() {
   const [locationBusy, setLocationBusy] = useState(false), [locationSaving, setLocationSaving] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  const initialCustomToggles = useRef<{master:boolean;enabled:Record<string,boolean>}>({master:false,enabled:{}});
   const [languageOpen, setLanguageOpen] = useState(false), [languageQuery, setLanguageQuery] = useState('');
   const [timePickerOpen, setTimePickerOpen] = useState(false), [sameAsCover, setSameAsCover] = useState(false), [thumbnailBusy, setThumbnailBusy] = useState(false);
   const load = () => {
@@ -259,8 +260,11 @@ export function GoodiesStorePage() {
         setSavedAddress({ address: store.address.trim(), city: store.city.trim(), country: store.country.trim() });
         setCapturedLocation(null);
         setSameAsCover(!!store.coverUrl && store.thumbnailUrl === store.coverUrl);
-        setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
-        setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
+        const types=rows.filter(x => x.type === 'pizza' || x.type === 'burger');
+        const master=types.some(x => x.enabled);
+        initialCustomToggles.current={master,enabled:Object.fromEntries(types.map(x=>[x.id,x.enabled]))};
+        setCustomTypes(types);
+        setCustomProducts(master);
       })
       .catch(e => setLoadErr(text(errText(e))));
   };
@@ -298,10 +302,24 @@ export function GoodiesStorePage() {
       setSavedAddress(nextSavedAddress);
       if (addressChanged) setF(current => current ? { ...current, storeLatitude: null, storeLongitude: null } : current);
       await goodiesApi.saveStoreThumbnail(app.biz.id, sameAsCover ? f.coverUrl : f.thumbnailUrl);
-      const rows = await goodiesApi.listBuilders(app.biz.id);
-      const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
-      next.push(...customTypes.map(x => ({ ...x, enabled: customProducts && x.enabled })));
-      await goodiesApi.saveBuilders(app.biz.id, next);
+      const baseline=initialCustomToggles.current;
+      const togglesChanged=customProducts!==baseline.master || customTypes.some(x=>baseline.enabled[x.id]!==x.enabled);
+      if(togglesChanged){
+        // Store setup edits toggle publication only. Always retain the newest
+        // server-owned builder content rather than overwriting other edits.
+        const rows=await goodiesApi.listBuilders(app.biz.id);
+        const localById=new Map(customTypes.map(x=>[x.id,x]));
+        const next=rows.map(x=>{
+          if(x.type!=='pizza'&&x.type!=='burger')return x;
+          const selected=localById.get(x.id);
+          if(customProducts!==baseline.master)return {...x,enabled:customProducts&&(selected?.enabled??x.enabled)};
+          if(selected&&baseline.enabled[x.id]!==selected.enabled)return {...x,enabled:customProducts&&selected.enabled};
+          return x;
+        });
+        next.push(...customTypes.filter(x=>!(x.id in baseline.enabled)&&!rows.some(row=>row.id===x.id)).map(x=>({...x,enabled:customProducts&&x.enabled})));
+        await goodiesApi.saveBuilders(app.biz.id,next);
+        initialCustomToggles.current={master:customProducts,enabled:Object.fromEntries(customTypes.map(x=>[x.id,x.enabled]))};
+      }
       app.toast(label("lbl.vendor.store.0589b60d42","Store saved")); app.bump();
     } catch (x) { app.toast(text(errText(x))); } finally { storeSaveLock.current = false; setBusy(false); }
   };
