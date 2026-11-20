@@ -49,7 +49,7 @@ const PAGES: Record<string, () => React.ReactElement> = {
 };
 const TABS: [string, string, string | null][] = [['Overview', 'view-dashboard-outline', null], ['Features', 'apps', 'features'], ['Orders', 'clipboard-list-outline', 'orders'], ['Listings', 'format-list-bulleted', 'listings'], ['Payouts', 'bank-transfer-out', 'payouts']];
 
-export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpenWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: { onSignOut: () => void; onSwitchToBuyer: () => void; onOpenWallet?: () => void;initialGoodiesNotification?:Record<string,any>|null;onGoodiesNotificationHandled?:()=>void }) {
+export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpenWallet,initialGoodiesNotification,onGoodiesNotificationHandled,onGoodiesWorkspaceActive }: { onSignOut: () => void; onSwitchToBuyer: () => void; onOpenWallet?: () => void;initialGoodiesNotification?:Record<string,any>|null;onGoodiesNotificationHandled?:()=>void;onGoodiesWorkspaceActive?:(active:boolean)=>void }) {
   const scheme = useColorScheme();
   const [dark, setDarkS] = useState(scheme === 'dark');
   useEffect(() => { AsyncStorage.getItem('bs.dark').then(v => { if (v != null) setDarkS(v === '1'); }).catch(() => undefined); }, []);
@@ -58,14 +58,14 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpen
   return (
     <SafeAreaProvider>
       <ThemeCtx.Provider value={dark ? DARK : LIGHT}>
-        <Gate dark={dark} setDark={setDark} onSignOut={signOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} />
+        <Gate dark={dark} setDark={setDark} onSignOut={signOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} onGoodiesWorkspaceActive={onGoodiesWorkspaceActive} />
       </ThemeCtx.Provider>
     </SafeAreaProvider>
   );
 }
 
 /** Loads the signed-in user and their businesses, then hands over to the workspace. */
-function Gate({ dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: any) {
+function Gate({ dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled,onGoodiesWorkspaceActive }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   const [user, setUser] = useState<{ id: string; email: string; name: string } | null>(null), [uerr, setUerr] = useState<string | null>(null), [tick, setTick] = useState(0);
   useEffect(() => {
@@ -89,7 +89,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotifi
   if (mem.e) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={mem.e} retry={mem.reload} /></View>;
   const list = mem.d ?? [];
   if (!list.length) return <FirstBusiness user={user} onCreated={reloadBiz} onBuyer={onBuyer} />;
-  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} onWallet={onWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} />;
+  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} onWallet={onWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} onGoodiesWorkspaceActive={onGoodiesWorkspaceActive} />;
 }
 function FirstBusiness({ user, onCreated }: any) {
   const t = useTheme(), ins = useSafeAreaInsets();
@@ -119,7 +119,7 @@ function FirstBusiness({ user, onCreated }: any) {
 }
 
 /** Everything that needs an active business. */
-function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: any) {
+function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled,onGoodiesWorkspaceActive }: any) {
   const t = useTheme(), ins = useSafeAreaInsets(), s = useS();
   const [bizId, setBizId] = useState<string>(''), [tick, setTick] = useState(0), [range, setRange] = useState<Range>(presetRange('30D'));
   const [stack, setStack] = useState<{ page: string; arg?: any; fromProfile?: boolean }[]>([]);
@@ -159,6 +159,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   const m: Meta = meta.d ?? { feats: [], listings: 0, unreadN: 0, unreadM: 0, payout: null, rules: DEFAULT_RULES, minWithdrawal: 5 };
 
   const goodiesWorkspace=isGoodiesBusiness({biz,meta:m});
+  useEffect(()=>{onGoodiesWorkspaceActive?.(goodiesWorkspace);return()=>onGoodiesWorkspaceActive?.(false);},[goodiesWorkspace,onGoodiesWorkspaceActive]);
   useEffect(()=>{let active=true;if(goodiesWorkspace)void supabase.from('user_settings').select('language').eq('user_id',user.id).maybeSingle().then(({data,error})=>{if(active&&!error&&data?.language)setLangS(WANTISS_LANGUAGES.find(row=>row.code===wantissLocale(data.language))!.label);},()=>undefined);return()=>{active=false;};},[user.id,goodiesWorkspace]);
   /* realtime: any change to this business refreshes the screen */
   useEffect(() => {
@@ -186,7 +187,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     setStack(st => [...st, { page, arg, fromProfile: sheet?.name === 'profile' }]); setPanel(null); setSheet(null);
   } };
   useEffect(() => {
-    if (!pref.push || Platform.OS === 'web') return;
+    if (!pref.push || Platform.OS === 'web' || (goodiesWorkspace&&GOODIES_PUSH_RELEASED)) return;
     (async () => {
       try {
         let { status } = await Notifications.getPermissionsAsync();

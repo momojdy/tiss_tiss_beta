@@ -22,15 +22,22 @@
       "sha256": "f32972767c97e73eb9081630e5bac1a69ab73598a887a96cc7cf17a9ebcaa854",
       "preparedSource": "supabase/migrations/20261120222003_goodies_push_content_review.sql",
       "executedVersion": "20261120173052"
+    },
+    {
+      "source": "supabase/migrations/20261120174734_goodies_push_message_preferences.sql",
+      "preparedSource": "supabase/migrations/20261120174455_goodies_push_message_preferences.sql",
+      "executedVersion": "20261120174734",
+      "sha256": "48119c1fcc5cfd18e998032fd477e11c99f7be0ead857d7909b01e52d8668f3b",
+      "sourceCommitDeployed": "7d2c2d3be07cf974cedfcfc1f5243fce7d4381c5"
     }
   ],
   "isolatedVerification": {
-    "nativePostgresTargetMigrations": 31,
+    "nativePostgresTargetMigrations": 32,
     "nativeConcurrencyCases": 27,
     "fullDenoBeforeFinalWorkerTest": 95,
     "targetedPushCmsAfterFinalWorkerChange": 10,
     "targetedRecovery": 1,
-    "customerNodeTests": 263,
+    "customerNodeTests": 268,
     "adminNodeTests": 68,
     "crossRoleNodeTests": 47,
     "typesBoth": "PASS",

@@ -1,12 +1,4 @@
 {
-  "cron": [
-    {
-      "active": true,
-      "jobname": "goodies-push-delivery",
-      "schedule": "* * * * *",
-      "config_guard": true
-    }
-  ],
   "config": {
     "id": true,
     "enabled": false,
@@ -60,40 +52,8 @@
     }
   ],
   "queue_rows": 0,
-  "cms_records": [
-    {
-      "id": "551b013f-ba23-42a2-a55f-3080e34164cd",
-      "locale": "en",
-      "status": "archived",
-      "version": 1
-    },
-    {
-      "id": "f34a2641-82cc-4ff9-818e-e0da6a786818",
-      "locale": "en",
-      "status": "archived",
-      "version": 3
-    },
-    {
-      "id": "6d92c0d8-4a63-4c4d-a05f-20bfe2558b89",
-      "locale": "en",
-      "status": "archived",
-      "version": 4
-    },
-    {
-      "id": "da301ba8-15b8-4092-a37f-5da73d721c2f",
-      "locale": "en",
-      "status": "published",
-      "version": 5
-    },
-    {
-      "id": "50c96e40-cae0-4aab-b23e-1c0f9f4622e9",
-      "locale": "en",
-      "status": "archived",
-      "version": 2
-    }
-  ],
   "device_rows": 0,
-  "observed_at": "2026-11-20T17:33:28.304049+00:00",
+  "observed_at": "2026-11-20T18:10:45.466079+00:00",
   "worker_probe": {
     "body": {
       "scanned": 0
@@ -114,6 +74,10 @@
     {
       "name": "goodies_push_content_review",
       "version": "20261120173052"
+    },
+    {
+      "name": "goodies_push_message_preferences",
+      "version": "20261120174734"
     }
   ],
   "private_tables": [
@@ -139,10 +103,10 @@
       "authenticated_select": false
     }
   ],
-  "migration_count": 415,
-  "cms_push_keys_in_guard": true,
+  "migration_count": 416,
   "private_delivery_proof": {
     "id": "goodies-delivery-proofs",
     "public": false
-  }
+  },
+  "order_preference_is_scoped": true
 }

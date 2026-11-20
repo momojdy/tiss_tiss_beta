@@ -12,7 +12,7 @@ async function harness(){
  insert into auth.users(id) values('${user}'),('${other}');insert into auth.sessions values('${session}','${user}',null),('${otherSession}','${other}',null);`);
  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120173011_goodies_notification_reviewed_english_fallback.sql',import.meta.url)));
  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120173033_goodies_push_delivery.sql',import.meta.url)));
- await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120174455_goodies_push_message_preferences.sql',import.meta.url)));
+ await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120174734_goodies_push_message_preferences.sql',import.meta.url)));
  const actor=async(uid=user,sid=session)=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claims',$2,false)",[uid,JSON.stringify({session_id:sid})]);await db.exec('set role authenticated');};
  const root=()=>db.exec('reset role'),enable=async()=>{await root();await db.query('update private.goodies_push_config set enabled=true,eas_project_id=$1',[project]);};
  const register=async()=> (await db.query<{data:{status:string;device_id:string}}>('select public.goodies_register_push_device($1,\'android\',$2) as data',[token,project])).rows[0].data;

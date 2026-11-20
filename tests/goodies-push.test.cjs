@@ -59,6 +59,13 @@ test('cold-start push waits for sign-in and routes one canonical notification af
 test('push addressed to another account cannot fetch or open that account notification',async()=>{
  const h=hookHarness();h.signIn(id(8));await drain();h.emit({feature:'Goodies',notification_id:notification,user_id:user});await drain();assert.equal(h.queries.length,0);assert.equal(h.opens.length,0);
 });
+test('Goodies permission registration remains inactive in unrelated buyer and vendor features',()=>{
+ const ast=ts.createSourceFile('App.tsx',fs.readFileSync('App.tsx','utf8'),99,true);let activation;
+ function visit(node){if(ts.isCallExpression(node)&&node.expression.getText(ast)==='useGoodiesPush')activation=node.arguments[1];ts.forEachChild(node,visit);}visit(ast);assert.ok(activation);
+ const active=(appMode,buyerScreen,goodiesVendorActive)=>vm.runInNewContext(activation.getText(ast),{appMode,buyerScreen,goodiesVendorActive});
+ assert.equal(active('vendor','home',false),false);assert.equal(active('buyer','wallet',false),false);assert.equal(active('vendor','goodies',false),false);
+ assert.equal(active('vendor','home',true),true);assert.equal(active('buyer','goodies',false),true);assert.equal(active('courier','home',false),true);
+});
 test('offline push opening shows a safe failure and retries the stored reference on recovery',async()=>{
  const h=hookHarness();h.signIn();h.offline(true);await drain();h.emit({feature:'Goodies',notification_id:notification,user_id:user});await drain();assert.equal(h.opens.length,0);assert.equal(h.alerts.length,1);assert.doesNotMatch(h.alerts[0],/private|database|credentials/);assert.equal(h.cleared,0);
  h.offline(false);h.foreground();await drain();assert.equal(h.opens.length,1);assert.equal(h.cleared,1);

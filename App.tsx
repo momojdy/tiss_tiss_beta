@@ -133,6 +133,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [authReady, setAuthReady] = useState(false);
   const [appMode, setAppMode] = useState<AppMode>('buyer');
   const [goodiesPushNotice,setGoodiesPushNotice]=useState<Record<string,any>|null>(null);
+  const [goodiesVendorActive,setGoodiesVendorActive]=useState(false);
   const signOutAccount=async()=>{
     // A successful server sign-out also revokes the bound Auth session.
     await unregisterGoodiesPushDevice().catch(()=>undefined);
@@ -322,7 +323,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(()=>{if(!authenticated||!pendingHelpPayId)return;setWalletHelpPayId(pendingHelpPayId);setPendingHelpPayId(null);setAppMode('buyer');setBuyerScreen('walletHelpPay');},[authenticated,pendingHelpPayId]);
   useEffect(()=>{if(!authenticated||!pendingGroupInviteCode)return;setGoodiesInitialRoute('groupinvite:'+pendingGroupInviteCode);setPendingGroupInviteCode(null);setAppMode('buyer');setBuyerScreen('goodies');},[authenticated,pendingGroupInviteCode]);
   useEffect(() => { if (!authenticated || !pendingQrToken) return; let active = true; const token = pendingQrToken; void (async () => { try { const { data, error } = await supabase.rpc('resolve_qr_identity', { p_token: token }); if (error) throw error; if (!data?.valid) throw new Error('This Wantiss QR is invalid, expired, or revoked.'); if (!active) return; setPendingQrToken(null); if (data.is_self === true) { setQrLaunchToken(token); setQrKind(data.qr_type === 'wallet_receive' ? 'wallet_receive' : 'buyer_identity'); setBuyerScreen('qrIdentity'); setAppMode('buyer'); return; } if (data.destination === 'vendor-shop') { setPublicShop({ vendorId: data.vendor_id, shopName: data.shop_name }); setBuyerScreen('vendorShop'); } else if (data.destination === 'buyer-profile') { setPublicBuyerProfile(data); setBuyerScreen('publicBuyerProfile'); } else if (data.destination === 'wallet-receive' || data.qr_type === 'wallet_receive') { setWalletQrRecipient({ token, recipient: { ...data, destination: 'wallet-receive' } }); setQrLaunchToken(null); setWalletQrDisplayToken(null); setBuyerScreen('walletQrRecipient'); setAppMode('buyer'); } } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'This QR could not be opened.'); } })(); return () => { active = false; }; }, [authenticated, pendingQrToken]);
-  useGoodiesPush(authenticated,appMode==='courier'||appMode==='vendor'||buyerScreen==='goodies',destination=>{
+  useGoodiesPush(authenticated,appMode==='courier'||(appMode==='vendor'&&goodiesVendorActive)||(appMode==='buyer'&&buyerScreen==='goodies'),destination=>{
     if(destination.mode==='courier'){setAppMode('courier');return;}
     if(destination.mode==='vendor'){setGoodiesPushNotice(destination.notice);setAppMode('vendor');return;}
     setAppMode('buyer');
@@ -334,7 +335,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     return <GoodiesCourierScreen onSignOut={async () => { const {error}=await signOutAccount(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated && appMode === 'vendor') {
-    return <BusinessSpaceScreen initialGoodiesNotification={goodiesPushNotice} onGoodiesNotificationHandled={()=>setGoodiesPushNotice(null)} onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onOpenWallet={() => { setAppMode('buyer'); setBuyerScreen('wallet'); }} onSignOut={async () => { const {error}=await signOutAccount(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+    return <BusinessSpaceScreen onGoodiesWorkspaceActive={setGoodiesVendorActive} initialGoodiesNotification={goodiesPushNotice} onGoodiesNotificationHandled={()=>setGoodiesPushNotice(null)} onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onOpenWallet={() => { setAppMode('buyer'); setBuyerScreen('wallet'); }} onSignOut={async () => { const {error}=await signOutAccount(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated) {
     try {
