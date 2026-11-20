@@ -90,7 +90,7 @@ test('editing a hidden or unavailable custom product never silently republishes 
  const makeSave=(b,all,onSaved)=>compile(decl.initializer.getText(ast),{
   b,all,builderSaveLock:{current:false},validateBuilder:()=>[],setErrs(){},setSaving(){},requireManage:()=>true,
   app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},
-  goodiesApi:{saveBuilders:async(_business,rows)=>onSaved(JSON.parse(JSON.stringify(rows)))},
+  goodiesApi:{listBuilders:async()=>all,saveBuilders:async(_business,rows)=>onSaved(JSON.parse(JSON.stringify(rows)))},
   errText:()=> 'Safe failure',
  });
  const other={id:'another-product',enabled:true,available:true,productCreated:true};
@@ -225,7 +225,7 @@ test('custom product editor save is single-flight and unlocks after a failed wri
  const save=compile(decl.initializer.getText(ast),{
   b,all:[b],builderSaveLock:lock,requireManage:()=>true,validateBuilder:()=>[],setErrs(){},setSaving(){},
   app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},errText:()=> 'Safe failure',
-  goodiesApi:{saveBuilders:async()=>{calls.push('save');await pending;if(reject)throw Error('Synthetic write failed');}},
+  goodiesApi:{listBuilders:async()=>[b],saveBuilders:async()=>{calls.push('save');await pending;if(reject)throw Error('Synthetic write failed');}},
  });
  const first=save();await save();
  assert.equal(calls.length,1);assert.equal(lock.current,true);
@@ -268,4 +268,54 @@ test('saving unrelated store fields does not overwrite freshly edited builder re
  await save();
  assert.equal(reads,1,'No builder read needed when only store fields were changed');
  assert.equal(written.length,1,'No unnecessary full-list builder write');
+});
+
+
+test('custom product availability toggles keep newly approved unrelated builder recipes',async()=>{
+ const {node,ast}=find(vendor,'GoodiesProductsPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='toggleCustom')).declarationList.declarations[0];
+ const stale={id:'pizza',type:'pizza',enabled:true,available:true,groups:[{name:'Outdated'}]};
+ const current=[
+  {...stale,groups:[{name:'Current admin pizza'}]},
+  {id:'burger',type:'burger',enabled:true,available:true,groups:[{name:'New admin burger'}]},
+ ];
+ const submissions=[];
+ const toggle=compile(decl.initializer.getText(ast),{
+  availabilityLock:{current:false},setAvailabilityBusy(){},requireManage:()=>true,
+  app:{biz:{id:'business'},toast(){},bump(){}},builders:{d:[stale],reload:async()=>{}},
+  goodiesApi:{listBuilders:async()=>current,saveBuilders:async(_biz,rows)=>submissions.push(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Safe failure',
+ });
+ await toggle(stale,false);
+ assert.equal(submissions.length,1);
+ assert.equal(submissions[0].length,2);
+ assert.equal(submissions[0][0].available,false);
+ assert.equal(submissions[0][0].groups[0].name,'Current admin pizza');
+ assert.equal(submissions[0][1].groups[0].name,'New admin burger');
+});
+
+test('editing a builder preserves other new server builders and does not restore deleted builders',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const previous={id:'pizza',type:'pizza',name:'Pizza',enabled:true,available:true,productCreated:true};
+ const latest=[previous,{id:'burger',type:'burger',name:'New admin recipe',enabled:true,available:true}];
+ const results=[],toasts=[];
+ let deleted=false;
+ const save=compile(decl.initializer.getText(ast),{
+  b:{...previous,name:'Edited pizza'},all:[previous],
+  builderSaveLock:{current:false},requireManage:()=>true,validateBuilder:()=>[],setErrs(){},setSaving(){},
+  app:{biz:{id:'merchant'},toast:msg=>toasts.push(msg),bump(){},back(){}},
+  goodiesApi:{listBuilders:async()=>deleted?latest.slice(1):latest,
+   saveBuilders:async(_biz,rows)=>results.push(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Could not save the custom product',
+ });
+ await save();
+ assert.equal(results.length,1);
+ assert.equal(results[0].length,2);
+ assert.equal(results[0][1].name,'New admin recipe');
+ assert.equal(results[0][0].name,'Edited pizza');
+ deleted=true;
+ await save();
+ assert.equal(results.length,1,'Removed product cannot be recreated by old editor state');
+ assert.ok(toasts.some(msg=>/Could not save/.test(msg)));
 });
