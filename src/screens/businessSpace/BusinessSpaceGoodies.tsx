@@ -692,7 +692,9 @@ export function GoodiesProductsPage() {
     if (!requireManage()) return;
     if(availabilityLock.current)return;availabilityLock.current=true;setAvailabilityBusy(b.id);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, (builders.d ?? []).map(x => x.id === b.id ? { ...x, available: v } : x));
+      const latest=await goodiesApi.listBuilders(app.biz.id);
+      if(!latest.some(x=>x.id===b.id))throw new Error('This custom product is no longer available. Refresh Products.');
+      await goodiesApi.saveBuilders(app.biz.id, latest.map(x => x.id === b.id ? { ...x, available: v } : x));
       await builders.reload(); app.bump();
     } catch (e) { app.toast(text(errText(e))); } finally {availabilityLock.current=false;setAvailabilityBusy('');}
   };
@@ -774,7 +776,15 @@ export function GoodiesBuilderEditPage() {
     builderSaveLock.current = true;
     setSaving(true);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
+      const latest=await goodiesApi.listBuilders(app.biz.id);
+      const existed=all.some(x=>x.id===b.id), existsNow=latest.some(x=>x.id===b.id);
+      if(existed!==existsNow)throw new Error('This custom product changed while editing. Refresh Products and try again.');
+      // Do not submit a stale full-list snapshot that removes or rewrites
+      // unrelated custom products modified by a vendor or administrator.
+      const updated=existed
+        ? latest.map(x=>(x.id===b.id ? { ...b, productCreated: true } : x))
+        : [...latest, { ...b, enabled: true, available: true, productCreated: true }];
+      await goodiesApi.saveBuilders(app.biz.id,updated);
       app.toast(b.productCreated === false ? label("lbl.vendor.builders.55fbc59fd2","Custom product added") : label("lbl.vendor.builders.7efcfe59ac","Custom product saved")); app.bump(); app.back();
     } catch (error) {
       app.toast(text(errText(error)));
