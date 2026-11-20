@@ -1,0 +1,846 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "codeCommits": {
+    "customer": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+    "admin": "f13f959afad44f5e0fd23f2f1da0266031641be1"
+  },
+  "scope": "Current registry and CMS association/source evidence. No row represents an authenticated, installed-device, button-by-button PASS.",
+  "rules": {
+    "PASS": "Only the explicitly named check was executed successfully.",
+    "FAIL": "An executed check establishes the stated defect.",
+    "NOT VERIFIED": "The relevant hosted/device/provider test has not run."
+  },
+  "customer": [
+    {
+      "target": "wantiss",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 163,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Historical Home alias; not an additional demo page."
+    },
+    {
+      "target": "home",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 164,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "cats",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 165,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "orders",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 166,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "cart",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 167,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "grouporder",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 168,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "explore",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 169,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "search",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 170,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "catlist",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 171,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "store",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 172,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "reviews",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 173,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "product",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 174,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "checkout",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 175,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "help-pay",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 176,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "addcard",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 177,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "cardauth",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 178,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "confirm",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 179,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "track",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 180,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "notifs",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 181,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "promos",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 182,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "flashdeals",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 183,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "favs",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 184,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "byo",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 185,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "help",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 186,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "settings",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 400,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "profile",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 401,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "addresses",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 402,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "payments",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 403,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "contact",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 404,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "storechat",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 405,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "supdone",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 406,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "policies",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 407,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "policy",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 408,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    },
+    {
+      "target": "ndetail",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 409,
+      "registryClassification": "PASS",
+      "cmsSourceCoverage": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "notes": "Use controls/source inventory for exact handlers, calls and locations."
+    }
+  ],
+  "vendor": [
+    {
+      "route": "feature",
+      "component": "FeaturePage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "explore",
+      "component": "ExplorePage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "charts",
+      "component": "ChartsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "actions",
+      "component": "ActionsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "activity",
+      "component": "ActivityPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "messages",
+      "component": "MessagesPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "conversation",
+      "component": "ConversationPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "notifications",
+      "component": "NotificationsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "search",
+      "component": "SearchPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "promotions",
+      "component": "PromotionsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "registration",
+      "component": "RegistrationPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "audit",
+      "component": "AuditPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "help",
+      "component": "HelpPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "security",
+      "component": "SecurityPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "businessInfo",
+      "component": "BusinessInfoPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesTools",
+      "component": "GoodiesToolsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesStore",
+      "component": "GoodiesStorePage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesProducts",
+      "component": "GoodiesProductsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesBuilder",
+      "component": "GoodiesBuilderEditPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesRequests",
+      "component": "GoodiesRequestsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesOrders",
+      "component": "GoodiesOrdersPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    },
+    {
+      "route": "goodiesReviews",
+      "component": "GoodiesReviewsPage",
+      "registryClassification": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED",
+      "scope": "Goodies-reachable Business Space route; shared/mixed-feature contracts are qualified separately."
+    }
+  ],
+  "courier": [
+    {
+      "component": "GoodiesCourierScreen",
+      "automatedCases": "PASS",
+      "physicalDeviceClassification": "NOT VERIFIED"
+    }
+  ],
+  "admin": [
+    {
+      "module": "Overview",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Merchants",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Product review",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Customer reviews",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Orders",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Delivery reports",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Couriers",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Support",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Settlement",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Fees",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Delivery surcharge",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Analytics",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Goodies assets",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    },
+    {
+      "module": "Content editor",
+      "registryClassification": "PASS",
+      "automatedSuite": "PASS",
+      "hostedInteractionClassification": "NOT VERIFIED"
+    }
+  ],
+  "additionalDynamicTargets": [
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 34,
+      "owner": "GoodiesAdminScreen",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "setModule",
+      "kind": "ADMIN_GOODIES_MODULE",
+      "targetExpression": "target",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 313,
+      "owner": "GoodiesAdminScreen",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "setModule",
+      "kind": "ADMIN_GOODIES_MODULE",
+      "targetExpression": "x",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx",
+      "line": 26,
+      "owner": "ServiceWorkspaceScreen.setModule",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "openModule",
+      "kind": "ADMIN_GOODIES_HUB_MODULE",
+      "targetExpression": "next",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "mappedModule": null
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 11,
+      "owner": "go",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "push",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "r",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 12,
+      "owner": "tab",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "p",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 587,
+      "owner": "GroupOrderSheet.checkoutGroupOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "orderId?'home':'orders'",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 40,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "initialRoute",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 105,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "initialRoute",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 281,
+      "owner": "BottomNav.item",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "A.tab",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "id",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 114,
+      "owner": "NotificationsPage.open",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "goodiesTarget.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 137,
+      "owner": "SearchPage.go",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "r.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 220,
+      "owner": "GoodiesToolsCard.R",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 75,
+      "owner": "FeaturesPanel",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "on.has(f.key) ? 'goodiesTools' : 'feature'",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 210,
+      "owner": "Workspace.sub",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "nav.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "target.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 211,
+      "owner": "Workspace.sub",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "nav.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "d.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 258,
+      "owner": "Workspace",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "nav.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "target.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 26,
+      "owner": "ProfileSheet.open",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED"
+    }
+  ],
+  "interactiveBindingCount": 1347
+}

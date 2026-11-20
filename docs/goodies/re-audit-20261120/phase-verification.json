@@ -1,0 +1,77 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Backend reconciliation",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 32-migration isolated target, current Goodies signatures/ACLs, four scoped live deployments and exact deployed TypeScript matches for all seven inspected Goodies functions. Nine shared legacy branches and six partial/static argument analyses are explicitly qualified; full hosted role coverage remains open."
+    },
+    {
+      "phase": 2,
+      "name": "Customer screens and controls",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 34 registered routes, current CMS coverage, 1,347 extracted bindings, zero unresolved recognized literal registry targets. Every hosted interaction and 17 computed targets have not been manually accepted."
+    },
+    {
+      "phase": 3,
+      "name": "Vendor store/product/builder operations",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: focused product/order/permissions/recovery regressions, stable localized settlement selections, safe financial results and real scoped services. Hosted merchant lifecycle and full mixed-feature workspaces remain open."
+    },
+    {
+      "phase": 4,
+      "name": "Checkout/payment/refund/settlement",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: synthetic authoritative-price, state, idempotency, refund and concurrent ledger scenarios. Card refunds remain on the original card as confirmed by the user. Positive provider sandbox and hosted authenticated financial acceptance remain open."
+    },
+    {
+      "phase": 5,
+      "name": "Courier and delivery",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: real-coordinate implementation, freshness tests, courier races and native manifest configuration. Physical GPS/background/offline/maps/push and hosted proof uploads have not passed device acceptance."
+    },
+    {
+      "phase": 6,
+      "name": "Group orders and Shared Bill",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: isolated real PostgreSQL funding, exactly-once checkout, stock, payer refunds and races. Hosted Auth/API acceptance and intentional release-gate activation remain open."
+    },
+    {
+      "phase": 7,
+      "name": "Admin operations",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 68 paired tests with no skipped preview checks and successful builds/typecheck. Full signed-in hosted permissions and every admin control remain open."
+    },
+    {
+      "phase": 8,
+      "name": "CMS coverage/preview/publication",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 1,926 fields, 73 page/shared groups, 34 routes, five-locale editing/serialization checks and a real public consumer read. Not every field has completed hosted draft-preview-publish-installed-app-reload acceptance."
+    },
+    {
+      "phase": 9,
+      "name": "Notifications/messaging/security",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: deployed default-off device/outbox/worker path, auth denial, valid zero-work health check, session/ownership/preference/retry/recovery tests and safe navigation. Real remote push delivery needs device/provider configuration. Supabase leaked-password protection remains disabled."
+    },
+    {
+      "phase": 10,
+      "name": "Languages and production cleanup",
+      "classification": "FAIL",
+      "evidence": "PASS: source catalog, truthful fallback, isolated fixtures and safe UI transport/errors. The live label bundle has no reviewed French/Spanish/Chinese label entries and uses English fallback; the prepared approved four-language package remains unpublished. FAQ/legal/Haitian Creole approval is deferred."
+    },
+    {
+      "phase": 11,
+      "name": "Automated tests and builds",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 481 automated tests, zero skipped, 27 separate native PostgreSQL scenarios and successful CI/typechecks/unsigned exports. Native signing, physical devices, provider sandbox and complete hosted E2E are not verified."
+    },
+    {
+      "phase": 12,
+      "name": "Production release decision",
+      "classification": "FAIL",
+      "evidence": "Do not certify or launch Goodies yet. Complete hosted isolated acceptance, content release, provider/device checks, the shared Auth setting and full backup/recovery prerequisites. The Wantiss app was not deployed."
+    }
+  ]
+}

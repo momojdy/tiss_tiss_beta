@@ -1,0 +1,2648 @@
+{
+  "scope": "Isolated target signatures plus unchanged shared live signatures. Shared functions not present in the fixture were NOT reconstructed or executed by this overlay.",
+  "entries": [
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "activate_feature",
+      "signature": "p_business uuid, p_feature text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "create_business",
+      "signature": "p_name text",
+      "returns": "uuid",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "deactivate_feature",
+      "signature": "p_business uuid, p_feature text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "delete_payment_method",
+      "signature": "p_payment_method_id uuid",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_payment_method_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "delete_user_address",
+      "signature": "p_address_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_address_id"
+      ],
+      "security_definer": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "ensure_my_wallet",
+      "signature": "",
+      "returns": "wallets",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "get_my_payment_methods",
+      "signature": "",
+      "returns": "TABLE(id uuid, type text, brand text, last4 text, expiry_month integer, expiry_year integer, is_default boolean, created_at timestamp with time zone)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "issue_qr_identity",
+      "signature": "p_qr_type text, p_business_id uuid",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 1,
+      "input_names": [
+        "p_qr_type",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "mark_conversation_read",
+      "signature": "p_conv uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_conv"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "resubmit_business_application",
+      "signature": "p_application_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "set_default_payment_method",
+      "signature": "p_payment_method_id uuid",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_payment_method_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application",
+      "signature": "p_business_name text",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application",
+      "signature": "p_business_name text, p_business_id uuid",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business_name",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application_document",
+      "signature": "p_application_id uuid, p_document_type text, p_storage_path text",
+      "returns": "uuid",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id",
+        "p_document_type",
+        "p_storage_path"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_accept_invitation",
+      "signature": "",
+      "returns": "void",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_application_businesses",
+      "signature": "p_application_id uuid",
+      "returns": "TABLE(business_id uuid, business_name text, member_role text)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_apply_account_restriction",
+      "signature": "p_user_id uuid, p_kind text, p_scope text, p_reason text, p_notes text, p_starts_at timestamp with time zone, p_ends_at timestamp with time zone, p_notify_user boolean",
+      "returns": "uuid",
+      "arg_count": 8,
+      "default_count": 1,
+      "input_names": [
+        "p_user_id",
+        "p_kind",
+        "p_scope",
+        "p_reason",
+        "p_notes",
+        "p_starts_at",
+        "p_ends_at",
+        "p_notify_user"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_archive_cms_version",
+      "signature": "p_content_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_content_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_assign_business_application",
+      "signature": "p_application_id uuid, p_business_id uuid",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_audit_read",
+      "signature": "",
+      "returns": "SETOF wantiss_admin_audit_log",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_dashboard_snapshot",
+      "signature": "p_domain text",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_domain"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_list_library_ingredients",
+      "signature": "",
+      "returns": "TABLE(id text, builder text, role text, name text, asset_key text, active boolean, request_id uuid)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_publish_cms_version",
+      "signature": "p_content_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_content_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_request_financial_action",
+      "signature": "p_action_type text, p_transaction_id uuid, p_target_user_id uuid, p_amount numeric, p_direction text, p_reason text",
+      "returns": "uuid",
+      "arg_count": 6,
+      "default_count": 0,
+      "input_names": [
+        "p_action_type",
+        "p_transaction_id",
+        "p_target_user_id",
+        "p_amount",
+        "p_direction",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_business_application",
+      "signature": "p_application_id uuid, p_status text, p_review_note text, p_final_rejection boolean",
+      "returns": "void",
+      "arg_count": 4,
+      "default_count": 2,
+      "input_names": [
+        "p_application_id",
+        "p_status",
+        "p_review_note",
+        "p_final_rejection"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_financial_action",
+      "signature": "p_action_id uuid, p_decision text, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_action_id",
+        "p_decision",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_ingredient_request",
+      "signature": "p_request_id uuid, p_status text, p_review_note text, p_admin_asset_key text, p_role text",
+      "returns": "boolean",
+      "arg_count": 5,
+      "default_count": 3,
+      "input_names": [
+        "p_request_id",
+        "p_status",
+        "p_review_note",
+        "p_admin_asset_key",
+        "p_role"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_save_cms_draft",
+      "signature": "p_content_key text, p_locale text, p_payload jsonb",
+      "returns": "uuid",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_content_key",
+        "p_locale",
+        "p_payload"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_save_library_ingredient",
+      "signature": "p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean",
+      "returns": "text",
+      "arg_count": 6,
+      "default_count": 1,
+      "input_names": [
+        "p_id",
+        "p_builder",
+        "p_role",
+        "p_name",
+        "p_asset_key",
+        "p_active"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_application_document_status",
+      "signature": "p_document_id uuid, p_status text, p_review_note text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_document_id",
+        "p_status",
+        "p_review_note"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_business_verification",
+      "signature": "p_business uuid, p_status text, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_business",
+        "p_status",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_cms_asset_status",
+      "signature": "p_asset_id uuid, p_status text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_asset_id",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_ingredient_rules",
+      "signature": "p_rules text",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_rules"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_update_account_restriction",
+      "signature": "p_restriction_id uuid, p_ends_at timestamp with time zone, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_restriction_id",
+        "p_ends_at",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_upsert_asset",
+      "signature": "p_asset_key text, p_storage_path text, p_content_type text, p_byte_size bigint, p_alt_text jsonb, p_status text",
+      "returns": "uuid",
+      "arg_count": 6,
+      "default_count": 2,
+      "input_names": [
+        "p_asset_key",
+        "p_storage_path",
+        "p_content_type",
+        "p_byte_size",
+        "p_alt_text",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_message_contact_profiles",
+      "signature": "",
+      "returns": "TABLE(id uuid, full_name text, avatar_url text, wantiss_number text)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true,
+      "signatureOrigin": "read_only_live_shared_contract"
+    },
+    {
+      "name": "get_goodies_stripe_webhook_event_status",
+      "input_names": [
+        "p_event_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_decline_invite",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_list_library_ingredients",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_contribute_for_account",
+      "input_names": [
+        "p_request_id",
+        "p_amount_cents",
+        "p_idempotency_key",
+        "p_expected_user_id"
+      ],
+      "arg_count": 4,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_contribute_wallet",
+      "input_names": [
+        "p_request_id",
+        "p_amount_cents",
+        "p_idempotency_key"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_delivery_eligible_stores",
+      "input_names": [
+        "p_store_ids"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_invite_friends",
+      "input_names": [
+        "p_group_id",
+        "p_user_ids"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "finish_goodies_card_refund",
+      "input_names": [
+        "p_queue_id",
+        "p_lease_token",
+        "p_status",
+        "p_refund_id",
+        "p_error"
+      ],
+      "arg_count": 5,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "claim_goodies_card_refunds",
+      "input_names": [
+        "p_limit"
+      ],
+      "arg_count": 1,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "synthetic_courier_lock",
+      "input_names": [
+        "p_order"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "process_goodies_card_payment_event",
+      "input_names": [
+        "p_order_id",
+        "p_payment_intent_id",
+        "p_event_state",
+        "p_amount_cents",
+        "p_currency",
+        "p_refunded_amount_cents",
+        "p_event_created"
+      ],
+      "arg_count": 7,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_auto_complete_self_deliveries",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_minutes"
+      ],
+      "arg_count": 22,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country"
+      ],
+      "arg_count": 20,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_delivery_offer_expiry",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "expire_goodies_courier_offers",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "sync_goodies_card_refund_queue_dispute",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_courier_respond_assignment",
+      "input_names": [
+        "p_order_id",
+        "p_accept"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone",
+        "p_store_name"
+      ],
+      "arg_count": 24,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_notify_store_on_payment_confirmed",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_thumbnail",
+      "input_names": [
+        "p_business",
+        "p_thumbnail_url"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "place_goodies_card_order_once",
+      "input_names": [
+        "p_idempotency_key",
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code"
+      ],
+      "arg_count": 15,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone"
+      ],
+      "arg_count": 23,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time"
+      ],
+      "arg_count": 22,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "pause_goodies_card_refund_for_dispute",
+      "input_names": [
+        "p_queue_id",
+        "p_lease_token",
+        "p_error"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "monitor_goodies_card_refund_worker",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_list_goodies_builder_configs",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_requeue_goodies_card_refund",
+      "input_names": [
+        "p_queue_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "expire_goodies_card_auth",
+      "input_names": [
+        "p_order_id",
+        "p_payment_intent_id",
+        "p_stripe_status"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_get_ingredient_rules",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_save_goodies_builder_config",
+      "input_names": [
+        "p_business_id",
+        "p_builder_id",
+        "p_config",
+        "p_enabled"
+      ],
+      "arg_count": 4,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_list_goodies_builder_businesses",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_submit_ingredient_request",
+      "input_names": [
+        "p_business",
+        "p_name",
+        "p_builder",
+        "p_role",
+        "p_note",
+        "p_image_path"
+      ],
+      "arg_count": 6,
+      "default_count": 3,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_list_ingredient_requests",
+      "input_names": [
+        "p_business"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "monitor_goodies_card_auth_expiry_worker",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_join",
+      "input_names": [
+        "p_invite_code"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "get_my_goodies_access_status",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_close",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_add_courier",
+      "input_names": [
+        "p_courier_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_add_item",
+      "input_names": [
+        "p_group_id",
+        "p_product_id",
+        "p_line_key",
+        "p_quantity",
+        "p_options",
+        "p_note"
+      ],
+      "arg_count": 6,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_remove_item",
+      "input_names": [
+        "p_item_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km"
+      ],
+      "arg_count": 17,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_validate_message",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_courier_availability",
+      "input_names": [
+        "p_is_available",
+        "p_accepts_cash_on_delivery"
+      ],
+      "arg_count": 2,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_list_courier_candidates",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_sync_store_from_business",
+      "input_names": [
+        "p_business"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_update_conversation_summary",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_cash_on_delivery_available",
+      "input_names": [
+        "p_store_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_store_cash_policy",
+      "input_names": [
+        "p_store_id",
+        "p_enabled"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_assert",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_dashboard",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_analytics",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_update_fee_policy",
+      "input_names": [
+        "p_service_fee",
+        "p_first_order_free",
+        "p_wallet_enabled",
+        "p_card_enabled",
+        "p_cash_enabled",
+        "p_tips"
+      ],
+      "arg_count": 6,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_cancel_order",
+      "input_names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_require_cash_policy",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_set_merchant_verification",
+      "input_names": [
+        "p_business_id",
+        "p_status"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_update_delivery_surcharge_policy",
+      "input_names": [
+        "p_enabled",
+        "p_additional_store_fee",
+        "p_extra_distance_per_km"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_remove_courier",
+      "input_names": [
+        "p_courier_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_has_permission",
+      "input_names": [
+        "p_permission",
+        "p_min_level"
+      ],
+      "arg_count": 2,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_cover",
+      "input_names": [
+        "p_business",
+        "p_cover_url"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_ingredient_request_notifications",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_location",
+      "input_names": [
+        "p_business",
+        "p_latitude",
+        "p_longitude"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_list_dispatch_couriers",
+      "input_names": [
+        "p_order_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_assign_courier",
+      "input_names": [
+        "p_order_id",
+        "p_courier_id"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_cash_global_enabled",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_remove_item",
+      "input_names": [
+        "p_group_id",
+        "p_line_key"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_create",
+      "input_names": [
+        "p_store_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_list_delivery_reports",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_list_members",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_order_commission_snapshot",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_join",
+      "input_names": [
+        "p_invite_code"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "place_goodies_order_with_payment_once",
+      "input_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code"
+      ],
+      "arg_count": 16,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_tip_is_allowed",
+      "input_names": [
+        "p_tip",
+        "p_choices"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "validate_goodies_standard_product_line",
+      "input_names": [
+        "p_category",
+        "p_base_price",
+        "p_line",
+        "p_deals"
+      ],
+      "arg_count": 4,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_hours_allow_order",
+      "input_names": [
+        "p_hours",
+        "p_timezone",
+        "p_at"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_place_multi_order",
+      "input_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_stops",
+        "p_service_fee",
+        "p_tip",
+        "p_notes"
+      ],
+      "arg_count": 10,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_update_multi_store_policy",
+      "input_names": [
+        "p_enabled",
+        "p_additional_store_fee",
+        "p_extra_distance_per_km",
+        "p_max_stops"
+      ],
+      "arg_count": 4,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_update_max_stops",
+      "input_names": [
+        "p_max_stops"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_store_setup",
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup"
+      ],
+      "arg_count": 11,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_checkout_preview",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_order_notify",
+      "input_names": [
+        "p_user_id",
+        "p_title",
+        "p_body",
+        "p_order_id",
+        "p_order_code",
+        "p_status",
+        "p_reason_code"
+      ],
+      "arg_count": 7,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "accept_goodies_order",
+      "input_names": [
+        "p_order_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "get_goodies_refund_worker_token",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_end",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_list_friends",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_get_status",
+      "input_names": [
+        "p_group_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_create",
+      "input_names": [
+        "p_store_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_upsert_item",
+      "input_names": [
+        "p_group_id",
+        "p_product_id",
+        "p_line_key",
+        "p_quantity",
+        "p_options",
+        "p_note"
+      ],
+      "arg_count": 6,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "decline_goodies_order",
+      "input_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "place_goodies_order_with_wallet",
+      "input_names": [
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code"
+      ],
+      "arg_count": 14,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_checkout",
+      "input_names": [
+        "p_idempotency_key",
+        "p_group_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_tip",
+        "p_notes"
+      ],
+      "arg_count": 8,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "set_goodies_order_status",
+      "input_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "validate_goodies_builder_line",
+      "input_names": [
+        "p_business_id",
+        "p_store_id",
+        "p_line"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "expire_unaccepted_goodies_orders",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_checkout_estimate",
+      "input_names": [
+        "p_group_id",
+        "p_order_type",
+        "p_address"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "claim_goodies_stripe_webhook_event",
+      "input_names": [
+        "p_event_id",
+        "p_event_type",
+        "p_livemode"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "complete_goodies_stripe_webhook_event",
+      "input_names": [
+        "p_event_id",
+        "p_claim_token"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "complete_goodies_card_refund",
+      "input_names": [
+        "p_order_id",
+        "p_refund_id"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "validate_goodies_refund_worker_token",
+      "input_names": [
+        "p_token"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "fail_goodies_stripe_webhook_event",
+      "input_names": [
+        "p_event_id",
+        "p_claim_token",
+        "p_error"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "queue_goodies_card_refund_on_terminal_status",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "enqueue_goodies_card_refund",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "cancel_goodies_order_by_store",
+      "input_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_order_after_insert",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_group_order_my_invites",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_assign_own_driver",
+      "input_names": [
+        "p_order_id",
+        "p_driver_name",
+        "p_driver_phone"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_expire",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_customer_confirm_received",
+      "input_names": [
+        "p_order_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_customer_dispute_delivery",
+      "input_names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_enforce_store_opening_hours",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_resolve_delivery_dispute",
+      "input_names": [
+        "p_order_id",
+        "p_resolution"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_start_store_conversation",
+      "input_names": [
+        "p_store_id",
+        "p_customer_name"
+      ],
+      "arg_count": 2,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_send_store_message",
+      "input_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_reply",
+      "input_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_cancel_request",
+      "input_names": [
+        "p_request_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_refund_request",
+      "input_names": [
+        "p_request_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_share_to_friend",
+      "input_names": [
+        "p_request_id",
+        "p_friend_id"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_status",
+      "input_names": [
+        "p_request_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "refund_goodies_wallet_order",
+      "input_names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_products_default_pending_review",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_save_product",
+      "input_names": [
+        "p_business",
+        "p_id",
+        "p_name",
+        "p_description",
+        "p_price",
+        "p_emoji",
+        "p_stock",
+        "p_restriction",
+        "p_photo_url",
+        "p_photo_urls"
+      ],
+      "arg_count": 10,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_set_product_availability",
+      "input_names": [
+        "p_business",
+        "p_id",
+        "p_available"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_store_live",
+      "input_names": [
+        "p_business",
+        "p_live"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "place_goodies_order",
+      "input_names": [
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code"
+      ],
+      "arg_count": 14,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_list_reviews",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_public_store_review_stats",
+      "input_names": [
+        "p_store_ids"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_public_store_reviews",
+      "input_names": [
+        "p_store_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_courier_orders",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_vendor_notification_preferences",
+      "input_names": [
+        "p_push",
+        "p_email"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_record_restriction_appeal",
+      "input_names": [
+        "p_restriction_id",
+        "p_action",
+        "p_reason"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_lift_account_restriction",
+      "input_names": [
+        "p_restriction_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_products_enforce_update_moderation",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_review_product",
+      "input_names": [
+        "p_product_id",
+        "p_status",
+        "p_note"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_products_validate_photo_url",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_courier_candidates_page",
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 2,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_set_payout_channel",
+      "input_names": [
+        "p_method",
+        "p_enabled",
+        "p_reason"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_private_delivery_proof_uploads_enabled",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_request_vendor_payout",
+      "input_names": [
+        "p_business",
+        "p_amount",
+        "p_method",
+        "p_destination",
+        "p_key",
+        "p_expected_receive"
+      ],
+      "arg_count": 6,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_destination_details",
+      "input_names": [
+        "p_destination",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_set_private_delivery_proofs",
+      "input_names": [
+        "p_enabled"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_self_delivery_mark_delivered",
+      "input_names": [
+        "p_order_id",
+        "p_proof_url"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_store_reviews",
+      "input_names": [
+        "p_store_id",
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 3,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_store_review_summaries",
+      "input_names": [
+        "p_business_ids"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_set_notification_preference",
+      "input_names": [
+        "p_kind",
+        "p_enabled"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_promotions",
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 3,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "update_my_business_info",
+      "input_names": [
+        "p_business",
+        "p_fields"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_orders_page",
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 2,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_set_cash_acceptance",
+      "input_names": [
+        "p_business",
+        "p_enabled"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_dispatch_waits",
+      "input_names": [
+        "p_business"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_settlement_summary",
+      "input_names": [
+        "p_business"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_settlement_ledger",
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit",
+        "p_type"
+      ],
+      "arg_count": 4,
+      "default_count": 3,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_payout_options",
+      "input_names": [
+        "p_business"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_register_payout_destination",
+      "input_names": [
+        "p_business",
+        "p_method",
+        "p_country",
+        "p_holder",
+        "p_details"
+      ],
+      "arg_count": 5,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_pay_cash_commission",
+      "input_names": [
+        "p_business",
+        "p_key"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_settlement_queue",
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 2,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_settlement_action",
+      "input_names": [
+        "p_kind",
+        "p_id",
+        "p_decision",
+        "p_reference",
+        "p_reason",
+        "p_amount"
+      ],
+      "arg_count": 6,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_vendor_dashboard_range",
+      "input_names": [
+        "p_business",
+        "p_from",
+        "p_to"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_set_bank_calendar",
+      "input_names": [
+        "p_country",
+        "p_reviewed_until",
+        "p_holidays",
+        "p_reason"
+      ],
+      "arg_count": 4,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_orders_capture_delivery_coordinates",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_admin_refund_queue",
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 2,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_admin_retry_refund",
+      "input_names": [
+        "p_request_id",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_contribution_status",
+      "input_names": [
+        "p_request_id",
+        "p_idempotency_key"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_create_for_account",
+      "input_names": [
+        "p_mode",
+        "p_total_cents",
+        "p_checkout_key",
+        "p_checkout_snapshot",
+        "p_expected_user_id"
+      ],
+      "arg_count": 5,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_create_request",
+      "input_names": [
+        "p_mode",
+        "p_total_cents",
+        "p_checkout_key",
+        "p_checkout_snapshot"
+      ],
+      "arg_count": 4,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_request_for_checkout",
+      "input_names": [
+        "p_checkout_key"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_set_wallet_enabled",
+      "input_names": [
+        "p_enabled",
+        "p_reason"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "help_pay_wallet_enabled",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_submit_order_review",
+      "input_names": [
+        "p_order_id",
+        "p_review_target",
+        "p_rating",
+        "p_comment"
+      ],
+      "arg_count": 4,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_list_reviews",
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 2,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_review_order_review",
+      "input_names": [
+        "p_review_id",
+        "p_status",
+        "p_note"
+      ],
+      "arg_count": 3,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_courier_update_delivery_status",
+      "input_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_courier_update_location",
+      "input_names": [
+        "p_order_id",
+        "p_latitude",
+        "p_longitude",
+        "p_accuracy_m",
+        "p_heading",
+        "p_speed_mps"
+      ],
+      "arg_count": 6,
+      "default_count": 3,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_courier_delivery_details",
+      "input_names": [
+        "p_order_id"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_save_builder_configs",
+      "input_names": [
+        "p_business",
+        "p_configs"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_list_ingredient_requests_page",
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit"
+      ],
+      "arg_count": 3,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "wantiss_admin_list_ingredient_requests_page",
+      "input_names": [
+        "p_offset",
+        "p_limit",
+        "p_waiting"
+      ],
+      "arg_count": 3,
+      "default_count": 3,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_admin_set_merchant_status",
+      "input_names": [
+        "p_business_id",
+        "p_live"
+      ],
+      "arg_count": 2,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_notification_text",
+      "input_names": [
+        "p_key",
+        "p_fallback",
+        "p_user_id",
+        "p_vars"
+      ],
+      "arg_count": 4,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_register_push_device",
+      "input_names": [
+        "p_token",
+        "p_platform",
+        "p_project_id"
+      ],
+      "arg_count": 3,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_unregister_push_device",
+      "input_names": [
+        "p_token"
+      ],
+      "arg_count": 1,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_push_registration_status",
+      "input_names": [],
+      "arg_count": 0,
+      "default_count": 0,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_claim_push_deliveries",
+      "input_names": [
+        "p_limit"
+      ],
+      "arg_count": 1,
+      "default_count": 1,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    },
+    {
+      "name": "goodies_finish_push_delivery",
+      "input_names": [
+        "p_id",
+        "p_lease",
+        "p_outcome",
+        "p_ticket_id",
+        "p_code"
+      ],
+      "arg_count": 5,
+      "default_count": 2,
+      "signatureOrigin": "isolated_postgres_target_signature"
+    }
+  ]
+}

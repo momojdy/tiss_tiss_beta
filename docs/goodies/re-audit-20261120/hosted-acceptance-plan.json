@@ -1,0 +1,48 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "classification": "NOT VERIFIED",
+  "name": "goodies-acceptance-20261120",
+  "parentProject": "ycbirmgppwavorwudlrv",
+  "purpose": "Hosted Auth/PostgREST/Storage/Realtime acceptance using synthetic data on a temporary development branch of the existing Wantiss project.",
+  "resourceCreated": false,
+  "creationAttempt": "Supabase cost confirmation expired; subsequent branch listing still contains only main.",
+  "costQuote": {
+    "type": "branch",
+    "recurrence": "hourly",
+    "amount": 0.01344,
+    "quotedBy": "Supabase get_cost",
+    "currency": "USD",
+    "exampleTwoHourCompute": 0.02688,
+    "otherUsage": "Supabase may charge other applicable usage; this is not a fixed total quote."
+  },
+  "costApprovalRequired": true,
+  "costApprovalReceived": false,
+  "productionDataCopied": false,
+  "appDeployment": false,
+  "gitBranches": "Continue on main in both repositories.",
+  "preconditions": [
+    "Obtain explicit approval of the quoted branch cost; no plan upgrade is authorized.",
+    "Verify the created project_ref is a non-default branch of Wantiss and differs from production.",
+    "Inspect branch migration completion and reconcile any historical replay differences before seeding.",
+    "Disable outbound scheduled jobs in the new branch and prevent any worker URL or credentials from reaching production.",
+    "Create confirmed synthetic Auth identities and approved synthetic Wallet balances only on that branch; keep credentials outside Git and reports.",
+    "Use test-mode payment-provider credentials only. Do not copy live charging secrets or exercise production transactions."
+  ],
+  "scenarios": [
+    "Customer/vendor/courier/admin/restricted-staff ownership and direct API denial.",
+    "Wallet and Cash checkout, server prices/builders/discounts/stock, acceptance, decline, cancellation and customer receipt.",
+    "Multi-store allocations and partial cancellation; stale quotes and insufficient funds.",
+    "Shared Bill 60/40 and full funding, concurrent contributions, exactly-once paid order/stock/debits and per-payer refunds.",
+    "Restriction/unrestriction, listing moderation and unavailable/deleted products/stores.",
+    "Courier dispatch/expiry/reassignment, wrong-courier denial, pickup/completion and private proof access.",
+    "Interrupted/lost responses and retry/status recovery through actual authenticated APIs.",
+    "Current CMS draft/publication permissions and consumer fetch semantics with synthetic branch content.",
+    "Per-event notification and language-switch acceptance with real event values: separate localized system text from user-authored details; do not treat placeholder lookup as complete translation."
+  ],
+  "limitations": [
+    "Provider sandbox charges/webhooks/refunds still require approved provider test configuration.",
+    "SDK/API acceptance is not a signed-device UI or physical background GPS/push test.",
+    "Production CMS publication and deferred FAQ/legal/Haitian Creole approval are separate content actions."
+  ],
+  "cleanup": "Delete only the newly created acceptance branch after tests. Do not restore Wantiss Security Test, merge into production, or deploy the Wantiss app."
+}

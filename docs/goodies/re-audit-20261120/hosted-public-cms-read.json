@@ -1,0 +1,84 @@
+{
+  "observedAt": "2026-11-20T17:54:57.256Z",
+  "role": "anonymous public client",
+  "mutationsPerformed": false,
+  "checks": [
+    {
+      "locale": "en",
+      "recordLocale": "en",
+      "version": 5,
+      "labels": 782,
+      "nonblank": 647,
+      "reviewedStatusEntries": 647,
+      "draftFallbacks": 135,
+      "englishFallbacks": 0,
+      "payloadSha256": "ab92bc991300cd96b759c67727adf9e38261f706dcd66fa33a267f6bc5f3b73b",
+      "classification": "PASS",
+      "scope": "Actual consumer English-bundle fetch and current five-locale resolver only; no human review, edit, publication or installed-app reload"
+    },
+    {
+      "locale": "fr",
+      "recordLocale": "en",
+      "version": 5,
+      "labels": 782,
+      "nonblank": 647,
+      "reviewedStatusEntries": 0,
+      "draftFallbacks": 129,
+      "englishFallbacks": 647,
+      "payloadSha256": "ab92bc991300cd96b759c67727adf9e38261f706dcd66fa33a267f6bc5f3b73b",
+      "classification": "PASS",
+      "scope": "Actual consumer English-bundle fetch and current five-locale resolver only; no human review, edit, publication or installed-app reload"
+    },
+    {
+      "locale": "es",
+      "recordLocale": "en",
+      "version": 5,
+      "labels": 782,
+      "nonblank": 647,
+      "reviewedStatusEntries": 0,
+      "draftFallbacks": 129,
+      "englishFallbacks": 647,
+      "payloadSha256": "ab92bc991300cd96b759c67727adf9e38261f706dcd66fa33a267f6bc5f3b73b",
+      "classification": "PASS",
+      "scope": "Actual consumer English-bundle fetch and current five-locale resolver only; no human review, edit, publication or installed-app reload"
+    },
+    {
+      "locale": "zh-Hans",
+      "recordLocale": "en",
+      "version": 5,
+      "labels": 782,
+      "nonblank": 647,
+      "reviewedStatusEntries": 0,
+      "draftFallbacks": 129,
+      "englishFallbacks": 647,
+      "payloadSha256": "ab92bc991300cd96b759c67727adf9e38261f706dcd66fa33a267f6bc5f3b73b",
+      "classification": "PASS",
+      "scope": "Actual consumer English-bundle fetch and current five-locale resolver only; no human review, edit, publication or installed-app reload"
+    },
+    {
+      "locale": "ht",
+      "recordLocale": "en",
+      "version": 5,
+      "labels": 782,
+      "nonblank": 647,
+      "reviewedStatusEntries": 0,
+      "draftFallbacks": 129,
+      "englishFallbacks": 647,
+      "payloadSha256": "ab92bc991300cd96b759c67727adf9e38261f706dcd66fa33a267f6bc5f3b73b",
+      "classification": "PASS",
+      "scope": "Actual consumer English-bundle fetch and current five-locale resolver only; no human review, edit, publication or installed-app reload"
+    }
+  ],
+  "denials": [
+    {
+      "rpc": "goodies_push_registration_status",
+      "code": "42501",
+      "classification": "PASS"
+    },
+    {
+      "rpc": "goodies_claim_push_deliveries",
+      "code": "42501",
+      "classification": "PASS"
+    }
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "observedAt": "2026-11-20T18:11:10.076Z",
+  "scope": "Exact deployed TypeScript file comparison only; matching code does not prove provider configuration or successful payment/delivery.",
+  "functions": [
+    {
+      "name": "goodies-delivery-quote",
+      "version": 23,
+      "verifyJwt": true,
+      "files": [
+        {
+          "source": "supabase/functions/goodies-delivery-quote/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 18166,
+          "deployedBytes": 18166,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "place-goodies-card-order",
+      "version": 15,
+      "verifyJwt": true,
+      "files": [
+        {
+          "source": "supabase/functions/place-goodies-card-order/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 15381,
+          "deployedBytes": 15381,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "refund-goodies-card-order",
+      "version": 8,
+      "verifyJwt": true,
+      "files": [
+        {
+          "source": "supabase/functions/refund-goodies-card-order/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 4797,
+          "deployedBytes": 4797,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "process-goodies-card-refunds",
+      "version": 18,
+      "verifyJwt": false,
+      "files": [
+        {
+          "source": "supabase/functions/process-goodies-card-refunds/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 2203,
+          "deployedBytes": 2203,
+          "firstDifferentLine": null
+        },
+        {
+          "source": "supabase/functions/process-goodies-card-refunds/refundProcessor.ts",
+          "deployedName": "refundProcessor.ts",
+          "equal": true,
+          "localBytes": 6187,
+          "deployedBytes": 6187,
+          "firstDifferentLine": null
+        },
+        {
+          "source": "supabase/functions/process-goodies-card-refunds/refundLogic.ts",
+          "deployedName": "refundLogic.ts",
+          "equal": true,
+          "localBytes": 1434,
+          "deployedBytes": 1434,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "expire-goodies-card-auth",
+      "version": 2,
+      "verifyJwt": false,
+      "files": [
+        {
+          "source": "supabase/functions/expire-goodies-card-auth/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 5571,
+          "deployedBytes": 5571,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "rapid-api",
+      "version": 20,
+      "verifyJwt": false,
+      "files": [
+        {
+          "source": "supabase/functions/rapid-api/index.ts",
+          "deployedName": "index.ts",
+          "equal": true,
+          "localBytes": 16184,
+          "deployedBytes": 16184,
+          "firstDifferentLine": null
+        },
+        {
+          "source": "supabase/functions/rapid-api/goodiesStripeState.ts",
+          "deployedName": "goodiesStripeState.ts",
+          "equal": true,
+          "localBytes": 1431,
+          "deployedBytes": 1431,
+          "firstDifferentLine": null
+        }
+      ]
+    },
+    {
+      "name": "process-goodies-push-notifications",
+      "version": 1,
+      "verifyJwt": false,
+      "files": [
+        {
+          "source": "supabase/functions/process-goodies-push-notifications/index.ts",
+          "deployedName": "process-goodies-push-notifications/index.ts",
+          "equal": true,
+          "localBytes": 605,
+          "deployedBytes": 605,
+          "firstDifferentLine": null
+        },
+        {
+          "source": "supabase/functions/process-goodies-push-notifications/pushProcessor.ts",
+          "deployedName": "process-goodies-push-notifications/pushProcessor.ts",
+          "equal": true,
+          "localBytes": 4449,
+          "deployedBytes": 4449,
+          "firstDifferentLine": null
+        }
+      ]
+    }
+  ]
+}

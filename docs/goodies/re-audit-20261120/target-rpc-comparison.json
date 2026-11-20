@@ -1,0 +1,6896 @@
+{
+  "observedAt": "2026-11-20T18:29:32.742Z",
+  "scope": "Literal RPC name/argument compatibility only. No application, authorization, provider, return-value or hosted execution is inferred.",
+  "inventory": {
+    "path": "docs/goodies/re-audit-20261120/source-inventory.json",
+    "sha256": "8e4e4c45424e905ba1fe60bea5e89579e2c786038136cb73149f8c461836e756"
+  },
+  "catalog": {
+    "path": "docs/goodies/re-audit-20261120/target-rpc-catalog.json",
+    "sha256": "6f1924a6fed74fc527a45de2dd6b589ce0739e7bff24e1965e0d818946e70dba"
+  },
+  "counts": {
+    "COMPATIBLE": 157,
+    "PARTIAL": 6,
+    "MISSING": 9,
+    "INCOMPATIBLE": 0
+  },
+  "dynamicSites": 6,
+  "sites": [
+    {
+      "repository": "admin",
+      "file": "src/features/admin/auth/AuthFlow.tsx",
+      "line": 173,
+      "owner": "AuthFlow.savePassword",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_accept_invitation",
+      "arguments": [
+        "'wantiss_admin_accept_invitation'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_accept_invitation",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 90,
+      "owner": "loadAdminDomain",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_dashboard_snapshot",
+      "arguments": [
+        "'wantiss_admin_dashboard_snapshot'",
+        "{ p_domain: domain }"
+      ],
+      "input": {
+        "certain": [
+          "p_domain"
+        ],
+        "possible": [
+          "p_domain"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_dashboard_snapshot",
+          "names": [
+            "p_domain"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 96,
+      "owner": "listApplicationBusinesses",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_application_businesses",
+      "arguments": [
+        "'wantiss_admin_application_businesses'",
+        "{ p_application_id: applicationId }"
+      ],
+      "input": {
+        "certain": [
+          "p_application_id"
+        ],
+        "possible": [
+          "p_application_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_application_businesses",
+          "names": [
+            "p_application_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 100,
+      "owner": "assignApplicationBusiness",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_assign_business_application",
+      "arguments": [
+        "'wantiss_admin_assign_business_application'",
+        "{ p_application_id: applicationId, p_business_id: businessId }"
+      ],
+      "input": {
+        "certain": [
+          "p_application_id",
+          "p_business_id"
+        ],
+        "possible": [
+          "p_application_id",
+          "p_business_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_assign_business_application",
+          "names": [
+            "p_application_id",
+            "p_business_id"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 104,
+      "owner": "reviewBusinessApplication",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_review_business_application",
+      "arguments": [
+        "'wantiss_admin_review_business_application'",
+        "{\n    p_application_id: id, p_status: status, p_review_note: note, p_final_rejection: finalRejection,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_application_id",
+          "p_status",
+          "p_review_note",
+          "p_final_rejection"
+        ],
+        "possible": [
+          "p_application_id",
+          "p_status",
+          "p_review_note",
+          "p_final_rejection"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_review_business_application",
+          "names": [
+            "p_application_id",
+            "p_status",
+            "p_review_note",
+            "p_final_rejection"
+          ],
+          "count": 4,
+          "defaults": 2,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 130,
+      "owner": "setBusinessApplicationDocumentStatus",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_set_application_document_status",
+      "arguments": [
+        "'wantiss_admin_set_application_document_status'",
+        "{\n    p_document_id: documentId, p_status: status, p_review_note: reason || null,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_document_id",
+          "p_status",
+          "p_review_note"
+        ],
+        "possible": [
+          "p_document_id",
+          "p_status",
+          "p_review_note"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_set_application_document_status",
+          "names": [
+            "p_document_id",
+            "p_status",
+            "p_review_note"
+          ],
+          "count": 3,
+          "defaults": 1,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 142,
+      "owner": "setBusinessVerification",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_set_business_verification",
+      "arguments": [
+        "'wantiss_admin_set_business_verification'",
+        "{\n    p_business: businessId, p_status: status, p_reason: reason,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_status",
+          "p_reason"
+        ],
+        "possible": [
+          "p_business",
+          "p_status",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_set_business_verification",
+          "names": [
+            "p_business",
+            "p_status",
+            "p_reason"
+          ],
+          "count": 3,
+          "defaults": 1,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 149,
+      "owner": "saveCmsVersion",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_save_cms_draft",
+      "arguments": [
+        "'wantiss_admin_save_cms_draft'",
+        "{\n    p_content_key: input.key, p_locale: input.locale, p_payload: input.payload,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_content_key",
+          "p_locale",
+          "p_payload"
+        ],
+        "possible": [
+          "p_content_key",
+          "p_locale",
+          "p_payload"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_save_cms_draft",
+          "names": [
+            "p_content_key",
+            "p_locale",
+            "p_payload"
+          ],
+          "count": 3,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 191,
+      "owner": "uploadCmsAsset",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_upsert_asset",
+      "arguments": [
+        "'wantiss_admin_upsert_asset'",
+        "{\n    p_asset_key: input.key, p_storage_path: path, p_content_type: contentType,\n    p_byte_size: byteSize, p_alt_text: input.altText || {}, p_status: 'draft',\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_asset_key",
+          "p_storage_path",
+          "p_content_type",
+          "p_byte_size",
+          "p_alt_text",
+          "p_status"
+        ],
+        "possible": [
+          "p_asset_key",
+          "p_storage_path",
+          "p_content_type",
+          "p_byte_size",
+          "p_alt_text",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_upsert_asset",
+          "names": [
+            "p_asset_key",
+            "p_storage_path",
+            "p_content_type",
+            "p_byte_size",
+            "p_alt_text",
+            "p_status"
+          ],
+          "count": 6,
+          "defaults": 2,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 207,
+      "owner": "publishCmsVersion",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_publish_cms_version",
+      "arguments": [
+        "'wantiss_admin_publish_cms_version'",
+        "{ p_content_id: id }"
+      ],
+      "input": {
+        "certain": [
+          "p_content_id"
+        ],
+        "possible": [
+          "p_content_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_publish_cms_version",
+          "names": [
+            "p_content_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 210,
+      "owner": "archiveCmsVersion",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_archive_cms_version",
+      "arguments": [
+        "'wantiss_admin_archive_cms_version'",
+        "{ p_content_id: id }"
+      ],
+      "input": {
+        "certain": [
+          "p_content_id"
+        ],
+        "possible": [
+          "p_content_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_archive_cms_version",
+          "names": [
+            "p_content_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 213,
+      "owner": "publishCmsAsset",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_set_cms_asset_status",
+      "arguments": [
+        "'wantiss_admin_set_cms_asset_status'",
+        "{ p_asset_id: id, p_status: 'published' }"
+      ],
+      "input": {
+        "certain": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_set_cms_asset_status",
+          "names": [
+            "p_asset_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 216,
+      "owner": "archiveCmsAsset",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_set_cms_asset_status",
+      "arguments": [
+        "'wantiss_admin_set_cms_asset_status'",
+        "{ p_asset_id: id, p_status: 'archived' }"
+      ],
+      "input": {
+        "certain": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_asset_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_set_cms_asset_status",
+          "names": [
+            "p_asset_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 244,
+      "owner": "applyAccountRestriction",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_apply_account_restriction",
+      "arguments": [
+        "'wantiss_admin_apply_account_restriction'",
+        "{\n    p_user_id: input.userId, p_kind: input.kind, p_scope: input.scope, p_reason: input.reason,\n    p_notes: input.notes, p_starts_at: input.startsAt, p_ends_at: input.endsAt || null,\n    p_notify_user: input.notifyUser,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_user_id",
+          "p_kind",
+          "p_scope",
+          "p_reason",
+          "p_notes",
+          "p_starts_at",
+          "p_ends_at",
+          "p_notify_user"
+        ],
+        "possible": [
+          "p_user_id",
+          "p_kind",
+          "p_scope",
+          "p_reason",
+          "p_notes",
+          "p_starts_at",
+          "p_ends_at",
+          "p_notify_user"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_apply_account_restriction",
+          "names": [
+            "p_user_id",
+            "p_kind",
+            "p_scope",
+            "p_reason",
+            "p_notes",
+            "p_starts_at",
+            "p_ends_at",
+            "p_notify_user"
+          ],
+          "count": 8,
+          "defaults": 1,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 252,
+      "owner": "liftAccountRestriction",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_lift_account_restriction",
+      "arguments": [
+        "'wantiss_admin_lift_account_restriction'",
+        "{\n    p_restriction_id: restrictionId, p_reason: reason,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_restriction_id",
+          "p_reason"
+        ],
+        "possible": [
+          "p_restriction_id",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_lift_account_restriction",
+          "names": [
+            "p_restriction_id",
+            "p_reason"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 258,
+      "owner": "updateAccountRestriction",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_update_account_restriction",
+      "arguments": [
+        "'wantiss_admin_update_account_restriction'",
+        "{\n    p_restriction_id: restrictionId, p_ends_at: endsAt, p_reason: reason,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_restriction_id",
+          "p_ends_at",
+          "p_reason"
+        ],
+        "possible": [
+          "p_restriction_id",
+          "p_ends_at",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_update_account_restriction",
+          "names": [
+            "p_restriction_id",
+            "p_ends_at",
+            "p_reason"
+          ],
+          "count": 3,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 289,
+      "owner": "requestFinancialAction",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_request_financial_action",
+      "arguments": [
+        "'wantiss_admin_request_financial_action'",
+        "{\n    p_action_type: input.actionType, p_transaction_id: input.transactionId || null,\n    p_target_user_id: input.targetUserId, p_amount: input.amount,\n    p_direction: input.direction || null, p_reason: input.reason,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_action_type",
+          "p_transaction_id",
+          "p_target_user_id",
+          "p_amount",
+          "p_direction",
+          "p_reason"
+        ],
+        "possible": [
+          "p_action_type",
+          "p_transaction_id",
+          "p_target_user_id",
+          "p_amount",
+          "p_direction",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_request_financial_action",
+          "names": [
+            "p_action_type",
+            "p_transaction_id",
+            "p_target_user_id",
+            "p_amount",
+            "p_direction",
+            "p_reason"
+          ],
+          "count": 6,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 298,
+      "owner": "reviewFinancialAction",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_review_financial_action",
+      "arguments": [
+        "'wantiss_admin_review_financial_action'",
+        "{\n    p_action_id: id, p_decision: decision, p_reason: reason,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_action_id",
+          "p_decision",
+          "p_reason"
+        ],
+        "possible": [
+          "p_action_id",
+          "p_decision",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_review_financial_action",
+          "names": [
+            "p_action_id",
+            "p_decision",
+            "p_reason"
+          ],
+          "count": 3,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/adminBackend.ts",
+      "line": 305,
+      "owner": "recordRestrictionAppeal",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_record_restriction_appeal",
+      "arguments": [
+        "'wantiss_admin_record_restriction_appeal'",
+        "{\n    p_restriction_id: restrictionId, p_action: action, p_reason: reason.trim(),\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_restriction_id",
+          "p_action",
+          "p_reason"
+        ],
+        "possible": [
+          "p_restriction_id",
+          "p_action",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_record_restriction_appeal",
+          "names": [
+            "p_restriction_id",
+            "p_action",
+            "p_reason"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/goodiesIngredientRequests.ts",
+      "line": 7,
+      "owner": "loadAllGoodiesIngredientRequests",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "client.rpc",
+      "contract": "wantiss_admin_list_ingredient_requests_page",
+      "arguments": [
+        "'wantiss_admin_list_ingredient_requests_page'",
+        "{p_offset:offset,p_limit:size,p_waiting:false}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit",
+          "p_waiting"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit",
+          "p_waiting"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_list_ingredient_requests_page",
+          "names": [
+            "p_offset",
+            "p_limit",
+            "p_waiting"
+          ],
+          "count": 3,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/lib/hydrateAdminState.ts",
+      "line": 57,
+      "owner": "hydrateAdminState",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_audit_read",
+      "arguments": [
+        "'wantiss_admin_audit_read'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_audit_read",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 51,
+      "owner": "GoodiesBuilderConfigEditor.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_list_goodies_builder_configs",
+      "arguments": [
+        "'wantiss_admin_list_goodies_builder_configs'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_list_goodies_builder_configs",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 62,
+      "owner": "GoodiesBuilderConfigEditor",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_list_library_ingredients",
+      "arguments": [
+        "'wantiss_admin_list_library_ingredients'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_list_library_ingredients",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+      "line": 114,
+      "owner": "GoodiesBuilderConfigEditor.persist",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_save_goodies_builder_config",
+      "arguments": [
+        "'wantiss_admin_save_goodies_builder_config'",
+        "{\n        p_business_id: row.business_id, p_builder_id: row.builder_id, p_config: config, p_enabled: !!row.enabled,\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_business_id",
+          "p_builder_id",
+          "p_config",
+          "p_enabled"
+        ],
+        "possible": [
+          "p_business_id",
+          "p_builder_id",
+          "p_config",
+          "p_enabled"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_save_goodies_builder_config",
+          "names": [
+            "p_business_id",
+            "p_builder_id",
+            "p_config",
+            "p_enabled"
+          ],
+          "count": 4,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 66,
+      "owner": "GoodiesIngredientRequests.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_list_ingredient_requests_page",
+      "arguments": [
+        "'wantiss_admin_list_ingredient_requests_page'",
+        "{p_offset:requestPage*50,p_limit:50,p_waiting:!showAll}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit",
+          "p_waiting"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit",
+          "p_waiting"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_list_ingredient_requests_page",
+          "names": [
+            "p_offset",
+            "p_limit",
+            "p_waiting"
+          ],
+          "count": 3,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 67,
+      "owner": "GoodiesIngredientRequests.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_list_library_ingredients",
+      "arguments": [
+        "'wantiss_admin_list_library_ingredients'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_list_library_ingredients",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 68,
+      "owner": "GoodiesIngredientRequests.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_get_ingredient_rules",
+      "arguments": [
+        "'goodies_get_ingredient_rules'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_get_ingredient_rules",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 120,
+      "owner": "GoodiesIngredientRequests.review",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_review_ingredient_request",
+      "arguments": [
+        "'wantiss_admin_review_ingredient_request'",
+        "{ p_request_id: r.id, p_status: status, p_review_note: notes[r.id] || null, p_admin_asset_key: assetKey, p_role: null }"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_review_ingredient_request",
+          "names": [
+            "p_request_id",
+            "p_status",
+            "p_review_note",
+            "p_admin_asset_key",
+            "p_role"
+          ],
+          "count": 5,
+          "defaults": 3,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 129,
+      "owner": "GoodiesIngredientRequests.replacePhoto",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_review_ingredient_request",
+      "arguments": [
+        "'wantiss_admin_review_ingredient_request'",
+        "{ p_request_id: r.id, p_status: r.status === 'approved' ? 'approved' : 'needs_info', p_review_note: r.status === 'approved' ? r.review_note : (notes[r.id] || 'We replaced your photo to fit the builder.'), p_admin_asset_key: key, p_role: null }"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_status",
+          "p_review_note",
+          "p_admin_asset_key",
+          "p_role"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_review_ingredient_request",
+          "names": [
+            "p_request_id",
+            "p_status",
+            "p_review_note",
+            "p_admin_asset_key",
+            "p_role"
+          ],
+          "count": 5,
+          "defaults": 3,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 136,
+      "owner": "GoodiesIngredientRequests.persistLibrary",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_save_library_ingredient",
+      "arguments": [
+        "'wantiss_admin_save_library_ingredient'",
+        "{ p_id: l.id || null, p_builder: l.builder, p_role: l.role || null, p_name: l.name, p_asset_key: key, p_active: l.active ?? true }"
+      ],
+      "input": {
+        "certain": [
+          "p_id",
+          "p_builder",
+          "p_role",
+          "p_name",
+          "p_asset_key",
+          "p_active"
+        ],
+        "possible": [
+          "p_id",
+          "p_builder",
+          "p_role",
+          "p_name",
+          "p_asset_key",
+          "p_active"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_save_library_ingredient",
+          "names": [
+            "p_id",
+            "p_builder",
+            "p_role",
+            "p_name",
+            "p_asset_key",
+            "p_active"
+          ],
+          "count": 6,
+          "defaults": 1,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+      "line": 147,
+      "owner": "GoodiesIngredientRequests.saveRules",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_admin_set_ingredient_rules",
+      "arguments": [
+        "'wantiss_admin_set_ingredient_rules'",
+        "{ p_rules: rules }"
+      ],
+      "input": {
+        "certain": [
+          "p_rules"
+        ],
+        "possible": [
+          "p_rules"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_admin_set_ingredient_rules",
+          "names": [
+            "p_rules"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 91,
+      "owner": "GoodiesAdminScreen.reload",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_dashboard",
+      "arguments": [
+        "'goodies_admin_dashboard'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_dashboard",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 117,
+      "owner": "GoodiesAdminScreen.loadCouriers",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_courier_candidates_page",
+      "arguments": [
+        "'goodies_admin_courier_candidates_page'",
+        "{p_offset:courierPage*100,p_limit:100}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_courier_candidates_page",
+          "names": [
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 2,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 126,
+      "owner": "GoodiesAdminScreen.loadOrderPage",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_orders_page",
+      "arguments": [
+        "'goodies_admin_orders_page'",
+        "{p_offset:orderPage*100,p_limit:100}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_orders_page",
+          "names": [
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 2,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 165,
+      "owner": "GoodiesAdminScreen.loadReports",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_list_delivery_reports",
+      "arguments": [
+        "'goodies_admin_list_delivery_reports'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_list_delivery_reports",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 182,
+      "owner": "GoodiesAdminScreen.reviewCustomerRating",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_review_order_review",
+      "arguments": [
+        "'goodies_admin_review_order_review'",
+        "{p_review_id:row.id,p_status:status,p_note:status==='rejected'?note?.trim()||null:null}"
+      ],
+      "input": {
+        "certain": [
+          "p_review_id",
+          "p_status",
+          "p_note"
+        ],
+        "possible": [
+          "p_review_id",
+          "p_status",
+          "p_note"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_review_order_review",
+          "names": [
+            "p_review_id",
+            "p_status",
+            "p_note"
+          ],
+          "count": 3,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 195,
+      "owner": "GoodiesAdminScreen.resolveReport.onPress",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_resolve_delivery_dispute",
+      "arguments": [
+        "'goodies_admin_resolve_delivery_dispute'",
+        "{p_order_id:item.order_id,p_resolution:resolution}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_resolution"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_resolution"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_resolve_delivery_dispute",
+          "names": [
+            "p_order_id",
+            "p_resolution"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 219,
+      "owner": "GoodiesAdminScreen.setCourierAccess",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_add_courier",
+      "arguments": [
+        "enabled?'goodies_admin_add_courier':'goodies_admin_remove_courier'",
+        "{p_courier_id:item.courier_id}"
+      ],
+      "input": {
+        "certain": [
+          "p_courier_id"
+        ],
+        "possible": [
+          "p_courier_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_add_courier",
+          "names": [
+            "p_courier_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 219,
+      "owner": "GoodiesAdminScreen.setCourierAccess",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_remove_courier",
+      "arguments": [
+        "enabled?'goodies_admin_add_courier':'goodies_admin_remove_courier'",
+        "{p_courier_id:item.courier_id}"
+      ],
+      "input": {
+        "certain": [
+          "p_courier_id"
+        ],
+        "possible": [
+          "p_courier_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_remove_courier",
+          "names": [
+            "p_courier_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 227,
+      "owner": "GoodiesAdminScreen.loadAnalytics",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_analytics",
+      "arguments": [
+        "'goodies_admin_analytics'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_analytics",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 235,
+      "owner": "GoodiesAdminScreen.loadCustomerReviews",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_list_reviews",
+      "arguments": [
+        "'goodies_admin_list_reviews'",
+        "{p_offset:reviewsPage*50,p_limit:50}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_list_reviews",
+          "names": [
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 2,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 244,
+      "owner": "GoodiesAdminScreen.setMerchant",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_set_merchant_status",
+      "arguments": [
+        "'goodies_admin_set_merchant_status'",
+        "{p_business_id:item.business_id,p_live:!item.is_live}"
+      ],
+      "input": {
+        "certain": [
+          "p_business_id",
+          "p_live"
+        ],
+        "possible": [
+          "p_business_id",
+          "p_live"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_set_merchant_status",
+          "names": [
+            "p_business_id",
+            "p_live"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 255,
+      "owner": "GoodiesAdminScreen.cancelOrder.onPress",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_cancel_order",
+      "arguments": [
+        "'goodies_admin_cancel_order'",
+        "{p_order_id:item.id,p_reason:'The order was cancelled by Wantiss support.'}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_reason"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_cancel_order",
+          "names": [
+            "p_order_id",
+            "p_reason"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 266,
+      "owner": "GoodiesAdminScreen.reviewProduct",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_review_product",
+      "arguments": [
+        "'goodies_admin_review_product'",
+        "{p_product_id:item.id,p_status:status,p_note:status==='rejected'?reason.trim():null}"
+      ],
+      "input": {
+        "certain": [
+          "p_product_id",
+          "p_status",
+          "p_note"
+        ],
+        "possible": [
+          "p_product_id",
+          "p_status",
+          "p_note"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_review_product",
+          "names": [
+            "p_product_id",
+            "p_status",
+            "p_note"
+          ],
+          "count": 3,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 280,
+      "owner": "GoodiesAdminScreen.saveFees",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_update_fee_policy",
+      "arguments": [
+        "'goodies_admin_update_fee_policy'",
+        "{p_service_fee:amount,p_first_order_free:firstFree,p_wallet_enabled:wallet,p_card_enabled:card,p_cash_enabled:cash,p_tips:tipValues}"
+      ],
+      "input": {
+        "certain": [
+          "p_service_fee",
+          "p_first_order_free",
+          "p_wallet_enabled",
+          "p_card_enabled",
+          "p_cash_enabled",
+          "p_tips"
+        ],
+        "possible": [
+          "p_service_fee",
+          "p_first_order_free",
+          "p_wallet_enabled",
+          "p_card_enabled",
+          "p_cash_enabled",
+          "p_tips"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_update_fee_policy",
+          "names": [
+            "p_service_fee",
+            "p_first_order_free",
+            "p_wallet_enabled",
+            "p_card_enabled",
+            "p_cash_enabled",
+            "p_tips"
+          ],
+          "count": 6,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 294,
+      "owner": "GoodiesAdminScreen.saveDeliverySurcharge",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesRequest",
+      "contract": "goodies_admin_update_multi_store_policy",
+      "arguments": [
+        "'goodies_admin_update_multi_store_policy'",
+        "{\n      p_enabled:additionalStoreSurchargeEnabled,\n      p_additional_store_fee:flat,\n      p_extra_distance_per_km:perKm,\n      p_max_stops:stops\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_enabled",
+          "p_additional_store_fee",
+          "p_extra_distance_per_km",
+          "p_max_stops"
+        ],
+        "possible": [
+          "p_enabled",
+          "p_additional_store_fee",
+          "p_extra_distance_per_km",
+          "p_max_stops"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_update_multi_store_policy",
+          "names": [
+            "p_enabled",
+            "p_additional_store_fee",
+            "p_extra_distance_per_km",
+            "p_max_stops"
+          ],
+          "count": 4,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 27,
+      "owner": "GoodiesSettlementAdmin.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_admin_settlement_queue",
+      "arguments": [
+        "'goodies_admin_settlement_queue'",
+        "{p_offset:page*50,p_limit:50}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_settlement_queue",
+          "names": [
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 2,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 35,
+      "owner": "GoodiesSettlementAdmin.submit",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_admin_destination_details",
+      "arguments": [
+        "'goodies_admin_destination_details'",
+        "{p_destination:chosen.id,p_reason:reason}"
+      ],
+      "input": {
+        "certain": [
+          "p_destination",
+          "p_reason"
+        ],
+        "possible": [
+          "p_destination",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_destination_details",
+          "names": [
+            "p_destination",
+            "p_reason"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 36,
+      "owner": "GoodiesSettlementAdmin.submit",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_admin_set_bank_calendar",
+      "arguments": [
+        "'goodies_admin_set_bank_calendar'",
+        "{p_country:calendarCountry,p_reviewed_until:calendarCoverage,p_holidays:calendarDays.split(',').map(value=>value.trim()).filter(Boolean),p_reason:reason}"
+      ],
+      "input": {
+        "certain": [
+          "p_country",
+          "p_reviewed_until",
+          "p_holidays",
+          "p_reason"
+        ],
+        "possible": [
+          "p_country",
+          "p_reviewed_until",
+          "p_holidays",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_set_bank_calendar",
+          "names": [
+            "p_country",
+            "p_reviewed_until",
+            "p_holidays",
+            "p_reason"
+          ],
+          "count": 4,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 36,
+      "owner": "GoodiesSettlementAdmin.submit",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_admin_set_payout_channel",
+      "arguments": [
+        "'goodies_admin_set_payout_channel'",
+        "{p_method:chosen.method,p_enabled:chosen.enabled,p_reason:reason}"
+      ],
+      "input": {
+        "certain": [
+          "p_method",
+          "p_enabled",
+          "p_reason"
+        ],
+        "possible": [
+          "p_method",
+          "p_enabled",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_set_payout_channel",
+          "names": [
+            "p_method",
+            "p_enabled",
+            "p_reason"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+      "line": 36,
+      "owner": "GoodiesSettlementAdmin.submit",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_admin_settlement_action",
+      "arguments": [
+        "'goodies_admin_settlement_action'",
+        "{p_kind:chosen.kind,p_id:chosen.id,p_decision:chosen.decision,p_reference:reference||null,p_reason:reason,p_amount:needsAmount?Number(amount):null}"
+      ],
+      "input": {
+        "certain": [
+          "p_kind",
+          "p_id",
+          "p_decision",
+          "p_reference",
+          "p_reason",
+          "p_amount"
+        ],
+        "possible": [
+          "p_kind",
+          "p_id",
+          "p_decision",
+          "p_reference",
+          "p_reason",
+          "p_amount"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_admin_settlement_action",
+          "names": [
+            "p_kind",
+            "p_id",
+            "p_decision",
+            "p_reference",
+            "p_reason",
+            "p_amount"
+          ],
+          "count": 6,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+      "line": 17,
+      "owner": "GoodiesSharedBillRefunds.load",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "help_pay_admin_refund_queue",
+      "arguments": [
+        "'help_pay_admin_refund_queue'",
+        "{p_offset:page*40,p_limit:40}"
+      ],
+      "input": {
+        "certain": [
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_admin_refund_queue",
+          "names": [
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 2,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+      "line": 20,
+      "owner": "GoodiesSharedBillRefunds.retry",
+      "roles": [
+        "admin"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "help_pay_admin_retry_refund",
+      "arguments": [
+        "'help_pay_admin_retry_refund'",
+        "{p_request_id:id,p_reason:reason.trim()}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_reason"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_reason"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_admin_retry_refund",
+          "names": [
+            "p_request_id",
+            "p_reason"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 355,
+      "owner": "placeOrderWork",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "place_goodies_order_with_payment_once",
+      "arguments": [
+        "'place_goodies_order_with_payment_once'",
+        "{\n        p_idempotency_key: attempt.key,\n        p_payment_method: submitted.pay,\n        ...orderPayload,\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_idempotency_key",
+          "p_payment_method"
+        ],
+        "possible": [
+          "p_idempotency_key",
+          "p_payment_method"
+        ],
+        "unknown": true
+      },
+      "matchingSignatures": [
+        {
+          "name": "place_goodies_order_with_payment_once",
+          "names": [
+            "p_idempotency_key",
+            "p_payment_method",
+            "p_store_id",
+            "p_order_type",
+            "p_scheduled_for",
+            "p_address",
+            "p_contact_phone",
+            "p_items",
+            "p_subtotal",
+            "p_delivery_fee",
+            "p_service_fee",
+            "p_discount",
+            "p_tip",
+            "p_total",
+            "p_notes",
+            "p_promo_code"
+          ],
+          "count": 16,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 468,
+      "owner": "cancelOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "set_goodies_order_status",
+      "arguments": [
+        "'set_goodies_order_status'",
+        "{p_order_id:o.backendId,p_status:'cancelled'}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "set_goodies_order_status",
+          "names": [
+            "p_order_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 500,
+      "owner": "togglePref",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_set_notification_preference",
+      "arguments": [
+        "'goodies_set_notification_preference'",
+        "{p_kind: k, p_enabled: enabled}"
+      ],
+      "input": {
+        "certain": [
+          "p_kind",
+          "p_enabled"
+        ],
+        "possible": [
+          "p_kind",
+          "p_enabled"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_notification_preference",
+          "names": [
+            "p_kind",
+            "p_enabled"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 536,
+      "owner": "refreshPaymentOptions",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "get_my_payment_methods",
+      "arguments": [
+        "'get_my_payment_methods'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "get_my_payment_methods",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 563,
+      "owner": "createWallet",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "ensure_my_wallet",
+      "arguments": [
+        "'ensure_my_wallet'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "ensure_my_wallet",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 587,
+      "owner": "placeMultiOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_cash_on_delivery_available",
+      "arguments": [
+        "'goodies_cash_on_delivery_available'",
+        "{p_store_id: sid}"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id"
+        ],
+        "possible": [
+          "p_store_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_cash_on_delivery_available",
+          "names": [
+            "p_store_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 649,
+      "owner": "placeMultiOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_place_multi_order",
+      "arguments": [
+        "'goodies_place_multi_order'",
+        "{p_idempotency_key: attempt.key, ...payload}"
+      ],
+      "input": {
+        "certain": [
+          "p_idempotency_key"
+        ],
+        "possible": [
+          "p_idempotency_key"
+        ],
+        "unknown": true
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_place_multi_order",
+          "names": [
+            "p_idempotency_key",
+            "p_payment_method",
+            "p_order_type",
+            "p_scheduled_for",
+            "p_address",
+            "p_contact_phone",
+            "p_stops",
+            "p_service_fee",
+            "p_tip",
+            "p_notes"
+          ],
+          "count": 10,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 301,
+      "owner": "GroupOrderSheet.createServerGroup",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_create",
+      "arguments": [
+        "'goodies_group_order_create'",
+        "{p_store_id:targetStoreId}"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id"
+        ],
+        "possible": [
+          "p_store_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_create",
+          "names": [
+            "p_store_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 326,
+      "owner": "GroupOrderSheet.joinGroup",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_join",
+      "arguments": [
+        "'goodies_group_order_join'",
+        "{p_invite_code:code}"
+      ],
+      "input": {
+        "certain": [
+          "p_invite_code"
+        ],
+        "possible": [
+          "p_invite_code"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_join",
+          "names": [
+            "p_invite_code"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 361,
+      "owner": "GroupOrderSheet.loadMembers",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_list_members",
+      "arguments": [
+        "'goodies_group_order_list_members'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_list_members",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 372,
+      "owner": "GroupOrderSheet.refreshGroupStatus",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_get_status",
+      "arguments": [
+        "'goodies_group_order_get_status'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_get_status",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 412,
+      "owner": "GroupOrderSheet.loadInvites",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_my_invites",
+      "arguments": [
+        "'goodies_group_order_my_invites'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_my_invites",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 430,
+      "owner": "GroupOrderSheet.openFriends",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_list_friends",
+      "arguments": [
+        "'goodies_group_order_list_friends'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_list_friends",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 443,
+      "owner": "GroupOrderSheet.sendFriendInvites",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_invite_friends",
+      "arguments": [
+        "'goodies_group_order_invite_friends'",
+        "{p_group_id:groupId,p_user_ids:users}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id",
+          "p_user_ids"
+        ],
+        "possible": [
+          "p_group_id",
+          "p_user_ids"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_invite_friends",
+          "names": [
+            "p_group_id",
+            "p_user_ids"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 461,
+      "owner": "GroupOrderSheet.declineInvite",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_decline_invite",
+      "arguments": [
+        "'goodies_group_order_decline_invite'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_decline_invite",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 488,
+      "owner": "GroupOrderSheet.loadGroupEstimate",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_checkout_estimate",
+      "arguments": [
+        "'goodies_group_order_checkout_estimate'",
+        "{p_group_id:groupId,p_order_type:type,p_address:address}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id",
+          "p_order_type",
+          "p_address"
+        ],
+        "possible": [
+          "p_group_id",
+          "p_order_type",
+          "p_address"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_checkout_estimate",
+          "names": [
+            "p_group_id",
+            "p_order_type",
+            "p_address"
+          ],
+          "count": 3,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 560,
+      "owner": "GroupOrderSheet.checkoutGroupOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_checkout",
+      "arguments": [
+        "'goodies_group_order_checkout'",
+        "{\n        p_idempotency_key:'group-'+submittedGroupId+'-checkout',\n        p_group_id:submittedGroupId,\n        p_order_type:submittedOrderType,\n        p_scheduled_for:null,\n        p_address:addressPayload,\n        p_contact_phone:contactPhone,\n        p_tip:0,\n        p_notes:null\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_idempotency_key",
+          "p_group_id",
+          "p_order_type",
+          "p_scheduled_for",
+          "p_address",
+          "p_contact_phone",
+          "p_tip",
+          "p_notes"
+        ],
+        "possible": [
+          "p_idempotency_key",
+          "p_group_id",
+          "p_order_type",
+          "p_scheduled_for",
+          "p_address",
+          "p_contact_phone",
+          "p_tip",
+          "p_notes"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_checkout",
+          "names": [
+            "p_idempotency_key",
+            "p_group_id",
+            "p_order_type",
+            "p_scheduled_for",
+            "p_address",
+            "p_contact_phone",
+            "p_tip",
+            "p_notes"
+          ],
+          "count": 8,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 600,
+      "owner": "GroupOrderSheet.reviewSharedOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_checkout_preview",
+      "arguments": [
+        "'goodies_group_order_checkout_preview'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_checkout_preview",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 615,
+      "owner": "GroupOrderSheet.endGroupOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_end",
+      "arguments": [
+        "'goodies_group_order_end'",
+        "{p_group_id:groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_end",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 849,
+      "owner": "ReviewSheet",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_submit_order_review",
+      "arguments": [
+        "'goodies_submit_order_review'",
+        "{p_order_id: o.backendId, p_review_target: driver ? 'courier' : 'store', p_rating: n, p_comment: t.trim()}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_review_target",
+          "p_rating",
+          "p_comment"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_review_target",
+          "p_rating",
+          "p_comment"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_submit_order_review",
+          "names": [
+            "p_order_id",
+            "p_review_target",
+            "p_rating",
+            "p_comment"
+          ],
+          "count": 4,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+      "line": 44,
+      "owner": "module",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_update_location",
+      "arguments": [
+        "'goodies_courier_update_location'",
+        "{\n    p_order_id: activeOrderId,\n    p_latitude: latitude,\n    p_longitude: longitude,\n    p_accuracy_m: accuracy,\n    p_heading: heading,\n    p_speed_mps: speed,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_update_location",
+          "names": [
+            "p_order_id",
+            "p_latitude",
+            "p_longitude",
+            "p_accuracy_m",
+            "p_heading",
+            "p_speed_mps"
+          ],
+          "count": 6,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 105,
+      "owner": "GoodiesCourierScreen.read",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_orders",
+      "arguments": [
+        "'goodies_courier_orders'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_orders",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 110,
+      "owner": "GoodiesCourierScreen.read",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_delivery_details",
+      "arguments": [
+        "'goodies_courier_delivery_details'",
+        "{p_order_id:order.order_id}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id"
+        ],
+        "possible": [
+          "p_order_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_delivery_details",
+          "names": [
+            "p_order_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 198,
+      "owner": "GoodiesCourierScreen.startTracking",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_update_location",
+      "arguments": [
+        "'goodies_courier_update_location'",
+        "{\n          p_order_id:activeOrderId,\n          p_latitude:position.coords.latitude,\n          p_longitude:position.coords.longitude,\n          p_accuracy_m:position.coords.accuracy,\n          p_heading:position.coords.heading,\n          p_speed_mps:position.coords.speed,\n        }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_latitude",
+          "p_longitude",
+          "p_accuracy_m",
+          "p_heading",
+          "p_speed_mps"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_update_location",
+          "names": [
+            "p_order_id",
+            "p_latitude",
+            "p_longitude",
+            "p_accuracy_m",
+            "p_heading",
+            "p_speed_mps"
+          ],
+          "count": 6,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 229,
+      "owner": "GoodiesCourierScreen.heartbeat",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_set_courier_availability",
+      "arguments": [
+        "'goodies_set_courier_availability'",
+        "{p_is_available:true,p_accepts_cash_on_delivery:acceptsCash}"
+      ],
+      "input": {
+        "certain": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "possible": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_courier_availability",
+          "names": [
+            "p_is_available",
+            "p_accepts_cash_on_delivery"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 242,
+      "owner": "GoodiesCourierScreen.signOut",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_set_courier_availability",
+      "arguments": [
+        "'goodies_set_courier_availability'",
+        "{p_is_available:false,p_accepts_cash_on_delivery:acceptsCash}"
+      ],
+      "input": {
+        "certain": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "possible": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_courier_availability",
+          "names": [
+            "p_is_available",
+            "p_accepts_cash_on_delivery"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 259,
+      "owner": "GoodiesCourierScreen.setPresence",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_set_courier_availability",
+      "arguments": [
+        "'goodies_set_courier_availability'",
+        "{p_is_available:next,p_accepts_cash_on_delivery:cash}"
+      ],
+      "input": {
+        "certain": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "possible": [
+          "p_is_available",
+          "p_accepts_cash_on_delivery"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_courier_availability",
+          "names": [
+            "p_is_available",
+            "p_accepts_cash_on_delivery"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 269,
+      "owner": "GoodiesCourierScreen.respond",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_respond_assignment",
+      "arguments": [
+        "'goodies_courier_respond_assignment'",
+        "{p_order_id:orderId,p_accept:accept}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_accept"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_accept"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_respond_assignment",
+          "names": [
+            "p_order_id",
+            "p_accept"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 279,
+      "owner": "GoodiesCourierScreen.advance",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_courier_update_delivery_status",
+      "arguments": [
+        "'goodies_courier_update_delivery_status'",
+        "{p_order_id:orderId,p_status:status}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_courier_update_delivery_status",
+          "names": [
+            "p_order_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 67,
+      "owner": "fetchHelpPayStatus",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_status",
+      "arguments": [
+        "'help_pay_status'",
+        "{p_request_id:id}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id"
+        ],
+        "possible": [
+          "p_request_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_status",
+          "names": [
+            "p_request_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 75,
+      "owner": "createHelpPayDraft",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_create_for_account",
+      "arguments": [
+        "expectedUserId?'help_pay_create_for_account':'help_pay_create_request'",
+        "{p_mode:mode,p_total_cents:totalCents,p_checkout_key:checkoutKey,p_checkout_snapshot:checkoutSnapshot,...(expectedUserId?{p_expected_user_id:expectedUserId}:{})}"
+      ],
+      "input": {
+        "certain": [
+          "p_mode",
+          "p_total_cents",
+          "p_checkout_key",
+          "p_checkout_snapshot"
+        ],
+        "possible": [
+          "p_mode",
+          "p_total_cents",
+          "p_checkout_key",
+          "p_checkout_snapshot",
+          "p_expected_user_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_create_for_account",
+          "names": [
+            "p_mode",
+            "p_total_cents",
+            "p_checkout_key",
+            "p_checkout_snapshot",
+            "p_expected_user_id"
+          ],
+          "count": 5,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 75,
+      "owner": "createHelpPayDraft",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_create_request",
+      "arguments": [
+        "expectedUserId?'help_pay_create_for_account':'help_pay_create_request'",
+        "{p_mode:mode,p_total_cents:totalCents,p_checkout_key:checkoutKey,p_checkout_snapshot:checkoutSnapshot,...(expectedUserId?{p_expected_user_id:expectedUserId}:{})}"
+      ],
+      "input": {
+        "certain": [
+          "p_mode",
+          "p_total_cents",
+          "p_checkout_key",
+          "p_checkout_snapshot"
+        ],
+        "possible": [
+          "p_mode",
+          "p_total_cents",
+          "p_checkout_key",
+          "p_checkout_snapshot",
+          "p_expected_user_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_create_request",
+          "names": [
+            "p_mode",
+            "p_total_cents",
+            "p_checkout_key",
+            "p_checkout_snapshot"
+          ],
+          "count": 4,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 80,
+      "owner": "shareHelpPayToFriend",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_share_to_friend",
+      "arguments": [
+        "'help_pay_share_to_friend'",
+        "{p_request_id:requestId,p_friend_id:friendId}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_friend_id"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_friend_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_share_to_friend",
+          "names": [
+            "p_request_id",
+            "p_friend_id"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 85,
+      "owner": "cancelHelpPayRequest",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_cancel_request",
+      "arguments": [
+        "'help_pay_cancel_request'",
+        "{p_request_id:requestId}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id"
+        ],
+        "possible": [
+          "p_request_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_cancel_request",
+          "names": [
+            "p_request_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 96,
+      "owner": "contributeToHelpPay",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_contribute_for_account",
+      "arguments": [
+        "expectedUserId?'help_pay_contribute_for_account':'help_pay_contribute_wallet'",
+        "{p_request_id:requestId,p_amount_cents:amountCents,p_idempotency_key:key,...(expectedUserId?{p_expected_user_id:expectedUserId}:{})}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_amount_cents",
+          "p_idempotency_key"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_amount_cents",
+          "p_idempotency_key",
+          "p_expected_user_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_contribute_for_account",
+          "names": [
+            "p_request_id",
+            "p_amount_cents",
+            "p_idempotency_key",
+            "p_expected_user_id"
+          ],
+          "count": 4,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 96,
+      "owner": "contributeToHelpPay",
+      "roles": [
+        "customer"
+      ],
+      "classification": "PARTIAL",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_contribute_wallet",
+      "arguments": [
+        "expectedUserId?'help_pay_contribute_for_account':'help_pay_contribute_wallet'",
+        "{p_request_id:requestId,p_amount_cents:amountCents,p_idempotency_key:key,...(expectedUserId?{p_expected_user_id:expectedUserId}:{})}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_amount_cents",
+          "p_idempotency_key"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_amount_cents",
+          "p_idempotency_key",
+          "p_expected_user_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_contribute_wallet",
+          "names": [
+            "p_request_id",
+            "p_amount_cents",
+            "p_idempotency_key"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 98,
+      "owner": "fetchHelpPayWalletEnabled",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_wallet_enabled",
+      "arguments": [
+        "'help_pay_wallet_enabled'",
+        "{}"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_wallet_enabled",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 99,
+      "owner": "findHelpPayCheckout",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_request_for_checkout",
+      "arguments": [
+        "'help_pay_request_for_checkout'",
+        "{p_checkout_key:checkoutKey}"
+      ],
+      "input": {
+        "certain": [
+          "p_checkout_key"
+        ],
+        "possible": [
+          "p_checkout_key"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_request_for_checkout",
+          "names": [
+            "p_checkout_key"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 100,
+      "owner": "findHelpPayContribution",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "help_pay_contribution_status",
+      "arguments": [
+        "'help_pay_contribution_status'",
+        "{p_request_id:requestId,p_idempotency_key:key}"
+      ],
+      "input": {
+        "certain": [
+          "p_request_id",
+          "p_idempotency_key"
+        ],
+        "possible": [
+          "p_request_id",
+          "p_idempotency_key"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "help_pay_contribution_status",
+          "names": [
+            "p_request_id",
+            "p_idempotency_key"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/reviews.ts",
+      "line": 12,
+      "owner": "notifyStoreReviewsChanged",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_store_review_summaries",
+      "arguments": [
+        "'goodies_store_review_summaries'",
+        "{p_business_ids: [store.businessId]}"
+      ],
+      "input": {
+        "certain": [
+          "p_business_ids"
+        ],
+        "possible": [
+          "p_business_ids"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_store_review_summaries",
+          "names": [
+            "p_business_ids"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/reviews.ts",
+      "line": 36,
+      "owner": "useStoreReviews.loadPage",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_store_reviews",
+      "arguments": [
+        "'goodies_store_reviews'",
+        "{p_store_id: storeId, p_offset: more ? offset.current : 0, p_limit: 20}"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id",
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_store_id",
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_store_reviews",
+          "names": [
+            "p_store_id",
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 3,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 179,
+      "owner": "Addresses.removeAddr.onConfirm",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "delete_user_address",
+      "arguments": [
+        "'delete_user_address'",
+        "{p_address_id: String(a.id)}"
+      ],
+      "input": {
+        "certain": [
+          "p_address_id"
+        ],
+        "possible": [
+          "p_address_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "delete_user_address",
+          "names": [
+            "p_address_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 247,
+      "owner": "StoreChat.loadMessages",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "mark_conversation_read",
+      "arguments": [
+        "'mark_conversation_read'",
+        "{p_conv:cid}"
+      ],
+      "input": {
+        "certain": [
+          "p_conv"
+        ],
+        "possible": [
+          "p_conv"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "mark_conversation_read",
+          "names": [
+            "p_conv"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 260,
+      "owner": "StoreChat",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_start_store_conversation",
+      "arguments": [
+        "'goodies_start_store_conversation'",
+        "{\n          p_store_id: id,\n          p_customer_name: S.pf.n || label('lbl.accountCustomerFallback', 'Customer'),\n        }"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "possible": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_start_store_conversation",
+          "names": [
+            "p_store_id",
+            "p_customer_name"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 283,
+      "owner": "StoreChat.send",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_send_store_message",
+      "arguments": [
+        "'goodies_send_store_message'",
+        "{p_conversation_id: conversationId, p_body: body}"
+      ],
+      "input": {
+        "certain": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "possible": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_send_store_message",
+          "names": [
+            "p_conversation_id",
+            "p_body"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 341,
+      "owner": "Contact.submit",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_start_store_conversation",
+      "arguments": [
+        "'goodies_start_store_conversation'",
+        "{\n          p_store_id: storeId,\n          p_customer_name: S.pf.n || label('lbl.accountCustomerFallback', 'Customer'),\n        }"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "possible": [
+          "p_store_id",
+          "p_customer_name"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_start_store_conversation",
+          "names": [
+            "p_store_id",
+            "p_customer_name"
+          ],
+          "count": 2,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 351,
+      "owner": "Contact.submit",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_send_store_message",
+      "arguments": [
+        "'goodies_send_store_message'",
+        "{p_conversation_id: conversationId, p_body: ticketBody}"
+      ],
+      "input": {
+        "certain": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "possible": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_send_store_message",
+          "names": [
+            "p_conversation_id",
+            "p_body"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/HelpPay.tsx",
+      "line": 79,
+      "owner": "HelpPay",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_message_contact_profiles",
+      "arguments": [
+        "'wantiss_message_contact_profiles'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_message_contact_profiles",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "line": 63,
+      "owner": "LivePayments.load",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "get_my_payment_methods",
+      "arguments": [
+        "'get_my_payment_methods'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "get_my_payment_methods",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "line": 107,
+      "owner": "LivePayments.makeDefault",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "set_default_payment_method",
+      "arguments": [
+        "'set_default_payment_method'",
+        "{p_payment_method_id: id}"
+      ],
+      "input": {
+        "certain": [
+          "p_payment_method_id"
+        ],
+        "possible": [
+          "p_payment_method_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "set_default_payment_method",
+          "names": [
+            "p_payment_method_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "line": 112,
+      "owner": "LivePayments.removeCard",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "delete_payment_method",
+      "arguments": [
+        "'delete_payment_method'",
+        "{p_payment_method_id: id}"
+      ],
+      "input": {
+        "certain": [
+          "p_payment_method_id"
+        ],
+        "possible": [
+          "p_payment_method_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "delete_payment_method",
+          "names": [
+            "p_payment_method_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 53,
+      "owner": "Store.openStoreShare",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "wantiss_message_contact_profiles",
+      "arguments": [
+        "'wantiss_message_contact_profiles'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "wantiss_message_contact_profiles",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 351,
+      "owner": "Checkout",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_cash_on_delivery_available",
+      "arguments": [
+        "'goodies_cash_on_delivery_available'",
+        "{p_store_id: storeId}"
+      ],
+      "input": {
+        "certain": [
+          "p_store_id"
+        ],
+        "possible": [
+          "p_store_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_cash_on_delivery_available",
+          "names": [
+            "p_store_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 209,
+      "owner": "refreshLiveSchedules",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_store_review_summaries",
+      "arguments": [
+        "'goodies_store_review_summaries'",
+        "{p_business_ids: stores.map(r => r.business_id)}"
+      ],
+      "input": {
+        "certain": [
+          "p_business_ids"
+        ],
+        "possible": [
+          "p_business_ids"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_store_review_summaries",
+          "names": [
+            "p_business_ids"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 253,
+      "owner": "refreshGoodiesAccess",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "get_my_goodies_access_status",
+      "arguments": [
+        "'get_my_goodies_access_status'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "get_my_goodies_access_status",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 386,
+      "owner": "load",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "get_my_payment_methods",
+      "arguments": [
+        "'get_my_payment_methods'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "get_my_payment_methods",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 762,
+      "owner": "syncGroupOrderCartLine",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_upsert_item",
+      "arguments": [
+        "'goodies_group_order_upsert_item'",
+        "{\n    p_group_id: groupId,\n    p_product_id: productId,\n    p_line_key: line.k,\n    p_quantity: line.q,\n    p_options: line.options || {},\n    p_note: line.nt || null,\n  }"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id",
+          "p_product_id",
+          "p_line_key",
+          "p_quantity",
+          "p_options",
+          "p_note"
+        ],
+        "possible": [
+          "p_group_id",
+          "p_product_id",
+          "p_line_key",
+          "p_quantity",
+          "p_options",
+          "p_note"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_upsert_item",
+          "names": [
+            "p_group_id",
+            "p_product_id",
+            "p_line_key",
+            "p_quantity",
+            "p_options",
+            "p_note"
+          ],
+          "count": 6,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 785,
+      "owner": "validateActiveGroup",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_get_status",
+      "arguments": [
+        "'goodies_group_order_get_status'",
+        "{p_group_id: groupId}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id"
+        ],
+        "possible": [
+          "p_group_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_get_status",
+          "names": [
+            "p_group_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/store.ts",
+      "line": 818,
+      "owner": "removeGroupOrderCartLine",
+      "roles": [
+        "customer"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_group_order_remove_item",
+      "arguments": [
+        "'goodies_group_order_remove_item'",
+        "{p_group_id: groupId, p_line_key: lineKey}"
+      ],
+      "input": {
+        "certain": [
+          "p_group_id",
+          "p_line_key"
+        ],
+        "possible": [
+          "p_group_id",
+          "p_line_key"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_group_order_remove_item",
+          "names": [
+            "p_group_id",
+            "p_line_key"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 26,
+      "owner": "GoodiesPromotionsPage.p",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_vendor_promotions",
+      "arguments": [
+        "'goodies_vendor_promotions'",
+        "{p_business:app.biz.id,p_offset:page*40,p_limit:40}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_business",
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_promotions",
+          "names": [
+            "p_business",
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 3,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 46,
+      "owner": "RegistrationPage.r",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "feature_requirements_status",
+      "arguments": [
+        "'feature_requirements_status'",
+        "{ p_business: b.id, p_feature: '_business' }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 83,
+      "owner": "RegistrationPage.uploadApplicationDocument",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "submit_business_application_document",
+      "arguments": [
+        "'submit_business_application_document'",
+        "{\n        p_application_id: application.id, p_document_type: type, p_storage_path: path,\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_application_id",
+          "p_document_type",
+          "p_storage_path"
+        ],
+        "possible": [
+          "p_application_id",
+          "p_document_type",
+          "p_storage_path"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "submit_business_application_document",
+          "names": [
+            "p_application_id",
+            "p_document_type",
+            "p_storage_path"
+          ],
+          "count": 3,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 92,
+      "owner": "RegistrationPage.startApplication",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "submit_business_application",
+      "arguments": [
+        "'submit_business_application'",
+        "{ p_business_name: b.name, p_business_id: b.id }"
+      ],
+      "input": {
+        "certain": [
+          "p_business_name",
+          "p_business_id"
+        ],
+        "possible": [
+          "p_business_name",
+          "p_business_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "submit_business_application",
+          "names": [
+            "p_business_name",
+            "p_business_id"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 117,
+      "owner": "RegistrationPage.upload",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "submit_requirement",
+      "arguments": [
+        "'submit_requirement'",
+        "{ p_business: b.id, p_requirement: x.id, p_file: path, p_declared: false }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_requirement",
+          "p_file",
+          "p_declared"
+        ],
+        "possible": [
+          "p_business",
+          "p_requirement",
+          "p_file",
+          "p_declared"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 142,
+      "owner": "RegistrationPage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "resubmit_business_application",
+      "arguments": [
+        "'resubmit_business_application'",
+        "{ p_application_id: currentApplication.id }"
+      ],
+      "input": {
+        "certain": [
+          "p_application_id"
+        ],
+        "possible": [
+          "p_application_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "resubmit_business_application",
+          "names": [
+            "p_application_id"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 155,
+      "owner": "RegistrationPage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "submit_verification",
+      "arguments": [
+        "'submit_verification'",
+        "{ p_business: b.id, p_documents: {} }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_documents"
+        ],
+        "possible": [
+          "p_business",
+          "p_documents"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 213,
+      "owner": "BusinessInfoPage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "issue_qr_identity",
+      "arguments": [
+        "'issue_qr_identity'",
+        "{ p_qr_type: 'vendor_shop', p_business_id: b.id }"
+      ],
+      "input": {
+        "certain": [
+          "p_qr_type",
+          "p_business_id"
+        ],
+        "possible": [
+          "p_qr_type",
+          "p_business_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "issue_qr_identity",
+          "names": [
+            "p_qr_type",
+            "p_business_id"
+          ],
+          "count": 2,
+          "defaults": 1,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 237,
+      "owner": "BusinessInfoPage.save",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "update_my_business_info",
+      "arguments": [
+        "'update_my_business_info'",
+        "{ p_business: b.id, p_fields: { ...(f.goodies_store_id !== (b.goodies_store_id ?? '') ? {goodies_store_id: f.goodies_store_id || null} : {}), name: f.name.trim(), description: f.description || null, phone: f.phone || null, phone_country: f.phone_country, email: f.email || null, website: f.website || null, address: f.address || null, city: f.city || null, country: f.country, delivery_modes: f.delivery_modes, hours: f.hours, logo_url: f.logo_url, accept_scheduled_orders: !!f.accept_scheduled_orders, scheduled_order_start_minutes: Math.max(0, Math.min(1440, Number(f.scheduled_order_start_minutes) || 0)) } }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_fields"
+        ],
+        "possible": [
+          "p_business",
+          "p_fields"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "update_my_business_info",
+          "names": [
+            "p_business",
+            "p_fields"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 59,
+      "owner": "ConversationPage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "mark_conversation_read",
+      "arguments": [
+        "'mark_conversation_read'",
+        "{ p_conv: id }"
+      ],
+      "input": {
+        "certain": [
+          "p_conv"
+        ],
+        "possible": [
+          "p_conv"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "mark_conversation_read",
+          "names": [
+            "p_conv"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 65,
+      "owner": "ConversationPage.send",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_vendor_reply",
+      "arguments": [
+        "'goodies_vendor_reply'",
+        "{ p_conversation_id: id, p_body: body }"
+      ],
+      "input": {
+        "certain": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "possible": [
+          "p_conversation_id",
+          "p_body"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_reply",
+          "names": [
+            "p_conversation_id",
+            "p_body"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 51,
+      "owner": "saveStoreLocation",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_save_store_location",
+      "arguments": [
+        "'goodies_save_store_location'",
+        "{ p_business: biz, p_latitude: latitude, p_longitude: longitude }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_latitude",
+          "p_longitude"
+        ],
+        "possible": [
+          "p_business",
+          "p_latitude",
+          "p_longitude"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_save_store_location",
+          "names": [
+            "p_business",
+            "p_latitude",
+            "p_longitude"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 52,
+      "owner": "saveStoreCover",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_save_store_cover",
+      "arguments": [
+        "'goodies_save_store_cover'",
+        "{ p_business: biz, p_cover_url: coverUrl }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_cover_url"
+        ],
+        "possible": [
+          "p_business",
+          "p_cover_url"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_save_store_cover",
+          "names": [
+            "p_business",
+            "p_cover_url"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 53,
+      "owner": "saveStoreThumbnail",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_save_store_thumbnail",
+      "arguments": [
+        "'goodies_save_store_thumbnail'",
+        "{ p_business: biz, p_thumbnail_url: thumbnailUrl }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_thumbnail_url"
+        ],
+        "possible": [
+          "p_business",
+          "p_thumbnail_url"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_save_store_thumbnail",
+          "names": [
+            "p_business",
+            "p_thumbnail_url"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 56,
+      "owner": "saveStore",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_save_store_setup",
+      "arguments": [
+        "'goodies_save_store_setup'",
+        "{\n      p_business: biz, p_category: st.category, p_kind: st.kind.trim() || null, p_min_order: parseFloat(st.minOrder) || 0, p_delivery_fee: parseFloat(st.fee) || 0,\n      p_eta_min: parseInt(st.etaMin, 10) || 20, p_eta_max: parseInt(st.etaMax, 10) || 35, p_promo: st.promo.trim() || null, p_names: names, p_delivery: st.delivery, p_pickup: st.pickup,\n      p_delivery_pricing_mode: st.pricingMode, p_delivery_base_fee: parseFloat(st.baseFee) || 0, p_delivery_per_km_fee: parseFloat(st.perKmFee) || 0, p_delivery_min_fee: parseFloat(st.minFee) || 0, p_delivery_max_fee: null, p_delivery_max_distance_km: st.maxDistanceKm.trim() ? parseFloat(st.maxDistanceKm) : null, p_address: st.address.trim(), p_city: st.city.trim(), p_country: st.country.trim(), p_accept_scheduled_orders: st.acceptScheduledOrders, p_scheduled_order_start_time: st.scheduledOrderStartTime, p_scheduled_order_timezone: st.scheduledOrderTimezone, p_store_name: st.storeName.trim(),\n    }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_category",
+          "p_kind",
+          "p_min_order",
+          "p_delivery_fee",
+          "p_eta_min",
+          "p_eta_max",
+          "p_promo",
+          "p_names",
+          "p_delivery",
+          "p_pickup",
+          "p_delivery_pricing_mode",
+          "p_delivery_base_fee",
+          "p_delivery_per_km_fee",
+          "p_delivery_min_fee",
+          "p_delivery_max_fee",
+          "p_delivery_max_distance_km",
+          "p_address",
+          "p_city",
+          "p_country",
+          "p_accept_scheduled_orders",
+          "p_scheduled_order_start_time",
+          "p_scheduled_order_timezone",
+          "p_store_name"
+        ],
+        "possible": [
+          "p_business",
+          "p_category",
+          "p_kind",
+          "p_min_order",
+          "p_delivery_fee",
+          "p_eta_min",
+          "p_eta_max",
+          "p_promo",
+          "p_names",
+          "p_delivery",
+          "p_pickup",
+          "p_delivery_pricing_mode",
+          "p_delivery_base_fee",
+          "p_delivery_per_km_fee",
+          "p_delivery_min_fee",
+          "p_delivery_max_fee",
+          "p_delivery_max_distance_km",
+          "p_address",
+          "p_city",
+          "p_country",
+          "p_accept_scheduled_orders",
+          "p_scheduled_order_start_time",
+          "p_scheduled_order_timezone",
+          "p_store_name"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_save_store_setup",
+          "names": [
+            "p_business",
+            "p_category",
+            "p_kind",
+            "p_min_order",
+            "p_delivery_fee",
+            "p_eta_min",
+            "p_eta_max",
+            "p_promo",
+            "p_names",
+            "p_delivery",
+            "p_pickup",
+            "p_delivery_pricing_mode",
+            "p_delivery_base_fee",
+            "p_delivery_per_km_fee",
+            "p_delivery_min_fee",
+            "p_delivery_max_fee",
+            "p_delivery_max_distance_km",
+            "p_address",
+            "p_city",
+            "p_country",
+            "p_accept_scheduled_orders",
+            "p_scheduled_order_start_time",
+            "p_scheduled_order_timezone",
+            "p_store_name"
+          ],
+          "count": 24,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 67,
+      "owner": "setLive",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_set_store_live",
+      "arguments": [
+        "'goodies_set_store_live'",
+        "{ p_business: biz, p_live: live }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_live"
+        ],
+        "possible": [
+          "p_business",
+          "p_live"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_store_live",
+          "names": [
+            "p_business",
+            "p_live"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 80,
+      "owner": "saveProduct",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_vendor_set_product_availability",
+      "arguments": [
+        "'goodies_vendor_set_product_availability'",
+        "{\n        p_business: biz, p_id: p.id, p_available: p.available,\n      }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_id",
+          "p_available"
+        ],
+        "possible": [
+          "p_business",
+          "p_id",
+          "p_available"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_set_product_availability",
+          "names": [
+            "p_business",
+            "p_id",
+            "p_available"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 89,
+      "owner": "saveProduct",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_vendor_save_product",
+      "arguments": [
+        "'goodies_vendor_save_product'",
+        "{\n      p_business: biz, p_id: p.id || null,\n      p_name: p.name.trim(), p_description: (p.description || '').trim(),\n      p_price: p.price, p_emoji: (p.emoji || '🛍️').trim(),\n      p_stock: p.stock, p_restriction: p.restriction,\n      p_photo_url: p.photoUrl || null, p_photo_urls: (p.photoUrls || []).slice(0, 5),\n    }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_id",
+          "p_name",
+          "p_description",
+          "p_price",
+          "p_emoji",
+          "p_stock",
+          "p_restriction",
+          "p_photo_url",
+          "p_photo_urls"
+        ],
+        "possible": [
+          "p_business",
+          "p_id",
+          "p_name",
+          "p_description",
+          "p_price",
+          "p_emoji",
+          "p_stock",
+          "p_restriction",
+          "p_photo_url",
+          "p_photo_urls"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_save_product",
+          "names": [
+            "p_business",
+            "p_id",
+            "p_name",
+            "p_description",
+            "p_price",
+            "p_emoji",
+            "p_stock",
+            "p_restriction",
+            "p_photo_url",
+            "p_photo_urls"
+          ],
+          "count": 10,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 125,
+      "owner": "saveBuilders",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_save_builder_configs",
+      "arguments": [
+        "'goodies_save_builder_configs'",
+        "{ p_business: biz, p_configs: persisted }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_configs"
+        ],
+        "possible": [
+          "p_business",
+          "p_configs"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_save_builder_configs",
+          "names": [
+            "p_business",
+            "p_configs"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 133,
+      "owner": "listRequests",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_list_ingredient_requests_page",
+      "arguments": [
+        "'goodies_list_ingredient_requests_page'",
+        "{ p_business: biz, p_offset: page * 50, p_limit: 50 }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_offset",
+          "p_limit"
+        ],
+        "possible": [
+          "p_business",
+          "p_offset",
+          "p_limit"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_list_ingredient_requests_page",
+          "names": [
+            "p_business",
+            "p_offset",
+            "p_limit"
+          ],
+          "count": 3,
+          "defaults": 2
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 136,
+      "owner": "rules",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_get_ingredient_rules",
+      "arguments": [
+        "'goodies_get_ingredient_rules'",
+        "{}"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_get_ingredient_rules",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 146,
+      "owner": "submitRequest",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_submit_ingredient_request",
+      "arguments": [
+        "'goodies_submit_ingredient_request'",
+        "{ p_business: biz, p_name: f.name, p_builder: f.builder, p_role: f.role || null, p_note: f.note || null, p_image_path: imagePath }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_name",
+          "p_builder",
+          "p_role",
+          "p_note",
+          "p_image_path"
+        ],
+        "possible": [
+          "p_business",
+          "p_name",
+          "p_builder",
+          "p_role",
+          "p_note",
+          "p_image_path"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_submit_ingredient_request",
+          "names": [
+            "p_business",
+            "p_name",
+            "p_builder",
+            "p_role",
+            "p_note",
+            "p_image_path"
+          ],
+          "count": 6,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 164,
+      "owner": "library",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "goodies_list_library_ingredients",
+      "arguments": [
+        "'goodies_list_library_ingredients'",
+        "{}"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_list_library_ingredients",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 81,
+      "owner": "GoodiesOrdersPage.submitOwnDriver",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_assign_own_driver",
+      "arguments": [
+        "'goodies_assign_own_driver'",
+        "{p_order_id: ownDriverOrder.id, p_driver_name: driverName, p_driver_phone: driverPhone}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_driver_name",
+          "p_driver_phone"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_driver_name",
+          "p_driver_phone"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_assign_own_driver",
+          "names": [
+            "p_order_id",
+            "p_driver_name",
+            "p_driver_phone"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 90,
+      "owner": "GoodiesOrdersPage.markOwnDelivered",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_private_delivery_proof_uploads_enabled",
+      "arguments": [
+        "'goodies_private_delivery_proof_uploads_enabled'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_private_delivery_proof_uploads_enabled",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 114,
+      "owner": "GoodiesOrdersPage.markOwnDelivered",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_self_delivery_mark_delivered",
+      "arguments": [
+        "'goodies_self_delivery_mark_delivered'",
+        "{p_order_id: order.id, p_proof_url: reference}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_proof_url"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_proof_url"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_self_delivery_mark_delivered",
+          "names": [
+            "p_order_id",
+            "p_proof_url"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 154,
+      "owner": "GoodiesOrdersPage.dispatchWaits",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_vendor_dispatch_waits",
+      "arguments": [
+        "'goodies_vendor_dispatch_waits'",
+        "{p_business:app.biz.id}"
+      ],
+      "input": {
+        "certain": [
+          "p_business"
+        ],
+        "possible": [
+          "p_business"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_dispatch_waits",
+          "names": [
+            "p_business"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 189,
+      "owner": "GoodiesOrdersPage.openDispatch",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_list_dispatch_couriers",
+      "arguments": [
+        "'goodies_list_dispatch_couriers'",
+        "{p_order_id:order.id}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id"
+        ],
+        "possible": [
+          "p_order_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_list_dispatch_couriers",
+          "names": [
+            "p_order_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 198,
+      "owner": "GoodiesOrdersPage.assignCourier",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "goodies_assign_courier",
+      "arguments": [
+        "'goodies_assign_courier'",
+        "{p_order_id:dispatchOrder.id,p_courier_id:courierId}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_courier_id"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_courier_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_assign_courier",
+          "names": [
+            "p_order_id",
+            "p_courier_id"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 233,
+      "owner": "GoodiesOrdersPage.act",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "accept_goodies_order",
+      "arguments": [
+        "'accept_goodies_order'",
+        "{ p_order_id: order.id }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id"
+        ],
+        "possible": [
+          "p_order_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "accept_goodies_order",
+          "names": [
+            "p_order_id"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 235,
+      "owner": "GoodiesOrdersPage.act",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "decline_goodies_order",
+      "arguments": [
+        "'decline_goodies_order'",
+        "{ p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "decline_goodies_order",
+          "names": [
+            "p_order_id",
+            "p_reason_code",
+            "p_reason_detail"
+          ],
+          "count": 3,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 237,
+      "owner": "GoodiesOrdersPage.act",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "cancel_goodies_order_by_store",
+      "arguments": [
+        "'cancel_goodies_order_by_store'",
+        "{ p_order_id: order.id, p_reason_code: reason, p_reason_detail: reason === 'other' ? detail.trim() : (detail.trim() || null) }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_reason_code",
+          "p_reason_detail"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "cancel_goodies_order_by_store",
+          "names": [
+            "p_order_id",
+            "p_reason_code",
+            "p_reason_detail"
+          ],
+          "count": 3,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 238,
+      "owner": "GoodiesOrdersPage.act",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "goodiesOrdersRequest",
+      "contract": "set_goodies_order_status",
+      "arguments": [
+        "'set_goodies_order_status'",
+        "{ p_order_id: order.id, p_status: action }"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "set_goodies_order_status",
+          "names": [
+            "p_order_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 31,
+      "owner": "FeaturePage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "deactivate_feature",
+      "arguments": [
+        "on ? 'deactivate_feature' : 'activate_feature'",
+        "{ p_business: app.biz.id, p_feature: 'goodies' }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "deactivate_feature",
+          "names": [
+            "p_business",
+            "p_feature"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 31,
+      "owner": "FeaturePage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "activate_feature",
+      "arguments": [
+        "on ? 'deactivate_feature' : 'activate_feature'",
+        "{ p_business: app.biz.id, p_feature: 'goodies' }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "activate_feature",
+          "names": [
+            "p_business",
+            "p_feature"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 43,
+      "owner": "FeaturePage",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "activate_feature",
+      "arguments": [
+        "'activate_feature'",
+        "{ p_business: app.biz.id, p_feature: k }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "activate_feature",
+          "names": [
+            "p_business",
+            "p_feature"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 78,
+      "owner": "FeaturesPanel",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "deactivate_feature",
+      "arguments": [
+        "on.has(f.key) ? 'deactivate_feature' : 'activate_feature'",
+        "{ p_business: app.biz.id, p_feature: f.key }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "deactivate_feature",
+          "names": [
+            "p_business",
+            "p_feature"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 78,
+      "owner": "FeaturesPanel",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "activate_feature",
+      "arguments": [
+        "on.has(f.key) ? 'deactivate_feature' : 'activate_feature'",
+        "{ p_business: app.biz.id, p_feature: f.key }"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "activate_feature",
+          "names": [
+            "p_business",
+            "p_feature"
+          ],
+          "count": 2,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 114,
+      "owner": "OrdersPanel.advanceGoodies",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "set_goodies_order_status",
+      "arguments": [
+        "'set_goodies_order_status'",
+        "{p_order_id: x.id, p_status: next}"
+      ],
+      "input": {
+        "certain": [
+          "p_order_id",
+          "p_status"
+        ],
+        "possible": [
+          "p_order_id",
+          "p_status"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "set_goodies_order_status",
+          "names": [
+            "p_order_id",
+            "p_status"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 102,
+      "owner": "FirstBusiness",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "create_business",
+      "arguments": [
+        "'create_business'",
+        "{ p_name: name }"
+      ],
+      "input": {
+        "certain": [
+          "p_name"
+        ],
+        "possible": [
+          "p_name"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "create_business",
+          "names": [
+            "p_name"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 198,
+      "owner": "Workspace",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "register_push_token",
+      "arguments": [
+        "'register_push_token'",
+        "{ p_token: token, p_platform: Platform.OS }"
+      ],
+      "input": {
+        "certain": [
+          "p_token",
+          "p_platform"
+        ],
+        "possible": [
+          "p_token",
+          "p_platform"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1015,
+      "owner": "Checklist.on",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "go_live",
+      "arguments": [
+        "'go_live'",
+        "{ p_business: b.id }"
+      ],
+      "input": {
+        "certain": [
+          "p_business"
+        ],
+        "possible": [
+          "p_business"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 64,
+      "owner": "AddBusinessSheet.create",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "rpc",
+      "contract": "create_business",
+      "arguments": [
+        "'create_business'",
+        "{ p_name: name.trim() }"
+      ],
+      "input": {
+        "certain": [
+          "p_name"
+        ],
+        "possible": [
+          "p_name"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "create_business",
+          "names": [
+            "p_name"
+          ],
+          "count": 1,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesPush.ts",
+      "line": 27,
+      "owner": "registerGoodiesPushDevice",
+      "roles": [
+        "courier",
+        "customer",
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_push_registration_status",
+      "arguments": [
+        "'goodies_push_registration_status'"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_push_registration_status",
+          "names": [],
+          "count": 0,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesPush.ts",
+      "line": 38,
+      "owner": "registerGoodiesPushDevice",
+      "roles": [
+        "courier",
+        "customer",
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_register_push_device",
+      "arguments": [
+        "'goodies_register_push_device'",
+        "{p_token:token,p_platform:Platform.OS,p_project_id:projectId}"
+      ],
+      "input": {
+        "certain": [
+          "p_token",
+          "p_platform",
+          "p_project_id"
+        ],
+        "possible": [
+          "p_token",
+          "p_platform",
+          "p_project_id"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_register_push_device",
+          "names": [
+            "p_token",
+            "p_platform",
+            "p_project_id"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesPush.ts",
+      "line": 50,
+      "owner": "unregisterGoodiesPushDevice",
+      "roles": [
+        "courier",
+        "customer",
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_unregister_push_device",
+      "arguments": [
+        "'goodies_unregister_push_device'",
+        "{p_token:token}"
+      ],
+      "input": {
+        "certain": [
+          "p_token"
+        ],
+        "possible": [
+          "p_token"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_unregister_push_device",
+          "names": [
+            "p_token"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 29,
+      "owner": "getGoodiesSettlement",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_vendor_settlement_summary",
+      "arguments": [
+        "'goodies_vendor_settlement_summary'",
+        "{p_business:business}"
+      ],
+      "input": {
+        "certain": [
+          "p_business"
+        ],
+        "possible": [
+          "p_business"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_settlement_summary",
+          "names": [
+            "p_business"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 30,
+      "owner": "getGoodiesPayoutOptions",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_vendor_payout_options",
+      "arguments": [
+        "'goodies_vendor_payout_options'",
+        "{p_business:business}"
+      ],
+      "input": {
+        "certain": [
+          "p_business"
+        ],
+        "possible": [
+          "p_business"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_payout_options",
+          "names": [
+            "p_business"
+          ],
+          "count": 1,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 32,
+      "owner": "getGoodiesSettlementLedger",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_vendor_settlement_ledger",
+      "arguments": [
+        "'goodies_vendor_settlement_ledger'",
+        "{p_business:business,p_offset:offset,p_limit:30,p_type:type}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_offset",
+          "p_limit",
+          "p_type"
+        ],
+        "possible": [
+          "p_business",
+          "p_offset",
+          "p_limit",
+          "p_type"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_settlement_ledger",
+          "names": [
+            "p_business",
+            "p_offset",
+            "p_limit",
+            "p_type"
+          ],
+          "count": 4,
+          "defaults": 3
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 45,
+      "owner": "requestGoodiesPayout",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_request_vendor_payout",
+      "arguments": [
+        "'goodies_request_vendor_payout'",
+        "{p_business:business,p_amount:amount,p_method:method,p_destination:destination,p_key:key,p_expected_receive:expectedReceive}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_amount",
+          "p_method",
+          "p_destination",
+          "p_key",
+          "p_expected_receive"
+        ],
+        "possible": [
+          "p_business",
+          "p_amount",
+          "p_method",
+          "p_destination",
+          "p_key",
+          "p_expected_receive"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_request_vendor_payout",
+          "names": [
+            "p_business",
+            "p_amount",
+            "p_method",
+            "p_destination",
+            "p_key",
+            "p_expected_receive"
+          ],
+          "count": 6,
+          "defaults": 1
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 46,
+      "owner": "payGoodiesCommission",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_pay_cash_commission",
+      "arguments": [
+        "'goodies_pay_cash_commission'",
+        "{p_business:business,p_key:key}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_key"
+        ],
+        "possible": [
+          "p_business",
+          "p_key"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_pay_cash_commission",
+          "names": [
+            "p_business",
+            "p_key"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 47,
+      "owner": "setGoodiesCashAcceptance",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_vendor_set_cash_acceptance",
+      "arguments": [
+        "'goodies_vendor_set_cash_acceptance'",
+        "{p_business:business,p_enabled:enabled}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_enabled"
+        ],
+        "possible": [
+          "p_business",
+          "p_enabled"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_set_cash_acceptance",
+          "names": [
+            "p_business",
+            "p_enabled"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 48,
+      "owner": "registerGoodiesDestination",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_register_payout_destination",
+      "arguments": [
+        "'goodies_register_payout_destination'",
+        "{p_business:business,p_method:method,p_country:country,p_holder:holder,p_details:details}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_method",
+          "p_country",
+          "p_holder",
+          "p_details"
+        ],
+        "possible": [
+          "p_business",
+          "p_method",
+          "p_country",
+          "p_holder",
+          "p_details"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_register_payout_destination",
+          "names": [
+            "p_business",
+            "p_method",
+            "p_country",
+            "p_holder",
+            "p_details"
+          ],
+          "count": 5,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 61,
+      "owner": "getBusinessFinancialSummary",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "dashboard_range",
+      "arguments": [
+        "'dashboard_range'",
+        "{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to,p_feature:null}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_from",
+          "p_to",
+          "p_feature"
+        ],
+        "possible": [
+          "p_business",
+          "p_from",
+          "p_to",
+          "p_feature"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 62,
+      "owner": "getBusinessFinancialSummary",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "goodies_vendor_dashboard_range",
+      "arguments": [
+        "'goodies_vendor_dashboard_range'",
+        "{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_from",
+          "p_to"
+        ],
+        "possible": [
+          "p_business",
+          "p_from",
+          "p_to"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_vendor_dashboard_range",
+          "names": [
+            "p_business",
+            "p_from",
+            "p_to"
+          ],
+          "count": 3,
+          "defaults": 0
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 74,
+      "owner": "ensureGoodiesWallet",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "call",
+      "contract": "ensure_my_wallet",
+      "arguments": [
+        "'ensure_my_wallet'",
+        "{}"
+      ],
+      "input": {
+        "certain": [],
+        "possible": [],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "ensure_my_wallet",
+          "names": [],
+          "count": 0,
+          "defaults": 0,
+          "authenticated": true
+        }
+      ]
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 7,
+      "owner": "businessActions",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "legacy",
+      "contract": "action_required",
+      "arguments": [
+        "'action_required'",
+        "{p_business:app.biz.id}"
+      ],
+      "input": {
+        "certain": [
+          "p_business"
+        ],
+        "possible": [
+          "p_business"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 17,
+      "owner": "businessActivity",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "legacy",
+      "contract": "activity_feed",
+      "arguments": [
+        "'activity_feed'",
+        "{p_business:app.biz.id,p_days:120,p_before:before,p_limit:limit,p_kind:kind}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_days",
+          "p_before",
+          "p_limit",
+          "p_kind"
+        ],
+        "possible": [
+          "p_business",
+          "p_days",
+          "p_before",
+          "p_limit",
+          "p_kind"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 28,
+      "owner": "businessSearch",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "MISSING",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "legacy",
+      "contract": "search_business",
+      "arguments": [
+        "'search_business'",
+        "{p_business:app.biz.id,p_q:query}"
+      ],
+      "input": {
+        "certain": [
+          "p_business",
+          "p_q"
+        ],
+        "possible": [
+          "p_business",
+          "p_q"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": []
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 44,
+      "owner": "saveBusinessPreferences",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "COMPATIBLE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": "goodies_set_vendor_notification_preferences",
+      "arguments": [
+        "'goodies_set_vendor_notification_preferences'",
+        "{p_push:prefs.push,p_email:prefs.email}"
+      ],
+      "input": {
+        "certain": [
+          "p_push",
+          "p_email"
+        ],
+        "possible": [
+          "p_push",
+          "p_email"
+        ],
+        "unknown": false
+      },
+      "matchingSignatures": [
+        {
+          "name": "goodies_set_vendor_notification_preferences",
+          "names": [
+            "p_push",
+            "p_email"
+          ],
+          "count": 2,
+          "defaults": 0
+        }
+      ]
+    }
+  ],
+  "dynamic": [
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 26,
+      "owner": "goodiesRequest",
+      "roles": [
+        "admin"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "name",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/helpPayApi.ts",
+      "line": 23,
+      "owner": "rpc",
+      "roles": [
+        "customer"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "name",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "line": 573,
+      "owner": "Track.receiptCall",
+      "roles": [
+        "courier",
+        "customer"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "fn",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "line": 37,
+      "owner": "goodiesOrdersRequest",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "name",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 11,
+      "owner": "call",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "name",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    },
+    {
+      "repository": "customer",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 5,
+      "owner": "legacy",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "NOT VERIFIED",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "supabase.rpc",
+      "contract": null,
+      "arguments": [
+        "name",
+        "args"
+      ],
+      "reason": "RPC name is computed or passed through a wrapper."
+    }
+  ]
+}

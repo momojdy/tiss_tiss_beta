@@ -1,0 +1,401 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "branch": "main",
+  "scope": "Code commits in this pass. Final evidence/tooling additions follow as a separate documentation commit.",
+  "repositories": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "baseline": "ddadcc5f221ca2a12a82099967076290d8fdc7d8",
+      "verifiedCodeCommit": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+      "commits": [
+        {
+          "sha": "29c8f0912f996bd02233beb7dd37fc0ed68ebad3",
+          "subject": "fix(goodies): reject malformed settlement amounts and ledger rows"
+        },
+        {
+          "sha": "f2a3863d465363d46b9534a5367077d42020c611",
+          "subject": "fix(goodies): keep settlement selection independent of edited captions"
+        },
+        {
+          "sha": "ff09a5d374d28f112828460f59d0f7efe2857c26",
+          "subject": "fix(goodies): reject invalid vendor notification destinations"
+        },
+        {
+          "sha": "4f8a4df662130c3cf021ae83c190398a8a9f8a6a",
+          "subject": "fix(goodies): use reviewed published English in notification fallback"
+        },
+        {
+          "sha": "91b56aa46e6eb57fb64ccf44accd9b4645dc67f8",
+          "subject": "test(goodies): verify courier capacity and offer acceptance races"
+        },
+        {
+          "sha": "8af5576da75d3d3e10ad95fffad0904cc700e9a8",
+          "subject": "fix(goodies): secure secondary vendor order controls and pagination"
+        },
+        {
+          "sha": "d5b5f0511487cc45ca1797204458372681470975",
+          "subject": "fix(goodies): validate vendor revenue reporting before display"
+        },
+        {
+          "sha": "41d8e9242c5dcfd3a1e8a2a8ee53a00de70b4778",
+          "subject": "feat(goodies): add protected push delivery and notification recovery"
+        },
+        {
+          "sha": "7d2c2d3be07cf974cedfcfc1f5243fce7d4381c5",
+          "subject": "fix(goodies): preserve message alerts and reconcile deployed migrations"
+        },
+        {
+          "sha": "67f4a48b95f5aec0e445e1773e839435f9007584",
+          "subject": "fix(goodies): validate published CMS responses and sanitize transport errors"
+        },
+        {
+          "sha": "06d13a632fff78a585b26ec339abef898d9da30d",
+          "subject": "fix(goodies): limit push permission prompts to Goodies workspaces"
+        },
+        {
+          "sha": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+          "subject": "fix(goodies): preserve successful notification opens on cache errors"
+        }
+      ],
+      "files": [
+        {
+          "status": "M",
+          "files": [
+            ".github/workflows/expo-validation.yml"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "App.tsx"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "app.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/content-acceptance-release/manifest.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/content-acceptance-release/publish-payload.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/content-acceptance-release/verification.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/localization-release/assistant-reaudit-copy.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/localization-release/manifest.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "docs/goodies/localization-release/publish-payload.json"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "docs/goodies/re-audit-20261120/backend-deployment-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "docs/goodies/re-audit-20261120/backend-package.json"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "docs/goodies/re-audit-20261120/predeployment-functions.json"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "docs/goodies/re-audit-20261120/recover-notifications.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "docs/goodies/re-audit-20261120/worker-http-denials.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "package-lock.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "package.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "scripts/audit-goodies-reproductions.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "scripts/check-goodies-cms.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "scripts/goodies-courier-races.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "scripts/goodies-push-races.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "scripts/test-goodies-settlement-postgres.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/features/Goodies/i18n/notificationCatalog.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/lib/wantissCms.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/screens/businessSpace/BusinessSpaceScreen.tsx"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "src/services/goodiesPush.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "src/services/goodiesPushRouting.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/services/goodiesSettlement.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "src/services/useGoodiesPush.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "supabase/config.toml"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "supabase/functions/deno.lock"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "supabase/functions/goodies-tests/contentRepairReview_test.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "supabase/functions/goodies-tests/notificationLocalization_test.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/functions/goodies-tests/pushDelivery_test.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/functions/goodies-tests/pushRecovery_test.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/functions/process-goodies-push-notifications/index.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/functions/process-goodies-push-notifications/pushProcessor.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/migrations/20261120173011_goodies_notification_reviewed_english_fallback.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/migrations/20261120173033_goodies_push_delivery.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/migrations/20261120173052_goodies_push_content_review.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "supabase/migrations/20261120174734_goodies_push_message_preferences.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "tests/goodies-cms-transport.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "tests/goodies-native-config.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "tests/goodies-push.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "files": [
+            "tests/goodies-secondary-orders.test.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "tests/goodies-settlement.test.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "tests/goodies-vendor-readiness.test.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "tests/goodies-workspace.test.cjs"
+          ]
+        }
+      ],
+      "courierFreshnessCommit": "75857548e48594429eb229d105412f2ee41fcacf",
+      "courierFreshnessCommitIsAncestor": true
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "baseline": "c00bb25296b5e295d89c575e23d713f40a443d84",
+      "verifiedCodeCommit": "f13f959afad44f5e0fd23f2f1da0266031641be1",
+      "commits": [
+        {
+          "sha": "4451c830a26dce10cb2e7c7795e2df73a1ffaafc",
+          "subject": "fix(goodies): expose push delivery and recovery copy in CMS"
+        },
+        {
+          "sha": "f13f959afad44f5e0fd23f2f1da0266031641be1",
+          "subject": "ci(goodies): run paired preview checks without skipped source tests"
+        }
+      ],
+      "files": [
+        {
+          "status": "M",
+          "files": [
+            ".github/workflows/admin-validation.yml"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/features/admin/goodiesConsumer/criticalContentKeys.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/features/admin/goodiesConsumer/customerLabelCatalog.json"
+          ]
+        },
+        {
+          "status": "M",
+          "files": [
+            "src/features/admin/goodiesConsumer/customerPageCatalog.json"
+          ]
+        }
+      ]
+    }
+  ]
+}

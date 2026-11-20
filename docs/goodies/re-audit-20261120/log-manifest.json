@@ -1,0 +1,137 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "logs": [
+    {
+      "path": "logs/goodies-dashboard-metrics-green.log.gz",
+      "source": "goodies-dashboard-metrics-green.log",
+      "sha256": "ed9a91024dcfd3f385abd4dcb3f6c11072cc3989f60f0a051a2e52fd8b5a3566",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-dashboard-types.log.gz",
+      "source": "goodies-dashboard-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-service-lint.log.gz",
+      "source": "goodies-final-service-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-app-lint.json.gz",
+      "source": "goodies-final-app-lint.json",
+      "sha256": "dd05ef586ef979bbc0787341c947ed622075ee18c9b472f714275c9ff29f813f",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-inventory.log.gz",
+      "source": "goodies-final-inventory.log",
+      "sha256": "3dd7deefd2abc8580d119e5f1b1d6cbb831edebb91bfce102824d47f328c5de5",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-rpc-comparison.log.gz",
+      "source": "goodies-final-rpc-comparison.log",
+      "sha256": "185068258c0248ad53c00e3fecf7f4b0e65c97405186f9b7f123af92fca82646",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-cms-source.log.gz",
+      "source": "goodies-final-cms-source.log",
+      "sha256": "fc5ad435f89124a569b5e745e34027835080409dc2a9c7a01f23b48f13304015",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-migration-versions.log.gz",
+      "source": "goodies-final-migration-versions.log",
+      "sha256": "6bc71195038cea12ad452e53795c750bb3c7ac5495a4c0424d622b6fa7053948",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-credential-scan.log.gz",
+      "source": "goodies-final-credential-scan.log",
+      "sha256": "64b05865aee1862c98fb32f444ab3bb03ee2240a7490b58540979f4009d6abe0",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-push-message-pref-green.log.gz",
+      "source": "goodies-push-message-pref-green.log",
+      "sha256": "be71256c7f75d7b2062126d6f61c8a6554c4ac7fac5cd07f96fb1305c7e54f23",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-push-recovery.log.gz",
+      "source": "goodies-push-recovery.log",
+      "sha256": "91f58572aa83e480a3adcc0847b7d7759130a8b219b12be14f05b45fee085806",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-native-manifest-check.log.gz",
+      "source": "goodies-native-manifest-check.log",
+      "sha256": "b5ab5eb86ecf131f4f3c5c88194c0869ae8fbb8bf543b699857586fcb806b079",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-native-release-inputs.log.gz",
+      "source": "goodies-native-release-inputs.log",
+      "sha256": "afccb88c9f8a5ce18792cbe2628fa5311654765715b2627c6b97f8f3f0e43b9b",
+      "scope": "External readiness evidence; not a passing build"
+    },
+    {
+      "path": "logs/goodies-expo-auth-status.log.gz",
+      "source": "goodies-expo-auth-status.log",
+      "sha256": "a06d5ca8261150a5175e866fc3dc401070fb4ea30e849a1b9394b7e252fa1677",
+      "scope": "External readiness evidence; not a passing build"
+    },
+    {
+      "path": "logs/goodies-eas-auth-status.log.gz",
+      "source": "goodies-eas-auth-status.log",
+      "sha256": "a06d5ca8261150a5175e866fc3dc401070fb4ea30e849a1b9394b7e252fa1677",
+      "scope": "External readiness evidence; not a passing build"
+    },
+    {
+      "path": "logs/goodies-hosted-public-read-final.log.gz",
+      "source": "goodies-hosted-public-read-final.log",
+      "sha256": "1bd61c56a1ca797fd4640c102b3caac04ac5b767cb1a768fd4bca2e0a3e5948a",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-reaudit3-native-32.log.gz",
+      "source": "goodies-reaudit3-native-32.log",
+      "sha256": "32c0840ccc8161d6253f7b9e72476bfa34d3c713378847854789fc1a99e2ae41",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-push-cache-cleanup-tests.log.gz",
+      "source": "goodies-push-cache-cleanup-tests.log",
+      "sha256": "730cccda047387bb7004c57970b1d9e9ed9de4c146d9b6095992336cf5c88aa7",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-push-cache-cleanup-types.log.gz",
+      "source": "goodies-push-cache-cleanup-types.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-push-cache-cleanup-lint.log.gz",
+      "source": "goodies-push-cache-cleanup-lint.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-30405ad1-android.log.gz",
+      "source": "goodies-final-30405ad1-android.log",
+      "sha256": "d59671c9bcfa675e0b91769c8056c00bb564a2c4f54e8b62a45eacd3810a1deb",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    },
+    {
+      "path": "logs/goodies-final-30405ad1-ios.log.gz",
+      "source": "goodies-final-30405ad1-ios.log",
+      "sha256": "b58e83bc3176bfcaec2f5629942ee6ac93ba1664ed4d58088d544bc9d896cb23",
+      "scope": "Read the named check and its scope; no global PASS is inferred"
+    }
+  ]
+}

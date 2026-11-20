@@ -1,0 +1,122 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "displayDate": "21 November 2026",
+  "productionReady": false,
+  "classification": "FAIL",
+  "verifiedCodeCommits": {
+    "customer": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+    "admin": "f13f959afad44f5e0fd23f2f1da0266031641be1"
+  },
+  "appDeployed": false,
+  "cmsPublishedThisPass": false,
+  "productionFinancialRecordsModified": false,
+  "liveChargesExecuted": false,
+  "fullDatabaseBackupCreated": false,
+  "scopedFunctionRecoveryTest": "PASS",
+  "deployment": {
+    "scope": "Backend only",
+    "migrationCount": 4,
+    "ledgerEntries": 416,
+    "pushWorkerVersion": 1,
+    "pushActivated": false
+  },
+  "automated": {
+    "classification": "PASS",
+    "tests": 481,
+    "customer": 269,
+    "admin": 68,
+    "crossRole": 47,
+    "deno": 97,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "nativeConcurrencyScenarios": 27,
+    "isolatedTargetMigrations": 32
+  },
+  "sourceCoverage": {
+    "files": 111,
+    "astFiles": 99,
+    "functions": 1558,
+    "interactiveBindings": 1347,
+    "jsxBindings": 1204,
+    "objectEventBindings": 143,
+    "backendCallSites": 456,
+    "serviceCallSites": 223,
+    "navigationCallSites": 537,
+    "commentTokens": 265,
+    "demoReferenceLines": 264,
+    "embeddedEventReferences": 9,
+    "unresolvedLiteralRegistryTargets": 0,
+    "dynamicRegistryTargets": 17
+  },
+  "cms": {
+    "registeredFields": 1926,
+    "pageAndSharedGroups": 73,
+    "registeredRoutes": 34,
+    "livePublishedBundleVersion": 5,
+    "liveLabels": 782,
+    "englishReviewedLabels": 647,
+    "englishDraftLabels": 135,
+    "otherReviewedLabels": {
+      "fr": 0,
+      "es": 0,
+      "zh-Hans": 0,
+      "ht": 0
+    },
+    "preparedFourLanguageFields": 2138,
+    "humanReviewClaim": false,
+    "installedReloadAcceptance": "NOT VERIFIED"
+  },
+  "knownFailures": [
+    {
+      "classification": "FAIL",
+      "scope": "Shared Auth setting",
+      "finding": "Supabase leaked-password protection is disabled.",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Published label translations",
+      "finding": "The prepared approved four-language content has not reached the published label bundle."
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Existing shared shell, not introduced by this pass",
+      "finding": "Expanded App.tsx lint still reports 64 pre-existing react-hooks/error-boundaries errors; configured checks and new service lint pass."
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Other/mixed-feature shared platform contracts",
+      "finding": "Nine older shared RPCs remain absent; dedicated Goodies-only paths are guarded and tested. Mixed-feature workspace support is not certified."
+    }
+  ],
+  "notVerified": [
+    "Every authenticated hosted button, role boundary and cross-role complete order lifecycle.",
+    "Hosted synthetic Wallet/Cash/Shared Bill acceptance: temporary branch cost approval is outstanding.",
+    "Positive payment-provider sandbox charges/capture/webhooks/refunds and reconciliation.",
+    "Signed Android/iOS builds, registered native/EAS/Maps/provider configuration, physical GPS/background/push/proof behavior.",
+    "CMS edit to draft preview to approved publication to installed-customer reload for all fields.",
+    "A full database backup and isolated full restore; only the two changed function definitions/ACLs were captured and restored locally.",
+    "Per-event notification language acceptance: {details} may contain user-authored text or server-generated English; lookup tests do not establish complete translated event bodies."
+  ],
+  "userDeferred": [
+    "FAQ and final policy/support approval",
+    "Haitian Creole human review"
+  ],
+  "refundPolicy": "Card cancellation refunds return to the original card through Stripe; Wallet contributions refund their original payers. No duplicate card-plus-Wallet credit.",
+  "nextConcreteAction": "Approve the quoted temporary branch cost, then execute hosted-acceptance-plan.json without creating synthetic financial data in production.",
+  "evidence": [
+    "final-ci-verification.json",
+    "backend-deployment-verification.json",
+    "edge-source-comparison.json",
+    "hosted-public-cms-read.json",
+    "screen-verification.json",
+    "source-inventory.json",
+    "live-rpc-comparison.json",
+    "shared-platform-contract-gaps.json",
+    "hosted-acceptance-plan.json",
+    "commits-and-files.json"
+  ],
+  "nativeExportEvidence": "final-native-export-files.json",
+  "hostedBranchCostApprovalRequired": true,
+  "localDevelopmentConfiguration": "Existing Wantiss URL and public publishable key configured in ignored .env.local; no service-role key or app release."
+}

@@ -1,0 +1,2961 @@
+{
+  "scope": "Read-only postdeployment RPC signatures/ACLs for current literal Goodies client calls; no account or transaction records.",
+  "capturedNames": [
+    "accept_goodies_order",
+    "action_required",
+    "activate_feature",
+    "activity_feed",
+    "cancel_goodies_order_by_store",
+    "create_business",
+    "dashboard_range",
+    "deactivate_feature",
+    "decline_goodies_order",
+    "delete_payment_method",
+    "delete_user_address",
+    "ensure_my_wallet",
+    "feature_requirements_status",
+    "get_my_goodies_access_status",
+    "get_my_payment_methods",
+    "go_live",
+    "goodies_admin_add_courier",
+    "goodies_admin_analytics",
+    "goodies_admin_cancel_order",
+    "goodies_admin_courier_candidates_page",
+    "goodies_admin_dashboard",
+    "goodies_admin_destination_details",
+    "goodies_admin_list_delivery_reports",
+    "goodies_admin_list_reviews",
+    "goodies_admin_orders_page",
+    "goodies_admin_remove_courier",
+    "goodies_admin_resolve_delivery_dispute",
+    "goodies_admin_review_order_review",
+    "goodies_admin_review_product",
+    "goodies_admin_set_bank_calendar",
+    "goodies_admin_set_merchant_status",
+    "goodies_admin_set_payout_channel",
+    "goodies_admin_settlement_action",
+    "goodies_admin_settlement_queue",
+    "goodies_admin_update_fee_policy",
+    "goodies_admin_update_multi_store_policy",
+    "goodies_assign_courier",
+    "goodies_assign_own_driver",
+    "goodies_cash_on_delivery_available",
+    "goodies_courier_delivery_details",
+    "goodies_courier_orders",
+    "goodies_courier_respond_assignment",
+    "goodies_courier_update_delivery_status",
+    "goodies_courier_update_location",
+    "goodies_get_ingredient_rules",
+    "goodies_group_order_checkout",
+    "goodies_group_order_checkout_estimate",
+    "goodies_group_order_checkout_preview",
+    "goodies_group_order_create",
+    "goodies_group_order_decline_invite",
+    "goodies_group_order_end",
+    "goodies_group_order_get_status",
+    "goodies_group_order_invite_friends",
+    "goodies_group_order_join",
+    "goodies_group_order_list_friends",
+    "goodies_group_order_list_members",
+    "goodies_group_order_my_invites",
+    "goodies_group_order_remove_item",
+    "goodies_group_order_upsert_item",
+    "goodies_list_dispatch_couriers",
+    "goodies_list_ingredient_requests_page",
+    "goodies_list_library_ingredients",
+    "goodies_pay_cash_commission",
+    "goodies_place_multi_order",
+    "goodies_private_delivery_proof_uploads_enabled",
+    "goodies_push_registration_status",
+    "goodies_register_payout_destination",
+    "goodies_register_push_device",
+    "goodies_request_vendor_payout",
+    "goodies_save_builder_configs",
+    "goodies_save_store_cover",
+    "goodies_save_store_location",
+    "goodies_save_store_setup",
+    "goodies_save_store_thumbnail",
+    "goodies_self_delivery_mark_delivered",
+    "goodies_send_store_message",
+    "goodies_set_courier_availability",
+    "goodies_set_notification_preference",
+    "goodies_set_store_live",
+    "goodies_set_vendor_notification_preferences",
+    "goodies_start_store_conversation",
+    "goodies_store_review_summaries",
+    "goodies_store_reviews",
+    "goodies_submit_ingredient_request",
+    "goodies_submit_order_review",
+    "goodies_unregister_push_device",
+    "goodies_vendor_dashboard_range",
+    "goodies_vendor_dispatch_waits",
+    "goodies_vendor_payout_options",
+    "goodies_vendor_promotions",
+    "goodies_vendor_reply",
+    "goodies_vendor_save_product",
+    "goodies_vendor_set_cash_acceptance",
+    "goodies_vendor_set_product_availability",
+    "goodies_vendor_settlement_ledger",
+    "goodies_vendor_settlement_summary",
+    "help_pay_admin_refund_queue",
+    "help_pay_admin_retry_refund",
+    "help_pay_cancel_request",
+    "help_pay_contribute_for_account",
+    "help_pay_contribute_wallet",
+    "help_pay_contribution_status",
+    "help_pay_create_for_account",
+    "help_pay_create_request",
+    "help_pay_request_for_checkout",
+    "help_pay_share_to_friend",
+    "help_pay_status",
+    "help_pay_wallet_enabled",
+    "issue_qr_identity",
+    "mark_conversation_read",
+    "place_goodies_order_with_payment_once",
+    "register_push_token",
+    "resubmit_business_application",
+    "search_business",
+    "set_default_payment_method",
+    "set_goodies_order_status",
+    "submit_business_application",
+    "submit_business_application_document",
+    "submit_requirement",
+    "submit_verification",
+    "update_my_business_info",
+    "wantiss_admin_accept_invitation",
+    "wantiss_admin_application_businesses",
+    "wantiss_admin_apply_account_restriction",
+    "wantiss_admin_archive_cms_version",
+    "wantiss_admin_assign_business_application",
+    "wantiss_admin_audit_read",
+    "wantiss_admin_dashboard_snapshot",
+    "wantiss_admin_lift_account_restriction",
+    "wantiss_admin_list_goodies_builder_configs",
+    "wantiss_admin_list_ingredient_requests_page",
+    "wantiss_admin_list_library_ingredients",
+    "wantiss_admin_publish_cms_version",
+    "wantiss_admin_record_restriction_appeal",
+    "wantiss_admin_request_financial_action",
+    "wantiss_admin_review_business_application",
+    "wantiss_admin_review_financial_action",
+    "wantiss_admin_review_ingredient_request",
+    "wantiss_admin_save_cms_draft",
+    "wantiss_admin_save_goodies_builder_config",
+    "wantiss_admin_save_library_ingredient",
+    "wantiss_admin_set_application_document_status",
+    "wantiss_admin_set_business_verification",
+    "wantiss_admin_set_cms_asset_status",
+    "wantiss_admin_set_ingredient_rules",
+    "wantiss_admin_update_account_restriction",
+    "wantiss_admin_upsert_asset",
+    "wantiss_message_contact_profiles"
+  ],
+  "entries": [
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "accept_goodies_order",
+      "signature": "p_order_id uuid",
+      "returns": "text",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "activate_feature",
+      "signature": "p_business uuid, p_feature text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "cancel_goodies_order_by_store",
+      "signature": "p_order_id uuid, p_reason_code text, p_reason_detail text",
+      "returns": "text",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "create_business",
+      "signature": "p_name text",
+      "returns": "uuid",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "deactivate_feature",
+      "signature": "p_business uuid, p_feature text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_feature"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "decline_goodies_order",
+      "signature": "p_order_id uuid, p_reason_code text, p_reason_detail text",
+      "returns": "text",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_order_id",
+        "p_reason_code",
+        "p_reason_detail"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "delete_payment_method",
+      "signature": "p_payment_method_id uuid",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_payment_method_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "delete_user_address",
+      "signature": "p_address_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_address_id"
+      ],
+      "security_definer": false,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "ensure_my_wallet",
+      "signature": "",
+      "returns": "wallets",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "get_my_goodies_access_status",
+      "signature": "",
+      "returns": "TABLE(status text, reason text, ends_at timestamp with time zone, restriction_kind text)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "get_my_payment_methods",
+      "signature": "",
+      "returns": "TABLE(id uuid, type text, brand text, last4 text, expiry_month integer, expiry_year integer, is_default boolean, created_at timestamp with time zone)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_add_courier",
+      "signature": "p_courier_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_courier_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_analytics",
+      "signature": "",
+      "returns": "jsonb",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_cancel_order",
+      "signature": "p_order_id uuid, p_reason text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 1,
+      "input_names": [
+        "p_order_id",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_courier_candidates_page",
+      "signature": "p_offset integer, p_limit integer",
+      "returns": "TABLE(courier_id uuid, full_name text, phone_number text, already_added boolean)",
+      "arg_count": 2,
+      "default_count": 2,
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_dashboard",
+      "signature": "",
+      "returns": "jsonb",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_destination_details",
+      "signature": "p_destination uuid, p_reason text",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_destination",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_list_delivery_reports",
+      "signature": "",
+      "returns": "TABLE(order_id uuid, order_code text, store_name text, customer_name text, customer_phone text, total numeric, payment_method text, payment_status text, driver_name text, driver_phone text, proof_url text, reason text, delivered_at timestamp with time zone, opened_at timestamp with time zone, report_status text)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_list_reviews",
+      "signature": "",
+      "returns": "TABLE(id uuid, order_id uuid, store_name text, review_target text, rating integer, comment text, review_status text, review_note text, created_at timestamp with time zone)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=public, auth, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_list_reviews",
+      "signature": "p_offset integer, p_limit integer",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 2,
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_orders_page",
+      "signature": "p_offset integer, p_limit integer",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 2,
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_remove_courier",
+      "signature": "p_courier_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_courier_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_resolve_delivery_dispute",
+      "signature": "p_order_id uuid, p_resolution text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_resolution"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_review_order_review",
+      "signature": "p_review_id uuid, p_status text, p_note text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_review_id",
+        "p_status",
+        "p_note"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_review_product",
+      "signature": "p_product_id uuid, p_status text, p_note text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_product_id",
+        "p_status",
+        "p_note"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_set_bank_calendar",
+      "signature": "p_country text, p_reviewed_until date, p_holidays date[], p_reason text",
+      "returns": "void",
+      "arg_count": 4,
+      "default_count": 0,
+      "input_names": [
+        "p_country",
+        "p_reviewed_until",
+        "p_holidays",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_set_merchant_status",
+      "signature": "p_business_id uuid, p_live boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business_id",
+        "p_live"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_set_payout_channel",
+      "signature": "p_method text, p_enabled boolean, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_method",
+        "p_enabled",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_settlement_action",
+      "signature": "p_kind text, p_id uuid, p_decision text, p_reference text, p_reason text, p_amount numeric",
+      "returns": "void",
+      "arg_count": 6,
+      "default_count": 1,
+      "input_names": [
+        "p_kind",
+        "p_id",
+        "p_decision",
+        "p_reference",
+        "p_reason",
+        "p_amount"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_settlement_queue",
+      "signature": "p_offset integer, p_limit integer",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 2,
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_update_fee_policy",
+      "signature": "p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[]",
+      "returns": "void",
+      "arg_count": 6,
+      "default_count": 0,
+      "input_names": [
+        "p_service_fee",
+        "p_first_order_free",
+        "p_wallet_enabled",
+        "p_card_enabled",
+        "p_cash_enabled",
+        "p_tips"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_admin_update_multi_store_policy",
+      "signature": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer",
+      "returns": "void",
+      "arg_count": 4,
+      "default_count": 0,
+      "input_names": [
+        "p_enabled",
+        "p_additional_store_fee",
+        "p_extra_distance_per_km",
+        "p_max_stops"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_assign_courier",
+      "signature": "p_order_id uuid, p_courier_id uuid",
+      "returns": "uuid",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_courier_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_assign_own_driver",
+      "signature": "p_order_id uuid, p_driver_name text, p_driver_phone text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_driver_name",
+        "p_driver_phone"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_cash_on_delivery_available",
+      "signature": "p_store_id text",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_store_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_courier_delivery_details",
+      "signature": "p_order_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_courier_orders",
+      "signature": "",
+      "returns": "TABLE(id uuid, order_id uuid, status text, order_code text, address jsonb, contact_phone text, items jsonb, total numeric, payment_method text, payment_status text, business_id uuid)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_courier_respond_assignment",
+      "signature": "p_order_id uuid, p_accept boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_accept"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_courier_update_delivery_status",
+      "signature": "p_order_id uuid, p_status text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_courier_update_location",
+      "signature": "p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision, p_heading double precision, p_speed_mps double precision",
+      "returns": "void",
+      "arg_count": 6,
+      "default_count": 3,
+      "input_names": [
+        "p_order_id",
+        "p_latitude",
+        "p_longitude",
+        "p_accuracy_m",
+        "p_heading",
+        "p_speed_mps"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_get_ingredient_rules",
+      "signature": "",
+      "returns": "text",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_checkout",
+      "signature": "p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric, p_notes text",
+      "returns": "TABLE(id uuid, order_code text, status text)",
+      "arg_count": 8,
+      "default_count": 2,
+      "input_names": [
+        "p_idempotency_key",
+        "p_group_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_tip",
+        "p_notes"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_checkout_estimate",
+      "signature": "p_group_id uuid, p_order_type text, p_address jsonb",
+      "returns": "jsonb",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_group_id",
+        "p_order_type",
+        "p_address"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_checkout_preview",
+      "signature": "p_group_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_create",
+      "signature": "p_store_id text",
+      "returns": "TABLE(group_id uuid, invite_code text, expires_at timestamp with time zone)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_store_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, public, extensions, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_decline_invite",
+      "signature": "p_group_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_end",
+      "signature": "p_group_id uuid",
+      "returns": "TABLE(group_id uuid, status text)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_get_status",
+      "signature": "p_group_id uuid",
+      "returns": "TABLE(group_id uuid, status text, expires_at timestamp with time zone)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_invite_friends",
+      "signature": "p_group_id uuid, p_user_ids uuid[]",
+      "returns": "integer",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id",
+        "p_user_ids"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_join",
+      "signature": "p_invite_code text",
+      "returns": "TABLE(group_id uuid, invite_code text, store_id text, expires_at timestamp with time zone, member_count integer)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_invite_code"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_list_friends",
+      "signature": "p_group_id uuid",
+      "returns": "TABLE(user_id uuid, display_name text, avatar_url text, already_member boolean, already_invited boolean, invite_status text)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_list_members",
+      "signature": "p_group_id uuid",
+      "returns": "TABLE(user_id uuid, display_name text, role text, is_host boolean, joined_at timestamp with time zone)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_my_invites",
+      "signature": "",
+      "returns": "TABLE(group_id uuid, invite_code text, store_id text, host_name text, expires_at timestamp with time zone)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_remove_item",
+      "signature": "p_group_id uuid, p_line_key text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_group_id",
+        "p_line_key"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_group_order_upsert_item",
+      "signature": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text",
+      "returns": "TABLE(item_id uuid, product_name text, quantity integer, unit_price numeric, photo_url text, contributed_by uuid)",
+      "arg_count": 6,
+      "default_count": 2,
+      "input_names": [
+        "p_group_id",
+        "p_product_id",
+        "p_line_key",
+        "p_quantity",
+        "p_options",
+        "p_note"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_list_dispatch_couriers",
+      "signature": "p_order_id uuid",
+      "returns": "TABLE(courier_id uuid, full_name text, phone_number text, accepts_cash_on_delivery boolean, last_seen timestamp with time zone, distance_km numeric)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_list_ingredient_requests_page",
+      "signature": "p_business uuid, p_offset integer, p_limit integer",
+      "returns": "TABLE(id uuid, name text, builder text, role text, note text, status text, review_note text, created_at timestamp with time zone, image_path text, library_id text)",
+      "arg_count": 3,
+      "default_count": 2,
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_list_library_ingredients",
+      "signature": "",
+      "returns": "TABLE(id text, builder text, role text, name text, asset_key text)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_pay_cash_commission",
+      "signature": "p_business uuid, p_key text",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_key"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_place_multi_order",
+      "signature": "p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text",
+      "returns": "TABLE(group_id uuid, order_id uuid, order_code text, status text, stop_index integer, store_id text)",
+      "arg_count": 10,
+      "default_count": 0,
+      "input_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_stops",
+        "p_service_fee",
+        "p_tip",
+        "p_notes"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_private_delivery_proof_uploads_enabled",
+      "signature": "",
+      "returns": "boolean",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_push_registration_status",
+      "signature": "",
+      "returns": "jsonb",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_register_payout_destination",
+      "signature": "p_business uuid, p_method text, p_country text, p_holder text, p_details jsonb",
+      "returns": "uuid",
+      "arg_count": 5,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_method",
+        "p_country",
+        "p_holder",
+        "p_details"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_register_push_device",
+      "signature": "p_token text, p_platform text, p_project_id uuid",
+      "returns": "jsonb",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_token",
+        "p_platform",
+        "p_project_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_request_vendor_payout",
+      "signature": "p_business uuid, p_amount numeric, p_method text, p_destination uuid, p_key text, p_expected_receive numeric",
+      "returns": "jsonb",
+      "arg_count": 6,
+      "default_count": 1,
+      "input_names": [
+        "p_business",
+        "p_amount",
+        "p_method",
+        "p_destination",
+        "p_key",
+        "p_expected_receive"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_builder_configs",
+      "signature": "p_business uuid, p_configs jsonb",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_configs"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_cover",
+      "signature": "p_business uuid, p_cover_url text",
+      "returns": "boolean",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_cover_url"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_location",
+      "signature": "p_business uuid, p_latitude double precision, p_longitude double precision",
+      "returns": "boolean",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_latitude",
+        "p_longitude"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean",
+      "returns": "void",
+      "arg_count": 11,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric",
+      "returns": "void",
+      "arg_count": 17,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text",
+      "returns": "void",
+      "arg_count": 20,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer",
+      "returns": "void",
+      "arg_count": 22,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_minutes"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text",
+      "returns": "void",
+      "arg_count": 22,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text",
+      "returns": "void",
+      "arg_count": 23,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_setup",
+      "signature": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text",
+      "returns": "void",
+      "arg_count": 24,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_category",
+        "p_kind",
+        "p_min_order",
+        "p_delivery_fee",
+        "p_eta_min",
+        "p_eta_max",
+        "p_promo",
+        "p_names",
+        "p_delivery",
+        "p_pickup",
+        "p_delivery_pricing_mode",
+        "p_delivery_base_fee",
+        "p_delivery_per_km_fee",
+        "p_delivery_min_fee",
+        "p_delivery_max_fee",
+        "p_delivery_max_distance_km",
+        "p_address",
+        "p_city",
+        "p_country",
+        "p_accept_scheduled_orders",
+        "p_scheduled_order_start_time",
+        "p_scheduled_order_timezone",
+        "p_store_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_save_store_thumbnail",
+      "signature": "p_business uuid, p_thumbnail_url text",
+      "returns": "boolean",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_thumbnail_url"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_self_delivery_mark_delivered",
+      "signature": "p_order_id uuid, p_proof_url text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_proof_url"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_send_store_message",
+      "signature": "p_conversation_id uuid, p_body text",
+      "returns": "uuid",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_set_courier_availability",
+      "signature": "p_is_available boolean, p_accepts_cash_on_delivery boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 1,
+      "input_names": [
+        "p_is_available",
+        "p_accepts_cash_on_delivery"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_set_notification_preference",
+      "signature": "p_kind text, p_enabled boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_kind",
+        "p_enabled"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_set_store_live",
+      "signature": "p_business uuid, p_live boolean",
+      "returns": "boolean",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_live"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_set_vendor_notification_preferences",
+      "signature": "p_push boolean, p_email boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_push",
+        "p_email"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_start_store_conversation",
+      "signature": "p_store_id text, p_customer_name text",
+      "returns": "uuid",
+      "arg_count": 2,
+      "default_count": 1,
+      "input_names": [
+        "p_store_id",
+        "p_customer_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_store_review_summaries",
+      "signature": "p_business_ids uuid[]",
+      "returns": "TABLE(business_id uuid, rating numeric, review_count bigint)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business_ids"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_store_reviews",
+      "signature": "p_store_id text, p_offset integer, p_limit integer",
+      "returns": "TABLE(order_id uuid, rating integer, comment text, created_at timestamp with time zone, is_mine boolean)",
+      "arg_count": 3,
+      "default_count": 2,
+      "input_names": [
+        "p_store_id",
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_submit_ingredient_request",
+      "signature": "p_business uuid, p_name text, p_builder text, p_role text, p_note text, p_image_path text",
+      "returns": "uuid",
+      "arg_count": 6,
+      "default_count": 3,
+      "input_names": [
+        "p_business",
+        "p_name",
+        "p_builder",
+        "p_role",
+        "p_note",
+        "p_image_path"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_submit_order_review",
+      "signature": "p_order_id uuid, p_review_target text, p_rating integer, p_comment text",
+      "returns": "uuid",
+      "arg_count": 4,
+      "default_count": 1,
+      "input_names": [
+        "p_order_id",
+        "p_review_target",
+        "p_rating",
+        "p_comment"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_unregister_push_device",
+      "signature": "p_token text",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_token"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_dashboard_range",
+      "signature": "p_business uuid, p_from timestamp with time zone, p_to timestamp with time zone",
+      "returns": "jsonb",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_from",
+        "p_to"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_dispatch_waits",
+      "signature": "p_business uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_payout_options",
+      "signature": "p_business uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_promotions",
+      "signature": "p_business uuid, p_offset integer, p_limit integer",
+      "returns": "jsonb",
+      "arg_count": 3,
+      "default_count": 2,
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_reply",
+      "signature": "p_conversation_id uuid, p_body text",
+      "returns": "uuid",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_conversation_id",
+        "p_body"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_save_product",
+      "signature": "p_business uuid, p_id uuid, p_name text, p_description text, p_price numeric, p_emoji text, p_stock integer, p_restriction text, p_photo_url text, p_photo_urls jsonb",
+      "returns": "uuid",
+      "arg_count": 10,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_id",
+        "p_name",
+        "p_description",
+        "p_price",
+        "p_emoji",
+        "p_stock",
+        "p_restriction",
+        "p_photo_url",
+        "p_photo_urls"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, auth, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_set_cash_acceptance",
+      "signature": "p_business uuid, p_enabled boolean",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_enabled"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_set_product_availability",
+      "signature": "p_business uuid, p_id uuid, p_available boolean",
+      "returns": "boolean",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_id",
+        "p_available"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, auth, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_settlement_ledger",
+      "signature": "p_business uuid, p_offset integer, p_limit integer, p_type text",
+      "returns": "jsonb",
+      "arg_count": 4,
+      "default_count": 3,
+      "input_names": [
+        "p_business",
+        "p_offset",
+        "p_limit",
+        "p_type"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "goodies_vendor_settlement_summary",
+      "signature": "p_business uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_admin_refund_queue",
+      "signature": "p_offset integer, p_limit integer",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 2,
+      "input_names": [
+        "p_offset",
+        "p_limit"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_admin_retry_refund",
+      "signature": "p_request_id uuid, p_reason text",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_cancel_request",
+      "signature": "p_request_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_contribute_for_account",
+      "signature": "p_request_id uuid, p_amount_cents bigint, p_idempotency_key text, p_expected_user_id uuid",
+      "returns": "jsonb",
+      "arg_count": 4,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id",
+        "p_amount_cents",
+        "p_idempotency_key",
+        "p_expected_user_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_contribute_wallet",
+      "signature": "p_request_id uuid, p_amount_cents bigint, p_idempotency_key text",
+      "returns": "jsonb",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id",
+        "p_amount_cents",
+        "p_idempotency_key"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_contribution_status",
+      "signature": "p_request_id uuid, p_idempotency_key text",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id",
+        "p_idempotency_key"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_create_for_account",
+      "signature": "p_mode text, p_total_cents bigint, p_checkout_key text, p_checkout_snapshot jsonb, p_expected_user_id uuid",
+      "returns": "uuid",
+      "arg_count": 5,
+      "default_count": 0,
+      "input_names": [
+        "p_mode",
+        "p_total_cents",
+        "p_checkout_key",
+        "p_checkout_snapshot",
+        "p_expected_user_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_create_request",
+      "signature": "p_mode text, p_total_cents bigint, p_checkout_key text, p_checkout_snapshot jsonb",
+      "returns": "uuid",
+      "arg_count": 4,
+      "default_count": 1,
+      "input_names": [
+        "p_mode",
+        "p_total_cents",
+        "p_checkout_key",
+        "p_checkout_snapshot"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_request_for_checkout",
+      "signature": "p_checkout_key text",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_checkout_key"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_share_to_friend",
+      "signature": "p_request_id uuid, p_friend_id uuid",
+      "returns": "uuid",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id",
+        "p_friend_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_status",
+      "signature": "p_request_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_request_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "help_pay_wallet_enabled",
+      "signature": "",
+      "returns": "boolean",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "issue_qr_identity",
+      "signature": "p_qr_type text, p_business_id uuid",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 1,
+      "input_names": [
+        "p_qr_type",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "mark_conversation_read",
+      "signature": "p_conv uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_conv"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=pg_catalog, public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "place_goodies_order_with_payment_once",
+      "signature": "p_idempotency_key text, p_payment_method text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text",
+      "returns": "TABLE(id uuid, order_code text, status text)",
+      "arg_count": 16,
+      "default_count": 1,
+      "input_names": [
+        "p_idempotency_key",
+        "p_payment_method",
+        "p_store_id",
+        "p_order_type",
+        "p_scheduled_for",
+        "p_address",
+        "p_contact_phone",
+        "p_items",
+        "p_subtotal",
+        "p_delivery_fee",
+        "p_service_fee",
+        "p_discount",
+        "p_tip",
+        "p_total",
+        "p_notes",
+        "p_promo_code"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "resubmit_business_application",
+      "signature": "p_application_id uuid",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "set_default_payment_method",
+      "signature": "p_payment_method_id uuid",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_payment_method_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "set_goodies_order_status",
+      "signature": "p_order_id uuid, p_status text",
+      "returns": "text",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_order_id",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application",
+      "signature": "p_business_name text",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_business_name"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application",
+      "signature": "p_business_name text, p_business_id uuid",
+      "returns": "jsonb",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business_name",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "submit_business_application_document",
+      "signature": "p_application_id uuid, p_document_type text, p_storage_path text",
+      "returns": "uuid",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id",
+        "p_document_type",
+        "p_storage_path"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "update_my_business_info",
+      "signature": "p_business uuid, p_fields jsonb",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_business",
+        "p_fields"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_accept_invitation",
+      "signature": "",
+      "returns": "void",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_application_businesses",
+      "signature": "p_application_id uuid",
+      "returns": "TABLE(business_id uuid, business_name text, member_role text)",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_apply_account_restriction",
+      "signature": "p_user_id uuid, p_kind text, p_scope text, p_reason text, p_notes text, p_starts_at timestamp with time zone, p_ends_at timestamp with time zone, p_notify_user boolean",
+      "returns": "uuid",
+      "arg_count": 8,
+      "default_count": 1,
+      "input_names": [
+        "p_user_id",
+        "p_kind",
+        "p_scope",
+        "p_reason",
+        "p_notes",
+        "p_starts_at",
+        "p_ends_at",
+        "p_notify_user"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_archive_cms_version",
+      "signature": "p_content_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_content_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_assign_business_application",
+      "signature": "p_application_id uuid, p_business_id uuid",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_application_id",
+        "p_business_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_audit_read",
+      "signature": "",
+      "returns": "SETOF wantiss_admin_audit_log",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_dashboard_snapshot",
+      "signature": "p_domain text",
+      "returns": "jsonb",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_domain"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_lift_account_restriction",
+      "signature": "p_restriction_id uuid, p_reason text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_restriction_id",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_list_goodies_builder_configs",
+      "signature": "",
+      "returns": "TABLE(business_id uuid, business_name text, builder_id text, config jsonb, enabled boolean, updated_at timestamp with time zone)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_list_ingredient_requests_page",
+      "signature": "p_offset integer, p_limit integer, p_waiting boolean",
+      "returns": "TABLE(id uuid, business_id uuid, business_name text, name text, builder text, role text, note text, status text, review_note text, created_at timestamp with time zone, reviewed_at timestamp with time zone, image_path text, admin_asset_key text, library_id text)",
+      "arg_count": 3,
+      "default_count": 3,
+      "input_names": [
+        "p_offset",
+        "p_limit",
+        "p_waiting"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_list_library_ingredients",
+      "signature": "",
+      "returns": "TABLE(id text, builder text, role text, name text, asset_key text, active boolean, request_id uuid)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_publish_cms_version",
+      "signature": "p_content_id uuid",
+      "returns": "void",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_content_id"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_record_restriction_appeal",
+      "signature": "p_restriction_id uuid, p_action text, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_restriction_id",
+        "p_action",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_request_financial_action",
+      "signature": "p_action_type text, p_transaction_id uuid, p_target_user_id uuid, p_amount numeric, p_direction text, p_reason text",
+      "returns": "uuid",
+      "arg_count": 6,
+      "default_count": 0,
+      "input_names": [
+        "p_action_type",
+        "p_transaction_id",
+        "p_target_user_id",
+        "p_amount",
+        "p_direction",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_business_application",
+      "signature": "p_application_id uuid, p_status text, p_review_note text, p_final_rejection boolean",
+      "returns": "void",
+      "arg_count": 4,
+      "default_count": 2,
+      "input_names": [
+        "p_application_id",
+        "p_status",
+        "p_review_note",
+        "p_final_rejection"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_financial_action",
+      "signature": "p_action_id uuid, p_decision text, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_action_id",
+        "p_decision",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_review_ingredient_request",
+      "signature": "p_request_id uuid, p_status text, p_review_note text, p_admin_asset_key text, p_role text",
+      "returns": "boolean",
+      "arg_count": 5,
+      "default_count": 3,
+      "input_names": [
+        "p_request_id",
+        "p_status",
+        "p_review_note",
+        "p_admin_asset_key",
+        "p_role"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_save_cms_draft",
+      "signature": "p_content_key text, p_locale text, p_payload jsonb",
+      "returns": "uuid",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_content_key",
+        "p_locale",
+        "p_payload"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_save_goodies_builder_config",
+      "signature": "p_business_id uuid, p_builder_id text, p_config jsonb, p_enabled boolean",
+      "returns": "boolean",
+      "arg_count": 4,
+      "default_count": 0,
+      "input_names": [
+        "p_business_id",
+        "p_builder_id",
+        "p_config",
+        "p_enabled"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_save_library_ingredient",
+      "signature": "p_id text, p_builder text, p_role text, p_name text, p_asset_key text, p_active boolean",
+      "returns": "text",
+      "arg_count": 6,
+      "default_count": 1,
+      "input_names": [
+        "p_id",
+        "p_builder",
+        "p_role",
+        "p_name",
+        "p_asset_key",
+        "p_active"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_application_document_status",
+      "signature": "p_document_id uuid, p_status text, p_review_note text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_document_id",
+        "p_status",
+        "p_review_note"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_business_verification",
+      "signature": "p_business uuid, p_status text, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 1,
+      "input_names": [
+        "p_business",
+        "p_status",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_cms_asset_status",
+      "signature": "p_asset_id uuid, p_status text",
+      "returns": "void",
+      "arg_count": 2,
+      "default_count": 0,
+      "input_names": [
+        "p_asset_id",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_set_ingredient_rules",
+      "signature": "p_rules text",
+      "returns": "boolean",
+      "arg_count": 1,
+      "default_count": 0,
+      "input_names": [
+        "p_rules"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_update_account_restriction",
+      "signature": "p_restriction_id uuid, p_ends_at timestamp with time zone, p_reason text",
+      "returns": "void",
+      "arg_count": 3,
+      "default_count": 0,
+      "input_names": [
+        "p_restriction_id",
+        "p_ends_at",
+        "p_reason"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_admin_upsert_asset",
+      "signature": "p_asset_key text, p_storage_path text, p_content_type text, p_byte_size bigint, p_alt_text jsonb, p_status text",
+      "returns": "uuid",
+      "arg_count": 6,
+      "default_count": 2,
+      "input_names": [
+        "p_asset_key",
+        "p_storage_path",
+        "p_content_type",
+        "p_byte_size",
+        "p_alt_text",
+        "p_status"
+      ],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    },
+    {
+      "observed_at": "2026-11-20 17:58:35.464011+00",
+      "name": "wantiss_message_contact_profiles",
+      "signature": "",
+      "returns": "TABLE(id uuid, full_name text, avatar_url text, wantiss_number text)",
+      "arg_count": 0,
+      "default_count": 0,
+      "input_names": [],
+      "security_definer": true,
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "authenticated_execute": true
+    }
+  ]
+}

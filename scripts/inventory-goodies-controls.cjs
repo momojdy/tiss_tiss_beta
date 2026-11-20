@@ -10,7 +10,10 @@ const root = path.resolve(__dirname, '..');
 const adminRoot = path.resolve(root, '../tiss-admin');
 const ts = require(path.join(root, 'node_modules/typescript'));
 const auditDir = path.join(root, 'docs/goodies/re-audit-20261118');
-const output = path.join(auditDir, 'current-source-inventory.json');
+const outputIndex=process.argv.indexOf('--output');
+const output=outputIndex<0?path.join(auditDir,'current-source-inventory.json'):path.resolve(root,process.argv[outputIndex+1]||'');
+if(!output.startsWith(path.join(root,'docs/goodies')+path.sep)||!output.endsWith('.json'))throw Error('Inventory output must stay inside docs/goodies and use a JSON file.');
+fs.mkdirSync(path.dirname(output),{recursive:true});
 const MAX_FILES = 180, MAX_FILE_BYTES = 2 * 1024 * 1024, MAX_OUTPUT_BYTES = 20 * 1024 * 1024;
 const SOURCE_TRACE = 'SOURCE_TRACE', HOSTED_NOT_VERIFIED = 'HOSTED_NOT_VERIFIED';
 const roots = {customer: root, admin: adminRoot};
@@ -67,6 +70,8 @@ for (const name of fs.readdirSync(path.join(root, 'src/screens/businessSpace')).
 for (const name of fs.readdirSync(path.join(root, 'src/services')).sort()) {
   if (/^goodies.*\.ts$/.test(name)) add('customer', `src/services/${name}`, 'vendor');
 }
+for(const name of ['goodiesPush.ts','goodiesPushRouting.ts','useGoodiesPush.ts'])for(const role of ['customer','vendor','courier'])add('customer','src/services/'+name,role);
+add('customer','src/lib/wantissCms.ts','customer',{scope:'Shared published CMS transport used by Goodies; valid response behavior preserved for other features.'});
 add('customer', 'src/features/Goodies/i18n/vendorCopy.json', 'vendor');
 add('admin', 'src/features/admin/shell/Nav.tsx', 'admin', {scope: 'Actual admin route registry and navigation implementation'});
 for (const name of ['previewRuntime.ts', 'previewNative.tsx', 'previewBuilders.ts', 'previewBuilderTemplates.ts', 'previewMenu.tsx', 'previewLocales.ts', 'previewSourceManifest.json']) {
@@ -262,7 +267,9 @@ for (const scope of [...scopes.values()].sort((a, b) => `${a.repository}:${a.fil
     if (ts.isCallExpression(node)) {
       const call = node.expression.getText(source), args = node.arguments.map(argument => argument.getText(source));
       const localRoot = call.match(/^[A-Za-z_$][\w$]*/)?.[0], imported = imports.get(localRoot);
-      const isBackend = /(?:^|\.)rpc$/.test(call) || /^(?:goodiesRequest|goodiesRpc|rpc|invoke)$/.test(call) ||
+      const isBackend = /(?:^|\.)rpc$/.test(call) || /^(?:goodiesRequest|goodiesOrdersRequest|goodiesRpc|rpc|invoke)$/.test(call) ||
+        (call === 'legacy' && scope.file === 'src/services/goodiesWorkspace.ts') ||
+        (/^client\.(?:from|auth\.getUser)$/.test(call) && scope.file === 'src/features/Goodies/groupRecovery.ts') ||
         (call === 'call' && scope.file === 'src/services/goodiesSettlement.ts') || /^supabase\.(?:from|functions\.invoke|channel|removeChannel)$/.test(call) ||
         /^supabase\.auth\.[\w.]+$/.test(call) || /^supabase\.storage\.from$/.test(call) ||
         /^supabase\.storage\.from\([\s\S]*\)\.(?:upload|update|remove|download|list|move|copy|createSignedUrl|createSignedUrls|createSignedUploadUrl|getPublicUrl)$/.test(call);
@@ -302,8 +309,8 @@ if (changedDuringGeneration.length) throw Error(`Source changed while reading; r
 const report = {
   schemaVersion: 1, generatedAt: new Date().toISOString(), classification: SOURCE_TRACE, hostedClassification: HOSTED_NOT_VERIFIED,
   purpose: 'Reproducible inventory of current Goodies source. A binding, handler, route or contract trace is never hosted acceptance or a role authorization PASS.',
-  generator: {file: 'scripts/inventory-goodies-controls.cjs', sha256: sha256(fs.readFileSync(__filename)), command: 'node scripts/inventory-goodies-controls.cjs'},
-  writeBoundary: {onlyOutput: 'docs/goodies/re-audit-20261118/current-source-inventory.json', applicationCodeExecuted: false, networkOrDatabaseCalls: false, deploymentPerformed: false, semanticReportsModified: false},
+  generator: {file: 'scripts/inventory-goodies-controls.cjs', sha256: sha256(fs.readFileSync(__filename)), command: 'node scripts/inventory-goodies-controls.cjs'+(outputIndex<0?'':' --output '+posix(path.relative(root,output)))},
+  writeBoundary: {onlyOutput: posix(path.relative(root,output)), applicationCodeExecuted: false, networkOrDatabaseCalls: false, deploymentPerformed: false, semanticReportsModified: false},
   sourceSnapshot: {consistency: 'SCOPED_FILE_HASHES_RECHECKED_BEFORE_WRITE', changedDuringGeneration, limitation: 'Subsequent source edits invalidate this snapshot; rerun before reporting final evidence.'},
   classificationRules: {SOURCE_TRACE: 'Current source was parsed or hashed; behavior, authorization and outcomes have not been executed by this generator.', HOSTED_NOT_VERIFIED: 'No signed-in hosted button, cross-role, provider or device acceptance was performed.'},
   scopeRules: {seedReports, sharedVendorFunctions: 'Existing vendor.json includedFunctions are retained; whole-file hashes/comment metadata cover shared files but AST controls/calls are limited to the named functions and their nested callbacks.', additions: 'Dedicated src/features/Goodies TS/TSX/JSON, BusinessSpaceGoodies files, goodiesTemplates and goodies services; actual admin navigation implementation and isolated preview port/manifest metadata.', exclusions: 'Unrelated service screens, SQL, environment/credential files, node_modules, generated admin consumer mirror controls, and test execution. Test files listed by the courier report receive metadata only.', bounds: {maxFiles: MAX_FILES, maxFileBytes: MAX_FILE_BYTES, maxOutputBytes: MAX_OUTPUT_BYTES}},

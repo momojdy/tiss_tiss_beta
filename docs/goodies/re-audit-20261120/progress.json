@@ -1,0 +1,251 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "displayDate": "21 November 2026",
+  "productionReady": false,
+  "classification": "FAIL",
+  "verifiedCodeCommits": {
+    "customer": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+    "admin": "f13f959afad44f5e0fd23f2f1da0266031641be1"
+  },
+  "appDeployed": false,
+  "cmsPublishedThisPass": false,
+  "productionFinancialRecordsModified": false,
+  "liveChargesExecuted": false,
+  "fullDatabaseBackupCreated": false,
+  "scopedFunctionRecoveryTest": "PASS",
+  "deployment": {
+    "scope": "Backend only",
+    "migrationCount": 4,
+    "ledgerEntries": 416,
+    "pushWorkerVersion": 1,
+    "pushActivated": false
+  },
+  "automated": {
+    "classification": "PASS",
+    "tests": 481,
+    "customer": 269,
+    "admin": 68,
+    "crossRole": 47,
+    "deno": 97,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "nativeConcurrencyScenarios": 27,
+    "isolatedTargetMigrations": 32
+  },
+  "sourceCoverage": {
+    "files": 111,
+    "astFiles": 99,
+    "functions": 1558,
+    "interactiveBindings": 1347,
+    "jsxBindings": 1204,
+    "objectEventBindings": 143,
+    "backendCallSites": 456,
+    "serviceCallSites": 223,
+    "navigationCallSites": 537,
+    "commentTokens": 265,
+    "demoReferenceLines": 264,
+    "embeddedEventReferences": 9,
+    "unresolvedLiteralRegistryTargets": 0,
+    "dynamicRegistryTargets": 17
+  },
+  "cms": {
+    "registeredFields": 1926,
+    "pageAndSharedGroups": 73,
+    "registeredRoutes": 34,
+    "livePublishedBundleVersion": 5,
+    "liveLabels": 782,
+    "englishReviewedLabels": 647,
+    "englishDraftLabels": 135,
+    "otherReviewedLabels": {
+      "fr": 0,
+      "es": 0,
+      "zh-Hans": 0,
+      "ht": 0
+    },
+    "preparedFourLanguageFields": 2138,
+    "humanReviewClaim": false,
+    "installedReloadAcceptance": "NOT VERIFIED"
+  },
+  "knownFailures": [
+    {
+      "classification": "FAIL",
+      "scope": "Shared Auth setting",
+      "finding": "Supabase leaked-password protection is disabled.",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Published label translations",
+      "finding": "The prepared approved four-language content has not reached the published label bundle."
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Existing shared shell, not introduced by this pass",
+      "finding": "Expanded App.tsx lint still reports 64 pre-existing react-hooks/error-boundaries errors; configured checks and new service lint pass."
+    },
+    {
+      "classification": "FAIL",
+      "scope": "Other/mixed-feature shared platform contracts",
+      "finding": "Nine older shared RPCs remain absent; dedicated Goodies-only paths are guarded and tested. Mixed-feature workspace support is not certified."
+    }
+  ],
+  "notVerified": [
+    "Every authenticated hosted button, role boundary and cross-role complete order lifecycle.",
+    "Hosted synthetic Wallet/Cash/Shared Bill acceptance: temporary branch cost approval is outstanding.",
+    "Positive payment-provider sandbox charges/capture/webhooks/refunds and reconciliation.",
+    "Signed Android/iOS builds, registered native/EAS/Maps/provider configuration, physical GPS/background/push/proof behavior.",
+    "CMS edit to draft preview to approved publication to installed-customer reload for all fields.",
+    "A full database backup and isolated full restore; only the two changed function definitions/ACLs were captured and restored locally.",
+    "Per-event notification language acceptance: {details} may contain user-authored text or server-generated English; lookup tests do not establish complete translated event bodies."
+  ],
+  "userDeferred": [
+    "FAQ and final policy/support approval",
+    "Haitian Creole human review"
+  ],
+  "refundPolicy": "Card cancellation refunds return to the original card through Stripe; Wallet contributions refund their original payers. No duplicate card-plus-Wallet credit.",
+  "nextConcreteAction": "Approve the quoted temporary branch cost, then execute hosted-acceptance-plan.json without creating synthetic financial data in production.",
+  "evidence": [
+    "final-ci-verification.json",
+    "backend-deployment-verification.json",
+    "edge-source-comparison.json",
+    "hosted-public-cms-read.json",
+    "screen-verification.json",
+    "source-inventory.json",
+    "live-rpc-comparison.json",
+    "shared-platform-contract-gaps.json",
+    "hosted-acceptance-plan.json",
+    "commits-and-files.json"
+  ],
+  "baseline": {
+    "customer": "ddadcc5f221ca2a12a82099967076290d8fdc7d8",
+    "admin": "c00bb25296b5e295d89c575e23d713f40a443d84"
+  },
+  "deploymentBoundary": "Backend deployment was explicitly approved later in this task. No app release, OTA or CMS publication was performed.",
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Backend reconciliation",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 32-migration isolated target, current Goodies signatures/ACLs, four scoped live deployments and exact deployed TypeScript matches for all seven inspected Goodies functions. Nine shared legacy branches and six partial/static argument analyses are explicitly qualified; full hosted role coverage remains open."
+    },
+    {
+      "phase": 2,
+      "name": "Customer screens and controls",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 34 registered routes, current CMS coverage, 1,347 extracted bindings, zero unresolved recognized literal registry targets. Every hosted interaction and 17 computed targets have not been manually accepted."
+    },
+    {
+      "phase": 3,
+      "name": "Vendor store/product/builder operations",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: focused product/order/permissions/recovery regressions, stable localized settlement selections, safe financial results and real scoped services. Hosted merchant lifecycle and full mixed-feature workspaces remain open."
+    },
+    {
+      "phase": 4,
+      "name": "Checkout/payment/refund/settlement",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: synthetic authoritative-price, state, idempotency, refund and concurrent ledger scenarios. Card refunds remain on the original card as confirmed by the user. Positive provider sandbox and hosted authenticated financial acceptance remain open."
+    },
+    {
+      "phase": 5,
+      "name": "Courier and delivery",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: real-coordinate implementation, freshness tests, courier races and native manifest configuration. Physical GPS/background/offline/maps/push and hosted proof uploads have not passed device acceptance."
+    },
+    {
+      "phase": 6,
+      "name": "Group orders and Shared Bill",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: isolated real PostgreSQL funding, exactly-once checkout, stock, payer refunds and races. Hosted Auth/API acceptance and intentional release-gate activation remain open."
+    },
+    {
+      "phase": 7,
+      "name": "Admin operations",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 68 paired tests with no skipped preview checks and successful builds/typecheck. Full signed-in hosted permissions and every admin control remain open."
+    },
+    {
+      "phase": 8,
+      "name": "CMS coverage/preview/publication",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 1,926 fields, 73 page/shared groups, 34 routes, five-locale editing/serialization checks and a real public consumer read. Not every field has completed hosted draft-preview-publish-installed-app-reload acceptance."
+    },
+    {
+      "phase": 9,
+      "name": "Notifications/messaging/security",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: deployed default-off device/outbox/worker path, auth denial, valid zero-work health check, session/ownership/preference/retry/recovery tests and safe navigation. Real remote push delivery needs device/provider configuration. Supabase leaked-password protection remains disabled."
+    },
+    {
+      "phase": 10,
+      "name": "Languages and production cleanup",
+      "classification": "FAIL",
+      "evidence": "PASS: source catalog, truthful fallback, isolated fixtures and safe UI transport/errors. The live label bundle has no reviewed French/Spanish/Chinese label entries and uses English fallback; the prepared approved four-language package remains unpublished. FAQ/legal/Haitian Creole approval is deferred."
+    },
+    {
+      "phase": 11,
+      "name": "Automated tests and builds",
+      "classification": "NOT VERIFIED",
+      "evidence": "PASS: 481 automated tests, zero skipped, 27 separate native PostgreSQL scenarios and successful CI/typechecks/unsigned exports. Native signing, physical devices, provider sandbox and complete hosted E2E are not verified."
+    },
+    {
+      "phase": 12,
+      "name": "Production release decision",
+      "classification": "FAIL",
+      "evidence": "Do not certify or launch Goodies yet. Complete hosted isolated acceptance, content release, provider/device checks, the shared Auth setting and full backup/recovery prerequisites. The Wantiss app was not deployed."
+    }
+  ],
+  "implementedThisPass": [
+    {
+      "sha": "29c8f0912f996bd02233beb7dd37fc0ed68ebad3",
+      "subject": "fix(goodies): reject malformed settlement amounts and ledger rows"
+    },
+    {
+      "sha": "f2a3863d465363d46b9534a5367077d42020c611",
+      "subject": "fix(goodies): keep settlement selection independent of edited captions"
+    },
+    {
+      "sha": "ff09a5d374d28f112828460f59d0f7efe2857c26",
+      "subject": "fix(goodies): reject invalid vendor notification destinations"
+    },
+    {
+      "sha": "4f8a4df662130c3cf021ae83c190398a8a9f8a6a",
+      "subject": "fix(goodies): use reviewed published English in notification fallback"
+    },
+    {
+      "sha": "91b56aa46e6eb57fb64ccf44accd9b4645dc67f8",
+      "subject": "test(goodies): verify courier capacity and offer acceptance races"
+    },
+    {
+      "sha": "8af5576da75d3d3e10ad95fffad0904cc700e9a8",
+      "subject": "fix(goodies): secure secondary vendor order controls and pagination"
+    },
+    {
+      "sha": "d5b5f0511487cc45ca1797204458372681470975",
+      "subject": "fix(goodies): validate vendor revenue reporting before display"
+    },
+    {
+      "sha": "41d8e9242c5dcfd3a1e8a2a8ee53a00de70b4778",
+      "subject": "feat(goodies): add protected push delivery and notification recovery"
+    },
+    {
+      "sha": "7d2c2d3be07cf974cedfcfc1f5243fce7d4381c5",
+      "subject": "fix(goodies): preserve message alerts and reconcile deployed migrations"
+    },
+    {
+      "sha": "67f4a48b95f5aec0e445e1773e839435f9007584",
+      "subject": "fix(goodies): validate published CMS responses and sanitize transport errors"
+    },
+    {
+      "sha": "06d13a632fff78a585b26ec339abef898d9da30d",
+      "subject": "fix(goodies): limit push permission prompts to Goodies workspaces"
+    },
+    {
+      "sha": "30405ad1a2c9dc467efc1b5bf7be0dd63768619e",
+      "subject": "fix(goodies): preserve successful notification opens on cache errors"
+    }
+  ],
+  "nativeExportEvidence": "final-native-export-files.json",
+  "hostedBranchCostApprovalRequired": true,
+  "localDevelopmentConfiguration": "Existing Wantiss URL and public publishable key configured in ignored .env.local; no service-role key or app release."
+}

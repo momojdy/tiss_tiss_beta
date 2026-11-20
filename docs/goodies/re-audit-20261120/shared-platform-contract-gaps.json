@@ -1,0 +1,62 @@
+{
+  "observedAt": "2026-11-20T19:17:24.530Z",
+  "classification": "FAIL",
+  "scope": "Confirmed absence of nine older shared contracts; this is not a claim that the dedicated Goodies RPCs are missing. Pure Goodies guarded paths are covered by regression tests. Full mixed-feature workspace operation is not certified.",
+  "contracts": [
+    {
+      "name": "feature_requirements_status",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 46,
+      "context": "Shared registration branch used when the business is not Goodies-only; the Goodies-only branch uses the current business-application APIs."
+    },
+    {
+      "name": "submit_requirement",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 117,
+      "context": "Legacy shared registration upload handler; the Goodies-only application uses submit_business_application_document."
+    },
+    {
+      "name": "submit_verification",
+      "file": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "line": 155,
+      "context": "Legacy shared registration submission; the Goodies-only application uses the current application workflow."
+    },
+    {
+      "name": "register_push_token",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 198,
+      "context": "Non-Goodies workspace branch. Goodies explicitly skips it and now uses the deployed, session-bound Goodies device APIs."
+    },
+    {
+      "name": "go_live",
+      "file": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "line": 1015,
+      "context": "Shared checklist branch when its first feature is not Goodies; the Goodies branch opens the existing store setup/publication page."
+    },
+    {
+      "name": "dashboard_range",
+      "file": "src/services/goodiesSettlement.ts",
+      "line": 61,
+      "context": "Shared non-Goodies or mixed-feature financial dashboard. Goodies-only workspaces use goodies_vendor_dashboard_range."
+    },
+    {
+      "name": "action_required",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 7,
+      "context": "Shared non-Goodies or mixed-feature actions feed. Goodies-only workspaces use scoped real order/product/conversation queries."
+    },
+    {
+      "name": "activity_feed",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 17,
+      "context": "Shared non-Goodies or mixed-feature activity feed. Goodies-only workspaces use real account/business notifications."
+    },
+    {
+      "name": "search_business",
+      "file": "src/services/goodiesWorkspace.ts",
+      "line": 28,
+      "context": "Shared non-Goodies or mixed-feature search. Goodies-only workspaces use scoped real products/orders."
+    }
+  ],
+  "unrelatedCodeModified": false
+}
