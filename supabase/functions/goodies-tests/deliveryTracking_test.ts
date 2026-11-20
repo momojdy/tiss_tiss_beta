@@ -1,4 +1,4 @@
-import {coordinate, courierLocation, freshGpsSample, routeSegments, trackingRegion, GPS_MAX_AGE_MS} from '../../../src/features/Goodies/deliveryTracking.ts';
+import {coordinate, courierLocation, freshGpsSample, routeSegments, trackingRegion, GPS_MAX_AGE_MS, GPS_SAMPLE_MAX_AGE_MS} from '../../../src/features/Goodies/deliveryTracking.ts';
 
 function equal(actual: unknown, expected: unknown) {
   if (JSON.stringify(actual) !== JSON.stringify(expected)) throw new Error(`Expected ${JSON.stringify(expected)}, got ${JSON.stringify(actual)}`);
@@ -40,4 +40,14 @@ Deno.test('viewport contains distant store, customer, courier and route points',
   const region = trackingRegion([{latitude: 18, longitude: -73}, {latitude: 19, longitude: -72}, null]);
   equal(region, {latitude: 18.5, longitude: -72.5, latitudeDelta: 1.3, longitudeDelta: 1.3});
   equal(trackingRegion([null, {latitude: 100, longitude: 0}]), null);
+});
+
+
+Deno.test("incoming courier samples must be recent even while customers can see a slightly older last fix", () => {
+  const now=Date.now(), point={latitude:18.5,longitude:-72.3};
+  equal(freshGpsSample({timestamp:now-GPS_SAMPLE_MAX_AGE_MS,coords:point},now),true);
+  equal(freshGpsSample({timestamp:now-GPS_SAMPLE_MAX_AGE_MS-1,coords:point},now),false);
+  equal(freshGpsSample({timestamp:now-GPS_MAX_AGE_MS+1000,coords:point},now),false);
+  const persisted={...point,status:'picked_up',location_updated_at:new Date(now-GPS_SAMPLE_MAX_AGE_MS-5000).toISOString()};
+  equal(!!courierLocation(persisted,now),true);
 });

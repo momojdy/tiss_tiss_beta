@@ -6,7 +6,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, Empty, useTh
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, persistGoodiesContactNumber, removeGoodiesContactNumber, clearActiveGroup} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, cartStoreIds, canScheduleGoodiesStore, lineStore, IT, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, persistGoodiesContactNumber, removeGoodiesContactNumber, clearActiveGroup} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -114,27 +114,10 @@ export function Sheets({sheet, close}: {sheet: any; close: () => void}) {
 function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boolean}) {
   const th = useTheme(), store: any = STB[S.cart.sid];
   const customerZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Etc/GMT';
-  const storeZone = store?.scheduledOrderTimezone || customerZone;
-  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  const storeParts = (instant: Date) => {
-    const parts = new Intl.DateTimeFormat('en-US',{timeZone:storeZone,year:'numeric',month:'2-digit',day:'2-digit',weekday:'long',hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(instant);
-    const get = (key:string) => parts.find(part=>part.type===key)?.value || '';
-    return {year:Number(get('year')),month:Number(get('month')),day:Number(get('day')),weekday:get('weekday'),hour:Number(get('hour')),minute:Number(get('minute'))};
-  };
   const customerNow = new Date();
-  const minimumOrderTime = String(store?.scheduledOrderStartTime || '10:00').slice(0,5);
-  const [minimumHour,minimumMinute] = minimumOrderTime.split(':').map(Number);
   const isAvailableInstant = (instant:Date) => {
-    const p=storeParts(instant), hours=store?.scheduleHours?.[p.weekday] || null;
-    if (hours && hours.closed) return false;
-    let openMinute=8*60, closeMinute=22*60;
-    if (hours && hours.open && hours.close) {
-      const [oh,om]=String(hours.open).slice(0,5).split(':').map(Number);
-      const [ch,cm]=String(hours.close).slice(0,5).split(':').map(Number);
-      openMinute=oh*60+(om||0); closeMinute=ch*60+(cm||0);
-    } else if (store?.scheduleHours && Object.keys(store.scheduleHours).length && !hours) return false;
-    const minute=p.hour*60+p.minute, minimum=(minimumHour||0)*60+(minimumMinute||0);
-    return minute>=Math.max(openMinute,minimum) && minute<closeMinute;
+    const stores=cartStoreIds();
+    return stores.length>0&&stores.every(storeId=>canScheduleGoodiesStore(storeId,instant.getTime()));
   };
   const customerDayStart = (offset:number) => {const d=new Date(customerNow);d.setHours(0,0,0,0);d.setDate(d.getDate()+offset);return d;};
   const slotsForDay = (offset:number) => {
@@ -287,7 +270,14 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     if(groupActionLock.current||groupCheckoutLock.current)return;
     const targetStoreId = storeId || S.cart.sid || group.storeId || '';
     if (!targetStoreId) {toast(label("lbl.cms.9ad0840772c3", "Open a store first to create its group invitation."));return;}
-    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast(label("lbl.cms.a6b2201002c6", "Your current cart belongs to another store. Clear it before creating this group."));return;}
+    if (S.cart.lines.some((line:any)=>lineStore(line)!==targetStoreId)) {
+      toast(label("lbl.cms.a6b2201002c6", "Your current cart belongs to another store. Clear it before creating this group."));
+      return;
+    }
+    if (S.cart.lines.some((line:any)=>!IT[line.id])) {
+      toast(label("lbl.page.store.d8aea5db73", "This cart item is not linked to a live catalogue product."));
+      return;
+    }
     const owner=accountId,previousGroupId=String(group.groupId||''),cartLines=JSON.parse(JSON.stringify(S.cart.sid===targetStoreId?S.cart.lines:[]));
     groupActionLock.current=true;setGroupBusy(true);let created=false;
     try {
@@ -377,12 +367,15 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       }catch{if(valid()&&request===statusRequest)setStatusError(label('lbl.groupRefreshFailed','Could not refresh this group order. Please try again.'));}
     };
     void loadItems(); void loadMembers(); void refreshGroupStatus();
+    // A group can expire without any database UPDATE or Realtime event.
+    // Refresh the server-owned status while this sheet is open.
+    const statusPoll=setInterval(()=>{if(active)void refreshGroupStatus();},30000);
     const channel=supabase.channel('goodies-group-live-'+group.groupId)
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void loadItems();})
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_members',filter:'group_id=eq.'+group.groupId},()=>{void loadMembers();})
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'goodies_group_orders',filter:'id=eq.'+group.groupId},()=>{void refreshGroupStatus();})
       .subscribe();
-    return ()=>{active=false;void supabase.removeChannel(channel);};
+    return ()=>{active=false;clearInterval(statusPoll);void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId,accountId,groupReload]);
 
   /* Friends picker (host) and invitations from friends (guest). */
@@ -468,8 +461,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     if(typeof value!=='number'&&!(typeof value==='string'&&/^-?\d+(?:\.\d+)?$/.test(value.trim())))return null;
     const amount=Number(value);return Number.isFinite(amount)&&amount>=0?amount:null;
   };
-  const validEstimate=(value:any)=>!!value&&value.group_id===group.groupId&&['pickup','delivery'].includes(value.order_type)
-    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>groupAmount(value[key])!==null)&&Number(value.estimated_total)>0;
+  const validEstimate=(value:any)=>!!value&&value.group_id===group.groupId&&value.currency==='USD'&&['pickup','delivery'].includes(value.order_type)
+    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>groupAmount(value[key])!==null)
+    &&Number(value.estimated_total)>0
+    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>Number.isSafeInteger(Math.round(Number(value[key])*100))&&Math.abs(Number(value[key])*100-Math.round(Number(value[key])*100))<0.00001)
+    &&Math.round(Number(value.estimated_total)*100)===Math.round(Number(value.subtotal)*100)+Math.round(Number(value.delivery_fee)*100)+Math.round(Number(value.service_fee)*100);
   const loadGroupEstimate=async(type:'pickup'|'delivery',address:any={})=>{
     const owner=accountId,groupId=String(group.groupId||''),request=++estimateVersion.current,selected=selection.current;
     if(!await requireAccount(owner)||!current(owner,groupId)||request!==estimateVersion.current||selection.current!==selected)return;

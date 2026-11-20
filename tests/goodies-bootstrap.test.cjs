@@ -17,3 +17,15 @@ test('failed account hydration exposes retry without a previous account restrict
 test('a native sheet can render only for the account that opened it',()=>{
  for(const accountId of ['a','b']){const value={kind:'ctform',privatePhone:'synthetic-owned-phone'};const tree=render('addresses',false,{loaded:true,sheet:{accountId,value}}),sheet=elements(tree).find(e=>e.type==='Sheets');if(accountId==='a')assert.ok(!sheet?.props.sheet);else assert.equal(sheet.props.sheet,value);}
 });
+
+
+test('restricted customers cannot open new Goodies shopping routes but retain history and recovery',()=>{
+ for(const route of ['home','cart','checkout','reviews','flashdeals','grouporder']){
+  const tree=render(route,false,{loaded:true});
+  assert.match(text(tree),/Goodies access temporarily suspended/,route);
+ }
+ for(const route of ['orders','track','help-pay','help','addresses']){
+  const tree=render(route,false,{loaded:true});
+  assert.doesNotMatch(text(tree),/Goodies access temporarily suspended/,route);
+ }
+});

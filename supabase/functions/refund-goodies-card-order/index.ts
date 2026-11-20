@@ -34,21 +34,23 @@ Deno.serve(async (req: Request) => {
       .eq("id", orderId).maybeSingle();
     if (orderError) throw orderError;
     if (!order) return json({ error: "Order not found" }, 404);
+    // Authorize before returning any payment status, including non-card and
+    // already-refunded orders, so another user's order ID discloses nothing.
+    let authorized = user.id === order.customer_id;
+    if (!authorized) {
+      const { data: membership, error: membershipError } = await service.from("business_members")
+        .select("role").eq("business_id", order.business_id).eq("user_id", user.id).maybeSingle();
+      if (membershipError) throw membershipError;
+      authorized = membership?.role === "owner" || membership?.role === "admin";
+    }
+    if (!authorized) return json({ error: "Order not found" }, 404);
+
     if (order.payment_method !== "card") return json({ status: order.payment_status || "not_card" });
     if (order.payment_status === "refunded") return json({ status: "refunded" });
     if (!["declined", "expired", "cancelled"].includes(order.status) ||
         !["paid", "refund_pending", "partially_refunded"].includes(order.payment_status) || !order.payment_provider_ref) {
       return json({ error: "This order is not ready for a card refund" }, 409);
     }
-
-    let authorized = user.id === order.customer_id;
-    if (!authorized) {
-      const { data: membership, error: membershipError } = await service.from("business_members")
-        .select("business_id").eq("business_id", order.business_id).eq("user_id", user.id).maybeSingle();
-      if (membershipError) throw membershipError;
-      authorized = !!membership;
-    }
-    if (!authorized) return json({ error: "Not authorized for this order" }, 403);
 
     const { data: queueRow, error: queueReadError } = await service.from("goodies_card_refund_queue")
       .select("id,status").eq("order_id", order.id).maybeSingle();

@@ -242,11 +242,13 @@ export function GoodiesStorePage() {
   const {label,text,money:dollars,locale,canManage,requireManage}=useGoodiesVendorLabels("store");
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
+  const storeSaveLock = useRef(false);
   const [savedAddress, setSavedAddress] = useState({ address: '', city: '', country: '' });
   const [capturedLocation, setCapturedLocation] = useState<{ latitude: number; longitude: number; accuracy: number | null } | null>(null);
   const [locationBusy, setLocationBusy] = useState(false), [locationSaving, setLocationSaving] = useState(false);
   const [loadErr, setLoadErr] = useState('');
   const [customProducts, setCustomProducts] = useState(false), [customTypes, setCustomTypes] = useState<GBuilder[]>([]);
+  const initialCustomToggles = useRef<{master:boolean;enabled:Record<string,boolean>}>({master:false,enabled:{}});
   const [languageOpen, setLanguageOpen] = useState(false), [languageQuery, setLanguageQuery] = useState('');
   const [timePickerOpen, setTimePickerOpen] = useState(false), [sameAsCover, setSameAsCover] = useState(false), [thumbnailBusy, setThumbnailBusy] = useState(false);
   const load = () => {
@@ -258,8 +260,11 @@ export function GoodiesStorePage() {
         setSavedAddress({ address: store.address.trim(), city: store.city.trim(), country: store.country.trim() });
         setCapturedLocation(null);
         setSameAsCover(!!store.coverUrl && store.thumbnailUrl === store.coverUrl);
-        setCustomTypes(rows.filter(x => x.type === 'pizza' || x.type === 'burger'));
-        setCustomProducts(rows.some(x => (x.type === 'pizza' || x.type === 'burger') && x.enabled));
+        const types=rows.filter(x => x.type === 'pizza' || x.type === 'burger');
+        const master=types.some(x => x.enabled);
+        initialCustomToggles.current={master,enabled:Object.fromEntries(types.map(x=>[x.id,x.enabled]))};
+        setCustomTypes(types);
+        setCustomProducts(master);
       })
       .catch(e => setLoadErr(text(errText(e))));
   };
@@ -286,8 +291,9 @@ export function GoodiesStorePage() {
     return '';
   };
   const save = async () => {
-    if (!requireManage()) return;
+    if (!requireManage() || storeSaveLock.current) return;
     const e = err(); if (e) return app.toast(text(e));
+    storeSaveLock.current = true;
     setBusy(true);
     try {
       await goodiesApi.saveStore(app.biz.id, f);
@@ -296,12 +302,26 @@ export function GoodiesStorePage() {
       setSavedAddress(nextSavedAddress);
       if (addressChanged) setF(current => current ? { ...current, storeLatitude: null, storeLongitude: null } : current);
       await goodiesApi.saveStoreThumbnail(app.biz.id, sameAsCover ? f.coverUrl : f.thumbnailUrl);
-      const rows = await goodiesApi.listBuilders(app.biz.id);
-      const next = rows.filter(x => x.type !== 'pizza' && x.type !== 'burger');
-      next.push(...customTypes.map(x => ({ ...x, enabled: customProducts && x.enabled })));
-      await goodiesApi.saveBuilders(app.biz.id, next);
+      const baseline=initialCustomToggles.current;
+      const togglesChanged=customProducts!==baseline.master || customTypes.some(x=>baseline.enabled[x.id]!==x.enabled);
+      if(togglesChanged){
+        // Store setup edits toggle publication only. Always retain the newest
+        // server-owned builder content rather than overwriting other edits.
+        const rows=await goodiesApi.listBuilders(app.biz.id);
+        const localById=new Map(customTypes.map(x=>[x.id,x]));
+        const next=rows.map(x=>{
+          if(x.type!=='pizza'&&x.type!=='burger')return x;
+          const selected=localById.get(x.id);
+          if(customProducts!==baseline.master)return {...x,enabled:customProducts&&(selected?.enabled??x.enabled)};
+          if(selected&&baseline.enabled[x.id]!==selected.enabled)return {...x,enabled:customProducts&&selected.enabled};
+          return x;
+        });
+        next.push(...customTypes.filter(x=>!(x.id in baseline.enabled)&&!rows.some(row=>row.id===x.id)).map(x=>({...x,enabled:customProducts&&x.enabled})));
+        await goodiesApi.saveBuilders(app.biz.id,next);
+        initialCustomToggles.current={master:customProducts,enabled:Object.fromEntries(customTypes.map(x=>[x.id,x.enabled]))};
+      }
       app.toast(label("lbl.vendor.store.0589b60d42","Store saved")); app.bump();
-    } catch (x) { app.toast(text(errText(x))); } finally { setBusy(false); }
+    } catch (x) { app.toast(text(errText(x))); } finally { storeSaveLock.current = false; setBusy(false); }
   };
   const captureStoreLocation = async () => {
     if (!requireManage()) return;
@@ -672,7 +692,9 @@ export function GoodiesProductsPage() {
     if (!requireManage()) return;
     if(availabilityLock.current)return;availabilityLock.current=true;setAvailabilityBusy(b.id);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, (builders.d ?? []).map(x => x.id === b.id ? { ...x, available: v } : x));
+      const latest=await goodiesApi.listBuilders(app.biz.id);
+      if(!latest.some(x=>x.id===b.id))throw new Error('This custom product is no longer available. Refresh Products.');
+      await goodiesApi.saveBuilders(app.biz.id, latest.map(x => x.id === b.id ? { ...x, available: v } : x));
       await builders.reload(); app.bump();
     } catch (e) { app.toast(text(errText(e))); } finally {availabilityLock.current=false;setAvailabilityBusy('');}
   };
@@ -703,6 +725,7 @@ export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [errs, setErrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false), [loadAttempt, setLoadAttempt] = useState(0);
+  const builderSaveLock = useRef(false);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(0), [selectedItem, setSelectedItem] = useState<{ gi: number; ii: number } | null>(null);
   useEffect(() => {
     let active = true;
@@ -747,16 +770,26 @@ export function GoodiesBuilderEditPage() {
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
   const move = <T,>(a: T[], i: number, d: number) => { const j = i + d; if (j < 0 || j >= a.length) return a; const c = a.slice(); [c[i], c[j]] = [c[j], c[i]]; return c; };
   const save = async () => {
-    if (!requireManage()) return;
+    if (!requireManage() || builderSaveLock.current) return;
     const e = validateBuilder(b,label); setErrs(e);
     if (e.length) return app.toast(e[0]);
+    builderSaveLock.current = true;
     setSaving(true);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
+      const latest=await goodiesApi.listBuilders(app.biz.id);
+      const existed=all.some(x=>x.id===b.id), existsNow=latest.some(x=>x.id===b.id);
+      if(existed!==existsNow)throw new Error('This custom product changed while editing. Refresh Products and try again.');
+      // Do not submit a stale full-list snapshot that removes or rewrites
+      // unrelated custom products modified by a vendor or administrator.
+      const updated=existed
+        ? latest.map(x=>(x.id===b.id ? { ...b, productCreated: true } : x))
+        : [...latest, { ...b, enabled: true, available: true, productCreated: true }];
+      await goodiesApi.saveBuilders(app.biz.id,updated);
       app.toast(b.productCreated === false ? label("lbl.vendor.builders.55fbc59fd2","Custom product added") : label("lbl.vendor.builders.7efcfe59ac","Custom product saved")); app.bump(); app.back();
     } catch (error) {
       app.toast(text(errText(error)));
     } finally {
+      builderSaveLock.current = false;
       setSaving(false);
     }
   };

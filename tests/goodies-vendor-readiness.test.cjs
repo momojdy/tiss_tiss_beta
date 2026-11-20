@@ -82,3 +82,240 @@ test('vendor and courier App signout bridges preserve auth state when Supabase r
 test('vendor signout boundary shows a safe failure instead of an unhandled server rejection',async()=>{
  const {node,ast}=find('src/screens/businessSpace/BusinessSpaceScreen.tsx','signOut','variable'),alerts=[];const signout=compile(node.getText(ast),{onSignOut:async()=>{throw Error('private server detail');},Alert:{alert:(...args)=>alerts.push(args)}});await signout();assert.equal(alerts.length,1);assert.ok(!alerts.flat().join(' ').includes('private'));assert.equal(alerts[0][0],'Could not sign out');
 });
+
+
+test('editing a hidden or unavailable custom product never silently republishes it',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const makeSave=(b,all,onSaved)=>compile(decl.initializer.getText(ast),{
+  b,all,builderSaveLock:{current:false},validateBuilder:()=>[],setErrs(){},setSaving(){},requireManage:()=>true,
+  app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},
+  goodiesApi:{listBuilders:async()=>all,saveBuilders:async(_business,rows)=>onSaved(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Safe failure',
+ });
+ const other={id:'another-product',enabled:true,available:true,productCreated:true};
+ for(const [enabled,available] of [[false,false],[true,false],[false,true],[true,true]]){
+  const existing={id:'custom-existing',name:'Existing bowl',enabled,available,productCreated:true};
+  let written=null;
+  await makeSave(existing,[existing,other],rows=>{written=rows;})();
+  assert.equal(written.length,2);
+  assert.equal(written[0].enabled,enabled);
+  assert.equal(written[0].available,available);
+  assert.equal(written[0].productCreated,true);
+  assert.equal(written[1].enabled,true);
+  assert.equal(written[1].available,true);
+ }
+ let created=null;
+ const fresh={id:'new-builder',name:'Fresh bowl',enabled:true,available:true,productCreated:false};
+ await makeSave(fresh,[],rows=>{created=rows;})();
+ assert.equal(created.length,1);
+ assert.equal(created[0].productCreated,true);
+ assert.equal(created[0].enabled,true);
+ assert.equal(created[0].available,true);
+});
+
+
+test('own-driver evidence never falls back to public listing photos when private rollout is off',async()=>{
+ const {node,ast}=find(orders,'GoodiesOrdersPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='markOwnDelivered')).declarationList.declarations[0];
+ const events=[],order={id:'delivery-order'};
+ const run=(enabled)=>compile(decl.initializer.getText(ast),{
+  app:{biz:{id:'merchant'},toast:message=>events.push(['toast',message])},
+  orders:{reload:async()=>events.push(['reload'])},
+  setOwnBusy:value=>events.push(['busy',value]),
+  goodiesOrdersRequest:async(name,args)=>{
+   events.push(['rpc',name,args]);
+   return name==='goodies_private_delivery_proof_uploads_enabled'?{data:enabled,error:null}:{error:null};
+  },
+  ImagePicker:{
+   MediaTypeOptions:{Images:'Images'},requestCameraPermissionsAsync:async()=>{events.push(['camera']);return{granted:true};},
+   launchCameraAsync:async()=>({canceled:false,assets:[{uri:'file:///photo.jpg',width:1200}]}),
+  },
+  ImageManipulator:{manipulateAsync:async()=>({uri:'file:///edited.jpg'}),SaveFormat:{JPEG:'jpeg'}},
+  FileSystem:{EncodingType:{Base64:'base64'},readAsStringAsync:async()=> 'U1lOVEhFVElD'},
+  decode:value=>value,
+  GOODIES_DELIVERY_PROOF_BUCKET:'goodies-delivery-proofs',
+  supabase:{storage:{from:bucket=>{
+   events.push(['bucket',bucket]);
+   return{upload:async(path)=>{events.push(['upload',path]);return{error:null};},getPublicUrl:()=>{throw Error('Private proof must not have a public URL');}};
+  }}},
+  console:{warn(){}},
+ });
+ await run(false)(order);
+ assert.ok(!events.some(e=>e[0]==='camera'||e[0]==='upload'||e[0]==='bucket'));
+ assert.ok(!events.some(e=>e[0]==='rpc'&&e[1]==='goodies_self_delivery_mark_delivered'));
+ events.length=0;
+ await run(true)(order);
+ assert.ok(events.some(e=>e[0]==='bucket'&&e[1]==='goodies-delivery-proofs'));
+ assert.ok(events.some(e=>e[0]==='upload'&&/^merchant\/delivery-order\/.*\.jpg$/.test(e[1])));
+ const submitted=events.find(e=>e[0]==='rpc'&&e[1]==='goodies_self_delivery_mark_delivered');
+ assert.ok(submitted,'Private proof must be confirmed by the server');
+ assert.match(submitted[2].p_proof_url,/^merchant\/delivery-order\/.*\.jpg$/);
+ assert.ok(!events.some(e=>e[0]==='bucket'&&e[1]==='listing-photos'));
+});
+
+
+test('vendor accept and decline callbacks reject rapid duplicate status transitions',async()=>{
+ const {node,ast}=find(orders,'GoodiesOrdersPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='act')).declarationList.declarations[0];
+ const lock={current:false},notifications=[],calls=[];
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ let rejectMode=false;
+ const act=compile(decl.initializer.getText(ast),{
+  statusActionLock:lock,busyId:'',setBusyId(){},requireManage:()=>true,
+  goodiesOrdersRequest:async(name,args)=>{calls.push({name,args});await pending;return rejectMode?{error:{message:'Synthetic rejection'}}:{error:null};},
+  orders:{reload:async()=>{}},
+  app:{toast:value=>notifications.push(value),bump(){}},
+  setDecline(){},setCancel(){},setDetail(){},reason:'out_of_stock',detail:'',
+  errText:()=> 'Safe status error',
+ });
+ const row={id:'order-1',payment_method:'wallet'};
+ const first=act(row,'accept');
+ await act(row,'accept');
+ assert.equal(calls.length,1);
+ assert.equal(lock.current,true);
+ finish();
+ await first;
+ assert.equal(lock.current,false);
+ rejectMode=true;
+ await act(row,'ready');
+ assert.equal(calls.length,2);
+ assert.equal(lock.current,false);
+ assert.ok(notifications.some(x=>/Could not update this order/.test(x)));
+});
+
+
+test('store setup save is single-flight even before the UI busy state rerenders',async()=>{
+ const {node,ast}=find(vendor,'GoodiesStorePage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const lock={current:false},events=[];
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ const f={storeName:'Shop',address:'Street',city:'City',country:'Haiti',coverUrl:null,thumbnailUrl:null};
+ const save=compile(decl.initializer.getText(ast),{
+  requireManage:()=>true,storeSaveLock:lock,err:()=>'',setBusy(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){}},f,savedAddress:{address:'Street',city:'City',country:'Haiti'},
+  setSavedAddress(){},setF(){},sameAsCover:false,customTypes:[],customProducts:false,
+  initialCustomToggles:{current:{master:false,enabled:{}}},
+  goodiesApi:{
+   saveStore:async()=>{events.push('store');await pending;},
+   saveStoreThumbnail:async()=>events.push('thumbnail'),
+   listBuilders:async()=>[],
+   saveBuilders:async()=>events.push('builders'),
+  },errText:()=> 'Safe failure',
+ });
+ const first=save();
+ await save();
+ assert.deepEqual(events,['store']);
+ assert.equal(lock.current,true);
+ finish();await first;
+ assert.deepEqual(events,['store','thumbnail']);
+ assert.equal(lock.current,false);
+ await save();
+ assert.equal(events.filter(item=>item==='store').length,2);
+});
+
+test('custom product editor save is single-flight and unlocks after a failed write',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const b={id:'builder',name:'Product',enabled:false,available:false,productCreated:true},lock={current:false},calls=[];
+ let finish,reject=false;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ const save=compile(decl.initializer.getText(ast),{
+  b,all:[b],builderSaveLock:lock,requireManage:()=>true,validateBuilder:()=>[],setErrs(){},setSaving(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},errText:()=> 'Safe failure',
+  goodiesApi:{listBuilders:async()=>[b],saveBuilders:async()=>{calls.push('save');await pending;if(reject)throw Error('Synthetic write failed');}},
+ });
+ const first=save();await save();
+ assert.equal(calls.length,1);assert.equal(lock.current,true);
+ reject=true;finish();await first;
+ assert.equal(lock.current,false);
+ await save();assert.equal(calls.length,2);
+ assert.equal(lock.current,false);
+});
+
+
+test('saving unrelated store fields does not overwrite freshly edited builder recipes or availability',async()=>{
+ const {node,ast}=find(vendor,'GoodiesStorePage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const baseline={current:{master:true,enabled:{pizza:true,burger:true}}};
+ const localTypes=[{id:'pizza',type:'pizza',enabled:false,groups:[{name:'Old pizza'}]},{id:'burger',type:'burger',enabled:true,groups:[{name:'Old burger'}]}];
+ const liveRows=[
+  {id:'pizza',type:'pizza',enabled:true,groups:[{name:'New admin pizza'}]},
+  {id:'burger',type:'burger',enabled:false,groups:[{name:'New admin burger'}]},
+  {id:'other',type:'custom',enabled:true,groups:[{name:'Other custom recipe'}]},
+ ];
+ const written=[];let reads=0;
+ const save=compile(decl.initializer.getText(ast),{
+  storeSaveLock:{current:false},initialCustomToggles:baseline,requireManage:()=>true,err:()=>'',setBusy(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){}},
+  f:{storeName:'Shop',address:'Street',city:'City',country:'Haiti',coverUrl:null,thumbnailUrl:null},
+  savedAddress:{address:'Street',city:'City',country:'Haiti'},setSavedAddress(){},setF(){},sameAsCover:false,
+  customTypes:localTypes,customProducts:true,
+  goodiesApi:{saveStore:async()=>{},saveStoreThumbnail:async()=>{},
+   listBuilders:async()=>{reads++;return liveRows;},
+   saveBuilders:async(_biz,rows)=>{written.push(JSON.parse(JSON.stringify(rows)));}},
+  errText:()=> 'Safe failure',
+ });
+ await save();
+ assert.equal(reads,1);assert.equal(written.length,1);
+ assert.equal(written[0][0].enabled,false,'Vendor changed pizza availability');
+ assert.equal(written[0][0].groups[0].name,'New admin pizza','Keep newer admin recipe');
+ assert.equal(written[0][1].enabled,false,'Keep newer admin availability when vendor did not change burger');
+ assert.equal(written[0][1].groups[0].name,'New admin burger');
+ assert.equal(written[0][2].groups[0].name,'Other custom recipe');
+ await save();
+ assert.equal(reads,1,'No builder read needed when only store fields were changed');
+ assert.equal(written.length,1,'No unnecessary full-list builder write');
+});
+
+
+test('custom product availability toggles keep newly approved unrelated builder recipes',async()=>{
+ const {node,ast}=find(vendor,'GoodiesProductsPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='toggleCustom')).declarationList.declarations[0];
+ const stale={id:'pizza',type:'pizza',enabled:true,available:true,groups:[{name:'Outdated'}]};
+ const current=[
+  {...stale,groups:[{name:'Current admin pizza'}]},
+  {id:'burger',type:'burger',enabled:true,available:true,groups:[{name:'New admin burger'}]},
+ ];
+ const submissions=[];
+ const toggle=compile(decl.initializer.getText(ast),{
+  availabilityLock:{current:false},setAvailabilityBusy(){},requireManage:()=>true,
+  app:{biz:{id:'business'},toast(){},bump(){}},builders:{d:[stale],reload:async()=>{}},
+  goodiesApi:{listBuilders:async()=>current,saveBuilders:async(_biz,rows)=>submissions.push(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Safe failure',
+ });
+ await toggle(stale,false);
+ assert.equal(submissions.length,1);
+ assert.equal(submissions[0].length,2);
+ assert.equal(submissions[0][0].available,false);
+ assert.equal(submissions[0][0].groups[0].name,'Current admin pizza');
+ assert.equal(submissions[0][1].groups[0].name,'New admin burger');
+});
+
+test('editing a builder preserves other new server builders and does not restore deleted builders',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const previous={id:'pizza',type:'pizza',name:'Pizza',enabled:true,available:true,productCreated:true};
+ const latest=[previous,{id:'burger',type:'burger',name:'New admin recipe',enabled:true,available:true}];
+ const results=[],toasts=[];
+ let deleted=false;
+ const save=compile(decl.initializer.getText(ast),{
+  b:{...previous,name:'Edited pizza'},all:[previous],
+  builderSaveLock:{current:false},requireManage:()=>true,validateBuilder:()=>[],setErrs(){},setSaving(){},
+  app:{biz:{id:'merchant'},toast:msg=>toasts.push(msg),bump(){},back(){}},
+  goodiesApi:{listBuilders:async()=>deleted?latest.slice(1):latest,
+   saveBuilders:async(_biz,rows)=>results.push(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Could not save the custom product',
+ });
+ await save();
+ assert.equal(results.length,1);
+ assert.equal(results[0].length,2);
+ assert.equal(results[0][1].name,'New admin recipe');
+ assert.equal(results[0][0].name,'Edited pizza');
+ deleted=true;
+ await save();
+ assert.equal(results.length,1,'Removed product cannot be recreated by old editor state');
+ assert.ok(toasts.some(msg=>/Could not save/.test(msg)));
+});

@@ -96,7 +96,7 @@ test('history paging merges cached rows, advances its server cursor and prevents
  const query={select(){return this;},eq(){return this;},or(value){condition=value;return this;},order(){return this;},async limit(){calls++;return {data:[{id:'older-order',order_code:'OLD',store_id:'removed-store',status:'completed',created_at:'2026-11-05T00:00:00Z',items:[]}],error:null};}};
  const stageByStatus=extract(root,'src/features/Goodies/serverSync.ts','stageByStatus')({});
  const STB={},placeholderStore=extract(root,'src/features/Goodies/store.ts','placeholderStore')({label,bgOf:()=> 'green'}),ensureGoodiesOrderStore=extract(root,'src/features/Goodies/store.ts','ensureGoodiesOrderStore')({STB,placeholderStore});
- const mapOrder=extract(root,'src/features/Goodies/serverSync.ts','mapOrder')({STB,IT:{},stageByStatus,ensureGoodiesOrderStore});
+ const mapOrder=extract(root,'src/features/Goodies/serverSync.ts','mapOrder')({STB,IT:{},stageByStatus,ensureGoodiesOrderStore,label});
  const load=extract(root,'src/features/Goodies/serverSync.ts','loadOlderGoodiesOrders')({S,supabase:{from:()=>query},mapOrder,save(){},emit(){}});
  await Promise.all([load(),load()]);assert.equal(calls,1);assert.equal(S.orders.length,1);assert.equal(S.orders[0].serverCreatedAt,'2026-11-05T00:00:00Z');assert.equal(S.ordersCursor.id,'older-order');assert.equal(S.ordersHasMore,false);assert.ok(STB['removed-store']);assert.equal(STB['removed-store'].open,0);assert.ok(condition.includes('newer-order'));assert.equal(S.ordersPaging,false);
 });

@@ -13,7 +13,7 @@ function harness({serverBacked=true,dispatch,authenticate,initial={}}={}){
  const group={groupId:serverBacked?'group-a':'',code:serverBacked?'INVITE-A':'',storeId:'store-a',serverBacked,members:[],expiresAt:'2099-01-01T00:00:00Z'};
  const line={k:'line-a',id:'product-a',q:1,options:{size:'regular'},nt:'Original note'};
  const S={accountId:'account-a',groupOrder:group,cart:{sid:'store-a',lines:[clone(line)]},pf:{n:'Buyer',ph:'12345678'},addr:[{id:'address-a',l:'Home',t:'Real street'}],as:'address-a',wallet:100,hasWallet:true,paymentOptionsStatus:'ready'};
- const state={calls:[],toasts:[],logs:[],saved:0,emitted:0,closed:0,cleared:0,routes:[],friends:[],friendsBusy:false,friendsOpen:false,friendsError:'',pickedFriends:['friend-a'],myInvites:[{group_id:'invited-group',invite_code:'OTHER',host_name:'Friend'}],invitesLoading:false,invitesError:'',groupBusy:false,previewBusy:false,groupCheckoutBusy:false,groupQuoteBusy:false,sharedItems:[{id:'item-a',user_id:'account-a',line_key:'line-a',quantity:1,product:{price:10}}],groupMembers:[{user_id:'account-a',role:'host'}],sharedLoading:false,membersLoading:false,sharedError:'',membershipError:'',statusError:'',checkoutPreview:{group_id:'group-a',store_id:'store-a',items:[{id:'item-a',quantity:1}],subtotal:10},checkoutEstimate:{group_id:'group-a',order_type:'pickup',subtotal:10,delivery_fee:0,service_fee:0,estimated_total:10},groupDeliveryQuote:null,...initial};
+ const state={calls:[],toasts:[],logs:[],saved:0,emitted:0,closed:0,cleared:0,routes:[],friends:[],friendsBusy:false,friendsOpen:false,friendsError:'',pickedFriends:['friend-a'],myInvites:[{group_id:'invited-group',invite_code:'OTHER',host_name:'Friend'}],invitesLoading:false,invitesError:'',groupBusy:false,previewBusy:false,groupCheckoutBusy:false,groupQuoteBusy:false,sharedItems:[{id:'item-a',user_id:'account-a',line_key:'line-a',quantity:1,product:{price:10}}],groupMembers:[{user_id:'account-a',role:'host'}],sharedLoading:false,membersLoading:false,sharedError:'',membershipError:'',statusError:'',checkoutPreview:{group_id:'group-a',store_id:'store-a',items:[{id:'item-a',quantity:1}],subtotal:10},checkoutEstimate:{group_id:'group-a',order_type:'pickup',subtotal:10,delivery_fee:0,service_fee:0,estimated_total:10,currency:'USD'},groupDeliveryQuote:null,...initial};
  const ctx={S,accountId:'account-a',group,storeId:'store-a',currentUserId:'account-a',mounted:{current:true},activeGroup:{current:group.groupId},groupActionLock:{current:false},friendsActionLock:{current:false},groupCheckoutLock:{current:false},previewLock:{current:false},quoteLock:{current:false},itemLocks:{current:new Set()},invitesLoadId:{current:0},estimateVersion:{current:0},selection:{current:JSON.stringify([group.groupId,'pickup','address-a'])},groupCheckoutType:'pickup',groupAddressId:'address-a',label,money:value=>'$'+value,phoneOK:()=>true,toast:message=>state.toasts.push(message),save:()=>state.saved++,emit:()=>state.emitted++,close:()=>state.closed++,reset:route=>state.routes.push({route}),push:(route,id)=>state.routes.push({route,id}),clearActiveGroup:()=>{state.cleared++;S.groupOrder={code:'',members:[],serverBacked:false};},refreshUserAddresses:async()=>S.addr,fetchGoodiesOrderForNotification:async()=> 'order-a',A:{refreshPaymentOptions:async()=>true},console:{warn:(...values)=>state.logs.push(values.join(' '))},...state};
  // The handlers and their scope/auth helpers below are extracted from production ASTs;
  // only network, persistence, navigation and React setters are mocked.
@@ -22,6 +22,7 @@ function harness({serverBacked=true,dispatch,authenticate,initial={}}={}){
  ctx.setGroup=next=>{ctx.group=typeof next==='function'?next(ctx.group):next;};
  const transport=async(name,args)=>{state.calls.push({name,args:clone(args||{})});return dispatch?dispatch(name,args):{data:null,error:null};};
  ctx.supabase={auth:{getUser:authenticate||(async()=>({data:{user:{id:S.accountId}},error:null}))},rpc:transport,functions:{invoke:async(name,options)=>transport(name,options.body)},from:table=>{const query={select(){return query;},eq(key,value){query.filter={key,value};return query;},order:async()=>transport(table,query.filter)};return query;}};
+ ctx.IT={'product-a':{s:'store-a'}};ctx.lineStore=line=>line.s||line.byo?.sid||ctx.IT[line.id]?.s||S.cart.sid||'';
  ctx.removeGroupOrderCartLine=(groupId,key)=>transport('goodies_group_order_remove_item',{p_group_id:groupId,p_line_key:key});
  ctx.syncGroupOrderCartLine=(groupId,value)=>transport('goodies_group_order_upsert_item',{p_group_id:groupId,line:value});
  const friendly=declarations('src/features/Goodies/friendlyError.ts',['friendlyError']);
@@ -104,7 +105,7 @@ test('shared preview rejection restores its busy state and duplicate checks issu
  const response=deferred(),h=harness({dispatch:()=>response.promise}),checking=h.handlers.reviewSharedOrder();await h.handlers.reviewSharedOrder();await waitFor(()=>h.state.calls.length===1);response.reject(Error('private shared-cart SQL'));await checking;assert.equal(h.state.previewBusy,false);assert.equal(h.ctx.previewLock.current,false);assert.equal(h.state.checkoutPreview,null);assert.equal(h.state.checkoutEstimate,null);assert.match(h.state.toasts[0],/Could not validate/);assert.doesNotMatch(h.state.toasts[0],/private|SQL/);
 });
 test('payment estimates reject malformed amounts and late estimates respect account, group and selection',async()=>{
- for(const amount of [false,true,[],{},'',Infinity,-1]){const h=harness({dispatch:async()=>({data:{group_id:'group-a',order_type:'pickup',subtotal:amount,delivery_fee:0,service_fee:0,estimated_total:10},error:null})});await h.handlers.selectGroupCheckoutType('pickup');assert.equal(h.state.checkoutEstimate,null);assert.match(h.state.toasts[0],/Could not calculate/);}
+ for(const amount of [false,true,[],{},'',Infinity,-1]){const h=harness({dispatch:async()=>({data:{group_id:'group-a',order_type:'pickup',subtotal:amount,delivery_fee:0,service_fee:0,estimated_total:10,currency:'USD'},error:null})});await h.handlers.selectGroupCheckoutType('pickup');assert.equal(h.state.checkoutEstimate,null);assert.match(h.state.toasts[0],/Could not calculate/);}
  for(const change of [h=>{h.S.accountId='account-b';},h=>h.switchGroup(),h=>{h.ctx.selection.current='another-address';}]){const response=deferred(),h=harness({dispatch:()=>response.promise}),estimating=h.handlers.selectGroupCheckoutType('pickup');await waitFor(()=>h.state.calls.length===1);change(h);response.resolve({data:{group_id:'group-a',order_type:'pickup',subtotal:10,delivery_fee:0,service_fee:0,estimated_total:10},error:null});await estimating;assert.equal(h.state.checkoutEstimate,null);assert.equal(h.state.toasts.length,0);}
 });
 test('delivery quote rejection releases loading and deduplicates same-tick callbacks',async()=>{
@@ -140,4 +141,52 @@ test('temporary validation failures retain the known group without logging raw e
 test('ScheduleSheet formats dates with the selected account language and customer time zone',()=>{
  const wantissLocale=evaluate(declarations('src/lib/locales.ts',['wantissLocale'])+'\nmodule.exports=wantissLocale;',{WANTISS_LANGUAGES:[{code:'en',label:'English'},{code:'fr',label:'Français'},{code:'ht',label:'Kreyòl Ayisyen'},{code:'es',label:'Español'},{code:'zh-Hans',label:'简体中文'}]});
  for(const [selected,expected]of [['fr','fr'],['Español','es'],['zh-Hans','zh-Hans'],['ht','fr-HT']]){const formats=[],formatter=evaluate('module.exports='+expression('ScheduleSheet','formatCustomer')+';',{S:{lang:selected},customerZone:'America/Port-au-Prince',wantissLocale,Intl:{DateTimeFormat:function(locale,options){formats.push({locale,options});return{format:()=> 'formatted'};}}});assert.equal(formatter(Date.UTC(2026,10,20),{weekday:'short'}),'formatted');assert.equal(formats[0].locale,expected);assert.equal(formats[0].options.timeZone,'America/Port-au-Prince');}
+});
+
+
+test('group Wallet checkout only accepts an exact USD quote with cent-consistent totals',async()=>{
+ const h=harness(),base={group_id:'group-a',order_type:'pickup',subtotal:10,delivery_fee:2,service_fee:1,estimated_total:13,currency:'USD'};
+ assert.equal(h.handlers.validEstimate(base),true);
+ for(const change of [
+  {currency:'PHP'},{currency:''},{currency:null},{estimated_total:13.001},
+  {estimated_total:12.99},{subtotal:10.005},{delivery_fee:'2oops'},
+  {service_fee:-1},{estimated_total:Infinity},
+ ]){
+  assert.equal(h.handlers.validEstimate({...base,...change}),false,JSON.stringify(change));
+ }
+ h.ctx.checkoutEstimate={...base,currency:'PHP'};
+ await h.handlers.checkoutGroupOrder();
+ assert.equal(h.state.calls.some(x=>x.name==='goodies_group_order_checkout'),false,'No USD Wallet checkout for a mismatched currency quote');
+});
+
+
+test('an open group that reaches its server expiry closes even without a Realtime event',async()=>{
+ const src=fs.readFileSync(sheetFile,'utf8');
+ assert.match(src,/const statusPoll=setInterval\(\(\)=>\{if\(active\)void refreshGroupStatus\(\);\},30000\)/);
+ assert.match(src,/clearInterval\(statusPoll\)/);
+ const h=harness({dispatch:async name=>name==='goodies_group_order_get_status'
+  ?{data:{group_id:'group-a',status:'open',expires_at:'2000-01-01T00:00:00Z'},error:null}
+  :{data:null,error:null}});
+ await h.handlers.refreshGroupStatus();
+ assert.equal(h.S.groupOrder.serverBacked,false);
+ assert.match(h.state.toasts.at(-1),/closed or expired/);
+});
+
+
+test('single-store group creation rejects multi-store carts before creating any server invitation',async()=>{
+ const h=harness({serverBacked:false});
+ h.S.cart.lines.push({...h.line,k:'second-store',s:'store-b',id:'another-product'});
+ await h.handlers.createServerGroup();
+ assert.equal(h.state.calls.length,0,'A mixed-store cart must not create a partially synced group');
+ assert.ok(h.state.toasts.some(x=>/another store/.test(x)));
+ assert.equal(h.ctx.groupActionLock.current,false);
+ assert.equal(h.state.saved,0);
+});
+test('group creation rejects unsyncable builder lines before mutating server state',async()=>{
+ const h=harness({serverBacked:false});
+ h.S.cart.lines.push({...h.line,k:'custom-builder',s:'store-a',id:'unlisted-builder',byo:{sid:'store-a'}});
+ await h.handlers.createServerGroup();
+ assert.equal(h.state.calls.length,0,'Unsupported builder must not leave a partially synced group invitation');
+ assert.ok(h.state.toasts.some(x=>/not linked to a live catalogue product/.test(x)));
+ assert.equal(h.ctx.groupActionLock.current,false);
 });

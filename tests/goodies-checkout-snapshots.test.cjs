@@ -22,3 +22,29 @@ test('fresh multi-store road quote IDs do not create a new checkout idempotency 
 test('a cancelled card order stays cancelled when the refund transport fails',async()=>{const h=harness({dispatch:async name=>{if(name==='set_goodies_order_status')return{error:null};throw Error('Synthetic private provider failure');}});h.S.orders.push({id:'GOODIES-A',backendId:'order-a',st:0,pay:'card'});await h.actions.cancelOrder('GOODIES-A');assert.equal(h.S.orders[0].cx,1);assert.equal(h.S.orders[0].serverStatus,'cancelled');assert.ok(h.messages.some(x=>/refund is pending/.test(x)));assert.ok(!h.messages.some(x=>/private|provider/.test(x)));});
 test('concurrent cancel callbacks dispatch one transition and late responses cannot affect a new account',async()=>{let finish;const response=new Promise(resolve=>finish=resolve),h=harness({dispatch:()=>response});h.S.orders.push({id:'GOODIES-A',backendId:'order-a',st:0,pay:'cash'});const cancelling=h.actions.cancelOrder('GOODIES-A');await h.actions.cancelOrder('GOODIES-A');assert.equal(h.calls.length,1);h.S.accountId='customer-b';h.S.orders=[];finish({error:null});await cancelling;assert.equal(h.S.orders.length,0);assert.deepEqual(h.messages,[]);});
 test('checkout-intent persistence uses distinct account keys instead of overwriting another payer',async()=>{const file='src/features/Goodies/store.ts',sf=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true),names=['getGoodiesCheckoutAttempt','completeGoodiesCheckoutAttempt'],module={exports:{}};const declarations=sf.statements.filter(n=>ts.isFunctionDeclaration(n)&&names.includes(n.name?.text)).map(n=>n.getText(sf)).join('\n'),S={accountId:'a',checkoutAttempt:null},disk=new Map();vm.runInNewContext(ts.transpileModule(declarations,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,S,AsyncStorage:{setItem:async(key,value)=>disk.set(key,value)}});const a=await module.exports.getGoodiesCheckoutAttempt('same-cart');S.accountId='b';S.checkoutAttempt=null;const b=await module.exports.getGoodiesCheckoutAttempt('same-cart');assert.notEqual(a.key,b.key);assert.equal(JSON.parse(disk.get('goodies-checkout-attempt-v1:a')).key,a.key);assert.equal(JSON.parse(disk.get('goodies-checkout-attempt-v1:b')).key,b.key);await module.exports.completeGoodiesCheckoutAttempt('order-b');assert.equal(JSON.parse(disk.get('goodies-checkout-attempt-v1:a')).completed,false);assert.equal(JSON.parse(disk.get('goodies-checkout-attempt-v1:b')).completed,true);});
+
+
+test('checkout must persist its idempotency key before any payment dispatch',async()=>{
+ const path='src/features/Goodies/store.ts';
+ const sf=ts.createSourceFile(path,fs.readFileSync(path,'utf8'),99,true);
+ const code=sf.statements.filter(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='getGoodiesCheckoutAttempt').map(n=>n.getText(sf)).join('\n');
+ const module={exports:{}},S={accountId:'customer-a',checkoutAttempt:null},disk=new Map();
+ let fail=true,attempts=0;
+ vm.runInNewContext(ts.transpileModule(code+'\nmodule.exports=getGoodiesCheckoutAttempt;',{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{
+  module,exports:module.exports,S,Date,Math,JSON,String,Error,
+  AsyncStorage:{setItem:async(key,value)=>{attempts++;if(fail)throw Error('Synthetic storage unavailable');disk.set(key,value);}}
+ });
+ await assert.rejects(module.exports('same-cart'),/Synthetic storage unavailable/);
+ assert.equal(S.checkoutAttempt,null,'An unpersisted key cannot be dispatched');
+ fail=false;
+ const committed=await module.exports('same-cart');
+ assert.equal(JSON.parse(disk.get('goodies-checkout-attempt-v1:customer-a')).key,committed.key);
+ assert.equal(S.checkoutAttempt.key,committed.key);
+ fail=true;
+ await assert.rejects(module.exports('same-cart'),/Synthetic storage unavailable/);
+ assert.equal(S.checkoutAttempt.key,committed.key,'A failed retry must not generate a new key');
+ fail=false;
+ const retry=await module.exports('same-cart');
+ assert.equal(retry.key,committed.key);
+ assert.equal(attempts,4);
+});
