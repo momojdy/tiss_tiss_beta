@@ -197,6 +197,7 @@ test('store setup save is single-flight even before the UI busy state rerenders'
   requireManage:()=>true,storeSaveLock:lock,err:()=>'',setBusy(){},
   app:{biz:{id:'merchant'},toast(){},bump(){}},f,savedAddress:{address:'Street',city:'City',country:'Haiti'},
   setSavedAddress(){},setF(){},sameAsCover:false,customTypes:[],customProducts:false,
+  initialCustomToggles:{current:{master:false,enabled:{}}},
   goodiesApi:{
    saveStore:async()=>{events.push('store');await pending;},
    saveStoreThumbnail:async()=>events.push('thumbnail'),
@@ -209,7 +210,7 @@ test('store setup save is single-flight even before the UI busy state rerenders'
  assert.deepEqual(events,['store']);
  assert.equal(lock.current,true);
  finish();await first;
- assert.deepEqual(events,['store','thumbnail','builders']);
+ assert.deepEqual(events,['store','thumbnail']);
  assert.equal(lock.current,false);
  await save();
  assert.equal(events.filter(item=>item==='store').length,2);
@@ -232,4 +233,39 @@ test('custom product editor save is single-flight and unlocks after a failed wri
  assert.equal(lock.current,false);
  await save();assert.equal(calls.length,2);
  assert.equal(lock.current,false);
+});
+
+
+test('saving unrelated store fields does not overwrite freshly edited builder recipes or availability',async()=>{
+ const {node,ast}=find(vendor,'GoodiesStorePage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const baseline={current:{master:true,enabled:{pizza:true,burger:true}}};
+ const localTypes=[{id:'pizza',type:'pizza',enabled:false,groups:[{name:'Old pizza'}]},{id:'burger',type:'burger',enabled:true,groups:[{name:'Old burger'}]}];
+ const liveRows=[
+  {id:'pizza',type:'pizza',enabled:true,groups:[{name:'New admin pizza'}]},
+  {id:'burger',type:'burger',enabled:false,groups:[{name:'New admin burger'}]},
+  {id:'other',type:'custom',enabled:true,groups:[{name:'Other custom recipe'}]},
+ ];
+ const written=[];let reads=0;
+ const save=compile(decl.initializer.getText(ast),{
+  storeSaveLock:{current:false},initialCustomToggles:baseline,requireManage:()=>true,err:()=>'',setBusy(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){}},
+  f:{storeName:'Shop',address:'Street',city:'City',country:'Haiti',coverUrl:null,thumbnailUrl:null},
+  savedAddress:{address:'Street',city:'City',country:'Haiti'},setSavedAddress(){},setF(){},sameAsCover:false,
+  customTypes:localTypes,customProducts:true,
+  goodiesApi:{saveStore:async()=>{},saveStoreThumbnail:async()=>{},
+   listBuilders:async()=>{reads++;return liveRows;},
+   saveBuilders:async(_biz,rows)=>{written.push(JSON.parse(JSON.stringify(rows)));}},
+  errText:()=> 'Safe failure',
+ });
+ await save();
+ assert.equal(reads,1);assert.equal(written.length,1);
+ assert.equal(written[0][0].enabled,false,'Vendor changed pizza availability');
+ assert.equal(written[0][0].groups[0].name,'New admin pizza','Keep newer admin recipe');
+ assert.equal(written[0][1].enabled,false,'Keep newer admin availability when vendor did not change burger');
+ assert.equal(written[0][1].groups[0].name,'New admin burger');
+ assert.equal(written[0][2].groups[0].name,'Other custom recipe');
+ await save();
+ assert.equal(reads,1,'No builder read needed when only store fields were changed');
+ assert.equal(written.length,1,'No unnecessary full-list builder write');
 });
