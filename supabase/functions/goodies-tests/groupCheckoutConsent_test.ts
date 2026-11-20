@@ -11,6 +11,9 @@ Deno.test('group checkout compares reviewed items and totals before entering the
  try{
   await db.exec(await Deno.readTextFile(new URL('./fixtures/goodies-core.sql',import.meta.url)));
   await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106022200_goodies_builder_selection_contract.sql',import.meta.url)));
+  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120200500_goodies_group_checkout_estimate_usd.sql',import.meta.url)));
+  await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120200500_goodies_group_checkout_estimate_usd.sql',import.meta.url)));
+
   // An explicit synthetic trap verifies ordering without faking a payment success.
   await db.exec(`create or replace function public.place_goodies_order_with_payment_once(p_idempotency_key text,p_payment_method text,p_store_id text,p_order_type text,p_scheduled_for timestamptz,p_address jsonb,p_contact_phone text,p_items jsonb,p_subtotal numeric,p_delivery_fee numeric,p_service_fee numeric,p_discount numeric,p_tip numeric,p_total numeric,p_notes text,p_promo_code text default null)
    returns table(id uuid,order_code text,status text) language plpgsql security definer set search_path=public,pg_temp as $$begin
@@ -25,6 +28,8 @@ Deno.test('group checkout compares reviewed items and totals before entering the
   await db.query("insert into public.goodies_group_order_items(group_id,user_id,line_key,product_id,quantity) values($1,$2,'synthetic-line',$3,1)",[group,host,product]);
   await as(host);
   const preview=(await db.query<{value:{items:unknown[]}}>('select public.goodies_group_order_checkout_preview($1) as value',[group])).rows[0].value;
+  const estimate=(await db.query<{value:{currency:string;subtotal:number;estimated_total:number}}>("select public.goodies_group_order_checkout_estimate($1,'pickup',null) as value",[group])).rows[0].value;
+  if(estimate.currency!=='USD'||Number(estimate.subtotal)!==10||Number(estimate.estimated_total)<10)throw Error('Group estimate currency or amounts do not match USD Wallet checkout');
   const reviewed={_goodies_expected_total:10,_goodies_expected_items:preview.items};
   await t.step('matching review reaches only the explicit unpaid test boundary',()=>check(group,reviewed,'P4211'));
   await t.step('tampered or stale totals cannot enter payment',()=>check(group,{...reviewed,_goodies_expected_total:1},'P4210'));
