@@ -66,6 +66,33 @@ test('the actual Goodies balance panel never presents a failed summary as zero e
  const panel=extract('GoodiesPayoutsPanel',{useApp:()=>({biz:{id:'business',role:'owner',verification:'verified'},userId:'owner',tick:0,sheet(){}}),useS:()=>({mut:{},rt:{},card:{}}),useTheme:()=>({ink:'#000'}),useMounted:()=>({current:true}),useSettlementLabels:()=>({label,money:v=>'$'+v,locale:'en'}),useQ:()=>results[q++],useState:v=>[v,()=>{}],useRef:v=>({current:v}),uuid:()=> 'key'});
  const nodes=elements(panel());assert.ok(nodes.some(n=>n.type==='Text'&&n.props.children==='Unavailable'));assert.ok(!nodes.some(n=>n.type==='Text'&&n.props.children==='$0'));assert.ok(nodes.find(n=>n.type==='Btn'&&n.props.label==='Request payout').props.disabled);
 });
+test('equal editable settlement captions cannot change tab or filter destinations',()=>{
+ let q=0,slot=0;const changes=[];
+ const panel=extract('GoodiesPayoutsPanel',{useApp:()=>({biz:{id:'business',role:'owner',verification:'verified'},userId:'owner',tick:0,sheet(){}}),useS:()=>({mut:{},rt:{},card:{}}),useTheme:()=>({ink:'#000'}),useMounted:()=>({current:true}),useSettlementLabels:()=>({label:()=> 'Same caption',money:v=>'$'+v,locale:'en'}),useQ:()=>q++?{d:[],l:false,e:null}:{d:base(),l:false,e:null},useState:v=>{const index=slot++;return[v,next=>changes.push([index,next])];},useRef:v=>({current:v}),uuid:()=> 'key'});
+ const nodes=elements(panel()),seg=nodes.find(n=>n.type==='Seg'),chips=nodes.find(n=>n.type==='Chips');
+ assert.deepEqual(Array.from(seg.props.items,item=>item.k),['Ledger','Payout history']);
+ assert.deepEqual(Array.from(chips.props.items,item=>item.k),['All','Sales','Fees','Refunds','Payouts']);
+ const file='src/screens/businessSpace/BusinessSpaceShared.tsx',ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true);
+ for(const [name,props,index,wanted] of [['Seg',seg.props,1,'Payout history'],['Chips',chips.props,3,'Refunds']]){
+  const node=ast.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text===name);
+  const control=compile(node.getText(ast)+'\nmodule.exports='+name+';',{React,View:'View',ScrollView:'ScrollView',Text:'Text',Pressable:'Pressable',useTheme:()=>({})});
+  elements(control(props)).filter(n=>n.type==='Pressable')[index].props.onPress();
+  assert.ok(changes.some(row=>row[0]===(name==='Seg'?0:1)&&row[1]===wanted));
+ }
+});
+test('payout destination method and country selection survive identical edited captions',()=>{
+ let slot=0;const changes=[];
+ const view=extract('GoodiesPayoutSetupSheet',{useApp:()=>({biz:{id:'business',role:'owner'},tick:0}),useS:()=>({mut:{}}),useTheme:()=>({}),useMounted:()=>({current:true}),useSettlementLabels:()=>({label:()=> 'Same caption'}),useQ:()=>({d:{destinations:[]},l:false,e:null}),useState:v=>{const i=slot++;return[i===0?'bank':v,next=>changes.push([i,next])];},useRef:v=>({current:v}),names:()=>({moncash:'Same caption',natcash:'Same caption',gcash:'Same caption',bank:'Same caption'})});
+ const chips=elements(view()).filter(n=>n.type==='Chips');
+ assert.deepEqual(Array.from(chips[0].props.items,item=>item.k),['moncash','natcash','gcash','bank']);
+ assert.deepEqual(Array.from(chips[1].props.items,item=>item.k),['HT','PH','US']);
+ const file='src/screens/businessSpace/BusinessSpaceShared.tsx',ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true),node=ast.statements.find(n=>ts.isFunctionDeclaration(n)&&n.name?.text==='Chips');
+ const control=compile(node.getText(ast)+'\nmodule.exports=Chips;',{React,ScrollView:'ScrollView',Text:'Text',Pressable:'Pressable',useTheme:()=>({})});
+ elements(control(chips[0].props)).filter(n=>n.type==='Pressable')[3].props.onPress();
+ elements(control(chips[1].props)).filter(n=>n.type==='Pressable')[1].props.onPress();
+ assert.ok(changes.some(row=>row[0]===0&&row[1]==='bank'));
+ assert.ok(changes.some(row=>row[0]===1&&row[1]==='PH'));
+});
 
 test('own-driver countdown never fabricates a wait when server eligibility is immediate and fails closed on unknown scope',()=>{
  const file='src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx',source=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true);let expression;function visit(node){if(ts.isVariableDeclaration(node)&&node.name.getText(source)==='ownDriverWaitLeft')expression=node.initializer;ts.forEachChild(node,visit);}visit(source);assert.ok(expression);
