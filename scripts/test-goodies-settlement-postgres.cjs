@@ -39,7 +39,7 @@ const sharedBill=process.argv.includes('--shared-bill')||reaudit;
 const helpPay=sharedBill?"create table public.user_friendships(id uuid primary key default gen_random_uuid(),requester_id uuid,recipient_id uuid,status text);\n"+fs.readFileSync(path.join(root,'supabase/functions/goodies-tests/fixtures/help-pay-live.sql'),'utf8'):'';
 const liveOverlay=sharedBill?fs.readFileSync(path.join(root,'supabase/functions/goodies-tests/fixtures/goodies-live-20261116.sql'),'utf8'):'';
 const upstreamFiles=reaudit?['20261117155800_goodies_admin_invitation_accepted_server_side.sql']:[];
-const forwardFiles=reaudit?['20261118032703_goodies_courier_mutation_integrity.sql','20261118033204_goodies_vendor_builder_and_request_contracts.sql','20261118033410_goodies_catalog_realtime.sql','20261118033451_goodies_scoped_staff_permissions.sql'].filter(file=>!process.argv.includes('--courier-baseline')||!file.endsWith('_goodies_courier_mutation_integrity.sql')):[];
+const forwardFiles=reaudit?['20261118032703_goodies_courier_mutation_integrity.sql','20261118033204_goodies_vendor_builder_and_request_contracts.sql','20261118033410_goodies_catalog_realtime.sql','20261118033451_goodies_scoped_staff_permissions.sql','20261120061607_goodies_restricted_store_admission.sql','20261120063231_goodies_content_repair_review_coverage.sql'].filter(file=>!process.argv.includes('--courier-baseline')||!file.endsWith('_goodies_courier_mutation_integrity.sql')):[];
 const bootstrap=fixture+'\n'+storage+shared+'\n'+helpPay+'\n'+liveOverlay+'\n'+files.map(file=>fs.readFileSync(path.join(root,'supabase/migrations',file),'utf8')).join('\n')+(sharedBill?'\n'+['20261113101825_goodies_shared_bill_integrity.sql','20261117055744_goodies_review_moderation_compatibility.sql'].map(file=>fs.readFileSync(path.join(root,'supabase/migrations',file),'utf8')).join('\n'):'')+'\n'+upstreamFiles.map(file=>fs.readFileSync(path.join(root,'supabase/migrations',file),'utf8')).join('\n')+(reaudit?'\n'+fs.readFileSync(path.join(root,'supabase/functions/goodies-tests/fixtures/goodies-shared-profile-access-20261117.sql'),'utf8')+'\ncreate publication supabase_realtime for table public.goodies_orders,public.goodies_delivery_assignments;\n'+forwardFiles.map(file=>fs.readFileSync(path.join(root,'supabase/migrations',file),'utf8')).join('\n'):'');
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'goodies-native-settlement-')),file=path.join(temp,'bootstrap.sql');fs.writeFileSync(file,bootstrap);
 try{if(native)execFileSync(execute,[...queryArgs,'-f',file],{env,encoding:'utf8',maxBuffer:8*1024*1024});else{docker(['cp',file,container+':/tmp/goodies-bootstrap.sql']);docker(['exec',container,'psql','-U','postgres','-d',database,'-X','-v','ON_ERROR_STOP=1','-f','/tmp/goodies-bootstrap.sql']);}}finally{fs.rmSync(temp,{recursive:true,force:true});}
@@ -52,7 +52,7 @@ async function race(first,second,name,actors=[uid,uid]){const results=Promise.al
 async function raceAfterLock(first,second,name,actors){
  const started=request(first,name+'1',actors[0]);let firstSleeping=false;
  for(let n=0;n<40;n++){await new Promise(r=>setTimeout(r,50));if(Number(sql(`select count(*) from pg_stat_activity where application_name='goodies_concurrency_${name}1' and wait_event='PgSleep'`))>0){firstSleeping=true;break;}}
- if(!firstSleeping){await started;assert.fail('First synthetic transaction did not reach its lock barrier: '+name);}
+ if(!firstSleeping){const result=await started;assert.fail('First synthetic transaction did not reach its lock barrier: '+name+' '+JSON.stringify(result));}
  const pending=request(second,name+'2',actors[1]);let blocked=false;
  for(let n=0;n<40;n++){await new Promise(r=>setTimeout(r,50));if(Number(sql(`select count(*) from pg_stat_activity where application_name='goodies_concurrency_${name}2' and wait_event_type='Lock'`))>0){blocked=true;break;}}
  const values=await Promise.all([started,pending]);assert.ok(blocked,'Second transaction did not contend for the locked order: '+JSON.stringify(values));return values;
@@ -82,6 +82,7 @@ async function raceAfterLock(first,second,name,actors){
  assert.equal(Number(sql(`select stock from public.goodies_products where id='${product}'`)),19);
  console.log('PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.');
  if(sharedBill)await require('./goodies-shared-bill-races.cjs')({sql,race});
+ if(reaudit)await require('./goodies-restriction-races.cjs')({sql,raceAfterLock,uid,business,product});
  if(reaudit)await require('./goodies-courier-races.cjs')({sql,race,raceAfterLock});
  if(process.argv.includes('--catalog-output')){
   const output=process.argv[process.argv.indexOf('--catalog-output')+1];

@@ -207,6 +207,11 @@ Deno.serve(async (req: Request) => {
     }
 
     const service: any = createClient(url, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const {data: eligibleStores, error: admissionError} = await service.rpc("goodies_delivery_eligible_stores", {p_store_ids: storeIds});
+    if (admissionError) throw admissionError;
+    if (!Array.isArray(eligibleStores) || eligibleStores.length !== storeIds.length) {
+      return reply({ error: "One or more stores are no longer accepting orders." }, 404);
+    }
     const { data: stores, error: storeError } = await service.from("goodies_store_schedules")
       .select("store_id,address,city,country,store_latitude,store_longitude,delivery_fee,delivery_pricing_mode,delivery_base_fee,delivery_per_km_fee,delivery_min_fee,delivery_max_fee,delivery_max_distance_km")
       .in("store_id", storeIds).eq("is_live", true);
