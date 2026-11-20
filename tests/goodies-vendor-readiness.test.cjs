@@ -153,3 +153,34 @@ test('own-driver evidence never falls back to public listing photos when private
  assert.match(submitted[2].p_proof_url,/^merchant\/delivery-order\/.*\.jpg$/);
  assert.ok(!events.some(e=>e[0]==='bucket'&&e[1]==='listing-photos'));
 });
+
+
+test('vendor accept and decline callbacks reject rapid duplicate status transitions',async()=>{
+ const {node,ast}=find(orders,'GoodiesOrdersPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='act')).declarationList.declarations[0];
+ const lock={current:false},notifications=[],calls=[];
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ let rejectMode=false;
+ const act=compile(decl.initializer.getText(ast),{
+  statusActionLock:lock,busyId:'',setBusyId(){},requireManage:()=>true,
+  goodiesOrdersRequest:async(name,args)=>{calls.push({name,args});await pending;return rejectMode?{error:{message:'Synthetic rejection'}}:{error:null};},
+  orders:{reload:async()=>{}},
+  app:{toast:value=>notifications.push(value),bump(){}},
+  setDecline(){},setCancel(){},setDetail(){},reason:'out_of_stock',detail:'',
+  errText:()=> 'Safe status error',
+ });
+ const row={id:'order-1',payment_method:'wallet'};
+ const first=act(row,'accept');
+ await act(row,'accept');
+ assert.equal(calls.length,1);
+ assert.equal(lock.current,true);
+ finish();
+ await first;
+ assert.equal(lock.current,false);
+ rejectMode=true;
+ await act(row,'ready');
+ assert.equal(calls.length,2);
+ assert.equal(lock.current,false);
+ assert.ok(notifications.some(x=>/Could not update this order/.test(x)));
+});
