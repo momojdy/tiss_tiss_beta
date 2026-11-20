@@ -431,6 +431,10 @@ export function save(): Promise<void> {
 export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{key: string; fingerprint: string}> {
   const ownerId=S.accountId,current = S.checkoutAttempt;
   if (current && current.ownerId===ownerId && !current.completed && current.fingerprint === fingerprint && typeof current.key === 'string') {
+    // Retry persistence before dispatching any payment. A previous disk write
+    // may have failed, even if the attempt still exists in memory.
+    await AsyncStorage.setItem('goodies-checkout-attempt-v1:'+String(ownerId), JSON.stringify(current));
+    if(S.accountId!==ownerId)throw new Error('Checkout account changed');
     return {key: current.key, fingerprint: current.fingerprint};
   }
   const attempt = {
@@ -439,9 +443,10 @@ export async function getGoodiesCheckoutAttempt(fingerprint: string): Promise<{k
     fingerprint,
     completed: false,
   };
-  S.checkoutAttempt = attempt;
+  // Never expose an unpersisted idempotency key to a checkout RPC.
   await AsyncStorage.setItem('goodies-checkout-attempt-v1:'+String(ownerId), JSON.stringify(attempt));
   if(S.accountId!==ownerId)throw new Error('Checkout account changed');
+  S.checkoutAttempt = attempt;
   return {key: attempt.key, fingerprint: attempt.fingerprint};
 }
 
