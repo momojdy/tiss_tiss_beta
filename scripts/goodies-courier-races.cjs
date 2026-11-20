@@ -6,14 +6,18 @@ module.exports=async({sql,race,raceAfterLock})=>{
  const as=(actor,statement)=>sql(`begin;set local role authenticated;select set_config('request.jwt.claim.sub','${actor}',true);${statement};commit;`).split('\n').at(-1);
  sql(`insert into auth.users(id,email_confirmed_at) values('${courier}',now()),('${admin}',now()),('${replacement}',now());insert into public.profiles(id,full_name,role) values('${courier}','Synthetic courier','customer'),('${admin}','Synthetic courier operator','super_admin'),('${replacement}','Synthetic replacement courier','customer');insert into public.wantiss_admin_staff(user_id,display_name,role,status) values('${admin}','Synthetic courier operator','super_admin','active');insert into public.goodies_courier_roster(courier_id,is_approved,added_by) values('${courier}',true,'${admin}'),('${replacement}',true,'${admin}');insert into public.wallets(user_id,balance) values('${customer}',500) on conflict(user_id) do update set balance=500;update public.goodies_store_schedules set delivery_fee=2,delivery_pricing_mode='fixed',delivery_modes=array['delivery','pickup'] where store_id='race-store';`);
  const product=sql(`insert into public.goodies_products(business_id,name,price,stock,is_available,review_status) values('${business}','Synthetic courier race product',10,50,true,'approved') returning id`).split('\n')[0];
- sql(`create function public.synthetic_courier_lock(p_order uuid) returns void language plpgsql security definer set search_path='' as $$begin if auth.uid() is distinct from '${admin}'::uuid then raise exception 'Synthetic barrier denied' using errcode='42501';end if;perform 1 from public.goodies_orders where id=p_order for update;end$$;revoke all on function public.synthetic_courier_lock(uuid) from public,anon;grant execute on function public.synthetic_courier_lock(uuid) to authenticated;`);
+ sql(`create function public.synthetic_courier_lock(p_order uuid) returns void language plpgsql security definer set search_path='' as $$begin if auth.uid() is distinct from '${admin}'::uuid and not exists(select 1 from public.goodies_orders where id=p_order and courier_id=auth.uid()) then raise exception 'Synthetic barrier denied' using errcode='42501';end if;perform 1 from public.goodies_orders where id=p_order for update;end$$;revoke all on function public.synthetic_courier_lock(uuid) from public,anon;grant execute on function public.synthetic_courier_lock(uuid) to authenticated;`);
  sql(`update public.goodies_products set review_status='approved',is_available=true where id='${product}'`);
  let seq=0;
- const prepare=(accept=true)=>{
+ const readyOrder=()=>{
   sql(`update public.goodies_courier_roster set is_approved=true where courier_id in ('${courier}','${replacement}')`);
   as(courier,'select public.goodies_set_courier_availability(true,false)');as(replacement,'select public.goodies_set_courier_availability(true,false)');
   const id=as(customer,`select id from public.place_goodies_order_with_payment_once('native-courier-${++seq}','wallet','race-store','delivery',null,'{"l":"Home","t":"Synthetic delivery destination"}'::jsonb,'50937000000','[{"id":"${product}","q":1,"p":10}]'::jsonb,10,2,1,0,0,13,null,null)`);assert.match(id,/^[0-9a-f-]{36}$/);
-  as(vendor,`select public.accept_goodies_order('${id}');select public.set_goodies_order_status('${id}','preparing');select public.set_goodies_order_status('${id}','ready');select public.goodies_assign_courier('${id}','${courier}')`);
+  as(vendor,`select public.accept_goodies_order('${id}');select public.set_goodies_order_status('${id}','preparing');select public.set_goodies_order_status('${id}','ready')`);
+  return id;
+ };
+ const prepare=(accept=true)=>{
+  const id=readyOrder();as(vendor,`select public.goodies_assign_courier('${id}','${courier}')`);
   if(accept)as(courier,`select public.goodies_courier_respond_assignment('${id}',true)`);
   return id;
  };
@@ -44,7 +48,26 @@ module.exports=async({sql,race,raceAfterLock})=>{
  const reassign=prepare(false);values=await raceAfterLock(`${lockedOrder(reassign)};select public.goodies_assign_courier('${reassign}','${replacement}')`,`select public.goodies_courier_respond_assignment('${reassign}',true)`,'courier_reassign_accept',[admin,courier]);
  noDeadlock(values);assert.equal(values[0].code,0,JSON.stringify(values));assert.notEqual(values[1].code,0);assert.equal(sql(`select courier_id||'/'||status from public.goodies_delivery_assignments where order_id='${reassign}'`),replacement+'/offered');as(admin,cancel(reassign));
  console.log('PASS: reassignment racing old-courier acceptance authorizes only the replacement courier.');
+ const capacityBalance=Number(sql(`select balance from public.wallets where user_id='${customer}'`));
+ const first=readyOrder(),second=readyOrder();
+ values=await race(`select public.goodies_assign_courier('${first}','${courier}')`,`select public.goodies_assign_courier('${second}','${courier}')`,'courier_two_orders',[vendor,vendor]);
+ noDeadlock(values);assert.equal(values.filter(v=>v.code===0).length,1,JSON.stringify(values));
+ assert.equal(sql(`select count(*) from public.goodies_delivery_assignments where order_id in ('${first}','${second}') and status='offered'`),'1');
+ const winner=values[0].code===0?first:second,loser=winner===first?second:first;
+ assert.equal(sql(`select status from public.goodies_orders where id='${loser}'`),'ready');
+ console.log('PASS: concurrent dispatch of two orders reserves only one active offer for a courier.');
+ values=await race(`select public.goodies_courier_respond_assignment('${winner}',true)`,`select public.goodies_courier_respond_assignment('${winner}',true)`,'courier_accept_retry',[courier,courier]);
+ noDeadlock(values);assert.equal(values.filter(v=>v.code===0).length,1,JSON.stringify(values));
+ assert.equal(sql(`select count(*) from public.notifications where user_id='${customer}' and metadata->>'order_id'='${winner}' and title='Courier accepted your order'`),'1');
+ console.log('PASS: simultaneous offer-acceptance retries create one accepted assignment and one customer notice.');
+ as(admin,cancel(first));as(admin,cancel(second));
+ const protectedOffer=prepare(false);
+ values=await raceAfterLock(`${lockedOrder(protectedOffer)};select public.goodies_courier_respond_assignment('${protectedOffer}',true)`,`select public.goodies_courier_respond_assignment('${protectedOffer}',true)`,'courier_wrong_actor',[courier,replacement]);
+ noDeadlock(values);assert.equal(values[0].code,0,JSON.stringify(values));assert.notEqual(values[1].code,0);
+ assert.equal(sql(`select courier_id||'/'||status from public.goodies_delivery_assignments where order_id='${protectedOffer}'`),courier+'/accepted');
+ as(admin,cancel(protectedOffer));assert.equal(Number(sql(`select balance from public.wallets where user_id='${customer}'`)),capacityBalance);
+ console.log('PASS: a different approved courier cannot win or alter another courier\'s offer.');
  assert.equal(Number(sql("select count(*) from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename in ('goodies_products','goodies_store_schedules','goodies_builder_configs','goodies_order_reviews')")),4);
  console.log('PASS: all four RLS-protected catalog relations are present in the real PostgreSQL publication.');
- console.log('All six courier PostgreSQL races passed with synthetic orders and Wallets only.');
+ console.log('All nine courier PostgreSQL races passed with synthetic orders and Wallets only.');
 };
