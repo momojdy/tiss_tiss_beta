@@ -145,7 +145,7 @@ export function canScheduleGoodiesStore(storeId:string, timestamp:number):boolea
   if(!store?.live||!store.acceptScheduledOrders||!Number.isFinite(timestamp)||timestamp<=0)return false;
   const timezone=store.scheduledOrderTimezone||'UTC';
   if(!openState(store.scheduleHours,new Date(timestamp),timezone).open)return false;
-  const minimum=/^([01]\\d|2[0-3]):([0-5]\\d)$/.exec(String(store.scheduledOrderStartTime||'10:00').slice(0,5));
+  const minimum=/^([01]\d|2[0-3]):([0-5]\d)$/.exec(String(store.scheduledOrderStartTime||'10:00').slice(0,5));
   if(!minimum)return false;
   try {
     const parts=new Intl.DateTimeFormat('en-US',{timeZone:timezone,hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).formatToParts(new Date(timestamp));
