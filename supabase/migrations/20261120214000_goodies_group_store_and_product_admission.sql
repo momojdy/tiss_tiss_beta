@@ -13,6 +13,8 @@ declare
   invite_needle text := '  if v_group.status <> ''open'' or v_group.expires_at <= pg_catalog.now() then'||E'\n'||'    raise exception ''This group order has closed'' using errcode = ''P0001'';'||E'\n'||'  end if;';
   membership_needle text := ' if not exists(select 1 from public.goodies_group_order_members m where m.group_id=v_group.id and m.user_id=v_uid) then raise exception ''Join this group before adding items'' using errcode=''42501''; end if;';
   product_needle text := 'where p.id=p_product_id and b.store_id=v_group.store_id and b.is_live=true and p.is_available=true for update of p;';
+  select_needle text := 'select quantity,product_id into v_existing,v_existing_product from public.goodies_group_order_items where group_id=v_group.id and user_id=v_uid and line_key=p_line_key;';
+  sum_needle text := 'select coalesce(sum(quantity),0) into v_total from public.goodies_group_order_items where group_id=v_group.id and product_id=p_product_id;';
   store_guard text := ' perform private.goodies_assert_store_admission((select s.business_id from public.goodies_store_schedules s where s.store_id=v_group.store_id));';
 begin
   select pg_get_functiondef('public.goodies_group_order_create(text)'::regprocedure) into source_create;
@@ -25,6 +27,8 @@ begin
      or position(invite_needle in source_invite)=0
      or position(membership_needle in source_item)=0
      or position(product_needle in source_item)=0
+     or position(select_needle in source_item)=0
+     or position(sum_needle in source_item)=0
      or position('private.goodies_assert_store_admission' in source_item)>0
   then raise exception 'Group order admission contract changed; inspect before applying' using errcode='55000';end if;
 
@@ -33,9 +37,17 @@ begin
   execute replace(source_join,join_needle,join_needle||E'\n'||store_guard);
   execute replace(source_invite,invite_needle,invite_needle||E'\n'||store_guard);
   execute replace(
-    replace(source_item,membership_needle,membership_needle||E'\n'||store_guard),
-    product_needle,
-    'where p.id=p_product_id and b.store_id=v_group.store_id and b.is_live=true and p.is_available=true and p.review_status=''approved'' and coalesce(p.restriction,'''')<>''alcohol'' for update of p;'
+    replace(
+      replace(
+        replace(source_item,membership_needle,membership_needle||E'\n'||store_guard),
+        product_needle,
+        'where p.id=p_product_id and b.store_id=v_group.store_id and b.is_live=true and p.is_available=true and p.review_status=''approved'' and coalesce(p.restriction,'''')<>''alcohol'' for update of p;'
+      ),
+      select_needle,
+      'select gi.quantity,gi.product_id into v_existing,v_existing_product from public.goodies_group_order_items gi where gi.group_id=v_group.id and gi.user_id=v_uid and gi.line_key=p_line_key;'
+    ),
+    sum_needle,
+    'select coalesce(sum(gi.quantity),0) into v_total from public.goodies_group_order_items gi where gi.group_id=v_group.id and gi.product_id=p_product_id;'
   );
 end $admission$;
 commit;
