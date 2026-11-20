@@ -135,7 +135,7 @@ function ScheduleSheet({close, inline = false}: {close: () => void; inline?: boo
     const parseWindow=(entry:any):{open:number;close:number}|null=>{
       if(!entry||entry.closed===true)return null;
       const minutes=(value:any):number|null=>{
-        const match=/^(\\d{1,2}):(\\d{2})(?::\\d{2})?$/.exec(String(value||''));
+        const match=/^(\d{1,2}):(\d{2})(?::\d{2})?$/.exec(String(value||''));
         if(!match)return null;
         const hour=Number(match[1]),minute=Number(match[2]);
         return hour<=23&&minute<=59?hour*60+minute:null;
