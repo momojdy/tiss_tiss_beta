@@ -22,6 +22,7 @@ function harness({serverBacked=true,dispatch,authenticate,initial={}}={}){
  ctx.setGroup=next=>{ctx.group=typeof next==='function'?next(ctx.group):next;};
  const transport=async(name,args)=>{state.calls.push({name,args:clone(args||{})});return dispatch?dispatch(name,args):{data:null,error:null};};
  ctx.supabase={auth:{getUser:authenticate||(async()=>({data:{user:{id:S.accountId}},error:null}))},rpc:transport,functions:{invoke:async(name,options)=>transport(name,options.body)},from:table=>{const query={select(){return query;},eq(key,value){query.filter={key,value};return query;},order:async()=>transport(table,query.filter)};return query;}};
+ ctx.IT={'product-a':{s:'store-a'}};ctx.lineStore=line=>line.s||line.byo?.sid||ctx.IT[line.id]?.s||S.cart.sid||'';
  ctx.removeGroupOrderCartLine=(groupId,key)=>transport('goodies_group_order_remove_item',{p_group_id:groupId,p_line_key:key});
  ctx.syncGroupOrderCartLine=(groupId,value)=>transport('goodies_group_order_upsert_item',{p_group_id:groupId,line:value});
  const friendly=declarations('src/features/Goodies/friendlyError.ts',['friendlyError']);
@@ -169,4 +170,23 @@ test('an open group that reaches its server expiry closes even without a Realtim
  await h.handlers.refreshGroupStatus();
  assert.equal(h.S.groupOrder.serverBacked,false);
  assert.match(h.state.toasts.at(-1),/closed or expired/);
+});
+
+
+test('single-store group creation rejects multi-store carts before creating any server invitation',async()=>{
+ const h=harness({serverBacked:false});
+ h.S.cart.lines.push({...h.line,k:'second-store',s:'store-b',id:'another-product'});
+ await h.handlers.createServerGroup();
+ assert.equal(h.state.calls.length,0,'A mixed-store cart must not create a partially synced group');
+ assert.ok(h.state.toasts.some(x=>/another store/.test(x)));
+ assert.equal(h.ctx.groupActionLock.current,false);
+ assert.equal(h.state.saved,0);
+});
+test('group creation rejects unsyncable builder lines before mutating server state',async()=>{
+ const h=harness({serverBacked:false});
+ h.S.cart.lines.push({...h.line,k:'custom-builder',s:'store-a',id:'unlisted-builder',byo:{sid:'store-a'}});
+ await h.handlers.createServerGroup();
+ assert.equal(h.state.calls.length,0,'Unsupported builder must not leave a partially synced group invitation');
+ assert.ok(h.state.toasts.some(x=>/not linked to a live catalogue product/.test(x)));
+ assert.equal(h.ctx.groupActionLock.current,false);
 });
