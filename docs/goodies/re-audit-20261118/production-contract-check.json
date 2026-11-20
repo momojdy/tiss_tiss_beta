@@ -1,0 +1,18 @@
+{
+  "scope": "Read-only production metadata. No migrations, publication, financial writes or secret changes.",
+  "classification": "FAIL",
+  "reason": "Required Goodies contracts remain absent while deployment waits for a verified full backup.",
+  "results": [
+    {
+      "observed_at": "2026-11-20 06:49:24.378311+00",
+      "migration_count": 356,
+      "migration_head": "20261116135012",
+      "courier_orders_present": false,
+      "courier_details_present": false,
+      "settlement_present": false,
+      "shared_bill_present": false,
+      "restriction_admission_present": false,
+      "proof_bucket_public": null
+    }
+  ]
+}

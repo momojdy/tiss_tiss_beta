@@ -1,0 +1,17 @@
+✔ Goodies action cards read real scoped orders, rejected products and messages without legacy RPCs (110.433364ms)
+✔ failed vendor reads reject instead of displaying an empty action list (39.714454ms)
+✔ activity uses existing notification fields, account/business scope and stable paired cursors (52.099312ms)
+✔ business search returns real Goodies destinations and escapes wildcard input (12.490667ms)
+✔ vendor preferences use an atomic main-account RPC and reject stale account writes (39.045151ms)
+✔ data requests create real support tickets without promising a completed export or deletion (65.072364ms)
+✔ the actual Goodies workspace metadata avoids unavailable legacy listing/payout APIs and retains real counts (41.803831ms)
+✔ the actual Goodies workspace rejects failed counts instead of presenting false zero badges (69.09212ms)
+✔ vendor search/notification destinations load the selected product and order within the current business (104.133177ms)
+ℹ tests 9
+ℹ suites 0
+ℹ pass 9
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 565.906286

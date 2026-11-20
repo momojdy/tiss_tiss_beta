@@ -1,0 +1,2795 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-20T07:00:18.861Z",
+  "classification": "COMMITTED_SOURCE_AND_EVIDENCE_MANIFEST",
+  "scope": "Exact Git objects in the requested source commit ranges plus the explicitly supplied customer test-only correction c339ce9e; later customer closeout documents are outside these ranges.",
+  "deploymentPerformed": false,
+  "repositories": {
+    "customer": {
+      "repository": "momojdy/tiss_tiss_beta",
+      "baseCommit": "259df9231b3dfe1a43cc17ad86c0717f7cf573bf",
+      "headCommit": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+      "applicationSourceCommit": "68da26e44b0c77107adf6fff198308f1741704d9",
+      "testCorrectionCommits": [
+        "c339ce9e05f2f554b33947f2cad301cd63a3f11a"
+      ],
+      "range": "259df9231b3dfe1a43cc17ad86c0717f7cf573bf..c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+      "derivation": {
+        "commits": "git rev-list --reverse BASE..HEAD; git show -s",
+        "files": "git diff --find-renames --name-status -z BASE HEAD",
+        "lineCounts": "git diff --find-renames --numstat -z BASE HEAD",
+        "hashes": "git ls-tree / git cat-file of committed base/head blobs; SHA-256 over exact blob bytes"
+      },
+      "counts": {
+        "commits": 4,
+        "netChangedFiles": 67,
+        "added": 30,
+        "modified": 37,
+        "deleted": 0,
+        "renamed": 0,
+        "binaryFiles": 0,
+        "insertions": 17930,
+        "deletions": 2173
+      },
+      "commits": [
+        {
+          "commit": "40b376deecf31f2e4f00a7f660b8462a8d335ca1",
+          "parents": [
+            "259df9231b3dfe1a43cc17ad86c0717f7cf573bf"
+          ],
+          "committedAt": "2026-11-18T16:38:01Z",
+          "subject": "fix(goodies): enforce courier, merchant and staff backend boundaries",
+          "changedFiles": [
+            {
+              "status": "M",
+              "path": ".github/workflows/expo-validation.yml"
+            },
+            {
+              "status": "A",
+              "path": "scripts/goodies-courier-races.cjs"
+            },
+            {
+              "status": "M",
+              "path": "scripts/test-goodies-settlement-postgres.cjs"
+            },
+            {
+              "status": "M",
+              "path": "supabase/functions/goodies-delivery-quote/index.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/catalogRealtime_test.ts"
+            },
+            {
+              "status": "M",
+              "path": "supabase/functions/goodies-tests/cmsReleaseAcceptance_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/courierMutationIntegrity_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/scopedStaffPermissions_test.ts"
+            },
+            {
+              "status": "M",
+              "path": "supabase/functions/goodies-tests/sharedBillHarness.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/staffInvitationServerSide_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/vendorBuilderRequests_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261118032703_goodies_courier_mutation_integrity.sql"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261118033204_goodies_vendor_builder_and_request_contracts.sql"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261118033410_goodies_catalog_realtime.sql"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261118033451_goodies_scoped_staff_permissions.sql"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-route-geometry.test.cjs"
+            }
+          ]
+        },
+        {
+          "commit": "154ce41334a9eb104ea963f46d971341b1bd681d",
+          "parents": [
+            "40b376deecf31f2e4f00a7f660b8462a8d335ca1"
+          ],
+          "committedAt": "2026-11-20T06:39:21Z",
+          "subject": "fix(goodies): block restricted-store admissions and enforce content review coverage",
+          "changedFiles": [
+            {
+              "status": "M",
+              "path": "scripts/check-goodies-cms.cjs"
+            },
+            {
+              "status": "A",
+              "path": "scripts/goodies-restriction-races.cjs"
+            },
+            {
+              "status": "M",
+              "path": "scripts/test-goodies-settlement-postgres.cjs"
+            },
+            {
+              "status": "M",
+              "path": "supabase/functions/goodies-delivery-quote/index.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/contentRepairReview_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/functions/goodies-tests/storeRestrictionAdmission_test.ts"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261120061607_goodies_restricted_store_admission.sql"
+            },
+            {
+              "status": "A",
+              "path": "supabase/migrations/20261120063231_goodies_content_repair_review_coverage.sql"
+            }
+          ]
+        },
+        {
+          "commit": "68da26e44b0c77107adf6fff198308f1741704d9",
+          "parents": [
+            "154ce41334a9eb104ea963f46d971341b1bd681d"
+          ],
+          "committedAt": "2026-11-20T06:47:05Z",
+          "subject": "fix(goodies): complete connected customer vendor and courier workflows",
+          "changedFiles": [
+            {
+              "status": "M",
+              "path": ".github/workflows/expo-validation.yml"
+            },
+            {
+              "status": "M",
+              "path": "App.tsx"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/content-acceptance-release/manifest.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/content-acceptance-release/publish-payload.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/content-acceptance-release/verification.json"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/localization-release/assistant-reaudit-copy.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/localization-release/manifest.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/localization-release/publish-payload.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/localization-release/translation-requests.json"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/localization-release/verification.json"
+            },
+            {
+              "status": "M",
+              "path": "eslint.config.js"
+            },
+            {
+              "status": "M",
+              "path": "scripts/audit-goodies-reproductions.cjs"
+            },
+            {
+              "status": "M",
+              "path": "scripts/goodies-cms-source.cjs"
+            },
+            {
+              "status": "A",
+              "path": "scripts/inventory-goodies-controls.cjs"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/GoodiesCourierScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/actions.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/components/Sheets.tsx"
+            },
+            {
+              "status": "A",
+              "path": "src/features/Goodies/courierNavigation.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/deliveryTracking.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/i18n/dict.ts"
+            },
+            {
+              "status": "A",
+              "path": "src/features/Goodies/i18n/vendorCopy.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/screens/Account.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/screens/Browse.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/screens/Payments.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/screens/Shop.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/Goodies/store.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/Wallet/WalletHelpPayScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx"
+            },
+            {
+              "status": "A",
+              "path": "src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx"
+            },
+            {
+              "status": "A",
+              "path": "src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceShared.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-account-notifications.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-checkout-snapshots.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-courier-location.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-courier-map.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-courier-navigation.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-group-handlers.test.cjs"
+            },
+            {
+              "status": "M",
+              "path": "tests/goodies-recovery.test.cjs"
+            },
+            {
+              "status": "M",
+              "path": "tests/goodies-shared-payments-ui.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-vendor-localization.test.cjs"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-vendor-readiness.test.cjs"
+            }
+          ]
+        },
+        {
+          "commit": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+          "parents": [
+            "68da26e44b0c77107adf6fff198308f1741704d9"
+          ],
+          "committedAt": "2026-11-20T06:56:21Z",
+          "subject": "test(goodies): normalize PostgreSQL race assertion across clients",
+          "changedFiles": [
+            {
+              "status": "M",
+              "path": "scripts/goodies-courier-races.cjs"
+            }
+          ]
+        }
+      ],
+      "changedFiles": [
+        {
+          "status": "M",
+          "path": ".github/workflows/expo-validation.yml",
+          "category": "configuration",
+          "insertions": 2,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "21a20b467060b854ddc1d0fee9fea909ce2cf533",
+            "sha256": "ce53ff7e31761e9925674a0524277b70838a1054423d12d677b0164a8e1b3f6d",
+            "bytes": 4238
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "ea0ff15c6266a4e4114577b5de66923dd2bf7b31",
+            "sha256": "0fffe0f0071122457043432d2e11167a706b49e0be0369b3f15ff01076e051c6",
+            "bytes": 4248
+          }
+        },
+        {
+          "status": "M",
+          "path": "App.tsx",
+          "category": "application-source",
+          "insertions": 2,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "25bb51ad10b3d80bc320174c6533de297c9be18e",
+            "sha256": "155c1bff2d947d6437d58c4096bb2bfd301262f0d935debfce63119a02e57514",
+            "bytes": 52675
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "12f9a29257daff40d4038bceca6441b7296b9123",
+            "sha256": "e7e863342249d7e9a42a0de671735837d38dc612bb0aa363db74b4d029f5fe8c",
+            "bytes": 52819
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/content-acceptance-release/manifest.json",
+          "category": "documentation-or-evidence",
+          "insertions": 2,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "208e3e4f94afde52512aa31bcc82ae1a0927bb4e",
+            "sha256": "277f2102b74ade19e77ee7021872ed5541bfd8343a73461d806ba245d68b3083",
+            "bytes": 1469
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e2550b37714716a406aa94a08aa341b632fc7ccc",
+            "sha256": "f213ec234471ed7879c305d3bb09cd252ddfb8e1bc8c71b5043ac9c2af705fe3",
+            "bytes": 1469
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/content-acceptance-release/publish-payload.json",
+          "category": "documentation-or-evidence",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a1319995bc3c5769b3d8fae40f6d0c88f8135e2c",
+            "sha256": "9bda7b83e771ff0675cdc9da108f3204d33ca1c045147679601a52eb36195aaf",
+            "bytes": 1335262
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "058af67f760d8c95042462974306c0f178b8dd58",
+            "sha256": "22950455b3bd12dd38600b9bcf9803cbb7ba816909b344fa4471672256b650cb",
+            "bytes": 1663944
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/content-acceptance-release/verification.json",
+          "category": "documentation-or-evidence",
+          "insertions": 3,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c9b45ba1a99678511a508ba6ff617499685bf916",
+            "sha256": "b4cc74901e94048b4baa883e07962cf7a4aa8cc073bdf23db85c0004fe9ae6ec",
+            "bytes": 466
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "59123730e054a299c9104fa4b29bdd3a3fbccfbd",
+            "sha256": "0d8fb3bc1a2ecfa44014b6ceafd0fd9c8b521a18cb19ea3d934e51c93b0db209",
+            "bytes": 466
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/localization-release/assistant-reaudit-copy.json",
+          "category": "documentation-or-evidence",
+          "insertions": 14,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e09c6aea57520464395054945868dc1cda725b65",
+            "sha256": "b8873a8a3c2a9b3bfb0749c4a9dac947d2fe5537db48f09c49f6f5ffd307dd79",
+            "bytes": 2421
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/localization-release/manifest.json",
+          "category": "documentation-or-evidence",
+          "insertions": 8,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "b3e9e85d5d836a437c1768ec6778d7014c54d539",
+            "sha256": "6020063fa37f8744dd2aebecdcafdacfe0477bc0e5fdc00ec5b5fbe95588a9b2",
+            "bytes": 685
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "1bccd682d33b7972c741cf9344f76468c5970aab",
+            "sha256": "adfed32cc3567a50442276832fb976f2052d2ac21e3469d055d9140782988e48",
+            "bytes": 840
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/localization-release/publish-payload.json",
+          "category": "documentation-or-evidence",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "b5913b037dffc61a01a11fa4f88205af5f78e69f",
+            "sha256": "2317c2052092f011af4645a1fd0f90fc56b75084a881315afc08b0d09a84cfbe",
+            "bytes": 1329964
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a2ffe89e06aac487dbede0e9d09a50b97fa14dda",
+            "sha256": "8b5bcdc0beceac2714d743b70a33a0dcf50bca0f7263ad2a124de491c8270e38",
+            "bytes": 1658646
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/localization-release/translation-requests.json",
+          "category": "documentation-or-evidence",
+          "insertions": 2779,
+          "deletions": 1395,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "be89aa1cba307af3a762942aa361ddc3b6f08153",
+            "sha256": "ce599305c0964e997eb6751f4308b1ec7fed225fadfb3dbad88db538f27b8719",
+            "bytes": 101502
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f0491fc56c04df236cfc1074a1b8f4ee5be1f3f9",
+            "sha256": "ae14f49f7e77022c1fb6718392271604d586ae23a79be9a60787a6457524a27b",
+            "bytes": 126538
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/localization-release/verification.json",
+          "category": "documentation-or-evidence",
+          "insertions": 3,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "68f98b4af1a5311886979376edf9be261c4e8260",
+            "sha256": "d308994f6065d7ad282887da8744bbb625ffe1aa12921a549baf3652e8d619f4",
+            "bytes": 758
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "168bb107bf5548468a3d3ffddd9ba9cd90126c70",
+            "sha256": "f53a498aafafd6bbf063b66c30f74bce00f57383ca12ada10c3fc2694222962b",
+            "bytes": 758
+          }
+        },
+        {
+          "status": "M",
+          "path": "eslint.config.js",
+          "category": "configuration",
+          "insertions": 4,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c1bc4f16afabb11b5ef233e17d6ec41fe1f4d6aa",
+            "sha256": "905d136e6bf27cc2b9f5e2c99197c4884f3991c7b1a77ce2a64eb159438f42e8",
+            "bytes": 986
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "571f8d56959fb15b53f3d5d271ec6a040388b199",
+            "sha256": "6fb25c536c00f4f4c1fd798f92f64292289a5388b594dcf7609f02c004760290",
+            "bytes": 1147
+          }
+        },
+        {
+          "status": "M",
+          "path": "scripts/audit-goodies-reproductions.cjs",
+          "category": "tooling",
+          "insertions": 3,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "bc374c6db4f6ca94f7ec288341ae2ff4e809b917",
+            "sha256": "47ea3321479bf082ddaf9866f057bd6f5f1a1ac7138e7e831983e20eda58d147",
+            "bytes": 35303
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "cd23597920b322fbb35c91a16c34733ea8e7cc06",
+            "sha256": "01e1c581e88080494ad80e1674ff093b664994380668220c53c8b8dc138c25ae",
+            "bytes": 35419
+          }
+        },
+        {
+          "status": "M",
+          "path": "scripts/check-goodies-cms.cjs",
+          "category": "tooling",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6c124f83eadb8cab526cb761848b1c57f20dfe62",
+            "sha256": "414266847cd5850c3a326db7c83d3dd40b3debeaf6e054f95ede54b0cb829532",
+            "bytes": 3332
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3e18a2b41e0dff86b9c2a15de02d9d50391886a2",
+            "sha256": "d85f2c371b4eebdbc5bbf8195e629709226659ad9f2a3e8ad7336560d6558dec",
+            "bytes": 3334
+          }
+        },
+        {
+          "status": "M",
+          "path": "scripts/goodies-cms-source.cjs",
+          "category": "tooling",
+          "insertions": 12,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e0b3443e52475e941d541a9e801e1508863a1943",
+            "sha256": "51e58c5122cb23083d62c0e71ea50b95c1e31e55aad785990628b5dfcc44cd82",
+            "bytes": 9974
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "09126c948c605317eb64fddf43de4ce4b86ba4ca",
+            "sha256": "d945d5733c606f4d4d0ab2a45fb0f1fc7d6808bdf0f4b79358d266d2b5263f06",
+            "bytes": 11295
+          }
+        },
+        {
+          "status": "A",
+          "path": "scripts/goodies-courier-races.cjs",
+          "category": "tooling",
+          "insertions": 50,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2518f3a55861f0d0793d0d1e69ddd72998b29bee",
+            "sha256": "cc172c577a52d78d2b4970b060d18fd21248a6f7477f239121e7c177c4aa8472",
+            "bytes": 8018
+          }
+        },
+        {
+          "status": "A",
+          "path": "scripts/goodies-restriction-races.cjs",
+          "category": "tooling",
+          "insertions": 31,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2e3ecf9a38262bd71a47a1aa0fae9cf06a083fef",
+            "sha256": "d8bae67324a6384a0e08497db067b54f4566b6e1fcd82ffaa7accad363ad9fe6",
+            "bytes": 3828
+          }
+        },
+        {
+          "status": "A",
+          "path": "scripts/inventory-goodies-controls.cjs",
+          "category": "tooling",
+          "insertions": 323,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "95213d69f0ab7317418362e64b7ca16ed2af4ad8",
+            "sha256": "b0c729880dbeed53dc47d1a938a6dc71d6855e6982c27305feffdbcf1330e2ab",
+            "bytes": 30447
+          }
+        },
+        {
+          "status": "M",
+          "path": "scripts/test-goodies-settlement-postgres.cjs",
+          "category": "tooling",
+          "insertions": 16,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "82b80245529381f9722812a6250a6cf2837fb2e8",
+            "sha256": "453cdd417876d57febeef845d3c4722ce588f16e2631addab202b0ffe9dbdb9e",
+            "bytes": 17933
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c35ab45c03fcca2f95797295e3552bd3481ed298",
+            "sha256": "92991b953d77255baad45c34ebcaa85afe23b8e05e67e75ea1779c9fb7b12dea",
+            "bytes": 20256
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/GoodiesCourierScreen.tsx",
+          "category": "application-source",
+          "insertions": 81,
+          "deletions": 21,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "178addd00322edef4062cf976405867dcf212414",
+            "sha256": "c2c3cafbf2ecc467dd49daa491f4f0e58e986ee8740071167ac7afce835bdcd1",
+            "bytes": 19775
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3d6a9264716baf294843110fe618dc4c6ba83869",
+            "sha256": "691ec18127c4d640d00d167eb8da697e91ce0ff019913669bbc515694563799c",
+            "bytes": 23984
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/actions.ts",
+          "category": "application-source",
+          "insertions": 131,
+          "deletions": 94,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e3eb7abf2c67228e0f338e1a474eeed8fc097c17",
+            "sha256": "d88271106a647cdb85c5cbb7a3461a36fb7a5dfb80fcf400438fa04a4657097e",
+            "bytes": 44193
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "37be99d58fd0ef244b22c98929eb967750880934",
+            "sha256": "c50db1e71e1749b6e8c0d81bf9a2682c41919ee312009e8d65f54957f457d881",
+            "bytes": 46616
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/components/Sheets.tsx",
+          "category": "application-source",
+          "insertions": 297,
+          "deletions": 151,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "650417319e9046f04c9c1241c30c32793d57bd0a",
+            "sha256": "8d3adc369d19983cc86a4d46d05a637f97908deeb376ce8b98953a35b11b6c4e",
+            "bytes": 75256
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "04c43fe36f0a31ae07168bf59c05ad4edd149c21",
+            "sha256": "3f5f829f7e61315b963915e31ac87c673c4ec58c2634a3f9b153b846555ff559",
+            "bytes": 88316
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/Goodies/courierNavigation.ts",
+          "category": "application-source",
+          "insertions": 10,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "141db50c605c1b49f4b53fa4735cb46e49d32cc6",
+            "sha256": "e1a18517c182f3871ca6aa617babdf22c2780b397e641fb3d036ee32a979a99c",
+            "bytes": 431
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/deliveryTracking.ts",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "7837cf861b9725df05fa84fc06092600050c5ca2",
+            "sha256": "ffb0f3ad2aac9603dcd5d93e1997fe58c47ea09cc716a681d029e9ea15bcf796",
+            "bytes": 2685
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "40fb82f8e8d172789afc7668d3b8b0b17d508c20",
+            "sha256": "2807c091d11a19554070feffc2b3446b807c6190789147d73777ab35f7b6e413",
+            "bytes": 2757
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+          "category": "application-source",
+          "insertions": 4,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "334e16ba35b2acb3727543643a05eaf09ac668c2",
+            "sha256": "ff27d90bb462a74656377338b17acc53906c3aaebe0c6b0ea9d049bb8287f1c9",
+            "bytes": 1927
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "65110857d30e7963a3a880766dbd81d0fff0c932",
+            "sha256": "10bcc77350bd9a1498e1834eaf09c40bd811c0546a0d369d12621165282b8431",
+            "bytes": 2037
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/i18n/dict.ts",
+          "category": "application-source",
+          "insertions": 25,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "be88ac5d4dcda214532411a28d761870f9d2a427",
+            "sha256": "7fdff4a1da4f8dcfbd9ce7d6d67079fa4a9548ffb58b9fee5bfe710897b7081c",
+            "bytes": 13234
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f6b4cb0fab240c8987a5932670d8aa69f1fd37c4",
+            "sha256": "e70ee3d161e7b1d65908b4193b2a4cebc6739c526b71b6436a1f85fe914a2606",
+            "bytes": 14542
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/Goodies/i18n/vendorCopy.json",
+          "category": "application-source",
+          "insertions": 10688,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "04c11c9815c31811909ee8e53d96c83cd69576d6",
+            "sha256": "73f819ebbe5592e9f220a4265ff9c13b48af87fdbdc111911d201d77b34c2774",
+            "bytes": 245880
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/screens/Account.tsx",
+          "category": "application-source",
+          "insertions": 104,
+          "deletions": 56,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8a22b5977e8cd68c2bf8a5f4fe2e089b300c2e17",
+            "sha256": "0722682cb8ae481ead37e6328a52e71e5bc0cce4ddedd4a781f5fe9ec96bf210",
+            "bytes": 33816
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "7cbadcc459894332ffc7c9a6aa88071ac432f610",
+            "sha256": "ff385a4ccdce8002b00e59960bf643db8de9b1535825c6708b7fa883222ce385",
+            "bytes": 39335
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/screens/Browse.tsx",
+          "category": "application-source",
+          "insertions": 68,
+          "deletions": 33,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c741e420f28b59d5286f458afd6040530deeb256",
+            "sha256": "a743dd2e0e5530f87cc87b03b5d15ff1cfc117aad7977ba1c947f0990f682f54",
+            "bytes": 43503
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "96ae101e8aed1fdf3af0b6107dd3a60f287d758c",
+            "sha256": "81cf186d0c825b5d3a35dbdd07476a994df0bb187b22b779881d46b8a4285723",
+            "bytes": 46806
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/screens/Payments.tsx",
+          "category": "application-source",
+          "insertions": 20,
+          "deletions": 10,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "af70b072b5e7117268f5539118d4969b70ba2f30",
+            "sha256": "4fd791b79edd4d8face4908dd52cd559cb35e912ebabd264d44491b61a3f4801",
+            "bytes": 11120
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e9e67f5a45f3467cebe3fae3c0b3736b66e2fb7a",
+            "sha256": "bc9df4c4419721b7287d8a58ab42d401f7e30193fa7096bb56e28c875bec52a6",
+            "bytes": 12004
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/screens/Shop.tsx",
+          "category": "application-source",
+          "insertions": 24,
+          "deletions": 16,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c2e4fc6f35bf04f9742d5a139aab501243e75124",
+            "sha256": "456a56b9ac9fcdbe00ae373ce853038abb7755bdfad7047b8f2a53600a74357f",
+            "bytes": 93540
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c54bb4f21559582c4fe7620fde54b8bbd003989d",
+            "sha256": "8f955dc846138b261e48f9df4520d650f352b229f039f0022073d64adb216211",
+            "bytes": 94739
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/Goodies/store.ts",
+          "category": "application-source",
+          "insertions": 39,
+          "deletions": 24,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "bab01f6fc5954ae8921b55b83744a9ceaedf1261",
+            "sha256": "2e3462c39ad22bf6f0a1f83a0eee8708bff8e1d55b7050b722e888e6ca443748",
+            "bytes": 54387
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "83b335937b09639d65a93e4ea871321e98ff9674",
+            "sha256": "827ebd9ad5b908200f6222fec6b277a3018677cbb1ee23785a4483c7b8a18f45",
+            "bytes": 55650
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/Wallet/WalletHelpPayScreen.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "36f10fd8ee84743c05f1f42fa9466967293d690a",
+            "sha256": "f3882968b614a5c9fa1b28ac75941e0bd93ca63d6f9468826db5ecc131848a34",
+            "bytes": 16907
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "ae3079208f8ab465777ffe83a70e6ebf0290d505",
+            "sha256": "0b378402ed68cd61db77fdfe1ab959b8cd04a6da8253907dd023216d9ea68ca6",
+            "bytes": 17158
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+          "category": "application-source",
+          "insertions": 4,
+          "deletions": 4,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f35e07ef5f9348c02040c8a0fb98c19a8ccd9d72",
+            "sha256": "7a837fdf66ffeac7a3127543f8e1f09b99628fc2e2d8568812c9118d9ca20068",
+            "bytes": 33604
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "5c7ae63162496548d4da5e814af0c58a87b4e393",
+            "sha256": "1e7266d95d42ca20b7a80a11abc5edbb69b9202434ab2ea0ef98c15c652eda82",
+            "bytes": 33563
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+          "category": "application-source",
+          "insertions": 262,
+          "deletions": 225,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2259e58c54c8b7d53ab40f9b1c38017da1f88187",
+            "sha256": "8c4d966abf1274076a39da24c3a9f5a9cbc26f354ec12d4513b52b2ff245b36e",
+            "bytes": 78495
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "06798f3b1e2f8b46adeeb5dbcd2a376c16a7d7e5",
+            "sha256": "76d4cedb4027d090ee333e2a4025e813557381e558e90883a7b8a2aa967978d6",
+            "bytes": 93352
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx",
+          "category": "application-source",
+          "insertions": 19,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e169918ffa79af2d027e23c6b39009c04e955f56",
+            "sha256": "eed88ae8171701952bd20d217267eea0643f9bb464e0c620c8aec5458f5d733b",
+            "bytes": 978
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts",
+          "category": "application-source",
+          "insertions": 62,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9123faf5c8ef72b6d266a3d820f467ad946d6944",
+            "sha256": "d5df3dc8efba2f8bbed5373faa6a562c4882fabb7f5deff43bd52fe217bebbf8",
+            "bytes": 3687
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+          "category": "application-source",
+          "insertions": 105,
+          "deletions": 86,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "aee331b192a04b51806be84ed6f724fc3fe207c7",
+            "sha256": "9da12d38f91e03536ff434c50fce5886fd005fa315c976a8f3e0d757b1dc97c5",
+            "bytes": 33589
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "94397b406ac2a7c20487a735f8e66a0a15c4e98b",
+            "sha256": "571568eabfb9123b2e5b99fed5166c6f003391b3c3e85eb7178373662f0523a4",
+            "bytes": 39158
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d41de892da6b235f2d6063a5c9724868f6c02233",
+            "sha256": "2953c7ff5a7fc533a3c17249f830892e0f13bff61a8d5b30964fb2afb1be9e5e",
+            "bytes": 21730
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a44a7d9d700067cede6f751694afbfb9851d9df9",
+            "sha256": "32f824852bf9c75aa11e7eb62513784cc4ba162f6ad6ffa67fbc9ad65f6794ed",
+            "bytes": 21857
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceShared.tsx",
+          "category": "application-source",
+          "insertions": 19,
+          "deletions": 4,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "cc727764cc66ebcc185b4eaf7df4660fe2070a5c",
+            "sha256": "a6b9c29f8908e7cfddea0ebb1d626663775e12ee5acd59f47de61eb72b740595",
+            "bytes": 100296
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "56e29d74aa1ca9d29fa199177076c758e5807bb2",
+            "sha256": "644117d44a1f531732a971cebe84a3bc842183c5b89e1b1d2067b22ce43c53c7",
+            "bytes": 101118
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "49475f4793a4fa966797634848989887ff7fd100",
+            "sha256": "9cfa34bfb684a10b122ed55c071a72dfcad538531c49cadbe0b3045f5ebd20e3",
+            "bytes": 23394
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "45bf84ae17a02203f56f89b2bd8a7e0beade2cc2",
+            "sha256": "06667d4d40fa43b6c4f1961f201810a7a291de08b7e6f6f1eb426e506b213db7",
+            "bytes": 23474
+          }
+        },
+        {
+          "status": "M",
+          "path": "supabase/functions/goodies-delivery-quote/index.ts",
+          "category": "edge-function",
+          "insertions": 24,
+          "deletions": 12,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "4115861afc7dce7f0cae3ea9a92cb6621d3f76b8",
+            "sha256": "6b9fb21b67c702439d8defe43d557fc4b9d78a0adaa4b41001588c355d445ccf",
+            "bytes": 17384
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "008abdee2a9e7c014a46f67703e8ffca594dbc21",
+            "sha256": "25b1e7482ff9ddddc801131d4c6341611ca9fd1e187cc681437e9f126e1eb02f",
+            "bytes": 18166
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/catalogRealtime_test.ts",
+          "category": "local-test",
+          "insertions": 13,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6515208b138f51f73e5dcaa4fe176882932c790e",
+            "sha256": "7fc88f7d4c96cff4d2e320e2f9961a3940944a5ac4c1a2876f8424850cc3c96e",
+            "bytes": 1466
+          }
+        },
+        {
+          "status": "M",
+          "path": "supabase/functions/goodies-tests/cmsReleaseAcceptance_test.ts",
+          "category": "local-test",
+          "insertions": 18,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6b934dc688a7cf3f5d7e7fe2cdbb7aea0ef144a7",
+            "sha256": "b3b3c6ff5ae95b6015dd2fc8d76a87919b234a88c548d80daeb2ed370f5e8f10",
+            "bytes": 5643
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9ca217ec2f70bf37f185d7c4e6765f884bfabec9",
+            "sha256": "546fb073ec1a16890822ca29633820f077e1aa81dab1596bce456087489ed0e7",
+            "bytes": 8212
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/contentRepairReview_test.ts",
+          "category": "local-test",
+          "insertions": 18,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0aa5fc4e5fdb5dc9d028f2e31d20f5ffc1cb7235",
+            "sha256": "ee1a668212714d7d465fea3fbf57a0480e698dba2dae8f379bb97638c2cd472b",
+            "bytes": 1928
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/courierMutationIntegrity_test.ts",
+          "category": "local-test",
+          "insertions": 85,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "327845de2e10532c12090f053dadfc6b725e0de6",
+            "sha256": "f50b6c5a46afd0e8e30235ccb8142230668c0f7bf0f40b832a9f1af3ff8c38ed",
+            "bytes": 8785
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/scopedStaffPermissions_test.ts",
+          "category": "local-test",
+          "insertions": 63,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "865ed59790d59785d712bdf5e1dfd9cd3ad50133",
+            "sha256": "8e0a2069b9e77ba67c8d15e8c584c70f6378154c4f0a5d9d3ab937646b5f1501",
+            "bytes": 6777
+          }
+        },
+        {
+          "status": "M",
+          "path": "supabase/functions/goodies-tests/sharedBillHarness.ts",
+          "category": "local-test",
+          "insertions": 1,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "518bdd812cfa8b91dd9ff0ed91aecc482df5a026",
+            "sha256": "ea8ef80555cae27bb31ab586ff08d481e94b9e23b25a56bed7fab0a981b961b9",
+            "bytes": 6535
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "fd9f7d0c30ab541e0e1ed36a9b9b0cc3cca96e1f",
+            "sha256": "5177822644e3e86d1645cb8409fac2026b773c2826ac8b1772ad1cdb9a147c4c",
+            "bytes": 6686
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/staffInvitationServerSide_test.ts",
+          "category": "local-test",
+          "insertions": 45,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a3a0013970a16c66a92327d533e9d489bff39cf2",
+            "sha256": "bfc8eed36859bd2366f43a978f6744f819d9e9654ea44d8ae64b1f5f639e8bc4",
+            "bytes": 4679
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/storeRestrictionAdmission_test.ts",
+          "category": "local-test",
+          "insertions": 51,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f492aea85bcb28c080ea1cd409735060151d8e2c",
+            "sha256": "d818caa0d199fb892410ed44bcd872e2c7ccd26405151450077d137cbfeb3e46",
+            "bytes": 7313
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/functions/goodies-tests/vendorBuilderRequests_test.ts",
+          "category": "local-test",
+          "insertions": 86,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "cc47f0ecd5a5a1b0cbce8d00704c86b6658d598a",
+            "sha256": "14f1abb8214ce6c6adece44479c32752bdab3e35959925cdd5a609faeb95d6f7",
+            "bytes": 10662
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261118032703_goodies_courier_mutation_integrity.sql",
+          "category": "database-migration",
+          "insertions": 227,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0bdbe9a9cf0d1b0fde06b0bf4975ba987d0d02bf",
+            "sha256": "002b500112b2495d5c8a3f0128b6a0fe727b201398b3ea155b16c1220b729d4e",
+            "bytes": 15610
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261118033204_goodies_vendor_builder_and_request_contracts.sql",
+          "category": "database-migration",
+          "insertions": 84,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "4538629ce67d9a03abc592c65b2c98b20e498d59",
+            "sha256": "4bacbaac5d2e0dc1afca909f56e222455b9c93be02a0d1f7552e862893b87731",
+            "bytes": 4720
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261118033410_goodies_catalog_realtime.sql",
+          "category": "database-migration",
+          "insertions": 18,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d870a86d1e2106014dbc722bed419ee64e06e2c2",
+            "sha256": "7c169d68e3719e6a4fea8b081a7a0fc7e76634da4388603722c19e9e82956b4c",
+            "bytes": 995
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261118033451_goodies_scoped_staff_permissions.sql",
+          "category": "database-migration",
+          "insertions": 143,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "02125d1127e1a4914fb05a1f4fa902548090ce27",
+            "sha256": "ee89e096162481a6123d3051c10a7e3d62047854e2fa09a20a7b52d2df2bf351",
+            "bytes": 9252
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261120061607_goodies_restricted_store_admission.sql",
+          "category": "database-migration",
+          "insertions": 95,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0bcf09240e2b2ff596214c87d02b02937cf36cad",
+            "sha256": "e835c581054206ef51aa32c1b6b86603857c7aa93221e2e9abaa9cdb6e09ffda",
+            "bytes": 5258
+          }
+        },
+        {
+          "status": "A",
+          "path": "supabase/migrations/20261120063231_goodies_content_repair_review_coverage.sql",
+          "category": "database-migration",
+          "insertions": 1219,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0f7ae8b4ec1c96c3aac0039389cebde562a14156",
+            "sha256": "4af1ab91f890c984b61ad6a7a79fd9c4317bd8fca796bfca30d5d69e7748ebdd",
+            "bytes": 36130
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-account-notifications.test.cjs",
+          "category": "local-test",
+          "insertions": 52,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f6b6199113dab939e752d87c721897f105d11415",
+            "sha256": "f23a98a07baab121b22d035d7081fac7b3c42ad193f2d3f4a0af010fd794d3f6",
+            "bytes": 16700
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-checkout-snapshots.test.cjs",
+          "category": "local-test",
+          "insertions": 24,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "913395a9686b3243bc1b3ce2206c750edd9fac7e",
+            "sha256": "28a484a2d995697c29dcdbdcf277cbcffedb67a7eca263158ff5e4c65e1d8c23",
+            "bytes": 10557
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-courier-location.test.cjs",
+          "category": "local-test",
+          "insertions": 19,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6e5f5780c4d9269af2130d38376e82cd60d876f4",
+            "sha256": "e92408c30687721bd79b1d949eca25fae2c946937c55b3eeda7835e0bf698dbe",
+            "bytes": 7100
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-courier-map.test.cjs",
+          "category": "local-test",
+          "insertions": 13,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "1c11fc72c6d07949b215925d351654fc190e8e1a",
+            "sha256": "c464bb284347a743b90a01f5bc151d71955951b1ed5e3e846375df2655c2315b",
+            "bytes": 4726
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-courier-navigation.test.cjs",
+          "category": "local-test",
+          "insertions": 15,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a104c469fd3d2ff4840c3b051fb713b4c9e19f32",
+            "sha256": "3987f524fb6ed1019e71ac3968fd5a9c6fb989ddebf0364f8ea459ecb8e7d775",
+            "bytes": 7066
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-group-handlers.test.cjs",
+          "category": "local-test",
+          "insertions": 143,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6933e57931c50d9fc27a94e606484c0ca69271d1",
+            "sha256": "cac41282b33fa4eadb3286dd30138c75be7b4e24037122c9ed25018cb699a3a1",
+            "bytes": 29284
+          }
+        },
+        {
+          "status": "M",
+          "path": "tests/goodies-recovery.test.cjs",
+          "category": "local-test",
+          "insertions": 7,
+          "deletions": 7,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "091b38cc346512d2c6a5fe922ed9b9bdd982cb3c",
+            "sha256": "58303a5eefd8cac45754678d7ce8107d13a98adfaebc89a15f6f0bd68269811d",
+            "bytes": 8105
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c8593328ba46fb94aa34435de74ee70154099e27",
+            "sha256": "44aaac38db5f08cb9d11192450cdb5adcc897b845c2508daf8190207ec553eb2",
+            "bytes": 8657
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-route-geometry.test.cjs",
+          "category": "local-test",
+          "insertions": 37,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "ac6403bda87319f5fd9a98a3fd03832c099a4149",
+            "sha256": "f73341a280de25170b64a05e8e1abec506ff377adfce8a715cb62018e4101975",
+            "bytes": 2376
+          }
+        },
+        {
+          "status": "M",
+          "path": "tests/goodies-shared-payments-ui.test.cjs",
+          "category": "local-test",
+          "insertions": 8,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "eb23e8657f2d6c82e9b06b4816c9bb166c4ec5f3",
+            "sha256": "0462a48e2502e48770d7561ca560228439090af226332329a6e747f6c83802ef",
+            "bytes": 3497
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9f9dbe27d51976d188710cc8a4a0b8558f35ff69",
+            "sha256": "1305a123868f4313afac6e06ccbdf12d676573c8e2c5fdd5a91de7fadeddd550",
+            "bytes": 4734
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-vendor-localization.test.cjs",
+          "category": "local-test",
+          "insertions": 109,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "72f91adb997de57b10ee374d16e90da764442d48",
+            "sha256": "6c9e2a02212bbf3a0e8aab3503f46cd705e8667bab63d49aa6df2f734d7724d4",
+            "bytes": 11802
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-vendor-readiness.test.cjs",
+          "category": "local-test",
+          "insertions": 84,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "bae0356e34f247c269d2c39e5976ce47e6bac9af",
+            "sha256": "9ef614ca394fc7ec32c79a8b1cbd092e30e1384bca29f69e24ce66eea2498f8d",
+            "bytes": 15193
+          }
+        }
+      ]
+    },
+    "admin": {
+      "repository": "momojdy/tiss-admin",
+      "baseCommit": "cbc71c2416489bcb6eea6c2e4dbdd34c5dbbb98d",
+      "headCommit": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+      "applicationSourceCommit": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+      "testCorrectionCommits": [],
+      "range": "cbc71c2416489bcb6eea6c2e4dbdd34c5dbbb98d..14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+      "derivation": {
+        "commits": "git rev-list --reverse BASE..HEAD; git show -s",
+        "files": "git diff --find-renames --name-status -z BASE HEAD",
+        "lineCounts": "git diff --find-renames --numstat -z BASE HEAD",
+        "hashes": "git ls-tree / git cat-file of committed base/head blobs; SHA-256 over exact blob bytes"
+      },
+      "counts": {
+        "commits": 1,
+        "netChangedFiles": 45,
+        "added": 12,
+        "modified": 33,
+        "deleted": 0,
+        "renamed": 0,
+        "binaryFiles": 5,
+        "insertions": 10531,
+        "deletions": 727
+      },
+      "commits": [
+        {
+          "commit": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+          "parents": [
+            "cbc71c2416489bcb6eea6c2e4dbdd34c5dbbb98d"
+          ],
+          "committedAt": "2026-11-20T06:46:14Z",
+          "subject": "fix(goodies-admin): connect scoped operations, content and recovery workflows",
+          "changedFiles": [
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/admin.json"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/faq-preview.json"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/logs/admin-navigation.log.gz"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/logs/admin-recovery.log.gz"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/logs/admin-settlement.log.gz"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/logs/admin-shared-refunds.log.gz"
+            },
+            {
+              "status": "A",
+              "path": "docs/goodies/re-audit-20261118/logs/admin-typecheck.log.gz"
+            },
+            {
+              "status": "M",
+              "path": "docs/goodies/release-20261112/browser-harness/faq-acceptance.cjs"
+            },
+            {
+              "status": "M",
+              "path": "package.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/actions.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/components/Sheets.tsx"
+            },
+            {
+              "status": "A",
+              "path": "src/features/admin/goodiesConsumer/courierNavigation.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/criticalContentKeys.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/customerLabelCatalog.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/customerPageCatalog.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/deliveryTracking.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/i18n/dict.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/previewSourceManifest.json"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/screens/Account.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/screens/Browse.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/screens/Payments.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/screens/Shop.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/screens/WalletHelpPay.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/goodiesConsumer/store.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/lib/adminBackend.ts"
+            },
+            {
+              "status": "A",
+              "path": "src/features/admin/lib/goodiesBuilderSelection.ts"
+            },
+            {
+              "status": "A",
+              "path": "src/features/admin/lib/goodiesIngredientRequests.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/lib/hydrateAdminState.ts"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/overlays/PeopleDrawers.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/content/GoodiesEditor.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/ecosystem/EcosystemScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/operations/OperationsScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/people/PeopleScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx"
+            },
+            {
+              "status": "M",
+              "path": "src/features/admin/state/db.ts"
+            },
+            {
+              "status": "A",
+              "path": "src/features/admin/ui/AdminSnapshotBoundary.tsx"
+            },
+            {
+              "status": "A",
+              "path": "tests/goodies-admin-recovery.test.cjs"
+            },
+            {
+              "status": "M",
+              "path": "tests/settlement.test.cjs"
+            },
+            {
+              "status": "M",
+              "path": "tests/shared-bill-refunds.test.cjs"
+            }
+          ]
+        }
+      ],
+      "changedFiles": [
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/admin.json",
+          "category": "documentation-or-evidence",
+          "insertions": 5074,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "88ffa119ce1add20034faa005538105a6be42f74",
+            "sha256": "5c3fb2551de1791f529e545a2abbd393b7b13c41fb95742ba8da171f2d74dc64",
+            "bytes": 191268
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/faq-preview.json",
+          "category": "documentation-or-evidence",
+          "insertions": 157,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0a7ab949a66998020b2f864ef6c294c49ee6699e",
+            "sha256": "fed8e6de08ded5efc85394ee5643138a443014d1a9c5d535855c98692e62da74",
+            "bytes": 3053
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/logs/admin-navigation.log.gz",
+          "category": "documentation-or-evidence",
+          "insertions": null,
+          "deletions": null,
+          "binary": true,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a4fec63dbbea894bc632ba371a3e04cb11c06792",
+            "sha256": "ae73a1e3789ae7da108c6a90cef490af8949a1737f7e91fe187eb634c20b22a9",
+            "bytes": 337
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/logs/admin-recovery.log.gz",
+          "category": "documentation-or-evidence",
+          "insertions": null,
+          "deletions": null,
+          "binary": true,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3515e0f4f305dafbd254878c76cb1994750acbe9",
+            "sha256": "caf4fd5f11ad4f99171aff5beee4848db3abd6bc0139780040dac16a8ff20e19",
+            "bytes": 1513
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/logs/admin-settlement.log.gz",
+          "category": "documentation-or-evidence",
+          "insertions": null,
+          "deletions": null,
+          "binary": true,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "4330fce41ce0fe3651ddf6308a6108ef191e0b84",
+            "sha256": "d6633ec96474b52ef4f9e883744e3c5ff487104bd5d1a02dbd26bd1c074627b2",
+            "bytes": 237
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/logs/admin-shared-refunds.log.gz",
+          "category": "documentation-or-evidence",
+          "insertions": null,
+          "deletions": null,
+          "binary": true,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "375ba6e09283807e3d12d4107f59b1543f2bbaa0",
+            "sha256": "7618d3641fa2d0ce870584aa8bd6c5e220205e9df0748c72dcc1d22734bd207c",
+            "bytes": 362
+          }
+        },
+        {
+          "status": "A",
+          "path": "docs/goodies/re-audit-20261118/logs/admin-typecheck.log.gz",
+          "category": "documentation-or-evidence",
+          "insertions": null,
+          "deletions": null,
+          "binary": true,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "50c3d3063000b74e5ce0e12a0cb0c6fe6fed3b91",
+            "sha256": "f67515f15281b12c79aefb2eaeffc77da08cd97566de08e31b29d459adc46716",
+            "bytes": 73
+          }
+        },
+        {
+          "status": "M",
+          "path": "docs/goodies/release-20261112/browser-harness/faq-acceptance.cjs",
+          "category": "documentation-or-evidence",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "e573897b741a3068efe1b710bfc9feb0640ecd51",
+            "sha256": "b0c22c9490f637a435ab615c285dce6c627c33c35fcc954faa90b009a99da691",
+            "bytes": 2690
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "39d2811c3348d1886d92cded22aa8548fb94e660",
+            "sha256": "64c2bff7b3d8c9eeafb0ff63f32acc9c0e93a09d685696392d285354d4905375",
+            "bytes": 2784
+          }
+        },
+        {
+          "status": "M",
+          "path": "package.json",
+          "category": "configuration",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "ca84ae5add1e57be2f8864ecfcd2a9f67434c63a",
+            "sha256": "a1f9196df2a25509c05ae881adada5026ef04615dd42bece747b7a2cb98b23aa",
+            "bytes": 1459
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "40fba069cf0def1335df70918dc0a728d7ee787d",
+            "sha256": "cc9d709e842779566a172ee27b097bfc63ced0b4b28a1e96f06e10d1e5cef861",
+            "bytes": 1505
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/actions.ts",
+          "category": "application-source",
+          "insertions": 131,
+          "deletions": 94,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2bc60a733dd4a45a9627c74c564537c099dcd873",
+            "sha256": "b13a2a6df7eaf30de864e438bb67364b066671aa82c3b16e790460c65a7e988f",
+            "bytes": 44209
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d55a12dfe6073c514bbf4689f9eab66fc48d4886",
+            "sha256": "4eaff25de09d3149d59abde167f9f087a7432d86349b9ac21a64ff99c9e936f1",
+            "bytes": 46632
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/components/Sheets.tsx",
+          "category": "application-source",
+          "insertions": 297,
+          "deletions": 151,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8f2024a3d855f59df581c326aac403627e6bf519",
+            "sha256": "d5c8bcadfadd91457cac7b8341701e756c4e680eff8e0ed73c8a9f62cd9ab2d9",
+            "bytes": 80668
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8a21b86b2b27a9aae7511698e4ff03b0245d9d8c",
+            "sha256": "ae73e854aa623496e3d23ec41f0d031a92553f5cbc49a7c7f1503d3ddb99b62c",
+            "bytes": 93837
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/admin/goodiesConsumer/courierNavigation.ts",
+          "category": "application-source",
+          "insertions": 10,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "141db50c605c1b49f4b53fa4735cb46e49d32cc6",
+            "sha256": "e1a18517c182f3871ca6aa617babdf22c2780b397e641fb3d036ee32a979a99c",
+            "bytes": 431
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/criticalContentKeys.json",
+          "category": "application-source",
+          "insertions": 393,
+          "deletions": 5,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "483a17a11ee33b21fd347a704ba824b37b81ac1d",
+            "sha256": "cfc31e68b7e27fb430f75f3537334bf0a970f057faa601eb6511e869a74ea1f3",
+            "bytes": 24448
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2e2309022df83fc4b2d9a77b0c5feaa751f7de8d",
+            "sha256": "7525423075b87213b04fed83a3a6b2e494f5605932a4810577a17adce5571fd7",
+            "bytes": 37830
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/customerLabelCatalog.json",
+          "category": "application-source",
+          "insertions": 3024,
+          "deletions": 57,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "595c1bf447b03cddacdaf9ce39b86cba74b163c0",
+            "sha256": "a05297bb9ab1f7204f26f1e86328494bbc81ffa5803c50ddd93cdf2019192d37",
+            "bytes": 200408
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "47b9ee82ca274539a0658442688b577fdf0f1dd4",
+            "sha256": "e08176e9df2b6e7b6a6b005bfc86c1e41897225c49b170cad298297504b2e09a",
+            "bytes": 258758
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/customerPageCatalog.json",
+          "category": "application-source",
+          "insertions": 522,
+          "deletions": 32,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f40c1ec73e32a4c6a82201a3bab044532602e4f4",
+            "sha256": "2f8a820ce9c91fd7260ccabde8bac905f1ee86b5f49635b9ac5da61d96ed66c1",
+            "bytes": 61274
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8f7781272eab3923e7a030472aa67ec3b1910dc1",
+            "sha256": "b1624b8fd844751cc7c402731c813ca2f70a4a8b6748ce4e02628f6e0a9abb0c",
+            "bytes": 78758
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/deliveryTracking.ts",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "7837cf861b9725df05fa84fc06092600050c5ca2",
+            "sha256": "ffb0f3ad2aac9603dcd5d93e1997fe58c47ea09cc716a681d029e9ea15bcf796",
+            "bytes": 2685
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "40fb82f8e8d172789afc7668d3b8b0b17d508c20",
+            "sha256": "2807c091d11a19554070feffc2b3446b807c6190789147d73777ab35f7b6e413",
+            "bytes": 2757
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/i18n/dict.ts",
+          "category": "application-source",
+          "insertions": 25,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "be88ac5d4dcda214532411a28d761870f9d2a427",
+            "sha256": "7fdff4a1da4f8dcfbd9ce7d6d67079fa4a9548ffb58b9fee5bfe710897b7081c",
+            "bytes": 13234
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f6b4cb0fab240c8987a5932670d8aa69f1fd37c4",
+            "sha256": "e70ee3d161e7b1d65908b4193b2a4cebc6739c526b71b6436a1f85fe914a2606",
+            "bytes": 14542
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
+          "category": "application-source",
+          "insertions": 19,
+          "deletions": 10,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "4b94e73f33f5547ffa1098c4632ceb295b03d2ef",
+            "sha256": "dc2ec77d3f901937748302fdac632bc7b26bc2edb5d755848ada444157b8742d",
+            "bytes": 11625
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0cc82e97080ab5fb370a184663987726245346d1",
+            "sha256": "aaf5d8670ada07724ea83d19ac07b276f741af816baa61377892bdfae61e4d59",
+            "bytes": 11875
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/screens/Account.tsx",
+          "category": "application-source",
+          "insertions": 106,
+          "deletions": 57,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d34eb9df85c741ba61714de3cd4e4abd335283b5",
+            "sha256": "9b169dfce1dd0f542f45474f45cebb5c466a71ed8df1f723d8701b4adb113b71",
+            "bytes": 35940
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "0c90336f4b10a7a664149c250a50a7906e5b83d2",
+            "sha256": "9f49ef665715fe997b068ffe3e6bfa815d1a646d6f8bfa1fb4963362e6e0a984",
+            "bytes": 41662
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/screens/Browse.tsx",
+          "category": "application-source",
+          "insertions": 68,
+          "deletions": 33,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "99bd294401399c69b9c2922a3f4e3e78924d1f7f",
+            "sha256": "15566d3e57012886e9aa521be4e5abe73287829f11417edac732c234a8be4d5a",
+            "bytes": 46888
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "fdf77a71adc5f7ecdfa9a01217be5faa0f7ce06f",
+            "sha256": "06a3468a99d16ac268486d32789acdc59fbee0686f53a0732d3d1b5f33f5b758",
+            "bytes": 50302
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/screens/Payments.tsx",
+          "category": "application-source",
+          "insertions": 20,
+          "deletions": 10,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a0d99c81031351fdec5d9e3e262a683162f5cb76",
+            "sha256": "154d0712c5d8e3bb0b0ef7ba42ba9e81ddbe1812ce981280515d3c02b732b5bf",
+            "bytes": 11921
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "164ebfe0e77522e8990133dd8dd75d487450874e",
+            "sha256": "fe4bdf0190bb70bf68b0415de8fc53223faafe8d2643558dfdfa44d846e8996b",
+            "bytes": 12805
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/screens/Shop.tsx",
+          "category": "application-source",
+          "insertions": 24,
+          "deletions": 16,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "57ba0da00dc8eb65978e37474d8416416494b5df",
+            "sha256": "8e704392ed023190738b2729c26ad67aad5a0374a7c8b16fed2949a916a9b611",
+            "bytes": 101118
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "b03265466822d86fa5515980a7b649f2e2039b15",
+            "sha256": "25e275a83a8021563b1ec807c3a0b8b00f6af94aef0d0a9f4143233a1f87cbbd",
+            "bytes": 102377
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/screens/WalletHelpPay.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "84072c5a8df68a21fe00bbf57c8bd2e045c547db",
+            "sha256": "0ff06039ac86efa69b2ec595d51be94c795562123156a6adfb981d424ccaf55c",
+            "bytes": 17974
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "fbf59316b4c8a20a8baa94ec5161b3e787d2f50e",
+            "sha256": "e91fa4c94e052c186bf3667a3d6969bf00d2832eef272114a87321e451d73467",
+            "bytes": 18225
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/goodiesConsumer/store.ts",
+          "category": "application-source",
+          "insertions": 39,
+          "deletions": 24,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3de9616715cc10a3e650838b96d70536b70a349c",
+            "sha256": "967d67f52898d0fe7e3ebf1dcd3144b9453582326f954e381fca1575f485a631",
+            "bytes": 54696
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "233fe6fa6923b40f65c0ebc0586584a587a23732",
+            "sha256": "b66c6c04770b7ee368ecb818f59b3e2b844661cda5344ead77ba3bc74f064072",
+            "bytes": 55959
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/lib/adminBackend.ts",
+          "category": "application-source",
+          "insertions": 36,
+          "deletions": 42,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "543818447a6e4a57a72fab383963da367472c56b",
+            "sha256": "da06523357c0235592a6f065dcf3442691676aa92b29bc3c1c580dca991bb8e7",
+            "bytes": 16640
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "60e1f335a1a1b644055bfd9d988e968fcd0c5331",
+            "sha256": "00d3699f40558c09683d22bd5f7f8c63395bbe666e06ccd1ff88863a76da18f5",
+            "bytes": 17692
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/admin/lib/goodiesBuilderSelection.ts",
+          "category": "application-source",
+          "insertions": 8,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "2a6c5c541487f4808618163624315e9f59fecf3b",
+            "sha256": "6a28ae06b8c8b6fd94fa065f8d941fb2f077e1f65b1eb0874f415cd98ccfe0ca",
+            "bytes": 507
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/admin/lib/goodiesIngredientRequests.ts",
+          "category": "application-source",
+          "insertions": 15,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c12c70598f0c27f49474ba81234ded1013b336e3",
+            "sha256": "4299e5039eb1d6f7b4c9d7101c50b6fb256e64378e8c3a5f488b8ae22605ff0b",
+            "bytes": 911
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/lib/hydrateAdminState.ts",
+          "category": "application-source",
+          "insertions": 17,
+          "deletions": 5,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "c0100e3420e74e66662e5b853b61254357c5ea72",
+            "sha256": "8a89f8ac9f7a1f44b64c0cd8dd3fd56425ee84b2aee8f3e77910c9b3e0be68a5",
+            "bytes": 5990
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9668d64b34fe014b8707a204bca2d24c0849c09e",
+            "sha256": "50616be07a71bd1dced3b927c101e3d4470c90101d086d0f16c781e08e1edb08",
+            "bytes": 6916
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/overlays/PeopleDrawers.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3817e187f0cc8852cb7b6a878a082f1cdff51f46",
+            "sha256": "69c3a257ef302c9342127f8e3f438e9699e604808af12f49c285d86bf44046bc",
+            "bytes": 29728
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8d23a271f492408a5633e89b069ae49a87b209a6",
+            "sha256": "4a7e501e5353206af96f94ef3c3238708012a77dc803cd8b88de8c3872698932",
+            "bytes": 30046
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/content/GoodiesBuilderConfigEditor.tsx",
+          "category": "application-source",
+          "insertions": 34,
+          "deletions": 17,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "24c8c0a465a5bb86146f474808b672c1d98c71d4",
+            "sha256": "780107368670a6160cf2dda5cde7716560ca89bfea7cec70b7c77fe9244bead8",
+            "bytes": 13910
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "b3600d4dbaf5626d7a033171f9693e5971a811c2",
+            "sha256": "30066e152e65ee6484e1d647cc20b716b122d0cf657cf7a70443530238cfab62",
+            "bytes": 15292
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/content/GoodiesEditor.tsx",
+          "category": "application-source",
+          "insertions": 47,
+          "deletions": 32,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "60f0d5553b0c48b54de9ea856c32b891f478f770",
+            "sha256": "4f738119d14f66a0bfd4e8c527ae21084e21aea983f434f5bec63482c5577b14",
+            "bytes": 49362
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "42c36fbf842a0a74a0b1754383f2a47aeefdcd9b",
+            "sha256": "a225546b1c53dc6e37e2e887a7d95e7c34915b1e209f8c3edaf7d034d4e2d05c",
+            "bytes": 50485
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/content/GoodiesIngredientRequests.tsx",
+          "category": "application-source",
+          "insertions": 46,
+          "deletions": 25,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "fa7037b25b13af20133bafbbc5e83807f7f75ea4",
+            "sha256": "97fdc23e1ab3b8fe02501d72a85a14ec42f1be31f8cd9d0ad710bb6694d2cafb",
+            "bytes": 14039
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d892553ea58503401f01bf5d82c6b8ab12985591",
+            "sha256": "4f81cd90f37bf28f406b0316b078145c9fd56e2c306f683da3fdc3c187aac84e",
+            "bytes": 15637
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/ecosystem/BusinessDetailsScreen.tsx",
+          "category": "application-source",
+          "insertions": 4,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "3483bc6a4abef0a867d5b27c8bbf9f6dbca941dd",
+            "sha256": "e353a44fa26be897bc2ec6af92293fa6b964268c08b7e09580203fcd3db4dd39",
+            "bytes": 7305
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "8a21793127bca77cf2217cdf27e61bcca62e4acd",
+            "sha256": "415fc4fe0613e8fa44983124e5cece1d2e22fff49519a958a5485a36f6a122f9",
+            "bytes": 7440
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/ecosystem/EcosystemScreen.tsx",
+          "category": "application-source",
+          "insertions": 7,
+          "deletions": 4,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "6d5079d752f5242419e80aa230b7094bdfa13335",
+            "sha256": "283e2572734e1f209e457050594bf2e67fc1802bce18f0300cdd1c313cafb438",
+            "bytes": 7195
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "834fdff9e9f2953a6c6cd2c157dc1b5b4c3c5eb5",
+            "sha256": "e987239bab5003f06a3b0b90ec194182ff0396ef55d19c71e3c91774f2c2e1de",
+            "bytes": 7688
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+          "category": "application-source",
+          "insertions": 131,
+          "deletions": 89,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d34d3fcce973c70f11f0c74f91412ded16538347",
+            "sha256": "da48d72b3dfea042c3e41d15a074bbd8299486d668905aec7f07477c1c80e51c",
+            "bytes": 38848
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "06413be9ef61d0655e6226ec9473f587e6acd685",
+            "sha256": "035b3828e7328601ad4a36471d829951323f211cfb826683d0341eb1767ee5ca",
+            "bytes": 42652
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/goodies/GoodiesSettlementAdmin.tsx",
+          "category": "application-source",
+          "insertions": 17,
+          "deletions": 6,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "42bae167cb6e270ff7229ab509a8617d270ed519",
+            "sha256": "0265c380e80648547cec81e460c9ce1202385485e98dafa95a61bedd8c88941c",
+            "bytes": 10974
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "5e92e45e38871f10b5bbfa911cd76a1047430999",
+            "sha256": "1d630c6e1e74221d55670827b264fd19f1fa0056400d79c53f2632b8bfc7e0d5",
+            "bytes": 12275
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/goodies/GoodiesSharedBillRefunds.tsx",
+          "category": "application-source",
+          "insertions": 4,
+          "deletions": 3,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "547978de4c2f0795bc6247f4520f3db5f3c0a217",
+            "sha256": "5bc414728b281fb6b5b0c00e7af4d351c562685219c1d7e0db1042303d52cafd",
+            "bytes": 5268
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a7d1478945f45a0ed010f69d21501ae041a7910e",
+            "sha256": "01c5fc5f8af7ebe02fdd46a874e77331b22956f2ed56ff3e7b63aebe9b229f26",
+            "bytes": 5458
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/operations/OperationsScreen.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 2,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "31ec5168677b73859e9ee33e2497a6c47f32b274",
+            "sha256": "5f2a75f8eae64846ee4962824c76c706ac68f20915dfdacb26db9bf19f8f90b7",
+            "bytes": 6145
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "4fa5fcb625e37025b1a315bcd631218ad06ad0a1",
+            "sha256": "f585ddb64a42eff13a3e7a36834fabf76610425caa8146aff4b7fc753b2229ce",
+            "bytes": 6284
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/people/PeopleScreen.tsx",
+          "category": "application-source",
+          "insertions": 2,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "a14e73e85ba364f8f20e24c8bc21505cc428daac",
+            "sha256": "44f56288033eb4418dea3485787c80469a7ccf7a8f76c604271c3bac9fc725bf",
+            "bytes": 14016
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "cc4054a948534f8c10233a57aa2674b41d65bd41",
+            "sha256": "28593ea29b1a2a47b13078d53934955eca3b2661894be4153d2ea4298a0a6654",
+            "bytes": 14315
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx",
+          "category": "application-source",
+          "insertions": 3,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "7e9d71cc94b981315a00409f17804b21645d5f68",
+            "sha256": "cb71e93b0b7fabe4a887f8ec5f83c2f67a2f0f74d5c3a056cebc4cf58355dba0",
+            "bytes": 10941
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "71c6b91bb4ee34c74a3a11c293977af8f70ced2a",
+            "sha256": "40757612272c24860c9183b8d421da3d2d83fd3ee55e44d9ce6d50d1fc61ab55",
+            "bytes": 11102
+          }
+        },
+        {
+          "status": "M",
+          "path": "src/features/admin/state/db.ts",
+          "category": "application-source",
+          "insertions": 4,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "972f03f2da42a6d55b77e3ef94bdb8998925d0bb",
+            "sha256": "bbca593d62b26a44ca5700e9a94e0d95d0b99d11ddec297c542b8d7a1820853d",
+            "bytes": 4121
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "bf04e6b66506f44f371f2cc897f6b275e236aa9a",
+            "sha256": "1a1878972fb0b89aa8a75a67cc382d99ba7e32f60ed37b88d9614f075dfeea3c",
+            "bytes": 4372
+          }
+        },
+        {
+          "status": "A",
+          "path": "src/features/admin/ui/AdminSnapshotBoundary.tsx",
+          "category": "application-source",
+          "insertions": 26,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "d821e73475d96e77f0a45364b22ff2b6c356fcbe",
+            "sha256": "c3713fa0276ee114b1eb6667d748e37ba7d34ad22b3ffa7eb72bf1715aece12c",
+            "bytes": 1427
+          }
+        },
+        {
+          "status": "A",
+          "path": "tests/goodies-admin-recovery.test.cjs",
+          "category": "local-test",
+          "insertions": 201,
+          "deletions": 0,
+          "binary": false,
+          "baseBlob": null,
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "f131cf93ff3820b7edd635ac94154d3110c0091f",
+            "sha256": "611f08dc4c9124bca8b423aadb9086b872a3985b0fa26146403cbac7b9e300a9",
+            "bytes": 32987
+          }
+        },
+        {
+          "status": "M",
+          "path": "tests/settlement.test.cjs",
+          "category": "local-test",
+          "insertions": 1,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "74381ce9c117ef35ba26eda26cdd403a783f0d2a",
+            "sha256": "d8ab481e92bb40faf1ebf125bb8827265745c45a267d3b53adb752bdce15a3a3",
+            "bytes": 2361
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "41051efc3d4d47c2ac64c1a2b8b86137a805b632",
+            "sha256": "e9f0c2216c6379772c46ff3e2afa8337ebcec9e2843fcb0656f3528b00de385d",
+            "bytes": 2396
+          }
+        },
+        {
+          "status": "M",
+          "path": "tests/shared-bill-refunds.test.cjs",
+          "category": "local-test",
+          "insertions": 5,
+          "deletions": 1,
+          "binary": false,
+          "baseBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9d8bca948f22cdc01bace2907b7d303bd92d1f10",
+            "sha256": "f897f9d8f2291d02f1a9343bf1562469ef4a2d3a27a08243424a937b89f659d3",
+            "bytes": 3569
+          },
+          "headBlob": {
+            "mode": "100644",
+            "type": "blob",
+            "objectId": "9e8c328da06412bde16ce338efa9381f6d74d5f8",
+            "sha256": "3aec4995c759b1203473288a23e804735488caab1349f41de402deb196be1f4d",
+            "bytes": 4322
+          }
+        }
+      ]
+    }
+  }
+}

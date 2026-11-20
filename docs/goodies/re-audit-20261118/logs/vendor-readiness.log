@@ -1,0 +1,22 @@
+✔ vendor application documents use the SDK58 working filesystem entry point before upload and server submission (98.154461ms)
+✔ vendor private delivery proof resolves signed storage links and supplies loading/error/retry states (77.832418ms)
+✔ product save cannot delete newly committed photos if cleanup of removed photos loses its response (53.529022ms)
+✔ shared vendor actions synchronously lock repeated taps, release after a failure and keep server errors private (75.263081ms)
+✔ vendor ingredient history requests the selected server page beyond the old 200-row cutoff (41.003232ms)
+✔ failed store-publication refresh remains visible and prevents stale go-live actions (72.171021ms)
+✔ an authoritative empty builder list cannot resurrect removed or sample builders from a stale device cache (28.889703ms)
+✔ a confirmed builder save remains successful if only the nonauthoritative device cache is full (46.92453ms)
+✔ new product save prevents repeated taps before the first server response arrives (48.318341ms)
+✔ existing custom builder products remain reachable and editable from the vendor product list (44.947487ms)
+✔ historical partial business hours cannot crash the actual form or silently open missing days (110.018603ms)
+✔ vendor Wallet button opens the existing Wantiss Wallet destination instead of buyer home (9.821294ms)
+✔ vendor and courier App signout bridges preserve auth state when Supabase returns an error (21.01121ms)
+✔ vendor signout boundary shows a safe failure instead of an unhandled server rejection (9.192152ms)
+ℹ tests 14
+ℹ suites 0
+ℹ pass 14
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 762.761676

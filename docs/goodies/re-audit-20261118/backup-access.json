@@ -1,0 +1,86 @@
+{
+  "observedAt": "2026-11-18T03:32:57.373091+00:00",
+  "classification": "NOT VERIFIED",
+  "requirement": "A restorable pre-deployment production database backup",
+  "backupCreated": false,
+  "productionMutationsPerformed": false,
+  "productionDataExported": false,
+  "credentialsCreated": false,
+  "findings": {
+    "postgresClientsInstalled": false,
+    "secureDatabaseOrManagementBindingsConfigured": false,
+    "directDatabaseDns": "IPv6-only",
+    "directDatabaseTcp": "ENETUNREACH",
+    "ipv4PoolerTcp5432": "Connection refused on tested us-east-1 poolers",
+    "httpProxy": "CONNECT/TLS succeeds, but PostgreSQL StartupMessage receives HTTP 400; this is not a usable PostgreSQL tunnel",
+    "connectedSupabaseTools": "SQL and schema operations available; no backup create/list/download capability exposed",
+    "postgresRoleMetadata": {
+      "currentUser": "postgres",
+      "superuser": false,
+      "createRole": true,
+      "bypassRls": true,
+      "readAllData": true
+    },
+    "ipv4PoolerTcp": "No connection succeeded across all 12 resolved-address tests for the two tested us-east-1 aliases on session/transaction ports 5432/6543; errors were refusal or timeout. The project-specific Connect-panel endpoint remains unverified."
+  },
+  "officialReferences": [
+    {
+      "url": "https://supabase.com/docs/guides/platform/backups",
+      "finding": "Paid plans provide automatic daily backups/PITR; Free projects should create off-site logical backups using the CLI. No on-demand logical backup creation endpoint is documented."
+    },
+    {
+      "url": "https://supabase.com/docs/guides/self-hosting/restore-from-platform",
+      "finding": "The documented export consists of roles.sql, schema.sql and data.sql, requires a PostgreSQL connection/password, and should be restored then checked. Storage object bytes and Edge Function/configuration require separate handling."
+    },
+    {
+      "url": "https://supabase.com/docs/reference/api/v1-list-all-backups",
+      "finding": "GET /v1/projects/{ref}/database/backups lists existing backups with authorized Management API access; no such credential binding or direct callable tool is available."
+    }
+  ],
+  "safeNextPath": [
+    "Provide a secure PostgreSQL connection binding and a network path that carries PostgreSQL, then run the documented roles/schema/data dump and verify restoration in isolation.",
+    "Alternatively provide authenticated dashboard or authorized Management API backup access to establish a real existing automated restore point.",
+    "Keep schema-definition recovery snapshots explicitly separate from a full data backup; do not classify them as a full backup."
+  ],
+  "scopeLimit": "Only network negotiation and metadata reads were performed. No backup login role was created because the available connection path cannot use it. No credentials or database records are included in this receipt.",
+  "networkTestObservedAt": "2026-11-18T03:33:30.278826+00:00",
+  "networkTests": [
+    {
+      "host": "aws-0-us-east-1.pooler.supabase.com",
+      "port": 5432,
+      "dnsAddressesTested": 3,
+      "connectionsSucceeded": 0,
+      "errors": [
+        "111:ConnectionRefusedError"
+      ]
+    },
+    {
+      "host": "aws-0-us-east-1.pooler.supabase.com",
+      "port": 6543,
+      "dnsAddressesTested": 3,
+      "connectionsSucceeded": 0,
+      "errors": [
+        "111:ConnectionRefusedError"
+      ]
+    },
+    {
+      "host": "aws-1-us-east-1.pooler.supabase.com",
+      "port": 5432,
+      "dnsAddressesTested": 3,
+      "connectionsSucceeded": 0,
+      "errors": [
+        "None:TimeoutError"
+      ]
+    },
+    {
+      "host": "aws-1-us-east-1.pooler.supabase.com",
+      "port": 6543,
+      "dnsAddressesTested": 3,
+      "connectionsSucceeded": 0,
+      "errors": [
+        "111:ConnectionRefusedError",
+        "None:TimeoutError"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,354 @@
+{
+  "observedAt": "2026-11-18T03:40:35.703Z",
+  "scope": "Courier workspace, background GPS, customer maps and delivery-proof resolver. Static traces and local executed regressions are not hosted or physical-device acceptance.",
+  "productionDeploymentPerformedByThisAgent": false,
+  "uiPreservation": "Existing layout/styling/navigation preserved; only mandatory pickup identity/address and real external map actions added to existing courier delivery cards.",
+  "files": [
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "sha256": "691ec18127c4d640d00d167eb8da697e91ce0ff019913669bbc515694563799c"
+    },
+    {
+      "file": "src/features/Goodies/deliveryTracking.ts",
+      "sha256": "2807c091d11a19554070feffc2b3446b807c6190789147d73777ab35f7b6e413"
+    },
+    {
+      "file": "src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+      "sha256": "10bcc77350bd9a1498e1834eaf09c40bd811c0546a0d369d12621165282b8431"
+    },
+    {
+      "file": "src/features/Goodies/courierNavigation.ts",
+      "sha256": "e1a18517c182f3871ca6aa617babdf22c2780b397e641fb3d036ee32a979a99c"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "sha256": "8f955dc846138b261e48f9df4520d650f352b229f039f0022073d64adb216211"
+    },
+    {
+      "file": "src/services/goodiesDeliveryProof.ts",
+      "sha256": "7b30c92ab92adc2d429baa891276ea6d400347572419bf8c8152c50d3184a16e"
+    },
+    {
+      "file": "tests/goodies-courier-location.test.cjs",
+      "sha256": "e92408c30687721bd79b1d949eca25fae2c946937c55b3eeda7835e0bf698dbe"
+    },
+    {
+      "file": "tests/goodies-courier-navigation.test.cjs",
+      "sha256": "3987f524fb6ed1019e71ac3968fd5a9c6fb989ddebf0364f8ea459ecb8e7d775"
+    },
+    {
+      "file": "tests/goodies-courier-map.test.cjs",
+      "sha256": "c464bb284347a743b90a01f5bc151d71955951b1ed5e3e846375df2655c2315b"
+    }
+  ],
+  "controlCount": 10,
+  "controls": [
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 302,
+      "action": "()=>void signOut()",
+      "disabled": "{!!busy}",
+      "labels": [
+        {
+          "key": "lbl.cms.7169f4af4373",
+          "fallback": "Sign out"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 308,
+      "action": "()=>void setPresence(!available)",
+      "disabled": "{!!busy || !!activeOrderId || loading || loadError}",
+      "labels": [
+        {
+          "key": "lbl.cms.ea052535e65e",
+          "fallback": "Saving…"
+        },
+        {
+          "key": "lbl.cms.a56cc2117fd5",
+          "fallback": "Delivery in progress"
+        },
+        {
+          "key": "lbl.cms.e0c1f42dae8c",
+          "fallback": "You are online · Tap to go offline"
+        },
+        {
+          "key": "lbl.cms.d3055d65ac25",
+          "fallback": "Go online"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 311,
+      "action": "()=>void setPresence(available,!acceptsCash)",
+      "disabled": "{!!busy||!available||!!activeOrderId||loading||loadError}",
+      "labels": [
+        {
+          "key": "lbl.cms.09ae3d36c166",
+          "fallback": "I accept cash on delivery"
+        },
+        {
+          "key": "lbl.cms.8f4b0527a23c",
+          "fallback": "ON"
+        },
+        {
+          "key": "lbl.cms.6cde4afa422f",
+          "fallback": "OFF"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 318,
+      "action": "()=>void load()",
+      "disabled": null,
+      "labels": [
+        {
+          "key": "lbl.retry",
+          "fallback": "Try again"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 324,
+      "action": "()=>void openMap(d,true)",
+      "disabled": null,
+      "labels": [
+        {
+          "key": "lbl.courierOpenPickupMap",
+          "fallback": "Open pickup map"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 327,
+      "action": "()=>void openMap(d,false)",
+      "disabled": null,
+      "labels": [
+        {
+          "key": "lbl.courierOpenDeliveryMap",
+          "fallback": "Open delivery map"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 330,
+      "action": "()=>void respond(d.order_id,true)",
+      "disabled": "{!!busy}",
+      "labels": [
+        {
+          "key": "lbl.cms.ea052535e65e",
+          "fallback": "Saving…"
+        },
+        {
+          "key": "lbl.cms.3e82f7a82e08",
+          "fallback": "Accept delivery"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 330,
+      "action": "()=>void respond(d.order_id,false)",
+      "disabled": "{!!busy}",
+      "labels": [
+        {
+          "key": "lbl.cms.19a9e614842b",
+          "fallback": "Decline"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 331,
+      "action": "()=>void advance(d.order_id,'picked_up')",
+      "disabled": "{!!busy}",
+      "labels": [
+        {
+          "key": "lbl.cms.2ca6e6a547c5",
+          "fallback": "Picked up order"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    },
+    {
+      "file": "src/features/Goodies/GoodiesCourierScreen.tsx",
+      "line": 332,
+      "action": "()=>void advance(d.order_id,'delivered')",
+      "disabled": "{!!busy}",
+      "labels": [
+        {
+          "key": "lbl.cms.af35acfc4f83",
+          "fallback": "Mark delivered"
+        }
+      ],
+      "sourceTrace": "TRACED",
+      "localExecution": "PASS: matching actual handler/body or real component regression; see tests below",
+      "hostedButton": "NOT VERIFIED"
+    }
+  ],
+  "fixes": [
+    {
+      "scope": "Courier pickup/destination navigation",
+      "status": "PASS",
+      "environment": "LOCAL actual component handlers/pure URL helper",
+      "result": "Approved scoped details RPC supplies real pickup name/address and authoritative coordinates; buttons open the correct pickup or destination on Google Maps, use real address if coordinates unavailable, and hide when both absent. Native errors show owned safe text. Failed details query causes retry/error, never fake location.",
+      "backend": "public.goodies_courier_delivery_details(uuid)",
+      "backendVerification": "Separate backend reviewer actual SQL tests cover other identities, reassignment, expiry, revoked roster and order coordinate precedence."
+    },
+    {
+      "scope": "GPS/language/status",
+      "status": "PASS",
+      "environment": "LOCAL actual render/callback/task",
+      "result": "GPS status stores a stable enum and resolves current CMS locale at render. Assignment enum is translated. OS watcher errors are shown safely; successful real update clears a prior failure. Background batches use newest valid fresh real fix instead of an invalid future sample."
+    },
+    {
+      "scope": "Account changes",
+      "status": "PASS",
+      "environment": "LOCAL actual callbacks/real component effect",
+      "result": "Old availability heartbeat cannot write the replacement account. Pending order/detail/GPS reads are scoped to the account, and a prior courier marker hides immediately when identity changes. Map actions reject stale-account callbacks."
+    },
+    {
+      "scope": "Map correctness",
+      "status": "PASS",
+      "environment": "LOCAL pure helpers/real map render",
+      "result": "Boolean/array/object/blank coordinate coercion rejected. Missing road geometry shows actual known locations only. Actual segments preserved; no dashed line advertised as road route. Pickup viewport follows current real coordinates. Courier signal expiry during a hung refresh hides the marker and accurately reports stale GPS. Marker time uses selected Goodies locale formatter."
+    },
+    {
+      "scope": "Courier sign out/actions",
+      "status": "PASS",
+      "environment": "LOCAL actual async handlers",
+      "result": "All accept/decline/pickup/delivered variants use actual RPC argument paths, synchronously prevent duplicates, refresh only on success and show safe uncertain-response errors. Sign-out waits for actual session logout, blocks active deliveries and catches asynchronous failure. Parent App bridge error propagation repaired by vendor agent."
+    }
+  ],
+  "checks": [
+    {
+      "command": "node tests/goodies-courier-location.test.cjs",
+      "status": "PASS",
+      "tests": 6
+    },
+    {
+      "command": "node tests/goodies-courier-navigation.test.cjs",
+      "status": "PASS",
+      "tests": 6
+    },
+    {
+      "command": "node tests/goodies-courier-map.test.cjs",
+      "status": "PASS",
+      "tests": 4
+    },
+    {
+      "command": "node tests/goodies-tracking-refresh.test.cjs",
+      "status": "PASS",
+      "tests": 4
+    },
+    {
+      "command": "node tests/goodies-delivery-pricing.test.cjs",
+      "status": "PASS",
+      "tests": 4
+    },
+    {
+      "command": "node scripts/audit-goodies-reproductions.cjs",
+      "status": "PASS",
+      "tests": 47,
+      "scope": "Cross-source regression suite; latest run before only signout await and marker locale-format changes. Root final aggregate rerun required."
+    },
+    {
+      "command": "npm run lint",
+      "status": "PASS"
+    },
+    {
+      "command": "./node_modules/.bin/tsc --noEmit",
+      "status": "PASS",
+      "scope": "Full customer typecheck after source changes; root final aggregate rerun required after other agents finish."
+    },
+    {
+      "command": "eslint targeted courier source and three node tests",
+      "status": "PASS",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "command": "git diff --check",
+      "status": "PASS"
+    }
+  ],
+  "reproducedBeforeRepair": {
+    "testCases": 11,
+    "scope": "Five initial GPS/render tests, heartbeat race, three initial map tests, hung-refresh stale copy and asynchronous signout busy guard. Five additional tests validate new navigation/details/action/error acceptance; source and receipt assertions do not substitute for devices."
+  },
+  "architectureTrace": {
+    "entry": "App.tsx courier roster-approved mode -> GoodiesCourierScreen",
+    "read": "Auth getUser -> own courier_presence -> goodies_courier_orders -> scoped details RPC -> account-owned refresh commit",
+    "presence": "goodies_set_courier_availability; heartbeat only while idle/available, GPS starts only after acceptance",
+    "gps": "Expo real foreground watch or registered background task -> freshGpsSample -> goodies_courier_update_location -> delivery_assignments realtime -> customer DeliveryRouteMap",
+    "advance": "goodies_courier_respond_assignment and goodies_courier_update_delivery_status -> backend order/assignment/notification state",
+    "proof": "Own-driver proof belongs to vendor flow; resolver accepts official legacy URLs or private object paths and requests short-lived signed URLs. Courier assignment UI does not pretend to upload proof.",
+    "maps": "Real order store/destination/courier coordinates; Geoapify backend road route geometry only; known-point map and honest unavailable text when missing"
+  },
+  "securityFindingsDelegated": {
+    "rpcMutations": "Backend reviewer reproduced/fixed and tested stale/revoked/invalid-state mutation and accuracy constraint cases in new migration20261118032703.",
+    "assignmentPolicy": "Read-only live policy review by backend reviewer confirms fully qualified business_members predicate; suspected historic unqualified-policy issue not present live."
+  },
+  "commentDemoReview": {
+    "productionFakeCoordinates": false,
+    "sampleOrdersOrEarnings": false,
+    "previewOrMockServiceImports": false,
+    "engineeringComments": "Only implementation/validation/lifecycle comments; no production demonstration data. Physical GPS samples are named sample in code, not simulated data.",
+    "existingRuntimeCapabilityCopy": "Foreground-only/background-unavailable text reports actual build/permission capability. No raw native/database/provider message rendered by repaired failures."
+  },
+  "NOT_VERIFIED": [
+    "Signed-in hosted courier buttons and auth tokens against deployed reviewed package",
+    "Valid Geoapify credentials and real routing/geocoding provider responses",
+    "Native map opening/return, physical Android and iOS GPS permissions and precision",
+    "OS background/locked-phone/task restart, revocation, airplane-mode/offline recovery and reassignment on devices",
+    "Remote push foreground/background/terminated/reopen delivery notifications",
+    "Installed consumer/admin signed URL rendering and installed CMS publishing/reload",
+    "Migration deployment/activation controlled by root; this audit report does not claim a live rollout"
+  ],
+  "logs": [
+    "courier-logs/location-before.log.gz",
+    "courier-logs/heartbeat-before.log.gz",
+    "courier-logs/map-before.log.gz",
+    "courier-logs/map-stale-before.log.gz",
+    "courier-logs/signout-before.log.gz",
+    "courier-logs/location-after.log.gz",
+    "courier-logs/navigation.log.gz",
+    "courier-logs/map-after.log.gz",
+    "courier-logs/cross-role.log.gz",
+    "courier-logs/typecheck.log.gz",
+    "courier-logs/lint.log.gz",
+    "courier-logs/expanded-lint.log.gz"
+  ]
+}

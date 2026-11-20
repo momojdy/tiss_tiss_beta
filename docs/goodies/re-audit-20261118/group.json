@@ -1,0 +1,98 @@
+{
+  "scope": "Local-only GroupOrderSheet async handler completion, ScheduleSheet account locale formatting, and validateActiveGroup/syncActiveGroup ownership guards. UI layout preserved. No deployment, app/OTA publication, FAQ publication, production writes, or live financial calls.",
+  "checkedAt": "2026-11-20T06:23:36.549Z",
+  "status": "LOCAL_VALIDATION_PASS",
+  "files": [
+    "src/features/Goodies/components/Sheets.tsx (GroupOrderSheet and selected ScheduleSheet formatter only)",
+    "src/features/Goodies/store.ts (validateActiveGroup and syncActiveGroup only)",
+    "src/features/Goodies/i18n/dict.ts",
+    "tests/goodies-group-handlers.test.cjs"
+  ],
+  "changes": [
+    "Verify current Supabase authenticated identity before group mutations, estimates and scoped reads.",
+    "Capture rendered account and active group/source ownership; discard stale account, external group and out-of-order load/estimate results.",
+    "Use synchronous refs to prevent duplicate create, join, invite, decline, preview, quote, remove, end and checkout requests.",
+    "Catch transport rejections and restore busy state; show app-owned error/retry copy for shared items, members, group status, friends and invitations.",
+    "Preserve a declined invitation until RPC confirmation, and preserve personal cart edits during shared item removal or checkout.",
+    "Validate create/join, friends invitation count, status, estimate, delivery quote, end-group and checkout receipt shapes before applying success.",
+    "Do not log raw group response errors.",
+    "Use the selected account locale, with fr-HT formatting for ht, in customer-zone schedule summaries."
+  ],
+  "validation": [
+    {
+      "command": "node tests/goodies-group-handlers.test.cjs",
+      "result": "PASS",
+      "tests": 28,
+      "coverage": [
+        "rejected promises and retry/busy reset",
+        "duplicate mutations",
+        "actual auth mismatch",
+        "stale account/group and latest reads",
+        "malformed receipts and amounts",
+        "failed decline retains invitation",
+        "concurrent cart edits preserved",
+        "store validation/sync ownership",
+        "selected schedule locale"
+      ]
+    },
+    {
+      "command": "node --test tests/goodies-group-handlers.test.cjs",
+      "result": "PASS"
+    },
+    {
+      "command": "./node_modules/.bin/tsc --noEmit --pretty false",
+      "result": "PASS"
+    },
+    {
+      "command": "npm run lint",
+      "result": "PASS",
+      "note": "Repository lint script checks content.ts and Overlays.tsx."
+    },
+    {
+      "command": "git diff --check (scoped files)",
+      "result": "PASS"
+    }
+  ],
+  "cmsCopy": [
+    {
+      "key": "lbl.groupRefreshFailed",
+      "english": "Could not refresh this group order. Please try again."
+    },
+    {
+      "key": "lbl.groupInvitesFailed",
+      "english": "Could not load invitations. Please try again."
+    },
+    {
+      "key": "lbl.groupDeclineFailed",
+      "english": "Could not decline this invitation. Please try again."
+    },
+    {
+      "key": "lbl.groupInvitesLoading",
+      "english": "Loading invitations…"
+    },
+    {
+      "key": "lbl.groupOrderClosed",
+      "english": "This group order is no longer active. Check Orders for its payment status."
+    }
+  ],
+  "dictionary": {
+    "path": "src/features/Goodies/i18n/dict.ts",
+    "languages": [
+      "en (English source keys)",
+      "fr",
+      "es",
+      "zh-Hans"
+    ],
+    "ht": "No Haitian Creole draft added.",
+    "publication": "Root integration handles CMS catalog synchronization. No FAQ or app publication performed."
+  },
+  "evidence": [
+    "group-logs/handlers.log",
+    "group-logs/typecheck.log"
+  ],
+  "limits": [
+    "AST/VM tests execute the actual production handler declarations with mocked transports and React setters; they are not hosted or native end-to-end acceptance.",
+    "Supabase changelog/docs could not be fetched because the configured proxy was unreachable; RPC response shapes were verified against checked-in contracts and SQL.",
+    "Existing recovery-test checkout harness needs integration updates for the new production helper dependencies and complete receipt shape; root agent notified."
+  ]
+}

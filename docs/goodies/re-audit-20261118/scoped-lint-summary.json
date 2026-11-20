@@ -1,0 +1,195 @@
+{
+  "observedAt": "2026-11-20T06:59:55.275892+00:00",
+  "classification": "PASS",
+  "scope": "Expanded changed Goodies files; shared App.tsx baseline recorded separately",
+  "files": 37,
+  "errors": 0,
+  "warnings": 344,
+  "byFile": [
+    {
+      "file": "tiss_tiss_beta/scripts/audit-goodies-reproductions.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/scripts/check-goodies-cms.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/scripts/goodies-cms-source.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/scripts/goodies-restriction-races.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/scripts/inventory-goodies-controls.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/scripts/test-goodies-settlement-postgres.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/GoodiesCourierScreen.tsx",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/actions.ts",
+      "errors": 0,
+      "warnings": 6
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/components/Sheets.tsx",
+      "errors": 0,
+      "warnings": 32
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/courierNavigation.ts",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/deliveryTracking.ts",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/goodiesCourierBackgroundLocation.ts",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/i18n/dict.ts",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/screens/Account.tsx",
+      "errors": 0,
+      "warnings": 13
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/screens/Browse.tsx",
+      "errors": 0,
+      "warnings": 26
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/screens/Payments.tsx",
+      "errors": 0,
+      "warnings": 3
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/screens/Shop.tsx",
+      "errors": 0,
+      "warnings": 52
+    },
+    {
+      "file": "tiss_tiss_beta/src/features/Goodies/store.ts",
+      "errors": 0,
+      "warnings": 11
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/Wallet/WalletHelpPayScreen.tsx",
+      "errors": 0,
+      "warnings": 6
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceAccountScreens.tsx",
+      "errors": 0,
+      "warnings": 33
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "errors": 0,
+      "warnings": 35
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "errors": 0,
+      "warnings": 18
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "errors": 0,
+      "warnings": 31
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceShared.tsx",
+      "errors": 0,
+      "warnings": 34
+    },
+    {
+      "file": "tiss_tiss_beta/src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "errors": 0,
+      "warnings": 44
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-account-notifications.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-checkout-snapshots.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-courier-location.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-courier-map.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-courier-navigation.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-group-handlers.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-recovery.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-shared-payments-ui.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-vendor-localization.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    },
+    {
+      "file": "tiss_tiss_beta/tests/goodies-vendor-readiness.test.cjs",
+      "errors": 0,
+      "warnings": 0
+    }
+  ]
+}

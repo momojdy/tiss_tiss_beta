@@ -1,0 +1,16 @@
+{
+  "observedAt": "2026-11-18T10:04:50.820904+00:00",
+  "classification": "PASS",
+  "scope": "Scoped stored-code/catalog capture only. NOT a full database backup or verified data restore. No production rows, balances or secret records were exported.",
+  "snapshotPath": "/tmp/goodies-re-audit-20261118/recovery/schema-snapshot.json",
+  "sha256": "be3313050f603fe875c076e39ff4944fefb5f5a2cc4351c64bcf2b8f570c69c6",
+  "bytes": 513285,
+  "functions": 143,
+  "relations": 35,
+  "policies": 74,
+  "triggers": 19,
+  "publications": 10,
+  "migrationHead": "20261116135012",
+  "fullDatabaseBackup": "NOT VERIFIED",
+  "productionDeploymentPerformed": false
+}

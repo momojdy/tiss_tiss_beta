@@ -1,0 +1,116 @@
+{
+  "audit": "Goodies dedicated vendor localization and read-only control closeout",
+  "date": "2026-11-20",
+  "classification": "PASS_LOCAL_SOURCE_VALIDATION",
+  "scope": [
+    "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+    "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+    "src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts",
+    "src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx",
+    "src/features/Goodies/i18n/vendorCopy.json",
+    "tests/goodies-vendor-localization.test.cjs"
+  ],
+  "copyCatalog": {
+    "path": "src/features/Goodies/i18n/vendorCopy.json",
+    "rows": 411,
+    "uniqueIds": 411,
+    "pages": {
+      "builders": 70,
+      "orders": 129,
+      "products": 55,
+      "requests": 34,
+      "reviews": 8,
+      "shared": 9,
+      "store": 95,
+      "tools": 11
+    },
+    "locales": [
+      "en",
+      "fr",
+      "es",
+      "zh-Hans"
+    ],
+    "state": "reviewed",
+    "human_reviewed": false,
+    "ht": "No Haitian Creole copy added or modified; missing HT vendor labels fall back to English.",
+    "finalAdditions": [
+      {
+        "id": "lbl.vendor.builders.addSize",
+        "en": "Add"
+      },
+      {
+        "id": "lbl.vendor.builders.addSection",
+        "en": "Add section"
+      },
+      {
+        "id": "lbl.vendor.orders.cashEnabled",
+        "en": "Cash on delivery enabled for your store."
+      },
+      {
+        "id": "lbl.vendor.orders.dispatchLoading",
+        "en": "Checking delivery options…"
+      },
+      {
+        "id": "lbl.vendor.orders.dispatchFailed",
+        "en": "Could not check delivery options."
+      }
+    ],
+    "centralCmsSync": "Complete in customer68da26e4/admin14e3d589; checker verifies the catalog and mirrored preview source."
+  },
+  "behavior": [
+    "Dedicated vendor labels follow app.lang, apply reviewed published CMS overrides, and rerender on content updates.",
+    "Store categories, restrictions, builder choices, request types, order statuses and payment statuses display translated labels while retaining canonical identifiers and RPC values.",
+    "Order/review dates and USD formatting follow the selected language; monetary values are not converted.",
+    "Vendor-owned store/product/builder/ingredient names, descriptions, notes and review text are displayed verbatim.",
+    "Owners and admins retain the merchant membership gate. Staff and unknown roles cannot submit mutations; editing controls are disabled while details, expansion, lists, retry and paging remain available.",
+    "Automatic card-refund retry is also guarded by owner/admin membership.",
+    "Fixed duplicate JSX props and missing spaces adjacent to location accuracy, required-group and ingredient maximum fragments."
+  ],
+  "authorization": {
+    "contract": "supabase/migrations/20261101111833_goodies_merchant_restrictions.sql:private.goodies_merchant_can_operate",
+    "client": "Mirrors owner/admin membership only. Business verification status is not treated as the current-user account restriction state.",
+    "server": "Authoritative RPC/storage policies retain enforcement of current-user active all/GoodiesMerchant restrictions; no server contract changed.",
+    "payout": "Existing owner-only payout controls unchanged."
+  },
+  "verification": {
+    "vendorLocalization": {
+      "command": "node tests/goodies-vendor-localization.test.cjs",
+      "tests": 13,
+      "result": "PASS"
+    },
+    "vendorReadiness": {
+      "command": "node tests/goodies-vendor-readiness.test.cjs",
+      "tests": 14,
+      "result": "PASS"
+    },
+    "applicationTypecheck": {
+      "command": "./node_modules/.bin/tsc --noEmit",
+      "result": "PASS"
+    },
+    "configuredLint": {
+      "command": "npm run lint",
+      "result": "PASS",
+      "scope": "Repository configured lint targets: Goodies content.ts and components/Overlays.tsx"
+    },
+    "diffWhitespace": {
+      "command": "git diff --check -- src/screens/businessSpace/BusinessSpaceGoodies.tsx src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx",
+      "result": "PASS"
+    },
+    "independentReview": "Read-only reviewer checked source, server contract, catalogue placeholder integrity and translated-fragment spacing."
+  },
+  "limits": [
+    "Source/AST/VM validation; no physical-device or hosted button verification performed in this closeout.",
+    "Shared Business Space surfaces outside these dedicated vendor pages are outside this localization scope.",
+    "FAQ and legal copy deferred; no app or OTA deployment, production writes, schema changes, package changes or commit performed."
+  ],
+  "sha256": {
+    "src/screens/businessSpace/BusinessSpaceGoodies.tsx": "76d4cedb4027d090ee333e2a4025e813557381e558e90883a7b8a2aa967978d6",
+    "src/screens/businessSpace/BusinessSpaceGoodiesOrders.tsx": "571568eabfb9123b2e5b99fed5166c6f003391b3c3e85eb7178373662f0523a4",
+    "src/screens/businessSpace/BusinessSpaceGoodiesLabels.ts": "d5df3dc8efba2f8bbed5373faa6a562c4882fabb7f5deff43bd52fe217bebbf8",
+    "src/screens/businessSpace/BusinessSpaceGoodiesFeedback.tsx": "eed88ae8171701952bd20d217267eea0643f9bb464e0c620c8aec5458f5d733b",
+    "src/features/Goodies/i18n/vendorCopy.json": "73f819ebbe5592e9f220a4265ff9c13b48af87fdbdc111911d201d77b34c2774",
+    "tests/goodies-vendor-localization.test.cjs": "6c9e2a02212bbf3a0e8aab3503f46cd705e8667bab63d49aa6df2f734d7724d4"
+  },
+  "finalVerificationAt": "2026-11-20T06:59:55.275892+00:00",
+  "finalSourceInventory": "current-source-inventory.json"
+}

@@ -1,0 +1,36 @@
+✔ friend list rejection exits loading, retains safe retry copy, and successful retry recovers (143.177539ms)
+✔ same-tick friend sends dispatch once and retain the selection after a rejected send (43.658335ms)
+✔ friend invite receipts must be finite counts from the submitted recipients (275.198066ms)
+✔ late friend replies and errors cannot display a result for another account or group (179.084174ms)
+✔ actual authenticated identity is required before every group mutation (258.501912ms)
+✔ shared cart, membership and status read failures keep safe retry states and recover on retry (84.047382ms)
+✔ shared reads discard out-of-order results and replies after an external group change (142.219821ms)
+✔ invitation reads surface safe failure and ignore superseded or account-switched replies (87.175478ms)
+✔ decline failure preserves its invitation and duplicate taps issue one decline (27.428109ms)
+✔ confirmed decline removes only its invitation and stale decline preserves next-account state (60.738121ms)
+✔ create and join reject malformed receipts and release their synchronous action lock (82.559502ms)
+✔ end failures and malformed receipts preserve the active group and allow a retry (105.672463ms)
+✔ end dispatch is deduplicated and its stale receipt cannot clear another group (48.980142ms)
+✔ remove rejection preserves the shared/local item, and retries do not stick behind its lock (31.931481ms)
+✔ remove deduplicates same-tick taps and preserves a cart line edited during its response (30.126107ms)
+✔ late removal success cannot change a newly selected group or account (60.497772ms)
+✔ shared preview rejection restores its busy state and duplicate checks issue one request (30.139497ms)
+✔ payment estimates reject malformed amounts and late estimates respect account, group and selection (406.947828ms)
+✔ delivery quote rejection releases loading and deduplicates same-tick callbacks (28.570296ms)
+✔ malformed and stale delivery quotes never provide a payable quote (271.41508ms)
+✔ checkout rejects malformed receipts without clearing a paid cart or reporting success (113.609891ms)
+✔ checkout deduplicates transport calls and late receipts cannot clear the next account or group cart (56.886312ms)
+✔ rejected checkout transport restores busy state without success or raw provider details (26.213643ms)
+✔ successful checkout preserves the submitted cart line if it changed before the receipt (28.483586ms)
+✔ stale group validation responses and permission errors cannot clear a new account or group (65.007805ms)
+✔ stale sync validation never dispatches a cart mutation and late sync failures stay with their owner (28.361875ms)
+✔ temporary validation failures retain the known group without logging raw errors (21.054129ms)
+✔ ScheduleSheet formats dates with the selected account language and customer time zone (23.027999ms)
+ℹ tests 28
+ℹ suites 0
+ℹ pass 28
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 2772.091525

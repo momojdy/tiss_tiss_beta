@@ -1,0 +1,11 @@
+{
+  "scope": "Expanded lint on the shared App.tsx. Existing render try/catch belongs to the super-app shell, outside the Goodies bridge callback changes.",
+  "baselineCommit": "154ce41334a9eb104ea963f46d971341b1bd681d",
+  "baselineErrorsByRule": {
+    "react-hooks/error-boundaries": 64
+  },
+  "currentErrorsByRule": {
+    "react-hooks/error-boundaries": 64
+  },
+  "introducedErrorCount": 0
+}

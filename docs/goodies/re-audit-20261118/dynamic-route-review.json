@@ -1,0 +1,355 @@
+{
+  "observedAt": "2026-11-20T12:31:11.168232+00:00",
+  "classification": "SOURCE_TRACE",
+  "scope": "Source-context review of16 expressions that the conservative literal scanner cannot resolve. No new runtime test was performed for this document.",
+  "sourceCommits": {
+    "customer": "68da26e44b0c77107adf6fff198308f1741704d9",
+    "admin": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5"
+  },
+  "sites": [
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 34,
+      "owner": "GoodiesAdminScreen",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "setModule",
+      "kind": "ADMIN_GOODIES_MODULE",
+      "targetExpression": "target",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "MODULES.includes(target) guards the value obtained from adminUi.goodiesModule before setModule. Unknown values cannot select an unregistered module.",
+      "evidenceAndLimits": "tests/goodies-navigation.test.cjs in admin; source guard review",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/goodies/GoodiesAdminScreen.tsx",
+      "line": 313,
+      "owner": "GoodiesAdminScreen",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "setModule",
+      "kind": "ADMIN_GOODIES_MODULE",
+      "targetExpression": "x",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "x is produced by MODULES.map, so every rendered tab uses an exact registered module.",
+      "evidenceAndLimits": "admin navigation tests and registered-module comparison",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "admin",
+      "file": "src/features/admin/screens/workspace/ServiceWorkspaceScreen.tsx",
+      "line": 26,
+      "owner": "ServiceWorkspaceScreen.setModule",
+      "roles": [
+        "admin"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "openModule",
+      "kind": "ADMIN_GOODIES_HUB_MODULE",
+      "targetExpression": "next",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "mappedModule": null,
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "For Goodies, next is passed through useOpenModule; its20-entry mapping falls back to Overview and always goes to the registered goodies screen. Other services preserve the existing generic workspace.",
+      "evidenceAndLimits": "admin tests/goodies-navigation.test.cjs covers advertised module mappings and unknown-module fallback",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 11,
+      "owner": "go",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "push",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "r",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "The generic go(r) wrapper forwards a string. Recognized literal call sites are covered by the main inventory; arbitrary runtime strings are not exhaustively bounded by this wrapper.",
+      "evidenceAndLimits": "source trace; no general hosted/runtime-input acceptance claim",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/actions.ts",
+      "line": 12,
+      "owner": "tab",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "p",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "The generic tab(p) wrapper forwards a string. Current BottomNav calls provide home,cats,orders,cart, all registered. It has no exhaustive type/runtime allowlist for hypothetical callers.",
+      "evidenceAndLimits": "source trace and local customer preview navigation",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/components/Sheets.tsx",
+      "line": 575,
+      "owner": "GroupOrderSheet.checkoutGroupOrder",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "orderId?'home':'orders'",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "Both conditional destinations home and orders exist. A successful detail lookup then pushes confirm; a failed lookup keeps a paid order reachable through Orders.",
+      "evidenceAndLimits": "tests/goodies-group-handlers.test.cjs and tests/goodies-recovery.test.cjs; local handler transport fixtures",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 39,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "initialRoute",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "product:,store: and favs: prefixes are resolved to registered product/store/favs routes. Other initialRoute strings pass through; current App/Saved/message/notification callers require their own source trace and do not constitute an arbitrary-input guarantee.",
+      "evidenceAndLimits": "App.tsx bridge/source review and local preview route receipts; not all external input strings tested",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 101,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "initialRoute",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "Post-hydration initialRoute uses the same registered prefix handlers and known current super-app inputs. Generic string fallback is intentionally recorded as not exhaustively input-tested.",
+      "evidenceAndLimits": "App.tsx bridge/source review and local preview route receipts",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 278,
+      "owner": "BottomNav.item",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "A.tab",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "id",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "The helper is called only with home,cats,orders,cart in BottomNav; all four are in the customer route registry.",
+      "evidenceAndLimits": "actual BottomNav source and registered-route comparison",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 114,
+      "owner": "NotificationsPage.open",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "goodiesTarget.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "goodiesBusinessNotificationTarget returns goodiesRequests,goodiesProducts,goodiesOrders,conversation or payouts. payouts opens a panel; all remaining values are registered pages. Business ownership metadata is checked.",
+      "evidenceAndLimits": "notifications.ts source; existing workspace/notification tests",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceCommunicationScreens.tsx",
+      "line": 137,
+      "owner": "SearchPage.go",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "r.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "Goodies-only businessSearch produces goodiesProducts or goodiesOrders. A mixed-feature business uses the existing shared search_business RPC; its arbitrary returned page strings are not exhaustively hosted-validated.",
+      "evidenceAndLimits": "tests/goodies-workspace.test.cjs asserts actual Goodies search result destinations",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceGoodies.tsx",
+      "line": 220,
+      "owner": "GoodiesToolsCard.R",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "The R helper is called with goodiesOrders,goodiesStore,goodiesProducts,goodiesReviews,goodiesRequests. All five are registered Business Space pages.",
+      "evidenceAndLimits": "actual GoodiesToolsCard source and Business Space registry comparison",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx",
+      "line": 74,
+      "owner": "FeaturesPanel",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "on.has(f.key) ? 'goodiesTools' : 'feature'",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "The Goodies activation expression selects goodiesTools or feature. Both are registered; inactive feature receives k:goodies.",
+      "evidenceAndLimits": "actual FeaturesPanel source and Business Space registry comparison",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 200,
+      "owner": "Workspace.sub",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "nav.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "target.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "goodiesBusinessNotificationTarget returns the same finite registered Goodies destinations, with payouts handled as a panel. goodiesNotificationWorkspace limits business switching to the selected or already-owned business.",
+      "evidenceAndLimits": "notifications.ts and Workspace source; hosted push/reopen behavior NOT VERIFIED",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceScreen.tsx",
+      "line": 201,
+      "owner": "Workspace.sub",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "nav.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "d.page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "Fallback feature is registered, but fallback d.page is a payload string from shared notifications. Goodies recognized destinations use the mapper above; arbitrary legacy/mixed-feature page values are not exhaustively established here.",
+      "evidenceAndLimits": "source trace only; real push payloads/device acceptance NOT VERIFIED",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    },
+    {
+      "repository": "customer",
+      "file": "src/screens/businessSpace/BusinessSpaceSheets.tsx",
+      "line": 26,
+      "owner": "ProfileSheet.open",
+      "roles": [
+        "vendor"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "app.go",
+      "kind": "BUSINESS_SPACE_PAGE",
+      "targetExpression": "page",
+      "target": null,
+      "validation": "DYNAMIC_TARGET_NOT_EXHAUSTIVELY_VALIDATED",
+      "reviewClassification": "SOURCE_TRACE",
+      "sourceDomain": "ProfileSheet open() receives businessInfo,registration,promotions,audit,security,help, all registered pages. Language/features use existing sheet/panel handlers instead.",
+      "evidenceAndLimits": "actual ProfileSheet source and Business Space registry comparison",
+      "hosted": "NOT VERIFIED",
+      "confirmedMissingDestination": false
+    }
+  ],
+  "summary": {
+    "reviewedSites": 16,
+    "confirmedMissingDestinations": 0,
+    "hostedPasses": 0,
+    "arbitraryStringsExhaustivelyValidated": false
+  },
+  "limit": "Known finite helper inputs resolve to existing pages. Generic string wrappers, external initial routes, legacy/mixed-feature search and notification payloads require hosted acceptance; source review is not proof of every runtime value."
+}

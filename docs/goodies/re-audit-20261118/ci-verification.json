@@ -1,0 +1,40 @@
+{
+  "observedAt": "2026-11-20T07:00:38.576Z",
+  "classification": "PASS",
+  "scope": "GitHub source validation only; no app release or backend deployment",
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44691361544,
+      "name": "Expo validation",
+      "sourceCommit": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44691361544",
+      "createdAt": "2026-11-20T06:56:42Z",
+      "updatedAt": "2026-11-20T06:58:06Z"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44691361556,
+      "name": "TypeScript and Expo build checks",
+      "sourceCommit": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44691361556",
+      "createdAt": "2026-11-20T06:56:42Z",
+      "updatedAt": "2026-11-20T06:58:00Z"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "id": 44690250591,
+      "name": "Admin validation",
+      "sourceCommit": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44690250591",
+      "createdAt": "2026-11-20T06:47:07Z",
+      "updatedAt": "2026-11-20T06:48:10Z"
+    }
+  ]
+}

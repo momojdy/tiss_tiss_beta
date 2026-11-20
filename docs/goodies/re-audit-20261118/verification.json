@@ -1,0 +1,149 @@
+{
+  "observedAt": "2026-11-20T06:59:55.275892+00:00",
+  "clientTimezone": "Asia/Manila",
+  "classification": "NOT VERIFIED",
+  "productionReady": false,
+  "source": {
+    "customer": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
+    "admin": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
+    "customerApplicationSource": "68da26e44b0c77107adf6fff198308f1741704d9"
+  },
+  "meaning": {
+    "PASS": "Only the specifically executed check and stated environment.",
+    "FAIL": "Confirmed defect or absent required deployed contract.",
+    "NOT VERIFIED": "Required environment, credential, device or acceptance is unavailable; no inferred pass."
+  },
+  "automated": {
+    "classification": "PASS",
+    "tests": 409,
+    "customerNode": 213,
+    "adminNode": 68,
+    "crossRole": 47,
+    "backendDeno": 81,
+    "backendSubsteps": 71,
+    "substepsCountedInTotal": false,
+    "logs": "final-logs/"
+  },
+  "nativePostgres": {
+    "classification": "PASS",
+    "version": "17.6",
+    "migrationCandidate": 24,
+    "concurrencyCases": 22,
+    "financialGroupSharedBill": 13,
+    "courier": 6,
+    "restrictionOrdering": 3,
+    "productionConnection": false,
+    "fullProductionRestore": false,
+    "evidence": "final-logs/goodies-ci-native-fixed.log.gz"
+  },
+  "sourceInventory": {
+    "classification": "PASS",
+    "scope": "Inventory generation/invariants only; not runtime button acceptance",
+    "file": "current-source-inventory.json",
+    "counts": {
+      "files": 104,
+      "astFiles": 92,
+      "functions": 1534,
+      "interactiveBindings": 1343,
+      "jsxBindings": 1200,
+      "objectEventBindings": 143,
+      "backendCallSites": 434,
+      "serviceCallSites": 221,
+      "navigationCallSites": 533,
+      "commentTokens": 241,
+      "demoReferenceLines": 264,
+      "embeddedEventReferences": 9,
+      "unresolvedLiteralRegistryTargets": 0,
+      "dynamicRegistryTargets": 16
+    },
+    "screenResults": "screen-verification.json",
+    "dynamicReview": "dynamic-route-review.json"
+  },
+  "cms": {
+    "sourceCoverage": "PASS",
+    "fields": 1923,
+    "pageAndSharedGroups": 73,
+    "customerRoutes": 34,
+    "browserRoutes": 34,
+    "editorPreviewAssertions": 17,
+    "faqLocaleCases": 25,
+    "preparedFields": 2135,
+    "approvedLocaleLookups": 8532,
+    "preservedHtEntries": 775,
+    "publication": "NOT VERIFIED",
+    "sourceAudit": "final-logs/cms.log.gz",
+    "previewReceipts": [
+      "preview-routes.json",
+      "preview-interactions.json",
+      "faq-preview.json"
+    ],
+    "candidatePayloadSha256": "45a84e7d87e26be86363a05db32ae165cf2b220ce2464e5b2b75357b1a6be6cd",
+    "limits": "Local isolated real-source preview; network/payment/publish transports blocked. Not every editable field individually edited/published or tested on an installed device."
+  },
+  "build": {
+    "typescriptCustomer": "PASS",
+    "typescriptAdmin": "PASS",
+    "configuredLint": "PASS",
+    "changedScopeLint": "PASS",
+    "changedFiles": 37,
+    "changedScopeErrors": 0,
+    "changedScopeWarnings": 344,
+    "expoDoctorCustomer": "PASS20/20",
+    "expoDoctorAdmin": "PASS20/20",
+    "customerExpoExport": [
+      "android",
+      "ios",
+      "web"
+    ],
+    "adminExpoExport": [
+      "android",
+      "ios"
+    ],
+    "edgeTypecheckFunctions": 10,
+    "signedNativeBuilds": "NOT VERIFIED",
+    "sharedPreexistingLint": {
+      "classification": "FAIL",
+      "errors": 64,
+      "introduced": 0,
+      "evidence": "preexisting-app-lint.json"
+    }
+  },
+  "production": {
+    "classification": "FAIL",
+    "reason": "Required courier, settlement, Shared Bill, restriction-admission and private-proof contracts are absent from the current live backend.",
+    "metadata": "production-contract-check.json",
+    "migrationCount": 356,
+    "migrationHead": "20261116135012",
+    "schemaFunctionSnapshotDrift": 0,
+    "deployedThisPass": false
+  },
+  "security": {
+    "isolatedAuthorizationAndConcurrency": "PASS",
+    "clientPrivilegedCredentialScan": "PASS",
+    "hostedCompleteRoleMatrix": "NOT VERIFIED",
+    "advisorReceipt": "security-advisors.json",
+    "leakedPasswordProtection": {
+      "classification": "FAIL",
+      "reason": "Supabaseadvisor reports provider protection disabled; shared Auth setting requires provider/dashboard configuration access.",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    },
+    "privateServerOnlyTables": "RLS deny-all intentionally retained; RPC auth and service-only access checked in bounded suites. No blanket policy grants.",
+    "advisorLimit": "SECURITY DEFINER executability is a review surface, not automatically an authorization bypass. Goodies/publicCMS review readers are intentionally public; unrelated super-app functions unchanged."
+  },
+  "notVerified": [
+    "Full restorable production backup and isolated full-backup recovery",
+    "Production rollout of24 migrations/six paired Edge Functions and hosted contract recheck",
+    "Every hosted signed-in button,16 dynamic route destinations and full customer/vendor/courier/staff identity matrix",
+    "Positive payment-provider sandbox charge,valid webhook,capture,refund,reconciliation and retry lifecycle",
+    "Physical Android/iOS real GPS,background/offline recovery,push delivery and deep-link reopening",
+    "Signed native builds and installation",
+    "Hosted CMS edit,draft preview,publish and installed-consumer reload for every editable field",
+    "Custom admin ingredient-rule language completeness beyond its current single-text contract"
+  ],
+  "deferredByUser": [
+    "FAQ/legal final approval and publication",
+    "Haitian Creole human review; unfinished copy uses approved English fallback"
+  ],
+  "releaseStatus": "NOT READY: source repairs and available isolated checks complete; production and external acceptance remain blocked.",
+  "ci": "ci-verification.json"
+}

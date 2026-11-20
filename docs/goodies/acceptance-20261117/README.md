@@ -1,5 +1,7 @@
 # Goodies acceptance and deployment proposal — 17 November 2026
 
+Historical snapshot. The [20 November implementation and verification report](../re-audit-20261118/README.md) supersedes these source heads, counts and deployment prerequisites. Database approval is now granted; verified backup/recovery access and external acceptance remain blocked. Do not use this older 17-migration plan for rollout.
+
 **Production readiness remains blocked by deployment approval and external acceptance.** The implementations and available checks below are complete. No production migrations, Edge Function deployments, content publication, real charge, financial record edit or secret change was performed.
 
 Verified source is pushed to `main`:

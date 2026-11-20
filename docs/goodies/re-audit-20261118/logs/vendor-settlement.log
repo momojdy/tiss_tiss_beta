@@ -1,0 +1,20 @@
+✔ financial summaries reject malformed amounts rather than inventing zero balances (54.703748ms)
+✔ transport and backend errors never expose server details; actionable codes use owned messages (43.081874ms)
+✔ summary responses are bound to the requested business and empty successful protocols fail closed (79.090371ms)
+✔ Goodies-only businesses use the scoped dashboard while unrelated and mixed feature dashboards keep their existing API (21.813445ms)
+✔ currency quotes match positive PostgreSQL decimal rounding and reject unsupported precision (41.849884ms)
+✔ commission and payout requests retain their idempotency keys and send explicit server quote expectations (14.469756ms)
+✔ Goodies vendor language uses the main account locale codes and never writes another signed-in account (25.616534ms)
+✔ the actual payout form shows unavailable/retry instead of spendable zero on a failed summary (121.416766ms)
+✔ the actual payout form locks repeated taps until the first request resolves (53.521636ms)
+✔ new vendor copy uses its selected locale and never serves unfinished Creole (20.08292ms)
+✔ the actual Goodies balance panel never presents a failed summary as zero earnings (23.72441ms)
+✔ own-driver countdown never fabricates a wait when server eligibility is immediate and fails closed on unknown scope (41.685499ms)
+ℹ tests 12
+ℹ suites 0
+ℹ pass 12
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 552.904742

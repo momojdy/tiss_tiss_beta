@@ -1,0 +1,335 @@
+{
+  "observedAt": "2026-11-18T10:12:55.025136+00:00",
+  "scope": "Independent read-only backend inspection, scoped forward fixes, isolated actual SQL authorization and socket-only native PostgreSQL races. No production mutation, database backup, provider sandbox, app release or hosted identity/device acceptance was performed by this agent.",
+  "productionDeploymentPerformed": false,
+  "classification": "PASS for the specified isolated checks; production readiness NOT VERIFIED",
+  "candidate": {
+    "originalMigrationsUnchanged": 17,
+    "forwardMigrations": 6,
+    "total": 24,
+    "original": [
+      {
+        "file": "supabase/migrations/20261106015226_goodies_courier_scoped_order_read.sql",
+        "sha256": "d38b5bf2370b565c9a1ec7d5f49af7cb947e61d7410968870835bc2cf3c4f52b",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106020705_goodies_private_delivery_proofs.sql",
+        "sha256": "c669f61d6ae38f3a8549632c30dc94d877b2de80d0235032fbfabd352f34cd49",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106021033_goodies_truthful_dispute_refund_notification.sql",
+        "sha256": "c5c7fd714e736223c0850baa4ab9db5ae5e94d50a1b36824433b052079997fd9",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106022200_goodies_builder_selection_contract.sql",
+        "sha256": "5e12a9d6915f256532f7c77290cc9a095a701d283f090c81e90e6e63bde19b68",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106024100_goodies_admin_restriction_appeals.sql",
+        "sha256": "bc47351292222483fdee4f861542efd2a874036da4a304bf035f87dd3439826e",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106025454_goodies_product_moderation_enforcement.sql",
+        "sha256": "742a7ff3b00239aff0e8e0950f32d16d83fb0f7cba4af808d79073fa774d29ef",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106030151_goodies_role_notifications.sql",
+        "sha256": "3c23574c010e9755c73bb9841f30ae7a529114346460b3a59f91923f6caf366a",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106030829_goodies_private_proof_rollout.sql",
+        "sha256": "cb753eeef67cc7985426152b6a76352394cd058648a2f6b60309bf3d78fe2019",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106031210_goodies_notification_localization.sql",
+        "sha256": "0765a19f4e5990466ac6159d23420cb76c14073201a5dd50bcf3d69283d14c2e",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106081225_goodies_reviews_preferences_and_store_link.sql",
+        "sha256": "4179a9c8f2c2e0ca6ce3dab15099fc4038ec034b255c86d8ed5dde2cb3495508",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106082226_goodies_admin_operational_pagination.sql",
+        "sha256": "55db6451804d987409998f02d4a7d0d4a5e6a6bc1b7575f39883a175ba81319b",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106084303_goodies_cms_publication_review_guard.sql",
+        "sha256": "8ef4cfabc3197c62fc4266111ffc7fd85bac1257bef92dbc55ddd4af8b7bb962",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261106144811_goodies_creole_reviewed_english_fallback.sql",
+        "sha256": "7590e0905f0534c43c55454e3a731340dfd23303710451592ad70a68e4698d5a",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261107014239_goodies_failure_state_content_review.sql",
+        "sha256": "89db2f499f227f71948cf012a4b1b9655cbfca49c2342ae0ca0627c82fb403e0",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261107021612_goodies_vendor_settlement.sql",
+        "sha256": "8da9e2855478ace41f948ec2c52e1b823ffe5ead483d6cbf8773b0f204392e92",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261113101825_goodies_shared_bill_integrity.sql",
+        "sha256": "2ee40d491cc563b6b7a55aa93aeba883d76d05b95c87a163f29437cfd0f83d32",
+        "unchangedFromReviewedPackage": true
+      },
+      {
+        "file": "supabase/migrations/20261117055744_goodies_review_moderation_compatibility.sql",
+        "sha256": "ff6d4b9ee99cfd3fa5be857174d7b7130c64e70544b87c1eea7bfed767bdd140",
+        "unchangedFromReviewedPackage": true
+      }
+    ],
+    "forward": [
+      {
+        "file": "supabase/migrations/20261118032703_goodies_courier_mutation_integrity.sql",
+        "sha256": "002b500112b2495d5c8a3f0128b6a0fe727b201398b3ea155b16c1220b729d4e",
+        "verificationOwner": "backend actual SQL suite"
+      },
+      {
+        "file": "supabase/migrations/20261118033204_goodies_vendor_builder_and_request_contracts.sql",
+        "sha256": "4bacbaac5d2e0dc1afca909f56e222455b9c93be02a0d1f7552e862893b87731",
+        "verificationOwner": "backend actual SQL suite"
+      },
+      {
+        "file": "supabase/migrations/20261118033410_goodies_catalog_realtime.sql",
+        "sha256": "7c169d68e3719e6a4fea8b081a7a0fc7e76634da4388603722c19e9e82956b4c",
+        "verificationOwner": "backend actual SQL suite"
+      },
+      {
+        "file": "supabase/migrations/20261118033451_goodies_scoped_staff_permissions.sql",
+        "sha256": "ee89e096162481a6123d3051c10a7e3d62047854e2fa09a20a7b52d2df2bf351",
+        "verificationOwner": "root scoped-staff suite"
+      },
+      {
+        "file": "supabase/migrations/20261120061607_goodies_restricted_store_admission.sql",
+        "sha256": "e835c581054206ef51aa32c1b6b86603857c7aa93221e2e9abaa9cdb6e09ffda",
+        "verificationOwner": "final restriction/CMS SQL and native24 package"
+      },
+      {
+        "file": "supabase/migrations/20261120063231_goodies_content_repair_review_coverage.sql",
+        "sha256": "4af1ab91f890c984b61ad6a7a79fd9c4317bd8fca796bfca30d5d69e7748ebdd",
+        "verificationOwner": "final restriction/CMS SQL and native24 package"
+      }
+    ],
+    "hashScope": "Original17 migrations unchanged. Incoming server-owned invitation migration plus six forward fixes produce the final24 package; the final manifest is authoritative.",
+    "mergedUpstreamMigrations": [
+      {
+        "file": "supabase/migrations/20261117155800_goodies_admin_invitation_accepted_server_side.sql",
+        "sha256": "df7f93fa9ae7ae3dcff505f2a89b51f42115131fde63fdc3ce5561fb37e7b868",
+        "order": "After original17, before four Nov18 forward migrations",
+        "verificationOwner": "actual staffInvitationServerSide SQL suite and native22 package"
+      }
+    ],
+    "finalManifest": "production-change-plan.json"
+  },
+  "implemented": [
+    {
+      "area": "Courier authorization and transitions",
+      "rpc": [
+        "goodies_courier_respond_assignment",
+        "goodies_courier_update_delivery_status",
+        "goodies_courier_update_location",
+        "goodies_admin_remove_courier"
+      ],
+      "result": "Use order-before-assignment locks, require current order/courier/business/status and approved roster, normalize GPS metadata, deny removal during a physical pickup until operationally resolved.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Courier pickup navigation contract",
+      "rpc": [
+        "goodies_courier_delivery_details"
+      ],
+      "result": "Six-field scoped projection supplies actual pickup name/address and coordinate snapshots to current approved couriers. Complete valid snapshot coordinates take precedence; complete current-store coordinates are fallback; partial pairs return null instead of creating a hybrid map position.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Vendor builder writes",
+      "rpc": [
+        "goodies_save_builder_configs"
+      ],
+      "result": "Owner/admin merchant authorization plus business/account restrictions; rejects other vendors and ordinary staff; bulk deletion affects only the current business. Existing RPC signature retained.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Ingredient requests",
+      "rpc": [
+        "goodies_list_ingredient_requests_page",
+        "goodies_list_ingredient_requests"
+      ],
+      "result": "New owner/admin-only paginated RPC reaches all 230 tied-timestamp records without duplication, clamps limit 100, denies other identities; original capped 200 RPC remains compatible.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Catalog realtime registration",
+      "relations": [
+        "goodies_products",
+        "goodies_store_schedules",
+        "goodies_builder_configs",
+        "goodies_order_reviews"
+      ],
+      "result": "Conditional publication membership for four existing RLS-enabled relations; rerun is idempotent and leaves unrelated membership untouched. Metadata is tested, not WebSocket delivery.",
+      "local": "PASS",
+      "hostedTransport": "NOT VERIFIED"
+    },
+    {
+      "area": "Admin ingredient operational queue",
+      "rpc": [
+        "wantiss_admin_list_ingredient_requests_page",
+        "wantiss_admin_list_ingredient_requests",
+        "wantiss_admin_review_ingredient_request"
+      ],
+      "result": "New default-compatible offset/limit/waiting RPC reaches 295 records beyond legacy 200, filters 65 older waiting requests before pagination, clamps 100 and orders by created_at/id deterministically. Server-owned goodies.requests/view grants govern reads; actualreview approval reaches vendor request and real shared library. ExistinglegacyRPC signature retained.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Merged upstream staff invitation security",
+      "rpc": [
+        "wantiss_has_permission",
+        "goodies_admin_assert",
+        "wantiss_admin_accept_invitation"
+      ],
+      "result": "Retains the incoming database-owned acceptance rule across shared RBAC. Actual SQL rejects forged user metadata, accepts verified invitations only through the existing RPC with one audit entry each, preserves view/edit/manage boundaries, and rejects revoked/expired/suspended/unconfirmed access.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "Restricted merchant admission",
+      "result": "Restricted businesses or owner/admin account restrictions cannot publish, appear in public catalog or create new paid orders; canonical checkout and Shared Bill finalization serialize with restriction decisions. Existing fulfillment/refunds remain operable.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    },
+    {
+      "area": "CMS review coverage",
+      "result": "Critical review-key guard synchronized with all new source labels, including411 vendor labels. Draft critical translations cannot bypass publish review; approved four-locale publishing and unfinished HT English fallback preserved.",
+      "local": "PASS",
+      "hosted": "NOT VERIFIED"
+    }
+  ],
+  "isolatedSql": {
+    "classification": "PASS",
+    "tests": 12,
+    "failed": 0,
+    "typechecked": true,
+    "command": "DENO_DIR=/tmp/wantiss-deno-cache DENO_TLS_CA_STORE=system deno test -A supabase/functions/goodies-tests/staffInvitationServerSide_test.ts supabase/functions/goodies-tests/courierMutationIntegrity_test.ts supabase/functions/goodies-tests/vendorBuilderRequests_test.ts supabase/functions/goodies-tests/catalogRealtime_test.ts",
+    "files": [
+      "supabase/functions/goodies-tests/courierMutationIntegrity_test.ts",
+      "supabase/functions/goodies-tests/vendorBuilderRequests_test.ts",
+      "supabase/functions/goodies-tests/catalogRealtime_test.ts",
+      "supabase/functions/goodies-tests/staffInvitationServerSide_test.ts"
+    ],
+    "evidence": "backend-logs/merged-sql-after.log.gz",
+    "coverage": {
+      "courier": 6,
+      "vendorBuilderAndIngredientQueues": 4,
+      "catalogPublication": 1,
+      "mergedServerOwnedStaffInvitation": 1
+    },
+    "steps": 4,
+    "finalAllBackendSuites": {
+      "classification": "PASS",
+      "tests": 81,
+      "substeps": 71,
+      "evidence": "final-logs/backend-tests.log.gz",
+      "scope": "Actual SQL fixtures plus mocked provider/network paths; no positive provider sandbox calls"
+    }
+  },
+  "nativePostgres": {
+    "classification": "PASS",
+    "version": "17.6",
+    "freshSocketOnlyCluster": true,
+    "productionDatabaseUrlAccepted": false,
+    "migrationApplication": 24,
+    "raceCases": 22,
+    "originalFinancialGroupAndSharedBillRaces": 13,
+    "newCourierRaces": 6,
+    "extraChecks": [
+      "Stale group quote rejected before debit",
+      "Four catalog publication memberships exist with RLS enabled"
+    ],
+    "command": "GOODIES_TEST_PG_MODULE=/tmp/wantiss-native-postgres/node_modules/pg node scripts/test-goodies-settlement-postgres.cjs --native-bin /tmp/wantiss-native-postgres/node_modules/@embedded-postgres/linux-x64/native/bin --reaudit --catalog-output /tmp/goodies-nov18-candidate-catalog.json",
+    "beforeReproduction": "Historic pre-fix receipt: the former21-candidate package was run with --courier-baseline, excluding the courier fix (20 migrations applied). Its actual offer-acceptance/cancellation race produced deadlock detected. That artifact predates the merged upstream staff migration; the latest22-candidate fixed package passes all19 races. No current full-package failure is inferred from that historical receipt.",
+    "evidence": "final-logs/goodies-ci-native-fixed.log.gz",
+    "beforeEvidence": "backend-logs/native-lock-before.log.gz",
+    "courierCases": [
+      "Offer acceptance racing cancellation preserves cancellation/refund without deadlock",
+      "GPS update racing cancellation cannot write a stale authorized location",
+      "Concurrent pickup advances once",
+      "Concurrent delivery completes once and preserves one stock reservation",
+      "Removal racing pickup requires explicit operational resolution",
+      "Reassignment racing old courier acceptance authorizes only replacement"
+    ],
+    "financialCases": [
+      "Cash acceptance cannot exceed 5000 HTG total-sales exposure",
+      "Distinct withdrawals cannot spend same earnings",
+      "Same payout retry yields one credit",
+      "Commission retries debit once",
+      "Group checkout retry yields one paid order/debit/stock reservation",
+      "SharedBill creation reserves 60 percent once without stock consumption",
+      "Same contribution retry debits once",
+      "Competing final payers create one paid original-customer order and reserve once",
+      "Concurrent distinct contributions settle only remaining 40 percent",
+      "Cancellation racing contribution restores each payer",
+      "Cancellation retries refund once",
+      "Vendor rejection retries refund funded SharedBill once and restore stock once",
+      "Expiry/status polling waits for final funding and never refunds fulfilled order"
+    ],
+    "restrictionRaces": 3,
+    "fixtureLimit": "Actual PostgreSQL17.6 with scoped live-definition fixtures and synthetic rows. Not a restored full production database or full-backup restore test."
+  },
+  "beforeRepair": {
+    "courierSql": "4 confirmed failures; ordinary post-cancellation denial already passed and is not misrepresented as an observed resurrection defect.",
+    "vendorSql": "3 confirmed failures: ordinary-member builder modification, restricted merchant modification, missing pagination RPC.",
+    "native": "Actual lock-order deadlock reproduced.",
+    "evidence": [
+      "backend-logs/courier-sql-before.log.gz",
+      "backend-logs/vendor-sql-before.log.gz",
+      "backend-logs/native-lock-before.log.gz"
+    ]
+  },
+  "safety": {
+    "existingFinancialRowsModifiedAtMigrationTime": false,
+    "historicalBalanceBackfill": false,
+    "newSettlementGate": "disabled; starts_at remains null",
+    "newSharedBillFundingGate": "disabled",
+    "privateProofUploads": "remain gated off until separate compatible-client acceptance",
+    "externalPayoutChannels": "disabled by default; manual provider transfers are not represented as automated or tested",
+    "secretChanges": false,
+    "fullBackupCreated": false,
+    "recovery": "Original17 files remain unchanged; read-only schema snapshot is not a full database backup. Actual backup and restore-point access is a genuine deployment blocker."
+  },
+  "notVerified": [
+    "Production migration/function/ACL deployment",
+    "Hosted customer/vendor/courier/admin JWT paths and every installed button",
+    "Realtime WebSocket delivery for newly registered catalog relations",
+    "Payment-provider sandbox charges, authenticated success webhooks, refunds and reconciliation",
+    "Physical GPS/background/offline/push/device behavior",
+    "Signed native builds",
+    "A full database backup and tested production recovery"
+  ],
+  "historicalReceipts": [
+    "backend-logs/sql-after.log.gz (11tests before merged upstream)",
+    "backend-logs/native-21-after.log.gz (former21 candidate)",
+    "backend-logs/native-lock-before.log.gz (intentional pre-fix courier deadlock;20 applied)"
+  ],
+  "finalVerificationAt": "2026-11-20T06:59:55.275892+00:00"
+}

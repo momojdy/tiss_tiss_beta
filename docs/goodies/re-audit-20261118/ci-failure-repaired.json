@@ -1,0 +1,19 @@
+{
+  "repository": "momojdy/tiss_tiss_beta",
+  "sourceCommit": "68da26e44b0c77107adf6fff198308f1741704d9",
+  "runId": 44690308957,
+  "runUrl": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44690308957",
+  "failedJobId": 136134252542,
+  "failedJob": "settlement-concurrency",
+  "failedStep": "Verify Goodies financial concurrency using synthetic data",
+  "failedAt": "2026-11-20T06:48:29Z",
+  "assertion": "scripts/goodies-courier-races.cjs:41 expected literal true but psql returned t",
+  "cause": "Test transport serialization mismatch: node-postgres maps boolean to JavaScript true, whereas psql renders PostgreSQL boolean as t.",
+  "fix": "Cast is_approved to text in the SELECT so both transports return the same strict true string. No assertion weakening or backend behavior change.",
+  "otherJobs": {
+    "validate": "success",
+    "edge-functions": "success"
+  },
+  "verification": "PASS: local full24/22 native rerun and replacement GitHub Expo validation44691361544, all three jobs successful. See ci-verification.json.",
+  "correctionCommit": "c339ce9e05f2f554b33947f2cad301cd63a3f11a"
+}

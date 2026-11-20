@@ -1,0 +1,365 @@
+{
+  "observedAt": "2026-11-18T10:02:09.439283+00:00",
+  "scope": "Goodies consumer and real Shared Bill Wallet payer, saved existing work plus completed regression fixes; no app/OTA/database/content deployment.",
+  "productionReady": false,
+  "sourceInventory": {
+    "file": "customer-controls.json",
+    "sourceFiles": 36,
+    "configuredStackRoutes": 34,
+    "controls": 402,
+    "backendCalls": 118,
+    "navigationCalls": 191,
+    "unmatchedLiteralNavigationDestinations": 0,
+    "classification": "SOURCE_TRACE",
+    "hostedButtons": "NOT VERIFIED",
+    "finalFile": "current-source-inventory.json"
+  },
+  "findings": [
+    {
+      "id": "customer-address-coordinates",
+      "classification": "PASS",
+      "problem": "Street/city/region/country edits kept stale saved GPS; display address was saved as the street and postal code could be lost.",
+      "implemented": "Retain raw street/postal fields and persist null coordinate pairs after location edits; restrict compatibility retry to missing-column errors.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-address-async-states",
+      "classification": "PASS",
+      "problem": "Address operations had no persistent retryable loading error and could finish after an account switch; a preference failure could misreport a completed address insert.",
+      "implemented": "Scoped loads/mutations with synchronous locks; accurate insert vs preference failure, loading/retry and account-switch protection.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-notification-routes-and-pagination",
+      "classification": "PASS",
+      "problem": "Product notices reopened stale product state, notices ended at 50, and authentication/transport failure states were incomplete.",
+      "implemented": "Initialize the requested real product, preserve retryable errors, page beyond 50 with stable ID sorting, and route informational notices to actual details.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-removed-store-product",
+      "classification": "PASS",
+      "problem": "Product footer could dereference a removed store.",
+      "implemented": "Guard absent product/store snapshots before rendering or dispatch.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-checkout-submitted-state",
+      "classification": "PASS",
+      "problem": "A delayed successful checkout/3DS response used mutable current cart/payment state and could erase a newly edited cart.",
+      "implemented": "Build confirmation from immutable submitted inputs; prevent dispatch after input changes and clear only the matching submitted cart. Applies single/multi-store and 3DS completion.",
+      "evidence": "checkout-snapshots"
+    },
+    {
+      "id": "customer-checkout-idempotency-scope",
+      "classification": "PASS",
+      "problem": "Multi-store refreshed road-quote IDs changed retry identity; persisted checkout intents shared one storage key across accounts.",
+      "implemented": "Exclude ephemeral quote IDs from multi-store idempotency fingerprints and namespace checkout storage by payer, with legacy recovery.",
+      "evidence": "checkout-snapshots"
+    },
+    {
+      "id": "customer-cancellation-recovery",
+      "classification": "PASS",
+      "problem": "Concurrent cancellation callbacks could repeat transitions and refund transport failure could misrepresent an already-cancelled order.",
+      "implemented": "Synchronously lock by owner/order and preserve confirmed cancellation with truthful refund-pending messaging; discard late account responses.",
+      "evidence": "checkout-snapshots"
+    },
+    {
+      "id": "customer-payment-malformed-balance",
+      "classification": "PASS",
+      "problem": "Boolean/array/hex-like balances could become a successful $0 display or checkout-balance read.",
+      "implemented": "Require real finite decimal numeric values in payment screen, checkout payment refresh and Shared Bill payer reads; keep unavailable states and last known values.",
+      "evidence": [
+        "account-notifications",
+        "recovery",
+        "shared-payments-ui"
+      ]
+    },
+    {
+      "id": "customer-payment-account-and-receipt",
+      "classification": "PASS",
+      "problem": "Late payment refreshes could overwrite newer state; non-true card mutation receipts could be reported successful.",
+      "implemented": "Request/account scoping, strict true mutation receipts and synchronous action locks; only reload the owner after wallet creation.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-support-confirmation",
+      "classification": "PASS",
+      "problem": "Same-tick support sends could duplicate, store message receipts were unchecked and late responses could navigate a different account.",
+      "implemented": "Synchronous submit lock, persisted message/ticket receipt validation and account/lifecycle checks; a removed-store route cannot silently create a platform ticket.",
+      "evidence": "account-notifications"
+    },
+    {
+      "id": "customer-chat-promise-contract",
+      "classification": "PASS",
+      "problem": "Calling catch directly after a PromiseLike RPC chain failed TypeScript.",
+      "implemented": "Normalize the RPC using Promise.resolve before the catch, preserving the safe retry message.",
+      "evidence": "typecheck"
+    }
+  ],
+  "tests": [
+    {
+      "suite": "account-notifications",
+      "classification": "PASS",
+      "tests": 21,
+      "evidence": "customer-logs/account-notifications.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "checkout-snapshots",
+      "classification": "PASS",
+      "tests": 9,
+      "evidence": "customer-logs/checkout-snapshots.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "recovery",
+      "classification": "PASS",
+      "tests": 10,
+      "evidence": "customer-logs/recovery.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "shared-payments-api",
+      "classification": "PASS",
+      "tests": 4,
+      "evidence": "customer-logs/shared-payments-api.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "shared-payments-recovery",
+      "classification": "PASS",
+      "tests": 9,
+      "evidence": "customer-logs/shared-payments-recovery.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "shared-payments-ui",
+      "classification": "PASS",
+      "tests": 6,
+      "evidence": "customer-logs/shared-payments-ui.log.gz",
+      "scope": "Executed local actual-handler/API modules with synthetic mocks; no hosted request or charge"
+    },
+    {
+      "suite": "typecheck",
+      "classification": "PASS",
+      "tests": null,
+      "evidence": "customer-logs/typecheck.log.gz",
+      "scope": "Executed local compiler/configured linter"
+    },
+    {
+      "suite": "configured-lint",
+      "classification": "PASS",
+      "tests": null,
+      "evidence": "customer-logs/configured-lint.log.gz",
+      "scope": "Executed local compiler/configured linter"
+    }
+  ],
+  "targetedExecutedTests": 59,
+  "configuredLint": "PASS",
+  "typecheck": "PASS",
+  "fullNodeSuite": {
+    "classification": "PASS",
+    "tests": 213,
+    "evidence": "final-logs/customer-tests.log.gz",
+    "scope": "All customer Goodies Node suites, including vendor/courier/client recovery; mocked transports where specified"
+  },
+  "scenarios": [
+    {
+      "area": "Discovery and product navigation",
+      "routes": [
+        "home",
+        "wantiss",
+        "cats",
+        "catlist",
+        "explore",
+        "search",
+        "store",
+        "reviews",
+        "promos",
+        "flashdeals",
+        "favs",
+        "product",
+        "byo"
+      ],
+      "classification": "SOURCE_TRACE",
+      "contracts": [
+        "goodies_store_schedules",
+        "goodies_products",
+        "goodies_public_store_reviews",
+        "goodies_builder_configs"
+      ],
+      "evidence": "customer-controls.json",
+      "limit": "402 controls are inventoried across the entire source selection. Static traces do not establish hosted behavior for all controls."
+    },
+    {
+      "area": "Cart, options, quantity, scheduling and authoritative checkout",
+      "routes": [
+        "cart",
+        "checkout",
+        "grouporder",
+        "confirm"
+      ],
+      "classification": "EXECUTED_LOCAL",
+      "evidence": [
+        "checkout-snapshots",
+        "recovery"
+      ],
+      "limit": "Server financial/RLS assertions and native PostgreSQL races are separately owned by the backend acceptance package; this receipt executes client handler logic only."
+    },
+    {
+      "area": "Card selection, mutation and 3DS confirmation",
+      "routes": [
+        "payments",
+        "addcard",
+        "cardauth"
+      ],
+      "classification": "EXECUTED_LOCAL",
+      "evidence": [
+        "account-notifications",
+        "checkout-snapshots"
+      ],
+      "limit": "No payment-provider sandbox/physical-device SDK was available. Provider charges, capture, webhooks and signed native behavior remain NOT VERIFIED."
+    },
+    {
+      "area": "Shared Bill 60/40/full-payment requests, invitations, QR/message access and recovery",
+      "routes": [
+        "help-pay",
+        "external:walletHelpPay"
+      ],
+      "classification": "EXECUTED_LOCAL",
+      "evidence": [
+        "shared-payments-api",
+        "shared-payments-recovery",
+        "shared-payments-ui"
+      ],
+      "verifiedScenarios": [
+        "integer cents and contribution limits",
+        "client release gate prevents new funding",
+        "creator reservation recovery after restart",
+        "canonical QR request ID only, never QR amount authority",
+        "same confirmation double taps exactly one dispatch",
+        "lost response after payment recovers without second debit",
+        "request lost before dispatch retries the same key",
+        "unresolved intent prevents amount replacement",
+        "local storage failure retains recoverable key",
+        "account/request switches block stale confirmation and success receipt",
+        "cancellation remains available while funding paused",
+        "terminal/refund_pending views show no active funding",
+        "malformed wallet data cannot render a financial success"
+      ],
+      "limit": "Client/server feature gates remain closed. Real hosted participant sessions, balances, invitations and installed-app acceptance remain NOT VERIFIED."
+    },
+    {
+      "area": "Order history, tracking, cancellation and reviews",
+      "routes": [
+        "orders",
+        "track"
+      ],
+      "classification": "EXECUTED_LOCAL",
+      "evidence": [
+        "checkout-snapshots",
+        "recovery"
+      ],
+      "limit": "Real GPS/routing/device/push verification belongs to courier report and remains hardware/provider limited; actual hosted order cycle has not been claimed."
+    },
+    {
+      "area": "Account, addresses, preferences, support, notification details and policies",
+      "routes": [
+        "settings",
+        "profile",
+        "addresses",
+        "storechat",
+        "contact",
+        "supdone",
+        "notifs",
+        "ndetail",
+        "policies",
+        "policy"
+      ],
+      "classification": "EXECUTED_LOCAL",
+      "evidence": [
+        "account-notifications"
+      ],
+      "limit": "Contact/address/notification/payment handler tests pass locally. Policies/FAQ text approval/publication remain deferred by user."
+    },
+    {
+      "area": "Five-language configuration, fallback and persistence",
+      "locales": [
+        "en",
+        "fr",
+        "ht",
+        "es",
+        "zh-Hans"
+      ],
+      "classification": "SOURCE_TRACE",
+      "evidence": [
+        "src/lib/locales.ts",
+        "src/features/Goodies/i18n/index.ts",
+        "src/features/Goodies/i18n/resolveText.ts",
+        "src/features/Goodies/store.ts:setLang"
+      ],
+      "limit": "Main Wantiss account language is the canonical shared preference; Haitian entries remain unchanged with reviewed-English fallback. New source keys require root-owned final catalog, prepared translation and preview sync; no human review or hosted publication claimed."
+    }
+  ],
+  "newCmsKeys": [
+    "lbl.addressesLoading",
+    "lbl.notificationsLoading",
+    "lbl.checkoutChanged"
+  ],
+  "changedFiles": [
+    {
+      "file": "src/features/Goodies/actions.ts",
+      "sha256": "c50db1e71e1749b6e8c0d81bf9a2682c41919ee312009e8d65f54957f457d881"
+    },
+    {
+      "file": "src/features/Goodies/store.ts",
+      "sha256": "5dda5ffd567919c3277cde2bbdf1537c8473d45fc5eca2d5085ca126110af0c7"
+    },
+    {
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "sha256": "52331dfdd21b2016656db6ef2f63e5cd276272ede3388dd267a9ff18b2541b8e"
+    },
+    {
+      "file": "src/features/Goodies/screens/Browse.tsx",
+      "sha256": "81cf186d0c825b5d3a35dbdd07476a994df0bb187b22b779881d46b8a4285723"
+    },
+    {
+      "file": "src/features/Goodies/screens/Shop.tsx",
+      "sha256": "8f955dc846138b261e48f9df4520d650f352b229f039f0022073d64adb216211"
+    },
+    {
+      "file": "src/features/Goodies/screens/Payments.tsx",
+      "sha256": "bc9df4c4419721b7287d8a58ab42d401f7e30193fa7096bb56e28c875bec52a6"
+    },
+    {
+      "file": "src/screens/Wallet/WalletHelpPayScreen.tsx",
+      "sha256": "0b378402ed68cd61db77fdfe1ab959b8cd04a6da8253907dd023216d9ea68ca6"
+    },
+    {
+      "file": "tests/goodies-account-notifications.test.cjs",
+      "sha256": "f23a98a07baab121b22d035d7081fac7b3c42ad193f2d3f4a0af010fd794d3f6"
+    },
+    {
+      "file": "tests/goodies-checkout-snapshots.test.cjs",
+      "sha256": "28a484a2d995697c29dcdbdcf277cbcffedb67a7eca263158ff5e4c65e1d8c23"
+    },
+    {
+      "file": "tests/goodies-recovery.test.cjs",
+      "sha256": "5c87b021176f4f10405183b51d66fd6952a9ae120b377adbed4e68bb5d51feab"
+    },
+    {
+      "file": "tests/goodies-shared-payments-ui.test.cjs",
+      "sha256": "1305a123868f4313afac6e06ccbdf12d676573c8e2c5fdd5a91de7fadeddd550"
+    }
+  ],
+  "notVerified": [
+    "Every authenticated hosted consumer button and cross-role authorization path",
+    "Positive provider sandbox payment/capture/refund/webhook lifecycle",
+    "Signed Android/iOS and physical-device GPS/background/push",
+    "Installed-app hosted CMS publication/reload and all translation review",
+    "Production database backup, migrations and feature activation"
+  ],
+  "uiPreservation": "Layouts, typography, colors and existing navigation retained; only truthful missing loading/error/retry states were added.",
+  "finalVerificationAt": "2026-11-20T06:59:55.275892+00:00"
+}

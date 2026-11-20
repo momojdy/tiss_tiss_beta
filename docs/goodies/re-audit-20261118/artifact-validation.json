@@ -1,0 +1,13 @@
+{
+  "observedAt": "2026-11-20T12:31:11.534833+00:00",
+  "classification": "PASS",
+  "checks": {
+    "jsonParsed": 29,
+    "inventorySourceHashes": 104,
+    "orderedMigrationHashes": 24,
+    "committedSourceReferences": 2,
+    "artifactSecretPatternsScanned": 94,
+    "secretPatternFindings": 0
+  },
+  "limits": "Bounded secret-pattern scan, not a guarantee that every possible secret format is absent. Artifact scope excludes production data and the private partial schema snapshot."
+}
