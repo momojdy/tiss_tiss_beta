@@ -360,12 +360,15 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
       }catch{if(valid()&&request===statusRequest)setStatusError(label('lbl.groupRefreshFailed','Could not refresh this group order. Please try again.'));}
     };
     void loadItems(); void loadMembers(); void refreshGroupStatus();
+    // A group can expire without any database UPDATE or Realtime event.
+    // Refresh the server-owned status while this sheet is open.
+    const statusPoll=setInterval(()=>{if(active)void refreshGroupStatus();},30000);
     const channel=supabase.channel('goodies-group-live-'+group.groupId)
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_items',filter:'group_id=eq.'+group.groupId},()=>{void loadItems();})
       .on('postgres_changes',{event:'*',schema:'public',table:'goodies_group_order_members',filter:'group_id=eq.'+group.groupId},()=>{void loadMembers();})
       .on('postgres_changes',{event:'UPDATE',schema:'public',table:'goodies_group_orders',filter:'id=eq.'+group.groupId},()=>{void refreshGroupStatus();})
       .subscribe();
-    return ()=>{active=false;void supabase.removeChannel(channel);};
+    return ()=>{active=false;clearInterval(statusPoll);void supabase.removeChannel(channel);};
   },[group.serverBacked,group.groupId,accountId,groupReload]);
 
   /* Friends picker (host) and invitations from friends (guest). */
