@@ -6,7 +6,7 @@ import {T, Cta, Row, Card, Badge, Input, Radio, Seg, SheetBox, Bar, Empty, useTh
 import {Icon} from './Icon';
 import {CameraView, useCameraPermissions} from 'expo-camera';
 import QRCode from 'react-native-qrcode-svg';
-import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, cartStoreIds, canScheduleGoodiesStore, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, persistGoodiesContactNumber, removeGoodiesContactNumber, clearActiveGroup} from '../store';
+import {S, STB, money, emit, save, toast, ui, addr, defAddr, done, phoneOK, fmtDay, fmtTime, alcAge, cartStoreIds, canScheduleGoodiesStore, lineStore, IT, syncGroupOrderCartLine, removeGroupOrderCartLine, refreshUserAddresses, persistGoodiesContactNumber, removeGoodiesContactNumber, clearActiveGroup} from '../store';
 import * as A from '../actions';
 import {supabase} from '../../../lib/supabase';
 import {PROMO_DETAIL} from '../data/promoText';
@@ -270,7 +270,14 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     if(groupActionLock.current||groupCheckoutLock.current)return;
     const targetStoreId = storeId || S.cart.sid || group.storeId || '';
     if (!targetStoreId) {toast(label("lbl.cms.9ad0840772c3", "Open a store first to create its group invitation."));return;}
-    if (S.cart.lines.length && S.cart.sid !== targetStoreId) {toast(label("lbl.cms.a6b2201002c6", "Your current cart belongs to another store. Clear it before creating this group."));return;}
+    if (S.cart.lines.some((line:any)=>lineStore(line)!==targetStoreId)) {
+      toast(label("lbl.cms.a6b2201002c6", "Your current cart belongs to another store. Clear it before creating this group."));
+      return;
+    }
+    if (S.cart.lines.some((line:any)=>!IT[line.id])) {
+      toast(label("lbl.page.store.d8aea5db73", "This cart item is not linked to a live catalogue product."));
+      return;
+    }
     const owner=accountId,previousGroupId=String(group.groupId||''),cartLines=JSON.parse(JSON.stringify(S.cart.sid===targetStoreId?S.cart.lines:[]));
     groupActionLock.current=true;setGroupBusy(true);let created=false;
     try {
