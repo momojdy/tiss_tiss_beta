@@ -47,7 +47,7 @@ export function useGoodiesPush(authenticated:boolean,active:boolean,onOpen:(dest
     if(!destination)throw Error('Notification unavailable');
     open.current(destination);
     consumed.current=pending.notification_id;setPending(null);
-    await Notifications.clearLastNotificationResponseAsync();
+    await Notifications.clearLastNotificationResponseAsync().catch(()=>undefined);
    }catch{
     if(current)Alert.alert('Goodies',label('lbl.notification.openFailed','This update could not be opened. Please try again from your notifications.'));
    }

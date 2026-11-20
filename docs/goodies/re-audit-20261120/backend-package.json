@@ -37,7 +37,7 @@
     "fullDenoBeforeFinalWorkerTest": 95,
     "targetedPushCmsAfterFinalWorkerChange": 10,
     "targetedRecovery": 1,
-    "customerNodeTests": 268,
+    "customerNodeTests": 269,
     "adminNodeTests": 68,
     "crossRoleNodeTests": 47,
     "typesBoth": "PASS",

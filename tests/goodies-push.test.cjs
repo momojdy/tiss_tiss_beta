@@ -40,12 +40,12 @@ test('a registration interrupted by an account change cannot register or cache t
  const h=device({changeAccount:true});assert.equal(await h.registerGoodiesPushDevice(()=>true),'unavailable');assert.equal(h.storage.size,0);assert.ok(!h.calls.some(call=>call.name==='goodies_register_push_device'));
 });
 
-function hookHarness({cold=null}={}){
+function hookHarness({cold=null,clearFailure=false}={}){
  const slots=[],effects=[],events=[],alerts=[],opens=[],queries=[];let cursor=0,scheduled=false,authenticated=false,account=user,fail=false,tap,cleared=0,last=cold;
  const render=()=>{cursor=0;api.useGoodiesPush(authenticated,true,destination=>opens.push(destination));for(const run of effects.splice(0))run();};
  const schedule=()=>{if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;render();});};
  const react={useRef(value){const i=cursor++;return slots[i]??(slots[i]={current:value});},useState(value){const i=cursor++;if(!(i in slots))slots[i]=value;return[slots[i],next=>{const result=typeof next==='function'?next(slots[i]):next;if(result!==slots[i]){slots[i]=result;schedule();}}];},useEffect(fn,deps){const i=cursor++,previous=slots[i];if(!previous||deps.some((value,n)=>value!==previous.deps[n])){effects.push(()=>{previous?.cleanup?.();slots[i]={deps,cleanup:fn()};});}}};
- const notifications={addNotificationResponseReceivedListener:fn=>{tap=fn;return{remove(){tap=null;}};},getLastNotificationResponseAsync:async()=>last,clearLastNotificationResponseAsync:async()=>{last=null;cleared++;},addPushTokenListener:()=>({remove(){}})};
+ const notifications={addNotificationResponseReceivedListener:fn=>{tap=fn;return{remove(){tap=null;}};},getLastNotificationResponseAsync:async()=>last,clearLastNotificationResponseAsync:async()=>{if(clearFailure)throw Error('OS response cache unavailable');last=null;cleared++;},addPushTokenListener:()=>({remove(){}})};
  const client={auth:{getUser:async()=>({data:{user:{id:account}},error:null}),getSession:async()=>({data:{session:{user:{id:account}}},error:null})},from(){const filters={};return{select(){return this;},eq(key,value){filters[key]=value;return this;},async maybeSingle(){queries.push(filters);if(fail)return{data:null,error:Error('private database credentials')};return{data:{id:filters.id,user_id:filters.user_id,feature_name:'Goodies',notification_type:'goodies_order',metadata:{order_id:notification}},error:null};}};}};
  const api=load('src/services/useGoodiesPush.ts',{'react':react,'react-native':{Alert:{alert:(_title,body)=>alerts.push(body)},AppState:{addEventListener:(_event,fn)=>{events.push(fn);return{remove(){const i=events.indexOf(fn);if(i>=0)events.splice(i,1);}};}}},'expo-notifications':notifications,'../lib/supabase':{supabase:client},'../features/Goodies/content':{label:(_key,fallback)=>fallback},'./goodiesPush':{GOODIES_PUSH_RELEASED:true,isGoodiesPushSupported:()=>true,registerGoodiesPushDevice:async()=> 'registered'},'./goodiesPushRouting':routing});
  render();return{opens,alerts,queries,signIn(id=user){account=id;authenticated=true;render();},emit(reference){tap?.({notification:{request:{content:{data:reference}}}});},foreground(){for(const event of [...events])event('active');},offline(value){fail=value;},get cleared(){return cleared;}};
@@ -58,6 +58,10 @@ test('cold-start push waits for sign-in and routes one canonical notification af
 });
 test('push addressed to another account cannot fetch or open that account notification',async()=>{
  const h=hookHarness();h.signIn(id(8));await drain();h.emit({feature:'Goodies',notification_id:notification,user_id:user});await drain();assert.equal(h.queries.length,0);assert.equal(h.opens.length,0);
+});
+test('notification cache cleanup failure cannot falsely report that successful navigation failed',async()=>{
+ const h=hookHarness({clearFailure:true});h.signIn();await drain();h.emit({feature:'Goodies',notification_id:notification,user_id:user});await drain();assert.equal(h.opens.length,1);assert.equal(h.alerts.length,0);
+ h.emit({feature:'Goodies',notification_id:notification,user_id:user});await drain();assert.equal(h.opens.length,1,'An already opened reference remains consumed even when OS cleanup fails');
 });
 test('Goodies permission registration remains inactive in unrelated buyer and vendor features',()=>{
  const ast=ts.createSourceFile('App.tsx',fs.readFileSync('App.tsx','utf8'),99,true);let activation;
