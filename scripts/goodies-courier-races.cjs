@@ -38,7 +38,7 @@ module.exports=async({sql,race,raceAfterLock})=>{
  console.log('PASS: concurrent delivery requests complete one order and preserve one stock reservation.');
 
  const removal=prepare();values=await raceAfterLock(`select public.goodies_courier_update_delivery_status('${removal}','picked_up')`,`select public.goodies_admin_remove_courier('${courier}')`,'courier_remove_pickup',[courier,admin]);
- noDeadlock(values);assert.equal(values[0].code,0,JSON.stringify(values));assert.notEqual(values[1].code,0);assert.match(values[1].stderr,/Resolve the courier delivery/);assert.equal(sql(`select is_approved from public.goodies_courier_roster where courier_id='${courier}'`),'true');as(courier,`select public.goodies_courier_update_delivery_status('${removal}','delivered')`);
+ noDeadlock(values);assert.equal(values[0].code,0,JSON.stringify(values));assert.notEqual(values[1].code,0);assert.match(values[1].stderr,/Resolve the courier delivery/);assert.equal(sql(`select is_approved::text from public.goodies_courier_roster where courier_id='${courier}'`),'true');as(courier,`select public.goodies_courier_update_delivery_status('${removal}','delivered')`);
  console.log('PASS: removal racing pickup requires operational resolution and preserves the physical handoff.');
 
  const reassign=prepare(false);values=await raceAfterLock(`${lockedOrder(reassign)};select public.goodies_assign_courier('${reassign}','${replacement}')`,`select public.goodies_courier_respond_assignment('${reassign}',true)`,'courier_reassign_accept',[admin,courier]);
