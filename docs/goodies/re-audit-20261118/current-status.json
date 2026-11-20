@@ -1,10 +1,10 @@
 {
-  "observedAt": "2026-11-20T12:39:53.769648+00:00",
+  "observedAt": "2026-11-20T12:46:58.405708+00:00",
   "classification": "NOT VERIFIED",
   "productionReady": false,
   "sourceReconciledThrough": {
-    "customer": "a5e8be35435c3e550bfefae79a6f171b184e6bb5",
-    "admin": "8ff72b315f7efc93ff6feee9cb5cc453af28d55a"
+    "customer": "c6a75db6e1c99546b0e01e43b3635bfab66628d8",
+    "admin": "d9c5c6b7f55aa82f43a8c115f1de607de10925c4"
   },
   "backend": {
     "classification": "PASS",
@@ -24,41 +24,42 @@
     "metadata": "current-production-contracts.json"
   },
   "sourceCloseout": {
-    "localCustomerTests": 236,
+    "classification": "PASS",
+    "scope": "Executed local checks only; replacement full CI pending",
+    "localCustomerTests": 239,
     "localAdminTests": 68,
     "localCrossRoleTests": 47,
-    "completeMigrationCandidate": 29,
+    "localNodeTotal": 354,
+    "backendTestsOnUnchangedPriorSource": 87,
+    "completeMigrationCandidate": 28,
     "nativeConcurrencyCases": 22,
     "typechecks": "PASS for both applications",
-    "cmsReviewRegression": "PASS in isolation, including unchanged ACLs, existing critical keys and Creole fallback",
+    "configuredLint": "PASS",
+    "cmsSourceCoverage": "PASS;1923fields,34routes",
     "replacementCI": "PENDING",
     "inventory": "latest-source-inventory.json",
     "inventoryCounts": {
-      "files": 105,
-      "astFiles": 93,
-      "functions": 1538,
+      "files": 106,
+      "astFiles": 94,
+      "functions": 1540,
       "interactiveBindings": 1343,
       "jsxBindings": 1200,
       "objectEventBindings": 143,
       "backendCallSites": 432,
       "serviceCallSites": 221,
-      "navigationCallSites": 534,
-      "commentTokens": 252,
+      "navigationCallSites": 536,
+      "commentTokens": 255,
       "demoReferenceLines": 265,
       "embeddedEventReferences": 9,
       "unresolvedLiteralRegistryTargets": 0,
       "dynamicRegistryTargets": 16
-    }
+    },
+    "logs": "final-logs/latest-*"
   },
-  "pendingMigration": {
-    "file": "supabase/migrations/20261120223000_goodies_group_content_review_coverage.sql",
-    "sha256": "940e1e35fd329b173279ba110b70bfad496fd4ab36c3d2d7d3d14d58ff7caf07",
-    "status": "PREPARED_NOT_DEPLOYED",
-    "reason": "A now-critical group-cart label requires the existing server-side publication review boundary. Prepared forward migration preserves the deployed list and permissions."
-  },
+  "pendingMigration": null,
   "remaining": [
     "Verified production backup/restore evidence and recovery access",
-    "Deploy and recheck the new group-cart CMS review migration after recovery readiness",
+    "Enable the provider Auth leaked-password protection setting through authorized dashboard/configuration access",
     "Complete authenticated hosted customer/vendor/courier/admin/staff and cross-account acceptance",
     "Positive provider sandbox charge/capture/authenticated webhook/refund/reconciliation flows",
     "Signed native builds and physical Android/iOS GPS/background/offline/push/reopen behavior",
@@ -73,7 +74,18 @@
   "financialWritesPerformed": false,
   "historicalEvidence": "Other files in this directory retain the source and timestamps of their original verification. Current totals and CI will be recorded here separately.",
   "verifiedSourceCommits": {
-    "customer": "c67ded6e905502d600a82f9eec6c57269065976b",
-    "admin": "b5985b642f31c1ca0fed15c8769cfd2e3549e856"
-  }
+    "customer": "b743fe9fb3b0c6a10eae3e164158b2cfb022c98f",
+    "admin": "d9c5c6b7f55aa82f43a8c115f1de607de10925c4"
+  },
+  "retiredIntermediateCandidate": {
+    "version": "20261120223000",
+    "applied": false,
+    "reason": "The upstream fix reuses existing reviewed content; an extra coverage migration became unnecessary and was removed before deployment."
+  },
+  "backupAccess": {
+    "classification": "NOT VERIFIED",
+    "secureEnvironmentBindings": 0,
+    "fullBackupCreatedInThisCloseout": false
+  },
+  "securityAdvisors": "current-security-advisors.json"
 }

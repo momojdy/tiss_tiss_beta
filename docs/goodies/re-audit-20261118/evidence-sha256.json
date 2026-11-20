@@ -157,14 +157,19 @@
       "sha256": "7a32450cdc4eb883662a3e7113c845fec80d08c7ae17a42d3eba1873974cfc62"
     },
     {
+      "file": "current-security-advisors.json",
+      "bytes": 172988,
+      "sha256": "45dfe39fe9f67aca426bc02f3cef4a7ccda0e7764a089a2b13c020741c121bc8"
+    },
+    {
       "file": "current-source-inventory.json",
       "bytes": 3129094,
       "sha256": "b5dffb2aac6b37365b5c322b92de43ac98e495f9e54b22d02e654d436d3e72c2"
     },
     {
       "file": "current-status.json",
-      "bytes": 3372,
-      "sha256": "9166d3d4d24e4ed0c17f951fa388b1521837faccf79fa01a4efc8e73d5336d5b"
+      "bytes": 3621,
+      "sha256": "2f90d28e3dafa7475381558acfe7c31dc4f732c2ff4f8068020512389fafabee"
     },
     {
       "file": "customer-controls.json",
@@ -362,6 +367,41 @@
       "sha256": "831d9066614b80b519f4d587b5f5070984ba5ccc7961f6db9155b27a24670362"
     },
     {
+      "file": "final-logs/latest-admin-tests.log.gz",
+      "bytes": 3334,
+      "sha256": "935a9d826ea9e87b3f9226babed8afb33378fb03c5699be32ac6d9433fcf661d"
+    },
+    {
+      "file": "final-logs/latest-admin-types.log.gz",
+      "bytes": 43,
+      "sha256": "b21702f8d55f718b1080e7416a80fb52e5cc093020e3d91809a2e217508378cc"
+    },
+    {
+      "file": "final-logs/latest-cross-role.log.gz",
+      "bytes": 2126,
+      "sha256": "eae65eeb31c2c5477ea4e076ee5d797d184c4adc6abd8b9129bfbbccd2f21209"
+    },
+    {
+      "file": "final-logs/latest-customer-lint.log.gz",
+      "bytes": 131,
+      "sha256": "0de92bf79e580306c39cc46fbba3ce17ac107c2d69effce4ff59417fa4e110a9"
+    },
+    {
+      "file": "final-logs/latest-customer-tests.log.gz",
+      "bytes": 9763,
+      "sha256": "5b90cbc0065bc693ce4897acd4b1797262db10d495205aec9236e80775177816"
+    },
+    {
+      "file": "final-logs/latest-customer-types.log.gz",
+      "bytes": 46,
+      "sha256": "f6886d82d03e1d15434bfcbbcdfa0cd6f86c75c78aedf15f4af4fcfe01410b83"
+    },
+    {
+      "file": "final-logs/latest-native-28.log.gz",
+      "bytes": 1037,
+      "sha256": "0a37497019fc6133794c52468068a1c255fbf157c4a58db3f86aacbf5d5e8cd6"
+    },
+    {
       "file": "final-logs/lint.log.gz",
       "bytes": 115,
       "sha256": "347256bd8e9b38fe388544f9ac71a0d64c955190610bceb37f0d1f863679c22c"
@@ -428,8 +468,8 @@
     },
     {
       "file": "latest-source-inventory.json",
-      "bytes": 3131686,
-      "sha256": "bb0842670c608ea27cbe9ee17b7d2468bf034ad2a20820ae05cd07c7738cb4d4"
+      "bytes": 3134099,
+      "sha256": "055d65fada80f1ed4394d10564391daf8fcd04959e5784e814b207aec34d2bcb"
     },
     {
       "file": "live-source-drift.json",

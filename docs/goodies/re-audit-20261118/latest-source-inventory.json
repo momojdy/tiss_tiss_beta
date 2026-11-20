@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-20T12:41:07.916Z",
+  "generatedAt": "2026-11-20T12:46:58.279Z",
   "classification": "SOURCE_TRACE",
   "hostedClassification": "HOSTED_NOT_VERIFIED",
   "purpose": "Reproducible inventory of current Goodies source. A binding, handler, route or contract trace is never hosted acceptance or a role authorization PASS.",
@@ -62,16 +62,16 @@
     }
   },
   "counts": {
-    "files": 105,
-    "astFiles": 93,
-    "functions": 1538,
+    "files": 106,
+    "astFiles": 94,
+    "functions": 1540,
     "interactiveBindings": 1343,
     "jsxBindings": 1200,
     "objectEventBindings": 143,
     "backendCallSites": 432,
     "serviceCallSites": 221,
-    "navigationCallSites": 534,
-    "commentTokens": 252,
+    "navigationCallSites": 536,
+    "commentTokens": 255,
     "demoReferenceLines": 265,
     "embeddedEventReferences": 9,
     "unresolvedLiteralRegistryTargets": 0,
@@ -92,122 +92,122 @@
         {
           "target": "wantiss",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 159
+          "line": 163
         },
         {
           "target": "home",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 160
+          "line": 164
         },
         {
           "target": "cats",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 161
+          "line": 165
         },
         {
           "target": "orders",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 162
+          "line": 166
         },
         {
           "target": "cart",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 163
+          "line": 167
         },
         {
           "target": "grouporder",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 164
+          "line": 168
         },
         {
           "target": "explore",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 165
+          "line": 169
         },
         {
           "target": "search",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 166
+          "line": 170
         },
         {
           "target": "catlist",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 167
+          "line": 171
         },
         {
           "target": "store",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 168
+          "line": 172
         },
         {
           "target": "reviews",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 169
+          "line": 173
         },
         {
           "target": "product",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 170
+          "line": 174
         },
         {
           "target": "checkout",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 171
+          "line": 175
         },
         {
           "target": "help-pay",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 172
+          "line": 176
         },
         {
           "target": "addcard",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 173
+          "line": 177
         },
         {
           "target": "cardauth",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 174
+          "line": 178
         },
         {
           "target": "confirm",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 175
+          "line": 179
         },
         {
           "target": "track",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 176
+          "line": 180
         },
         {
           "target": "notifs",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 177
+          "line": 181
         },
         {
           "target": "promos",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 178
+          "line": 182
         },
         {
           "target": "flashdeals",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 179
+          "line": 183
         },
         {
           "target": "favs",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 180
+          "line": 184
         },
         {
           "target": "byo",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 181
+          "line": 185
         },
         {
           "target": "help",
           "file": "src/features/Goodies/GoodiesApp.tsx",
-          "line": 182
+          "line": 186
         },
         {
           "target": "settings",
@@ -533,7 +533,7 @@
       {
         "repository": "customer",
         "file": "src/features/Goodies/GoodiesApp.tsx",
-        "line": 39,
+        "line": 40,
         "owner": "GoodiesApp",
         "roles": [
           "customer"
@@ -549,7 +549,7 @@
       {
         "repository": "customer",
         "file": "src/features/Goodies/GoodiesApp.tsx",
-        "line": 101,
+        "line": 105,
         "owner": "GoodiesApp",
         "roles": [
           "customer"
@@ -565,7 +565,7 @@
       {
         "repository": "customer",
         "file": "src/features/Goodies/GoodiesApp.tsx",
-        "line": 277,
+        "line": 281,
         "owner": "BottomNav.item",
         "roles": [
           "customer"
@@ -827,9 +827,9 @@
       "roles": [
         "admin-preview"
       ],
-      "sha256": "7132e2e2ff2fa36b61e0fd0df89bc29c243b4c5588219838b2e1a0ab97b8f188",
-      "bytes": 12123,
-      "lines": 447,
+      "sha256": "6e091235158a64d85c6e121c822d381a66cd9e23db9e0649f8b96c9205448efb",
+      "bytes": 12371,
+      "lines": 456,
       "commentCount": 0,
       "commentLines": 0,
       "includedFunctions": "all",
@@ -1524,8 +1524,8 @@
       "roles": [
         "customer"
       ],
-      "sha256": "c8d088b2e53d7e23704d2dd541d9e7164631a025e3d6beb3c96f5c468417a7ce",
-      "bytes": 87878,
+      "sha256": "37beca54ed6211d5b35e804af9d230daeb6264b7134cc19d3ac832d2e9941f9a",
+      "bytes": 87872,
       "lines": 906,
       "commentCount": 8,
       "commentLines": 8,
@@ -1696,11 +1696,11 @@
       "roles": [
         "customer"
       ],
-      "sha256": "acb60d866ba055071b5b2c93c5689e250465a0f979689d434ca1e19853378826",
-      "bytes": 24187,
-      "lines": 293,
-      "commentCount": 12,
-      "commentLines": 14,
+      "sha256": "2bdd2b456165b55450c7d16c14e916881b832b6028b55f97a19198e0f7cd7727",
+      "bytes": 24594,
+      "lines": 297,
+      "commentCount": 13,
+      "commentLines": 15,
       "includedFunctions": "all",
       "scope": "Existing customer audit scope",
       "extraction": "TYPESCRIPT_AST",
@@ -1756,6 +1756,23 @@
       "commentLines": 2,
       "includedFunctions": "all",
       "scope": "Existing customer audit scope",
+      "extraction": "TYPESCRIPT_AST",
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/groupInviteLinks.ts",
+      "roles": [
+        "customer"
+      ],
+      "sha256": "e37a424565dc60f34a316d63eded5afa3dbfee95ad8fd43abcbf48c67a5a01c4",
+      "bytes": 649,
+      "lines": 14,
+      "commentCount": 2,
+      "commentLines": 2,
+      "includedFunctions": "all",
+      "scope": "Dedicated Goodies source",
       "extraction": "TYPESCRIPT_AST",
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED"
@@ -13044,7 +13061,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 30,
+      "line": 31,
       "owner": "module",
       "roles": [
         "customer"
@@ -13052,12 +13069,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "GoodiesApp",
-      "endLine": 265
+      "endLine": 269
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 48,
+      "line": 49,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13065,12 +13082,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "setSheet",
-      "endLine": 48
+      "endLine": 49
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 60,
+      "line": 61,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13083,7 +13100,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 73,
+      "line": 74,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13091,12 +13108,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "subscription",
-      "endLine": 73
+      "endLine": 74
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 110,
+      "line": 114,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13104,12 +13121,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "appStateSub",
-      "endLine": 110
+      "endLine": 114
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 111,
+      "line": 115,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13117,12 +13134,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "id",
-      "endLine": 124
+      "endLine": 128
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 128,
+      "line": 132,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13130,12 +13147,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "handleBack",
-      "endLine": 132
+      "endLine": 136
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 134,
+      "line": 138,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13143,12 +13160,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "sub",
-      "endLine": 134
+      "endLine": 138
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 139,
+      "line": 143,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13156,12 +13173,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "pan",
-      "endLine": 149
+      "endLine": 153
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 140,
+      "line": 144,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
@@ -13169,12 +13186,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onStartShouldSetPanResponder",
-      "endLine": 140
+      "endLine": 144
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 141,
+      "line": 145,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
@@ -13182,12 +13199,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onMoveShouldSetPanResponder",
-      "endLine": 147
+      "endLine": 151
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 148,
+      "line": 152,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
@@ -13195,12 +13212,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onPanResponderRelease",
-      "endLine": 148
+      "endLine": 152
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 203,
+      "line": 207,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -13208,12 +13225,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "cartBannerPan",
-      "endLine": 217
+      "endLine": 221
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 204,
+      "line": 208,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
@@ -13221,12 +13238,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onStartShouldSetPanResponder",
-      "endLine": 204
+      "endLine": 208
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 205,
+      "line": 209,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
@@ -13234,12 +13251,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onMoveShouldSetPanResponderCapture",
-      "endLine": 205
+      "endLine": 209
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 206,
+      "line": 210,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
@@ -13247,12 +13264,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onPanResponderMove",
-      "endLine": 206
+      "endLine": 210
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 207,
+      "line": 211,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
@@ -13260,12 +13277,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onPanResponderRelease",
-      "endLine": 215
+      "endLine": 219
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 216,
+      "line": 220,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
@@ -13273,12 +13290,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "onPanResponderTerminate",
-      "endLine": 216
+      "endLine": 220
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 267,
+      "line": 271,
       "owner": "module",
       "roles": [
         "customer"
@@ -13286,12 +13303,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "TopBar",
-      "endLine": 270
+      "endLine": 274
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 272,
+      "line": 276,
       "owner": "module",
       "roles": [
         "customer"
@@ -13299,12 +13316,12 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "BottomNav",
-      "endLine": 292
+      "endLine": 296
     },
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 274,
+      "line": 278,
       "owner": "BottomNav",
       "roles": [
         "customer"
@@ -13312,7 +13329,7 @@
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "item",
-      "endLine": 284
+      "endLine": 288
     },
     {
       "repository": "customer",
@@ -13673,6 +13690,32 @@
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "name": "tile",
       "endLine": 48
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/groupInviteLinks.ts",
+      "line": 2,
+      "owner": "module",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "groupInviteCodeFromLink",
+      "endLine": 13
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/groupInviteLinks.ts",
+      "line": 6,
+      "owner": "groupInviteCodeFromLink",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "name": "fields",
+      "endLine": 6
     },
     {
       "repository": "customer",
@@ -44884,7 +44927,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:62233:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:62227:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -44933,7 +44976,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:62875:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:62869:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -44985,7 +45028,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63088:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63082:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45034,7 +45077,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63512:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63506:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -45059,7 +45102,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:63800:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:63794:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45134,7 +45177,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:64433:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:64427:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45183,7 +45226,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:65259:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:65253:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45232,7 +45275,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:66367:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:66361:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45274,7 +45317,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:66741:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:66735:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45311,7 +45354,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:67436:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:67430:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45355,7 +45398,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:67709:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:67703:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45405,7 +45448,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:68126:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:68120:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45454,7 +45497,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:68693:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:68687:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45509,7 +45552,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:70059:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:70053:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45558,7 +45601,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:72347:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:72341:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -45614,7 +45657,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:73047:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:73041:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45663,7 +45706,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:74208:onPick",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:74202:onPick",
       "binding": "JSX_ATTRIBUTE",
       "element": "Seg",
       "event": "onPick",
@@ -45702,7 +45745,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:74549:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:74543:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Radio",
       "event": "onPress",
@@ -45758,7 +45801,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:75323:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:75317:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45807,7 +45850,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:75905:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:75899:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45854,7 +45897,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:77539:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:77533:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45903,7 +45946,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:77890:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:77884:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45933,7 +45976,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78184:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:78178:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -45982,7 +46025,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78285:onRequestClose",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:78279:onRequestClose",
       "binding": "JSX_ATTRIBUTE",
       "element": "Modal",
       "event": "onRequestClose",
@@ -46014,7 +46057,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:78483:onBarcodeScanned",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:78477:onBarcodeScanned",
       "binding": "JSX_ATTRIBUTE",
       "element": "CameraView",
       "event": "onBarcodeScanned",
@@ -46114,7 +46157,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:79248:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:79242:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -46151,7 +46194,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:79580:onBack",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:79574:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "Bar",
       "event": "onBack",
@@ -46181,7 +46224,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:80392:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:80386:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -46206,7 +46249,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:80664:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:80658:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -46552,7 +46595,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:83703:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:83697:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Radio",
       "event": "onPress",
@@ -46604,7 +46647,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84127:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:84121:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -46649,7 +46692,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84364:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:84358:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -46829,7 +46872,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:84586:onConfirm",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:84580:onConfirm",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onConfirm",
@@ -46951,7 +46994,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:85035:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:85029:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -46992,7 +47035,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87136:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:87130:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -47022,7 +47065,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87299:onChange",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:87293:onChange",
       "binding": "JSX_ATTRIBUTE",
       "element": "Input",
       "event": "onChange",
@@ -47052,7 +47095,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87636:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:87630:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -47101,7 +47144,7 @@
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/components/Sheets.tsx:87755:onPress",
+      "id": "customer:src/features/Goodies/components/Sheets.tsx:87749:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -47759,14 +47802,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 140,
+      "line": 144,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:8691:onStartShouldSetPanResponder",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9098:onStartShouldSetPanResponder",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onStartShouldSetPanResponder",
@@ -47784,14 +47827,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 141,
+      "line": 145,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:8738:onMoveShouldSetPanResponder",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9145:onMoveShouldSetPanResponder",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onMoveShouldSetPanResponder",
@@ -47802,7 +47845,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 145,
+            "line": 149,
             "reference": "Dimensions.get",
             "imported": {
               "module": "react-native",
@@ -47812,13 +47855,13 @@
             "definitions": []
           },
           {
-            "line": 146,
+            "line": 150,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 146,
+            "line": 150,
             "reference": "cur",
             "imported": {
               "module": "./store",
@@ -47836,14 +47879,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 148,
+      "line": 152,
       "owner": "GoodiesApp.pan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9199:onPanResponderRelease",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9606:onPanResponderRelease",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onPanResponderRelease",
@@ -47854,21 +47897,21 @@
         "definitions": [],
         "calls": [
           {
-            "line": 148,
+            "line": 152,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 148,
+            "line": 152,
             "reference": "handleBack",
             "imported": null,
             "definitions": [
               {
                 "name": "handleBack",
                 "owner": "GoodiesApp",
-                "line": 128,
-                "endLine": 132
+                "line": 132,
+                "endLine": 136
               }
             ]
           }
@@ -47881,14 +47924,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 159,
+      "line": 163,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9893:onExit",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10300:onExit",
       "binding": "JSX_ATTRIBUTE",
       "element": "Home",
       "event": "onExit",
@@ -47900,8 +47943,8 @@
           {
             "name": "handleBack",
             "owner": "GoodiesApp",
-            "line": 128,
-            "endLine": 132
+            "line": 132,
+            "endLine": 136
           }
         ],
         "calls": []
@@ -47913,14 +47956,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 160,
+      "line": 164,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:9954:onExit",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10361:onExit",
       "binding": "JSX_ATTRIBUTE",
       "element": "Home",
       "event": "onExit",
@@ -47932,8 +47975,8 @@
           {
             "name": "handleBack",
             "owner": "GoodiesApp",
-            "line": 128,
-            "endLine": 132
+            "line": 132,
+            "endLine": 136
           }
         ],
         "calls": []
@@ -47945,14 +47988,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 161,
+      "line": 165,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10041:onBack",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10448:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "Bar",
       "event": "onBack",
@@ -47979,14 +48022,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 161,
+      "line": 165,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10166:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10573:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -47997,7 +48040,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 161,
+            "line": 165,
             "reference": "A.go",
             "imported": {
               "module": "./actions",
@@ -48028,14 +48071,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 164,
+      "line": 168,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10500:onBack",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:10907:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "GroupOrderPage",
       "event": "onBack",
@@ -48047,8 +48090,8 @@
           {
             "name": "handleBack",
             "owner": "GoodiesApp",
-            "line": 128,
-            "endLine": 132
+            "line": 132,
+            "endLine": 136
           }
         ],
         "calls": []
@@ -48060,14 +48103,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 173,
+      "line": 177,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11164:onBack",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11571:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "WalletAddNewCardScreen",
       "event": "onBack",
@@ -48089,14 +48132,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 173,
+      "line": 177,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11180:onSaved",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11587:onSaved",
       "binding": "JSX_ATTRIBUTE",
       "element": "WalletAddNewCardScreen",
       "event": "onSaved",
@@ -48107,7 +48150,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 173,
+            "line": 177,
             "reference": "A.refreshPaymentOptions",
             "imported": {
               "module": "./actions",
@@ -48125,14 +48168,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 174,
+      "line": 178,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11393:onComplete",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11800:onComplete",
       "binding": "JSX_ATTRIBUTE",
       "element": "CardAuthentication",
       "event": "onComplete",
@@ -48143,7 +48186,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 174,
+            "line": 178,
             "reference": "A.completeCardOrder",
             "imported": {
               "module": "./actions",
@@ -48161,14 +48204,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 174,
+      "line": 178,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11442:onCancel",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11849:onCancel",
       "binding": "JSX_ATTRIBUTE",
       "element": "CardAuthentication",
       "event": "onCancel",
@@ -48179,7 +48222,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 174,
+            "line": 178,
             "reference": "A.cancelPendingCardOrder",
             "imported": {
               "module": "./actions",
@@ -48197,14 +48240,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 174,
+      "line": 178,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11535:onOpenWallet",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:11942:onOpenWallet",
       "binding": "JSX_ATTRIBUTE",
       "element": "Account",
       "event": "onOpenWallet",
@@ -48215,7 +48258,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 174,
+            "line": 178,
             "reference": "onUniversalAction",
             "imported": null,
             "definitions": []
@@ -48229,14 +48272,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 183,
+      "line": 187,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:12050:onOpenWallet",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:12457:onOpenWallet",
       "binding": "JSX_ATTRIBUTE",
       "element": "Account",
       "event": "onOpenWallet",
@@ -48247,7 +48290,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 183,
+            "line": 187,
             "reference": "onUniversalAction",
             "imported": null,
             "definitions": []
@@ -48261,14 +48304,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 185,
+      "line": 189,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:12388:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:12795:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -48279,7 +48322,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 185,
+            "line": 189,
             "reference": "setStartupAttempt",
             "imported": null,
             "definitions": []
@@ -48298,14 +48341,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 204,
+      "line": 208,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14262:onStartShouldSetPanResponder",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14669:onStartShouldSetPanResponder",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onStartShouldSetPanResponder",
@@ -48323,14 +48366,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 205,
+      "line": 209,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14309:onMoveShouldSetPanResponderCapture",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14716:onMoveShouldSetPanResponderCapture",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onMoveShouldSetPanResponderCapture",
@@ -48341,19 +48384,19 @@
         "definitions": [],
         "calls": [
           {
-            "line": 205,
+            "line": 209,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 205,
+            "line": 209,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 205,
+            "line": 209,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
@@ -48367,14 +48410,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 206,
+      "line": 210,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14422:onPanResponderMove",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14829:onPanResponderMove",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onPanResponderMove",
@@ -48385,7 +48428,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 206,
+            "line": 210,
             "reference": "cartDragX.setValue",
             "imported": null,
             "definitions": []
@@ -48399,14 +48442,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 207,
+      "line": 211,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14483:onPanResponderRelease",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14890:onPanResponderRelease",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onPanResponderRelease",
@@ -48417,25 +48460,25 @@
         "definitions": [],
         "calls": [
           {
-            "line": 208,
+            "line": 212,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 208,
+            "line": 212,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 208,
+            "line": 212,
             "reference": "Math.abs",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 209,
+            "line": 213,
             "reference": "Animated.timing(cartDragX, {toValue: (g.dx > 0 ? 1 : -1) * Dimensions.get('window').width, duration: 260, useNativeDriver: true}).start",
             "imported": {
               "module": "react-native",
@@ -48445,7 +48488,7 @@
             "definitions": []
           },
           {
-            "line": 209,
+            "line": 213,
             "reference": "Animated.timing",
             "imported": {
               "module": "react-native",
@@ -48455,7 +48498,7 @@
             "definitions": []
           },
           {
-            "line": 209,
+            "line": 213,
             "reference": "Dimensions.get",
             "imported": {
               "module": "react-native",
@@ -48465,13 +48508,13 @@
             "definitions": []
           },
           {
-            "line": 210,
+            "line": 214,
             "reference": "setDismissedCartCount",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 210,
+            "line": 214,
             "reference": "cnt",
             "imported": {
               "module": "./store",
@@ -48481,13 +48524,13 @@
             "definitions": []
           },
           {
-            "line": 210,
+            "line": 214,
             "reference": "cartDragX.setValue",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 213,
+            "line": 217,
             "reference": "Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true, speed: 22, bounciness: 5}).start",
             "imported": {
               "module": "react-native",
@@ -48497,7 +48540,7 @@
             "definitions": []
           },
           {
-            "line": 213,
+            "line": 217,
             "reference": "Animated.spring",
             "imported": {
               "module": "react-native",
@@ -48515,14 +48558,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 216,
+      "line": 220,
       "owner": "GoodiesApp.cartBannerPan",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:14989:onPanResponderTerminate",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:15396:onPanResponderTerminate",
       "binding": "OBJECT_EVENT_BINDING",
       "element": "Object callback/action",
       "event": "onPanResponderTerminate",
@@ -48533,7 +48576,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 216,
+            "line": 220,
             "reference": "Animated.spring(cartDragX, {toValue: 0, useNativeDriver: true}).start",
             "imported": {
               "module": "react-native",
@@ -48543,7 +48586,7 @@
             "definitions": []
           },
           {
-            "line": 216,
+            "line": 220,
             "reference": "Animated.spring",
             "imported": {
               "module": "react-native",
@@ -48561,14 +48604,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 236,
+      "line": 240,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:17048:onScroll",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:17455:onScroll",
       "binding": "JSX_ATTRIBUTE",
       "element": "ScrollView",
       "event": "onScroll",
@@ -48586,14 +48629,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 236,
+      "line": 240,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:17311:onRefresh",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:17718:onRefresh",
       "binding": "JSX_ATTRIBUTE",
       "element": "RefreshControl",
       "event": "onRefresh",
@@ -48604,25 +48647,25 @@
         "definitions": [],
         "calls": [
           {
-            "line": 236,
+            "line": 240,
             "reference": "setRefreshing",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "Promise.all([loadContent(), refreshLiveSchedules(), refreshGoodiesOrders()]).finally",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "Promise.all",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "loadContent",
             "imported": {
               "module": "./content",
@@ -48632,7 +48675,7 @@
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "refreshLiveSchedules",
             "imported": {
               "module": "./store",
@@ -48642,7 +48685,7 @@
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "refreshGoodiesOrders",
             "imported": {
               "module": "./serverSync",
@@ -48652,7 +48695,7 @@
             "definitions": []
           },
           {
-            "line": 236,
+            "line": 240,
             "reference": "setRefreshing",
             "imported": null,
             "definitions": []
@@ -48666,14 +48709,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 237,
+      "line": 241,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:17805:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:18212:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Cta",
       "event": "onPress",
@@ -48684,7 +48727,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 237,
+            "line": 241,
             "reference": "refreshLiveSchedules",
             "imported": {
               "module": "./store",
@@ -48707,14 +48750,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 247,
+      "line": 251,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:18987:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:19394:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -48725,7 +48768,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 247,
+            "line": 251,
             "reference": "A.tab",
             "imported": {
               "module": "./actions",
@@ -48765,14 +48808,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 252,
+      "line": 256,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:19922:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:20329:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -48783,19 +48826,19 @@
         "definitions": [],
         "calls": [
           {
-            "line": 252,
+            "line": 256,
             "reference": "cartDragX.setValue",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 252,
+            "line": 256,
             "reference": "setDismissedCartCount",
             "imported": null,
             "definitions": []
           },
           {
-            "line": 252,
+            "line": 256,
             "reference": "cnt",
             "imported": {
               "module": "./store",
@@ -48826,14 +48869,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 259,
+      "line": 263,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:20627:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:21034:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -48844,7 +48887,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 259,
+            "line": 263,
             "reference": "setQuickMenuOpen",
             "imported": null,
             "definitions": []
@@ -48873,14 +48916,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 260,
+      "line": 264,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:21499:onUniversalAction",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:21906:onUniversalAction",
       "binding": "JSX_ATTRIBUTE",
       "element": "GoodiesQuickMenu",
       "event": "onUniversalAction",
@@ -48898,14 +48941,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 269,
+      "line": 273,
       "owner": "TopBar",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:22183:onBack",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:22590:onBack",
       "binding": "JSX_ATTRIBUTE",
       "element": "Bar",
       "event": "onBack",
@@ -48932,14 +48975,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 277,
+      "line": 281,
       "owner": "BottomNav.item",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:22420:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:22827:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -48950,7 +48993,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 277,
+            "line": 281,
             "reference": "A.tab",
             "imported": {
               "module": "./actions",
@@ -48978,14 +49021,14 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 288,
+      "line": 292,
       "owner": "BottomNav",
       "roles": [
         "customer"
       ],
       "classification": "SOURCE_TRACE",
       "hostedClassification": "HOSTED_NOT_VERIFIED",
-      "id": "customer:src/features/Goodies/GoodiesApp.tsx:23754:onPress",
+      "id": "customer:src/features/Goodies/GoodiesApp.tsx:24161:onPress",
       "binding": "JSX_ATTRIBUTE",
       "element": "Pressable",
       "event": "onPress",
@@ -48996,7 +49039,7 @@
         "definitions": [],
         "calls": [
           {
-            "line": 288,
+            "line": 292,
             "reference": "A.go",
             "imported": {
               "module": "./actions",
@@ -88375,7 +88418,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 106,
+      "line": 110,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -88393,7 +88436,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 236,
+      "line": 240,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94534,7 +94577,23 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 36,
+      "line": 37,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "'grouporder'",
+      "target": "grouporder",
+      "validation": "LITERAL_REGISTERED_SOURCE_TARGET"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 37,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94550,7 +94609,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 36,
+      "line": 37,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94566,7 +94625,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 36,
+      "line": 37,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94582,7 +94641,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 38,
+      "line": 39,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94598,7 +94657,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 39,
+      "line": 40,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94614,7 +94673,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 65,
+      "line": 66,
       "owner": "GoodiesApp.openInvite",
       "roles": [
         "customer"
@@ -94646,7 +94705,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 80,
+      "line": 81,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94662,7 +94721,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 81,
+      "line": 82,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94678,7 +94737,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 95,
+      "line": 97,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94687,8 +94746,8 @@
       "hostedClassification": "HOSTED_NOT_VERIFIED",
       "call": "reset",
       "kind": "CUSTOMER_INTERNAL_STACK",
-      "targetExpression": "'home'",
-      "target": "home",
+      "targetExpression": "'grouporder'",
+      "target": "grouporder",
       "validation": "LITERAL_REGISTERED_SOURCE_TARGET"
     },
     {
@@ -94710,7 +94769,23 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 99,
+      "line": 103,
+      "owner": "GoodiesApp",
+      "roles": [
+        "customer"
+      ],
+      "classification": "SOURCE_TRACE",
+      "hostedClassification": "HOSTED_NOT_VERIFIED",
+      "call": "reset",
+      "kind": "CUSTOMER_INTERNAL_STACK",
+      "targetExpression": "'home'",
+      "target": "home",
+      "validation": "LITERAL_REGISTERED_SOURCE_TARGET"
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 103,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94726,7 +94801,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 100,
+      "line": 104,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94742,7 +94817,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 101,
+      "line": 105,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94758,7 +94833,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 102,
+      "line": 106,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94774,7 +94849,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 119,
+      "line": 123,
       "owner": "GoodiesApp.id",
       "roles": [
         "customer"
@@ -94790,7 +94865,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 129,
+      "line": 133,
       "owner": "GoodiesApp.handleBack",
       "roles": [
         "customer"
@@ -94806,7 +94881,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 134,
+      "line": 138,
       "owner": "GoodiesApp.sub",
       "roles": [
         "customer"
@@ -94822,7 +94897,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 161,
+      "line": 165,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94838,7 +94913,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 247,
+      "line": 251,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94854,7 +94929,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 261,
+      "line": 265,
       "owner": "GoodiesApp",
       "roles": [
         "customer"
@@ -94870,7 +94945,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 277,
+      "line": 281,
       "owner": "BottomNav.item",
       "roles": [
         "customer"
@@ -94886,7 +94961,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 288,
+      "line": 292,
       "owner": "BottomNav",
       "roles": [
         "customer"
@@ -102878,6 +102953,14 @@
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
       "line": 22,
+      "module": "./groupInviteLinks",
+      "resolvedFile": "src/features/Goodies/groupInviteLinks.ts",
+      "inventoried": true
+    },
+    {
+      "repository": "customer",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 23,
       "module": "./theme",
       "resolvedFile": "src/features/Goodies/theme.ts",
       "inventoried": true
@@ -102885,7 +102968,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 23,
+      "line": 24,
       "module": "./i18n",
       "resolvedFile": "src/features/Goodies/i18n/index.ts",
       "inventoried": true
@@ -102893,7 +102976,7 @@
     {
       "repository": "customer",
       "file": "src/features/Goodies/GoodiesApp.tsx",
-      "line": 24,
+      "line": 25,
       "module": "./GoodiesQuickMenu",
       "resolvedFile": "src/features/Goodies/GoodiesQuickMenu.tsx",
       "inventoried": true
@@ -106423,7 +106506,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 365,
+      "line": 374,
       "terms": [
         "previewBuilderTemplates"
       ],
@@ -106435,7 +106518,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 374,
+      "line": 383,
       "terms": [
         "previewLocales"
       ],
@@ -106447,7 +106530,7 @@
     {
       "repository": "admin",
       "file": "src/features/admin/goodiesConsumer/previewSourceManifest.json",
-      "line": 383,
+      "line": 392,
       "terms": [
         "previewMenu"
       ],
