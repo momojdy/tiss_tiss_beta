@@ -49,7 +49,28 @@ export async function registerGoodiesDestination(business:string,method:string,c
 export const isGoodiesBusiness=(app:any)=>!!app.biz?.goodies_store_id||app.meta?.feats?.some((row:any)=>row.feature==='goodies');
 
 export const isGoodiesOnlyBusiness=(app:any)=>isGoodiesBusiness(app)&&(app.meta?.feats||[]).every((row:any)=>row.feature==='goodies');
-export async function getBusinessFinancialSummary(app:any){if(isGoodiesOnlyBusiness(app)){const data=await call<any>('goodies_vendor_dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to});parseSettlementSummary(data);if(data.business_id!==app.biz.id||!Number.isFinite(Number(data.revenue)))throw Error('Goodies financial summary unavailable.');return data;}return call<any>('dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to,p_feature:null});}
+function reportingMetric(value:unknown):number{
+ // Revenue reports prorate partial refunds and may contain fractional cents.
+ // Preserve those values while rejecting missing/nondecimal server results.
+ if(typeof value!=='number'&&!(typeof value==='string'&&/^\d+(?:\.\d+)?$/.test(value.trim())))throw new GoodiesSettlementError();
+ const amount=Number(value);
+ if(!Number.isFinite(amount)||amount<0||!Number.isSafeInteger(Math.round(amount*100)))throw new GoodiesSettlementError();
+ return amount;
+}
+export async function getBusinessFinancialSummary(app:any){
+ if(!isGoodiesOnlyBusiness(app))return call<any>('dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to,p_feature:null});
+ const raw=await call<any>('goodies_vendor_dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to});
+ const data={...raw,...parseSettlementSummary(raw)};
+ if(data.business_id!==app.biz.id||data.scope!=='goodies')throw new GoodiesSettlementError();
+ for(const key of ['revenue','gross','fees','refunds','prev_revenue'])data[key]=reportingMetric(raw[key]);
+ for(const key of ['series','prev_series']){
+  if(!Array.isArray(raw[key]))throw new GoodiesSettlementError();
+  data[key]=raw[key].map((row:any)=>{if(!row||!validDate(row.d))throw new GoodiesSettlementError();return{...row,v:reportingMetric(row.v)};});
+ }
+ if(!Array.isArray(raw.features)||raw.features.some((row:any)=>!row||row.feature!=='goodies'))throw new GoodiesSettlementError();
+ data.features=raw.features.map((row:any)=>({...row,amount:reportingMetric(row.amount)}));
+ return data;
+}
 export const ensureGoodiesWallet=()=>call('ensure_my_wallet',{});
 
 export async function saveGoodiesVendorLanguage(user:string,language:string){const {data,error}=await supabase.auth.getUser();if(error||data.user?.id!==user)throw new GoodiesSettlementError();const result=await supabase.from('user_settings').upsert({user_id:user,language:wantissLocale(language)},{onConflict:'user_id'});if(result.error)throw new GoodiesSettlementError();}

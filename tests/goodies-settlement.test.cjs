@@ -29,9 +29,19 @@ test('settlement summaries reject nondecimal money and fractional timing while r
  assert.equal(s.parseSettlementSummary({...base(),available:'0.00'}).available,0);
 });
 test('Goodies-only businesses use the scoped dashboard while unrelated and mixed feature dashboards keep their existing API',async()=>{
- const calls=[],s=service({rpc:async(name,args)=>{calls.push({name,args});return{data:{...base(),scope:'goodies',revenue:10}};}});
+ const calls=[],s=service({rpc:async(name,args)=>{calls.push({name,args});return{data:{...base(),scope:'goodies',revenue:10,gross:10,fees:1,refunds:0,prev_revenue:0,series:[],prev_series:[],features:[{feature:'goodies',amount:10}]}};}});
  const app={biz:{id:'business',goodies_store_id:'store'},meta:{feats:[{feature:'goodies'}]},range:{from:'2026-11-01',to:'2026-11-07'}};await s.getBusinessFinancialSummary(app);assert.equal(calls[0].name,'goodies_vendor_dashboard_range');
  await s.getBusinessFinancialSummary({...app,meta:{feats:[{feature:'goodies'},{feature:'other'}]}});assert.equal(calls[1].name,'dashboard_range');
+});
+test('Goodies dashboard rejects malformed financial metrics instead of rendering a false zero',async()=>{
+ const app={biz:{id:'business',goodies_store_id:'store'},meta:{feats:[{feature:'goodies'}]},range:{from:'2026-11-01',to:'2026-11-07'}},valid={...base(),scope:'goodies',revenue:10,gross:10,fees:1,refunds:0,prev_revenue:0,series:[{d:'2026-11-02',v:10}],prev_series:[],features:[{feature:'goodies',amount:10}]};
+ const read=raw=>service({rpc:async()=>({data:raw,error:null})}).getBusinessFinancialSummary(app);
+ for(const key of ['revenue','gross','fees','refunds','prev_revenue'])for(const value of [null,'0x10','1e2','',-1])await assert.rejects(read({...valid,[key]:value}));
+ await assert.rejects(read({...valid,series:[{d:'2026-11-02',v:'private SQL error'}]}));
+ await assert.rejects(read({...valid,series:[{d:'bad-date',v:10}]}));
+ await assert.rejects(read({...valid,features:[{feature:'goodies',amount:null}]}));
+ assert.equal((await read({...valid,revenue:'0.00'})).revenue,0);
+ assert.equal((await read({...valid,revenue:10/3})).revenue,10/3,'Prorated reporting metrics can have fractional cents; available settlement balances still require exact cents');
 });
 test('currency quotes match positive PostgreSQL decimal rounding and reject unsupported precision',()=>{
  const {quoteGoodiesReceive:q}=service({});assert.equal(q('1.00','1.00500000'),1.01);assert.equal(q('0.01','0.50000000'),0.01);assert.equal(q('2000.00','130.50000000'),261000);assert.equal(q('3.00','133.33000000'),399.99);for(const [amount,rate] of [['1.001','1'],['-1','1'],['1','NaN'],['1','-1'],['900719925474099.12','1']])assert.ok(Number.isNaN(q(amount,rate)));
