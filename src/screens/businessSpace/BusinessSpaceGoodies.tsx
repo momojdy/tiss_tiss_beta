@@ -752,7 +752,7 @@ export function GoodiesBuilderEditPage() {
     if (e.length) return app.toast(e[0]);
     setSaving(true);
     try {
-      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, enabled: true, available: true, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
+      await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
       app.toast(b.productCreated === false ? label("lbl.vendor.builders.55fbc59fd2","Custom product added") : label("lbl.vendor.builders.7efcfe59ac","Custom product saved")); app.bump(); app.back();
     } catch (error) {
       app.toast(text(errText(error)));
