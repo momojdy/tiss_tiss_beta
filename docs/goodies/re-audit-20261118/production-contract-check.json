@@ -14,5 +14,7 @@
       "restriction_admission_present": false,
       "proof_bucket_public": null
     }
-  ]
+  ],
+  "historicalSnapshot": true,
+  "supersededBy": "current-status.json"
 }

@@ -1,0 +1,17 @@
+{
+  "classification": "PASS",
+  "scope": "Read-only contract metadata presence only; no positive hosted lifecycle or authorization claim",
+  "rows": [
+    {
+      "observed_at": "2026-11-20 12:33:14.456786+00",
+      "migration_count": 412,
+      "migration_head": "20261120222000",
+      "courier_orders_present": true,
+      "courier_details_present": true,
+      "settlement_present": true,
+      "shared_bill_present": true,
+      "restriction_admission_present": true,
+      "proof_bucket_public": false
+    }
+  ]
+}

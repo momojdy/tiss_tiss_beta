@@ -145,5 +145,7 @@
     "Haitian Creole human review; unfinished copy uses approved English fallback"
   ],
   "releaseStatus": "NOT READY: source repairs and available isolated checks complete; production and external acceptance remain blocked.",
-  "ci": "ci-verification.json"
+  "ci": "ci-verification.json",
+  "historicalSnapshot": true,
+  "supersededBy": "current-status.json"
 }

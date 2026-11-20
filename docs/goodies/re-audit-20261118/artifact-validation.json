@@ -9,5 +9,7 @@
     "artifactSecretPatternsScanned": 94,
     "secretPatternFindings": 0
   },
-  "limits": "Bounded secret-pattern scan, not a guarantee that every possible secret format is absent. Artifact scope excludes production data and the private partial schema snapshot."
+  "limits": "Bounded secret-pattern scan, not a guarantee that every possible secret format is absent. Artifact scope excludes production data and the private partial schema snapshot.",
+  "historicalSnapshot": true,
+  "supersededBy": "current-status.json"
 }

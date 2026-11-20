@@ -1,14 +1,10 @@
 {
-  "scope": "All final evidence files in this directory, excluding this self-referential manifest. Gzip files hash compressed bytes.",
-  "sourceCommits": {
-    "customer": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
-    "admin": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5"
-  },
+  "scope": "All evidence artifacts; historical files retain their original source/timestamps. Current status is current-status.json. This manifest excludes itself.",
   "files": [
     {
       "file": "README.md",
-      "bytes": 14132,
-      "sha256": "cda59d28c0d41eb9ec6847424b3dd283909ae79cf3ccdb7a277d0778a2976e9d"
+      "bytes": 14719,
+      "sha256": "b76b4039ed729da432f2014e287623e28648090c6fe26e099239f112ee138be7"
     },
     {
       "file": "admin-android-metadata.json",
@@ -22,8 +18,8 @@
     },
     {
       "file": "artifact-validation.json",
-      "bytes": 486,
-      "sha256": "6c0baac18c3a0d99409ef85e5d6577b4ebfcc2ea8b57d99fbe713edfbaea2f48"
+      "bytes": 557,
+      "sha256": "0f70803d169a906ae830d763793303db84dc7bc09be8f73e36dadc42da696b3f"
     },
     {
       "file": "backend-logs/courier-sql-before.log.gz",
@@ -156,9 +152,19 @@
       "sha256": "b4b16ae9b3f85ec1a83a5eb10e7998b92b1e8d6bbe6189487f41f27ac3bcd092"
     },
     {
+      "file": "current-production-contracts.json",
+      "bytes": 521,
+      "sha256": "7a32450cdc4eb883662a3e7113c845fec80d08c7ae17a42d3eba1873974cfc62"
+    },
+    {
       "file": "current-source-inventory.json",
       "bytes": 3129094,
       "sha256": "b5dffb2aac6b37365b5c322b92de43ac98e495f9e54b22d02e654d436d3e72c2"
+    },
+    {
+      "file": "current-status.json",
+      "bytes": 3372,
+      "sha256": "9166d3d4d24e4ed0c17f951fa388b1521837faccf79fa01a4efc8e73d5336d5b"
     },
     {
       "file": "customer-controls.json",
@@ -271,6 +277,46 @@
       "sha256": "f43f8cd3e5707f2c88df79f6f9c305067d906259f5aa7b92bcbb3386e19789e7"
     },
     {
+      "file": "final-logs/current-admin-tests.log.gz",
+      "bytes": 3342,
+      "sha256": "ad89b5d4bf39fc3b66ea0994ff6bafe0da5461c5304d311358454ead0076dcef"
+    },
+    {
+      "file": "final-logs/current-admin-types.log.gz",
+      "bytes": 44,
+      "sha256": "09c350623c6c255db5daf77921f7061a4762c2bc5d83855612f405206aaafee7"
+    },
+    {
+      "file": "final-logs/current-cms-review.log.gz",
+      "bytes": 247,
+      "sha256": "bf2e0d80e9ad521b9cf0efb63ee9c1a4c2e288c1fb0785aeb6b1c8f365159448"
+    },
+    {
+      "file": "final-logs/current-cross-role.log.gz",
+      "bytes": 2114,
+      "sha256": "3775d72dc1b87b2f2936cd5cb1094e431021dcbe9c2e09806fe999f83052403c"
+    },
+    {
+      "file": "final-logs/current-customer-lint.log.gz",
+      "bytes": 132,
+      "sha256": "c7d1bfa99c0e737a3053ba829a494a7a872eb5e13e243b0e56bf193c5c62c0cb"
+    },
+    {
+      "file": "final-logs/current-customer-tests.log.gz",
+      "bytes": 9672,
+      "sha256": "24d485228a5b0ea00fa25c5a2996638ce02ad5f782b650a3badaa5c3cfc93f03"
+    },
+    {
+      "file": "final-logs/current-customer-types.log.gz",
+      "bytes": 47,
+      "sha256": "c6d8d03b7ebfccc79e6ad3b6488810ef3c314fcffea980466a34fa501d9b8d72"
+    },
+    {
+      "file": "final-logs/current-native-29.log.gz",
+      "bytes": 1038,
+      "sha256": "2e6cf44432be22cf0cf18a6d6c5fb09bec34469f79fd6426caef10fbb658878e"
+    },
+    {
       "file": "final-logs/customer-doctor-proxy.log.gz",
       "bytes": 115,
       "sha256": "04892215d78035789d368af3e0f0c3afbe56351d349ce3632c961ac8a76d446b"
@@ -381,6 +427,11 @@
       "sha256": "ab172a1842d646d0624982f5dfb2484773208b384aad43bde57b2c8aadf09a9f"
     },
     {
+      "file": "latest-source-inventory.json",
+      "bytes": 3131686,
+      "sha256": "bb0842670c608ea27cbe9ee17b7d2468bf034ad2a20820ae05cd07c7738cb4d4"
+    },
+    {
       "file": "live-source-drift.json",
       "bytes": 281,
       "sha256": "31c9d3ec2c576779f9e8c2d2aa9732e90973ba2c5d82c97e46f333eb1b3e5fe9"
@@ -432,13 +483,13 @@
     },
     {
       "file": "production-change-plan.json",
-      "bytes": 16530,
-      "sha256": "51f981cff4694579cd4e6f9d7c62683ccb51b0061496676a5a18f6532ce48908"
+      "bytes": 16856,
+      "sha256": "aec424b4ba01ecd37bfec4e954a1ef7cb3344633e794f8b1d731a83747aa00d2"
     },
     {
       "file": "production-contract-check.json",
-      "bytes": 635,
-      "sha256": "95cf01ffebee831990c05c3e75b1781b4613f68955759c60615693597a355179"
+      "bytes": 706,
+      "sha256": "e1c6368af16765176e2e02c8893876b2843bbd4362e2fde9f6485c5c2d7b9c58"
     },
     {
       "file": "recovery-runbook.md",
@@ -477,8 +528,8 @@
     },
     {
       "file": "verification.json",
-      "bytes": 5877,
-      "sha256": "11bc84f7d08094d8e0d7cc816a0758c113133bbc099a0f4cf855fa8729ffdb7c"
+      "bytes": 5948,
+      "sha256": "dbb1a8fedb590a4a1c657e919acad71712d8d8f33b10d92de790462f8ddaf622"
     }
   ]
 }

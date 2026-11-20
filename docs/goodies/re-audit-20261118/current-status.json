@@ -1,0 +1,79 @@
+{
+  "observedAt": "2026-11-20T12:39:53.769648+00:00",
+  "classification": "NOT VERIFIED",
+  "productionReady": false,
+  "sourceReconciledThrough": {
+    "customer": "a5e8be35435c3e550bfefae79a6f171b184e6bb5",
+    "admin": "8ff72b315f7efc93ff6feee9cb5cc453af28d55a"
+  },
+  "backend": {
+    "classification": "PASS",
+    "scope": "Read-only contract presence only, not hosted transaction acceptance",
+    "observedAt": "2026-11-20T12:33:14.456786Z",
+    "migrationCount": 412,
+    "migrationHead": "20261120222000",
+    "courierOrders": true,
+    "courierDetails": true,
+    "settlementSummary": true,
+    "accountSharedBill": true,
+    "storeRestrictionAdmission": true,
+    "deliveryProofBucketPublic": false,
+    "rolloutReceipt": "../phase1-backend-reconciliation-20261120.json",
+    "rolloutPerformedInThisCloseout": false,
+    "backupRecovery": "NOT VERIFIED",
+    "metadata": "current-production-contracts.json"
+  },
+  "sourceCloseout": {
+    "localCustomerTests": 236,
+    "localAdminTests": 68,
+    "localCrossRoleTests": 47,
+    "completeMigrationCandidate": 29,
+    "nativeConcurrencyCases": 22,
+    "typechecks": "PASS for both applications",
+    "cmsReviewRegression": "PASS in isolation, including unchanged ACLs, existing critical keys and Creole fallback",
+    "replacementCI": "PENDING",
+    "inventory": "latest-source-inventory.json",
+    "inventoryCounts": {
+      "files": 105,
+      "astFiles": 93,
+      "functions": 1538,
+      "interactiveBindings": 1343,
+      "jsxBindings": 1200,
+      "objectEventBindings": 143,
+      "backendCallSites": 432,
+      "serviceCallSites": 221,
+      "navigationCallSites": 534,
+      "commentTokens": 252,
+      "demoReferenceLines": 265,
+      "embeddedEventReferences": 9,
+      "unresolvedLiteralRegistryTargets": 0,
+      "dynamicRegistryTargets": 16
+    }
+  },
+  "pendingMigration": {
+    "file": "supabase/migrations/20261120223000_goodies_group_content_review_coverage.sql",
+    "sha256": "940e1e35fd329b173279ba110b70bfad496fd4ab36c3d2d7d3d14d58ff7caf07",
+    "status": "PREPARED_NOT_DEPLOYED",
+    "reason": "A now-critical group-cart label requires the existing server-side publication review boundary. Prepared forward migration preserves the deployed list and permissions."
+  },
+  "remaining": [
+    "Verified production backup/restore evidence and recovery access",
+    "Deploy and recheck the new group-cart CMS review migration after recovery readiness",
+    "Complete authenticated hosted customer/vendor/courier/admin/staff and cross-account acceptance",
+    "Positive provider sandbox charge/capture/authenticated webhook/refund/reconciliation flows",
+    "Signed native builds and physical Android/iOS GPS/background/offline/push/reopen behavior",
+    "Installed-customer CMS edit/draft/preview/publish/reload acceptance"
+  ],
+  "deferredByUser": [
+    "FAQ/legal final approval/publication",
+    "Super-admin Haitian Creole review; unfinished content uses English fallback"
+  ],
+  "appDeployed": false,
+  "cmsPublished": false,
+  "financialWritesPerformed": false,
+  "historicalEvidence": "Other files in this directory retain the source and timestamps of their original verification. Current totals and CI will be recorded here separately.",
+  "verifiedSourceCommits": {
+    "customer": "c67ded6e905502d600a82f9eec6c57269065976b",
+    "admin": "b5985b642f31c1ca0fed15c8769cfd2e3549e856"
+  }
+}

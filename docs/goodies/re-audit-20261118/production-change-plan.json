@@ -1,5 +1,5 @@
 {
-  "status": "PREPARED_NOT_DEPLOYED_BACKUP_BLOCKED",
+  "status": "ARCHIVED_PREDEPLOYMENT_PLAN_ALREADY_APPLIED_UPSTREAM",
   "projectRef": "ycbirmgppwavorwudlrv",
   "projectName": "Wantiss",
   "region": "us-east-1",
@@ -385,5 +385,8 @@
     "migrations": "Failure rolls back that migration transaction; preserve previously applied migrations and stop. Do not blindly run financial down migrations.",
     "afterCommitFailure": "Keep new feature gates off, capture metadata and logs, compare old clients, and prepare a scoped forward fix. Full restore needs a verified restore point and coordinated write pause/recovery operator.",
     "financialSafety": "Do not reset ledgers or customer balances; preserve successful financial receipts and reconcile idempotently."
-  }
+  },
+  "historicalSnapshot": true,
+  "supersededBy": "current-status.json",
+  "executionInstruction": "DO NOT APPLY OR REPLAY. See phase1-backend-reconciliation-20261120.json for executed versions and current-status.json for current pending work. File hashes describe the older committed package, not newer main."
 }
