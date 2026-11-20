@@ -19,6 +19,7 @@ import { supabase } from '../../lib/supabase';
 
 import { Feature, FX, FM, LIGHT, useTheme, useS, money, ago, rpc, useQ, useApp, useArg, useAct, Icon, Btn, Pill, Chips, Seg, Section, Empty, Skel, ErrBox, Loading, FIcon, Row, Divided, Pg, OrderRow, ListingRow, RequirementsCard, q } from "./BusinessSpaceShared";
 import { GoodiesToolsCard } from "./BusinessSpaceGoodies";
+import {useGoodiesVendorLabels} from './BusinessSpaceGoodiesLabels';
 
 export function FeaturePage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), { k, focus } = useArg() as { k: string; focus?: string };
@@ -83,27 +84,41 @@ export function FeaturesPanel() {
 }
 export function OrdersPanel() {
   const app = useApp(), [f, setF] = useState('Open');
+  const {text,status,locale,canManage,requireManage}=useGoodiesVendorLabels('orders');
   const [page, setPage] = useState(0), [busyId, setBusyId] = useState('');
+  const mutation=useRef<object|null>(null),scope=useRef({business:app.biz.id,user:app.userId,active:true});
+  if(scope.current.business!==app.biz.id||scope.current.user!==app.userId){scope.current.active=false;scope.current={business:app.biz.id,user:app.userId,active:true};mutation.current=null;}
+  useEffect(()=>()=>{scope.current.active=false;},[]);
+  useEffect(()=>{setBusyId('');},[app.biz.id,app.userId]);
   const o = useQ(() => isGoodiesOnlyBusiness(app)?Promise.resolve([]):q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
-  const goodies = useQ(() => q<any[]>(supabase.from('goodies_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
+  const goodies = useQ(() => {
+    let query=supabase.from('goodies_orders').select('*').eq('business_id',app.biz.id);
+    if(f==='Open')query=query.not('status','in','(completed,cancelled,declined,expired)');
+    else if(f==='Closed')query=query.eq('status','completed');
+    else if(f==='Cancelled')query=query.in('status',['cancelled','declined','expired']);
+    return q<any[]>(query.order('created_at',{ascending:false}).order('id',{ascending:false}).range(page*80,page*80+79));
+  }, [app.biz.id, app.tick, page,f]);
   const rows = (o.d ?? []).filter(x => f === 'All' || (f === 'Open' ? x.status !== 'Cancelled' && !FX.FM[x.feature]?.flow.slice(-1).includes(x.status) : f === 'Cancelled' ? x.status === 'Cancelled' : FX.FM[x.feature]?.flow.slice(-1).includes(x.status)));
-  const grows = (goodies.d ?? []).filter(x => f === 'All' || (f === 'Open' ? !['completed','cancelled','declined','expired'].includes(String(x.status).toLowerCase()) : f === 'Cancelled' ? String(x.status).toLowerCase() === 'cancelled' : String(x.status).toLowerCase() === 'completed'));
+  const grows = goodies.d ?? [];
   const nextGoodiesStatus: Record<string,string> = {accepted:'preparing',preparing:'ready',ready:'completed'};
   const advanceGoodies = async (x: any) => {
+    if(mutation.current||!requireManage())return;
     const due = !x.scheduled_for || new Date(x.scheduled_for).getTime() <= Date.now();
-    if (!due) {app.toast('This order is scheduled for ' + new Date(x.scheduled_for).toLocaleString()); return;}
+    if (!due) {app.toast('This order is scheduled for ' + new Date(x.scheduled_for).toLocaleString(locale)); return;}
     const next = nextGoodiesStatus[String(x.status).toLowerCase()];
     if (!next) return;
-    if (busyId) return;setBusyId(x.id);
+    if (busyId) return;
+    const token={},owner=scope.current,current=()=>owner.active&&scope.current===owner;
+    mutation.current=token;setBusyId(x.id);
     try {
       const {error} = await supabase.rpc('set_goodies_order_status', {p_order_id: x.id, p_status: next});
       if (error) throw error;
-      app.bump(); app.toast('Goodies order updated');
-    } catch (e: any) {app.toast('Could not update order. Please try again.');} finally {setBusyId('');}
+      if(current()){app.bump();app.toast(text('Goodies order updated'));}
+    } catch (e: any) {if(current())app.toast(text('Could not update order. Please try again.'));} finally {if(mutation.current===token)mutation.current=null;if(current())setBusyId('');}
   };
   return (
     <View style={{ gap: 10 }}>
-      <Chips items={['Open', 'Closed', 'Cancelled', 'All']} value={f} onChange={setF} />
+      <Chips items={['Open', 'Closed', 'Cancelled', 'All']} value={f} onChange={(next:string)=>{setF(next);setPage(0);}} />
       <Section title="Goodies orders" right={String(grows.length)} />
       <Btn label="Open 15-minute response queue" kind="soft" onPress={() => app.go('goodiesOrders')} />
       {goodies.e ? <ErrBox e={goodies.e} retry={goodies.reload} /> : goodies.l && !goodies.d ? <Loading /> : grows.length ? <View style={{gap:8}}>{grows.map(x => {
@@ -112,11 +127,11 @@ export function OrdersPanel() {
         const items = Array.isArray(x.items) ? x.items.map((i: any) => (i.q ?? i.quantity ?? 1) + '× ' + (i.n ?? i.name ?? 'Item')).join(', ') : 'Order items';
         return <View key={x.id} style={{padding:13,borderRadius:14,borderWidth:1,borderColor:LIGHT.line,gap:7}}>
           <View style={{flexDirection:'row',alignItems:'center',gap:8}}><View style={{flex:1}}><Text style={{fontSize:14,fontWeight:'800',color:LIGHT.ink}}>Order {x.order_code}</Text><Text style={{fontSize:12,color:LIGHT.mute,marginTop:3}}>{items}</Text></View><Pill tone={String(x.status).toLowerCase()==='completed'?'good':String(x.status).toLowerCase()==='cancelled'?'bad':'warn'}>{String(x.status).replace('_',' ')}</Pill></View>
-          <Text style={{fontSize:12,color:LIGHT.mute}}>{x.scheduled_for ? (due ? 'Scheduled time reached · ' : 'Scheduled for · ') + new Date(x.scheduled_for).toLocaleString() : 'Order received'} · {money(Number(x.total))}</Text>
-          <Text style={{fontSize:11,color:LIGHT.mute}}>Payment: {x.payment_status === 'demo' ? 'Demo payment (not charged)' : x.payment_status}</Text>
-          {next && due && !(next==='completed' && x.order_type==='delivery') ? <View style={{alignSelf:'flex-end'}}><Btn small busy={busyId===x.id} disabled={!!busyId} label={next === 'accepted' ? 'Accept order' : next === 'preparing' ? 'Start preparing' : next === 'ready' ? 'Mark ready' : 'Complete order'} onPress={() => advanceGoodies(x)} /></View> : null}
+          <Text style={{fontSize:12,color:LIGHT.mute}}>{x.scheduled_for ? (due ? 'Scheduled time reached · ' : 'Scheduled for · ') + new Date(x.scheduled_for).toLocaleString(locale) : 'Order received'} · {money(Number(x.total))}</Text>
+          <Text style={{fontSize:11,color:LIGHT.mute}}>Payment: {status(['pending','paid','authorized','requires_action','refunded','partially_refunded','failed','disputed','dispute_won','disputed_lost','refund_pending','refund_manual_review'].includes(x.payment_status)?x.payment_status:'unknown')}</Text>
+          {next && due && !(next==='completed' && x.order_type==='delivery') ? <View style={{alignSelf:'flex-end'}}><Btn small busy={busyId===x.id} disabled={!!busyId||!canManage} label={next === 'accepted' ? 'Accept order' : next === 'preparing' ? 'Start preparing' : next === 'ready' ? 'Mark ready' : 'Complete order'} onPress={() => advanceGoodies(x)} /></View> : null}
         </View>;
-      })}</View> : <Empty icon="clipboard-text-outline" title="No Goodies orders yet" hint="Scheduled orders from mapped Goodies stores appear here." />}
+      })}</View> : <Empty icon="clipboard-text-outline" title="No Goodies orders yet" />}
       <View style={{flexDirection:'row',gap:8}}><Btn label="Previous page" kind="soft" disabled={page===0 || goodies.l} onPress={() => setPage(p=>p-1)} /><Btn label="Next page" kind="soft" disabled={goodies.l || (goodies.d || []).length<80} onPress={() => setPage(p=>p+1)} /></View>
       <Section title="Other orders" right={String(rows.length)} />
       {o.e ? <ErrBox e={o.e} retry={o.reload} /> : o.l && !o.d ? <Loading /> : rows.length ? <Divided>{rows.map(x => <OrderRow key={x.id} o={x} />)}</Divided> : <Empty icon="clipboard-text-outline" title={(o.d ?? []).length ? 'No orders here' : 'No orders yet'} hint="Other feature orders appear here when customers buy or book." />}

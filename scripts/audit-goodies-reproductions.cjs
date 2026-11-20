@@ -62,7 +62,7 @@ test('REGRESSION A13: business storefront selection is included in save',async()
 });
 test('REGRESSION A14: secondary orders render canonical quantities and names',()=>{
  let query=0;const order={id:'synthetic-order',order_code:'TEST-ORDER',status:'accepted',items:[{q:3,n:'Synthetic meal'}],payment_status:'paid',total:10};
- const OrdersPanel=extract(root,'src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx','OrdersPanel')({useApp:()=>({biz:{id:'synthetic-business'},tick:0,bump(){},toast(){}}),useState:value=>[value,()=>{}],useQ:()=>({d:query++===0?[]:[order],l:false,e:null}),FX:{FM:{}},LIGHT:{line:'#ddd',ink:'#111',mute:'#555'},money:()=>'$10'});
+ const OrdersPanel=extract(root,'src/screens/businessSpace/BusinessSpaceMarketplaceScreens.tsx','OrdersPanel')({useApp:()=>({biz:{id:'synthetic-business'},tick:0,bump(){},toast(){}}),useState:value=>[value,()=>{}],useRef:value=>({current:value}),useEffect(){},useGoodiesVendorLabels:()=>({text:value=>value,status:value=>value,locale:'en',canManage:false,requireManage:()=>false}),useQ:()=>({d:query++===0?[]:[order],l:false,e:null}),FX:{FM:{}},LIGHT:{line:'#ddd',ink:'#111',mute:'#555'},money:()=>'$10'});
  assert.ok(flatten(OrdersPanel()).includes('3× Synthetic meal'));
 });
 test('REGRESSION A15: admin analytics failures have a safe persistent error',async()=>{
