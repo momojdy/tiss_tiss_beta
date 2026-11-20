@@ -19,6 +19,9 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
   // A guessed UUID for a pending/unreviewed product must not disclose its name,
   // price or image through the SECURITY DEFINER group item receipt.
   await h.root();await db.query("insert into public.goodies_products(id,business_id,name,price,stock,is_available,review_status) values($1,$2,'Unreviewed synthetic secret',8,3,true,'pending')",[sbId(91),u.business]);
+  await h.as(u.alice);
+  const joined=(await db.query<{group_id:string}>('select * from public.goodies_group_order_join($1)',[ownGroup.invite_code])).rows[0];
+  check(joined?.group_id===ownGroup.group_id,'An invited customer could not join an unrestricted group');
   await h.as(u.host);let productCode='';
   try{await db.query("select * from public.goodies_group_order_upsert_item($1,$2,'pending-line',1,'{}'::jsonb,null)",[ownGroup.group_id,sbId(91)]);}catch(e){productCode=(e as {code?:string}).code||'';}
   check(productCode==='P0001','Group item RPC exposed an unreviewed product');
@@ -37,7 +40,7 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
    await deny("select * from public.goodies_group_order_create('shared-bill-test')");
    await deny("select * from public.goodies_group_order_upsert_item($1,$2,'new-line',1,'{}'::jsonb,null)",[ownGroup.group_id,u.product]);
    await deny("select public.goodies_group_order_invite_friends($1,'{}'::uuid[])",[ownGroup.group_id]);
-   await h.as(u.alice);await deny("select * from public.goodies_group_order_join($1)",[ownGroup.invite_code]);
+   await h.as(u.stranger);await deny("select * from public.goodies_group_order_join($1)",[ownGroup.invite_code]);
   });
   await t.step('a final Shared Bill payment after restriction refunds every payer without creating an order',async()=>{
    await h.root();const orders=(await db.query<{n:number}>('select count(*)::integer n from public.goodies_orders')).rows[0].n;

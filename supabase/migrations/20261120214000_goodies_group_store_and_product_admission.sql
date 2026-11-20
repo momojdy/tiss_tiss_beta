@@ -9,6 +9,9 @@ declare
   source_item text;
   source_invite text;
   create_needle text := '  if not exists(select 1 from public.goodies_store_schedules where store_id=p_store_id and is_live=true) then';
+  join_lookup_needle text := 'select * into v_group from public.goodies_group_orders where invite_code=upper(trim(p_invite_code)) for update;';
+  join_count_needle text := 'select count(*) into v_count from public.goodies_group_order_members where group_id=v_group.id;';
+  join_exists_needle text := 'select 1 from public.goodies_group_order_members where group_id=v_group.id and user_id=v_uid';
   join_needle text := ' if not found or v_group.status<>''open'' or v_group.expires_at<=now() then raise exception ''This group invite code is invalid or expired'' using errcode=''P0001''; end if;';
   invite_needle text := '  if v_group.status <> ''open'' or v_group.expires_at <= pg_catalog.now() then'||E'\n'||'    raise exception ''This group order has closed'' using errcode = ''P0001'';'||E'\n'||'  end if;';
   membership_needle text := ' if not exists(select 1 from public.goodies_group_order_members m where m.group_id=v_group.id and m.user_id=v_uid) then raise exception ''Join this group before adding items'' using errcode=''42501''; end if;';
@@ -24,6 +27,9 @@ begin
   if source_create is null or source_join is null or source_item is null or source_invite is null
      or position(create_needle in source_create)=0
      or position(join_needle in source_join)=0
+     or position(join_lookup_needle in source_join)=0
+     or position(join_count_needle in source_join)=0
+     or position(join_exists_needle in source_join)=0
      or position(invite_needle in source_invite)=0
      or position(membership_needle in source_item)=0
      or position(product_needle in source_item)=0
@@ -34,7 +40,19 @@ begin
 
   execute replace(source_create,create_needle,
     '  perform private.goodies_assert_store_admission((select s.business_id from public.goodies_store_schedules s where s.store_id=p_store_id));'||E'\n'||create_needle);
-  execute replace(source_join,join_needle,join_needle||E'\n'||store_guard);
+  execute replace(
+    replace(
+      replace(
+        replace(source_join,join_needle,join_needle||E'\n'||store_guard),
+        join_lookup_needle,
+        'select g.* into v_group from public.goodies_group_orders g where g.invite_code=upper(trim(p_invite_code)) for update;'
+      ),
+      join_count_needle,
+      'select count(*) into v_count from public.goodies_group_order_members m where m.group_id=v_group.id;'
+    ),
+    join_exists_needle,
+    'select 1 from public.goodies_group_order_members m where m.group_id=v_group.id and m.user_id=v_uid'
+  );
   execute replace(source_invite,invite_needle,invite_needle||E'\n'||store_guard);
   execute replace(
     replace(
