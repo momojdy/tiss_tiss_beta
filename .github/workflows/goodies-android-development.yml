@@ -1,0 +1,66 @@
+name: Goodies Android development build
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/goodies-android-development.yml
+      - app.config.js
+      - app.json
+      - package.json
+      - package-lock.json
+      - src/features/Goodies/**
+      - src/services/goodies*.ts
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: goodies-android-development-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android-development:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CI: '1'
+      APP_VARIANT: development
+      EXPO_NO_TELEMETRY: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: android-actions/setup-android@v3
+      - name: Install the existing locked dependencies
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Generate the existing development native configuration
+        run: npx expo prebuild --platform android --no-install
+      - name: Compile a development APK for ARM64 devices
+        working-directory: android
+        run: ./gradlew :app:assembleDebug --no-daemon --max-workers=2 -PreactNativeArchitectures=arm64-v8a
+      - name: Verify the generated development APK signature
+        shell: bash
+        run: |
+          set -euo pipefail
+          goodies_apk=android/app/build/outputs/apk/debug/app-debug.apk
+          goodies_signer=$(rg --files "$ANDROID_HOME/build-tools" | rg '/apksigner$' | sort -V | tail -n 1)
+          "$goodies_signer" verify --verbose --print-certs "$goodies_apk" | tee goodies-android-signature.txt
+          sha256sum "$goodies_apk" > goodies-android-apk.sha256
+      - name: Retain the development build and signature evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-android-development-${{ github.sha }}
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
+            goodies-android-signature.txt
+            goodies-android-apk.sha256
+          retention-days: 3
+          if-no-files-found: error
