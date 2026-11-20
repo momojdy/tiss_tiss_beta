@@ -157,3 +157,16 @@ test('group Wallet checkout only accepts an exact USD quote with cent-consistent
  await h.handlers.checkoutGroupOrder();
  assert.equal(h.state.calls.some(x=>x.name==='goodies_group_order_checkout'),false,'No USD Wallet checkout for a mismatched currency quote');
 });
+
+
+test('an open group that reaches its server expiry closes even without a Realtime event',async()=>{
+ const src=fs.readFileSync(sheetFile,'utf8');
+ assert.match(src,/const statusPoll=setInterval\(\(\)=>\{if\(active\)void refreshGroupStatus\(\);\},30000\)/);
+ assert.match(src,/clearInterval\(statusPoll\)/);
+ const h=harness({dispatch:async name=>name==='goodies_group_order_get_status'
+  ?{data:{group_id:'group-a',status:'open',expires_at:'2000-01-01T00:00:00Z'},error:null}
+  :{data:null,error:null}});
+ await h.handlers.refreshGroupStatus();
+ assert.equal(h.S.groupOrder.serverBacked,false);
+ assert.match(h.state.toasts.at(-1),/closed or expired/);
+});
