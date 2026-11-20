@@ -242,6 +242,7 @@ export function GoodiesStorePage() {
   const {label,text,money:dollars,locale,canManage,requireManage}=useGoodiesVendorLabels("store");
   const app = useApp(), s = useS(), t = useTheme();
   const [f, setF] = useState<GStore | null>(null), [busy, setBusy] = useState(false), [coverBusy, setCoverBusy] = useState(false);
+  const storeSaveLock = useRef(false);
   const [savedAddress, setSavedAddress] = useState({ address: '', city: '', country: '' });
   const [capturedLocation, setCapturedLocation] = useState<{ latitude: number; longitude: number; accuracy: number | null } | null>(null);
   const [locationBusy, setLocationBusy] = useState(false), [locationSaving, setLocationSaving] = useState(false);
@@ -286,8 +287,9 @@ export function GoodiesStorePage() {
     return '';
   };
   const save = async () => {
-    if (!requireManage()) return;
+    if (!requireManage() || storeSaveLock.current) return;
     const e = err(); if (e) return app.toast(text(e));
+    storeSaveLock.current = true;
     setBusy(true);
     try {
       await goodiesApi.saveStore(app.biz.id, f);
@@ -301,7 +303,7 @@ export function GoodiesStorePage() {
       next.push(...customTypes.map(x => ({ ...x, enabled: customProducts && x.enabled })));
       await goodiesApi.saveBuilders(app.biz.id, next);
       app.toast(label("lbl.vendor.store.0589b60d42","Store saved")); app.bump();
-    } catch (x) { app.toast(text(errText(x))); } finally { setBusy(false); }
+    } catch (x) { app.toast(text(errText(x))); } finally { storeSaveLock.current = false; setBusy(false); }
   };
   const captureStoreLocation = async () => {
     if (!requireManage()) return;
@@ -703,6 +705,7 @@ export function GoodiesBuilderEditPage() {
   const app = useApp(), s = useS(), t = useTheme(), route = useArg() as { id?: string; type?: 'pizza' | 'burger'; create?: boolean } | undefined, id = route?.id, createType = route?.create ? route.type : undefined;
   const [all, setAll] = useState<GBuilder[]>([]), [b, setB] = useState<GBuilder | null>(null), [errs, setErrs] = useState<string[]>([]);
   const [loading, setLoading] = useState(true), [loadError, setLoadError] = useState(''), [saving, setSaving] = useState(false), [loadAttempt, setLoadAttempt] = useState(0);
+  const builderSaveLock = useRef(false);
   const [expandedGroup, setExpandedGroup] = useState<number | null>(0), [selectedItem, setSelectedItem] = useState<{ gi: number; ii: number } | null>(null);
   useEffect(() => {
     let active = true;
@@ -747,9 +750,10 @@ export function GoodiesBuilderEditPage() {
   const upI = (gi: number, ii: number, p: Partial<GItem>) => upG(gi, { items: b.groups[gi].items.map((x, i) => (i === ii ? { ...x, ...p } : x)) });
   const move = <T,>(a: T[], i: number, d: number) => { const j = i + d; if (j < 0 || j >= a.length) return a; const c = a.slice(); [c[i], c[j]] = [c[j], c[i]]; return c; };
   const save = async () => {
-    if (!requireManage()) return;
+    if (!requireManage() || builderSaveLock.current) return;
     const e = validateBuilder(b,label); setErrs(e);
     if (e.length) return app.toast(e[0]);
+    builderSaveLock.current = true;
     setSaving(true);
     try {
       await goodiesApi.saveBuilders(app.biz.id, all.some(x => x.id === b.id) ? all.map(x => (x.id === b.id ? { ...b, productCreated: true } : x)) : [...all, { ...b, enabled: true, available: true, productCreated: true }]);
@@ -757,6 +761,7 @@ export function GoodiesBuilderEditPage() {
     } catch (error) {
       app.toast(text(errText(error)));
     } finally {
+      builderSaveLock.current = false;
       setSaving(false);
     }
   };
