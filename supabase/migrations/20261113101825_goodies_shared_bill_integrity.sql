@@ -46,8 +46,12 @@ declare f record;definition text;matched integer:=0;
 begin
  for f in select p.oid from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('place_goodies_order','goodies_place_multi_order','goodies_group_order_checkout','goodies_group_order_checkout_estimate') loop
   definition:=pg_get_functiondef(f.oid);
+  -- Preserve checkout variants already hardened to delivery-only history.
+  -- Normalize only legacy unscoped first-delivery checks (not unrelated ownership predicates).
   definition:=regexp_replace(definition,'where o.customer_id\s*=\s*v_uid\)','where o.customer_id=v_uid and o.order_type=''delivery'')','g');
-  if position('o.customer_id=v_uid and o.order_type=''delivery''' in definition)=0 then raise exception 'First-delivery checkout contract drift';end if;
+  if definition !~ 'select not exists\(select 1 from public\.goodies_orders o where o\.customer_id\s*=\s*v_uid\s+and\s+o\.order_type\s*=\s*''delivery''\)' then
+    raise exception 'First-delivery checkout contract drift';
+  end if;
   execute definition;matched:=matched+1;
  end loop;
  if matched<>4 then raise exception 'Checkout variants drifted';end if;
