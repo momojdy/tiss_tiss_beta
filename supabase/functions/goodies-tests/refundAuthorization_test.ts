@@ -1,5 +1,5 @@
 import { assert, assertStringIncludes, assertEquals } from "jsr:@std/assert@1";
-const source = await Deno.readTextFile(new URL("./index.ts", import.meta.url));
+const source = await Deno.readTextFile(new URL("../refund-goodies-card-order/index.ts", import.meta.url));
 
 Deno.test("Goodies refund endpoint authorizes before exposing any order payment state", () => {
   const authorize = source.indexOf('let authorized = user.id === order.customer_id');
