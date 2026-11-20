@@ -88,7 +88,7 @@ test('editing a hidden or unavailable custom product never silently republishes 
  const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
  const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
  const makeSave=(b,all,onSaved)=>compile(decl.initializer.getText(ast),{
-  b,all,validateBuilder:()=>[],setErrs(){},setSaving(){},requireManage:()=>true,
+  b,all,builderSaveLock:{current:false},validateBuilder:()=>[],setErrs(){},setSaving(){},requireManage:()=>true,
   app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},
   goodiesApi:{saveBuilders:async(_business,rows)=>onSaved(JSON.parse(JSON.stringify(rows)))},
   errText:()=> 'Safe failure',
@@ -183,4 +183,53 @@ test('vendor accept and decline callbacks reject rapid duplicate status transiti
  assert.equal(calls.length,2);
  assert.equal(lock.current,false);
  assert.ok(notifications.some(x=>/Could not update this order/.test(x)));
+});
+
+
+test('store setup save is single-flight even before the UI busy state rerenders',async()=>{
+ const {node,ast}=find(vendor,'GoodiesStorePage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const lock={current:false},events=[];
+ let finish;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ const f={storeName:'Shop',address:'Street',city:'City',country:'Haiti',coverUrl:null,thumbnailUrl:null};
+ const save=compile(decl.initializer.getText(ast),{
+  requireManage:()=>true,storeSaveLock:lock,err:()=>'',setBusy(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){}},f,savedAddress:{address:'Street',city:'City',country:'Haiti'},
+  setSavedAddress(){},setF(){},sameAsCover:false,customTypes:[],customProducts:false,
+  goodiesApi:{
+   saveStore:async()=>{events.push('store');await pending;},
+   saveStoreThumbnail:async()=>events.push('thumbnail'),
+   listBuilders:async()=>[],
+   saveBuilders:async()=>events.push('builders'),
+  },errText:()=> 'Safe failure',
+ });
+ const first=save();
+ await save();
+ assert.deepEqual(events,['store']);
+ assert.equal(lock.current,true);
+ finish();await first;
+ assert.deepEqual(events,['store','thumbnail','builders']);
+ assert.equal(lock.current,false);
+ await save();
+ assert.equal(events.filter(item=>item==='store').length,2);
+});
+
+test('custom product editor save is single-flight and unlocks after a failed write',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const b={id:'builder',name:'Product',enabled:false,available:false,productCreated:true},lock={current:false},calls=[];
+ let finish,reject=false;
+ const pending=new Promise(resolve=>{finish=resolve;});
+ const save=compile(decl.initializer.getText(ast),{
+  b,all:[b],builderSaveLock:lock,requireManage:()=>true,validateBuilder:()=>[],setErrs(){},setSaving(){},
+  app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},errText:()=> 'Safe failure',
+  goodiesApi:{saveBuilders:async()=>{calls.push('save');await pending;if(reject)throw Error('Synthetic write failed');}},
+ });
+ const first=save();await save();
+ assert.equal(calls.length,1);assert.equal(lock.current,true);
+ reject=true;finish();await first;
+ assert.equal(lock.current,false);
+ await save();assert.equal(calls.length,2);
+ assert.equal(lock.current,false);
 });
