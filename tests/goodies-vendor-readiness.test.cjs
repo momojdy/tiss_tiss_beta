@@ -113,3 +113,43 @@ test('editing a hidden or unavailable custom product never silently republishes 
  assert.equal(created[0].enabled,true);
  assert.equal(created[0].available,true);
 });
+
+
+test('own-driver evidence never falls back to public listing photos when private rollout is off',async()=>{
+ const {node,ast}=find(orders,'GoodiesOrdersPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='markOwnDelivered')).declarationList.declarations[0];
+ const events=[],order={id:'delivery-order'};
+ const run=(enabled)=>compile(decl.initializer.getText(ast),{
+  app:{biz:{id:'merchant'},toast:message=>events.push(['toast',message])},
+  orders:{reload:async()=>events.push(['reload'])},
+  setOwnBusy:value=>events.push(['busy',value]),
+  goodiesOrdersRequest:async(name,args)=>{
+   events.push(['rpc',name,args]);
+   return name==='goodies_private_delivery_proof_uploads_enabled'?{data:enabled,error:null}:{error:null};
+  },
+  ImagePicker:{
+   MediaTypeOptions:{Images:'Images'},requestCameraPermissionsAsync:async()=>{events.push(['camera']);return{granted:true};},
+   launchCameraAsync:async()=>({canceled:false,assets:[{uri:'file:///photo.jpg',width:1200}]}),
+  },
+  ImageManipulator:{manipulateAsync:async()=>({uri:'file:///edited.jpg'}),SaveFormat:{JPEG:'jpeg'}},
+  FileSystem:{EncodingType:{Base64:'base64'},readAsStringAsync:async()=> 'U1lOVEhFVElD'},
+  decode:value=>value,
+  GOODIES_DELIVERY_PROOF_BUCKET:'goodies-delivery-proofs',
+  supabase:{storage:{from:bucket=>{
+   events.push(['bucket',bucket]);
+   return{upload:async(path)=>{events.push(['upload',path]);return{error:null};},getPublicUrl:()=>{throw Error('Private proof must not have a public URL');}};
+  }}},
+  console:{warn(){}},
+ });
+ await run(false)(order);
+ assert.ok(!events.some(e=>e[0]==='camera'||e[0]==='upload'||e[0]==='bucket'));
+ assert.ok(!events.some(e=>e[0]==='rpc'&&e[1]==='goodies_self_delivery_mark_delivered'));
+ events.length=0;
+ await run(true)(order);
+ assert.ok(events.some(e=>e[0]==='bucket'&&e[1]==='goodies-delivery-proofs'));
+ assert.ok(events.some(e=>e[0]==='upload'&&/^merchant\/delivery-order\/.*\.jpg$/.test(e[1])));
+ const submitted=events.find(e=>e[0]==='rpc'&&e[1]==='goodies_self_delivery_mark_delivered');
+ assert.ok(submitted,'Private proof must be confirmed by the server');
+ assert.match(submitted[2].p_proof_url,/^merchant\/delivery-order\/.*\.jpg$/);
+ assert.ok(!events.some(e=>e[0]==='bucket'&&e[1]==='listing-photos'));
+});
