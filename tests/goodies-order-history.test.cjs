@@ -8,9 +8,9 @@ const path='src/features/Goodies/serverSync.ts';
 const source=ts.createSourceFile(path,fs.readFileSync(path,'utf8'),ts.ScriptTarget.ES2022,true,ts.ScriptKind.TS);
 const declaration=source.statements.find(node=>ts.isFunctionDeclaration(node)&&node.name?.text==='mapOrder');
 assert.ok(declaration,'The server-order mapper must remain testable');
-const module={exports:{}};
+const sandboxModule={exports:{}};
 const context={
- module,exports:module.exports,Date,Number,String,Array,
+ module:sandboxModule,exports:sandboxModule.exports,Date,Number,String,Array,
  STB:{},IT:{},ensureGoodiesOrderStore(){},
  stageByStatus:{scheduled:0,placed:0,accepted:1,preparing:2,ready:3,courier_assigned:4,picked_up:5,completed:6,cancelled:0,declined:0,expired:0},
  label:(_key,fallback)=>fallback,
@@ -20,7 +20,7 @@ vm.runInNewContext(
   compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022},
  }).outputText,context
 );
-const mapOrder=module.exports;
+const mapOrder=sandboxModule.exports;
 const row=payment_method=>({
  id:'db-order',order_code:'GD-123',store_id:'store-1',
  status:'placed',order_type:'delivery',items:[],
