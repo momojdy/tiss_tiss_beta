@@ -24,6 +24,18 @@ test('business search returns real Goodies destinations and escapes wildcard inp
  const s=service({goodies_products:{data:[{id:'p',name:'Real product',review_status:'approved'}]},goodies_orders:{data:[{id:'o',order_code:'GOOD-1',status:'completed'}]}});
  const rows=await s.businessSearch(app,'50%_');assert.equal(rows[0].page,'goodiesProducts');assert.equal(rows[1].page,'goodiesOrders');assert.equal(s.calls[0].filters.find(f=>f[0]==='ilike')[2],'%50\\%\\_%');
 });
+test('workspace navigation accepts registered pages and rejects unknown or inherited notification destinations',()=>{
+ const file='src/screens/businessSpace/BusinessSpaceScreen.tsx',ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true);let registry,nav;
+ function visit(node){if(ts.isVariableDeclaration(node)&&node.name.getText(ast)==='PAGES')registry=node.initializer;if(ts.isVariableDeclaration(node)&&node.name.getText(ast)==='nav')nav=node.initializer;ts.forEachChild(node,visit);}visit(ast);
+ assert.ok(registry&&nav);const pages=Object.fromEntries(registry.properties.map(p=>[p.name.text,()=>null]));let stack=[],panel='orders',sheet='profile';const alerts=[];
+ const module={exports:{}};vm.runInNewContext(ts.transpileModule('module.exports='+nav.getText(ast),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,PAGES:pages,sheet:{name:'profile'},lang:'fr',wantissLocale:v=>v,resolveGoodiesVendorLabel:()=> 'Indisponible',toast:v=>alerts.push(v),setStack:update=>{stack=update(stack);},setPanel:v=>{panel=v;},setSheet:v=>{sheet=v;}});
+ for(const key of Object.keys(pages))module.exports.go(key,{focus:'synthetic'});
+ assert.equal(stack.length,Object.keys(pages).length);assert.equal(panel,null);assert.equal(sheet,null);
+ const before=stack.length;
+ for(const key of ['missing-page','constructor','__proto__','',null,[]])module.exports.go(key);
+ assert.equal(stack.length,before,'Unknown routes must not leave an invisible page on the navigation stack');
+ assert.equal(alerts.length,6);assert.ok(alerts.every(text=>text==='Indisponible'));
+});
 test('vendor preferences use an atomic main-account RPC and reject stale account writes',async()=>{
  const s=service();await s.saveBusinessPreferences('owner',{push:false,email:false});assert.equal(s.calls[0].rpc,'goodies_set_vendor_notification_preferences');assert.equal(s.calls[0].args.p_push,false);
  const stale=service({},'other');await assert.rejects(stale.saveBusinessPreferences('owner',{push:true,email:true}));assert.equal(stale.calls.length,0);

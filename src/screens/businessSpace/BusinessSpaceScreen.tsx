@@ -2,6 +2,7 @@ import {loadBusinessPreferences,saveBusinessPreferences} from '../../services/go
 import {isGoodiesBusiness,saveGoodiesVendorLanguage} from '../../services/goodiesSettlement';
 import {WANTISS_LANGUAGES,wantissLocale} from '../../lib/locales';
 import {goodiesBusinessNotificationTarget,goodiesNotificationWorkspace} from '../../features/Goodies/notifications';
+import {resolveGoodiesVendorLabel} from './BusinessSpaceGoodiesLabels';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -176,7 +177,13 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
 
   /* preferences, push token, deep links */
   useEffect(()=>{let active=true;void loadBusinessPreferences(user.id).then(p=>{if(active)setPrefS(p);},()=>{if(active){setPrefS({push:false,email:false});toast('Notification preferences could not load. Please try again.');}});return()=>{active=false;};},[user.id,toast]);
-  const nav = { go: (page: string, arg?: any) => { setStack(st => [...st, { page, arg, fromProfile: sheet?.name === 'profile' }]); setPanel(null); setSheet(null); } };
+  const nav = { go: (page: string, arg?: any) => {
+    if(typeof page!=='string'||!Object.hasOwn(PAGES,page)){
+      toast(resolveGoodiesVendorLabel('lbl.vendor.shared.ca18449697','Unavailable',wantissLocale(lang)));
+      return;
+    }
+    setStack(st => [...st, { page, arg, fromProfile: sheet?.name === 'profile' }]); setPanel(null); setSheet(null);
+  } };
   useEffect(() => {
     if (!pref.push || Platform.OS === 'web') return;
     (async () => {
