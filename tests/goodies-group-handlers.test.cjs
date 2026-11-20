@@ -187,6 +187,6 @@ test('group creation rejects unsyncable builder lines before mutating server sta
  h.S.cart.lines.push({...h.line,k:'custom-builder',s:'store-a',id:'unlisted-builder',byo:{sid:'store-a'}});
  await h.handlers.createServerGroup();
  assert.equal(h.state.calls.length,0,'Unsupported builder must not leave a partially synced group invitation');
- assert.ok(h.state.toasts.some(x=>/not linked to a live catalogue product/.test(x)));
+ assert.ok(h.state.toasts.some(x=>/Could not create the group invitation/.test(x)));
  assert.equal(h.ctx.groupActionLock.current,false);
 });
