@@ -14,6 +14,7 @@ import * as Linking from 'expo-linking';
 import * as Notifications from 'expo-notifications';
 import * as WebBrowser from 'expo-web-browser';
 import { supabase } from '../../lib/supabase';
+import {GOODIES_PUSH_RELEASED} from '../../services/goodiesPush';
 
 import { FX, FM, LIGHT, DARK, ThemeCtx, useTheme, useS, errText, Biz, Meta, Range, DEFAULT_RULES, presetRange, rpc, q, useQ, App, AppCtx, ArgCtx, useAct, Btn, Field, Skel, ErrBox, PanelSheet, ListingWizard } from "./BusinessSpaceShared";
 import { GoodiesToolsPage, GoodiesStorePage, GoodiesProductsPage, GoodiesBuilderEditPage, GoodiesRequestsPage, GoodiesReviewsPage } from "./BusinessSpaceGoodies";
@@ -26,7 +27,7 @@ import { PromotionsPage, RegistrationPage, AuditPage, HelpPage, SecurityPage, Bu
 import { SheetHost } from "./BusinessSpaceSheets";
 
 /* ---------- notifications handler (foreground) ---------- */
-Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowAlert: true, shouldPlaySound: false, shouldSetBadge: false } as any) });
+Notifications.setNotificationHandler({ handleNotification: async () => ({ shouldShowBanner: true, shouldShowList: true, shouldPlaySound: false, shouldSetBadge: false }) });
 
 const BUSINESS_REQUEST_TIMEOUT_MS = 15000;
 
@@ -48,7 +49,7 @@ const PAGES: Record<string, () => React.ReactElement> = {
 };
 const TABS: [string, string, string | null][] = [['Overview', 'view-dashboard-outline', null], ['Features', 'apps', 'features'], ['Orders', 'clipboard-list-outline', 'orders'], ['Listings', 'format-list-bulleted', 'listings'], ['Payouts', 'bank-transfer-out', 'payouts']];
 
-export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpenWallet }: { onSignOut: () => void; onSwitchToBuyer: () => void; onOpenWallet?: () => void }) {
+export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpenWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: { onSignOut: () => void; onSwitchToBuyer: () => void; onOpenWallet?: () => void;initialGoodiesNotification?:Record<string,any>|null;onGoodiesNotificationHandled?:()=>void }) {
   const scheme = useColorScheme();
   const [dark, setDarkS] = useState(scheme === 'dark');
   useEffect(() => { AsyncStorage.getItem('bs.dark').then(v => { if (v != null) setDarkS(v === '1'); }).catch(() => undefined); }, []);
@@ -57,14 +58,14 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpen
   return (
     <SafeAreaProvider>
       <ThemeCtx.Provider value={dark ? DARK : LIGHT}>
-        <Gate dark={dark} setDark={setDark} onSignOut={signOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} />
+        <Gate dark={dark} setDark={setDark} onSignOut={signOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} />
       </ThemeCtx.Provider>
     </SafeAreaProvider>
   );
 }
 
 /** Loads the signed-in user and their businesses, then hands over to the workspace. */
-function Gate({ dark, setDark, onSignOut, onBuyer, onWallet }: any) {
+function Gate({ dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: any) {
   const t = useTheme(), s = useS(), ins = useSafeAreaInsets();
   const [user, setUser] = useState<{ id: string; email: string; name: string } | null>(null), [uerr, setUerr] = useState<string | null>(null), [tick, setTick] = useState(0);
   useEffect(() => {
@@ -88,7 +89,7 @@ function Gate({ dark, setDark, onSignOut, onBuyer, onWallet }: any) {
   if (mem.e) return <View style={{ flex: 1, backgroundColor: t.bg, padding: 24, paddingTop: ins.top + 40 }}><ErrBox e={mem.e} retry={mem.reload} /></View>;
   const list = mem.d ?? [];
   if (!list.length) return <FirstBusiness user={user} onCreated={reloadBiz} onBuyer={onBuyer} />;
-  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} onWallet={onWallet} />;
+  return <Workspace user={user} bizList={list} reloadBiz={reloadBiz} dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onBuyer} onWallet={onWallet} initialGoodiesNotification={initialGoodiesNotification} onGoodiesNotificationHandled={onGoodiesNotificationHandled} />;
 }
 function FirstBusiness({ user, onCreated }: any) {
   const t = useTheme(), ins = useSafeAreaInsets();
@@ -118,7 +119,7 @@ function FirstBusiness({ user, onCreated }: any) {
 }
 
 /** Everything that needs an active business. */
-function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer, onWallet }: any) {
+function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer, onWallet,initialGoodiesNotification,onGoodiesNotificationHandled }: any) {
   const t = useTheme(), ins = useSafeAreaInsets(), s = useS();
   const [bizId, setBizId] = useState<string>(''), [tick, setTick] = useState(0), [range, setRange] = useState<Range>(presetRange('30D'));
   const [stack, setStack] = useState<{ page: string; arg?: any; fromProfile?: boolean }[]>([]);
@@ -166,7 +167,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     (goodiesWorkspace?['goodies_orders','goodies_store_schedules','conversations','goodies_products','goodies_builder_configs']:['wallet_ledger','feature_orders','business_activity','listings','conversations','payout_methods','goodies_products','goodies_builder_configs']).forEach(tb => ch.on('postgres_changes' as any, { event: '*', schema: 'public', table: tb, filter: `business_id=eq.${biz.id}` }, kick));
     ch.on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'notifications', filter: 'user_id=eq.' + user.id }, payload => {
       const notice: any = payload.new;kick();
-      if (pref.push && (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_'))) {
+      if (pref.push && !(goodiesWorkspace&&GOODIES_PUSH_RELEASED) && (String(notice?.notification_type || '').startsWith('goodies_ingredient_') || String(notice?.notification_type || '').startsWith('goodies_vendor_'))) {
         void Notifications.scheduleNotificationAsync({ content: { title: String(notice.title || 'Goodies ingredient update'), body: String(notice.body || 'Your ingredient request was updated.'), data: {...(notice.metadata || {}), notification_type: notice.notification_type, destination: notice.destination} }, trigger: null }).catch(()=>toast('An alert could not be shown. Check your device notification settings.'));
       }
     });
@@ -200,6 +201,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(r => {
       const d: any = r.notification.request.content.data ?? {};
+      if(d.feature==='Goodies'&&d.notification_id)return;
       const targetBusiness=goodiesNotificationWorkspace(d,biz.id,bizList.map((row:Biz)=>row.id));
       if(!targetBusiness)return;
       if(targetBusiness!==biz.id)app.selectBiz(targetBusiness);
@@ -244,6 +246,17 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
     regDismissed, dismissReg: () => setRegDismissed(true),
   };
 
+  useEffect(()=>{
+    if(!initialGoodiesNotification)return;
+    const notice=initialGoodiesNotification;
+    if(notice.user_id!==user.id){onGoodiesNotificationHandled?.();return;}
+    const business=goodiesNotificationWorkspace(notice,biz.id,bizList.map((row:Biz)=>row.id));
+    const target=business?goodiesBusinessNotificationTarget(notice,business):null;
+    if(!business||!target){toast(resolveGoodiesVendorLabel('lbl.vendor.shared.ca18449697','Unavailable',wantissLocale(lang)));onGoodiesNotificationHandled?.();return;}
+    if(business!==biz.id){app.selectBiz(business);return;}
+    if(target.page==='payouts')setPanel({name:'payouts'});else nav.go(target.page,target.arg);
+    onGoodiesNotificationHandled?.();
+  },[initialGoodiesNotification,biz.id,user.id]); // eslint-disable-line react-hooks/exhaustive-deps
   const top = stack[stack.length - 1], Page = top ? PAGES[top.page] : null;
   const overlay = !!(top || panel || sheet || wiz);
   const panelTitle = panel ? panel.name[0].toUpperCase() + panel.name.slice(1) : '';

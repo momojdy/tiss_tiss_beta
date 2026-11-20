@@ -1,14 +1,77 @@
 {
-  "Loading addresses…": {"fr":"Chargement des adresses…","es":"Cargando direcciones…","zh-Hans":"正在加载地址…"},
-  "Could not check cash-on-delivery availability. Please retry or choose another payment method.": {"fr":"Impossible de vérifier si le paiement à la livraison est disponible. Réessayez ou choisissez un autre moyen de paiement.","es":"No se pudo comprobar si el pago contra entrega está disponible. Vuelve a intentarlo o elige otro método de pago.","zh-Hans":"无法确认是否支持货到付款。请重试或选择其他付款方式。"},
-  "Your checkout changed. Review the current items and total before trying again.": {"fr":"Votre commande a changé. Vérifiez les articles et le total actuels avant de réessayer.","es":"Tu pedido ha cambiado. Revisa los artículos y el total actuales antes de volver a intentarlo.","zh-Hans":"结账信息已更改。请检查当前商品和总额后重试。"},
-  "Delivery accepted": {"fr":"Livraison acceptée","es":"Entrega aceptada","zh-Hans":"已接受配送任务"},
-  "Live location sharing is active while Wantiss is open.": {"fr":"Le partage de position en direct est actif lorsque Wantiss est ouvert.","es":"La ubicación se comparte en tiempo real mientras Wantiss está abierto.","zh-Hans":"Wantiss 打开时会实时共享位置。"},
-  "Could not open the map": {"fr":"Impossible d’ouvrir la carte","es":"No se pudo abrir el mapa","zh-Hans":"无法打开地图"},
-  "Delivery offer": {"fr":"Proposition de livraison","es":"Oferta de entrega","zh-Hans":"配送邀约"},
-  "Open delivery map": {"fr":"Ouvrir la carte de livraison","es":"Abrir el mapa de entrega","zh-Hans":"打开送达地点地图"},
-  "Open pickup map": {"fr":"Ouvrir la carte du retrait","es":"Abrir el mapa de recogida","zh-Hans":"打开取货地点地图"},
-  "Pickup store": {"fr":"Magasin de retrait","es":"Tienda de recogida","zh-Hans":"取货商店"},
-  "Delivery is unavailable for this address. Choose pickup or another address.": {"fr":"La livraison n’est pas disponible à cette adresse. Choisissez le retrait ou une autre adresse.","es":"La entrega no está disponible para esta dirección. Elige recogida u otra dirección.","zh-Hans":"此地址暂不支持配送。请选择自取或其他地址。"},
-  "Loading notifications…": {"fr":"Chargement des notifications…","es":"Cargando notificaciones…","zh-Hans":"正在加载通知…"}
+  "Loading addresses…": {
+    "fr": "Chargement des adresses…",
+    "es": "Cargando direcciones…",
+    "zh-Hans": "正在加载地址…"
+  },
+  "Could not check cash-on-delivery availability. Please retry or choose another payment method.": {
+    "fr": "Impossible de vérifier si le paiement à la livraison est disponible. Réessayez ou choisissez un autre moyen de paiement.",
+    "es": "No se pudo comprobar si el pago contra entrega está disponible. Vuelve a intentarlo o elige otro método de pago.",
+    "zh-Hans": "无法确认是否支持货到付款。请重试或选择其他付款方式。"
+  },
+  "Your checkout changed. Review the current items and total before trying again.": {
+    "fr": "Votre commande a changé. Vérifiez les articles et le total actuels avant de réessayer.",
+    "es": "Tu pedido ha cambiado. Revisa los artículos y el total actuales antes de volver a intentarlo.",
+    "zh-Hans": "结账信息已更改。请检查当前商品和总额后重试。"
+  },
+  "Delivery accepted": {
+    "fr": "Livraison acceptée",
+    "es": "Entrega aceptada",
+    "zh-Hans": "已接受配送任务"
+  },
+  "Live location sharing is active while Wantiss is open.": {
+    "fr": "Le partage de position en direct est actif lorsque Wantiss est ouvert.",
+    "es": "La ubicación se comparte en tiempo real mientras Wantiss está abierto.",
+    "zh-Hans": "Wantiss 打开时会实时共享位置。"
+  },
+  "Could not open the map": {
+    "fr": "Impossible d’ouvrir la carte",
+    "es": "No se pudo abrir el mapa",
+    "zh-Hans": "无法打开地图"
+  },
+  "Delivery offer": {
+    "fr": "Proposition de livraison",
+    "es": "Oferta de entrega",
+    "zh-Hans": "配送邀约"
+  },
+  "Open delivery map": {
+    "fr": "Ouvrir la carte de livraison",
+    "es": "Abrir el mapa de entrega",
+    "zh-Hans": "打开送达地点地图"
+  },
+  "Open pickup map": {
+    "fr": "Ouvrir la carte du retrait",
+    "es": "Abrir el mapa de recogida",
+    "zh-Hans": "打开取货地点地图"
+  },
+  "Pickup store": {
+    "fr": "Magasin de retrait",
+    "es": "Tienda de recogida",
+    "zh-Hans": "取货商店"
+  },
+  "Delivery is unavailable for this address. Choose pickup or another address.": {
+    "fr": "La livraison n’est pas disponible à cette adresse. Choisissez le retrait ou une autre adresse.",
+    "es": "La entrega no está disponible para esta dirección. Elige recogida u otra dirección.",
+    "zh-Hans": "此地址暂不支持配送。请选择自取或其他地址。"
+  },
+  "Loading notifications…": {
+    "fr": "Chargement des notifications…",
+    "es": "Cargando notificaciones…",
+    "zh-Hans": "正在加载通知…"
+  },
+  "Goodies update": {
+    "fr": "Mise à jour Goodies",
+    "es": "Actualización de Goodies",
+    "zh-Hans": "Goodies 更新"
+  },
+  "Open Wantiss to see your update.": {
+    "fr": "Ouvrez Wantiss pour consulter votre mise à jour.",
+    "es": "Abre Wantiss para ver tu actualización.",
+    "zh-Hans": "打开 Wantiss 查看更新。"
+  },
+  "This update could not be opened. Please try again from your notifications.": {
+    "fr": "Impossible d’ouvrir cette mise à jour. Réessayez depuis vos notifications.",
+    "es": "No se pudo abrir esta actualización. Vuelve a intentarlo desde tus notificaciones.",
+    "zh-Hans": "无法打开此更新。请从通知中重试。"
+  }
 }

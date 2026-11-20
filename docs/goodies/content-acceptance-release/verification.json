@@ -1,13 +1,13 @@
 {
   "prepared": true,
   "published": false,
-  "fields": 2135,
-  "localeLookupsVerified": 8532,
+  "fields": 2138,
+  "localeLookupsVerified": 8544,
   "existingHaitianFieldsPreserved": 775,
   "feesAndNonTextConfigurationUnchanged": true,
   "policyDocumentsUnchanged": true,
   "schemaErrors": [],
   "publicationGuardErrors": [],
-  "payloadSha256": "45a84e7d87e26be86363a05db32ae165cf2b220ce2464e5b2b75357b1a6be6cd",
+  "payloadSha256": "cf066a4a298ced2bc38c46e3e307de748e2bc94597380c42ccb425f638e5b87f",
   "scope": "Local payload/schema/consumer-resolver verification, not live publication or human review"
 }

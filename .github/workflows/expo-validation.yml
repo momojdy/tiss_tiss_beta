@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: momojdy/tiss-admin
-          ref: c00bb25296b5e295d89c575e23d713f40a443d84
+          ref: 4451c830a26dce10cb2e7c7795e2df73a1ffaafc
           path: tiss-admin
           persist-credentials: false
       - uses: actions/setup-node@v4
@@ -68,7 +68,7 @@ jobs:
         with:
           deno-version: v2.9.6
       - name: Type-check deployed edge functions
-        run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts supabase/functions/refund-goodies-card-order/index.ts supabase/functions/expire-goodies-card-auth/index.ts
+        run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-admin-bootstrap/index.ts supabase/functions/wantiss-admin-staff/index.ts supabase/functions/wantiss-public-content/index.ts supabase/functions/wantiss-cms-public/index.ts supabase/functions/goodies-delivery-quote/index.ts supabase/functions/rapid-api/index.ts supabase/functions/process-goodies-card-refunds/index.ts supabase/functions/place-goodies-card-order/index.ts supabase/functions/refund-goodies-card-order/index.ts supabase/functions/expire-goodies-card-auth/index.ts supabase/functions/process-goodies-push-notifications/index.ts
       - name: Test Goodies refund and webhook decision logic
         run: deno test --allow-read --allow-env --config supabase/functions/deno.json supabase/functions/goodies-tests/ supabase/functions/process-goodies-card-refunds/ supabase/functions/rapid-api/goodiesStripeState_test.ts
 

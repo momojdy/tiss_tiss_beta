@@ -270,5 +270,17 @@
   {
     "id": "lbl.notification.goodies_vendor_settlement_commission_due_soon.body",
     "text": "Your weekly Goodies commission settlement is due within 24 hours."
+  },
+  {
+    "id": "lbl.notification.push.title",
+    "text": "Goodies update"
+  },
+  {
+    "id": "lbl.notification.push.body",
+    "text": "Open Wantiss to see your update."
+  },
+  {
+    "id": "lbl.notification.openFailed",
+    "text": "This update could not be opened. Please try again from your notifications."
   }
 ]

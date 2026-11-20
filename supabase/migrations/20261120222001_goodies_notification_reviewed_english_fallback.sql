@@ -1,4 +1,6 @@
 begin;
+set local lock_timeout='5s';
+set local statement_timeout='45s';
 -- Match the existing customer CMS resolver: reviewed locale, reviewed English,
 -- then the application-owned fallback. Unfinished Creole remains unpublished.
 create or replace function public.goodies_notification_text(p_key text,p_fallback text,p_user_id uuid,p_vars jsonb default '{}'::jsonb)

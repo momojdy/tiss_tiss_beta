@@ -62,6 +62,8 @@ import FrenziesStreakShieldScreen from './src/screens/Frenzies/FrenziesStreakShi
 import FrenziesGetStreakShieldScreen from './src/screens/Frenzies/FrenziesGetStreakShieldScreen';
 import FrenziesStreakShieldCheckoutScreen from './src/screens/Frenzies/FrenziesStreakShieldCheckoutScreen';
 import { supabase } from './src/lib/supabase';
+import {useGoodiesPush} from './src/services/useGoodiesPush';
+import {unregisterGoodiesPushDevice} from './src/services/goodiesPush';
 import BusinessSpaceScreen from './src/features/BusinessSpace/BusinessSpaceStandaloneEntry';
 import GoodiesCourierScreen from './src/features/Goodies/GoodiesCourierScreen';
 import { GlowzEntry } from './src/features/Glowz/GlowzStandaloneEntry';
@@ -130,6 +132,12 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [authenticated, setAuthenticated] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   const [appMode, setAppMode] = useState<AppMode>('buyer');
+  const [goodiesPushNotice,setGoodiesPushNotice]=useState<Record<string,any>|null>(null);
+  const signOutAccount=async()=>{
+    // A successful server sign-out also revokes the bound Auth session.
+    await unregisterGoodiesPushDevice().catch(()=>undefined);
+    return supabase.auth.signOut();
+  };
   const [authInitialMode, setAuthInitialMode] = useState<RequestedMode>('buyer');
   const routeAuthenticatedUser = async (requestedMode: RequestedMode = 'buyer') => {
     const { data: userResult, error: userError } = await withAuthRequestTimeout(supabase.auth.getUser(), 'Checking your session');
@@ -160,7 +168,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     if (modesError) throw modesError;
     const hasRequestedMode = requestedMode === 'buyer' ? modes?.buyer === true : modes?.business === true;
     if (!hasRequestedMode) {
-      await supabase.auth.signOut();
+      await signOutAccount();
       throw new Error(requestedMode === 'buyer'
         ? 'This Wantiss account is not registered in Buyer mode yet. Choose Register with Buyer selected.'
         : 'This Wantiss account is not registered in B&P 2P mode yet. Choose Register with B&P 2P selected.');
@@ -314,12 +322,19 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(()=>{if(!authenticated||!pendingHelpPayId)return;setWalletHelpPayId(pendingHelpPayId);setPendingHelpPayId(null);setAppMode('buyer');setBuyerScreen('walletHelpPay');},[authenticated,pendingHelpPayId]);
   useEffect(()=>{if(!authenticated||!pendingGroupInviteCode)return;setGoodiesInitialRoute('groupinvite:'+pendingGroupInviteCode);setPendingGroupInviteCode(null);setAppMode('buyer');setBuyerScreen('goodies');},[authenticated,pendingGroupInviteCode]);
   useEffect(() => { if (!authenticated || !pendingQrToken) return; let active = true; const token = pendingQrToken; void (async () => { try { const { data, error } = await supabase.rpc('resolve_qr_identity', { p_token: token }); if (error) throw error; if (!data?.valid) throw new Error('This Wantiss QR is invalid, expired, or revoked.'); if (!active) return; setPendingQrToken(null); if (data.is_self === true) { setQrLaunchToken(token); setQrKind(data.qr_type === 'wallet_receive' ? 'wallet_receive' : 'buyer_identity'); setBuyerScreen('qrIdentity'); setAppMode('buyer'); return; } if (data.destination === 'vendor-shop') { setPublicShop({ vendorId: data.vendor_id, shopName: data.shop_name }); setBuyerScreen('vendorShop'); } else if (data.destination === 'buyer-profile') { setPublicBuyerProfile(data); setBuyerScreen('publicBuyerProfile'); } else if (data.destination === 'wallet-receive' || data.qr_type === 'wallet_receive') { setWalletQrRecipient({ token, recipient: { ...data, destination: 'wallet-receive' } }); setQrLaunchToken(null); setWalletQrDisplayToken(null); setBuyerScreen('walletQrRecipient'); setAppMode('buyer'); } } catch (error) { Alert.alert('QR not recognized', error instanceof Error ? error.message : 'This QR could not be opened.'); } })(); return () => { active = false; }; }, [authenticated, pendingQrToken]);
+  useGoodiesPush(authenticated,appMode==='courier'||appMode==='vendor'||buyerScreen==='goodies',destination=>{
+    if(destination.mode==='courier'){setAppMode('courier');return;}
+    if(destination.mode==='vendor'){setGoodiesPushNotice(destination.notice);setAppMode('vendor');return;}
+    setAppMode('buyer');
+    if(destination.route==='messages'){setNotificationConversationId(destination.conversationId);setBuyerScreen('messages');return;}
+    setGoodiesInitialRoute(destination.route==='orders'?'orders':'notifs');setBuyerScreen('goodies');
+  });
   if (!fontsLoaded || !authReady) return null;
   if (authenticated && appMode === 'courier') {
-    return <GoodiesCourierScreen onSignOut={async () => { const {error}=await supabase.auth.signOut(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+    return <GoodiesCourierScreen onSignOut={async () => { const {error}=await signOutAccount(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated && appMode === 'vendor') {
-    return <BusinessSpaceScreen onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onOpenWallet={() => { setAppMode('buyer'); setBuyerScreen('wallet'); }} onSignOut={async () => { const {error}=await supabase.auth.signOut(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
+    return <BusinessSpaceScreen initialGoodiesNotification={goodiesPushNotice} onGoodiesNotificationHandled={()=>setGoodiesPushNotice(null)} onSwitchToBuyer={() => { setAppMode('buyer'); setBuyerScreen('home'); }} onOpenWallet={() => { setAppMode('buyer'); setBuyerScreen('wallet'); }} onSignOut={async () => { const {error}=await signOutAccount(); if(error)throw error; setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }} />;
   }
   if (authenticated) {
     try {
@@ -407,7 +422,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
             }
             return;
           }
-          const { error } = await supabase.auth.signOut();
+          const { error } = await signOutAccount();
           if (error) { Alert.alert('Could not switch account', error.message); return; }
           setAuthenticated(false);
           setAppMode('buyer');
@@ -415,7 +430,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
           setScreen('auth');
           setBuyerScreen('home');
         }}
-        onLogOut={async () => { const { error } = await supabase.auth.signOut(); if (error) { Alert.alert('Could not log out', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
+        onLogOut={async () => { const { error } = await signOutAccount(); if (error) { Alert.alert('Could not log out', error.message); return; } setAuthenticated(false); setAppMode('buyer'); setScreen('auth'); setBuyerScreen('home'); }}
       />;
       if (buyerScreen === 'accountSecurity') return <AccountSecurityScreen onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'addresses') return <AddressesScreen onBack={() => setBuyerScreen('settings')} />;
@@ -427,7 +442,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
-  if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await supabase.auth.signOut(); setScreen('auth'); }} />;
+  if (screen === 'reset') return <ResetPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onUpdatePassword={async password => { const { error } = await supabase.auth.updateUser({ password }); if (error) throw error; await signOutAccount(); setScreen('auth'); }} />;
   return <AuthScreen initialMode={authInitialMode} onSignInPressed={async (email, password, requestedMode) => { const { error } = await withAuthRequestTimeout(supabase.auth.signInWithPassword({ email, password }), 'Signing in'); if (error) throw error; await routeAuthenticatedUser(requestedMode); }} onForgotPasswordPressed={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} onForgotPasswordScreenPressed={() => setScreen('forgot')} onSignUpPressed={async (email, password, role, fullName, businessName) => {
     const wantsBusiness = ['vendor', 'business', 'seller', 'merchant'].includes(String(role).trim().toLowerCase());
     const { data, error } = await supabase.auth.signUp({

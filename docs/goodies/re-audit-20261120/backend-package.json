@@ -1,0 +1,36 @@
+{
+  "preparedAt": "2026-11-20T16:44:55.838114+00:00",
+  "project": "ycbirmgppwavorwudlrv",
+  "authorization": "Latest user message explicitly authorizes migrations, Edge Functions and backend reconciliation; no Wantiss app deployment or unnecessary UI changes.",
+  "scope": "Additive default-off notification infrastructure and reversible notification/CMS helpers only. No charges, financial records, production secrets, CMS payload publication or client deployment.",
+  "backupScope": "Two changed function definitions and ACLs captured, tested recovery. This is NOT a full production database backup. Prior broad financial rollout recovery requirements remain unchanged.",
+  "files": [
+    {
+      "source": "supabase/migrations/20261120222001_goodies_notification_reviewed_english_fallback.sql",
+      "sha256": "38a2f06d7adc99acaaf98a458c81ea12a43c2da92e999588ef86550c224e5703"
+    },
+    {
+      "source": "supabase/migrations/20261120222002_goodies_push_delivery.sql",
+      "sha256": "7e61a9f0cfd088bc187e28330f2aa709c47f507cfb7a7e69f5515457d82416db"
+    },
+    {
+      "source": "supabase/migrations/20261120222003_goodies_push_content_review.sql",
+      "sha256": "f32972767c97e73eb9081630e5bac1a69ab73598a887a96cc7cf17a9ebcaa854"
+    }
+  ],
+  "isolatedVerification": {
+    "nativePostgresTargetMigrations": 31,
+    "nativeConcurrencyCases": 27,
+    "fullDenoBeforeFinalWorkerTest": 95,
+    "targetedPushCmsAfterFinalWorkerChange": 10,
+    "targetedRecovery": 1,
+    "customerNodeTests": 263,
+    "adminNodeTests": 68,
+    "crossRoleNodeTests": 47,
+    "typesBoth": "PASS",
+    "newServicesLint": "PASS",
+    "unsignedBundles": "Customer web/Android/iOS and admin Android/iOS. Not signed device builds."
+  },
+  "deploymentStatus": "PREPARED_NOT_DEPLOYED",
+  "activation": "Default off; no EAS project binding is fabricated and no real notifications are sent during this deployment."
+}

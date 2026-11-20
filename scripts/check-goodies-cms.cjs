@@ -21,5 +21,6 @@ inspect(root);assert.deepEqual(violations,[],'CMS labels must cover literal refe
 assert.equal(new Set(current.routes.map(route=>route.route)).size,34,'Update the explicit route acceptance register when navigation changes.');
 
 const critical=require('./goodies-cms-source.cjs').criticalKeys(current);
-const review=fs.readFileSync(path.join(root,'../../../supabase/migrations/20261120063231_goodies_content_repair_review_coverage.sql'),'utf8');
+const migrationRoot=path.join(root,'../../../supabase/migrations');
+const review=['20261120063231_goodies_content_repair_review_coverage.sql','20261120222003_goodies_push_content_review.sql'].map(file=>fs.readFileSync(path.join(migrationRoot,file),'utf8')).join('\n');
 for(const key of critical)assert.ok(review.includes("'"+key+"'"),'Missing server publication review coverage: '+key);
