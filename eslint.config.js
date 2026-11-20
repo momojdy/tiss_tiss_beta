@@ -4,6 +4,10 @@ const expoConfig = require('eslint-config-expo/flat');
 module.exports = defineConfig([
   expoConfig,
   {
+    files: ['scripts/**/*.cjs', 'tests/**/*.cjs'],
+    languageOptions: {globals: {__dirname: 'readonly', __filename: 'readonly', Buffer: 'readonly'}},
+  },
+  {
     ignores: ['dist/*', 'node_modules/*', '.expo/*'],
     rules: {
       // The existing app does not enable React Compiler; its compiler-only diagnostics

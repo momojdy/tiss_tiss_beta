@@ -3,9 +3,15 @@ const path = require('node:path');
 const ts = require('typescript');
 const root = path.resolve(__dirname, '../src/features/Goodies');
 const pageNames = {WantissEntry:'Wantiss entry',GroupOrderSheet:'Group orders',GroupOrderModal:'Group orders',ScheduleSheet:'Scheduling',ScheduleInline:'Scheduling',SegSchedule:'Scheduling',ReviewSheet:'Review sheet',ContactsSheet:'Contact numbers sheet',CtForm:'Contact number form',Home:'Home',Cats:'Categories',CatList:'Category / store results',Explore:'Explore',Search:'Search',Promos:'Promotions',FlashDeals:'Flash deals',Notifs:'Notifications',Store:'Store',StoreReviews:'Store reviews',Product:'Product',ProductFoot:'Product',Cart:'Cart',Checkout:'Checkout',CheckoutFoot:'Checkout',Confirm:'Order confirmation',Track:'Order tracking',Orders:'Order history',Favs:'Favorites',Help:'Help / FAQs',Settings:'Settings',Profile:'Profile',Addresses:'Addresses',Contact:'Contact support',StoreChat:'Store conversation',LivePayments:'Payment methods',CardAuthentication:'Card verification',ByoScreen:'Build Your Own',ByoFoot:'Build Your Own',GoodiesCourierScreen:'Courier',GroupOrderPage:'Group orders',Sheets:'Sheets and bottom sheets',GoodiesApp:'Shared navigation and access states',Account:'Account subpages',WalletAddNewCardScreen:'Add card',HelpPay:'Shared Bill requests'};
+const vendorPages = {tools:'Vendor tools',store:'Vendor store',products:'Vendor products',builders:'Vendor builders',requests:'Vendor ingredient requests',reviews:'Vendor reviews',orders:'Vendor orders',shared:'Vendor shared interface'};
+const vendorFunctions = {GoodiesToolsCard:'tools',GoodiesToolsPage:'tools',GoodiesStorePage:'store',GoodiesStorefrontSheet:'store',GoodiesProductsPage:'products',ProductSheet:'products',GoodiesBuilderEditPage:'builders',validateBuilder:'builders',GoodiesRequestsPage:'requests',GoodiesReviewsPage:'reviews'};
 function files(dir) { if(!fs.existsSync(dir))return [];return fs.readdirSync(dir,{withFileTypes:true}).flatMap(entry => entry.isDirectory()?files(path.join(dir,entry.name)):/\.tsx?$/.test(entry.name)?[path.join(dir,entry.name)]:[]); }
 function pageFor(node, ast, rel) {
   if(rel.endsWith('BusinessSpaceGoodiesOrders.tsx'))return 'Vendor orders';
+  if(rel.endsWith('BusinessSpaceGoodies.tsx')){
+    for(let p=node.parent;p;p=p.parent)if(ts.isFunctionDeclaration(p)&&p.name&&vendorFunctions[p.name.text])return vendorPages[vendorFunctions[p.name.text]];
+    return 'Vendor shared interface';
+  }
   if(rel.includes('businessSpace/')) return 'Vendor settlement';
   for(let ancestor=node.parent;ancestor;ancestor=ancestor.parent) if(ts.isIfStatement(ancestor)&&rel==='components/Sheets.tsx'){const kind=/^k === ['"]([^'"]+)['"]$/.exec(ancestor.expression.getText(ast));if(kind) return 'Sheets · '+kind[1];}
   if(rel.endsWith('mainAddressesScreen.tsx'))return 'Shared account addresses';
@@ -26,7 +32,7 @@ function analyze() {
   const entry=entries.get(id);if(!entry.pages.includes(page))entry.pages.push(page);
   references.push({id,page,source,line,fallback:text});
  };
- for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/Wallet/WalletHelpPayScreen.tsx'),path.resolve(root,'../../screens/Main/mainAddressesScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx')]){
+ for(const filename of [...files(root),path.resolve(root,'../../components/wallet/WalletBalance.tsx'),path.resolve(root,'../../screens/Wallet/WalletAddNewCardScreen.tsx'),path.resolve(root,'../../screens/Wallet/WalletHelpPayScreen.tsx'),path.resolve(root,'../../screens/Main/mainAddressesScreen.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesSettlement.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceShared.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodiesOrders.tsx'),path.resolve(root,'../../screens/businessSpace/BusinessSpaceGoodies.tsx')]){
   if(!fs.existsSync(filename))continue;const source=fs.readFileSync(filename,'utf8'),ast=ts.createSourceFile(filename,source,99,true),rel=path.relative(root,filename);
   function visit(node){
    const line=ast.getLineAndCharacterOfPosition(node.getStart(ast)).line+1;
@@ -42,6 +48,10 @@ function analyze() {
   }visit(ast);
  }
  for(const entry of (fs.existsSync(path.join(root,'i18n/notificationCatalog.json'))?JSON.parse(fs.readFileSync(path.join(root,'i18n/notificationCatalog.json'),'utf8')):[]))add(entry.id,entry.text,'Notification templates','i18n/notificationCatalog.json',1);
+ for(const entry of (fs.existsSync(path.join(root,'i18n/vendorCopy.json'))?JSON.parse(fs.readFileSync(path.join(root,'i18n/vendorCopy.json'),'utf8')):[])){
+  const text=typeof entry.t==='string'?entry.t:entry.t?.en?.v;
+  if(entry.id&&typeof text==='string')add(entry.id,text,vendorPages[entry.page]||'Vendor shared interface','i18n/vendorCopy.json',1);
+ }
  for(const [id,text,page] of [['lbl.legalTermsTitle','Terms of use','Policies'],['lbl.legalPrivacyTitle','Privacy policy','Policies'],['lbl.legalRefundTitle','Refund and cancellation policy','Policies'],...['Home','Work','Other'].map(text=>['lbl.accountAddressType'+text,text,'Addresses']),...['Order placed','Vendor confirmed','Preparing order','Ready for courier pickup','Courier assigned','On the way','Delivered'].map((text,index)=>['lbl.stageD'+index,text,'Order tracking']),...['Order placed','Vendor confirmed','Preparing order','Ready for pickup','Picked up'].map((text,index)=>['lbl.stageP'+index,text,'Order tracking'])])add(id,text,page,'explicit dynamic keys',1);
  const collections={Home:['modes','cats','promos'],Categories:['cats'],'Category / store results':['cats'],Promotions:['coupons.title','coupons.desc'],'Build Your Own':['lib','separate existing builder configuration editor'],'Help / FAQs':['faq'],'Contact support':['topics'],Policies:['legal'],'Policy document':['legal'],'Sheets · alcrules':['rg.texts'],'Sheets · promo':['promos']};
  const pages=[...new Set([...routes.map(r=>r.page),...references.map(r=>r.page),'Support confirmation','Policies','Policy document','Notification detail'])].map(name=>({name,collections:collections[name]||[],routes:routes.filter(r=>r.page===name).map(r=>r.route),fields:[...entries.values()].filter(e=>e.pages.includes(name)).map(e=>e.id)}));
@@ -52,7 +62,7 @@ function analyze() {
  return {restrictionTexts:[...restrictionTexts.values()],entries:[...entries.values()].sort((a,b)=>a.id.localeCompare(b.id)),pages,references,routes};
 }
 function criticalKeys(result){
- const pages=new Set(['Vendor settlement','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation','Shared Bill requests','Shared Bill contribution','Shared account addresses']);
+ const pages=new Set(['Vendor settlement','Vendor orders','Vendor store','Vendor products','Vendor builders','Vendor ingredient requests','Cart','Checkout','Add card','Card verification','Order tracking','Order history','Payment methods','Notification templates','Policies','Policy document','Group orders','Support confirmation','Shared Bill requests','Shared Bill contribution','Shared account addresses']);
  return [...new Set([...result.pages.filter(p=>pages.has(p.name)).flatMap(p=>p.fields),...result.restrictionTexts.map(r=>r.id),...result.entries.filter(e=>/^lbl\.(checkout|orders?|payments?|card|addcard|notifications?)/i.test(e.id)).map(e=>e.id),...result.references.filter(r=>['actions.ts','friendlyError.ts','serverSync.ts'].includes(r.source)).map(r=>r.id)])].sort();
 }
 module.exports={analyze,root,criticalKeys};

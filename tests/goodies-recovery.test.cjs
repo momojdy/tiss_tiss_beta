@@ -22,7 +22,7 @@ test('failed payment reads preserve known balance, report unavailable, and retry
  const retry=h.refresh();await tick();h.requests[2].resolve({data:null});h.requests[3].resolve({data:[]});assert.equal(await retry,true);assert.equal(h.S.hasWallet,false);assert.equal(h.S.wallet,0);assert.equal(h.S.paymentOptionsStatus,'ready');
 });
 test('malformed balances never become a successful zero-dollar payment result',async()=>{
- for(const balance of [null,'', 'invalid']){const h=payments(),p=h.refresh();await tick();h.requests[0].resolve({data:{id:'wallet',balance}});h.requests[1].resolve({data:[]});assert.equal(await p,false);assert.equal(h.S.wallet,91);}
+ for(const balance of [null,'', 'invalid',false,true,[],[0],{},'0x10',NaN,Infinity]){const h=payments(),p=h.refresh();await tick();h.requests[0].resolve({data:{id:'wallet',balance}});h.requests[1].resolve({data:[]});assert.equal(await p,false);assert.equal(h.S.wallet,91);}
 });
 test('late responses cannot overwrite another account or a newer payment refresh',async()=>{
  const h=payments(),old=h.refresh();await tick();h.S.accountId='b';const next=h.refresh();await tick();h.requests[2].resolve({data:{id:'new',balance:30}});h.requests[3].resolve({data:[]});assert.equal(await next,true);h.requests[0].resolve({data:{id:'old',balance:999}});h.requests[1].resolve({data:[]});assert.equal(await old,false);assert.equal(h.S.wallet,30);assert.equal(h.S.paymentOptionsStatus,'ready');
@@ -31,20 +31,20 @@ test('late responses cannot overwrite another account or a newer payment refresh
 function groupCheckout({detailsFail=false}={}){
  const file='src/features/Goodies/components/Sheets.tsx',ast=ts.createSourceFile(file,fs.readFileSync(file,'utf8'),99,true);let action;
  function visit(n){if(ts.isVariableDeclaration(n)&&n.name.getText(ast)==='checkoutGroupOrder')action=n.initializer.getText(ast);ts.forEachChild(n,visit);}visit(ast);assert.ok(action);
- const line={k:'paid',id:'p',q:1},other={k:'unrelated',id:'other',q:1},S={accountId:'a',pf:{ph:'valid'},hasWallet:true,wallet:100,cart:{sid:'store',lines:[line,other]},groupOrder:{groupId:'group'}};
- let resolveWallet;const calls=[],messages=[],routes=[];const group={serverBacked:true,groupId:'group'};
- const context={S,group,groupCheckoutLock:{current:false},sharedItems:[{user_id:'a',line_key:'paid'}],currentUserId:'a',groupMembers:[{user_id:'a',role:'host'}],checkoutPreview:{items:[{line_key:'paid',product_id:'p',quantity:1,unit_price:10}]},checkoutEstimate:{group_id:'group',order_type:'pickup',estimated_total:10},groupCheckoutType:'pickup',setGroupCheckoutBusy(){},phoneOK:()=>true,A:{refreshPaymentOptions:()=>new Promise(resolve=>{resolveWallet=resolve;})},label:(_id,text)=>text,toast:text=>messages.push(text),friendlyError:(_e,text)=>text,save(){},emit(){},close(){},clearActiveGroup(){S.groupOrder=null;},reset:r=>routes.push(r),push:(r,p)=>routes.push([r,p]),fetchGoodiesOrderForNotification:async()=>{if(detailsFail)throw Error('offline');return 'code';},supabase:{rpc:async(name,args)=>{calls.push({name,args});return{data:{id:'order',order_code:'code'}};}}};
+ const line={k:'paid',id:'p',q:1},other={k:'unrelated',id:'other',q:1},group={serverBacked:true,groupId:'group'},S={accountId:'a',pf:{ph:'valid'},hasWallet:true,wallet:100,cart:{sid:'store',lines:[line,other]},groupOrder:group};
+ let resolveWallet;const calls=[],messages=[],routes=[];
+ const context={S,group,accountId:'a',mounted:{current:true},selection:{current:'selection'},groupAddressId:null,groupDeliveryQuote:null,groupCheckoutLock:{current:false},groupActionLock:{current:false},quoteLock:{current:false},previewLock:{current:false},itemLocks:{current:new Set()},current:(owner,id)=>S.accountId===owner&&S.groupOrder===group&&group.groupId===id,requireAccount:async owner=>S.accountId===owner,validEstimate:estimate=>estimate.group_id==='group'&&estimate.order_type==='pickup'&&estimate.estimated_total===10,sharedItems:[{user_id:'a',line_key:'paid'}],currentUserId:'a',groupMembers:[{user_id:'a',role:'host'}],checkoutPreview:{items:[{line_key:'paid',product_id:'p',quantity:1,unit_price:10}]},checkoutEstimate:{group_id:'group',order_type:'pickup',estimated_total:10},groupCheckoutType:'pickup',setGroupCheckoutBusy(){},phoneOK:()=>true,A:{refreshPaymentOptions:()=>new Promise(resolve=>{resolveWallet=resolve;})},label:(_id,text)=>text,toast:text=>messages.push(text),friendlyError:(_e,text)=>text,save(){},emit(){},close(){},clearActiveGroup(){S.groupOrder=null;},reset:r=>routes.push(r),push:(r,p)=>routes.push([r,p]),fetchGoodiesOrderForNotification:async()=>{if(detailsFail)throw Error('offline');return 'code';},supabase:{rpc:async(name,args)=>{calls.push({name,args});return{data:{id:'order',order_code:'code',status:'placed'}};}}};
  const run=compile('module.exports='+action,context);return{run,S,calls,messages,routes,release:()=>resolveWallet(true)};
 }
 test('group checkout prevents concurrent duplicate payment and opens the actual placed order',async()=>{
- const h=groupCheckout(),first=h.run();await h.run();assert.equal(h.calls.length,0);h.release();await first;
+ const h=groupCheckout(),first=h.run();await h.run();await tick();assert.equal(h.calls.length,0);h.release();await first;
  assert.equal(h.calls.length,1);assert.equal(h.calls[0].args.p_idempotency_key,'group-group-checkout');assert.equal(h.calls[0].args.p_address._goodies_expected_total,10);assert.equal(h.calls[0].args.p_address._goodies_expected_items[0].line_key,'paid');assert.deepEqual(h.S.cart.lines.map(x=>x.k),['unrelated']);assert.equal(h.S.groupOrder,null);assert.deepEqual(h.routes,['home',['confirm','code']]);
 });
 test('successful group payment remains successful when order details are temporarily unavailable',async()=>{
- const h=groupCheckout({detailsFail:true}),request=h.run();h.release();await request;assert.deepEqual(h.routes,['orders']);assert.equal(h.calls.length,1);assert.match(h.messages.at(-1),/Group order placed/);
+ const h=groupCheckout({detailsFail:true}),request=h.run();await tick();h.release();await request;assert.deepEqual(h.routes,['orders']);assert.equal(h.calls.length,1);assert.match(h.messages.at(-1),/Group order placed/);
 });
 test('group checkout stops after an account switch and never submits for the replacement account',async()=>{
- const h=groupCheckout(),request=h.run();h.S.accountId='b';h.release();await request;assert.equal(h.calls.length,0);assert.equal(h.S.cart.lines.length,2);assert.equal(h.routes.length,0);
+ const h=groupCheckout(),request=h.run();await tick();h.S.accountId='b';h.release();await request;assert.equal(h.calls.length,0);assert.equal(h.S.cart.lines.length,2);assert.equal(h.routes.length,0);
 });
 
 test('permission failures never masquerade as insufficient wallet funds',()=>{

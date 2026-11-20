@@ -1,6 +1,6 @@
 import {label, loadContent, onContent} from "./content";
 import React, {useCallback, useEffect, useRef, useState} from 'react';
-import {ActivityIndicator, Alert, AppState, Pressable, ScrollView, Text, View} from 'react-native';
+import {ActivityIndicator, Alert, AppState, Linking, Pressable, ScrollView, Text, View} from 'react-native';
 import * as Location from 'expo-location';
 import * as TaskManager from 'expo-task-manager';
 import {GOODIES_COURIER_LOCATION_TASK} from './goodiesCourierBackgroundLocation';
@@ -10,13 +10,45 @@ import {wantissLocale} from '../../lib/locales';
 import {friendlyError} from './friendlyError';
 import {createGoodiesRefresh} from './refreshScope';
 import {freshGpsSample} from './deliveryTracking';
+import {courierMapUrl} from './courierNavigation';
+
+type DeliveryDetails = {
+  store_name?:string; store_address?:string; store_latitude?:number; store_longitude?:number;
+  delivery_latitude?:number; delivery_longitude?:number;
+};
 
 type Delivery = {
   id:string; order_id:string; status:string; order_code:string; address:any; contact_phone:string|null;
-  items:any[]; total:number; payment_method:string; payment_status:string; business_id:string;
+  items:any[]; total:number; payment_method:string; payment_status:string; business_id:string; details?:DeliveryDetails;
 };
 
-export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
+type LocationStatus = 'off' | 'inactive' | 'permission' | 'foreground-only' | 'background-unavailable'
+  | 'task-unavailable' | 'background-active' | 'waiting' | 'foreground-active' | 'update-error' | 'start-error';
+
+export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void|Promise<void>}) {
+  function courierLocationStatus(status: LocationStatus): string {
+    switch (status) {
+      case 'inactive': return label('lbl.page.GoodiesCourierScreen.c5dd75349b', 'Location sharing stops when no delivery is active');
+      case 'permission': return label('lbl.page.GoodiesCourierScreen.22a7f353b4', 'Allow location access to track your active delivery.');
+      case 'foreground-only': return label('lbl.page.GoodiesCourierScreen.5800646f2b', 'Background permission was not granted. Live GPS works only while Wantiss is open.');
+      case 'background-unavailable': return label('lbl.page.GoodiesCourierScreen.82058ce156', 'Background GPS is unavailable in this app build. Live GPS will continue while Wantiss is open.');
+      case 'task-unavailable': return label('lbl.page.GoodiesCourierScreen.e769b32cb8', 'Foreground GPS only in Expo Go. A Wantiss development build is required for background tracking.');
+      case 'background-active': return label('lbl.page.GoodiesCourierScreen.762dfff7c0', 'Background GPS active · location sharing continues when you switch apps or lock your phone');
+      case 'waiting': return label('lbl.page.GoodiesCourierScreen.01753bced3', 'Waiting for a fresh GPS location.');
+      case 'foreground-active': return label('lbl.courierForegroundGpsActive', 'Live location sharing is active while Wantiss is open.');
+      case 'update-error': return label('lbl.cms.809e99644369', 'GPS update failed.');
+      case 'start-error': return label('lbl.cms.87e2d9bf2774', 'Unable to start background GPS');
+      default: return label('lbl.page.GoodiesCourierScreen.9ea62e5a2d', 'Location sharing is off');
+    }
+  }
+
+  function courierAssignmentStatus(status: string): string {
+    if (status === 'offered') return label('lbl.courierOfferStatus', 'Delivery offer');
+    if (status === 'accepted') return label('lbl.courierAcceptedStatus', 'Delivery accepted');
+    if (status === 'picked_up') return label('lbl.orderPickedUp', 'Picked up');
+    return label('lbl.orderUpdated', 'Order update');
+  }
+
   const [,refreshContent]=useState(0);
   const [uid,setUid]=useState('');
   const [available,setAvailable]=useState(false);
@@ -35,12 +67,11 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     });
     return()=>{mounted.current=false;subscription.unsubscribe();};
   },[]);
-  const [locationStatus,setLocationStatus]=useState(label("lbl.page.GoodiesCourierScreen.9ea62e5a2d", "Location sharing is off"));
+  const [locationStatus,setLocationStatus]=useState<LocationStatus>('off');
 
   useEffect(()=>{
     const stop=onContent(()=>{
       refreshContent(value=>value+1);
-      setLocationStatus(current=>current==='Location sharing is off'?label('lbl.page.GoodiesCourierScreen.9ea62e5a2d','Location sharing is off'):current);
     });
     void loadContent();
     const foreground=AppState.addEventListener('change',state=>{if(state==='active')void loadContent();});
@@ -73,7 +104,15 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
         if(!mounted.current||owner.current!==expectedOwner)return null;
         const {data:orders,error}=await supabase.rpc('goodies_courier_orders');
         if(error||!Array.isArray(orders))throw error||new Error('Deliveries unavailable');
-        return {presence,orders};
+        if(!mounted.current||owner.current!==expectedOwner)return null;
+        const withDetails=await Promise.all(orders.map(async(order:Delivery)=>{
+          if(!mounted.current||owner.current!==expectedOwner)return null;
+          const {data:details,error:detailsError}=await supabase.rpc('goodies_courier_delivery_details',{p_order_id:order.order_id});
+          if(detailsError||!details||typeof details!=='object'||Array.isArray(details))throw detailsError||new Error('Delivery details unavailable');
+          return {...order,details:details as DeliveryDetails};
+        }));
+        if(!mounted.current||owner.current!==expectedOwner)return null;
+        return {presence,orders:withDetails.filter(order=>order!==null)};
       },
       commit:result=>{if(result){setAvailable(!!result.presence?.is_available);setAcceptsCash(!!result.presence?.accepts_cash_on_delivery);setDeliveries((result.orders||[]) as Delivery[]);}},
     });
@@ -96,7 +135,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
           await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
         }
       } catch {}
-      if(!cancelled)setLocationStatus(label("lbl.page.GoodiesCourierScreen.c5dd75349b", "Location sharing stops when no delivery is active"));
+      if(!cancelled)setLocationStatus('inactive');
     };
 
     const startTracking=async()=>{
@@ -104,7 +143,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
       const foreground=await Location.requestForegroundPermissionsAsync();
       if(cancelled)return;
       if(!foreground.granted){
-        if(!cancelled)setLocationStatus(label("lbl.page.GoodiesCourierScreen.22a7f353b4", "Allow location access to track your active delivery."));
+        if(!cancelled)setLocationStatus('permission');
         return;
       }
 
@@ -135,16 +174,16 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
             }
             backgroundStarted=true;
           } else if(!cancelled) {
-            setLocationStatus(label("lbl.page.GoodiesCourierScreen.5800646f2b", "Background permission was not granted. Live GPS works only while Wantiss is open."));
+            setLocationStatus('foreground-only');
           }
-        } catch (backgroundError:any) {
-          if(!cancelled)setLocationStatus(label("lbl.page.GoodiesCourierScreen.82058ce156", "Background GPS is unavailable in this app build. Live GPS will continue while Wantiss is open."));
+        } catch {
+          if(!cancelled)setLocationStatus('background-unavailable');
         }
       } else if(!cancelled) {
-        setLocationStatus(label("lbl.page.GoodiesCourierScreen.e769b32cb8", "Foreground GPS only in Expo Go. A Wantiss development build is required for background tracking."));
+        setLocationStatus('task-unavailable');
       }
       if(backgroundStarted){
-        if(!cancelled)setLocationStatus(label("lbl.page.GoodiesCourierScreen.762dfff7c0", "Background GPS active · location sharing continues when you switch apps or lock your phone"));
+        if(!cancelled)setLocationStatus('background-active');
         return;
       }
 
@@ -155,7 +194,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
         distanceInterval:15,
       },position=>{
         if(cancelled)return;
-        if(!freshGpsSample(position)){setLocationStatus(label("lbl.page.GoodiesCourierScreen.01753bced3", "Waiting for a fresh GPS location."));return;}
+        if(!freshGpsSample(position)){setLocationStatus('waiting');return;}
         void Promise.resolve(supabase.rpc('goodies_courier_update_location',{
           p_order_id:activeOrderId,
           p_latitude:position.coords.latitude,
@@ -164,14 +203,16 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
           p_heading:position.coords.heading,
           p_speed_mps:position.coords.speed,
         })).then(({error})=>{
-          if(error&&!cancelled)setLocationStatus(friendlyError(error,label("lbl.cms.809e99644369", "GPS update failed.")));
-        }).catch(()=>{if(!cancelled)setLocationStatus(label('lbl.cms.809e99644369', 'GPS update failed.'));});
+          if(!cancelled)setLocationStatus(error ? 'update-error' : 'foreground-active');
+        }).catch(()=>{if(!cancelled)setLocationStatus('update-error');});
+      },()=>{
+        if(!cancelled)setLocationStatus('update-error');
       });
       if(cancelled)foregroundSubscription.remove();
     };
 
-    void startTracking().catch(error=>{
-      if(!cancelled)setLocationStatus(friendlyError(error,label("lbl.cms.87e2d9bf2774", "Unable to start background GPS")));
+    void startTracking().catch(()=>{
+      if(!cancelled)setLocationStatus('start-error');
     });
     return()=>{
       cancelled=true;
@@ -184,6 +225,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     if(!available||activeOrderId)return;
     const userId=owner.current;
     const heartbeat=setInterval(()=>{
+      if(!mounted.current||owner.current!==userId)return;
       void Promise.resolve(supabase.rpc('goodies_set_courier_availability',{p_is_available:true,p_accepts_cash_on_delivery:acceptsCash})).then(({error})=>{if(error&&mounted.current&&owner.current===userId)setLoadError(true);}).catch(()=>{if(mounted.current&&owner.current===userId)setLoadError(true);});
     },60000);
     return()=>clearInterval(heartbeat);
@@ -205,7 +247,7 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
         await Location.stopLocationUpdatesAsync(GOODIES_COURIER_LOCATION_TASK);
       }
     } catch {}
-    if(mounted.current&&owner.current===userId)onSignOut();
+    if(mounted.current&&owner.current===userId)await onSignOut();
     }catch(error){if(mounted.current&&owner.current===userId)Alert.alert(label('lbl.cms.2e6f98d92bd3', 'Could not go offline'),friendlyError(error,label('lbl.cms.89e524601f0d', 'Please try again.')));}
     finally{if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
@@ -241,6 +283,19 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
     finally {if(mutation.current===token)mutation.current=null;if(mounted.current&&owner.current===userId)setBusy('');}
   };
 
+  const openMap=async(delivery:Delivery,pickup:boolean)=>{
+    if(!mounted.current||owner.current!==uid)return;
+    const details=delivery.details;
+    const address=pickup?details?.store_address:delivery.address?.t||delivery.address?.address;
+    const point=pickup?{latitude:details?.store_latitude,longitude:details?.store_longitude}
+      :{latitude:details?.delivery_latitude,longitude:details?.delivery_longitude};
+    const url=courierMapUrl(point,address);
+    if(!url)return;
+    const userId=owner.current;
+    try{await Linking.openURL(url);}
+    catch{if(mounted.current&&owner.current===userId)Alert.alert(label('lbl.courierMapUnavailable','Could not open the map'),label('lbl.retry','Try again'));}
+  };
+
   return <View style={{flex:1,backgroundColor:'#F7F8F5'}}>
     <View style={{height:100,paddingHorizontal:20,paddingBottom:12,backgroundColor:'#fff',borderBottomWidth:1,borderBottomColor:'#E3E8DF',flexDirection:'row',alignItems:'flex-end',justifyContent:'space-between'}}>
       <View><Text style={{fontSize:20,fontWeight: "600",color:'#172316'}}>{label("lbl.cms.1c37cd1c523e", "Goodies Courier")}</Text><Text style={{fontSize:11,color:'#667064'}}>{label("lbl.cms.7961892a1ae8", "Delivery assignments and live GPS")}</Text></View>
@@ -256,15 +311,20 @@ export default function GoodiesCourierScreen({onSignOut}:{onSignOut:()=>void}) {
         <Pressable disabled={!!busy||!available||!!activeOrderId||loading||loadError} onPress={()=>void setPresence(available,!acceptsCash)} style={{paddingVertical:9,flexDirection:'row',justifyContent:'space-between'}}>
           <Text style={{fontSize:13,color:'#263324'}}>{label("lbl.cms.09ae3d36c166", "I accept cash on delivery")}</Text><Text style={{fontSize:13,fontWeight: "600",color:acceptsCash?'#286A35':'#8A6250'}}>{acceptsCash?label("lbl.cms.8f4b0527a23c", "ON"):label("lbl.cms.6cde4afa422f", "OFF")}</Text>
         </Pressable>
-        <Text style={{fontSize:11,color:'#697567'}}>{locationStatus}</Text>
+        <Text style={{fontSize:11,color:'#697567'}}>{courierLocationStatus(locationStatus)}</Text>
       </View>
       <Text style={{fontSize:17,fontWeight: "600",color:'#1A2517'}}>{label("lbl.cms.9ed6a2aa1cf9", "My deliveries")}</Text>
       {loading?<ActivityIndicator/>:null}
       {loadError?<View style={{padding:16,backgroundColor:'#fff',borderRadius:16,gap:10}}><Text style={{color:'#9B4036'}}>{label('lbl.cms.ce9c4301c916', 'Could not load deliveries')}</Text><Pressable accessibilityRole="button" onPress={()=>void load()}><Text style={{fontWeight:'600',color:'#426B39'}}>{label('lbl.retry', 'Try again')}</Text></Pressable></View>:null}
       {!loading&&!loadError&&!deliveries.length?<View style={{padding:22,backgroundColor:'#fff',borderRadius:16,alignItems:'center'}}><Text style={{fontWeight: "600",color:'#263324'}}>{label("lbl.cms.6ddb87eb71b2", "No active delivery offers")}</Text><Text style={{fontSize:12,color:'#6B7568',marginTop:5}}>{label("lbl.cms.4b8df09e4dfe", "New offers will appear here when a store assigns you.")}</Text></View>:null}
       {deliveries.map(d=><View key={d.id} style={{padding:15,backgroundColor:'#fff',borderRadius:16,borderWidth:1,borderColor:'#DCE4D7',gap:8}}>
-        <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight: "600",color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight: "600",color:'#426B39'}}>{d.status}</Text></View>
+        <View style={{flexDirection:'row',justifyContent:'space-between'}}><Text style={{fontWeight: "600",color:'#1A2517'}}>{d.order_code}</Text><Text style={{fontWeight: "600",color:'#426B39'}}>{courierAssignmentStatus(d.status)}</Text></View>
+        <Text style={{fontSize:13,fontWeight:'600',color:'#263324'}}>{label('lbl.courierPickupStore','Pickup store')}: {d.details?.store_name||label('lbl.orderPickupLocation','Pickup location')}</Text>
+        <Text style={{fontSize:13,color:'#263324'}}>{d.details?.store_address||label('lbl.orderPickupUnavailable','Live location unavailable')}</Text>
+        {courierMapUrl({latitude:d.details?.store_latitude,longitude:d.details?.store_longitude},d.details?.store_address)?<Pressable accessibilityRole="button" onPress={()=>void openMap(d,true)} style={{paddingVertical:8}}><Text style={{fontWeight:'600',color:'#426B39'}}>{label('lbl.courierOpenPickupMap','Open pickup map')}</Text></Pressable>:null}
+        <Text style={{fontSize:13,fontWeight:'600',color:'#263324'}}>{label('lbl.orderDeliveryDestination','Delivery address')}</Text>
         <Text style={{fontSize:13,color:'#263324'}}> {String(d.address?.t||d.address?.address||label("lbl.page.GoodiesCourierScreen.c8c91e20b0", "Delivery address unavailable"))} </Text>
+        {courierMapUrl({latitude:d.details?.delivery_latitude,longitude:d.details?.delivery_longitude},d.address?.t||d.address?.address)?<Pressable accessibilityRole="button" onPress={()=>void openMap(d,false)} style={{paddingVertical:8}}><Text style={{fontWeight:'600',color:'#426B39'}}>{label('lbl.courierOpenDeliveryMap','Open delivery map')}</Text></Pressable>:null}
         <Text style={{fontSize:12,color:'#687264'}}>{label("lbl.cms.1e2ac2ca5391", "Customer: ")}{d.contact_phone||label("lbl.cms.846f347b830b", "No phone")} · {d.payment_method==='cash'?label("lbl.cms.3942099232a3", "Cash on delivery"):label("lbl.cms.74ebf31a8487", "Prepaid")}</Text>
         <Text style={{fontSize:13,fontWeight: "600",color:'#1A2517'}}>{money(d.total)}</Text>
         {d.status==='offered'?<View style={{flexDirection:'row',gap:8}}><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,true)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#E7F2E5',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#28552B'}}>{busy===d.order_id?label("lbl.cms.ea052535e65e", "Saving…"):label("lbl.cms.3e82f7a82e08", "Accept delivery")}</Text></Pressable><Pressable disabled={!!busy} onPress={()=>void respond(d.order_id,false)} style={{flex:1,padding:12,borderRadius:10,backgroundColor:'#F7ECEA',alignItems:'center'}}><Text style={{fontWeight: "600",color:'#9B4036'}}>{label("lbl.cms.19a9e614842b", "Decline")}</Text></Pressable></View>:null}

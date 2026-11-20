@@ -365,6 +365,16 @@ export const STATUS_UI: Record<Status, { label: string; tone: 'good' | 'warn' | 
 export const MAX_BUSINESSES = 5;
 export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 export const defaultHours = () => Object.fromEntries(DAYS.map((d, i) => [d, { open: '09:00', close: i > 4 ? '15:00' : '18:00', closed: i === 6 }]));
+export function normalizeBusinessHours(value: unknown) {
+  const defaults=defaultHours();
+  if(!value||typeof value!=='object'||!Object.keys(value).length)return defaults;
+  const clock=/^([01]\d|2[0-3]):[0-5]\d(?::[0-5]\d)?$/;
+  return Object.fromEntries(DAYS.map(day=>{
+    const row=(value as Record<string,any>)[day];
+    const valid=typeof row?.open==='string'&&clock.test(row.open)&&typeof row?.close==='string'&&clock.test(row.close);
+    return [day,{open:valid?row.open.slice(0,5):defaults[day].open,close:valid?row.close.slice(0,5):defaults[day].close,closed:!valid||row.closed===true}];
+  }));
+}
 export const DEFAULT_RULES: PayRule[] = [
   { method: 'std', name: 'Standard bank payout', cap: 100000, window_days: 7, fee: 0, eta: 'Arrives within 14 days', needs_bank: true },
   { method: 'exp', name: 'Express bank payout', cap: 3000000, window_days: 1, fee: 0.035, eta: 'Same day', needs_bank: true },
@@ -426,12 +436,14 @@ export const useArg = () => useContext(ArgCtx);
 export function useAct() {
   const app = useApp();
   const [busy, setBusy] = useState(false);
+  const lock = useRef(false);
   const run = async (fn: () => Promise<unknown>, ok?: string) => {
-    if (busy) return false;
+    if (lock.current) return false;
+    lock.current = true;
     setBusy(true);
     try { await fn(); if (ok) app.toast(ok); app.bump(); return true; }
     catch (e) { app.toast(errText(e)); return false; }
-    finally { setBusy(false); }
+    finally { lock.current = false; setBusy(false); }
   };
   return { busy, run };
 }
@@ -467,7 +479,10 @@ export function Chips({ items, value, onChange }: any) {
 }
 export function Seg({ items, value, onChange }: any) {
   const t = useTheme();
-  return <View style={{ flexDirection: 'row', backgroundColor: t.chip, borderRadius: 12, padding: 3 }}>{items.map((x: string) => <Pressable key={x} onPress={() => onChange(x)} style={{ flex: 1, paddingVertical: 8, borderRadius: 9, alignItems: 'center', backgroundColor: value === x ? t.card : 'transparent' }}><Text style={{ fontSize: 12, fontWeight: '700', color: value === x ? t.ink : t.mute }}>{x}</Text></Pressable>)}</View>;
+  return <View style={{ flexDirection: 'row', backgroundColor: t.chip, borderRadius: 12, padding: 3 }}>{items.map((x: string | {k:string;l:string}) => {
+    const key=typeof x==='string'?x:x.k,caption=typeof x==='string'?x:x.l;
+    return <Pressable key={key} onPress={() => onChange(key)} style={{ flex: 1, paddingVertical: 8, borderRadius: 9, alignItems: 'center', backgroundColor: value === key ? t.card : 'transparent' }}><Text style={{ fontSize: 12, fontWeight: '700', color: value === key ? t.ink : t.mute }}>{caption}</Text></Pressable>;
+  })}</View>;
 }
 export function Toggle({ value, onValueChange, disabled, accessibilityLabel }: any) { const t = useTheme(); return <Switch disabled={disabled} accessibilityLabel={accessibilityLabel} value={value} onValueChange={onValueChange} trackColor={{ false: t.line, true: t.blue }} thumbColor="#fff" />; }
 export function Section({ title, right, onRight }: any) { const s = useS(); return <View style={s.sec}><Text style={s.secT}>{displayText(title)}</Text>{right ? <Pressable onPress={onRight}><Text style={s.link}>{displayText(right)}</Text></Pressable> : null}</View>; }

@@ -36,8 +36,10 @@ TaskManager.defineTask<LocationTaskData>(GOODIES_COURIER_LOCATION_TASK, async ({
     return;
   }
 
-  const latest = data.locations.reduce((newest, sample) => sample.timestamp > newest.timestamp ? sample : newest);
-  if (!freshGpsSample(latest)) return;
+  const now = Date.now();
+  const latest = data.locations.filter(sample => freshGpsSample(sample, now))
+    .reduce<Location.LocationObject | null>((newest, sample) => !newest || sample.timestamp > newest.timestamp ? sample : newest, null);
+  if (!latest) return;
   const {latitude, longitude, accuracy, heading, speed} = latest.coords;
   const {error: updateError} = await supabase.rpc('goodies_courier_update_location', {
     p_order_id: activeOrderId,

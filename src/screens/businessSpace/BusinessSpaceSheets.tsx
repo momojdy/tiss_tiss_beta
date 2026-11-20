@@ -22,7 +22,7 @@ import { supabase } from '../../lib/supabase';
 import { Feature, FX, FM, LIGHT, useTheme, useS, money, iso, parseISO, addDays, initials, errText, uuid, PayRule, STATUS_UI, MAX_BUSINESSES, LANGUAGES, customRange, rpc, useQ, useApp, ArgCtx, useArg, useAct, Icon, Btn, Chips, Toggle, Field, Skel, ErrBox, Avatar, Row, Divided, SheetShell, DateField, Wrap, q } from "./BusinessSpaceShared";
 
 export function ProfileSheet() {
-  const app = useApp(), s = useS(), t = useTheme(), b = app.biz;
+  const app = useApp(), s = useS(), t = useTheme(), b = app.biz, action = useAct();
   const open = (page: string) => app.go(page);
   const R = (title: string, sub: string | undefined, on: () => void) => <Row title={title} sub={sub} onPress={on} right={<Icon name="chevron-right" size={18} color={t.mute} />} />;
   return (
@@ -42,7 +42,7 @@ export function ProfileSheet() {
         <Row title="Email notifications" sub={isGoodiesBusiness(app)?"Email delivery is not available yet":"Separate from push"} right={<Toggle disabled={isGoodiesBusiness(app)} value={app.pref.email} onValueChange={(v: boolean) => app.setPref({ ...app.pref, email: v })} />} />
         <Row title="Dark mode" right={<Toggle value={app.dark} onValueChange={app.setDark} />} />
       </Divided>
-      <View style={[s.row, { marginTop: 14 }]}><Btn style={{ flex: 1 }} label="Switch to Buyer" onPress={app.onBuyer} /><Btn style={{ flex: 1 }} kind="soft" label="Sign out" onPress={app.onSignOut} /></View>
+      <View style={[s.row, { marginTop: 14 }]}><Btn style={{ flex: 1 }} label="Switch to Buyer" onPress={app.onBuyer} /><Btn style={{ flex: 1 }} kind="soft" label="Sign out" busy={action.busy} onPress={()=>void action.run(async()=>{await app.onSignOut();})} /></View>
     </SheetShell>
   );
 }

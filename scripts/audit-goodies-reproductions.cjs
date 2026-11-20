@@ -18,7 +18,7 @@ test('REGRESSION A02: receipt errors use safe app-owned copy',async()=>{
  await receiptCall('goodies_customer_dispute_delivery',{},'Success');assert.equal(messages[0],'Could not send this. Please try again.');
 });
 test('REGRESSION A03: admin Reject requires and sends a reason',async()=>{
- const calls=[],messages=[];const reviewProduct=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','reviewProduct')({busy:'',setRejection(){},setBusy(){},supabase:{rpc:async(fn,args)=>{calls.push({fn,args});return {error:null};}},toast:m=>messages.push(m),reload:async()=>{}});
+ const calls=[],messages=[];const reviewProduct=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','reviewProduct')({canOperate:true,runMutation:async(_key,work)=>work(()=>true),busy:'',setRejection(){},setBusy(){},supabase:{rpc:async(fn,args)=>{calls.push({fn,args});return {error:null};}},toast:m=>messages.push(m),reload:async()=>{}});
  await reviewProduct({id:'synthetic-product'},'rejected');assert.equal(calls.length,0);assert.equal(messages[0],'Enter a rejection reason.');
  await reviewProduct({id:'synthetic-product'},'rejected','Needs a clear photo');assert.equal(calls[0].args.p_note,'Needs a clear photo');
 });
@@ -49,7 +49,7 @@ test('REGRESSION A09: pickup map uses valid coordinates and otherwise shows unav
  assert.ok(elements(PickupLocationMap({origin:null})).some(n=>n.type==='Empty'));
 });
 test('REGRESSION A11: fee save refuses unloaded defaults',async()=>{
- const calls=[];const saveFees=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','saveFees')({feesLoaded:false,busy:'',fee:'0',tips:'0,1,2,3',firstFree:false,wallet:true,card:true,cash:true,loading:true,setBusy(){},toast(){},supabase:{rpc:async(fn,args)=>{calls.push({fn,args});return {error:null};}}});
+ const calls=[];const saveFees=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','saveFees')({canOperate:true,canFinance:true,feesLoaded:false,busy:'',fee:'0',tips:'0,1,2,3',firstFree:false,wallet:true,card:true,cash:true,loading:true,setBusy(){},toast(){},supabase:{rpc:async(fn,args)=>{calls.push({fn,args});return {error:null};}}});
  await saveFees();assert.equal(calls.length,0);
 });
 test('REGRESSION A12: notification switches persist backend preference before local success',async()=>{
@@ -66,7 +66,7 @@ test('REGRESSION A14: secondary orders render canonical quantities and names',()
  assert.ok(flatten(OrdersPanel()).includes('3× Synthetic meal'));
 });
 test('REGRESSION A15: admin analytics failures have a safe persistent error',async()=>{
- const messages=[];const loadAnalytics=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','loadAnalytics')({setAnalyticsLoaded(){},setSectionErrors(fn){const state=fn({});messages.push(state.Analytics);},setBusy(){},setAnalytics(){},toast:m=>messages.push(m),supabase:{rpc:async()=>({data:null,error:{message:'permission denied for relation internal_finance_queue (SQLSTATE 42501)'}})}});
+ const messages=[];const loadAnalytics=extract(admin,'src/features/admin/screens/goodies/GoodiesAdminScreen.tsx','loadAnalytics')({beginRead:()=>()=>true,setAnalyticsLoaded(){},setSectionErrors(fn){const state=fn({});messages.push(state.Analytics);},setBusy(){},setAnalytics(){},toast:m=>messages.push(m),supabase:{rpc:async()=>({data:null,error:{message:'permission denied for relation internal_finance_queue (SQLSTATE 42501)'}})}});
  await loadAnalytics();assert.ok(messages.includes('Could not load analytics. Please try again.'));assert.ok(!messages.some(m=>m.includes('internal_finance_queue')));
 });
 test('REGRESSION A16: failed payout summary displays unavailable instead of zero',()=>{

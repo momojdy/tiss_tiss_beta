@@ -4,7 +4,7 @@
   "baselineId": "da301ba8-15b8-4092-a37f-5da73d721c2f",
   "baselineVersion": 5,
   "baselinePayloadSha256": "774528704c23644cfc2ad3e0580659b0aa3d73a4bc44aa48e9d834aeb4cadfed",
-  "payloadSha256": "348dbcaa25125928c27316154fd242f8c2bd4c9f777954892c3fd69dba58b7f5",
+  "payloadSha256": "76d7e0f831f7edd00bb2daa70764e33056afa7e9c633c7169cb530584648b6c1",
   "authorizedLocales": [
     "en",
     "fr",
@@ -14,5 +14,11 @@
   "haitianCreole": "Existing entries preserved; super admin owns review",
   "humanReviewClaim": false,
   "provider": "Cached Google machine translations with locally assistant-translated recovery and settlement copy; existing CMS translations preserved",
-  "fields": 1706
+  "fields": 2135,
+  "reauditAdditions": {
+    "labelsTotalAddedSinceOriginal": 429,
+    "vendorCatalogRows": 411,
+    "humanReviewClaim": false,
+    "published": false
+  }
 }

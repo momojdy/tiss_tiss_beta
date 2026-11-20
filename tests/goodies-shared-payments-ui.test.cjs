@@ -21,3 +21,11 @@ test('terminal and refund-pending requests display no active funding',()=>{
  for(const status of ['expired','cancelled','refund_pending'])assert.equal(extract('funded',{request:{status,total_cents:1100},remaining:440},true)(),0);
  assert.equal(extract('funded',{request:{status:'active',total_cents:1100},remaining:440},true)(),660);
 });
+test('Shared Bill wallet reads reject coerced zero balances and retain a retryable unavailable state',async()=>{
+ for(const balance of [false,true,[],[0],{},'', '0x10',Infinity]){
+  const state={balance:123,request:'previous',enabled:true,error:'',loading:true};
+  const query={select(){return this;},eq(){return this;},maybeSingle:async()=>({data:{balance},error:null})};
+  const context={sequence:{current:0},requestId:'valid-request',validHelpPayId:()=>true,owner:{current:null},mounted:{current:true},scope:{current:'valid-request'},helpPayAccount:async()=> 'payer',fetchHelpPayStatus:async()=>({id:'valid-request'}),supabase:{from:()=>query},GOODIES_SHARED_PAYMENTS_RELEASED:false,fetchHelpPayWalletEnabled:async()=>false,recoverHelpPayPayment:async()=>({pending:null,result:null}),setWalletBalance:value=>state.balance=value,setRequest:value=>state.request=value,setWalletEnabled:value=>state.enabled=value,setError:value=>state.error=value,setLoading:value=>state.loading=value,label:(_id,fallback)=>fallback};
+  await extract('load',context)();assert.equal(state.balance,null);assert.equal(state.request,null);assert.equal(state.enabled,false);assert.equal(state.loading,false);assert.match(state.error,/Could not load/);
+ }
+});

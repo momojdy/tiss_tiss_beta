@@ -52,10 +52,11 @@ export default function BusinessSpaceScreen({ onSignOut, onSwitchToBuyer, onOpen
   const [dark, setDarkS] = useState(scheme === 'dark');
   useEffect(() => { AsyncStorage.getItem('bs.dark').then(v => { if (v != null) setDarkS(v === '1'); }).catch(() => undefined); }, []);
   const setDark = (d: boolean) => { setDarkS(d); AsyncStorage.setItem('bs.dark', d ? '1' : '0').catch(() => undefined); };
+  const signOut = async () => { try { await onSignOut(); } catch { Alert.alert('Could not sign out', 'Please try again.'); } };
   return (
     <SafeAreaProvider>
       <ThemeCtx.Provider value={dark ? DARK : LIGHT}>
-        <Gate dark={dark} setDark={setDark} onSignOut={onSignOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} />
+        <Gate dark={dark} setDark={setDark} onSignOut={signOut} onBuyer={onSwitchToBuyer} onWallet={onOpenWallet} />
       </ThemeCtx.Provider>
     </SafeAreaProvider>
   );
