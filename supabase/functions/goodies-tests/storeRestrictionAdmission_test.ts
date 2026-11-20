@@ -36,6 +36,7 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
    await h.as(u.host);await deny("select * from public.goodies_delivery_eligible_stores(array['shared-bill-test'])");
    await deny("select * from public.goodies_group_order_create('shared-bill-test')");
    await deny("select * from public.goodies_group_order_upsert_item($1,$2,'new-line',1,'{}'::jsonb,null)",[ownGroup.group_id,u.product]);
+   await deny("select public.goodies_group_order_invite_friends($1,'{}'::uuid[])",[ownGroup.group_id]);
    await h.as(u.alice);await deny("select * from public.goodies_group_order_join($1)",[ownGroup.invite_code]);
   });
   await t.step('a final Shared Bill payment after restriction refunds every payer without creating an order',async()=>{
