@@ -18,8 +18,8 @@ with candidate_quotes as (
     and q.created_at <= o.created_at
     and q.created_at > o.created_at - interval '2 minutes'
     and q.route_geometry->>'type' in ('LineString','MultiLineString')
-    and jsonb_typeof(q.route_geometry->'coordinates')='array'
-    and jsonb_array_length(q.route_geometry->'coordinates') > 0
+    and case when jsonb_typeof(q.route_geometry->'coordinates')='array'
+      then jsonb_array_length(q.route_geometry->'coordinates') > 0 else false end
   where o.order_type='delivery' and o.delivery_route is null
     and o.status in ('scheduled','placed','accepted','preparing','ready','courier_assigned','picked_up')
 ), unique_quotes as (
