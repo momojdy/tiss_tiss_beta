@@ -14,7 +14,7 @@ Deno.test('notifications use reviewed CMS translations and preserve truthful Eng
     await db.exec('create table public.user_settings(user_id uuid primary key,language text)');
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106030151_goodies_role_notifications.sql',import.meta.url)));
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106031210_goodies_notification_localization.sql',import.meta.url)));
-    await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120222001_goodies_notification_reviewed_english_fallback.sql',import.meta.url)));
+    await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120173011_goodies_notification_reviewed_english_fallback.sql',import.meta.url)));
     await db.query("insert into public.user_settings values($1,'Kreyòl Ayisyen')",[user]);
     const payload={labels:[{id:'lbl.notification.orderAccepted.body',t:{en:{v:'Order {order_code} accepted',s:'reviewed'},ht:{v:'Draft Kreyòl {order_code}',s:'draft'},fr:{v:'Commande {order_code} acceptée',s:'reviewed'}}}]};
     await db.query("insert into public.wantiss_cms_content(content_key,locale,version,status,payload,created_by,updated_by) values('goodies.content','en',1,'published',$1::jsonb,$2,$2)",[JSON.stringify(payload),user]);

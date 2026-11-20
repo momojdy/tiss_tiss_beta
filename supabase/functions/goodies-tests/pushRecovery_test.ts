@@ -14,7 +14,7 @@ Deno.test('scoped notification deployment and recovery restore captured function
   const before=(await db.query<{n:number}>('select (select count(*) from public.goodies_orders)+(select count(*) from public.wallet_transactions) n')).rows[0].n;
   const bodies=()=>db.query<{name:string;body:string}>("select n.nspname||'.'||p.proname name,p.prosrc body from pg_proc p join pg_namespace n on n.oid=p.pronamespace where (n.nspname='private' and p.proname='goodies_guard_content_publication') or (n.nspname='public' and p.proname='goodies_notification_text') order by name");
   const original=(await bodies()).rows;
-  for(const file of ['20261120222001_goodies_notification_reviewed_english_fallback.sql','20261120222002_goodies_push_delivery.sql','20261120222003_goodies_push_content_review.sql'])await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
+  for(const file of ['20261120173011_goodies_notification_reviewed_english_fallback.sql','20261120173033_goodies_push_delivery.sql','20261120173052_goodies_push_content_review.sql','20261120174455_goodies_push_message_preferences.sql'])await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
   check((await db.query<{enabled:boolean}>('select enabled from private.goodies_push_config')).rows[0].enabled===false,'Deployment unexpectedly enabled remote delivery');
   const changed=(await bodies()).rows;check(changed.every(row=>row.body!==original.find(old=>old.name===row.name)?.body),'Target helper changes did not apply');
   await db.exec(await Deno.readTextFile(new URL('../../../docs/goodies/re-audit-20261120/recover-notifications.sql',import.meta.url)));

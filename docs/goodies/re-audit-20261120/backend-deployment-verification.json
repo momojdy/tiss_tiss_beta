@@ -1,0 +1,148 @@
+{
+  "cron": [
+    {
+      "active": true,
+      "jobname": "goodies-push-delivery",
+      "schedule": "* * * * *",
+      "config_guard": true
+    }
+  ],
+  "config": {
+    "id": true,
+    "enabled": false,
+    "eas_project_id": null
+  },
+  "rpc_acl": [
+    {
+      "name": "goodies_claim_push_deliveries",
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "service_execute": true,
+      "authenticated_execute": false
+    },
+    {
+      "name": "goodies_finish_push_delivery",
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "service_execute": true,
+      "authenticated_execute": false
+    },
+    {
+      "name": "goodies_push_registration_status",
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "service_execute": true,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_register_push_device",
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "service_execute": true,
+      "authenticated_execute": true
+    },
+    {
+      "name": "goodies_unregister_push_device",
+      "config": [
+        "search_path=\"\""
+      ],
+      "anon_execute": false,
+      "service_execute": true,
+      "authenticated_execute": true
+    }
+  ],
+  "queue_rows": 0,
+  "cms_records": [
+    {
+      "id": "551b013f-ba23-42a2-a55f-3080e34164cd",
+      "locale": "en",
+      "status": "archived",
+      "version": 1
+    },
+    {
+      "id": "f34a2641-82cc-4ff9-818e-e0da6a786818",
+      "locale": "en",
+      "status": "archived",
+      "version": 3
+    },
+    {
+      "id": "6d92c0d8-4a63-4c4d-a05f-20bfe2558b89",
+      "locale": "en",
+      "status": "archived",
+      "version": 4
+    },
+    {
+      "id": "da301ba8-15b8-4092-a37f-5da73d721c2f",
+      "locale": "en",
+      "status": "published",
+      "version": 5
+    },
+    {
+      "id": "50c96e40-cae0-4aab-b23e-1c0f9f4622e9",
+      "locale": "en",
+      "status": "archived",
+      "version": 2
+    }
+  ],
+  "device_rows": 0,
+  "observed_at": "2026-11-20T17:33:28.304049+00:00",
+  "worker_probe": {
+    "body": {
+      "scanned": 0
+    },
+    "status": 200,
+    "timed_out": false,
+    "request_id": 65786
+  },
+  "new_migrations": [
+    {
+      "name": "goodies_notification_reviewed_english_fallback",
+      "version": "20261120173011"
+    },
+    {
+      "name": "goodies_push_delivery",
+      "version": "20261120173033"
+    },
+    {
+      "name": "goodies_push_content_review",
+      "version": "20261120173052"
+    }
+  ],
+  "private_tables": [
+    {
+      "rls": true,
+      "name": "goodies_push_config",
+      "anon_select": false,
+      "authenticated_insert": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "name": "goodies_push_deliveries",
+      "anon_select": false,
+      "authenticated_insert": false,
+      "authenticated_select": false
+    },
+    {
+      "rls": true,
+      "name": "wantiss_push_devices",
+      "anon_select": false,
+      "authenticated_insert": false,
+      "authenticated_select": false
+    }
+  ],
+  "migration_count": 415,
+  "cms_push_keys_in_guard": true,
+  "private_delivery_proof": {
+    "id": "goodies-delivery-proofs",
+    "public": false
+  }
+}

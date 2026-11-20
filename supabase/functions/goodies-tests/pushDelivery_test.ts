@@ -10,8 +10,9 @@ async function harness(){
  create table public.user_settings(user_id uuid primary key,language text,notification_preferences jsonb default '{}');
  create schema cron;create function cron.schedule(text,text,text) returns bigint language sql as 'select 1::bigint';
  insert into auth.users(id) values('${user}'),('${other}');insert into auth.sessions values('${session}','${user}',null),('${otherSession}','${other}',null);`);
- await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120222001_goodies_notification_reviewed_english_fallback.sql',import.meta.url)));
- await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120222002_goodies_push_delivery.sql',import.meta.url)));
+ await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120173011_goodies_notification_reviewed_english_fallback.sql',import.meta.url)));
+ await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120173033_goodies_push_delivery.sql',import.meta.url)));
+ await db.exec(await Deno.readTextFile(new URL('../../migrations/20261120174455_goodies_push_message_preferences.sql',import.meta.url)));
  const actor=async(uid=user,sid=session)=>{await db.exec('reset role');await db.query("select set_config('request.jwt.claim.sub',$1,false),set_config('request.jwt.claims',$2,false)",[uid,JSON.stringify({session_id:sid})]);await db.exec('set role authenticated');};
  const root=()=>db.exec('reset role'),enable=async()=>{await root();await db.query('update private.goodies_push_config set enabled=true,eas_project_id=$1',[project]);};
  const register=async()=> (await db.query<{data:{status:string;device_id:string}}>('select public.goodies_register_push_device($1,\'android\',$2) as data',[token,project])).rows[0].data;
@@ -69,6 +70,7 @@ Deno.test('push rechecks vendor membership, courier approval and notification pr
   await h.notice(user,'order','goodies_courier');await h.db.query('update public.goodies_courier_roster set is_approved=false where courier_id=$1',[user]);check((await h.claim()).length===0,'Suspended courier received queued push');
   await h.root();await h.db.query('insert into public.user_settings(user_id,notification_preferences) values($1,$2)',[user,JSON.stringify({goodies_orders:false})]);
   await h.notice();await h.notice(user,'goodies_admin_alert','admin/goodies');check((await h.claim()).length===0,'Disabled preference/admin-only notice was sent');
+  await h.notice(user,'store_message','storechat',{conversation_id:session});check((await h.claim()).length===1,'Disabling order alerts must not suppress customer store messages');
  }finally{await h.db.close();}
 });
 Deno.test('expired send leases stay uncertain while receipt leases recover without resending',async()=>{

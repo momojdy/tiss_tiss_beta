@@ -22,5 +22,5 @@ assert.equal(new Set(current.routes.map(route=>route.route)).size,34,'Update the
 
 const critical=require('./goodies-cms-source.cjs').criticalKeys(current);
 const migrationRoot=path.join(root,'../../../supabase/migrations');
-const review=['20261120063231_goodies_content_repair_review_coverage.sql','20261120222003_goodies_push_content_review.sql'].map(file=>fs.readFileSync(path.join(migrationRoot,file),'utf8')).join('\n');
+const review=['20261120063231_goodies_content_repair_review_coverage.sql','20261120173052_goodies_push_content_review.sql'].map(file=>fs.readFileSync(path.join(migrationRoot,file),'utf8')).join('\n');
 for(const key of critical)assert.ok(review.includes("'"+key+"'"),'Missing server publication review coverage: '+key);

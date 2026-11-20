@@ -1,0 +1,33 @@
+{
+  "observedAt": "2026-11-20T17:31:59.230950+00:00",
+  "scope": "Deployed worker method/auth denial only; no records, device registrations, notifications or payments created.",
+  "checks": [
+    {
+      "scenario": "get-denied",
+      "expectedStatus": 405,
+      "observedStatus": 405,
+      "body": {
+        "error": "Method not allowed"
+      },
+      "classification": "PASS"
+    },
+    {
+      "scenario": "missing-token-denied",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "body": {
+        "error": "Not authorized"
+      },
+      "classification": "PASS"
+    },
+    {
+      "scenario": "invalid-token-denied",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "body": {
+        "error": "Not authorized"
+      },
+      "classification": "PASS"
+    }
+  ]
+}

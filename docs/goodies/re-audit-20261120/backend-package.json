@@ -6,16 +6,22 @@
   "backupScope": "Two changed function definitions and ACLs captured, tested recovery. This is NOT a full production database backup. Prior broad financial rollout recovery requirements remain unchanged.",
   "files": [
     {
-      "source": "supabase/migrations/20261120222001_goodies_notification_reviewed_english_fallback.sql",
-      "sha256": "38a2f06d7adc99acaaf98a458c81ea12a43c2da92e999588ef86550c224e5703"
+      "source": "supabase/migrations/20261120173011_goodies_notification_reviewed_english_fallback.sql",
+      "sha256": "38a2f06d7adc99acaaf98a458c81ea12a43c2da92e999588ef86550c224e5703",
+      "preparedSource": "supabase/migrations/20261120222001_goodies_notification_reviewed_english_fallback.sql",
+      "executedVersion": "20261120173011"
     },
     {
-      "source": "supabase/migrations/20261120222002_goodies_push_delivery.sql",
-      "sha256": "7e61a9f0cfd088bc187e28330f2aa709c47f507cfb7a7e69f5515457d82416db"
+      "source": "supabase/migrations/20261120173033_goodies_push_delivery.sql",
+      "sha256": "7e61a9f0cfd088bc187e28330f2aa709c47f507cfb7a7e69f5515457d82416db",
+      "preparedSource": "supabase/migrations/20261120222002_goodies_push_delivery.sql",
+      "executedVersion": "20261120173033"
     },
     {
-      "source": "supabase/migrations/20261120222003_goodies_push_content_review.sql",
-      "sha256": "f32972767c97e73eb9081630e5bac1a69ab73598a887a96cc7cf17a9ebcaa854"
+      "source": "supabase/migrations/20261120173052_goodies_push_content_review.sql",
+      "sha256": "f32972767c97e73eb9081630e5bac1a69ab73598a887a96cc7cf17a9ebcaa854",
+      "preparedSource": "supabase/migrations/20261120222003_goodies_push_content_review.sql",
+      "executedVersion": "20261120173052"
     }
   ],
   "isolatedVerification": {
@@ -31,6 +37,17 @@
     "newServicesLint": "PASS",
     "unsignedBundles": "Customer web/Android/iOS and admin Android/iOS. Not signed device builds."
   },
-  "deploymentStatus": "PREPARED_NOT_DEPLOYED",
-  "activation": "Default off; no EAS project binding is fabricated and no real notifications are sent during this deployment."
+  "deploymentStatus": "DEPLOYED_BACKEND_ONLY",
+  "activation": "Default off; no EAS project binding is fabricated and no real notifications are sent during this deployment.",
+  "deploymentEvidence": "backend-deployment-verification.json",
+  "sourceCommitDeployed": "41d8e9242c5dcfd3a1e8a2a8ee53a00de70b4778",
+  "sourceMigrationVersionReconciliation": "Prepared filenames were renamed to the actual executed migration ledger versions. SQL bytes are unchanged; no alias or fabricated ledger entry was added.",
+  "edgeFunction": {
+    "name": "process-goodies-push-notifications",
+    "version": 1,
+    "verify_jwt": false,
+    "authentication": "Existing private scheduled-worker token is checked before any claim.",
+    "deployedBundleSha256": "a52cd80d69dd99a250c606275090bf003aab0a9ca28f60906d031b205db5b037"
+  },
+  "refundPolicy": "User confirmed: card cancellation refunds return to the original card through Stripe. No duplicate Wallet refund."
 }
