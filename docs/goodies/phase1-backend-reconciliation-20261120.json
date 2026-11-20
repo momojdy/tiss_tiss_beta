@@ -1,0 +1,190 @@
+{
+  "audit_date": "2026-11-20",
+  "project_ref": "ycbirmgppwavorwudlrv",
+  "scope": "Goodies-only backend reconciliation",
+  "app_deployed": false,
+  "cms_published": false,
+  "production_synthetic_records_created": false,
+  "applied_migrations": [
+    {
+      "repo_file": "20261106015226_goodies_courier_scoped_order_read.sql",
+      "original_version": "20261106015226",
+      "executed_version": "20261120075133"
+    },
+    {
+      "repo_file": "20261106020705_goodies_private_delivery_proofs.sql",
+      "original_version": "20261106020705",
+      "executed_version": "20261120075207"
+    },
+    {
+      "repo_file": "20261106021033_goodies_truthful_dispute_refund_notification.sql",
+      "original_version": "20261106021033",
+      "executed_version": "20261120075212"
+    },
+    {
+      "repo_file": "20261106022200_goodies_builder_selection_contract.sql",
+      "original_version": "20261106022200",
+      "executed_version": "20261120075218"
+    },
+    {
+      "repo_file": "20261106024100_goodies_admin_restriction_appeals.sql",
+      "original_version": "20261106024100",
+      "executed_version": "20261120075235"
+    },
+    {
+      "repo_file": "20261106025454_goodies_product_moderation_enforcement.sql",
+      "original_version": "20261106025454",
+      "executed_version": "20261120075241"
+    },
+    {
+      "repo_file": "20261106030151_goodies_role_notifications.sql",
+      "original_version": "20261106030151",
+      "executed_version": "20261120075247"
+    },
+    {
+      "repo_file": "20261106030829_goodies_private_proof_rollout.sql",
+      "original_version": "20261106030829",
+      "executed_version": "20261120075252"
+    },
+    {
+      "repo_file": "20261106031210_goodies_notification_localization.sql",
+      "original_version": "20261106031210",
+      "executed_version": "20261120075258"
+    },
+    {
+      "repo_file": "20261106081225_goodies_reviews_preferences_and_store_link.sql",
+      "original_version": "20261106081225",
+      "executed_version": "20261120075319"
+    },
+    {
+      "repo_file": "20261106082226_goodies_admin_operational_pagination.sql",
+      "original_version": "20261106082226",
+      "executed_version": "20261120075325"
+    },
+    {
+      "repo_file": "20261106084303_goodies_cms_publication_review_guard.sql",
+      "original_version": "20261106084303",
+      "executed_version": "20261120075330"
+    },
+    {
+      "repo_file": "20261106144811_goodies_creole_reviewed_english_fallback.sql",
+      "original_version": "20261106144811",
+      "executed_version": "20261120075336"
+    },
+    {
+      "repo_file": "20261107014239_goodies_failure_state_content_review.sql",
+      "original_version": "20261107014239",
+      "executed_version": "20261120075343"
+    },
+    {
+      "repo_file": "20261107021612_goodies_vendor_settlement.sql",
+      "original_version": "20261107021612",
+      "executed_version": "20261120075400"
+    },
+    {
+      "repo_file": "20261113101825_goodies_shared_bill_integrity.sql",
+      "original_version": "20261113101825",
+      "executed_version": "20261120075627"
+    },
+    {
+      "repo_file": "20261117055744_goodies_review_moderation_compatibility.sql",
+      "original_version": "20261117055744",
+      "executed_version": "20261120075638"
+    },
+    {
+      "repo_file": "20261117155800_goodies_admin_invitation_accepted_server_side.sql",
+      "original_version": "20261117155800",
+      "executed_version": "20261120075653"
+    },
+    {
+      "repo_file": "20261118032703_goodies_courier_mutation_integrity.sql",
+      "original_version": "20261118032703",
+      "executed_version": "20261120075659"
+    },
+    {
+      "repo_file": "20261118033204_goodies_vendor_builder_and_request_contracts.sql",
+      "original_version": "20261118033204",
+      "executed_version": "20261120075705"
+    },
+    {
+      "repo_file": "20261118033410_goodies_catalog_realtime.sql",
+      "original_version": "20261118033410",
+      "executed_version": "20261120075725"
+    },
+    {
+      "repo_file": "20261118033451_goodies_scoped_staff_permissions.sql",
+      "original_version": "20261118033451",
+      "executed_version": "20261120075731"
+    },
+    {
+      "repo_file": "20261120061607_goodies_restricted_store_admission.sql",
+      "original_version": "20261120061607",
+      "executed_version": "20261120075757"
+    },
+    {
+      "repo_file": "20261120063231_goodies_content_repair_review_coverage.sql",
+      "original_version": "20261120063231",
+      "executed_version": "20261120075815"
+    }
+  ],
+  "original_version_reconciliation": "24 original versions were marked applied after verifying the tool-generated executed migration and recorded statements. Executed and original history records both remain. No migration SQL was rerun during history reconciliation.",
+  "edge_functions": [
+    {
+      "slug": "goodies-delivery-quote",
+      "version": 23,
+      "verify_jwt": true
+    },
+    {
+      "slug": "place-goodies-card-order",
+      "version": 15,
+      "verify_jwt": true
+    },
+    {
+      "slug": "refund-goodies-card-order",
+      "version": 7,
+      "verify_jwt": true
+    },
+    {
+      "slug": "process-goodies-card-refunds",
+      "version": 18,
+      "verify_jwt": false
+    },
+    {
+      "slug": "expire-goodies-card-auth",
+      "version": 2,
+      "verify_jwt": false
+    },
+    {
+      "slug": "rapid-api",
+      "version": 20,
+      "verify_jwt": false
+    }
+  ],
+  "migration_source_repair_commit": "6112ef0c35fd91703e84bfbd44d624b31216c079",
+  "db_verification": {
+    "ledger_before": 356,
+    "executed_migrations": 24,
+    "original_version_history_aliases": 24,
+    "ledger_after": 404,
+    "orders_before": 1,
+    "orders_after": 1,
+    "wallet_rows_after": 6,
+    "products_before": 1,
+    "products_after": 1,
+    "refund_queue_after": 0,
+    "active_assignments_after": 0,
+    "private_bucket": "goodies-delivery-proofs",
+    "courier_rpcs_restored": true,
+    "admin_pagination_restored": true,
+    "store_review_rpcs_restored": true,
+    "vendor_ingredient_request_paging_restored": true,
+    "realtime_catalog_membership": true
+  },
+  "activation_gates": {
+    "goodies_settlement_enabled": false,
+    "shared_bill_wallet_enabled": false,
+    "private_delivery_proofs_enabled": false
+  },
+  "verification_limit": "Read-only production SQL metadata and source comparisons, no authenticated hosted transaction, no valid Stripe sandbox charge/refund, no courier GPS/device acceptance. These remain separate release gates.",
+  "rollback_limit": "Production snapshot/restore readiness not independently verified; database DDL cannot be automatically undone by resetting GitHub or reverting an app commit."
+}
