@@ -451,8 +451,11 @@ function GroupOrderSheet({close, showTitle = true, showDone = true, storeId = ''
     if(typeof value!=='number'&&!(typeof value==='string'&&/^-?\d+(?:\.\d+)?$/.test(value.trim())))return null;
     const amount=Number(value);return Number.isFinite(amount)&&amount>=0?amount:null;
   };
-  const validEstimate=(value:any)=>!!value&&value.group_id===group.groupId&&['pickup','delivery'].includes(value.order_type)
-    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>groupAmount(value[key])!==null)&&Number(value.estimated_total)>0;
+  const validEstimate=(value:any)=>!!value&&value.group_id===group.groupId&&value.currency==='USD'&&['pickup','delivery'].includes(value.order_type)
+    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>groupAmount(value[key])!==null)
+    &&Number(value.estimated_total)>0
+    &&['subtotal','delivery_fee','service_fee','estimated_total'].every(key=>Number.isSafeInteger(Math.round(Number(value[key])*100))&&Math.abs(Number(value[key])*100-Math.round(Number(value[key])*100))<0.00001)
+    &&Math.round(Number(value.estimated_total)*100)===Math.round(Number(value.subtotal)*100)+Math.round(Number(value.delivery_fee)*100)+Math.round(Number(value.service_fee)*100);
   const loadGroupEstimate=async(type:'pickup'|'delivery',address:any={})=>{
     const owner=accountId,groupId=String(group.groupId||''),request=++estimateVersion.current,selected=selection.current;
     if(!await requireAccount(owner)||!current(owner,groupId)||request!==estimateVersion.current||selection.current!==selected)return;
