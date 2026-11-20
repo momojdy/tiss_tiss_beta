@@ -8,6 +8,10 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
  const visible=async()=>{await h.as(u.host);return (await db.query('select store_id from public.goodies_store_schedules')).rows.length;};
  try{
   await h.root();for(const file of forward)await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
+  // Ephemeral PGlite does not bundle pgcrypto's gen_random_bytes.
+  // A deterministic value is sufficient for this single synthetic invite;
+  // never install this stub in production or a shared database.
+  await db.exec("create schema if not exists extensions; create function extensions.gen_random_bytes(n integer) returns bytea language sql as $select decode(repeat('ab',n),'hex')$;");
   await db.query('update public.businesses set hours=$1::jsonb where id=$2',[JSON.stringify(Object.fromEntries(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day=>[day,{open:'00:00',close:'00:00',closed:false}]))),u.business]);
   await h.as(u.host);const prior=(await checkout('restriction-existing-order')).rows[0].id;
   const ownGroup=(await db.query<{group_id:string;invite_code:string}>("select * from public.goodies_group_order_create('shared-bill-test')")).rows[0];
