@@ -6,7 +6,7 @@ export function groupInviteCodeFromLink(url: unknown): string|null {
   const fields=match[1].split('&').filter(field=>/^code=/i.test(field));
   if(fields.length!==1)return null;
   try {
-    const code=decodeURIComponent(fields[0].slice(5)).trim().toUpperCase();
+    const code=decodeURIComponent(fields[0].slice(5)).toUpperCase();
     // Older issued invite codes have eight characters; current codes can be longer.
     return /^[A-Z0-9]{8,16}$/.test(code)?code:null;
   } catch {return null;}
