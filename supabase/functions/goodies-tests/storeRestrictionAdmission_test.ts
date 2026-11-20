@@ -1,6 +1,6 @@
 import {sharedBillHarness,sbUsers as u,sbCheck as check,sbId} from './sharedBillHarness.ts';
 
-const forward=['20261118032703_goodies_courier_mutation_integrity.sql','20261118033204_goodies_vendor_builder_and_request_contracts.sql','20261118033410_goodies_catalog_realtime.sql','20261118033451_goodies_scoped_staff_permissions.sql','20261120061607_goodies_restricted_store_admission.sql'];
+const forward=['20261118032703_goodies_courier_mutation_integrity.sql','20261118033204_goodies_vendor_builder_and_request_contracts.sql','20261118033410_goodies_catalog_realtime.sql','20261118033451_goodies_scoped_staff_permissions.sql','20261120061607_goodies_restricted_store_admission.sql','20261120214000_goodies_group_store_and_product_admission.sql'];
 Deno.test('business and merchant restrictions pause new sales without losing existing orders or payer refunds',async t=>{
  const h=await sharedBillHarness(),{db}=h;
  const checkout=(key:string)=>db.query<{id:string}>("select * from public.place_goodies_order_with_payment_once($1,'wallet','shared-bill-test','pickup',null,null,'50937000000',$2::jsonb,10,0,1,0,0,11,null,null)",[key,JSON.stringify(h.snapshot().p_items)]);
@@ -10,6 +10,14 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
   await h.root();for(const file of forward)await db.exec(await Deno.readTextFile(new URL('../../migrations/'+file,import.meta.url)));
   await db.query('update public.businesses set hours=$1::jsonb where id=$2',[JSON.stringify(Object.fromEntries(['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(day=>[day,{open:'00:00',close:'00:00',closed:false}]))),u.business]);
   await h.as(u.host);const prior=(await checkout('restriction-existing-order')).rows[0].id;
+  const ownGroup=(await db.query<{group_id:string;invite_code:string}>("select * from public.goodies_group_order_create('shared-bill-test')")).rows[0];
+  await db.query("select * from public.goodies_group_order_upsert_item($1,$2,'approved-line',1,'{}'::jsonb,null)",[ownGroup.group_id,u.product]);
+  // A guessed UUID for a pending/unreviewed product must not disclose its name,
+  // price or image through the SECURITY DEFINER group item receipt.
+  await h.root();await db.query("insert into public.goodies_products(id,business_id,name,price,stock,is_available,review_status) values($1,$2,'Unreviewed synthetic secret',8,3,true,'pending')",[sbId(91),u.business]);
+  await h.as(u.host);let productCode='';
+  try{await db.query("select * from public.goodies_group_order_upsert_item($1,$2,'pending-line',1,'{}'::jsonb,null)",[ownGroup.group_id,sbId(91)]);}catch(e){productCode=(e as {code?:string}).code||'';}
+  check(productCode==='P0001','Group item RPC exposed an unreviewed product');
   await h.enable();const shared=await h.create();await h.contribute(shared,u.alice,100,'restriction-partial-friend');
   const finalPayment=await h.create('share',h.snapshot(),'restriction-final-payment');
   await h.root();await db.query("update public.businesses set verification='restricted' where id=$1",[u.business]);await db.query('update public.goodies_store_schedules set is_live=false where business_id=$1',[u.business]);
@@ -22,6 +30,9 @@ Deno.test('business and merchant restrictions pause new sales without losing exi
    check(await visible()===0,'Restricted store remains public');await h.as(u.vendor);check((await db.query('select store_id from public.goodies_store_schedules')).rows.length===1,'Owner lost store recovery/configuration reads');
    await h.as(null,'service_role');check((await db.query("select * from public.goodies_delivery_eligible_stores(array['shared-bill-test'])")).rows.length===0,'Routing still offers a restricted store');
    await h.as(u.host);await deny("select * from public.goodies_delivery_eligible_stores(array['shared-bill-test'])");
+   await deny("select * from public.goodies_group_order_create('shared-bill-test')");
+   await deny("select * from public.goodies_group_order_upsert_item($1,$2,'new-line',1,'{}'::jsonb,null)",[ownGroup.group_id,u.product]);
+   await h.as(u.alice);await deny("select * from public.goodies_group_order_join($1)",[ownGroup.invite_code]);
   });
   await t.step('a final Shared Bill payment after restriction refunds every payer without creating an order',async()=>{
    await h.root();const orders=(await db.query<{n:number}>('select count(*)::integer n from public.goodies_orders')).rows[0].n;
