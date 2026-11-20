@@ -1,10 +1,10 @@
 {
-  "observedAt": "2026-11-20T12:55:17.012233+00:00",
+  "observedAt": "2026-11-20T13:01:12.790262+00:00",
   "classification": "NOT VERIFIED",
   "productionReady": false,
   "sourceReconciledThrough": {
-    "customer": "1388cec15fa83bde5d182aa6708a49c492d70144",
-    "admin": "de2514968f080f0e304acc826a16bb9359066516"
+    "customer": "e497d6983aeb14f9ccc6a968777b84c500bfb345",
+    "admin": "c00bb25296b5e295d89c575e23d713f40a443d84"
   },
   "backend": {
     "classification": "PASS",
@@ -26,8 +26,8 @@
   "sourceCloseout": {
     "classification": "PASS",
     "scope": "Current exact paired source CI and stated isolated checks; no hosted/device/provider sign-off",
-    "automatedTests": 445,
-    "customerNode": 243,
+    "automatedTests": 447,
+    "customerNode": 245,
     "adminNode": 68,
     "crossRole": 47,
     "backendDeno": 87,
@@ -43,14 +43,14 @@
     "inventoryCounts": {
       "files": 107,
       "astFiles": 95,
-      "functions": 1541,
+      "functions": 1542,
       "interactiveBindings": 1343,
       "jsxBindings": 1200,
       "objectEventBindings": 143,
       "backendCallSites": 432,
       "serviceCallSites": 221,
       "navigationCallSites": 536,
-      "commentTokens": 261,
+      "commentTokens": 262,
       "demoReferenceLines": 265,
       "embeddedEventReferences": 9,
       "unresolvedLiteralRegistryTargets": 0,
@@ -76,8 +76,8 @@
   "financialWritesPerformed": false,
   "historicalEvidence": "Other files in this directory retain the source and timestamps of their original verification. Current totals and CI will be recorded here separately.",
   "verifiedSourceCommits": {
-    "customer": "27c04e69f8aa2111d203ad6400154a0356301107",
-    "admin": "de2514968f080f0e304acc826a16bb9359066516"
+    "customer": "386e5752a2eb7a9c1408c47cb496394900ada92b",
+    "admin": "c00bb25296b5e295d89c575e23d713f40a443d84"
   },
   "retiredIntermediateCandidate": {
     "version": "20261120223000",

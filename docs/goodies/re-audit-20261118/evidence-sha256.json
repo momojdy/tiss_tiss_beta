@@ -1,14 +1,14 @@
 {
   "scope": "All evidence artifacts; historical files retain their original source/timestamps. Current status is CURRENT_STATUS.md and current-status.json. This self-referential manifest is excluded.",
   "verifiedSourceCommits": {
-    "customer": "27c04e69f8aa2111d203ad6400154a0356301107",
-    "admin": "de2514968f080f0e304acc826a16bb9359066516"
+    "customer": "386e5752a2eb7a9c1408c47cb496394900ada92b",
+    "admin": "c00bb25296b5e295d89c575e23d713f40a443d84"
   },
   "files": [
     {
       "file": "CURRENT_STATUS.md",
       "bytes": 6302,
-      "sha256": "5793d463589b8ca45d1e2328fe0b469a2345437105471c1806a6fd195dccf380"
+      "sha256": "cf30ffcc1da0cf49a5002505522aee38edd4afc25e8a66e854362ad9a681bed7"
     },
     {
       "file": "README.md",
@@ -163,17 +163,17 @@
     {
       "file": "current-artifact-validation.json",
       "bytes": 379,
-      "sha256": "098f6514d3ce1fad0711197913bc19f1766cd04563388e25be8fbc8ecaf1f865"
+      "sha256": "85e9fad47c07b0088e1e2c166e0f4b24ac49600f4c57268156d941c806104f77"
     },
     {
       "file": "current-ci-verification.json",
-      "bytes": 1283,
-      "sha256": "651edfb5637acd0e77cc475b9ad76b503ec1e744e582b50d0c7010c30a32c4ef"
+      "bytes": 1469,
+      "sha256": "a485108d9d8213ac3b1565691ec5c2b0cdb71d72744389d54a9d8047bc86a561"
     },
     {
       "file": "current-commits-and-files.json",
-      "bytes": 44085,
-      "sha256": "4a31f5ce2fba0999c2ded650141b911880513b3b0b467b0de315a2196195fc0c"
+      "bytes": 46070,
+      "sha256": "62f0e9bf44ef5fa840c56add65003faca0b012476df5154c3c01a9be00923e7d"
     },
     {
       "file": "current-production-contracts.json",
@@ -193,7 +193,7 @@
     {
       "file": "current-status.json",
       "bytes": 3816,
-      "sha256": "1d5c3774dbf7b6695ae507c6a6dae5ed4edf093b089ec9ba3054d78cad393866"
+      "sha256": "f7ab11f39899480af046d58659cc5c595703263e526fed3b6f9283d6ade21ca5"
     },
     {
       "file": "customer-controls.json",
@@ -492,8 +492,8 @@
     },
     {
       "file": "latest-source-inventory.json",
-      "bytes": 3135220,
-      "sha256": "6a764eea8a56055b45ac3a3342e7cfa4b03aca53cc0a5a90b72c4e54e8dea86e"
+      "bytes": 3135578,
+      "sha256": "10b77b9c0238f0000a616ca961ad4b3748bc4b8bf28d2390f6fdbf842b9bed7a"
     },
     {
       "file": "live-source-drift.json",

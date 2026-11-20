@@ -1,7 +1,7 @@
 {
   "customer": {
     "base": "c339ce9e05f2f554b33947f2cad301cd63a3f11a",
-    "verifiedHead": "27c04e69f8aa2111d203ad6400154a0356301107",
+    "verifiedHead": "386e5752a2eb7a9c1408c47cb496394900ada92b",
     "commits": [
       {
         "commit": "667c777b67de83af805c2b31f4f9e2ebae1edfd8",
@@ -541,6 +541,39 @@
         ],
         "committedAt": "2026-11-20T12:49:31Z",
         "subject": "ci(goodies): pin synchronized hosted-group recovery preview"
+      },
+      {
+        "commit": "e497d6983aeb14f9ccc6a968777b84c500bfb345",
+        "parents": [
+          "27c04e69f8aa2111d203ad6400154a0356301107"
+        ],
+        "committedAt": "2026-11-20T20:50:53+08:00",
+        "subject": "fix(goodies-group): verify scanned invitation origins and reject malformed QR payloads"
+      },
+      {
+        "commit": "90dd72dbe3e62c15f4c8178334d031cae2c9cac6",
+        "parents": [
+          "27c04e69f8aa2111d203ad6400154a0356301107"
+        ],
+        "committedAt": "2026-11-20T12:55:17Z",
+        "subject": "docs(goodies): publish current CI evidence and open release checks"
+      },
+      {
+        "commit": "d3172534f96fb3940c8c98f319ac4337d7c894ab",
+        "parents": [
+          "90dd72dbe3e62c15f4c8178334d031cae2c9cac6",
+          "e497d6983aeb14f9ccc6a968777b84c500bfb345"
+        ],
+        "committedAt": "2026-11-20T12:57:03Z",
+        "subject": "Merge remote-tracking branch 'origin/main'"
+      },
+      {
+        "commit": "386e5752a2eb7a9c1408c47cb496394900ada92b",
+        "parents": [
+          "d3172534f96fb3940c8c98f319ac4337d7c894ab"
+        ],
+        "committedAt": "2026-11-20T12:57:46Z",
+        "subject": "ci(goodies): pin matching safe QR preview source"
       }
     ],
     "netChangedFiles": [
@@ -559,6 +592,10 @@
       {
         "status": "A",
         "file": "docs/goodies/phase1-backend-reconciliation-20261120.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/CURRENT_STATUS.md"
       },
       {
         "status": "A",
@@ -679,6 +716,18 @@
       {
         "status": "A",
         "file": "docs/goodies/re-audit-20261118/courier.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-artifact-validation.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-ci-verification.json"
+      },
+      {
+        "status": "A",
+        "file": "docs/goodies/re-audit-20261118/current-commits-and-files.json"
       },
       {
         "status": "A",
@@ -1173,7 +1222,7 @@
   },
   "admin": {
     "base": "14e3d589552ac09eb5bcfcbf7bbef85569ddd5a5",
-    "verifiedHead": "de2514968f080f0e304acc826a16bb9359066516",
+    "verifiedHead": "c00bb25296b5e295d89c575e23d713f40a443d84",
     "commits": [
       {
         "commit": "fb387690d168cf1835f81eb25935cf63bcf01445",
@@ -1246,6 +1295,14 @@
         ],
         "committedAt": "2026-11-20T12:49:07Z",
         "subject": "fix(goodies-admin): mirror hosted group recovery in content preview"
+      },
+      {
+        "commit": "c00bb25296b5e295d89c575e23d713f40a443d84",
+        "parents": [
+          "de2514968f080f0e304acc826a16bb9359066516"
+        ],
+        "committedAt": "2026-11-20T12:57:25Z",
+        "subject": "fix(goodies-admin): mirror verified group QR parsing"
       }
     ],
     "netChangedFiles": [

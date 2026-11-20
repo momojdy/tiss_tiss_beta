@@ -1,37 +1,46 @@
 {
-  "observedAt": "2026-11-20T12:51:52.434Z",
-  "scope": "Current paired source CI, no app release or database deployment",
+  "observedAt": "2026-11-20T13:01:02.777Z",
+  "scope": "Exact paired source CI; no application or backend release",
+  "classification": "PASS",
   "runs": [
     {
       "repository": "momojdy/tiss_tiss_beta",
-      "id": 44739016887,
+      "id": 44740151685,
       "name": "Expo validation",
-      "sourceCommit": "27c04e69f8aa2111d203ad6400154a0356301107",
+      "sourceCommit": "386e5752a2eb7a9c1408c47cb496394900ada92b",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44739016887",
-      "updatedAt": "2026-11-20T12:51:48Z"
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44740151685",
+      "updatedAt": "2026-11-20T13:00:01Z"
     },
     {
       "repository": "momojdy/tiss_tiss_beta",
-      "id": 44739017076,
+      "id": 44740151625,
       "name": "TypeScript and Expo build checks",
-      "sourceCommit": "27c04e69f8aa2111d203ad6400154a0356301107",
+      "sourceCommit": "386e5752a2eb7a9c1408c47cb496394900ada92b",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44739017076",
-      "updatedAt": "2026-11-20T12:50:57Z"
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44740151625",
+      "updatedAt": "2026-11-20T12:59:25Z"
     },
     {
       "repository": "momojdy/tiss-admin",
-      "id": 44738959273,
+      "id": 44740106703,
       "name": "Admin validation",
-      "sourceCommit": "de2514968f080f0e304acc826a16bb9359066516",
+      "sourceCommit": "c00bb25296b5e295d89c575e23d713f40a443d84",
       "status": "completed",
       "conclusion": "success",
-      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44738959273",
-      "updatedAt": "2026-11-20T12:50:31Z"
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44740106703",
+      "updatedAt": "2026-11-20T12:58:58Z"
     }
   ],
-  "classification": "PASS"
+  "testTotals": {
+    "customerNode": 245,
+    "adminNode": 68,
+    "crossRole": 47,
+    "backendDeno": 87,
+    "total": 447,
+    "backendSubsteps": 71,
+    "substepsCountedAgain": false
+  }
 }

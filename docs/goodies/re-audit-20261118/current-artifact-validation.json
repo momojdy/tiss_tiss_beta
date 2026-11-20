@@ -1,9 +1,9 @@
 {
   "classification": "PASS",
-  "observedAt": "2026-11-20T12:55:17.528848+00:00",
-  "jsonDocumentsParsed": 37,
+  "observedAt": "2026-11-20T13:01:13.242306+00:00",
+  "jsonDocumentsParsed": 38,
   "currentSourceHashesVerified": 107,
-  "secretPatternFilesScanned": 117,
+  "secretPatternFilesScanned": 118,
   "secretPatternFindings": 0,
   "limits": "Bounded token-pattern scan; does not prove absence of every possible secret format. No production rows or private partial schema dump are included."
 }
