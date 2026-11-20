@@ -87,7 +87,11 @@ export function GoodiesOrdersPage() {
     if (!requireManage()) return;
     try {
       const {data: privateUploads, error: policyError} = await goodiesOrdersRequest('goodies_private_delivery_proof_uploads_enabled');
-      if (policyError) throw policyError;
+      // Delivery evidence contains private customer information: never upload it to the public listing-photo bucket.
+      if (policyError || privateUploads !== true) {
+        app.toast(label('lbl.vendor.orders.ad5634db80','Could not save the delivery photo. Please try again.'));
+        return;
+      }
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       let result: ImagePicker.ImagePickerResult;
       if (perm.granted) result = await ImagePicker.launchCameraAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images, quality: 0.8 });
@@ -102,11 +106,10 @@ export function GoodiesOrdersPage() {
       const m = await ImageManipulator.manipulateAsync(asset.uri, asset.width && asset.width > 1400 ? [{ resize: { width: 1400 } }] : [], { compress: 0.8, format: ImageManipulator.SaveFormat.JPEG });
       const b64 = await FileSystem.readAsStringAsync(m.uri, { encoding: FileSystem.EncodingType.Base64 });
       const suffix = Date.now() + '-' + Math.random().toString(36).slice(2) + '.jpg';
-      const path = privateUploads ? app.biz.id + '/' + order.id + '/' + suffix : app.biz.id + '/delivery-proofs/' + order.id + '-' + suffix;
-      const bucket = privateUploads ? GOODIES_DELIVERY_PROOF_BUCKET : 'listing-photos';
-      const {error: uploadError} = await supabase.storage.from(bucket).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
+      const path = app.biz.id + '/' + order.id + '/' + suffix;
+      const {error: uploadError} = await supabase.storage.from(GOODIES_DELIVERY_PROOF_BUCKET).upload(path, decode(b64), { contentType: 'image/jpeg', cacheControl: '300' });
       if (uploadError) throw uploadError;
-      const reference = privateUploads ? path : supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl;
+      const reference = path;
       const {error} = await goodiesOrdersRequest('goodies_self_delivery_mark_delivered', {p_order_id: order.id, p_proof_url: reference});
       if (error) throw error;
       app.toast(label("lbl.vendor.orders.b7ff1a6fb9","Marked as delivered. The customer has 24 hours to confirm or report a problem."));
