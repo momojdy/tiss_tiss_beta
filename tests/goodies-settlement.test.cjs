@@ -14,6 +14,20 @@ test('transport and backend errors never expose server details; actionable codes
 test('summary responses are bound to the requested business and empty successful protocols fail closed',async()=>{
  await assert.rejects(service({rpc:async()=>({data:{...base(),business_id:'other'}})}).getGoodiesSettlement('business'));await assert.rejects(service({rpc:async()=>({data:null})}).registerGoodiesDestination('business','moncash','HT','Owner',{account:'37000000'}));
 });
+test('settlement history rejects corrupt financial rows and preserves real signed ledger amounts',async()=>{
+ const row={id:'order:synthetic',label:'Order G-1',type:'sale',amount:'9.00',status:'posted',method:null,created_at:'2026-11-20T00:00:00Z',details:null};
+ const read=rows=>service({rpc:async()=>({data:rows})}).getGoodiesSettlementLedger('business');
+ for(const amount of [null,undefined,'',true,[],{},'private SQL failure','0x10','NaN',Infinity,'1.001'])await assert.rejects(read([{...row,amount}]),'Invalid amount must become an error, never $0');
+ for(const broken of [{...row,created_at:'invalid'},{...row,type:'unknown'},{...row,id:''},{...row,details:{receive_amount:'broken',receive_currency:'HTG'}}])await assert.rejects(read([broken]));
+ const values=await read([row,{...row,id:'refund:synthetic',type:'refund',amount:'-9.00'},{...row,id:'zero',amount:0}]);
+ assert.deepEqual(Array.from(values,value=>value.amount),[9,-9,0]);
+ assert.equal((await read([])).length,0);
+});
+test('settlement summaries reject nondecimal money and fractional timing while retaining legitimate zero',()=>{
+ const s=service({});for(const value of ['0x10','1e2','0b11','1.001'])assert.throws(()=>s.parseSettlementSummary({...base(),available:value}));
+ for(const key of ['hold_hours','settlement_days'])assert.throws(()=>s.parseSettlementSummary({...base(),[key]:1.5}));
+ assert.equal(s.parseSettlementSummary({...base(),available:'0.00'}).available,0);
+});
 test('Goodies-only businesses use the scoped dashboard while unrelated and mixed feature dashboards keep their existing API',async()=>{
  const calls=[],s=service({rpc:async(name,args)=>{calls.push({name,args});return{data:{...base(),scope:'goodies',revenue:10}};}});
  const app={biz:{id:'business',goodies_store_id:'store'},meta:{feats:[{feature:'goodies'}]},range:{from:'2026-11-01',to:'2026-11-07'}};await s.getBusinessFinancialSummary(app);assert.equal(calls[0].name,'goodies_vendor_dashboard_range');
