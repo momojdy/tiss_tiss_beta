@@ -82,3 +82,34 @@ test('vendor and courier App signout bridges preserve auth state when Supabase r
 test('vendor signout boundary shows a safe failure instead of an unhandled server rejection',async()=>{
  const {node,ast}=find('src/screens/businessSpace/BusinessSpaceScreen.tsx','signOut','variable'),alerts=[];const signout=compile(node.getText(ast),{onSignOut:async()=>{throw Error('private server detail');},Alert:{alert:(...args)=>alerts.push(args)}});await signout();assert.equal(alerts.length,1);assert.ok(!alerts.flat().join(' ').includes('private'));assert.equal(alerts[0][0],'Could not sign out');
 });
+
+
+test('editing a hidden or unavailable custom product never silently republishes it',async()=>{
+ const {node,ast}=find(vendor,'GoodiesBuilderEditPage');
+ const decl=node.body.statements.find(n=>ts.isVariableStatement(n)&&n.declarationList.declarations.some(d=>d.name.getText(ast)==='save')).declarationList.declarations[0];
+ const makeSave=(b,all,onSaved)=>compile(decl.initializer.getText(ast),{
+  b,all,validateBuilder:()=>[],setErrs(){},setSaving(){},requireManage:()=>true,
+  app:{biz:{id:'merchant'},toast(){},bump(){},back(){}},
+  goodiesApi:{saveBuilders:async(_business,rows)=>onSaved(JSON.parse(JSON.stringify(rows)))},
+  errText:()=> 'Safe failure',
+ });
+ const other={id:'another-product',enabled:true,available:true,productCreated:true};
+ for(const [enabled,available] of [[false,false],[true,false],[false,true],[true,true]]){
+  const existing={id:'custom-existing',name:'Existing bowl',enabled,available,productCreated:true};
+  let written=null;
+  await makeSave(existing,[existing,other],rows=>{written=rows;})();
+  assert.equal(written.length,2);
+  assert.equal(written[0].enabled,enabled);
+  assert.equal(written[0].available,available);
+  assert.equal(written[0].productCreated,true);
+  assert.equal(written[1].enabled,true);
+  assert.equal(written[1].available,true);
+ }
+ let created=null;
+ const fresh={id:'new-builder',name:'Fresh bowl',enabled:true,available:true,productCreated:false};
+ await makeSave(fresh,[],rows=>{created=rows;})();
+ assert.equal(created.length,1);
+ assert.equal(created[0].productCreated,true);
+ assert.equal(created[0].enabled,true);
+ assert.equal(created[0].available,true);
+});
