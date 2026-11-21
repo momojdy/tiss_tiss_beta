@@ -1,7 +1,13 @@
 {
   "expo": {
     "name": "tiss_tiss_beta",
-    "slug": "tiss_tiss_beta",
+    "slug": "wantiss",
+    "owner": "wantiss",
+    "extra": {
+      "eas": {
+        "projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e"
+      }
+    },
     "version": "1.10.0",
     "scheme": "wantiss",
     "orientation": "portrait",

@@ -69,6 +69,13 @@
       "checks": 14,
       "scope": "Actual local private PNG uploads, MIME enforcement, original-byte downloads, five-minute signing and authorization/immutability. No hosted Storage or physical camera.",
       "report": "local-api-storage-verification.json"
+    },
+    "expoProjectLink": {
+      "classification": "PASS",
+      "project": "@wantiss/wantiss",
+      "evidence": "expo-account-setup.json",
+      "appReleased": false,
+      "signing": "NOT VERIFIED"
     }
   },
   "notVerified": [

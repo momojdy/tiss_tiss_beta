@@ -14,11 +14,10 @@
   },
   "limitations": [
     "Connector OAuth access is distinct from shell account/secret bindings.",
-    "The owner has Expo/Stripe accounts and Android/iPhone devices, but no approved CLI session or physical-device connection is available in this environment.",
+    "Expo CLI is now authorized and the existing Wantiss project is linked. Stripe sandbox authorization, Apple signing configuration and physical-device execution remain unavailable.",
     "A production backup cannot be created through the available metadata/SQL tools without an approved backup or privileged connection binding."
   ],
   "requiredOwnerInputs": [
-    "Approve the one-time Expo browser login, then use the prepared build links.",
     "Approve Stripe access in sandbox/test mode only so actual provider tests can run.",
     "Authorize a production backup connection or provide an existing backup through a secure channel; no password or key in chat.",
     "Run the guided installed-build checks on the Android phone and iPhone."
@@ -28,5 +27,11 @@
     "stripeAccount": true,
     "androidPhone": true,
     "iPhone": true
+  },
+  "expoCliSession": {
+    "authenticated": true,
+    "username": "momo_jdy",
+    "project": "@wantiss/wantiss",
+    "evidence": "expo-account-setup.json"
   }
 }

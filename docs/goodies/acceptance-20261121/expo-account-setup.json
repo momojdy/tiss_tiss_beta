@@ -1,0 +1,68 @@
+{
+  "classification": "PASS",
+  "scope": "Owner-approved Expo CLI sign-in, existing-project identification, repository linking and development public configuration only. No signing/build/device acceptance is implied.",
+  "observedAt": "2026-11-21T15:12:29.078236+00:00",
+  "expoUsername": "momo_jdy",
+  "project": {
+    "id": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+    "fullName": "@wantiss/wantiss",
+    "owner": "wantiss",
+    "slug": "wantiss",
+    "existingProjectReused": true
+  },
+  "repositoryConfiguration": {
+    "file": "app.json",
+    "owner": "wantiss",
+    "slug": "wantiss",
+    "extra.eas.projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+    "nativeScreenLayoutChanged": false
+  },
+  "developmentConfiguration": {
+    "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co",
+    "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY": {
+      "present": true,
+      "valueRecorded": false,
+      "environment": "development",
+      "serverSecret": false
+    }
+  },
+  "observedBuildAllowance": {
+    "plan": "Free",
+    "billingPeriodStart": "2026-11-01T00:00:00.000Z",
+    "billingPeriodEnd": "2026-12-01T00:00:00.000Z",
+    "android": {
+      "used": 0,
+      "limit": 15
+    },
+    "ios": {
+      "used": 0,
+      "limit": 15
+    }
+  },
+  "existingProjectSigningRecordCounts": {
+    "android": 0,
+    "ios": 0
+  },
+  "knownConfigurationGaps": [
+    "Android Google Maps API key and package/signature restrictions are not configured.",
+    "No FCM/APNs credentials are stored in the existing Expo project; actual push remains unverified.",
+    "iOS physical-device signing/provisioning and device registration require the Apple account setup.",
+    "Production Android/iOS application identifiers and signing identities remain unverified."
+  ],
+  "verification": {
+    "easProjectInfoMatches": true,
+    "developmentEnvironmentMetadataMatches": true,
+    "existingNativeTests": {
+      "passed": 3,
+      "failed": 0
+    },
+    "configuredLint": "PASS",
+    "typeScript": "PASS"
+  },
+  "appPublished": false,
+  "appSubmitted": false,
+  "buildTriggered": false,
+  "paidPlanEnabled": false,
+  "productionSecretsChanged": false,
+  "hostedSupabaseTestCreated": false
+}
