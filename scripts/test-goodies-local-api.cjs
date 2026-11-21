@@ -103,11 +103,13 @@ async function main(){
   let migrated=false;
   for(let attempt=0;attempt<200;attempt++){
    assert.equal(docker(['inspect','--format','{{.State.Running}}',storage.name]).trim(),'true','Local Storage exited during its own schema migrations.');
-   if(pg("select to_regclass('storage.migrations') is not null")==='true'&&Number(pg('select count(*) from storage.migrations'))===79){migrated=true;break;}
+   if(pg("select to_regclass('storage.migrations') is not null")==='true'){
+    report.storageMigrations=JSON.parse(pg('select json_build_object(\'ledgerRows\',count(*),\'appliedVersions\',count(*) filter(where id between 1 and 79),\'latestVersion\',max(id)) from storage.migrations'));
+    if(report.storageMigrations.appliedVersions===79&&report.storageMigrations.latestVersion===79){migrated=true;break;}
+   }
    await new Promise(resolve=>setTimeout(resolve,250));
   }
-  assert.ok(migrated,'The pinned Storage service must finish all 79 of its own migrations.');
-  report.storageMigrationCount=79;
+  assert.ok(migrated,'The pinned Storage service must finish all 79 versioned migrations: '+JSON.stringify(report.storageMigrations));
  }
  fs.writeFileSync(file,target.bootstrap,{mode:0o600});
  execFileSync(process.execPath,[path.join(__dirname,'goodies-postgres-client.cjs'),'-h',socket,'-U','postgres','-d','postgres','-f',file],{env,encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:8*1024*1024});
