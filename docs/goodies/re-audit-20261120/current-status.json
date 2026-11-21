@@ -103,7 +103,7 @@
     "Haitian Creole human review"
   ],
   "refundPolicy": "Card cancellation refunds return to the original card through Stripe; Wallet contributions refund their original payers. No duplicate card-plus-Wallet credit.",
-  "nextConcreteAction": "Approve the quoted temporary branch cost, then execute hosted-acceptance-plan.json without creating synthetic financial data in production.",
+  "nextConcreteAction": "Follow the current acceptance-20261121 report. Hosted Supabase test branches are prohibited by the user; the earlier proposal is cancelled.",
   "evidence": [
     "final-ci-verification.json",
     "backend-deployment-verification.json",
@@ -117,9 +117,12 @@
     "commits-and-files.json"
   ],
   "nativeExportEvidence": "final-native-export-files.json",
-  "hostedBranchCostApprovalRequired": true,
+  "hostedBranchCostApprovalRequired": false,
   "localDevelopmentConfiguration": "Existing Wantiss URL and public publishable key configured in ignored .env.local; no service-role key or app release.",
   "courierFreshnessHistoryEvidence": "courier-freshness-history.json",
   "historyIntegrationCommit": "ca11bee44f0eba30804cd95f24e1d9aa3adfe314",
-  "runtimeChangedSinceVerifiedCodeCommit": false
+  "runtimeChangedSinceVerifiedCodeCommit": false,
+  "historicalSnapshot": true,
+  "supersededBy": "../acceptance-20261121/current-status.json",
+  "hostedTestProhibitedByUser": true
 }

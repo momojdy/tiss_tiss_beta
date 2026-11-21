@@ -1,0 +1,30 @@
+2026-11-21T05:26:02.6002398Z PASS: Ten distinct role accounts sign in through real local Auth and retrieve their own account
+2026-11-21T05:26:03.2826401Z PASS: A customer-signed JWT resolves the same database identity through PostgREST
+2026-11-21T05:26:03.4483423Z PASS: Customer and unrelated vendor cannot save products in another merchant account
+2026-11-21T05:26:03.6168211Z PASS: The owning vendor saves a real pending product that remains hidden from anonymous shoppers
+2026-11-21T05:26:03.7290972Z PASS: Product rejection requires a reason and restricted staff cannot moderate
+2026-11-21T05:26:03.8991338Z PASS: Super-admin approval makes the same vendor product available in the public catalogue
+2026-11-21T05:26:04.4124928Z PASS: Server pricing rejects a tampered product price without changing balance or stock
+2026-11-21T05:26:04.7243573Z PASS: Concurrent SDK checkout retries create one paid order, one debit and one stock reservation
+2026-11-21T05:26:05.1627233Z PASS: Cross-customer and cross-vendor reads and order acceptance are denied
+2026-11-21T05:26:05.6209450Z PASS: The vendor fulfills pickup through valid transitions and the customer and admin see the same completion
+2026-11-21T05:26:06.0836288Z PASS: Customer cancellation refunds Wallet and restores stock exactly once across retries
+2026-11-21T05:26:06.1990756Z PASS: A customer cannot directly rewrite the order total or payment status
+2026-11-21T05:26:06.5523661Z PASS: A delivery quote belongs to its customer and cannot be reused by another account
+2026-11-21T05:26:07.0167103Z PASS: Vendor readiness creates an authorized courier offer; another courier cannot accept it
+2026-11-21T05:26:07.2431108Z PASS: Only the assigned courier can report GPS and only the owning customer can read it
+2026-11-21T05:26:07.6366726Z PASS: Courier pickup and completion synchronize customer, vendor and admin state
+2026-11-21T05:26:08.0971585Z PASS: The vendor assigns its own driver without claiming platform-courier GPS
+2026-11-21T05:26:08.5494348Z PASS: Private proof submission requires an owned existing object and a customer confirms only their own delivery
+2026-11-21T05:26:08.8337911Z PASS: Only an eligible order owner can submit a real review and admin publication reaches customer review reads
+2026-11-21T05:26:09.0478589Z PASS: Editing user metadata cannot elevate a customer into Goodies administration
+2026-11-21T05:26:10.0254498Z PASS: Shared Bill stays disabled by default and local 60/40 funding produces one original-customer order
+2026-11-21T05:26:10.6610244Z PASS: Full-payment Shared Bill charges only the payer and cancellation refunds that payer once
+2026-11-21T05:26:11.1171108Z PASS: Cancelling a partially funded request restores every contribution across repeated cancellation
+2026-11-21T05:26:11.3418020Z PASS: Rejection survives availability changes and prevents new purchases
+2026-11-21T05:26:12.2375875Z PASS: The real public Edge handler loads published Goodies into the actual consumer content module
+2026-11-21T05:26:13.0483820Z PASS: CMS editing is permission-controlled and cannot change protected fee policy
+2026-11-21T05:26:13.4839321Z PASS: Authorized CMS publication reaches a consumer reload through real Edge and PostgREST calls
+2026-11-21T05:26:15.6328424Z PASS: A complete local synthetic database copy restores every table fingerprint, role and policy
+2026-11-21T05:26:15.9879218Z PASS: Restored Auth sessions recover the same paid order without a second checkout debit
+2026-11-21T05:26:15.9880586Z All local API scenarios passed; no hosted project, payment provider or physical device was used.

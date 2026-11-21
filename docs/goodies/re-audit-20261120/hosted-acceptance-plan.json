@@ -15,19 +15,12 @@
     "exampleTwoHourCompute": 0.02688,
     "otherUsage": "Supabase may charge other applicable usage; this is not a fixed total quote."
   },
-  "costApprovalRequired": true,
+  "costApprovalRequired": false,
   "costApprovalReceived": false,
   "productionDataCopied": false,
   "appDeployment": false,
   "gitBranches": "Continue on main in both repositories.",
-  "preconditions": [
-    "Obtain explicit approval of the quoted branch cost; no plan upgrade is authorized.",
-    "Verify the created project_ref is a non-default branch of Wantiss and differs from production.",
-    "Inspect branch migration completion and reconcile any historical replay differences before seeding.",
-    "Disable outbound scheduled jobs in the new branch and prevent any worker URL or credentials from reaching production.",
-    "Create confirmed synthetic Auth identities and approved synthetic Wallet balances only on that branch; keep credentials outside Git and reports.",
-    "Use test-mode payment-provider credentials only. Do not copy live charging secrets or exercise production transactions."
-  ],
+  "preconditions": [],
   "scenarios": [
     "Customer/vendor/courier/admin/restricted-staff ownership and direct API denial.",
     "Wallet and Cash checkout, server prices/builders/discounts/stock, acceptance, decline, cancellation and customer receipt.",
@@ -44,5 +37,10 @@
     "SDK/API acceptance is not a signed-device UI or physical background GPS/push test.",
     "Production CMS publication and deferred FAQ/legal/Haitian Creole approval are separate content actions."
   ],
-  "cleanup": "Delete only the newly created acceptance branch after tests. Do not restore Wantiss Security Test, merge into production, or deploy the Wantiss app."
+  "cleanup": "No acceptance branch was created; no hosted project or branch may be restored for these tests.",
+  "status": "CANCELLED BY USER",
+  "prohibitedByUser": true,
+  "currentAction": "Do not create or restore a hosted Supabase test branch/project. Use the local-only Auth/PostgREST/CMS/recovery harness in scripts/test-goodies-local-api.cjs.",
+  "supersededBy": "../acceptance-20261121/CURRENT_STATUS.md",
+  "historicalCostQuoteOnly": true
 }

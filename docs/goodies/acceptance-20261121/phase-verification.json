@@ -1,0 +1,169 @@
+{
+  "displayDate": "21 November 2026 (Asia/Manila)",
+  "sourceCommits": {
+    "customer": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+    "admin": "393606950ffdfe6f61dcea508ae310d97ef343e6"
+  },
+  "productionReady": false,
+  "allPhasesCompleteExcludingDeferredContent": false,
+  "classificationRules": {
+    "PASS": "Only the explicitly named executed check succeeded.",
+    "FAIL": "An executed check confirms a defect or release prerequisite is unsatisfied.",
+    "NOT VERIFIED": "The required complete acceptance has not run in the applicable environment."
+  },
+  "userDeferred": [
+    "FAQ",
+    "Translations including Haitian Creole human review",
+    "Final policy/support content approval"
+  ],
+  "phases": [
+    {
+      "phase": 1,
+      "name": "Backend reconciliation",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Reviewed 32-migration target applies locally. Prior scoped backend package is recorded live.",
+        "Both corrected shared CMS handlers are deployed and byte-match source.",
+        "Local Auth/PostgREST calls exercise exact product, order, courier, review and CMS signatures."
+      ],
+      "remainingAcceptance": [
+        "All role/contract paths and full production recovery have not been accepted. Existing shared-platform exceptions remain separately documented."
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Customer screens and controls",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Source registry: 34 customer routes, 1347 extracted bindings, zero unresolved recognized literal registry targets.",
+        "Real local purchasing, history visibility, review, cancellation and consumer CMS load paths pass."
+      ],
+      "remainingAcceptance": [
+        "Every installed screen/control and 17 computed navigation targets require runtime acceptance."
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Vendor store/product/builder operations",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Local ownership denial, pending listing, approval, required rejection reason, rejection persistence and fulfillment pass.",
+        "Existing builder/restricted-store and product tests pass within their named scopes."
+      ],
+      "remainingAcceptance": [
+        "Complete signed-in merchant onboarding, inventory, staff and all operational button scenarios are not manually accepted."
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Checkout/payment/refund/settlement",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Actual local Wallet pricing, financial tampering denial, retries, refunds and stock preservation pass.",
+        "27 native concurrency scenarios cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
+        "Original-card refund policy preserved."
+      ],
+      "remainingAcceptance": [
+        "Provider sandbox charge/capture/webhook/refund/reconciliation and physical payment UI are not verified."
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Courier and delivery",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Assigned-courier API access, wrong-courier denial, GPS authorization, pickup/completion and 24-hour hold pass locally.",
+        "Own-driver proof object ownership and receipt confirmation pass against metadata fixtures.",
+        "Native Android development compilation and signature verification pass."
+      ],
+      "remainingAcceptance": [
+        "Physical GPS/background/offline/maps, actual private Storage upload/signing and push behavior are not verified."
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Group orders and Shared Bill",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "Local 60/40 and full-payment contributions, original-customer ownership, idempotency and per-payer refunds pass through Auth/PostgREST.",
+        "Native PostgreSQL group/Shared Bill race tests pass."
+      ],
+      "remainingAcceptance": [
+        "Complete installed invitation/QR/offline/restart interactions and release-gate activation acceptance remain open; no production gate was activated."
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Admin operations",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "71 admin tests and the paired admin CI pass.",
+        "Real local moderation, restricted-staff denial, orders oversight, reviews and CMS permission checks pass."
+      ],
+      "remainingAcceptance": [
+        "All signed-in admin modules, restricted roles and every operational control are not manually accepted."
+      ]
+    },
+    {
+      "phase": 8,
+      "name": "CMS coverage/preview/publication",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "1926 registered fields in 73 groups across 34 registered customer routes.",
+        "Real local draft permissions, draft isolation, protected fees and publication to actual consumer module pass; 2102 candidate labels roundtrip.",
+        "Public CMS locale validation repaired and deployed; malformed admin responses rejected."
+      ],
+      "remainingAcceptance": [
+        "Every editable field has not been manually previewed/published/reloaded on an installed app. Native cache/realtime acceptance remains open."
+      ]
+    },
+    {
+      "phase": 9,
+      "name": "Notifications/messaging/security",
+      "classification": "FAIL",
+      "verifiedSubchecks": [
+        "Actual local cross-account/vendor/courier/staff denials and metadata-escalation denial pass.",
+        "Existing push worker/device/outbox/session/retry tests pass; production activation unchanged."
+      ],
+      "remainingAcceptance": [
+        "Current Supabase leaked-password protection is disabled; Free plan is ineligible for that native feature.",
+        "Physical push/provider behavior and every notification/message destination are not verified."
+      ]
+    },
+    {
+      "phase": 10,
+      "name": "Languages and production cleanup",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "No UI redesign or production demo flow added; safe CMS errors and existing cleanup retained.",
+        "Configured zh-Hans request validation repaired without publishing content."
+      ],
+      "remainingAcceptance": [
+        "FAQ, translations and final policy/support approval are excluded from current acceptance at the user request.",
+        "Source cleanup is verified within its recorded checks; full installed-screen acceptance remains open."
+      ]
+    },
+    {
+      "phase": 11,
+      "name": "Automated tests and builds",
+      "classification": "NOT VERIFIED",
+      "verifiedSubchecks": [
+        "488 core tests with zero skipped, 27 native PostgreSQL concurrency scenarios, 29 local API/recovery scenarios, successful current CI/TypeScript/exports and an Android development APK."
+      ],
+      "remainingAcceptance": [
+        "Production Android/iOS signing, actual provider sandbox, full installed-button acceptance and physical-device requirements remain open."
+      ]
+    },
+    {
+      "phase": 12,
+      "name": "Production release decision",
+      "classification": "FAIL",
+      "verifiedSubchecks": [
+        "No Wantiss app release, real charge, production financial mutation, hosted test branch or CMS publication."
+      ],
+      "remainingAcceptance": [
+        "Leaked-password protection and the external device/provider/production-backup acceptance requirements must be resolved. All twelve full phases are not certified complete."
+      ]
+    }
+  ]
+}

@@ -1,4 +1,6 @@
-# Goodies readiness — 20 November 2026 (UTC)
+# Goodies readiness — historical 20 November evidence
+
+**Superseded by the [21 November status](../acceptance-20261121/CURRENT_STATUS.md).** The earlier paid hosted-test proposal below has been cancelled under the user’s instruction. No test branch was created. This file preserves the earlier evidence and is not the current release decision.
 
 **Not production-ready.** The verified source fixes are pushed and the scoped backend package is deployed. Production acceptance still contains confirmed content/Auth gaps and unverified hosted/provider/device requirements. The Wantiss app was not released.
 
@@ -27,7 +29,7 @@ Push activation remains **off**, with no fabricated EAS project binding, registe
 
 The 264 demo/preview/sample keyword references in the source inventory include legitimate editor fixtures, input hints, GPS samples, historical-store recovery and shared non-Goodies code. They are not 264 production demos. Required isolated CMS previews were retained; no new customer demo path or simulated production transaction was added. Source classification does not replace live workflow testing.
 
-The next concrete test package is the [temporary hosted acceptance plan](hosted-acceptance-plan.json). Supabase's first branch cost confirmation expired, and the branch listing still contains only main. Its quoted compute cost is **$0.01344/hour** (about **$0.02688 for two hours**, plus applicable usage). Explicit cost approval is required before creating it. Synthetic Auth users, balances, orders and refunds would remain on that temporary branch; production cron/transactions and the app release stay outside that test action.
+The earlier [temporary hosted acceptance proposal](hosted-acceptance-plan.json) is **cancelled**. The user prohibited hosted Supabase isolation tests. The replacement Auth/PostgREST/CMS/recovery tests run locally with synthetic accounts and balances; see the current report. No cost approval or hosted test resource is pending.
 
 Expo and EAS report **not logged in**, and registered native/EAS/Maps configuration is incomplete. Signed development builds and actual GPS/push therefore remain open. FAQ/legal final approval and Haitian Creole review stay deferred as requested. The prepared translations retain machine/assistant provenance and do not claim human review. Event-by-event notification body acceptance also remains open: some templates preserve `{details}`, and lookup tests do not prove all server-generated text is localized. Customer/vendor-authored messages should retain their original content.
 

@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "542fb7967b054753db2fb7b1a0798c99e70e9380",
+  "scope": "Read-only deployed function metadata/source comparison; no hosted synthetic scenario or CMS publication.",
+  "functions": [
+    {
+      "slug": "wantiss-public-content",
+      "version": 7,
+      "status": "ACTIVE",
+      "verifyJwt": false,
+      "sourceMatches": true,
+      "sourceSha256": "62f92b2f9be4fc1c0c441402ce2fad041f47fed6d5fbf605590938a1854e9964"
+    },
+    {
+      "slug": "wantiss-cms-public",
+      "version": 6,
+      "status": "ACTIVE",
+      "verifyJwt": false,
+      "sourceMatches": true,
+      "sourceSha256": "56e6b3ff0be6a696800e33c5a721865fbff0ea01794f25cc6a9c261d6526bed2"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "observedAt": "2026-11-21T05:18:38.231Z",
+  "project": "ycbirmgppwavorwudlrv",
+  "classification": "FAIL",
+  "organization": {
+    "id": "dywhonoeirxeaeffryes",
+    "plan": "free",
+    "tier": "tier_free"
+  },
+  "advisorFindings": [
+    {
+      "name": "auth_leaked_password_protection",
+      "title": "Leaked Password Protection Disabled",
+      "level": "WARN",
+      "facing": "EXTERNAL",
+      "categories": [
+        "SECURITY"
+      ],
+      "description": "Leaked password protection is currently disabled.",
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+      "count": 1,
+      "findings": [
+        {
+          "detail": "Supabase Auth prevents the use of compromised passwords by checking against HaveIBeenPwned.org. Enable this feature to enhance security.",
+          "metadata": {
+            "type": "auth",
+            "entity": "Auth"
+          }
+        }
+      ]
+    }
+  ],
+  "protectionEnabled": false,
+  "accountUpgradePerformed": false,
+  "configurationChanged": false,
+  "availableToolLimitation": "Connected Supabase tools have no Auth configuration or project backup endpoint. No Supabase management token or privileged database binding is configured.",
+  "documentation": {
+    "url": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection",
+    "requirement": "Leaked password protection is available on the Pro Plan and above.",
+    "verifiedOn": "2026-11-21"
+  },
+  "nextAction": "The project owner must enable the eligible plan and Auth setting, or provide approved administrative configuration access after upgrading. Recheck the advisor and approved local/test auth flow afterward; no plan upgrade is currently authorized."
+}

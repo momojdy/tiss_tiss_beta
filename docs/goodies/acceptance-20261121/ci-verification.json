@@ -1,0 +1,115 @@
+{
+  "displayDate": "21 November 2026 (Asia/Manila)",
+  "classification": "PASS",
+  "scope": "Named CI checks only; no physical-device, provider-sandbox, installed-app CMS or production backup certification.",
+  "codeCommits": {
+    "customer": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+    "admin": "393606950ffdfe6f61dcea508ae310d97ef343e6"
+  },
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44870803147,
+      "name": "Expo validation",
+      "headSha": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44870803147",
+      "jobs": [
+        {
+          "id": 136744654501,
+          "name": "goodies-local-api",
+          "conclusion": "success"
+        },
+        {
+          "id": 136744654609,
+          "name": "settlement-concurrency",
+          "conclusion": "success"
+        },
+        {
+          "id": 136744654724,
+          "name": "edge-functions",
+          "conclusion": "success"
+        },
+        {
+          "id": 136744654755,
+          "name": "validate",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44870803143,
+      "name": "TypeScript and Expo build checks",
+      "headSha": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44870803143"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "id": 44866770565,
+      "name": "Admin validation",
+      "headSha": "393606950ffdfe6f61dcea508ae310d97ef343e6",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44866770565"
+    }
+  ],
+  "automated": {
+    "coreTests": 488,
+    "customer": 269,
+    "admin": 71,
+    "crossRole": 47,
+    "deno": 101,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "localApiScenarios": 29,
+    "nativePostgresConcurrencyScenarios": 27,
+    "targetGoodiesMigrations": 32
+  },
+  "artifacts": [
+    {
+      "id": 14693861779,
+      "name": "goodies-local-api-cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "sizeBytes": 5671,
+      "digest": "sha256:6210ffad2de62e822c728f141bb2de1c9df0bcc85e9fe40889b96e8a487ca6a0",
+      "expiresAt": "2027-02-19T05:25:14Z"
+    },
+    {
+      "id": 14693543767,
+      "name": "goodies-settlement-races-cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "sizeBytes": 1309,
+      "digest": "sha256:fcec0a40a9b84016e432825f7d6f82e7b75080a3739faaad09cf25a36578fa71",
+      "expiresAt": "2027-02-19T05:25:14Z"
+    },
+    {
+      "id": 14693098558,
+      "name": "goodies-customer-web-cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "sizeBytes": 44463955,
+      "digest": "sha256:8133ba3fc08493ae95e14a290a04c7854534ea95c03e0a5e5e49a8161576852e",
+      "expiresAt": "2027-02-19T05:25:14Z"
+    }
+  ],
+  "earlierHarnessFailures": [
+    {
+      "commit": "542fb7967b054753db2fb7b1a0798c99e70e9380",
+      "reason": "Preserved server-source snapshots used a .ts suffix and entered the application's TypeScript scan; corrected to .ts.txt."
+    },
+    {
+      "commit": "4d5e3a3d71bb42732921a24ea9656617eaf0305e",
+      "reason": "GitHub runner context was used at job env level; moved to step env."
+    },
+    {
+      "commit": "63f39e11ea7e5d9617c95c752f6c0f8b10c32729",
+      "reason": "Pinned PostgreSQL package's symlinks were not hydrated under --ignore-scripts; run the reviewed hydration script."
+    },
+    {
+      "commit": "9b98b53107a9529efa80ddf3f5b6767f319dcba2",
+      "reason": "The restored local data directory did not start; explicit private directory mode and startup diagnostics were added. The complete follow-up recovery test passes; no production recovery is inferred."
+    }
+  ],
+  "appReleased": false,
+  "hostedSupabaseTestCreated": false
+}

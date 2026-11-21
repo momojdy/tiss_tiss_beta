@@ -1,0 +1,14 @@
+{
+  "logs": [
+    {
+      "file": "logs/goodies-local-api-final.log.gz",
+      "uncompressedSha256": "757203fdf967840fee63e50e40a6cafeaeb983698c5d6139f074cdf75bf64978",
+      "scope": "Local synthetic database only; no provider, hosted test or physical device."
+    },
+    {
+      "file": "logs/goodies-native-20261121.log.gz",
+      "uncompressedSha256": "32c0840ccc8161d6253f7b9e72476bfa34d3c713378847854789fc1a99e2ae41",
+      "scope": "Local synthetic database only; no provider, hosted test or physical device."
+    }
+  ]
+}

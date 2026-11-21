@@ -1,0 +1,169 @@
+{
+  "scope": "Changes in the current follow-up acceptance pass; final evidence-only commits follow this source checkpoint.",
+  "repositories": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "branch": "main",
+      "baseline": "bf4119e12079fc9a5317b89690564eed2bc67087",
+      "sourceCommit": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "commits": [
+        {
+          "sha": "7fbfc092ce95c4029c52dcccf9f84fa5385c71d7",
+          "subject": "ci(goodies): compile and verify an internal Android development APK"
+        },
+        {
+          "sha": "c7c18cda1bc6edd1d83d63ba8ca6d1a6c31239fe",
+          "subject": "ci(goodies): omit the retired Android SDK tools package"
+        },
+        {
+          "sha": "7ba8a8d0957be4f9621002f2a5cf682132f87daa",
+          "subject": "ci(goodies): verify Android artifacts without assuming ripgrep is installed"
+        },
+        {
+          "sha": "542fb7967b054753db2fb7b1a0798c99e70e9380",
+          "subject": "fix(goodies-cms): accept configured script locales in published content delivery"
+        },
+        {
+          "sha": "4d5e3a3d71bb42732921a24ea9656617eaf0305e",
+          "subject": "test(goodies): exercise authenticated local workflows and full local recovery"
+        },
+        {
+          "sha": "63f39e11ea7e5d9617c95c752f6c0f8b10c32729",
+          "subject": "ci(goodies): resolve local API tool paths in the runner step"
+        },
+        {
+          "sha": "9b98b53107a9529efa80ddf3f5b6767f319dcba2",
+          "subject": "ci(goodies): hydrate pinned PostgreSQL library symlinks before acceptance"
+        },
+        {
+          "sha": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+          "subject": "test(goodies): retain local recovery startup diagnostics and directory permissions"
+        }
+      ],
+      "changedFiles": [
+        {
+          "status": "M",
+          "paths": [
+            ".github/workflows/expo-validation.yml"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            ".github/workflows/goodies-android-development.yml"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/manifest.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/wantiss-cms-public.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/wantiss-public-content.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-isolated-schema.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-local-api-scenarios.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-local-cms-scenarios.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-local-cms.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-local-recovery.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/test-goodies-local-api.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "scripts/test-goodies-settlement-postgres.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "supabase/functions/goodies-tests/publicCmsTransport_test.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "supabase/functions/wantiss-cms-public/index.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "supabase/functions/wantiss-public-content/index.ts"
+          ]
+        }
+      ]
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "branch": "main",
+      "baseline": "f13f959afad44f5e0fd23f2f1da0266031641be1",
+      "sourceCommit": "393606950ffdfe6f61dcea508ae310d97ef343e6",
+      "commits": [
+        {
+          "sha": "393606950ffdfe6f61dcea508ae310d97ef343e6",
+          "subject": "fix(goodies-cms): reject malformed editor publication responses"
+        }
+      ],
+      "changedFiles": [
+        {
+          "status": "M",
+          "paths": [
+            "package.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "src/features/admin/lib/wantissCms.ts"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "tests/cms-public-transport.test.cjs"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "displayDate": "21 November 2026 (Asia/Manila)",
+  "productionReady": false,
+  "allTwelvePhasesCompleteExcludingDeferredContent": false,
+  "classification": "FAIL",
+  "appReleased": false,
+  "hostedTestCreatedOrRestored": false,
+  "hostedIsolationProhibitedByUser": true,
+  "productionFinancialDataModified": false,
+  "liveChargesExecuted": false,
+  "cmsPublished": false,
+  "faqAndTranslationsDeferred": true,
+  "sourceCommits": {
+    "customer": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+    "admin": "393606950ffdfe6f61dcea508ae310d97ef343e6"
+  },
+  "verifiedScopes": {
+    "localApi": {
+      "classification": "PASS",
+      "scenarios": 29,
+      "roles": 10,
+      "targetGoodiesMigrations": 32,
+      "report": "local-api-verification.json"
+    },
+    "localSyntheticRecovery": {
+      "classification": "PASS",
+      "tables": 88,
+      "productionBackup": false
+    },
+    "localCmsPipeline": {
+      "classification": "PASS",
+      "labelsRoundtripped": 2102,
+      "installedApp": "NOT VERIFIED"
+    },
+    "androidDevelopmentApk": {
+      "classification": "PASS",
+      "run": 44865869015,
+      "productionSigning": "NOT VERIFIED"
+    },
+    "adminValidation": {
+      "classification": "PASS",
+      "tests": 71,
+      "ciRun": 44866770565
+    },
+    "sharedCmsLocaleHandlerDeployment": {
+      "classification": "PASS",
+      "functions": {
+        "wantiss-public-content": 7,
+        "wantiss-cms-public": 6
+      },
+      "sourceMatches": true
+    },
+    "currentCI": {
+      "classification": "PASS",
+      "receipt": "ci-verification.json",
+      "runs": [
+        44870803147,
+        44870803143,
+        44866770565
+      ]
+    }
+  },
+  "knownFailures": [
+    {
+      "classification": "FAIL",
+      "finding": "Supabase leaked-password protection remains disabled.",
+      "reason": "Organization is on Free; native leaked-password protection requires Pro or above. No billing upgrade is authorized and no Auth configuration endpoint is connected.",
+      "evidence": "auth-security-status.json"
+    }
+  ],
+  "notVerified": [
+    "Every installed customer/vendor/courier/admin control and all authorization paths.",
+    "Actual payment-provider sandbox charges, webhooks, original-card refunds and reconciliation.",
+    "Production Android/iOS signing and physical maps/GPS/background/push/proof behavior.",
+    "Installed-app persistent cache/realtime CMS reload.",
+    "Full Wantiss production backup and restoration."
+  ],
+  "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
+  "sourceInventory": "../re-audit-20261120/source-inventory.json",
+  "phaseEvidence": "phase-verification.json",
+  "ciEvidence": "ci-verification.json",
+  "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
+  "localTestLimitations": [
+    "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
+    "Storage is an object-metadata fixture and Cron execution is stubbed.",
+    "Actual consumer CMS loading runs with an in-memory AsyncStorage test port.",
+    "Coordinates and route geometry are explicit local test inputs; physical GPS and external route providers are not contacted."
+  ],
+  "automated": {
+    "coreTests": 488,
+    "customer": 269,
+    "admin": 71,
+    "crossRole": 47,
+    "deno": 101,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "localApiScenarios": 29,
+    "nativePostgresConcurrencyScenarios": 27,
+    "targetGoodiesMigrations": 32
+  }
+}

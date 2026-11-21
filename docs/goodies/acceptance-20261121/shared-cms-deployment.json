@@ -1,0 +1,43 @@
+{
+  "sourceCommit": "542fb7967b054753db2fb7b1a0798c99e70e9380",
+  "project": "ycbirmgppwavorwudlrv",
+  "scope": "CMS delivery locale validation only. No CMS publication, application release, secret change or financial record mutation.",
+  "deployments": [
+    {
+      "name": "wantiss-public-content",
+      "result": {
+        "id": "e4e99adc-f11e-4881-8457-444b30351b65",
+        "slug": "wantiss-public-content",
+        "name": "wantiss-public-content",
+        "status": "ACTIVE",
+        "version": 7,
+        "created_at": 1792839922186,
+        "updated_at": 1795235815825,
+        "verify_jwt": false,
+        "import_map": true,
+        "entrypoint_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_e4e99adc-f11e-4881-8457-444b30351b65_7/source/index.ts",
+        "import_map_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_e4e99adc-f11e-4881-8457-444b30351b65_7/source/deno.json",
+        "ezbr_sha256": "e5156fb2275fabf35f76c2738f6319bcd659db79f75bbae712ae00901bd8c156"
+      },
+      "isError": false
+    },
+    {
+      "name": "wantiss-cms-public",
+      "result": {
+        "id": "bd323c0a-f1c9-41f2-ac53-7a4919c0290a",
+        "slug": "wantiss-cms-public",
+        "name": "wantiss-cms-public",
+        "status": "ACTIVE",
+        "version": 6,
+        "created_at": 1792839854239,
+        "updated_at": 1795235821612,
+        "verify_jwt": false,
+        "import_map": true,
+        "entrypoint_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_bd323c0a-f1c9-41f2-ac53-7a4919c0290a_6/source/index.ts",
+        "import_map_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_bd323c0a-f1c9-41f2-ac53-7a4919c0290a_6/source/deno.json",
+        "ezbr_sha256": "e55685cdb2c53e3db2ab8b109edbe93c9a78938211e56cfa50524170515a21de"
+      },
+      "isError": false
+    }
+  ]
+}

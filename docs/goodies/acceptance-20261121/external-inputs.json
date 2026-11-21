@@ -1,0 +1,26 @@
+{
+  "observedAt": "2026-11-21T05:22:05.421858+00:00",
+  "scope": "Presence of environment binding names only; no secret values are read into reports.",
+  "configuredEnvironmentBindings": {
+    "SUPABASE_ACCESS_TOKEN": false,
+    "SUPABASE_DB_PASSWORD": false,
+    "DATABASE_URL": false,
+    "SUPABASE_SERVICE_ROLE_KEY": false,
+    "STRIPE_TEST_SECRET_KEY": false,
+    "STRIPE_SECRET_KEY": false,
+    "STRIPE_WEBHOOK_SECRET": false,
+    "EXPO_TOKEN": false,
+    "EAS_ACCESS_TOKEN": false
+  },
+  "limitations": [
+    "Connector OAuth access is distinct from shell account/secret bindings.",
+    "No physical device, Apple signing session or provider test account is supplied.",
+    "A production backup cannot be created through the available metadata/SQL tools without an approved backup or privileged connection binding."
+  ],
+  "requiredOwnerInputs": [
+    "Eligible Supabase plan and Auth setting access for leaked-password protection.",
+    "Approved Stripe test-mode bindings and sandbox webhook forwarding/endpoint.",
+    "Registered app identities, signing access and physical Android/iOS devices with native Maps/push configuration.",
+    "Existing production backup artifact or a secure privileged database/backup binding; no passwords or keys in chat."
+  ]
+}
