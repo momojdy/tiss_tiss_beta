@@ -83,6 +83,18 @@ module.exports=async function({actors,anonymous,pg,scenario,report,storageProof}
   assert.equal(balance(a.customer),before);assert.equal(Number(pg(`select stock from public.goodies_products where id=${q(product)}`)),stock);
   assert.equal(pg(`select status||':'||payment_status from public.goodies_orders where id=${q(id)}`),'cancelled:refunded');
  });
+ await scenario('Card checkout reserves stock once across concurrent retries and blocks acceptance before payment',async()=>{
+  const args=checkout('local-api-card-'+product);delete args.p_payment_method;
+  const beforeBalance=balance(a.customer),beforeStock=Number(pg('select stock from public.goodies_products where id='+q(product)));
+  const results=await Promise.all([call(a.customer,'place_goodies_card_order_once',args),call(a.customer,'place_goodies_card_order_once',args)]);
+  const id=results[0][0].id;assert.equal(results[1][0].id,id);
+  assert.equal(Number(pg('select stock from public.goodies_products where id='+q(product))),beforeStock-1);
+  assert.equal((await rows(a.otherCustomer,'goodies_orders','id','id',id)).length,0);
+  await denied(a.vendor,'accept_goodies_order',{p_order_id:id},['P0001','22023']);
+  await call(a.customer,'set_goodies_order_status',{p_order_id:id,p_status:'cancelled'});
+  assert.equal(Number(pg('select stock from public.goodies_products where id='+q(product))),beforeStock);
+  assert.equal(balance(a.customer),beforeBalance);
+ });
  await scenario('A customer cannot directly rewrite the order total or payment status',async()=>{
   const response=await a.customer.sdk.from('goodies_orders').update({total:0,payment_status:'refunded'}).eq('id',order);
   assert.equal(response.error?.code,'42501');assert.equal(pg(`select total||':'||payment_status from public.goodies_orders where id=${q(order)}`),'11.00:paid');
