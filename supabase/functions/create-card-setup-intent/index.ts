@@ -8,10 +8,6 @@ const corsHeaders = {
 };
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-const messageOf = (error: unknown) =>
-  error instanceof Error ? error.message
-    : typeof (error as any)?.message === "string" ? (error as any).message
-    : "Unable to create card setup session";
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -19,9 +15,10 @@ Deno.serve(async (req) => {
     if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
     const stripePublishableKey = Deno.env.get("STRIPE_PUBLISHABLE_KEY");
-    if (!supabaseUrl || !supabaseAnonKey || !stripeSecretKey || !stripePublishableKey) {
+    if (!supabaseUrl || !supabaseAnonKey || !supabaseServiceKey || !stripeSecretKey || !stripePublishableKey) {
       throw new Error("Card setup is not configured yet.");
     }
     const authHeader = req.headers.get("Authorization");
@@ -30,8 +27,9 @@ Deno.serve(async (req) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
     if (userError || !user) return json({ error: "Not authenticated" }, 401);
 
-    const stripe = new Stripe(stripeSecretKey, { apiVersion: "2026-08-26.dahlia" });
-    const { data: existingCustomer, error: customerLookupError } = await supabase
+    const service = createClient(supabaseUrl, supabaseServiceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const stripe = new Stripe(stripeSecretKey, { apiVersion: "2026-08-26.dahlia" as Stripe.LatestApiVersion });
+    const { data: existingCustomer, error: customerLookupError } = await service
       .from("stripe_customers").select("stripe_customer_id").eq("user_id", user.id).maybeSingle();
     if (customerLookupError) throw customerLookupError;
     let stripeCustomerId = existingCustomer?.stripe_customer_id ?? null;
@@ -39,10 +37,10 @@ Deno.serve(async (req) => {
     if (!stripeCustomerId) {
       const customer = await stripe.customers.create({ metadata: { wantiss_user_id: user.id } });
       stripeCustomerId = customer.id;
-      const { error: insertCustomerError } = await supabase
+      const { error: insertCustomerError } = await service
         .from("stripe_customers").insert({ user_id: user.id, stripe_customer_id: stripeCustomerId });
       if (insertCustomerError) {
-        const { data: existingAfterRace } = await supabase
+        const { data: existingAfterRace } = await service
           .from("stripe_customers").select("stripe_customer_id").eq("user_id", user.id).maybeSingle();
         if (existingAfterRace?.stripe_customer_id) stripeCustomerId = existingAfterRace.stripe_customer_id;
         else throw insertCustomerError;
@@ -62,6 +60,6 @@ Deno.serve(async (req) => {
     });
   } catch (error) {
     console.error("create-card-setup-intent error:", error);
-    return json({ error: messageOf(error) }, 500);
+    return json({ error: "Could not start card setup. Please try again." }, 500);
   }
 });

@@ -5,6 +5,8 @@ const assert=require('node:assert/strict'),{execFileSync,spawnSync,spawn}=requir
 const buildSchema=require('./goodies-isolated-schema.cjs');
 const root=path.resolve(__dirname,'..'),args=process.argv.slice(2),value=flag=>args[args.indexOf(flag)+1];
 const useStorage=args.includes('--storage');
+const useStripe=args.includes('--stripe-sandbox');
+assert.ok(!useStripe||args.includes('--deno-bin'),'Stripe sandbox checks require the real local Edge runtime.');
 assert.ok(args.includes('--native-bin'),'Provide the existing local PostgreSQL 17.6 native bin directory.');
 assert.ok(!args.some(arg=>/^(?:postgres(?:ql)?|https?):\/\//i.test(arg)),'Hosted URLs are not accepted.');
 const nativeBin=fs.realpathSync(value('--native-bin')),state=fs.mkdtempSync(path.join(os.tmpdir(),'wantiss-goodies-postgres-'));
@@ -24,8 +26,9 @@ if(useStorage)images.storage='supabase/storage-api:v1.89.12@sha256:4a71028f91060
 const jwtSecret=crypto.randomBytes(48).toString('hex');
 function jwt(role){const encode=obj=>Buffer.from(JSON.stringify(obj)).toString('base64url'),payload=encode({role,iss:'local-goodies-acceptance',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+3600});const body=encode({alg:'HS256',typ:'JWT'})+'.'+payload;return body+'.'+crypto.createHmac('sha256',jwtSecret).update(body).digest('base64url');}
 const anonKey=jwt('anon'),serviceKey=jwt('service_role');
-const redact=value=>[jwtSecret,anonKey,serviceKey].reduce((text,secret)=>text.split(secret).join('[redacted]'),String(value));
-let started=false,networkCreated=false,proxy,cmsProcess,cmsPort,activeDataDirectory=path.join(state,'data');
+const privateValues=[jwtSecret,anonKey,serviceKey];
+const redact=value=>privateValues.reduce((text,secret)=>text.split(secret).join('[redacted]'),String(value));
+let started=false,networkCreated=false,proxy,cmsProcess,cmsPort,sandbox,activeDataDirectory=path.join(state,'data');
 const report={observedAt:new Date().toISOString(),scope:'Actual local Auth/PostgREST/'+(useStorage?'Storage/':'')+'SQL with synthetic users and balances. Not hosted or physical-device acceptance.',productionContacted:false,hostedTestCreated:false,images,scenarios:[]};
 function service(kind,port,settings){
  const name=network+'-'+kind;containers.push(name);
@@ -57,7 +60,7 @@ async function authStarted(service){
 async function localTransport(auth,rest,storage){
  const name=network+'-transport';containers.push(name);
  docker(['run','--name',name,'--network',network,'--read-only','--entrypoint','/bin/busybox','-d',images.gateway,'sleep','3600']);
- const agents=new Map();
+ const agents=new Map(),functionPorts=new Map();
  function agentFor(target){
   if(agents.has(target.name))return agents.get(target.name);
   const agent=new http.Agent({keepAlive:false});
@@ -71,8 +74,10 @@ async function localTransport(auth,rest,storage){
   agents.set(target.name,agent);return agent;
  }
  proxy=http.createServer((incoming,outgoing)=>{
-  if(cmsPort&&incoming.url.startsWith('/functions/v1/wantiss-public-content')){
-   const request=http.request({hostname:'127.0.0.1',port:cmsPort,path:incoming.url,method:incoming.method,headers:incoming.headers},response=>{outgoing.writeHead(response.statusCode,response.headers);response.pipe(outgoing);});
+  const name=incoming.url.match(/^\/functions\/v1\/([^/?]+)(?:[/?]|$)/)?.[1];
+  const functionPort=name==='wantiss-public-content'?cmsPort:functionPorts.get(name);
+  if(functionPort){
+   const request=http.request({hostname:'127.0.0.1',port:functionPort,path:incoming.url,method:incoming.method,headers:incoming.headers},response=>{outgoing.writeHead(response.statusCode,response.headers);response.pipe(outgoing);});
    request.on('error',()=>{if(!outgoing.headersSent)outgoing.writeHead(502);outgoing.end();});incoming.pipe(request);return;
   }
   const isAuth=incoming.url.startsWith('/auth/v1/'),isRest=incoming.url.startsWith('/rest/v1/'),isStorage=storage&&incoming.url.startsWith('/storage/v1/');
@@ -83,10 +88,11 @@ async function localTransport(auth,rest,storage){
  });
  await new Promise(resolve=>proxy.listen(0,'127.0.0.1',resolve));
  report.transport='Real local HTTP through a loopback proxy and Docker exec TCP streams; no fabricated API response.';
- return {name,port:proxy.address().port};
+ return {name,port:proxy.address().port,functionPorts};
 }
 async function scenario(name,work){try{await work();report.scenarios.push({name,classification:'PASS'});console.log('PASS: '+name);}catch(error){report.scenarios.push({name,classification:'FAIL'});throw error;}}
 async function main(){
+ if(useStripe)sandbox=await require('./goodies-stripe-sandbox.cjs').prepare({args,report,registerSecret:secret=>privateValues.push(secret)});
  assert.match(execFileSync(path.join(nativeBin,'postgres'),['--version'],{env,encoding:'utf8'}),/PostgreSQL\) 17\.6\s*$/);
  execFileSync(path.join(nativeBin,'initdb'),['-D',path.join(state,'data'),'-U','postgres','--auth=trust','--no-locale','--encoding=UTF8','--no-sync'],{env,stdio:'ignore'});
  execFileSync(path.join(nativeBin,'pg_ctl'),['-D',path.join(state,'data'),'-l',path.join(state,'server.log'),'-o',`-k ${socket} -c listen_addresses='' -c unix_socket_permissions=0777`,'-w','start'],{env,stdio:'ignore'});started=true;
@@ -135,12 +141,14 @@ async function main(){
  await scenario('Ten distinct role accounts sign in through real local Auth and retrieve their own account',async()=>assert.equal(new Set(Object.values(actors).map(actor=>actor.id)).size,10));
  // Scenario module uses actual signed-in SDK clients. Seed operations are confined to the fresh local socket.
  const storageProof=storage?require('./goodies-local-storage.cjs')({actors,anonymous,pg,scenario,report}):null;
- const afterRestore=await require('./goodies-local-api-scenarios.cjs')({actors,anonymous,pg,scenario,report,storageProof});
+ const afterRestore=await require('./goodies-local-api-scenarios.cjs')({actors,anonymous,service:admin,pg,scenario,report,storageProof});
  if(useCms)await require('./goodies-local-cms-scenarios.cjs')({actors,anonymous,pg,scenario,report});
+ if(sandbox)await sandbox.run({actors,pg,scenario,state,env,base,api,anonKey,serviceKey,denoBin:fs.realpathSync(value('--deno-bin'))});
  await require('./goodies-local-recovery.cjs')({pg,state,nativeBin,env,docker,auth,rest,storage,api,ready,scenario,report,afterRestore,setActiveDirectory:value=>{activeDataDirectory=value;}});
- console.log('All local API scenarios passed; no hosted project, payment provider or physical device was used.');
+ console.log('All local API scenarios passed; no hosted Supabase project or physical device was used.'+(sandbox?' Actual Stripe sandbox requests were verified.':' No payment provider was used.'));
 }
 async function cleanup(){
+ if(sandbox)try{await sandbox.dispose();}catch(error){process.exitCode=1;report.sandboxCleanupError=redact(error.message);console.error('Sandbox cleanup needs attention: '+report.sandboxCleanupError);}
  if(cmsProcess)cmsProcess.kill();
  if(proxy){proxy.closeAllConnections();await new Promise(resolve=>proxy.close(resolve));}
  for(const name of containers.reverse())try{docker(['rm','-f',name]);}catch{}
@@ -150,6 +158,7 @@ async function cleanup(){
 }
 main().catch(error=>{
  report.error=redact(error.message).slice(0,1000);console.error(report.error);process.exitCode=1;
+ if(sandbox)console.error(redact(sandbox.diagnostics()));
  for(const name of containers.filter(name=>/-auth$|-rest$|-storage$/.test(name))){
   const result=spawnSync('docker',['--host=unix:///var/run/docker.sock','logs',name],{env,encoding:'utf8'});
   for(const line of (result.stdout+result.stderr).split('\n'))try{const entry=JSON.parse(line);if(['error','fatal',50,60].includes(entry.level))console.error(redact(JSON.stringify({service:name.split('-').at(-1),message:entry.msg,error:entry.error})).slice(0,1500));}catch{}

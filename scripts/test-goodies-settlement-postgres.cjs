@@ -50,6 +50,16 @@ async function raceAfterLock(first,second,name,actors){
 }
 (async()=>{
  console.log('PASS: PostgreSQL '+sql('show server_version')+'; full '+(files.length+(sharedBill?2:0)+upstreamFiles.length+forwardFiles.length)+'-migration package applied in '+(native?'a self-created socket-only temporary cluster.':'a network-isolated synthetic container.'));
+ if(reaudit){
+  const fingerprint=()=>sql("select jsonb_build_object('functions',(select jsonb_agg(jsonb_build_object('name',p.proname,'definition',md5(pg_get_functiondef(p.oid)),'owner',p.proowner,'acl',p.proacl) order by p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('place_goodies_card_order_once','enqueue_goodies_card_refund')),'bindingAcl',(select relacl::text from pg_class where oid='public.stripe_customers'::regclass),'bindingPolicies',(select jsonb_agg(to_jsonb(p) order by policyname) from pg_policies p where schemaname='public' and tablename='stripe_customers'))");
+  const before=fingerprint();
+  for(const name of ['20261121153651_goodies_card_checkout_attempt_identifier.sql','20261121155215_goodies_server_owned_stripe_customer_bindings.sql','20261121160018_goodies_preserve_card_refund_queue_leases.sql'])sql(fs.readFileSync(path.join(root,'supabase/migrations',name),'utf8'));
+  assert.equal(fingerprint(),before,'Repeated payment migrations changed their authorization or function definitions');
+  const original=['place-goodies-card-order-once-before-20261121.sql','enqueue-card-refund-before-20261121.sql'].map(name=>fs.readFileSync(path.join(root,'docs/goodies/acceptance-20261121/backend-baselines',name),'utf8').trimEnd()+';').join('\n');
+  sql('begin;\n'+original+"\ngrant insert on public.stripe_customers to authenticated;create policy \"Users can insert their own Stripe customer\" on public.stripe_customers for insert to authenticated with check((select auth.uid())=user_id);rollback;");
+  assert.equal(fingerprint(),before,'Transaction rollback did not restore protected payment definitions and privileges');
+  console.log('PASS: payment migration replay and transactional recovery preserve exact function ownership, grants and binding policies.');
+ }
  const a=order('cash',30),b=order('cash',30),accept=await race(`select public.accept_goodies_order('${a}')`,`select public.accept_goodies_order('${b}')`,'accept');assert.equal(accept.filter(x=>x.code===0).length,1,JSON.stringify(accept));assert.equal(Number(sql(`select sum(cash_sales_htg) from private.goodies_order_settlements where business_id='${business}'`)),3000);console.log('PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.');
  const accepted=sql(`select id from public.goodies_orders where status='accepted'`);complete(accepted);
  const earn=order('wallet',11);complete(earn);

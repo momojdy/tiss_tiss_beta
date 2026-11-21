@@ -6,6 +6,7 @@ test('a failed per-store route never exposes routing-provider error details',asy
  const result=await module.exports(Error('Provider URL with synthetic-secret'),{store_id:'store'});assert.equal(result.error,'Road distance is unavailable for this store.');assert.equal(result.geometry,null);assert.equal(result.distance_m,null);assert.equal(result.store_id,'store');
 });
 for(const [name,message,status]of [
+ ['create-card-setup-intent','Could not start card setup. Please try again.',500],
  ['place-goodies-card-order','Could not confirm the payment. Check your orders before trying again.',400],
  ['refund-goodies-card-order','Could not confirm this refund. Check the order payment status and try again.',500],
  ['process-goodies-card-refunds','Refund processing is temporarily unavailable.',500],

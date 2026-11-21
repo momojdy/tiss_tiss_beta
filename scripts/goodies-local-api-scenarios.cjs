@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
-module.exports=async function({actors,anonymous,pg,scenario,report,storageProof}){
+module.exports=async function({actors,anonymous,service,pg,scenario,report,storageProof}){
  const a=actors,q=value=>"'"+String(value).replaceAll("'","''")+"'",json=value=>q(JSON.stringify(value))+'::jsonb';
  const call=async(actor,name,args={})=>{const response=await actor.sdk.rpc(name,args);assert.equal(response.error,null,name+': '+response.error?.message);return response.data;};
  const denied=async(actor,name,args={},codes=['42501','28000','P0001','P0002','22023'])=>{const response=await actor.sdk.rpc(name,args);assert.ok(response.error,name+' unexpectedly succeeded');assert.ok(codes.includes(response.error.code),name+' failed for an unexpected reason: '+JSON.stringify(response.error));};
@@ -17,6 +17,13 @@ module.exports=async function({actors,anonymous,pg,scenario,report,storageProof}
  update private.goodies_settlement_config set enabled=true,starts_at=now()-interval '1 hour';`);
  const balance=actor=>Number(pg(`select balance from public.wallets where user_id=${q(actor.id)}`));
  const productArgs={p_business:business,p_id:null,p_name:'Synthetic API rice',p_description:'Synthetic test product',p_price:10,p_emoji:'🛍️',p_stock:30,p_restriction:'none',p_photo_url:null,p_photo_urls:[]};
+ await scenario('Authenticated clients cannot forge Stripe customer bindings or payment methods, including for themselves',async()=>{
+  for(const actor of [a.customer,a.vendor,a.courier,a.superAdmin]){
+   const forged=await actor.sdk.from('stripe_customers').insert({user_id:actor.id,stripe_customer_id:'cus_synthetic_'+actor.id});assert.equal(forged.error?.code,'42501');
+  }
+  const method=await a.customer.sdk.from('user_payment_methods').insert({user_id:a.customer.id,stripe_customer_id:'cus_synthetic',stripe_payment_method_id:'pm_synthetic',brand:'visa',last4:'4242',expiry_month:12,expiry_year:2034});assert.equal(method.error?.code,'42501');
+  assert.equal(pg('select count(*) from public.stripe_customers'),'0');
+ });
  let product,order,delivery;
  await scenario('A customer-signed JWT resolves the same database identity through PostgREST',async()=>{
   const response=await a.customer.sdk.rpc('goodies_push_registration_status');
@@ -94,6 +101,25 @@ module.exports=async function({actors,anonymous,pg,scenario,report,storageProof}
   await call(a.customer,'set_goodies_order_status',{p_order_id:id,p_status:'cancelled'});
   assert.equal(Number(pg('select stock from public.goodies_products where id='+q(product))),beforeStock);
   assert.equal(balance(a.customer),beforeBalance);
+ });
+ await scenario('Refund webhook retries preserve active leases, failure backoff and stale-worker fencing',async()=>{
+  const args=checkout('local-api-refund-lease-'+product);delete args.p_payment_method;
+  const id=(await call(a.customer,'place_goodies_card_order_once',args))[0].id,reference='pi_local_lease_'+product.replaceAll('-','');
+  pg('update public.goodies_orders set payment_method='+q('card')+',payment_status='+q('paid')+',payment_provider_ref='+q(reference)+' where id='+q(id));
+  await call(a.customer,'set_goodies_order_status',{p_order_id:id,p_status:'cancelled'});
+  const claim=async()=>(await call({sdk:service},'claim_goodies_card_refunds',{p_limit:25})).find(x=>x.order_id===id);
+  const first=await claim();assert.ok(first?.lease_token);
+  const queue=()=>JSON.parse(pg('select row_to_json(q) from public.goodies_card_refund_queue q where order_id='+q(id)));
+  const partial=()=>call({sdk:service},'process_goodies_card_payment_event',{p_order_id:id,p_payment_intent_id:reference,p_event_state:'refund_updated',p_amount_cents:1100,p_currency:'usd',p_refunded_amount_cents:300,p_event_created:Math.floor(Date.now()/1000)});
+  let before=queue();await partial();assert.deepEqual(queue(),before,'A partial-refund webhook reset the in-progress worker');
+  assert.equal(await call({sdk:service},'finish_goodies_card_refund',{p_queue_id:first.queue_id,p_lease_token:randomUUID(),p_status:'refunded',p_refund_id:null,p_error:null}),false);
+  assert.equal(await call({sdk:service},'finish_goodies_card_refund',{p_queue_id:first.queue_id,p_lease_token:first.lease_token,p_status:'failed',p_refund_id:null,p_error:'Synthetic retry failure'}),true);
+  before=queue();assert.equal(before.status,'failed');await partial();assert.deepEqual(queue(),before,'A repeated webhook bypassed refund backoff');
+  pg('update public.goodies_card_refund_queue set next_attempt_at=now()-interval '+q('1 second')+' where order_id='+q(id));
+  const second=await claim();assert.ok(second?.lease_token);assert.notEqual(second.lease_token,first.lease_token);
+  assert.equal(await call({sdk:service},'finish_goodies_card_refund',{p_queue_id:first.queue_id,p_lease_token:first.lease_token,p_status:'refunded',p_refund_id:null,p_error:null}),false);
+  assert.equal(await call({sdk:service},'finish_goodies_card_refund',{p_queue_id:second.queue_id,p_lease_token:second.lease_token,p_status:'refunded',p_refund_id:'re_synthetic_local_only',p_error:null}),true);
+  assert.equal(queue().status,'completed');
  });
  await scenario('A customer cannot directly rewrite the order total or payment status',async()=>{
   const response=await a.customer.sdk.from('goodies_orders').update({total:0,payment_status:'refunded'}).eq('id',order);

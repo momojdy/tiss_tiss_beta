@@ -27,3 +27,37 @@ This is not a full production reconstruction: unrelated feature foreign keys are
 The recovery scenario stops its own local services and database, copies the full clean data directory, starts the copy, compares all table contents/function/role/policy fingerprints and retries authenticated checkout. This proves recovery of that synthetic database cluster only. It does not create or restore a production backup, copy the Storage file directory or verify hosted extensions.
 
 The runner removes its own Docker resources and temporary cluster after execution. Do not point it at an existing cluster or substitute production credentials. The report's `productionContacted` and `hostedTestCreated` fields must remain false.
+
+## Actual Stripe sandbox acceptance
+
+This is an explicit opt-in extension, separate from credential-free CI. Authorize the official Stripe CLI in the owner's existing **test/sandbox** account through its browser login. Never paste keys into chat or use `--live`. The runner checks the CLI identity, private OAuth context and a real `livemode: false` API response before creating any provider object. The CLI credentials stay outside the repository in a file owned by the current user with mode `0600`.
+
+Cache executable dependencies as well as types:
+
+```bash
+deno cache --config supabase/functions/deno.json \
+  supabase/functions/create-card-setup-intent/index.ts \
+  supabase/functions/place-goodies-card-order/index.ts \
+  supabase/functions/refund-goodies-card-order/index.ts \
+  supabase/functions/process-goodies-card-refunds/index.ts \
+  supabase/functions/rapid-api/index.ts
+
+GOODIES_TEST_PG_MODULE=/absolute/test-tools/node_modules/pg \
+node scripts/test-goodies-local-api.cjs \
+  --native-bin /absolute/test-tools/node_modules/@embedded-postgres/linux-x64/native/bin \
+  --deno-bin /absolute/path/to/deno \
+  --stripe-sandbox \
+  --stripe-cli /absolute/path/to/stripe \
+  --stripe-config /private/path/stripe-config.toml \
+  --stripe-profile wantiss-goodies-test \
+  --stripe-account YOUR_APPROVED_SANDBOX_ACCOUNT_ID \
+  --report /tmp/goodies-stripe-sandbox.json
+```
+
+This managed workspace requires `NODE_USE_ENV_PROXY=1` for external Node HTTPS calls; TLS verification remains enabled. Use the same `DENO_DIR` when caching and executing.
+
+The repository's actual checkout, card setup, refund worker and webhook handlers run against the local Auth/PostgREST database and real Stripe sandbox. A private wrapper adds the CLI OAuth account/test-mode headers; it does not replace provider responses or business logic. The official CLI forwards actual signed events to loopback. A server-only publishable-key fixture deliberately excludes card-form and native/browser 3DS challenge acceptance.
+
+Cases include ownership/tampering denials, real card saving, authoritative capture, simultaneous retries, process recovery, 3DS pending/cancellation, issuer decline, partial/full original-card refunds, signed/invalid/stale/reordered events, and open/won disputes. The runner refunds remaining successful payments only for its newly created synthetic sandbox customer. It never updates a production Supabase financial record, changes production credentials or configures a sandbox webhook to target production.
+
+The shared Stripe tables, indexes, grants and read RPC in the local target were inspected from production schema metadata. Vault remains a synthetic local worker-token boundary. Migration replay and transactional recovery are also checked by the existing PostgreSQL concurrency runner; those results do not establish full Wantiss backup restoration.
