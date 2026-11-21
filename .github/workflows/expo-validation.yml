@@ -103,8 +103,6 @@ jobs:
   goodies-local-api:
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    env:
-      GOODIES_TEST_PG_MODULE: ${{ runner.temp }}/goodies-api-tools/node_modules/pg
     steps:
       - uses: actions/checkout@v4
         with:
@@ -125,6 +123,8 @@ jobs:
         run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-public-content/index.ts
       - name: Exercise local Auth, PostgREST, CMS and database recovery
         shell: bash
+        env:
+          GOODIES_TEST_PG_MODULE: ${{ runner.temp }}/goodies-api-tools/node_modules/pg
         run: |
           set -euo pipefail
           node scripts/test-goodies-local-api.cjs \
