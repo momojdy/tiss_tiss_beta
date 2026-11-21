@@ -39,5 +39,8 @@
     "requirement": "Leaked password protection is available on the Pro Plan and above.",
     "verifiedOn": "2026-11-21"
   },
-  "nextAction": "The project owner must enable the eligible plan and Auth setting, or provide approved administrative configuration access after upgrading. Recheck the advisor and approved local/test auth flow afterward; no plan upgrade is currently authorized."
+  "nextAction": "The project owner must enable the eligible plan and Auth setting, or provide approved administrative configuration access after upgrading. Recheck the advisor and approved local/test auth flow afterward; no plan upgrade is currently authorized.",
+  "deferredByUser": true,
+  "activeReleaseBlocker": false,
+  "deferredUntil": "The owner upgrades to Pro after completing the Wantiss features."
 }

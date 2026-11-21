@@ -2,18 +2,18 @@
   "classification": "PASS",
   "scope": "Native Android ARM64 development/debug APK compilation and signature verification only.",
   "workflowRun": {
-    "id": 44865869015,
-    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44865869015",
-    "headSha": "7ba8a8d0957be4f9621002f2a5cf682132f87daa",
+    "id": 44897499044,
+    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44897499044",
+    "headSha": "f5f2eb7a9ea7fb926337b7fd75931a94b6608724",
     "conclusion": "success",
-    "jobId": 136729263846
+    "jobId": 136826177812
   },
   "artifact": {
-    "id": 14692076464,
-    "name": "goodies-android-development-7ba8a8d0957be4f9621002f2a5cf682132f87daa",
-    "sizeBytes": 58861149,
-    "digest": "sha256:d565f218ba24dc74fd5518deb8fc769e13ef1691a91cf31162baa5ac14b32b35",
-    "expiresAt": "2026-11-24T04:33:37Z"
+    "id": 14704986150,
+    "name": "goodies-android-development-f5f2eb7a9ea7fb926337b7fd75931a94b6608724",
+    "sizeBytes": 58861186,
+    "digest": "sha256:dd4211bace0dd5ad6c5662dc428e12fd254a9a1cbaedc9c1535e13e403a5e6a6",
+    "expiresAt": "2026-11-24T11:15:19Z"
   },
   "nativeTasksExecuted": 592,
   "signature": {
@@ -26,10 +26,14 @@
   "installedOnDevice": false,
   "productionSigning": "NOT VERIFIED",
   "iosDeviceBuild": "NOT VERIFIED",
+  "previousPassingRun": {
+    "id": 44865869015,
+    "sourceCommit": "7ba8a8d0957be4f9621002f2a5cf682132f87daa"
+  },
   "limitations": [
-    "Development certificate is not a production signing identity.",
-    "APK has not been installed on a physical device; native maps, GPS, background execution, proof capture and push are not verified.",
-    "No Wantiss app submission, release, OTA update or distribution service deployment was performed.",
-    "Subsequent commits changed Edge delivery handlers, test infrastructure and reports; the native configuration, dependencies and mobile runtime are unchanged since this build."
+    "Development/debug certificate is not a production signing identity.",
+    "No physical-device installation, real maps/GPS/background/proof/push behavior or production signing is claimed.",
+    "A later small correction changes only browser map wording/contrast and its preview mirror; the exact source snapshot verified by this build is recorded above.",
+    "No Wantiss app submission, release or OTA update was performed."
   ]
 }

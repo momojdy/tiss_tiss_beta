@@ -1,0 +1,50 @@
+{
+  "classification": "PASS",
+  "scope": "Real anonymous browser startup and scoped map regressions only. Not every Goodies button, signed-in role, provider sandbox or installed device.",
+  "before": {
+    "sourceCommit": "f740d0c15fa9d90c10bb9abbde0590386e360f6a",
+    "classification": "FAIL",
+    "error": "(0 , _reactNativeWebDistIndex.codegenNativeComponent) is not a function",
+    "cause": "react-native-maps native codegen imported into the web bundle before the app could mount.",
+    "visibleText": "",
+    "buttonCount": 0
+  },
+  "after": {
+    "classification": "PASS",
+    "scope": "Actual anonymous web entry only; not signed-in or installed-device acceptance.",
+    "externalPageRequestsAllowed": false,
+    "externalRequestsBlocked": 5,
+    "uncaughtErrors": [],
+    "signInMounted": true
+  },
+  "localTests": {
+    "customer": 273,
+    "admin": 71,
+    "crossRole": 47,
+    "newMapRegressions": 4,
+    "customerTypeScript": "PASS",
+    "adminTypeScript": "PASS",
+    "configuredLint": "PASS",
+    "cmsFields": 1926,
+    "customerRoutes": 34
+  },
+  "physicalDevice": false,
+  "hostedTestCreated": false,
+  "productionWritesPerformed": false,
+  "mapProviderOrGpsVerified": false,
+  "uiChangeScope": "Required browser unavailable state and map accessibility labels; native layouts/styles preserved.",
+  "ciCheck": "scripts/check-goodies-browser-boot.cjs",
+  "verifiedSourceCommits": {
+    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
+  },
+  "afterProductionModeExport": {
+    "classification": "PASS",
+    "scope": "Actual anonymous web entry only; not signed-in or installed-device acceptance.",
+    "externalPageRequestsAllowed": false,
+    "externalRequestsBlocked": 5,
+    "uncaughtErrors": [],
+    "signInMounted": true
+  },
+  "offlineConfiguration": "The CI verification export uses an intentionally unusable public key. Chrome blocks all external page requests; backend connectivity is not asserted by this check."
+}

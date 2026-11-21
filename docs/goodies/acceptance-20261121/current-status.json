@@ -2,7 +2,7 @@
   "displayDate": "21 November 2026 (Asia/Manila)",
   "productionReady": false,
   "allTwelvePhasesCompleteExcludingDeferredContent": false,
-  "classification": "FAIL",
+  "classification": "NOT VERIFIED",
   "appReleased": false,
   "hostedTestCreatedOrRestored": false,
   "hostedIsolationProhibitedByUser": true,
@@ -11,8 +11,8 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
-    "admin": "393606950ffdfe6f61dcea508ae310d97ef343e6"
+    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
   },
   "verifiedScopes": {
     "localApi": {
@@ -34,7 +34,7 @@
     },
     "androidDevelopmentApk": {
       "classification": "PASS",
-      "run": 44865869015,
+      "run": 44897499044,
       "productionSigning": "NOT VERIFIED"
     },
     "adminValidation": {
@@ -52,22 +52,19 @@
     },
     "currentCI": {
       "classification": "PASS",
-      "receipt": "ci-verification.json",
+      "receipt": "browser-fix-ci-verification.json",
       "runs": [
-        44870803147,
-        44870803143,
-        44866770565
+        44898449492,
+        44898449431,
+        44897583364
       ]
+    },
+    "browserBoot": {
+      "classification": "PASS",
+      "scope": "Actual anonymous web entry with external page traffic blocked.",
+      "evidence": "browser-runtime-verification.json"
     }
   },
-  "knownFailures": [
-    {
-      "classification": "FAIL",
-      "finding": "Supabase leaked-password protection remains disabled.",
-      "reason": "Organization is on Free; native leaked-password protection requires Pro or above. No billing upgrade is authorized and no Auth configuration endpoint is connected.",
-      "evidence": "auth-security-status.json"
-    }
-  ],
   "notVerified": [
     "Every installed customer/vendor/courier/admin control and all authorization paths.",
     "Actual payment-provider sandbox charges, webhooks, original-card refunds and reconciliation.",
@@ -78,7 +75,7 @@
   "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
   "sourceInventory": "../re-audit-20261120/source-inventory.json",
   "phaseEvidence": "phase-verification.json",
-  "ciEvidence": "ci-verification.json",
+  "ciEvidence": "browser-fix-ci-verification.json",
   "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
   "localTestLimitations": [
     "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
@@ -87,8 +84,8 @@
     "Coordinates and route geometry are explicit local test inputs; physical GPS and external route providers are not contacted."
   ],
   "automated": {
-    "coreTests": 488,
-    "customer": 269,
+    "coreTests": 492,
+    "customer": 273,
     "admin": 71,
     "crossRole": 47,
     "deno": 101,
@@ -97,5 +94,30 @@
     "localApiScenarios": 29,
     "nativePostgresConcurrencyScenarios": 27,
     "targetGoodiesMigrations": 32
+  },
+  "leakedPasswordProtectionDeferredByUser": true,
+  "knownFailuresDeferredByUser": [
+    {
+      "classification": "FAIL",
+      "finding": "Supabase leaked-password protection remains disabled.",
+      "reason": "Organization is on Free; native leaked-password protection requires Pro or above. No billing upgrade is authorized and no Auth configuration endpoint is connected.",
+      "evidence": "auth-security-status.json"
+    }
+  ],
+  "knownFailures": [],
+  "userDeferred": [
+    "FAQ",
+    "Translations and final policy/support content approval",
+    "Leaked-password protection until the owner upgrades to Pro"
+  ],
+  "ownerConfirmedAvailable": {
+    "expoAccount": true,
+    "stripeAccount": true,
+    "androidPhone": true,
+    "iPhone": true
+  },
+  "laterScopedSourceCommits": {
+    "customer": "f4e77de659572f9c1621b49df88fc79c351d355e",
+    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   }
 }

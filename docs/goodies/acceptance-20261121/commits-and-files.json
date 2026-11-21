@@ -5,7 +5,7 @@
       "repository": "momojdy/tiss_tiss_beta",
       "branch": "main",
       "baseline": "bf4119e12079fc9a5317b89690564eed2bc67087",
-      "sourceCommit": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
+      "sourceCommit": "f4e77de659572f9c1621b49df88fc79c351d355e",
       "commits": [
         {
           "sha": "7fbfc092ce95c4029c52dcccf9f84fa5385c71d7",
@@ -38,6 +38,30 @@
         {
           "sha": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
           "subject": "test(goodies): retain local recovery startup diagnostics and directory permissions"
+        },
+        {
+          "sha": "f740d0c15fa9d90c10bb9abbde0590386e360f6a",
+          "subject": "docs(goodies): record verified local acceptance and remaining release gates"
+        },
+        {
+          "sha": "f5f2eb7a9ea7fb926337b7fd75931a94b6608724",
+          "subject": "fix(goodies): prevent native map imports from crashing the web app"
+        },
+        {
+          "sha": "f67553ac53984e1283a6dc8e778ed025f7c5d1aa",
+          "subject": "ci(goodies): pair the browser fix with its current admin preview"
+        },
+        {
+          "sha": "2597afc89d2da8f8d0595da6d1878b8cedefe430",
+          "subject": "ci(goodies): configure offline browser exports and close Chrome cleanly"
+        },
+        {
+          "sha": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+          "subject": "ci(goodies): stop the isolated Chrome process group before profile cleanup"
+        },
+        {
+          "sha": "f4e77de659572f9c1621b49df88fc79c351d355e",
+          "subject": "fix(goodies): distinguish map availability from courier GPS availability"
         }
       ],
       "changedFiles": [
@@ -56,6 +80,30 @@
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/CURRENT_STATUS.md"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/LOCAL_TESTS.md"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/android-development-build.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/auth-security-status.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/backend-baselines/manifest.json"
           ]
         },
@@ -69,6 +117,114 @@
           "status": "A",
           "paths": [
             "docs/goodies/acceptance-20261121/backend-baselines/wantiss-public-content.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/ci-local-api-scenarios.log"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/ci-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/commits-and-files.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/current-status.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/external-inputs.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/local-api-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/log-manifest.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-local-api-final.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-native-20261121.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/phase-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/shared-cms-deployment.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/shared-cms-source-verification.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "docs/goodies/re-audit-20261120/CURRENT_STATUS.md"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "docs/goodies/re-audit-20261120/current-status.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "docs/goodies/re-audit-20261120/hosted-acceptance-plan.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "metro.config.js"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "scripts/audit-goodies-reproductions.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/check-goodies-browser-boot.cjs"
           ]
         },
         {
@@ -102,6 +258,12 @@
           ]
         },
         {
+          "status": "M",
+          "paths": [
+            "scripts/sync-goodies-preview.cjs"
+          ]
+        },
+        {
           "status": "A",
           "paths": [
             "scripts/test-goodies-local-api.cjs"
@@ -111,6 +273,18 @@
           "status": "M",
           "paths": [
             "scripts/test-goodies-settlement-postgres.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "src/components/NativeMap.web.tsx"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "src/features/Goodies/screens/Shop.tsx"
           ]
         },
         {
@@ -130,6 +304,18 @@
           "paths": [
             "supabase/functions/wantiss-public-content/index.ts"
           ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "tests/goodies-courier-map.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "tests/goodies-web-map.test.cjs"
+          ]
         }
       ]
     },
@@ -137,18 +323,44 @@
       "repository": "momojdy/tiss-admin",
       "branch": "main",
       "baseline": "f13f959afad44f5e0fd23f2f1da0266031641be1",
-      "sourceCommit": "393606950ffdfe6f61dcea508ae310d97ef343e6",
+      "sourceCommit": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
       "commits": [
         {
           "sha": "393606950ffdfe6f61dcea508ae310d97ef343e6",
           "subject": "fix(goodies-cms): reject malformed editor publication responses"
+        },
+        {
+          "sha": "d0aa95042a63e2f662aa92cd6fa199a20df82268",
+          "subject": "fix(goodies-cms): retain native phone map preview and current consumer checks"
+        },
+        {
+          "sha": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
+          "subject": "fix(goodies-cms): retain accurate map state labels in the phone preview"
         }
       ],
       "changedFiles": [
         {
           "status": "M",
           "paths": [
+            ".github/workflows/admin-validation.yml"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
             "package.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "src/features/admin/goodiesConsumer/previewSourceManifest.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "src/features/admin/goodiesConsumer/screens/Shop.tsx"
           ]
         },
         {

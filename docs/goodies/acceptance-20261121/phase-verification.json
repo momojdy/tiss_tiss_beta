@@ -1,8 +1,8 @@
 {
   "displayDate": "21 November 2026 (Asia/Manila)",
   "sourceCommits": {
-    "customer": "cbe4efe6ab77b50bacfdd68d173e9c10a2f9bc9c",
-    "admin": "393606950ffdfe6f61dcea508ae310d97ef343e6"
+    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
   },
   "productionReady": false,
   "allPhasesCompleteExcludingDeferredContent": false,
@@ -14,7 +14,8 @@
   "userDeferred": [
     "FAQ",
     "Translations including Haitian Creole human review",
-    "Final policy/support content approval"
+    "Final policy/support content approval",
+    "Leaked-password protection until the owner upgrades to Pro"
   ],
   "phases": [
     {
@@ -120,14 +121,15 @@
     {
       "phase": 9,
       "name": "Notifications/messaging/security",
-      "classification": "FAIL",
+      "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Actual local cross-account/vendor/courier/staff denials and metadata-escalation denial pass.",
-        "Existing push worker/device/outbox/session/retry tests pass; production activation unchanged."
+        "Existing push worker/device/outbox/session/retry tests pass; production activation unchanged.",
+        "Leaked-password protection is explicitly excluded by the owner until a future Pro upgrade; it is not an active acceptance requirement."
       ],
       "remainingAcceptance": [
-        "Current Supabase leaked-password protection is disabled; Free plan is ineligible for that native feature.",
-        "Physical push/provider behavior and every notification/message destination are not verified."
+        "Physical push/provider behavior and every notification/message destination are not verified.",
+        "Leaked-password protection remains disabled but is deferred by the owner until a future Pro upgrade."
       ]
     },
     {
@@ -148,7 +150,7 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "488 core tests with zero skipped, 27 native PostgreSQL concurrency scenarios, 29 local API/recovery scenarios, successful current CI/TypeScript/exports and an Android development APK."
+        "492 core tests with zero skipped, 27 native PostgreSQL races, 29 local API/recovery scenarios, current CI/TypeScript/exports, real anonymous browser startup, and the updated Android development APK."
       ],
       "remainingAcceptance": [
         "Production Android/iOS signing, actual provider sandbox, full installed-button acceptance and physical-device requirements remain open."
@@ -157,13 +159,15 @@
     {
       "phase": 12,
       "name": "Production release decision",
-      "classification": "FAIL",
+      "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "No Wantiss app release, real charge, production financial mutation, hosted test branch or CMS publication."
       ],
       "remainingAcceptance": [
-        "Leaked-password protection and the external device/provider/production-backup acceptance requirements must be resolved. All twelve full phases are not certified complete."
+        "The owner deferred leaked-password protection, FAQ and translations. Full application, provider, device and actual production-backup acceptance still need evidence."
       ]
     }
-  ]
+  ],
+  "classification": "NOT VERIFIED",
+  "leakedPasswordProtectionDeferredByUser": true
 }

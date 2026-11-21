@@ -1,0 +1,84 @@
+{
+  "classification": "PASS",
+  "scope": "Named executed checks only. Installed account/button acceptance, actual provider sandbox, production signing, physical sensors/push and full production backup restoration remain NOT VERIFIED.",
+  "codeCommits": {
+    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
+  },
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44898449492,
+      "name": "Expo validation",
+      "headSha": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44898449492"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44898449431,
+      "name": "TypeScript and Expo build checks",
+      "headSha": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44898449431"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "id": 44897583364,
+      "name": "Admin validation",
+      "headSha": "d0aa95042a63e2f662aa92cd6fa199a20df82268",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44897583364"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44897499044,
+      "name": "Goodies Android development build",
+      "headSha": "f5f2eb7a9ea7fb926337b7fd75931a94b6608724",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44897499044"
+    }
+  ],
+  "automated": {
+    "coreTests": 492,
+    "customer": 273,
+    "admin": 71,
+    "crossRole": 47,
+    "deno": 101,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "nativePostgresConcurrencyScenarios": 27,
+    "targetGoodiesMigrations": 32,
+    "localApiRecoveryScenarios": 29,
+    "realOfflineBrowserBoot": 1
+  },
+  "laterScopedCorrection": {
+    "customer": "f4e77de659572f9c1621b49df88fc79c351d355e",
+    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
+    "scope": "Use the existing CMS map-unavailable message instead of implying GPS coordinates are missing, with readable web-only contrast. Native layout/resolution unchanged.",
+    "localVerification": {
+      "mapTests": 8,
+      "crossRoleTests": 47,
+      "adminTests": 71,
+      "customerTypeScript": "PASS",
+      "adminTypeScript": "PASS",
+      "cmsCoverage": "PASS",
+      "newComponentLint": "PASS"
+    },
+    "ci": "Record subsequent final-head results separately; do not infer native physical acceptance from these tests."
+  },
+  "earlierCIHarnessFailures": [
+    {
+      "head": "f5f2eb7a9ea7fb926337b7fd75931a94b6608724",
+      "finding": "New runtime check caught missing public Supabase configuration in the CI export; offline verification env values were added only to the export step."
+    },
+    {
+      "head": "2597afc89d2da8f8d0595da6d1878b8cedefe430",
+      "finding": "The app mounted, but Chrome left profile writers running. A dedicated browser process group is now stopped before deleting the temporary profile; the complete job passes."
+    }
+  ],
+  "appReleased": false,
+  "hostedSupabaseTestCreated": false,
+  "productionFinancialRecordsModified": false,
+  "leakedPasswordProtectionDeferredByOwner": true
+}

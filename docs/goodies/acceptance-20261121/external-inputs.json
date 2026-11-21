@@ -18,9 +18,15 @@
     "A production backup cannot be created through the available metadata/SQL tools without an approved backup or privileged connection binding."
   ],
   "requiredOwnerInputs": [
-    "Eligible Supabase plan and Auth setting access for leaked-password protection.",
-    "Approved Stripe test-mode bindings and sandbox webhook forwarding/endpoint.",
-    "Registered app identities, signing access and physical Android/iOS devices with native Maps/push configuration.",
-    "Existing production backup artifact or a secure privileged database/backup binding; no passwords or keys in chat."
-  ]
+    "Approve the one-time Expo browser login, then use the prepared build links.",
+    "Approve Stripe access in sandbox/test mode only so actual provider tests can run.",
+    "Authorize a production backup connection or provide an existing backup through a secure channel; no password or key in chat.",
+    "Run the guided installed-build checks on the Android phone and iPhone."
+  ],
+  "ownerConfirmedAvailable": {
+    "expoAccount": true,
+    "stripeAccount": true,
+    "androidPhone": true,
+    "iPhone": true
+  }
 }
