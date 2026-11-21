@@ -47,6 +47,14 @@
         }
       ],
       [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "dynamic"
+          }
+        }
+      ],
+      [
         "expo-camera",
         {
           "cameraPermission": "Allow Wantiss to use your camera to scan QR codes."
