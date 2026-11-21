@@ -5,7 +5,7 @@
       "repository": "momojdy/tiss_tiss_beta",
       "branch": "main",
       "baseline": "bf4119e12079fc9a5317b89690564eed2bc67087",
-      "sourceCommit": "f4e77de659572f9c1621b49df88fc79c351d355e",
+      "sourceCommit": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
       "commits": [
         {
           "sha": "7fbfc092ce95c4029c52dcccf9f84fa5385c71d7",
@@ -62,6 +62,18 @@
         {
           "sha": "f4e77de659572f9c1621b49df88fc79c351d355e",
           "subject": "fix(goodies): distinguish map availability from courier GPS availability"
+        },
+        {
+          "sha": "0e890df963d4c295c51700753d5bc2a087d55bcc",
+          "subject": "docs(goodies): record runtime acceptance and defer the owner-excluded Auth setting"
+        },
+        {
+          "sha": "b7bc855563a7c6c110393579d1fda424b422a96c",
+          "subject": "test(goodies): exercise private delivery proof uploads through real local Storage"
+        },
+        {
+          "sha": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+          "subject": "test(goodies): verify Storage migration versions independently of its bootstrap row"
         }
       ],
       "changedFiles": [
@@ -117,6 +129,18 @@
           "status": "A",
           "paths": [
             "docs/goodies/acceptance-20261121/backend-baselines/wantiss-public-content.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/browser-fix-ci-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/browser-runtime-verification.json"
           ]
         },
         {
@@ -255,6 +279,12 @@
           "status": "A",
           "paths": [
             "scripts/goodies-local-recovery.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-local-storage.cjs"
           ]
         },
         {

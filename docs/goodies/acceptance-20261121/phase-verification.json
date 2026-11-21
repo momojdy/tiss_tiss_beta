@@ -1,8 +1,8 @@
 {
   "displayDate": "21 November 2026 (Asia/Manila)",
   "sourceCommits": {
-    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
-    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
+    "customer": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "productionReady": false,
   "allPhasesCompleteExcludingDeferredContent": false,
@@ -74,11 +74,11 @@
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Assigned-courier API access, wrong-courier denial, GPS authorization, pickup/completion and 24-hour hold pass locally.",
-        "Own-driver proof object ownership and receipt confirmation pass against metadata fixtures.",
+        "Real local private Storage upload, MIME restrictions, consumer signed resolver, authorized exact-byte reads, wrong-account denials, post-delivery immutability and customer receipt confirmation pass.",
         "Native Android development compilation and signature verification pass."
       ],
       "remainingAcceptance": [
-        "Physical GPS/background/offline/maps, actual private Storage upload/signing and push behavior are not verified."
+        "Physical GPS/background/offline/maps, hosted private Storage/camera and push behavior are not verified."
       ]
     },
     {
@@ -125,7 +125,8 @@
       "verifiedSubchecks": [
         "Actual local cross-account/vendor/courier/staff denials and metadata-escalation denial pass.",
         "Existing push worker/device/outbox/session/retry tests pass; production activation unchanged.",
-        "Leaked-password protection is explicitly excluded by the owner until a future Pro upgrade; it is not an active acceptance requirement."
+        "Leaked-password protection is explicitly excluded by the owner until a future Pro upgrade; it is not an active acceptance requirement.",
+        "Real private Storage HTTP denies unrelated users, anonymous access and restricted staff; public evidence URLs stay unavailable."
       ],
       "remainingAcceptance": [
         "Physical push/provider behavior and every notification/message destination are not verified.",
@@ -150,7 +151,7 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "492 core tests with zero skipped, 27 native PostgreSQL races, 29 local API/recovery scenarios, current CI/TypeScript/exports, real anonymous browser startup, and the updated Android development APK."
+        "492 core tests with zero skipped, 27 native PostgreSQL races, 32 local API/Storage/recovery scenarios, current CI/TypeScript/exports, real anonymous browser startup, and the updated Android development APK."
       ],
       "remainingAcceptance": [
         "Production Android/iOS signing, actual provider sandbox, full installed-button acceptance and physical-device requirements remain open."

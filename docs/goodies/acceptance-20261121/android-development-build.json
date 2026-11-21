@@ -33,7 +33,25 @@
   "limitations": [
     "Development/debug certificate is not a production signing identity.",
     "No physical-device installation, real maps/GPS/background/proof/push behavior or production signing is claimed.",
-    "A later small correction changes only browser map wording/contrast and its preview mirror; the exact source snapshot verified by this build is recorded above.",
+    "The later browser wording/contrast correction also passes native compilation and APK v2 verification in newerPassingRun. No physical-device acceptance is inferred.",
     "No Wantiss app submission, release or OTA update was performed."
-  ]
+  ],
+  "newerPassingRun": {
+    "id": 44899275861,
+    "sourceCommit": "f4e77de659572f9c1621b49df88fc79c351d355e",
+    "jobId": 136831558586,
+    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44899275861",
+    "conclusion": "success",
+    "nativeTasksExecuted": 592,
+    "apkV2SignatureVerified": true,
+    "artifact": {
+      "id": 14705482680,
+      "name": "goodies-android-development-f4e77de659572f9c1621b49df88fc79c351d355e",
+      "sizeBytes": 58861150,
+      "digest": "sha256:78cb72dfe090c65c71093b35460c092c0883a1418a123ad1f03803f9793f996c",
+      "expiresAt": "2026-11-24T11:37:46Z"
+    },
+    "productionSigning": "NOT VERIFIED",
+    "installedOnDevice": false
+  }
 }

@@ -1,0 +1,745 @@
+{
+  "observedAt": "2026-11-21T12:09:46.549Z",
+  "scope": "Actual local Auth/PostgREST/Storage/SQL with synthetic users and balances. Not hosted or physical-device acceptance.",
+  "productionContacted": false,
+  "hostedTestCreated": false,
+  "images": {
+    "auth": "supabase/gotrue:v2.197.0@sha256:1736a63078f5922b198c4cbe50f80ab9a2d3b54fe8b7b6cfb2e9dc5dbbc12c6b",
+    "rest": "postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf",
+    "gateway": "haproxy:3.2-alpine@sha256:7816a9801a6846b912bc37e48529808e2fa87c3c47992441940f68e393ebcfeb",
+    "storage": "supabase/storage-api:v1.89.12@sha256:4a71028f91060c8d2e86d7426faa6841947d63f4ee97f9683d058d3ec367fb6c"
+  },
+  "scenarios": [
+    {
+      "name": "Ten distinct role accounts sign in through real local Auth and retrieve their own account",
+      "classification": "PASS"
+    },
+    {
+      "name": "A customer-signed JWT resolves the same database identity through PostgREST",
+      "classification": "PASS"
+    },
+    {
+      "name": "Customer and unrelated vendor cannot save products in another merchant account",
+      "classification": "PASS"
+    },
+    {
+      "name": "The owning vendor saves a real pending product that remains hidden from anonymous shoppers",
+      "classification": "PASS"
+    },
+    {
+      "name": "Product rejection requires a reason and restricted staff cannot moderate",
+      "classification": "PASS"
+    },
+    {
+      "name": "Super-admin approval makes the same vendor product available in the public catalogue",
+      "classification": "PASS"
+    },
+    {
+      "name": "Server pricing rejects a tampered product price without changing balance or stock",
+      "classification": "PASS"
+    },
+    {
+      "name": "Concurrent SDK checkout retries create one paid order, one debit and one stock reservation",
+      "classification": "PASS"
+    },
+    {
+      "name": "Cross-customer and cross-vendor reads and order acceptance are denied",
+      "classification": "PASS"
+    },
+    {
+      "name": "The vendor fulfills pickup through valid transitions and the customer and admin see the same completion",
+      "classification": "PASS"
+    },
+    {
+      "name": "Customer cancellation refunds Wallet and restores stock exactly once across retries",
+      "classification": "PASS"
+    },
+    {
+      "name": "A customer cannot directly rewrite the order total or payment status",
+      "classification": "PASS"
+    },
+    {
+      "name": "A delivery quote belongs to its customer and cannot be reused by another account",
+      "classification": "PASS"
+    },
+    {
+      "name": "Vendor readiness creates an authorized courier offer; another courier cannot accept it",
+      "classification": "PASS"
+    },
+    {
+      "name": "Only the assigned courier can report GPS and only the owning customer can read it",
+      "classification": "PASS"
+    },
+    {
+      "name": "Courier pickup and completion synchronize customer, vendor and admin state",
+      "classification": "PASS"
+    },
+    {
+      "name": "The vendor assigns its own driver without claiming platform-courier GPS",
+      "classification": "PASS"
+    },
+    {
+      "name": "Private proof submission requires an owned existing object and a customer confirms only their own delivery",
+      "classification": "PASS"
+    },
+    {
+      "name": "Real private Storage returns the original proof bytes through the consumer resolver and authorized admin access",
+      "classification": "PASS"
+    },
+    {
+      "name": "Private proof download and signing deny anonymous, unrelated customer/vendor and restricted staff; public URLs stay unavailable",
+      "classification": "PASS"
+    },
+    {
+      "name": "Delivered private proof cannot be overwritten or supplemented after the merchant handoff",
+      "classification": "PASS"
+    },
+    {
+      "name": "Only an eligible order owner can submit a real review and admin publication reaches customer review reads",
+      "classification": "PASS"
+    },
+    {
+      "name": "Editing user metadata cannot elevate a customer into Goodies administration",
+      "classification": "PASS"
+    },
+    {
+      "name": "Shared Bill stays disabled by default and local 60/40 funding produces one original-customer order",
+      "classification": "PASS"
+    },
+    {
+      "name": "Full-payment Shared Bill charges only the payer and cancellation refunds that payer once",
+      "classification": "PASS"
+    },
+    {
+      "name": "Cancelling a partially funded request restores every contribution across repeated cancellation",
+      "classification": "PASS"
+    },
+    {
+      "name": "Rejection survives availability changes and prevents new purchases",
+      "classification": "PASS"
+    },
+    {
+      "name": "The real public Edge handler loads published Goodies into the actual consumer content module",
+      "classification": "PASS"
+    },
+    {
+      "name": "CMS editing is permission-controlled and cannot change protected fee policy",
+      "classification": "PASS"
+    },
+    {
+      "name": "Authorized CMS publication reaches a consumer reload through real Edge and PostgREST calls",
+      "classification": "PASS"
+    },
+    {
+      "name": "A complete local synthetic database copy restores every table fingerprint, role and policy",
+      "classification": "PASS"
+    },
+    {
+      "name": "Restored Auth sessions recover the same paid order without a second checkout debit",
+      "classification": "PASS"
+    }
+  ],
+  "storageMigrations": {
+    "ledgerRows": 80,
+    "appliedVersions": 79,
+    "latestVersion": 79
+  },
+  "migrationCount": 32,
+  "sharedCmsMigrationFiles": [
+    "20261031191833_protect_goodies_financial_settings_from_cms_publish.sql",
+    "20261024110844_fix_cms_archive_visibility.sql"
+  ],
+  "transport": "Real local HTTP through a loopback proxy and Docker exec TCP streams; no fabricated API response.",
+  "actorRoles": [
+    "customer",
+    "otherCustomer",
+    "vendor",
+    "otherVendor",
+    "vendorStaff",
+    "otherVendorStaff",
+    "courier",
+    "otherCourier",
+    "superAdmin",
+    "restrictedStaff"
+  ],
+  "storage": {
+    "classification": "PASS",
+    "scope": "Actual local HTTP Storage operations only; no hosted object or physical camera.",
+    "checks": [
+      {
+        "name": "anonymous upload denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "customer upload denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "otherVendor upload denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "vendorStaff upload denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "courier upload denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "Unsupported MIME type denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "Authorized vendor uploads real PNG bytes",
+        "classification": "PASS"
+      },
+      {
+        "name": "Owner/customer/admin authorized reads and bounded capability",
+        "classification": "PASS"
+      },
+      {
+        "name": "anonymous private read and signing denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "otherCustomer private read and signing denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "otherVendor private read and signing denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "restrictedStaff private read and signing denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "Public access and invalid path denied",
+        "classification": "PASS"
+      },
+      {
+        "name": "Post-delivery evidence remains immutable",
+        "classification": "PASS"
+      }
+    ],
+    "originalByteSha256": "ad5f30a57d1f649c598136f9b8703bf6265fa51901ec5a19e2bdadbfc0d0c6e0",
+    "signedCapabilitySeconds": 300
+  },
+  "confirmedOrderIds": {
+    "pickup": "dcd54875-db73-4754-b2c4-8258daec9fa4",
+    "courier": "d50be966-9084-4faf-8d95-eb69b85f2945",
+    "ownDriver": "1cca89c8-1599-480e-844e-1a2596c8c859"
+  },
+  "proofScope": "Real local Storage HTTP upload, private read/signing, object bytes and submission authorization; physical image capture and hosted access remain unverified.",
+  "localGateActivation": "Settlement, private-proof and Shared Bill gates were enabled only in this disposable local database. Production activation is not part of this script.",
+  "cms": {
+    "classification": "PASS",
+    "scope": "Real local Edge + PostgREST + consumer loadContent, with an in-memory AsyncStorage port. Not a physical installed-app reload or production publication.",
+    "labels": 2102,
+    "productionPublished": false,
+    "installedApp": "NOT VERIFIED"
+  },
+  "localRecovery": {
+    "classification": "PASS",
+    "scope": "All tables in this synthetic local cluster; not a production backup or production restore.",
+    "productionBackupCreated": false,
+    "restoredTableCount": 98,
+    "tableFingerprints": [
+      {
+        "rows": 23,
+        "table": "auth.audit_log_entries",
+        "fingerprint": "0da943de192e1c98d64cc1d6ad0f6261"
+      },
+      {
+        "rows": 0,
+        "table": "auth.custom_oauth_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.flow_state",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.identities",
+        "fingerprint": "ee03096055b54de2233cd1fcb249fa99"
+      },
+      {
+        "rows": 0,
+        "table": "auth.instances",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.mfa_amr_claims",
+        "fingerprint": "ee78094fbe48d4c225660842f2c55f43"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_challenges",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_factors",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_recovery_code_sets",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_recovery_codes",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_authorizations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_client_states",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_clients",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_consents",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.one_time_tokens",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 11,
+        "table": "auth.refresh_tokens",
+        "fingerprint": "7d2f2283ca63f1bb1975db928c1b0702"
+      },
+      {
+        "rows": 0,
+        "table": "auth.saml_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.saml_relay_states",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 75,
+        "table": "auth.schema_migrations",
+        "fingerprint": "d2036873352237c4c78cfccbe1233203"
+      },
+      {
+        "rows": 0,
+        "table": "auth.scim_tokens",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.scim_users",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.sessions",
+        "fingerprint": "55b370e4e3dc22f28c68b9fdfd699c30"
+      },
+      {
+        "rows": 0,
+        "table": "auth.sso_domains",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.sso_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.users",
+        "fingerprint": "ba638b95ae02a130b4ea255fedb3cd21"
+      },
+      {
+        "rows": 0,
+        "table": "auth.webauthn_challenges",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.webauthn_credentials",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_bank_calendars",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_bank_holidays",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_commission_payments",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 6,
+        "table": "private.goodies_order_settlements",
+        "fingerprint": "62435f0d575fc9be95e6991e60e03605"
+      },
+      {
+        "rows": 5,
+        "table": "private.goodies_payout_channels",
+        "fingerprint": "69e8ecec36ab86b2a73ebaa97a0b7de5"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_payout_destinations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_push_config",
+        "fingerprint": "0261734ce36cfd599da18cdbf36e6f9e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_push_deliveries",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_settlement_config",
+        "fingerprint": "ec693ff9c3ff77ef0fd5040cb8c7ca5b"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_settlement_events",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_settlement_reminders",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_shared_bill_config",
+        "fingerprint": "5aa728b96e5fb71882eb7423f37c5f9e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_vendor_accounts",
+        "fingerprint": "e64e6632c2710408d2469a9be8cfb6e1"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_vendor_payouts",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.wantiss_push_devices",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 4,
+        "table": "public.business_members",
+        "fingerprint": "ec7b8d142ab11e9494444578fe18b81c"
+      },
+      {
+        "rows": 2,
+        "table": "public.businesses",
+        "fingerprint": "2f807aa96e9b38019391567948d7e4e6"
+      },
+      {
+        "rows": 0,
+        "table": "public.conversations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "public.exchange_rates",
+        "fingerprint": "c0699b5afe49aa05729d9153f9b06160"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_builder_configs",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_card_checkout_attempts",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_card_refund_queue",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 4,
+        "table": "public.goodies_checkout_attempts",
+        "fingerprint": "3bce015cb0527ca72cf4c3c01b2e71ed"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_courier_presence",
+        "fingerprint": "803fb6282cca906303c9497195cd65da"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_courier_roster",
+        "fingerprint": "c88bcc36f9dd78505847f2016f6d2333"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_delivery_assignments",
+        "fingerprint": "c5cab89bc67ab2aefdf6122845825070"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_delivery_quotes",
+        "fingerprint": "806ee8a8eb9a661045173b731fdfc045"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_geocode_cache",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_invites",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_items",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_members",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_orders",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_ingredient_requests",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_ingredient_rules",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_library_ingredients",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_order_cancellation_private",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_order_groups",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_order_reviews",
+        "fingerprint": "8e78f54bc6cffe23c0c0af20b3ba8eba"
+      },
+      {
+        "rows": 6,
+        "table": "public.goodies_orders",
+        "fingerprint": "e5a0f828d804d2bc57cd875af0b37aae"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_products",
+        "fingerprint": "ac294b375ae8c8785ede642b37fb7fbd"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_promotions",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_route_cache",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_store_schedules",
+        "fingerprint": "82c71c60b5f61499d65cfa00c1756745"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_stripe_webhook_events",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 5,
+        "table": "public.help_pay_contributions",
+        "fingerprint": "21196b98fa003862182b5a547ef681a2"
+      },
+      {
+        "rows": 3,
+        "table": "public.help_pay_requests",
+        "fingerprint": "7940985f717cacc39210f2213ae44467"
+      },
+      {
+        "rows": 0,
+        "table": "public.messages",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 47,
+        "table": "public.notifications",
+        "fingerprint": "a7748df4ef65a6d00e3d7001aa9cc2cb"
+      },
+      {
+        "rows": 10,
+        "table": "public.profiles",
+        "fingerprint": "89e41a3e738c5995ed41a76a4cdd1ed2"
+      },
+      {
+        "rows": 0,
+        "table": "public.user_friendships",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.user_settings",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 15,
+        "table": "public.wallet_transactions",
+        "fingerprint": "daab500d3e317be4d9de387f11f80f99"
+      },
+      {
+        "rows": 10,
+        "table": "public.wallets",
+        "fingerprint": "e1a8c364ec9a5bec4110012255a3f2a1"
+      },
+      {
+        "rows": 0,
+        "table": "public.wantiss_admin_account_restrictions",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 6,
+        "table": "public.wantiss_admin_audit_log",
+        "fingerprint": "c1dcd8c34febdb5233671628744df45d"
+      },
+      {
+        "rows": 1,
+        "table": "public.wantiss_admin_permission_grants",
+        "fingerprint": "00dbe19ccfa4c0eccbbf39a5dce75b14"
+      },
+      {
+        "rows": 2,
+        "table": "public.wantiss_admin_staff",
+        "fingerprint": "370b9b05bb548e71ccc1dd15429415ac"
+      },
+      {
+        "rows": 0,
+        "table": "public.wantiss_cms_assets",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 2,
+        "table": "public.wantiss_cms_content",
+        "fingerprint": "a61da5d88fcfd55165ee8bceeffb0dc1"
+      },
+      {
+        "rows": 0,
+        "table": "storage.bucket_lifecycle_states",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "storage.buckets",
+        "fingerprint": "3f59f221076dc28de130f78aadb19981"
+      },
+      {
+        "rows": 0,
+        "table": "storage.buckets_analytics",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.buckets_vectors",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.iceberg_namespaces",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.iceberg_tables",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.lifecycle_abandoned_artifacts",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 80,
+        "table": "storage.migrations",
+        "fingerprint": "da2d8173f3f86d18fb0acfff7ded74ed"
+      },
+      {
+        "rows": 1,
+        "table": "storage.objects",
+        "fingerprint": "e15a961b7bfded459e872b8175cb1cef"
+      },
+      {
+        "rows": 0,
+        "table": "storage.s3_multipart_uploads",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.s3_multipart_uploads_parts",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "storage.vector_indexes",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      }
+    ],
+    "functionFingerprint": "96e266ae51af725a98493a6ac88899bb",
+    "roleFingerprint": "de2d7c245f86b4cc487c415063238203",
+    "policyFingerprint": "f1ad58f7da9e585a47b5a561e5e04c53"
+  },
+  "classification": "PASS"
+}

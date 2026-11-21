@@ -14,7 +14,7 @@
   },
   "limitations": [
     "Connector OAuth access is distinct from shell account/secret bindings.",
-    "No physical device, Apple signing session or provider test account is supplied.",
+    "The owner has Expo/Stripe accounts and Android/iPhone devices, but no approved CLI session or physical-device connection is available in this environment.",
     "A production backup cannot be created through the available metadata/SQL tools without an approved backup or privileged connection binding."
   ],
   "requiredOwnerInputs": [

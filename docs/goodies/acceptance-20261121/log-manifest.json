@@ -9,6 +9,13 @@
       "file": "logs/goodies-native-20261121.log.gz",
       "uncompressedSha256": "32c0840ccc8161d6253f7b9e72476bfa34d3c713378847854789fc1a99e2ae41",
       "scope": "Local synthetic database only; no provider, hosted test or physical device."
+    },
+    {
+      "file": "ci-local-storage-scenarios.log",
+      "sha256": "43a412d742760190fb933df2eb63f30c7a844d4dff65681f8858458f04595f00",
+      "scope": "32 actual local Auth/PostgREST/Storage/CMS/recovery scenarios in CI; synthetic data only, no hosted test, provider or physical device.",
+      "sourceCommit": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+      "workflowRun": 44902477851
     }
   ]
 }

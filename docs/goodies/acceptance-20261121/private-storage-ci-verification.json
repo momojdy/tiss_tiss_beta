@@ -1,0 +1,77 @@
+{
+  "classification": "PASS",
+  "scope": "Executed local and CI checks only. No physical-device, provider sandbox or production backup claim.",
+  "codeCommits": {
+    "customer": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
+  },
+  "runs": [
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44902477851,
+      "name": "Expo validation",
+      "headSha": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44902477851"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44902477852,
+      "name": "TypeScript and Expo build checks",
+      "headSha": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44902477852"
+    },
+    {
+      "repository": "momojdy/tiss-admin",
+      "id": 44899334075,
+      "name": "Admin validation",
+      "headSha": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss-admin/actions/runs/44899334075"
+    },
+    {
+      "repository": "momojdy/tiss_tiss_beta",
+      "id": 44899275861,
+      "name": "Goodies Android development build",
+      "headSha": "f4e77de659572f9c1621b49df88fc79c351d355e",
+      "conclusion": "success",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44899275861"
+    }
+  ],
+  "automated": {
+    "coreTests": 492,
+    "customer": 273,
+    "admin": 71,
+    "crossRole": 47,
+    "deno": 101,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0,
+    "localApiScenarios": 32,
+    "nativePostgresConcurrencyScenarios": 27,
+    "targetGoodiesMigrations": 32
+  },
+  "localStorage": {
+    "scenarioReport": "local-api-storage-verification.json",
+    "checks": 14,
+    "migrationLedger": {
+      "ledgerRows": 80,
+      "appliedVersions": 79,
+      "latestVersion": 79
+    },
+    "apiArtifactId": 14706866026,
+    "apiJobId": 136841086773,
+    "reportSha256": "f8c91fde2820ced9a322cf865c913126acb1a113812e0b10cf4fc0c21ff12073"
+  },
+  "setupFailureResolved": {
+    "sourceCommit": "b7bc855563a7c6c110393579d1fda424b422a96c",
+    "jobId": 136840343276,
+    "cause": "The official Storage migration ledger contains its version-zero bootstrap row in addition to 79 versioned migrations. The first harness incorrectly expected 79 total rows.",
+    "correction": "Verify all 79 versioned migrations and latest version independently of the bootstrap row, then execute actual upload/read/signing tests.",
+    "correctedSourceCommit": "ce9fbeeba4a614bc41530638977e5530d1ce2835"
+  },
+  "appReleased": false,
+  "hostedSupabaseTestCreated": false,
+  "productionFinancialRecordsModified": false,
+  "leakedPasswordProtectionDeferredByOwner": true
+}

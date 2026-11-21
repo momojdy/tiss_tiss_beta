@@ -11,20 +11,20 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "fb1f42aefbf586a2ad664426bf48e17795ed6e85",
-    "admin": "d0aa95042a63e2f662aa92cd6fa199a20df82268"
+    "customer": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "verifiedScopes": {
     "localApi": {
       "classification": "PASS",
-      "scenarios": 29,
+      "scenarios": 32,
       "roles": 10,
       "targetGoodiesMigrations": 32,
-      "report": "local-api-verification.json"
+      "report": "local-api-storage-verification.json"
     },
     "localSyntheticRecovery": {
       "classification": "PASS",
-      "tables": 88,
+      "tables": 98,
       "productionBackup": false
     },
     "localCmsPipeline": {
@@ -34,13 +34,13 @@
     },
     "androidDevelopmentApk": {
       "classification": "PASS",
-      "run": 44897499044,
+      "run": 44899275861,
       "productionSigning": "NOT VERIFIED"
     },
     "adminValidation": {
       "classification": "PASS",
       "tests": 71,
-      "ciRun": 44866770565
+      "ciRun": 44899334075
     },
     "sharedCmsLocaleHandlerDeployment": {
       "classification": "PASS",
@@ -52,17 +52,23 @@
     },
     "currentCI": {
       "classification": "PASS",
-      "receipt": "browser-fix-ci-verification.json",
+      "receipt": "private-storage-ci-verification.json",
       "runs": [
-        44898449492,
-        44898449431,
-        44897583364
+        44902477851,
+        44902477852,
+        44899334075
       ]
     },
     "browserBoot": {
       "classification": "PASS",
       "scope": "Actual anonymous web entry with external page traffic blocked.",
       "evidence": "browser-runtime-verification.json"
+    },
+    "localPrivateProofStorage": {
+      "classification": "PASS",
+      "checks": 14,
+      "scope": "Actual local private PNG uploads, MIME enforcement, original-byte downloads, five-minute signing and authorization/immutability. No hosted Storage or physical camera.",
+      "report": "local-api-storage-verification.json"
     }
   },
   "notVerified": [
@@ -75,11 +81,11 @@
   "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
   "sourceInventory": "../re-audit-20261120/source-inventory.json",
   "phaseEvidence": "phase-verification.json",
-  "ciEvidence": "browser-fix-ci-verification.json",
+  "ciEvidence": "private-storage-ci-verification.json",
   "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
   "localTestLimitations": [
     "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
-    "Storage is an object-metadata fixture and Cron execution is stubbed.",
+    "Real local Storage API and private file bytes are tested; scheduled Cron execution is stubbed. Storage file backup/restoration is not tested.",
     "Actual consumer CMS loading runs with an in-memory AsyncStorage test port.",
     "Coordinates and route geometry are explicit local test inputs; physical GPS and external route providers are not contacted."
   ],
@@ -91,7 +97,7 @@
     "deno": 101,
     "denoStepsNotAddedAgain": 71,
     "skipped": 0,
-    "localApiScenarios": 29,
+    "localApiScenarios": 32,
     "nativePostgresConcurrencyScenarios": 27,
     "targetGoodiesMigrations": 32
   },

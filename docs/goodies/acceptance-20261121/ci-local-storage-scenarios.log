@@ -1,0 +1,33 @@
+PASS: Ten distinct role accounts sign in through real local Auth and retrieve their own account
+PASS: A customer-signed JWT resolves the same database identity through PostgREST
+PASS: Customer and unrelated vendor cannot save products in another merchant account
+PASS: The owning vendor saves a real pending product that remains hidden from anonymous shoppers
+PASS: Product rejection requires a reason and restricted staff cannot moderate
+PASS: Super-admin approval makes the same vendor product available in the public catalogue
+PASS: Server pricing rejects a tampered product price without changing balance or stock
+PASS: Concurrent SDK checkout retries create one paid order, one debit and one stock reservation
+PASS: Cross-customer and cross-vendor reads and order acceptance are denied
+PASS: The vendor fulfills pickup through valid transitions and the customer and admin see the same completion
+PASS: Customer cancellation refunds Wallet and restores stock exactly once across retries
+PASS: A customer cannot directly rewrite the order total or payment status
+PASS: A delivery quote belongs to its customer and cannot be reused by another account
+PASS: Vendor readiness creates an authorized courier offer; another courier cannot accept it
+PASS: Only the assigned courier can report GPS and only the owning customer can read it
+PASS: Courier pickup and completion synchronize customer, vendor and admin state
+PASS: The vendor assigns its own driver without claiming platform-courier GPS
+PASS: Private proof submission requires an owned existing object and a customer confirms only their own delivery
+PASS: Real private Storage returns the original proof bytes through the consumer resolver and authorized admin access
+PASS: Private proof download and signing deny anonymous, unrelated customer/vendor and restricted staff; public URLs stay unavailable
+PASS: Delivered private proof cannot be overwritten or supplemented after the merchant handoff
+PASS: Only an eligible order owner can submit a real review and admin publication reaches customer review reads
+PASS: Editing user metadata cannot elevate a customer into Goodies administration
+PASS: Shared Bill stays disabled by default and local 60/40 funding produces one original-customer order
+PASS: Full-payment Shared Bill charges only the payer and cancellation refunds that payer once
+PASS: Cancelling a partially funded request restores every contribution across repeated cancellation
+PASS: Rejection survives availability changes and prevents new purchases
+PASS: The real public Edge handler loads published Goodies into the actual consumer content module
+PASS: CMS editing is permission-controlled and cannot change protected fee policy
+PASS: Authorized CMS publication reaches a consumer reload through real Edge and PostgREST calls
+PASS: A complete local synthetic database copy restores every table fingerprint, role and policy
+PASS: Restored Auth sessions recover the same paid order without a second checkout debit
+All local API scenarios passed; no hosted project, payment provider or physical device was used.
