@@ -99,3 +99,44 @@ jobs:
       - name: Remove this test container
         if: always()
         run: docker rm -f "$GOODIES_TEST_CONTAINER"
+
+  goodies-local-api:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      GOODIES_TEST_PG_MODULE: ${{ runner.temp }}/goodies-api-tools/node_modules/pg
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: tiss_tiss_beta
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tiss_tiss_beta/package-lock.json
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.9.6
+      - name: Install locked application dependencies
+        run: npm ci --legacy-peer-deps --no-audit --no-fund
+      - name: Install isolated local database test tools outside the application
+        run: npm install --prefix "$RUNNER_TEMP/goodies-api-tools" --no-audit --no-fund --no-package-lock --ignore-scripts pg@8.23.1 @embedded-postgres/linux-x64@17.6.0-beta.15
+      - name: Cache and check the real CMS delivery handler
+        run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-public-content/index.ts
+      - name: Exercise local Auth, PostgREST, CMS and database recovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          node scripts/test-goodies-local-api.cjs \
+            --native-bin "$RUNNER_TEMP/goodies-api-tools/node_modules/@embedded-postgres/linux-x64/native/bin" \
+            --deno-bin "$(command -v deno)" \
+            --report goodies-local-api.json | tee goodies-local-api.log
+      - name: Retain local acceptance evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-local-api-${{ github.sha }}
+          path: |
+            tiss_tiss_beta/goodies-local-api.json
+            tiss_tiss_beta/goodies-local-api.log
+          if-no-files-found: warn
