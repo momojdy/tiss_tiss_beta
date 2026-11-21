@@ -28,7 +28,7 @@ async function main(){
  const binary=process.env.GOODIES_BROWSER_BIN||['google-chrome','chromium','chromium-browser'].map(name=>spawnSync('which',[name],{encoding:'utf8'})).find(result=>result.status===0)?.stdout.trim();
  assert.ok(binary&&fs.existsSync(binary),'Install or select an existing Chrome/Chromium binary.');
  const browserEnv={...process.env};for(const key of ['EXPO_TOKEN','EAS_ACCESS_TOKEN','GITHUB_TOKEN','GH_TOKEN','SUPABASE_ACCESS_TOKEN','SUPABASE_DB_PASSWORD','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','STRIPE_SECRET_KEY','STRIPE_TEST_SECRET_KEY','STRIPE_WEBHOOK_SECRET'])delete browserEnv[key];
- browser=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-default-apps','--disable-sync','--no-first-run','--no-default-browser-check','--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--user-data-dir='+path.join(state,'profile'),'about:blank'],{env:browserEnv,stdio:'ignore'});
+ browser=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-default-apps','--disable-sync','--no-first-run','--no-default-browser-check','--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--user-data-dir='+path.join(state,'profile'),'about:blank'],{env:browserEnv,stdio:'ignore',detached:true});
  browser.on('error',error=>{report.browserError=error.code||'Launch failed';});
  const portFile=path.join(state,'profile','DevToolsActivePort');
  for(let attempt=0;attempt<150&&!fs.existsSync(portFile);attempt++){assert.ok(browser.exitCode===null&&!report.browserError,'The selected browser could not start.');await delay(100);}
@@ -67,8 +67,13 @@ async function cleanup(){
  if(connection?.readyState===WebSocket.OPEN)await Promise.race([cdp('Browser.close').catch(()=>{}),delay(1500)]);
  for(const request of pending.values())request.reject(Error('Browser check ended.'));pending.clear();
  if(connection)connection.close();
- if(browser&&browser.exitCode===null){browser.kill('SIGTERM');await Promise.race([new Promise(resolve=>browser.once('exit',resolve)),delay(3000)]);if(browser.exitCode===null)browser.kill('SIGKILL');}
+ if(browser?.pid){
+  const stopGroup=signal=>{try{process.kill(-browser.pid,signal);}catch(error){if(error.code!=='ESRCH')throw error;}};
+  stopGroup('SIGTERM');
+  if(browser.exitCode===null)await Promise.race([new Promise(resolve=>browser.once('exit',resolve)),delay(3000)]);
+  stopGroup('SIGKILL');
+ }
  if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
  fs.rmSync(state,{recursive:true,force:true,maxRetries:10,retryDelay:100});
 }
-main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);console.error(report.error);process.exitCode=1;}).finally(async()=>{try{await cleanup();}catch(error){report.classification='FAIL';report.cleanupError=String(error.message).slice(0,500);process.exitCode=1;}if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});
+main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);console.error(report.error);process.exitCode=1;}).finally(async()=>{try{await cleanup();}catch(error){report.classification='FAIL';report.cleanupError=String(error.message).slice(0,500);console.error(report.cleanupError);process.exitCode=1;}if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});
