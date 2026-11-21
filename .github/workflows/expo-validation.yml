@@ -118,7 +118,12 @@ jobs:
       - name: Install locked application dependencies
         run: npm ci --legacy-peer-deps --no-audit --no-fund
       - name: Install isolated local database test tools outside the application
-        run: npm install --prefix "$RUNNER_TEMP/goodies-api-tools" --no-audit --no-fund --no-package-lock --ignore-scripts pg@8.23.1 @embedded-postgres/linux-x64@17.6.0-beta.15
+        run: |
+          npm install --prefix "$RUNNER_TEMP/goodies-api-tools" --no-audit --no-fund --no-package-lock --ignore-scripts pg@8.23.1 @embedded-postgres/linux-x64@17.6.0-beta.15
+          (
+            cd "$RUNNER_TEMP/goodies-api-tools/node_modules/@embedded-postgres/linux-x64"
+            node scripts/hydrate-symlinks.js
+          )
       - name: Cache and check the real CMS delivery handler
         run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-public-content/index.ts
       - name: Exercise local Auth, PostgREST, CMS and database recovery
