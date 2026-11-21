@@ -64,10 +64,11 @@ async function main(){
  console.log('PASS: real anonymous web entry mounts without uncaught errors; external page requests blocked.');
 }
 async function cleanup(){
+ if(connection?.readyState===WebSocket.OPEN)await Promise.race([cdp('Browser.close').catch(()=>{}),delay(1500)]);
  for(const request of pending.values())request.reject(Error('Browser check ended.'));pending.clear();
  if(connection)connection.close();
  if(browser&&browser.exitCode===null){browser.kill('SIGTERM');await Promise.race([new Promise(resolve=>browser.once('exit',resolve)),delay(3000)]);if(browser.exitCode===null)browser.kill('SIGKILL');}
  if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
- fs.rmSync(state,{recursive:true,force:true});
+ fs.rmSync(state,{recursive:true,force:true,maxRetries:10,retryDelay:100});
 }
-main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);console.error(report.error);process.exitCode=1;}).finally(async()=>{await cleanup();if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});
+main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);console.error(report.error);process.exitCode=1;}).finally(async()=>{try{await cleanup();}catch(error){report.classification='FAIL';report.cleanupError=String(error.message).slice(0,500);process.exitCode=1;}if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});

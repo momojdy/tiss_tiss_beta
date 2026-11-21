@@ -47,6 +47,10 @@ jobs:
       - name: Type-check
         run: npx tsc --noEmit
       - name: Export Expo web bundle
+        env:
+          # Offline verification artifact only; the Chrome check blocks every external page request.
+          EXPO_PUBLIC_SUPABASE_URL: https://ycbirmgppwavorwudlrv.supabase.co
+          EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_offline_verification_only
         run: npx expo export --platform web
       - name: Verify the exported app actually mounts in Chrome
         run: node scripts/check-goodies-browser-boot.cjs --root dist --report goodies-browser-boot.json
@@ -62,7 +66,7 @@ jobs:
       - name: Upload customer web verification bundle
         uses: actions/upload-artifact@v4
         with:
-          name: goodies-customer-web-${{ github.sha }}
+          name: goodies-customer-web-verification-${{ github.sha }}
           path: tiss_tiss_beta/dist
           if-no-files-found: error
 
