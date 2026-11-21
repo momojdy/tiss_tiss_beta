@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-21T05:22:05.421858+00:00",
+  "observedAt": "2026-11-21T16:40:46.171Z",
   "scope": "Presence of environment binding names only; no secret values are read into reports.",
   "configuredEnvironmentBindings": {
     "SUPABASE_ACCESS_TOKEN": false,
@@ -13,14 +13,16 @@
     "EAS_ACCESS_TOKEN": false
   },
   "limitations": [
-    "Connector OAuth access is distinct from shell account/secret bindings.",
-    "Expo CLI is now authorized and the existing Wantiss project is linked. Stripe sandbox authorization, Apple signing configuration and physical-device execution remain unavailable.",
-    "A production backup cannot be created through the available metadata/SQL tools without an approved backup or privileged connection binding."
+    "Environment-variable presence and connector/CLI OAuth authorization are distinct. Previously recorded absent environment bindings do not imply that the now-authorized Expo and Stripe CLI sessions are unavailable.",
+    "Expo and Stripe test-mode authorization succeeded. Actual Stripe sandbox server tests passed; no production Stripe secret was modified.",
+    "No configured Android Maps/push signing setup, Apple provisioning session or connected physical device has been verified.",
+    "The available Supabase connector has no backup download/management or privileged database connection endpoint. Production backup and restoration remain unverified."
   ],
   "requiredOwnerInputs": [
-    "Approve Stripe access in sandbox/test mode only so actual provider tests can run.",
-    "Authorize a production backup connection or provide an existing backup through a secure channel; no password or key in chat.",
-    "Run the guided installed-build checks on the Android phone and iPhone."
+    "Identify or connect the existing Wantiss Google Cloud/Firebase project for Android maps/push.",
+    "Complete Apple device signing setup for the iPhone test build.",
+    "Approve the secure Supabase backup-connection flow if required; no passwords or keys in chat.",
+    "Run guided private installed-build checks on the Android phone and iPhone."
   ],
   "ownerConfirmedAvailable": {
     "expoAccount": true,
@@ -33,5 +35,16 @@
     "username": "momo_jdy",
     "project": "@wantiss/wantiss",
     "evidence": "expo-account-setup.json"
+  },
+  "stripeCliSession": {
+    "authenticated": true,
+    "mode": "test",
+    "accountId": "acct_1FntNWCvFEhF140B",
+    "evidence": "stripe-sandbox-verification.json",
+    "credentialsRecorded": false
+  },
+  "supabaseCliBackupAccess": {
+    "authenticated": false,
+    "status": "Awaiting owner verification through the official Supabase CLI browser login; no password reset or database change requested."
   }
 }

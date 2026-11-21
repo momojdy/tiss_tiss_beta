@@ -1,0 +1,24 @@
+{
+  "classification": "NOT VERIFIED",
+  "sourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+  "expoAccount": "wantiss",
+  "cloudSimulatorAvailability": {
+    "available": false,
+    "observedThrough": "Official EAS CLI simulator:availability --json"
+  },
+  "cloudSimulatorStarted": false,
+  "cloudBuildStarted": false,
+  "paidUpgradePurchased": false,
+  "physicalDevicesKnownAvailable": [
+    "Android phone",
+    "iPhone"
+  ],
+  "physicalDevicesConnectedToThisWorkspace": false,
+  "remainingConfiguration": [
+    "Android Google Maps key and package/signature restrictions",
+    "Firebase/FCM configuration",
+    "Apple physical-device signing/provisioning",
+    "Installed app and physical-device execution"
+  ],
+  "scope": "Read-only account availability and local capability evidence only. Existing Android development compilation is recorded separately."
+}

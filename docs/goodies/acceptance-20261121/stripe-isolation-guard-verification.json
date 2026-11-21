@@ -1,0 +1,24 @@
+{
+  "classification": "PASS",
+  "sourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+  "scope": "Expected safe refusal in the real connected Stripe test account before any financial object or local scenario is created. This is not a passing financial test suite.",
+  "runnerExitCode": 1,
+  "financialWrites": 0,
+  "scenariosStarted": 0,
+  "providerRequests": [
+    {
+      "method": "GET",
+      "path": "/v1/balance",
+      "status": 200,
+      "requestId": "req_I5lmDlFB8601UI"
+    },
+    {
+      "method": "GET",
+      "path": "/v1/webhook_endpoints",
+      "status": 200,
+      "requestId": "req_lmPMO0aUxj2pW3"
+    }
+  ],
+  "unitTests": 4,
+  "hostedBackendContactedByGuard": false
+}

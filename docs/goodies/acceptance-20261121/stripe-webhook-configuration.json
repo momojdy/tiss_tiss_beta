@@ -1,0 +1,114 @@
+{
+  "observedAt": "2026-11-21T16:52:13.081Z",
+  "classification": "PASS",
+  "scope": "Existing Wantiss TEST-MODE webhook subscription configuration and read-only impact inspection. No live-mode configuration or financial transaction accepted.",
+  "accountId": "acct_1FntNWCvFEhF140B",
+  "livemode": false,
+  "initialFinding": {
+    "classification": "FAIL",
+    "detail": "Existing test webhook subscribed only to payment_intent.succeeded; card setup, refund and dispute events were not subscribed."
+  },
+  "before": {
+    "id": "we_1UI24iCvFEhF140BzoOs0oXc",
+    "object": "webhook_endpoint",
+    "api_version": "2026-08-26.dahlia",
+    "application": null,
+    "created": 1789977344,
+    "description": "Receives successful Stripe payments for Wantiss money requests.",
+    "enabled_events": [
+      "payment_intent.succeeded"
+    ],
+    "livemode": false,
+    "metadata": {},
+    "status": "enabled",
+    "url": "https://ycbirmgppwavorwudlrv.supabase.co/functions/v1/rapid-api"
+  },
+  "after": {
+    "id": "we_1UI24iCvFEhF140BzoOs0oXc",
+    "object": "webhook_endpoint",
+    "api_version": "2026-08-26.dahlia",
+    "application": null,
+    "created": 1789977344,
+    "description": "Receives successful Stripe payments for Wantiss money requests.",
+    "enabled_events": [
+      "payment_intent.succeeded",
+      "setup_intent.succeeded",
+      "payment_intent.payment_failed",
+      "payment_intent.canceled",
+      "charge.refunded",
+      "refund.updated",
+      "refund.failed",
+      "charge.dispute.created",
+      "charge.dispute.updated",
+      "charge.dispute.closed",
+      "charge.dispute.funds_reinstated",
+      "charge.dispute.funds_withdrawn"
+    ],
+    "livemode": false,
+    "metadata": {},
+    "status": "enabled",
+    "url": "https://ycbirmgppwavorwudlrv.supabase.co/functions/v1/rapid-api"
+  },
+  "handler": {
+    "version": 20,
+    "status": "ACTIVE",
+    "verifyJwt": false,
+    "files": [
+      {
+        "file": "index.ts",
+        "sourceMatches": true,
+        "sha256": "de17e9a0c564570ce688359dc2ec1f07b0fdcdc62d4828458c68c3d77ec473ca"
+      },
+      {
+        "file": "goodiesStripeState.ts",
+        "sourceMatches": true,
+        "sha256": "a026386bb349e27b4b5ccc7fa8af507d0e28c34504a238eb707976270693d0a8"
+      }
+    ]
+  },
+  "signingSecretRotated": false,
+  "endpointReplaced": false,
+  "productionSecretChanged": false,
+  "appReleased": false,
+  "rollback": {
+    "operation": "PostWebhookEndpointsWebhookEndpoint",
+    "livemode": false,
+    "parameters": {
+      "id": "we_1UI24iCvFEhF140BzoOs0oXc",
+      "enabled_events": [
+        "payment_intent.succeeded"
+      ]
+    }
+  },
+  "historicalTestIsolation": {
+    "classification": "FAIL",
+    "detail": "The prior local provider run did not check pre-existing Dashboard webhooks. Stripe automatically forwarded some test events to the hosted backend as well as the local CLI receiver. The runner’s initial productionContacted:false claim did not cover that forwarding and was incorrect as an overall isolation claim.",
+    "scopedReadOnlyImpact": {
+      "synthetic_orders": 0,
+      "synthetic_saved_cards": 0,
+      "known_test_webhook_events": [
+        {
+          "count": 17,
+          "status": "processed"
+        }
+      ],
+      "synthetic_customer_bindings": 0
+    },
+    "inspectedObjects": {
+      "paymentIntents": 25,
+      "savedCards": 4,
+      "customers": 11,
+      "events": 76,
+      "orders": 12
+    },
+    "inspectionQuery": "select jsonb_build_object('synthetic_orders',(select count(*) from public.goodies_orders where payment_provider_ref=any(array['pi_3UeGQKCvFEhF140B1K2RRRYB','pi_3UeGUvCvFEhF140B1MNP8ih1','pi_3UeGVBCvFEhF140B06ZBFaso','pi_3UeGVICvFEhF140B1cnADzpx','pi_3UeGVLCvFEhF140B0IUx7yP6','pi_3UeGVOCvFEhF140B1BsP2XX2','pi_3UeGVWCvFEhF140B1R2S9Cyo','pi_3UeGdrCvFEhF140B1dxYGKFr','pi_3UeGe6CvFEhF140B0afOfsM7','pi_3UeGeGCvFEhF140B07FyVP3P','pi_3UeGeKCvFEhF140B1wtxKvG7','pi_3UeGeOCvFEhF140B0ZRU1FNp','pi_3UeGkGCvFEhF140B1Yzq5XtL','pi_3UeGkWCvFEhF140B1lYbzoPN','pi_3UeGkhCvFEhF140B1FNEkTll','pi_3UeGklCvFEhF140B1xTVy4vF','pi_3UeGkpCvFEhF140B03iIVt9U','pi_3UeGkwCvFEhF140B0AnG8Vaq','pi_3UeGogCvFEhF140B1RV3MXSj','pi_3UeGowCvFEhF140B0mIHGRvz','pi_3UeGp9CvFEhF140B0pZBsmzP','pi_3UeGpFCvFEhF140B1D4NI3Mv','pi_3UeGpJCvFEhF140B1GAgATYU','pi_3UeGpTCvFEhF140B1cYWm9le','pi_3UeGpbCvFEhF140B0AWXR5OQ']::text[]) or id::text=any(array['14b9b970-9713-4379-9ef9-1c83c533fa58','161fd11b-25d4-4114-afea-12c89422ca3c','3c5b4ef9-419d-41d4-988c-5e142f54b3ba','435fcd04-2a20-4873-b89f-54b6908dc109','51b1eb97-8686-42a0-ad3c-5bf12c7c021c','578ba322-91a9-4e39-9a6d-49e99d29b7c9','81fcc4bf-78a4-412d-b5a2-45cf473b44a6','85820db6-f271-484d-97c7-5b1170f37ba0','a6cbd742-9176-443d-a118-34e8596b27ed','bfee89e2-7acc-4fbe-83f2-5f421ab55c34','cf55da28-ab16-41e2-8144-552e3952ca27','eb9cd9fb-312b-40de-8f9a-19f94d41d60a']::text[])), 'synthetic_saved_cards',(select count(*) from public.user_payment_methods where stripe_payment_method_id=any(array['pm_1UeGdcCvFEhF140B9CbF5XVW','pm_1UeGk1CvFEhF140BailrEp8F','pm_1UeGoRCvFEhF140BLMWPyH2x','pm_card']::text[]) or stripe_customer_id=any(array['cus_VfbXfeZ2MOSuSr','cus_VfbafVhXStCTe7','cus_VfbbZLao3Wkijn','cus_VfbdcOK2jL6fXi','cus_VfbiSTVA4EBPgJ','cus_VfbrDErizquSy9','cus_VfbrR7uoNzs8fU','cus_VfbxF00cUmmvzP','cus_VfbxtEpLv8r7fl','cus_Vfc2OFGMkSyAD4','cus_Vfc2Sy4uhImAt1']::text[])), 'synthetic_customer_bindings',(select count(*) from public.stripe_customers where stripe_customer_id=any(array['cus_VfbXfeZ2MOSuSr','cus_VfbafVhXStCTe7','cus_VfbbZLao3Wkijn','cus_VfbdcOK2jL6fXi','cus_VfbiSTVA4EBPgJ','cus_VfbrDErizquSy9','cus_VfbrR7uoNzs8fU','cus_VfbxF00cUmmvzP','cus_VfbxtEpLv8r7fl','cus_Vfc2OFGMkSyAD4','cus_Vfc2Sy4uhImAt1']::text[])), 'known_test_webhook_events',(select coalesce(jsonb_agg(x), '[]'::jsonb) from (select status,count(*) from public.goodies_stripe_webhook_events where event_id=any(array['evt_1UeGdcCvFEhF140BeH4BLYDN','evt_1UeGk2CvFEhF140BrdLUqQKB','evt_1UeGoRCvFEhF140BvK7TLsnI','evt_1UeGpeCvFEhF140BY00Khs8H','evt_1UeGpeCvFEhF140Bb4Wue8uP','evt_1UeGplCvFEhF140BcKPqMvPv','evt_1UeGplCvFEhF140BztyaVfBS','evt_3UeGQKCvFEhF140B10S0DYTj','evt_3UeGQKCvFEhF140B17xmvZst','evt_3UeGQKCvFEhF140B1RfpLAKH','evt_3UeGUvCvFEhF140B14rbL0km','evt_3UeGUvCvFEhF140B1gYYyxho','evt_3UeGUvCvFEhF140B1v2JSh0s','evt_3UeGVBCvFEhF140B0tzYG40F','evt_3UeGVICvFEhF140B19Z8ETl3','evt_3UeGVLCvFEhF140B0TOvNUgo','evt_3UeGVLCvFEhF140B0yiskIY8','evt_3UeGVOCvFEhF140B1JL8ZOs8','evt_3UeGVOCvFEhF140B1MLQ9AxE','evt_3UeGVOCvFEhF140B1f8Mimw9','evt_3UeGVOCvFEhF140B1m9vtp8z','evt_3UeGVOCvFEhF140B1rveFNEw','evt_3UeGVWCvFEhF140B1QZ6Tz5a','evt_3UeGVWCvFEhF140B1WOm8b5l','evt_3UeGVWCvFEhF140B1xNyebrL','evt_3UeGVWCvFEhF140B1yimQFHA','evt_3UeGdrCvFEhF140B10YsehSN','evt_3UeGdrCvFEhF140B1VJRfdVe','evt_3UeGdrCvFEhF140B1WeJEQzm','evt_3UeGe6CvFEhF140B05RYPu7S','evt_3UeGe6CvFEhF140B0VsCIbXP','evt_3UeGeGCvFEhF140B0isEM6OT','evt_3UeGeKCvFEhF140B1DEAZdkN','evt_3UeGeKCvFEhF140B1xpG9Lao','evt_3UeGeOCvFEhF140B0EVT7Z72','evt_3UeGeOCvFEhF140B0Um0NjQQ','evt_3UeGeOCvFEhF140B0eKMfuYN','evt_3UeGeOCvFEhF140B0t54r6td','evt_3UeGeOCvFEhF140B0zht9r4d','evt_3UeGkGCvFEhF140B1KZ8pfRL','evt_3UeGkGCvFEhF140B1hfcZ6lk','evt_3UeGkGCvFEhF140B1pb7g5zy','evt_3UeGkWCvFEhF140B1AvK22Ul','evt_3UeGkhCvFEhF140B19vpSRNA','evt_3UeGklCvFEhF140B1c3gJNO1','evt_3UeGklCvFEhF140B1zCRKSDg','evt_3UeGkpCvFEhF140B05FT8Njw','evt_3UeGkpCvFEhF140B0IgByt0C','evt_3UeGkpCvFEhF140B0MGghXIk','evt_3UeGkpCvFEhF140B0jZUpE0c','evt_3UeGkpCvFEhF140B0mEjeEtm','evt_3UeGkwCvFEhF140B0MOR8sSY','evt_3UeGkwCvFEhF140B0aDqm16i','evt_3UeGkwCvFEhF140B0d5PnpiD','evt_3UeGkwCvFEhF140B0jiCHQVa','evt_3UeGogCvFEhF140B1GtNDjoy','evt_3UeGogCvFEhF140B1J9jP4jZ','evt_3UeGogCvFEhF140B1nfwUP91','evt_3UeGowCvFEhF140B0JVwC1U2','evt_3UeGowCvFEhF140B0qr28TNX','evt_3UeGp9CvFEhF140B09clbgY2','evt_3UeGpFCvFEhF140B17hh9uwF','evt_3UeGpFCvFEhF140B1wI0GUgn','evt_3UeGpJCvFEhF140B1FoCAVOR','evt_3UeGpJCvFEhF140B1LeG9hfK','evt_3UeGpJCvFEhF140B1Wxd3tkz','evt_3UeGpJCvFEhF140B1d69pb3t','evt_3UeGpJCvFEhF140B1jzS5303','evt_3UeGpTCvFEhF140B18cIiqRN','evt_3UeGpTCvFEhF140B1BShDanT','evt_3UeGpTCvFEhF140B1Shsn9Vf','evt_3UeGpTCvFEhF140B1wR0H4Me','evt_3UeGpbCvFEhF140B046Qj4yv','evt_3UeGpbCvFEhF140B08nAkjgp','evt_3UeGpbCvFEhF140B0SvCDcME','evt_3UeGpbCvFEhF140B0y8t0XEj']::text[]) group by status) x)) as result;",
+    "hostedFinancialRecordsCreatedForInspectedObjects": false,
+    "existingOperationalReceiptsRetained": true,
+    "remediation": "The optional Stripe runner now pages through Dashboard webhook endpoints before creating any object and refuses any enabled endpoint. The Wantiss shared test account therefore cannot run further isolated financial scenarios; use a separate owner-approved Stripe sandbox with no enabled Dashboard endpoint."
+  },
+  "notVerified": [
+    "Hosted webhook signing-secret/key/account alignment and actual delivery acceptance.",
+    "Native/web card entry and 3DS authentication UI.",
+    "Live-mode endpoint configuration."
+  ]
+}

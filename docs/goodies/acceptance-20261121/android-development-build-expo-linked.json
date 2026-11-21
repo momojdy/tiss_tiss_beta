@@ -1,0 +1,21 @@
+{
+  "classification": "PASS",
+  "run": 44917985726,
+  "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44917985726",
+  "headSha": "9d1a1af4ad47b9ff0341215a097a44c4bc499aa3",
+  "conclusion": "success",
+  "updatedAt": "2026-11-21T15:25:36Z",
+  "artifacts": [
+    {
+      "id": 14712593397,
+      "name": "goodies-android-development-9d1a1af4ad47b9ff0341215a097a44c4bc499aa3",
+      "size": 58861228,
+      "sha256": "sha256:ff892d7477bd1aea3b690e49c572aad8e77c5a5d36bad9e40690ba5d5447d191",
+      "expiresAt": "2026-11-24T15:25:30Z"
+    }
+  ],
+  "scope": "Private Android ARM64 development/debug build compilation and apksigner verification only. This artifact precedes backend-only payment fixes. No installed-device or production-signing acceptance.",
+  "productionSigning": "NOT VERIFIED",
+  "physicalDevice": "NOT VERIFIED",
+  "appReleased": false
+}

@@ -1,0 +1,729 @@
+{
+  "observedAt": "2026-11-21T16:56:24.761Z",
+  "classification": "NOT VERIFIED",
+  "scope": "Post-deployment read-only advisor inspection. Advisory presence does not establish an exploitable vulnerability or complete authorization acceptance.",
+  "findings": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO",
+      "count": 28,
+      "goodiesFindings": [
+        {
+          "name": "goodies_bank_calendars",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_bank_holidays",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_commission_payments",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_order_settlements",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_payout_channels",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_payout_destinations",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_push_config",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_push_deliveries",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_settlement_config",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_settlement_events",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_settlement_reminders",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_shared_bill_config",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_vendor_accounts",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_vendor_payouts",
+          "schema": "private"
+        },
+        {
+          "name": "goodies_card_checkout_attempts",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_card_refund_queue",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_checkout_attempts",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_delivery_quotes",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_geocode_cache",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_ingredient_requests",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_ingredient_rules",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_promotions",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_route_cache",
+          "schema": "public"
+        },
+        {
+          "name": "goodies_stripe_webhook_events",
+          "schema": "public"
+        }
+      ],
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy"
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN",
+      "count": 1,
+      "goodiesFindings": [],
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0014_extension_in_public"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "level": "WARN",
+      "count": 5,
+      "goodiesFindings": [
+        {
+          "name": "goodies_public_store_review_stats",
+          "schema": "public",
+          "arguments": "p_store_ids text[]"
+        },
+        {
+          "name": "goodies_public_store_reviews",
+          "schema": "public",
+          "arguments": "p_store_id text"
+        }
+      ],
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0028_anon_security_definer_function_executable"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN",
+      "count": 236,
+      "goodiesFindings": [
+        {
+          "name": "accept_goodies_order",
+          "schema": "public",
+          "arguments": "p_order_id uuid"
+        },
+        {
+          "name": "cancel_goodies_order_by_store",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text"
+        },
+        {
+          "name": "decline_goodies_order",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_reason_code text, p_reason_detail text"
+        },
+        {
+          "name": "get_my_goodies_access_status",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_add_courier",
+          "schema": "public",
+          "arguments": "p_courier_id uuid"
+        },
+        {
+          "name": "goodies_admin_analytics",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_cancel_order",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_reason text"
+        },
+        {
+          "name": "goodies_admin_courier_candidates_page",
+          "schema": "public",
+          "arguments": "p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_admin_dashboard",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_destination_details",
+          "schema": "public",
+          "arguments": "p_destination uuid, p_reason text"
+        },
+        {
+          "name": "goodies_admin_list_courier_candidates",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_list_delivery_reports",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_list_reviews",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_admin_list_reviews",
+          "schema": "public",
+          "arguments": "p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_admin_orders_page",
+          "schema": "public",
+          "arguments": "p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_admin_remove_courier",
+          "schema": "public",
+          "arguments": "p_courier_id uuid"
+        },
+        {
+          "name": "goodies_admin_resolve_delivery_dispute",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_resolution text"
+        },
+        {
+          "name": "goodies_admin_review_order_review",
+          "schema": "public",
+          "arguments": "p_review_id uuid, p_status text, p_note text"
+        },
+        {
+          "name": "goodies_admin_review_product",
+          "schema": "public",
+          "arguments": "p_product_id uuid, p_status text, p_note text"
+        },
+        {
+          "name": "goodies_admin_set_bank_calendar",
+          "schema": "public",
+          "arguments": "p_country text, p_reviewed_until date, p_holidays date[], p_reason text"
+        },
+        {
+          "name": "goodies_admin_set_merchant_status",
+          "schema": "public",
+          "arguments": "p_business_id uuid, p_live boolean"
+        },
+        {
+          "name": "goodies_admin_set_payout_channel",
+          "schema": "public",
+          "arguments": "p_method text, p_enabled boolean, p_reason text"
+        },
+        {
+          "name": "goodies_admin_set_private_delivery_proofs",
+          "schema": "public",
+          "arguments": "p_enabled boolean"
+        },
+        {
+          "name": "goodies_admin_settlement_action",
+          "schema": "public",
+          "arguments": "p_kind text, p_id uuid, p_decision text, p_reference text, p_reason text, p_amount numeric"
+        },
+        {
+          "name": "goodies_admin_settlement_queue",
+          "schema": "public",
+          "arguments": "p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_admin_update_delivery_surcharge_policy",
+          "schema": "public",
+          "arguments": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric"
+        },
+        {
+          "name": "goodies_admin_update_fee_policy",
+          "schema": "public",
+          "arguments": "p_service_fee numeric, p_first_order_free boolean, p_wallet_enabled boolean, p_card_enabled boolean, p_cash_enabled boolean, p_tips numeric[]"
+        },
+        {
+          "name": "goodies_admin_update_max_stops",
+          "schema": "public",
+          "arguments": "p_max_stops integer"
+        },
+        {
+          "name": "goodies_admin_update_multi_store_policy",
+          "schema": "public",
+          "arguments": "p_enabled boolean, p_additional_store_fee numeric, p_extra_distance_per_km numeric, p_max_stops integer"
+        },
+        {
+          "name": "goodies_assign_courier",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_courier_id uuid"
+        },
+        {
+          "name": "goodies_assign_own_driver",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_driver_name text, p_driver_phone text"
+        },
+        {
+          "name": "goodies_cash_global_enabled",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_cash_on_delivery_available",
+          "schema": "public",
+          "arguments": "p_store_id text"
+        },
+        {
+          "name": "goodies_courier_delivery_details",
+          "schema": "public",
+          "arguments": "p_order_id uuid"
+        },
+        {
+          "name": "goodies_courier_orders",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_courier_respond_assignment",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_accept boolean"
+        },
+        {
+          "name": "goodies_courier_update_delivery_status",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_status text"
+        },
+        {
+          "name": "goodies_courier_update_location",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_latitude double precision, p_longitude double precision, p_accuracy_m double precision, p_heading double precision, p_speed_mps double precision"
+        },
+        {
+          "name": "goodies_customer_confirm_received",
+          "schema": "public",
+          "arguments": "p_order_id uuid"
+        },
+        {
+          "name": "goodies_customer_dispute_delivery",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_reason text"
+        },
+        {
+          "name": "goodies_get_ingredient_rules",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_group_add_item",
+          "schema": "public",
+          "arguments": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text"
+        },
+        {
+          "name": "goodies_group_close",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_create",
+          "schema": "public",
+          "arguments": "p_store_id text"
+        },
+        {
+          "name": "goodies_group_join",
+          "schema": "public",
+          "arguments": "p_invite_code text"
+        },
+        {
+          "name": "goodies_group_order_checkout",
+          "schema": "public",
+          "arguments": "p_idempotency_key text, p_group_id uuid, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_tip numeric, p_notes text"
+        },
+        {
+          "name": "goodies_group_order_checkout_estimate",
+          "schema": "public",
+          "arguments": "p_group_id uuid, p_order_type text, p_address jsonb"
+        },
+        {
+          "name": "goodies_group_order_checkout_preview",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_create",
+          "schema": "public",
+          "arguments": "p_store_id text"
+        },
+        {
+          "name": "goodies_group_order_decline_invite",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_end",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_get_status",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_invite_friends",
+          "schema": "public",
+          "arguments": "p_group_id uuid, p_user_ids uuid[]"
+        },
+        {
+          "name": "goodies_group_order_join",
+          "schema": "public",
+          "arguments": "p_invite_code text"
+        },
+        {
+          "name": "goodies_group_order_list_friends",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_list_members",
+          "schema": "public",
+          "arguments": "p_group_id uuid"
+        },
+        {
+          "name": "goodies_group_order_my_invites",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_group_order_remove_item",
+          "schema": "public",
+          "arguments": "p_group_id uuid, p_line_key text"
+        },
+        {
+          "name": "goodies_group_order_upsert_item",
+          "schema": "public",
+          "arguments": "p_group_id uuid, p_product_id uuid, p_line_key text, p_quantity integer, p_options jsonb, p_note text"
+        },
+        {
+          "name": "goodies_group_remove_item",
+          "schema": "public",
+          "arguments": "p_item_id uuid"
+        },
+        {
+          "name": "goodies_list_dispatch_couriers",
+          "schema": "public",
+          "arguments": "p_order_id uuid"
+        },
+        {
+          "name": "goodies_list_ingredient_requests",
+          "schema": "public",
+          "arguments": "p_business uuid"
+        },
+        {
+          "name": "goodies_list_ingredient_requests_page",
+          "schema": "public",
+          "arguments": "p_business uuid, p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_list_library_ingredients",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_pay_cash_commission",
+          "schema": "public",
+          "arguments": "p_business uuid, p_key text"
+        },
+        {
+          "name": "goodies_place_multi_order",
+          "schema": "public",
+          "arguments": "p_idempotency_key text, p_payment_method text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_stops jsonb, p_service_fee numeric, p_tip numeric, p_notes text"
+        },
+        {
+          "name": "goodies_private_delivery_proof_uploads_enabled",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_public_store_review_stats",
+          "schema": "public",
+          "arguments": "p_store_ids text[]"
+        },
+        {
+          "name": "goodies_public_store_reviews",
+          "schema": "public",
+          "arguments": "p_store_id text"
+        },
+        {
+          "name": "goodies_push_registration_status",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "goodies_register_payout_destination",
+          "schema": "public",
+          "arguments": "p_business uuid, p_method text, p_country text, p_holder text, p_details jsonb"
+        },
+        {
+          "name": "goodies_register_push_device",
+          "schema": "public",
+          "arguments": "p_token text, p_platform text, p_project_id uuid"
+        },
+        {
+          "name": "goodies_request_vendor_payout",
+          "schema": "public",
+          "arguments": "p_business uuid, p_amount numeric, p_method text, p_destination uuid, p_key text, p_expected_receive numeric"
+        },
+        {
+          "name": "goodies_save_builder_configs",
+          "schema": "public",
+          "arguments": "p_business uuid, p_configs jsonb"
+        },
+        {
+          "name": "goodies_save_store_cover",
+          "schema": "public",
+          "arguments": "p_business uuid, p_cover_url text"
+        },
+        {
+          "name": "goodies_save_store_location",
+          "schema": "public",
+          "arguments": "p_business uuid, p_latitude double precision, p_longitude double precision"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_minutes integer"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text"
+        },
+        {
+          "name": "goodies_save_store_setup",
+          "schema": "public",
+          "arguments": "p_business uuid, p_category text, p_kind text, p_min_order numeric, p_delivery_fee numeric, p_eta_min integer, p_eta_max integer, p_promo text, p_names jsonb, p_delivery boolean, p_pickup boolean, p_delivery_pricing_mode text, p_delivery_base_fee numeric, p_delivery_per_km_fee numeric, p_delivery_min_fee numeric, p_delivery_max_fee numeric, p_delivery_max_distance_km numeric, p_address text, p_city text, p_country text, p_accept_scheduled_orders boolean, p_scheduled_order_start_time text, p_scheduled_order_timezone text, p_store_name text"
+        },
+        {
+          "name": "goodies_save_store_thumbnail",
+          "schema": "public",
+          "arguments": "p_business uuid, p_thumbnail_url text"
+        },
+        {
+          "name": "goodies_self_delivery_mark_delivered",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_proof_url text"
+        },
+        {
+          "name": "goodies_send_store_message",
+          "schema": "public",
+          "arguments": "p_conversation_id uuid, p_body text"
+        },
+        {
+          "name": "goodies_set_courier_availability",
+          "schema": "public",
+          "arguments": "p_is_available boolean, p_accepts_cash_on_delivery boolean"
+        },
+        {
+          "name": "goodies_set_notification_preference",
+          "schema": "public",
+          "arguments": "p_kind text, p_enabled boolean"
+        },
+        {
+          "name": "goodies_set_store_cash_policy",
+          "schema": "public",
+          "arguments": "p_store_id text, p_enabled boolean"
+        },
+        {
+          "name": "goodies_set_store_live",
+          "schema": "public",
+          "arguments": "p_business uuid, p_live boolean"
+        },
+        {
+          "name": "goodies_set_vendor_notification_preferences",
+          "schema": "public",
+          "arguments": "p_push boolean, p_email boolean"
+        },
+        {
+          "name": "goodies_start_store_conversation",
+          "schema": "public",
+          "arguments": "p_store_id text, p_customer_name text"
+        },
+        {
+          "name": "goodies_store_review_summaries",
+          "schema": "public",
+          "arguments": "p_business_ids uuid[]"
+        },
+        {
+          "name": "goodies_store_reviews",
+          "schema": "public",
+          "arguments": "p_store_id text, p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_submit_ingredient_request",
+          "schema": "public",
+          "arguments": "p_business uuid, p_name text, p_builder text, p_role text, p_note text, p_image_path text"
+        },
+        {
+          "name": "goodies_submit_order_review",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_review_target text, p_rating integer, p_comment text"
+        },
+        {
+          "name": "goodies_unregister_push_device",
+          "schema": "public",
+          "arguments": "p_token text"
+        },
+        {
+          "name": "goodies_vendor_dashboard_range",
+          "schema": "public",
+          "arguments": "p_business uuid, p_from timestamp with time zone, p_to timestamp with time zone"
+        },
+        {
+          "name": "goodies_vendor_dispatch_waits",
+          "schema": "public",
+          "arguments": "p_business uuid"
+        },
+        {
+          "name": "goodies_vendor_payout_options",
+          "schema": "public",
+          "arguments": "p_business uuid"
+        },
+        {
+          "name": "goodies_vendor_promotions",
+          "schema": "public",
+          "arguments": "p_business uuid, p_offset integer, p_limit integer"
+        },
+        {
+          "name": "goodies_vendor_reply",
+          "schema": "public",
+          "arguments": "p_conversation_id uuid, p_body text"
+        },
+        {
+          "name": "goodies_vendor_save_product",
+          "schema": "public",
+          "arguments": "p_business uuid, p_id uuid, p_name text, p_description text, p_price numeric, p_emoji text, p_stock integer, p_restriction text, p_photo_url text, p_photo_urls jsonb"
+        },
+        {
+          "name": "goodies_vendor_set_cash_acceptance",
+          "schema": "public",
+          "arguments": "p_business uuid, p_enabled boolean"
+        },
+        {
+          "name": "goodies_vendor_set_product_availability",
+          "schema": "public",
+          "arguments": "p_business uuid, p_id uuid, p_available boolean"
+        },
+        {
+          "name": "goodies_vendor_settlement_ledger",
+          "schema": "public",
+          "arguments": "p_business uuid, p_offset integer, p_limit integer, p_type text"
+        },
+        {
+          "name": "goodies_vendor_settlement_summary",
+          "schema": "public",
+          "arguments": "p_business uuid"
+        },
+        {
+          "name": "place_goodies_card_order_once",
+          "schema": "public",
+          "arguments": "p_idempotency_key text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text"
+        },
+        {
+          "name": "place_goodies_order_with_payment_once",
+          "schema": "public",
+          "arguments": "p_idempotency_key text, p_payment_method text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text"
+        },
+        {
+          "name": "set_goodies_order_status",
+          "schema": "public",
+          "arguments": "p_order_id uuid, p_status text"
+        },
+        {
+          "name": "wantiss_admin_list_goodies_builder_businesses",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "wantiss_admin_list_goodies_builder_configs",
+          "schema": "public",
+          "arguments": ""
+        },
+        {
+          "name": "wantiss_admin_requeue_goodies_card_refund",
+          "schema": "public",
+          "arguments": "p_queue_id uuid, p_reason text"
+        },
+        {
+          "name": "wantiss_admin_save_goodies_builder_config",
+          "schema": "public",
+          "arguments": "p_business_id uuid, p_builder_id text, p_config jsonb, p_enabled boolean"
+        }
+      ],
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN",
+      "count": 1,
+      "goodiesFindings": [],
+      "remediation": "https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection"
+    }
+  ],
+  "notes": [
+    "No-policy private/queue tables remain inaccessible to client roles by design; no broad public policy was added.",
+    "Callable SECURITY DEFINER warnings require internal ownership checks; passing named local authorization tests do not certify every RPC.",
+    "The shared pg_net extension placement remains an existing platform advisory.",
+    "Leaked-password protection remains disabled and explicitly owner-deferred."
+  ],
+  "securitySensitiveChange": "Stripe customer bindings now permit own-row SELECT only to authenticated users; server-side card setup retains the write path.",
+  "completeCrossRoleAuthorization": "NOT VERIFIED"
+}

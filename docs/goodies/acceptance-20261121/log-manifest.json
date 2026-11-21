@@ -16,6 +16,69 @@
       "scope": "32 actual local Auth/PostgREST/Storage/CMS/recovery scenarios in CI; synthetic data only, no hosted test, provider or physical device.",
       "sourceCommit": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
       "workflowRun": 44902477851
+    },
+    {
+      "file": "logs/goodies-stripe-sandbox.log.gz",
+      "uncompressedSha256": "2e81e0b5c96fce562ea3a6f80d3085ce9ae3e8a3a2002c4407e0a7f4ce46cab2",
+      "scope": "44 local API/recovery scenarios, including 12 actual Stripe sandbox scenarios. Local database and synthetic accounts only; real test-mode provider HTTP, no real money.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "logs/goodies-payment-customer-tests.log.gz",
+      "uncompressedSha256": "f53b9d5ca852303ccc94050e1c204540ba99c42db97b8df6b390ade0bb6f4003",
+      "scope": "278 customer tests; existing Node test runner.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "logs/goodies-payment-cross-role.log.gz",
+      "uncompressedSha256": "5fc2a70dffde49e9e09cb0c90dacfa5c9d29d9d12a04aa99e01e8b9f098ff201",
+      "scope": "47 cross-role automated tests.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "logs/goodies-payment-deno.log.gz",
+      "uncompressedSha256": "abd87af63efe232aac075eef820d11e91d4aac1934d876f808e431400bf7a378",
+      "scope": "101 Deno tests and 71 steps; steps are not counted again.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "logs/goodies-payment-postgres.log.gz",
+      "uncompressedSha256": "5c53c46b37184c9f5e8f8c8b9be51dfc7072c654bbeb43999afd47d3324cc932",
+      "scope": "31 native PostgreSQL checks, including financial races, migration replay and transaction recovery. Synthetic local database only.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "payment-ci-local-api.log",
+      "sha256": "7772a5926a2d116a2d78f92658552726b92369fa9e00f170a5a5564c42651ff7",
+      "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
+      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+      "workflowRun": 44926958109
+    },
+    {
+      "file": "payment-ci-postgres.log",
+      "sha256": "226dd0346457a8a3cd36e190c58104fce66e7cd069fc32e647465f9a9ac59847",
+      "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
+      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+      "workflowRun": 44926958109
+    },
+    {
+      "file": "stripe-sandbox-verification.json",
+      "sha256": "25f71ebd914b655d21f9f6d2f68c4050029d390abd885028bf9e664676ea9e8d",
+      "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
+      "sourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+    },
+    {
+      "file": "payment-ci-local-api-verification.json",
+      "sha256": "b41b62e918c3d400068b3b8481b06097d831f84e3fdc129df161a9e807212d09",
+      "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
+      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+      "workflowRun": 44926958109
+    },
+    {
+      "file": "logs/goodies-payment-with-isolation-customer-tests.log.gz",
+      "uncompressedSha256": "2c7eb7ab29ab22e1fef254f25fc2a9012d68450ed7f2d8ff17e25323b73b7d67",
+      "scope": "282 customer tests, including four provider-forwarding isolation regressions; no provider payment created.",
+      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce"
     }
   ]
 }

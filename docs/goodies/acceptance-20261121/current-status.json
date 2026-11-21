@@ -1,5 +1,5 @@
 {
-  "displayDate": "21 November 2026 (Asia/Manila)",
+  "displayDate": "22 November 2026 (Asia/Manila)",
   "productionReady": false,
   "allTwelvePhasesCompleteExcludingDeferredContent": false,
   "classification": "NOT VERIFIED",
@@ -11,21 +11,22 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "verifiedScopes": {
     "localApi": {
       "classification": "PASS",
-      "scenarios": 32,
+      "scenarios": 35,
       "roles": 10,
-      "targetGoodiesMigrations": 32,
-      "report": "local-api-storage-verification.json"
+      "targetGoodiesMigrations": 35,
+      "report": "payment-ci-local-api-verification.json"
     },
     "localSyntheticRecovery": {
       "classification": "PASS",
-      "tables": 98,
-      "productionBackup": false
+      "tables": 100,
+      "productionBackup": false,
+      "report": "payment-ci-local-api-verification.json"
     },
     "localCmsPipeline": {
       "classification": "PASS",
@@ -34,8 +35,10 @@
     },
     "androidDevelopmentApk": {
       "classification": "PASS",
-      "run": 44899275861,
-      "productionSigning": "NOT VERIFIED"
+      "run": 44917985726,
+      "report": "android-development-build-expo-linked.json",
+      "productionSigning": "NOT VERIFIED",
+      "physicalDevice": "NOT VERIFIED"
     },
     "adminValidation": {
       "classification": "PASS",
@@ -52,10 +55,10 @@
     },
     "currentCI": {
       "classification": "PASS",
-      "receipt": "private-storage-ci-verification.json",
+      "receipt": "payment-ci-verification.json",
       "runs": [
-        44902477851,
-        44902477852,
+        44926958109,
+        44926958133,
         44899334075
       ]
     },
@@ -76,37 +79,82 @@
       "evidence": "expo-account-setup.json",
       "appReleased": false,
       "signing": "NOT VERIFIED"
+    },
+    "stripeSandbox": {
+      "classification": "PASS",
+      "providerScenarios": 12,
+      "combinedScenarios": 44,
+      "realProviderHttpRequests": 116,
+      "actualProviderSignedDeliveries": 26,
+      "report": "stripe-sandbox-verification.json",
+      "productionEndpointConfiguration": "NOT VERIFIED",
+      "installedPaymentAnd3dsUi": "NOT VERIFIED",
+      "historicalIsolation": "FAIL; preflight guard now implemented and verified separately",
+      "financialAssertionResults": "PASS"
+    },
+    "paymentBackendDeployment": {
+      "classification": "PASS",
+      "migrations": [
+        "20261121162019",
+        "20261121162035",
+        "20261121162650"
+      ],
+      "functions": {
+        "create-card-setup-intent": 4,
+        "place-goodies-card-order": 16
+      },
+      "sourceAndPrivilegesVerified": true,
+      "report": "payment-backend-deployment.json"
+    },
+    "stripeWebhookSubscription": {
+      "classification": "PASS",
+      "mode": "test",
+      "endpointId": "we_1UI24iCvFEhF140BzoOs0oXc",
+      "events": 12,
+      "evidence": "stripe-webhook-configuration.json",
+      "deliveryAcceptance": "NOT VERIFIED"
+    },
+    "stripeIsolationGuard": {
+      "classification": "PASS",
+      "evidence": "stripe-isolation-guard-verification.json",
+      "scope": "Real read-only refusal plus four regression tests; no financial test started."
     }
   },
   "notVerified": [
     "Every installed customer/vendor/courier/admin control and all authorization paths.",
-    "Actual payment-provider sandbox charges, webhooks, original-card refunds and reconciliation.",
-    "Production Android/iOS signing and physical maps/GPS/background/push/proof behavior.",
+    "Installed card entry/3DS authentication and deployed webhook/key/account configuration. Actual sandbox server payment/refund/webhook scenarios pass.",
+    "Production Android/iOS signing and physical maps/GPS/background/push/camera/private-proof behavior.",
     "Installed-app persistent cache/realtime CMS reload.",
     "Full Wantiss production backup and restoration."
   ],
   "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
   "sourceInventory": "../re-audit-20261120/source-inventory.json",
   "phaseEvidence": "phase-verification.json",
-  "ciEvidence": "private-storage-ci-verification.json",
+  "ciEvidence": "payment-ci-verification.json",
   "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
   "localTestLimitations": [
     "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
     "Real local Storage API and private file bytes are tested; scheduled Cron execution is stubbed. Storage file backup/restoration is not tested.",
     "Actual consumer CMS loading runs with an in-memory AsyncStorage test port.",
-    "Coordinates and route geometry are explicit local test inputs; physical GPS and external route providers are not contacted."
+    "Coordinates and route geometry are explicit local test inputs; physical GPS and external route providers are not contacted.",
+    "Real sandbox payments use synthetic local database records and an OAuth transport adapter. Installed card/3DS UI and production endpoint configuration are not certified by those tests."
   ],
   "automated": {
-    "coreTests": 492,
-    "customer": 273,
+    "customer": 282,
     "admin": 71,
     "crossRole": 47,
     "deno": 101,
     "denoStepsNotAddedAgain": 71,
     "skipped": 0,
-    "localApiScenarios": 32,
-    "nativePostgresConcurrencyScenarios": 27,
-    "targetGoodiesMigrations": 32
+    "coreTests": 501,
+    "localApiScenarios": 35,
+    "localPrivateStorageChecks": 14,
+    "nativePostgresChecks": 31,
+    "stripeSandboxProviderScenarios": 12,
+    "stripeCombinedLocalApiScenarios": 44,
+    "targetGoodiesMigrations": 35,
+    "latestCiCoreTests": 501,
+    "currentCustomerTestsEvidence": "logs/goodies-payment-with-isolation-customer-tests.log.gz"
   },
   "leakedPasswordProtectionDeferredByUser": true,
   "knownFailuresDeferredByUser": [
@@ -130,7 +178,21 @@
     "iPhone": true
   },
   "laterScopedSourceCommits": {
-    "customer": "f4e77de659572f9c1621b49df88fc79c351d355e",
+    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
-  }
+  },
+  "observedAt": "2026-11-21T16:40:46.171Z",
+  "backendDeployedInThisFollowup": true,
+  "backendDeploymentEvidence": "payment-backend-deployment.json",
+  "stripeAuthorization": {
+    "classification": "PASS",
+    "mode": "test",
+    "accountId": "acct_1FntNWCvFEhF140B",
+    "credentialsRecorded": false
+  },
+  "stripeAutomaticHostedForwardingDetected": true,
+  "hostedOperationalReceiptsFromPriorProviderRuns": 17,
+  "hostedSyntheticFinancialRecordsFound": 0,
+  "historicalTestSafetyFinding": "stripe-webhook-configuration.json",
+  "securityAdvisors": "post-payment-security-advisors.json"
 }

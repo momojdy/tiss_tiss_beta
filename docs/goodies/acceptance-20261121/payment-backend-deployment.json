@@ -1,0 +1,124 @@
+{
+  "classification": "PASS",
+  "project": "ycbirmgppwavorwudlrv",
+  "region": "us-east-1",
+  "exactFunctionDefinitionMatch": true,
+  "functions": [
+    {
+      "name": "create-card-setup-intent",
+      "version": 4,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "updatedAt": "2026-11-21T16:20:00.365Z",
+      "sourceMatches": true
+    },
+    {
+      "name": "place-goodies-card-order",
+      "version": 16,
+      "status": "ACTIVE",
+      "verifyJwt": true,
+      "updatedAt": "2026-11-21T16:27:12.853Z",
+      "sourceMatches": true
+    }
+  ],
+  "readback": [
+    {
+      "kind": "functions",
+      "result": [
+        {
+          "name": "enqueue_goodies_card_refund",
+          "config": [
+            "search_path=public, pg_temp"
+          ],
+          "definition": "CREATE OR REPLACE FUNCTION public.enqueue_goodies_card_refund()\n RETURNS trigger\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\nbegin\n  if new.status in ('declined','expired','cancelled')\n     and new.payment_method='card'\n     and new.payment_provider_ref is not null\n     and new.payment_status in ('paid','refund_pending','partially_refunded')\n     and new.payment_dispute_status is distinct from 'open'\n     and new.payment_dispute_status is distinct from 'lost' then\n    insert into public.goodies_card_refund_queue(order_id,status,next_attempt_at)\n    values(new.id,'pending',now())\n    on conflict(order_id) do nothing;\n  end if;\n  return new;\nend;\n$function$\n",
+          "privileges": "{postgres=X/postgres,service_role=X/postgres}",
+          "security_definer": true
+        },
+        {
+          "name": "place_goodies_card_order_once",
+          "config": [
+            "search_path=public, pg_temp"
+          ],
+          "definition": "CREATE OR REPLACE FUNCTION public.place_goodies_card_order_once(p_idempotency_key text, p_store_id text, p_order_type text, p_scheduled_for timestamp with time zone, p_address jsonb, p_contact_phone text, p_items jsonb, p_subtotal numeric, p_delivery_fee numeric, p_service_fee numeric, p_discount numeric, p_tip numeric, p_total numeric, p_notes text, p_promo_code text DEFAULT NULL::text)\n RETURNS TABLE(id uuid, order_code text, status text)\n LANGUAGE plpgsql\n SECURITY DEFINER\n SET search_path TO 'public', 'pg_temp'\nAS $function$\ndeclare v_uid uuid:=auth.uid(); v_attempt_id uuid; v_existing_order uuid; v_existing_fingerprint text; v_fingerprint text; v_created record;\nbegin\n if v_uid is null then raise exception 'Sign in to place an order' using errcode='28000'; end if;\n if p_idempotency_key is null or length(p_idempotency_key)<8 or length(p_idempotency_key)>200 then raise exception 'A valid checkout idempotency key is required' using errcode='22023'; end if;\n v_fingerprint:=md5(jsonb_build_object('payment_method','card','store_id',p_store_id,'order_type',p_order_type,'scheduled_for',p_scheduled_for,'address',case when p_address is null then null else p_address-'delivery_quote_id' end,'contact_phone',p_contact_phone,'items',p_items,'subtotal',p_subtotal,'delivery_fee',p_delivery_fee,'service_fee',p_service_fee,'discount',p_discount,'tip',p_tip,'total',p_total,'notes',p_notes,'promo_code',p_promo_code)::text);\n perform pg_advisory_xact_lock(hashtextextended(v_uid::text||':'||v_fingerprint,0));\n select a.order_id,a.request_fingerprint into v_existing_order,v_existing_fingerprint from public.goodies_card_checkout_attempts a join public.goodies_orders o on o.id=a.order_id where a.user_id=v_uid and a.request_fingerprint=v_fingerprint and o.customer_id=v_uid and o.status not in ('cancelled','declined','expired','completed') and o.payment_status in ('pending','requires_action') order by a.created_at desc limit 1 for update of a;\n if v_existing_order is not null then return query select o.id,o.order_code,o.status from public.goodies_orders o where o.id=v_existing_order and o.customer_id=v_uid; return; end if;\n insert into public.goodies_card_checkout_attempts as attempt(user_id,idempotency_key,request_fingerprint) values(v_uid,p_idempotency_key,v_fingerprint) on conflict(user_id,idempotency_key) do nothing returning attempt.id into v_attempt_id;\n if v_attempt_id is null then\n  select a.order_id,a.request_fingerprint into v_existing_order,v_existing_fingerprint from public.goodies_card_checkout_attempts a where a.user_id=v_uid and a.idempotency_key=p_idempotency_key for update;\n  if v_existing_fingerprint is not null and v_existing_fingerprint is distinct from v_fingerprint then raise exception 'This checkout key was already used for different order details. Start a new checkout.' using errcode='22023'; end if;\n  if v_existing_order is null then raise exception 'This card checkout is already being processed. Please retry shortly' using errcode='55P03'; end if;\n  return query select o.id,o.order_code,o.status from public.goodies_orders o where o.id=v_existing_order and o.customer_id=v_uid; return;\n end if;\n perform set_config('app.goodies_payment_context','card',true);\n select * into v_created from public.place_goodies_order(p_store_id,p_order_type,p_scheduled_for,p_address,p_contact_phone,p_items,p_subtotal,p_delivery_fee,p_service_fee,p_discount,p_tip,p_total,p_notes,p_promo_code) limit 1;\n if v_created.id is null then raise exception 'The order could not be created' using errcode='P0001'; end if;\n update public.goodies_card_checkout_attempts as attempt set order_id=v_created.id where attempt.id=v_attempt_id;\n return query select v_created.id,v_created.order_code,v_created.status;\nend; $function$\n",
+          "privileges": "{postgres=X/postgres,authenticated=X/postgres,service_role=X/postgres}",
+          "security_definer": true
+        }
+      ]
+    },
+    {
+      "kind": "binding_permissions",
+      "result": {
+        "rls": true,
+        "policies": [
+          {
+            "cmd": "SELECT",
+            "qual": "(user_id = auth.uid())",
+            "roles": [
+              "authenticated"
+            ],
+            "tablename": "stripe_customers",
+            "permissive": "PERMISSIVE",
+            "policyname": "Users can view their own Stripe customer",
+            "schemaname": "public",
+            "with_check": null
+          }
+        ],
+        "anon_insert": false,
+        "server_insert": true,
+        "authenticated_delete": false,
+        "authenticated_insert": false,
+        "authenticated_select": true,
+        "authenticated_update": false
+      }
+    },
+    {
+      "kind": "migrations",
+      "result": [
+        {
+          "name": "goodies_card_checkout_attempt_identifier",
+          "version": "20261121162019"
+        },
+        {
+          "name": "goodies_preserve_card_refund_queue_leases",
+          "version": "20261121162035"
+        },
+        {
+          "name": "goodies_server_owned_stripe_customer_bindings",
+          "version": "20261121162650"
+        }
+      ]
+    }
+  ],
+  "applicationReleased": false,
+  "productionFinancialRecordsChanged": false,
+  "productionSecretsChanged": false,
+  "cmsPublished": false,
+  "previousDefinitions": "backend-baselines/",
+  "recoveryEvidence": "payment-ci-postgres.log",
+  "fullProductionBackup": "NOT VERIFIED",
+  "scope": "Three guarded function/permission migrations and two existing Edge Functions only. Object baselines and isolated transaction recovery are not a full database backup.",
+  "observedAt": "2026-11-21T16:40:46.171Z",
+  "sourceCommit": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16",
+  "migrations": [
+    {
+      "name": "goodies_card_checkout_attempt_identifier",
+      "version": "20261121162019",
+      "file": "supabase/migrations/20261121162019_goodies_card_checkout_attempt_identifier.sql",
+      "sha256": "458a67770360706c89fab5d447956b434360a754ebaa54f05686c38e338104f3"
+    },
+    {
+      "name": "goodies_preserve_card_refund_queue_leases",
+      "version": "20261121162035",
+      "file": "supabase/migrations/20261121162035_goodies_preserve_card_refund_queue_leases.sql",
+      "sha256": "897e70f48f9f223a591b3dee58a8803ce3b2dc0b803649d165f8754d7531c473"
+    },
+    {
+      "name": "goodies_server_owned_stripe_customer_bindings",
+      "version": "20261121162650",
+      "file": "supabase/migrations/20261121162650_goodies_server_owned_stripe_customer_bindings.sql",
+      "sha256": "14f25dfa6e889f45ede777a1b75dc910af121f9eada7ca92b357fbf0d8951edf"
+    }
+  ],
+  "migrationHistoryReconciled": true,
+  "historyNote": "Repository files were renamed in an ordinary Git commit to the versions assigned by the deployment service. SQL bytes are unchanged; no live ledger edits or history rewrite."
+}

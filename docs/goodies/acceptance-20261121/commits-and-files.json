@@ -1,11 +1,11 @@
 {
-  "scope": "Changes in the current follow-up acceptance pass; final evidence-only commits follow this source checkpoint.",
+  "scope": "Current Goodies follow-up, including verified payment fixes, backend deployment and Expo linking. Evidence-only commits follow this source checkpoint.",
   "repositories": [
     {
       "repository": "momojdy/tiss_tiss_beta",
       "branch": "main",
       "baseline": "bf4119e12079fc9a5317b89690564eed2bc67087",
-      "sourceCommit": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+      "sourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
       "commits": [
         {
           "sha": "7fbfc092ce95c4029c52dcccf9f84fa5385c71d7",
@@ -74,6 +74,34 @@
         {
           "sha": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
           "subject": "test(goodies): verify Storage migration versions independently of its bootstrap row"
+        },
+        {
+          "sha": "1a8d143485f50ebfe419069931b5b33382f0d26c",
+          "subject": "docs(goodies): retain passing private Storage and current native build evidence"
+        },
+        {
+          "sha": "9d1a1af4ad47b9ff0341215a097a44c4bc499aa3",
+          "subject": "fix(goodies): link development builds to the existing Wantiss Expo project"
+        },
+        {
+          "sha": "a18e77e772686e185e85dbe9d061f4e27c5bd0b7",
+          "subject": "fix(goodies): qualify the card checkout attempt identifier"
+        },
+        {
+          "sha": "eb6711a04a1e88bd2c5c459bbf2f3ad6ccf73390",
+          "subject": "fix(goodies): restrict checkout authorization to supported card methods"
+        },
+        {
+          "sha": "eb500d93ee6319d76e843eff7881f2b1b9ea15da",
+          "subject": "fix(goodies): protect card bindings and preserve refund worker leases"
+        },
+        {
+          "sha": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16",
+          "subject": "chore(goodies): align payment migrations with deployed versions"
+        },
+        {
+          "sha": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+          "subject": "test(goodies): prevent sandbox events reaching hosted backends"
         }
       ],
       "changedFiles": [
@@ -87,6 +115,12 @@
           "status": "A",
           "paths": [
             ".github/workflows/goodies-android-development.yml"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "app.json"
           ]
         },
         {
@@ -116,7 +150,31 @@
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/create-card-setup-intent-before-20261121.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/enqueue-card-refund-before-20261121.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/backend-baselines/manifest.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/place-goodies-card-order-before-20261121.ts.txt"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/backend-baselines/place-goodies-card-order-once-before-20261121.sql"
           ]
         },
         {
@@ -152,6 +210,12 @@
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/ci-local-storage-scenarios.log"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/ci-verification.json"
           ]
         },
@@ -170,7 +234,19 @@
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/expo-account-setup.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/external-inputs.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/local-api-storage-verification.json"
           ]
         },
         {
@@ -201,6 +277,12 @@
           "status": "A",
           "paths": [
             "docs/goodies/acceptance-20261121/phase-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/private-storage-ci-verification.json"
           ]
         },
         {
@@ -288,6 +370,18 @@
           ]
         },
         {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-stripe-isolation.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "scripts/goodies-stripe-sandbox.cjs"
+          ]
+        },
+        {
           "status": "M",
           "paths": [
             "scripts/sync-goodies-preview.cjs"
@@ -318,9 +412,33 @@
           ]
         },
         {
+          "status": "M",
+          "paths": [
+            "supabase/functions/create-card-setup-intent/index.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "supabase/functions/deno.lock"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "supabase/functions/goodies-tests/fixtures/goodies-shared-payment-access-20261121.sql"
+          ]
+        },
+        {
           "status": "A",
           "paths": [
             "supabase/functions/goodies-tests/publicCmsTransport_test.ts"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "supabase/functions/place-goodies-card-order/index.ts"
           ]
         },
         {
@@ -336,9 +454,51 @@
           ]
         },
         {
+          "status": "A",
+          "paths": [
+            "supabase/migrations/20261121162019_goodies_card_checkout_attempt_identifier.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "supabase/migrations/20261121162035_goodies_preserve_card_refund_queue_leases.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "supabase/migrations/20261121162650_goodies_server_owned_stripe_customer_bindings.sql"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "tests/goodies-card-provider.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "tests/goodies-card-setup.test.cjs"
+          ]
+        },
+        {
           "status": "M",
           "paths": [
             "tests/goodies-courier-map.test.cjs"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "tests/goodies-edge-errors.test.cjs"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "tests/goodies-stripe-isolation.test.cjs"
           ]
         },
         {
@@ -407,5 +567,31 @@
         }
       ]
     }
+  ],
+  "evidenceFilesFollowingSourceCheckpoint": [
+    "docs/goodies/acceptance-20261121/CURRENT_STATUS.md",
+    "docs/goodies/acceptance-20261121/android-development-build-expo-linked.json",
+    "docs/goodies/acceptance-20261121/commits-and-files.json",
+    "docs/goodies/acceptance-20261121/current-status.json",
+    "docs/goodies/acceptance-20261121/external-inputs.json",
+    "docs/goodies/acceptance-20261121/log-manifest.json",
+    "docs/goodies/acceptance-20261121/logs/goodies-payment-cross-role.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-payment-customer-tests.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-payment-deno.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-payment-postgres.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-payment-with-isolation-customer-tests.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-stripe-sandbox.log.gz",
+    "docs/goodies/acceptance-20261121/native-test-availability.json",
+    "docs/goodies/acceptance-20261121/payment-backend-deployment.json",
+    "docs/goodies/acceptance-20261121/payment-ci-local-api-verification.json",
+    "docs/goodies/acceptance-20261121/payment-ci-local-api.log",
+    "docs/goodies/acceptance-20261121/payment-ci-postgres.log",
+    "docs/goodies/acceptance-20261121/payment-ci-verification.json",
+    "docs/goodies/acceptance-20261121/phase-verification.json",
+    "docs/goodies/acceptance-20261121/post-payment-security-advisors.json",
+    "docs/goodies/acceptance-20261121/production-backup-access.json",
+    "docs/goodies/acceptance-20261121/stripe-isolation-guard-verification.json",
+    "docs/goodies/acceptance-20261121/stripe-sandbox-verification.json",
+    "docs/goodies/acceptance-20261121/stripe-webhook-configuration.json"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "classification": "NOT VERIFIED",
+  "scope": "Full Wantiss production backup and restoration; synthetic local recovery is separate.",
+  "productionBackupCreated": false,
+  "productionRestorePerformed": false,
+  "hostedTestProjectCreated": false,
+  "existingConnectorCanManageBackups": false,
+  "supabaseCliVersion": "2.81.3",
+  "cliAuthenticationCheck": "No access token supplied; official browser sign-in started and awaits owner verification.",
+  "passwordResetPerformed": false,
+  "productionSecretChanged": false,
+  "databaseDumpAttempted": false,
+  "remainingPrerequisite": "Complete the official CLI login so supported backup/connection capabilities can be inspected; do not send a password or API key in chat."
+}

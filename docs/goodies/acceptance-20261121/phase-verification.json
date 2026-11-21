@@ -1,7 +1,7 @@
 {
-  "displayDate": "21 November 2026 (Asia/Manila)",
+  "displayDate": "22 November 2026 (Asia/Manila)",
   "sourceCommits": {
-    "customer": "ce9fbeeba4a614bc41530638977e5530d1ce2835",
+    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "productionReady": false,
@@ -23,9 +23,10 @@
       "name": "Backend reconciliation",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "Reviewed 32-migration target applies locally. Prior scoped backend package is recorded live.",
+        "Reviewed 35-migration target applies locally. Prior scoped backend package is recorded live.",
         "Both corrected shared CMS handlers are deployed and byte-match source.",
-        "Local Auth/PostgREST calls exercise exact product, order, courier, review and CMS signatures."
+        "Local Auth/PostgREST calls exercise exact product, order, courier, review and CMS signatures.",
+        "Three payment migrations and two existing Edge Functions deployed; exact definitions, grants, binding ownership policy and source readback pass. See payment-backend-deployment.json."
       ],
       "remainingAcceptance": [
         "All role/contract paths and full production recovery have not been accepted. Existing shared-platform exceptions remain separately documented."
@@ -61,11 +62,13 @@
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Actual local Wallet pricing, financial tampering denial, retries, refunds and stock preservation pass.",
-        "27 native concurrency scenarios cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
-        "Original-card refund policy preserved."
+        "31 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
+        "Original-card refund policy preserved.",
+        "12 real Stripe sandbox scenarios pass within 44 local API/recovery scenarios: setup/webhook, authorization, capture, retries, original-card and partial refunds, issuer failure, interruption/reordering, and dispute recovery.",
+        "Existing test-mode webhook event subscriptions now include all 12 handled events, preserving its URL, API version, prior event and signing secret. Delivery/key alignment remains unverified."
       ],
       "remainingAcceptance": [
-        "Provider sandbox charge/capture/webhook/refund/reconciliation and physical payment UI are not verified."
+        "Installed card entry/3DS challenge and deployed webhook/key/account configuration remain unverified. Sandbox server tests are not full live-provider acceptance."
       ]
     },
     {
@@ -126,7 +129,9 @@
         "Actual local cross-account/vendor/courier/staff denials and metadata-escalation denial pass.",
         "Existing push worker/device/outbox/session/retry tests pass; production activation unchanged.",
         "Leaked-password protection is explicitly excluded by the owner until a future Pro upgrade; it is not an active acceptance requirement.",
-        "Real private Storage HTTP denies unrelated users, anonymous access and restricted staff; public evidence URLs stay unavailable."
+        "Real private Storage HTTP denies unrelated users, anonymous access and restricted staff; public evidence URLs stay unavailable.",
+        "Direct Stripe customer binding and saved-card writes are denied to clients. Actual signed sandbox webhook duplicates, invalid signatures, authorization failures and financial retries pass.",
+        "Preflight now refuses real Stripe test accounts with any enabled Dashboard webhook before financial object creation; four regression tests and the actual read-only refusal pass. Prior automatic hosted event receipts are disclosed, retained and checked for synthetic financial records (none found)."
       ],
       "remainingAcceptance": [
         "Physical push/provider behavior and every notification/message destination are not verified.",
@@ -151,10 +156,10 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "492 core tests with zero skipped, 27 native PostgreSQL races, 32 local API/Storage/recovery scenarios, current CI/TypeScript/exports, real anonymous browser startup, and the updated Android development APK."
+        "501 core tests (282 customer) with zero skipped; 31 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass."
       ],
       "remainingAcceptance": [
-        "Production Android/iOS signing, actual provider sandbox, full installed-button acceptance and physical-device requirements remain open."
+        "Production Android/iOS signing, installed-screen acceptance, native card/3DS and physical-device requirements remain open."
       ]
     },
     {
@@ -162,10 +167,10 @@
       "name": "Production release decision",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "No Wantiss app release, real charge, production financial mutation, hosted test branch or CMS publication."
+        "No Wantiss app release, live-mode charge, production financial mutation, hosted test branch or CMS publication. Prior automatic test-event forwarding is disclosed and guarded against."
       ],
       "remainingAcceptance": [
-        "The owner deferred leaked-password protection, FAQ and translations. Full application, provider, device and actual production-backup acceptance still need evidence."
+        "Owner-deferred content/Auth remain excluded. Full installed application/device, deployed provider configuration and actual production-backup acceptance still require evidence."
       ]
     }
   ],

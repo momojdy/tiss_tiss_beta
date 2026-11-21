@@ -1,0 +1,1654 @@
+{
+  "observedAt": "2026-11-21T16:06:15.796Z",
+  "scope": "Actual local Auth/PostgREST/SQL with synthetic users and balances. Not hosted or physical-device acceptance.",
+  "productionContacted": true,
+  "hostedTestCreated": false,
+  "images": {
+    "auth": "supabase/gotrue:v2.197.0@sha256:1736a63078f5922b198c4cbe50f80ab9a2d3b54fe8b7b6cfb2e9dc5dbbc12c6b",
+    "rest": "postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf",
+    "gateway": "haproxy:3.2-alpine@sha256:7816a9801a6846b912bc37e48529808e2fa87c3c47992441940f68e393ebcfeb"
+  },
+  "scenarios": [
+    {
+      "name": "Ten distinct role accounts sign in through real local Auth and retrieve their own account",
+      "classification": "PASS"
+    },
+    {
+      "name": "Authenticated clients cannot forge Stripe customer bindings or payment methods, including for themselves",
+      "classification": "PASS"
+    },
+    {
+      "name": "A customer-signed JWT resolves the same database identity through PostgREST",
+      "classification": "PASS"
+    },
+    {
+      "name": "Customer and unrelated vendor cannot save products in another merchant account",
+      "classification": "PASS"
+    },
+    {
+      "name": "The owning vendor saves a real pending product that remains hidden from anonymous shoppers",
+      "classification": "PASS"
+    },
+    {
+      "name": "Product rejection requires a reason and restricted staff cannot moderate",
+      "classification": "PASS"
+    },
+    {
+      "name": "Super-admin approval makes the same vendor product available in the public catalogue",
+      "classification": "PASS"
+    },
+    {
+      "name": "Server pricing rejects a tampered product price without changing balance or stock",
+      "classification": "PASS"
+    },
+    {
+      "name": "Concurrent SDK checkout retries create one paid order, one debit and one stock reservation",
+      "classification": "PASS"
+    },
+    {
+      "name": "Cross-customer and cross-vendor reads and order acceptance are denied",
+      "classification": "PASS"
+    },
+    {
+      "name": "The vendor fulfills pickup through valid transitions and the customer and admin see the same completion",
+      "classification": "PASS"
+    },
+    {
+      "name": "Customer cancellation refunds Wallet and restores stock exactly once across retries",
+      "classification": "PASS"
+    },
+    {
+      "name": "Card checkout reserves stock once across concurrent retries and blocks acceptance before payment",
+      "classification": "PASS"
+    },
+    {
+      "name": "Refund webhook retries preserve active leases, failure backoff and stale-worker fencing",
+      "classification": "PASS"
+    },
+    {
+      "name": "A customer cannot directly rewrite the order total or payment status",
+      "classification": "PASS"
+    },
+    {
+      "name": "A delivery quote belongs to its customer and cannot be reused by another account",
+      "classification": "PASS"
+    },
+    {
+      "name": "Vendor readiness creates an authorized courier offer; another courier cannot accept it",
+      "classification": "PASS"
+    },
+    {
+      "name": "Only the assigned courier can report GPS and only the owning customer can read it",
+      "classification": "PASS"
+    },
+    {
+      "name": "Courier pickup and completion synchronize customer, vendor and admin state",
+      "classification": "PASS"
+    },
+    {
+      "name": "The vendor assigns its own driver without claiming platform-courier GPS",
+      "classification": "PASS"
+    },
+    {
+      "name": "Private proof submission requires an owned existing object and a customer confirms only their own delivery",
+      "classification": "PASS"
+    },
+    {
+      "name": "Only an eligible order owner can submit a real review and admin publication reaches customer review reads",
+      "classification": "PASS"
+    },
+    {
+      "name": "Editing user metadata cannot elevate a customer into Goodies administration",
+      "classification": "PASS"
+    },
+    {
+      "name": "Shared Bill stays disabled by default and local 60/40 funding produces one original-customer order",
+      "classification": "PASS"
+    },
+    {
+      "name": "Full-payment Shared Bill charges only the payer and cancellation refunds that payer once",
+      "classification": "PASS"
+    },
+    {
+      "name": "Cancelling a partially funded request restores every contribution across repeated cancellation",
+      "classification": "PASS"
+    },
+    {
+      "name": "Rejection survives availability changes and prevents new purchases",
+      "classification": "PASS"
+    },
+    {
+      "name": "The real public Edge handler loads published Goodies into the actual consumer content module",
+      "classification": "PASS"
+    },
+    {
+      "name": "CMS editing is permission-controlled and cannot change protected fee policy",
+      "classification": "PASS"
+    },
+    {
+      "name": "Authorized CMS publication reaches a consumer reload through real Edge and PostgREST calls",
+      "classification": "PASS"
+    },
+    {
+      "name": "Real server-owned card setup ignores forged identity and signed Stripe completion saves one owner-visible card",
+      "classification": "PASS"
+    },
+    {
+      "name": "Stripe sandbox checkout rejects missing auth, another customer’s card and tampered prices before charging",
+      "classification": "PASS"
+    },
+    {
+      "name": "Real Stripe card checkout captures exactly the server total and retries recover one paid order",
+      "classification": "PASS"
+    },
+    {
+      "name": "Real signed Stripe webhook reaches the production handler and duplicate delivery changes no financial state",
+      "classification": "PASS"
+    },
+    {
+      "name": "Original-card refund denies unrelated users and repeated refund requests create one exact Stripe refund",
+      "classification": "PASS"
+    },
+    {
+      "name": "Simultaneous real Stripe checkout requests reserve one order, charge and stock item",
+      "classification": "PASS"
+    },
+    {
+      "name": "A restarted checkout Edge process recovers a lost successful response without another charge",
+      "classification": "PASS"
+    },
+    {
+      "name": "Real 3DS-required authorization stays unpaid, blocks vendor acceptance and cancels without a charge",
+      "classification": "PASS"
+    },
+    {
+      "name": "A real issuer decline returns safe failure, restores stock and cannot be retried into another order",
+      "classification": "PASS"
+    },
+    {
+      "name": "Partial original-card refund reconciles before the worker returns only the remaining amount once",
+      "classification": "PASS"
+    },
+    {
+      "name": "Reordered real Stripe failure/success webhooks recover an offline interval from canonical provider state",
+      "classification": "PASS"
+    },
+    {
+      "name": "A real Stripe dispute blocks fulfillment/refund while open and reconciles a won case before original-card refund",
+      "classification": "PASS"
+    },
+    {
+      "name": "A complete local synthetic database copy restores every table fingerprint, role and policy",
+      "classification": "PASS"
+    },
+    {
+      "name": "Restored Auth sessions recover the same paid order without a second checkout debit",
+      "classification": "PASS"
+    }
+  ],
+  "stripeSandbox": {
+    "classification": "PASS",
+    "accountId": "acct_1FntNWCvFEhF140B",
+    "mode": "test",
+    "runId": "99afc05f-774f-4ea2-868d-8e5c656f1b6d",
+    "realProviderContacted": true,
+    "liveChargesExecuted": false,
+    "productionDatabaseContacted": true,
+    "requests": [
+      {
+        "method": "GET",
+        "path": "/v1/balance",
+        "status": 200,
+        "requestId": "req_H4XtHYeCHrV26o"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/customers",
+        "status": 200,
+        "requestId": "req_EdDJkrLw0Qaqev"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/customers",
+        "status": 200,
+        "requestId": "req_fFD4TDM1XtrcMg",
+        "handler": "create-card-setup-intent"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/setup_intents",
+        "status": 200,
+        "requestId": "req_3yhUZ6jhdhL9sR",
+        "handler": "create-card-setup-intent"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/setup_intents/seti_1UeGoPCvFEhF140B837P7aYv",
+        "status": 200,
+        "requestId": "req_tALmSrxUwoDhyA"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/customers/cus_Vfc2Sy4uhImAt1",
+        "status": 200,
+        "requestId": "req_iLzRbQp1D9EtHt"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/setup_intents/seti_1UeGoPCvFEhF140B837P7aYv/confirm",
+        "status": 200,
+        "requestId": "req_BKjLUMFZX1F2hu"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_methods/pm_1UeGoRCvFEhF140BLMWPyH2x",
+        "status": 200,
+        "requestId": "req_jtTbjqzYHI4TWM",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_methods/pm_1UeGoRCvFEhF140BLMWPyH2x",
+        "status": 200,
+        "requestId": "req_3dRV0GayunJMsh",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_visa/attach",
+        "status": 200,
+        "requestId": "req_LXTHk8ZRDK5xUL"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_eKeIL4J5jyM9S2",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj/capture",
+        "status": 200,
+        "requestId": "req_ITA0lXuqK9V8cY",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_ZlmZjP2E1eg1QE"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_eEPwP6DbHo7mtt",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges",
+        "status": 200,
+        "requestId": "req_b4ZxiKx29j8BYP"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_MvUK7OkYXqvKf9",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_ZfVbs0sbk3ji2g",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_A4OemoC3IoSSdR",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes",
+        "status": 200,
+        "requestId": "req_blvvkRVzUV0NkW",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_LM4ggOK5Zh4NTS",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_HVIn4R8TsYRbZa",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_1oJXHEioS1J5aT"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGogCvFEhF140B1xQjpxnj",
+        "status": 200,
+        "requestId": "req_H1jugEibr7KacK",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_950LQQT6IPkJOj",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGogCvFEhF140B1RV3MXSj",
+        "status": 200,
+        "requestId": "req_4vjWUxXS6YBtmf",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_q9kaFu8t4KBodB",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_visa/attach",
+        "status": 200,
+        "requestId": "req_Ujf137TuRaldgp"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_vDHBnp84iTxFhH",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_IUuLFQqr6nT6uV",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGowCvFEhF140B0mIHGRvz/capture",
+        "status": 200,
+        "requestId": "req_b8RexkTuzKnEM9",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGowCvFEhF140B0mIHGRvz/capture",
+        "status": 200,
+        "requestId": "req_1FiJT1g1ZbY9JV",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGowCvFEhF140B0mIHGRvz",
+        "status": 200,
+        "requestId": "req_fp7bpm2GP0wa1z",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges",
+        "status": 200,
+        "requestId": "req_massMfxI9cO6m1"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_threeDSecure2Required/attach",
+        "status": 200,
+        "requestId": "req_py64Og7tXK5gzl"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_lITzRyzaOJOT6w",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGp9CvFEhF140B0pZBsmzP",
+        "status": 200,
+        "requestId": "req_vKSslfbdKpR3nU"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGp9CvFEhF140B0pZBsmzP",
+        "status": 200,
+        "requestId": "req_Ef7CBGOWnzJjw4",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGp9CvFEhF140B0pZBsmzP/cancel",
+        "status": 200,
+        "requestId": "req_gnOh2A7xiGeV30",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGp9CvFEhF140B0pZBsmzP",
+        "status": 200,
+        "requestId": "req_UgMSb9SKYOeLlx",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGp9CvFEhF140B0pZBsmzP",
+        "status": 200,
+        "requestId": "req_Af6dzI15lmXlf0"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_chargeCustomerFail/attach",
+        "status": 200,
+        "requestId": "req_00UqRZL2cXC2E7"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 402,
+        "requestId": "req_arwNhleRjPWQvB",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpFCvFEhF140B1D4NI3Mv",
+        "status": 200,
+        "requestId": "req_bglvhBCTP396pf",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_visa/attach",
+        "status": 200,
+        "requestId": "req_74xn2MzXrWjmQK"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_G1jlHqCSVZ4ItP",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU/capture",
+        "status": 200,
+        "requestId": "req_MhZIPbzuHoTbN7",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU",
+        "status": 200,
+        "requestId": "req_VyHgX9WynWdrwS",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_TRHi9c5ybENwUY"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU",
+        "status": 200,
+        "requestId": "req_XtGDlwCtbLCc4n",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_3KnIl8O1dJipgJ",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpJCvFEhF140B18zAAP11",
+        "status": 200,
+        "requestId": "req_VlHYFlk1t8MMkO",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU",
+        "status": 200,
+        "requestId": "req_GrK6aNUQRKZEvy",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_hMHiAwqjV37BV8",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_MW8ysU7eXT1VSK",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes",
+        "status": 200,
+        "requestId": "req_xy3VGHLZEYk5NA",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_1RmpneAVVLZcbW",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU",
+        "status": 200,
+        "requestId": "req_XP5cEf2OTVLNtO",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_69DTeujEuiIehk",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpJCvFEhF140B18zAAP11",
+        "status": 200,
+        "requestId": "req_UUzFIXS1YRahTl",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_4hCmFbRkDX0GBf"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpJCvFEhF140B1GAgATYU",
+        "status": 200,
+        "requestId": "req_kdFlJytsU5GneX",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_AWzr8NQW9cLjmF",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_guVkk9sdtzz8By"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_chargeCustomerFail/attach",
+        "status": 200,
+        "requestId": "req_DxvJzwU2FqnN37"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le/confirm",
+        "status": 402,
+        "requestId": "req_MTuiflj5tbJmrP"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_visa/attach",
+        "status": 200,
+        "requestId": "req_KCXN53FldXE3yy"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le/confirm",
+        "status": 200,
+        "requestId": "req_HxmnhJMQ0tyDLV"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le/capture",
+        "status": 200,
+        "requestId": "req_kCbeKR6EOVz1VH"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le",
+        "status": 200,
+        "requestId": "req_xXt4LpMizKqJh2",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le",
+        "status": 200,
+        "requestId": "req_1R2dVWb6V0Jlc7",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_methods/pm_card_createDisputeProductNotReceived/attach",
+        "status": 200,
+        "requestId": "req_avKtMJUCsnynTq"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_Uvm1TYanCYUHBI",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ/capture",
+        "status": 200,
+        "requestId": "req_TqxT2o1n15Xp7X",
+        "handler": "place-goodies-card-order"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_hQi3Bd1ehPKqH5",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_carIFvQbLiitOW",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_1C3x54rTxjM06F",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_Ewv9PX6VqMdOGq",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_OBW7tam0S0ftSp",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_mC4jx5ZnxU9AmX",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_FswvS2huMR571t",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes",
+        "status": 200,
+        "requestId": "req_TDIyZnddkY9cac"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_OqDForAD3UaxQz"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_JNWsTD8UQivw86"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_Z8PHYe1TByWBj5",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_JakDKGq32dMDvk",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_TsJhnYae7EPt0W",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_Zoi3JQwhsn5Q1k",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes/du_1UeGpdCvFEhF140BLEcn18AP",
+        "status": 200,
+        "requestId": "req_5TvVPZGZe6LN0u",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_Sl3aMerYfQ6k1O",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_26Zke1vKQLlouD",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_mnKFw8SYbZwJt8",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_1bdGX8VLrK6M5q",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_sQuOYbP566SvMO",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes",
+        "status": 200,
+        "requestId": "req_mfBa1Ky7PdIWqz",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_hfMiLYfGPOoJGi",
+        "handler": "process-goodies-card-refunds"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_gK0qFxgXaJwyKB",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents",
+        "status": 200,
+        "requestId": "req_YQvUyra32xhCvl"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_U9aRXYmNjtPzWO",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_l163xcEvilTRuE",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpbCvFEhF140B0NZhrAL9",
+        "status": 200,
+        "requestId": "req_Pfqh9HuIaUDaKE"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpbCvFEhF140B0AWXR5OQ",
+        "status": 200,
+        "requestId": "req_KiBvPnnQbWERO2",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/disputes",
+        "status": 200,
+        "requestId": "req_kpjeY0n8SMhQuD"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_ZRF5RUQeTkxKjO",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpTCvFEhF140B1lZxVe39",
+        "status": 200,
+        "requestId": "req_X2DMb5rAuo8nSP"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_GLSN6eCIx7Zh5x"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpJCvFEhF140B18zAAP11",
+        "status": 200,
+        "requestId": "req_Z1gQ98v9D3x0Mj"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le",
+        "status": 200,
+        "requestId": "req_DJyfnwWolcLoQj",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/payment_intents/pi_3UeGpFCvFEhF140B1D4NI3Mv/cancel",
+        "status": 200,
+        "requestId": "req_8cxqQHWgo22FUL"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_tq5ApHxlcYVkke",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGowCvFEhF140B0RXXqO4Y",
+        "status": 200,
+        "requestId": "req_n0YM9urt9aomwq"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGpTCvFEhF140B1lZxVe39",
+        "status": 200,
+        "requestId": "req_EVCDrO2lGmsfOl",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpFCvFEhF140B1D4NI3Mv",
+        "status": 200,
+        "requestId": "req_AN1uKVlcFLoSqE",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/payment_intents/pi_3UeGpTCvFEhF140B1cYWm9le",
+        "status": 200,
+        "requestId": "req_IGZXJdbc2faTNS",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_c85UOKrtqtGR9l",
+        "handler": "rapid-api"
+      },
+      {
+        "method": "POST",
+        "path": "/v1/refunds",
+        "status": 200,
+        "requestId": "req_M0tfGnCcIJEmGi"
+      },
+      {
+        "method": "GET",
+        "path": "/v1/charges/ch_3UeGogCvFEhF140B1xQjpxnj",
+        "status": 200,
+        "requestId": "req_3nIVYO8fQszJMv"
+      }
+    ],
+    "events": [
+      {
+        "id": "evt_1UeGoRCvFEhF140BvK7TLsnI",
+        "type": "setup_intent.succeeded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGogCvFEhF140B1GtNDjoy",
+        "type": "payment_intent.succeeded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGogCvFEhF140B1J9jP4jZ",
+        "type": "charge.refunded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGogCvFEhF140B1nfwUP91",
+        "type": "refund.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGowCvFEhF140B0JVwC1U2",
+        "type": "payment_intent.succeeded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGp9CvFEhF140B09clbgY2",
+        "type": "payment_intent.canceled",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpFCvFEhF140B1wI0GUgn",
+        "type": "payment_intent.payment_failed",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpJCvFEhF140B1d69pb3t",
+        "type": "payment_intent.succeeded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpJCvFEhF140B1Wxd3tkz",
+        "type": "charge.refunded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpJCvFEhF140B1jzS5303",
+        "type": "refund.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpJCvFEhF140B1LeG9hfK",
+        "type": "charge.refunded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpJCvFEhF140B1FoCAVOR",
+        "type": "refund.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpTCvFEhF140B1BShDanT",
+        "type": "payment_intent.payment_failed",
+        "status": 503
+      },
+      {
+        "id": "evt_3UeGpTCvFEhF140B1Shsn9Vf",
+        "type": "payment_intent.succeeded",
+        "status": 503
+      },
+      {
+        "id": "evt_3UeGpbCvFEhF140B046Qj4yv",
+        "type": "payment_intent.succeeded",
+        "status": 200
+      },
+      {
+        "id": "evt_1UeGpeCvFEhF140Bb4Wue8uP",
+        "type": "charge.dispute.created",
+        "status": 200
+      },
+      {
+        "id": "evt_1UeGpeCvFEhF140BY00Khs8H",
+        "type": "charge.dispute.funds_withdrawn",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpbCvFEhF140B0y8t0XEj",
+        "type": "charge.dispute.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_1UeGplCvFEhF140BztyaVfBS",
+        "type": "charge.dispute.funds_reinstated",
+        "status": 200
+      },
+      {
+        "id": "evt_1UeGplCvFEhF140BcKPqMvPv",
+        "type": "charge.dispute.closed",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpbCvFEhF140B0SvCDcME",
+        "type": "charge.refunded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpbCvFEhF140B08nAkjgp",
+        "type": "refund.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpTCvFEhF140B18cIiqRN",
+        "type": "charge.refunded",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpTCvFEhF140B1wR0H4Me",
+        "type": "refund.updated",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGpFCvFEhF140B17hh9uwF",
+        "type": "payment_intent.canceled",
+        "status": 200
+      },
+      {
+        "id": "evt_3UeGowCvFEhF140B0qr28TNX",
+        "type": "charge.refunded",
+        "status": null
+      }
+    ],
+    "limitations": [
+      "OAuth sandbox context headers are added by the test wrapper; handler business logic and actual Stripe HTTP responses are unchanged.",
+      "The server-only publishable-key fixture does not verify native/web 3DS authentication UI or real publishable-key configuration.",
+      "Local SQL/HTTP acceptance is not a deployed production webhook or installed-app certification."
+    ],
+    "authentication": "PASS",
+    "customerId": "cus_Vfc2OFGMkSyAD4",
+    "savedCardSetup": {
+      "classification": "PASS",
+      "setupIntentId": "seti_1UeGoPCvFEhF140B837P7aYv",
+      "syntheticCustomerId": "cus_Vfc2Sy4uhImAt1",
+      "clientPaymentForm": "NOT VERIFIED"
+    },
+    "originalChargeId": "ch_3UeGogCvFEhF140B1xQjpxnj",
+    "primaryPaymentIntentId": "pi_3UeGogCvFEhF140B1RV3MXSj",
+    "primaryOrderId": "161fd11b-25d4-4114-afea-12c89422ca3c",
+    "originalCardRefundId": "re_3UeGogCvFEhF140B1Zds75wh",
+    "concurrentOrderId": "a6cbd742-9176-443d-a118-34e8596b27ed",
+    "authenticationRequiredServerState": "PASS",
+    "authenticationChallengeUi": "NOT VERIFIED",
+    "offlineReorderedWebhookOrderId": "81fcc4bf-78a4-412d-b5a2-45cf473b44a6",
+    "dispute": {
+      "classification": "PASS",
+      "disputeId": "du_1UeGpdCvFEhF140BLEcn18AP",
+      "openStateDenied": true,
+      "wonStateReconciled": true,
+      "originalCardRefund": true
+    },
+    "serverCheckout": "PASS",
+    "signedWebhook": "PASS",
+    "originalCardRefund": "PASS",
+    "cleanup": {
+      "classification": "PASS",
+      "scope": "Remaining authorizations/payments for this run’s synthetic sandbox customer only.",
+      "refundedPaymentIntentIds": [
+        "pi_3UeGpTCvFEhF140B1cYWm9le",
+        "pi_3UeGowCvFEhF140B0mIHGRvz"
+      ]
+    },
+    "productionContactNote": "Stripe automatically forwarded events to the existing Dashboard webhook in addition to the local CLI receiver. Scoped hosted readback found 17 operational event receipts and no synthetic orders, saved cards or customer bindings. The original overall isolation claim was incorrect; see stripe-webhook-configuration.json."
+  },
+  "migrationCount": 35,
+  "sharedCmsMigrationFiles": [
+    "20261031191833_protect_goodies_financial_settings_from_cms_publish.sql",
+    "20261024110844_fix_cms_archive_visibility.sql"
+  ],
+  "transport": "Real local HTTP through a loopback proxy and Docker exec TCP streams; no fabricated API response.",
+  "actorRoles": [
+    "customer",
+    "otherCustomer",
+    "vendor",
+    "otherVendor",
+    "vendorStaff",
+    "otherVendorStaff",
+    "courier",
+    "otherCourier",
+    "superAdmin",
+    "restrictedStaff"
+  ],
+  "confirmedOrderIds": {
+    "pickup": "ffee6fa2-9fd7-4907-ad4a-ca369410f859",
+    "courier": "b2e096d2-0cc9-410c-98cc-72b11afcfbb9",
+    "ownDriver": "adbd4893-e604-4f42-b803-68afe2644045"
+  },
+  "proofScope": "Existing-object metadata and submission authorization only; no Storage HTTP upload or physical image capture was tested.",
+  "localGateActivation": "Settlement, private-proof and Shared Bill gates were enabled only in this disposable local database. Production activation is not part of this script.",
+  "cms": {
+    "classification": "PASS",
+    "scope": "Real local Edge + PostgREST + consumer loadContent, with an in-memory AsyncStorage port. Not a physical installed-app reload or production publication.",
+    "labels": 2102,
+    "productionPublished": false,
+    "installedApp": "NOT VERIFIED"
+  },
+  "localRecovery": {
+    "classification": "PASS",
+    "scope": "All tables in this synthetic local cluster; not a production backup or production restore.",
+    "productionBackupCreated": false,
+    "restoredTableCount": 91,
+    "tableFingerprints": [
+      {
+        "rows": 23,
+        "table": "auth.audit_log_entries",
+        "fingerprint": "5c795e4284515699b26ad732c799b64e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.custom_oauth_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.flow_state",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.identities",
+        "fingerprint": "9b1d5cb651a0a06274440e0daad792f1"
+      },
+      {
+        "rows": 0,
+        "table": "auth.instances",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.mfa_amr_claims",
+        "fingerprint": "82a4acc9d8b1542ca3fc0965dbc0d066"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_challenges",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_factors",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_recovery_code_sets",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.mfa_recovery_codes",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_authorizations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_client_states",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_clients",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.oauth_consents",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.one_time_tokens",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 11,
+        "table": "auth.refresh_tokens",
+        "fingerprint": "18382a5ab27e3bd43b7a0b35b36b84f3"
+      },
+      {
+        "rows": 0,
+        "table": "auth.saml_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.saml_relay_states",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 75,
+        "table": "auth.schema_migrations",
+        "fingerprint": "d2036873352237c4c78cfccbe1233203"
+      },
+      {
+        "rows": 0,
+        "table": "auth.scim_tokens",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.scim_users",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.sessions",
+        "fingerprint": "5d28460792be8a8b9334feb4cc381d6c"
+      },
+      {
+        "rows": 0,
+        "table": "auth.sso_domains",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.sso_providers",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 10,
+        "table": "auth.users",
+        "fingerprint": "dfeb2de82931e4668513b4f4d5047a0c"
+      },
+      {
+        "rows": 0,
+        "table": "auth.webauthn_challenges",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "auth.webauthn_credentials",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_bank_calendars",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_bank_holidays",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_commission_payments",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 13,
+        "table": "private.goodies_order_settlements",
+        "fingerprint": "ab8cff7da8009d376b2c6573701845ec"
+      },
+      {
+        "rows": 5,
+        "table": "private.goodies_payout_channels",
+        "fingerprint": "69e8ecec36ab86b2a73ebaa97a0b7de5"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_payout_destinations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_push_config",
+        "fingerprint": "0261734ce36cfd599da18cdbf36e6f9e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_push_deliveries",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_settlement_config",
+        "fingerprint": "d788e7d4f3f579d4b75c9ef760c0a3ec"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_settlement_events",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_settlement_reminders",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "private.goodies_shared_bill_config",
+        "fingerprint": "5aa728b96e5fb71882eb7423f37c5f9e"
+      },
+      {
+        "rows": 2,
+        "table": "private.goodies_vendor_accounts",
+        "fingerprint": "765b2085d4015f507164f7a8345ffc5d"
+      },
+      {
+        "rows": 0,
+        "table": "private.goodies_vendor_payouts",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "private.wantiss_push_devices",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 5,
+        "table": "public.business_members",
+        "fingerprint": "212c86016f21272332f1137df9c6ae6a"
+      },
+      {
+        "rows": 3,
+        "table": "public.businesses",
+        "fingerprint": "1c616f5266b87f71d93c810c79d4b3ac"
+      },
+      {
+        "rows": 0,
+        "table": "public.conversations",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "public.exchange_rates",
+        "fingerprint": "1ef15322ee7df50181b6b1ef1b919c5e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_builder_configs",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 9,
+        "table": "public.goodies_card_checkout_attempts",
+        "fingerprint": "3327853212eb17bb0f2a9c3e25e40757"
+      },
+      {
+        "rows": 4,
+        "table": "public.goodies_card_refund_queue",
+        "fingerprint": "80c7511b0b95d1227b840c69f78c3e7d"
+      },
+      {
+        "rows": 4,
+        "table": "public.goodies_checkout_attempts",
+        "fingerprint": "d8207d2df58dc505a62d3aac1b90932d"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_courier_presence",
+        "fingerprint": "675e90a59d590b1f2c6cd48eac479478"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_courier_roster",
+        "fingerprint": "ea9cd2f03fda4bbf9017ae98dc5fa386"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_delivery_assignments",
+        "fingerprint": "c427817c652b0a3ee6144889d3d7ea9a"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_delivery_quotes",
+        "fingerprint": "066a5dd97fa02e780432fdcdf8faadbf"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_geocode_cache",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_invites",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_items",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_order_members",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_group_orders",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_ingredient_requests",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_ingredient_rules",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_library_ingredients",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_order_cancellation_private",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_order_groups",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 1,
+        "table": "public.goodies_order_reviews",
+        "fingerprint": "5f6ae4739cdb37135914d05df9cadfca"
+      },
+      {
+        "rows": 15,
+        "table": "public.goodies_orders",
+        "fingerprint": "6f30da22d206360503085a1ff76532a9"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_products",
+        "fingerprint": "d29b3c92a6b7f6de2f140d870393b89b"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_promotions",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 0,
+        "table": "public.goodies_route_cache",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 2,
+        "table": "public.goodies_store_schedules",
+        "fingerprint": "86515827df0eff2ad634ef21e5a45030"
+      },
+      {
+        "rows": 24,
+        "table": "public.goodies_stripe_webhook_events",
+        "fingerprint": "3010709daba76c38e0bb8353fe7c2069"
+      },
+      {
+        "rows": 5,
+        "table": "public.help_pay_contributions",
+        "fingerprint": "9198dce41cb1d86c3f95200726c0241f"
+      },
+      {
+        "rows": 3,
+        "table": "public.help_pay_requests",
+        "fingerprint": "3da1f0dee6e9230a755d19e71e65a3df"
+      },
+      {
+        "rows": 0,
+        "table": "public.messages",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 86,
+        "table": "public.notifications",
+        "fingerprint": "4ed2e21a9d79efe3ad6157daa89dfb9d"
+      },
+      {
+        "rows": 10,
+        "table": "public.profiles",
+        "fingerprint": "28871a4973b7a53f873ea26270fac033"
+      },
+      {
+        "rows": 2,
+        "table": "public.stripe_customers",
+        "fingerprint": "0c2b417665d4f1143fcd76bb42fe1b26"
+      },
+      {
+        "rows": 0,
+        "table": "public.user_friendships",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 9,
+        "table": "public.user_payment_methods",
+        "fingerprint": "a34574e926cad320e72440341a425fb4"
+      },
+      {
+        "rows": 0,
+        "table": "public.user_settings",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 15,
+        "table": "public.wallet_transactions",
+        "fingerprint": "51550d7931fb8e51a9fe98b48b17bef0"
+      },
+      {
+        "rows": 10,
+        "table": "public.wallets",
+        "fingerprint": "c395bf98511177f9747d764b4abd48dc"
+      },
+      {
+        "rows": 0,
+        "table": "public.wantiss_admin_account_restrictions",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 7,
+        "table": "public.wantiss_admin_audit_log",
+        "fingerprint": "4e2f17443f566d8b9b934e80d18beaa4"
+      },
+      {
+        "rows": 1,
+        "table": "public.wantiss_admin_permission_grants",
+        "fingerprint": "1c7f356ccee65bc17e376b9533b33937"
+      },
+      {
+        "rows": 2,
+        "table": "public.wantiss_admin_staff",
+        "fingerprint": "f9b66b751d51201fdc702df820fcdb90"
+      },
+      {
+        "rows": 0,
+        "table": "public.wantiss_cms_assets",
+        "fingerprint": "d41d8cd98f00b204e9800998ecf8427e"
+      },
+      {
+        "rows": 2,
+        "table": "public.wantiss_cms_content",
+        "fingerprint": "63f574f8dc01da425cce5dd9d3138d2f"
+      },
+      {
+        "rows": 1,
+        "table": "storage.buckets",
+        "fingerprint": "7d545690f924836906b78880aaaca37c"
+      },
+      {
+        "rows": 1,
+        "table": "storage.objects",
+        "fingerprint": "b3760ba8c18a0b12b45ac05beb7a1b41"
+      },
+      {
+        "rows": 1,
+        "table": "vault.decrypted_secrets",
+        "fingerprint": "97cd3d6b93c9e541e6c28489675be1a9"
+      }
+    ],
+    "functionFingerprint": "2a3b21032b9e99455f9c479c5748e014",
+    "roleFingerprint": "de2d7c245f86b4cc487c415063238203",
+    "policyFingerprint": "b3caf13d151d9f7c070f073a4e5d68da"
+  },
+  "classification": "PASS",
+  "originalRunnerReportSha256": "ab8e7c5813c89da93a3854fb05d4cc12db82c3ac74ea3eacd1dcba60f8e255f1",
+  "executionSourceCheckpoint": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16",
+  "directRunnerProductionContacted": false,
+  "historicalIsolation": {
+    "classification": "FAIL",
+    "evidence": "stripe-webhook-configuration.json",
+    "guardImplementedIn": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+    "furtherFinancialTestsInSharedTestAccount": "BLOCKED before object creation"
+  }
+}

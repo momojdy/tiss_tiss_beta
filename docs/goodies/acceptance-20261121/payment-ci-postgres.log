@@ -1,0 +1,34 @@
+PASS: PostgreSQL 17.6; full 35-migration package applied in a network-isolated synthetic container.
+PASS: payment migration replay and transactional recovery preserve exact function ownership, grants and binding policies.
+PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.
+PASS: concurrent distinct withdrawal requests cannot spend the same earnings.
+PASS: overlapping retries return one payout and create one wallet credit.
+PASS: concurrent commission retries create one debit and release the settled sales allowance.
+PASS: a stale group quote is rejected before the real synthetic Wallet is debited.
+PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.
+PASS: concurrent Shared Bill creation reserves the host 60% once and does not consume stock.
+PASS: concurrent contribution retries debit one payer once.
+PASS: competing final payers create one paid customer order and reserve stock once.
+PASS: simultaneous distinct contributions settle exactly the remaining 40%.
+PASS: cancellation racing a payment restores every payer without an orphan debit.
+PASS: overlapping cancellation retries credit each original payer exactly once.
+PASS: overlapping vendor rejection refunds the funded Shared Bill once and restores stock once.
+PASS: status polling crossing expiry waits for final funding and cannot refund a fulfilled order.
+All eight Shared Bill PostgreSQL races passed using synthetic Wallets only.
+PASS: a committed restriction blocks a waiting checkout without a debit, order or stock reservation.
+PASS: an admitted checkout commits once before a waiting restriction, which then closes new admissions.
+PASS: publication waits for a restriction decision and cannot republish the restricted shop.
+PASS: offer acceptance racing cancellation never deadlocks, resurrects the order or loses its refund.
+PASS: a GPS update racing cancellation waits for the order and cannot persist a stale authorized sample.
+PASS: concurrent pickup requests advance the order and assignment once.
+PASS: concurrent delivery requests complete one order and preserve one stock reservation.
+PASS: removal racing pickup requires operational resolution and preserves the physical handoff.
+PASS: reassignment racing old-courier acceptance authorizes only the replacement courier.
+PASS: concurrent dispatch of two orders reserves only one active offer for a courier.
+PASS: simultaneous offer-acceptance retries create one accepted assignment and one customer notice.
+PASS: a different approved courier cannot win or alter another courier's offer.
+PASS: all four RLS-protected catalog relations are present in the real PostgreSQL publication.
+All nine courier PostgreSQL races passed with synthetic orders and Wallets only.
+PASS: concurrent device registration retries preserve one current account/session binding.
+PASS: overlapping SKIP LOCKED push workers claim a notification once without blocking or duplicate delivery work.
+All native PostgreSQL race tests passed; no production connection or real money was used.
