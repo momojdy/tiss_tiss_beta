@@ -54,10 +54,12 @@ jobs:
         run: |
           set -euo pipefail
           goodies_apk=android/app/build/outputs/apk/debug/app-debug.apk
-          goodies_signer=$(rg --files "$ANDROID_HOME/build-tools" | rg '/apksigner$' | sort -V | tail -n 1)
+          goodies_signer=$(find "$ANDROID_HOME/build-tools" -type f -name apksigner | sort -V | tail -n 1)
+          test -n "$goodies_signer"
           "$goodies_signer" verify --verbose --print-certs "$goodies_apk" | tee goodies-android-signature.txt
           sha256sum "$goodies_apk" > goodies-android-apk.sha256
       - name: Retain the development build and signature evidence
+        if: ${{ always() && hashFiles('android/app/build/outputs/apk/debug/app-debug.apk') != '' }}
         uses: actions/upload-artifact@v4
         with:
           name: goodies-android-development-${{ github.sha }}
