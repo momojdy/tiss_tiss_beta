@@ -4,6 +4,7 @@ const {Duplex}=require('node:stream');
 const assert=require('node:assert/strict'),{execFileSync,spawnSync,spawn}=require('node:child_process');
 const buildSchema=require('./goodies-isolated-schema.cjs');
 const root=path.resolve(__dirname,'..'),args=process.argv.slice(2),value=flag=>args[args.indexOf(flag)+1];
+const useStorage=args.includes('--storage');
 assert.ok(args.includes('--native-bin'),'Provide the existing local PostgreSQL 17.6 native bin directory.');
 assert.ok(!args.some(arg=>/^(?:postgres(?:ql)?|https?):\/\//i.test(arg)),'Hosted URLs are not accepted.');
 const nativeBin=fs.realpathSync(value('--native-bin')),state=fs.mkdtempSync(path.join(os.tmpdir(),'wantiss-goodies-postgres-'));
@@ -19,15 +20,18 @@ const pg=statement=>{
  try{return execFileSync(process.execPath,[path.join(__dirname,'goodies-postgres-client.cjs'),'-h',socket,'-U','postgres','-d','postgres',...(queryFile?['-f',queryFile]:['-c',statement])],{env,encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:8*1024*1024}).trim();}finally{if(queryFile)fs.rmSync(queryFile);}
 };
 const images={auth:'supabase/gotrue:v2.197.0@sha256:1736a63078f5922b198c4cbe50f80ab9a2d3b54fe8b7b6cfb2e9dc5dbbc12c6b',rest:'postgrest/postgrest:v14.18@sha256:c7cd7e265a85b05248abf53f4473fcec7e327c282d0bd0cf60f1551996d09fcf',gateway:'haproxy:3.2-alpine@sha256:7816a9801a6846b912bc37e48529808e2fa87c3c47992441940f68e393ebcfeb'};
+if(useStorage)images.storage='supabase/storage-api:v1.89.12@sha256:4a71028f91060c8d2e86d7426faa6841947d63f4ee97f9683d058d3ec367fb6c';
 const jwtSecret=crypto.randomBytes(48).toString('hex');
 function jwt(role){const encode=obj=>Buffer.from(JSON.stringify(obj)).toString('base64url'),payload=encode({role,iss:'local-goodies-acceptance',iat:Math.floor(Date.now()/1000),exp:Math.floor(Date.now()/1000)+3600});const body=encode({alg:'HS256',typ:'JWT'})+'.'+payload;return body+'.'+crypto.createHmac('sha256',jwtSecret).update(body).digest('base64url');}
 const anonKey=jwt('anon'),serviceKey=jwt('service_role');
+const redact=value=>[jwtSecret,anonKey,serviceKey].reduce((text,secret)=>text.split(secret).join('[redacted]'),String(value));
 let started=false,networkCreated=false,proxy,cmsProcess,cmsPort,activeDataDirectory=path.join(state,'data');
-const report={observedAt:new Date().toISOString(),scope:'Actual local Auth/PostgREST/SQL with synthetic users and balances. Not hosted or physical-device acceptance.',productionContacted:false,hostedTestCreated:false,images,scenarios:[]};
+const report={observedAt:new Date().toISOString(),scope:'Actual local Auth/PostgREST/'+(useStorage?'Storage/':'')+'SQL with synthetic users and balances. Not hosted or physical-device acceptance.',productionContacted:false,hostedTestCreated:false,images,scenarios:[]};
 function service(kind,port,settings){
  const name=network+'-'+kind;containers.push(name);
  const options=Object.entries(settings).flatMap(([key,val])=>['-e',key+'='+val]);
- docker(['run','--name',name,'--network',network,'--mount',`type=bind,src=${socket},dst=/run/goodies-db,readonly`,...options,'-d',images[kind]]);
+ const extra=kind==='storage'?['--user',process.getuid()+':'+process.getgid(),'--mount',`type=bind,src=${path.join(state,'storage')},dst=/var/lib/storage`]:[];
+ docker(['run','--name',name,'--network',network,'--mount',`type=bind,src=${socket},dst=/run/goodies-db,readonly`,...extra,...options,'-d',images[kind]]);
  const info=JSON.parse(docker(['inspect',name]))[0];
  assert.deepEqual(info.HostConfig.PortBindings,{});
  return {name,port,ip:info.NetworkSettings.Networks[network].IPAddress};
@@ -50,7 +54,7 @@ async function authStarted(service){
  }
  throw Error('Local Auth did not finish its schema migrations.');
 }
-async function localTransport(auth,rest){
+async function localTransport(auth,rest,storage){
  const name=network+'-transport';containers.push(name);
  docker(['run','--name',name,'--network',network,'--read-only','--entrypoint','/bin/busybox','-d',images.gateway,'sleep','3600']);
  const agents=new Map();
@@ -71,9 +75,9 @@ async function localTransport(auth,rest){
    const request=http.request({hostname:'127.0.0.1',port:cmsPort,path:incoming.url,method:incoming.method,headers:incoming.headers},response=>{outgoing.writeHead(response.statusCode,response.headers);response.pipe(outgoing);});
    request.on('error',()=>{if(!outgoing.headersSent)outgoing.writeHead(502);outgoing.end();});incoming.pipe(request);return;
   }
-  const isAuth=incoming.url.startsWith('/auth/v1/'),isRest=incoming.url.startsWith('/rest/v1/');
-  if(!isAuth&&!isRest){outgoing.writeHead(404).end();return;}
-  const prefix=isAuth?'/auth/v1':'/rest/v1',target=isAuth?auth:rest;
+  const isAuth=incoming.url.startsWith('/auth/v1/'),isRest=incoming.url.startsWith('/rest/v1/'),isStorage=storage&&incoming.url.startsWith('/storage/v1/');
+  if(!isAuth&&!isRest&&!isStorage){outgoing.writeHead(404).end();return;}
+  const prefix=isAuth?'/auth/v1':isStorage?'/storage/v1':'/rest/v1',target=isAuth?auth:isStorage?storage:rest;
   const request=http.request({hostname:target.ip,port:target.port,path:incoming.url.slice(prefix.length)||'/',method:incoming.method,agent:agentFor(target),headers:{...incoming.headers,connection:'close'}},response=>{outgoing.writeHead(response.statusCode,response.headers);response.pipe(outgoing);});
   request.on('error',()=>{if(!outgoing.headersSent)outgoing.writeHead(502);outgoing.end();});incoming.pipe(request);
  });
@@ -91,13 +95,27 @@ async function main(){
  assert.equal(JSON.parse(docker(['network','inspect',network]))[0].Internal,true);
  const auth=service('auth',9999,{GOTRUE_API_HOST:'0.0.0.0',GOTRUE_API_PORT:9999,API_EXTERNAL_URL:'http://localhost/auth/v1',GOTRUE_DB_DRIVER:'postgres',GOTRUE_DB_DATABASE_URL:'postgres://postgres@localhost/postgres?host=/run/goodies-db&search_path=auth',GOTRUE_SITE_URL:'http://localhost',GOTRUE_JWT_SECRET:jwtSecret,GOTRUE_JWT_ADMIN_ROLES:'service_role',GOTRUE_JWT_AUD:'authenticated',GOTRUE_JWT_EXP:3600,GOTRUE_EXTERNAL_EMAIL_ENABLED:true,GOTRUE_MAILER_AUTOCONFIRM:true,GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED:false});
  await authStarted(auth);
- const useCms=args.includes('--deno-bin'),target=buildSchema({reaudit:true,managedAuth:true,cmsLifecycle:useCms}),file=path.join(state,'bootstrap.sql');fs.writeFileSync(file,target.bootstrap,{mode:0o600});
+ const useCms=args.includes('--deno-bin'),target=buildSchema({reaudit:true,managedAuth:true,managedStorage:useStorage,cmsLifecycle:useCms}),file=path.join(state,'bootstrap.sql');
+ let storage;
+ if(useStorage){
+  pg(target.storagePrerequisites);fs.mkdirSync(path.join(state,'storage'),{mode:0o700});
+  storage=service('storage',5000,{ANON_KEY:anonKey,SERVICE_KEY:serviceKey,AUTH_JWT_SECRET:jwtSecret,DATABASE_URL:'postgres://postgres@localhost/postgres?host=/run/goodies-db',DATABASE_SEARCH_PATH:'storage,public,extensions',DB_INSTALL_ROLES:true,STORAGE_BACKEND:'file',FILE_STORAGE_BACKEND_PATH:'/var/lib/storage',GLOBAL_S3_BUCKET:'goodies-local',TENANT_ID:'goodies-local',REGION:'local',ENABLE_IMAGE_TRANSFORMATION:false,PG_QUEUE_ENABLE:false,VECTOR_ENABLED:false,WORKERS_NUM:1,SERVER_PORT:5000,SERVER_HOST:'0.0.0.0'});
+  let migrated=false;
+  for(let attempt=0;attempt<200;attempt++){
+   assert.equal(docker(['inspect','--format','{{.State.Running}}',storage.name]).trim(),'true','Local Storage exited during its own schema migrations.');
+   if(pg("select to_regclass('storage.migrations') is not null")==='true'&&Number(pg('select count(*) from storage.migrations'))===79){migrated=true;break;}
+   await new Promise(resolve=>setTimeout(resolve,250));
+  }
+  assert.ok(migrated,'The pinned Storage service must finish all 79 of its own migrations.');
+  report.storageMigrationCount=79;
+ }
+ fs.writeFileSync(file,target.bootstrap,{mode:0o600});
  execFileSync(process.execPath,[path.join(__dirname,'goodies-postgres-client.cjs'),'-h',socket,'-U','postgres','-d','postgres','-f',file],{env,encoding:'utf8',stdio:['ignore','pipe','pipe'],maxBuffer:8*1024*1024});
- pg('create role authenticator noinherit login;grant anon,authenticated,service_role to authenticator;');
+ pg("do $$begin if not exists(select 1 from pg_roles where rolname='authenticator') then create role authenticator noinherit login;end if;end $$;grant anon,authenticated,service_role to authenticator;");
  report.migrationCount=target.files.length+2+target.upstreamFiles.length+target.forwardFiles.length;
  report.sharedCmsMigrationFiles=target.cmsBaselineFiles;
  const rest=service('rest',3000,{PGRST_DB_URI:'postgres://authenticator@localhost/postgres?host=/run/goodies-db',PGRST_DB_SCHEMAS:'public',PGRST_DB_ANON_ROLE:'anon',PGRST_JWT_SECRET:jwtSecret,PGRST_SERVER_HOST:'0.0.0.0',PGRST_SERVER_PORT:3000});
- const api=await localTransport(auth,rest);await ready(api,'/auth/v1/health');await ready(api,'/rest/v1/');
+ const api=await localTransport(auth,rest,storage);await ready(api,'/auth/v1/health');await ready(api,'/rest/v1/');if(storage)await ready(api,'/storage/v1/status');
  const base='http://127.0.0.1:'+api.port;
  if(useCms){
   const runtime=await require('./goodies-local-cms.cjs')({denoBin:fs.realpathSync(value('--deno-bin')),state,env,base,serviceKey});cmsPort=runtime.port;cmsProcess=runtime.child;
@@ -114,9 +132,10 @@ async function main(){
  report.actorRoles=Object.keys(actors);
  await scenario('Ten distinct role accounts sign in through real local Auth and retrieve their own account',async()=>assert.equal(new Set(Object.values(actors).map(actor=>actor.id)).size,10));
  // Scenario module uses actual signed-in SDK clients. Seed operations are confined to the fresh local socket.
- const afterRestore=await require('./goodies-local-api-scenarios.cjs')({actors,anonymous,pg,scenario,report});
+ const storageProof=storage?require('./goodies-local-storage.cjs')({actors,anonymous,pg,scenario,report}):null;
+ const afterRestore=await require('./goodies-local-api-scenarios.cjs')({actors,anonymous,pg,scenario,report,storageProof});
  if(useCms)await require('./goodies-local-cms-scenarios.cjs')({actors,anonymous,pg,scenario,report});
- await require('./goodies-local-recovery.cjs')({pg,state,nativeBin,env,docker,auth,rest,api,ready,scenario,report,afterRestore,setActiveDirectory:value=>{activeDataDirectory=value;}});
+ await require('./goodies-local-recovery.cjs')({pg,state,nativeBin,env,docker,auth,rest,storage,api,ready,scenario,report,afterRestore,setActiveDirectory:value=>{activeDataDirectory=value;}});
  console.log('All local API scenarios passed; no hosted project, payment provider or physical device was used.');
 }
 async function cleanup(){
@@ -128,10 +147,10 @@ async function cleanup(){
  fs.rmSync(state,{recursive:true,force:true});
 }
 main().catch(error=>{
- report.error=String(error.message).slice(0,1000);console.error(report.error);process.exitCode=1;
- for(const name of containers.filter(name=>/-auth$|-rest$/.test(name))){
+ report.error=redact(error.message).slice(0,1000);console.error(report.error);process.exitCode=1;
+ for(const name of containers.filter(name=>/-auth$|-rest$|-storage$/.test(name))){
   const result=spawnSync('docker',['--host=unix:///var/run/docker.sock','logs',name],{env,encoding:'utf8'});
-  for(const line of (result.stdout+result.stderr).split('\n'))try{const entry=JSON.parse(line);if(['error','fatal'].includes(entry.level))console.error(JSON.stringify({service:name.split('-').at(-1),message:entry.msg,error:entry.error}).slice(0,1500));}catch{}
+  for(const line of (result.stdout+result.stderr).split('\n'))try{const entry=JSON.parse(line);if(['error','fatal',50,60].includes(entry.level))console.error(redact(JSON.stringify({service:name.split('-').at(-1),message:entry.msg,error:entry.error})).slice(0,1500));}catch{}
  }
 }).finally(async()=>{
  await cleanup();report.classification=process.exitCode?'FAIL':'PASS';

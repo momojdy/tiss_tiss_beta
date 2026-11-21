@@ -139,13 +139,14 @@ jobs:
           )
       - name: Cache and check the real CMS delivery handler
         run: deno check --config supabase/functions/deno.json supabase/functions/wantiss-public-content/index.ts
-      - name: Exercise local Auth, PostgREST, CMS and database recovery
+      - name: Exercise local Auth, PostgREST, private Storage, CMS and database recovery
         shell: bash
         env:
           GOODIES_TEST_PG_MODULE: ${{ runner.temp }}/goodies-api-tools/node_modules/pg
         run: |
           set -euo pipefail
           node scripts/test-goodies-local-api.cjs \
+            --storage \
             --native-bin "$RUNNER_TEMP/goodies-api-tools/node_modules/@embedded-postgres/linux-x64/native/bin" \
             --deno-bin "$(command -v deno)" \
             --report goodies-local-api.json | tee goodies-local-api.log

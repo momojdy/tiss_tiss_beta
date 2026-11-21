@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict'),{randomUUID}=require('node:crypto');
-module.exports=async function({actors,anonymous,pg,scenario,report}){
+module.exports=async function({actors,anonymous,pg,scenario,report,storageProof}){
  const a=actors,q=value=>"'"+String(value).replaceAll("'","''")+"'",json=value=>q(JSON.stringify(value))+'::jsonb';
  const call=async(actor,name,args={})=>{const response=await actor.sdk.rpc(name,args);assert.equal(response.error,null,name+': '+response.error?.message);return response.data;};
  const denied=async(actor,name,args={},codes=['42501','28000','P0001','P0002','22023'])=>{const response=await actor.sdk.rpc(name,args);assert.ok(response.error,name+' unexpectedly succeeded');assert.ok(codes.includes(response.error.code),name+' failed for an unexpected reason: '+JSON.stringify(response.error));};
@@ -135,16 +135,18 @@ module.exports=async function({actors,anonymous,pg,scenario,report}){
  });
  await scenario('Private proof submission requires an owned existing object and a customer confirms only their own delivery',async()=>{
   await call(a.superAdmin,'goodies_admin_set_private_delivery_proofs',{p_enabled:true});
-  const proof=business+'/'+ownOrder+'/synthetic-proof.jpg';
+  const proof=business+'/'+ownOrder+'/synthetic-proof.'+(storageProof?'png':'jpg');
   await denied(a.vendor,'goodies_self_delivery_mark_delivered',{p_order_id:ownOrder,p_proof_url:proof},['22023']);
-  // Metadata fixture only. Storage HTTP upload/signing and physical capture are separate acceptance requirements.
-  pg(`insert into storage.objects(bucket_id,name) values('goodies-delivery-proofs',${q(proof)});`);
+  if(storageProof)await storageProof.upload(proof);
+  else pg(`insert into storage.objects(bucket_id,name) values('goodies-delivery-proofs',${q(proof)});`);
   await denied(a.otherVendor,'goodies_self_delivery_mark_delivered',{p_order_id:ownOrder,p_proof_url:proof},['42501','P0002']);
   await call(a.vendor,'goodies_self_delivery_mark_delivered',{p_order_id:ownOrder,p_proof_url:proof});
   await denied(a.otherCustomer,'goodies_customer_confirm_received',{p_order_id:ownOrder},['P0002','42501']);
   await call(a.customer,'goodies_customer_confirm_received',{p_order_id:ownOrder});
   assert.equal((await rows(a.customer,'goodies_orders','status,customer_confirmed_at','id',ownOrder))[0].status,'completed');
+  if(storageProof)storageProof.reference=proof;
  });
+ if(storageProof)await storageProof.verify();
  await scenario('Only an eligible order owner can submit a real review and admin publication reaches customer review reads',async()=>{
   const args={p_order_id:order,p_review_target:'store',p_rating:5,p_comment:'Synthetic API review'};
   await denied(a.otherCustomer,'goodies_submit_order_review',args,['42501','P0001','P0002']);
@@ -202,7 +204,7 @@ module.exports=async function({actors,anonymous,pg,scenario,report}){
   await denied(a.customer,'place_goodies_order_with_payment_once',checkout('local-api-rejected-'+product),['P0001','22023']);
  });
  report.confirmedOrderIds={pickup:order,courier:delivery,ownDriver:ownOrder};
- report.proofScope='Existing-object metadata and submission authorization only; no Storage HTTP upload or physical image capture was tested.';
+ report.proofScope=storageProof?'Real local Storage HTTP upload, private read/signing, object bytes and submission authorization; physical image capture and hosted access remain unverified.':'Existing-object metadata and submission authorization only; no Storage HTTP upload or physical image capture was tested.';
  report.localGateActivation='Settlement, private-proof and Shared Bill gates were enabled only in this disposable local database. Production activation is not part of this script.';
  const finalBalance=balance(a.customer);
  return async()=>{
