@@ -139,7 +139,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const stripeIdempotencyKey = "goodies-card-order-" + orderId;
-    const createdIntent = await stripe.paymentIntents.create({amount, currency: "usd", customer: customer.stripe_customer_id, payment_method: savedMethod.stripe_payment_method_id, confirm: true, off_session: false, capture_method: "manual", metadata: {wantiss_user_id: userId, wantiss_purpose: "goodies_order", goodies_order_id: orderId}}, {idempotencyKey: stripeIdempotencyKey});
+    const createdIntent = await stripe.paymentIntents.create({amount, currency: "usd", customer: customer.stripe_customer_id, payment_method: savedMethod.stripe_payment_method_id, payment_method_types: ["card"], confirm: true, off_session: false, capture_method: "manual", metadata: {wantiss_user_id: userId, wantiss_purpose: "goodies_order", goodies_order_id: orderId}}, {idempotencyKey: stripeIdempotencyKey});
     if (createdIntent.metadata?.wantiss_purpose !== "goodies_order" || createdIntent.metadata?.goodies_order_id !== orderId || createdIntent.metadata?.wantiss_user_id !== userId || createdIntent.amount !== amount || createdIntent.currency !== "usd") throw new Error("Stripe returned a PaymentIntent that does not match this Goodies order.");
     intent = createdIntent;
 
