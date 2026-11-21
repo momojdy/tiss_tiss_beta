@@ -1,67 +1,76 @@
 {
   "classification": "PASS",
-  "customerSourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+  "customerSourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
   "adminSourceCommit": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
   "workflows": [
     {
-      "id": 44926958133,
+      "id": 44928603193,
       "name": "TypeScript and Expo build checks",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44926958133",
-      "updatedAt": "2026-11-21T16:53:55Z"
+      "headSha": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44928603193",
+      "updatedAt": "2026-11-21T17:12:20Z"
     },
     {
-      "id": 44926958109,
+      "id": 44928603198,
       "name": "Expo validation",
       "status": "completed",
       "conclusion": "success",
-      "headSha": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44926958109",
-      "updatedAt": "2026-11-21T16:54:40Z"
+      "headSha": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44928603198",
+      "updatedAt": "2026-11-21T17:12:51Z"
+    },
+    {
+      "id": 44928603197,
+      "name": "Goodies Android development build",
+      "status": "completed",
+      "conclusion": "success",
+      "headSha": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44928603197",
+      "updatedAt": "2026-11-21T17:20:45Z"
     }
   ],
   "jobs": [
     {
-      "name": "edge-functions",
-      "id": 136915036617,
-      "conclusion": "success"
-    },
-    {
-      "name": "validate",
-      "id": 136915036736,
-      "conclusion": "success"
-    },
-    {
-      "name": "settlement-concurrency",
-      "id": 136915036863,
-      "conclusion": "success"
-    },
-    {
+      "id": 136920072607,
       "name": "goodies-local-api",
-      "id": 136915036866,
+      "conclusion": "success"
+    },
+    {
+      "id": 136920072873,
+      "name": "validate",
+      "conclusion": "success"
+    },
+    {
+      "id": 136920072946,
+      "name": "edge-functions",
+      "conclusion": "success"
+    },
+    {
+      "id": 136920072961,
+      "name": "settlement-concurrency",
       "conclusion": "success"
     }
   ],
   "artifacts": [
     {
-      "id": 14716600967,
-      "name": "goodies-browser-boot-ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "sha256": "sha256:800c3e565fabc4b3d8ab642f9f3b374d33da69c48c0f8d69e4b70ce13646a25b",
-      "size": 342
+      "id": 14716653745,
+      "name": "goodies-local-api-88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "size": 6803,
+      "sha256": "sha256:f0e419f487761cf3c69a26dbb15f7595ec5bcc2d83d1a52c27517b4c04f15116"
     },
     {
-      "id": 14716425779,
-      "name": "goodies-local-api-ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "sha256": "sha256:5bc31e098ecc4bb4ef4c8366b1687edc5db3ac736dd610485c5fc9ef827923b6",
-      "size": 6799
+      "id": 14716597706,
+      "name": "goodies-browser-boot-88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "size": 342,
+      "sha256": "sha256:dac9cd3c3b6cfc4183b8a30799f4eca3fef1a3f44dc68c0844fed71ce45196cd"
     },
     {
-      "id": 14716290904,
-      "name": "goodies-settlement-races-ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "sha256": "sha256:8da58027bb0dafd2c76418fc58d880d81e5c2aaf8d9ed8799b2ea8ab1c698278",
-      "size": 1360
+      "id": 14716073470,
+      "name": "goodies-settlement-races-88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "size": 1360,
+      "sha256": "sha256:8f5d888b4589d7610c30d81b87313edb0518a73fad6bf654f8c677b1b71236c4"
     }
   ],
   "adminRun": 44899334075,
@@ -77,10 +86,10 @@
   "localApiReport": "payment-ci-local-api-verification.json",
   "nativePostgresLog": "payment-ci-postgres.log",
   "actualStripeSandboxSeparateFromCI": true,
-  "observedAt": "2026-11-21T16:57:15.621862+00:00",
+  "observedAt": "2026-11-21T17:27:39.964155+00:00",
   "localApiScenarios": 35,
   "localPrivateStorageChecks": 14,
   "nativePostgresChecks": 31,
   "targetGoodiesMigrations": 35,
-  "previousValidatedCustomerSourceCommit": "b989c86a59a4ddc776445c1fa6a7b00f2d4acd16"
+  "previousValidatedCustomerSourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce"
 }

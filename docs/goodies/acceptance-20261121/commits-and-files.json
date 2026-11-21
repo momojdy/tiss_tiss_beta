@@ -5,7 +5,7 @@
       "repository": "momojdy/tiss_tiss_beta",
       "branch": "main",
       "baseline": "bf4119e12079fc9a5317b89690564eed2bc67087",
-      "sourceCommit": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+      "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
       "commits": [
         {
           "sha": "7fbfc092ce95c4029c52dcccf9f84fa5385c71d7",
@@ -102,6 +102,14 @@
         {
           "sha": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
           "subject": "test(goodies): prevent sandbox events reaching hosted backends"
+        },
+        {
+          "sha": "7f834dadda23834730efbb891581b177328792a9",
+          "subject": "docs(goodies): retain real Stripe payment evidence and remaining acceptance gates"
+        },
+        {
+          "sha": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+          "subject": "fix(goodies): enable supported Stripe iOS framework linkage"
         }
       ],
       "changedFiles": [
@@ -133,6 +141,12 @@
           "status": "A",
           "paths": [
             "docs/goodies/acceptance-20261121/LOCAL_TESTS.md"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/android-development-build-expo-linked.json"
           ]
         },
         {
@@ -276,13 +290,97 @@
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-payment-cross-role.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-payment-customer-tests.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-payment-deno.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-payment-postgres.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-payment-with-isolation-customer-tests.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/logs/goodies-stripe-sandbox.log.gz"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/native-test-availability.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/payment-backend-deployment.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/payment-ci-local-api-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/payment-ci-local-api.log"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/payment-ci-postgres.log"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/payment-ci-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/phase-verification.json"
           ]
         },
         {
           "status": "A",
           "paths": [
+            "docs/goodies/acceptance-20261121/post-payment-security-advisors.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
             "docs/goodies/acceptance-20261121/private-storage-ci-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/production-backup-access.json"
           ]
         },
         {
@@ -295,6 +393,24 @@
           "status": "A",
           "paths": [
             "docs/goodies/acceptance-20261121/shared-cms-source-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/stripe-isolation-guard-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/stripe-sandbox-verification.json"
+          ]
+        },
+        {
+          "status": "A",
+          "paths": [
+            "docs/goodies/acceptance-20261121/stripe-webhook-configuration.json"
           ]
         },
         {
@@ -319,6 +435,18 @@
           "status": "M",
           "paths": [
             "metro.config.js"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "package-lock.json"
+          ]
+        },
+        {
+          "status": "M",
+          "paths": [
+            "package.json"
           ]
         },
         {
@@ -496,6 +624,12 @@
           ]
         },
         {
+          "status": "M",
+          "paths": [
+            "tests/goodies-native-config.test.cjs"
+          ]
+        },
+        {
           "status": "A",
           "paths": [
             "tests/goodies-stripe-isolation.test.cjs"
@@ -569,29 +703,17 @@
     }
   ],
   "evidenceFilesFollowingSourceCheckpoint": [
-    "docs/goodies/acceptance-20261121/CURRENT_STATUS.md",
-    "docs/goodies/acceptance-20261121/android-development-build-expo-linked.json",
+    "docs/goodies/acceptance-20261121/android-development-build-current.json",
     "docs/goodies/acceptance-20261121/commits-and-files.json",
     "docs/goodies/acceptance-20261121/current-status.json",
-    "docs/goodies/acceptance-20261121/external-inputs.json",
+    "docs/goodies/acceptance-20261121/ios-development-simulator-build.json",
     "docs/goodies/acceptance-20261121/log-manifest.json",
-    "docs/goodies/acceptance-20261121/logs/goodies-payment-cross-role.log.gz",
-    "docs/goodies/acceptance-20261121/logs/goodies-payment-customer-tests.log.gz",
-    "docs/goodies/acceptance-20261121/logs/goodies-payment-deno.log.gz",
-    "docs/goodies/acceptance-20261121/logs/goodies-payment-postgres.log.gz",
-    "docs/goodies/acceptance-20261121/logs/goodies-payment-with-isolation-customer-tests.log.gz",
-    "docs/goodies/acceptance-20261121/logs/goodies-stripe-sandbox.log.gz",
+    "docs/goodies/acceptance-20261121/logs/goodies-ios-framework-customer-tests.log.gz",
     "docs/goodies/acceptance-20261121/native-test-availability.json",
-    "docs/goodies/acceptance-20261121/payment-backend-deployment.json",
     "docs/goodies/acceptance-20261121/payment-ci-local-api-verification.json",
-    "docs/goodies/acceptance-20261121/payment-ci-local-api.log",
-    "docs/goodies/acceptance-20261121/payment-ci-postgres.log",
     "docs/goodies/acceptance-20261121/payment-ci-verification.json",
     "docs/goodies/acceptance-20261121/phase-verification.json",
-    "docs/goodies/acceptance-20261121/post-payment-security-advisors.json",
     "docs/goodies/acceptance-20261121/production-backup-access.json",
-    "docs/goodies/acceptance-20261121/stripe-isolation-guard-verification.json",
-    "docs/goodies/acceptance-20261121/stripe-sandbox-verification.json",
     "docs/goodies/acceptance-20261121/stripe-webhook-configuration.json"
   ]
 }

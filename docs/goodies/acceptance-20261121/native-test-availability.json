@@ -7,7 +7,7 @@
     "observedThrough": "Official EAS CLI simulator:availability --json"
   },
   "cloudSimulatorStarted": false,
-  "cloudBuildStarted": false,
+  "cloudBuildStarted": true,
   "paidUpgradePurchased": false,
   "physicalDevicesKnownAvailable": [
     "Android phone",
@@ -20,5 +20,10 @@
     "Apple physical-device signing/provisioning",
     "Installed app and physical-device execution"
   ],
-  "scope": "Read-only account availability and local capability evidence only. Existing Android development compilation is recorded separately."
+  "scope": "Read-only account availability and local capability evidence only. Existing Android development compilation is recorded separately.",
+  "cloudBuildIds": [
+    "6a54fe63-ce9a-40b0-9732-631a2aea895e",
+    "37d2b7b0-c1ad-40f7-b560-ff7d8747898e"
+  ],
+  "cloudBuildScope": "iOS simulator development compilation only, using the existing free allowance. No cloud simulator or app release."
 }

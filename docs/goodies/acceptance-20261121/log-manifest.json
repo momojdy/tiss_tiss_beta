@@ -51,15 +51,15 @@
       "file": "payment-ci-local-api.log",
       "sha256": "7772a5926a2d116a2d78f92658552726b92369fa9e00f170a5a5564c42651ff7",
       "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
-      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "workflowRun": 44926958109
+      "sourceCheckpoint": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "workflowRun": 44928603198
     },
     {
       "file": "payment-ci-postgres.log",
       "sha256": "226dd0346457a8a3cd36e190c58104fce66e7cd069fc32e647465f9a9ac59847",
       "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
-      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "workflowRun": 44926958109
+      "sourceCheckpoint": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "workflowRun": 44928603198
     },
     {
       "file": "stripe-sandbox-verification.json",
@@ -69,16 +69,22 @@
     },
     {
       "file": "payment-ci-local-api-verification.json",
-      "sha256": "b41b62e918c3d400068b3b8481b06097d831f84e3fdc129df161a9e807212d09",
+      "sha256": "2d9d1c11c91bfcaba764467e3858299795ad7872163e78052c974bb2249cbea6",
       "scope": "Exact retained executed payment/local acceptance evidence; consult its stated limits.",
-      "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
-      "workflowRun": 44926958109
+      "sourceCheckpoint": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "workflowRun": 44928603198
     },
     {
       "file": "logs/goodies-payment-with-isolation-customer-tests.log.gz",
       "uncompressedSha256": "2c7eb7ab29ab22e1fef254f25fc2a9012d68450ed7f2d8ff17e25323b73b7d67",
       "scope": "282 customer tests, including four provider-forwarding isolation regressions; no provider payment created.",
       "sourceCheckpoint": "ef510e0d0f15e279867ccc3f94089c48e859b3ce"
+    },
+    {
+      "file": "logs/goodies-ios-framework-customer-tests.log.gz",
+      "uncompressedSha256": "c35b9406f046c921e467aab3d5953f9aae97fa14bcd980615ff3cbf6635c6121",
+      "scope": "282 customer regressions including real SDK 58 generated dynamic iOS/Android configuration; no provider calls.",
+      "sourceCheckpoint": "88cb258140a4fa8ef2d5424e09db052a52eae908"
     }
   ]
 }

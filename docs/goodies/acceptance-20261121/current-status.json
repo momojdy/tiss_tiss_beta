@@ -11,7 +11,7 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+    "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "verifiedScopes": {
@@ -35,8 +35,9 @@
     },
     "androidDevelopmentApk": {
       "classification": "PASS",
-      "run": 44917985726,
-      "report": "android-development-build-expo-linked.json",
+      "run": 44928603197,
+      "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "report": "android-development-build-current.json",
       "productionSigning": "NOT VERIFIED",
       "physicalDevice": "NOT VERIFIED"
     },
@@ -57,8 +58,9 @@
       "classification": "PASS",
       "receipt": "payment-ci-verification.json",
       "runs": [
-        44926958109,
-        44926958133,
+        44928603198,
+        44928603193,
+        44928603197,
         44899334075
       ]
     },
@@ -112,17 +114,25 @@
       "endpointId": "we_1UI24iCvFEhF140BzoOs0oXc",
       "events": 12,
       "evidence": "stripe-webhook-configuration.json",
-      "deliveryAcceptance": "NOT VERIFIED"
+      "deliveryAcceptance": "17 success-only no-op deliveries observed; financial state and new event types NOT VERIFIED"
     },
     "stripeIsolationGuard": {
       "classification": "PASS",
       "evidence": "stripe-isolation-guard-verification.json",
       "scope": "Real read-only refusal plus four regression tests; no financial test started."
+    },
+    "iosSimulatorBuild": {
+      "classification": "PASS",
+      "scope": "Compilation and downloaded native artifact identity only. No native runtime or signing acceptance.",
+      "report": "ios-development-simulator-build.json",
+      "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "physicalDevice": "NOT VERIFIED",
+      "productionSigning": "NOT VERIFIED"
     }
   },
   "notVerified": [
     "Every installed customer/vendor/courier/admin control and all authorization paths.",
-    "Installed card entry/3DS authentication and deployed webhook/key/account configuration. Actual sandbox server payment/refund/webhook scenarios pass.",
+    "Installed card entry/3DS and hosted financial state transitions/new webhook types. Actual sandbox server cases and 17 hosted success-only no-op deliveries are recorded separately.",
     "Production Android/iOS signing and physical maps/GPS/background/push/camera/private-proof behavior.",
     "Installed-app persistent cache/realtime CMS reload.",
     "Full Wantiss production backup and restoration."
@@ -178,7 +188,7 @@
     "iPhone": true
   },
   "laterScopedSourceCommits": {
-    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+    "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "observedAt": "2026-11-21T16:40:46.171Z",

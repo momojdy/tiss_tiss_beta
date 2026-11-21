@@ -1,5 +1,5 @@
 {
-  "observedAt": "2026-11-21T16:53:14.616Z",
+  "observedAt": "2026-11-21T17:11:16.860Z",
   "scope": "Actual local Auth/PostgREST/Storage/SQL with synthetic users and balances. Not hosted or physical-device acceptance.",
   "productionContacted": false,
   "hostedTestCreated": false,
@@ -239,9 +239,9 @@
     "signedCapabilitySeconds": 300
   },
   "confirmedOrderIds": {
-    "pickup": "24b48219-d855-4b26-9a6b-4ddbc84b0302",
-    "courier": "058dd593-9a9f-40a8-87c0-6ee9bb4d7d92",
-    "ownDriver": "6a6bc6eb-5783-4681-a3e3-0d70d39b023a"
+    "pickup": "632b71fc-9c19-4923-acd5-6ad74e09e16d",
+    "courier": "75636aeb-1f3a-46a7-8091-2c80fd8d30a8",
+    "ownDriver": "6de5273f-7978-46d2-8f5d-6bcaf9f1aa9a"
   },
   "proofScope": "Real local Storage HTTP upload, private read/signing, object bytes and submission authorization; physical image capture and hosted access remain unverified.",
   "localGateActivation": "Settlement, private-proof and Shared Bill gates were enabled only in this disposable local database. Production activation is not part of this script.",
@@ -261,7 +261,7 @@
       {
         "rows": 23,
         "table": "auth.audit_log_entries",
-        "fingerprint": "bd6dff47ff5ada89c5dde755e0b3de0e"
+        "fingerprint": "1f5e55f45db3c10ba6129bd547f9b69b"
       },
       {
         "rows": 0,
@@ -276,7 +276,7 @@
       {
         "rows": 10,
         "table": "auth.identities",
-        "fingerprint": "7c81112f6d9894401d72c767cf853779"
+        "fingerprint": "255f1decdd76fcd51d3b932bb1a466e3"
       },
       {
         "rows": 0,
@@ -286,7 +286,7 @@
       {
         "rows": 10,
         "table": "auth.mfa_amr_claims",
-        "fingerprint": "762d8c94a31702a096ba0db0ed0b5477"
+        "fingerprint": "342a9b7dd7af1dfafc6c80f7367e1e27"
       },
       {
         "rows": 0,
@@ -336,7 +336,7 @@
       {
         "rows": 11,
         "table": "auth.refresh_tokens",
-        "fingerprint": "2e5b6a13e9737c27446f8d8817e94327"
+        "fingerprint": "2b3dc11839ac95614b1ef2a57820c49c"
       },
       {
         "rows": 0,
@@ -366,7 +366,7 @@
       {
         "rows": 10,
         "table": "auth.sessions",
-        "fingerprint": "3d792f172d816e5836c11384f7da0f8a"
+        "fingerprint": "ae89205b305c9bddd1df5919f674d91a"
       },
       {
         "rows": 0,
@@ -381,7 +381,7 @@
       {
         "rows": 10,
         "table": "auth.users",
-        "fingerprint": "2e29b798b20bbae1d60c6f16b7f08b29"
+        "fingerprint": "2c0b4592d942c154bae6a78de0424f6e"
       },
       {
         "rows": 0,
@@ -411,7 +411,7 @@
       {
         "rows": 8,
         "table": "private.goodies_order_settlements",
-        "fingerprint": "1f1d109039dcfd45ce95527320db353b"
+        "fingerprint": "c129f4161593fbec6d7ce3be6e92ddc8"
       },
       {
         "rows": 5,
@@ -436,7 +436,7 @@
       {
         "rows": 1,
         "table": "private.goodies_settlement_config",
-        "fingerprint": "5bc7720cdfba12c0b9d16a97ae9b6145"
+        "fingerprint": "89ac687a7a895a67e857f58304581816"
       },
       {
         "rows": 0,
@@ -456,7 +456,7 @@
       {
         "rows": 1,
         "table": "private.goodies_vendor_accounts",
-        "fingerprint": "50fee19f7ccb644c5130e134938f3011"
+        "fingerprint": "831604d283eb58d971e4db6e3104b711"
       },
       {
         "rows": 0,
@@ -471,12 +471,12 @@
       {
         "rows": 4,
         "table": "public.business_members",
-        "fingerprint": "2ac13b4f26ec5f8c3405b4d097bc2454"
+        "fingerprint": "3a0a666da88cbabbf9c4efaf370d7979"
       },
       {
         "rows": 2,
         "table": "public.businesses",
-        "fingerprint": "325e16ca9d7aa9e28f59825516f207d0"
+        "fingerprint": "da27fa6a21474598b97ce1dcefe6a8c5"
       },
       {
         "rows": 0,
@@ -486,7 +486,7 @@
       {
         "rows": 1,
         "table": "public.exchange_rates",
-        "fingerprint": "284df162239e687515603d7aaab8254b"
+        "fingerprint": "db27cb53d72517e717dd7d44c5932d20"
       },
       {
         "rows": 0,
@@ -496,37 +496,37 @@
       {
         "rows": 2,
         "table": "public.goodies_card_checkout_attempts",
-        "fingerprint": "64c6044ec837b89fa19f7cc5e79afb41"
+        "fingerprint": "64a66cac883869da9c7903f5db32c1d4"
       },
       {
         "rows": 1,
         "table": "public.goodies_card_refund_queue",
-        "fingerprint": "4b0a73f819004db206f9f1a9a25b480c"
+        "fingerprint": "e44f7d48de93d7bc68c28a1922c56f8d"
       },
       {
         "rows": 4,
         "table": "public.goodies_checkout_attempts",
-        "fingerprint": "8e6725de6c8a45611a92d9617cf1420f"
+        "fingerprint": "d42892b78ee5e5529ede37db7fca641e"
       },
       {
         "rows": 1,
         "table": "public.goodies_courier_presence",
-        "fingerprint": "b17e22674b12d9ca6be24c0a303656ef"
+        "fingerprint": "95f99ed84bc3600bf161f8e5b9250a23"
       },
       {
         "rows": 2,
         "table": "public.goodies_courier_roster",
-        "fingerprint": "02daaa857931fe83106ff7cf4978f03c"
+        "fingerprint": "2acb205215edd2f4d3f839604944718e"
       },
       {
         "rows": 1,
         "table": "public.goodies_delivery_assignments",
-        "fingerprint": "e8a69d6e765243d54b3644241edec7f3"
+        "fingerprint": "96b43f6e74ea81c0372c2befa2410be3"
       },
       {
         "rows": 2,
         "table": "public.goodies_delivery_quotes",
-        "fingerprint": "10dfee6f7e58b66a559dfed78c7b0d82"
+        "fingerprint": "68cc3a89595dc590b3af838139e62099"
       },
       {
         "rows": 0,
@@ -581,17 +581,17 @@
       {
         "rows": 1,
         "table": "public.goodies_order_reviews",
-        "fingerprint": "0fe80de34437067a6ab383cc7510df91"
+        "fingerprint": "6e9e1711eaf8e0ea46205386e9861f85"
       },
       {
         "rows": 8,
         "table": "public.goodies_orders",
-        "fingerprint": "6bb504eeb075c7fefa12d64d14e9501d"
+        "fingerprint": "38eb6c4866b1c955bca12ff03b8cc09e"
       },
       {
         "rows": 1,
         "table": "public.goodies_products",
-        "fingerprint": "20674a1c9b7fdc52326e3b6ec887c311"
+        "fingerprint": "385c1a3b73ba4f1901d0c3fa6ee1b8c8"
       },
       {
         "rows": 0,
@@ -606,7 +606,7 @@
       {
         "rows": 1,
         "table": "public.goodies_store_schedules",
-        "fingerprint": "344e02aa5f8d5a801ec16b84be52839b"
+        "fingerprint": "d3307353c1d1d4308b7fab827097a09c"
       },
       {
         "rows": 0,
@@ -616,12 +616,12 @@
       {
         "rows": 5,
         "table": "public.help_pay_contributions",
-        "fingerprint": "5eecd40ec04bd958dc4a01d0d8456e3e"
+        "fingerprint": "0f0bff7c3f268577ff124ce1ed267c4a"
       },
       {
         "rows": 3,
         "table": "public.help_pay_requests",
-        "fingerprint": "18b3dd789aff0011764ce6339a0755bc"
+        "fingerprint": "3fdfae611cfa3e7d7b6fb452b4f29e70"
       },
       {
         "rows": 0,
@@ -631,12 +631,12 @@
       {
         "rows": 58,
         "table": "public.notifications",
-        "fingerprint": "0a3b4ef89d9d4f0da5c0d2785ef605bc"
+        "fingerprint": "fb2ae2b8fa3c3d77f4ec3579e24d6436"
       },
       {
         "rows": 10,
         "table": "public.profiles",
-        "fingerprint": "852ac5e2a2d4cc5b04098e96af8629c8"
+        "fingerprint": "520533f3dd5d3a77b400d5fbae6ff352"
       },
       {
         "rows": 0,
@@ -661,12 +661,12 @@
       {
         "rows": 15,
         "table": "public.wallet_transactions",
-        "fingerprint": "240825dfd386cc7ef682c2ed70a142ee"
+        "fingerprint": "8ae76c494153dad34bc3a9046920b880"
       },
       {
         "rows": 10,
         "table": "public.wallets",
-        "fingerprint": "ff6c192c2a25e9b2a761ca70c6a27ff0"
+        "fingerprint": "f6126567886842c97dc8c67b22884be8"
       },
       {
         "rows": 0,
@@ -676,17 +676,17 @@
       {
         "rows": 6,
         "table": "public.wantiss_admin_audit_log",
-        "fingerprint": "1315b77faf0d1f7d5c8e9cfef7de9451"
+        "fingerprint": "0683820f292780919c1a053c12a61adc"
       },
       {
         "rows": 1,
         "table": "public.wantiss_admin_permission_grants",
-        "fingerprint": "0b72b651ba8ef616d989068983c7460f"
+        "fingerprint": "d7a6efaa6cf3a71378e6bf4f0813e710"
       },
       {
         "rows": 2,
         "table": "public.wantiss_admin_staff",
-        "fingerprint": "9243c81ad891fd57ebb096e20890a0d1"
+        "fingerprint": "45abbf607ff8808b92ca8b79dcb172de"
       },
       {
         "rows": 0,
@@ -696,7 +696,7 @@
       {
         "rows": 2,
         "table": "public.wantiss_cms_content",
-        "fingerprint": "dee711feec9e9b59ddffe82c882a5721"
+        "fingerprint": "af236364b47c1afb7689c3ab633b0a51"
       },
       {
         "rows": 0,
@@ -706,7 +706,7 @@
       {
         "rows": 1,
         "table": "storage.buckets",
-        "fingerprint": "5c8fd31c59103508ab7fd6be07d056c4"
+        "fingerprint": "79192447c13fc10af9a734ed1a31037e"
       },
       {
         "rows": 0,
@@ -736,12 +736,12 @@
       {
         "rows": 80,
         "table": "storage.migrations",
-        "fingerprint": "a637bd4a5f420f6bcdbee0b75a98ebe0"
+        "fingerprint": "899909ced07c70ab8c58c68e4b4376d8"
       },
       {
         "rows": 1,
         "table": "storage.objects",
-        "fingerprint": "7b5bd6eb285a19131c371d35e0f6e023"
+        "fingerprint": "c2d63cde774e4e6100a0750835825e22"
       },
       {
         "rows": 0,

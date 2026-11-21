@@ -107,8 +107,20 @@
     "remediation": "The optional Stripe runner now pages through Dashboard webhook endpoints before creating any object and refuses any enabled endpoint. The Wantiss shared test account therefore cannot run further isolated financial scenarios; use a separate owner-approved Stripe sandbox with no enabled Dashboard endpoint."
   },
   "notVerified": [
-    "Hosted webhook signing-secret/key/account alignment and actual delivery acceptance.",
+    "Hosted financial state transitions and newly subscribed setup/refund/dispute deliveries.",
     "Native/web card entry and 3DS authentication UI.",
     "Live-mode endpoint configuration."
-  ]
+  ],
+  "observedHostedSuccessOnlyDelivery": {
+    "classification": "PASS",
+    "scope": "17 actual test-mode payment_intent.succeeded events passed the existing signature verification and canonical Stripe lookup, then produced processed operational receipts. No corresponding hosted synthetic financial records exist. This is not hosted order/payment-state acceptance.",
+    "counts": [
+      {
+        "event_type": "payment_intent.succeeded",
+        "livemode": false,
+        "status": "processed",
+        "count": 17
+      }
+    ]
+  }
 }

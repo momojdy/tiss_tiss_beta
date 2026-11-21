@@ -1,0 +1,91 @@
+{
+  "classification": "PASS",
+  "scope": "Actual ARM64 development APK compilation and apksigner verification in CI after the iOS linkage/plugin change. This is not production signing, map/push configuration or installed-device acceptance.",
+  "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+  "workflow": {
+    "id": 44928603197,
+    "name": "Goodies Android development build",
+    "status": "completed",
+    "conclusion": "success",
+    "headSha": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44928603197",
+    "updatedAt": "2026-11-21T17:20:45Z"
+  },
+  "jobs": [
+    {
+      "id": 136920072677,
+      "name": "android-development",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run android-actions/setup-android@v3",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install the existing locked dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Generate the existing development native configuration",
+          "conclusion": "success"
+        },
+        {
+          "name": "Compile a development APK for ARM64 devices",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify the generated development APK signature",
+          "conclusion": "success"
+        },
+        {
+          "name": "Retain the development build and signature evidence",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-java@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 14717316114,
+      "name": "goodies-android-development-88cb258140a4fa8ef2d5424e09db052a52eae908",
+      "size": 58861330,
+      "sha256": "sha256:46d1d0fdc33dd35805916771b7f3c0c3057f9979ddf50ff560b002adf91377b9",
+      "expiresAt": "2026-11-24T17:20:38Z"
+    }
+  ],
+  "productionSigning": "NOT VERIFIED",
+  "physicalDevice": "NOT VERIFIED",
+  "appReleased": false
+}

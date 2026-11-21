@@ -1,0 +1,93 @@
+{
+  "classification": "PASS",
+  "scope": "Private iOS simulator development compilation only. No physical iPhone, production signing, app-store submission, OTA or simulator runtime acceptance.",
+  "project": "@wantiss/wantiss",
+  "profile": "development-simulator",
+  "distribution": "INTERNAL",
+  "simulator": true,
+  "initialFailure": {
+    "id": "6a54fe63-ce9a-40b0-9732-631a2aea895e",
+    "classification": "FAIL",
+    "sourceCommit": "7f834dadda23834730efbb891581b177328792a9",
+    "phase": "INSTALL_PODS",
+    "cause": "Stripe 0.81.0 Swift Package Manager integration requires dynamic iOS frameworks; the existing app generated static linkage.",
+    "logExcerpt": [
+      "[SPM]  Building stripe-react-native into the shared products dir to avoid duplicate module maps",
+      "[SPM]  Building stripe-react-native into the shared products dir to avoid duplicate module maps",
+      "[SPM] WARNING!!! Pod stripe-react-native is using swift package(s) Stripe, StripePaymentSheet, StripePayments, StripePaymentsUI, StripeApplePay, StripeFinancialConnections with static linking, this might cause linker errors. Consider using USE_FRAMEWORKS=dynamic, see https://github.com/facebook/react-native/pull/44627#issuecomment-2123119711 for more information",
+      "[!] [stripe-react-native] Resolving the Stripe iOS SDK through Swift Package",
+      "Manager requires dynamic frameworks, but stripe-react-native is building as",
+      "a static library. To fix, add `use_frameworks! :linkage => :dynamic` to your Podfile",
+      "(for Expo, set `\"useFrameworks\": \"dynamic\"` via the expo-build-properties plugin)."
+    ]
+  },
+  "repair": {
+    "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+    "files": [
+      "app.json",
+      "package.json",
+      "package-lock.json",
+      "tests/goodies-native-config.test.cjs"
+    ],
+    "expoSdk": "58.0.20",
+    "addedDependency": "expo-build-properties@58.0.12",
+    "property": "ios.useFrameworks=dynamic",
+    "nativeIntrospection": "PASS",
+    "customerRegressionTests": 282,
+    "lint": "PASS",
+    "typescript": "PASS",
+    "existingLockEntriesPreserved": true,
+    "screenChanges": false,
+    "nativeBuild": "PASS"
+  },
+  "currentAttempt": {
+    "id": "37d2b7b0-c1ad-40f7-b560-ff7d8747898e",
+    "status": "FINISHED",
+    "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
+    "sdkVersion": "58.0.0",
+    "createdAt": "2026-11-21T17:11:12.734Z",
+    "completedAt": "2026-11-21T17:20:20.734Z",
+    "expirationDate": "2026-12-05T17:11:12.784Z",
+    "url": "https://expo.dev/accounts/wantiss/projects/wantiss/builds/37d2b7b0-c1ad-40f7-b560-ff7d8747898e"
+  },
+  "quota": {
+    "plan": "Free",
+    "verifiedUnusedIosBuildsBeforeFirstAttempt": 15,
+    "simulatorBuildAttempts": 2,
+    "paidUpgrade": false
+  },
+  "physicalIosDevice": "NOT VERIFIED",
+  "productionSigning": "NOT VERIFIED",
+  "appReleased": false,
+  "artifactInspection": {
+    "classification": "PASS",
+    "scope": "Downloaded artifact identity and native executable inspection only; no runtime or production signing.",
+    "artifactBytes": 93126682,
+    "artifactSha256": "4a8d546f16a3e8bc92bfff3d4c327eba7f40f053f6ec78e97a99f8fb3ea9c382",
+    "bundle": {
+      "CFBundleIdentifier": "com.wantiss.app.development",
+      "CFBundleExecutable": "WantissDev",
+      "CFBundleShortVersionString": "1.10.0",
+      "CFBundleVersion": "1",
+      "CFBundleSupportedPlatforms": [
+        "iPhoneSimulator"
+      ],
+      "DTPlatformName": "iphonesimulator",
+      "MinimumOSVersion": "16.4"
+    },
+    "nativeExecutable": {
+      "path": "WantissDev.app/WantissDev",
+      "bytes": 124032,
+      "cpuTypes": [
+        16777223,
+        16777228
+      ],
+      "architectures": [
+        "x86_64",
+        "arm64"
+      ],
+      "fileInspection": "Mach-O universal binary with 2 architectures: [x86_64:\\012- Mach-O 64-bit x86_64 executable, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|PIE>] [\\012- arm64:\\012- Mach-O 64-bit arm64 executable, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|PIE>]"
+    }
+  },
+  "runtimeAcceptance": "NOT VERIFIED"
+}

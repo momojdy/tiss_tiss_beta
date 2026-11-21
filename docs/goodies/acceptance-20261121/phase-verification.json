@@ -1,7 +1,7 @@
 {
   "displayDate": "22 November 2026 (Asia/Manila)",
   "sourceCommits": {
-    "customer": "ef510e0d0f15e279867ccc3f94089c48e859b3ce",
+    "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
   "productionReady": false,
@@ -156,7 +156,9 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "501 core tests (282 customer) with zero skipped; 31 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass."
+        "501 core tests (282 customer) with zero skipped; 31 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
+        "Initial private iOS build exposed Stripe SPM static-linkage failure. The documented dynamic-framework fix passes actual generated configuration, 282 customer regressions, TypeScript and lint; the private iOS simulator build now compiles successfully; downloaded universal arm64/x86_64 artifact identity is verified.",
+        "Latest Android ARM64 development compilation and apksigner checks pass at the same source commit. No app release or production signing."
       ],
       "remainingAcceptance": [
         "Production Android/iOS signing, installed-screen acceptance, native card/3DS and physical-device requirements remain open."
