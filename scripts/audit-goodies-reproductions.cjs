@@ -44,7 +44,7 @@ test('REGRESSION A08: historical orders render without a catalog store',()=>{
  assert.doesNotThrow(()=>Orders());
 });
 test('REGRESSION A09: pickup map uses valid coordinates and otherwise shows unavailable state',()=>{
- const PickupLocationMap=extract(root,'src/features/Goodies/screens/Shop.tsx','PickupLocationMap')({label,coordinate:p=>p?.latitude!=null?p:null});
+ const PickupLocationMap=extract(root,'src/features/Goodies/screens/Shop.tsx','PickupLocationMap')({label,Platform:{OS:'ios'},coordinate:p=>p?.latitude!=null?p:null});
  const nodes=elements(PickupLocationMap({origin:{latitude:18.5,longitude:-72.3}}));assert.ok(nodes.some(n=>n.type==='MapView'));assert.ok(!nodes.some(n=>n.type==='Empty'));
  assert.ok(elements(PickupLocationMap({origin:null})).some(n=>n.type==='Empty'));
 });

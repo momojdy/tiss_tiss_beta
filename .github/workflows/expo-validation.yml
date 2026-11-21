@@ -48,6 +48,15 @@ jobs:
         run: npx tsc --noEmit
       - name: Export Expo web bundle
         run: npx expo export --platform web
+      - name: Verify the exported app actually mounts in Chrome
+        run: node scripts/check-goodies-browser-boot.cjs --root dist --report goodies-browser-boot.json
+      - name: Retain browser runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: goodies-browser-boot-${{ github.sha }}
+          path: tiss_tiss_beta/goodies-browser-boot.json
+          if-no-files-found: warn
       - name: Expo Doctor
         run: npx expo-doctor
       - name: Upload customer web verification bundle
