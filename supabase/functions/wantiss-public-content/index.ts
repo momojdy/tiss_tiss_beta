@@ -59,7 +59,7 @@ Deno.serve(async (req: Request) => {
   let body: Record<string, unknown>;
   try { body = await req.json(); } catch { return reply(400, { error: "Invalid JSON body" }); }
   const locale = String(body.locale || "en");
-  if (!/^[a-z]{2,3}(-[A-Z]{2})?$/.test(locale)) return reply(400, { error: "Invalid locale" });
+  if (!/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|\d{3}))?$/.test(locale)) return reply(400, { error: "Invalid locale" });
 
   const { data: content, error: contentError } = await admin.rpc("wantiss_cms_published_content", { p_locale: locale });
   if (contentError) return reply(503, { error: "Published content is temporarily unavailable" });

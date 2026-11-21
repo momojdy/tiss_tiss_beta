@@ -53,7 +53,7 @@ Deno.serve(async (req: Request) => {
   }
 
   const locale = params.get("locale") || "en";
-  if (!/^[a-z]{2,3}(-[A-Z]{2})?$/.test(locale)) return reply(400, { error: "Invalid locale" });
+  if (!/^[a-z]{2,3}(?:-[A-Z][a-z]{3})?(?:-(?:[A-Z]{2}|\d{3}))?$/.test(locale)) return reply(400, { error: "Invalid locale" });
   const [{ data: content, error: contentError }, { data: assets, error: assetError }] = await Promise.all([
     admin.rpc("wantiss_cms_published_content", { p_locale: locale }),
     admin.from("wantiss_cms_assets").select("asset_key,content_type,alt_text")

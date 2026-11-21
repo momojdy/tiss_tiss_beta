@@ -1,0 +1,16 @@
+[
+  {
+    "slug": "wantiss-public-content",
+    "previousVersion": 6,
+    "verifyJwt": false,
+    "sourceSha256": "3397c7cd63c42bd95832d371a399eab16a11405ee5da1e5811758425a94f64be",
+    "repositoryMatchesDeployedBeforeChange": true
+  },
+  {
+    "slug": "wantiss-cms-public",
+    "previousVersion": 5,
+    "verifyJwt": false,
+    "sourceSha256": "70fb84d11db8e68c8459b249d93612b85f1092d3fe58272ebea0913895305f1a",
+    "repositoryMatchesDeployedBeforeChange": true
+  }
+]
