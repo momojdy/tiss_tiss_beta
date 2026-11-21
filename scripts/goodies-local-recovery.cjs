@@ -23,8 +23,12 @@ module.exports=async function({pg,state,nativeBin,env,docker,auth,rest,api,ready
   execFileSync(path.join(nativeBin,'pg_ctl'),['-D',original,'-m','fast','-w','stop'],{env,stdio:'ignore'});
   assert.equal(fs.existsSync(path.join(original,'postmaster.pid')),false);
   fs.cpSync(original,recovered,{recursive:true,preserveTimestamps:true,errorOnExist:true,force:false});
+  fs.chmodSync(recovered,fs.statSync(original).mode&0o777);
+  assert.equal(fs.statSync(recovered).mode&0o777,0o700);
   setActiveDirectory(recovered);
-  execFileSync(path.join(nativeBin,'pg_ctl'),['-D',recovered,'-l',path.join(state,'restored.log'),'-o',`-k ${socket} -c listen_addresses='' -c unix_socket_permissions=0777`,'-w','start'],{env,stdio:'ignore'});
+  const restoredLog=path.join(state,'restored.log');
+  try{execFileSync(path.join(nativeBin,'pg_ctl'),['-D',recovered,'-l',restoredLog,'-o',`-k ${socket} -c listen_addresses='' -c unix_socket_permissions=0777`,'-w','start'],{env,stdio:'ignore'});}
+  catch(error){throw Error('Restored local cluster could not start: '+(fs.existsSync(restoredLog)?fs.readFileSync(restoredLog,'utf8').split('\n').slice(-12).join('\n'):String(error.message)));}
   assert.equal(fs.realpathSync(pg('show data_directory')),fs.realpathSync(recovered));assert.equal(pg('show listen_addresses'),'');
   assert.deepEqual(snapshot(),before);
   report.localRecovery={classification:'PASS',scope:'All tables in this synthetic local cluster; not a production backup or production restore.',productionBackupCreated:false,restoredTableCount:before.rows.length,tableFingerprints:before.rows,functionFingerprint:before.schema,roleFingerprint:before.roles,policyFingerprint:before.policies};
