@@ -37,6 +37,7 @@ exports.prepare=async function({args,report,registerSecret}){
   return {data,status:response.status};
  }
  const balance=await stripe('GET','/v1/balance');assert.equal(balance.data.livemode,false);
+ provider.webhookIsolation=await require('./goodies-stripe-isolation.cjs').verifySandboxWebhookIsolation(stripe);
  provider.authentication='PASS';
  async function startEdge(name,runtime){
   const {state,env,base,anonKey,serviceKey,denoBin,api}=runtime,wrapper=path.join(state,'stripe-'+name+'.ts'),logFile=path.join(state,'stripe-'+name+'.log');
