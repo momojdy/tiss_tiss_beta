@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, {useEffect,useRef,useState} from 'react';
 import {Image,Modal,Pressable,ScrollView,Text,View} from 'react-native';
 import {ThinMenuIcon} from '../../features/gatherz/GatherzQuickMenu';
 import {supabase} from '../../lib/supabase';
@@ -10,32 +10,33 @@ export default function KonsolissQuickMenu({visible,close,onAction,dark,unreadNo
  const [notificationColors,setNotificationColors]=useState<string[]>([]);
  const [messageColors,setMessageColors]=useState<string[]>([]);
  const [badgeColorsLoaded,setBadgeColorsLoaded]=useState(false);
+ const requestSequence=useRef(0);
  useEffect(()=>{
   if(!visible)return;
   let active=true;
+  const isCurrent=(seq:number)=>active&&seq===requestSequence.current;
   setBadgeColorsLoaded(false);
   setNotificationColors([]);
   setMessageColors([]);
   const palette:Record<string,string>={goodies:'#FD802E',gatherz:'#A36BE8',flyz:'#4A67B0',wallet:'#81C56C',frenzies:'#B3DF4B',konsoliss:'#DDB52B',woulib:'#FEC509',stayz:'#579BC7',glowz:'#D49E2B'};
   const load=async()=>{
+   const seq=++requestSequence.current;
    const {data:{user}}=await supabase.auth.getUser();
-   if(!active)return;
+   if(!isCurrent(seq))return;
    if(!user){setNotificationColors([]);setMessageColors([]);setBadgeColorsLoaded(true);return;}
    const {data:notices,error:noticeError}=await supabase.from('notifications').select('feature_name').eq('user_id',user.id).eq('read',false);
-   if(!active)return;
+   if(!isCurrent(seq))return;
    setNotificationColors(noticeError?[]:Array.from(new Set((notices??[]).map((n:any)=>palette[String(n.feature_name??'').toLowerCase()]??'#BD279F'))));
-   const {data:conversations,error:conversationError}=await supabase.from('conversations').select('id,feature_name').contains('participant_ids',[user.id]);
-   if(!active)return;
-   if(conversationError||!conversations?.length){setMessageColors([]);setBadgeColorsLoaded(true);return;}
-   const {data:unread,error:messageError}=await supabase.from('messages').select('conversation_id').in('conversation_id',conversations.map((c:any)=>c.id)).is('read_at',null).neq('sender_id',user.id).limit(500);
-   if(!active)return;
-   const ids=new Set((messageError?[]:unread??[]).map((m:any)=>m.conversation_id));
-   setMessageColors(Array.from(new Set(conversations.filter((c:any)=>ids.has(c.id)).map((c:any)=>palette[String(c.feature_name??'').toLowerCase()]??'#BD279F'))));
+   // Real schema: conversations.feature and conversations.unread_customer.
+   const {data:conversations,error:conversationError}=await supabase.from('conversations')
+     .select('feature,unread_customer').contains('participant_ids',[user.id]).gt('unread_customer',0);
+   if(!isCurrent(seq))return;
+   setMessageColors(conversationError?[]:Array.from(new Set((conversations??[]).map((c:any)=>palette[String(c.feature??'').toLowerCase()]??'#BD279F'))));
    setBadgeColorsLoaded(true);
   };
   void load();
-  const channel=supabase.channel('konsoliss-menu-feature-badges').on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>{void load();}).on('postgres_changes',{event:'*',schema:'public',table:'messages'},()=>{void load();}).subscribe();
-  return()=>{active=false;void supabase.removeChannel(channel);};
+  const channel=supabase.channel('konsoliss-menu-feature-badges').on('postgres_changes',{event:'*',schema:'public',table:'notifications'},()=>{void load();}).on('postgres_changes',{event:'*',schema:'public',table:'conversations'},()=>{void load();}).subscribe();
+  return()=>{active=false;requestSequence.current++;void supabase.removeChannel(channel);};
  },[visible]);
 
  // The aggregate badge must not suggest all unread items are Konsoliss when mixed origins exist.
