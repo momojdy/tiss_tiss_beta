@@ -15,7 +15,7 @@ export type KonsolissSelectableContainer = {
 const sample = [
   // number, status, total physically loaded, customer allocated, customer physically loaded
   ['KS-DEMO-01','filling',0,0,0],
-  ['KS-DEMO-02','filling',8.4,2.0,0.6],
+  ['KS-DEMO-02','filling',8.4,2.0,0.02],
   ['KS-DEMO-03','filling',18.7,3.0,1.2],
   ['KS-DEMO-04','filled',31.5,1.6,0.5],
   ['KS-DEMO-05','filled',48.2,4.0,2.0],
