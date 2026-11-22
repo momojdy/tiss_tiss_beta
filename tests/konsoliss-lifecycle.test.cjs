@@ -60,24 +60,39 @@ test('3D container stays interactive and plays a clearly labeled illustrative pa
  assert.doesNotMatch(home,/cx\.fillText\('Your space 0\.50 CBM'/);
  assert.doesNotMatch(home,/cx\.fillText\('16\.3 CBM free'/);
 });
-test('compact container summary remains and the added CBM cards are absent',()=>{
- assert.match(home,/const containerLoadDisplay=emptyContainerDisplay\?'0\.0':'—'/);
- assert.match(home,/const containerFillDisplay=emptyContainerDisplay\?'0%':'—'/);
- assert.match(home,/const containerFreeDisplay=emptyContainerDisplay\?'68\.0':'—'/);
- assert.match(home,/\{containerFillDisplay\} filled/);
- assert.match(home,/\{containerFreeDisplay\} CBM/);
- assert.match(home,/\/ 68 CBM/);
+test('My current load stays based on customer loaded plus inbound versus reserved',()=>{
+ assert.match(home,/const committedValue=progress\?fmt\(progress\.allocatedCbm\)/);
+ assert.match(home,/const fillRatio=progress&&progress\.reservedCbm>0\?progress\.allocatedCbm\/progress\.reservedCbm:0/);
+ assert.match(home,/\{committedValue\}<Tx/);
+ assert.match(home,/\/ \{reservedValue\} CBM/);
+ assert.match(home,/\{fillPercent\} of your space/);
+ assert.match(home,/\{stillToSendValue\} CBM/);
+ assert.doesNotMatch(home,/containerLoadDisplay/);
+ assert.doesNotMatch(home,/containerFillDisplay/);
+});
+test('short empty-state hint appears only without a container or committed cargo',()=>{
+ assert.match(home,/showEmptyLoadHint=currentContainer\.kind==='unassigned'/);
+ assert.match(home,/progress\.loadedCbm===0&&progress\.inboundCbm===0/);
+ assert.match(home,/\{showEmptyLoadHint\?<Tx/);
+ assert.match(home,/Nothing loaded yet/);
+ assert.doesNotMatch(home,/No goods loaded into a container yet/);
+});
+test('lower bar alternates every fifteen seconds only when container assigned',()=>{
+ assert.match(home,/progressView,setProgressView/);
+ assert.match(home,/const hasCurrentContainer=currentContainer\.kind==='assigned'/);
+ assert.match(home,/if\(!hasCurrentContainer\)\{setProgressView\('customer'\);return;\}/);
+ assert.match(home,/setInterval\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),15000\)/);
+ assert.match(home,/progressView==='container'&&hasCurrentContainer/);
+ assert.match(home,/Loaded <Tx/);
+ assert.match(home,/Inbound <Tx/);
+ assert.match(home,/Not allocated <Tx/);
+ assert.match(home,/containerOccupancy\.otherCargoCbm\.toFixed\(1\)/);
+ assert.match(home,/containerOccupancy\.yourSpaceCbm\.toFixed\(1\)/);
+ assert.match(home,/containerOccupancy\.freeCbm\.toFixed\(1\)/);
+ assert.doesNotMatch(home,/Shared container · 68 CBM total capacity/);
  for(const label of ['Space reserved','Goods sent','Loaded in container','Inbound to container','Sent — not yet allocated']){
    assert.doesNotMatch(home,new RegExp("\\['"+label+"'"));
  }
- assert.doesNotMatch(home,/Shared container · 68 CBM total capacity/);
-});
-test('small empty-state text disappears once customer cargo is loaded',()=>{
- assert.match(home,/showEmptyLoadHint=/);
- assert.match(home,/progress\.loadedCbm===0/);
- assert.match(home,/\{showEmptyLoadHint\?<Tx/);
- assert.match(home,/No goods loaded into a container yet\./);
- assert.doesNotMatch(home,/No active load yet\. The loading animation below/);
 });
 test('load progress math does not treat cargo sent as loaded or inbound',()=>{
  const source=fs.readFileSync(path.join(root,'useKonsolissLoadProgress.ts'),'utf8');
