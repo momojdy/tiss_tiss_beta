@@ -31,6 +31,18 @@ Database constraints already enforce nonnegative volumes and `loaded + inbound <
 
 **Verification:** Migration applied successfully; read-back confirmed `security_invoker=true`, source-table RLS enabled, authenticated SELECT allowed and anon SELECT denied. The source table currently contains **zero rows**, so end-to-end verification with a real customer shipment remains outstanding. The combined warehouse/in-transit category cannot distinguish those two physical states until separate verified event data exists. The frontend must not infer that a customer has left the warehouse from a booking alone.
 
+## Live-data restoration and correctness improvements (2026-11-23)
+
+**Customer-facing placeholders removed from the Konsoliss home screen:** commit `b9ea227a8032bd94b1f3011d19178a0701216236` removes the automatic selection of `KS-DEMO-*` containers, the demo container picker entries, the default-on sample customer CBM breakdown (`2.00 / 1.00 / 0.40 / 0.30`), and the preview toggle. The customer summary now displays only values returned by their authenticated, RLS-protected load-progress view, or an explicit missing/unavailable state. The container selector shows only assigned containers. No demo rows were inserted into the database. The unused preview data module remains in the repository for deferred container testing but is not imported into the live home page. **Container geometry and visual test cases are deliberately deferred as requested.**
+
+**Async freshness:** commits `534fd483bb5aa5caec3dd0cb484bb932a8ff72a5`, `4e683cf5daf8afae8301a706e75c0d3ea374c080`, and `e0b3e44a09e8a0813ab98922379bf2d23ee5838e` introduce latest-request guards for the customer load-progress and selected-container occupancy hooks, including cleanup invalidation. These reduce stale responses overwriting newer reads. The other container hooks and app-wide account-change lifecycle still need a dedicated pass.
+
+**Backend CBM validation:** commit `9cfc9a523dfbee5d4236d0d002eb325d535b3a83` compares the backend view's derived columns against values calculated from its source measurements, with explicit tolerances for numeric serialization/rounding. Invalid records become unavailable rather than silently displaying contradictory values.
+
+**Unread feature colors:** commit `0893827e5a0942e13f71a9a6222f0c3118e2b183` fixes an actual schema mismatch: `conversations` has `feature` and `unread_customer`, **not** `feature_name`. The quick menu now reads conversations with positive customer unread counts, uses their feature-origin palette, listens for conversation changes, and ignores superseded async queries. Notifications still use `notifications.feature_name`. The aggregate badge intentionally avoids yellow when other identified unread feature origins exist; unknown data uses magenta. Counts are still passed in from the host, and complete consistency with the host unread totals needs testing.
+
+**Important remaining production blockers:** transactional capacity reservations and payment idempotency have **not** been implemented or proven in this pass; nor has a complete server-side cargo event ledger, end-to-end admin/warehouse lifecycle validation, or a security audit of all writes and RLS policies. Do not describe these as complete. Dedicated Konsoliss orders, support/feedback, Saved persistence, and final device/build/integration tests remain pending. Never infer customer ownership from sample cargo or default a missing verified measurement to a real shipment value.
+
 ## Konsoliss universal three-dot quick menu (updated 2026-11-23)
 
 ### Persistent trigger and appearance
@@ -62,7 +74,7 @@ On opening the popup, `KonsolissQuickMenu.tsx` uses the authenticated Supabase u
 | Glowz | `#D49E2B` |
 | Unknown/other | `#BD279F` |
 
-The current menu uses the **first distinct unread feature color** for each of its two aggregate badges (Notifications and Messages), falling back to magenta when no matching origin is available. It does **not** simultaneously display every origin color or rotate colors when several features have unread items; this remains a possible parity improvement against Gatherz. The numeric unread counts are supplied by the parent screen, not recomputed from these color queries, so confirm their scope matches the displayed color metadata in end-to-end QA. Never infer that all unread items belong to Konsoliss merely because this popup was opened from Konsoliss.
+The current menu prefers a **non-Konsoliss feature color** when several origins are unread for either aggregate badge (Notifications and Messages), falling back to magenta when no matching origin is available. It does **not** simultaneously display every origin color or rotate colors when several features have unread items; this remains a possible parity improvement against Gatherz. The numeric unread counts are supplied by the parent screen, not recomputed from these color queries, so confirm their scope matches the displayed color metadata in end-to-end QA. Never infer that all unread items belong to Konsoliss merely because this popup was opened from Konsoliss.
 
 ### Navigation and known limitations
 
