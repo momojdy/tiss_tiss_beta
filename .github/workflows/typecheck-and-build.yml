@@ -17,5 +17,7 @@ jobs:
         run: npm ci --legacy-peer-deps --no-audit --no-fund
       - name: TypeScript check
         run: npx tsc --noEmit
+      - name: Konsoliss lifecycle notice tests
+        run: node --test tests/konsoliss-lifecycle.test.cjs
       - name: Expo web export
         run: npx expo export --platform web --output-dir /tmp/wantiss-web-export
