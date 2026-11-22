@@ -344,7 +344,8 @@ export async function refreshUserAddresses() {
   return S.addr;
 }
 
-export async function load() {
+type HydratedCallback = () => void;
+export async function load(onHydrated?: HydratedCallback) {
   const {data: cachedSession} = await supabase.auth.getSession();
   switchGoodiesAccount(cachedSession.session?.user.id || null);
   const ownerId = S.accountId;
@@ -362,6 +363,13 @@ export async function load() {
     const attempt = JSON.parse(rawAttempt || 'null');
     if (S.accountId === ownerId && attempt?.ownerId === ownerId && typeof attempt.key === 'string' && typeof attempt.fingerprint === 'string') S.checkoutAttempt = attempt;
   } catch (e) {}
+  if (S.accountId !== ownerId) return;
+  try {const theme = await AsyncStorage.getItem('goodies-theme'); if (theme === 'light' || theme === 'dark') S.theme = theme;} catch {}
+  try {const language = await AsyncStorage.getItem('goodies-lang'); if (language) S.lang = wantissLocale(language);} catch {}
+  if (S.accountId !== ownerId) return;
+  recoverShoppingSnapshots(S, IT, STB, placeholderStore);
+  S.catalogLoading = true;
+  onHydrated?.();
   S.wallet = 0; S.hasWallet = false; S.cards = []; S.selectedCardId = '';
   try {
     const {data: auth} = await supabase.auth.getUser();

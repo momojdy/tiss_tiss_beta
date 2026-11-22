@@ -1,0 +1,52 @@
+{
+  "date": "2026-11-22",
+  "scope": "Checkout time selection, requested copy removal, owned carousel hydration and synchronized isolated CMS preview",
+  "tests": [
+    {
+      "suite": "customer",
+      "command": "npm run test:goodies",
+      "classification": "PASS",
+      "tests": 308,
+      "pass": 308,
+      "fail": 0,
+      "logSha256": "35964aa1cb9b651682d1fd7ede7d8a45545c751b0a466a23f00eead539992c6f"
+    },
+    {
+      "suite": "admin",
+      "command": "npm run test:goodies",
+      "classification": "PASS",
+      "tests": 73,
+      "pass": 73,
+      "fail": 0,
+      "logSha256": "ef36bce2e18b7cf6f296cd3f1c73f702595e874c8f9c162ee2978ee0f4e2b20b"
+    },
+    {
+      "suite": "cross-role",
+      "command": "npm run test:goodies-cross-role",
+      "classification": "PASS",
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "logSha256": "fdedf3909f02224a1f4944decf4b73fa2f9201e936764a5e473475e77e6d162d"
+    }
+  ],
+  "checks": {
+    "customerTypeScript": "PASS",
+    "adminTypeScript": "PASS",
+    "requiredLint": "PASS",
+    "changedRuntimeLintErrors": 0,
+    "cmsRoutes": 34,
+    "cmsFields": 1923,
+    "preparedContentSchemaErrors": 0,
+    "preparedContentPublicationErrors": 0
+  },
+  "limits": {
+    "physicalAndroidAndIPhone": "NOT VERIFIED",
+    "installedAppReload": "NOT VERIFIED",
+    "appReleasePerformed": false,
+    "otaPerformed": false,
+    "cmsPublicationPerformed": false,
+    "productionDatabaseChanged": false,
+    "hostedSyntheticTestsPerformed": false
+  }
+}
