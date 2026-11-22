@@ -3,7 +3,7 @@ const app={userId:'owner',email:'owner@example.test',biz:{id:'business',goodies_
 function service(responses={},user='owner'){
  const calls=[];
  const client={auth:{getUser:async()=>({data:{user:{id:user,email:'owner@example.test'}}})},rpc:async(name,args)=>{calls.push({rpc:name,args});return responses[name]||{data:null,error:null};},from:table=>{const call={table,filters:[]};calls.push(call);const query=new Proxy({then(resolve,reject){return Promise.resolve(responses[table]||{data:[],error:null}).then(resolve,reject);}}, {get(target,name){return name==='then'?target.then:(...args)=>{call.filters.push([name,...args]);return query;};}});return query;}};
- const module={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/services/goodiesWorkspace.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,Date,require:id=>id.includes('supabase')?{supabase:client}:{isGoodiesOnlyBusiness:a=>a.meta.feats.every(f=>f.feature==='goodies')}});
+ const module={exports:{}};vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/services/goodiesWorkspace.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{module,exports:module.exports,Date,require:id=>id.includes('supabase')?{supabase:client}:{isGoodiesWorkspace:a=>a.meta.feats.every(f=>f.feature==='goodies')||(a.workspaceFeature==='goodies'&&a.meta.feats.some(f=>f.feature==='goodies'))}});
  return {...module.exports,calls};
 }
 test('Goodies action cards read real scoped orders, rejected products and messages without legacy RPCs',async()=>{
@@ -66,4 +66,11 @@ test('vendor search/notification destinations load the selected product and orde
   await (kind==='product'?module.exports('business',0,'selected'):module.exports());
   assert.ok(filters.some(f=>f[0]==='eq'&&f[1]==='business_id'&&f[2]==='business'));assert.ok(filters.some(f=>f[0]==='eq'&&f[1]==='id'&&f[2]==='selected'));
  }
+});
+
+test('mixed businesses in the Goodies workspace use Goodies actions, activity and search',async()=>{
+ const mixed={...app,workspaceFeature:'goodies',meta:{feats:[{feature:'goodies'},{feature:'other'}]}};
+ const s=service();await s.businessActions(mixed);await s.businessActivity(mixed);await s.businessSearch(mixed,'meal');
+ assert.ok(s.calls.every(c=>!c.rpc),'Goodies workspace must not call missing generic RPCs');
+ const legacy=service();await legacy.businessSearch({...mixed,workspaceFeature:undefined},'meal');assert.equal(legacy.calls[0].rpc,'search_business');
 });

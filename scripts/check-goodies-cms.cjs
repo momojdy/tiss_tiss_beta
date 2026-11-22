@@ -21,6 +21,7 @@ inspect(root);assert.deepEqual(violations,[],'CMS labels must cover literal refe
 assert.equal(new Set(current.routes.map(route=>route.route)).size,34,'Update the explicit route acceptance register when navigation changes.');
 
 const critical=require('./goodies-cms-source.cjs').criticalKeys(current);
-const migrationRoot=path.join(root,'../../../supabase/migrations');
-const review=['20261120063231_goodies_content_repair_review_coverage.sql','20261120173052_goodies_push_content_review.sql'].map(file=>fs.readFileSync(path.join(migrationRoot,file),'utf8')).join('\n');
-for(const key of critical)assert.ok(review.includes("'"+key+"'"),'Missing server publication review coverage: '+key);
+// Publication and editorial review are independent. Verify the generated review catalogue,
+// rather than requiring every new key in an obsolete historical SQL allow-list.
+const reviewCatalogue=JSON.parse(fs.readFileSync(path.resolve(root,'../../../../tiss-admin/src/features/admin/goodiesConsumer/criticalContentKeys.json'),'utf8'));
+assert.deepEqual([...critical].sort(),[...reviewCatalogue].sort(),'Regenerate the editor review-key catalogue');

@@ -1,4 +1,4 @@
-import {isGoodiesBusiness,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
+import {isGoodiesBusiness,isGoodiesWorkspace} from '../../services/goodiesSettlement';
 import {GoodiesPayoutsPanel} from './BusinessSpaceGoodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -90,7 +90,7 @@ export function OrdersPanel() {
   if(scope.current.business!==app.biz.id||scope.current.user!==app.userId){scope.current.active=false;scope.current={business:app.biz.id,user:app.userId,active:true};mutation.current=null;}
   useEffect(()=>()=>{scope.current.active=false;},[]);
   useEffect(()=>{setBusyId('');},[app.biz.id,app.userId]);
-  const o = useQ(() => isGoodiesOnlyBusiness(app)?Promise.resolve([]):q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
+  const o = useQ(() => isGoodiesWorkspace(app)?Promise.resolve([]):q<any[]>(supabase.from('feature_orders').select('*').eq('business_id', app.biz.id).order('created_at', { ascending: false }).order('id', {ascending:false}).range(page*80,page*80+79)), [app.biz.id, app.tick, page]);
   const goodies = useQ(() => {
     let query=supabase.from('goodies_orders').select('*').eq('business_id',app.biz.id);
     if(f==='Open')query=query.not('status','in','(completed,cancelled,declined,expired)');

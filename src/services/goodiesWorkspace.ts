@@ -1,10 +1,10 @@
 import {supabase} from '../lib/supabase';
-import {isGoodiesOnlyBusiness} from './goodiesSettlement';
+import {isGoodiesWorkspace} from './goodiesSettlement';
 
 async function result<T>(request:PromiseLike<{data:T|null;error:any}>):Promise<T>{const response=await request;if(response.error)throw response.error;return response.data as T;}
 const legacy=(name:string,args:Record<string,unknown>)=>result<any[]>(supabase.rpc(name,args));
 export async function businessActions(app:any){
- if(!isGoodiesOnlyBusiness(app))return legacy('action_required',{p_business:app.biz.id});
+ if(!isGoodiesWorkspace(app))return legacy('action_required',{p_business:app.biz.id});
  const [orders,products,messages]=await Promise.all([
   result<any[]>(supabase.from('goodies_orders').select('id').eq('business_id',app.biz.id).eq('status','placed').limit(1)),
   result<any[]>(supabase.from('goodies_products').select('id').eq('business_id',app.biz.id).eq('review_status','rejected').limit(1)),
@@ -14,7 +14,7 @@ export async function businessActions(app:any){
 }
 function activityKind(type:string){return /refund/.test(type)?'refund':/payout/.test(type)?'payout':/settlement|commission/.test(type)?'earn':'order';}
 export async function businessActivity(app:any,limit=30,before:string|null=null,kind:string|null=null){
- if(!isGoodiesOnlyBusiness(app))return legacy('activity_feed',{p_business:app.biz.id,p_days:120,p_before:before,p_limit:limit,p_kind:kind});
+ if(!isGoodiesWorkspace(app))return legacy('activity_feed',{p_business:app.biz.id,p_days:120,p_before:before,p_limit:limit,p_kind:kind});
  let request=supabase.from('notifications').select('id,title,created_at,notification_type,metadata').eq('user_id',app.userId).contains('metadata',{business_id:app.biz.id}).gte('created_at',new Date(Date.now()-120*86400000).toISOString()).order('created_at',{ascending:false}).order('id',{ascending:false}).limit(limit);
  if(before){const [at,id]=before.split('|');if(!Number.isFinite(Date.parse(at))||!/^[\da-f-]{36}$/i.test(id||''))throw Error('Invalid activity cursor');request=request.or(`created_at.lt.${at},and(created_at.eq.${at},id.lt.${id})`);}
  if(kind==='refund')request=request.like('notification_type','%refund%');
@@ -25,7 +25,7 @@ export async function businessActivity(app:any,limit=30,before:string|null=null,
  return rows.map(row=>({id:row.id,title:row.title,kind:activityKind(row.notification_type||''),feature:'goodies',at:row.created_at,cursor:row.created_at+'|'+row.id}));
 }
 export async function businessSearch(app:any,query:string){
- if(!isGoodiesOnlyBusiness(app))return legacy('search_business',{p_business:app.biz.id,p_q:query});
+ if(!isGoodiesWorkspace(app))return legacy('search_business',{p_business:app.biz.id,p_q:query});
  const pattern='%'+query.replace(/[\\%_]/g,'\\$&')+'%';
  const [products,orders]=await Promise.all([
   result<any[]>(supabase.from('goodies_products').select('id,name,review_status').eq('business_id',app.biz.id).ilike('name',pattern).order('id').limit(30)),

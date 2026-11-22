@@ -1,4 +1,4 @@
-import {isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
+import {isGoodiesWorkspace} from '../../services/goodiesSettlement';
 import {businessActivity,requestBusinessData} from '../../services/goodiesWorkspace';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -20,7 +20,7 @@ import { supabase } from '../../lib/supabase';
 
 import { useTheme, useS, money, ago, initials, uuid, Status, DAYS, normalizeBusinessHours, COUNTRIES, flagOf, countryOf, rpc, useQ, publicUrl, useApp, useAct, Icon, Btn, Pill, StatusPill, Toggle, Section, Field, Empty, Skel, ErrBox, Loading, Avatar, FIcon, Row, Divided, Pg, DateField, Wrap, Checklist, q } from "./BusinessSpaceShared";
 
-export function PromotionsPage(){const app=useApp();return isGoodiesOnlyBusiness(app)?<GoodiesPromotionsPage/>:<LegacyPromotionsPage/>;}
+export function PromotionsPage(){const app=useApp();return isGoodiesWorkspace(app)?<GoodiesPromotionsPage/>:<LegacyPromotionsPage/>;}
 function GoodiesPromotionsPage(){
  const app=useApp(),s=useS(),[page,setPage]=useState(0);
  const p=useQ(()=>rpc<any[]>('goodies_vendor_promotions',{p_business:app.biz.id,p_offset:page*40,p_limit:40}),[app.biz.id,app.tick,page]);
@@ -43,7 +43,7 @@ function LegacyPromotionsPage() {
 /* ---------- registration (optional business verification) ---------- */
 export function RegistrationPage() {
   const app = useApp(), s = useS(), t = useTheme(), a = useAct(), b = app.biz;
-  const r = useQ(() => isGoodiesOnlyBusiness(app)?Promise.resolve([]):rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
+  const r = useQ(() => isGoodiesWorkspace(app)?Promise.resolve([]):rpc<any[]>('feature_requirements_status', { p_business: b.id, p_feature: '_business' }), [b.id, app.tick]);
   const applicationDocs = useQ(async () => {
     const { data: auth, error: authError } = await supabase.auth.getUser();
     if (authError) throw authError;
@@ -147,7 +147,7 @@ export function RegistrationPage() {
       </View>
       <View style={s.row}><StatusPill s={b.verification} /></View>
       <View style={{ backgroundColor: b.verification === 'restricted' || b.verification === 'action' ? t.badBg : t.soft, borderRadius: 12, padding: 12 }}><Text style={{ color: b.verification === 'restricted' || b.verification === 'action' ? t.badFg : t.blue, fontWeight: '600', lineHeight: 20 }}>{msg[b.verification]}</Text></View>
-      {!isGoodiesOnlyBusiness(app)?<View style={s.cardFlat}>
+      {!isGoodiesWorkspace(app)?<View style={s.cardFlat}>
         <Text style={[s.title, { paddingTop: 14 }]}>Documents</Text>
         {r.e ? <View style={{ paddingVertical: 12 }}><ErrBox e={r.e} retry={r.reload} /></View> : r.l && !r.d ? <View style={{ paddingVertical: 12 }}><Skel h={120} /></View> : rows.length ? (
           <Divided>{rows.map(x => <Row key={x.id} title={x.label} sub={x.file ? String(x.file).split('/').pop() : 'PDF or photo, up to 15 MB'} sub2={x.reason} right={<View style={{ alignItems: 'flex-end', gap: 6 }}>{pill(x.status)}{can && (x.status === 'missing' || x.status === 'rejected' || x.status === 'submitted') ? <Btn small kind="soft" label={x.status === 'missing' ? 'Upload' : 'Replace'} busy={a.busy} onPress={() => upload(x)} /> : null}</View>} />)}</Divided>
@@ -164,11 +164,11 @@ export function RegistrationPage() {
 export function AuditPage() {
   const app = useApp(), s = useS();
   const [cursors,setCursors]=useState<(string|null)[]>([null]);
-  const l = useQ(() => isGoodiesOnlyBusiness(app)?businessActivity(app,80,cursors[cursors.length-1]):q<any[]>(supabase.from('audit_log').select('id,action,meta,at').eq('business_id', app.biz.id).order('at', { ascending: false }).limit(80)), [app.biz.id, app.tick,cursors]);
+  const l = useQ(() => isGoodiesWorkspace(app)?businessActivity(app,80,cursors[cursors.length-1]):q<any[]>(supabase.from('audit_log').select('id,action,meta,at').eq('business_id', app.biz.id).order('at', { ascending: false }).limit(80)), [app.biz.id, app.tick,cursors]);
   return (
     <Pg title="Activity log" onBack={app.back} refreshing={l.l && !!l.d} onRefresh={()=>{setCursors([null]);app.bump();}}>
       {l.e ? <ErrBox e={l.e} retry={l.reload} /> : l.l && !l.d ? <Loading /> : (l.d ?? []).length ? <View style={s.cardFlat}><Divided>{(l.d ?? []).map(x => <Row key={x.id} title={x.title ?? x.meta?.title ?? String(x.action).replace(/_/g, ' ')} sub={ago(x.at)} />)}</Divided></View> : <View style={s.card}><Empty icon="history" title="Nothing logged yet" /></View>}
-      {isGoodiesOnlyBusiness(app)?<View style={s.row}>{cursors.length>1?<Btn label="Previous" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>c.slice(0,-1))}/>:null}{l.d?.length===80?<Btn label="Next" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>[...c,l.d![l.d!.length-1].cursor])}/>:null}</View>:null}
+      {isGoodiesWorkspace(app)?<View style={s.row}>{cursors.length>1?<Btn label="Previous" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>c.slice(0,-1))}/>:null}{l.d?.length===80?<Btn label="Next" kind="soft" disabled={l.l} onPress={()=>setCursors(c=>[...c,l.d![l.d!.length-1].cursor])}/>:null}</View>:null}
     </Pg>
   );
 }

@@ -111,3 +111,11 @@ test('own-driver countdown never fabricates a wait when server eligibility is im
  assert.equal(make({d:{businessId:'other',waits:{order:0},receivedAt:2000}},1000)({id:'order'}),null);
  assert.equal(make({e:'unavailable',d:null},1000)({id:'order'}),null);
 });
+
+test('explicit Goodies workspace keeps mixed-business financial totals scoped and other contexts unchanged',async()=>{
+ const calls=[],data={...base(),scope:'goodies',revenue:10,gross:10,fees:1,refunds:0,prev_revenue:0,series:[],prev_series:[],features:[{feature:'goodies',amount:10}]};
+ const s=service({rpc:async(name,args)=>{calls.push(name);return {data};}});
+ const app={workspaceFeature:'goodies',biz:{id:'business',goodies_store_id:'store'},meta:{feats:[{feature:'goodies'},{feature:'other'}]},range:{from:'2026-11-01',to:'2026-11-07'}};
+ await s.getBusinessFinancialSummary(app);assert.equal(calls[0],'goodies_vendor_dashboard_range');
+ await s.getBusinessFinancialSummary({...app,workspaceFeature:undefined});assert.equal(calls[1],'dashboard_range');
+});

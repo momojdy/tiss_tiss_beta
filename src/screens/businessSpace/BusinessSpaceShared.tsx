@@ -1,3 +1,4 @@
+import {isGoodiesWorkspace} from '../../services/goodiesSettlement';
 import {label as cmsLabel} from '../../features/Goodies/content';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
@@ -414,6 +415,7 @@ export const publicUrl = (path: string) => supabase.storage.from('listing-photos
 
 /* ---------- app context ---------- */
 export interface App {
+  workspaceFeature?: 'goodies';
   biz: Biz; bizList: Biz[]; meta: Meta; userId: string; email: string; name: string;
   tick: number; bump: () => void; toast: (m: string) => void;
   go: (page: string, arg?: any) => void; back: () => void; tab: (p: string | null) => void;
@@ -1005,7 +1007,7 @@ export function WalletCard({ available, pending, title, payoutLabel }: any) {
 }
 export function Checklist() {
   const app = useApp(), s = useS(), t = useTheme(), b = app.biz, a = useAct();
-  const nF = app.meta.feats.length, first = app.meta.feats[0]?.feature, payOK = app.meta.payout?.status === 'verified';
+  const nF = app.meta.feats.length, first = isGoodiesWorkspace(app)?'goodies':app.meta.feats[0]?.feature, payOK = app.meta.payout?.status === 'verified';
   const steps: any[] = [
     { l: 'Create business profile', d: true, sub: 'Name, logo, contact, location' },
     { l: 'Register your business (optional)', d: b.verification === 'verified', sub: b.verification === 'verified' ? 'Approved by Wantiss' : b.verification === 'pending' ? 'In review' : b.verification === 'restricted' ? 'Restricted' : 'Earn the Verified badge', btn: b.verification === 'setup' ? 'Register' : 'Open', on: () => app.go('registration') },

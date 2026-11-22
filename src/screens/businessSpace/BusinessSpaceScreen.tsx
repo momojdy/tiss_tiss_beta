@@ -139,13 +139,13 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
 
   const meta = useQ<Meta>(async () => {
     const feats=await q<any[]>(supabase.from('business_features').select('feature,status').eq('business_id',biz.id));
-    const onlyGoodies=(!!biz.goodies_store_id||feats.some(row=>row.feature==='goodies'))&&feats.every(row=>row.feature==='goodies');
+    const goodiesScope=!!biz.goodies_store_id||feats.some(row=>row.feature==='goodies');
     const [lc,un,cv,pm,rules]=await Promise.all([
-      onlyGoodies?supabase.from('goodies_products').select('id',{count:'exact',head:true}).eq('business_id',biz.id):supabase.from('listings').select('id',{count:'exact',head:true}).eq('business_id',biz.id).neq('status','archived'),
+      goodiesScope?supabase.from('goodies_products').select('id',{count:'exact',head:true}).eq('business_id',biz.id):supabase.from('listings').select('id',{count:'exact',head:true}).eq('business_id',biz.id).neq('status','archived'),
       supabase.from('notifications').select('id',{count:'exact',head:true}).eq('user_id',user.id).contains('metadata',{business_id:biz.id}).eq('read',false),
       q<any[]>(supabase.from('conversations').select('unread_business').eq('business_id',biz.id)),
-      onlyGoodies?Promise.resolve({data:null,error:null}):supabase.from('payout_methods').select('status,last4').eq('business_id',biz.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
-      onlyGoodies?Promise.resolve({data:[],error:null}):supabase.from('payout_rules').select('*').order('sort'),
+      goodiesScope?Promise.resolve({data:null,error:null}):supabase.from('payout_methods').select('status,last4').eq('business_id',biz.id).order('created_at',{ascending:false}).limit(1).maybeSingle(),
+      goodiesScope?Promise.resolve({data:[],error:null}):supabase.from('payout_rules').select('*').order('sort'),
     ]);
     for(const response of [lc,un,pm,rules])if(response.error)throw response.error;
     const rr: any[] = rules.data ?? [];
@@ -235,6 +235,7 @@ function Workspace({ user, bizList, reloadBiz, dark, setDark, onSignOut, onBuyer
   }, [wiz, sheet, panel, stack.length, back, closePanel]);
 
   const app: App = {
+    workspaceFeature: goodiesWorkspace ? 'goodies' : undefined,
     biz, bizList, meta: m, userId: user.id, email: user.email, name: user.name, tick, bump, toast,
     go: nav.go, back, tab: p => { if(p==='listings'&&goodiesWorkspace){nav.go('goodiesProducts');return;} setStack([]); setSheet(null); setPanel(p ? { name: p } : null); },
     sheet: (name, arg) => setSheet({ name, arg }), closeSheet: () => setSheet(null),

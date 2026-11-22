@@ -2,7 +2,7 @@
 
 This is the guide to the existing Goodies customer app, vendor dashboard, courier workspace and admin panel. It describes the implemented rules and the live configuration observed on **22 November 2026**. Amounts and switches below are a dated snapshot, not permanent defaults.
 
-**Readiness:** Goodies has real backend workflows and enabled Wallet operations, but is **not certified for production release**. Installed cross-role/device acceptance, payment-provider reconciliation and recovery checks remain open. Owner-deferred work is listed separately below. See the [current audit and evidence](../../../docs/goodies/operating-guide-audit-20261122/README.md); older reports are historical snapshots.
+**Readiness:** Goodies has real backend workflows and enabled Wallet operations, but is **not certified for production release**. Installed cross-role/device acceptance, payment-provider reconciliation and recovery checks remain open. Owner-deferred work is listed separately below. See the [confirmed-gap repairs](../../../docs/goodies/confirmed-gap-repairs-20261122.md) and [audit and evidence](../../../docs/goodies/operating-guide-audit-20261122/README.md); older reports are historical snapshots.
 
 ## 1. One system, four roles
 
@@ -85,7 +85,7 @@ Payable total = validated product subtotal
 
 The server checks product/option/builder prices, stock, store minimums, promo eligibility, delivery quote, allowed tips and the exact total. A price or quote change requires review; a lost response must recover the original checkout instead of charging again. There is no separate automatic tax term in this checkout formula; a jurisdictional tax engine must not be assumed.
 
-Discount authorization comes from `goodies_promotions`, not an edited coupon caption. The current published CMS coupon list is empty. The editor exposes wording for existing coupons and the vendor page lists existing offers/contact support; those controls are not a connected financial coupon-creation/activation workflow. That operational administration remains a recorded gap rather than a promise that publishing marketing text creates a redeemable discount.
+Discount authorization comes from `goodies_promotions`, not an edited coupon caption. Admin → Goodies → Promotions provides finance-controlled creation, editing and activation of percentage/free-delivery codes, store scope, minimum subtotal, validity timestamps and total redemption limits. Review reasons and audit records are required; already redeemed financial terms cannot be rewritten. Public content endpoints overlay current eligible financial offers onto CMS wording. Marketing drafts cannot authorize discounts. Global campaign features such as fixed-amount discounts, funding budgets, weekday rules and per-customer caps are outside this supported Goodies coupon contract.
 
 | Component | Current implemented rule |
 | --- | --- |
@@ -123,7 +123,7 @@ Published switches currently enable Wallet, Card and Cash and disable MonCash ch
 
 Wallet payment debits the authenticated account through an idempotent server transaction. Card setup/checkout uses the trusted server's Stripe customer binding, saved methods and supported bank-authentication flow. Stripe webhook signature verification, event deduplication and payment-state processing determine confirmed payment; a client success screen is not authority. Internal worker endpoints use their own protected authentication even where gateway JWT verification is disabled.
 
-Cash is offered only when the server's store/global/settlement/rate/exposure rules allow it. With settlement activated, merchant-managed COD can operate before a Wantiss courier is available. The remaining checkout caption about requiring an available courier predates that policy and is recorded as a wording inconsistency in the audit.
+Cash is offered only when the server's store/global/settlement/rate/exposure rules allow it. With settlement activated, merchant-managed COD can operate before a Wantiss courier is available. Checkout describes store/order eligibility without claiming an available platform courier is always required.
 
 ## 6. Order lifecycle and cross-role updates
 
@@ -260,10 +260,10 @@ Live metadata confirms 26 Goodies tables plus two Help Pay tables have RLS enabl
 | Classification | Current conclusion |
 | --- | --- |
 | **PASS — scoped evidence** | Source route/CMS coverage; inspected literal Goodies RPC signatures; enabled Wallet/settlement/private-proof switches; private bucket metadata; selected financial/recovery/GPS tests; client secret scan; deployed Edge entry comparison. See the evidence for exact limits. |
-| **FAIL — confirmed shared limitation** | Nine older shared RPC names are absent. Goodies-only branches bypass them, but mixed-feature business overview/search/activity/registration flows can enter those legacy paths. Mixed-feature workspaces are not certified. |
+| **PASS — scoped dispatch tests** | Explicit Goodies workspace context uses Goodies APIs even for mixed-feature businesses. Unrelated feature contexts retain their existing APIs and are not certified by this Goodies repair. |
 | **FAIL — deferred safeguard** | Leaked-password protection is disabled as acknowledged by the owner. |
-| **FAIL — copy consistency** | The COD caption still describes courier availability although the active settlement policy can permit merchant-managed COD without it. It should be aligned with the implemented policy. |
-| **FAIL — operational scope** | The existing promotion interfaces do not provide connected creation/activation of authoritative financial discount codes; CMS wording alone cannot perform it. |
+| **PASS — source consistency** | COD wording reflects store/order eligibility; the editor catalogue and phone-preview mirror are synchronized. Installed acceptance remains open. |
+| **PASS — isolated/backend checks** | Dedicated finance-authorized promotion operations, public offer terms, audit, stale/concurrent edits and eligibility rules pass focused checks. Signed-in installed admin/customer acceptance remains open. |
 | **NOT VERIFIED** | Every installed customer/vendor/courier/admin interaction and restricted-staff/cross-account authorization path; complete cross-role order outcomes; physical GPS/background/offline/push/proof behavior; configured signed installers; installed card/3DS/provider reconciliation; installed CMS reload; full production restore. |
 
 Provider test history includes successful API scenarios, but the existing shared Stripe test account forwards events to hosted Wantiss. Further synthetic financial testing must use an approved isolated **Stripe** sandbox with no forwarding to live Wantiss. Do not create hosted isolated Supabase tests/projects or real-money tests to fill this gap.

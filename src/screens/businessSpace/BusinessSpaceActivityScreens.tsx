@@ -1,5 +1,5 @@
 import {businessActions,businessActivity} from '../../services/goodiesWorkspace';
-import {getBusinessFinancialSummary,isGoodiesOnlyBusiness} from '../../services/goodiesSettlement';
+import {getBusinessFinancialSummary,isGoodiesWorkspace} from '../../services/goodiesSettlement';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, Alert, Animated, AppState, BackHandler, Image, KeyboardAvoidingView, PanResponder, Platform, Pressable, RefreshControl, ScrollView, StyleSheet, Switch, Text, TextInput, View, useColorScheme, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,7 +21,7 @@ import { FX, FM, FUI, LIGHT, useTheme, useS, money, short, parseISO, fmtDay, day
 
 export function ActionsPage() {
   const app = useApp(), s = useS();
-  const a = useQ(() => businessActions(app), [app.biz.id, app.tick,isGoodiesOnlyBusiness(app)]);
+  const a = useQ(() => businessActions(app), [app.biz.id, app.tick,isGoodiesWorkspace(app)]);
   return (
     <Pg title="Action required" onBack={app.back} refreshing={a.l && !!a.d} onRefresh={app.bump}>
       {a.e ? <ErrBox e={a.e} retry={a.reload} /> : a.l && !a.d ? <Loading /> : (a.d ?? []).length ? <View style={[s.cardFlat, { borderWidth: 2, borderStyle: 'dotted', borderColor: LIGHT.blue }]}><Divided>{(a.d ?? []).map((x: any, i: number) => <ActionRow key={i} a={x} />)}</Divided></View> : <View style={s.card}><Empty icon="check-circle-outline" title="You're all caught up" hint="Nothing needs your attention right now." /></View>}
@@ -72,10 +72,10 @@ export function ExplorePage() {
 /* ---------- charts ---------- */
 export function ChartsPage() {
   const app = useApp(), s = useS(), t = useTheme(), { range } = app;
-  const sum = useQ(() => getBusinessFinancialSummary(app), [app.biz.id, range.from, range.to, app.tick,isGoodiesOnlyBusiness(app)]);
+  const sum = useQ(() => getBusinessFinancialSummary(app), [app.biz.id, range.from, range.to, app.tick,isGoodiesWorkspace(app)]);
   const [ci, setCi] = useState<number | null>(null);
   const { width } = useWindowDimensions();
-  const d = isGoodiesOnlyBusiness(app)&&sum.d?.business_id!==app.biz.id?null:sum.d, cur: { d: string; v: number }[] = d?.series ?? [], pv: { d: string; v: number }[] = d?.prev_series ?? [];
+  const d = isGoodiesWorkspace(app)&&sum.d?.business_id!==app.biz.id?null:sum.d, cur: { d: string; v: number }[] = d?.series ?? [], pv: { d: string; v: number }[] = d?.prev_series ?? [];
   const feats: any[] = [...(d?.features ?? [])].sort((a, b) => Number(b.amount) - Number(a.amount));
   const total = feats.reduce((a, x) => a + Number(x.amount), 0) || 1;
   const rev = Number(d?.revenue ?? 0), prev = Number(d?.prev_revenue ?? 0), growth = prev ? ((rev - prev) / Math.abs(prev)) * 100 : null;

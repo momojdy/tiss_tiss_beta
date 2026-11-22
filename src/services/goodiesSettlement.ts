@@ -49,6 +49,7 @@ export async function registerGoodiesDestination(business:string,method:string,c
 export const isGoodiesBusiness=(app:any)=>!!app.biz?.goodies_store_id||app.meta?.feats?.some((row:any)=>row.feature==='goodies');
 
 export const isGoodiesOnlyBusiness=(app:any)=>isGoodiesBusiness(app)&&(app.meta?.feats||[]).every((row:any)=>row.feature==='goodies');
+export const isGoodiesWorkspace=(app:any)=>isGoodiesOnlyBusiness(app)||(app.workspaceFeature==='goodies'&&isGoodiesBusiness(app));
 function reportingMetric(value:unknown):number{
  // Revenue reports prorate partial refunds and may contain fractional cents.
  // Preserve those values while rejecting missing/nondecimal server results.
@@ -58,7 +59,7 @@ function reportingMetric(value:unknown):number{
  return amount;
 }
 export async function getBusinessFinancialSummary(app:any){
- if(!isGoodiesOnlyBusiness(app))return call<any>('dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to,p_feature:null});
+ if(!isGoodiesWorkspace(app))return call<any>('dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to,p_feature:null});
  const raw=await call<any>('goodies_vendor_dashboard_range',{p_business:app.biz.id,p_from:app.range.from,p_to:app.range.to});
  const data={...raw,...parseSettlementSummary(raw)};
  if(data.business_id!==app.biz.id||data.scope!=='goodies')throw new GoodiesSettlementError();

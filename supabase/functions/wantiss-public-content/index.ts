@@ -1,3 +1,4 @@
+import {mergeGoodiesPromotions} from "../_shared/goodiesPromotions.ts";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 
@@ -67,6 +68,12 @@ Deno.serve(async (req: Request) => {
     .select("asset_key,content_type,byte_size,alt_text").eq("status", "published");
   if (assetError) return reply(503, { error: "Published assets are temporarily unavailable" });
 
+  let publicContent = content || [];
+  if (publicContent.some((record: any) => ['goodies.content', 'goodies'].includes(record.content_key))) {
+    const {data: promotions, error: promotionError} = await admin.rpc('goodies_public_promotions');
+    if (promotionError || !Array.isArray(promotions)) return reply(503, {error: 'Published offers are temporarily unavailable'});
+    publicContent = mergeGoodiesPromotions(publicContent, promotions);
+  }
   const publishedAssets = (assets || []).map(asset => ({
     ...asset,
     url: stableAssetUrl(url, "asset_file", asset.asset_key),
@@ -79,7 +86,7 @@ Deno.serve(async (req: Request) => {
     wordmark_url: brand?.wordmark_storage_path ? stableAssetUrl(url, "brand_asset", "wordmark") : null,
     updated_at: brand?.updated_at || null,
   };
-  return new Response(JSON.stringify({ content: content || [], assets: publishedAssets, branding }), {
+  return new Response(JSON.stringify({ content: publicContent, assets: publishedAssets, branding }), {
     status: 200, headers: { ...headers, "Content-Type": "application/json", "Cache-Control": "public, max-age=60" },
   });
 });

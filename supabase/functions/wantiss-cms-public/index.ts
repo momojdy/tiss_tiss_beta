@@ -1,3 +1,4 @@
+import {mergeGoodiesPromotions} from "../_shared/goodiesPromotions.ts";
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "npm:@supabase/supabase-js@2.117.2";
 
@@ -60,9 +61,15 @@ Deno.serve(async (req: Request) => {
       .eq("status", "published").order("created_at", { ascending: false }).limit(100),
   ]);
   if (contentError || assetError) return reply(500, { error: "Published content could not be loaded" });
+  let publicContent = content || [];
+  if (publicContent.some((record: any) => ['goodies.content', 'goodies'].includes(record.content_key))) {
+    const {data: promotions, error: promotionError} = await admin.rpc('goodies_public_promotions');
+    if (promotionError || !Array.isArray(promotions)) return reply(503, {error: 'Published offers are temporarily unavailable'});
+    publicContent = mergeGoodiesPromotions(publicContent, promotions);
+  }
   const publishedAssets = (assets || []).map(asset => ({
     ...asset,
     url: assetUrl(url, asset.asset_key),
   }));
-  return reply(200, { locale, content: content || [], assets: publishedAssets, generated_at: new Date().toISOString() });
+  return reply(200, { locale, content: publicContent, assets: publishedAssets, generated_at: new Date().toISOString() });
 });
