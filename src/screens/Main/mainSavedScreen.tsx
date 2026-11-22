@@ -17,7 +17,7 @@ const other=[
  {icon:'heart-outline' as const,title:'Frenzies',detail:'Saved moments and favorites',count:'',color:'#91B834'},
  {icon:'bed-outline' as const,title:'Stayz',detail:'Places you want to stay',color:'#d92d36'},
 ];
-export default function SavedScreen({onBack,onOpenGoodies,onOpenFeature}:{onBack:()=>void;onOpenGoodies:(route:string)=>void;onOpenFeature:(feature:string)=>void}) {
+export default function SavedScreen({onBack,onOpenGoodies,onOpenFeature,preferredFeature='goodies'}:{onBack:()=>void;onOpenGoodies:(route:string)=>void;onOpenFeature:(feature:string)=>void;preferredFeature?:string}) {
  useGoodies();
  const storeCount=S.fav.length, itemCount=S.favp.length;
  const [counts,setCounts]=useState<Record<string,number>>({});
@@ -27,6 +27,7 @@ export default function SavedScreen({onBack,onOpenGoodies,onOpenFeature}:{onBack
   <View style={s.header}><Pressable onPress={onBack} hitSlop={12} style={s.back}><Icon name="chevL" size={20} color={INK}/></Pressable><Text style={s.heading}>Saved</Text></View>
   <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
    <Text style={s.eyebrow}>YOUR COLLECTION</Text>
+   {preferredFeature==='konsoliss'?<View style={{marginBottom:18}}><View style={s.sectionHead}><Text style={s.sectionTitle}>Konsoliss</Text><Text style={s.sectionNote}>Your current feature</Text></View><View style={s.item}><View style={[s.iconBox,{backgroundColor:'#FFFBD4'}]}><MaterialCommunityIcons name="cube-outline" size={23} color="#A90E02"/></View><View style={s.itemText}><Text style={s.itemTitle}>Saved Konsoliss items</Text><Text style={s.itemDetail}>No saved items available yet</Text></View></View></View>:null}
    <View style={s.sectionHead}><Text style={s.sectionTitle}>Goodies</Text><Text style={s.sectionNote}>Food, shops & offers</Text></View>
    {goodies.map(item=><Pressable key={item.title} onPress={()=>onOpenGoodies(item.title==='Favorite stores' ? 'favs:stores' : item.title==='Saved food & drinks' ? 'favs:items' : 'promos')} style={s.item}><View style={[s.iconBox,{backgroundColor:'#FFF0E4'}]}><MaterialCommunityIcons name={item.icon} size={23} color={item.color}/></View><View style={s.itemText}><Text style={s.itemTitle}>{item.title}</Text><Text style={s.itemDetail}>{item.detail}</Text></View><Text style={s.count}>{item.title==='Favorite stores' ? storeCount : item.title==='Saved food & drinks' ? itemCount : ''}</Text><MaterialCommunityIcons name="chevron-right" size={20} color="#A79BA5"/></Pressable>)}
    <View style={s.sectionHead}><Text style={s.sectionTitle}>Other collections</Text><Text style={s.sectionNote}></Text></View>
