@@ -16,6 +16,14 @@ test('Shared Bill release gate prevents request creation and wallet debits befor
 test('existing Shared Bill cancellation remains available so reserved money can be recovered',async()=>{
  await api.cancelHelpPayRequest('00000000-0000-4000-8000-000000000001');assert.equal(calls.at(-1)[0],'help_pay_cancel_request');
 });
+test('an opted-in build follows the backend Wallet switch and rejects an invalid switch response',async()=>{
+ let response=false;const enabled={exports:{}};
+ vm.runInNewContext(ts.transpileModule(fs.readFileSync('src/features/Goodies/helpPayApi.ts','utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText,{process:{env:{EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED:'true'}},module:enabled,exports:enabled.exports,require:()=>({supabase:{rpc:async(name)=>{assert.equal(name,'help_pay_wallet_enabled');return{data:response};}}})});
+ assert.equal(enabled.exports.GOODIES_SHARED_PAYMENTS_RELEASED,true);
+ assert.equal(await enabled.exports.fetchHelpPayWalletEnabled(),false);
+ response=true;assert.equal(await enabled.exports.fetchHelpPayWalletEnabled(),true);
+ response={enabled:true};await assert.rejects(()=>enabled.exports.fetchHelpPayWalletEnabled());
+});
 test('QR parsing accepts a canonical request identifier and rejects forged amount authority',()=>{
  const id='00000000-0000-4000-8000-000000000001';assert.equal(api.helpPayIdFromLink(api.helpPayQRValue(id)),id);assert.equal(api.helpPayIdFromLink('https://attacker.invalid/help-pay/'+id),null);assert.equal(api.helpPayIdFromLink('wantiss://help-pay/not-a-request?amount=1'),null);
 });

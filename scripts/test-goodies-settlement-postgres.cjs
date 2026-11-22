@@ -50,6 +50,7 @@ async function raceAfterLock(first,second,name,actors){
 }
 (async()=>{
  console.log('PASS: PostgreSQL '+sql('show server_version')+'; full '+(files.length+(sharedBill?2:0)+upstreamFiles.length+forwardFiles.length)+'-migration package applied in '+(native?'a self-created socket-only temporary cluster.':'a network-isolated synthetic container.'));
+ if(reaudit)require('./goodies-activation-checks.cjs')({sql,root,order});
  if(reaudit){
   const fingerprint=()=>sql("select jsonb_build_object('functions',(select jsonb_agg(jsonb_build_object('name',p.proname,'definition',md5(pg_get_functiondef(p.oid)),'owner',p.proowner,'acl',p.proacl) order by p.proname) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='public' and p.proname in ('place_goodies_card_order_once','enqueue_goodies_card_refund')),'bindingAcl',(select relacl::text from pg_class where oid='public.stripe_customers'::regclass),'bindingPolicies',(select jsonb_agg(to_jsonb(p) order by policyname) from pg_policies p where schemaname='public' and tablename='stripe_customers'))");
   const before=fingerprint();

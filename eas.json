@@ -6,6 +6,7 @@
       "environment": "production",
       "env": {
         "APP_VARIANT": "production",
+        "EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED": "true",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co"
       },
       "android": {
@@ -21,6 +22,7 @@
       "environment": "development",
       "env": {
         "APP_VARIANT": "development",
+        "EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED": "true",
         "EXPO_PUBLIC_SUPABASE_URL": "https://ycbirmgppwavorwudlrv.supabase.co"
       },
       "android": {
