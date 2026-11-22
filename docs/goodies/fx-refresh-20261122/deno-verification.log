@@ -367,4 +367,3 @@ invalid order totals are rejected before Stripe is contacted ... ok (773µs)
 Stripe refund history pagination is exhausted before calculating the remainder ... ok (198µs)
 
 ok | 113 passed (71 steps) | 0 failed (1m59s)
-

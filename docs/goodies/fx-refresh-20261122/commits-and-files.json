@@ -72,9 +72,12 @@
     "docs/goodies/fx-refresh-20261122/native-prerequisites.json",
     "docs/goodies/fx-refresh-20261122/postgres-verification.log",
     "docs/goodies/fx-refresh-20261122/security-advisor-review.json",
-    "docs/goodies/fx-refresh-20261122/commits-and-files.json"
+    "docs/goodies/fx-refresh-20261122/commits-and-files.json",
+    "docs/goodies/fx-refresh-20261122/live-contract-readback.json",
+    "docs/goodies/fx-refresh-20261122/android-native-build.json"
   ],
   "appReleased": false,
   "productionBackendChanged": true,
-  "hostedSyntheticTesting": false
+  "hostedSyntheticTesting": false,
+  "documentationCommit": "5c756a2ab95d5a43b9ac0f0c639f4f0f5e36cdb6"
 }

@@ -1,0 +1,26 @@
+{
+  "classification": "PASS",
+  "scope": "Android ARM64 native compilation and debug-signature verification only",
+  "sourceCommit": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+  "run": 44997219400,
+  "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44997219400",
+  "job": 137130742252,
+  "status": "completed",
+  "conclusion": "success",
+  "artifacts": [
+    {
+      "id": 14745070088,
+      "name": "goodies-android-development-8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "sizeInBytes": 58861317,
+      "digest": "sha256:bd882c280980b2dd49b32e6f76e50506065637ad3ba61773f77a35a00d5985b3",
+      "expired": false
+    }
+  ],
+  "compileReceipt": "2026-11-22T07:24:21.4019069Z BUILD SUCCESSFUL in 10m 38s",
+  "configuredPhysicalPhoneInstaller": false,
+  "productionSigning": "NOT VERIFIED",
+  "physicalDevice": "NOT VERIFIED",
+  "mapsPushConfiguration": "NOT VERIFIED",
+  "appReleased": false,
+  "limit": "This compile-only GitHub artifact does not receive the configured EAS runtime environment or Android provider credentials. It is not offered as a working private phone acceptance installer."
+}

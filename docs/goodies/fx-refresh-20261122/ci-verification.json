@@ -19,6 +19,14 @@
       "conclusion": "success",
       "sha": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
       "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44997219385"
+    },
+    {
+      "id": 44997219400,
+      "name": "Goodies Android development build",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44997219400"
     }
   ],
   "customerJobs": [
@@ -93,5 +101,6 @@
     "Admin 71-test suite was rerun locally at the unchanged admin revision; its existing CI evidence remains in the prior activation report.",
     "The Android compile/debug-signature workflow is recorded separately; it is not a configured private phone installer.",
     "Physical GPS, background execution, Maps/provider credentials, push, installed payment/3DS and installed CMS reload remain unverified."
-  ]
+  ],
+  "androidNativeBuild": "android-native-build.json"
 }

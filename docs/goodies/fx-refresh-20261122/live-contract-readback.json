@@ -1,0 +1,147 @@
+{
+  "classification": "PASS",
+  "scope": "Read-only presence and signatures for the ten contracts previously reported missing; not complete hosted authorization or installed UI acceptance",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "checkedAt": "2026-11-22 07:21:27 UTC",
+  "contracts": [
+    {
+      "contract": "goodies_admin_courier_candidates_page",
+      "deployed": [
+        {
+          "returns": "TABLE(courier_id uuid, full_name text, phone_number text, already_added boolean)",
+          "arguments": "p_offset integer DEFAULT 0, p_limit integer DEFAULT 100",
+          "signature": "goodies_admin_courier_candidates_page(integer,integer)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_admin_list_reviews",
+      "deployed": [
+        {
+          "returns": "TABLE(id uuid, order_id uuid, store_name text, review_target text, rating integer, comment text, review_status text, review_note text, created_at timestamp with time zone)",
+          "arguments": "",
+          "signature": "goodies_admin_list_reviews()",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        },
+        {
+          "returns": "jsonb",
+          "arguments": "p_offset integer DEFAULT 0, p_limit integer DEFAULT 50",
+          "signature": "goodies_admin_list_reviews(integer,integer)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_admin_orders_page",
+      "deployed": [
+        {
+          "returns": "jsonb",
+          "arguments": "p_offset integer DEFAULT 0, p_limit integer DEFAULT 100",
+          "signature": "goodies_admin_orders_page(integer,integer)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_courier_delivery_details",
+      "deployed": [
+        {
+          "returns": "jsonb",
+          "arguments": "p_order_id uuid",
+          "signature": "goodies_courier_delivery_details(uuid)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_courier_orders",
+      "deployed": [
+        {
+          "returns": "TABLE(id uuid, order_id uuid, status text, order_code text, address jsonb, contact_phone text, items jsonb, total numeric, payment_method text, payment_status text, business_id uuid)",
+          "arguments": "",
+          "signature": "goodies_courier_orders()",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_delivery_eligible_stores",
+      "deployed": [
+        {
+          "returns": "SETOF text",
+          "arguments": "p_store_ids text[]",
+          "signature": "goodies_delivery_eligible_stores(text[])",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": false
+        }
+      ]
+    },
+    {
+      "contract": "goodies_list_ingredient_requests_page",
+      "deployed": [
+        {
+          "returns": "TABLE(id uuid, name text, builder text, role text, note text, status text, review_note text, created_at timestamp with time zone, image_path text, library_id text)",
+          "arguments": "p_business uuid, p_offset integer DEFAULT 0, p_limit integer DEFAULT 50",
+          "signature": "goodies_list_ingredient_requests_page(uuid,integer,integer)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_private_delivery_proof_uploads_enabled",
+      "deployed": [
+        {
+          "returns": "boolean",
+          "arguments": "",
+          "signature": "goodies_private_delivery_proof_uploads_enabled()",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_store_review_summaries",
+      "deployed": [
+        {
+          "returns": "TABLE(business_id uuid, rating numeric, review_count bigint)",
+          "arguments": "p_business_ids uuid[]",
+          "signature": "goodies_store_review_summaries(uuid[])",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    },
+    {
+      "contract": "goodies_store_reviews",
+      "deployed": [
+        {
+          "returns": "TABLE(order_id uuid, rating integer, comment text, created_at timestamp with time zone, is_mine boolean)",
+          "arguments": "p_store_id text, p_offset integer DEFAULT 0, p_limit integer DEFAULT 20",
+          "signature": "goodies_store_reviews(text,integer,integer)",
+          "anon_execute": false,
+          "security_definer": true,
+          "authenticated_execute": true
+        }
+      ]
+    }
+  ],
+  "financialWritesPerformed": false
+}

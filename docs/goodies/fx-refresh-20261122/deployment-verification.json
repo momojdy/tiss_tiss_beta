@@ -149,5 +149,12 @@
   "limits": [
     "Cron schedule is active; a later scheduled execution has not been observed in this receipt.",
     "Cash-store eligibility is verified; an installed cash checkout/delivery has not been performed."
-  ]
+  ],
+  "fingerprintMethod": "MD5 of to_jsonb(row)::text joined by LF and ordered by id. Compare this report's before/after with the same serialization; historical reports can use a different method.",
+  "sharedCompatibilityReview": {
+    "customerWalletDisplay": "Existing WalletBalance selects active, non-expired USD reference rows, newest first and first row per currency. Immutable quote insertion preserves this contract.",
+    "cashReservation": "The deployed settlement trigger selects the latest positive finite unexpired quote and stores its rate and ID on each new cash reservation. Existing snapshots are not revalued.",
+    "payoutOptions": "The deployed options use distinct latest eligible rows per currency. External payout gates remain disabled.",
+    "scope": "Read-only deployed function/source inspection, local financial snapshot tests and live unchanged-row readback; no unrelated feature was edited."
+  }
 }

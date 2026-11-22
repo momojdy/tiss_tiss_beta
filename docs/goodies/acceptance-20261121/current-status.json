@@ -35,9 +35,10 @@
     },
     "androidDevelopmentApk": {
       "classification": "PASS",
-      "run": 44928603197,
-      "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
-      "report": "android-development-build-current.json",
+      "run": 44997219400,
+      "sourceCommit": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "report": "../fx-refresh-20261122/android-native-build.json",
+      "scope": "ARM64 compilation and debug-signature check only; no configured physical installer",
       "productionSigning": "NOT VERIFIED",
       "physicalDevice": "NOT VERIFIED"
     },
@@ -59,7 +60,8 @@
       "receipt": "../fx-refresh-20261122/ci-verification.json",
       "runs": [
         44997219364,
-        44997219385
+        44997219385,
+        44997219400
       ],
       "sourceCommits": {
         "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
@@ -232,7 +234,7 @@
     "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
     "admin": "243a183b25ec084f700387e39a63b67142a9913b"
   },
-  "observedAt": "2026-11-22T07:14:27Z",
+  "observedAt": "2026-11-22T07:26:06.181Z",
   "backendDeployedInThisFollowup": true,
   "backendDeploymentEvidence": "payment-backend-deployment.json",
   "stripeAuthorization": {
@@ -307,5 +309,6 @@
   "latestFxDeploymentEvidence": "../fx-refresh-20261122/deployment-verification.json",
   "productionExchangeRateConfigurationUpdated": true,
   "existingProductionFinancialRecordsModified": false,
-  "nativePrerequisitesEvidence": "../fx-refresh-20261122/native-prerequisites.json"
+  "nativePrerequisitesEvidence": "../fx-refresh-20261122/native-prerequisites.json",
+  "targetedLiveContractEvidence": "../fx-refresh-20261122/live-contract-readback.json"
 }
