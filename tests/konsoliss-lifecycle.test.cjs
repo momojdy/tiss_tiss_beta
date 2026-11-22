@@ -316,3 +316,18 @@ test('verified 40HQ backend is the source of truth for selected container 3D vol
  assert.match(current,/\.order\('assigned_at',\{ascending:false\}\)/);
  assert.match(current,/\.limit\(1\)/);
 });
+
+
+test('physical 40HQ 3D boxes highlight only the verified customer fraction of loaded cargo',()=>{
+ const parsed=ts.createSourceFile('home.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(d=>d.name.getText(parsed)==='CONTAINER_JS');
+ const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
+ assert.match(engine,/RESERVED>0\?Math\.ceil\(cargo\.length\*Math\.min\(1,LOADED\/RESERVED\)\)/);
+ assert.match(engine,/boxCount=cargo\.slice\(0,visible\)\.filter\(c=>!c\.pal\)\.length/);
+ assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
+ assert.match(engine,/isYours=!EMPTY&&boxIndex>=boxCount-ownCount/);
+ assert.match(engine,/isYours\?'#A90E02'/);
+ assert.doesNotMatch(engine,/const fz=\[CE\+\.05,HX-\.05,\.15,2\.55/);
+ assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
+});
