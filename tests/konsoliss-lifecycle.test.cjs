@@ -36,3 +36,11 @@ test('explanatory popup is temporary, closes on request, and does not mutate con
  assert.match(home,/KONSOLISS_LIFECYCLE_MESSAGES\[lifecycleNotice\]\.description/);
  assert.doesNotMatch(messages,/supabase|fetch\(|\.rpc\(/);
 });
+
+test('every entry into Konsoliss starts a fresh lifecycle notice without status mutation',()=>{
+ const app=fs.readFileSync(path.join(__dirname,'../App.tsx'),'utf8');
+ assert.match(app,/const \[konsolissVisitId, setKonsolissVisitId\] = useState\(0\)/);
+ assert.match(app,/KonsolissHomeScreen key=\{konsolissVisitId\}/);
+ assert.match(app,/onKonsolissPress=\{\(\) => \{ setKonsolissVisitId\(id => id \+ 1\); setBuyerScreen\('konsoliss'\); \}\}/);
+ assert.match(home,/previousContainerStage\.current === assignedStage/);
+});
