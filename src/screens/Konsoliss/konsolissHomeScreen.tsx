@@ -179,7 +179,7 @@ function Screen({onBack}: {onBack?: () => void}) {
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/68:0;
   const containerPercent=containerOccupancy?Math.round(containerRatio*100)+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
   const containerAvailable=containerOccupancy?containerOccupancy.freeCbm.toFixed(1):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
-  const showEmptyLoadHint=!hasCurrentContainer&&currentContainer.kind==='unassigned'&&(
+  const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.loadedCbm===0&&progress.inboundCbm===0));
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
