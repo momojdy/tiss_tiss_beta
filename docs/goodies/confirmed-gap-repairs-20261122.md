@@ -25,7 +25,7 @@ This report supersedes the three confirmed source/operation gaps in the earlier 
 
 The additive migration was tested before deployment. It creates management/public-read RPCs and changes no existing orders, balances, promotion values, table grants or pricing/refund functions. Edge reads were deployed after the functions existed. No Wantiss application/OTA/store build or CMS version was published.
 
-If recovery is required, first redeploy the previous public content handlers (v7/v6 source from the parent commit), then roll back the paired admin client. The added RPCs can remain unused. Drop them only after confirming no deployed caller depends on them; never remove or rewind promotion/audit records to undo a client release. Migration rollback was verified locally; this is not full production backup restoration.
+If recovery is required, first redeploy the previous public content handlers (v7/v6 source from customer commit `c94c8447f589707a1503101b7e4e13b6abd79545`), then roll back the paired admin client. The added RPCs can remain unused. Drop them only after confirming no deployed caller depends on them; never remove or rewind promotion/audit records to undo a client release. Migration rollback was verified locally; this is not full production backup restoration.
 
 FAQ/policies, final translations/Creole review, external payout channels, the owner-deferred leaked-password safeguard, backup export/full restore and the full Wantiss release retain their previously recorded status.
 
@@ -34,3 +34,18 @@ FAQ/policies, final translations/Creole review, external payout channels, the ow
 The first paired push exposed that the validation workflows pinned older revisions of the other repository, producing catalogue/provenance mismatches. Both checkouts now pin the matching paired revisions. A separate local-API job exposed that its synthetic schema builder omitted the newly required public promotion RPC. The isolated builder now includes the promotion migration; the dedicated migration test explicitly starts before that addition so rollback coverage remains meaningful. These failures were investigated; subsequent CI results must be read at the final corrective commit rather than assumed from earlier local passes.
 
 The prepared, unpublished four-language content candidates now also include the corrected cash caption; every existing Creole entry and deferred FAQ/policy field remains unchanged. An unrelated upstream snapshot deadline exposed missing timer functions in the existing recovery test VM; the harness supplies the real timers and preserves the runtime timeout. Neither correction publishes customer content.
+
+Further focused verification passed: 30 admin recovery cases, five prepared-content cases, 47 reproduction cases and four secondary-order cases, in addition to the initial 35 checks (121 JavaScript checks total). The extraction harnesses now supply the explicit workspace predicate. Customer final code validation is tracked at `a9eab536f09b529ddf1550980d08edad52c0868b`; admin validation passed at `4d83e24dd78022c419382133c8bfb6a3147e4621`.
+
+## Final CI evidence
+
+| Scope | Result | Evidence |
+| --- | --- | --- |
+| Customer TypeScript and Expo build checks | PASS | [45041359860](https://github.com/momojdy/tiss_tiss_beta/actions/runs/45041359860), code `a9eab536f09b529ddf1550980d08edad52c0868b` |
+| Customer validation and Chrome mount | PASS | [45041359907](https://github.com/momojdy/tiss_tiss_beta/actions/runs/45041359907) |
+| Local Auth/PostgREST/private Storage/CMS/recovery scenarios | PASS | Same run, `goodies-local-api` job; synthetic local stack, no hosted test project |
+| Financial concurrency | PASS | Same run, `settlement-concurrency` job |
+| Edge checks and refund/webhook decision tests | PASS | Same run, `edge-functions` job; external payment-provider acceptance remains NOT VERIFIED |
+| Admin validation | PASS | [45034264851](https://github.com/momojdy/tiss-admin/actions/runs/45034264851), code `4d83e24dd78022c419382133c8bfb6a3147e4621` |
+
+Documentation-only follow-ups do not change the tested runtime. None of these checks substitutes for physical-phone, signed-in installed administration/customer acceptance, real isolated-provider sandbox acceptance or a full production restore. No public Wantiss app release was performed.
