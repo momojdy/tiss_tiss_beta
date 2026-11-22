@@ -46,7 +46,7 @@ test('every entry into Konsoliss starts a fresh lifecycle notice without status 
 });
 
 
-test('3D container keeps rotation and automatically repeats demo cartons for 4s then empty for 9s',()=>{
+test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
  assert.match(hook,/value\.kind === 'unassigned'\) return 'No active load'/);
  assert.doesNotMatch(home,/accessibilityLabel="Current load empty state"/);
@@ -56,12 +56,15 @@ test('3D container keeps rotation and automatically repeats demo cartons for 4s 
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
  assert.match(home,/containerHtml\(dark,noCargoLoaded,progress\?\.reservedCbm\?\?0,progress\?\.loadedCbm\?\?0,progress\?\.inboundCbm\?\?0\)/);
  assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
- assert.match(home,/const cycle=\(Date\.now\(\)-started\)%10000/);
- assert.match(home,/demoCount=cycle<5000/);
- assert.match(home,/cycle\/3800/);
- assert.match(home,/demoBlink=cycle<5000&&Math\.floor\(cycle\/500\)%2===0/);
+ assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13600/);
+ assert.match(home,/demoCount=cycle<4800/);
+ assert.match(home,/cycle\/4800/);
+ assert.match(home,/cycle<8600\?cargo\.length:0/);
+ assert.match(home,/demoBlink=cycle>=4800&&cycle<8600&&Math\.floor\(\(cycle-4800\)\/500\)%2===0/);
  assert.match(home,/const timer=setInterval\(tick,100\)/);
- assert.match(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox\(1\.3,\[3\.65,4\.35,\.3,1\.08,-\.95,-\.2\]/);
+ assert.match(home,/highlight=EMPTY&&demoBlink&&c\.u&&c\.top&&c\.lab/);
+ assert.match(home,/highlight\?'#FFE36B':c\.k/);
+ assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
  assert.match(home,/<WebView/);
  assert.match(home,/onTouchStart=\{\(\) => setScroll\(false\)\}/);
