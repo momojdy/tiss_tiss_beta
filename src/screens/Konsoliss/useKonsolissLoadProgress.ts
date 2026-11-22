@@ -33,6 +33,15 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
     ||loadedCbm+inboundCbm>sentCbm||loadedCbm+inboundCbm>reservedCbm)return null;
   const derived=[data.allocated_cbm,data.at_warehouse_or_in_transit_cbm,data.reserved_not_sent_cbm,data.not_allocated_cbm,data.allocated_percent];
   if(derived.some(v=>v!==undefined&&v!==null&&!Number.isFinite(Number(v))))return null;
+  const expected=[
+    loadedCbm+inboundCbm,
+    Math.max(0,sentCbm-loadedCbm-inboundCbm),
+    Math.max(0,reservedCbm-sentCbm),
+    Math.max(0,reservedCbm-loadedCbm-inboundCbm),
+    reservedCbm>0?Math.round((loadedCbm+inboundCbm)/reservedCbm*10000)/100:0,
+  ];
+  // Numeric database fields may be serialized as strings; tolerate rounding only.
+  if(derived.some((v,i)=>v!==undefined&&v!==null&&Math.abs(Number(v)-expected[i])>(i===4?0.011:0.0001)))return null;
   return {reservedCbm,sentCbm,loadedCbm,inboundCbm,
     allocatedCbm:loadedCbm+inboundCbm,
     atWarehouseOrInTransitCbm:Math.max(0,sentCbm-loadedCbm-inboundCbm),
