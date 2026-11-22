@@ -5,6 +5,7 @@ import {WebView} from 'react-native-webview';
 import {useKonsolissCopy, type KonsolissCopy} from './useKonsolissCopy';
 import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type KonsolissContainerStatus} from './useCurrentKonsolissContainer';
 import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
+import {useKonsolissLoadProgress} from './useKonsolissLoadProgress';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 const StatusBarCompat: any = StatusBar;
@@ -103,7 +104,7 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
   return <SafeAreaProvider><Screen onBack={onBack} /></SafeAreaProvider>;
 }
 function Screen({onBack}: {onBack?: () => void}) {
-  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const currentContainer = useCurrentKonsolissContainer();
+  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const currentContainer = useCurrentKonsolissContainer(); const loadProgress=useKonsolissLoadProgress();
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
   const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
@@ -118,16 +119,21 @@ function Screen({onBack}: {onBack?: () => void}) {
     const timer = setTimeout(() => setLifecycleNotice(null), 7000);
     return () => clearTimeout(timer);
   }, [lifecycleNotice]);
-  // Keep the entire load dashboard visible for all customers. Only the labels/values reflect whether a load exists.
-  const noActiveLoad=currentContainer.kind==='unassigned';
-  const loadKnown=currentContainer.kind==='assigned';
-  const loadAmount=loadKnown?'51.7':noActiveLoad?'0.0':'—';
-  const capacityAmount='68';
-  const fillPercent=loadKnown?'76%':noActiveLoad?'0%':'—';
-  const availableAmount=loadKnown?'16.3':noActiveLoad?'68.0':'—';
-  const otherCargo=loadKnown?'51.2':noActiveLoad?'0.0':'—';
-  const yourSpace=loadKnown?'0.5':noActiveLoad?'0.0':'—';
-  const visualMode=loadKnown?'sample':'empty';
+  // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
+  // Unknown data is never replaced with the former 51.7/68 sample occupancy.
+  const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
+  const noActiveLoad=currentContainer.kind==='unassigned'&&(!progress||progress.reservedCbm===0);
+  const initialZero=noActiveLoad&&loadProgress.kind==='unrecorded';
+  const fmt=(n:number)=>n.toFixed(1);
+  const loadedValue=progress?fmt(progress.loadedCbm):initialZero?'0.0':'—';
+  const reservedValue=progress?fmt(progress.reservedCbm):initialZero?'0.0':'—';
+  const sentValue=progress?fmt(progress.sentCbm):initialZero?'0.0':'—';
+  const notLoadedValue=progress?fmt(progress.sentNotLoadedCbm):initialZero?'0.0':'—';
+  const stillToSendValue=progress?fmt(progress.reservedNotSentCbm):initialZero?'0.0':'—';
+  const fillPercent=progress?progress.loadedPercent+'%':initialZero?'0%':'—';
+  const fillRatio=progress&&progress.reservedCbm>0?progress.loadedCbm/progress.reservedCbm:0;
+  const noCargoLoaded=!progress||progress.loadedCbm===0;
+  const visualMode=noCargoLoaded?'illustration':'sample';
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
@@ -135,15 +141,27 @@ function Screen({onBack}: {onBack?: () => void}) {
         disabled={currentContainer.kind!=='assigned'}
         onPress={() => {if(currentContainer.kind==='assigned')setLifecycleNotice(currentContainer.status);}}
         style={[s.pill, {backgroundColor: t.tint}]}>
-        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
+        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'&&progress&&progress.reservedCbm>0?'Preparing your load':currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
       </Pressable></View>
-      {noActiveLoad?<Tx style={{fontSize:11,color:t.mu,marginHorizontal:24,marginTop:5}}>No current shipment. Your load progress starts at zero.</Tx>:null}
-      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{loadAmount}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {capacityAmount} CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={loadKnown?'66.85 87.96':'0 87.96'} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{availableAmount} CBM</Tx> {copy['home.available']}</Tx></View></View>
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode} originWhitelist={['*']} source={{html: containerHtml(dark,visualMode==='empty')}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      {noActiveLoad?<Tx style={{fontSize:11,color:t.mu,marginHorizontal:24,marginTop:5}}>No active load yet. The loading animation below shows an example, not your packages.</Tx>:null}
+      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{loadedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM reserved</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(fillRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} of your space loaded</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{stillToSendValue} CBM</Tx> of reserved space not yet sent</Tx></View></View>
+      <View style={{paddingHorizontal:24,paddingTop:12,flexDirection:'row',flexWrap:'wrap',gap:10}}>
+        {([
+          ['Space reserved',reservedValue],
+          ['Goods sent',sentValue],
+          ['Loaded in container',loadedValue],
+          ['Sent, not yet loaded',notLoadedValue],
+        ] as const).map(([label,value])=><View key={label} style={{flexGrow:1,flexBasis:'42%',borderRadius:12,backgroundColor:t.card,padding:10,borderWidth:0.5,borderColor:t.bd}}>
+          <Tx style={{fontSize:11,color:t.mu}}>{label}</Tx><Tx style={{fontSize:17,fontWeight:'700',color:t.tx,marginTop:3}}>{value} CBM</Tx>
+        </View>)}
+        <Tx style={{width:'100%',fontSize:10,color:t.mu}}>Container capacity: 68 CBM · Customer loading progress is based on reserved space.</Tx>
+      </View>
+      {noCargoLoaded?<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>Loading illustration — sample packages only</Tx>:<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>3D layout is illustrative; quantities above are your recorded volumes.</Tx>}
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode} originWhitelist={['*']} source={{html: containerHtml(dark,noCargoLoaded)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
-      <View style={{paddingHorizontal: 24, marginTop: 12}}><View style={{flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2}}><View style={{width: loadKnown?'75.3%':'0%'}}><Svg width="100%" height={10}><Defs><LinearGradient id="g" x1="0" y1="0" x2="1" y2="0"><Stop offset="0" stopColor="#CDAA7D" /><Stop offset="0.25" stopColor="#E3D3B0" /><Stop offset="0.5" stopColor="#B7B1A3" /><Stop offset="0.75" stopColor="#D9B8A6" /><Stop offset="1" stopColor="#D2B48A" /></LinearGradient></Defs><Rect width="100%" height={10} fill="url(#g)" /></Svg></View><View style={{width: loadKnown?'3%':'0%', backgroundColor: t.ac}} /><View style={{flex: 1, backgroundColor: t.tint}} /></View><View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 7}}><Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color: t.tx}}>{otherCargo}</Tx></Tx><Tx style={[s.leg, {color: t.ac}]}>{copy['home.yourSpace']} <Tx style={{color: t.tx}}>{yourSpace}</Tx></Tx><Tx style={s.leg}>{copy['home.free']} <Tx style={{color: t.tx}}>{availableAmount}</Tx></Tx></View></View>
+      <View style={{paddingHorizontal: 24, marginTop: 12}}><View style={{flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2}}><View style={{width:'0%'}}><Svg width="100%" height={10}><Defs><LinearGradient id="g" x1="0" y1="0" x2="1" y2="0"><Stop offset="0" stopColor="#CDAA7D" /><Stop offset="0.25" stopColor="#E3D3B0" /><Stop offset="0.5" stopColor="#B7B1A3" /><Stop offset="0.75" stopColor="#D9B8A6" /><Stop offset="1" stopColor="#D2B48A" /></LinearGradient></Defs><Rect width="100%" height={10} fill="url(#g)" /></Svg></View><View style={{width:`${Math.max(0,Math.min(100,fillRatio*100))}%`, backgroundColor: t.ac}} /><View style={{flex: 1, backgroundColor: t.tint}} /></View><View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 7}}><Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color: t.tx}}>{'—'}</Tx></Tx><Tx style={[s.leg, {color: t.ac}]}>{copy['home.yourSpace']} <Tx style={{color: t.tx}}>{loadedValue}</Tx></Tx><Tx style={s.leg}>{copy['home.free']} <Tx style={{color: t.tx}}>{'—'}</Tx></Tx></View></View>
       <View style={{paddingHorizontal: 24, paddingTop: 22, gap: 12}}><View style={{flexDirection: 'row', gap: 12}}><Card t={t} i="box" title={copy['home.book.title']} sub={copy['home.book.subtitle']} red style={{flex: 1, height: 70}} onPress={() => setSh('book')} /><Card t={t} i="box" title={copy['home.load.title']} sub={copy['home.load.subtitle']} style={{flex: 1, height: 70, borderWidth: 0.5}} /></View><Card t={t} i="calc" title={copy['home.calc.title']} sub={copy['home.calc.subtitle']} onPress={() => setSh('calc')} style={{borderWidth: 0.5}} /><View style={{flexDirection: 'row', gap: 12}}><View style={[s.card2, {backgroundColor: t.card, borderColor: t.bd, borderWidth: 0.5}]}><Head t={t} i="wh" title={copy['home.warehouse.title']} /><Tx style={[s.body, {color: t.tx}]}>{currentContainer.kind==='unassigned'?'No packages in an active load':currentContainer.kind==='assigned'?`12 ${copy['home.packages.received']}\n2 ${copy['home.packages.ready']}`:'Package information unavailable'}</Tx><View style={{position: 'absolute', right: 10, bottom: 8}}><Svg width={38} height={42} viewBox="0 0 20 22"><CP c={t.ac} /></Svg></View></View><View style={[s.card2, {backgroundColor: t.card, borderColor: t.bd, borderWidth: 0.5}]}><Head t={t} i="ct" title={copy['home.consolidated.title']} />
         {currentContainer.kind==='assigned'?<>
           <Tx style={[s.body,{color:t.tx}]}>{currentContainer.number+'\n'+currentKonsolissContainerLabel(currentContainer).split(' · ')[1]}</Tx>
