@@ -79,3 +79,20 @@ The complete private/shared ChatGPT conversation at `chatgpt.com/g/g-p-692de74d2
 After **every new Konsoliss logic change**, update this README in the **same work session**, documenting the invariant, implementation, test evidence, and commit. Do not mark screenshot matching or production readiness complete without device/browser render verification. Test at least: zero occupancy, 0.02 CBM, a mid-filled container, the reference's 51.7/68 example, 67.2/68, 99%, and full 68/68. Verify customer label, free label, 3D rotation, carton stickers, natural gaps, and red dashed free outline in light and dark themes.
 
 **Current verification status:** GitHub source edits have been committed. Live device screenshot verification, 3D text placement across rotation, and complete automated tests have **not** been performed. Do not claim otherwise.
+
+
+## Historical commit audit — rotation and labels (2026-11-23)
+
+**Root regression:** The original `draw()` implementation painted customer/free labels **directly on the same canvas as the 3D container**, using `proj([x,y,z])` from the current `yaw`/`pitch`. This made the labels track the container as it rotated. The newer `8e16ebef...` change created DOM HTML labels with CSS positioning, duplicating canvas text; that changed their placement and could cause angle mismatch. The intervening `fd98cb864...` native overlay cards were also not part of the original design.
+
+**Evidence from historical code:**
+- `be719f979`, `c78400998`: customer callout projects the customer-carton anchor, draws a line and dot, and writes loaded-space CBM above the 3D model; free-space text projects a world-space free-volume center and uses `strokeText` plus `fillText`.
+- `6102bf87b` and `291b86932`: free-space text uses `proj([freeRatio>0?(freeX0+innerX1)/2:innerX1-.12,1.3,0])`, keeping the text tied to the actual empty region as the view rotates.
+- `166830cdb`: retains those canvas projections and the original small 10px free-space font, before later label and packing changes.
+- `35b21dc6e` and `6432ef325`: repositioned/reworded the canvas annotations; `fd98cb864` and `8e16ebef` added UI/HTML overlays that did not preserve the original screenshot behavior.
+
+**Correction:** `38beda54552e52ed9389ac09c74e9cfdcd0f6684` removes the HTML annotations and restores **one source of text rendering**: the historical 3D canvas projected anchors, line/dot pointer, compact typography, and contrast stroke. Both annotations are calculated on every draw, so they track the same yaw/pitch as the container. The free label is projected from the free region center; the customer label is projected from the customer's actual carton when available, otherwise from a calculated customer cargo position.
+
+**Important data constraint:** Current UI passes `containerOccupancy?.capacityCbm??0`, `loadedCbm??0`, and `yourPhysicallyLoadedCbm??0` to the WebView. If the selected live container has **no verified occupancy** or the customer has **zero loaded CBM**, a numeric customer annotation cannot truthfully be shown. This is a data-state issue separate from the angle/position regression. Do not fabricate values to force a label.
+
+**Unverified:** no simulator/device screenshots or runtime build results were obtained in this audit. The correction restores historical implementation logic, not yet a verified visual match. Test dragging yaw/pitch at 0.02, 51.7/68, and 67.2/68, confirming the label anchor and free region rotate together.
