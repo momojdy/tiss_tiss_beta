@@ -1,0 +1,337 @@
+{
+  "v": 5,
+  "modes": [
+    {
+      "id": "mode.food",
+      "st": "Live",
+      "cat": "restaurants",
+      "img": null,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": "Hot and fresh to you"
+        }
+      },
+      "emoji": "🍛",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "Food delivery"
+        }
+      }
+    },
+    {
+      "id": "mode.groceries",
+      "st": "Live",
+      "cat": "groceries",
+      "img": null,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": ""
+        }
+      },
+      "emoji": "🇭🇹",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "Groceries"
+        }
+      }
+    },
+    {
+      "id": "mode.drugstore",
+      "st": "Live",
+      "cat": "drugstore",
+      "img": null,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": ""
+        }
+      },
+      "emoji": "💊",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "Drugstore"
+        }
+      }
+    }
+  ],
+  "promos": [
+    {
+      "id": "promo.free-delivery",
+      "st": "Live",
+      "aud": "New customers",
+      "btn": {
+        "en": {
+          "s": "draft",
+          "v": "Order now"
+        }
+      },
+      "img": null,
+      "ord": 1,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": "Welcome to Goodies. New here? It is on us."
+        }
+      },
+      "color": "#63059F",
+      "emoji": "🛵",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "Free delivery on your first order"
+        }
+      },
+      "target": ""
+    },
+    {
+      "id": "promo.double-points",
+      "st": "Live",
+      "aud": "All customers",
+      "btn": {
+        "en": {
+          "s": "draft",
+          "v": "Start earning"
+        }
+      },
+      "img": null,
+      "ord": 2,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": "Pay with Wallet on any order."
+        }
+      },
+      "color": "#EA6711",
+      "emoji": "🎁",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "Earn double points this weekend"
+        }
+      },
+      "target": ""
+    },
+    {
+      "id": "promo.fresh-produce",
+      "st": "Live",
+      "aud": "All customers",
+      "btn": {
+        "en": {
+          "s": "draft",
+          "v": "Shop now"
+        }
+      },
+      "img": null,
+      "ord": 3,
+      "sub": {
+        "en": {
+          "s": "draft",
+          "v": "Straight from local farms and markets."
+        }
+      },
+      "color": "#05503D",
+      "emoji": "🥬",
+      "title": {
+        "en": {
+          "s": "draft",
+          "v": "20% off fresh produce"
+        }
+      },
+      "target": ""
+    }
+  ],
+  "cats": [
+    {
+      "id": "restaurants",
+      "st": "on",
+      "art": {
+        "assetKey": "wantiss.goodies.home.category.restaurants.mvyzw661-cqbnpew4j5a-oo32dfmpsgb"
+      },
+      "ord": 1,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Restaurant"
+        }
+      },
+      "emoji": "🍽️"
+    },
+    {
+      "id": "produce",
+      "st": "on",
+      "art": null,
+      "ord": 2,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Fresh produce"
+        }
+      },
+      "emoji": "🥭"
+    },
+    {
+      "id": "beverages",
+      "st": "on",
+      "art": null,
+      "ord": 3,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Beverages"
+        }
+      },
+      "emoji": "🍻"
+    },
+    {
+      "id": "bakery",
+      "st": "on",
+      "art": null,
+      "ord": 4,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Bakery & desserts"
+        }
+      },
+      "emoji": "🥐"
+    },
+    {
+      "id": "meat",
+      "st": "on",
+      "art": null,
+      "ord": 5,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Meat & seafood"
+        }
+      },
+      "emoji": "🥩"
+    },
+    {
+      "id": "groceries",
+      "st": "on",
+      "art": null,
+      "ord": 6,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Groceries"
+        }
+      },
+      "emoji": "🛒"
+    },
+    {
+      "id": "haitian",
+      "st": "on",
+      "art": null,
+      "ord": 7,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Haitian products"
+        }
+      },
+      "emoji": "🇭🇹"
+    },
+    {
+      "id": "care",
+      "st": "on",
+      "art": null,
+      "ord": 8,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Personal care"
+        }
+      },
+      "emoji": "🧴"
+    },
+    {
+      "id": "drugstore",
+      "st": "on",
+      "art": null,
+      "ord": 9,
+      "home": true,
+      "name": {
+        "en": {
+          "s": "draft",
+          "v": "Drugstore"
+        }
+      },
+      "emoji": "💊"
+    }
+  ],
+  "labels": [
+    {
+      "t": {
+        "en": {
+          "s": "draft",
+          "v": "Fresh produce"
+        },
+        "es": {
+          "s": "draft",
+          "v": "Productos frescos"
+        },
+        "fr": {
+          "s": "draft",
+          "v": "Produits frais"
+        },
+        "ht": {
+          "s": "draft",
+          "v": "Pwodwi fre"
+        },
+        "zh-Hans": {
+          "s": "draft",
+          "v": "新鲜农产品"
+        }
+      },
+      "id": "lbl.produce",
+      "label": "Fresh produce heading"
+    },
+    {
+      "t": {
+        "en": {
+          "s": "reviewed",
+          "v": "No stores match right now"
+        },
+        "es": {
+          "s": "missing",
+          "v": ""
+        },
+        "fr": {
+          "s": "missing",
+          "v": ""
+        },
+        "ht": {
+          "s": "missing",
+          "v": ""
+        },
+        "zh-Hans": {
+          "s": "missing",
+          "v": ""
+        }
+      },
+      "id": "lbl.browseNoStores",
+      "label": "Browse no-store empty state"
+    }
+  ],
+  "deals": [],
+  "coupons": [],
+  "fees": {
+    "first": true
+  }
+}
