@@ -1,3 +1,4 @@
+import {useUnreadSummary} from './src/shared/inbox/useUnreadSummary';
 import React, { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -260,26 +261,9 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [goodiesInitialRoute, setGoodiesInitialRoute] = useState<string | undefined>(undefined);
   const [inboxReturnScreen, setInboxReturnScreen] = useState<BuyerScreen>('messageHub');
   const [quickMenuReturnScreen, setQuickMenuReturnScreen] = useState<BuyerScreen>('me');
-  const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-  useEffect(() => {
-    let alive = true;
-    let channel: ReturnType<typeof supabase.channel> | undefined;
-    const load = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) { if (alive) { setUnreadNotificationsCount(0); setUnreadMessagesCount(0); } return; }
-      const { count: notificationCount, error: notificationError } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', user.id).eq('read', false).or('vendor_id.is.null,notification_type.in.(friend_request,friend_accepted)').or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
-      if (!notificationError && alive) setUnreadNotificationsCount(notificationCount ?? 0);
-      const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [user.id]);
-      if (conversations?.length) {
-        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.filter((conversation: { id: string; business_id: string | null; customer_id: string | null }) => !conversation.business_id || conversation.customer_id === user.id).map(conversation => conversation.id)).is('read_at', null).neq('sender_id', user.id);
-        if (alive) setUnreadMessagesCount(messageCount ?? 0);
-      } else if (alive) setUnreadMessagesCount(0);
-    };
-    void load();
-    channel = supabase.channel('app-unread-counts').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, () => { void load(); }).on('postgres_changes', { event: '*', schema: 'public', table: 'conversations' }, () => { void load(); }).subscribe();
-    return () => { alive = false; if (channel) void supabase.removeChannel(channel); };
-  }, [authenticated, buyerScreen]);
+  const inbox = useUnreadSummary();
+  const unreadNotificationsCount = inbox.notifications;
+  const unreadMessagesCount = inbox.messages;
   const [flyzDestination, setFlyzDestination] = useState({ city: 'Miami', code: 'MIA', price: '$245' });
   const [flyzSearch, setFlyzSearch] = useState<any>(null);
   const [flyzSelectedFlight, setFlyzSelectedFlight] = useState<any>(null);
@@ -299,25 +283,6 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [pendingGroupInviteCode,setPendingGroupInviteCode] = useState<string|null>(null);
   const [qrAutoScan,setQrAutoScan] = useState(false);
   useEffect(() => { registerBuyerScreen(buyerScreen); }, [buyerScreen, registerBuyerScreen]);
-  useEffect(() => {
-    if (!authenticated) { setUnreadNotificationsCount(0); setUnreadMessagesCount(0); return; }
-    let active = true;
-    let channel: ReturnType<typeof supabase.channel> | undefined;
-    const load = async () => {
-      const { data: authData } = await supabase.auth.getUser();
-      if (!authData.user) { if (active) setUnreadNotificationsCount(0); return; }
-      const { count, error } = await supabase.from('notifications').select('id', { count: 'exact', head: true }).eq('user_id', authData.user.id).eq('read', false).or('vendor_id.is.null,notification_type.in.(friend_request,friend_accepted)').or('notification_type.is.null,notification_type.not.in.(store_message,goodies_ingredient_request)');
-      if (!error && active) setUnreadNotificationsCount(count || 0);
-      const { data: conversations } = await supabase.from('conversations').select('id,business_id,customer_id').contains('participant_ids', [authData.user.id]);
-      if (conversations?.length) {
-        const { count: messageCount } = await supabase.from('messages').select('id', { count: 'exact', head: true }).in('conversation_id', conversations.filter((conversation: { id: string; business_id: string | null; customer_id: string | null }) => !conversation.business_id || conversation.customer_id === authData.user.id).map(conversation => conversation.id)).is('read_at', null).neq('sender_id', authData.user.id);
-        if (active) setUnreadMessagesCount(messageCount || 0);
-      } else if (active) setUnreadMessagesCount(0);
-    };
-    void load();
-    channel = supabase.channel('app-notification-count').on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => { void load(); }).subscribe();
-    return () => { active = false; if (channel) void supabase.removeChannel(channel); };
-  }, [authenticated]);
   useEffect(() => { registerChallengePress(() => setBuyerScreen('frenziesChallenges')); registerChallengeDismiss(() => setShowChallenge(false)); }, [registerChallengePress, registerChallengeDismiss]);
   const [showChallenge, setShowChallenge] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
