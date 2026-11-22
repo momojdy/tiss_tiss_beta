@@ -197,6 +197,7 @@ test('container dropdown selects live or demo entries, five visible rows and scr
  const hook=fs.readFileSync(path.join(root,'useKonsolissAssignedContainers.ts'),'utf8');
  assert.match(demos,/KS-DEMO-01/);
  assert.match(demos,/KS-DEMO-08/);
+ assert.match(demos,/KS-DEMO-09/);
  assert.match(demos,/sample\.map/);
  assert.match(demos,/demo:true/);
  assert.match(hook,/konsoliss_container_assignments/);
@@ -238,16 +239,16 @@ test('sample container does not overwrite actual current load or mutate Supabase
 });
 
 
-test('eight distinct demo containers stay within the real 68 CBM physical capacity',()=>{
+test('nine distinct demo containers stay within the real 68 CBM physical capacity',()=>{
  const file=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
  const js=ts.transpileModule(file,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
  const module={exports:{}};
  require('node:vm').runInNewContext(js,{module,exports:module.exports});
  const items=module.exports.KONSOLISS_DEMO_CONTAINERS;
- assert.equal(items.length,8);
- assert.equal(new Set(items.map(row=>row.id)).size,8);
- assert.equal(new Set(items.map(row=>row.loadedCbm)).size,8);
- assert.deepEqual(Array.from(items,row=>row.loadedCbm),[0,8.4,18.7,31.5,48.2,54.3,62.1,67.2]);
+ assert.equal(items.length,9);
+ assert.equal(new Set(items.map(row=>row.id)).size,9);
+ assert.equal(new Set(items.map(row=>row.loadedCbm)).size,9);
+ assert.deepEqual(Array.from(items,row=>row.loadedCbm),[0,8.4,18.7,31.5,48.2,54.3,62.1,67.2,0.02]);
  for(const item of items){
    assert.equal(item.demo,true);
    assert.ok(item.id.startsWith('demo:'));
@@ -266,12 +267,16 @@ test('3D loaded cargo and lower My space use physically loaded CBM, not reserved
  const module={exports:{}};
  require('node:vm').runInNewContext(converted,{module,exports:module.exports});
  const rows=module.exports.KONSOLISS_DEMO_CONTAINERS;
- assert.equal(rows.length,8);
+ assert.equal(rows.length,9);
  assert.equal(rows[1].yourSpaceCbm,2);
  assert.equal(rows[1].yourLoadedCbm,0.02);
  assert.equal(rows[4].loadedCbm,48.2);
  assert.equal(rows[4].yourSpaceCbm,4);
  assert.equal(rows[4].yourLoadedCbm,2);
+ assert.equal(rows[8].number,'KS-DEMO-09');
+ assert.equal(rows[8].loadedCbm,0.02);
+ assert.equal(rows[8].yourLoadedCbm,0.02);
+ assert.equal(rows[8].yourSpaceCbm,0.02);
  assert.match(home,/otherCargoCbm:Math\.max\(0,\(selectedContainer\.loadedCbm\?\?0\)-\(selectedContainer\.yourLoadedCbm\?\?0\)\)/);
  assert.doesNotMatch(home,/yourAllocatedContainerCbm/);
  assert.match(home,/yourSpaceCbm:selectedContainer\.yourLoadedCbm\?\?0/);
@@ -375,4 +380,36 @@ test('40HQ free-space overlay spans the free fraction of the entire interior, ne
  assert.match(home,/if\(freeRatio>0\)/);
  assert.match(home,/freeX0=innerX1-\(innerX1-innerX0\)\*freeRatio/);
  assert.match(home,/const f=proj\(\[freeRatio>0\?\(freeX0\+innerX1\)\/2/);
+});
+
+
+test('carton labels use stable varied placements instead of identical white stickers',()=>{
+ const parsed=ts.createSourceFile('home.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(d=>d.name.getText(parsed)==='CONTAINER_JS');
+ const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
+ const ast=ts.createSourceFile('engine.js',engine,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
+ assert.equal(ast.parseDiagnostics.length,0,'Embedded script must remain valid');
+ assert.match(engine,/const labelLocations=\[\[\.07,\.74\],\[\.68,\.74\],\[\.37,\.07\],\[\.37,\.39\],\[\.07,\.38\],\[\.68,\.18\]\]/);
+ assert.match(engine,/labelPos:Math\.floor\(stickerPick\(i,j,l,q,1\)\*6\)/);
+ assert.match(engine,/labelSide:Math\.floor\(stickerPick\(i,j,l,q,2\)\*4\)/);
+ assert.match(engine,/labelTwo:stickerPick\(i,j,l,q,3\)<\.32/);
+ assert.match(engine,/else if\(c\.lab\)sticker\(l,n,c\.b,\{pos:c\.labelPos,side:c\.labelSide,second:c\.labelTwo\}\)/);
+ assert.match(engine,/poly\(layer,\[\[xx,low,zz\]/);
+ assert.match(engine,/'#FFF8E8',\.98,0/);
+ assert.doesNotMatch(engine,/lab:q==0&&l!=1/);
+ // The seeded label selection must vary between boxes without rerandomizing on 3D rotation.
+ const positions=new Set(),sides=new Set();
+ const pick=(i,j,l,q,salt)=>{
+  const n=Math.sin((i+1)*12.9898+(j+1)*78.233+(l+1)*37.719+q*19.19+salt*11.83)*43758.5453;
+  return n-Math.floor(n);
+ };
+ for(let i=0;i<10;i++)for(let j=0;j<2;j++)for(let l=0;l<3;l++)for(let q=0;q<2;q++){
+  const pos=Math.floor(pick(i,j,l,q,1)*6),side=Math.floor(pick(i,j,l,q,2)*4);
+  assert.equal(pos,Math.floor(pick(i,j,l,q,1)*6),'Stable label position');
+  assert.ok(pos>=0&&pos<6&&side>=0&&side<4);
+  positions.add(pos);sides.add(side);
+ }
+ assert.equal(positions.size,6,'All six label placements should occur');
+ assert.equal(sides.size,4,'Labels should appear on multiple carton sides');
 });
