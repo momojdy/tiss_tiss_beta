@@ -4,6 +4,7 @@ import {fetchPublishedWantissContent} from '../../lib/wantissCms';
 
 export const KONSOLISS_CONTENT_KEY='konsoliss.content';
 export const KONSOLISS_COPY_DEFAULTS:Record<string,string>={
+ 'header.stripeColor':'#FFD93D',
  'home.brand':'Konsoliss','home.load.heading':'My current load','home.available':'available',
  'home.otherCargo':'Other cargo','home.yourSpace':'Your space','home.free':'Free',
  'home.book.title':'Book Space','home.book.subtitle':'Reserve container capacity',
