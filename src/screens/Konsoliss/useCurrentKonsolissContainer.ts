@@ -27,6 +27,8 @@ export function useCurrentKonsolissContainer(): CurrentContainer {
         .select('container_id')
         .eq('user_id', authData.user.id)
         .eq('is_current', true)
+        .order('assigned_at',{ascending:false})
+        .limit(1)
         .maybeSingle();
       if (assignmentError) throw assignmentError;
       if (!assignment?.container_id) {
