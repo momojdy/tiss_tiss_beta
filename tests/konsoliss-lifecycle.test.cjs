@@ -210,3 +210,23 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.match(home,/DEMO=document\.documentElement\.dataset\.demo==='true'/);
  assert.match(home,/DEMO\?'Sample cargo ':'Your loaded '/);
 });
+
+
+test('eight distinct demo containers stay within the real 68 CBM physical capacity',()=>{
+ const file=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
+ const js=ts.transpileModule(file,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+ const module={exports:{}};
+ require('node:vm').runInNewContext(js,{module,exports:module.exports});
+ const items=module.exports.KONSOLISS_DEMO_CONTAINERS;
+ assert.equal(items.length,8);
+ assert.equal(new Set(items.map(row=>row.id)).size,8);
+ assert.equal(new Set(items.map(row=>row.loadedCbm)).size,8);
+ assert.deepEqual(items.map(row=>row.loadedCbm),[0,8.4,18.7,31.5,48.2,54.3,62.1,67.2]);
+ for(const item of items){
+   assert.equal(item.demo,true);
+   assert.ok(item.id.startsWith('demo:'));
+   assert.ok(item.loadedCbm>=0&&item.loadedCbm<=68);
+   assert.ok(item.yourSpaceCbm>=0&&item.yourSpaceCbm<=item.loadedCbm);
+   assert.ok(['filling','filled','departed','arrived'].includes(item.status));
+ }
+});
