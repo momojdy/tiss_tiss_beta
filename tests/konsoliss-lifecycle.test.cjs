@@ -67,7 +67,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.match(home,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
  assert.match(home,/if\(EMPTY&&demoShowLoad\)\{const carton=cargo\.find\(c=>c\.demoCurrent\)/);
  assert.match(home,/cx\.fillText\('My current loaded space',labelX,labelY\)/);
- assert.match(home,/highlight\?'#FFE36B':c\.k/);
+ assert.match(home,/highlight\?'#FFE36B':isYours\?'#A90E02':c\.k/);
  assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
  assert.match(home,/<WebView/);
