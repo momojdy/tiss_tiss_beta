@@ -31,6 +31,8 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
   if(![reservedCbm,sentCbm,loadedCbm,inboundCbm].every(Number.isFinite)
     ||reservedCbm<0||sentCbm<0||loadedCbm<0||inboundCbm<0
     ||loadedCbm+inboundCbm>sentCbm||loadedCbm+inboundCbm>reservedCbm)return null;
+  const derived=[data.allocated_cbm,data.at_warehouse_or_in_transit_cbm,data.reserved_not_sent_cbm,data.not_allocated_cbm,data.allocated_percent];
+  if(derived.some(v=>v!==undefined&&v!==null&&!Number.isFinite(Number(v))))return null;
   return {reservedCbm,sentCbm,loadedCbm,inboundCbm,
     allocatedCbm:loadedCbm+inboundCbm,
     atWarehouseOrInTransitCbm:Math.max(0,sentCbm-loadedCbm-inboundCbm),
@@ -45,8 +47,8 @@ export function useKonsolissLoadProgress():KonsolissLoadProgressState{
     try{
       const {data:auth,error:authError}=await supabase.auth.getUser();
       if(authError||!auth.user){setState({kind:'unavailable'});return;}
-      const {data,error}=await supabase.from('konsoliss_customer_load_progress')
-        .select('reserved_cbm,sent_cbm,inbound_to_container_cbm,loaded_cbm')
+      const {data,error}=await supabase.from('konsoliss_customer_load_breakdown')
+        .select('reserved_cbm,sent_cbm,inbound_to_container_cbm,loaded_cbm,allocated_cbm,at_warehouse_or_in_transit_cbm,reserved_not_sent_cbm,not_allocated_cbm,allocated_percent')
         .eq('user_id',auth.user.id).maybeSingle();
       if(error){setState({kind:'unavailable'});return;}
       if(!data){setState({kind:'unrecorded'});return;}
