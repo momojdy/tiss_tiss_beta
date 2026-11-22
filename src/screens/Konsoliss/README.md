@@ -31,10 +31,43 @@ Database constraints already enforce nonnegative volumes and `loaded + inbound <
 
 **Verification:** Migration applied successfully; read-back confirmed `security_invoker=true`, source-table RLS enabled, authenticated SELECT allowed and anon SELECT denied. The source table currently contains **zero rows**, so end-to-end verification with a real customer shipment remains outstanding. The combined warehouse/in-transit category cannot distinguish those two physical states until separate verified event data exists. The frontend must not infer that a customer has left the warehouse from a booking alone.
 
-## Konsoliss universal three-dot quick menu
+## Konsoliss universal three-dot quick menu (updated 2026-11-23)
 
-The horizontal `•••` control sits immediately below the **available CBM** text at the top right. It opens `KonsolissQuickMenu.tsx`, a bottom sheet patterned after Goodies' `GoodiesQuickMenu` (same primary/secondary action grouping, backdrop, cancel action, and navigation model) but with Konsoliss cream/red colors and system dark styling. It does not alter container geometry or occupancy.
+### Persistent trigger and appearance
 
-Host navigation in `App.tsx` routes Home, Messages, Notifications, Wallet, Saved, Recent Activity, and Business Space to shared Wantiss destinations. My Orders currently falls back to universal activity because a dedicated Konsoliss orders route has not been implemented; Help and Feedback temporarily open the existing Goodies support/contact routes, not a Konsoliss-specific support workflow. Do not represent those destinations as feature-complete.
+The quick-menu trigger in `konsolissHomeScreen.tsx` is an **absolute-positioned overlay outside the ScrollView**, so it stays on screen during scrolling, as in Goodies. It sits slightly lower than the header content (`top: insets.top + 198`, `right: 18`), has a compact red pill background, and uses three horizontally arranged dots of 5, 7, and 10 pixels with 3-pixel gaps. Pressing it opens `KonsolissQuickMenu.tsx`. The trigger is no longer embedded below the available-CBM text inside scrolling content. Do not regress its fixed positioning. This is UI-only and must not change the 3D container model or occupancy math.
 
-The shared Saved screen accepts `preferredFeature`. When entered from Konsoliss, it displays a Konsoliss section **before** Goodies and other collections, without fabricating saved items or counts; when entered from Goodies, its existing Goodies-first order remains. A real Konsoliss save/persistence feature has not yet been built, so this section explicitly indicates no saved items are available. Returning from Saved goes back to the originating feature. Menu interactions and navigation still need device-level QA.
+### Popup layout and actions
+
+The bottom sheet follows the **Goodies and Gatherz quick-menu pattern**: a top row of Home, Messages, Notifications, Wallet, Saved; a horizontally scrollable lower row of My Orders, Recent Activity, Help Center, Feedback, Business Space, Dark Mode; backdrop dismissal and Cancel. Menu action icons use `ThinMenuIcon` **directly on the sheet**, without the extra rounded tile backgrounds/borders that were removed. The Home slot uses the same remote Wantiss logo URL as Goodies, displays a `Home` label, and falls back to a letter **W** if image loading fails. This fallback does **not** prove that the actual remote logo loads successfully; verify on device. Only the Home logo retains a circular image frame.
+
+The popup uses Konsoliss cream/red styling in light mode and a darker palette in dark mode. Dark Mode toggles the **Konsoliss screen's own theme**, with the override saved in AsyncStorage under `konsoliss.theme`; without an override it follows the system appearance. This does not necessarily change the global Goodies/Gatherz theme.
+
+### Universal notification/message badge colors — critical invariant
+
+**Yellow (`#DDB52B`) is reserved for Konsoliss-originated unread items, not for all badges displayed while the user is in Konsoliss.** The quick menu now follows the feature-origin color logic of Goodies/Gatherz, rather than assigning yellow unconditionally.
+
+On opening the popup, `KonsolissQuickMenu.tsx` uses the authenticated Supabase user to load unread `notifications.feature_name` and unread messages from `conversations.feature_name` joined via unread `messages.conversation_id`. It subscribes to changes in the notifications and messages tables while open, then unsubscribes on close. Feature-to-color mapping:
+
+| Originating feature | Color |
+| --- | --- |
+| Goodies | `#FD802E` |
+| Gatherz | `#A36BE8` |
+| Flyz | `#4A67B0` |
+| Wallet | `#81C56C` |
+| Frenzies | `#B3DF4B` |
+| **Konsoliss** | **`#DDB52B`** |
+| Woulib | `#FEC509` |
+| Stayz | `#579BC7` |
+| Glowz | `#D49E2B` |
+| Unknown/other | `#BD279F` |
+
+The current menu uses the **first distinct unread feature color** for each of its two aggregate badges (Notifications and Messages), falling back to magenta when no matching origin is available. It does **not** simultaneously display every origin color or rotate colors when several features have unread items; this remains a possible parity improvement against Gatherz. The numeric unread counts are supplied by the parent screen, not recomputed from these color queries, so confirm their scope matches the displayed color metadata in end-to-end QA. Never infer that all unread items belong to Konsoliss merely because this popup was opened from Konsoliss.
+
+### Navigation and known limitations
+
+Host navigation in `App.tsx` routes Home, Messages, Notifications, Wallet, Saved, Recent Activity, and Business Space to shared Wantiss destinations. My Orders currently falls back to universal activity because a dedicated Konsoliss orders route has not been implemented; Help and Feedback temporarily open existing Goodies support/contact routes, not a Konsoliss-specific support workflow. Do not represent those destinations as feature-complete.
+
+The shared Saved screen accepts `preferredFeature`. When entered from Konsoliss, it displays a Konsoliss section **before** Goodies and other collections, without fabricating saved items or counts; when entered from Goodies, its existing Goodies-first order remains. A real Konsoliss save/persistence feature has not yet been built, so this section explicitly indicates no saved items are available. Returning from Saved goes back to the originating feature.
+
+**Verification still needed:** device/simulator visual QA of the persistent trigger, popup spacing and Home logo load/fallback; theme persistence after app restart; live Supabase unread notification/message counts and mixed-feature badge colors; navigation destinations and accessibility; final production builds. Code commits alone do not establish device-level correctness.
