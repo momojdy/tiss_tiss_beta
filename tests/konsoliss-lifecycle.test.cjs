@@ -158,6 +158,13 @@ test('3D WebView script remains syntactically valid after animation changes',()=
  assert.doesNotThrow(()=>new (require('node:vm').Script)(js));
  assert.match(js,/demoCount/);
  assert.match(js,/LOADED\/RESERVED/);
+ const ast=ts.createSourceFile('container-engine.js',js,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
+ assert.equal(ast.parseDiagnostics.length,0,'Embedded WebView code must parse');
+ const draw=ast.statements.find(stmt=>ts.isFunctionDeclaration(stmt)&&stmt.name?.text==='draw');
+ assert.ok(draw&&draw.body,'3D draw function must exist');
+ assert.match(draw.body.getText(ast),/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/,
+   'Free CBM must be drawn inside draw(), not at top-level before fit()');
+ assert.doesNotMatch(js.slice(draw.end),/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/);
 });
 
 test('rear 3D corner hardware is depth-sorted behind loaded boxes at every rotation',()=>{
