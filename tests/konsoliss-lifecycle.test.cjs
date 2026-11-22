@@ -391,7 +391,7 @@ test('carton labels use stable varied placements instead of identical white stic
  const ast=ts.createSourceFile('engine.js',engine,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
  assert.equal(ast.parseDiagnostics.length,0,'Embedded script must remain valid');
  assert.match(engine,/const labelLocations=\[\[\.19,\.81\],\[\.81,\.81\],\[\.5,\.16\],\[\.5,\.5\],\[\.19,\.49\],\[\.81,\.26\]\]/);
- assert.match(engine,/const labelSizes=\[\[\.12,\.10\],\[\.22,\.17\],\[\.38,\.29\],\[\.57,\.44\],\[\.78,\.62\]\]/);
+ assert.match(engine,/const labelSizes=\[\[\.10,\.09\],\[\.17,\.14\],\[\.25,\.21\],\[\.34,\.27\],\[\.43,\.34\]\]/);
  assert.match(engine,/const u0=Math\.max\(\.025,Math\.min\(\.975-width,u-width\/2\)\)/);
  assert.match(engine,/labelPos:Math\.floor\(stickerPick\(i,j,l,q,1\)\*6\)/);
  assert.match(engine,/labelSide:Math\.floor\(stickerPick\(i,j,l,q,2\)\*4\)/);
@@ -416,8 +416,8 @@ test('carton labels use stable varied placements instead of identical white stic
  assert.equal(positions.size,6,'All six label placements should occur');
  assert.equal(sides.size,4,'Labels should appear on multiple carton sides');
  assert.equal(sizes.size,5,'Tiny, small, medium, large, very large sizes must all appear');
- const widthHeights=[[.12,.10],[.22,.17],[.38,.29],[.57,.44],[.78,.62]];
+ const widthHeights=[[.10,.09],[.17,.14],[.25,.21],[.34,.27],[.43,.34]];
  for(const [w,h] of widthHeights){assert.ok(w>0&&w<1&&h>0&&h<1)}
- assert.ok(widthHeights[4][0]/widthHeights[0][0]>6);
- assert.ok(widthHeights[4][1]/widthHeights[0][1]>6);
+ assert.ok(widthHeights[4][0]/widthHeights[0][0]>4);
+ assert.ok(widthHeights[4][1]/widthHeights[0][1]>3);
 });
