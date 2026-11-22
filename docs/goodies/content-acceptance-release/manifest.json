@@ -5,8 +5,8 @@
     "version": 5,
     "payloadSha256": "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
   },
-  "sourcePayloadSha256": "849efc0f80e3d3fa4e86f16d26124d4607187ecc9d0cd0c927a71cbdccdc9573",
-  "payloadSha256": "af529208aedb22c93f7e9fd551fff685aa787a97dab44ff0317b3ab4957dfbee",
+  "sourcePayloadSha256": "df5825006b5cfed5f90a857d34401ff74888ff0ad7f3bb885f521aa910923d86",
+  "payloadSha256": "e3d6c6441262a7955b2abf66d1777c5e474b6f282a962376281e7e74f694df04",
   "changes": [
     {
       "index": 0,
@@ -62,7 +62,7 @@
   "unmodified": "Non-FAQ text from the authorized translation candidate, current live financial configuration, policy documents and every existing Haitian Creole entry",
   "humanReviewClaim": false,
   "publicationPerformed": false,
-  "fields": 2139,
+  "fields": 2140,
   "currentPushFields": {
     "ids": [
       "lbl.notification.push.title",
@@ -88,5 +88,11 @@
     ],
     "humanReviewed": false,
     "published": false
+  },
+  "cashEligibilityCaption": {
+    "id": "lbl.checkoutCashEligibility",
+    "status": "PREPARED_NOT_PUBLISHED",
+    "human_reviewed": false,
+    "haitianCreole": "unchanged; no new translation supplied"
   }
 }
