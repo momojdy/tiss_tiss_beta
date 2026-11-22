@@ -45,21 +45,26 @@ test('every entry into Konsoliss starts a fresh lifecycle notice without status 
  assert.match(home,/previousContainerStage\.current === assignedStage/);
 });
 
-test('unassigned customers see No active load and no fabricated cargo visualization',()=>{
+test('unassigned customers keep the whole dashboard with a genuinely empty 3D container',()=>{
  const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
  assert.match(hook,/value\.kind === 'unassigned'\) return 'No active load'/);
- assert.match(home,/currentContainer\.kind === 'assigned' \? <>/);
- assert.match(home,/accessibilityLabel="Current load empty state"/);
- assert.match(home,/Your next load starts here/);
- assert.match(home,/No active load yet/);
- assert.match(home,/Explore Book Space below/);
- assert.match(home,/currentContainer\.kind==='unassigned'\?'No active load'/);
- assert.match(home,/currentContainer\.kind==='unassigned'\?'No packages in an active load'/);
+ assert.doesNotMatch(home,/accessibilityLabel="Current load empty state"/);
+ assert.match(home,/const noActiveLoad=currentContainer\.kind==='unassigned'/);
+ assert.match(home,/const loadAmount=loadKnown\?'51\.7':noActiveLoad\?'0\.0':'—'/);
+ assert.match(home,/const fillPercent=loadKnown\?'76%':noActiveLoad\?'0%':'—'/);
+ assert.match(home,/const yourSpace=loadKnown\?'0\.5':noActiveLoad\?'0\.0':'—'/);
+ assert.match(home,/const visualMode=loadKnown\?'sample':'empty'/);
+ assert.match(home,/containerHtml\(dark,visualMode==='empty'\)/);
+ assert.match(home,/const CONTAINER_JS = \[/);
+ assert.match(home,/if\(!EMPTY\)for\(let i=0;i<10;i\+\+\)/);
+ assert.match(home,/if\(!EMPTY\)\{const top=/);
+ assert.match(home,/<WebView/);
+ assert.match(home,/onTouchStart=\{\(\) => setScroll\(false\)\}/);
  assert.doesNotMatch(home,/'Container KS-2048\\n76% filled'/);
 });
 test('empty, loading, and unavailable states are distinct from an assigned container',()=>{
  const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
- assert.match(home,/currentContainer\.kind==='loading'\?'Checking your current load/);
+ assert.match(home,/currentContainer\.kind==='unassigned'/);
  assert.match(home,/Load details unavailable/);
  assert.match(hook,/if \(value\.kind === 'loading'\)/);
  assert.match(hook,/if \(value\.kind === 'unavailable'\)/);
