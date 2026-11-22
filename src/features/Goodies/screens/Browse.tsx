@@ -23,12 +23,18 @@ function CachedContentImage({uri, style, contentFit = 'contain', onFail}: {uri: 
   const [reloadKey, setReloadKey] = useState(0);
   useEffect(() => { setFailed(false); setRetried(false); setReloadKey(0); }, [uri]);
   if (failed) return null;
-  return <Image key={uri + ':' + reloadKey} source={{uri}} style={style} resizeMode={contentFit}
-    onError={() => {
+  // Retry the actual image request with a fresh URL. Reloading CMS metadata
+  // does not invalidate React Native's cached failed image response.
+  const imageUri = reloadKey ? uri + (uri.includes('?') ? '&' : '?') + 'retry=' + reloadKey : uri;
+  return <Image key={imageUri} source={{uri: imageUri}} style={style} resizeMode={contentFit}
+    onError={(event) => {
       if (!retried) {
         setRetried(true);
-        void loadContent().finally(() => setReloadKey(value => value + 1));
-      } else { setFailed(true); onFail?.(); }
+        setReloadKey(value => value + 1);
+      } else {
+        console.warn('Goodies published image failed to render', event.nativeEvent?.error);
+        setFailed(true); onFail?.();
+      }
     }} />;
 }
 function Mode({title, sub, emoji, image, onPress, grad, bg, fg, small}: any) {
