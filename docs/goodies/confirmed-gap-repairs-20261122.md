@@ -28,3 +28,7 @@ The additive migration was tested before deployment. It creates management/publi
 If recovery is required, first redeploy the previous public content handlers (v7/v6 source from the parent commit), then roll back the paired admin client. The added RPCs can remain unused. Drop them only after confirming no deployed caller depends on them; never remove or rewind promotion/audit records to undo a client release. Migration rollback was verified locally; this is not full production backup restoration.
 
 FAQ/policies, final translations/Creole review, external payout channels, the owner-deferred leaked-password safeguard, backup export/full restore and the full Wantiss release retain their previously recorded status.
+
+## CI reconciliation follow-up
+
+The first paired push began customer validation before the updated admin key catalogue was available, producing a cross-repository catalogue mismatch. A separate local-API job exposed that its synthetic schema builder omitted the newly required public promotion RPC. The isolated builder now includes the promotion migration; the dedicated migration test explicitly starts before that addition so rollback coverage remains meaningful. These failures were investigated; subsequent CI results must be read at the final corrective commit rather than assumed from earlier local passes.

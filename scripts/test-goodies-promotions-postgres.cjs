@@ -31,7 +31,7 @@ assert.equal(sql("begin;select 'goodies_query_transport_ready';commit;"),'goodie
 if(native){assert.equal(sql('show listen_addresses'),'');assert.equal(sql('show unix_socket_directories'),socket);assert.equal(fs.realpathSync(sql('show data_directory')),fs.realpathSync(path.join(nativeRoot,'data')));assert.equal(fs.statSync(nativeRoot).uid,process.getuid());}
 assert.equal(sql("select count(*) from pg_namespace where nspname='auth'"),'0','Use a fresh synthetic test database; existing data is never reset.');
 const reaudit=true,sharedBill=true;
-const {bootstrap,files,upstreamFiles,forwardFiles}=require('./goodies-isolated-schema.cjs')({reaudit,sharedBill,courierBaseline:process.argv.includes('--courier-baseline')});
+const {bootstrap,files,upstreamFiles,forwardFiles}=require('./goodies-isolated-schema.cjs')({reaudit,sharedBill,promotions:false,courierBaseline:process.argv.includes('--courier-baseline')});
 const temp=fs.mkdtempSync(path.join(os.tmpdir(),'goodies-native-settlement-')),file=path.join(temp,'bootstrap.sql');fs.writeFileSync(file,bootstrap);
 try{if(native)execFileSync(execute,[...queryArgs,'-f',file],{env,encoding:'utf8',maxBuffer:8*1024*1024});else{docker(['cp',file,container+':/tmp/goodies-bootstrap.sql']);docker(['exec',container,'psql','-U','postgres','-d',database,'-X','-v','ON_ERROR_STOP=1','-f','/tmp/goodies-bootstrap.sql']);}}finally{fs.rmSync(temp,{recursive:true,force:true});}
 
