@@ -163,7 +163,7 @@ function Screen({onBack}: {onBack?: () => void}) {
   const noActiveLoad=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
   const initialZero=noActiveLoad&&loadProgress.kind==='unrecorded';
-  const fmt=(n:number)=>n.toFixed(1);
+  const fmt=(n:number)=>n.toFixed(2).replace(/0$/,'').replace(/\.$/,'.0');
   const loadedValue=progress?fmt(progress.loadedCbm):initialZero?'0.0':'—';
   const inboundValue=progress?fmt(progress.inboundCbm):initialZero?'0.0':'—';
   const committedValue=progress?fmt(progress.allocatedCbm):initialZero?'0.0':'—';
@@ -181,8 +181,8 @@ function Screen({onBack}: {onBack?: () => void}) {
   const visualMode=noCargoLoaded?'illustration':'sample';
   // Left: customer committed CBM / reserved CBM. Right: the shared 68 CBM container only.
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/containerOccupancy.capacityCbm:0;
-  const containerPercent=containerOccupancy?Math.round(containerRatio*100)+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
-  const containerAvailable=containerOccupancy?containerOccupancy.freeCbm.toFixed(1):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
+  const containerPercent=containerOccupancy?(containerRatio>0&&containerRatio<0.01?(containerRatio*100).toFixed(2):String(Math.round(containerRatio*100)))+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
+  const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
   const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.loadedCbm===0&&progress.inboundCbm===0));
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
@@ -200,7 +200,7 @@ function Screen({onBack}: {onBack?: () => void}) {
       </Pressable></View>
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No container assigned</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
@@ -220,9 +220,9 @@ function Screen({onBack}: {onBack?: () => void}) {
           </Pressable>:null}
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:7}}>
-            <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.otherCargoCbm.toFixed(1):'—'}</Tx></Tx>
-            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.yourSpaceCbm.toFixed(1):'—'}</Tx></Tx>
-            <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.freeCbm.toFixed(1):'—'}</Tx></Tx>
+            <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.otherCargoCbm):'—'}</Tx></Tx>
+            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.yourSpaceCbm):'—'}</Tx></Tx>
+            <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.freeCbm):'—'}</Tx></Tx>
           </View>
           {!containerOccupancy?<Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container totals appear once all loaded cargo has been verified.</Tx>:null}
         </>:<>
