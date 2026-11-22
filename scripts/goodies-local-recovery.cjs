@@ -11,7 +11,7 @@ module.exports=async function({pg,state,nativeBin,env,docker,auth,rest,storage,a
  function snapshot(){
   const tables=JSON.parse(pg("select jsonb_agg(jsonb_build_array(schemaname,tablename) order by schemaname,tablename) from pg_tables where schemaname not in ('pg_catalog','information_schema') and schemaname not like 'pg_toast%'"));
   const parts=tables.map(([schema,table])=>`(select jsonb_build_object('table',${literal(schema+'.'+table)},'rows',count(*),'fingerprint',md5(coalesce(string_agg(to_jsonb(record)::text,E'\\n' order by to_jsonb(record)::text),''))) from ${identifier(schema)}.${identifier(table)} record)`);
-  const rows=JSON.parse(pg('select jsonb_build_array('+parts.join(',')+')'));
+  const rows=JSON.parse(pg("select coalesce(jsonb_agg(item order by item->>'table'),'[]'::jsonb) from (values "+parts.map(part=>'('+part+')').join(',')+") as snapshot(item)"));
   const schema=pg("select md5(string_agg(pg_get_functiondef(p.oid),E'\\n' order by p.oid)) from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname in ('public','private','auth','storage') and p.prokind in ('f','p')");
   const roles=pg("select md5(jsonb_agg(to_jsonb(r) order by rolname)::text) from (select rolname,rolsuper,rolinherit,rolcreaterole,rolcreatedb,rolcanlogin,rolreplication,rolbypassrls,rolconnlimit,rolconfig from pg_roles) r");
   const policies=pg("select md5(coalesce(jsonb_agg(to_jsonb(p) order by schemaname,tablename,policyname)::text,'')) from pg_policies p where schemaname in ('public','private','auth','storage')");
