@@ -126,13 +126,16 @@ function Screen({onBack}: {onBack?: () => void}) {
   const initialZero=noActiveLoad&&loadProgress.kind==='unrecorded';
   const fmt=(n:number)=>n.toFixed(1);
   const loadedValue=progress?fmt(progress.loadedCbm):initialZero?'0.0':'—';
+  const inboundValue=progress?fmt(progress.inboundCbm):initialZero?'0.0':'—';
+  const committedValue=progress?fmt(progress.allocatedCbm):initialZero?'0.0':'—';
+  const warehouseOrTransitValue=progress?fmt(progress.atWarehouseOrInTransitCbm):initialZero?'0.0':'—';
   const reservedValue=progress?fmt(progress.reservedCbm):initialZero?'0.0':'—';
   const sentValue=progress?fmt(progress.sentCbm):initialZero?'0.0':'—';
   const notLoadedValue=progress?fmt(progress.sentNotLoadedCbm):initialZero?'0.0':'—';
   const stillToSendValue=progress?fmt(progress.reservedNotSentCbm):initialZero?'0.0':'—';
   const fillPercent=progress?progress.loadedPercent+'%':initialZero?'0%':'—';
-  const fillRatio=progress&&progress.reservedCbm>0?progress.loadedCbm/progress.reservedCbm:0;
-  const noCargoLoaded=!progress||progress.loadedCbm===0;
+  const fillRatio=progress&&progress.reservedCbm>0?progress.allocatedCbm/progress.reservedCbm:0;
+  const noCargoLoaded=!progress||progress.allocatedCbm===0;
   const visualMode=noCargoLoaded?'illustration':'sample';
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
@@ -144,17 +147,18 @@ function Screen({onBack}: {onBack?: () => void}) {
         <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'&&progress&&progress.reservedCbm>0?'Preparing your load':currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
       </Pressable></View>
       {noActiveLoad?<Tx style={{fontSize:11,color:t.mu,marginHorizontal:24,marginTop:5}}>No active load yet. The loading animation below shows an example, not your packages.</Tx>:null}
-      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{loadedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM reserved</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(fillRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} of your space loaded</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{stillToSendValue} CBM</Tx> of reserved space not yet sent</Tx></View></View>
+      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM reserved</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(fillRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} of your space committed</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{stillToSendValue} CBM</Tx> of reserved space not yet sent</Tx></View></View>
       <View style={{paddingHorizontal:24,paddingTop:12,flexDirection:'row',flexWrap:'wrap',gap:10}}>
         {([
           ['Space reserved',reservedValue],
           ['Goods sent',sentValue],
           ['Loaded in container',loadedValue],
-          ['Sent, not yet loaded',notLoadedValue],
+          ['Inbound to container',inboundValue],
+          ['Sent — not yet allocated',warehouseOrTransitValue],
         ] as const).map(([label,value])=><View key={label} style={{flexGrow:1,flexBasis:'42%',borderRadius:12,backgroundColor:t.card,padding:10,borderWidth:0.5,borderColor:t.bd}}>
           <Tx style={{fontSize:11,color:t.mu}}>{label}</Tx><Tx style={{fontSize:17,fontWeight:'700',color:t.tx,marginTop:3}}>{value} CBM</Tx>
         </View>)}
-        <Tx style={{width:'100%',fontSize:10,color:t.mu}}>Container capacity: 68 CBM · Customer loading progress is based on reserved space.</Tx>
+        <Tx style={{width:'100%',fontSize:10,color:t.mu}}>Container capacity: 68 CBM · Progress includes loaded and inbound-to-container cargo. Goods only sent to the warehouse are excluded.</Tx>
       </View>
       {noCargoLoaded?<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>Loading illustration — sample packages only</Tx>:<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>3D layout is illustrative; quantities above are your recorded volumes.</Tx>}
       <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode} originWhitelist={['*']} source={{html: containerHtml(dark,noCargoLoaded)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
