@@ -68,7 +68,7 @@ export function useCurrentKonsolissContainer(): CurrentContainer {
 
 export function currentKonsolissContainerLabel(value: CurrentContainer): string {
   if (value.kind === 'loading') return 'Loading container…';
-  if (value.kind === 'unassigned') return 'No container assigned';
+  if (value.kind === 'unassigned') return 'No active load';
   if (value.kind === 'unavailable') return 'Container unavailable';
   const labels: Record<KonsolissContainerStatus, string> = {
     filling: 'Filling',
