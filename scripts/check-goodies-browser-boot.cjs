@@ -5,7 +5,7 @@ const args=process.argv.slice(2),value=flag=>args[args.indexOf(flag)+1];
 assert.ok(args.includes('--root')!==args.includes('--url'),'Provide one local export directory or loopback app URL.');
 const state=fs.mkdtempSync(path.join(os.tmpdir(),'goodies-browser-'));fs.chmodSync(state,0o700);
 const report={classification:'NOT VERIFIED',scope:'Actual anonymous web entry only; not signed-in or installed-device acceptance.',externalPageRequestsAllowed:false,externalRequestsBlocked:0,uncaughtErrors:[]};
-let server,browser,connection,url;
+let server,browser,connection,url,browserStderr='';
 const pending=new Map();let sequence=0;
 const delay=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 function cdp(method,params={},sessionId){return new Promise((resolve,reject)=>{const id=++sequence,timer=setTimeout(()=>{pending.delete(id);reject(Error('Browser protocol timeout: '+method));},15000);pending.set(id,{resolve:result=>{clearTimeout(timer);resolve(result);},reject:error=>{clearTimeout(timer);reject(error);}});connection.send(JSON.stringify({id,method,params,...(sessionId?{sessionId}:{})}));});}
@@ -28,13 +28,24 @@ async function main(){
  const binary=process.env.GOODIES_BROWSER_BIN||['google-chrome','chromium','chromium-browser'].map(name=>spawnSync('which',[name],{encoding:'utf8'})).find(result=>result.status===0)?.stdout.trim();
  assert.ok(binary&&fs.existsSync(binary),'Install or select an existing Chrome/Chromium binary.');
  const browserEnv={...process.env};for(const key of ['EXPO_TOKEN','EAS_ACCESS_TOKEN','GITHUB_TOKEN','GH_TOKEN','SUPABASE_ACCESS_TOKEN','SUPABASE_DB_PASSWORD','SUPABASE_SERVICE_ROLE_KEY','DATABASE_URL','STRIPE_SECRET_KEY','STRIPE_TEST_SECRET_KEY','STRIPE_WEBHOOK_SECRET'])delete browserEnv[key];
- browser=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-default-apps','--disable-sync','--no-first-run','--no-default-browser-check','--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--user-data-dir='+path.join(state,'profile'),'about:blank'],{env:browserEnv,stdio:'ignore',detached:true});
+ browser=spawn(binary,['--headless=new','--no-sandbox','--disable-dev-shm-usage','--disable-background-networking','--disable-component-update','--disable-default-apps','--disable-sync','--no-first-run','--no-default-browser-check','--remote-debugging-address=127.0.0.1','--remote-debugging-port=0','--user-data-dir='+path.join(state,'profile'),'about:blank'],{env:browserEnv,stdio:['ignore','ignore','pipe'],detached:true});
+ browser.stderr.on('data',chunk=>{browserStderr=(browserStderr+chunk.toString()).slice(-8192);});
  browser.on('error',error=>{report.browserError=error.code||'Launch failed';});
  const portFile=path.join(state,'profile','DevToolsActivePort');
- for(let attempt=0;attempt<150&&!fs.existsSync(portFile);attempt++){assert.ok(browser.exitCode===null&&!report.browserError,'The selected browser could not start.');await delay(100);}
- assert.ok(fs.existsSync(portFile),'The browser did not expose its local test endpoint.');
- const [port,endpoint]=fs.readFileSync(portFile,'utf8').trim().split('\n');
- connection=new WebSocket('ws://127.0.0.1:'+port+endpoint);
+ let endpointUrl;
+ for(let attempt=0;attempt<300&&!endpointUrl;attempt++){
+  assert.ok(browser.exitCode===null&&browser.signalCode===null&&!report.browserError,'The selected browser could not start ('+(browser.signalCode??browser.exitCode??report.browserError)+').');
+  if(fs.existsSync(portFile)){
+   const [port,endpoint]=fs.readFileSync(portFile,'utf8').trim().split('\n');
+   if(/^\d+$/.test(port)&&/^\/devtools\/browser\/[a-z0-9-]+$/i.test(endpoint||''))endpointUrl='ws://127.0.0.1:'+port+endpoint;
+  }
+  // Chrome also reports its bound CDP socket on stderr. Some runner wrappers do
+  // not retain DevToolsActivePort; accept only the explicitly bound loopback URL.
+  endpointUrl??=browserStderr.match(/DevTools listening on (ws:\/\/127\.0\.0\.1:\d+\/devtools\/browser\/[a-z0-9-]+)/i)?.[1];
+  if(!endpointUrl)await delay(100);
+ }
+ assert.ok(endpointUrl,'The browser did not expose its local test endpoint.');
+ connection=new WebSocket(endpointUrl);
  await new Promise((resolve,reject)=>{connection.addEventListener('open',resolve,{once:true});connection.addEventListener('error',()=>reject(Error('Could not connect to the local browser.')),{once:true});});
  connection.addEventListener('message',event=>{
   const message=JSON.parse(event.data);
@@ -76,4 +87,4 @@ async function cleanup(){
  if(server){server.closeAllConnections();await new Promise(resolve=>server.close(resolve));}
  fs.rmSync(state,{recursive:true,force:true,maxRetries:10,retryDelay:100});
 }
-main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);console.error(report.error);process.exitCode=1;}).finally(async()=>{try{await cleanup();}catch(error){report.classification='FAIL';report.cleanupError=String(error.message).slice(0,500);console.error(report.cleanupError);process.exitCode=1;}if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});
+main().catch(error=>{report.classification='FAIL';report.error=String(error.message).slice(0,1200);if(browser){report.browserExitCode=browser.exitCode;report.browserExitSignal=browser.signalCode;report.browserStartupDiagnostic=browserStderr.slice(-4000);}console.error(report.error);process.exitCode=1;}).finally(async()=>{try{await cleanup();}catch(error){report.classification='FAIL';report.cleanupError=String(error.message).slice(0,500);console.error(report.cleanupError);process.exitCode=1;}if(args.includes('--report'))fs.writeFileSync(value('--report'),JSON.stringify(report,null,2)+'\n');});
