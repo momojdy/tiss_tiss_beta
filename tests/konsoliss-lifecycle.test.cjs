@@ -107,13 +107,14 @@ test('lower bar alternates every seven seconds only when container selected',()=
  assert.match(home,/progressView,setProgressView/);
  assert.match(home,/const hasCurrentContainer=selectedContainer!==null/);
  assert.match(home,/if\(!hasCurrentContainer\)\{setProgressView\('customer'\);return;\}/);
- assert.match(home,/setInterval\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),7000\)/);
+ assert.match(home,/setTimeout\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),7000\)/);
+ assert.match(home,/\[hasCurrentContainer,selectedContainer\?\.id,progressView\]/);
  assert.match(home,/progressView==='container'&&hasCurrentContainer/);
  assert.match(home,/Loaded <Tx/);
  assert.match(home,/Inbound <Tx/);
  assert.match(home,/Not allocated <Tx/);
  assert.match(home,/containerOccupancy\.otherCargoCbm\.toFixed\(1\)/);
- assert.match(home,/yourAllocatedContainerCbm\.toFixed\(1\)/);
+ assert.match(home,/containerOccupancy\.yourSpaceCbm\.toFixed\(1\)/);
  assert.match(home,/containerOccupancy\.freeCbm\.toFixed\(1\)/);
  assert.doesNotMatch(home,/Your loading progress/);
  assert.doesNotMatch(home,/Container progress · 68 CBM/);
@@ -211,7 +212,8 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.doesNotMatch(home,/Sample cargo/);
  assert.match(home,/YOUR_LOADED=Number\(document\.documentElement\.dataset\.yourLoaded\)/);
  assert.match(home,/cx\.fillText\('My current loaded space '\+YOUR_LOADED\.toFixed\(2\)/);
- assert.match(home,/cx\.fillText\('Free '\+FREE\.toFixed\(1\)\+' CBM'/);
+ assert.match(home,/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free',freeX,freeY\)/);
+ assert.match(home,/freeCenter=proj\(\[HX-\(FREE\/68\)\*L\/2,H\*\.45,HZ\+\.045\]\)/);
  assert.match(home,/yourPhysicallyLoadedCbm\?\?0,containerOccupancy\?\.freeCbm/);
 });
 
@@ -238,7 +240,7 @@ test('eight distinct demo containers stay within the real 68 CBM physical capaci
 });
 
 
-test('loaded-cargo figure and allocated My space are different even within the same demo container',()=>{
+test('3D loaded cargo and lower My space use physically loaded CBM, not reserved allocation',()=>{
  const file=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
  const converted=ts.transpileModule(file,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
  const module={exports:{}};
@@ -251,9 +253,19 @@ test('loaded-cargo figure and allocated My space are different even within the s
  assert.equal(rows[4].yourSpaceCbm,4);
  assert.equal(rows[4].yourLoadedCbm,2);
  assert.match(home,/otherCargoCbm:Math\.max\(0,\(selectedContainer\.loadedCbm\?\?0\)-\(selectedContainer\.yourLoadedCbm\?\?0\)\)/);
- assert.match(home,/yourAllocatedContainerCbm=isDemo\?selectedContainer\?\.yourSpaceCbm:null/);
+ assert.doesNotMatch(home,/yourAllocatedContainerCbm/);
+ assert.match(home,/yourSpaceCbm:selectedContainer\.yourLoadedCbm\?\?0/);
  assert.match(home,/yourPhysicallyLoadedCbm=isDemo\?selectedContainer\?\.yourLoadedCbm:verifiedOccupancy\?\.yourSpaceCbm/);
  assert.match(home,/accessibilityLabel="Show other progress bar"/);
  assert.doesNotMatch(home,/Switch ↻/);
  assert.match(home,/M3 5h23/);
+});
+
+
+test('manual arrows restart full seven-second dwell instead of preserving an old interval countdown',()=>{
+ assert.match(home,/onPress=\{\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\)\}/);
+ assert.match(home,/const timeout=setTimeout\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),7000\)/);
+ assert.match(home,/return\(\)=>clearTimeout\(timeout\)/);
+ assert.match(home,/\[hasCurrentContainer,selectedContainer\?\.id,progressView\]/);
+ assert.doesNotMatch(home,/setInterval\(\(\)=>setProgressView/);
 });
