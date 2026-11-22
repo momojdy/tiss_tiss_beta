@@ -219,8 +219,11 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.doesNotMatch(home,/Sample cargo/);
  assert.match(home,/YOUR_LOADED=Number\(document\.documentElement\.dataset\.yourLoaded\)/);
  assert.match(home,/cx\.fillText\('My current loaded space '\+YOUR_LOADED\.toFixed\(2\)/);
- assert.match(home,/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free',freeX,freeY\)/);
- assert.match(home,/freeCenter=proj\(\[HX-\(FREE\/68\)\*L\/2,H\*\.45,HZ\+\.045\]\)/);
+ assert.match(home,/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free',f\[0\],f\[1\]\)/);
+ assert.match(home,/const f=proj\(\[HX-\(FREE\/68\)\*L\/2,1\.3,0\]\)/);
+ assert.match(home,/cx\.font='700 10px -apple-system,Arial,sans-serif'/);
+ assert.match(home,/cx\.strokeStyle=C\.halo;cx\.strokeText\(FREE\.toFixed\(1\)\+' CBM free'/);
+ assert.match(home,/cx\.fillStyle=C\.fl;cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/);
  assert.match(home,/yourPhysicallyLoadedCbm\?\?0,containerOccupancy\?\.freeCbm/);
 });
 
@@ -275,4 +278,17 @@ test('manual arrows restart full seven-second dwell instead of preserving an old
  assert.match(home,/return\(\)=>clearTimeout\(timeout\)/);
  assert.match(home,/\[hasCurrentContainer,selectedContainer\?\.id,progressView\]/);
  assert.doesNotMatch(home,/setInterval\(\(\)=>setProgressView/);
+});
+
+
+test('two-way progress icon sits in the progress row, not a separate row above it',()=>{
+ const start=home.indexOf("<View style={{paddingHorizontal:24,marginTop:12}}>");
+ const end=home.indexOf("<View style={{paddingHorizontal: 24, paddingTop: 22",start);
+ assert.ok(start>=0&&end>start);
+ const layout=home.slice(start,end);
+ assert.equal((layout.match(/accessibilityLabel="Show other progress bar"/g)||[]).length,2,
+   'both possible bars must provide the same inline icon');
+ assert.match(layout,/flex:1,height:10,borderRadius:5/);
+ assert.match(layout,/flex:1,flexDirection:'row',height:10/);
+ assert.doesNotMatch(layout,/justifyContent:'flex-end',marginBottom:hasCurrentContainer/);
 });
