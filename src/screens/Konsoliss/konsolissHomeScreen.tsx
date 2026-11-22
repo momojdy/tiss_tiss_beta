@@ -3,7 +3,8 @@ import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {WebView} from 'react-native-webview';
 import {useKonsolissCopy, type KonsolissCopy} from './useKonsolissCopy';
-import {currentKonsolissContainerLabel, useCurrentKonsolissContainer} from './useCurrentKonsolissContainer';
+import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type KonsolissContainerStatus} from './useCurrentKonsolissContainer';
+import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 const StatusBarCompat: any = StatusBar;
@@ -103,10 +104,29 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
 }
 function Screen({onBack}: {onBack?: () => void}) {
   const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const currentContainer = useCurrentKonsolissContainer();
+  const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
+  const previousContainerStage = useRef<string|null>(null);
+  const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
+  useEffect(() => {
+    if (!assignedStage) return;
+    if (previousContainerStage.current === assignedStage) return;
+    previousContainerStage.current = assignedStage;
+    setLifecycleNotice(currentContainer.kind === 'assigned' ? currentContainer.status : null);
+  }, [assignedStage]);
+  useEffect(() => {
+    if (!lifecycleNotice) return;
+    const timer = setTimeout(() => setLifecycleNotice(null), 7000);
+    return () => clearTimeout(timer);
+  }, [lifecycleNotice]);
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
-      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentKonsolissContainerLabel(currentContainer)}</Tx></View></View>
+      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Show current container status explanation"
+        disabled={currentContainer.kind!=='assigned'}
+        onPress={() => {if(currentContainer.kind==='assigned')setLifecycleNotice(currentContainer.status);}}
+        style={[s.pill, {backgroundColor: t.tint}]}>
+        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
+      </Pressable></View>
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>51.7<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}}> / 68 CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray="66.85 87.96" rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>76% filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}}>16.3 CBM</Tx> {copy['home.available']}</Tx></View></View>
       <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={dark ? 'd' : 'l'} originWhitelist={['*']} source={{html: containerHtml(dark)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
@@ -145,6 +165,33 @@ function Screen({onBack}: {onBack?: () => void}) {
     </ScrollView>
     <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Image source={k===0?require('../../assets/konsoliss/icons/homeicon.png'):k===1?require('../../assets/konsoliss/icons/warehouseicon.png'):k===2?require('../../assets/konsoliss/icons/consolidation.png'):k===3?require('../../assets/konsoliss/icons/sourcingicon.png'):require('../../assets/konsoliss/icons/hub.png')} style={{width: k === 3 ? 43 : k === 4 ? 37 : 39, height: k === 3 ? 43 : k === 4 ? 37 : 39}} resizeMode="contain" /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} copy={copy} /> : <Book t={t} copy={copy} onClose={done} />}</Sheet>}
+    <Modal transparent visible={lifecycleNotice!==null} animationType="fade"
+      statusBarTranslucent onRequestClose={() => setLifecycleNotice(null)}>
+      <View style={{flex:1,justifyContent:'flex-end'}}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Dismiss container status explanation"
+          onPress={() => setLifecycleNotice(null)}
+          style={[StyleSheet.absoluteFill,{backgroundColor:'rgba(0,0,0,0.32)'}]}/>
+        {lifecycleNotice ? <View accessibilityLabel="Container status explanation"
+          style={{backgroundColor:t.bg,borderTopLeftRadius:24,borderTopRightRadius:24,paddingTop:22,
+            paddingHorizontal:24,paddingBottom:Math.max(30,insets.bottom+18),borderWidth:1,borderColor:t.bd}}>
+          <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'flex-start',gap:12}}>
+            <View style={{flex:1}}>
+              <Tx style={{fontSize:19,fontWeight:'800',color:t.ac,lineHeight:25}}>{KONSOLISS_LIFECYCLE_MESSAGES[lifecycleNotice].title}</Tx>
+              {currentContainer.kind==='assigned'?<Tx style={{fontSize:12,color:t.mu,marginTop:3}}>{currentContainer.number}</Tx>:null}
+            </View>
+            <Pressable accessibilityRole="button" accessibilityLabel="Close container status explanation"
+              hitSlop={12} onPress={() => setLifecycleNotice(null)}
+              style={{padding:6}}><Tx style={{fontSize:19,color:t.tx}}>✕</Tx></Pressable>
+          </View>
+          <Tx style={{fontSize:14,lineHeight:21,color:t.tx,marginTop:12}}>
+            {KONSOLISS_LIFECYCLE_MESSAGES[lifecycleNotice].description}
+          </Tx>
+          <Tx style={{fontSize:11,lineHeight:16,color:t.mu,marginTop:13}}>
+            This notice closes automatically. Tap the container status anytime to read it again.
+          </Tx>
+        </View>:null}
+      </View>
+    </Modal>
   </View>;
 }
 
