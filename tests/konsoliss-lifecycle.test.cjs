@@ -85,7 +85,7 @@ test('short empty-state hint appears only without a container or committed cargo
  assert.match(home,/showEmptyLoadHint=currentContainer\.kind==='unassigned'/);
  assert.match(home,/progress\.loadedCbm===0&&progress\.inboundCbm===0/);
  assert.match(home,/\{showEmptyLoadHint\?<Tx/);
- assert.match(home,/Nothing loaded yet/);
+ assert.match(home,/No container assigned/);
  assert.doesNotMatch(home,/No goods loaded into a container yet/);
 });
 test('lower bar alternates every fifteen seconds only when container assigned',()=>{
@@ -140,4 +140,18 @@ test('3D WebView script remains syntactically valid after animation changes',()=
  assert.doesNotThrow(()=>new (require('node:vm').Script)(js));
  assert.match(js,/demoCount/);
  assert.match(js,/LOADED\/RESERVED/);
+});
+
+test('rear 3D corner hardware is depth-sorted behind loaded boxes at every rotation',()=>{
+ const parsed=ts.createSourceFile('konsolissHomeScreen.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(row=>row.name.getText(parsed)==='CONTAINER_JS');
+ assert.ok(decl);
+ const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
+ assert.match(engine,/layer=far\?\.65:1\.6/);
+ assert.match(engine,/const cb=\[xs-\.17,xs\+\.17/);
+ assert.match(engine,/if\(xs<0\)abox\(layer,cb/);
+ assert.match(engine,/else abox\(layer,cb/);
+ assert.match(engine,/it\.sort\(\(a,b\)=>a\.l-b\.l\|\|a\.d-b\.d\)/);
+ assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
 });
