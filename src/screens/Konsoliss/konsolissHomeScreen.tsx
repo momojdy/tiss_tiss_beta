@@ -123,16 +123,17 @@ function Screen({onBack}: {onBack?: () => void}) {
     return () => clearTimeout(timer);
   }, [lifecycleNotice]);
   // Customer assignments remain server-owned; sample containers are local preview data only.
-  const liveContainers=assignedContainers.containers;
   const realFallback=currentContainer.kind==='assigned'?{
     id:'current:'+currentContainer.number,number:currentContainer.number,status:currentContainer.status,demo:false,
   } as KonsolissSelectableContainer:null;
+  const liveContainers=assignedContainers.containers.length?assignedContainers.containers:(realFallback?[realFallback]:[]);
   const defaultContainer=liveContainers.find(row=>row.number===realFallback?.number)
     ??liveContainers[0]??realFallback
     ??(currentContainer.kind==='unassigned'&&assignedContainers.state==='ready'?KONSOLISS_DEMO_CONTAINERS[0]:null);
   const selectedContainer:KonsolissSelectableContainer|null=selectedContainerId==='live'?null:
     (KONSOLISS_DEMO_CONTAINERS.find(row=>row.id===selectedContainerId)
       ??liveContainers.find(row=>row.id===selectedContainerId)
+      ??(selectedContainerId===realFallback?.id?realFallback:null)
       ??(selectedContainerId===null?defaultContainer:null));
   const isDemo=selectedContainer?.demo===true;
   const hasCurrentContainer=selectedContainer!==null;
@@ -284,16 +285,19 @@ function Screen({onBack}: {onBack?: () => void}) {
             <Pressable accessibilityRole="button" accessibilityLabel="Close container selector"
               onPress={() => setContainerMenuOpen(false)} hitSlop={10}><Tx style={{color:t.ac,fontSize:19}}>✕</Tx></Pressable>
           </View>
+          <Tx style={{paddingHorizontal:14,paddingVertical:6,fontSize:10,color:t.mu}}>
+            DEMO PREVIEW · NOT LIVE DATA
+          </Tx>
+          <Pressable accessibilityRole="button" accessibilityLabel="Show live container status without demo"
+            onPress={() => {setSelectedContainerId('live');setContainerMenuOpen(false);setProgressView('customer');}}
+            style={{paddingHorizontal:14,minHeight:53,justifyContent:'center',borderTopWidth:0.5,borderTopColor:t.bd}}>
+            <Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>Live view</Tx>
+            <Tx style={{fontSize:11,color:t.mu}}>
+              {liveContainers.length?liveContainers.length+' assigned container(s)':'No container assigned'}
+            </Tx>
+          </Pressable>
           <ScrollView nestedScrollEnabled showsVerticalScrollIndicator
             style={{maxHeight:5*59}} contentContainerStyle={{paddingBottom:5}}>
-            <Pressable accessibilityRole="button" accessibilityLabel="Show live container status without demo"
-              onPress={() => {setSelectedContainerId('live');setContainerMenuOpen(false);setProgressView('customer');}}
-              style={{paddingHorizontal:14,minHeight:53,justifyContent:'center',borderTopWidth:0.5,borderTopColor:t.bd}}>
-              <Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>Live view</Tx>
-              <Tx style={{fontSize:11,color:t.mu}}>
-                {liveContainers.length?liveContainers.length+' assigned container(s)':'No container assigned'}
-              </Tx>
-            </Pressable>
             {liveContainers.map(item=><View key={item.id} style={{flexDirection:'row',alignItems:'center',
               borderTopWidth:0.5,borderTopColor:t.bd,minHeight:59}}>
               <Pressable accessibilityRole="button" accessibilityLabel={'Select container '+item.number}
@@ -307,8 +311,6 @@ function Screen({onBack}: {onBack?: () => void}) {
                 onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setLifecycleNotice(item.status);}}
                 style={{paddingHorizontal:14,paddingVertical:12}}><Tx style={{color:t.ac,fontSize:17}}>ⓘ</Tx></Pressable>
             </View>)}
-            <Tx style={{paddingHorizontal:14,paddingVertical:8,fontSize:11,fontWeight:'800',color:t.mu,
-              borderTopWidth:0.5,borderTopColor:t.bd}}>DEMO PREVIEW · NOT LIVE DATA</Tx>
             {KONSOLISS_DEMO_CONTAINERS.map(item=><Pressable key={item.id} accessibilityRole="button"
               accessibilityLabel={'Preview demo container '+item.number}
               accessibilityState={{selected:selectedContainer?.id===item.id}}
