@@ -11,11 +11,9 @@ export default function KonsolissQuickMenu({visible,close,onAction,dark,unreadNo
  const bottom=[['orders','My Orders','package'],['activity','Recent Activity','clock'],['help','Help Center','help-circle'],['feedback','Feedback','edit-3'],['business','Business Space','briefcase'],['dark','Dark Mode',dark?'sun':'moon']] as const;
  const tile=(item:readonly [KonsolissMenuAction,string,string],primary:boolean)=>{
   const [key,label,icon]=item;const count=key==='messages'?unreadMessages:key==='notifications'?unreadNotifications:0;
-  return <Pressable key={key} accessibilityRole="button" accessibilityLabel={label} onPress={()=>{close();onAction(key);}} style={{width:primary?'20%':78,alignItems:'center',minHeight:78,gap:8}}>
-    <View style={{width:54,height:54,alignItems:'center',justifyContent:'center',borderRadius:27,backgroundColor:dark?'#342522':'#FBE9C9',borderWidth:1,borderColor:accent+'35'}}>
-      {key==='home'?<Image source={{uri:'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG'}} style={{width:52,height:52,borderRadius:26}} resizeMode="contain"/>:<ThinMenuIcon name={icon} color={accent}/>}
-      {count>0?<View style={{position:'absolute',right:-4,top:-5,minWidth:21,height:20,borderRadius:11,backgroundColor:konsolissYellow,alignItems:'center',justifyContent:'center',paddingHorizontal:3}}><Text style={{color:'#2B1210',fontSize:10,fontWeight:'700'}}>{count>99?'99+':count}</Text></View>:null}
-    </View>
+  return <Pressable key={key} accessibilityRole="button" accessibilityLabel={label} onPress={()=>{close();onAction(key);}} style={{width:primary?'20%':76,alignItems:'center',minHeight:78,gap:8}}>
+    {key==='home'?<View style={{width:56,height:56,borderRadius:28,borderWidth:1,borderColor:dark?'#6B4B38':'#DDB52B',alignItems:'center',justifyContent:'center',overflow:'hidden'}}><Image source={{uri:'https://raw.githubusercontent.com/momojdy/tiss_icons_assets/refs/heads/main/WantisslogoOuterless.PNG'}} style={{width:54,height:54,borderRadius:27}} resizeMode="contain"/></View>:<ThinMenuIcon name={icon} color={accent}/>}
+    {count>0?<View style={{position:'absolute',top:-8,right:2,minWidth:25,height:20,borderRadius:10,backgroundColor:konsolissYellow,alignItems:'center',justifyContent:'center',paddingHorizontal:5}}><Text style={{color:'#2B1210',fontSize:11,fontWeight:'700'}}>{count>99?'99+':count}</Text></View>:null}
     {key!=='home'?<Text style={{fontSize:10,fontWeight:'600',color:text,textAlign:'center'}}>{label}</Text>:null}
   </Pressable>;
  };
