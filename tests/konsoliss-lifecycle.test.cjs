@@ -60,9 +60,13 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.match(home,/demoCount=cycle<4800/);
  assert.match(home,/cycle\/4800/);
  assert.match(home,/cycle<8600\?cargo\.length:0/);
- assert.match(home,/demoBlink=cycle>=4800&&cycle<8600&&Math\.floor\(\(cycle-4800\)\/500\)%2===0/);
+ assert.match(home,/demoShowLoad=cycle>=4800&&cycle<8600/);
+ assert.match(home,/demoBlink=demoShowLoad&&Math\.floor\(\(cycle-4800\)\/500\)%2===0/);
  assert.match(home,/const timer=setInterval\(tick,100\)/);
- assert.match(home,/highlight=EMPTY&&demoBlink&&c\.u&&c\.top&&c\.lab/);
+ assert.match(home,/demoCurrent:i===6&&j===1&&l===nl-1&&q===0/);
+ assert.match(home,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
+ assert.match(home,/if\(EMPTY&&demoShowLoad\)\{const carton=cargo\.find\(c=>c\.demoCurrent\)/);
+ assert.match(home,/cx\.fillText\('My current load',labelX,labelY\)/);
  assert.match(home,/highlight\?'#FFE36B':c\.k/);
  assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
