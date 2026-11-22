@@ -122,9 +122,9 @@ function Screen({onBack}: {onBack?: () => void}) {
   const noActiveLoad=currentContainer.kind==='unassigned';
   const loadKnown=currentContainer.kind==='assigned';
   const loadAmount=loadKnown?'51.7':noActiveLoad?'0.0':'—';
-  const capacityAmount=loadKnown?'68':'—';
+  const capacityAmount='68';
   const fillPercent=loadKnown?'76%':noActiveLoad?'0%':'—';
-  const availableAmount=loadKnown?'16.3':'—';
+  const availableAmount=loadKnown?'16.3':noActiveLoad?'68.0':'—';
   const otherCargo=loadKnown?'51.2':noActiveLoad?'0.0':'—';
   const yourSpace=loadKnown?'0.5':noActiveLoad?'0.0':'—';
   const visualMode=loadKnown?'sample':'empty';
