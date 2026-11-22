@@ -224,7 +224,7 @@ function Screen({onBack}: {onBack?: () => void}) {
             <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{yourAllocatedContainerCbm!==null&&yourAllocatedContainerCbm!==undefined?yourAllocatedContainerCbm.toFixed(1):'—'}</Tx></Tx>
             <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.freeCbm.toFixed(1):'—'}</Tx></Tx>
           </View>
-          <Tx style={{fontSize:10,color:t.mu,marginTop:4}}>{containerOccupancy?'Based on physically loaded cargo in this 68 CBM container.':'Container totals appear once all loaded cargo has been verified.'}</Tx>
+          {!containerOccupancy?<Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container totals appear once all loaded cargo has been verified.</Tx>:null}
         </>:<>
           <View style={{flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',gap:2}}>
             <View style={{width:`${Math.max(0,Math.min(100,physicallyLoadedRatio*100))}%`}}>
