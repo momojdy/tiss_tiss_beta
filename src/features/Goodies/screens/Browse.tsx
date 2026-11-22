@@ -63,8 +63,8 @@ function CategoryTile({category, onPress}: {category: {id:string; name:any; emoj
   return (
     <Pressable onPress={onPress} style={{width:68,alignItems:'center'}}>
       {category.art && !failed
-        ? <CachedContentImage uri={category.art} style={{width:42,height:42}} onFail={() => setFailed(true)} />
-        : <View style={{width:42,height:42,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
+        ? <CachedContentImage uri={category.art} style={{width:46,height:46}} onFail={() => setFailed(true)} />
+        : <View style={{width:46,height:46,alignItems:'center',justifyContent:'center'}}><Text style={{fontSize:30}}>{category.emoji}</Text></View>}
       <T size={11.5} weight="600" align="center" style={{marginTop:6,lineHeight:14}}>{tx(category.name)}</T>
     </Pressable>
   );
