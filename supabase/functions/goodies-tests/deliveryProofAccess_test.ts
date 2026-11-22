@@ -46,6 +46,14 @@ Deno.test('private delivery evidence enforces customer, merchant, staff and obje
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106020705_goodies_private_delivery_proofs.sql',import.meta.url)));
     await db.query("insert into public.wantiss_cms_content(content_key,locale,version,status,payload) values('goodies.content','en',1,'published',$1::jsonb)",[JSON.stringify({fees:{svc:3.5}})]);
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106030829_goodies_private_proof_rollout.sql',import.meta.url)));
+    const privateOnlyMigration=await Deno.readTextFile(new URL('../../migrations/20261122022142_goodies_keep_delivery_proofs_private_when_paused.sql',import.meta.url));
+    const fingerprint=async()=>JSON.stringify((await db.query(`select pg_get_functiondef('public.goodies_self_delivery_mark_delivered(uuid,text)'::regprocedure) as definition,(select jsonb_agg(to_jsonb(p) order by policyname) from pg_policies p where schemaname='storage' and tablename='objects') as policies`)).rows);
+    const beforeMigration=await fingerprint();let driftRejected=false;
+    try{await db.exec(privateOnlyMigration.replace('previous text:=$old$if public.','previous text:=$old$if false and public.'));}
+    catch(error){driftRejected=String(error).includes('contract changed');await db.exec('rollback');}
+    check(driftRejected,'Schema drift must reject the migration');
+    check(await fingerprint()===beforeMigration,'Failed migration must roll back both storage policies and the proof RPC');
+    await db.exec(privateOnlyMigration);
     await user(vendor);
     check((await db.query<{enabled:boolean}>('select public.goodies_private_delivery_proof_uploads_enabled() as enabled')).rows[0].enabled===false,'Private uploads are gated until compatible readers are deployed');
     await denied("insert into storage.objects values('goodies-delivery-proofs',$1)",[proof]);
@@ -80,5 +88,21 @@ Deno.test('private delivery evidence enforces customer, merchant, staff and obje
     await user(admin);await db.query('select public.goodies_admin_set_private_delivery_proofs(false)');
     await user(customer);
     check((await db.query('select * from storage.objects')).rows.length===1,'Rollback gating preserves access to existing private evidence');
+    await user(vendor);
+    await denied("insert into storage.objects values('listing-photos',$1)",['legacy/delivery-proofs/paused-photo.jpg']);
+    await db.query("insert into storage.objects values('listing-photos',$1)",['legacy/product-photos/catalogue.jpg']);
+    await db.exec('reset role');
+    await db.exec("grant update on storage.objects to authenticated;create policy synthetic_legacy_read on storage.objects for select to authenticated using(bucket_id='listing-photos');create policy synthetic_legacy_update on storage.objects for update to authenticated using(bucket_id='listing-photos') with check(bucket_id='listing-photos');");
+    const legacyOrder=id(7),legacyPath=`${business}/delivery-proofs/${legacyOrder}-old.jpg`;
+    await db.query("insert into public.goodies_orders(id,business_id,customer_id,self_delivery,status,order_code) values($1,$2,$3,true,'picked_up','SYNTHETIC-LEGACY')",[legacyOrder,business,customer]);
+    await db.query("insert into storage.objects values('listing-photos',$1)",[legacyPath]);
+    await user(vendor);
+    await denied("update storage.objects set name='legacy/delivery-proofs/renamed.jpg' where name='legacy/product-photos/catalogue.jpg'");
+    await denied('select public.goodies_self_delivery_mark_delivered($1,$2)',[legacyOrder,`https://ycbirmgppwavorwudlrv.supabase.co/storage/v1/object/public/listing-photos/${legacyPath}`]);
+    await db.query("update storage.objects set name='legacy/product-photos/updated.jpg' where name='legacy/product-photos/catalogue.jpg'");
+    await db.exec('reset role');
+    check((await db.query("select * from storage.objects where name='legacy/product-photos/updated.jpg'")).rows.length===1,'Other listing image updates remain available');
+    const beforeReplay=await fingerprint();await db.exec(privateOnlyMigration);
+    check(await fingerprint()===beforeReplay,'Repeated migration must preserve exact policy and function definitions');
   } finally {await db.close();}
 });
