@@ -10,10 +10,11 @@ The owner approved activation of Shared Bill Wallet funding, vendor settlements 
 - Repeating activation keeps the cutoff and adds no duplicate activation audit. Pausing uses `supabase/operations/goodies-pause-wallet-and-private-proofs.sql`, preserving the cutoff, all ledgers and existing recovery/read access. Resuming keeps the original cutoff.
 - The deployment audit uses a null user actor and names the privileged operation. It does not impersonate the owner or create an authenticated application session.
 - Shared Bill stays protected by both the build opt-in and the server switch. Development and future production build profiles now opt in. This does not change already installed binaries or deploy an app.
+- The private-proof pause hardening migration makes the two legacy public-photo guards independent of the rollout flag. It also refuses new delivery submissions using legacy public URLs. Other listing assets and authorized historical reads remain available. Tests exercise paused uploads, rename attempts, legacy submission, schema-drift rollback and idempotent replay. Existing paired clients already refuse camera/upload work when the private switch is off.
 
 ## Verification
 
-The existing socket-only native PostgreSQL runner executes the operation against a fresh synthetic 35-migration Goodies reconstruction. It checks activation, replay, pause/resume, unchanged historical money/orders/stock, and seven refusal/rollback scenarios, then runs the existing settlement, Shared Bill, courier, restriction and push concurrency scenarios. Run `scripts/test-goodies-settlement-postgres.cjs --native-bin <PG17.6-bin> --reaudit` with the protected local test module configuration. No database URL or hosted test project is accepted.
+The existing socket-only native PostgreSQL runner executes the operation against a fresh synthetic 36-migration Goodies reconstruction. It checks activation, replay, pause/resume, unchanged historical money/orders/stock, and seven refusal/rollback scenarios, then runs the existing settlement, Shared Bill, courier, restriction and push concurrency scenarios. Run `scripts/test-goodies-settlement-postgres.cjs --native-bin <PG17.6-bin> --reaudit` with the protected local test module configuration. No database URL or hosted test project is accepted.
 
 Local Goodies unit tests, native configuration introspection, lint and TypeScript must also pass. Deployed switch readback and the operation SHA are recorded separately after application. Earlier acceptance results remain scoped to their recorded revisions.
 
@@ -32,6 +33,8 @@ Keep push rollout disabled until FCM/APNs setup is completed. `supabase/operatio
 Reference: [Expo push setup](https://docs.expo.dev/push-notifications/push-notifications-setup/), [FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/), [SDK 58 Maps](https://docs.expo.dev/versions/v58.0.0/sdk/map-view/), [internal iPhone distribution](https://docs.expo.dev/build/internal-distribution/).
 
 ## Remaining acceptance
+
+**FAIL — cash configuration:** the current USD-to-HTG exchange-rate record expired on 19 October 2026. No rate updater exists in either repository, hosted Edge Functions or scheduled jobs. The deployed eligibility and acceptance rules correctly keep cash unavailable. The owner must identify an approved rate source before the existing shared `exchange_rates` architecture can be configured. Rates, expiry dates and financial policy were not fabricated or silently changed. See [live prerequisite evidence](cash-rate-prerequisite.json).
 
 Every installed screen/button/navigation/authorization path, physical courier GPS/background/offline recovery, native card/3DS interaction, proof photo upload/viewing and CMS publish-to-installed-app reload remain NOT VERIFIED until observed on the owner's Android and iPhone with the paired code. Source inspection, local API checks and native compilation do not certify installed behavior.
 

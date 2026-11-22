@@ -1,0 +1,114 @@
+{
+  "classification": "PASS",
+  "scope": "CI for the exact recorded functional revisions; not installed acceptance or production signing",
+  "customerSource": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+  "adminSource": "243a183b25ec084f700387e39a63b67142a9913b",
+  "runs": [
+    {
+      "id": 44976339372,
+      "name": "Expo validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f67bc5148d4653a7991bd988d1ab39af74374d5e"
+    },
+    {
+      "id": 44976339235,
+      "name": "TypeScript and Expo build checks",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "f67bc5148d4653a7991bd988d1ab39af74374d5e"
+    },
+    {
+      "id": 44974783480,
+      "name": "Goodies Android development build",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "c02e47c70f363f0cdd744e27a27998a057147245"
+    },
+    {
+      "id": 44975195109,
+      "name": "Admin validation",
+      "status": "completed",
+      "conclusion": "success",
+      "head_sha": "243a183b25ec084f700387e39a63b67142a9913b"
+    }
+  ],
+  "customerJobs": [
+    {
+      "id": 137067008861,
+      "name": "goodies-local-api",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137067009059,
+      "name": "settlement-concurrency",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137067009123,
+      "name": "validate",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137067009137,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "customerArtifacts": [
+    {
+      "id": 14736057322,
+      "name": "goodies-customer-web-verification-f67bc5148d4653a7991bd988d1ab39af74374d5e",
+      "size_in_bytes": 44458850,
+      "digest": "sha256:46cd63c5d7647e16b1c95349af248f41f425e4219d61d256222c0ab60c921f39",
+      "expired": false
+    },
+    {
+      "id": 14735957542,
+      "name": "goodies-local-api-f67bc5148d4653a7991bd988d1ab39af74374d5e",
+      "size_in_bytes": 6797,
+      "digest": "sha256:00b0fa86ba2e9e5958cea16fe75d5898869023d169bc8b3009c4f92905fdaa9c",
+      "expired": false
+    },
+    {
+      "id": 14735907669,
+      "name": "goodies-browser-boot-f67bc5148d4653a7991bd988d1ab39af74374d5e",
+      "size_in_bytes": 342,
+      "digest": "sha256:d4e16b310fdb0827fcb8a847f8e1978407fd594e979b1f1635083c76a4978871",
+      "expired": false
+    },
+    {
+      "id": 14735832943,
+      "name": "goodies-settlement-races-f67bc5148d4653a7991bd988d1ab39af74374d5e",
+      "size_in_bytes": 1603,
+      "digest": "sha256:3da36d8a13280143679048580977d83fd477d0d52a08c44e755e413b3c279ef7",
+      "expired": false
+    }
+  ],
+  "androidArtifacts": [
+    {
+      "id": 14736045854,
+      "name": "goodies-android-development-c02e47c70f363f0cdd744e27a27998a057147245",
+      "size_in_bytes": 58861348,
+      "digest": "sha256:e3b6838f340a2ba5abe887eb852fbc23aaccab80a5732e2c79eb790b3fcbaf66",
+      "expired": false,
+      "expires_at": "2026-11-25T02:21:44Z"
+    }
+  ],
+  "counts": {
+    "coreTests": 503,
+    "nativePostgresChecks": 40,
+    "targetGoodiesMigrations": 36,
+    "localApiScenarios": 35,
+    "localPrivateStorageChecks": 14
+  },
+  "limits": [
+    "Android build is a native compilation/debug-signature check, not a configured physical-phone acceptance build. Use the existing EAS development environment and managed credentials for phone builds.",
+    "The last iOS simulator build at source 88cb258 remains compilation-only historical evidence; physical iPhone signing and installation are still NOT VERIFIED.",
+    "No app release, OTA or store submission occurred."
+  ]
+}

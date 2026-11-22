@@ -28,7 +28,8 @@
         "Reviewed 35-migration target applies locally. Prior scoped backend package is recorded live.",
         "Both corrected shared CMS handlers are deployed and byte-match source.",
         "Local Auth/PostgREST calls exercise exact product, order, courier, review and CMS signatures.",
-        "Three payment migrations and two existing Edge Functions deployed; exact definitions, grants, binding ownership policy and source readback pass. See payment-backend-deployment.json."
+        "Three payment migrations and two existing Edge Functions deployed; exact definitions, grants, binding ownership policy and source readback pass. See payment-backend-deployment.json.",
+        "The 36-migration target, including the deployed private-proof pause hardening, passes exact canonical-filename CI checks; live policies/grants/source readback matches the reviewed change."
       ],
       "remainingAcceptance": [
         "All role/contract paths and full production recovery have not been accepted. Existing shared-platform exceptions remain separately documented."
@@ -61,17 +62,18 @@
     {
       "phase": 4,
       "name": "Checkout/payment/refund/settlement",
-      "classification": "NOT VERIFIED",
+      "classification": "FAIL",
       "verifiedSubchecks": [
         "Actual local Wallet pricing, financial tampering denial, retries, refunds and stock preservation pass.",
-        "31 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
+        "40 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
         "Original-card refund policy preserved.",
         "12 real Stripe sandbox scenarios pass within 44 local API/recovery scenarios: setup/webhook, authorization, capture, retries, original-card and partial refunds, issuer failure, interruption/reordering, and dispute recovery.",
         "Existing test-mode webhook event subscriptions now include all 12 handled events, preserving its URL, API version, prior event and signing secret. Delivery/key alignment remains unverified.",
         "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation."
       ],
       "remainingAcceptance": [
-        "Installed card entry/3DS challenge and deployed webhook/key/account configuration remain unverified. Sandbox server tests are not full live-provider acceptance."
+        "Installed card entry/3DS challenge and deployed webhook/key/account configuration remain unverified. Sandbox server tests are not full live-provider acceptance.",
+        "The live USD-to-HTG rate expired on 19 October. Cash correctly remains unavailable; approved rate-source configuration is still required."
       ]
     },
     {
@@ -82,7 +84,8 @@
         "Assigned-courier API access, wrong-courier denial, GPS authorization, pickup/completion and 24-hour hold pass locally.",
         "Real local private Storage upload, MIME restrictions, consumer signed resolver, authorized exact-byte reads, wrong-account denials, post-delivery immutability and customer receipt confirmation pass.",
         "Native Android development compilation and signature verification pass.",
-        "Owner-approved private delivery-proof upload switch activated. Private bucket/read policies exist; physical camera/upload acceptance remains NOT VERIFIED."
+        "Owner-approved private delivery-proof upload switch activated. Private bucket/read policies exist; physical camera/upload acceptance remains NOT VERIFIED.",
+        "Private-proof pause hardening is deployed: new public uploads/renames and legacy public delivery submissions stay blocked while private uploads are paused; other assets and authorized historical reads are preserved."
       ],
       "remainingAcceptance": [
         "Physical GPS/background/offline/maps, hosted private Storage/camera and push behavior are not verified."
@@ -161,7 +164,7 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "501 core tests (282 customer) with zero skipped; 31 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
+        "501 core tests (282 customer) with zero skipped; 40 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
         "Initial private iOS build exposed Stripe SPM static-linkage failure. The documented dynamic-framework fix passes actual generated configuration, 282 customer regressions, TypeScript and lint; the private iOS simulator build now compiles successfully; downloaded universal arm64/x86_64 artifact identity is verified.",
         "Latest Android ARM64 development compilation and apksigner checks pass at the same source commit. No app release or production signing."
       ],
@@ -183,5 +186,9 @@
   ],
   "classification": "NOT VERIFIED",
   "leakedPasswordProtectionDeferredByUser": true,
-  "activationEvidence": "../activation-20261122/live-activation-verification.json"
+  "activationEvidence": "../activation-20261122/live-activation-verification.json",
+  "latestVerifiedSourceCommits": {
+    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "admin": "243a183b25ec084f700387e39a63b67142a9913b"
+  }
 }

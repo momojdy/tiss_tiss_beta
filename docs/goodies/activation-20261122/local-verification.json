@@ -1,0 +1,163 @@
+{
+  "classification": "PASS",
+  "scope": "Executed local automated checks only; physical and installed acceptance excluded",
+  "sourceCommits": {
+    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "admin": "243a183b25ec084f700387e39a63b67142a9913b"
+  },
+  "node": {
+    "unit": {
+      "tests": 284,
+      "pass": 284,
+      "fail": 0,
+      "skipped": 0
+    },
+    "admin-tests": {
+      "tests": 71,
+      "pass": 71,
+      "fail": 0,
+      "skipped": 0
+    },
+    "cross-role": {
+      "tests": 47,
+      "pass": 47,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "deno": {
+    "passed": 101,
+    "stepsNotCountedAgain": 71,
+    "failed": 0
+  },
+  "coreTotal": 503,
+  "nativePostgres": {
+    "passedChecks": 40,
+    "targetGoodiesMigrations": 36,
+    "connection": "self-created socket-only disposable PostgreSQL 17.6",
+    "syntheticDataOnly": true
+  },
+  "nativeIntrospection": {
+    "passed": 2,
+    "nativeProjectsWritten": false
+  },
+  "typecheck": "PASS",
+  "adminTypecheck": "PASS",
+  "lint": "PASS",
+  "webExport": "PASS",
+  "anonymousBrowser": {
+    "classification": "PASS",
+    "scope": "Actual anonymous web entry only; not signed-in or installed-device acceptance.",
+    "externalPageRequestsAllowed": false,
+    "externalRequestsBlocked": 3,
+    "uncaughtErrors": [],
+    "signInMounted": true
+  },
+  "nativeProviderPrerequisites": {
+    "classification": "NOT VERIFIED",
+    "expectedExitCode": 1,
+    "missing": [
+      "Android Maps key and verified application/certificate restrictions",
+      "Firebase Android client configuration GOOGLE_SERVICES_JSON",
+      "EAS Android signing and FCM credentials",
+      "EAS Apple provisioning/signing and APNs credentials"
+    ],
+    "easDevelopmentSupabaseKeyPresent": true
+  },
+  "appReleased": false,
+  "hostedSyntheticTestsRun": false,
+  "changedContentFingerprints": {
+    "app.config.js": "1d46592bdb635c8e274656d1e1b13605ba7ab24c8d0be4f6fcd7492b5c5c0c55",
+    "eas.json": "c2b115499293a33216539b36d0324398199b2a95873a760cd485bfa2144fc764",
+    "scripts/check-goodies-browser-boot.cjs": "f4b71d0692f0f1f83d9e8f0701afac30e370cf76138ba955c28f367a7bfd39b0",
+    "scripts/check-goodies-native-config.cjs": "79f0cb4e46131fd748e2bd66c4c2803bbb1c20363737ae3d3387470d3fc4f11a",
+    "scripts/goodies-activation-checks.cjs": "79bb2e95e48f203f05407df1d2f20000e416374445ce81d283688b72f7cb0c36",
+    "supabase/operations/goodies-activate-wallet-and-private-proofs.sql": "14ce5ada56fb1e6131762346cf946b870dec0c22b65d8b89266b94d787484aad",
+    "supabase/operations/goodies-pause-wallet-and-private-proofs.sql": "dd9616a53a59ce57ee6aa060ac4f3615a8fdfd7d12c0748dced0b0701754a06d",
+    "supabase/operations/goodies-bind-push-project.sql": "8d55acb46f8e529c296e6dfddbdf005bf9388f6c9e01ca8976297832adab063c",
+    "supabase/migrations/20261122022758_goodies_keep_delivery_proofs_private_when_paused.sql": "c6dda5fd4dd47abc7d6f80af9827ae65c8274fde4e95c7ec602158bf5364ca84",
+    "scripts/goodies-isolated-schema.cjs": "10b77d993900547a4e209287fca24ce870b707fbbcf1dd60d3cfdf8b8a1f26f0",
+    "supabase/functions/goodies-tests/deliveryProofAccess_test.ts": "e285afd1cba479ca369b9d5015d49c97bcc4c01a993e1bc68c8d2068aae57553"
+  },
+  "logs": [
+    {
+      "path": "logs/unit.log.gz",
+      "uncompressedBytes": 34474,
+      "sha256": "1e6203483cbbb7f9c2cfcbb7110bbf6c8628e4d60b1bfa3328576192c6bbeeea"
+    },
+    {
+      "path": "logs/admin-tests.log.gz",
+      "uncompressedBytes": 8393,
+      "sha256": "ca480fda623e797649b416ce24f262d47baca0af1f67b9fce4c820dc89570f89"
+    },
+    {
+      "path": "logs/cross-role.log.gz",
+      "uncompressedBytes": 4786,
+      "sha256": "8242b637a76fb55cbc4991ab2f22d70b0056e2d29a2dfe625329d37a7c8d09ac"
+    },
+    {
+      "path": "logs/deno.log.gz",
+      "uncompressedBytes": 25952,
+      "sha256": "46187aa8df04e8d0c2a2b5db856496b6605760be3e0c2762351b0fceab8b6347"
+    },
+    {
+      "path": "logs/postgres.log.gz",
+      "uncompressedBytes": 4586,
+      "sha256": "cbc4b2330ab258ef751613bec3165a3da3719978c5c3501a727f4bf946ad9d2b"
+    },
+    {
+      "path": "logs/native.log.gz",
+      "uncompressedBytes": 403,
+      "sha256": "e0036f872ef31d26179f770030365684bd22083c0d33824aca595a4d6d9afa2f"
+    },
+    {
+      "path": "logs/typecheck.log.gz",
+      "uncompressedBytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "logs/admin-typecheck.log.gz",
+      "uncompressedBytes": 53,
+      "sha256": "a38c654cb077f233cfa4ad73a52faf6907372bced1312056fa22cd3aaa45b2d8"
+    },
+    {
+      "path": "logs/lint.log.gz",
+      "uncompressedBytes": 117,
+      "sha256": "88bef2300a0f8e4ecc0c0f452bb9f3e59d9be7af4729956d8afe781ca3b94e7b"
+    },
+    {
+      "path": "logs/browser.log.gz",
+      "uncompressedBytes": 95,
+      "sha256": "c2da7f16227001c47f2008788580135c788f30692f5dab907788568ec67eba70"
+    },
+    {
+      "path": "logs/web-export.log.gz",
+      "uncompressedBytes": 11504,
+      "sha256": "45d36eae038a986c13ff21fa84166e1a15c3e8aa780c87d7cc26163d263ac1bd"
+    },
+    {
+      "path": "logs/native-prerequisites.log.gz",
+      "uncompressedBytes": 148,
+      "sha256": "d5d4c4a7e3cec46064c8c7ed2c7c90d8a2634dc804a0ea66184213eb4074cc84"
+    },
+    {
+      "path": "logs/private-proof-pause.log.gz",
+      "uncompressedBytes": 276,
+      "sha256": "782418a8856384af11fc4b4a6875482fbeb4f773d0599bca443e2573f5782f10"
+    }
+  ],
+  "privateProofPauseHardening": {
+    "classification": "PASS",
+    "specificTestLog": "logs/private-proof-pause.log.gz",
+    "cases": [
+      "Paused public upload rejection",
+      "Paused rename-to-public-proof rejection",
+      "Public legacy submission rejection",
+      "Ordinary listing image updates preserved",
+      "Existing private proof reads preserved",
+      "Atomic schema-drift rollback",
+      "Exact idempotent replay"
+    ],
+    "deployedReceipt": "private-proof-hardening-deployment.json"
+  }
+}

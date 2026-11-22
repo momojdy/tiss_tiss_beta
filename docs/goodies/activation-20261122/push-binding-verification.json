@@ -1,0 +1,60 @@
+{
+  "classification": "PASS",
+  "scope": "Disabled backend push-project binding only; no device registration or push delivery",
+  "operationFile": "supabase/operations/goodies-bind-push-project.sql",
+  "operationSha256": "8d55acb46f8e529c296e6dfddbdf005bf9388f6c9e01ca8976297832adab063c",
+  "verifiedExistingEasProjectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+  "observed": {
+    "push": {
+      "enabled": false,
+      "eas_project_id": "277b862a-4581-4c6b-91b8-a7da40ced36e"
+    },
+    "checked_at": "2026-11-22T02:19:15.055604+00:00",
+    "settlement": {
+      "enabled": true,
+      "singleton": true,
+      "starts_at": "2026-11-22T02:07:21.149398+00:00"
+    },
+    "binding_audit": {
+      "action": "goodies_push_project_bound",
+      "created_at": "2026-11-22T02:18:56.213534+00:00",
+      "after_state": {
+        "enabled": false,
+        "eas_project_id": "277b862a-4581-4c6b-91b8-a7da40ced36e"
+      }
+    },
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "shared_bill_wallet_enabled": true,
+    "private_delivery_proofs_enabled": true
+  },
+  "providerCredentialPresence": {
+    "checkedAt": "2026-11-22T01:59:23.810Z",
+    "androidSigningRecords": 0,
+    "androidFcmRecords": 0,
+    "iosSigningRecords": 0,
+    "iosApnsRecords": 0
+  },
+  "installedAcceptance": "NOT VERIFIED",
+  "appReleased": false
+}

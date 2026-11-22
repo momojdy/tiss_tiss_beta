@@ -1,0 +1,142 @@
+{
+  "classification": "PASS",
+  "scope": "Private evidence pause hardening, deployed definition/policy/grant verification and executed local/CI authorization tests",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "migrationFile": "supabase/migrations/20261122022758_goodies_keep_delivery_proofs_private_when_paused.sql",
+  "migrationSha256": "c6dda5fd4dd47abc7d6f80af9827ae65c8274fde4e95c7ec602158bf5364ca84",
+  "originalReviewedFilename": "20261122022142_goodies_keep_delivery_proofs_private_when_paused.sql",
+  "serverAssignedVersion": "20261122022758",
+  "sourceCommitReviewed": "05e23933271f304f077c5f36bf8102bf4eb547a2",
+  "before": {
+    "function": {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "owner": "postgres",
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "identity": "goodies_self_delivery_mark_delivered(uuid,text)",
+      "definition_md5": "f2a122b928618e187fdf86efbe1b2953",
+      "has_legacy_rollout_branch": true
+    },
+    "policies": [
+      {
+        "cmd": "UPDATE",
+        "qual": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text) OR (NOT goodies_private_delivery_proof_uploads_enabled()))",
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "objects",
+        "permissive": "RESTRICTIVE",
+        "policyname": "Goodies legacy proof update rollout guard",
+        "schemaname": "storage",
+        "with_check": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text) OR (NOT goodies_private_delivery_proof_uploads_enabled()))"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "authenticated"
+        ],
+        "tablename": "objects",
+        "permissive": "RESTRICTIVE",
+        "policyname": "Goodies legacy proof upload rollout guard",
+        "schemaname": "storage",
+        "with_check": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text) OR (NOT goodies_private_delivery_proof_uploads_enabled()))"
+      }
+    ],
+    "order_snapshot_md5": "8c8eb3d4bff83ab1d2c85358e93868fa",
+    "public_proof_objects": 0,
+    "private_bucket_public": false
+  },
+  "after": {
+    "function": {
+      "acl": [
+        "postgres=X/postgres",
+        "authenticated=X/postgres",
+        "service_role=X/postgres"
+      ],
+      "owner": "postgres",
+      "config": [
+        "search_path=public, pg_temp"
+      ],
+      "identity": "goodies_self_delivery_mark_delivered(uuid,text)",
+      "definition_md5": "cc8eef763d9e92763dd37b5fc3aebac9",
+      "anonymous_execute": false,
+      "authenticated_execute": true,
+      "reverted_definition_md5": "f2a122b928618e187fdf86efbe1b2953",
+      "legacy_rollout_branch_absent": true
+    },
+    "policies": [
+      {
+        "cmd": "UPDATE",
+        "qual": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text))",
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "RESTRICTIVE",
+        "policyname": "Goodies legacy proof update rollout guard",
+        "schemaname": "storage",
+        "with_check": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text))"
+      },
+      {
+        "cmd": "INSERT",
+        "qual": null,
+        "roles": [
+          "public"
+        ],
+        "tablename": "objects",
+        "permissive": "RESTRICTIVE",
+        "policyname": "Goodies legacy proof upload rollout guard",
+        "schemaname": "storage",
+        "with_check": "((bucket_id <> 'listing-photos'::text) OR (name !~~ '%/delivery-proofs/%'::text))"
+      }
+    ],
+    "migration": {
+      "name": "goodies_keep_delivery_proofs_private_when_paused",
+      "version": "20261122022758"
+    },
+    "checked_at": "2026-11-22T02:28:35.251175+00:00",
+    "order_snapshot_md5": "8c8eb3d4bff83ab1d2c85358e93868fa",
+    "public_proof_objects": 0,
+    "private_bucket_public": false,
+    "private_proofs_enabled": true
+  },
+  "authorizationImpact": "Two restrictive Storage policies deny public delivery-proof INSERT/UPDATE paths for all client roles independently of the rollout flag. The existing merchant-scoped proof RPC now always rejects a new legacy public URL. Function ACL, ownership, search_path and all other source text are preserved; unrelated listing assets and authorized historical proof reads remain available.",
+  "productionFinancialRecordsUnchanged": true,
+  "localVerification": {
+    "nativePostgresChecks": 40,
+    "targetGoodiesMigrations": 36,
+    "specificProofTest": "PASS; paused upload/rename/submission denial, ordinary listing updates, schema-drift atomic rollback and exact replay",
+    "hostedSyntheticTest": false
+  },
+  "ci": {
+    "runId": 44976032757,
+    "jobs": [
+      {
+        "id": 137066053580,
+        "name": "settlement-concurrency",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 137066053739,
+        "name": "goodies-local-api",
+        "status": "completed",
+        "conclusion": "success"
+      },
+      {
+        "id": 137066053766,
+        "name": "edge-functions",
+        "status": "completed",
+        "conclusion": "success"
+      }
+    ],
+    "physicalCamera": "NOT VERIFIED"
+  },
+  "appReleased": false
+}

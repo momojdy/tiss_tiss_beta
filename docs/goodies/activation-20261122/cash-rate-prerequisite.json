@@ -1,0 +1,29 @@
+{
+  "classification": "FAIL",
+  "scope": "Live cash-on-delivery configuration prerequisite; safe rejection behavior passes",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "prerequisites": {
+    "global_cash_enabled": true,
+    "global_wallet_enabled": true,
+    "latest_usd_htg_rate_expiry": "2026-10-19T19:21:30.179876+00:00",
+    "fresh_usd_htg_rate_available": false,
+    "settlement_reminder_job_active": true
+  },
+  "producerInspection": {
+    "repositoryRateUpdaterFound": false,
+    "hostedRateUpdaterEdgeFound": false,
+    "hostedRateCronFound": false,
+    "rateProviderSecretNameCandidates": [],
+    "secretValuesRead": false
+  },
+  "impact": "Goodies cash checkout/acceptance remains unavailable until a current approved USD-to-HTG rate is provided through the existing exchange_rates architecture. Wallet payouts do not need this conversion.",
+  "safeguard": "Existing store availability and acceptance enforce a fresh, positive, finite rate and reject stale data. The stale rate was not renewed, relabeled or fabricated.",
+  "ownerInputPending": "Which approved exchange-rate source and Wantiss rate policy should supply the shared USD/HTG rate?",
+  "productionFinancialDataModified": false,
+  "checkedOn": "2026-11-22",
+  "observedStoreEligibility": {
+    "liveStores": 1,
+    "cashAvailableStores": 0,
+    "deployedFreshPositiveRateGuardVerified": true
+  }
+}

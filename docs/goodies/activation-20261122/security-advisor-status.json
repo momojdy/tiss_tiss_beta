@@ -1,0 +1,51 @@
+{
+  "classification": "NOT VERIFIED",
+  "scope": "Post-deployment security advisor, not a complete authorization certification",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "beforeCategories": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO"
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "level": "WARN"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN"
+    }
+  ],
+  "afterCategories": [
+    {
+      "name": "rls_enabled_no_policy",
+      "level": "INFO"
+    },
+    {
+      "name": "extension_in_public",
+      "level": "WARN"
+    },
+    {
+      "name": "anon_security_definer_function_executable",
+      "level": "WARN"
+    },
+    {
+      "name": "authenticated_security_definer_function_executable",
+      "level": "WARN"
+    },
+    {
+      "name": "auth_leaked_password_protection",
+      "level": "WARN"
+    }
+  ],
+  "note": "Existing RLS-policyless server tables and privileged-function categories remain scoped to the prior security review. The owner-deferred leaked-password setting is unchanged. No advisor-clean claim is made.",
+  "changedProofAuthorizationEvidence": "private-proof-hardening-deployment.json"
+}

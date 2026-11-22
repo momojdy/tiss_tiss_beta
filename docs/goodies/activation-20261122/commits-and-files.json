@@ -1,0 +1,104 @@
+{
+  "scope": "Changes since the last owner-paused export snapshot; full app not released",
+  "customer": {
+    "repository": "momojdy/tiss_tiss_beta",
+    "baseline": "b0a1e1d8",
+    "through": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "commits": [
+      {
+        "sha": "e3be677cc7b218fc6b872c60ebe88c669114ffce",
+        "title": "feat(goodies): prepare audited Wallet activation and native Firebase configuration",
+        "files": [
+          "M\t.gitignore",
+          "M\tapp.config.js",
+          "A\tdocs/goodies/activation-20261122/README.md",
+          "M\teas.json",
+          "M\tscripts/check-goodies-native-config.cjs",
+          "A\tscripts/goodies-activation-checks.cjs",
+          "M\tscripts/test-goodies-settlement-postgres.cjs",
+          "M\tsrc/features/Goodies/helpPayApi.ts",
+          "A\tsupabase/operations/goodies-activate-wallet-and-private-proofs.sql",
+          "A\tsupabase/operations/goodies-pause-wallet-and-private-proofs.sql",
+          "M\ttests/goodies-native-config.test.cjs",
+          "M\ttests/goodies-shared-payments.test.cjs"
+        ]
+      },
+      {
+        "sha": "c02e47c70f363f0cdd744e27a27998a057147245",
+        "title": "feat(goodies): activate audited Wallet funding, settlements and private proofs",
+        "files": [
+          "M\t.github/workflows/goodies-android-development.yml",
+          "M\tdocs/goodies/acceptance-20261121/CURRENT_STATUS.md",
+          "M\tdocs/goodies/acceptance-20261121/current-status.json",
+          "M\tdocs/goodies/acceptance-20261121/live-release-configuration.json",
+          "M\tdocs/goodies/acceptance-20261121/phase-verification.json",
+          "A\tdocs/goodies/activation-20261122/live-activation-verification.json"
+        ]
+      },
+      {
+        "sha": "5758ebb5579dc341b795ae8c5b3b37616d48c51e",
+        "title": "test(goodies): recover headless browser endpoints and retain startup diagnostics",
+        "files": [
+          "M\tscripts/check-goodies-browser-boot.cjs"
+        ]
+      },
+      {
+        "sha": "2a940c27e67d529853784c74311d228914eb6558",
+        "title": "feat(goodies): prepare protected push binding and align paired CI contracts",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml",
+          "M\tdocs/goodies/activation-20261122/README.md",
+          "M\tscripts/check-goodies-native-config.cjs",
+          "M\tscripts/goodies-activation-checks.cjs",
+          "A\tsupabase/operations/goodies-bind-push-project.sql"
+        ]
+      },
+      {
+        "sha": "05e23933271f304f077c5f36bf8102bf4eb547a2",
+        "title": "fix(goodies): keep delivery evidence private when uploads are paused",
+        "files": [
+          "M\tscripts/goodies-isolated-schema.cjs",
+          "M\tsupabase/functions/goodies-tests/deliveryProofAccess_test.ts",
+          "A\tsupabase/migrations/20261122022142_goodies_keep_delivery_proofs_private_when_paused.sql"
+        ]
+      },
+      {
+        "sha": "0c7003e6955200ae92526b1bca10f98a39b8ae69",
+        "title": "chore(goodies): match proof migration to its deployed ledger version",
+        "files": [
+          "R100\tsupabase/migrations/20261122022142_goodies_keep_delivery_proofs_private_when_paused.sql\tsupabase/migrations/20261122022758_goodies_keep_delivery_proofs_private_when_paused.sql"
+        ]
+      },
+      {
+        "sha": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+        "title": "test(goodies): use the reconciled proof migration in isolated checks",
+        "files": [
+          "M\tscripts/goodies-isolated-schema.cjs",
+          "M\tsupabase/functions/goodies-tests/deliveryProofAccess_test.ts"
+        ]
+      }
+    ]
+  },
+  "admin": {
+    "repository": "momojdy/tiss-admin",
+    "baseline": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68",
+    "through": "243a183b25ec084f700387e39a63b67142a9913b",
+    "commits": [
+      {
+        "sha": "77b937e01911c952f88508d44c9f1f24c5f48c2d",
+        "title": "chore(goodies-cms): sync approved Wallet activation preview provenance",
+        "files": [
+          "M\tsrc/features/admin/goodiesConsumer/helpPayApi.ts",
+          "M\tsrc/features/admin/goodiesConsumer/previewSourceManifest.json"
+        ]
+      },
+      {
+        "sha": "243a183b25ec084f700387e39a63b67142a9913b",
+        "title": "ci(goodies-cms): verify against the approved activation source",
+        "files": [
+          "M\t.github/workflows/admin-validation.yml"
+        ]
+      }
+    ]
+  }
+}

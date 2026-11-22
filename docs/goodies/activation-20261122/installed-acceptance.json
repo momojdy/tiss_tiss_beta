@@ -1,0 +1,376 @@
+{
+  "classification": "NOT VERIFIED",
+  "scope": "Installed acceptance only; source navigation inventory is not a device test",
+  "sourceInventory": "../re-audit-20261120/screen-verification.json",
+  "ownerDevices": [
+    "Android phone",
+    "iPhone"
+  ],
+  "connectedDeviceObserved": false,
+  "customer": [
+    {
+      "target": "wantiss",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "home",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "cats",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "orders",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "cart",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "grouporder",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "explore",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "search",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "catlist",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "store",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "reviews",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "product",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "checkout",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "help-pay",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "addcard",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "cardauth",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "confirm",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "track",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "notifs",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "promos",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "flashdeals",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "favs",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "byo",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "help",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "settings",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "profile",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "addresses",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "payments",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "contact",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "storechat",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "supdone",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "policies",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "policy",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "target": "ndetail",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    }
+  ],
+  "vendor": [
+    {
+      "route": "feature",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "explore",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "charts",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "actions",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "activity",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "messages",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "conversation",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "notifications",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "search",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "promotions",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "registration",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "audit",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "help",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "security",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "businessInfo",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesTools",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesStore",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesProducts",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesBuilder",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesRequests",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesOrders",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    },
+    {
+      "route": "goodiesReviews",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    }
+  ],
+  "courier": [
+    {
+      "component": "GoodiesCourierScreen",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED"
+    }
+  ],
+  "admin": [
+    {
+      "module": "Overview",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Merchants",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Product review",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Customer reviews",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Orders",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Delivery reports",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Couriers",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Support",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Settlement",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Fees",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Delivery surcharge",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Analytics",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Goodies assets",
+      "authenticatedBrowser": "NOT VERIFIED"
+    },
+    {
+      "module": "Content editor",
+      "authenticatedBrowser": "NOT VERIFIED"
+    }
+  ],
+  "extractedSourceBindings": 1347,
+  "additionalDynamicTargetsSource": "../re-audit-20261120/source-inventory.json",
+  "requiredAcceptance": [
+    "Every visible control and navigation result for each role, with loading/error/retry/empty/offline states",
+    "Cross-account/vendor/courier/staff authorization in actual signed-in sessions",
+    "Physical GPS, permissions, foreground/background, stale/offline updates and completion",
+    "Physical camera upload, bounded signed proof viewing and unauthorized denial",
+    "Native saved-card entry and 3DS with original-card refund in an approved isolated test path",
+    "CMS draft, preview, publication and installed persistent-cache/realtime reload"
+  ],
+  "prerequisites": [
+    "Complete Google Maps/Firebase and EAS Android credential setup",
+    "Complete Apple membership, physical device registration, signing/provisioning and APNs setup",
+    "Approved current USD-to-HTG rate source for cash scenarios"
+  ],
+  "localScenarioEvidence": "local-verification.json",
+  "noAppReleased": true
+}

@@ -1,0 +1,17 @@
+{
+  "classification": "NOT VERIFIED",
+  "scope": "Fresh existing EAS project configuration presence only; no secret values",
+  "checkedAt": "2026-11-22T02:40:21.740Z",
+  "projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+  "androidCredentialRecords": 0,
+  "iosCredentialRecords": 0,
+  "projectEnvironmentVariableNames": [
+    "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+  ],
+  "sharedEnvironmentVariableNames": [],
+  "appleMembershipAnswerPending": true,
+  "googleCloudFirebaseAnswerPending": true,
+  "physicalDeviceConnected": false,
+  "privatePhoneBuildsCompleted": false,
+  "appReleased": false
+}

@@ -2,7 +2,7 @@
   "displayDate": "22 November 2026 (Asia/Manila)",
   "productionReady": false,
   "allTwelvePhasesCompleteExcludingDeferredContent": false,
-  "classification": "NOT VERIFIED",
+  "classification": "FAIL",
   "appReleased": false,
   "hostedTestCreatedOrRestored": false,
   "hostedIsolationProhibitedByUser": true,
@@ -11,8 +11,8 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
-    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
+    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "admin": "243a183b25ec084f700387e39a63b67142a9913b"
   },
   "verifiedScopes": {
     "localApi": {
@@ -56,13 +56,17 @@
     },
     "currentCI": {
       "classification": "PASS",
-      "receipt": "payment-ci-verification.json",
+      "receipt": "../activation-20261122/ci-verification.json",
       "runs": [
-        44928603198,
-        44928603193,
-        44928603197,
-        44899334075
-      ]
+        44976339372,
+        44976339235,
+        44974783480,
+        44975195109
+      ],
+      "sourceCommits": {
+        "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+        "admin": "243a183b25ec084f700387e39a63b67142a9913b"
+      }
     },
     "browserBoot": {
       "classification": "PASS",
@@ -142,6 +146,12 @@
       "settlementStartsAt": "2026-11-22T02:07:21.149398+00:00",
       "historicalOrdersUnchanged": true,
       "preCutoffOrderReviewRequired": true
+    },
+    "pushProjectPreparation": {
+      "classification": "PASS",
+      "enabled": false,
+      "projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+      "report": "../activation-20261122/push-binding-verification.json"
     }
   },
   "notVerified": [
@@ -154,7 +164,7 @@
   "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
   "sourceInventory": "../re-audit-20261120/source-inventory.json",
   "phaseEvidence": "phase-verification.json",
-  "ciEvidence": "payment-ci-verification.json",
+  "ciEvidence": "../activation-20261122/ci-verification.json",
   "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
   "localTestLimitations": [
     "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
@@ -173,13 +183,13 @@
     "coreTests": 503,
     "localApiScenarios": 35,
     "localPrivateStorageChecks": 14,
-    "nativePostgresChecks": 39,
+    "nativePostgresChecks": 40,
     "stripeSandboxProviderScenarios": 12,
     "stripeCombinedLocalApiScenarios": 44,
-    "targetGoodiesMigrations": 35,
-    "latestCiCoreTests": 501,
+    "targetGoodiesMigrations": 36,
+    "latestCiCoreTests": 503,
     "currentCustomerTestsEvidence": "../activation-20261122/local-verification.json",
-    "currentCIStillPending": true
+    "currentCIStillPending": false
   },
   "leakedPasswordProtectionDeferredByUser": true,
   "knownFailuresDeferredByUser": [
@@ -190,7 +200,15 @@
       "evidence": "auth-security-status.json"
     }
   ],
-  "knownFailures": [],
+  "knownFailures": [
+    {
+      "classification": "FAIL",
+      "finding": "Cash-on-delivery prerequisites: no fresh approved USD-to-HTG rate; latest stored expiry is 2026-10-19.",
+      "impact": "Cash remains unavailable under the existing safe eligibility/acceptance rules.",
+      "requiredInput": "Approved rate source and Wantiss rate policy; no provider, rate or markup was invented.",
+      "evidence": "../activation-20261122/cash-rate-prerequisite.json"
+    }
+  ],
   "userDeferred": [
     "FAQ",
     "Translations and final policy/support content approval",
@@ -205,8 +223,8 @@
     "iPhone": true
   },
   "laterScopedSourceCommits": {
-    "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
-    "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
+    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "admin": "243a183b25ec084f700387e39a63b67142a9913b"
   },
   "observedAt": "2026-11-22T02:07:42.559467+00:00",
   "backendDeployedInThisFollowup": true,
@@ -255,5 +273,20 @@
     "settlement_starts_at": "2026-11-22T02:07:21.149398+00:00",
     "private_delivery_proofs_enabled": true
   },
-  "activationSourceCommit": "e3be677cc7b218fc6b872c60ebe88c669114ffce"
+  "activationSourceCommit": "e3be677cc7b218fc6b872c60ebe88c669114ffce",
+  "cmsConfigurationUpdated": true,
+  "nonFeeCmsContentChanged": false,
+  "localCurrentVerificationEvidence": "../activation-20261122/local-verification.json",
+  "previousCI": {
+    "classification": "PASS",
+    "receipt": "payment-ci-verification.json",
+    "runs": [
+      44928603198,
+      44928603193,
+      44928603197,
+      44899334075
+    ]
+  },
+  "privateProofPauseHardeningEvidence": "../activation-20261122/private-proof-hardening-deployment.json",
+  "installedAcceptanceEvidence": "../activation-20261122/installed-acceptance.json"
 }
