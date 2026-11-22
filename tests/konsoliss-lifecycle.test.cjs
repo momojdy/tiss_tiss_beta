@@ -46,15 +46,22 @@ test('every entry into Konsoliss starts a fresh lifecycle notice without status 
 });
 
 
-test('3D container stays interactive and plays a clearly labeled illustrative package-loading sequence',()=>{
+test('3D container keeps rotation and automatically repeats demo cartons for 4s then empty for 9s',()=>{
  const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
  assert.match(hook,/value\.kind === 'unassigned'\) return 'No active load'/);
  assert.doesNotMatch(home,/accessibilityLabel="Current load empty state"/);
- assert.match(home,/Loading illustration — sample packages only/);
+ assert.doesNotMatch(home,/Loading illustration/);
+ assert.doesNotMatch(home,/3D layout is illustrative/);
+ assert.doesNotMatch(home,/Replay sample container loading animation/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
  assert.match(home,/containerHtml\(dark,noCargoLoaded,progress\?\.reservedCbm\?\?0,progress\?\.loadedCbm\?\?0,progress\?\.inboundCbm\?\?0\)/);
  assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
- assert.match(home,/const timer=setInterval\(\(\)=>\{const elapsed=Date\.now\(\)-started/);
+ assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13000/);
+ assert.match(home,/demoCount=cycle<4000/);
+ assert.match(home,/cycle\/2000/);
+ assert.match(home,/demoBlink=cycle<4000&&Math\.floor\(cycle\/500\)%2===0/);
+ assert.match(home,/const timer=setInterval\(tick,100\)/);
+ assert.match(home,/EMPTY\?'Your current load'/);
  assert.match(home,/<WebView/);
  assert.match(home,/onTouchStart=\{\(\) => setScroll\(false\)\}/);
  assert.doesNotMatch(home,/cx\.fillText\('Your space 0\.50 CBM'/);
@@ -100,6 +107,8 @@ test('lower bar alternates every fifteen seconds only when container assigned',(
  assert.match(home,/containerOccupancy\.otherCargoCbm\.toFixed\(1\)/);
  assert.match(home,/containerOccupancy\.yourSpaceCbm\.toFixed\(1\)/);
  assert.match(home,/containerOccupancy\.freeCbm\.toFixed\(1\)/);
+ assert.doesNotMatch(home,/Your loading progress/);
+ assert.doesNotMatch(home,/Container progress · 68 CBM/);
  assert.doesNotMatch(home,/Shared container · 68 CBM total capacity/);
  for(const label of ['Space reserved','Goods sent','Loaded in container','Inbound to container','Sent — not yet allocated']){
    assert.doesNotMatch(home,new RegExp("\\['"+label+"'"));
