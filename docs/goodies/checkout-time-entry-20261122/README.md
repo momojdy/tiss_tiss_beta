@@ -13,3 +13,5 @@ Local verification: **PASS** for 308 customer tests, 73 admin tests and 47 cross
 Only one unavailable-time label was added to the local prepared content packages, in English, French, Spanish and Simplified Chinese. All other content records, fee configuration, policy/FAQ bodies and existing Haitian Creole fields remain unchanged. No content was published.
 
 **NOT VERIFIED:** physical Android/iPhone picker presentation and installed-app refresh. Automated native-event tests and bundle/compilation checks do not certify physical-device behavior. No Wantiss app release, OTA, store submission, production database change or hosted synthetic test was performed.
+
+Customer scheduling implementation: `2a7e445f`. Carousel hydration: `70ef9a114f2f7b0de67518ee749e7cd838ee71d2`. Paired admin preview: `b9e09f1e575573f867937a399aa904890ae5da96`. The validation workflows pin these paired source revisions; GitHub records subsequent bundle and compilation results for them.
