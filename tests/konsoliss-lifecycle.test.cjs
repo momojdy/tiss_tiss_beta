@@ -65,10 +65,21 @@ test('My current load stays based on customer loaded plus inbound versus reserve
  assert.match(home,/const fillRatio=progress&&progress\.reservedCbm>0\?progress\.allocatedCbm\/progress\.reservedCbm:0/);
  assert.match(home,/\{committedValue\}<Tx/);
  assert.match(home,/\/ \{reservedValue\} CBM/);
- assert.match(home,/\{fillPercent\} of your space/);
- assert.match(home,/\{stillToSendValue\} CBM/);
+ assert.match(home,/const fillPercent=progress\?progress\.loadedPercent/);
+ assert.match(home,/const stillToSendValue=progress\?fmt\(progress\.reservedNotSentCbm\)/);
+ assert.match(home,/\{containerPercent\} filled/);
+ assert.match(home,/\{containerAvailable\} CBM/);
  assert.doesNotMatch(home,/containerLoadDisplay/);
  assert.doesNotMatch(home,/containerFillDisplay/);
+});
+test('right-side circle and available CBM use the 68 CBM shared container, not reserved space',()=>{
+ assert.match(home,/const containerRatio=containerOccupancy\?containerOccupancy\.loadedCbm\/68:0/);
+ assert.match(home,/currentContainer\.kind==='unassigned'\?'0%':'—'/);
+ assert.match(home,/currentContainer\.kind==='unassigned'\?'68\.0':'—'/);
+ assert.match(home,/strokeDasharray=\{\x60\$\{\(containerRatio\*87\.96\)/);
+ assert.match(home,/\{containerPercent\} filled/);
+ assert.match(home,/\{containerAvailable\} CBM/);
+ assert.doesNotMatch(home,/\{fillPercent\} of your space/);
 });
 test('short empty-state hint appears only without a container or committed cargo',()=>{
  assert.match(home,/showEmptyLoadHint=currentContainer\.kind==='unassigned'/);
