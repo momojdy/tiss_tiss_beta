@@ -52,6 +52,8 @@ test('unassigned customers keep the whole dashboard with a genuinely empty 3D co
  assert.match(home,/const noActiveLoad=currentContainer\.kind==='unassigned'/);
  assert.match(home,/const loadAmount=loadKnown\?'51\.7':noActiveLoad\?'0\.0':'—'/);
  assert.match(home,/const fillPercent=loadKnown\?'76%':noActiveLoad\?'0%':'—'/);
+ assert.match(home,/const capacityAmount='68'/);
+ assert.match(home,/const availableAmount=loadKnown\?'16\.3':noActiveLoad\?'68\.0':'—'/);
  assert.match(home,/const yourSpace=loadKnown\?'0\.5':noActiveLoad\?'0\.0':'—'/);
  assert.match(home,/const visualMode=loadKnown\?'sample':'empty'/);
  assert.match(home,/containerHtml\(dark,visualMode==='empty'\)/);
