@@ -183,11 +183,15 @@ function Screen({onBack}: {onBack?: () => void}) {
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
-      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Show current container status explanation"
-        disabled={currentContainer.kind!=='assigned'}
-        onPress={() => {if(currentContainer.kind==='assigned')setLifecycleNotice(currentContainer.status);}}
-        style={[s.pill, {backgroundColor: t.tint}]}>
-        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?'Preparing your load':loadProgress.kind==='loading'?'Checking your load…':loadProgress.kind==='unavailable'?'Load details unavailable':currentKonsolissContainerLabel(currentContainer)):currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
+      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Choose container" accessibilityHint="Open a list of assigned containers or preview sample containers"
+        onPress={() => setContainerMenuOpen(true)}
+        style={[s.pill,{backgroundColor:t.tint,flexDirection:'row',alignItems:'center',gap:5,maxWidth:'72%'}]}>
+        <Tx numberOfLines={1} style={{fontSize:12,lineHeight:15,fontWeight:'600',color:t.ac}}>
+          {selectedContainer?(isDemo?'DEMO · ':'')+containerStatusLabel(selectedContainer):
+            currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?'Preparing your load':currentKonsolissContainerLabel(currentContainer)):
+              currentKonsolissContainerLabel(currentContainer)}
+        </Tx>
+        <Tx style={{fontSize:12,color:t.ac}}>⌄</Tx>
       </Pressable></View>
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No container assigned</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
@@ -262,6 +266,61 @@ function Screen({onBack}: {onBack?: () => void}) {
     </ScrollView>
     <View style={s.bottomWrap}><View style={s.bottomNav}>{nav.map((n, k) => <Pressable key={n} onPress={() => {}} style={s.flyzNavItem}><View style={[s.flyzNavIcon, k === 0 && {backgroundColor: t.tint, borderRadius: 999}]}><Image source={k===0?require('../../assets/konsoliss/icons/homeicon.png'):k===1?require('../../assets/konsoliss/icons/warehouseicon.png'):k===2?require('../../assets/konsoliss/icons/consolidation.png'):k===3?require('../../assets/konsoliss/icons/sourcingicon.png'):require('../../assets/konsoliss/icons/hub.png')} style={{width: k === 3 ? 43 : k === 4 ? 37 : 39, height: k === 3 ? 43 : k === 4 ? 37 : 39}} resizeMode="contain" /></View><Tx style={[s.flyzNavLabel, {color: k===0?t.ac:t.tx}]}>{n}</Tx></Pressable>)}</View></View>
     {sh && <Sheet t={t} onClose={() => setSh(null)}>{done => sh === 'calc' ? <Calc t={t} copy={copy} /> : <Book t={t} copy={copy} onClose={done} />}</Sheet>}
+    <Modal transparent visible={containerMenuOpen} animationType="fade" statusBarTranslucent
+      onRequestClose={() => setContainerMenuOpen(false)}>
+      <View style={{flex:1}}>
+        <Pressable accessibilityRole="button" accessibilityLabel="Close container list"
+          onPress={() => setContainerMenuOpen(false)}
+          style={[StyleSheet.absoluteFill,{backgroundColor:'rgba(0,0,0,0.23)'}]}/>
+        <View style={{position:'absolute',top:Math.max(14,insets.top)+55,right:18,width:'min(88%,350px)',maxWidth:350,
+          backgroundColor:t.bg,borderRadius:16,borderWidth:1,borderColor:t.bd,overflow:'hidden',
+          shadowColor:'#000',shadowOpacity:0.16,shadowRadius:12,elevation:12}}>
+          <View style={{paddingHorizontal:14,paddingVertical:11,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
+            <Tx style={{fontSize:14,fontWeight:'800',color:t.tx}}>Choose container</Tx>
+            <Pressable accessibilityRole="button" accessibilityLabel="Close container selector"
+              onPress={() => setContainerMenuOpen(false)} hitSlop={10}><Tx style={{color:t.ac,fontSize:19}}>✕</Tx></Pressable>
+          </View>
+          <ScrollView nestedScrollEnabled showsVerticalScrollIndicator
+            style={{maxHeight:5*59}} contentContainerStyle={{paddingBottom:5}}>
+            <Pressable accessibilityRole="button" accessibilityLabel="Show live container status without demo"
+              onPress={() => {setSelectedContainerId('live');setContainerMenuOpen(false);setProgressView('customer');}}
+              style={{paddingHorizontal:14,minHeight:53,justifyContent:'center',borderTopWidth:0.5,borderTopColor:t.bd}}>
+              <Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>Live view</Tx>
+              <Tx style={{fontSize:11,color:t.mu}}>
+                {liveContainers.length?liveContainers.length+' assigned container(s)':'No container assigned'}
+              </Tx>
+            </Pressable>
+            {liveContainers.map(item=><View key={item.id} style={{flexDirection:'row',alignItems:'center',
+              borderTopWidth:0.5,borderTopColor:t.bd,minHeight:59}}>
+              <Pressable accessibilityRole="button" accessibilityLabel={'Select container '+item.number}
+                accessibilityState={{selected:selectedContainer?.id===item.id}}
+                onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setProgressView('customer');}}
+                style={{flex:1,paddingHorizontal:14,paddingVertical:10}}>
+                <Tx style={{fontSize:13,fontWeight:'700',color:selectedContainer?.id===item.id?t.ac:t.tx}}>{item.number}</Tx>
+                <Tx style={{fontSize:11,color:t.mu}}>{item.status}</Tx>
+              </Pressable>
+              <Pressable accessibilityRole="button" accessibilityLabel={'Explain status of '+item.number}
+                onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setLifecycleNotice(item.status);}}
+                style={{paddingHorizontal:14,paddingVertical:12}}><Tx style={{color:t.ac,fontSize:17}}>ⓘ</Tx></Pressable>
+            </View>)}
+            <Tx style={{paddingHorizontal:14,paddingVertical:8,fontSize:11,fontWeight:'800',color:t.mu,
+              borderTopWidth:0.5,borderTopColor:t.bd}}>DEMO PREVIEW · NOT LIVE DATA</Tx>
+            {KONSOLISS_DEMO_CONTAINERS.map(item=><Pressable key={item.id} accessibilityRole="button"
+              accessibilityLabel={'Preview demo container '+item.number}
+              accessibilityState={{selected:selectedContainer?.id===item.id}}
+              onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setProgressView('customer');}}
+              style={{minHeight:59,borderTopWidth:0.5,borderTopColor:t.bd,
+                paddingHorizontal:14,paddingVertical:10,justifyContent:'center'}}>
+              <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+                <Tx style={{fontSize:13,fontWeight:'700',color:selectedContainer?.id===item.id?t.ac:t.tx}}>{item.number}</Tx>
+                <Tx style={{fontSize:11,color:t.ac,fontWeight:'700'}}>{Math.round((item.loadedCbm??0)/68*100)}% filled</Tx>
+              </View>
+              <Tx style={{fontSize:11,color:t.mu}}>{item.status} · {(item.loadedCbm??0).toFixed(1)} / 68 CBM · Demo</Tx>
+            </Pressable>)}
+          </ScrollView>
+        </View>
+      </View>
+    </Modal>
     <Modal transparent visible={lifecycleNotice!==null} animationType="fade"
       statusBarTranslucent onRequestClose={() => setLifecycleNotice(null)}>
       <View style={{flex:1,justifyContent:'flex-end'}}>
@@ -274,7 +333,7 @@ function Screen({onBack}: {onBack?: () => void}) {
           <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'flex-start',gap:12}}>
             <View style={{flex:1}}>
               <Tx style={{fontSize:19,fontWeight:'800',color:t.ac,lineHeight:25}}>{KONSOLISS_LIFECYCLE_MESSAGES[lifecycleNotice].title}</Tx>
-              {currentContainer.kind==='assigned'?<Tx style={{fontSize:12,color:t.mu,marginTop:3}}>{currentContainer.number}</Tx>:null}
+              {selectedContainer&&!selectedContainer.demo?<Tx style={{fontSize:12,color:t.mu,marginTop:3}}>{selectedContainer.number}</Tx>:null}
             </View>
             <Pressable accessibilityRole="button" accessibilityLabel="Close container status explanation"
               hitSlop={12} onPress={() => setLifecycleNotice(null)}
