@@ -1,0 +1,42 @@
+{
+  "classification": "NOT VERIFIED",
+  "scope": "Managed credential/configuration presence and owner-confirmed prerequisites; no credential values",
+  "checkedAt": "2026-11-22T07:13:29.015Z",
+  "projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
+  "androidCredentialRecords": 0,
+  "iosCredentialRecords": 0,
+  "projectEnvironmentVariableNames": [
+    "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
+  ],
+  "sharedEnvironmentVariableNames": [],
+  "appleDeveloperMembership": false,
+  "appleMembershipEvidence": "Owner explicitly answered No.",
+  "googleCloudProject": "Owner is unsure; project selector check pending.",
+  "physicalDeviceConnected": false,
+  "privatePhoneBuildsCompleted": false,
+  "appReleased": false,
+  "backend": "Supabase remains Auth, database, Storage and notification source.",
+  "androidPushTransport": "Expo uses Google FCM for delivery only; no Firebase database/Auth is introduced.",
+  "missingAndroid": [
+    "Google Cloud project ownership confirmation",
+    "Maps Android key restricted to the application and build signature",
+    "Matching Android google-services.json client configuration",
+    "EAS-managed FCM delivery credential",
+    "Private Android installation and physical acceptance"
+  ],
+  "missingIphone": [
+    "Paid Apple Developer membership",
+    "Managed provisioning/signing and APNs",
+    "Physical iPhone installation and acceptance"
+  ],
+  "buildGuard": {
+    "classification": "PASS",
+    "sourceCommit": "7266e710",
+    "hook": "eas-build-pre-install",
+    "scope": "Platform-specific local fields only; Android/iOS and missing-runtime-key regression checks pass. Managed signing, key restrictions and device behavior are not certified."
+  },
+  "ownerNextStep": {
+    "url": "https://console.cloud.google.com/",
+    "instruction": "On a phone, sign in with the Google account used for Wantiss, tap the project selector and check whether Wantiss is listed. No passwords or keys should be sent in chat."
+  }
+}

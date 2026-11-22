@@ -34,7 +34,7 @@ Reference: [Expo push setup](https://docs.expo.dev/push-notifications/push-notif
 
 ## Remaining acceptance
 
-**FAIL — cash configuration:** the current USD-to-HTG exchange-rate record expired on 19 October 2026. No rate updater exists in either repository, hosted Edge Functions or scheduled jobs. The deployed eligibility and acceptance rules correctly keep cash unavailable. The owner must identify an approved rate source before the existing shared `exchange_rates` architecture can be configured. Rates, expiry dates and financial policy were not fabricated or silently changed. See [live prerequisite evidence](cash-rate-prerequisite.json).
+**PASS — cash rate prerequisite, resolved 22 November:** the protected Supabase worker now publishes validated daily USD→HTG references into the existing `exchange_rates` table. Live readback confirms a valid quote, the preserved Wantiss adjustment and cash eligibility for the existing store. Old quotes, orders, Wallets and settlements are unchanged. See [deployment evidence and limits](../fx-refresh-20261122/deployment-verification.json). This verifies the configuration prerequisite; installed cash checkout remains unverified.
 
 Every installed screen/button/navigation/authorization path, physical courier GPS/background/offline recovery, native card/3DS interaction, proof photo upload/viewing and CMS publish-to-installed-app reload remain NOT VERIFIED until observed on the owner's Android and iPhone with the paired code. Source inspection, local API checks and native compilation do not certify installed behavior.
 

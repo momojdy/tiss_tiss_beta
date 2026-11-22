@@ -2,7 +2,7 @@
   "displayDate": "22 November 2026 (Asia/Manila)",
   "productionReady": false,
   "allTwelvePhasesCompleteExcludingDeferredContent": false,
-  "classification": "FAIL",
+  "classification": "NOT VERIFIED",
   "appReleased": false,
   "hostedTestCreatedOrRestored": false,
   "hostedIsolationProhibitedByUser": true,
@@ -11,7 +11,7 @@
   "cmsPublished": false,
   "faqAndTranslationsDeferred": true,
   "sourceCommits": {
-    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
     "admin": "243a183b25ec084f700387e39a63b67142a9913b"
   },
   "verifiedScopes": {
@@ -19,14 +19,14 @@
       "classification": "PASS",
       "scenarios": 35,
       "roles": 10,
-      "targetGoodiesMigrations": 35,
-      "report": "payment-ci-local-api-verification.json"
+      "targetGoodiesMigrations": 37,
+      "report": "../fx-refresh-20261122/ci-verification.json"
     },
     "localSyntheticRecovery": {
       "classification": "PASS",
-      "tables": 100,
       "productionBackup": false,
-      "report": "payment-ci-local-api-verification.json"
+      "report": "../fx-refresh-20261122/ci-verification.json",
+      "scope": "Every table fingerprint, function, role and policy in the current complete synthetic local cluster."
     },
     "localCmsPipeline": {
       "classification": "PASS",
@@ -56,15 +56,13 @@
     },
     "currentCI": {
       "classification": "PASS",
-      "receipt": "../activation-20261122/ci-verification.json",
+      "receipt": "../fx-refresh-20261122/ci-verification.json",
       "runs": [
-        44976339372,
-        44976339235,
-        44974783480,
-        44975195109
+        44997219364,
+        44997219385
       ],
       "sourceCommits": {
-        "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+        "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
         "admin": "243a183b25ec084f700387e39a63b67142a9913b"
       }
     },
@@ -152,6 +150,21 @@
       "enabled": false,
       "projectId": "277b862a-4581-4c6b-91b8-a7da40ced36e",
       "report": "../activation-20261122/push-binding-verification.json"
+    },
+    "usdHtgRateRefresh": {
+      "classification": "PASS",
+      "migration": "20261122070253",
+      "functionVersion": 1,
+      "adjustmentPreserved": true,
+      "quoteDate": "2026-11-20",
+      "expiresAt": "2026-11-24T00:00:00Z",
+      "cashEligibleStores": 1,
+      "evidence": "../fx-refresh-20261122/deployment-verification.json"
+    },
+    "nativeBuildPreflight": {
+      "classification": "PASS",
+      "scope": "Platform-specific build fields and missing-config refusals; no provider/device certification",
+      "evidence": "../fx-refresh-20261122/native-preflight-verification.log"
     }
   },
   "notVerified": [
@@ -164,7 +177,7 @@
   "existingSharedPlatformExceptions": "../re-audit-20261120/shared-platform-contract-gaps.json",
   "sourceInventory": "../re-audit-20261120/source-inventory.json",
   "phaseEvidence": "phase-verification.json",
-  "ciEvidence": "../activation-20261122/ci-verification.json",
+  "ciEvidence": "../fx-refresh-20261122/ci-verification.json",
   "refundPolicy": "Card refunds return to the original card through Stripe; Wallet/Shared Bill refunds return to their original payers.",
   "localTestLimitations": [
     "Shared Auth helpers follow inspected hosted semantics, but this is not a full hosted Supabase reconstruction.",
@@ -174,21 +187,21 @@
     "Real sandbox payments use synthetic local database records and an OAuth transport adapter. Installed card/3DS UI and production endpoint configuration are not certified by those tests."
   ],
   "automated": {
-    "customer": 284,
+    "customer": 285,
     "admin": 71,
     "crossRole": 47,
-    "deno": 101,
+    "deno": 113,
     "denoStepsNotAddedAgain": 71,
     "skipped": 0,
-    "coreTests": 503,
+    "coreTests": 516,
     "localApiScenarios": 35,
     "localPrivateStorageChecks": 14,
-    "nativePostgresChecks": 40,
+    "nativePostgresChecks": 48,
     "stripeSandboxProviderScenarios": 12,
     "stripeCombinedLocalApiScenarios": 44,
-    "targetGoodiesMigrations": 36,
-    "latestCiCoreTests": 503,
-    "currentCustomerTestsEvidence": "../activation-20261122/local-verification.json",
+    "targetGoodiesMigrations": 37,
+    "latestCiCoreTests": 516,
+    "currentCustomerTestsEvidence": "../fx-refresh-20261122/ci-verification.json",
     "currentCIStillPending": false
   },
   "leakedPasswordProtectionDeferredByUser": true,
@@ -200,15 +213,7 @@
       "evidence": "auth-security-status.json"
     }
   ],
-  "knownFailures": [
-    {
-      "classification": "FAIL",
-      "finding": "Cash-on-delivery prerequisites: no fresh approved USD-to-HTG rate; latest stored expiry is 2026-10-19.",
-      "impact": "Cash remains unavailable under the existing safe eligibility/acceptance rules.",
-      "requiredInput": "Approved rate source and Wantiss rate policy; no provider, rate or markup was invented.",
-      "evidence": "../activation-20261122/cash-rate-prerequisite.json"
-    }
-  ],
+  "knownFailures": [],
   "userDeferred": [
     "FAQ",
     "Translations and final policy/support content approval",
@@ -220,13 +225,14 @@
     "expoAccount": true,
     "stripeAccount": true,
     "androidPhone": true,
-    "iPhone": true
+    "iPhone": true,
+    "appleDeveloperMembership": false
   },
   "laterScopedSourceCommits": {
-    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
     "admin": "243a183b25ec084f700387e39a63b67142a9913b"
   },
-  "observedAt": "2026-11-22T02:07:42.559467+00:00",
+  "observedAt": "2026-11-22T07:14:27Z",
   "backendDeployedInThisFollowup": true,
   "backendDeploymentEvidence": "payment-backend-deployment.json",
   "stripeAuthorization": {
@@ -276,7 +282,7 @@
   "activationSourceCommit": "e3be677cc7b218fc6b872c60ebe88c669114ffce",
   "cmsConfigurationUpdated": true,
   "nonFeeCmsContentChanged": false,
-  "localCurrentVerificationEvidence": "../activation-20261122/local-verification.json",
+  "localCurrentVerificationEvidence": "../fx-refresh-20261122/ci-verification.json",
   "previousCI": {
     "classification": "PASS",
     "receipt": "payment-ci-verification.json",
@@ -288,5 +294,18 @@
     ]
   },
   "privateProofPauseHardeningEvidence": "../activation-20261122/private-proof-hardening-deployment.json",
-  "installedAcceptanceEvidence": "../activation-20261122/installed-acceptance.json"
+  "installedAcceptanceEvidence": "../activation-20261122/installed-acceptance.json",
+  "resolvedFailures": [
+    {
+      "classification": "PASS",
+      "previousClassification": "FAIL",
+      "finding": "Cash orders lacked a fresh USD-to-HTG reference quote.",
+      "evidence": "../fx-refresh-20261122/deployment-verification.json",
+      "limit": "Cash-store eligibility is verified; installed cash checkout/delivery remains unverified."
+    }
+  ],
+  "latestFxDeploymentEvidence": "../fx-refresh-20261122/deployment-verification.json",
+  "productionExchangeRateConfigurationUpdated": true,
+  "existingProductionFinancialRecordsModified": false,
+  "nativePrerequisitesEvidence": "../fx-refresh-20261122/native-prerequisites.json"
 }

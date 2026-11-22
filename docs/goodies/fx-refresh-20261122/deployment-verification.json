@@ -1,0 +1,153 @@
+{
+  "classification": "PASS",
+  "scope": "Live USD/HTG reference producer, configuration, permissions and cash-store eligibility; no customer transaction or device acceptance",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "sourceCommit": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+  "implementationCommit": "d69de0ed63eafacbe2702fc120309590a753d37b",
+  "migration": {
+    "version": "20261122070253",
+    "name": "goodies_usd_htg_rate_refresh",
+    "exactSource": true,
+    "statementCount": 1
+  },
+  "edge": {
+    "id": "f8799ca2-cdac-4d67-8949-8b4cc43d592f",
+    "slug": "refresh-goodies-exchange-rate",
+    "name": "refresh-goodies-exchange-rate",
+    "status": "ACTIVE",
+    "version": 1,
+    "created_at": 1795330985481,
+    "updated_at": 1795330985481,
+    "verify_jwt": false,
+    "import_map": true,
+    "entrypoint_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_f8799ca2-cdac-4d67-8949-8b4cc43d592f_1/source/refresh-goodies-exchange-rate/index.ts",
+    "import_map_path": "file:///tmp/user_fn_ycbirmgppwavorwudlrv_f8799ca2-cdac-4d67-8949-8b4cc43d592f_1/source/deno.json",
+    "ezbr_sha256": "a64428c714a40a4b83e551fd8b9ef76744ae9e33434ba3c173e48f512e6f578e",
+    "sourceExactMatch": true,
+    "authentication": "Existing private Goodies worker token validated server-side before fetch/write; no secret exported"
+  },
+  "before": {
+    "checked_at": "2026-11-22 07:02:38.062407+00",
+    "orders_md5": "0de4768af78249cc34d5b563a5638445",
+    "wallets_md5": "c8032fa4c164d24814ddc4bf1f2c8ffe",
+    "settlement_count": 0,
+    "payout_count": 0,
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "wallet_tables": [
+      "wallet_notifications",
+      "wallet_payments",
+      "wallet_point_milestones",
+      "wallet_point_transactions",
+      "wallet_points",
+      "wallet_points_settings",
+      "wallet_points_transactions",
+      "wallet_referrals",
+      "wallet_transactions",
+      "wallets"
+    ]
+  },
+  "after": {
+    "job": {
+      "active": true,
+      "schedule": "17 */4 * * *",
+      "timeout_configured": true
+    },
+    "http": {
+      "id": 70289,
+      "status": 200,
+      "receipt": {
+        "status": "updated",
+        "quote_id": "269b4a8e-223d-456e-96bb-a1e0798b69d2",
+        "expires_at": "2026-11-24T00:00:00+00:00",
+        "quote_date": "2026-11-20"
+      },
+      "timed_out": false
+    },
+    "quote": {
+      "id": "269b4a8e-223d-456e-96bb-a1e0798b69d2",
+      "is_active": true,
+      "created_at": "2026-11-22T07:03:34.368595+00:00",
+      "expires_at": "2026-11-24T00:00:00+00:00",
+      "market_rate": 131.42,
+      "wantiss_rate": 132.7474747475
+    },
+    "producer": {
+      "fresh": true,
+      "source": "Frankfurter daily reference",
+      "enabled": true,
+      "expires_at": "2026-11-24T00:00:00+00:00",
+      "last_checked_at": "2026-11-22T07:03:34.368595+00:00",
+      "last_error_code": null,
+      "last_quote_date": "2026-11-20",
+      "last_success_at": "2026-11-22T07:03:34.368595+00:00",
+      "consecutive_failures": 0
+    },
+    "checked_at": "2026-11-22T07:04:54.27649+00:00",
+    "orders_md5": "0de4768af78249cc34d5b563a5638445",
+    "store_count": 1,
+    "wallets_md5": "c8032fa4c164d24814ddc4bf1f2c8ffe",
+    "payout_count": 0,
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "settlement_count": 0,
+    "wallet_ledger_count": 5,
+    "adjustment_preserved": true,
+    "cash_eligible_store_count": 1
+  },
+  "existingOrderAndWalletFingerprintsUnchanged": true,
+  "existingSettlementAndPayoutCountsUnchanged": true,
+  "existingWalletLedgerCountUnchanged": true,
+  "externalPayoutChannelsUnchanged": true,
+  "productionExchangeRateQuoteInserted": true,
+  "existingProductionFinancialRecordsModified": false,
+  "productionSecretsChanged": false,
+  "appReleased": false,
+  "hostedSyntheticTesting": false,
+  "source": "https://api.frankfurter.dev/v2/rates?base=USD&quotes=HTG",
+  "rateMeaning": "Blended daily reference, not an executable FX price or official BRH quote",
+  "limits": [
+    "Cron schedule is active; a later scheduled execution has not been observed in this receipt.",
+    "Cash-store eligibility is verified; an installed cash checkout/delivery has not been performed."
+  ]
+}

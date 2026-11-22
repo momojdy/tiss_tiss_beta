@@ -1,0 +1,85 @@
+PASS: PostgreSQL 17.6; full 37-migration package applied in a self-created socket-only temporary cluster.
+PASS: activation enables all three gates, audits excluded historical orders, replays without duplicate audit, and pause/resume preserves the cutoff and existing money.
+Historical settlement liabilities require reconciliation before activation
+PASS: activation refuses historical completed liabilities and rolls back without financial changes.
+Historical settlement liabilities require reconciliation before activation
+PASS: activation refuses historical cash liabilities and rolls back without financial changes.
+Only Wantiss Wallet payouts may be enabled
+PASS: activation refuses enabled external payout channel and rolls back without financial changes.
+Compatible private evidence bucket required
+PASS: activation refuses public evidence bucket and rolls back without financial changes.
+Wallet checkout must already be enabled
+PASS: activation refuses disabled Wallet checkout and rolls back without financial changes.
+Published Goodies configuration required
+PASS: activation refuses missing published configuration and rolls back without financial changes.
+Privileged deployment connection required
+PASS: activation refuses ordinary authenticated caller and rolls back without financial changes.
+Existing push configuration requires review before rebinding
+Existing push configuration requires review before rebinding
+Privileged deployment connection required
+PASS: push project preparation remains disabled, is audited once, and rejects active/different configuration or an ordinary caller.
+PASS: payment migration replay and transactional recovery preserve exact function ownership, grants and binding policies.
+PASS: concurrent cash acceptance cannot exceed the 5000 HTG sales allowance.
+PASS: concurrent distinct withdrawal requests cannot spend the same earnings.
+PASS: overlapping retries return one payout and create one wallet credit.
+PASS: concurrent commission retries create one debit and release the settled sales allowance.
+PASS: a stale group quote is rejected before the real synthetic Wallet is debited.
+PASS: overlapping group checkout retries create one real synthetic paid order, reserve stock once and debit Wallet once.
+PASS: concurrent Shared Bill creation reserves the host 60% once and does not consume stock.
+PASS: concurrent contribution retries debit one payer once.
+PASS: competing final payers create one paid customer order and reserve stock once.
+PASS: simultaneous distinct contributions settle exactly the remaining 40%.
+PASS: cancellation racing a payment restores every payer without an orphan debit.
+PASS: overlapping cancellation retries credit each original payer exactly once.
+PASS: overlapping vendor rejection refunds the funded Shared Bill once and restores stock once.
+PASS: status polling crossing expiry waits for final funding and cannot refund a fulfilled order.
+All eight Shared Bill PostgreSQL races passed using synthetic Wallets only.
+PASS: a committed restriction blocks a waiting checkout without a debit, order or stock reservation.
+PASS: an admitted checkout commits once before a waiting restriction, which then closes new admissions.
+PASS: publication waits for a restriction decision and cannot republish the restricted shop.
+PASS: offer acceptance racing cancellation never deadlocks, resurrects the order or loses its refund.
+PASS: a GPS update racing cancellation waits for the order and cannot persist a stale authorized sample.
+PASS: concurrent pickup requests advance the order and assignment once.
+PASS: concurrent delivery requests complete one order and preserve one stock reservation.
+PASS: removal racing pickup requires operational resolution and preserves the physical handoff.
+PASS: reassignment racing old-courier acceptance authorizes only the replacement courier.
+PASS: concurrent dispatch of two orders reserves only one active offer for a courier.
+PASS: simultaneous offer-acceptance retries create one accepted assignment and one customer notice.
+PASS: a different approved courier cannot win or alter another courier's offer.
+PASS: all four RLS-protected catalog relations are present in the real PostgreSQL publication.
+All nine courier PostgreSQL races passed with synthetic orders and Wallets only.
+PASS: concurrent device registration retries preserve one current account/session binding.
+PASS: overlapping SKIP LOCKED push workers claim a notification once without blocking or duplicate delivery work.
+An approved existing Wantiss rate adjustment is required
+The existing Wantiss adjustment requires financial review
+Privileged deployment connection required
+PASS: FX activation preserves the existing Wantiss adjustment, requires an approved basis and replays without duplicate audit.
+permission denied for function goodies_publish_usd_htg_quote
+permission denied for function goodies_fx_refresh_status
+permission denied for function goodies_record_fx_refresh_failure
+permission denied for function goodies_publish_usd_htg_quote
+permission denied for function goodies_fx_refresh_status
+permission denied for function goodies_record_fx_refresh_failure
+PASS: ordinary/anonymous clients cannot inspect or publish FX configuration, and server access uses scoped RPC grants.
+Not authorized
+Not authorized
+Not authorized
+Not authorized
+PASS: FX status requires active finance.view permission; ordinary accounts, restricted, revoked and inactive staff are denied.
+PASS: simultaneous FX refreshes publish one reference quote, preserve the adjustment and never revalue existing cash reservations or change money/stock.
+Invalid reference quote
+Invalid reference quote
+Invalid reference quote
+Invalid reference quote
+Invalid reference quote
+Reference quote is unavailable for this date
+Reference quote is unavailable for this date
+Reference quote is unavailable for this date
+Reference quote requires financial review
+PASS: SQL independently rejects stale/future/backdated, non-finite, invalid and outlier quotes without modifying the cached quote.
+PASS: provider outages and lost-response retries preserve the original expiry and quote; recovery clears the incident without another quote.
+Exchange rate refresh is unavailable
+PASS: pausing FX publication preserves all existing quotes, orders, settlement snapshots, balances and inventory.
+function cron.synthetic_missing_schedule(unknown, unknown, unknown) does not exist
+PASS: FX migration replay and an injected scheduled-job failure preserve exact grants/configuration and roll back atomically.
+All native PostgreSQL race tests passed; no production connection or real money was used.

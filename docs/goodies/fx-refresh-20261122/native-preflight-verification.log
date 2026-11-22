@@ -1,0 +1,11 @@
+✔ SDK 58 emits Stripe iOS frameworks, the Android maps key, courier permissions and notification channel without native file generation (489.124024ms)
+✔ Firebase build configuration accepts the matching Android client and refuses server credentials or another application (4.821836ms)
+✔ EAS preflight stops an incomplete Android installer and checks iOS independently of Google configuration (138.812073ms)
+ℹ tests 3
+ℹ suites 0
+ℹ pass 3
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 638.929151

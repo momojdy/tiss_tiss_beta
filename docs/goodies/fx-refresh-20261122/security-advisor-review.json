@@ -1,0 +1,154 @@
+{
+  "classification": "PASS",
+  "scope": "New FX producer access boundaries; no blanket Supabase security certification",
+  "live": {
+    "functions": [
+      {
+        "function": "goodies_admin_fx_refresh_status()",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "anon_execute": false,
+        "service_execute": true,
+        "security_definer": true,
+        "authenticated_execute": true
+      },
+      {
+        "function": "goodies_fx_refresh_status()",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "anon_execute": false,
+        "service_execute": true,
+        "security_definer": true,
+        "authenticated_execute": false
+      },
+      {
+        "function": "goodies_publish_usd_htg_quote(date,numeric)",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "anon_execute": false,
+        "service_execute": true,
+        "security_definer": true,
+        "authenticated_execute": false
+      },
+      {
+        "function": "goodies_record_fx_refresh_failure(text)",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "anon_execute": false,
+        "service_execute": true,
+        "security_definer": true,
+        "authenticated_execute": false
+      },
+      {
+        "function": "private.goodies_fx_refresh_snapshot()",
+        "settings": [
+          "search_path=\"\""
+        ],
+        "anon_execute": false,
+        "service_execute": false,
+        "security_definer": true,
+        "authenticated_execute": false
+      }
+    ],
+    "config_rls": true,
+    "admin_check": true,
+    "client_config_select": false,
+    "service_config_update": false
+  },
+  "advisors": {
+    "before": [
+      {
+        "name": "rls_enabled_no_policy",
+        "count": 28
+      },
+      {
+        "name": "extension_in_public",
+        "count": 1
+      },
+      {
+        "name": "anon_security_definer_function_executable",
+        "count": 5
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "count": 236
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "count": 1
+      }
+    ],
+    "after": [
+      {
+        "name": "rls_enabled_no_policy",
+        "count": 29
+      },
+      {
+        "name": "extension_in_public",
+        "count": 1
+      },
+      {
+        "name": "anon_security_definer_function_executable",
+        "count": 5
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "count": 237
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "count": 1
+      }
+    ],
+    "delta": [
+      {
+        "name": "rls_enabled_no_policy",
+        "level": "INFO",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy",
+        "findings": [
+          {
+            "detail": "Table \\`private.goodies_fx_refresh_config\\` has RLS enabled, but no policies exist",
+            "metadata": {
+              "name": "goodies_fx_refresh_config",
+              "type": "table",
+              "schema": "private"
+            }
+          }
+        ]
+      },
+      {
+        "name": "authenticated_security_definer_function_executable",
+        "level": "WARN",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable",
+        "findings": [
+          {
+            "detail": "Function `public.goodies_admin_fx_refresh_status()` can be executed by the `authenticated` role as a `SECURITY DEFINER` function via `/rest/v1/rpc/goodies_admin_fx_refresh_status`. Revoke `EXECUTE` or switch it to `SECURITY INVOKER` if that is not intentional.",
+            "metadata": {
+              "name": "goodies_admin_fx_refresh_status",
+              "schema": "public",
+              "language": "plpgsql",
+              "arguments": "",
+              "security_definer": true
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "review": [
+    {
+      "finding": "Private producer table has RLS and no policies",
+      "decision": "Intentional deny-by-default server-only configuration. All direct grants, including service_role, are revoked; scoped SECURITY DEFINER RPCs are the interface."
+    },
+    {
+      "finding": "Authenticated-executable SECURITY DEFINER finance status RPC",
+      "decision": "Intentional read-only finance.view endpoint. Actual local roles verify ordinary/restricted/revoked/inactive staff denials and an active scoped finance grant. Live grant/search_path/internal-guard readback matches the reviewed source."
+    }
+  ],
+  "localPermissionEvidence": "postgres-verification.log",
+  "unresolvedOwnerDeferredFinding": "Leaked-password protection; deferred by owner until a future Pro upgrade."
+}

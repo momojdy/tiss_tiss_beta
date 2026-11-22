@@ -1,0 +1,370 @@
+Check supabase/functions/rapid-api/goodiesStripeState_test.ts
+Check supabase/functions/goodies-tests/accountCache_test.ts
+Check supabase/functions/goodies-tests/adminPagination_test.ts
+Check supabase/functions/goodies-tests/adminRestrictions_test.ts
+Check supabase/functions/goodies-tests/builders_test.ts
+Check supabase/functions/goodies-tests/catalogRealtime_test.ts
+Check supabase/functions/goodies-tests/cmsPublication_test.ts
+Check supabase/functions/goodies-tests/cmsReleaseAcceptance_test.ts
+Check supabase/functions/goodies-tests/contentRepairReview_test.ts
+Check supabase/functions/goodies-tests/courierAccess_test.ts
+Check supabase/functions/goodies-tests/courierMutationIntegrity_test.ts
+Check supabase/functions/goodies-tests/deliveryProofAccess_test.ts
+Check supabase/functions/goodies-tests/deliveryTracking_test.ts
+Check supabase/functions/goodies-tests/deploymentPackage_test.ts
+Check supabase/functions/goodies-tests/disputeNotification_test.ts
+Check supabase/functions/goodies-tests/expiryStripeCompatibility_test.ts
+Check supabase/functions/goodies-tests/groupCheckoutConsent_test.ts
+Check supabase/functions/goodies-tests/groupExpiryWorker_test.ts
+Check supabase/functions/goodies-tests/historicalRouteBackfill_test.ts
+Check supabase/functions/goodies-tests/localization_test.ts
+Check supabase/functions/goodies-tests/notificationLocalization_test.ts
+Check supabase/functions/goodies-tests/notificationRouting_test.ts
+Check supabase/functions/goodies-tests/orderLifecycle_test.ts
+Check supabase/functions/goodies-tests/pricing_test.ts
+Check supabase/functions/goodies-tests/productModeration_test.ts
+Check supabase/functions/goodies-tests/publicCmsTransport_test.ts
+Check supabase/functions/goodies-tests/pushDelivery_test.ts
+Check supabase/functions/goodies-tests/pushRecovery_test.ts
+Check supabase/functions/goodies-tests/refundAuthorization_test.ts
+Check supabase/functions/goodies-tests/releaseCourierLifecycle_test.ts
+Check supabase/functions/goodies-tests/reviewModerationCompatibility_test.ts
+Check supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Check supabase/functions/goodies-tests/scopedStaffPermissions_test.ts
+Check supabase/functions/goodies-tests/sharedBillIntegrity_test.ts
+Check supabase/functions/goodies-tests/sharedBillReleaseGate_test.ts
+Check supabase/functions/goodies-tests/staffInvitationServerSide_test.ts
+Check supabase/functions/goodies-tests/storeRestrictionAdmission_test.ts
+Check supabase/functions/goodies-tests/storeRoadDistance_test.ts
+Check supabase/functions/goodies-tests/usdHtgRefresh_test.ts
+Check supabase/functions/goodies-tests/vendorBuilderRequests_test.ts
+Check supabase/functions/goodies-tests/vendorSettlement_test.ts
+Check supabase/functions/process-goodies-card-refunds/refundLogic_test.ts
+Check supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts
+running 5 tests from ./supabase/functions/rapid-api/goodiesStripeState_test.ts
+canonical PaymentIntent status wins over an older webhook event type ... ok (443µs)
+failed PaymentIntent is only recorded after it requires a new payment method ... ok (110µs)
+cumulative Stripe refund amount maps to pending, partial and full states ... ok (119µs)
+refund reconciliation rejects impossible Stripe totals ... ok (334µs)
+canonical dispute status preserves final outcome ... ok (146µs)
+running 3 tests from ./supabase/functions/goodies-tests/accountCache_test.ts
+private caches hydrate only for their original account ... ok (470µs)
+legacy caches with unknown owners and malformed envelopes never hydrate ... ok (74µs)
+guest cart caches cannot restore into signed-in accounts ... ok (45µs)
+running 1 test from ./supabase/functions/goodies-tests/adminPagination_test.ts
+admin paging retains access checks and reaches records beyond legacy caps ... ok (5s)
+running 1 test from ./supabase/functions/goodies-tests/adminRestrictions_test.ts
+restriction appeals persist and scoped staff cannot lift permanent Goodies bans ... ok (4s)
+running 1 test from ./supabase/functions/goodies-tests/builders_test.ts
+server builder rules enforce availability, required groups, limits and authoritative pricing ... ok (4s)
+running 1 test from ./supabase/functions/goodies-tests/catalogRealtime_test.ts
+catalog publication retains RLS and adds only missing Goodies realtime relations ... ok (5s)
+running 2 tests from ./supabase/functions/goodies-tests/cmsPublication_test.ts
+CMS publication rejects unreviewed critical English/Creole and placeholder FAQs without blocking fee-only updates ... ok (4s)
+forward CMS guard permits unfinished Creole only with reviewed English and preserves every review state ... ok (2s)
+running 1 test from ./supabase/functions/goodies-tests/cmsReleaseAcceptance_test.ts
+Goodies FAQ content passes real draft/publication permissions and consumer reload semantics ...
+  customers and anonymous callers cannot save or publish ... ok (168ms)
+  an editor can save a draft but cannot publish or alter financial settings ... ok (143ms)
+  draft preview can show edits while a consumer reload still sees published content ... ok (31ms)
+  an authorized publish changes the actual public projection and writes an audit record ... ok (234ms)
+  failed critical publication rolls back and preserves the prior consumer version ... ok (451ms)
+  Goodies CMS uses server acceptance while other-feature authorization stays unchanged ... ok (975ms)
+Goodies FAQ content passes real draft/publication permissions and consumer reload semantics ... ok (7s)
+running 1 test from ./supabase/functions/goodies-tests/contentRepairReview_test.ts
+new checkout and vendor copy obey server review without blocking fees or reviewed-English fallback ... ok (3s)
+running 1 test from ./supabase/functions/goodies-tests/courierAccess_test.ts
+courier RPC migration enforces assignment, approval, expiry and role boundaries ... ok (3s)
+running 6 tests from ./supabase/functions/goodies-tests/courierMutationIntegrity_test.ts
+courier metadata normalization accepts unknown accuracy and cannot roll back a valid location ... ok (3s)
+a cancelled order remains cancelled and refunded after late courier responses ... ok (1s)
+courier removal cannot abandon a physically picked-up delivery ... ok (1s)
+revoked couriers cannot keep tracking or completing an existing assignment ... ok (2s)
+stale assignment ownership or order state cannot authorize courier mutations ... ok (1s)
+real courier pickup details are scoped to the current approved active assignment ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/deliveryProofAccess_test.ts
+private delivery evidence enforces customer, merchant, staff and object ownership ... ok (1s)
+running 8 tests from ./supabase/functions/goodies-tests/deliveryTracking_test.ts
+queued old GPS samples cannot be submitted as fresh positions ... ok (564µs)
+GPS expires without realtime events and accepts the freshness boundary ... ok (206µs)
+only accepted active assignments expose a courier position ... ok (83µs)
+missing, invalid and implausibly future GPS timestamps are rejected ... ok (70µs)
+coordinates reject missing, non-finite and out-of-range data while retaining zero ... ok (133µs)
+road geometry preserves disconnected segments without fabricating connecting roads ... ok (249µs)
+viewport contains distant store, customer, courier and route points ... ok (132µs)
+incoming courier samples must be recent even while customers can see a slightly older last fix ... ok (145µs)
+running 1 test from ./supabase/functions/goodies-tests/deploymentPackage_test.ts
+approved Goodies deployment package applies in documented order and preserves final guards ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/disputeNotification_test.ts
+paid card disputes report pending or manual-review refunds without claiming no charge ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/expiryStripeCompatibility_test.ts
+expiry worker preserves the deployed Stripe API version with a compatible pinned SDK ... ok (18ms)
+running 1 test from ./supabase/functions/goodies-tests/groupCheckoutConsent_test.ts
+group checkout compares reviewed items and totals before entering the wallet boundary ...
+  matching review reaches only the explicit unpaid test boundary ... ok (16ms)
+  tampered or stale totals cannot enter payment ... ok (8ms)
+  incomplete review metadata cannot enter payment ... ok (3ms)
+  a member cart change invalidates the approved snapshot ... ok (10ms)
+  another customer cannot check out the host wallet ... ok (39ms)
+  existing clients keep the unchanged RPC signature ... ok (3ms)
+group checkout compares reviewed items and totals before entering the wallet boundary ... ok (2s)
+running 1 test from ./supabase/functions/goodies-tests/groupExpiryWorker_test.ts
+expired Goodies groups close without touching checked-out or future invitations ... ok (2s)
+running 1 test from ./supabase/functions/goodies-tests/historicalRouteBackfill_test.ts
+historical road-route repair uses only a unique consumed matching quote and keeps totals unchanged ... ok (2s)
+running 5 tests from ./supabase/functions/goodies-tests/localization_test.ts
+production falls back to English for missing and unreviewed translations in all five locales ... ok (664µs)
+Haitian Creole is available in production only after explicit human review ... ok (75µs)
+draft preview is explicit and never changes review metadata ... ok (65µs)
+empty and legacy text have predictable fallbacks ... ok (54µs)
+unreviewed English cannot bypass review by becoming the production fallback ... ok (92µs)
+running 2 tests from ./supabase/functions/goodies-tests/notificationLocalization_test.ts
+shared Wantiss settings map to the five existing Goodies locales ... ok (619µs)
+notifications use reviewed CMS translations and preserve truthful English fallbacks ... ok (2s)
+running 4 tests from ./supabase/functions/goodies-tests/notificationRouting_test.ts
+vendor order, moderation, ingredient and message notices open their established pages ... ok (403µs)
+push payloads cannot navigate another business or an unrelated page ... ok (58µs)
+settlement notices open the scoped vendor payout panel ... ok (49µs)
+notification workspace switches are limited to the vendor owned business list ... ok (64µs)
+running 1 test from ./supabase/functions/goodies-tests/orderLifecycle_test.ts
+wallet checkout, authorization, fulfillment and cancellation stay atomic and synchronized ... ok (2s)
+running 1 test from ./supabase/functions/goodies-tests/pricing_test.ts
+server product prices, option restrictions, promotions and tip choices reject tampering ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/productModeration_test.ts
+vendors can maintain their catalog while administrator rejection remains authoritative ... ok (1s)
+running 4 tests from ./supabase/functions/goodies-tests/publicCmsTransport_test.ts
+both CMS delivery handlers accept all five configured locales and preserve regional-code compatibility ... ok (48ms)
+invalid CMS locale input is rejected before any published-content lookup ... ok (2ms)
+CMS delivery failures return owned messages without database details ... ok (1ms)
+CMS delivery rejects unsupported methods without backend activity ... ok (281µs)
+running 9 tests from ./supabase/functions/goodies-tests/pushDelivery_test.ts
+push devices require the current Auth session and never grant client queue access ... ok (1s)
+push claims are unique, contain no private order text and reject stale worker receipts ... ok (1s)
+logout, shared-device account switches and expired sessions suppress queued push ... ok (1s)
+push rechecks vendor membership, courier approval and notification preferences ... ok (1s)
+expired send leases stay uncertain while receipt leases recover without resending ... ok (1s)
+Expo push tickets are polled to completion with canonical account references ... ok (3ms)
+Expo transport failures remain uncertain; explicit rate limits retry safely ... ok (1ms)
+push worker authenticates before claiming and never exposes provider or SQL errors ...
+------- post-test output -------
+Goodies push delivery processing failed
+----- post-test output end -----
+push worker authenticates before claiming and never exposes provider or SQL errors ... ok (3ms)
+push worker bounds provider concurrency and completes all claimed receipts ...
+------- post-test output -------
+Goodies push delivery outcomes {"scanned":12,"ticket":12}
+----- post-test output end -----
+push worker bounds provider concurrency and completes all claimed receipts ... ok (7ms)
+running 1 test from ./supabase/functions/goodies-tests/pushRecovery_test.ts
+scoped notification deployment and recovery restore captured functions without financial writes ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/refundAuthorization_test.ts
+Goodies refund endpoint authorizes before exposing any order payment state ... ok (953µs)
+running 1 test from ./supabase/functions/goodies-tests/releaseCourierLifecycle_test.ts
+Wallet delivery connects customer, vendor, assigned courier and admin using one paid order ...
+  server-authoritative checkout and a retry reserve and debit once ... ok (28ms)
+  other customer/vendor cannot read or fulfill the order ... ok (7ms)
+  vendor prepares the same order and assigns an approved courier ... ok (18ms)
+  accepted courier can share location and advance only the assigned delivery ... ok (9ms)
+  customer, vendor and admin see completion, routing and correctly addressed notification records ... ok (8ms)
+Wallet delivery connects customer, vendor, assigned courier and admin using one paid order ... ok (2s)
+running 2 tests from ./supabase/functions/goodies-tests/reviewModerationCompatibility_test.ts
+the merged review contract uses one table, approved public feedback, private access and audited moderation ... ok (1s)
+review moderation migration failure rolls back without altering the existing review contract ... ok (1s)
+running 2 tests from ./supabase/functions/goodies-tests/reviewsPreferences_test.ts
+Goodies reviews enforce completed-order ownership, isolate participants and deduplicate retries ... ok (1s)
+review migration failure rolls back partial schema changes and can be retried cleanly ... ok (888ms)
+running 1 test from ./supabase/functions/goodies-tests/scopedStaffPermissions_test.ts
+Goodies delegated staff use server-owned roles without gaining financial or other-feature authority ...
+  a viewer can read Goodies operations but cannot mutate them ... ok (17ms)
+  an operations manager can moderate but cannot change fees or resolve money disputes ... ok (48ms)
+  a separately granted financial approver can update the protected policy ... ok (11ms)
+  a Goodies grant cannot operate on another feature or bypass a business restriction ... ok (10ms)
+  user-editable invitation metadata cannot activate an unaccepted staff invitation ... ok (9ms)
+  revocation, expiry, suspension, unverified email and anonymous calls deny access ... ok (29ms)
+Goodies delegated staff use server-owned roles without gaining financial or other-feature authority ... ok (2s)
+running 2 tests from ./supabase/functions/goodies-tests/sharedBillIntegrity_test.ts
+Shared Bill uses the final backend package for actual Wallet funding, one order, split refunds and authorization ...
+  funding is paused by default, including direct RPC calls ... ok (15ms)
+  60/40 debits the host and two contributors, with one real owner order and one stock reservation ... ok (84ms)
+  full-payment mode leaves the host untouched and requires one complete friend payment ... ok (16ms)
+  cancellation refunds every payer once and repeated cancellation remains safe ... ok (50ms)
+  scheduled expiry refunds without reopening any app ... ok (13ms)
+  changed prices or unavailable stock cancel finalization and refund all contributors ... ok (17ms)
+  anonymous calls, forged client writes and private helpers are denied ... ok (4ms)
+  exact authoritative cents reject one-cent total/subtotal tampering and fractional amounts before reservation ... ok (17ms)
+  aggregate stock is checked without reserving inventory at request creation ... ok (9ms)
+  account-bound financial RPCs reject stale confirmations after account changes ... ok (12ms)
+  refund failures stay pending and recover once with audited finance-only retry ... ok (28ms)
+  accepted-friend invitations are private, authorized and deduplicated ... ok (22ms)
+  automatic refund recovery respects backoff, escalates repeat failures and retains cancellation ... ok (35ms)
+  reused keys with a different amount/request and creator self-payment never debit a Wallet ... ok (17ms)
+  server promotions and exact discount cents are validated, consumed only upon final funding ... ok (21ms)
+  real owner-scoped delivery quotes survive the shared window and are consumed once at funding ... ok (18ms)
+  builder selections/prices stay authoritative, and a disabled builder refunds every payer ... ok (32ms)
+  the first-delivery fee rule stays authoritative after pickup orders and cannot be reused ... ok (24ms)
+  deployed vendor product RPCs remain compatible and material product edits return to moderation ... ok (14ms)
+  pausing new funding preserves participant recovery and finance activation is audited ... ok (16ms)
+Shared Bill uses the final backend package for actual Wallet funding, one order, split refunds and authorization ... ok (2s)
+Shared Bill migration rollback leaves the prior schema/checkout intact and the complete migration can be retried ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/sharedBillReleaseGate_test.ts
+Shared Bill funding is denied by the backend while recovery access is preserved ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/staffInvitationServerSide_test.ts
+merged staff invitation hardening preserves RBAC levels and requires database-recorded acceptance ...
+  forged user metadata cannot activate ordinary staff or a pending super admin ... ok (8ms)
+  the actual verified invitation RPC records acceptance and audits it once ... ok (17ms)
+  accepted staff retain view/edit/manage grant boundaries without metadata dependence ... ok (38ms)
+  grant revocation, expiry, suspension and unverified email still revoke shared access ... ok (35ms)
+merged staff invitation hardening preserves RBAC levels and requires database-recorded acceptance ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/storeRestrictionAdmission_test.ts
+business and merchant restrictions pause new sales without losing existing orders or payer refunds ...
+  restricted vendors cannot republish through the RPC or direct table update ... ok (4ms)
+  stale live records are hidden from other customers and service-side routing ... ok (19ms)
+  a final Shared Bill payment after restriction refunds every payer without creating an order ... ok (14ms)
+  checkout is denied without another debit, order or stock reservation ... ok (8ms)
+  previous orders and funded requests retain cancellation and exactly-once refunds ... ok (17ms)
+  lifting the business restriction restores explicit publication and checkout ... ok (15ms)
+  another restricted owner cannot be bypassed by an unrestricted business admin ... ok (8ms)
+business and merchant restrictions pause new sales without losing existing orders or payer refunds ... ok (1s)
+running 2 tests from ./supabase/functions/goodies-tests/storeRoadDistance_test.ts
+Goodies store distance uses route metres, not GPS straight-line distance ... ok (443µs)
+Goodies store distance never invents kilometres from missing route results ... ok (105µs)
+running 12 tests from ./supabase/functions/goodies-tests/usdHtgRefresh_test.ts
+USD/HTG parser accepts a published weekend reference with a fixed publication-based expiry ... ok (586µs)
+USD/HTG parser rejects stale, future, impossible or ambiguous publication dates ... ok (383µs)
+USD/HTG parser refuses other pairs and non-finite, string or invalid rates ... ok (270µs)
+Refresh worker rejects wrong methods and missing/forged tokens before fetching or writing ... ok (13ms)
+Refresh worker remains inert when the approved rollout is disabled ... ok (376µs)
+Refresh worker fetches only the configured public feed and publishes validated values rather than request data ... ok (1ms)
+Refresh retries accept the server unchanged receipt without fabricating another quote ... ok (405µs)
+Provider failures preserve cached quotes and record safe operational outcomes ...
+------- post-test output -------
+Goodies exchange rate refresh failed provider_unavailable
+Goodies exchange rate refresh failed provider_unavailable
+Goodies exchange rate refresh failed provider_unavailable
+----- post-test output end -----
+Provider failures preserve cached quotes and record safe operational outcomes ... ok (1ms)
+Malformed, HTML and oversized provider bodies cannot update financial configuration ...
+------- post-test output -------
+Goodies exchange rate refresh failed provider_invalid
+Goodies exchange rate refresh failed provider_invalid
+Goodies exchange rate refresh failed provider_invalid
+Goodies exchange rate refresh failed provider_invalid
+----- post-test output end -----
+Malformed, HTML and oversized provider bodies cannot update financial configuration ... ok (1ms)
+Stale source data cannot be made fresh by polling it again ...
+------- post-test output -------
+Goodies exchange rate refresh failed source_stale
+----- post-test output end -----
+Stale source data cannot be made fresh by polling it again ... ok (372µs)
+Database failures and malformed acknowledgements never become a successful refresh ...
+------- post-test output -------
+Goodies exchange rate refresh failed write_unavailable
+Goodies exchange rate refresh failed write_unavailable
+Goodies exchange rate refresh failed write_unavailable
+----- post-test output end -----
+Database failures and malformed acknowledgements never become a successful refresh ... ok (834µs)
+Authorization or configuration outages fail closed before external requests ... ok (320µs)
+running 4 tests from ./supabase/functions/goodies-tests/vendorBuilderRequests_test.ts
+builder writes reject non-manager membership and preserve other merchants ... ok (1s)
+restricted businesses and restricted merchant accounts cannot alter builders ... ok (1s)
+ingredient request pagination reaches past 200 with stable ordering and manager-only access ... ok (1s)
+admin ingredient queue reaches every request and filters waiting work before pagination ... ok (1s)
+running 1 test from ./supabase/functions/goodies-tests/vendorSettlement_test.ts
+Goodies settlement enforces holds, HTG cash sales limits, weekly commission, private destinations and atomic payouts ...
+  rollout defaults off and unauthorized users cannot access private records or financial RPCs ... ok (18ms)
+  24-hour hold blocks withdrawals, then wallet payout credits exactly once and rejects changed retries ... ok (155ms)
+  cash limit is 5000 HTG of sales, including pending accepted orders, not 5000 of commission ... ok (89ms)
+  expired FX blocks new cash acceptance without deleting orders or affecting electronic checkout ... ok (4ms)
+  weekly overdue commission pauses new cash orders and wallet settlement restores the sales allowance ... ok (32ms)
+  disputes and refunds freeze earnings; post-payout loss is visible as recovery due ... ok (7ms)
+  external destinations require owner access and finance review; external payouts reserve funds and cannot fake instant success ... ok (42ms)
+  ledger filters, dashboard totals, owner cash preferences and finance details use real scoped data ... ok (34ms)
+  external completion records the exact converted amount and a unique verified receipt ... ok (17ms)
+  courier-collected cash cannot fund earnings until its real remittance is verified ... ok (24ms)
+  weekly reminders deduplicate and settlement notices stay in the vendor inbox ... ok (16ms)
+  paused writes retain history and accepted-order fulfillment while blocking new payouts and cash acceptance ... ok (6ms)
+  bank payout requires a reviewed country calendar and uses the seven-to-fourteen-business-day window ... ok (25ms)
+  clients cannot alter FX, and confirmed commission refunds create a real credit without making cash sales withdrawable ... ok (8ms)
+  every new public financial RPC denies anonymous execution and every private helper denies clients ... ok (5ms)
+  vendors can dispatch immediately without a fleet and cannot take over an accepted courier ... ok (78ms)
+  bank windows exclude weekends and configured holidays ... ok (4ms)
+Goodies settlement enforces holds, HTG cash sales limits, weekly commission, private destinations and atomic payouts ... ok (3s)
+running 7 tests from ./supabase/functions/process-goodies-card-refunds/refundLogic_test.ts
+only succeeded Stripe refunds reduce the remaining balance ... ok (420µs)
+pending and requires_action refunds block another refund creation ... ok (78µs)
+failed and canceled refunds do not block a genuine retry ... ok (47µs)
+uncertain network retries reuse the stable key when Stripe has no refund record ... ok (67µs)
+a recorded terminal refund advances the idempotency generation ... ok (88µs)
+fully refunded totals have no remaining amount ... ok (48µs)
+invalid refund totals and keys are rejected ... ok (356µs)
+running 9 tests from ./supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts
+mock Stripe full refund is finalized once ... ok (598µs)
+mock Stripe partial success creates only the remaining amount with a new key ... ok (124µs)
+existing pending Stripe refund prevents a second refund ... ok (80µs)
+requires_action Stripe refund prevents a second refund ... ok (60µs)
+uncertain Stripe network failure releases lease and retains stable retry key ...
+------- post-test output -------
+Goodies card refund failed for order order-123 Error: network timeout
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:101:43
+    at innerWrapped (ext:cli/40_test.js:300:11)
+    at exitSanitizer (ext:cli/40_test.js:201:33)
+    at outerWrapped (ext:cli/40_test.js:239:28)
+----- post-test output end -----
+uncertain Stripe network failure releases lease and retains stable retry key ... ok (3ms)
+stale lease cannot finalize a Stripe refund ...
+------- post-test output -------
+Could not release refund queue item queue-1 Error: Refund worker lease is no longer current
+    at finish (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:51:28)
+    at async processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:153:7)
+    at async file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:115:18
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund worker lease is no longer current
+    at finish (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:51:28)
+    at async processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:142:7)
+    at async file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:115:18
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+----- post-test output end -----
+stale lease cannot finalize a Stripe refund ... ok (11ms)
+already fully refunded PaymentIntent is finalized without creating another refund ... ok (98µs)
+invalid order totals are rejected before Stripe is contacted ...
+------- post-test output -------
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at innerWrapped (ext:cli/40_test.js:300:11)
+    at exitSanitizer (ext:cli/40_test.js:201:33)
+    at outerWrapped (ext:cli/40_test.js:239:28)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+Goodies card refund failed for order order-123 Error: Refund total must be a positive safe integer number of cents
+    at processRefundQueueItem (file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor.ts:62:13)
+    at file:///workspace/goodies-cms-completion/tiss_tiss_beta/supabase/functions/process-goodies-card-refunds/refundProcessor_test.ts:137:26
+    at async innerWrapped (ext:cli/40_test.js:300:5)
+    at async exitSanitizer (ext:cli/40_test.js:201:27)
+    at async outerWrapped (ext:cli/40_test.js:239:22)
+----- post-test output end -----
+invalid order totals are rejected before Stripe is contacted ... ok (773µs)
+Stripe refund history pagination is exhausted before calculating the remainder ... ok (198µs)
+
+ok | 113 passed (71 steps) | 0 failed (1m59s)
+

@@ -25,3 +25,11 @@ The existing isolated PostgreSQL runner tests activation/refusal, roles, concurr
 ## Native prerequisites
 
 Supabase remains the application backend and notification source. As documented in [Supabase's push guide](https://supabase.com/docs/guides/functions/examples/push-notifications), Expo delivers Android push through Google FCM and iPhone push through Apple APNs. FCM does not require moving application data or authentication to Firebase. Android still needs the owner's Google project/client credentials; physical iPhone signing remains blocked because the owner confirmed no paid Apple Developer membership. Installed device behavior remains NOT VERIFIED.
+
+The existing EAS build now runs a platform-specific pre-install check. Android requires Maps and matching push client configuration; iOS can be checked independently. The check needs no application dependencies and does not certify signing, credential ownership, API restrictions or physical behavior. Malformed/null client files and server service-account files are refused. Successful local Android/iOS fixture checks and incomplete-config refusals are in [the native preflight results](native-preflight-verification.log). No app installer was released by this change.
+
+## Verified deployment
+
+Migration **20261122070253** and version **1** of `refresh-goodies-exchange-rate` are deployed. Migration ledger SQL and all deployed Edge files exactly match source. The worker's first normal refresh returned HTTP 200, using the 20 November reference at **131.42 HTG/USD** and preserving the previous Wantiss adjustment. The quote expires **24 November 2026 at 00:00 UTC**. The existing cash store is eligible. The four-hour schedule is active; this receipt does not claim a later scheduled execution was observed.
+
+[Live readback](deployment-verification.json) verifies unchanged existing order/Wallet fingerprints, settlement/payout counts and external payout gates. [Security review](security-advisor-review.json) explains the two intentional new advisor notices and the scoped permission tests. [Native prerequisites](native-prerequisites.json) records the owner's confirmed Apple membership gap and pending Google project check. Full installed screen, GPS, push, card/3DS and CMS acceptance remain **NOT VERIFIED**.

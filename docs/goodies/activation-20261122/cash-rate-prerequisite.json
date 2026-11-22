@@ -1,29 +1,51 @@
 {
-  "classification": "FAIL",
+  "classification": "PASS",
   "scope": "Live cash-on-delivery configuration prerequisite; safe rejection behavior passes",
   "projectRef": "ycbirmgppwavorwudlrv",
   "prerequisites": {
     "global_cash_enabled": true,
     "global_wallet_enabled": true,
-    "latest_usd_htg_rate_expiry": "2026-10-19T19:21:30.179876+00:00",
-    "fresh_usd_htg_rate_available": false,
+    "latest_usd_htg_rate_expiry": "2026-11-24T00:00:00Z",
+    "fresh_usd_htg_rate_available": true,
     "settlement_reminder_job_active": true
   },
   "producerInspection": {
-    "repositoryRateUpdaterFound": false,
-    "hostedRateUpdaterEdgeFound": false,
-    "hostedRateCronFound": false,
-    "rateProviderSecretNameCandidates": [],
+    "repositoryRateUpdaterFound": true,
+    "hostedRateUpdaterEdgeFound": true,
+    "hostedRateCronFound": true,
     "secretValuesRead": false
   },
-  "impact": "Goodies cash checkout/acceptance remains unavailable until a current approved USD-to-HTG rate is provided through the existing exchange_rates architecture. Wallet payouts do not need this conversion.",
-  "safeguard": "Existing store availability and acceptance enforce a fresh, positive, finite rate and reject stale data. The stale rate was not renewed, relabeled or fabricated.",
-  "ownerInputPending": "Which approved exchange-rate source and Wantiss rate policy should supply the shared USD/HTG rate?",
+  "impact": "Fresh validated USD/HTG reference quotes now restore existing cash-store eligibility. Installed cash order acceptance remains unverified.",
+  "safeguard": "The existing adjustment is preserved. New immutable quotes keep the actual provider date and fixed expiry; stale-rate rejection remains enforced.",
   "productionFinancialDataModified": false,
   "checkedOn": "2026-11-22",
   "observedStoreEligibility": {
     "liveStores": 1,
-    "cashAvailableStores": 0,
+    "cashAvailableStores": 1,
     "deployedFreshPositiveRateGuardVerified": true
+  },
+  "historicalClassification": "FAIL",
+  "resolvedAt": "2026-11-22T07:04:54.276490Z",
+  "supersededBy": "../fx-refresh-20261122/deployment-verification.json",
+  "previousObservation": {
+    "prerequisites": {
+      "global_cash_enabled": true,
+      "global_wallet_enabled": true,
+      "latest_usd_htg_rate_expiry": "2026-10-19T19:21:30.179876+00:00",
+      "fresh_usd_htg_rate_available": false,
+      "settlement_reminder_job_active": true
+    },
+    "producerInspection": {
+      "repositoryRateUpdaterFound": false,
+      "hostedRateUpdaterEdgeFound": false,
+      "hostedRateCronFound": false,
+      "rateProviderSecretNameCandidates": [],
+      "secretValuesRead": false
+    },
+    "observedStoreEligibility": {
+      "liveStores": 1,
+      "cashAvailableStores": 0,
+      "deployedFreshPositiveRateGuardVerified": true
+    }
   }
 }

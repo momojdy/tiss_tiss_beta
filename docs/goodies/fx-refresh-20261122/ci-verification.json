@@ -1,0 +1,97 @@
+{
+  "classification": "PASS",
+  "scope": "Exact Goodies functional revision in GitHub Actions; not installed-device acceptance or production signing",
+  "customerSource": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+  "adminSource": "243a183b25ec084f700387e39a63b67142a9913b",
+  "runs": [
+    {
+      "id": 44997219364,
+      "name": "TypeScript and Expo build checks",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44997219364"
+    },
+    {
+      "id": 44997219385,
+      "name": "Expo validation",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/44997219385"
+    }
+  ],
+  "customerJobs": [
+    {
+      "id": 137130741947,
+      "name": "edge-functions",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137130742097,
+      "name": "settlement-concurrency",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137130742103,
+      "name": "validate",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 137130742133,
+      "name": "goodies-local-api",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "localApiScope": "35 actual local Auth/PostgREST/Storage/CMS/recovery scenarios; no hosted Supabase test or payment-provider call",
+  "postgresChecks": 48,
+  "targetGoodiesMigrations": 37,
+  "counts": {
+    "customer": 285,
+    "admin": 71,
+    "crossRole": 47,
+    "deno": 113,
+    "coreTests": 516,
+    "denoStepsNotAddedAgain": 71,
+    "skipped": 0
+  },
+  "artifacts": [
+    {
+      "id": 14744711118,
+      "name": "goodies-browser-boot-8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "digest": "sha256:574644081c78c6f7f59ef2ed4ab450b64e9d4362e676d132e9aefae310cdd452",
+      "size_in_bytes": 342,
+      "expired": false
+    },
+    {
+      "id": 14744496796,
+      "name": "goodies-customer-web-verification-8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "digest": "sha256:e65eed70421e40690354380b941b9d6fd2b182deb29477dc70a9f075fea68742",
+      "size_in_bytes": 44458850,
+      "expired": false
+    },
+    {
+      "id": 14743958545,
+      "name": "goodies-settlement-races-8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "digest": "sha256:96b8d504f6b4617e99528dd6fed1d60d2710d52fbf5d91734400edfa70353010",
+      "size_in_bytes": 1997,
+      "expired": false
+    },
+    {
+      "id": 14743923822,
+      "name": "goodies-local-api-8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+      "digest": "sha256:0c478bb88611bf58c59f1e7c6e2c8f43300beecbe3560141a52de625a9cc7f5a",
+      "size_in_bytes": 6835,
+      "expired": false
+    }
+  ],
+  "limits": [
+    "Admin 71-test suite was rerun locally at the unchanged admin revision; its existing CI evidence remains in the prior activation report.",
+    "The Android compile/debug-signature workflow is recorded separately; it is not a configured private phone installer.",
+    "Physical GPS, background execution, Maps/provider credentials, push, installed payment/3DS and installed CMS reload remain unverified."
+  ]
+}

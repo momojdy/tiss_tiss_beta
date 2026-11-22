@@ -9,9 +9,11 @@
     "EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY"
   ],
   "sharedEnvironmentVariableNames": [],
-  "appleMembershipAnswerPending": true,
+  "appleMembershipAnswerPending": false,
   "googleCloudFirebaseAnswerPending": true,
   "physicalDeviceConnected": false,
   "privatePhoneBuildsCompleted": false,
-  "appReleased": false
+  "appReleased": false,
+  "supersededBy": "../fx-refresh-20261122/native-prerequisites.json",
+  "appleDeveloperMembership": false
 }

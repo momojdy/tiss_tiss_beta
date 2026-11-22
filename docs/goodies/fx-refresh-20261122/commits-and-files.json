@@ -1,0 +1,80 @@
+{
+  "scope": "This USD/HTG and native configuration continuation. Earlier changes remain in prior manifests.",
+  "customer": {
+    "repository": "momojdy/tiss_tiss_beta",
+    "branch": "main",
+    "functionalHead": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+    "commits": [
+      {
+        "sha": "d69de0ed63eafacbe2702fc120309590a753d37b",
+        "subject": "fix(goodies): refresh USD HTG references with protected Supabase worker",
+        "files": [
+          "M\t.github/workflows/expo-validation.yml",
+          "A\tdocs/goodies/fx-refresh-20261122/README.md",
+          "A\tscripts/goodies-fx-checks.cjs",
+          "M\tscripts/goodies-isolated-schema.cjs",
+          "M\tscripts/test-goodies-settlement-postgres.cjs",
+          "M\tsupabase/config.toml",
+          "A\tsupabase/functions/goodies-tests/usdHtgRefresh_test.ts",
+          "A\tsupabase/functions/refresh-goodies-exchange-rate/index.ts",
+          "A\tsupabase/functions/refresh-goodies-exchange-rate/refreshProcessor.ts",
+          "A\tsupabase/migrations/20261122062600_goodies_usd_htg_rate_refresh.sql",
+          "A\tsupabase/operations/goodies-enable-usd-htg-refresh.sql"
+        ]
+      },
+      {
+        "sha": "c3ae7746e28240e72cd2799370e99a1f96ae253b",
+        "subject": "test(goodies): fingerprint recovery schemas beyond 100 tables",
+        "files": [
+          "M\tscripts/goodies-local-recovery.cjs"
+        ]
+      },
+      {
+        "sha": "7266e710836ec9cfe5ad87dc567a18f5211375e9",
+        "subject": "fix(goodies): validate platform configuration before EAS native builds",
+        "files": [
+          "M\tapp.config.js",
+          "M\tpackage.json",
+          "M\tscripts/check-goodies-native-config.cjs",
+          "M\ttests/goodies-native-config.test.cjs"
+        ]
+      },
+      {
+        "sha": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
+        "subject": "test(goodies): verify deployed FX migration and scoped finance access",
+        "files": [
+          "M\tscripts/goodies-fx-checks.cjs",
+          "M\tscripts/goodies-isolated-schema.cjs",
+          "R100\tsupabase/migrations/20261122062600_goodies_usd_htg_rate_refresh.sql\tsupabase/migrations/20261122070253_goodies_usd_htg_rate_refresh.sql"
+        ]
+      }
+    ]
+  },
+  "admin": {
+    "repository": "momojdy/tiss-admin",
+    "branch": "main",
+    "head": "243a183b25ec084f700387e39a63b67142a9913b",
+    "changedFiles": [],
+    "note": "No admin code change required in this continuation. The unchanged 71-test suite was rerun and passed."
+  },
+  "documentationFiles": [
+    "docs/goodies/acceptance-20261121/CURRENT_STATUS.md",
+    "docs/goodies/acceptance-20261121/current-status.json",
+    "docs/goodies/acceptance-20261121/phase-verification.json",
+    "docs/goodies/activation-20261122/README.md",
+    "docs/goodies/activation-20261122/cash-rate-prerequisite.json",
+    "docs/goodies/activation-20261122/device-configuration-status.json",
+    "docs/goodies/fx-refresh-20261122/README.md",
+    "docs/goodies/fx-refresh-20261122/ci-verification.json",
+    "docs/goodies/fx-refresh-20261122/deno-verification.log",
+    "docs/goodies/fx-refresh-20261122/deployment-verification.json",
+    "docs/goodies/fx-refresh-20261122/native-preflight-verification.log",
+    "docs/goodies/fx-refresh-20261122/native-prerequisites.json",
+    "docs/goodies/fx-refresh-20261122/postgres-verification.log",
+    "docs/goodies/fx-refresh-20261122/security-advisor-review.json",
+    "docs/goodies/fx-refresh-20261122/commits-and-files.json"
+  ],
+  "appReleased": false,
+  "productionBackendChanged": true,
+  "hostedSyntheticTesting": false
+}

@@ -29,10 +29,11 @@
         "Both corrected shared CMS handlers are deployed and byte-match source.",
         "Local Auth/PostgREST calls exercise exact product, order, courier, review and CMS signatures.",
         "Three payment migrations and two existing Edge Functions deployed; exact definitions, grants, binding ownership policy and source readback pass. See payment-backend-deployment.json.",
-        "The 36-migration target, including the deployed private-proof pause hardening, passes exact canonical-filename CI checks; live policies/grants/source readback matches the reviewed change."
+        "The 36-migration target, including the deployed private-proof pause hardening, passes exact canonical-filename CI checks; live policies/grants/source readback matches the reviewed change.",
+        "The 37-migration target passes CI. USD/HTG migration 20261122070253 and the protected refresh worker are deployed; exact SQL, Edge source, grants, preserved adjustment and cash eligibility pass readback."
       ],
       "remainingAcceptance": [
-        "All role/contract paths and full production recovery have not been accepted. Existing shared-platform exceptions remain separately documented."
+        "All role/contract paths have not been accepted on installed applications. Existing shared-platform exceptions remain separately documented. Full production recovery is deferred by the owner."
       ]
     },
     {
@@ -62,18 +63,19 @@
     {
       "phase": 4,
       "name": "Checkout/payment/refund/settlement",
-      "classification": "FAIL",
+      "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Actual local Wallet pricing, financial tampering denial, retries, refunds and stock preservation pass.",
-        "40 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
+        "48 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
         "Original-card refund policy preserved.",
         "12 real Stripe sandbox scenarios pass within 44 local API/recovery scenarios: setup/webhook, authorization, capture, retries, original-card and partial refunds, issuer failure, interruption/reordering, and dispute recovery.",
         "Existing test-mode webhook event subscriptions now include all 12 handled events, preserving its URL, API version, prior event and signing secret. Delivery/key alignment remains unverified.",
-        "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation."
+        "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation.",
+        "Live daily reference refresh restores fresh USD/HTG eligibility while preserving the existing Wantiss adjustment, old quotes, orders, Wallet balances and settlements. See ../fx-refresh-20261122/deployment-verification.json."
       ],
       "remainingAcceptance": [
         "Installed card entry/3DS challenge and deployed webhook/key/account configuration remain unverified. Sandbox server tests are not full live-provider acceptance.",
-        "The live USD-to-HTG rate expired on 19 October. Cash correctly remains unavailable; approved rate-source configuration is still required."
+        "Installed cash checkout and delivery acceptance remain unverified; the expired-rate configuration defect is resolved."
       ]
     },
     {
@@ -101,7 +103,7 @@
         "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation."
       ],
       "remainingAcceptance": [
-        "Complete installed invitation/QR/offline/restart interactions and release-gate activation acceptance remain open; no production gate was activated."
+        "Complete installed invitation/QR/offline/restart interactions remain open. The live backend Wallet funding gate is enabled; existing installed binaries are unchanged."
       ]
     },
     {
@@ -164,7 +166,8 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "501 core tests (282 customer) with zero skipped; 40 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
+        "Latest scoped verification: 516 core tests (285 customer, 71 admin, 47 cross-role, 113 Deno), zero skipped; 48 native PostgreSQL checks; 35 actual local API/Storage/CMS/recovery scenarios; 37-migration target; exact-revision Expo validation and TypeScript/export CI pass. Existing native compile evidence is separate from phone acceptance.",
+        "Earlier recorded evidence: 501 core tests (282 customer) with zero skipped; 40 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
         "Initial private iOS build exposed Stripe SPM static-linkage failure. The documented dynamic-framework fix passes actual generated configuration, 282 customer regressions, TypeScript and lint; the private iOS simulator build now compiles successfully; downloaded universal arm64/x86_64 artifact identity is verified.",
         "Latest Android ARM64 development compilation and apksigner checks pass at the same source commit. No app release or production signing."
       ],
@@ -180,7 +183,7 @@
         "No Wantiss app release, live-mode charge, production financial mutation, hosted test branch or CMS publication. Prior automatic test-event forwarding is disclosed and guarded against."
       ],
       "remainingAcceptance": [
-        "Owner-deferred content/Auth remain excluded. Full installed application/device, deployed provider configuration and actual production-backup acceptance still require evidence."
+        "Owner-deferred content/Auth/external payouts/backup remain excluded. Installed application/device and deployed payment-provider acceptance still require evidence."
       ]
     }
   ],
@@ -188,7 +191,8 @@
   "leakedPasswordProtectionDeferredByUser": true,
   "activationEvidence": "../activation-20261122/live-activation-verification.json",
   "latestVerifiedSourceCommits": {
-    "customer": "f67bc5148d4653a7991bd988d1ab39af74374d5e",
+    "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
     "admin": "243a183b25ec084f700387e39a63b67142a9913b"
-  }
+  },
+  "latestEvidence": "../fx-refresh-20261122/ci-verification.json"
 }
