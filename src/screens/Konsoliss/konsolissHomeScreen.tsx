@@ -141,6 +141,12 @@ function Screen({onBack}: {onBack?: () => void}) {
   const fillRatio=progress&&progress.reservedCbm>0?progress.allocatedCbm/progress.reservedCbm:0;
   const noCargoLoaded=!progress||progress.allocatedCbm===0;
   const visualMode=noCargoLoaded?'illustration':'sample';
+  // This top summary is the fixed physical container capacity, not the customer's reservation.
+  const emptyContainerDisplay=currentContainer.kind==='unassigned'&&noCargoLoaded;
+  const containerLoadDisplay=emptyContainerDisplay?'0.0':'—';
+  const containerFillDisplay=emptyContainerDisplay?'0%':'—';
+  const containerFreeDisplay=emptyContainerDisplay?'68.0':'—';
+  const showEmptyLoadHint=loadProgress.kind==='unrecorded'&&currentContainer.kind==='unassigned'||(progress!==null&&progress.loadedCbm===0);
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
@@ -150,34 +156,14 @@ function Screen({onBack}: {onBack?: () => void}) {
         style={[s.pill, {backgroundColor: t.tint}]}>
         <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?'Preparing your load':loadProgress.kind==='loading'?'Checking your load…':loadProgress.kind==='unavailable'?'Load details unavailable':currentKonsolissContainerLabel(currentContainer)):currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
       </Pressable></View>
-      {noActiveLoad?<Tx style={{fontSize:11,color:t.mu,marginHorizontal:24,marginTop:5}}>No active load yet. The loading animation below shows an example, not your packages.</Tx>:null}
-      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM reserved</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(fillRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} of your space committed</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{stillToSendValue} CBM</Tx> of reserved space not yet sent</Tx></View></View>
-      <View style={{paddingHorizontal:24,paddingTop:12,flexDirection:'row',flexWrap:'wrap',gap:10}}>
-        {([
-          ['Space reserved',reservedValue],
-          ['Goods sent',sentValue],
-          ['Loaded in container',loadedValue],
-          ['Inbound to container',inboundValue],
-          ['Sent — not yet allocated',warehouseOrTransitValue],
-        ] as const).map(([label,value])=><View key={label} style={{flexGrow:1,flexBasis:'42%',borderRadius:12,backgroundColor:t.card,padding:10,borderWidth:0.5,borderColor:t.bd}}>
-          <Tx style={{fontSize:11,color:t.mu}}>{label}</Tx><Tx style={{fontSize:17,fontWeight:'700',color:t.tx,marginTop:3}}>{value} CBM</Tx>
-        </View>)}
-        <Tx style={{width:'100%',fontSize:10,color:t.mu}}>Container capacity: 68 CBM · Progress includes loaded and inbound-to-container cargo. Goods only sent to the warehouse are excluded.</Tx>
-      </View>
+      {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No goods loaded into a container yet.</Tx>:null}
+      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{containerLoadDisplay}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / 68 CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={emptyContainerDisplay?'0 87.96':'0 87.96'} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerFillDisplay} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerFreeDisplay} CBM</Tx> {copy['home.available']}</Tx></View></View>
       {noCargoLoaded?<Pressable accessibilityRole="button" accessibilityLabel="Replay sample container loading animation" onPress={()=>setLoadingReplay(x=>x+1)} style={{alignSelf:'center',padding:10,marginTop:3}}><Tx style={{textAlign:'center',fontSize:11,color:t.ac,fontWeight:'600'}}>Loading illustration — sample packages only · Replay ↻</Tx></Pressable>:<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>3D layout is illustrative; quantities above are your recorded volumes.</Tx>}
       <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode+'-'+loadingReplay} originWhitelist={['*']} source={{html: containerHtml(dark,noCargoLoaded,progress?.reservedCbm??0,progress?.loadedCbm??0,progress?.inboundCbm??0)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
       <View style={{paddingHorizontal: 24, marginTop: 12}}><View style={{flexDirection: 'row', height: 10, borderRadius: 5, overflow: 'hidden', gap: 2}}><View style={{width:`${Math.max(0,Math.min(100,physicallyLoadedRatio*100))}%`}}><Svg width="100%" height={10}><Defs><LinearGradient id="g" x1="0" y1="0" x2="1" y2="0"><Stop offset="0" stopColor="#CDAA7D" /><Stop offset="0.25" stopColor="#E3D3B0" /><Stop offset="0.5" stopColor="#B7B1A3" /><Stop offset="0.75" stopColor="#D9B8A6" /><Stop offset="1" stopColor="#D2B48A" /></LinearGradient></Defs><Rect width="100%" height={10} fill="url(#g)" /></Svg></View><View style={{width:`${Math.max(0,Math.min(100,inboundRatio*100))}%`, backgroundColor: t.ac}} /><View style={{flex: 1, backgroundColor: t.tint}} /></View><View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 7}}><Tx style={s.leg}>Loaded <Tx style={{color: t.tx}}>{loadedValue}</Tx></Tx><Tx style={[s.leg, {color: t.ac}]}>Inbound <Tx style={{color: t.tx}}>{inboundValue}</Tx></Tx><Tx style={s.leg}>Not allocated <Tx style={{color: t.tx}}>{notAllocatedValue}</Tx></Tx></View>
-        <View style={{marginTop:10,borderTopWidth:0.5,borderTopColor:t.bd,paddingTop:8}}>
-          <Tx style={{fontSize:10.5,color:t.mu,fontWeight:'600'}}>Shared container · 68 CBM total capacity</Tx>
-          <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:5,gap:10}}>
-            <Tx style={{fontSize:11,color:t.mu}}>{copy['home.otherCargo']}: — CBM</Tx>
-            <Tx style={{fontSize:11,color:t.mu}}>{copy['home.free']}: — CBM</Tx>
-          </View>
-          <Tx style={{fontSize:9.5,lineHeight:14,color:t.mu,marginTop:3}}>Live shared-container occupancy is not yet available.</Tx>
-        </View>
       </View>
       <View style={{paddingHorizontal: 24, paddingTop: 22, gap: 12}}><View style={{flexDirection: 'row', gap: 12}}><Card t={t} i="box" title={copy['home.book.title']} sub={copy['home.book.subtitle']} red style={{flex: 1, height: 70}} onPress={() => setSh('book')} /><Card t={t} i="box" title={copy['home.load.title']} sub={copy['home.load.subtitle']} style={{flex: 1, height: 70, borderWidth: 0.5}} /></View><Card t={t} i="calc" title={copy['home.calc.title']} sub={copy['home.calc.subtitle']} onPress={() => setSh('calc')} style={{borderWidth: 0.5}} /><View style={{flexDirection: 'row', gap: 12}}><View style={[s.card2, {backgroundColor: t.card, borderColor: t.bd, borderWidth: 0.5}]}><Head t={t} i="wh" title={copy['home.warehouse.title']} /><Tx style={[s.body, {color: t.tx}]}>{progress?`${warehouseOrTransitValue} CBM sent, not yet allocated`:(noActiveLoad?'No goods sent yet':'Warehouse volume not yet recorded')}</Tx><View style={{position: 'absolute', right: 10, bottom: 8}}><Svg width={38} height={42} viewBox="0 0 20 22"><CP c={t.ac} /></Svg></View></View><View style={[s.card2, {backgroundColor: t.card, borderColor: t.bd, borderWidth: 0.5}]}><Head t={t} i="ct" title={copy['home.consolidated.title']} />
         {currentContainer.kind==='assigned'?<>
