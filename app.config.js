@@ -15,12 +15,15 @@ module.exports = ({ config }) => {
     let firebase;
     try { firebase = JSON.parse(fs.readFileSync(googleServicesFile, 'utf8')); }
     catch { throw new Error('GOOGLE_SERVICES_JSON must point to the Firebase Android client configuration file.'); }
+    if (!firebase || typeof firebase !== 'object' || Array.isArray(firebase)) {
+      throw new Error('GOOGLE_SERVICES_JSON must point to the Firebase Android client configuration file.');
+    }
     if (firebase.type === 'service_account' || firebase.private_key || firebase.client_email) {
       throw new Error('Use Firebase google-services.json for the Android app. Server service-account credentials must stay in EAS managed push credentials.');
     }
     if (!firebase.project_info?.project_id || !firebase.project_info?.project_number ||
       !Array.isArray(firebase.client) ||
-      !firebase.client.some(client => client.client_info?.android_client_info?.package_name === android.package)) {
+      !firebase.client.some(client => client?.client_info?.android_client_info?.package_name === android.package)) {
       throw new Error('Firebase Android client configuration must match the selected Wantiss application ID.');
     }
     android.googleServicesFile = googleServicesFile;
