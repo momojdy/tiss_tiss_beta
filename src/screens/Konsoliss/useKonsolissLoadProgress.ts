@@ -1,4 +1,4 @@
-import {useCallback,useEffect,useState} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
 import {AppState} from 'react-native';
 import {supabase} from '../../lib/supabase';
 
@@ -43,24 +43,27 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
 
 export function useKonsolissLoadProgress():KonsolissLoadProgressState{
   const [state,setState]=useState<KonsolissLoadProgressState>({kind:'loading'});
+  const requestSequence=useRef(0);
   const refresh=useCallback(async()=>{
+    const sequence=++requestSequence.current;
+    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};{
     try{
       const {data:auth,error:authError}=await supabase.auth.getUser();
-      if(authError||!auth.user){setState({kind:'unavailable'});return;}
+      if(authError||!auth.user){commit(()=>setState({kind:'unavailable'}));return;}
       const {data,error}=await supabase.from('konsoliss_customer_load_breakdown')
         .select('reserved_cbm,sent_cbm,inbound_to_container_cbm,loaded_cbm,allocated_cbm,at_warehouse_or_in_transit_cbm,reserved_not_sent_cbm,not_allocated_cbm,allocated_percent')
         .eq('user_id',auth.user.id).maybeSingle();
-      if(error){setState({kind:'unavailable'});return;}
-      if(!data){setState({kind:'unrecorded'});return;}
+      if(error){commit(()=>setState({kind:'unavailable'}));return;}
+      if(!data){commit(()=>setState({kind:'unrecorded'}));return;}
       const progress=parseKonsolissLoadProgress(data);
-      setState(progress?{kind:'recorded',progress}:{kind:'unavailable'});
-    }catch{setState({kind:'unavailable'});}
+      commit(()=>setState(progress?{kind:'recorded',progress}:{kind:'unavailable'}));
+    }catch{commit(()=>setState({kind:'unavailable'}));}
   },[]);
   useEffect(()=>{
     void refresh();
     const sub=AppState.addEventListener('change',next=>{if(next==='active')void refresh();});
     const interval=setInterval(()=>{if(AppState.currentState==='active')void refresh();},30000);
-    return()=>{sub.remove();clearInterval(interval);};
+    return()=>{requestSequence.current++;sub.remove();clearInterval(interval);};
   },[refresh]);
   return state;
 }
