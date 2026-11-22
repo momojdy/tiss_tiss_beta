@@ -44,3 +44,7 @@
 ## Status and next work
 
 This document records the design contract and the inspected architecture. **It does not assert that the latest spacing, dotted-border, in-visual available-space-label, or device-rendering corrections have been completed or tested.** Implement those changes in the WebView renderer, compare against the earliest original carton style, run automated checks, and validate screenshots at several fill percentages before marking complete.
+
+## 2026-11-23 renderer adjustment
+
+Commit `9ba7fa0246841541ac19bb7d8079009814241e02` increases packed-carton visual seams from `0.0006` to `0.018` renderer units, reduces the largest sticker sizes, adds a subtle capped gap at the start of the free-space overlay, and keeps the free-CBM text within the canvas bounds. This is a source-level change; device screenshots, visual regression checks and runtime tests have **not** been completed. Check that the red dashed outline remains legible for near-full containers and that all visible seams match the desired original appearance.
