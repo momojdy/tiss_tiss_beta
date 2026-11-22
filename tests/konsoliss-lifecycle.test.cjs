@@ -55,7 +55,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.doesNotMatch(home,/Replay sample container loading animation/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
  assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy\?\.capacityCbm\?\?0,containerOccupancy\?\.loadedCbm\?\?0/);
- assert.match(home,/visible=EMPTY\?demoCount:tinyTotal\?0/);
+ assert.match(home,/visible=EMPTY\?demoCount:0/);
  assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13600/);
  assert.match(home,/demoCount=cycle<4800/);
  assert.match(home,/cycle\/4800/);
@@ -64,10 +64,10 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.match(home,/demoBlink=demoShowLoad&&Math\.floor\(\(cycle-4800\)\/500\)%2===0/);
  assert.match(home,/const timer=setInterval\(tick,100\)/);
  assert.match(home,/demoCurrent:i===6&&j===1&&l===nl-1&&q===0/);
- assert.match(home,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
+ assert.match(home,/highlight=demoBlink&&c\.demoCurrent/);
  assert.match(home,/if\(EMPTY&&demoShowLoad\)\{const carton=cargo\.find\(c=>c\.demoCurrent\)/);
  assert.match(home,/cx\.fillText\('My current loaded space',labelX,labelY\)/);
- assert.match(home,/highlight\?'#FFE36B':isYours\?'#A90E02':c\.k/);
+ assert.match(home,/highlight\?'#FFE36B':c\.k/);
  assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
  assert.match(home,/<WebView/);
@@ -334,10 +334,10 @@ test('original stacked carton design remains, with a miniature exception below 0
  const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
  assert.match(engine,/const GR=\[\[0,2,'#CDAA7D'\]/);
  assert.match(engine,/const tinyTotal=!EMPTY&&LOADED>0&&LOADED<=0\.1/);
- assert.match(engine,/visible=EMPTY\?demoCount:tinyTotal\?0:RESERVED>0\?Math\.ceil\(cargo\.length\*Math\.min\(1,LOADED\/RESERVED\)\):0/);
- assert.match(engine,/ownCount=!EMPTY&&LOADED>0&&YOUR_LOADED>0\.1/);
- assert.match(engine,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
- assert.match(engine,/isYours\?'#A90E02':c\.k/);
+ assert.match(engine,/visible=EMPTY\?demoCount:0/);
+ assert.match(engine,/ownThreshold=fillEnd-\(innerX1-innerX0\)\*Math\.min\(1,YOUR_LOADED\/RESERVED\)/);
+ assert.match(engine,/highlight=demoBlink&&c\.demoCurrent/);
+ assert.match(engine,/isOwn\?'#A90E02':base/);
  assert.match(engine,/const edge=Math\.cbrt\(volume\*\(L\*W\*H\)\/68\)/);
  assert.match(engine,/else if\(YOUR_LOADED>0&&YOUR_LOADED<=\.1\)miniature\(YOUR_LOADED,'#A90E02',at\)/);
  assert.match(engine,/abox\(\.85,fz,'#FFF1A0',C\.fv\)/);
@@ -420,4 +420,57 @@ test('carton labels use stable varied placements instead of identical white stic
  for(const [w,h] of widthHeights){assert.ok(w>0&&w<1&&h>0&&h<1)}
  assert.ok(widthHeights[4][0]/widthHeights[0][0]>4);
  assert.ok(widthHeights[4][1]/widthHeights[0][1]>3);
+});
+
+
+test('visual 40HQ fill covers 98.82% of container at 67.2 CBM, leaving only 0.8 CBM free',()=>{
+ const parsed=ts.createSourceFile('home.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(d=>d.name.getText(parsed)==='CONTAINER_JS');
+ const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
+ const begin=engine.indexOf('const packedCartons=[];');
+ const end=engine.indexOf('let miniatureMarker=null;',begin);
+ assert.ok(begin>0&&end>begin,'Real carton packing must be separately addressable');
+ const snippet=engine.slice(begin,end);
+ assert.match(snippet,/fillEnd=innerX0\+\(innerX1-innerX0\)\*Math\.max\(0,Math\.min\(1,LOADED\/RESERVED\)\)/);
+ assert.match(snippet,/x1=Math\.min\(fillEnd,innerX0\+\(slot\+1\)\*dx-smallSeam\)/);
+ assert.match(snippet,/innerY1=H-\.015/);
+ assert.match(snippet,/smallSeam=\.0006/);
+ const vm=require('node:vm');
+ function layout(loaded,mine){
+  const sandbox={LOADED:loaded,YOUR_LOADED:mine,RESERVED:68,EMPTY:false,HX:6,H:2.7,HZ:2.35/2,
+   tinyTotal:loaded>0&&loaded<=.1,
+   GR:[[0,2,'#CDAA7D'],[2,4,'#E3D3B0'],[4,5,'#B7B1A3'],[5,7,'#D9B8A6'],[7,9,'#D2B48A'],[9,10,'#A90E02']],
+   stickerPick:(i,j,l,q,salt)=>{const n=Math.sin((i+1)*12.9898+(j+1)*78.233+(l+1)*37.719+q*19.19+salt*11.83)*43758.5453;return n-Math.floor(n)},
+   abox:()=>{},sticker:()=>{},poly:()=>{}};
+  return vm.runInNewContext(snippet+';packedCartons',sandbox);
+ }
+ const full=layout(68,0);
+ assert.equal(full.length,120);
+ const innerX0=-6+.12,innerX1=6-.12,innerY0=.15,innerY1=2.7-.015;
+ const innerZ0=-2.35/2+.12,innerZ1=2.35/2-.12;
+ const capVolume=(innerX1-innerX0)*(innerY1-innerY0)*(innerZ1-innerZ0);
+ function check(loaded,mine){
+  const cartons=layout(loaded,mine);
+  const boundary=innerX0+(innerX1-innerX0)*(loaded/68);
+  const volume=cartons.reduce((v,c)=>v+(c.b[1]-c.b[0])*(c.b[3]-c.b[2])*(c.b[5]-c.b[4]),0);
+  assert.ok(cartons.every(c=>c.b[0]>=innerX0&&c.b[1]<=boundary+1e-9),'no carton extends into free space');
+  assert.ok(cartons.every(c=>c.b[2]>=innerY0&&c.b[3]<=innerY1&&c.b[4]>=innerZ0&&c.b[5]<=innerZ1));
+  assert.ok(volume<=capVolume*(loaded/68)+1e-8,'packed volume cannot exceed loaded share');
+  return {cartons,visibleRatio:volume/capVolume,filledEnd:Math.max(innerX0,...cartons.map(c=>c.b[1])),boundary};
+ }
+ const nearFull=check(67.2,.3);
+ assert.equal(nearFull.cartons.length,120,'a 99%-filled container must retain the full visible carton stack');
+ assert.ok(Math.abs(nearFull.filledEnd-nearFull.boundary)<.002,'cartons meet exact free-space boundary');
+ assert.ok(nearFull.visibleRatio>.98,'the carton faces should visually occupy more than 98% at 98.82% filled');
+ const lastGap=(innerX1-nearFull.boundary)/(innerX1-innerX0);
+ assert.ok(Math.abs(lastGap-.8/68)<1e-12);
+ const mid=check(34,.5);
+ assert.ok(Math.abs(mid.boundary-(innerX0+innerX1)/2)<1e-10);
+ assert.ok(mid.visibleRatio>.49&&mid.visibleRatio<.5);
+ const sparse=check(8.4,.02);
+ assert.ok(sparse.visibleRatio>.12&&sparse.visibleRatio<.124);
+ assert.equal(layout(.02,.02).length,0,'the special 0.02 CBM miniature is retained');
+ const zero=check(0,0);
+ assert.equal(zero.cartons.length,0);
 });
