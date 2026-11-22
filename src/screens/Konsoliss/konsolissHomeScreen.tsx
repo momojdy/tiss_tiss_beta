@@ -143,16 +143,20 @@ function Screen({onBack}: {onBack?: () => void}) {
   // Rotate only when a container is selected; always start with customer progress.
   useEffect(()=>{
     if(!hasCurrentContainer){setProgressView('customer');return;}
-    const interval=setInterval(()=>setProgressView(view=>view==='customer'?'container':'customer'),15000);
+    const interval=setInterval(()=>setProgressView(view=>view==='customer'?'container':'customer'),7000);
     return()=>clearInterval(interval);
   },[hasCurrentContainer,selectedContainer?.id]);
   const verifiedOccupancy=useKonsolissContainerOccupancy(isSelectedCurrent);
   const containerOccupancy=selectedContainer?.demo?{
     capacityCbm:68,loadedCbm:selectedContainer.loadedCbm??0,
-    yourSpaceCbm:selectedContainer.yourSpaceCbm??0,
-    otherCargoCbm:Math.max(0,(selectedContainer.loadedCbm??0)-(selectedContainer.yourSpaceCbm??0)),
+    yourSpaceCbm:selectedContainer.yourLoadedCbm??0,
+    otherCargoCbm:Math.max(0,(selectedContainer.loadedCbm??0)-(selectedContainer.yourLoadedCbm??0)),
     freeCbm:Math.max(0,68-(selectedContainer.loadedCbm??0)),
   }:verifiedOccupancy;
+  // Physical loaded CBM is distinct from the customer's allocated/reserved space.
+  // The legacy aggregate RPC's yourSpaceCbm is physically loaded CBM, NOT allocation.
+  const yourAllocatedContainerCbm=isDemo?selectedContainer?.yourSpaceCbm:null;
+  const yourPhysicallyLoadedCbm=isDemo?selectedContainer?.yourLoadedCbm:verifiedOccupancy?.yourSpaceCbm;
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
@@ -202,8 +206,12 @@ function Screen({onBack}: {onBack?: () => void}) {
       </View>
       <View style={{paddingHorizontal:24,marginTop:12}}>
         <View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-end',marginBottom:hasCurrentContainer?7:0}}>
-          {hasCurrentContainer?<Pressable accessibilityRole="button" accessibilityLabel="Switch loading progress view" onPress={()=>setProgressView(view=>view==='customer'?'container':'customer')} style={{paddingVertical:4,paddingHorizontal:8,borderRadius:12,backgroundColor:t.tint}}>
-            <Tx style={{fontSize:10,color:t.ac}}>{progressView==='container'?'Container':'Your space'} · Switch ↻</Tx>
+          {hasCurrentContainer?<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
+            onPress={()=>setProgressView(view=>view==='customer'?'container':'customer')}
+            hitSlop={10} style={{paddingVertical:4,paddingHorizontal:7}}>
+            <Svg width={30} height={19} viewBox="0 0 30 19" fill="none" stroke={t.ac} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
+              <Path d="M3 5h23m-5-4 5 4-5 4M27 14H4m5-4-5 4 5 4"/>
+            </Svg>
           </Pressable>:null}
         </View>
         {progressView==='container'&&hasCurrentContainer?<>
@@ -213,7 +221,7 @@ function Screen({onBack}: {onBack?: () => void}) {
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:7}}>
             <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.otherCargoCbm.toFixed(1):'—'}</Tx></Tx>
-            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.yourSpaceCbm.toFixed(1):'—'}</Tx></Tx>
+            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{yourAllocatedContainerCbm!==null&&yourAllocatedContainerCbm!==undefined?yourAllocatedContainerCbm.toFixed(1):'—'}</Tx></Tx>
             <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.freeCbm.toFixed(1):'—'}</Tx></Tx>
           </View>
           <Tx style={{fontSize:10,color:t.mu,marginTop:4}}>{containerOccupancy?'Based on physically loaded cargo in this 68 CBM container.':'Container totals appear once all loaded cargo has been verified.'}</Tx>
