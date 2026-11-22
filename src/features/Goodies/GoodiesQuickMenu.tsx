@@ -2,12 +2,13 @@ import {label} from './content';
 import React from 'react';
 import {Image, Modal, Pressable, ScrollView, Text, View} from 'react-native';
 import {ThinMenuIcon} from '../../shared/quickMenu/ThinMenuIcon';
-import {S} from './store';
+import {S,useGoodies} from './store';
 import * as A from './actions';
 import {useUnreadSummary} from '../../shared/inbox/useUnreadSummary';
 
 export type GoodiesMenuAction = 'home'|'messages'|'notifications'|'wallet'|'saved'|'orders'|'activity'|'help'|'feedback'|'business';
 export default function GoodiesQuickMenu({visible, close, onUniversalAction, unreadNotifications = 0, unreadMessages = 0}: {visible:boolean;close:()=>void;onUniversalAction?: (action:GoodiesMenuAction)=>void;unreadNotifications?:number;unreadMessages?:number}) {
+  useGoodies(); // Preserve the existing live theme/content subscription.
   const inbox=useUnreadSummary();
   unreadNotifications=inbox.notifications;
   unreadMessages=inbox.messages;
