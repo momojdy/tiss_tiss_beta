@@ -10,9 +10,9 @@ function declaration(name){
 }
 const names=['DAY_NAMES','formatHour','hm','fmtHM','openState','canScheduleGoodiesStore'];
 const js=ts.transpileModule(names.map(declaration).join('\n')+'\nmodule.exports={canScheduleGoodiesStore};',{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-let picker=null;function visit(n){if(ts.isVariableDeclaration(n)&&n.name.getText(scheduleSrc)==='isAvailableInstant')picker=n.initializer?.getText(scheduleSrc);ts.forEachChild(n,visit);}visit(scheduleSrc);
+let picker=null;function visit(n){if(ts.isFunctionDeclaration(n)&&n.name?.text==='isAvailableInstant')picker=n.getText(scheduleSrc);ts.forEachChild(n,visit);}visit(scheduleSrc);
 assert.ok(picker,'The customer scheduling picker must remain testable');
-const pickerJs=ts.transpileModule('module.exports='+picker+';',{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
+const pickerJs=ts.transpileModule(picker+'\nmodule.exports=isAvailableInstant;',{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
 const shop=(scheduleHours,start='10:00',zone='America/New_York',enabled=true)=>({live:true,acceptScheduledOrders:enabled,scheduledOrderTimezone:zone,scheduledOrderStartTime:start,scheduleHours});
 function run(stores,cart,instant){
  const backend={exports:{}};

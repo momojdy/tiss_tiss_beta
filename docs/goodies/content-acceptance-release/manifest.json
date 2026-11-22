@@ -5,8 +5,8 @@
     "version": 5,
     "payloadSha256": "21d6d4ddb13066e66b3bb0dda229e20550f54774c084448389bcb406525b837a"
   },
-  "sourcePayloadSha256": "76d7e0f831f7edd00bb2daa70764e33056afa7e9c633c7169cb530584648b6c1",
-  "payloadSha256": "cf066a4a298ced2bc38c46e3e307de748e2bc94597380c42ccb425f638e5b87f",
+  "sourcePayloadSha256": "849efc0f80e3d3fa4e86f16d26124d4607187ecc9d0cd0c927a71cbdccdc9573",
+  "payloadSha256": "af529208aedb22c93f7e9fd551fff685aa787a97dab44ff0317b3ab4957dfbee",
   "changes": [
     {
       "index": 0,
@@ -62,13 +62,24 @@
   "unmodified": "Non-FAQ text from the authorized translation candidate, current live financial configuration, policy documents and every existing Haitian Creole entry",
   "humanReviewClaim": false,
   "publicationPerformed": false,
-  "fields": 2138,
+  "fields": 2139,
   "currentPushFields": {
     "ids": [
       "lbl.notification.push.title",
       "lbl.notification.push.body",
       "lbl.notification.openFailed"
     ],
+    "locales": [
+      "en",
+      "fr",
+      "es",
+      "zh-Hans"
+    ],
+    "humanReviewed": false,
+    "published": false
+  },
+  "checkoutScheduleField": {
+    "id": "lbl.sheetScheduleUnavailable",
     "locales": [
       "en",
       "fr",

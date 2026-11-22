@@ -4,7 +4,7 @@
   "baselineId": "da301ba8-15b8-4092-a37f-5da73d721c2f",
   "baselineVersion": 5,
   "baselinePayloadSha256": "774528704c23644cfc2ad3e0580659b0aa3d73a4bc44aa48e9d834aeb4cadfed",
-  "payloadSha256": "ec51d1ee56f6e260ce63dc6834fb4cc74bac36ca644f61929127e4f382c5a148",
+  "payloadSha256": "849efc0f80e3d3fa4e86f16d26124d4607187ecc9d0cd0c927a71cbdccdc9573",
   "authorizedLocales": [
     "en",
     "fr",
@@ -14,7 +14,7 @@
   "haitianCreole": "Existing entries preserved; super admin owns review",
   "humanReviewClaim": false,
   "provider": "Cached Google machine translations with locally assistant-translated recovery and settlement copy; existing CMS translations preserved",
-  "fields": 2138,
+  "fields": 2139,
   "reauditAdditions": {
     "labelsTotalAddedSinceOriginal": 429,
     "vendorCatalogRows": 411,
@@ -27,6 +27,17 @@
       "lbl.notification.push.body",
       "lbl.notification.openFailed"
     ],
+    "locales": [
+      "en",
+      "fr",
+      "es",
+      "zh-Hans"
+    ],
+    "humanReviewed": false,
+    "published": false
+  },
+  "checkoutScheduleField": {
+    "id": "lbl.sheetScheduleUnavailable",
     "locales": [
       "en",
       "fr",
