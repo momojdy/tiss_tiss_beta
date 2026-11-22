@@ -312,7 +312,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         </View>
         {previewLoadNumbers?<Tx style={{fontSize:10.5,color:t.ac,marginBottom:8}}>Sample numbers only — not your actual shipment.</Tx>:null}
         {([['Space purchased',loadPreviewValues.reservedValue],['Goods sent',loadPreviewValues.sentValue],['Physically loaded in container',loadPreviewValues.loadedValue],['Inbound to container (left warehouse)',loadPreviewValues.inboundValue],['Loaded + inbound',loadPreviewValues.committedValue],['At warehouse or still in transit',loadPreviewValues.warehouseOrTransitValue],['Purchased space not yet sent',loadPreviewValues.stillToSendValue],['Space not yet loaded or inbound',loadPreviewValues.notAllocatedValue]] as const).map(([label,value])=><View key={label} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:5,gap:12}}><Tx style={{fontSize:11.5,color:t.mu,flex:1}}>{label}</Tx><Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>{value} CBM</Tx></View>)}
-        <Tx style={{fontSize:10.5,color:t.mu,marginTop:8}}>Loaded and inbound count toward your purchased space. Goods still at the warehouse or in transit do not count as loaded or inbound to the container.</Tx>
+        <Tx style={{fontSize:10.5,color:t.ac,marginTop:8}}>Loaded and inbound count toward your purchased space. Goods still at the warehouse or in transit do not count as loaded or inbound to the container.</Tx>
       </View>
 
           </ScrollView>
