@@ -1,7 +1,7 @@
 {
-  "observedAt": "2026-11-22T01:47:24.778Z",
+  "observedAt": "2026-11-22T02:07:42.559467+00:00",
   "classification": "PASS",
-  "scope": "Read-only inspection of Goodies release configuration only; no customer/financial records exported and no setting changed.",
+  "scope": "Readback after the owner-approved configuration transaction; existing order fingerprints and financial row counts unchanged.",
   "projectRef": "ycbirmgppwavorwudlrv",
   "releaseConfiguration": {
     "payout_channels": [
@@ -26,13 +26,15 @@
         "enabled": true
       }
     ],
-    "settlement_enabled": false,
-    "shared_bill_wallet_enabled": false,
-    "settlement_opening_configured": false,
-    "private_delivery_proofs_enabled": false
+    "settlement_enabled": true,
+    "shared_bill_wallet_enabled": true,
+    "settlement_opening_configured": true,
+    "settlement_starts_at": "2026-11-22T02:07:21.149398+00:00",
+    "private_delivery_proofs_enabled": true
   },
   "productionReady": false,
   "allInstalledControlsVerified": false,
   "backupExportDeferredByOwner": true,
-  "note": "Disabled rollout switches are recorded as activation work, not automatically treated as implementation bugs. Complete release acceptance remains NOT VERIFIED."
+  "note": "Three backend gates activated. External payouts deferred. Existing installed binaries and full device acceptance remain NOT VERIFIED.",
+  "activationEvidence": "../activation-20261122/live-activation-verification.json"
 }

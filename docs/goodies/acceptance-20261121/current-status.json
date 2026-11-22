@@ -134,6 +134,14 @@
       "projectRef": "ycbirmgppwavorwudlrv",
       "evidence": "production-backup-access.json",
       "credentialsRecorded": false
+    },
+    "walletAndPrivateProofActivation": {
+      "classification": "PASS",
+      "scope": "Three live backend switches only, not installed workflows.",
+      "report": "../activation-20261122/live-activation-verification.json",
+      "settlementStartsAt": "2026-11-22T02:07:21.149398+00:00",
+      "historicalOrdersUnchanged": true,
+      "preCutoffOrderReviewRequired": true
     }
   },
   "notVerified": [
@@ -156,21 +164,22 @@
     "Real sandbox payments use synthetic local database records and an OAuth transport adapter. Installed card/3DS UI and production endpoint configuration are not certified by those tests."
   ],
   "automated": {
-    "customer": 282,
+    "customer": 284,
     "admin": 71,
     "crossRole": 47,
     "deno": 101,
     "denoStepsNotAddedAgain": 71,
     "skipped": 0,
-    "coreTests": 501,
+    "coreTests": 503,
     "localApiScenarios": 35,
     "localPrivateStorageChecks": 14,
-    "nativePostgresChecks": 31,
+    "nativePostgresChecks": 39,
     "stripeSandboxProviderScenarios": 12,
     "stripeCombinedLocalApiScenarios": 44,
     "targetGoodiesMigrations": 35,
     "latestCiCoreTests": 501,
-    "currentCustomerTestsEvidence": "logs/goodies-payment-with-isolation-customer-tests.log.gz"
+    "currentCustomerTestsEvidence": "../activation-20261122/local-verification.json",
+    "currentCIStillPending": true
   },
   "leakedPasswordProtectionDeferredByUser": true,
   "knownFailuresDeferredByUser": [
@@ -185,7 +194,9 @@
   "userDeferred": [
     "FAQ",
     "Translations and final policy/support content approval",
-    "Leaked-password protection until the owner upgrades to Pro"
+    "Leaked-password protection until the owner upgrades to Pro",
+    "Bank, GCash, MonCash and NatCash payout integrations",
+    "Production backup export/restoration"
   ],
   "ownerConfirmedAvailable": {
     "expoAccount": true,
@@ -197,7 +208,7 @@
     "customer": "88cb258140a4fa8ef2d5424e09db052a52eae908",
     "admin": "0aff0c79949765ff6c2d1b4adc8e2fc5c04c4d68"
   },
-  "observedAt": "2026-11-21T16:40:46.171Z",
+  "observedAt": "2026-11-22T02:07:42.559467+00:00",
   "backendDeployedInThisFollowup": true,
   "backendDeploymentEvidence": "payment-backend-deployment.json",
   "stripeAuthorization": {
@@ -238,9 +249,11 @@
         "enabled": true
       }
     ],
-    "settlement_enabled": false,
-    "shared_bill_wallet_enabled": false,
-    "settlement_opening_configured": false,
-    "private_delivery_proofs_enabled": false
-  }
+    "settlement_enabled": true,
+    "shared_bill_wallet_enabled": true,
+    "settlement_opening_configured": true,
+    "settlement_starts_at": "2026-11-22T02:07:21.149398+00:00",
+    "private_delivery_proofs_enabled": true
+  },
+  "activationSourceCommit": "e3be677cc7b218fc6b872c60ebe88c669114ffce"
 }

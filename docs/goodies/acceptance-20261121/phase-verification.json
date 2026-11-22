@@ -15,7 +15,9 @@
     "FAQ",
     "Translations including Haitian Creole human review",
     "Final policy/support content approval",
-    "Leaked-password protection until the owner upgrades to Pro"
+    "Leaked-password protection until the owner upgrades to Pro",
+    "External payout integrations: Bank, GCash, MonCash and NatCash",
+    "Production backup export/restoration"
   ],
   "phases": [
     {
@@ -65,7 +67,8 @@
         "31 native PostgreSQL checks cover sales-cap, withdrawal, settlement, group, Shared Bill, courier and push races.",
         "Original-card refund policy preserved.",
         "12 real Stripe sandbox scenarios pass within 44 local API/recovery scenarios: setup/webhook, authorization, capture, retries, original-card and partial refunds, issuer failure, interruption/reordering, and dispute recovery.",
-        "Existing test-mode webhook event subscriptions now include all 12 handled events, preserving its URL, API version, prior event and signing secret. Delivery/key alignment remains unverified."
+        "Existing test-mode webhook event subscriptions now include all 12 handled events, preserving its URL, API version, prior event and signing secret. Delivery/key alignment remains unverified.",
+        "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation."
       ],
       "remainingAcceptance": [
         "Installed card entry/3DS challenge and deployed webhook/key/account configuration remain unverified. Sandbox server tests are not full live-provider acceptance."
@@ -78,7 +81,8 @@
       "verifiedSubchecks": [
         "Assigned-courier API access, wrong-courier denial, GPS authorization, pickup/completion and 24-hour hold pass locally.",
         "Real local private Storage upload, MIME restrictions, consumer signed resolver, authorized exact-byte reads, wrong-account denials, post-delivery immutability and customer receipt confirmation pass.",
-        "Native Android development compilation and signature verification pass."
+        "Native Android development compilation and signature verification pass.",
+        "Owner-approved private delivery-proof upload switch activated. Private bucket/read policies exist; physical camera/upload acceptance remains NOT VERIFIED."
       ],
       "remainingAcceptance": [
         "Physical GPS/background/offline/maps, hosted private Storage/camera and push behavior are not verified."
@@ -90,7 +94,8 @@
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Local 60/40 and full-payment contributions, original-customer ownership, idempotency and per-payer refunds pass through Auth/PostgREST.",
-        "Native PostgreSQL group/Shared Bill race tests pass."
+        "Native PostgreSQL group/Shared Bill race tests pass.",
+        "Owner-approved live Shared Bill Wallet and vendor-settlement switches activated with an audited forward cutoff; external payout methods remain disabled. Existing historical order unchanged and recorded for reconciliation."
       ],
       "remainingAcceptance": [
         "Complete installed invitation/QR/offline/restart interactions and release-gate activation acceptance remain open; no production gate was activated."
@@ -177,5 +182,6 @@
     }
   ],
   "classification": "NOT VERIFIED",
-  "leakedPasswordProtectionDeferredByUser": true
+  "leakedPasswordProtectionDeferredByUser": true,
+  "activationEvidence": "../activation-20261122/live-activation-verification.json"
 }

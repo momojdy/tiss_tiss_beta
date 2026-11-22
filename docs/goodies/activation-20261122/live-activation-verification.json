@@ -1,0 +1,127 @@
+{
+  "classification": "PASS",
+  "checkedAt": "2026-11-22T02:07:42.559467+00:00",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "region": "us-east-1",
+  "configurationOnly": true,
+  "operationFile": "supabase/operations/goodies-activate-wallet-and-private-proofs.sql",
+  "operationSha256": "14ce5ada56fb1e6131762346cf946b870dec0c22b65d8b89266b94d787484aad",
+  "sourceCommit": "e3be677c",
+  "appReleased": false,
+  "hostedSyntheticTest": false,
+  "existingOrdersUnchanged": true,
+  "existingFinancialRowCountsUnchanged": true,
+  "nonFeeCmsContentUnchanged": true,
+  "before": {
+    "checked_at": "2026-11-22T02:07:07.106658+00:00",
+    "orders_md5": "8c8eb3d4bff83ab1d2c85358e93868fa",
+    "settlement": {
+      "enabled": false,
+      "singleton": true,
+      "starts_at": null
+    },
+    "order_count": 1,
+    "payout_count": 0,
+    "cms_non_fee_md5": "552465bc2665bb92ba07a7e4fe64e3d2",
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "settlement_row_count": 0,
+    "commission_payment_count": 0,
+    "shared_bill_wallet_enabled": false,
+    "private_delivery_proofs_enabled": false
+  },
+  "after": {
+    "push": {
+      "enabled": false,
+      "eas_project_id": null
+    },
+    "checked_at": "2026-11-22T02:07:42.559467+00:00",
+    "orders_md5": "8c8eb3d4bff83ab1d2c85358e93868fa",
+    "settlement": {
+      "enabled": true,
+      "singleton": true,
+      "starts_at": "2026-11-22T02:07:21.149398+00:00"
+    },
+    "order_count": 1,
+    "payout_count": 0,
+    "cms_non_fee_md5": "552465bc2665bb92ba07a7e4fe64e3d2",
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "activation_audit": {
+      "action": "goodies_wallet_and_private_proofs_activated",
+      "created_at": "2026-11-22T02:07:21.149398+00:00",
+      "after_state": {
+        "operation": "supabase/operations/goodies-activate-wallet-and-private-proofs.sql",
+        "opening_review": {
+          "review_required": true,
+          "excluded_gross_usd": 10.44,
+          "excluded_order_count": 1,
+          "excluded_vendor_net_usd": 6.75,
+          "historical_credit_created": false
+        },
+        "payout_channels": {
+          "wal": true,
+          "bank": false,
+          "gcash": false,
+          "moncash": false,
+          "natcash": false
+        },
+        "settlement_enabled": true,
+        "settlement_starts_at": "2026-11-22T02:07:21.149398+00:00",
+        "shared_bill_wallet_enabled": true,
+        "private_delivery_proofs_enabled": true
+      }
+    },
+    "settlement_row_count": 0,
+    "commission_payment_count": 0,
+    "shared_bill_wallet_enabled": true,
+    "private_delivery_proofs_enabled": true
+  },
+  "limitations": [
+    "Backend flags are activated; existing installed binaries are not changed.",
+    "The pre-cutoff order remains excluded and is recorded for reconciliation. No historical credit was created.",
+    "Physical-device proof upload and viewer acceptance remain NOT VERIFIED.",
+    "Android FCM, Maps, Apple signing/APNs, push activation and installed acceptance require owner account configuration.",
+    "External payout channels and backup export remain deferred."
+  ]
+}

@@ -27,6 +27,7 @@ jobs:
     env:
       CI: '1'
       APP_VARIANT: development
+      EXPO_PUBLIC_GOODIES_SHARED_PAYMENTS_RELEASED: 'true'
       EXPO_NO_TELEMETRY: '1'
     steps:
       - uses: actions/checkout@v4
