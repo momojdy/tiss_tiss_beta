@@ -103,7 +103,7 @@ test('3D WebView script remains syntactically valid after animation changes',()=
  assert.ok(call&&ts.isCallExpression(call));
  const array=call.expression.expression;
  assert.ok(array&&ts.isArrayLiteralExpression(array));
- const js=array.elements.map(element=>element.text).join('\\n');
+ const js=array.elements.map(element=>element.text).join('\n');
  assert.doesNotThrow(()=>new (require('node:vm').Script)(js));
  assert.match(js,/demoCount/);
  assert.match(js,/LOADED\/RESERVED/);
