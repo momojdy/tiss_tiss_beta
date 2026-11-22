@@ -1,7 +1,7 @@
 const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict');
 module.exports=({sql,root,order})=>{
  const read=name=>fs.readFileSync(path.join(root,'supabase/operations',name),'utf8').replace(/^begin;$/m,'').replace(/^commit;$/m,'');
- const activate=read('goodies-activate-wallet-and-private-proofs.sql'),pause=read('goodies-pause-wallet-and-private-proofs.sql');
+ const activate=read('goodies-activate-wallet-and-private-proofs.sql'),pause=read('goodies-pause-wallet-and-private-proofs.sql'),bindPush=read('goodies-bind-push-project.sql');
  const setup="update private.goodies_settlement_config set enabled=false,starts_at=null;update private.goodies_shared_bill_config set wallet_enabled=false;";
  const verify=condition=>`do $$begin if not (${condition}) then raise exception 'Synthetic activation assertion failed';end if;end$$;`;
  const legacy=order('wallet',11);
@@ -31,4 +31,13 @@ module.exports=({sql,root,order})=>{
   console.log('PASS: activation refuses '+label+' and rolls back without financial changes.');
  }
  sql(`delete from public.goodies_orders where id='${legacy}'`);
+ const target='90000000-0000-4000-8000-000000000001';
+ sql(`begin;update private.goodies_push_config set enabled=false,eas_project_id=null;set local wantiss.goodies.eas_project_id='${target}';${bindPush}${bindPush}
+ ${verify(`(select not enabled and eas_project_id='${target}' from private.goodies_push_config where id)`)}
+ ${verify("(select count(*)=1 from public.wantiss_admin_audit_log where action='goodies_push_project_bound')")}
+ rollback;`);
+ assert.throws(()=>sql(`begin;set local wantiss.goodies.eas_project_id='${target}';update private.goodies_push_config set enabled=true,eas_project_id=null;${bindPush}rollback;`));
+ assert.throws(()=>sql(`begin;set local wantiss.goodies.eas_project_id='${target}';update private.goodies_push_config set enabled=false,eas_project_id='90000000-0000-4000-8000-000000000002';${bindPush}rollback;`));
+ assert.throws(()=>sql(`begin;set local wantiss.goodies.eas_project_id='${target}';set local role authenticated;${bindPush}rollback;`));
+ console.log('PASS: push project preparation remains disabled, is audited once, and rejects active/different configuration or an ordinary caller.');
 };

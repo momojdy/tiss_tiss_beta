@@ -27,7 +27,7 @@ The Maps SDK for Android key uses `EXPO_PUBLIC_GOOGLE_MAPS_ANDROID_API_KEY`. Its
 
 Physical iPhone installation requires the owner's Apple Developer membership, device registration, an Apple signing/provisioning identity and APNs credentials. An iOS simulator build does not satisfy these requirements. Use internal development distribution only; do not submit to TestFlight or an app store.
 
-Keep push rollout disabled until FCM/APNs setup is completed. Its independent client opt-in and server registration switch must then be enabled for the verified existing Expo project. Do not report the presence of permissions as delivery evidence.
+Keep push rollout disabled until FCM/APNs setup is completed. `supabase/operations/goodies-bind-push-project.sql` prepares the independently verified EAS project binding using the transaction-local `wantiss.goodies.eas_project_id` setting; it does not enable push, register devices, overwrite another binding or send notifications. Its independent client opt-in and server registration switch must then be enabled for the verified existing Expo project. Do not report the presence of permissions as delivery evidence.
 
 Reference: [Expo push setup](https://docs.expo.dev/push-notifications/push-notifications-setup/), [FCM credentials](https://docs.expo.dev/push-notifications/fcm-credentials/), [SDK 58 Maps](https://docs.expo.dev/versions/v58.0.0/sdk/map-view/), [internal iPhone distribution](https://docs.expo.dev/build/internal-distribution/).
 
