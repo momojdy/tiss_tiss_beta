@@ -5,7 +5,8 @@ export const FEATURE_COLORS: Record<string,string> = {
   frenzies:'#B3DF4B', konsoliss:'#DDB52B', woulib:'#FEC509', stayz:'#579BC7', glowz:'#D49E2B',
 };
 export function featureColor(feature:unknown):string {
-  return FEATURE_COLORS[String(feature ?? '').trim().toLowerCase()] ?? UNKNOWN_COLOR;
+  const key=String(feature ?? '').trim().toLowerCase();
+  return Object.prototype.hasOwnProperty.call(FEATURE_COLORS,key)?FEATURE_COLORS[key]:UNKNOWN_COLOR;
 }
 export function aggregateColor(colors:string[]):string {
   const origins = new Set(colors);

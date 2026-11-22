@@ -42,7 +42,7 @@ test('verified occupancy arithmetic at tiny, zero, 76%, 99% and 100%',()=>{
 test('feature colors and deterministic mixed-origin policy',()=>{
  const expected={Goodies:'#FD802E',Gatherz:'#A36BE8',Flyz:'#4A67B0',Wallet:'#81C56C',Frenzies:'#B3DF4B',Konsoliss:'#DDB52B',Woulib:'#FEC509',Stayz:'#579BC7',Glowz:'#D49E2B'};
  for(const [name,color] of Object.entries(expected))assert.equal(featureColor(name),color);
- assert.equal(featureColor('unknown'),'#BD279F');
+ for(const unknown of ['unknown','constructor','__proto__'])assert.equal(featureColor(unknown),'#BD279F');
  assert.equal(aggregateColor([featureColor('Konsoliss')]),'#DDB52B');
  for(const colors of [['#DDB52B','#FD802E'],['#FD802E','#DDB52B'],[]])assert.equal(aggregateColor(colors),'#BD279F');
 });
