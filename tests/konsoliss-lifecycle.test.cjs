@@ -56,10 +56,10 @@ test('3D container keeps rotation and automatically repeats demo cartons for 4s 
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
  assert.match(home,/containerHtml\(dark,noCargoLoaded,progress\?\.reservedCbm\?\?0,progress\?\.loadedCbm\?\?0,progress\?\.inboundCbm\?\?0\)/);
  assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
- assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13000/);
- assert.match(home,/demoCount=cycle<4000/);
+ assert.match(home,/const cycle=\(Date\.now\(\)-started\)%10000/);
+ assert.match(home,/demoCount=cycle<5000/);
  assert.match(home,/cycle\/3800/);
- assert.match(home,/demoBlink=cycle<4000&&Math\.floor\(cycle\/500\)%2===0/);
+ assert.match(home,/demoBlink=cycle<5000&&Math\.floor\(cycle\/500\)%2===0/);
  assert.match(home,/const timer=setInterval\(tick,100\)/);
  assert.match(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox\(1\.3,\[3\.65,4\.35,\.3,1\.08,-\.95,-\.2\]/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
