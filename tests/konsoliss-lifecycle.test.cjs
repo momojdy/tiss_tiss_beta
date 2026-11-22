@@ -105,7 +105,7 @@ test('short empty-state hint appears only without a container or committed cargo
 });
 test('lower bar alternates every fifteen seconds only when container assigned',()=>{
  assert.match(home,/progressView,setProgressView/);
- assert.match(home,/const hasCurrentContainer=currentContainer\.kind==='assigned'/);
+ assert.match(home,/const hasCurrentContainer=selectedContainer!==null/);
  assert.match(home,/if\(!hasCurrentContainer\)\{setProgressView\('customer'\);return;\}/);
  assert.match(home,/setInterval\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),15000\)/);
  assert.match(home,/progressView==='container'&&hasCurrentContainer/);
