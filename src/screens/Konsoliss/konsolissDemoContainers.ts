@@ -22,6 +22,7 @@ const sample = [
   ['KS-DEMO-06','departed',54.3,2.5,1.1],
   ['KS-DEMO-07','arrived',62.1,1.0,0.4],
   ['KS-DEMO-08','filling',67.2,0.8,0.3],
+  ['KS-DEMO-09','filling',0.02,0.02,0.02],
 ] as const;
 
 /** Preview-only records; never persisted or interpreted as real assignments. */
