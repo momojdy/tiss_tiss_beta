@@ -270,7 +270,7 @@ export function Cats() {
     <View style={{paddingHorizontal: 16}}><View style={{flexDirection: 'row', flexWrap: 'wrap', rowGap: 18, columnGap: 8}}>
       {all.map(c => (
         <Pressable key={c.id} onPress={() => go('catlist', c.id)} style={{width: w, alignItems: 'center'}}>
-          {c.art ? <CachedContentImage uri={c.art} style={{width: 42, height: 42}} /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
+          {c.art ? <CachedContentImage uri={c.art} style={{width: 46, height: 46}} /> : <Text style={{fontSize: 30}}>{c.e}</Text>}
           <T size={11.5} weight="600" align="center" style={{marginTop: 6, lineHeight: 14}}>{c.n}</T>
         </Pressable>
       ))}
