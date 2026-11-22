@@ -226,7 +226,7 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.match(home,/YOUR_LOADED=Number\(document\.documentElement\.dataset\.yourLoaded\)/);
  assert.match(home,/cx\.fillText\('My current loaded space '\+YOUR_LOADED\.toFixed\(2\)/);
  assert.match(home,/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free',f\[0\],f\[1\]\)/);
- assert.match(home,/const f=proj\(\[HX-\(FREE\/68\)\*L\/2,1\.3,0\]\)/);
+ assert.match(home,/const f=proj\(\[freeRatio>0\?\(freeX0\+innerX1\)\/2:innerX1-\.12,1\.3,0\]\)/);
  assert.match(home,/cx\.font='700 10px -apple-system,Arial,sans-serif'/);
  assert.match(home,/cx\.strokeStyle=C\.halo;cx\.strokeText\(FREE\.toFixed\(1\)\+' CBM free'/);
  assert.match(home,/cx\.fillStyle=C\.fl;cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/);
@@ -328,11 +328,36 @@ test('physical 40HQ 3D boxes highlight only the verified customer fraction of lo
  assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
  assert.match(engine,/isYours=!EMPTY&&boxIndex>=boxCount-ownCount/);
  assert.match(engine,/isYours\?'#A90E02'/);
- assert.match(engine,/if\(!EMPTY\)\{const fz=\[CE\+\.05,HX-\.05,\.15,2\.55,-1\.1,1\.1\]/);
+ assert.match(engine,/freeRatio=!EMPTY&&RESERVED>0&&Number\.isFinite\(FREE\)\?Math\.max\(0,Math\.min\(1,FREE\/RESERVED\)\):0/);
+ assert.match(engine,/innerX0=-HX\+\.12,innerX1=HX-\.12,freeX0=innerX1-\(innerX1-innerX0\)\*freeRatio/);
+ assert.match(engine,/if\(freeRatio>0\)\{const fz=\[freeX0,innerX1,\.15,H-\.15,-HZ\+\.12,HZ-\.12\]/);
  assert.match(engine,/abox\(2,fz,'#FFF1A0',C\.fv\)/);
  assert.match(engine,/line\(2\.5,a,b,C\.ac,\.55,\.9,\[3,2\.5\]\)/);
- assert.match(engine,/if\(!EMPTY\)\{const fz/);
+ assert.doesNotMatch(engine,/const fz=\[CE\+\.05,HX-\.05/);
  // The visual marker is decorative; the verified cargo ratio remains source-owned.
  assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
  assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
+});
+
+
+test('40HQ free-space overlay spans the free fraction of the entire interior, never a fixed corner',()=>{
+ const interiorLength=12-0.24;
+ const dims=[0,8.4,31.5,51.7,67.2,68].map(loaded=>{
+   const free=68-loaded;
+   const ratio=free/68;
+   const start=6-0.12-interiorLength*ratio;
+   return {loaded,free,ratio,width:(6-0.12)-start};
+ });
+ for(const x of dims){
+   assert.ok(Math.abs(x.width/interiorLength-x.free/68)<1e-10);
+   assert.ok(x.width>=0&&x.width<=interiorLength);
+ }
+ assert.ok(dims[0].width>dims[1].width);
+ assert.ok(dims[1].width>dims[2].width);
+ assert.ok(dims[2].width>dims[3].width);
+ assert.ok(dims[3].width>dims[4].width);
+ assert.equal(dims[5].width,0);
+ assert.match(home,/if\(freeRatio>0\)/);
+ assert.match(home,/freeX0=innerX1-\(innerX1-innerX0\)\*freeRatio/);
+ assert.match(home,/const f=proj\(\[freeRatio>0\?\(freeX0\+innerX1\)\/2/);
 });
