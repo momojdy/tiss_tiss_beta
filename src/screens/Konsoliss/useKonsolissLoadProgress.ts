@@ -29,7 +29,7 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
   const loadedCbm=parse(data.loaded_cbm);
   const inboundCbm=parse(data.inbound_to_container_cbm);
   if(![reservedCbm,sentCbm,loadedCbm,inboundCbm].every(Number.isFinite)
-    ||reservedCbm<0||reservedCbm>68||sentCbm<0||loadedCbm<0||inboundCbm<0
+    ||reservedCbm<0||sentCbm<0||loadedCbm<0||inboundCbm<0
     ||loadedCbm+inboundCbm>sentCbm||loadedCbm+inboundCbm>reservedCbm)return null;
   return {reservedCbm,sentCbm,loadedCbm,inboundCbm,
     allocatedCbm:loadedCbm+inboundCbm,
