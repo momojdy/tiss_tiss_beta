@@ -52,12 +52,13 @@ test('3D container stays interactive and plays a clearly labeled illustrative pa
  assert.doesNotMatch(home,/accessibilityLabel="Current load empty state"/);
  assert.match(home,/Loading illustration — sample packages only/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
- assert.match(home,/containerHtml\(dark,noCargoLoaded\)/);
- assert.match(home,/if\(EMPTY&&ci>=demoCount\)continue/);
+ assert.match(home,/containerHtml\(dark,noCargoLoaded,progress\?\.reservedCbm\?\?0,progress\?\.loadedCbm\?\?0,progress\?\.inboundCbm\?\?0\)/);
+ assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
  assert.match(home,/const timer=setInterval\(\(\)=>\{const elapsed=Date\.now\(\)-started/);
  assert.match(home,/<WebView/);
  assert.match(home,/onTouchStart=\{\(\) => setScroll\(false\)\}/);
- assert.doesNotMatch(home,/'Container KS-2048\\n76% filled'/);
+ assert.doesNotMatch(home,/cx\.fillText\('Your space 0\.50 CBM'/);
+ assert.doesNotMatch(home,/cx\.fillText\('16\.3 CBM free'/);
 });
 test('customer metrics are separate from the 68 CBM shared container capacity',()=>{
  assert.match(home,/const progress=loadProgress\.kind==='recorded'\?loadProgress\.progress:null/);
