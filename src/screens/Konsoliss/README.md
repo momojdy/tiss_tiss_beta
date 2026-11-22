@@ -48,3 +48,34 @@ This document records the design contract and the inspected architecture. **It d
 ## 2026-11-23 renderer adjustment
 
 Commit `9ba7fa0246841541ac19bb7d8079009814241e02` increases packed-carton visual seams from `0.0006` to `0.018` renderer units, reduces the largest sticker sizes, adds a subtle capped gap at the start of the free-space overlay, and keeps the free-CBM text within the canvas bounds. This is a source-level change; device screenshots, visual regression checks and runtime tests have **not** been completed. Check that the red dashed outline remains legible for near-full containers and that all visible seams match the desired original appearance.
+
+
+## Recovered project history and source-of-truth decisions (2026-11-23)
+
+The complete private/shared ChatGPT conversation at `chatgpt.com/g/g-p-692de74d23788191a229fa7b668fbcf9-wantiss-project/shared/c/6a97c033-3aa8-83ec-aab7-fddc27de7508` could not be read directly. The following is recovered from available Wantiss project conversation excerpts, repository code, and GitHub commit history; it is **not** a claim of having read every message or image from that link.
+
+### Original screenshot contract
+
+- Preserve the reference's horizontal red 40HQ container with individually distinguishable brown, tan, gray, and red cartons, naturally spaced; avoid solid, narrow vertical packed panels.
+- The reference example shows **51.7 / 68 CBM** occupied (**76%**), **16.3 CBM** free, **51.2 CBM** other cargo, and **0.50 CBM** customer cargo. These numbers are an example only, not a live-data fallback.
+- **`Your space 0.50 CBM`** belongs **above the container**, with a thin pointer to the customer's **red carton**. The numeric value must follow the selected container's customer physically loaded CBM, not reserved/inbound CBM.
+- **`16.3 CBM free`** belongs **inside the yellow/translucent free-volume section**, with a red dotted/dashed outline. Its value must follow the selected container's free CBM.
+- Both annotations must be legible **without floating React Native cards**, must remain visible during 3D rotation, and must explicitly show an unavailable state when data cannot be verified. Never silently omit them for zero or missing occupancy.
+- All cartons should carry reasonably sized white shipping stickers, with deterministic varied positions/sizes. Small cargo can be rectangular/flat/tall, not forced into cubes; 0.02 CBM remains supported.
+- Keep a small *visual* loaded/free separation, without changing the 68 CBM arithmetic. At 99% fill, loaded cargo must visually occupy ~99%, not leave a misleadingly large gap.
+
+### Earlier implementation and regressions
+
+- Historical renderer at `166830cdb5cfb9184c6fd7308653b5fabe665380` painted both CBM labels **on canvas** using `cx.fillText`; its free label used `cx.strokeText` for contrast. These were tied to projected 3D positions.
+- `4cfd1583cd1e7a3dbe7d120063831e6d3f1a5da5` and `376d1277c05fc31555ac18ac42d59913620e2c6e` revised packing toward nearly full 99% occupancy, at the expense of carton breathing room.
+- `9ba7fa0246841541ac19bb7d8079009814241e02` increased visual seams and retained the free-volume outline.
+- `5e93686a193fd772cc125a1b3ef8c089ab9b1769` reduced packed columns and changed the customer's label wording.
+- `11c7117631be83df026cdaf18e3fe23d2b5fb789` made packed carton sticker presence mandatory and adjusted tiny-cargo aspect ratios; **main packing remains grid-based** and is not yet a natural variable-size packing engine.
+- `35b21dc6e8ce31990c29cffd17d37ceab0e17e90` adjusted canvas annotations; `fd98cb864d24230b2cfb350e0ff33c3f996a3a32` introduced native React Native overlay cards; `6432ef3253e18e956dd93ed70b9e0bbe012e1a0d` removed them. User repeatedly reported both labels invisible.
+- `8e16ebef55aa4d9781bbfbafbbf24e66f624cec4` restores screenshot-style **HTML text annotations inside the WebView**, separate from canvas paint operations. The customer label is above the container and the free label is placed over the free-space area; when projected coordinates are available they are updated on draw. Numeric text is generated from the selected container occupancy; unavailable data is explicitly marked. The canvas annotation drawing remains as a fallback.
+
+### Maintainability and acceptance workflow
+
+After **every new Konsoliss logic change**, update this README in the **same work session**, documenting the invariant, implementation, test evidence, and commit. Do not mark screenshot matching or production readiness complete without device/browser render verification. Test at least: zero occupancy, 0.02 CBM, a mid-filled container, the reference's 51.7/68 example, 67.2/68, 99%, and full 68/68. Verify customer label, free label, 3D rotation, carton stickers, natural gaps, and red dashed free outline in light and dark themes.
+
+**Current verification status:** GitHub source edits have been committed. Live device screenshot verification, 3D text placement across rotation, and complete automated tests have **not** been performed. Do not claim otherwise.
