@@ -97,7 +97,7 @@ test('right-side circle and available CBM use the 68 CBM shared container, not r
  assert.doesNotMatch(home,/\{fillPercent\} of your space/);
 });
 test('short empty-state hint appears only without a container or committed cargo',()=>{
- assert.match(home,/showEmptyLoadHint=!hasCurrentContainer&&currentContainer\.kind==='unassigned'/);
+ assert.match(home,/showEmptyLoadHint=currentContainer\.kind==='unassigned'/);
  assert.match(home,/progress\.loadedCbm===0&&progress\.inboundCbm===0/);
  assert.match(home,/\{showEmptyLoadHint\?<Tx/);
  assert.match(home,/No container assigned/);
