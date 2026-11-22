@@ -20,7 +20,7 @@ export function useKonsolissContainerOccupancy(containerId:string|null):Konsolis
   const requestSequence=useRef(0);
   const reload=useCallback(async()=>{
     const sequence=++requestSequence.current;
-    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};{
+    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};
     if(!containerId){commit(()=>setState(null));return;}
     try{
       const {data,error}=await supabase.rpc('konsoliss_container_occupancy',{p_container_id:containerId});
