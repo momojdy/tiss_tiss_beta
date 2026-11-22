@@ -54,7 +54,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.doesNotMatch(home,/3D layout is illustrative/);
  assert.doesNotMatch(home,/Replay sample container loading animation/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
- assert.match(home,/containerHtml\(dark,isDemo\?false:isSelectedCurrent\?/);
+ assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy\?\.capacityCbm\?\?0,containerOccupancy\?\.loadedCbm\?\?0/);
  assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
  assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13600/);
  assert.match(home,/demoCount=cycle<4800/);
@@ -88,7 +88,7 @@ test('My current load stays based on customer loaded plus inbound versus reserve
  assert.doesNotMatch(home,/containerFillDisplay/);
 });
 test('right-side circle and available CBM use the 68 CBM shared container, not reserved space',()=>{
- assert.match(home,/const containerRatio=containerOccupancy\?containerOccupancy\.loadedCbm\/68:0/);
+ assert.match(home,/const containerRatio=containerOccupancy\?containerOccupancy\.loadedCbm\/containerOccupancy\.capacityCbm:0/);
  assert.match(home,/!hasCurrentContainer&&currentContainer\.kind==='unassigned'\?'0%':'—'/);
  assert.match(home,/!hasCurrentContainer&&currentContainer\.kind==='unassigned'\?'68\.0':'—'/);
  assert.match(home,/strokeDasharray=\{\x60\$\{\(containerRatio\*87\.96\)/);
@@ -203,8 +203,8 @@ test('container dropdown selects live or demo entries, five visible rows and scr
  assert.match(home,/setSelectedContainerId\(item\.id\)/);
  assert.match(home,/setSelectedContainerId\('live'\)/);
  assert.match(home,/DEMO PREVIEW · NOT LIVE DATA/);
- assert.match(home,/containerHtml\(dark,isDemo\?false/);
- assert.match(home,/isDemo\?68:isSelectedCurrent\?/);
+ assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded/);
+ assert.match(home,/containerOccupancy\?\.capacityCbm\?\?0/);
  assert.match(home,/selectedContainer\?\.id\?\?visualMode/);
  assert.match(home,/selectedContainer\?\.loadedCbm\?\?0/);
 });
@@ -213,7 +213,7 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.doesNotMatch(demos,/supabase|insert\(|update\(|upsert\(/i);
  assert.match(home,/const committedValue=progress\?fmt\(progress\.allocatedCbm\)/);
  assert.match(home,/const containerOccupancy=selectedContainer\?\.demo\?/);
- assert.match(home,/useKonsolissContainerOccupancy\(isSelectedCurrent\)/);
+ assert.match(home,/useKonsolissContainerOccupancy\(!isDemo&&selectedContainer\?\.id/);
  assert.match(home,/DEMO · /);
  assert.match(home,/DEMO=document\.documentElement\.dataset\.demo==='true'/);
  assert.doesNotMatch(home,/Sample cargo/);
@@ -291,4 +291,22 @@ test('two-way progress icon sits in the progress row, not a separate row above i
  assert.match(layout,/flex:1,height:10,borderRadius:5/);
  assert.match(layout,/flex:1,flexDirection:'row',height:10/);
  assert.doesNotMatch(layout,/justifyContent:'flex-end',marginBottom:hasCurrentContainer/);
+});
+
+
+test('verified 40HQ backend is the source of truth for selected container 3D volume',()=>{
+ const hook=fs.readFileSync(path.join(root,'useKonsolissContainerOccupancy.ts'),'utf8');
+ const current=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
+ assert.match(hook,/supabase\.rpc\('konsoliss_container_occupancy',\{p_container_id:containerId\}\)/);
+ assert.match(hook,/row\.container_type==='40HQ'&&capacityCbm===68/);
+ assert.match(hook,/Math\.abs\(loadedCbm\+freeCbm-capacityCbm\)<0\.001/);
+ assert.match(hook,/Math\.abs\(otherCargoCbm\+yourSpaceCbm-loadedCbm\)<0\.001/);
+ assert.match(hook,/return state\?\.id===containerId\?state\.value:null/);
+ assert.match(home,/containerOccupancy\?containerOccupancy\.loadedCbm\/containerOccupancy\.capacityCbm:0/);
+ assert.match(home,/containerOccupancy\.otherCargoCbm\/containerOccupancy\.capacityCbm\*100/);
+ assert.match(home,/containerOccupancy\.yourSpaceCbm\/containerOccupancy\.capacityCbm\*100/);
+ assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy\?\.capacityCbm\?\?0,containerOccupancy\?\.loadedCbm\?\?0/);
+ assert.match(home,/yourPhysicallyLoadedCbm\?\?0,containerOccupancy\?\.freeCbm/);
+ assert.match(current,/\.order\('assigned_at',\{ascending:false\}\)/);
+ assert.match(current,/\.limit\(1\)/);
 });
