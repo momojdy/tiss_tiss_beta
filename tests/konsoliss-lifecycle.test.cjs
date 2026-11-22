@@ -45,29 +45,50 @@ test('every entry into Konsoliss starts a fresh lifecycle notice without status 
  assert.match(home,/previousContainerStage\.current === assignedStage/);
 });
 
-test('unassigned customers keep the whole dashboard with a genuinely empty 3D container',()=>{
+
+test('3D container stays interactive and plays a clearly labeled illustrative package-loading sequence',()=>{
  const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
  assert.match(hook,/value\.kind === 'unassigned'\) return 'No active load'/);
  assert.doesNotMatch(home,/accessibilityLabel="Current load empty state"/);
- assert.match(home,/const noActiveLoad=currentContainer\.kind==='unassigned'/);
- assert.match(home,/const loadAmount=loadKnown\?'51\.7':noActiveLoad\?'0\.0':'—'/);
- assert.match(home,/const fillPercent=loadKnown\?'76%':noActiveLoad\?'0%':'—'/);
- assert.match(home,/const capacityAmount='68'/);
- assert.match(home,/const availableAmount=loadKnown\?'16\.3':noActiveLoad\?'68\.0':'—'/);
- assert.match(home,/const yourSpace=loadKnown\?'0\.5':noActiveLoad\?'0\.0':'—'/);
- assert.match(home,/const visualMode=loadKnown\?'sample':'empty'/);
- assert.match(home,/containerHtml\(dark,visualMode==='empty'\)/);
- assert.match(home,/const CONTAINER_JS = \[/);
- assert.match(home,/if\(!EMPTY\)for\(let i=0;i<10;i\+\+\)/);
- assert.match(home,/if\(!EMPTY\)\{const top=/);
+ assert.match(home,/Loading illustration — sample packages only/);
+ assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
+ assert.match(home,/containerHtml\(dark,noCargoLoaded\)/);
+ assert.match(home,/if\(EMPTY&&ci>=demoCount\)continue/);
+ assert.match(home,/const timer=setInterval\(\(\)=>\{const elapsed=Date\.now\(\)-started/);
  assert.match(home,/<WebView/);
  assert.match(home,/onTouchStart=\{\(\) => setScroll\(false\)\}/);
  assert.doesNotMatch(home,/'Container KS-2048\\n76% filled'/);
 });
-test('empty, loading, and unavailable states are distinct from an assigned container',()=>{
- const hook=fs.readFileSync(path.join(root,'useCurrentKonsolissContainer.ts'),'utf8');
- assert.match(home,/currentContainer\.kind==='unassigned'/);
- assert.match(home,/Load details unavailable/);
- assert.match(hook,/if \(value\.kind === 'loading'\)/);
- assert.match(hook,/if \(value\.kind === 'unavailable'\)/);
+test('customer metrics are separate from the 68 CBM shared container capacity',()=>{
+ assert.match(home,/const progress=loadProgress\.kind==='recorded'\?loadProgress\.progress:null/);
+ assert.match(home,/const committedValue=progress\?fmt\(progress\.allocatedCbm\)/);
+ assert.match(home,/const fillRatio=progress&&progress\.reservedCbm>0\?progress\.allocatedCbm\/progress\.reservedCbm:0/);
+ assert.match(home,/Space reserved/);
+ assert.match(home,/Goods sent/);
+ assert.match(home,/Loaded in container/);
+ assert.match(home,/Inbound to container/);
+ assert.match(home,/Sent — not yet allocated/);
+ assert.match(home,/Container capacity: 68 CBM/);
+ assert.doesNotMatch(home,/const loadAmount=loadKnown\?'51\.7'/);
+});
+test('load progress math does not treat cargo sent as loaded or inbound',()=>{
+ const source=fs.readFileSync(path.join(root,'useKonsolissLoadProgress.ts'),'utf8');
+ const js=ts.transpileModule(source,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+ const module={exports:{}};
+ require('node:vm').runInNewContext(js,{module,exports:module.exports,require:()=>({})});
+ const parse=module.exports.parseKonsolissLoadProgress;
+ const base={reserved_cbm:2,sent_cbm:1,inbound_to_container_cbm:0,loaded_cbm:0.4};
+ const result=parse(base);
+ assert.equal(result.reservedCbm,2);
+ assert.equal(result.sentCbm,1);
+ assert.equal(result.loadedCbm,0.4);
+ assert.equal(result.inboundCbm,0);
+ assert.equal(result.allocatedCbm,0.4);
+ assert.equal(result.atWarehouseOrInTransitCbm,0.6);
+ assert.equal(result.loadedPercent,20);
+ const inbound=parse({...base,inbound_to_container_cbm:0.2});
+ assert.ok(Math.abs(inbound.allocatedCbm-0.6)<0.00001);
+ assert.equal(inbound.loadedPercent,30);
+ assert.equal(parse({...base,inbound_to_container_cbm:0.8}),null);
+ assert.equal(parse({...base,loaded_cbm:1.1}),null);
 });
