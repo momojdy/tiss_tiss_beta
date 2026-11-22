@@ -3,38 +3,51 @@ import {AppState} from 'react-native';
 import {supabase} from '../../lib/supabase';
 
 export type KonsolissContainerOccupancy = {
+  containerType:'40HQ';
   capacityCbm:number;
   loadedCbm:number;
   otherCargoCbm:number;
-  yourSpaceCbm:number;
+  yourSpaceCbm:number; // physically loaded customer cargo, not reserved space
+  yourAllocatedCbm:number|null;
   freeCbm:number;
 };
 
-/** Aggregated volumes are exposed only to members of the current container.
- * The RPC returns null when any member's volume is not verified. */
-export function useKonsolissContainerOccupancy(enabled:boolean):KonsolissContainerOccupancy|null {
-  const [value,setValue]=useState<KonsolissContainerOccupancy|null>(null);
+/** The backend owns container type (40HQ) and usable 68 CBM capacity.
+ * Only the selected assigned container is queried. Incomplete measurement
+ * coverage returns null rather than estimating the customer's cargo. */
+export function useKonsolissContainerOccupancy(containerId:string|null):KonsolissContainerOccupancy|null {
+  const [state,setState]=useState<{id:string;value:KonsolissContainerOccupancy|null}|null>(null);
   const reload=useCallback(async()=>{
-    if(!enabled){setValue(null);return;}
+    if(!containerId){setState(null);return;}
     try{
-      const {data,error}=await supabase.rpc('konsoliss_current_container_occupancy');
-      if(error||!data||typeof data!=='object'){setValue(null);return;}
+      const {data,error}=await supabase.rpc('konsoliss_container_occupancy',{p_container_id:containerId});
+      if(error||!data||typeof data!=='object'){setState({id:containerId,value:null});return;}
       const row=data as Record<string,unknown>;
-      const capacityCbm=Number(row.capacity_cbm),loadedCbm=Number(row.loaded_cbm);
-      const otherCargoCbm=Number(row.other_cargo_cbm),yourSpaceCbm=Number(row.your_space_cbm);
-      const freeCbm=Number(row.free_cbm);
-      if(![capacityCbm,loadedCbm,otherCargoCbm,yourSpaceCbm,freeCbm].every(Number.isFinite)
-        ||capacityCbm!==68||loadedCbm<0||loadedCbm>68||otherCargoCbm<0
-        ||yourSpaceCbm<0||freeCbm<0){setValue(null);return;}
-      setValue({capacityCbm,loadedCbm,otherCargoCbm,yourSpaceCbm,freeCbm});
-    }catch{setValue(null);}
-  },[enabled]);
+      const parse=(v:unknown)=>v===null||v===undefined?NaN:Number(v);
+      const capacityCbm=parse(row.capacity_cbm),loadedCbm=parse(row.loaded_cbm);
+      const otherCargoCbm=parse(row.other_cargo_cbm),yourSpaceCbm=parse(row.your_loaded_cbm);
+      const freeCbm=parse(row.free_cbm),allocated=parse(row.your_allocated_cbm);
+      const valid=[capacityCbm,loadedCbm,otherCargoCbm,yourSpaceCbm,freeCbm].every(Number.isFinite)
+        &&row.container_type==='40HQ'&&capacityCbm===68
+        &&loadedCbm>=0&&loadedCbm<=capacityCbm
+        &&yourSpaceCbm>=0&&yourSpaceCbm<=loadedCbm
+        &&otherCargoCbm>=0&&freeCbm>=0
+        &&Math.abs(otherCargoCbm+yourSpaceCbm-loadedCbm)<0.001
+        &&Math.abs(loadedCbm+freeCbm-capacityCbm)<0.001
+        &&(Number.isNaN(allocated)||(allocated>=yourSpaceCbm&&allocated<=capacityCbm));
+      setState({id:containerId,value:valid?{
+        containerType:'40HQ',capacityCbm,loadedCbm,otherCargoCbm,yourSpaceCbm,
+        yourAllocatedCbm:Number.isNaN(allocated)?null:allocated,freeCbm,
+      }:null});
+    }catch{setState({id:containerId,value:null});}
+  },[containerId]);
   useEffect(()=>{
-    if(!enabled){setValue(null);return;}
+    if(!containerId){setState(null);return;}
     void reload();
     const sub=AppState.addEventListener('change',state=>{if(state==='active')void reload();});
     const interval=setInterval(()=>{if(AppState.currentState==='active')void reload();},30000);
     return()=>{clearInterval(interval);sub.remove();};
-  },[enabled,reload]);
-  return enabled?value:null;
+  },[containerId,reload]);
+  // Prevent displaying data from the previously selected container while loading.
+  return state?.id===containerId?state.value:null;
 }
