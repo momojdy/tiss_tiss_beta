@@ -1,0 +1,124 @@
+{
+  "date": "2026-11-22",
+  "classification": "NOT VERIFIED",
+  "productionReady": false,
+  "sourceBaselines": {
+    "customer": "bbbff4d7b50379486e78ae49b40e2cad303181e4",
+    "admin": "279c812bc3e81fedd89d63db0152859f4f9e8640"
+  },
+  "sourceCounts": {
+    "files": 112,
+    "astFiles": 100,
+    "functions": 1575,
+    "interactiveBindings": 1349,
+    "jsxBindings": 1205,
+    "objectEventBindings": 144,
+    "backendCallSites": 456,
+    "serviceCallSites": 226,
+    "navigationCallSites": 537,
+    "commentTokens": 268,
+    "demoReferenceLines": 266,
+    "embeddedEventReferences": 9,
+    "unresolvedLiteralRegistryTargets": 0,
+    "dynamicRegistryTargets": 17
+  },
+  "sourceRegistryCounts": {
+    "customer": 34,
+    "sharedBusinessSpace": 22,
+    "goodiesAdminModules": 14
+  },
+  "rpcComparison": {
+    "COMPATIBLE": 157,
+    "PARTIAL": 6,
+    "MISSING": 9,
+    "INCOMPATIBLE": 0
+  },
+  "dynamicRpcSites": 6,
+  "focusedSuites": [
+    {
+      "name": "settlement",
+      "passed": 17,
+      "failed": 0,
+      "scope": "Local fixture/stub tests, not hosted/provider/device acceptance",
+      "logSha256": "db8f802997e717affee2516fe66182fac36d4c36fc30289054e78b810050c679"
+    },
+    {
+      "name": "shared-recovery",
+      "passed": 9,
+      "failed": 0,
+      "scope": "Local fixture/stub tests, not hosted/provider/device acceptance",
+      "logSha256": "daf01488e43de5634b032b5a1d6b0344c6df28ff0fe44214895d46d29adb690e"
+    },
+    {
+      "name": "delivery-pricing",
+      "passed": 4,
+      "failed": 0,
+      "scope": "Local fixture/stub tests, not hosted/provider/device acceptance",
+      "logSha256": "1445f8da0149750874d4c93761a027fda1f8b2060ba11d67954d50913ddb903f"
+    },
+    {
+      "name": "courier-map",
+      "passed": 5,
+      "failed": 0,
+      "scope": "Local fixture/stub tests, not hosted/provider/device acceptance",
+      "logSha256": "d72a1624a17fe206327925b2135390d022d69c3cc8c4bafca96f9bac62c5d569"
+    },
+    {
+      "name": "admin-publication-review-policy",
+      "passed": 2,
+      "failed": 0,
+      "scope": "Two obsolete publication expectations aligned with existing policy; production fallback/review-state checks retained",
+      "logSha256": "331ed79334ba491dcf6a4db27c2a5afe3eba2008a92e6bef0e8d0ad090547452"
+    }
+  ],
+  "focusedPassed": 37,
+  "fullSuiteRun": false,
+  "checks": {
+    "cmsSource": "PASS",
+    "clientSecretScan": "PASS",
+    "clientFilesScanned": 678,
+    "readmeExampleArithmetic": "PASS",
+    "customerTypeScript": "PASS",
+    "adminTypeScript": "PASS",
+    "configuredLint": "PASS",
+    "documentationLinks": "PASS",
+    "publicCmsHttpRead": "PASS",
+    "publishedSourceKeyCoverage": "PASS",
+    "publishedGoodiesAssetHttpRead": "PASS",
+    "publishedGoodiesAssetsVerified": 11
+  },
+  "sourceInventory": {
+    "uncompressedSha256": "d25a2b9586ef90f4304f254724dcf4adebd6d070906f8a28b82be6cac5569fdc",
+    "gzipSha256": "7d49aecb0d470740e1df7d9b0639a6ccd81c347127d5763043cbe36f8ff25aa1",
+    "publication": "Retained locally; not included in the published report"
+  },
+  "ownerDeferred": [
+    "Final FAQ/support/policy content",
+    "Final localization and owner Haitian Creole review",
+    "Bank/GCash/MonCash/NatCash payout integrations",
+    "Leaked-password protection until plan upgrade",
+    "Production backup export/full restore",
+    "Full Wantiss app release"
+  ],
+  "notVerified": [
+    "Complete installed cross-role scenarios and every button/authorization path",
+    "Provider sandbox/3DS/webhook/refund reconciliation",
+    "Configured signing, Maps/FCM/APNs and physical GPS/background/push/private proof behavior",
+    "Installed CMS publication reload",
+    "Full production restore"
+  ],
+  "mutations": {
+    "applicationCode": false,
+    "ui": false,
+    "productionData": false,
+    "financialRecords": false,
+    "cmsPublished": false,
+    "backendDeployed": false,
+    "appDeployed": false,
+    "hostedSyntheticTests": false,
+    "testCode": true
+  },
+  "ciObservation": "ci-observation.json",
+  "adminFullSuiteAfterTargetedRepair": "NOT VERIFIED; not rerun",
+  "publicationScope": "README operating guide, summarized audit/verification, source route register and CI observation only; detailed live backend metadata excluded"
+}

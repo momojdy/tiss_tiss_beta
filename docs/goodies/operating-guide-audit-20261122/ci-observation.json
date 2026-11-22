@@ -1,0 +1,36 @@
+{
+  "observedAt": "2026-11-22T13:17:43.369Z",
+  "scope": "Existing GitHub runs observed read-only. No workflow rerun or application release requested.",
+  "customer": {
+    "id": 45024762119,
+    "name": "TypeScript and Expo build checks",
+    "sha": "bbbff4d7b50379486e78ae49b40e2cad303181e4",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/45024762119"
+  },
+  "customerValidation": {
+    "id": 45024762169,
+    "name": "Expo validation",
+    "sha": "bbbff4d7b50379486e78ae49b40e2cad303181e4",
+    "status": "completed",
+    "conclusion": "success",
+    "url": "https://github.com/momojdy/tiss_tiss_beta/actions/runs/45024762169"
+  },
+  "adminBeforeFix": {
+    "id": 45025560021,
+    "name": "Admin validation",
+    "sha": "279c812bc3e81fedd89d63db0152859f4f9e8640",
+    "status": "completed",
+    "conclusion": "failure",
+    "url": "https://github.com/momojdy/tiss-admin/actions/runs/45025560021"
+  },
+  "adminFailureStep": "Goodies permissions, CMS and settlement tests",
+  "adminFailureCause": "Two regression cases retained mandatory editorial-review publication expectations after the backend/editor intentionally made review independent of publishing.",
+  "adminTargetedRepair": {
+    "tests": 2,
+    "classification": "PASS",
+    "fullAdminSuiteAfterRepair": "NOT VERIFIED; not rerun for this minor test/documentation change",
+    "runtimePolicyChanged": false
+  }
+}

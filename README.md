@@ -20,6 +20,10 @@ Use the Expo QR code with Expo Go or run a platform-specific development build. 
 - `src/components` contains shared UI components; `src/lib` contains shared services such as the Supabase client.
 - `src/assets` contains app artwork and feature assets.
 
+## Goodies
+
+The [Goodies operating guide](src/features/Goodies/README.md) explains customer/vendor/courier/admin workflows, pricing and commissions, Wallet/Card/Cash, Group Orders, Help Pay, the 5,000 HTG cash-sales cap, earnings holds, payouts, CMS ownership, deferred work and outstanding release acceptance. The [22 November audit](docs/goodies/operating-guide-audit-20261122/README.md) records the source/live-backend evidence and its verification limits. Goodies is part of the existing Wantiss app and backend; documenting or enabling backend capabilities does not release the super-app.
+
 ## Supabase
 
 Configure the environment values expected by `src/lib/supabase.ts`. The root `stayz_guest.sql` file defines the Stayz guest database objects; review and apply it in the intended Supabase project before using the related backend features.

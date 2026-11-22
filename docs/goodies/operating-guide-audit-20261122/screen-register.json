@@ -1,0 +1,457 @@
+{
+  "observedAt": "2026-11-22T13:17:43.403Z",
+  "routes": [
+    {
+      "route": "wantiss",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 172,
+      "cmsGroups": [
+        "Home"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "home",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 173,
+      "cmsGroups": [
+        "Home"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "cats",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 174,
+      "cmsGroups": [
+        "Categories"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "orders",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 175,
+      "cmsGroups": [
+        "Order history"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "cart",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 176,
+      "cmsGroups": [
+        "Cart"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "grouporder",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 177,
+      "cmsGroups": [
+        "Group orders"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "explore",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 178,
+      "cmsGroups": [
+        "Explore"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "search",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 179,
+      "cmsGroups": [
+        "Search"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "catlist",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 180,
+      "cmsGroups": [
+        "Category / store results"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "store",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 181,
+      "cmsGroups": [
+        "Store"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "reviews",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 182,
+      "cmsGroups": [
+        "Store reviews"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "product",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 183,
+      "cmsGroups": [
+        "Product"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "checkout",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 184,
+      "cmsGroups": [
+        "Checkout"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "help-pay",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 185,
+      "cmsGroups": [
+        "Shared Bill requests"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "addcard",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 186,
+      "cmsGroups": [
+        "Add card"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "cardauth",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 187,
+      "cmsGroups": [
+        "Card verification"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "confirm",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 188,
+      "cmsGroups": [
+        "Order confirmation"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "track",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 189,
+      "cmsGroups": [
+        "Order tracking"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "notifs",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 190,
+      "cmsGroups": [
+        "Notifications"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "promos",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 191,
+      "cmsGroups": [
+        "Promotions"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "flashdeals",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 192,
+      "cmsGroups": [
+        "Flash deals"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "favs",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 193,
+      "cmsGroups": [
+        "Favorites"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "byo",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 194,
+      "cmsGroups": [
+        "Build Your Own"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "help",
+      "file": "src/features/Goodies/GoodiesApp.tsx",
+      "line": 195,
+      "cmsGroups": [
+        "Help / FAQs"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "settings",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 400,
+      "cmsGroups": [
+        "Settings"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "profile",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 401,
+      "cmsGroups": [
+        "Profile"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "addresses",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 402,
+      "cmsGroups": [
+        "Addresses"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "payments",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 403,
+      "cmsGroups": [
+        "Payment methods"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "contact",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 404,
+      "cmsGroups": [
+        "Contact support"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "storechat",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 405,
+      "cmsGroups": [
+        "Store conversation"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "supdone",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 406,
+      "cmsGroups": [
+        "Support confirmation"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "policies",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 407,
+      "cmsGroups": [
+        "Policies"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "policy",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 408,
+      "cmsGroups": [
+        "Policy document"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    },
+    {
+      "route": "ndetail",
+      "file": "src/features/Goodies/screens/Account.tsx",
+      "line": 409,
+      "cmsGroups": [
+        "Notification detail"
+      ],
+      "sourceRegistration": "PASS",
+      "sourceScope": "Static route and CMS page association only",
+      "installedAndroid": "NOT VERIFIED",
+      "installedIos": "NOT VERIFIED",
+      "everyButtonAccepted": "NOT VERIFIED"
+    }
+  ],
+  "additionalSurfaces": [
+    "Wantiss Wallet Help Pay contributor",
+    "Goodies courier workspace",
+    "Goodies vendor/shared Business Space",
+    "14 Goodies admin modules"
+  ],
+  "sourceBaselines": {
+    "customer": "bbbff4d7b50379486e78ae49b40e2cad303181e4",
+    "admin": "279c812bc3e81fedd89d63db0152859f4f9e8640"
+  }
+}
