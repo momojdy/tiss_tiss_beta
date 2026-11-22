@@ -200,7 +200,22 @@ function Screen({onBack}: {onBack?: () => void}) {
       </Pressable></View>
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No container assigned</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} />
+        <View pointerEvents="none" style={{position:'absolute',top:4,left:12,right:12,alignItems:'center'}}>
+          <View style={{backgroundColor:dark?'rgba(23,16,15,0.94)':'rgba(255,251,212,0.96)',paddingHorizontal:12,paddingVertical:6,borderRadius:10,borderWidth:1,borderColor:t.bd}}>
+            <Tx style={{color:t.tx,fontSize:13,fontWeight:'800',textAlign:'center'}}>
+              {yourPhysicallyLoadedCbm!==null&&yourPhysicallyLoadedCbm!==undefined?'Your current loaded space: '+fmt(yourPhysicallyLoadedCbm)+' CBM':'Your current loaded space: —'}
+            </Tx>
+          </View>
+        </View>
+        <View pointerEvents="none" style={{position:'absolute',bottom:5,left:12,right:12,alignItems:'center'}}>
+          <View style={{backgroundColor:dark?'rgba(23,16,15,0.94)':'rgba(255,251,212,0.96)',paddingHorizontal:12,paddingVertical:6,borderRadius:10,borderWidth:1,borderColor:t.bd}}>
+            <Tx style={{color:t.ac,fontSize:13,fontWeight:'800',textAlign:'center'}}>
+              {containerOccupancy?'Available empty space: '+fmt(containerOccupancy.freeCbm)+' CBM':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'Available empty space: 68.0 CBM':'Available empty space: —'}
+            </Tx>
+          </View>
+        </View>
+      </View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
