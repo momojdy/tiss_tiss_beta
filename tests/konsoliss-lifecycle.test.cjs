@@ -390,26 +390,34 @@ test('carton labels use stable varied placements instead of identical white stic
  const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
  const ast=ts.createSourceFile('engine.js',engine,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
  assert.equal(ast.parseDiagnostics.length,0,'Embedded script must remain valid');
- assert.match(engine,/const labelLocations=\[\[\.07,\.74\],\[\.68,\.74\],\[\.37,\.07\],\[\.37,\.39\],\[\.07,\.38\],\[\.68,\.18\]\]/);
+ assert.match(engine,/const labelLocations=\[\[\.19,\.81\],\[\.81,\.81\],\[\.5,\.16\],\[\.5,\.5\],\[\.19,\.49\],\[\.81,\.26\]\]/);
+ assert.match(engine,/const labelSizes=\[\[\.12,\.10\],\[\.22,\.17\],\[\.38,\.29\],\[\.57,\.44\],\[\.78,\.62\]\]/);
+ assert.match(engine,/const u0=Math\.max\(\.025,Math\.min\(\.975-width,u-width\/2\)\)/);
  assert.match(engine,/labelPos:Math\.floor\(stickerPick\(i,j,l,q,1\)\*6\)/);
  assert.match(engine,/labelSide:Math\.floor\(stickerPick\(i,j,l,q,2\)\*4\)/);
  assert.match(engine,/labelTwo:stickerPick\(i,j,l,q,3\)<\.32/);
- assert.match(engine,/else if\(c\.lab\)sticker\(l,n,c\.b,\{pos:c\.labelPos,side:c\.labelSide,second:c\.labelTwo\}\)/);
+ assert.match(engine,/labelSize:Math\.floor\(stickerPick\(i,j,l,q,4\)\*5\)/);
+ assert.match(engine,/else if\(c\.lab\)sticker\(l,n,c\.b,\{pos:c\.labelPos,side:c\.labelSide,second:c\.labelTwo,size:c\.labelSize\}\)/);
  assert.match(engine,/poly\(layer,\[\[xx,low,zz\]/);
  assert.match(engine,/'#FFF8E8',\.98,0/);
  assert.doesNotMatch(engine,/lab:q==0&&l!=1/);
  // The seeded label selection must vary between boxes without rerandomizing on 3D rotation.
- const positions=new Set(),sides=new Set();
+ const positions=new Set(),sides=new Set(),sizes=new Set();
  const pick=(i,j,l,q,salt)=>{
   const n=Math.sin((i+1)*12.9898+(j+1)*78.233+(l+1)*37.719+q*19.19+salt*11.83)*43758.5453;
   return n-Math.floor(n);
  };
  for(let i=0;i<10;i++)for(let j=0;j<2;j++)for(let l=0;l<3;l++)for(let q=0;q<2;q++){
-  const pos=Math.floor(pick(i,j,l,q,1)*6),side=Math.floor(pick(i,j,l,q,2)*4);
+  const pos=Math.floor(pick(i,j,l,q,1)*6),side=Math.floor(pick(i,j,l,q,2)*4),size=Math.floor(pick(i,j,l,q,4)*5);
   assert.equal(pos,Math.floor(pick(i,j,l,q,1)*6),'Stable label position');
-  assert.ok(pos>=0&&pos<6&&side>=0&&side<4);
-  positions.add(pos);sides.add(side);
+  assert.ok(pos>=0&&pos<6&&side>=0&&side<4&&size>=0&&size<5);
+  positions.add(pos);sides.add(side);sizes.add(size);
  }
  assert.equal(positions.size,6,'All six label placements should occur');
  assert.equal(sides.size,4,'Labels should appear on multiple carton sides');
+ assert.equal(sizes.size,5,'Tiny, small, medium, large, very large sizes must all appear');
+ const widthHeights=[[.12,.10],[.22,.17],[.38,.29],[.57,.44],[.78,.62]];
+ for(const [w,h] of widthHeights){assert.ok(w>0&&w<1&&h>0&&h<1)}
+ assert.ok(widthHeights[4][0]/widthHeights[0][0]>6);
+ assert.ok(widthHeights[4][1]/widthHeights[0][1]>6);
 });
