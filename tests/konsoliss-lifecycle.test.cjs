@@ -93,3 +93,18 @@ test('load progress math does not treat cargo sent as loaded or inbound',()=>{
  assert.equal(parse({...base,inbound_to_container_cbm:0.8}),null);
  assert.equal(parse({...base,loaded_cbm:1.1}),null);
 });
+
+test('3D WebView script remains syntactically valid after animation changes',()=>{
+ const parsed=ts.createSourceFile('konsolissHomeScreen.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(row=>row.name.getText(parsed)==='CONTAINER_JS');
+ assert.ok(decl,'Missing 3D engine');
+ const call=decl.initializer;
+ assert.ok(call&&ts.isCallExpression(call));
+ const array=call.expression.expression;
+ assert.ok(array&&ts.isArrayLiteralExpression(array));
+ const js=array.elements.map(element=>element.text).join('\\n');
+ assert.doesNotThrow(()=>new (require('node:vm').Script)(js));
+ assert.match(js,/demoCount/);
+ assert.match(js,/LOADED\/RESERVED/);
+});
