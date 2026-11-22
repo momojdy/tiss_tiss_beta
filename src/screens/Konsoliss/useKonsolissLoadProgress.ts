@@ -46,7 +46,7 @@ export function useKonsolissLoadProgress():KonsolissLoadProgressState{
   const requestSequence=useRef(0);
   const refresh=useCallback(async()=>{
     const sequence=++requestSequence.current;
-    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};{
+    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};
     try{
       const {data:auth,error:authError}=await supabase.auth.getUser();
       if(authError||!auth.user){commit(()=>setState({kind:'unavailable'}));return;}
