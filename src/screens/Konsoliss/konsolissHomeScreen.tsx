@@ -104,7 +104,7 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
   return <SafeAreaProvider><Screen onBack={onBack} /></SafeAreaProvider>;
 }
 function Screen({onBack}: {onBack?: () => void}) {
-  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const currentContainer = useCurrentKonsolissContainer(); const loadProgress=useKonsolissLoadProgress();
+  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [loadingReplay,setLoadingReplay]=useState(0); const currentContainer = useCurrentKonsolissContainer(); const loadProgress=useKonsolissLoadProgress();
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
   const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
@@ -122,7 +122,8 @@ function Screen({onBack}: {onBack?: () => void}) {
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
-  const noActiveLoad=currentContainer.kind==='unassigned'&&(!progress||progress.reservedCbm===0);
+  const noActiveLoad=currentContainer.kind==='unassigned'&&(
+    loadProgress.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
   const initialZero=noActiveLoad&&loadProgress.kind==='unrecorded';
   const fmt=(n:number)=>n.toFixed(1);
   const loadedValue=progress?fmt(progress.loadedCbm):initialZero?'0.0':'—';
@@ -147,7 +148,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         disabled={currentContainer.kind!=='assigned'}
         onPress={() => {if(currentContainer.kind==='assigned')setLifecycleNotice(currentContainer.status);}}
         style={[s.pill, {backgroundColor: t.tint}]}>
-        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'&&progress&&progress.reservedCbm>0?'Preparing your load':currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
+        <Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?'Preparing your load':loadProgress.kind==='loading'?'Checking your load…':loadProgress.kind==='unavailable'?'Load details unavailable':currentKonsolissContainerLabel(currentContainer)):currentKonsolissContainerLabel(currentContainer)}{currentContainer.kind==='assigned'?'  ⓘ':''}</Tx>
       </Pressable></View>
       {noActiveLoad?<Tx style={{fontSize:11,color:t.mu,marginHorizontal:24,marginTop:5}}>No active load yet. The loading animation below shows an example, not your packages.</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM reserved</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(fillRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{fillPercent} of your space committed</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{stillToSendValue} CBM</Tx> of reserved space not yet sent</Tx></View></View>
@@ -163,8 +164,8 @@ function Screen({onBack}: {onBack?: () => void}) {
         </View>)}
         <Tx style={{width:'100%',fontSize:10,color:t.mu}}>Container capacity: 68 CBM · Progress includes loaded and inbound-to-container cargo. Goods only sent to the warehouse are excluded.</Tx>
       </View>
-      {noCargoLoaded?<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>Loading illustration — sample packages only</Tx>:<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>3D layout is illustrative; quantities above are your recorded volumes.</Tx>}
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode} originWhitelist={['*']} source={{html: containerHtml(dark,noCargoLoaded)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      {noCargoLoaded?<Pressable accessibilityRole="button" accessibilityLabel="Replay sample container loading animation" onPress={()=>setLoadingReplay(x=>x+1)} style={{alignSelf:'center',padding:10,marginTop:3}}><Tx style={{textAlign:'center',fontSize:11,color:t.ac,fontWeight:'600'}}>Loading illustration — sample packages only · Replay ↻</Tx></Pressable>:<Tx style={{textAlign:'center',fontSize:11,color:t.mu,marginTop:12}}>3D layout is illustrative; quantities above are your recorded volumes.</Tx>}
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+visualMode+'-'+loadingReplay} originWhitelist={['*']} source={{html: containerHtml(dark,noCargoLoaded)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
