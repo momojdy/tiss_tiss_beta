@@ -21,6 +21,17 @@ module.exports=async({sql,race,root})=>{
  assert.equal(sql("select has_table_privilege('authenticated','private.goodies_fx_refresh_config','select')::int"),'0');
  assert.equal(sql("select has_table_privilege('service_role','private.goodies_fx_refresh_config','update')::int"),'0');
  console.log('PASS: ordinary/anonymous clients cannot inspect or publish FX configuration, and server access uses scoped RPC grants.');
+ const viewer=sql("insert into auth.users(id,email_confirmed_at) values(gen_random_uuid(),now()) returning id");
+ const readStatus=()=>sql(`begin;set local role authenticated;set local "request.jwt.claim.sub"='${viewer}';select public.goodies_admin_fx_refresh_status();rollback;`);
+ assert.throws(readStatus,/Not authorized/);
+ sql(`insert into public.wantiss_admin_staff(user_id,display_name,role,status) values('${viewer}','Synthetic FX reviewer','staff','active')`);
+ assert.throws(readStatus,/Not authorized/);
+ const grant=sql(`insert into public.wantiss_admin_permission_grants(staff_user_id,permission_key,access_level,granted_by,reason) values('${viewer}','finance.view','view','${viewer}','Synthetic scoped financial visibility check') returning id`);
+ assert.equal(JSON.parse(readStatus()).enabled,true);
+ sql(`update public.wantiss_admin_permission_grants set revoked_at=now() where id='${grant}'`);assert.throws(readStatus,/Not authorized/);
+ sql(`update public.wantiss_admin_permission_grants set revoked_at=null where id='${grant}';update public.wantiss_admin_staff set status='inactive' where user_id='${viewer}'`);assert.throws(readStatus,/Not authorized/);
+ assert.equal(snapshot(),before);
+ console.log('PASS: FX status requires active finance.view permission; ordinary accounts, restricted, revoked and inactive staff are denied.');
  const count=Number(sql('select count(*) from public.exchange_rates'));
  const actor={role:'service_role',user:''};const results=await race(published,published,'fx_refresh',[actor,actor]);
  assert.equal(results.filter(result=>result.code===0).length,2,JSON.stringify(results));
@@ -49,7 +60,7 @@ module.exports=async({sql,race,root})=>{
  assert.equal(quoteSnapshot(),quoteBefore);sql(operation);
  assert.equal(snapshot(),before);
  console.log('PASS: pausing FX publication preserves all existing quotes, orders, settlement snapshots, balances and inventory.');
- const migration=fs.readFileSync(path.join(root,'supabase/migrations/20261122062600_goodies_usd_htg_rate_refresh.sql'),'utf8');
+ const migration=fs.readFileSync(path.join(root,'supabase/migrations/20261122070253_goodies_usd_htg_rate_refresh.sql'),'utf8');
  const structure=()=>sql("select jsonb_build_object('config',(select to_jsonb(c) from private.goodies_fx_refresh_config c),'functions',(select jsonb_agg(jsonb_build_object('name',p.proname,'definition',md5(pg_get_functiondef(p.oid)),'acl',p.proacl) order by p.proname) from pg_proc p where p.proname in ('goodies_publish_usd_htg_quote','goodies_record_fx_refresh_failure','goodies_fx_refresh_status','goodies_admin_fx_refresh_status')))");
  const same=structure();sql(migration);assert.equal(structure(),same);
  assert.throws(()=>sql(migration.replace("select cron.schedule('goodies-usd-htg-refresh'","select cron.synthetic_missing_schedule('goodies-usd-htg-refresh'")));
