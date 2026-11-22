@@ -36,7 +36,7 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
     atWarehouseOrInTransitCbm:Math.max(0,sentCbm-loadedCbm-inboundCbm),
     sentNotLoadedCbm:Math.max(0,sentCbm-loadedCbm),
     reservedNotSentCbm:Math.max(0,reservedCbm-sentCbm),
-    loadedPercent:reservedCbm>0?Math.round((loadedCbm+inboundCbm)/reservedCbm*100):0};
+    loadedPercent:reservedCbm>0?Math.round((loadedCbm+inboundCbm)/reservedCbm*10000)/100:0};
 }
 
 export function useKonsolissLoadProgress():KonsolissLoadProgressState{
