@@ -252,6 +252,8 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   useEffect(() => { registerAuthenticated(authenticated); }, [authenticated, registerAuthenticated]);
   useEffect(() => { registerVendorMode(appMode !== 'buyer'); }, [appMode, registerVendorMode]);
   const [buyerScreen, setBuyerScreen] = useState<BuyerScreen>('home');
+  // Each feature entry starts a fresh lifecycle notice for the currently assigned stage.
+  const [konsolissVisitId, setKonsolissVisitId] = useState(0);
   const [notificationConversationId, setNotificationConversationId] = useState<string | undefined>(undefined);
   const [notificationFriendId, setNotificationFriendId] = useState<string | undefined>(undefined);
   const [goodiesInitialRoute, setGoodiesInitialRoute] = useState<string | undefined>(undefined);
@@ -352,7 +354,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzMyTrips') return <FlyzMyTripsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onWalletPress={() => setBuyerScreen('wallet')} onDealsPress={() => setBuyerScreen('flyzDeals')} onMorePress={() => {}} />;
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen onBack={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen key={konsolissVisitId} onBack={() => setBuyerScreen('home')} />;
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen initialRoute={goodiesInitialRoute} onInitialRouteConsumed={() => setGoodiesInitialRoute(undefined)} onBack={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('home'); }} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
         if (action === 'home') setBuyerScreen('home');
         else if (action === 'messages' || action === 'notifications') { setInboxReturnScreen('goodies'); setBuyerScreen(action); }
@@ -439,7 +441,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'settingsDetail') return <SettingsDetailScreen screen={settingsDetail} onBack={() => setBuyerScreen('settings')} />;
       if (buyerScreen === 'me') { const MeScreen = require('./src/screens/Main/mainMeScreen').default; return <MeScreen onHomePress={() => setBuyerScreen('home')} onQRPress={() => { setQrLaunchToken(null); setQrKind('buyer_identity'); setBuyerScreen('qrIdentity'); }} onWalletPress={() => setBuyerScreen('wallet')} onSettingsPress={() => setBuyerScreen('settings')} onBusinessSpacePress={handleOpenBusinessSpace} />; }
       const HomeScreen = require('./src/screens/Main/mainHomeScreen').default;
-      return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => setBuyerScreen('konsoliss')} onGoodiesPress={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('goodies'); }} onWoulibPress={() => setBuyerScreen('woulib')} onStayzPress={() => setBuyerScreen('stayz')} onGlowzPress={() => setBuyerScreen('glowz')} onPrezoPress={() => setBuyerScreen('prezo')} onGatherzPress={() => setBuyerScreen('gatherz')} />;
+      return <HomeScreen onMessagesPress={() => setBuyerScreen('messageHub')} onMePress={() => setBuyerScreen('me')} onFrenziesPress={() => setBuyerScreen('frenzies')} onFlyzPress={() => setBuyerScreen('flyz')} onKonsolissPress={() => { setKonsolissVisitId(id => id + 1); setBuyerScreen('konsoliss'); }} onGoodiesPress={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('goodies'); }} onWoulibPress={() => setBuyerScreen('woulib')} onStayzPress={() => setBuyerScreen('stayz')} onGlowzPress={() => setBuyerScreen('glowz')} onPrezoPress={() => setBuyerScreen('prezo')} onGatherzPress={() => setBuyerScreen('gatherz')} />;
     } catch (error) { return <AppError title="Home could not load" error={error} />; }
   }
   if (screen === 'forgot') return <ForgotPasswordScreen onBack={() => setScreen('auth')} onSignIn={() => setScreen('auth')} onSendResetLink={async email => { const redirectTo = Linking.createURL('reset-password'); const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo }); if (error) throw error; }} />;
