@@ -6,6 +6,7 @@ import {useKonsolissCopy, type KonsolissCopy} from './useKonsolissCopy';
 import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type KonsolissContainerStatus} from './useCurrentKonsolissContainer';
 import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
 import {useKonsolissLoadProgress} from './useKonsolissLoadProgress';
+import {useKonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 const StatusBarCompat: any = StatusBar;
@@ -126,6 +127,7 @@ function Screen({onBack}: {onBack?: () => void}) {
     const interval=setInterval(()=>setProgressView(view=>view==='customer'?'container':'customer'),15000);
     return()=>clearInterval(interval);
   },[hasCurrentContainer]);
+  const containerOccupancy=useKonsolissContainerOccupancy(hasCurrentContainer);
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
@@ -176,15 +178,16 @@ function Screen({onBack}: {onBack?: () => void}) {
           </Pressable>:null}
         </View>
         {progressView==='container'&&hasCurrentContainer?<>
-          <View style={{height:10,borderRadius:5,overflow:'hidden',backgroundColor:t.tint}}>
-            <View style={{width:'0%',height:10,backgroundColor:t.ac}}/>
+          <View style={{height:10,borderRadius:5,overflow:'hidden',backgroundColor:t.tint,flexDirection:'row'}}>
+            <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.otherCargoCbm/68*100)):0}%`,backgroundColor:'#CDAA7D'}}/>
+            <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.yourSpaceCbm/68*100)):0}%`,backgroundColor:t.ac}}/>
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:7}}>
-            <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>—</Tx></Tx>
-            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>—</Tx></Tx>
-            <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>—</Tx></Tx>
+            <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.otherCargoCbm.toFixed(1):'—'}</Tx></Tx>
+            <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.yourSpaceCbm.toFixed(1):'—'}</Tx></Tx>
+            <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?containerOccupancy.freeCbm.toFixed(1):'—'}</Tx></Tx>
           </View>
-          <Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container occupancy is awaiting verified shipment totals.</Tx>
+          <Tx style={{fontSize:10,color:t.mu,marginTop:4}}>{containerOccupancy?'Based on physically loaded cargo in this 68 CBM container.':'Container totals appear once all loaded cargo has been verified.'}</Tx>
         </>:<>
           <View style={{flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',gap:2}}>
             <View style={{width:`${Math.max(0,Math.min(100,physicallyLoadedRatio*100))}%`}}>
