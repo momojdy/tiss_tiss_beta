@@ -256,6 +256,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
   const [konsolissVisitId, setKonsolissVisitId] = useState(0);
   const [notificationConversationId, setNotificationConversationId] = useState<string | undefined>(undefined);
   const [notificationFriendId, setNotificationFriendId] = useState<string | undefined>(undefined);
+  const [savedReturnScreen,setSavedReturnScreen]=useState<BuyerScreen>('goodies');
   const [goodiesInitialRoute, setGoodiesInitialRoute] = useState<string | undefined>(undefined);
   const [inboxReturnScreen, setInboxReturnScreen] = useState<BuyerScreen>('messageHub');
   const [quickMenuReturnScreen, setQuickMenuReturnScreen] = useState<BuyerScreen>('me');
@@ -343,7 +344,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
     try {
       if (buyerScreen === 'businessRegistration') return <BusinessRegistrationScreen onBack={() => setBuyerScreen('gatherz')} onComplete={() => { setAppMode('vendor'); setBuyerScreen('home'); }} />;
       if (buyerScreen === 'messageHub') return <MessageHubScreen onOpenHelpPay={(id)=>{setWalletHelpPayId(id);setBuyerScreen('walletHelpPay');}} onOpenShop={(storeId) => { setGoodiesInitialRoute('store:' + storeId); setBuyerScreen('goodies'); }} onBack={() => setBuyerScreen('home')} onMessagesPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('messages'); }} onNotificationsPress={() => { setInboxReturnScreen('messageHub'); setBuyerScreen('notifications'); }} unreadMessages={unreadMessagesCount} unreadNotifications={unreadNotificationsCount} />;
-      if (buyerScreen === 'saved') return <SavedScreen onBack={() => { setGoodiesInitialRoute('home'); setBuyerScreen('goodies'); }} onOpenGoodies={(route) => { setGoodiesInitialRoute(route); setBuyerScreen('goodies'); }} onOpenFeature={(feature) => { if (['flyz','gatherz','frenzies','stayz'].includes(feature)) setBuyerScreen(feature as BuyerScreen); }} />;
+      if (buyerScreen === 'saved') return <SavedScreen preferredFeature={savedReturnScreen} onBack={() => { setBuyerScreen(savedReturnScreen); }} onOpenGoodies={(route) => { setGoodiesInitialRoute(route); setBuyerScreen('goodies'); }} onOpenFeature={(feature) => { if (['flyz','gatherz','frenzies','stayz'].includes(feature)) setBuyerScreen(feature as BuyerScreen); }} />;
       if (buyerScreen === 'notifications') return <NotificationsScreen onBack={() => setBuyerScreen(inboxReturnScreen)} onNavigate={(target, conversationId) => { if (target === 'goodies/orders') { setGoodiesInitialRoute('orders'); setBuyerScreen('goodies'); return; } if (target === 'messages/profile' && conversationId) { setNotificationFriendId(conversationId); setNotificationConversationId(undefined); setBuyerScreen('messages'); return; } setNotificationFriendId(undefined); setNotificationConversationId(conversationId); setBuyerScreen(target as BuyerScreen); }} />;
       if (buyerScreen === 'messages') return <MessagesScreen initialConversationId={notificationConversationId} initialFriendId={notificationFriendId} onOpenHelpPay={(id)=>{setWalletHelpPayId(id);setBuyerScreen('walletHelpPay');}} onOpenShop={(storeId) => { setGoodiesInitialRoute('store:' + storeId); setBuyerScreen('goodies'); }} onBack={() => { setNotificationConversationId(undefined); setBuyerScreen(inboxReturnScreen); }} />;
       if (buyerScreen === 'flyzResults') return <FlyzResultsScreen {...flyzSearch} onBack={() => setBuyerScreen('flyz')} onSelect={(flight: any) => { setFlyzSelectedFlight(flight); setBuyerScreen('flyzDetails'); }} />;
@@ -354,14 +355,22 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'flyzMyTrips') return <FlyzMyTripsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onWalletPress={() => setBuyerScreen('wallet')} onDealsPress={() => setBuyerScreen('flyzDeals')} onMorePress={() => {}} />;
       if (buyerScreen === 'flyzDeals') return <FlyzDealsScreen onBack={() => setBuyerScreen('flyz')} onHomePress={() => setBuyerScreen('flyz')} onTripsPress={() => setBuyerScreen('flyzMyTrips')} onMorePress={() => setBuyerScreen('me')} />;
       if (buyerScreen === 'woulib') return <WoulibFlow onExit={() => setBuyerScreen('home')} />;
-      if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen key={konsolissVisitId} onBack={() => setBuyerScreen('home')} />;
+      if (buyerScreen === 'konsoliss') return <KonsolissHomeScreen key={konsolissVisitId} onBack={() => setBuyerScreen('home')} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={action=>{
+        if(action==='home')setBuyerScreen('home');
+        else if(action==='messages'||action==='notifications'){setInboxReturnScreen('konsoliss');setBuyerScreen(action);}
+        else if(action==='wallet'){setQuickMenuReturnScreen('konsoliss');setBuyerScreen('wallet');}
+        else if(action==='saved'){setSavedReturnScreen('konsoliss');setBuyerScreen('saved');}
+        else if(action==='activity'||action==='orders'){setQuickMenuReturnScreen('konsoliss');setBuyerScreen('universalActivity');}
+        else if(action==='business')void handleOpenBusinessSpace();
+        else if(action==='help'||action==='feedback'){setGoodiesInitialRoute(action==='help'?'help':'contact');setBuyerScreen('goodies');}
+      }} />;
       if (buyerScreen === 'goodies') return <GoodiesHomeScreen initialRoute={goodiesInitialRoute} onInitialRouteConsumed={() => setGoodiesInitialRoute(undefined)} onBack={() => { setGoodiesInitialRoute(undefined); setBuyerScreen('home'); }} unreadNotifications={unreadNotificationsCount} unreadMessages={unreadMessagesCount} onUniversalAction={(action) => {
         if (action === 'home') setBuyerScreen('home');
         else if (action === 'messages' || action === 'notifications') { setInboxReturnScreen('goodies'); setBuyerScreen(action); }
         else if (action === 'wallet') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('wallet'); }
         else if (action === 'activity') { setQuickMenuReturnScreen('goodies'); setBuyerScreen('universalActivity'); }
         else if (action === 'business') { void handleOpenBusinessSpace(); }
-        else if (action === 'saved') { setBuyerScreen('saved'); }
+        else if (action === 'saved') { setSavedReturnScreen('goodies'); setBuyerScreen('saved'); }
         else if (action === 'orders') { const A = require('./src/features/Goodies/actions'); A.tab('orders'); }
         else if (action === 'help' || action === 'feedback') { const A = require('./src/features/Goodies/actions'); A.go(action === 'help' ? 'help' : 'contact'); }
       }} />;
@@ -393,7 +402,7 @@ function AppContent({ registerChallengePress, registerChallengeDismiss, register
       if (buyerScreen === 'walletBankCards') return <WalletBankCardsScreen onBack={() => setBuyerScreen('walletPaymentMethods')} onAddCardPress={() => setBuyerScreen('walletAddNewCard')} />;
       if (buyerScreen === 'walletPersonalInfo') return <WalletPersonalInfoScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletPaymentMethods') return <WalletPaymentMethodsScreen onBack={() => setBuyerScreen('walletSettings')} onBankCardPress={() => setBuyerScreen('walletBankCards')} />;
-      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => { setBuyerScreen(quickMenuReturnScreen === 'goodies' ? 'goodies' : 'gatherz'); setQuickMenuReturnScreen('me'); }} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
+      if (buyerScreen === 'universalActivity') return <UniversalActivityScreen onBack={() => { setBuyerScreen(quickMenuReturnScreen === 'goodies' ? 'goodies' : quickMenuReturnScreen === 'konsoliss' ? 'konsoliss' : 'gatherz'); setQuickMenuReturnScreen('me'); }} onNavigate={(destination) => { if (destination === 'wallet') setBuyerScreen('wallet'); else if (destination === 'gatherz') setBuyerScreen('gatherz'); else if (destination === 'business') void handleOpenBusinessSpace(); else if (destination === 'goodies') setBuyerScreen('goodies'); else if (destination === 'flyz') setBuyerScreen('flyz'); }} />;
       if (buyerScreen === 'walletRecentActivity') return <WalletRecentActivityScreen onBack={() => setBuyerScreen('wallet')} />;
       if (buyerScreen === 'walletHistory') return <WalletHistoryScreen onBack={() => setBuyerScreen('walletSettings')} />;
       if (buyerScreen === 'walletSettings') return <WalletSettingsScreen onBack={() => setBuyerScreen('wallet')} onHomePress={() => setBuyerScreen('home')} onNotificationsPress={() => setBuyerScreen('walletNotifications')} onNotificationsSettingsPress={() => setBuyerScreen('walletNotificationSettings')} onPersonalInfoPress={() => setBuyerScreen('walletPersonalInfo')} onPaymentMethodsPress={() => setBuyerScreen('walletPaymentMethods')} onHistoryPress={() => setBuyerScreen('walletHistory')} onQRPress={(token) => { setWalletQrDisplayToken(token ?? null); setQrLaunchToken(null); setQrKind('wallet_receive'); setBuyerScreen('qrIdentity'); }} />
