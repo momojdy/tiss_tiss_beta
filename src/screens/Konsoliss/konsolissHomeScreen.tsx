@@ -272,7 +272,7 @@ function Screen({onBack}: {onBack?: () => void}) {
         <Pressable accessibilityRole="button" accessibilityLabel="Close container list"
           onPress={() => setContainerMenuOpen(false)}
           style={[StyleSheet.absoluteFill,{backgroundColor:'rgba(0,0,0,0.23)'}]}/>
-        <View style={{position:'absolute',top:Math.max(14,insets.top)+55,right:18,width:'min(88%,350px)',maxWidth:350,
+        <View style={{position:'absolute',top:Math.max(14,insets.top)+55,right:18,width:'88%',maxWidth:350,
           backgroundColor:t.bg,borderRadius:16,borderWidth:1,borderColor:t.bd,overflow:'hidden',
           shadowColor:'#000',shadowOpacity:0.16,shadowRadius:12,elevation:12}}>
           <View style={{paddingHorizontal:14,paddingVertical:11,flexDirection:'row',alignItems:'center',justifyContent:'space-between'}}>
