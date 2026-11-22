@@ -1,0 +1,179 @@
+{
+  "classification": "PASS",
+  "scope": "Read-only real public Edge response through the actual consumer CMS loader and text accessors; no installed device or hosted synthetic record",
+  "checkedAt": "2026-11-22T08:57:25.465Z",
+  "sourceFieldsChanged": false,
+  "reviewMetadataChanged": false,
+  "locales": {
+    "en": {
+      "modes": [
+        {
+          "title": "Food delivery",
+          "category": "restaurants"
+        },
+        {
+          "title": "Groceries",
+          "category": "groceries"
+        },
+        {
+          "title": "Drugstore",
+          "category": "drugstore"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "promo.free-delivery",
+          "title": "Free delivery on your first order",
+          "button": "Order now"
+        },
+        {
+          "id": "promo.double-points",
+          "title": "Earn double points this weekend",
+          "button": "Start earning"
+        },
+        {
+          "id": "promo.fresh-produce",
+          "title": "20% off fresh produce",
+          "button": "Shop now"
+        }
+      ],
+      "produceCategory": "Fresh produce"
+    },
+    "fr": {
+      "modes": [
+        {
+          "title": "Food delivery",
+          "category": "restaurants"
+        },
+        {
+          "title": "Groceries",
+          "category": "groceries"
+        },
+        {
+          "title": "Drugstore",
+          "category": "drugstore"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "promo.free-delivery",
+          "title": "Free delivery on your first order",
+          "button": "Order now"
+        },
+        {
+          "id": "promo.double-points",
+          "title": "Earn double points this weekend",
+          "button": "Start earning"
+        },
+        {
+          "id": "promo.fresh-produce",
+          "title": "20% off fresh produce",
+          "button": "Shop now"
+        }
+      ],
+      "produceCategory": "Fresh produce"
+    },
+    "ht": {
+      "modes": [
+        {
+          "title": "Food delivery",
+          "category": "restaurants"
+        },
+        {
+          "title": "Groceries",
+          "category": "groceries"
+        },
+        {
+          "title": "Drugstore",
+          "category": "drugstore"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "promo.free-delivery",
+          "title": "Free delivery on your first order",
+          "button": "Order now"
+        },
+        {
+          "id": "promo.double-points",
+          "title": "Earn double points this weekend",
+          "button": "Start earning"
+        },
+        {
+          "id": "promo.fresh-produce",
+          "title": "20% off fresh produce",
+          "button": "Shop now"
+        }
+      ],
+      "produceCategory": "Fresh produce"
+    },
+    "es": {
+      "modes": [
+        {
+          "title": "Food delivery",
+          "category": "restaurants"
+        },
+        {
+          "title": "Groceries",
+          "category": "groceries"
+        },
+        {
+          "title": "Drugstore",
+          "category": "drugstore"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "promo.free-delivery",
+          "title": "Free delivery on your first order",
+          "button": "Order now"
+        },
+        {
+          "id": "promo.double-points",
+          "title": "Earn double points this weekend",
+          "button": "Start earning"
+        },
+        {
+          "id": "promo.fresh-produce",
+          "title": "20% off fresh produce",
+          "button": "Shop now"
+        }
+      ],
+      "produceCategory": "Fresh produce"
+    },
+    "zh-Hans": {
+      "modes": [
+        {
+          "title": "Food delivery",
+          "category": "restaurants"
+        },
+        {
+          "title": "Groceries",
+          "category": "groceries"
+        },
+        {
+          "title": "Drugstore",
+          "category": "drugstore"
+        }
+      ],
+      "promotions": [
+        {
+          "id": "promo.free-delivery",
+          "title": "Free delivery on your first order",
+          "button": "Order now"
+        },
+        {
+          "id": "promo.double-points",
+          "title": "Earn double points this weekend",
+          "button": "Start earning"
+        },
+        {
+          "id": "promo.fresh-produce",
+          "title": "20% off fresh produce",
+          "button": "Shop now"
+        }
+      ],
+      "produceCategory": "Fresh produce"
+    }
+  }
+}

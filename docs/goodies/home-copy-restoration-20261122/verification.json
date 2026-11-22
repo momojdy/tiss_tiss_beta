@@ -1,0 +1,40 @@
+{
+  "classification": "PASS",
+  "scope": "Home copy rendering, existing category/promotion destinations and removal of the added Home notice; not blanket installed-device acceptance",
+  "customerCode": "dcc55c2228bf607c0880924bf3f1b84a1955eecc",
+  "adminCode": "b4fedee2c6f23839e7723585ff21587946a27f7b",
+  "before": {
+    "commit": "115f08a02e8f0f606bb12eb316dc588037d25f07",
+    "regressionTests": 6,
+    "passed": 1,
+    "failed": 5
+  },
+  "after": {
+    "regressionTests": 6,
+    "passed": 6,
+    "failed": 0,
+    "customerSuite": 291,
+    "adminSuite": 72,
+    "customerTypecheck": "PASS",
+    "adminTypecheck": "PASS",
+    "requiredLint": "PASS",
+    "changedFilesLint": {
+      "errors": 0,
+      "warnings": 26,
+      "beforeWarnings": 26,
+      "newWarnings": 0
+    },
+    "cmsSourceCoverage": "PASS",
+    "adminEditModeCampaignSelection": "PASS"
+  },
+  "productionDatabaseModified": false,
+  "cmsPublished": false,
+  "reviewMetadataChanged": false,
+  "financialRulesChanged": false,
+  "appReleased": false,
+  "limits": [
+    "Home component tests execute the actual JSX and handlers with native primitives represented by a local element tree. No physical device is claimed.",
+    "Public readback executes the actual consumer CMS loader against the real public Edge endpoint using a public client key. Native persistent-cache/reload acceptance remains unverified.",
+    "Only published home presentation uses its existing English source fallback. Critical checkout, policy/FAQ review and Creole translation-review boundaries are unchanged."
+  ]
+}

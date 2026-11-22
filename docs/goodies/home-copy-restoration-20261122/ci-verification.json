@@ -1,0 +1,71 @@
+{
+  "classification": "PASS",
+  "scope": "Tested functional customer/admin revisions; native device acceptance is separate",
+  "customer": "dcc55c2228bf607c0880924bf3f1b84a1955eecc",
+  "admin": "b4fedee2c6f23839e7723585ff21587946a27f7b",
+  "runs": [
+    {
+      "id": 45005345668,
+      "name": "TypeScript and Expo build checks",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "dcc55c2228bf607c0880924bf3f1b84a1955eecc"
+    },
+    {
+      "id": 45005345658,
+      "name": "Expo validation",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "dcc55c2228bf607c0880924bf3f1b84a1955eecc"
+    },
+    {
+      "id": 45005372255,
+      "name": "Admin validation",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "dd05831db138ae7a09d2a10e6c54af3639858261"
+    },
+    {
+      "id": 45005345823,
+      "name": "Goodies Android development build",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "dcc55c2228bf607c0880924bf3f1b84a1955eecc"
+    },
+    {
+      "id": 45006666878,
+      "name": "Admin validation",
+      "status": "completed",
+      "conclusion": "success",
+      "sha": "b4fedee2c6f23839e7723585ff21587946a27f7b"
+    }
+  ],
+  "tests": {
+    "customer": 291,
+    "admin": 72,
+    "newHomeRegressionCases": 6
+  },
+  "cmsCoverage": {
+    "fields": 1926,
+    "routes": 34,
+    "groups": 73
+  },
+  "nativeWorkflow": {
+    "id": 45005345823,
+    "name": "Goodies Android development build",
+    "status": "completed",
+    "conclusion": "success",
+    "sha": "dcc55c2228bf607c0880924bf3f1b84a1955eecc"
+  },
+  "appReleased": false,
+  "androidArtifacts": [
+    {
+      "id": 14747353218,
+      "name": "goodies-android-development-dcc55c2228bf607c0880924bf3f1b84a1955eecc",
+      "digest": "sha256:6b34dd6c70e6b53043263f83716db54ce67d4caa868ac1950f748560daaca1cf",
+      "size": 58861319
+    }
+  ],
+  "androidScope": "ARM64 compilation and debug-signature verification only; not a configured private-phone installer or physical-device acceptance.",
+  "checkedAt": "2026-11-22 09:19:01 UTC"
+}

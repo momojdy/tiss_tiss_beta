@@ -22,7 +22,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: momojdy/tiss-admin
-          ref: 243a183b25ec084f700387e39a63b67142a9913b
+          ref: b4fedee2c6f23839e7723585ff21587946a27f7b
           path: tiss-admin
           persist-credentials: false
       - uses: actions/setup-node@v4

@@ -42,7 +42,8 @@
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
         "Source registry: 34 customer routes, 1347 extracted bindings, zero unresolved recognized literal registry targets.",
-        "Real local purchasing, history visibility, review, cancellation and consumer CMS load paths pass."
+        "Real local purchasing, history visibility, review, cancellation and consumer CMS load paths pass.",
+        "Home copy regression is reproduced against the previous revision and fixed: original service/promotion/category text, existing destinations and the first-order eligibility restriction pass six new tests. The added Home no-store banner is removed. Actual public content loading confirms the corrected accessors."
       ],
       "remainingAcceptance": [
         "Every installed screen/control and 17 computed navigation targets require runtime acceptance."
@@ -125,7 +126,9 @@
       "verifiedSubchecks": [
         "1926 registered fields in 73 groups across 34 registered customer routes.",
         "Real local draft permissions, draft isolation, protected fees and publication to actual consumer module pass; 2102 candidate labels roundtrip.",
-        "Public CMS locale validation repaired and deployed; malformed admin responses rejected."
+        "Public CMS locale validation repaired and deployed; malformed admin responses rejected.",
+        "Published English home source remains visible with legacy draft field metadata; reviewed translations retain precedence. Stored content and translation-review flags are unchanged. Matching editor preview is synchronized.",
+        "The isolated Edit preview makes the first-order campaign selectable without changing customer or View-mode eligibility."
       ],
       "remainingAcceptance": [
         "Every editable field has not been manually previewed/published/reloaded on an installed app. Native cache/realtime acceptance remains open."
@@ -166,7 +169,7 @@
       "name": "Automated tests and builds",
       "classification": "NOT VERIFIED",
       "verifiedSubchecks": [
-        "Latest scoped verification: 516 core tests (285 customer, 71 admin, 47 cross-role, 113 Deno), zero skipped; 48 native PostgreSQL checks; 35 actual local API/Storage/CMS/recovery scenarios; 37-migration target; exact-revision Expo validation and TypeScript/export CI pass. Existing native compile evidence is separate from phone acceptance.",
+        "Latest scoped verification: 523 core tests (291 customer, 72 admin, 47 cross-role, 113 Deno), zero skipped; 48 native PostgreSQL checks; 35 actual local API/Storage/CMS/recovery scenarios; 37-migration target; exact-revision Expo validation and TypeScript/export CI pass. Existing native compile evidence is separate from phone acceptance.",
         "Earlier recorded evidence: 501 core tests (282 customer) with zero skipped; 40 native PostgreSQL checks; 35 actual local API/Storage/recovery scenarios; 44 local API/recovery scenarios including 12 real Stripe sandbox cases; current CI, TypeScript, lint and exports pass. Counts overlap only where explicitly stated. Android development compilation/signature and anonymous browser startup pass.",
         "Initial private iOS build exposed Stripe SPM static-linkage failure. The documented dynamic-framework fix passes actual generated configuration, 282 customer regressions, TypeScript and lint; the private iOS simulator build now compiles successfully; downloaded universal arm64/x86_64 artifact identity is verified.",
         "Latest Android ARM64 development compilation and apksigner checks pass at the same source commit. No app release or production signing."
@@ -191,8 +194,9 @@
   "leakedPasswordProtectionDeferredByUser": true,
   "activationEvidence": "../activation-20261122/live-activation-verification.json",
   "latestVerifiedSourceCommits": {
-    "customer": "8c1626135d62f92caf8959b4e21fcbe1484dcd53",
-    "admin": "243a183b25ec084f700387e39a63b67142a9913b"
+    "customer": "dcc55c2228bf607c0880924bf3f1b84a1955eecc",
+    "admin": "b4fedee2c6f23839e7723585ff21587946a27f7b"
   },
-  "latestEvidence": "../fx-refresh-20261122/ci-verification.json"
+  "latestEvidence": "../fx-refresh-20261122/ci-verification.json",
+  "homeCopyFollowupEvidence": "../home-copy-restoration-20261122/README.md"
 }

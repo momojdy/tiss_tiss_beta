@@ -11,7 +11,7 @@
   "sharedEnvironmentVariableNames": [],
   "appleDeveloperMembership": false,
   "appleMembershipEvidence": "Owner explicitly answered No.",
-  "googleCloudProject": "Owner is unsure; project selector check pending.",
+  "googleCloudProject": "Wantiss is visible in Google Cloud; confirmed by the owner. Project permissions and Maps/FCM credentials are not yet verified.",
   "physicalDeviceConnected": false,
   "privatePhoneBuildsCompleted": false,
   "appReleased": false,
@@ -36,7 +36,12 @@
     "scope": "Platform-specific local fields only; Android/iOS and missing-runtime-key regression checks pass. Managed signing, key restrictions and device behavior are not certified."
   },
   "ownerNextStep": {
-    "url": "https://console.cloud.google.com/",
-    "instruction": "On a phone, sign in with the Google account used for Wantiss, tap the project selector and check whether Wantiss is listed. No passwords or keys should be sent in chat."
+    "instruction": "Configure Android Maps and FCM delivery credentials for the existing Wantiss project using the official owner account flow and protected EAS credential storage."
+  },
+  "ownerProjectConfirmation": {
+    "name": "Wantiss",
+    "confirmedAt": "2026-11-22T09:02:55.962Z",
+    "source": "Owner message",
+    "credentialsConfigured": false
   }
 }
