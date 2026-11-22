@@ -55,7 +55,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.doesNotMatch(home,/Replay sample container loading animation/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
  assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy\?\.capacityCbm\?\?0,containerOccupancy\?\.loadedCbm\?\?0/);
- assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
+ assert.match(home,/const visible=EMPTY\?demoCount:0/);
  assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13600/);
  assert.match(home,/demoCount=cycle<4800/);
  assert.match(home,/cycle\/4800/);
@@ -64,10 +64,10 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.match(home,/demoBlink=demoShowLoad&&Math\.floor\(\(cycle-4800\)\/500\)%2===0/);
  assert.match(home,/const timer=setInterval\(tick,100\)/);
  assert.match(home,/demoCurrent:i===6&&j===1&&l===nl-1&&q===0/);
- assert.match(home,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
+ assert.match(home,/highlight=demoBlink&&c\.demoCurrent/);
  assert.match(home,/if\(EMPTY&&demoShowLoad\)\{const carton=cargo\.find\(c=>c\.demoCurrent\)/);
  assert.match(home,/cx\.fillText\('My current loaded space',labelX,labelY\)/);
- assert.match(home,/highlight\?'#FFE36B':isYours\?'#A90E02':c\.k/);
+ assert.match(home,/highlight\?'#FFE36B':c\.k/);
  assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
  assert.match(home,/<WebView/);
@@ -113,9 +113,9 @@ test('lower bar alternates every seven seconds only when container selected',()=
  assert.match(home,/Loaded <Tx/);
  assert.match(home,/Inbound <Tx/);
  assert.match(home,/Not allocated <Tx/);
- assert.match(home,/containerOccupancy\.otherCargoCbm\.toFixed\(1\)/);
- assert.match(home,/containerOccupancy\.yourSpaceCbm\.toFixed\(1\)/);
- assert.match(home,/containerOccupancy\.freeCbm\.toFixed\(1\)/);
+ assert.match(home,/fmt\(containerOccupancy\.otherCargoCbm\)/);
+ assert.match(home,/fmt\(containerOccupancy\.yourSpaceCbm\)/);
+ assert.match(home,/fmt\(containerOccupancy\.freeCbm\)/);
  assert.doesNotMatch(home,/Your loading progress/);
  assert.doesNotMatch(home,/Container progress · 68 CBM/);
  assert.doesNotMatch(home,/Shared container · 68 CBM total capacity/);
@@ -163,14 +163,14 @@ test('3D WebView script remains syntactically valid after animation changes',()=
  const js=array.elements.map(element=>element.text).join('\n');
  assert.doesNotThrow(()=>new (require('node:vm').Script)(js));
  assert.match(js,/demoCount/);
- assert.match(js,/LOADED\/RESERVED/);
+ assert.match(js,/makeRealCargo\(LOADED,YOUR_LOADED\)/);
  const ast=ts.createSourceFile('container-engine.js',js,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
  assert.equal(ast.parseDiagnostics.length,0,'Embedded WebView code must parse');
  const draw=ast.statements.find(stmt=>ts.isFunctionDeclaration(stmt)&&stmt.name?.text==='draw');
  assert.ok(draw&&draw.body,'3D draw function must exist');
- assert.match(draw.body.getText(ast),/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/,
+ assert.match(draw.body.getText(ast),/cx\.fillText\(formatCbm\(FREE\)\+' CBM free'/,
    'Free CBM must be drawn inside draw(), not at top-level before fit()');
- assert.doesNotMatch(js.slice(draw.end),/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/);
+ assert.doesNotMatch(js.slice(draw.end),/cx\.fillText\(formatCbm\(FREE\)\+' CBM free'/);
 });
 
 test('rear 3D corner hardware is depth-sorted behind loaded boxes at every rotation',()=>{
@@ -224,12 +224,12 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.match(home,/DEMO=document\.documentElement\.dataset\.demo==='true'/);
  assert.doesNotMatch(home,/Sample cargo/);
  assert.match(home,/YOUR_LOADED=Number\(document\.documentElement\.dataset\.yourLoaded\)/);
- assert.match(home,/cx\.fillText\('My current loaded space '\+YOUR_LOADED\.toFixed\(2\)/);
- assert.match(home,/cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free',f\[0\],f\[1\]\)/);
+ assert.match(home,/cx\.fillText\('My current loaded space '\+formatCbm\(YOUR_LOADED\)/);
+ assert.match(home,/cx\.fillText\(formatCbm\(FREE\)\+' CBM free',f\[0\],f\[1\]\)/);
  assert.match(home,/const f=proj\(\[freeRatio>0\?\(freeX0\+innerX1\)\/2:innerX1-\.12,1\.3,0\]\)/);
  assert.match(home,/cx\.font='700 10px -apple-system,Arial,sans-serif'/);
- assert.match(home,/cx\.strokeStyle=C\.halo;cx\.strokeText\(FREE\.toFixed\(1\)\+' CBM free'/);
- assert.match(home,/cx\.fillStyle=C\.fl;cx\.fillText\(FREE\.toFixed\(1\)\+' CBM free'/);
+ assert.match(home,/cx\.strokeStyle=C\.halo;cx\.strokeText\(formatCbm\(FREE\)\+' CBM free'/);
+ assert.match(home,/cx\.fillStyle=C\.fl;cx\.fillText\(formatCbm\(FREE\)\+' CBM free'/);
  assert.match(home,/yourPhysicallyLoadedCbm\?\?0,containerOccupancy\?\.freeCbm/);
 });
 
@@ -264,7 +264,7 @@ test('3D loaded cargo and lower My space use physically loaded CBM, not reserved
  const rows=module.exports.KONSOLISS_DEMO_CONTAINERS;
  assert.equal(rows.length,8);
  assert.equal(rows[1].yourSpaceCbm,2);
- assert.equal(rows[1].yourLoadedCbm,0.6);
+ assert.equal(rows[1].yourLoadedCbm,0.02);
  assert.equal(rows[4].loadedCbm,48.2);
  assert.equal(rows[4].yourSpaceCbm,4);
  assert.equal(rows[4].yourLoadedCbm,2);
@@ -318,27 +318,64 @@ test('verified 40HQ backend is the source of truth for selected container 3D vol
 });
 
 
-test('physical 40HQ 3D boxes highlight only the verified customer fraction of loaded cargo',()=>{
+test('real 40HQ parcels use fractional volume geometry instead of whole-carton rounding',()=>{
  const parsed=ts.createSourceFile('home.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
  const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
    .find(d=>d.name.getText(parsed)==='CONTAINER_JS');
  const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
- assert.match(engine,/RESERVED>0\?Math\.ceil\(cargo\.length\*Math\.min\(1,LOADED\/RESERVED\)\)/);
- assert.match(engine,/boxCount=cargo\.slice\(0,visible\)\.filter\(c=>!c\.pal\)\.length/);
- assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
- assert.match(engine,/isYours=!EMPTY&&boxIndex>=boxCount-ownCount/);
- assert.match(engine,/isYours\?'#A90E02'/);
- assert.match(engine,/freeRatio=!EMPTY&&RESERVED>0&&Number\.isFinite\(FREE\)\?Math\.max\(0,Math\.min\(1,FREE\/RESERVED\)\):0/);
- assert.match(engine,/innerX0=-HX\+\.12,innerX1=HX-\.12,freeX0=innerX1-\(innerX1-innerX0\)\*freeRatio/);
- assert.match(engine,/if\(freeRatio>0\)\{const fz=\[freeX0,innerX1,\.15,H-\.15,-HZ\+\.12,HZ-\.12\]/);
- assert.match(engine,/abox\(2,fz,'#FFF1A0',C\.fv\)/);
- assert.match(engine,/line\(2\.5,a,b,C\.ac,\.55,\.9,\[3,2\.5\]\)/);
- assert.doesNotMatch(engine,/const fz=\[CE\+\.05,HX-\.05/);
- // The visual marker is decorative; the verified cargo ratio remains source-owned.
- assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
+ assert.match(engine,/const realCargo=!EMPTY&&RESERVED>0\?makeRealCargo\(LOADED,YOUR_LOADED\):\[\]/);
+ assert.match(engine,/if\(!EMPTY\)for\(const item of realCargo\)abox\(1\.1,item\.b,item\.own\?'#A90E02':'#CDAA7D'/);
+ assert.match(engine,/geo=cellGeo\*\(v\/unit\)/);
+ assert.match(engine,/pushCell\(i\+1,u,true\)/);
+ assert.doesNotMatch(engine,/boxCount=cargo\.slice\(0,visible\)/);
+ assert.match(engine,/freeRatio=!EMPTY&&RESERVED>0&&Number\.isFinite\(FREE\)/);
+ assert.match(engine,/abox\(\.85,fz,'#FFF1A0',C\.fv\)/);
  assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
 });
 
+test('0.02 CBM customer parcels retain exact volume and visibly smaller geometry',()=>{
+ const parsed=ts.createSourceFile('home.tsx',home,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+ const decl=parsed.statements.flatMap(stmt=>ts.isVariableStatement(stmt)?Array.from(stmt.declarationList.declarations):[])
+   .find(d=>d.name.getText(parsed)==='CONTAINER_JS');
+ const engine=decl.initializer.expression.expression.elements.map(element=>element.text).join('\n');
+ const ast=ts.createSourceFile('engine.js',engine,ts.ScriptTarget.Latest,true,ts.ScriptKind.JS);
+ const fn=ast.statements.find(stmt=>ts.isFunctionDeclaration(stmt)&&stmt.name?.text==='makeRealCargo');
+ assert.ok(fn?.body,'Fractional cargo planner must be extracted from WebView');
+ const make=require('node:vm').runInNewContext('(function(){const HX=6,H=2.7,HZ=2.35/2;'+fn.getText(ast)+';return makeRealCargo})()');
+ const cellGeo=((12-.24)/22)*((2.7-.3)/3)*((2.35-.24)/2);
+ const cellUnit=68/(22*3*2);
+ const volumeOf=b=>(b[1]-b[0])*(b[3]-b[2])*(b[5]-b[4])/cellGeo*cellUnit;
+ const scenarios=[
+   [0,0],[.02,.02],[.04,.02],[.5,.02],[8.4,.02],
+   [31.5,1.2],[51.7,.5],[67.98,.02],[68,0.02],
+ ];
+ for(const [loaded,mine] of scenarios){
+   const boxes=make(loaded,mine);
+   const total=boxes.reduce((sum,b)=>sum+b.cbm,0);
+   const owned=boxes.filter(b=>b.own).reduce((sum,b)=>sum+b.cbm,0);
+   assert.ok(Math.abs(total-loaded)<0.000001,'Total '+loaded);
+   assert.ok(Math.abs(owned-mine)<0.000001,'Own '+mine+' in '+loaded);
+   assert.ok(boxes.length<=133);
+   for(const item of boxes){
+     assert.ok(item.b.every(Number.isFinite));
+     assert.ok(item.b[0]>=-6&&item.b[1]<=6&&item.b[0]<item.b[1]);
+     assert.ok(item.b[2]>=0&&item.b[3]<=2.7&&item.b[2]<item.b[3]);
+     assert.ok(item.b[4]>=-1.175&&item.b[5]<=1.175&&item.b[4]<item.b[5]);
+     assert.ok(Math.abs(volumeOf(item.b)-item.cbm)<0.000001,
+       'Box geometry must be proportional to its actual CBM');
+   }
+ }
+ const tiny=make(.02,.02)[0];
+ assert.ok(tiny&&tiny.own);
+ assert.ok(tiny.b[1]-tiny.b[0]<(12-.24)/22);
+ assert.ok(tiny.b[3]-tiny.b[2]<(2.7-.3)/3);
+ assert.ok(tiny.b[5]-tiny.b[4]<(2.35-.24)/2);
+ const alongside=make(8.4,.02).find(b=>b.own);
+ assert.ok(alongside);
+ assert.ok(alongside.b[1]-alongside.b[0]>0.1,'Own minimum-size parcel is not an invisible flat slice');
+ assert.match(home,/const fmt=\(n:number\)=>n\.toFixed\(2\)/);
+ assert.match(home,/containerRatio>0&&containerRatio<0\.01/);
+});
 
 test('40HQ free-space overlay spans the free fraction of the entire interior, never a fixed corner',()=>{
  const interiorLength=12-0.24;
