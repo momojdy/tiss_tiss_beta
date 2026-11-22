@@ -35,22 +35,23 @@ test('customer calendar days and slot bounds stay correct across daylight-saving
 const source=fs.readFileSync('src/features/Goodies/components/Sheets.tsx','utf8'),ast=ts.createSourceFile('Sheets.tsx',source,99,true,ts.ScriptKind.TSX);
 const declarations=ast.statements.filter(n=>ts.isFunctionDeclaration(n)&&['isAvailableInstant','ScheduleSheet'].includes(n.name?.text)).map(n=>n.getText(ast)).join('\n');
 function pickerHarness(platform='ios',available=date=>date.getUTCDay()===1&&date.getUTCHours()>=10&&date.getUTCHours()<17){
- const now=Date.parse('2026-11-22T16:45:00Z');class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
+ let now=Date.parse('2026-11-22T16:45:00Z');class Clock extends Date{constructor(...args){super(...(args.length?args:[now]));}static now(){return now;}}
  const state=[],memo=[],effects=[],deps=[];let cursor=0,changed=false;
  const differs=(before,after)=>!before||after.some((value,i)=>!Object.is(value,before[i]));
- const S={cart:{sid:'store'},sch:0,lang:'en',mode:'delivery'},calls=[];
+ const S={cart:{sid:'store'},sch:0,lang:'en',mode:'delivery'},calls=[],dialogs=[],intervals=[];
  const React={createElement:(type,props,...children)=>({type,props:{...props,children}})},module={exports:{}};
  const context={module,exports:module.exports,React,Date:Clock,Intl,STB:{store:{live:true,open:false,acceptScheduledOrders:true,scheduleHours:{Monday:{open:'10:00',close:'17:00'}}}},S,Platform:{OS:platform},
   useTheme:()=>({br:'orange',soft:'#eee',line:'#ddd',mut:'#666',ink:'#111'}),label:(_key,fallback)=>fallback,wantissLocale:()=> 'en',cartStoreIds:()=>['store'],canScheduleGoodiesStore:(_id,timestamp)=>available(new Date(timestamp)),
   useState:initial=>{const id=cursor++;if(!(id in state))state[id]=typeof initial==='function'?initial():initial;return[state[id],value=>{const next=typeof value==='function'?value(state[id]):value;if(!Object.is(next,state[id])){state[id]=next;changed=true;}}];},
   useMemo:(fn,d)=>{const id=cursor++;if(differs(deps[id],d)){memo[id]=fn();deps[id]=d;}return memo[id];},
-  useEffect:(fn,d)=>{const id=cursor++;if(differs(deps[id],d)){deps[id]=d;effects.push(fn);}},setInterval:()=>1,clearInterval:()=>{},
+  useEffect:(fn,d)=>{const id=cursor++;if(differs(deps[id],d)){deps[id]=d;effects.push(fn);}},setInterval:fn=>{intervals.push(fn);return intervals.length;},clearInterval:()=>{},
   A:{setSch:value=>{S.sch=value;calls.push(value);},setMode:value=>{S.mode=value;}},toast:()=>{},...scheduling.exports,
-  View:'View',T:'T',SegSchedule:'SegSchedule',ScrollView:'ScrollView',Pressable:'Pressable',DateTimePicker:'DateTimePicker',Cta:'Cta'};
+  View:'View',T:'T',Row:'Row',Icon:'Icon',SegSchedule:'SegSchedule',ScrollView:'ScrollView',Pressable:'Pressable',DateTimePicker:'DateTimePicker',DateTimePickerAndroid:{open:props=>dialogs.push(props)},Cta:'Cta'};
  vm.runInNewContext(compile(declarations+'\nmodule.exports=ScheduleSheet;'),context);
  function render(){let tree,attempt=0;do{changed=false;cursor=0;tree=module.exports({close:()=>{},inline:true,autoApply:true});effects.splice(0).forEach(fn=>fn());assert.ok(++attempt<10,'Schedule hooks did not settle');}while(changed);return tree;}
  const nodes=node=>{if(Array.isArray(node))return node.flatMap(nodes);if(!node||typeof node!=='object')return[];return[node,...nodes(node.props?.children)];};
- return{S,calls,render,picker:tree=>nodes(tree).find(n=>n.type==='DateTimePicker'),nodes};
+ const picker=tree=>{if(platform!=='android')return nodes(tree).find(n=>n.type==='DateTimePicker');const trigger=nodes(tree).find(n=>n.type==='Pressable'&&n.props.accessibilityRole==='button');if(!trigger)return;trigger.props.onPress();return{props:dialogs.at(-1)};};
+ return{S,calls,dialogs,render,picker,nodes,tick:ms=>{now+=ms;intervals.forEach(fn=>fn());}};
 }
 test('the actual inline picker saves its automatic minimum and keeps Android/iOS events within bounds',()=>inZone('UTC',()=>{
  for(const platform of ['ios','android']){const h=pickerHarness(platform);let tree=h.render(),picker=h.picker(tree);assert.ok(picker);assert.equal(h.S.sch,Date.parse('2026-11-23T10:00:00Z'));assert.equal(stamp(picker.props.value),h.S.sch);
@@ -62,4 +63,10 @@ test('the actual inline picker saves its automatic minimum and keeps Android/iOS
 }));
 test('a store with no real future slots never gets a midnight picker or an invented scheduled time',()=>inZone('UTC',()=>{
  const h=pickerHarness('ios',()=>false),tree=h.render();assert.equal(h.picker(tree),undefined);assert.equal(h.S.sch,0);
+}));
+test('Android opens its clock only on a tap and never reopens it after confirmation, cancellation or a refresh',()=>inZone('UTC',()=>{
+ const h=pickerHarness('android');let tree=h.render();assert.equal(h.dialogs.length,0);
+ let picker=h.picker(tree);assert.equal(h.dialogs.length,1);picker.props.onChange({type:'set'},new Date('2026-11-23T11:25:00Z'));
+ tree=h.render();h.tick(30_000);tree=h.render();assert.equal(h.dialogs.length,1);assert.equal(h.S.sch,Date.parse('2026-11-23T11:25:00Z'));
+ picker=h.picker(tree);assert.equal(h.dialogs.length,2);picker.props.onChange({type:'dismissed'});h.render();h.tick(30_000);h.render();assert.equal(h.dialogs.length,2);
 }));

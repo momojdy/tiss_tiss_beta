@@ -30,7 +30,7 @@ test('finishing background refresh does not reset a carousel user back to Home a
  const source=fs.readFileSync('src/features/Goodies/GoodiesApp.tsx','utf8'),app=ts.createSourceFile('GoodiesApp.tsx',source,99,true,ts.ScriptKind.TSX);let effect;
  function visit(n){if(ts.isCallExpression(n)&&n.expression.getText(app)==='useEffect'&&n.arguments[0]?.getText(app).includes('const contentReady = loadContent()'))effect=n.arguments[0].getText(app);ts.forEachChild(n,visit);}visit(app);assert.ok(effect);
  let finish;const remote=new Promise(resolve=>{finish=resolve;}),S={stack:[],orders:[]},resets=[],module={exports:{}};
- const context={module,S,embedded:true,homeEntry:true,initialRoute:undefined,Date,
+ const context={module,S,embedded:true,catalogueEntry:false,initialRoute:undefined,Date,
   load:async ready=>{ready();await remote;},loadContent:async()=>{},loadBuilders:async()=>{},startGoodiesSync:()=>()=>{},
   reset:route=>{S.stack=[{r:route}];resets.push(route);},setGoodiesLoaded:()=>{},setStartupError:()=>{},setAccountHydrated:()=>{},
   AppState:{addEventListener:()=>({remove(){}})},setInterval:()=>1,clearInterval:()=>{}};

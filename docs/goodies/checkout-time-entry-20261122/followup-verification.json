@@ -1,0 +1,21 @@
+{
+  "date": "2026-11-22",
+  "scope": "Shared-shop-only entry loader, one-use shell destination, owned local hydration, Android clock invocation and isolated CMS preview",
+  "classification": "PASS",
+  "focusedChecks": {
+    "entryAndHydration": {"passed": 13, "failed": 0},
+    "selectedCmsPreview": {"passed": 3, "failed": 0},
+    "androidAndIosPicker": {"passed": 8, "failed": 0},
+    "customerTypeScript": "PASS",
+    "adminTypeScript": "PASS",
+    "requiredLint": "PASS",
+    "changedRuntimeLintErrors": 0,
+    "cmsCoverage": {"routes": 34, "fields": 1921}
+  },
+  "fullSuiteRerunForLoaderRefinement": false,
+  "physicalDeviceAcceptance": "NOT VERIFIED",
+  "appReleasePerformed": false,
+  "otaPerformed": false,
+  "cmsPublished": false,
+  "productionDatabaseChanged": false
+}
