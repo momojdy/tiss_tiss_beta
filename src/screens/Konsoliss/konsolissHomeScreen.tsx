@@ -145,11 +145,10 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
     currentKonsolissContainerLabel({kind:'assigned',number:item.number,status:item.status});
   // Rotate only when a container is selected; always start with customer progress.
   useEffect(()=>{
-    if(!hasCurrentContainer){setProgressView('customer');return;}
     // A manual arrow tap changes progressView, resets this timeout and guarantees 7 full seconds.
     const timeout=setTimeout(()=>setProgressView(view=>view==='customer'?'container':'customer'),7000);
     return()=>clearTimeout(timeout);
-  },[hasCurrentContainer,selectedContainer?.id,progressView]);
+  },[selectedContainer?.id,progressView]);
   const verifiedOccupancy=useKonsolissContainerOccupancy(selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
   const containerOccupancy=verifiedOccupancy;
   // "Your space" in the lower container bar is loaded cargo, not reserved allocation.
@@ -206,26 +205,26 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
       <View style={{paddingHorizontal:24,marginTop:12}}>
-        {progressView==='container'&&hasCurrentContainer?<>
+        {progressView==='container'?<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
             <View style={{flex:1,height:10,borderRadius:5,overflow:'hidden',backgroundColor:t.tint,flexDirection:'row'}}>
               <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.otherCargoCbm/containerOccupancy.capacityCbm*100)):0}%`,backgroundColor:'#CDAA7D'}}/>
               <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.yourSpaceCbm/containerOccupancy.capacityCbm*100)):0}%`,backgroundColor:t.ac}}/>
             </View>
-            {hasCurrentContainer?<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
+            {<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
             onPress={()=>setProgressView(view=>view==='customer'?'container':'customer')}
             hitSlop={10} style={{paddingHorizontal:5,paddingVertical:5,justifyContent:'center',alignItems:'center'}}>
             <Svg width={30} height={19} viewBox="0 0 30 19" fill="none" stroke={t.ac} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
               <Path d="M3 5h23m-5-4 5 4-5 4M27 14H4m5-4-5 4 5 4"/>
             </Svg>
-          </Pressable>:null}
+          </Pressable>}
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:7}}>
             <Tx style={s.leg}>{copy['home.otherCargo']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.otherCargoCbm):'—'}</Tx></Tx>
             <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.yourSpaceCbm):'—'}</Tx></Tx>
             <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.freeCbm):'—'}</Tx></Tx>
           </View>
-          {!containerOccupancy?<Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container totals appear once all loaded cargo has been verified.</Tx>:null}
+          {!containerOccupancy?<Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container totals appear when a container is assigned and its loaded cargo is verified.</Tx>:null}
         </>:<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
             <View style={{flex:1,flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',gap:2}}>
@@ -235,13 +234,13 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
             <View style={{width:`${Math.max(0,Math.min(100,inboundRatio*100))}%`,backgroundColor:t.ac}}/>
               <View style={{flex:1,backgroundColor:t.tint}}/>
             </View>
-            {hasCurrentContainer?<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
+            {<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
             onPress={()=>setProgressView(view=>view==='customer'?'container':'customer')}
             hitSlop={10} style={{paddingHorizontal:5,paddingVertical:5,justifyContent:'center',alignItems:'center'}}>
             <Svg width={30} height={19} viewBox="0 0 30 19" fill="none" stroke={t.ac} strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round">
               <Path d="M3 5h23m-5-4 5 4-5 4M27 14H4m5-4-5 4 5 4"/>
             </Svg>
-          </Pressable>:null}
+          </Pressable>}
           </View>
           <View style={{flexDirection:'row',justifyContent:'space-between',marginTop:7}}>
             <Tx style={s.leg}>Loaded <Tx style={{color:t.tx}}>{loadedValue}</Tx></Tx>
