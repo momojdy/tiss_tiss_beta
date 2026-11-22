@@ -149,6 +149,10 @@ test('load progress math does not treat cargo sent as loaded or inbound',()=>{
  assert.equal(multi.reservedCbm,100);
  assert.equal(multi.allocatedCbm,72);
  assert.equal(multi.loadedPercent,72);
+ const minimum=parse({reserved_cbm:68,sent_cbm:0.02,inbound_to_container_cbm:0,loaded_cbm:0.02});
+ assert.ok(minimum);
+ assert.equal(minimum.loadedCbm,0.02);
+ assert.equal(minimum.loadedPercent,0.03);
 });
 
 test('3D WebView script remains syntactically valid after animation changes',()=>{
