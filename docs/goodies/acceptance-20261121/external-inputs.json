@@ -21,14 +21,15 @@
   "requiredOwnerInputs": [
     "Identify or connect the existing Wantiss Google Cloud/Firebase project for Android maps/push.",
     "Complete Apple device signing setup for the iPhone test build.",
-    "Approve the secure Supabase backup-connection flow if required; no passwords or keys in chat.",
-    "Run guided private installed-build checks on the Android phone and iPhone."
+    "Run guided private installed-build checks on the Android phone and iPhone.",
+    "Explicitly approve the concrete private encrypted export payload and destination if desired; automatic review blocked this action. No additional Supabase sign-in is required."
   ],
   "ownerConfirmedAvailable": {
     "expoAccount": true,
     "stripeAccount": true,
     "androidPhone": true,
-    "iPhone": true
+    "iPhone": true,
+    "desktopComputer": false
   },
   "expoCliSession": {
     "authenticated": true,
@@ -44,7 +45,11 @@
     "credentialsRecorded": false
   },
   "supabaseCliBackupAccess": {
-    "authenticated": false,
-    "status": "Awaiting owner verification through the official Supabase CLI browser login; no password reset or database change requested."
+    "authenticated": true,
+    "projectRef": "ycbirmgppwavorwudlrv",
+    "sessionSavedByOfficialCli": true,
+    "credentialValueRecorded": false,
+    "standardDatabaseTransportAvailable": false,
+    "evidence": "production-backup-access.json"
   }
 }

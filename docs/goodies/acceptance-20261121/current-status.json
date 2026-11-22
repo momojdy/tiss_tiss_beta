@@ -128,6 +128,12 @@
       "sourceCommit": "88cb258140a4fa8ef2d5424e09db052a52eae908",
       "physicalDevice": "NOT VERIFIED",
       "productionSigning": "NOT VERIFIED"
+    },
+    "supabaseCliSignIn": {
+      "classification": "PASS",
+      "projectRef": "ycbirmgppwavorwudlrv",
+      "evidence": "production-backup-access.json",
+      "credentialsRecorded": false
     }
   },
   "notVerified": [
@@ -204,5 +210,7 @@
   "hostedOperationalReceiptsFromPriorProviderRuns": 17,
   "hostedSyntheticFinancialRecordsFound": 0,
   "historicalTestSafetyFinding": "stripe-webhook-configuration.json",
-  "securityAdvisors": "post-payment-security-advisors.json"
+  "securityAdvisors": "post-payment-security-advisors.json",
+  "productionBackupEvidence": "production-backup-access.json",
+  "privateExportApprovalPlan": "private-export-approval-plan.json"
 }

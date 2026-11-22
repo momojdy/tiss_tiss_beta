@@ -1,0 +1,67 @@
+{
+  "classification": "NOT VERIFIED",
+  "status": "AWAITING_EXPLICIT_OWNER_APPROVAL",
+  "observedAt": "2026-11-22T01:36:45.304577+00:00",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "purpose": "A private read-only data/catalog and Storage export while the workspace cannot connect through the native PostgreSQL protocol. This is not a pg_dump backup and is not certified for full restoration.",
+  "scope": [
+    "All regular and partitioned non-system database tables, including account/Auth and financial records.",
+    "Catalog definitions, policies, grants and migration records.",
+    "Existing stored-file bytes; the last observed inventory contains five files."
+  ],
+  "destination": {
+    "encryptedArchiveDirectory": "/tmp/wantiss-production-backup",
+    "keyDirectory": "/tmp/wantiss-production-backup-keys",
+    "committedToGitHub": false,
+    "directoryPermissions": "0700",
+    "filePermissions": "0600",
+    "cipher": "AES-256-GCM",
+    "plaintextDataResponseFile": false
+  },
+  "controls": [
+    "Official CLI credentials stay private; no API key or credential is printed.",
+    "Read-only SQL requests and stored-file GETs only; no production data writes, secret rotation, app deployment or hosted test project.",
+    "Stored-file metadata is checked again after download; changes stop archive creation.",
+    "The encryption key is kept in a separate private directory outside both repositories."
+  ],
+  "limitations": [
+    "This custom data/catalog export does not establish full database restoration.",
+    "Provider runtime secrets, role passwords, large-object contents and foreign-table contents are not recovered.",
+    "Database rows and Storage file bytes are captured separately; cross-service atomic recovery is not certified.",
+    "Temporary workspace files are not an off-site backup."
+  ],
+  "preparationVerification": {
+    "scriptSyntax": "PASS",
+    "syntheticEncryptionChecks": "PASS",
+    "checks": [
+      "exact byte recovery including large decimal text",
+      "tampering rejected",
+      "wrong key rejected",
+      "private permissions",
+      "no plaintext payload in ciphertext"
+    ],
+    "productionDataUsedForChecks": false
+  },
+  "scripts": [
+    {
+      "path": "/tmp/wantiss-production-backup/export-readonly.sql",
+      "sha256": "8dac69117784cdb2fe804d58c4903acd049b05dc1dce4c2f996ae4d6d44adb18"
+    },
+    {
+      "path": "/tmp/wantiss-production-backup/export-via-api.cjs",
+      "sha256": "33770ac1e62d56c975dc492cfe0a23f5106d13cf61b12eef06beda1f91a8adfa"
+    },
+    {
+      "path": "/tmp/wantiss-production-backup/private-archive.cjs",
+      "sha256": "2e69772cfa5b5690ee495f962f3cc3205017fc89ea6bccf3ccfbfcb3147cfcf3"
+    }
+  ],
+  "approvalReview": {
+    "result": "REJECTED",
+    "action": "Custom full production data/catalog export to the local workspace.",
+    "statedReason": "Sensitive financial/personal data egress; the general backup instruction did not explicitly approve this complete payload and local destination.",
+    "retriedOrBypassedAfterRejection": false
+  },
+  "customerOrFinancialDataExported": false,
+  "storedFilesDownloaded": false
+}

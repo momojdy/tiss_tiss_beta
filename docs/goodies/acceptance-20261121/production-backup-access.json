@@ -6,11 +6,11 @@
   "hostedTestProjectCreated": false,
   "existingConnectorCanManageBackups": false,
   "supabaseCliVersion": "2.81.3",
-  "cliAuthenticationCheck": "No access token supplied; official browser sign-in started and awaits owner verification.",
+  "cliAuthenticationCheck": "PASS: official CLI session saved after owner browser authorization; expected Wantiss project is ACTIVE_HEALTHY in us-east-1.",
   "passwordResetPerformed": false,
   "productionSecretChanged": false,
   "databaseDumpAttempted": false,
-  "remainingPrerequisite": "Complete the official CLI login so supported backup/connection capabilities can be inspected; do not send a password or API key in chat.",
+  "remainingPrerequisite": "Approve the concrete encrypted export proposal if desired. Standard full backup/restoration additionally requires a supported PostgreSQL connection outside this workspace network limitation.",
   "readOnlyBackupRequirements": {
     "database_bytes": 103935123,
     "server_version": "17.6",
@@ -54,5 +54,26 @@
     ],
     "storage_bytes_recorded": 2102989
   },
-  "restoreEnvironmentRequirement": "The actual backup must restore pg_cron, pg_net and supabase_vault with supported binaries; local stub schemas are not acceptable full-production recovery evidence. Restore only in a network-isolated local environment with scheduled jobs disabled."
+  "restoreEnvironmentRequirement": "The actual backup must restore pg_cron, pg_net and supabase_vault with supported binaries; local stub schemas are not acceptable full-production recovery evidence. Restore only in a network-isolated local environment with scheduled jobs disabled.",
+  "observedAt": "2026-11-22T01:36:45.304577+00:00",
+  "cliAuthenticated": true,
+  "privateCredentialPermissions": "0600",
+  "nativeDatabaseExportConnection": {
+    "classification": "FAIL",
+    "scope": "Workspace transport capability, not a confirmed application defect.",
+    "directPoolerTcp": "ECONNREFUSED on port 5432, including an explicit network permission request.",
+    "configuredProxyPooler": "TLS succeeds to the HTTP proxy but PostgreSQL startup receives HTTP 400 rather than PostgreSQL.",
+    "configuredProxyDirectDatabase": "HTTP 403; no alternative alias or bypass attempted."
+  },
+  "managedBackupMetadata": {
+    "readOnlyRequest": "PASS",
+    "listedBackups": 0,
+    "pitrEnabled": false,
+    "walgEnabled": true,
+    "physicalBackupMetadataEmpty": true
+  },
+  "privateExportStatus": "BLOCKED by automatic approval review; explicit owner approval for payload and destination is required.",
+  "privateExportPlan": "private-export-approval-plan.json",
+  "productionDataExported": false,
+  "storedFilesDownloaded": false
 }
