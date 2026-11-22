@@ -212,5 +212,35 @@
   "historicalTestSafetyFinding": "stripe-webhook-configuration.json",
   "securityAdvisors": "post-payment-security-advisors.json",
   "productionBackupEvidence": "production-backup-access.json",
-  "privateExportApprovalPlan": "private-export-approval-plan.json"
+  "privateExportApprovalPlan": "private-export-approval-plan.json",
+  "backupExportDeferredByUser": true,
+  "liveReleaseConfigurationEvidence": "live-release-configuration.json",
+  "releaseConfiguration": {
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "settlement_enabled": false,
+    "shared_bill_wallet_enabled": false,
+    "settlement_opening_configured": false,
+    "private_delivery_proofs_enabled": false
+  }
 }

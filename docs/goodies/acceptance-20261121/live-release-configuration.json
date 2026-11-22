@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-11-22T01:47:24.778Z",
+  "classification": "PASS",
+  "scope": "Read-only inspection of Goodies release configuration only; no customer/financial records exported and no setting changed.",
+  "projectRef": "ycbirmgppwavorwudlrv",
+  "releaseConfiguration": {
+    "payout_channels": [
+      {
+        "method": "bank",
+        "enabled": false
+      },
+      {
+        "method": "gcash",
+        "enabled": false
+      },
+      {
+        "method": "moncash",
+        "enabled": false
+      },
+      {
+        "method": "natcash",
+        "enabled": false
+      },
+      {
+        "method": "wal",
+        "enabled": true
+      }
+    ],
+    "settlement_enabled": false,
+    "shared_bill_wallet_enabled": false,
+    "settlement_opening_configured": false,
+    "private_delivery_proofs_enabled": false
+  },
+  "productionReady": false,
+  "allInstalledControlsVerified": false,
+  "backupExportDeferredByOwner": true,
+  "note": "Disabled rollout switches are recorded as activation work, not automatically treated as implementation bugs. Complete release acceptance remains NOT VERIFIED."
+}

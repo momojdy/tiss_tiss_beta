@@ -1,6 +1,6 @@
 {
   "classification": "NOT VERIFIED",
-  "status": "AWAITING_EXPLICIT_OWNER_APPROVAL",
+  "status": "DEFERRED_BY_OWNER",
   "observedAt": "2026-11-22T01:36:45.304577+00:00",
   "projectRef": "ycbirmgppwavorwudlrv",
   "purpose": "A private read-only data/catalog and Storage export while the workspace cannot connect through the native PostgreSQL protocol. This is not a pg_dump backup and is not certified for full restoration.",
@@ -60,8 +60,10 @@
     "result": "REJECTED",
     "action": "Custom full production data/catalog export to the local workspace.",
     "statedReason": "Sensitive financial/personal data egress; the general backup instruction did not explicitly approve this complete payload and local destination.",
-    "retriedOrBypassedAfterRejection": false
+    "retriedOrBypassedAfterRejection": false,
+    "approvalCurrentlyRequested": false
   },
   "customerOrFinancialDataExported": false,
-  "storedFilesDownloaded": false
+  "storedFilesDownloaded": false,
+  "ownerInstruction": "No need for an export for now"
 }

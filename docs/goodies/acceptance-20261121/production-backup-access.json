@@ -10,7 +10,7 @@
   "passwordResetPerformed": false,
   "productionSecretChanged": false,
   "databaseDumpAttempted": false,
-  "remainingPrerequisite": "Approve the concrete encrypted export proposal if desired. Standard full backup/restoration additionally requires a supported PostgreSQL connection outside this workspace network limitation.",
+  "remainingPrerequisite": "Backup/export work is paused at the owner request. Full restoration remains NOT VERIFIED and is not being pursued in the current Goodies workflow checks.",
   "readOnlyBackupRequirements": {
     "database_bytes": 103935123,
     "server_version": "17.6",
@@ -72,8 +72,9 @@
     "walgEnabled": true,
     "physicalBackupMetadataEmpty": true
   },
-  "privateExportStatus": "BLOCKED by automatic approval review; explicit owner approval for payload and destination is required.",
+  "privateExportStatus": "DEFERRED_BY_OWNER; no export or approval request is active.",
   "privateExportPlan": "private-export-approval-plan.json",
   "productionDataExported": false,
-  "storedFilesDownloaded": false
+  "storedFilesDownloaded": false,
+  "exportDeferredByOwner": true
 }
