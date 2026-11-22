@@ -9,7 +9,7 @@ import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
 import {useKonsolissLoadProgress} from './useKonsolissLoadProgress';
 import {useKonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
 import {useKonsolissAssignedContainers} from './useKonsolissAssignedContainers';
-import {KONSOLISS_DEMO_CONTAINERS, type KonsolissSelectableContainer} from './konsolissDemoContainers';
+import {type KonsolissSelectableContainer} from './konsolissDemoContainers';
 import KonsolissQuickMenu, {type KonsolissMenuAction} from './KonsolissQuickMenu';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
@@ -111,7 +111,7 @@ export default function KonsolissHomeScreen({onBack,onUniversalAction,unreadNoti
 function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {onBack?: () => void;onUniversalAction?:(action:KonsolissMenuAction)=>void;unreadNotifications:number;unreadMessages:number}) {
   const insets = useSafeAreaInsets(); const systemDark=useColorScheme()==='dark'; const [themeOverride,setThemeOverride]=useState<'dark'|'light'|null>(null); const dark=themeOverride===null?systemDark:themeOverride==='dark'; const t=dark?Dk:L;
   useEffect(()=>{let active=true;AsyncStorage.getItem('konsoliss.theme').then(value=>{if(active&&(value==='dark'||value==='light'))setThemeOverride(value);}).catch(()=>{});return()=>{active=false;};},[]);
-  const toggleKonsolissDarkMode=()=>{const next=dark?'light':'dark';setThemeOverride(next);void AsyncStorage.setItem('konsoliss.theme',next).catch(()=>{});}; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [previewLoadNumbers,setPreviewLoadNumbers]=useState(true); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
+  const toggleKonsolissDarkMode=()=>{const next=dark?'light':'dark';setThemeOverride(next);void AsyncStorage.setItem('konsoliss.theme',next).catch(()=>{});}; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
   const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
@@ -133,13 +133,12 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const liveContainers=assignedContainers.containers.length?assignedContainers.containers:(realFallback?[realFallback]:[]);
   const defaultContainer=liveContainers.find(row=>row.number===realFallback?.number)
     ??liveContainers[0]??realFallback
-    ??(currentContainer.kind==='unassigned'&&assignedContainers.state==='ready'?KONSOLISS_DEMO_CONTAINERS[0]:null);
+;
   const selectedContainer:KonsolissSelectableContainer|null=selectedContainerId==='live'?null:
-    (KONSOLISS_DEMO_CONTAINERS.find(row=>row.id===selectedContainerId)
-      ??liveContainers.find(row=>row.id===selectedContainerId)
+    (liveContainers.find(row=>row.id===selectedContainerId)
       ??(selectedContainerId===realFallback?.id?realFallback:null)
       ??(selectedContainerId===null?defaultContainer:null));
-  const isDemo=selectedContainer?.demo===true;
+  const isDemo=false;
   const hasCurrentContainer=selectedContainer!==null;
   const isSelectedCurrent=selectedContainer!==null&&!isDemo&&currentContainer.kind==='assigned'&&currentContainer.number===selectedContainer.number;
   const containerStatusLabel=(item:KonsolissSelectableContainer)=>
@@ -151,16 +150,11 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
     const timeout=setTimeout(()=>setProgressView(view=>view==='customer'?'container':'customer'),7000);
     return()=>clearTimeout(timeout);
   },[hasCurrentContainer,selectedContainer?.id,progressView]);
-  const verifiedOccupancy=useKonsolissContainerOccupancy(!isDemo&&selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
-  const containerOccupancy=selectedContainer?.demo?{
-    containerType:'40HQ' as const,capacityCbm:68,loadedCbm:selectedContainer.loadedCbm??0,
-    yourSpaceCbm:selectedContainer.yourLoadedCbm??0,
-    otherCargoCbm:Math.max(0,(selectedContainer.loadedCbm??0)-(selectedContainer.yourLoadedCbm??0)),
-    freeCbm:Math.max(0,68-(selectedContainer.loadedCbm??0)),
-  }:verifiedOccupancy;
+  const verifiedOccupancy=useKonsolissContainerOccupancy(selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
+  const containerOccupancy=verifiedOccupancy;
   // "Your space" in the lower container bar is loaded cargo, not reserved allocation.
   // The aggregation RPC's yourSpaceCbm is also physically loaded cargo.
-  const yourPhysicallyLoadedCbm=isDemo?selectedContainer?.yourLoadedCbm:verifiedOccupancy?.yourSpaceCbm;
+  const yourPhysicallyLoadedCbm=verifiedOccupancy?.yourSpaceCbm;
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
@@ -189,28 +183,23 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
   const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.loadedCbm===0&&progress.inboundCbm===0));
-  // UI-only temporary preview; never sent to Supabase or used for container geometry.
-  const loadPreviewValues = previewLoadNumbers ? {
-    reservedValue:'2.00',sentValue:'1.00',loadedValue:'0.40',inboundValue:'0.30',
-    committedValue:'0.70',warehouseOrTransitValue:'0.30',
-    stillToSendValue:'1.00',notAllocatedValue:'1.30',
-  } : {reservedValue,sentValue,loadedValue,inboundValue,committedValue,warehouseOrTransitValue,stillToSendValue,notAllocatedValue};
+  const loadPreviewValues={reservedValue,sentValue,loadedValue,inboundValue,committedValue,warehouseOrTransitValue,stillToSendValue,notAllocatedValue};
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
-      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Choose container" accessibilityHint="Open a list of assigned containers or preview sample containers"
+      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>{copy['home.brand']}</Tx></Pressable></View><Pressable accessibilityRole="button" accessibilityLabel="Choose container" accessibilityHint="Open your assigned containers"
         onPress={() => setContainerMenuOpen(true)}
         style={[s.pill,{backgroundColor:t.tint,flexDirection:'row',alignItems:'center',gap:5,maxWidth:'72%'}]}>
         <Tx numberOfLines={1} style={{fontSize:12,lineHeight:15,fontWeight:'600',color:t.ac}}>
-          {selectedContainer?(isDemo?'DEMO · ':'')+containerStatusLabel(selectedContainer):
+          {selectedContainer?containerStatusLabel(selectedContainer):
             currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?'Preparing your load':currentKonsolissContainerLabel(currentContainer)):
               currentKonsolissContainerLabel(currentContainer)}
         </Tx>
         <Tx style={{fontSize:12,color:t.ac}}>⌄</Tx>
       </Pressable></View>
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No container assigned</Tx>:null}
-      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><Pressable accessibilityRole="button" accessibilityLabel="My current load details" accessibilityState={{expanded:loadDetailsOpen}} onPress={()=>setLoadDetailsOpen(open=>!open)} style={{paddingVertical:4,paddingRight:12}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={{fontSize:15,color:t.ac}}>{loadDetailsOpen?'⌃':'⌄'}</Tx></View><Tx style={[s.num, {color: t.ac}]}>{loadPreviewValues.committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {loadPreviewValues.reservedValue} CBM</Tx></Tx><Tx style={{fontSize:10.5,color:t.mu}}>Loaded {loadPreviewValues.loadedValue} · Inbound {loadPreviewValues.inboundValue} CBM{previewLoadNumbers?' · DEMO':''}</Tx></Pressable><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><Pressable accessibilityRole="button" accessibilityLabel="My current load details" accessibilityState={{expanded:loadDetailsOpen}} onPress={()=>setLoadDetailsOpen(open=>!open)} style={{paddingVertical:4,paddingRight:12}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={{fontSize:15,color:t.ac}}>{loadDetailsOpen?'⌃':'⌄'}</Tx></View><Tx style={[s.num, {color: t.ac}]}>{loadPreviewValues.committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {loadPreviewValues.reservedValue} CBM</Tx></Tx><Tx style={{fontSize:10.5,color:t.mu}}>Loaded {loadPreviewValues.loadedValue} · Inbound {loadPreviewValues.inboundValue} CBM</Tx></Pressable><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??null)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
@@ -264,7 +253,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   style={[s.card2, {backgroundColor: t.card, borderColor: t.bd, borderWidth: 0.5}]}>
   <Head t={t} i="ct" title={copy['home.consolidated.title']} />
   {selectedContainer?<Tx style={[s.body,{color:t.tx}]}>
-    {(isDemo?'DEMO · ':'')+selectedContainer.number+'\n'+selectedContainer.status}
+    {selectedContainer.number+'\n'+selectedContainer.status}
   </Tx>:<Tx style={[s.body,{color:t.mu}]}>{currentContainer.kind==='unassigned'?'No active load':'Load details unavailable'}</Tx>}
 </Pressable></View><Card t={t} i="ln" title={copy['home.sourcing.title']} sub={copy['home.sourcing.subtitle']} right={<Ic d={P.gl} c={t.tx} s={20} />} style={{borderWidth: 0.5}} /></View>
       <View style={{paddingTop: 20}}>
@@ -313,11 +302,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
             <View style={{marginTop:12,padding:13,borderRadius:12,backgroundColor:t.tint}}>
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',marginBottom:8,gap:8}}>
           <Tx style={{fontSize:13,fontWeight:'700',color:t.tx}}>My space breakdown</Tx>
-          <Pressable accessibilityRole="button" accessibilityLabel={previewLoadNumbers?'Show live load values':'Show sample load values'} onPress={()=>setPreviewLoadNumbers(v=>!v)} style={{paddingHorizontal:9,paddingVertical:5,borderRadius:9,backgroundColor:t.bg,borderWidth:1,borderColor:t.bd}}>
-            <Tx style={{fontSize:10,fontWeight:'700',color:t.ac}}>{previewLoadNumbers?'DEMO · Show live':'Preview example'}</Tx>
-          </Pressable>
         </View>
-        {previewLoadNumbers?<Tx style={{fontSize:10.5,color:t.ac,marginBottom:8}}>Sample numbers only — not your actual shipment.</Tx>:null}
         {([['Space purchased',loadPreviewValues.reservedValue],['Goods sent',loadPreviewValues.sentValue],['Physically loaded in container',loadPreviewValues.loadedValue],['Inbound to container (left warehouse)',loadPreviewValues.inboundValue],['Loaded + inbound',loadPreviewValues.committedValue],['At warehouse or still in transit',loadPreviewValues.warehouseOrTransitValue],['Purchased space not yet sent',loadPreviewValues.stillToSendValue],['Space not yet loaded or inbound',loadPreviewValues.notAllocatedValue]] as const).map(([label,value])=><View key={label} style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',paddingVertical:5,gap:12}}><Tx style={{fontSize:11.5,color:t.mu,flex:1}}>{label}</Tx><Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>{value} CBM</Tx></View>)}
         <Tx style={{fontSize:10.5,color:t.ac,marginTop:8}}>Loaded and inbound count toward your purchased space. Goods still at the warehouse or in transit do not count as loaded or inbound to the container.</Tx>
       </View>
@@ -340,17 +325,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
             <Pressable accessibilityRole="button" accessibilityLabel="Close container selector"
               onPress={() => setContainerMenuOpen(false)} hitSlop={10}><Tx style={{color:t.ac,fontSize:19}}>✕</Tx></Pressable>
           </View>
-          <Tx style={{paddingHorizontal:14,paddingVertical:6,fontSize:10,color:t.mu}}>
-            DEMO PREVIEW · NOT LIVE DATA
-          </Tx>
-          <Pressable accessibilityRole="button" accessibilityLabel="Show live container status without demo"
-            onPress={() => {setSelectedContainerId('live');setContainerMenuOpen(false);setProgressView('customer');}}
-            style={{paddingHorizontal:14,minHeight:53,justifyContent:'center',borderTopWidth:0.5,borderTopColor:t.bd}}>
-            <Tx style={{fontSize:12,fontWeight:'700',color:t.tx}}>Live view</Tx>
-            <Tx style={{fontSize:11,color:t.mu}}>
-              {liveContainers.length?liveContainers.length+' assigned container(s)':'No container assigned'}
-            </Tx>
-          </Pressable>
+          <Tx style={{paddingHorizontal:14,paddingVertical:8,fontSize:11,color:t.mu}}>{liveContainers.length?liveContainers.length+' assigned container(s)':'No container assigned to your account'}</Tx>
           <ScrollView nestedScrollEnabled showsVerticalScrollIndicator
             style={{maxHeight:5*59}} contentContainerStyle={{paddingBottom:5}}>
             {liveContainers.map(item=><View key={item.id} style={{flexDirection:'row',alignItems:'center',
@@ -366,18 +341,6 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
                 onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setLifecycleNotice(item.status);}}
                 style={{paddingHorizontal:14,paddingVertical:12}}><Tx style={{color:t.ac,fontSize:17}}>ⓘ</Tx></Pressable>
             </View>)}
-            {KONSOLISS_DEMO_CONTAINERS.map(item=><Pressable key={item.id} accessibilityRole="button"
-              accessibilityLabel={'Preview demo container '+item.number}
-              accessibilityState={{selected:selectedContainer?.id===item.id}}
-              onPress={() => {setSelectedContainerId(item.id);setContainerMenuOpen(false);setProgressView('customer');}}
-              style={{minHeight:59,borderTopWidth:0.5,borderTopColor:t.bd,
-                paddingHorizontal:14,paddingVertical:10,justifyContent:'center'}}>
-              <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
-                <Tx style={{fontSize:13,fontWeight:'700',color:selectedContainer?.id===item.id?t.ac:t.tx}}>{item.number}</Tx>
-                <Tx style={{fontSize:11,color:t.ac,fontWeight:'700'}}>{Math.round((item.loadedCbm??0)/68*100)}% filled</Tx>
-              </View>
-              <Tx style={{fontSize:11,color:t.mu}}>{item.status} · {(item.loadedCbm??0).toFixed(1)} / 68 CBM · Demo</Tx>
-            </Pressable>)}
           </ScrollView>
         </View>
       </View>
