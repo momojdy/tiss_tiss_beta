@@ -7,6 +7,8 @@ import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type Konso
 import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
 import {useKonsolissLoadProgress} from './useKonsolissLoadProgress';
 import {useKonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
+import {useKonsolissAssignedContainers} from './useKonsolissAssignedContainers';
+import {KONSOLISS_DEMO_CONTAINERS, type KonsolissSelectableContainer} from './konsolissDemoContainers';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 const StatusBarCompat: any = StatusBar;
@@ -105,7 +107,7 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
   return <SafeAreaProvider><Screen onBack={onBack} /></SafeAreaProvider>;
 }
 function Screen({onBack}: {onBack?: () => void}) {
-  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const currentContainer = useCurrentKonsolissContainer(); const loadProgress=useKonsolissLoadProgress();
+  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
   const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
@@ -120,14 +122,36 @@ function Screen({onBack}: {onBack?: () => void}) {
     const timer = setTimeout(() => setLifecycleNotice(null), 7000);
     return () => clearTimeout(timer);
   }, [lifecycleNotice]);
-  // Rotate only when a current container exists; always start with customer progress.
-  const hasCurrentContainer=currentContainer.kind==='assigned';
+  // Customer assignments remain server-owned; sample containers are local preview data only.
+  const liveContainers=assignedContainers.containers;
+  const realFallback=currentContainer.kind==='assigned'?{
+    id:'current:'+currentContainer.number,number:currentContainer.number,status:currentContainer.status,demo:false,
+  } as KonsolissSelectableContainer:null;
+  const defaultContainer=liveContainers.find(row=>row.number===realFallback?.number)
+    ??liveContainers[0]??realFallback
+    ??(currentContainer.kind==='unassigned'&&assignedContainers.state==='ready'?KONSOLISS_DEMO_CONTAINERS[0]:null);
+  const selectedContainer:KonsolissSelectableContainer|null=selectedContainerId==='live'?null:
+    (KONSOLISS_DEMO_CONTAINERS.find(row=>row.id===selectedContainerId)
+      ??liveContainers.find(row=>row.id===selectedContainerId)
+      ??(selectedContainerId===null?defaultContainer:null));
+  const isDemo=selectedContainer?.demo===true;
+  const hasCurrentContainer=selectedContainer!==null;
+  const isSelectedCurrent=selectedContainer!==null&&!isDemo&&currentContainer.kind==='assigned'&&currentContainer.number===selectedContainer.number;
+  const containerStatusLabel=(item:KonsolissSelectableContainer)=>
+    currentKonsolissContainerLabel({kind:'assigned',number:item.number,status:item.status});
+  // Rotate only when a container is selected; always start with customer progress.
   useEffect(()=>{
     if(!hasCurrentContainer){setProgressView('customer');return;}
     const interval=setInterval(()=>setProgressView(view=>view==='customer'?'container':'customer'),15000);
     return()=>clearInterval(interval);
   },[hasCurrentContainer]);
-  const containerOccupancy=useKonsolissContainerOccupancy(hasCurrentContainer);
+  const verifiedOccupancy=useKonsolissContainerOccupancy(isSelectedCurrent);
+  const containerOccupancy=selectedContainer?.demo?{
+    capacityCbm:68,loadedCbm:selectedContainer.loadedCbm??0,
+    yourSpaceCbm:selectedContainer.yourSpaceCbm??0,
+    otherCargoCbm:Math.max(0,(selectedContainer.loadedCbm??0)-(selectedContainer.yourSpaceCbm??0)),
+    freeCbm:Math.max(0,68-(selectedContainer.loadedCbm??0)),
+  }:verifiedOccupancy;
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
@@ -152,9 +176,9 @@ function Screen({onBack}: {onBack?: () => void}) {
   const visualMode=noCargoLoaded?'illustration':'sample';
   // Left: customer committed CBM / reserved CBM. Right: the shared 68 CBM container only.
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/68:0;
-  const containerPercent=containerOccupancy?Math.round(containerRatio*100)+'%':currentContainer.kind==='unassigned'?'0%':'—';
-  const containerAvailable=containerOccupancy?containerOccupancy.freeCbm.toFixed(1):currentContainer.kind==='unassigned'?'68.0':'—';
-  const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
+  const containerPercent=containerOccupancy?Math.round(containerRatio*100)+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
+  const containerAvailable=containerOccupancy?containerOccupancy.freeCbm.toFixed(1):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
+  const showEmptyLoadHint=!hasCurrentContainer&&currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.loadedCbm===0&&progress.inboundCbm===0));
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
