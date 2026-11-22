@@ -60,19 +60,24 @@ test('3D container stays interactive and plays a clearly labeled illustrative pa
  assert.doesNotMatch(home,/cx\.fillText\('Your space 0\.50 CBM'/);
  assert.doesNotMatch(home,/cx\.fillText\('16\.3 CBM free'/);
 });
-test('customer metrics are separate from the 68 CBM shared container capacity',()=>{
- assert.match(home,/const progress=loadProgress\.kind==='recorded'\?loadProgress\.progress:null/);
- assert.match(home,/const committedValue=progress\?fmt\(progress\.allocatedCbm\)/);
- assert.match(home,/const fillRatio=progress&&progress\.reservedCbm>0\?progress\.allocatedCbm\/progress\.reservedCbm:0/);
- assert.match(home,/Space reserved/);
- assert.match(home,/Goods sent/);
- assert.match(home,/Loaded in container/);
- assert.match(home,/Inbound to container/);
- assert.match(home,/Sent — not yet allocated/);
- assert.match(home,/Container capacity: 68 CBM/);
- assert.match(home,/Shared container · 68 CBM total capacity/);
- assert.match(home,/Live shared-container occupancy is not yet available/);
- assert.doesNotMatch(home,/const loadAmount=loadKnown\?'51\.7'/);
+test('compact container summary remains and the added CBM cards are absent',()=>{
+ assert.match(home,/const containerLoadDisplay=emptyContainerDisplay\?'0\.0':'—'/);
+ assert.match(home,/const containerFillDisplay=emptyContainerDisplay\?'0%':'—'/);
+ assert.match(home,/const containerFreeDisplay=emptyContainerDisplay\?'68\.0':'—'/);
+ assert.match(home,/\{containerFillDisplay\} filled/);
+ assert.match(home,/\{containerFreeDisplay\} CBM/);
+ assert.match(home,/\/ 68 CBM/);
+ for(const label of ['Space reserved','Goods sent','Loaded in container','Inbound to container','Sent — not yet allocated']){
+   assert.doesNotMatch(home,new RegExp("\\['"+label+"'"));
+ }
+ assert.doesNotMatch(home,/Shared container · 68 CBM total capacity/);
+});
+test('small empty-state text disappears once customer cargo is loaded',()=>{
+ assert.match(home,/showEmptyLoadHint=/);
+ assert.match(home,/progress\.loadedCbm===0/);
+ assert.match(home,/\{showEmptyLoadHint\?<Tx/);
+ assert.match(home,/No goods loaded into a container yet\./);
+ assert.doesNotMatch(home,/No active load yet\. The loading animation below/);
 });
 test('load progress math does not treat cargo sent as loaded or inbound',()=>{
  const source=fs.readFileSync(path.join(root,'useKonsolissLoadProgress.ts'),'utf8');
