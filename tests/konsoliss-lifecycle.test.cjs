@@ -70,6 +70,8 @@ test('customer metrics are separate from the 68 CBM shared container capacity',(
  assert.match(home,/Inbound to container/);
  assert.match(home,/Sent — not yet allocated/);
  assert.match(home,/Container capacity: 68 CBM/);
+ assert.match(home,/Shared container · 68 CBM total capacity/);
+ assert.match(home,/Live shared-container occupancy is not yet available/);
  assert.doesNotMatch(home,/const loadAmount=loadKnown\?'51\.7'/);
 });
 test('load progress math does not treat cargo sent as loaded or inbound',()=>{
