@@ -1,4 +1,4 @@
-import {useCallback,useEffect,useState} from 'react';
+import {useCallback,useEffect,useRef,useState} from 'react';
 import {AppState} from 'react-native';
 import {supabase} from '../../lib/supabase';
 
@@ -17,11 +17,14 @@ export type KonsolissContainerOccupancy = {
  * coverage returns null rather than estimating the customer's cargo. */
 export function useKonsolissContainerOccupancy(containerId:string|null):KonsolissContainerOccupancy|null {
   const [state,setState]=useState<{id:string;value:KonsolissContainerOccupancy|null}|null>(null);
+  const requestSequence=useRef(0);
   const reload=useCallback(async()=>{
-    if(!containerId){setState(null);return;}
+    const sequence=++requestSequence.current;
+    const commit=(update:()=>void)=>{if(sequence===requestSequence.current)update();};{
+    if(!containerId){commit(()=>setState(null));return;}
     try{
       const {data,error}=await supabase.rpc('konsoliss_container_occupancy',{p_container_id:containerId});
-      if(error||!data||typeof data!=='object'){setState({id:containerId,value:null});return;}
+      if(error||!data||typeof data!=='object'){commit(()=>setState({id:containerId,value:null}));return;}
       const row=data as Record<string,unknown>;
       const parse=(v:unknown)=>v===null||v===undefined?NaN:Number(v);
       const capacityCbm=parse(row.capacity_cbm),loadedCbm=parse(row.loaded_cbm);
@@ -35,18 +38,18 @@ export function useKonsolissContainerOccupancy(containerId:string|null):Konsolis
         &&Math.abs(otherCargoCbm+yourSpaceCbm-loadedCbm)<0.001
         &&Math.abs(loadedCbm+freeCbm-capacityCbm)<0.001
         &&(Number.isNaN(allocated)||(allocated>=yourSpaceCbm&&allocated<=capacityCbm));
-      setState({id:containerId,value:valid?{
+      commit(()=>setState({id:containerId,value:valid?{
         containerType:'40HQ',capacityCbm,loadedCbm,otherCargoCbm,yourSpaceCbm,
         yourAllocatedCbm:Number.isNaN(allocated)?null:allocated,freeCbm,
-      }:null});
-    }catch{setState({id:containerId,value:null});}
+      }:null}));
+    }catch{commit(()=>setState({id:containerId,value:null}));}
   },[containerId]);
   useEffect(()=>{
     if(!containerId){setState(null);return;}
     void reload();
     const sub=AppState.addEventListener('change',state=>{if(state==='active')void reload();});
     const interval=setInterval(()=>{if(AppState.currentState==='active')void reload();},30000);
-    return()=>{clearInterval(interval);sub.remove();};
+    return()=>{requestSequence.current++;clearInterval(interval);sub.remove();};
   },[containerId,reload]);
   // Prevent displaying data from the previously selected container while loading.
   return state?.id===containerId?state.value:null;
