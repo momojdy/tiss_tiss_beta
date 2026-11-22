@@ -32,7 +32,7 @@ test('explanatory popup is temporary, closes on request, and does not mutate con
  assert.match(home,/previousContainerStage\.current === assignedStage/);
  assert.match(home,/currentContainer\.kind === 'assigned'/);
  assert.match(home,/onRequestClose=\{\(\) => setLifecycleNotice\(null\)\}/);
- assert.match(home,/Show current container status explanation/);
+ assert.match(home,/accessibilityLabel=\{'Explain status of '\+item\.number\}/);
  assert.match(home,/KONSOLISS_LIFECYCLE_MESSAGES\[lifecycleNotice\]\.description/);
  assert.doesNotMatch(messages,/supabase|fetch\(|\.rpc\(/);
 });
@@ -54,7 +54,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.doesNotMatch(home,/3D layout is illustrative/);
  assert.doesNotMatch(home,/Replay sample container loading animation/);
  assert.match(home,/const noCargoLoaded=!progress\|\|progress\.allocatedCbm===0/);
- assert.match(home,/containerHtml\(dark,noCargoLoaded,progress\?\.reservedCbm\?\?0,progress\?\.loadedCbm\?\?0,progress\?\.inboundCbm\?\?0\)/);
+ assert.match(home,/containerHtml\(dark,isDemo\?false:isSelectedCurrent\?/);
  assert.match(home,/const visible=EMPTY\?demoCount:RESERVED>0/);
  assert.match(home,/const cycle=\(Date\.now\(\)-started\)%13600/);
  assert.match(home,/demoCount=cycle<4800/);
@@ -89,15 +89,15 @@ test('My current load stays based on customer loaded plus inbound versus reserve
 });
 test('right-side circle and available CBM use the 68 CBM shared container, not reserved space',()=>{
  assert.match(home,/const containerRatio=containerOccupancy\?containerOccupancy\.loadedCbm\/68:0/);
- assert.match(home,/currentContainer\.kind==='unassigned'\?'0%':'—'/);
- assert.match(home,/currentContainer\.kind==='unassigned'\?'68\.0':'—'/);
+ assert.match(home,/!hasCurrentContainer&&currentContainer\.kind==='unassigned'\?'0%':'—'/);
+ assert.match(home,/!hasCurrentContainer&&currentContainer\.kind==='unassigned'\?'68\.0':'—'/);
  assert.match(home,/strokeDasharray=\{\x60\$\{\(containerRatio\*87\.96\)/);
  assert.match(home,/\{containerPercent\} filled/);
  assert.match(home,/\{containerAvailable\} CBM/);
  assert.doesNotMatch(home,/\{fillPercent\} of your space/);
 });
 test('short empty-state hint appears only without a container or committed cargo',()=>{
- assert.match(home,/showEmptyLoadHint=currentContainer\.kind==='unassigned'/);
+ assert.match(home,/showEmptyLoadHint=!hasCurrentContainer&&currentContainer\.kind==='unassigned'/);
  assert.match(home,/progress\.loadedCbm===0&&progress\.inboundCbm===0/);
  assert.match(home,/\{showEmptyLoadHint\?<Tx/);
  assert.match(home,/No container assigned/);
@@ -171,4 +171,42 @@ test('rear 3D corner hardware is depth-sorted behind loaded boxes at every rotat
  assert.match(engine,/else abox\(layer,cb/);
  assert.match(engine,/it\.sort\(\(a,b\)=>a\.l-b\.l\|\|a\.d-b\.d\)/);
  assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
+});
+
+
+test('container dropdown selects live or demo entries, five visible rows and scroll for eight samples',()=>{
+ const demos=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
+ const hook=fs.readFileSync(path.join(root,'useKonsolissAssignedContainers.ts'),'utf8');
+ assert.match(demos,/KS-DEMO-01/);
+ assert.match(demos,/KS-DEMO-08/);
+ assert.match(demos,/sample\.map/);
+ assert.match(demos,/demo:true/);
+ assert.match(hook,/konsoliss_container_assignments/);
+ assert.match(hook,/\.eq\('user_id',auth\.user\.id\)/);
+ assert.match(hook,/\.from\('konsoliss_containers'\)/);
+ assert.match(home,/accessibilityLabel="Choose container"/);
+ assert.match(home,/onPress=\{\(\) => setContainerMenuOpen\(true\)\}/);
+ assert.match(home,/visible=\{containerMenuOpen\}/);
+ assert.match(home,/onRequestClose=\{\(\) => setContainerMenuOpen\(false\)\}/);
+ assert.match(home,/maxHeight:5\*59/);
+ assert.match(home,/nestedScrollEnabled showsVerticalScrollIndicator/);
+ assert.match(home,/KONSOLISS_DEMO_CONTAINERS\.map\(item=>/);
+ assert.match(home,/liveContainers\.map\(item=>/);
+ assert.match(home,/setSelectedContainerId\(item\.id\)/);
+ assert.match(home,/setSelectedContainerId\('live'\)/);
+ assert.match(home,/DEMO PREVIEW · NOT LIVE DATA/);
+ assert.match(home,/containerHtml\(dark,isDemo\?false/);
+ assert.match(home,/isDemo\?68:isSelectedCurrent\?/);
+ assert.match(home,/selectedContainer\?\.id\?\?visualMode/);
+ assert.match(home,/selectedContainer\?\.loadedCbm\?\?0/);
+});
+test('sample container does not overwrite actual current load or mutate Supabase',()=>{
+ const demos=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
+ assert.doesNotMatch(demos,/supabase|insert\(|update\(|upsert\(/i);
+ assert.match(home,/const committedValue=progress\?fmt\(progress\.allocatedCbm\)/);
+ assert.match(home,/const containerOccupancy=selectedContainer\?\.demo\?/);
+ assert.match(home,/useKonsolissContainerOccupancy\(isSelectedCurrent\)/);
+ assert.match(home,/DEMO · /);
+ assert.match(home,/DEMO=document\.documentElement\.dataset\.demo==='true'/);
+ assert.match(home,/DEMO\?'Sample cargo ':'Your loaded '/);
 });
