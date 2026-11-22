@@ -2,6 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable, Modal, TextInput, KeyboardAvoidingView, Platform, StatusBar, useColorScheme, useWindowDimensions, StyleSheet, Image} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {WebView} from 'react-native-webview';
+import {currentKonsolissContainerLabel, useCurrentKonsolissContainer} from './useCurrentKonsolissContainer';
 import Svg, {Path, G, Circle, Rect, Defs, LinearGradient, Stop} from 'react-native-svg';
 
 const StatusBarCompat: any = StatusBar;
@@ -100,11 +101,11 @@ export default function KonsolissHomeScreen({onBack}: {onBack?: () => void}) {
   return <SafeAreaProvider><Screen onBack={onBack} /></SafeAreaProvider>;
 }
 function Screen({onBack}: {onBack?: () => void}) {
-  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true);
+  const insets = useSafeAreaInsets(); const dark = useColorScheme() === 'dark'; const t = dark ? Dk : L; const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const currentContainer = useCurrentKonsolissContainer();
   const nav = ['Home', 'Warehouse', 'Konso', 'Sourcing+', 'Hub'];
   return <View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
-      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable></View><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>KS-2048 · Filling</Tx></View></View>
+      <View style={[s.row, {height: 60, paddingHorizontal: 24}]}><View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}><Pressable onPress={onBack} hitSlop={8}><Ic d={P.back} c={t.ac} s={22} w={2} /></Pressable><Pressable onPress={onBack}><Tx style={[s.logo, {color: t.ac}]}>Konsoliss</Tx></Pressable></View><View style={[s.pill, {backgroundColor: t.tint}]}><Tx style={{fontSize: 12, lineHeight: 15, fontWeight: '600', color: t.ac}}>{currentKonsolissContainerLabel(currentContainer)}</Tx></View></View>
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>My current load</Tx><Tx style={[s.num, {color: t.ac}]}>51.7<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}}> / 68 CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray="66.85 87.96" rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>76% filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}}>16.3 CBM</Tx> available</Tx></View></View>
       <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={dark ? 'd' : 'l'} originWhitelist={['*']} source={{html: containerHtml(dark)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
