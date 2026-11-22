@@ -33,6 +33,9 @@ Database constraints already enforce nonnegative volumes and `loaded + inbound <
 
 ## Live-data restoration and correctness improvements (2026-11-23)
 
+**Progress-bar visibility fix:** commit `333fece0a36e19075435db175a6a83871d6d83cb` removes the accidental `hasCurrentContainer` visibility/timer guard. The customer progress bar and shared-container bar now alternate every 7 seconds, and the manual double-arrow switch remains visible even for unassigned customers. Missing container occupancy displays dashes and an explanatory message, never fabricated CBM. Device verification is pending.
+
+
 **Empty-state animation restored:** commit `dc3d8e7b25f1498bc4bc0f320395895dffd355fe` re-enables the original looping carton animation and blinking `My current load` callout (regression reference `f9f8b50dcc47d85cb121c483dbf85a3fc1c50a53`) **only** for a confirmed unassigned/empty customer state. It remains a clearly illustrative animation, not a claim of customer cargo. When an assigned container lacks verified occupancy, show an unavailable state instead of fabricated measurements. Runtime animation testing is still pending.
 
 
