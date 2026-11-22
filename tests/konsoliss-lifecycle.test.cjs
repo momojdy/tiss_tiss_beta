@@ -66,7 +66,7 @@ test('3D container loops 4.8s cartons, 3.8s blinking carton, 5s empty',()=>{
  assert.match(home,/demoCurrent:i===6&&j===1&&l===nl-1&&q===0/);
  assert.match(home,/highlight=EMPTY&&demoBlink&&c\.demoCurrent/);
  assert.match(home,/if\(EMPTY&&demoShowLoad\)\{const carton=cargo\.find\(c=>c\.demoCurrent\)/);
- assert.match(home,/cx\.fillText\('My current load',labelX,labelY\)/);
+ assert.match(home,/cx\.fillText\('My current loaded space',labelX,labelY\)/);
  assert.match(home,/highlight\?'#FFE36B':c\.k/);
  assert.doesNotMatch(home,/if\(EMPTY&&demoCount>0&&demoBlink\)\{abox/);
  assert.doesNotMatch(home,/EMPTY\?'Your current load'/);
@@ -103,17 +103,17 @@ test('short empty-state hint appears only without a container or committed cargo
  assert.match(home,/No container assigned/);
  assert.doesNotMatch(home,/No goods loaded into a container yet/);
 });
-test('lower bar alternates every fifteen seconds only when container assigned',()=>{
+test('lower bar alternates every seven seconds only when container selected',()=>{
  assert.match(home,/progressView,setProgressView/);
  assert.match(home,/const hasCurrentContainer=selectedContainer!==null/);
  assert.match(home,/if\(!hasCurrentContainer\)\{setProgressView\('customer'\);return;\}/);
- assert.match(home,/setInterval\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),15000\)/);
+ assert.match(home,/setInterval\(\(\)=>setProgressView\(view=>view==='customer'\?'container':'customer'\),7000\)/);
  assert.match(home,/progressView==='container'&&hasCurrentContainer/);
  assert.match(home,/Loaded <Tx/);
  assert.match(home,/Inbound <Tx/);
  assert.match(home,/Not allocated <Tx/);
  assert.match(home,/containerOccupancy\.otherCargoCbm\.toFixed\(1\)/);
- assert.match(home,/containerOccupancy\.yourSpaceCbm\.toFixed\(1\)/);
+ assert.match(home,/yourAllocatedContainerCbm\.toFixed\(1\)/);
  assert.match(home,/containerOccupancy\.freeCbm\.toFixed\(1\)/);
  assert.doesNotMatch(home,/Your loading progress/);
  assert.doesNotMatch(home,/Container progress · 68 CBM/);
@@ -208,7 +208,11 @@ test('sample container does not overwrite actual current load or mutate Supabase
  assert.match(home,/useKonsolissContainerOccupancy\(isSelectedCurrent\)/);
  assert.match(home,/DEMO · /);
  assert.match(home,/DEMO=document\.documentElement\.dataset\.demo==='true'/);
- assert.match(home,/DEMO\?'Sample cargo ':'Your loaded '/);
+ assert.doesNotMatch(home,/Sample cargo/);
+ assert.match(home,/YOUR_LOADED=Number\(document\.documentElement\.dataset\.yourLoaded\)/);
+ assert.match(home,/cx\.fillText\('My current loaded space '\+YOUR_LOADED\.toFixed\(2\)/);
+ assert.match(home,/cx\.fillText\('Free '\+FREE\.toFixed\(1\)\+' CBM'/);
+ assert.match(home,/yourPhysicallyLoadedCbm\?\?0,containerOccupancy\?\.freeCbm/);
 });
 
 
@@ -226,7 +230,30 @@ test('eight distinct demo containers stay within the real 68 CBM physical capaci
    assert.equal(item.demo,true);
    assert.ok(item.id.startsWith('demo:'));
    assert.ok(item.loadedCbm>=0&&item.loadedCbm<=68);
-   assert.ok(item.yourSpaceCbm>=0&&item.yourSpaceCbm<=item.loadedCbm);
+   assert.ok(item.yourSpaceCbm>=0&&item.yourSpaceCbm<=68);
+   assert.ok(item.yourLoadedCbm>=0&&item.yourLoadedCbm<=item.yourSpaceCbm);
+   assert.ok(item.yourLoadedCbm<=item.loadedCbm);
    assert.ok(['filling','filled','departed','arrived'].includes(item.status));
  }
+});
+
+
+test('loaded-cargo figure and allocated My space are different even within the same demo container',()=>{
+ const file=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
+ const converted=ts.transpileModule(file,{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2020}}).outputText;
+ const module={exports:{}};
+ require('node:vm').runInNewContext(converted,{module,exports:module.exports});
+ const rows=module.exports.KONSOLISS_DEMO_CONTAINERS;
+ assert.equal(rows.length,8);
+ assert.equal(rows[1].yourSpaceCbm,2);
+ assert.equal(rows[1].yourLoadedCbm,0.6);
+ assert.equal(rows[4].loadedCbm,48.2);
+ assert.equal(rows[4].yourSpaceCbm,4);
+ assert.equal(rows[4].yourLoadedCbm,2);
+ assert.match(home,/otherCargoCbm:Math\.max\(0,\(selectedContainer\.loadedCbm\?\?0\)-\(selectedContainer\.yourLoadedCbm\?\?0\)\)/);
+ assert.match(home,/yourAllocatedContainerCbm=isDemo\?selectedContainer\?\.yourSpaceCbm:null/);
+ assert.match(home,/yourPhysicallyLoadedCbm=isDemo\?selectedContainer\?\.yourLoadedCbm:verifiedOccupancy\?\.yourSpaceCbm/);
+ assert.match(home,/accessibilityLabel="Show other progress bar"/);
+ assert.doesNotMatch(home,/Switch ↻/);
+ assert.match(home,/M3 5h23/);
 });
