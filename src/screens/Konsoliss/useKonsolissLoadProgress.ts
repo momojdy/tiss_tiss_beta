@@ -7,6 +7,9 @@ export type KonsolissLoadProgress={
   reservedCbm:number;
   sentCbm:number;
   loadedCbm:number;
+  inboundCbm:number;
+  allocatedCbm:number;
+  atWarehouseOrInTransitCbm:number;
   sentNotLoadedCbm:number;
   reservedNotSentCbm:number;
   loadedPercent:number;
@@ -24,13 +27,16 @@ export function parseKonsolissLoadProgress(row:unknown):KonsolissLoadProgress|nu
   const reservedCbm=parse(data.reserved_cbm);
   const sentCbm=parse(data.sent_cbm);
   const loadedCbm=parse(data.loaded_cbm);
-  if(![reservedCbm,sentCbm,loadedCbm].every(Number.isFinite)
-    ||reservedCbm<0||reservedCbm>68||sentCbm<0||loadedCbm<0
-    ||loadedCbm>sentCbm||loadedCbm>reservedCbm)return null;
-  return {reservedCbm,sentCbm,loadedCbm,
+  const inboundCbm=parse(data.inbound_to_container_cbm);
+  if(![reservedCbm,sentCbm,loadedCbm,inboundCbm].every(Number.isFinite)
+    ||reservedCbm<0||reservedCbm>68||sentCbm<0||loadedCbm<0||inboundCbm<0
+    ||loadedCbm+inboundCbm>sentCbm||loadedCbm+inboundCbm>reservedCbm)return null;
+  return {reservedCbm,sentCbm,loadedCbm,inboundCbm,
+    allocatedCbm:loadedCbm+inboundCbm,
+    atWarehouseOrInTransitCbm:Math.max(0,sentCbm-loadedCbm-inboundCbm),
     sentNotLoadedCbm:Math.max(0,sentCbm-loadedCbm),
     reservedNotSentCbm:Math.max(0,reservedCbm-sentCbm),
-    loadedPercent:reservedCbm>0?Math.round(loadedCbm/reservedCbm*100):0};
+    loadedPercent:reservedCbm>0?Math.round((loadedCbm+inboundCbm)/reservedCbm*100):0};
 }
 
 export function useKonsolissLoadProgress():KonsolissLoadProgressState{
@@ -40,7 +46,7 @@ export function useKonsolissLoadProgress():KonsolissLoadProgressState{
       const {data:auth,error:authError}=await supabase.auth.getUser();
       if(authError||!auth.user){setState({kind:'unavailable'});return;}
       const {data,error}=await supabase.from('konsoliss_customer_load_progress')
-        .select('reserved_cbm,sent_cbm,loaded_cbm')
+        .select('reserved_cbm,sent_cbm,inbound_to_container_cbm,loaded_cbm')
         .eq('user_id',auth.user.id).maybeSingle();
       if(error){setState({kind:'unavailable'});return;}
       if(!data){setState({kind:'unrecorded'});return;}
