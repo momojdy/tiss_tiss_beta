@@ -143,6 +143,12 @@ test('load progress math does not treat cargo sent as loaded or inbound',()=>{
  assert.equal(inbound.loadedPercent,30);
  assert.equal(parse({...base,inbound_to_container_cbm:0.8}),null);
  assert.equal(parse({...base,loaded_cbm:1.1}),null);
+ // 68 CBM is a per-container limit; a customer's total reservation can span several 40HQ containers.
+ const multi=parse({reserved_cbm:100,sent_cbm:72,inbound_to_container_cbm:12,loaded_cbm:60});
+ assert.ok(multi);
+ assert.equal(multi.reservedCbm,100);
+ assert.equal(multi.allocatedCbm,72);
+ assert.equal(multi.loadedPercent,72);
 });
 
 test('3D WebView script remains syntactically valid after animation changes',()=>{
@@ -206,7 +212,7 @@ test('container dropdown selects live or demo entries, five visible rows and scr
  assert.match(home,/containerHtml\(dark,!hasCurrentContainer&&noCargoLoaded/);
  assert.match(home,/containerOccupancy\?\.capacityCbm\?\?0/);
  assert.match(home,/selectedContainer\?\.id\?\?visualMode/);
- assert.match(home,/selectedContainer\?\.loadedCbm\?\?0/);
+ assert.match(home,/containerOccupancy\?\.loadedCbm\?\?0/);
 });
 test('sample container does not overwrite actual current load or mutate Supabase',()=>{
  const demos=fs.readFileSync(path.join(root,'konsolissDemoContainers.ts'),'utf8');
