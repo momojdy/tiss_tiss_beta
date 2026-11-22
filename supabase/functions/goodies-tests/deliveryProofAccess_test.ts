@@ -46,7 +46,7 @@ Deno.test('private delivery evidence enforces customer, merchant, staff and obje
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106020705_goodies_private_delivery_proofs.sql',import.meta.url)));
     await db.query("insert into public.wantiss_cms_content(content_key,locale,version,status,payload) values('goodies.content','en',1,'published',$1::jsonb)",[JSON.stringify({fees:{svc:3.5}})]);
     await db.exec(await Deno.readTextFile(new URL('../../migrations/20261106030829_goodies_private_proof_rollout.sql',import.meta.url)));
-    const privateOnlyMigration=await Deno.readTextFile(new URL('../../migrations/20261122022142_goodies_keep_delivery_proofs_private_when_paused.sql',import.meta.url));
+    const privateOnlyMigration=await Deno.readTextFile(new URL('../../migrations/20261122022758_goodies_keep_delivery_proofs_private_when_paused.sql',import.meta.url));
     const fingerprint=async()=>JSON.stringify((await db.query(`select pg_get_functiondef('public.goodies_self_delivery_mark_delivered(uuid,text)'::regprocedure) as definition,(select jsonb_agg(to_jsonb(p) order by policyname) from pg_policies p where schemaname='storage' and tablename='objects') as policies`)).rows);
     const beforeMigration=await fingerprint();let driftRejected=false;
     try{await db.exec(privateOnlyMigration.replace('previous text:=$old$if public.','previous text:=$old$if false and public.'));}
