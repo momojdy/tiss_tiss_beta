@@ -328,6 +328,11 @@ test('physical 40HQ 3D boxes highlight only the verified customer fraction of lo
  assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
  assert.match(engine,/isYours=!EMPTY&&boxIndex>=boxCount-ownCount/);
  assert.match(engine,/isYours\?'#A90E02'/);
- assert.doesNotMatch(engine,/const fz=\[CE\+\.05,HX-\.05,\.15,2\.55/);
+ assert.match(engine,/if\(!EMPTY\)\{const fz=\[CE\+\.05,HX-\.05,\.15,2\.55,-1\.1,1\.1\]/);
+ assert.match(engine,/abox\(2,fz,'#FFF1A0',C\.fv\)/);
+ assert.match(engine,/line\(2\.5,a,b,C\.ac,\.55,\.9,\[3,2\.5\]\)/);
+ assert.match(engine,/if\(!EMPTY\)\{const fz/);
+ // The visual marker is decorative; the verified cargo ratio remains source-owned.
+ assert.match(engine,/Math\.round\(boxCount\*YOUR_LOADED\/LOADED\)/);
  assert.doesNotThrow(()=>new (require('node:vm').Script)(engine));
 });
