@@ -147,9 +147,9 @@ function Screen({onBack}: {onBack?: () => void}) {
     const timeout=setTimeout(()=>setProgressView(view=>view==='customer'?'container':'customer'),7000);
     return()=>clearTimeout(timeout);
   },[hasCurrentContainer,selectedContainer?.id,progressView]);
-  const verifiedOccupancy=useKonsolissContainerOccupancy(isSelectedCurrent);
+  const verifiedOccupancy=useKonsolissContainerOccupancy(!isDemo&&selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
   const containerOccupancy=selectedContainer?.demo?{
-    capacityCbm:68,loadedCbm:selectedContainer.loadedCbm??0,
+    containerType:'40HQ' as const,capacityCbm:68,loadedCbm:selectedContainer.loadedCbm??0,
     yourSpaceCbm:selectedContainer.yourLoadedCbm??0,
     otherCargoCbm:Math.max(0,(selectedContainer.loadedCbm??0)-(selectedContainer.yourLoadedCbm??0)),
     freeCbm:Math.max(0,68-(selectedContainer.loadedCbm??0)),
@@ -180,7 +180,7 @@ function Screen({onBack}: {onBack?: () => void}) {
   const noCargoLoaded=!progress||progress.allocatedCbm===0;
   const visualMode=noCargoLoaded?'illustration':'sample';
   // Left: customer committed CBM / reserved CBM. Right: the shared 68 CBM container only.
-  const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/68:0;
+  const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/containerOccupancy.capacityCbm:0;
   const containerPercent=containerOccupancy?Math.round(containerRatio*100)+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
   const containerAvailable=containerOccupancy?containerOccupancy.freeCbm.toFixed(1):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
   const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
@@ -200,7 +200,7 @@ function Screen({onBack}: {onBack?: () => void}) {
       </Pressable></View>
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>No container assigned</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><View><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={[s.num, {color: t.ac}]}>{committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {reservedValue} CBM</Tx></Tx></View><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{containerPercent} filled</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(isDemo?selectedContainer?.loadedCbm:'live')} originWhitelist={['*']} source={{html: containerHtml(dark,isDemo?false:isSelectedCurrent?noCargoLoaded:!hasCurrentContainer&&noCargoLoaded,isDemo?68:isSelectedCurrent?progress?.reservedCbm??0:0,isDemo?selectedContainer?.loadedCbm??0:isSelectedCurrent?progress?.loadedCbm??0:0,isDemo?0:isSelectedCurrent?progress?.inboundCbm??0:0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??visualMode)+'-'+(containerOccupancy?.loadedCbm??'unverified')} originWhitelist={['*']} source={{html: containerHtml(dark,!hasCurrentContainer&&noCargoLoaded,containerOccupancy?.capacityCbm??0,containerOccupancy?.loadedCbm??0,0,isDemo,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??(!hasCurrentContainer&&currentContainer.kind==='unassigned'?68:null))}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
@@ -208,8 +208,8 @@ function Screen({onBack}: {onBack?: () => void}) {
         {progressView==='container'&&hasCurrentContainer?<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
             <View style={{flex:1,height:10,borderRadius:5,overflow:'hidden',backgroundColor:t.tint,flexDirection:'row'}}>
-              <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.otherCargoCbm/68*100)):0}%`,backgroundColor:'#CDAA7D'}}/>
-              <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.yourSpaceCbm/68*100)):0}%`,backgroundColor:t.ac}}/>
+              <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.otherCargoCbm/containerOccupancy.capacityCbm*100)):0}%`,backgroundColor:'#CDAA7D'}}/>
+              <View style={{width:`${containerOccupancy?Math.max(0,Math.min(100,containerOccupancy.yourSpaceCbm/containerOccupancy.capacityCbm*100)):0}%`,backgroundColor:t.ac}}/>
             </View>
             {hasCurrentContainer?<Pressable accessibilityRole="button" accessibilityLabel="Show other progress bar" accessibilityHint="Toggle between cargo loading and container allocation"
             onPress={()=>setProgressView(view=>view==='customer'?'container':'customer')}
