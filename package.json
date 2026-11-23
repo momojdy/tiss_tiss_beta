@@ -82,7 +82,8 @@
     "check:migrations": "node scripts/check-migration-versions.cjs",
     "check:goodies-native-config": "node scripts/check-goodies-native-config.cjs",
     "eas-build-pre-install": "node scripts/check-goodies-native-config.cjs",
-    "check:goodies-client-secrets": "node scripts/check-goodies-client-secrets.cjs"
+    "check:goodies-client-secrets": "node scripts/check-goodies-client-secrets.cjs",
+    "test:konsoliss": "node tests/konsoliss.test.cjs"
   },
   "private": true,
   "engines": {

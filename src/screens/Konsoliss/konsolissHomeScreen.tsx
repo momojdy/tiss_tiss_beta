@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable, Modal, TextInput, KeyboardAvoidingView, Platform, StatusBar, useColorScheme, useWindowDimensions, StyleSheet, Image} from 'react-native';
+import {Animated, Easing, View, Text as RNText, TextProps, ScrollView, Pressable, Modal, TextInput, KeyboardAvoidingView, Platform, StatusBar, useWindowDimensions, StyleSheet, Image} from 'react-native';
 import {SafeAreaProvider, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {WebView} from 'react-native-webview';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useFeatureTheme} from '../../shared/quickMenu/useFeatureTheme';
 import {useKonsolissCopy, type KonsolissCopy} from './useKonsolissCopy';
 import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type KonsolissContainerStatus} from './useCurrentKonsolissContainer';
 import {KONSOLISS_LIFECYCLE_MESSAGES} from './konsolissLifecycleMessages';
@@ -20,7 +20,7 @@ const L = {bg: '#FFFBD4', tx: '#2B1210', mu: '#7a5a52', ac: '#A90E02', tint: 'rg
 const Dk: typeof L = {bg: '#17100F', tx: '#FFFBD4', mu: '#BDB08C', ac: '#FF5B4A', tint: 'rgba(255,251,212,0.09)', nav: '#1E1514', card: 'rgba(255,251,212,0.06)', bd: 'rgba(255,251,212,0.1)', gr: '#5FD38A', inp: '#241a18'};
 type Th = typeof L;
 const Tx = (p: TextProps) => <RNText {...p} style={[{includeFontPadding: false}, p.style]} />;
-const RED = '#A90E02', CREAM = '#FFFBD4', RATE = 550;
+const RED = '#A90E02', CREAM = '#FFFBD4';
 
 const P: Record<string, string> = {
   box: 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM4 7.5l8 4.5 8-4.5M12 12v9',
@@ -81,10 +81,10 @@ function Sheet({t, onClose, children}: {t: Th; onClose: () => void; children: (c
 }
 function Calc({t,copy}: {t: Th;copy:KonsolissCopy}) {
   const [v, setV] = useState({l: '', w: '', h: '', q: '1'}); const n = (x: string) => parseFloat(x.replace(',', '.')) || 0; const c = (n(v.l) * n(v.w) * n(v.h)) / 1e6 * n(v.q); const f = [['l', copy['calc.length']], ['w', copy['calc.width']], ['h', copy['calc.height']], ['q', copy['calc.quantity']]] as const;
-  return <><Tx style={[s.h3, {color: t.tx}]}>{copy['calc.heading']}</Tx><Tx style={[s.m, {color: t.mu}]}>{copy['calc.instructions']}</Tx><View style={s.g}>{f.map(([k, p]) => <TextInput key={k} value={v[k]} onChangeText={x => setV({...v, [k]: x})} placeholder={p} placeholderTextColor={t.mu} keyboardType="decimal-pad" style={[s.inp, {backgroundColor: t.inp, color: t.tx}]} />)}</View><Tx style={[s.res, {color: t.ac}]}>{`Estimated volume: ${c.toFixed(2)} CBM`}</Tx><Tx style={[s.rs, {color: t.mu}]}>{c ? `About $${(c * RATE).toFixed(0)} at the sample rate of $${RATE} per CBM` : `Sample rate $${RATE} per CBM`}</Tx></>;
+  return <><Tx style={[s.h3, {color: t.tx}]}>{copy['calc.heading']}</Tx><Tx style={[s.m, {color: t.mu}]}>{copy['calc.instructions']}</Tx><View style={s.g}>{f.map(([k, p]) => <TextInput key={k} value={v[k]} onChangeText={x => setV({...v, [k]: x})} placeholder={p} placeholderTextColor={t.mu} keyboardType="decimal-pad" style={[s.inp, {backgroundColor: t.inp, color: t.tx}]} />)}</View><Tx style={[s.res, {color: t.ac}]}>{`Estimated volume: ${c.toFixed(2)} CBM`}</Tx><Tx style={[s.rs, {color: t.mu}]}>{'Volume estimate only. Physical fit also depends on orientation, weight, stacking and handling. Pricing requires a verified quote.'}</Tx></>;
 }
 function Book({t, onClose,copy}: {t: Th; onClose: () => void;copy:KonsolissCopy}) {
-  const [v, setV] = useState(0.5); return <><Tx style={[s.h3, {color: t.tx}]}>{copy['book.heading']}</Tx><Tx style={[s.m, {color: t.mu}]}>Container capacity: 68 CBM. Live free space must be confirmed before booking.</Tx><View style={s.chips}>{[0.02, 0.05, 0.2, 0.5, 1].map(x => <Pressable key={x} onPress={() => setV(x)} style={[s.chip, {backgroundColor: x === v ? RED : t.tint}]}><Tx style={{color: x === v ? CREAM : t.ac, fontWeight: '700', fontSize: 14}}>{x.toFixed(2)} CBM</Tx></Pressable>)}</View><Tx style={[s.res, {color: t.ac}]}>{`${v.toFixed(2)} CBM`}</Tx><Tx style={[s.rs, {color: t.mu}]}>{`About $${(v * RATE).toFixed(0)} at the sample rate of $${RATE} per CBM`}</Tx><Pressable onPress={onClose} style={s.rev}><Tx style={{color: CREAM, fontWeight: '700', fontSize: 16}}>{copy['book.review']}</Tx></Pressable></>;
+  const [v, setV] = useState(0.5); return <><Tx style={[s.h3, {color: t.tx}]}>{copy['book.heading']}</Tx><Tx style={[s.m, {color: t.mu}]}>Container capacity: 68 CBM. Live free space must be confirmed before booking.</Tx><View style={s.chips}>{[0.02, 0.05, 0.2, 0.5, 1].map(x => <Pressable key={x} onPress={() => setV(x)} style={[s.chip, {backgroundColor: x === v ? RED : t.tint}]}><Tx style={{color: x === v ? CREAM : t.ac, fontWeight: '700', fontSize: 14}}>{x.toFixed(2)} CBM</Tx></Pressable>)}</View><Tx style={[s.res, {color: t.ac}]}>{`${v.toFixed(2)} CBM`}</Tx><Tx style={[s.rs, {color: t.mu}]}>{'Booking is unavailable until a verified quote, capacity reservation and payment service are configured. No reservation or payment has been made.'}</Tx><Pressable onPress={onClose} style={s.rev}><Tx style={{color: CREAM, fontWeight: '700', fontSize: 16}}>Back</Tx></Pressable></>;
 }
 
 function KonsolissMarker({n, top, ac}: {n: number; top: boolean; ac: string}) {
@@ -109,9 +109,7 @@ export default function KonsolissHomeScreen({onBack,onUniversalAction,unreadNoti
   return <SafeAreaProvider><Screen onBack={onBack} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} /></SafeAreaProvider>;
 }
 function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {onBack?: () => void;onUniversalAction?:(action:KonsolissMenuAction)=>void;unreadNotifications:number;unreadMessages:number}) {
-  const insets = useSafeAreaInsets(); const systemDark=useColorScheme()==='dark'; const [themeOverride,setThemeOverride]=useState<'dark'|'light'|null>(null); const dark=themeOverride===null?systemDark:themeOverride==='dark'; const t=dark?Dk:L;
-  useEffect(()=>{let active=true;AsyncStorage.getItem('konsoliss.theme').then(value=>{if(active&&(value==='dark'||value==='light'))setThemeOverride(value);}).catch(()=>{});return()=>{active=false;};},[]);
-  const toggleKonsolissDarkMode=()=>{const next=dark?'light':'dark';setThemeOverride(next);void AsyncStorage.setItem('konsoliss.theme',next).catch(()=>{});}; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
+  const insets = useSafeAreaInsets(); const {dark,toggle:toggleKonsolissDarkMode}=useFeatureTheme('konsoliss.theme'); const t=dark?Dk:L; const copy = useKonsolissCopy(); const [sh, setSh] = useState<null | 'calc' | 'book'>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
   const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
@@ -159,27 +157,26 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
   const noActiveLoad=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
-  const initialZero=noActiveLoad&&loadProgress.kind==='unrecorded';
   const fmt=(n:number)=>n.toFixed(2).replace(/0$/,'').replace(/\.$/,'.0');
-  const loadedValue=progress?fmt(progress.loadedCbm):initialZero?'0.0':'—';
-  const inboundValue=progress?fmt(progress.inboundCbm):initialZero?'0.0':'—';
-  const committedValue=progress?fmt(progress.allocatedCbm):initialZero?'0.0':'—';
-  const warehouseOrTransitValue=progress?fmt(progress.atWarehouseOrInTransitCbm):initialZero?'0.0':'—';
-  const reservedValue=progress?fmt(progress.reservedCbm):initialZero?'0.0':'—';
-  const sentValue=progress?fmt(progress.sentCbm):initialZero?'0.0':'—';
-  const notLoadedValue=progress?fmt(progress.sentNotLoadedCbm):initialZero?'0.0':'—';
-  const stillToSendValue=progress?fmt(progress.reservedNotSentCbm):initialZero?'0.0':'—';
-  const notAllocatedValue=progress?fmt(Math.max(0,progress.reservedCbm-progress.allocatedCbm)):initialZero?'0.0':'—';
+  const loadedValue=progress?fmt(progress.loadedCbm):'—';
+  const inboundValue=progress?fmt(progress.inboundCbm):'—';
+  const committedValue=progress?fmt(progress.allocatedCbm):'—';
+  const warehouseOrTransitValue=progress?fmt(progress.atWarehouseOrInTransitCbm):'—';
+  const reservedValue=progress?fmt(progress.reservedCbm):'—';
+  const sentValue=progress?fmt(progress.sentCbm):'—';
+  const notLoadedValue=progress?fmt(progress.sentNotLoadedCbm):'—';
+  const stillToSendValue=progress?fmt(progress.reservedNotSentCbm):'—';
+  const notAllocatedValue=progress?fmt(Math.max(0,progress.reservedCbm-progress.allocatedCbm)):'—';
   const physicallyLoadedRatio=progress&&progress.reservedCbm>0?progress.loadedCbm/progress.reservedCbm:0;
   const inboundRatio=progress&&progress.reservedCbm>0?progress.inboundCbm/progress.reservedCbm:0;
-  const fillPercent=progress?progress.loadedPercent+'%':initialZero?'0%':'—';
+  const fillPercent=progress?progress.loadedPercent+'%':'—';
   const fillRatio=progress&&progress.reservedCbm>0?progress.allocatedCbm/progress.reservedCbm:0;
   const noCargoLoaded=!progress||progress.allocatedCbm===0;
   const visualMode=noCargoLoaded?'illustration':'sample';
   // Left: customer committed CBM / reserved CBM. Right: the shared 68 CBM container only.
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/containerOccupancy.capacityCbm:0;
-  const containerPercent=containerOccupancy?(containerRatio>0&&containerRatio<0.01?(containerRatio*100).toFixed(2):String(Math.round(containerRatio*100)))+'%':!hasCurrentContainer&&currentContainer.kind==='unassigned'?'0%':'—';
-  const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):!hasCurrentContainer&&currentContainer.kind==='unassigned'?'68.0':'—';
+  const containerPercent=containerOccupancy?(containerRatio>0&&containerRatio<0.01?(containerRatio*100).toFixed(2):String(Math.round(containerRatio*100)))+'%':'—';
+  const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):'—';
   const showEmptyLoadHint=currentContainer.kind==='unassigned'&&(
     loadProgress.kind==='unrecorded'||(progress!==null&&progress.loadedCbm===0&&progress.inboundCbm===0));
   const loadPreviewValues={reservedValue,sentValue,loadedValue,inboundValue,committedValue,warehouseOrTransitValue,stillToSendValue,notAllocatedValue};
