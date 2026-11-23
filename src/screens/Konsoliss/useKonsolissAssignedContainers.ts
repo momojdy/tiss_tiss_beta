@@ -35,6 +35,7 @@ export function useKonsolissAssignedContainers(){
           ||!validStatuses.includes(container.status as KonsolissContainerStatus))return [];
         return [{id,number:container.container_number,status:container.status as KonsolissContainerStatus,demo:false}];
       });
+      if(list.length!==ids.length)throw new Error('Assigned container details unavailable');
       commit(()=>{setContainers(list);setState('ready');});
     }catch{commit(()=>{setContainers([]);setState('unavailable');});}
   },[]);

@@ -99,3 +99,19 @@ This change introduces a shared unread service for App/Goodies/Gatherz/Konsoliss
 Two admin-owned migrations were applied and verified in live Supabase: `20261122205352_konsoliss_verified_volume_constraints` and `20261122210202_konsoliss_occupancy_realtime_invalidation`. They reject invalid inbound quantities, protect assignment ownership/shared capacity and enable realtime aggregate invalidation. No customer records were fabricated or financial records changed. The admin form accepts multi-container customer totals and leaves missing measurements blank.
 
 Run consumer `npm run test:konsoliss`; admin `npm run test:konsoliss` and `npm run test:konsoliss:backend`. Typechecks and Hermes exports passed, but do not establish native builds, payment correctness, customer/admin integration or release readiness. Renderer and wrapper bytes are unchanged. Dedicated 3D visualization regression/device testing remains deferred by the user.
+
+## Homepage CMS and admin completion — 2026-11-23
+
+The current homepage scope, implemented paths, applied migration and executed evidence are documented in [homepage-completion.md](../../../docs/konsoliss/homepage-completion.md). This supersedes older homepage notes above about per-menu unread loading, Help/Feedback routing to Goodies, inactive cards and the stale admin preview. It does not declare the whole feature production ready.
+
+The admin preview is generated from this homepage with `npm run sync:konsoliss-preview` (sibling admin checkout or `KONSOLISS_ADMIN_ROOT`). CI checks source/image hashes with `npm run check:konsoliss-preview`. Copy lives in `cms/catalog.ts`; 11 managed image slots and all intended text are exposed through manual and selectable preview editing. The renderer is unchanged; canvas annotations use a separate translation adapter. Changing the catalog also requires updating the server CMS validation contract and paired tests. Never put operational/customer quantities into CMS payloads.
+
+Customer language comes from authenticated `user_settings.language` with reviewed published en/fr/ht/es/zh-Hans content, English/default fallback and locale-keyed public cache. Admin publication requires per-field review and preserved placeholders, version conflict checks and read-back. No translated starter content was automatically reviewed or published.
+
+Admin `KonsolissMeasurements.tsx` exposes per-container loaded/allocated values, unknown blank, review confirmation and an audit reason. Live migration `20261123050013_konsoliss_homepage_cms_and_measurements` atomically reconciles measured customer loaded/inbound totals and protects legacy writes. Reserved/sent quantities remain server-owned operational records.
+
+Home, Warehouse, Consolidated, Sourcing, Hub, Load Items, Help and Feedback have real handlers. Konsoliss support uses the shared authenticated support inbox and confirms a server ticket code; it does not create a shipment, purchase or payment. Booking and shipment-history execution remain explicitly unavailable; request panels do not satisfy those deeper workflows.
+
+Final focused results: consumer 25 tests, admin 8 tests and 9 backend PASS groups; both typechecks and all four iOS/Android Hermes exports passed. Targeted Konsoliss lint has 0 errors and 6 warnings. The live project still has zero containers, assignments, progress records and Konsoliss CMS rows: real publication/customer integration and installed-device acceptance remain unverified. Dedicated 3D visual/device regression remains deferred by the user.
+
+Concurrent main commit `c7c0d9e6` removed the explanatory container-total hint below the progress bar. That removal is preserved in both apps. Follow-up live migration `20261123052456_konsoliss_retire_homepage_hint` removes its retired CMS field, with regression coverage; original migration history remains intact.

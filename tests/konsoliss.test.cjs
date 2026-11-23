@@ -61,7 +61,7 @@ test('new refresh, account switch and disposal invalidate pending responses',()=
  const accountB=gate.begin();gate.invalidate();assert.equal(gate.current(accountB),false);
 });
 
-function hookHarness(file,method,args=[]){
+function hookHarness(file,method,args=[],options={}){
  let state,refresh,invalidate;
  let authUser='A';
  let finishOld;
@@ -72,7 +72,7 @@ function hookHarness(file,method,args=[]){
   const builder={select(){return this;},eq(key,value){if(key==='user_id')owner=value;return this;},order(){return this;},limit(){return this;},in(){return this;},
    maybeSingle(){return this.read();},single(){return this.read();},
    read(){if(first){first=false;return pending;}return Promise.resolve({data:table==='konsoliss_customer_load_breakdown'?row:table==='konsoliss_container_assignments'?{container_id:owner}: {container_number:'B-container',status:'filling'},error:null});},
-   then(resolve,reject){if(first){first=false;return pending.then(resolve,reject);}return Promise.resolve({data:table==='konsoliss_container_assignments'?[{container_id:owner,assigned_at:'now'}]:[{id:'B',container_number:'B-container',status:'filling'}],error:null}).then(resolve,reject);}};
+   then(resolve,reject){if(first){first=false;return pending.then(resolve,reject);}return Promise.resolve({data:table==='konsoliss_container_assignments'?[{container_id:owner,assigned_at:'now'}]:options.missing?[]:[{id:'B',container_number:'B-container',status:'filling'}],error:null}).then(resolve,reject);}};
   return builder;
  },rpc:()=>first?(first=false,pending):Promise.resolve({data:{container_id:'container',container_type:'40HQ',capacity_cbm:68,loaded_cbm:0.02,your_loaded_cbm:0.02,other_cargo_cbm:0,free_cbm:67.98,your_allocated_cbm:0.02},error:null})};
  const source=fs.readFileSync(path.resolve(__dirname,'../src/screens/Konsoliss',file),'utf8');
@@ -103,4 +103,8 @@ for(const [file,method,args] of [
  await old;assert.equal(JSON.stringify(hook.state()),current);
  hook.invalidate();const cleared=JSON.stringify(hook.state());
  assert.notEqual(cleared,current); // clearing removes the previous customer's visible result
+});
+
+test('a visible assignment with inaccessible container details is unavailable, never confirmed empty',async()=>{
+ const hook=hookHarness('useKonsolissAssignedContainers.ts','useKonsolissAssignedContainers',[],{missing:true});const result=hook.refresh();await Promise.resolve();await Promise.resolve();hook.finishOld({data:[{container_id:'assigned'}],error:null});await result;assert.equal(hook.state(),'unavailable');
 });

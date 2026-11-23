@@ -59,15 +59,15 @@ export function useCurrentKonsolissContainer(): CurrentContainer {
   return current;
 }
 
-export function currentKonsolissContainerLabel(value: CurrentContainer): string {
-  if (value.kind === 'loading') return 'Loading container…';
-  if (value.kind === 'unassigned') return 'No active load';
-  if (value.kind === 'unavailable') return 'Container unavailable';
+export function currentKonsolissContainerLabel(value: CurrentContainer, copy:Record<string,string>={}): string {
+  if (value.kind === 'loading') return copy['status.loading']??'Loading container…';
+  if (value.kind === 'unassigned') return copy['status.unassigned']??'No active load';
+  if (value.kind === 'unavailable') return copy['status.unavailable']??'Container unavailable';
   const labels: Record<KonsolissContainerStatus, string> = {
-    filling: 'Filling',
-    filled: 'Filled',
-    departed: 'Departed',
-    arrived: 'Arrived',
+    filling: copy['status.filling']??'Filling',
+    filled: copy['status.filled']??'Filled',
+    departed: copy['status.departed']??'Departed',
+    arrived: copy['status.arrived']??'Arrived',
   };
   return value.number + ' · ' + labels[value.status];
 }
