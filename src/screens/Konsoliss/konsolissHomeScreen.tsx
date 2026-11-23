@@ -221,7 +221,6 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
             <Tx style={[s.leg,{color:t.ac}]}>{copy['home.yourSpace']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.yourSpaceCbm):'—'}</Tx></Tx>
             <Tx style={s.leg}>{copy['home.free']} <Tx style={{color:t.tx}}>{containerOccupancy?fmt(containerOccupancy.freeCbm):'—'}</Tx></Tx>
           </View>
-          {!containerOccupancy?<Tx style={{fontSize:10,color:t.mu,marginTop:4}}>Container totals appear when a container is assigned and its loaded cargo is verified.</Tx>:null}
         </>:<>
           <View style={{flexDirection:'row',alignItems:'center',gap:6}}>
             <View style={{flex:1,flexDirection:'row',height:10,borderRadius:5,overflow:'hidden',gap:2}}>
