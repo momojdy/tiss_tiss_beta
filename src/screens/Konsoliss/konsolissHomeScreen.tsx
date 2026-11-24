@@ -124,12 +124,12 @@ const demoOccupancy=(total:number,yours:number,allocated=yours):KonsolissContain
 });
 const KONSOLISS_DEMO_TOUR:readonly DemoScenario[]=[
   {id:'empty',title:'Empty container',note:'Original empty-container animation. No booking, no real cargo.',progress:null,occupancy:null},
-  {id:'not-sent',title:'Purchased · nothing sent',note:'1.000 CBM paid and reserved; 0.000 CBM sent or loaded. The reservation stays available until a valid deadline/release.',progress:demoProgress(1,0,0,0),occupancy:null},
+  {id:'not-sent',title:'Purchased · nothing sent',note:'1.000 CBM paid and reserved; 0.000 CBM sent or loaded. No 80-day warehouse-receipt clock has started. The reservation stays active until a valid deadline/release.',progress:demoProgress(1,0,0,0),occupancy:null},
   {id:'tracking',title:'Goods sent · in transit',note:'0.700 CBM sent using verified tracking, but nothing is physically loaded. Warehouse arrival remains unconfirmed.',progress:demoProgress(1,.7,0,0),occupancy:null},
   {id:'warehouse',title:'Received at China warehouse',note:'0.700 CBM received and measured; none allocated to a physical container. Receipt status is an illustrative extra demo label.',progress:demoProgress(1,.7,0,0),occupancy:null},
   {id:'allocated',title:'Assigned · not yet loaded',note:'0.700 CBM allocated/inbound to a container, 0.000 CBM physically loaded. Other customers\' cargo remains separate.',progress:demoProgress(1,.7,.7,0),occupancy:demoOccupancy(23,0,.7),status:'filling'},
   {id:'partial',title:'Partially loaded',note:'1.000 CBM purchased; 0.400 CBM physically loaded in red, another 0.300 CBM allocated/inbound.',progress:demoProgress(1,.7,.3,.4),occupancy:demoOccupancy(30.4,.4,.7),status:'filling'},
-  {id:'full',title:'My cargo fully loaded',note:'All 1.000 CBM of the customer\'s cargo physically loaded in red. Other cargo has its own natural colors.',progress:demoProgress(1,1,0,1),occupancy:demoOccupancy(55,1),status:'filled'},
+  {id:'full',title:'My cargo fully loaded',note:'All 1.000 CBM of the customer\'s cargo physically loaded in red. Other cargo has its own natural colors.',progress:demoProgress(1,1,0,1),occupancy:demoOccupancy(55,1),status:'filling'},
   {id:'micro',title:'Tiny 0.020 CBM loaded',note:'Smallest supported booking, visually represented without exaggerating its share of a 68 CBM container.',progress:demoProgress(.02,.02,0,.02),occupancy:demoOccupancy(.02,.02),status:'filling'},
   {id:'partner',title:'Third-party freight',note:'Cargo handed to an outside consolidator. No fictional Konsoliss physical-container loading or sailing status.',progress:demoProgress(1,.7,0,0),occupancy:null},
   {id:'expired',title:'Never sent · valid expiry',note:'No goods ever sent. After a valid D25/D32 expiry and release, active reserved CBM is 0; booking history and any refund review remain separate.',progress:demoProgress(0,0,0,0),occupancy:null},
