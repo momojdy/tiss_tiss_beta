@@ -8,8 +8,8 @@ import {Tx,CmsImage,KonsolissContentContext} from './KonsolissContent';
 import {estimateCbm,formatCopy} from './cms/model';
 import {currentKonsolissContainerLabel, useCurrentKonsolissContainer, type KonsolissContainerStatus} from './useCurrentKonsolissContainer';
 import {sendKonsolissSupport,supportRequestId} from './supportApi';
-import {useKonsolissLoadProgress} from './useKonsolissLoadProgress';
-import {useKonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
+import {useKonsolissLoadProgress, type KonsolissLoadProgress} from './useKonsolissLoadProgress';
+import {useKonsolissContainerOccupancy, type KonsolissContainerOccupancy} from './useKonsolissContainerOccupancy';
 import {useKonsolissAssignedContainers} from './useKonsolissAssignedContainers';
 import {type KonsolissSelectableContainer} from './konsolissDemoContainers';
 import KonsolissQuickMenu, {type KonsolissMenuAction} from './KonsolissQuickMenu';
@@ -98,16 +98,53 @@ function KonsolissMarker({n, top, ac}: {n: number; top: boolean; ac: string}) {
   </View>;
 }
 
+
+/** Temporary, unmistakably illustrative UI tour. No fixture is written to Supabase.
+ * Turn this off for the public production release; the real progress hooks keep running.
+ */
+const KONSOLISS_DEMO_TOUR_ENABLED = true;
+type DemoScenario = {
+  id:string; title:string; note:string;
+  progress:KonsolissLoadProgress|null;
+  occupancy:KonsolissContainerOccupancy|null;
+  status?:KonsolissContainerStatus;
+};
+const demoProgress=(reserved:number,sent:number,inbound:number,loaded:number):KonsolissLoadProgress=>({
+  reservedCbm:reserved,sentCbm:sent,inboundCbm:inbound,loadedCbm:loaded,
+  allocatedCbm:loaded+inbound,
+  atWarehouseOrInTransitCbm:Math.max(0,sent-loaded-inbound),
+  sentNotLoadedCbm:Math.max(0,sent-loaded),
+  reservedNotSentCbm:Math.max(0,reserved-sent),
+  loadedPercent:reserved>0?Math.round((loaded+inbound)*10000/reserved)/100:0,
+});
+const demoOccupancy=(total:number,yours:number,allocated=yours):KonsolissContainerOccupancy=>({
+  containerType:'40HQ',capacityCbm:68,loadedCbm:total,
+  otherCargoCbm:Number((total-yours).toFixed(3)),yourSpaceCbm:yours,
+  yourAllocatedCbm:allocated,freeCbm:Number((68-total).toFixed(3)),
+});
+const KONSOLISS_DEMO_TOUR:readonly DemoScenario[]=[
+  {id:'empty',title:'Empty container',note:'Original empty-container animation. No booking, no real cargo.',progress:null,occupancy:null},
+  {id:'not-sent',title:'Purchased · nothing sent',note:'1.000 CBM paid and reserved; 0.000 CBM sent or loaded. The reservation stays available until a valid deadline/release.',progress:demoProgress(1,0,0,0),occupancy:null},
+  {id:'tracking',title:'Goods sent · in transit',note:'0.700 CBM sent using verified tracking, but nothing is physically loaded. Warehouse arrival remains unconfirmed.',progress:demoProgress(1,.7,0,0),occupancy:null},
+  {id:'warehouse',title:'Received at China warehouse',note:'0.700 CBM received and measured; none allocated to a physical container. Receipt status is an illustrative extra demo label.',progress:demoProgress(1,.7,0,0),occupancy:null},
+  {id:'allocated',title:'Assigned · not yet loaded',note:'0.700 CBM allocated/inbound to a container, 0.000 CBM physically loaded. Other customers\' cargo remains separate.',progress:demoProgress(1,.7,.7,0),occupancy:demoOccupancy(23,0,.7),status:'filling'},
+  {id:'partial',title:'Partially loaded',note:'1.000 CBM purchased; 0.400 CBM physically loaded in red, another 0.300 CBM allocated/inbound.',progress:demoProgress(1,.7,.3,.4),occupancy:demoOccupancy(30.4,.4,.7),status:'filling'},
+  {id:'full',title:'My cargo fully loaded',note:'All 1.000 CBM of the customer\'s cargo physically loaded in red. Other cargo has its own natural colors.',progress:demoProgress(1,1,0,1),occupancy:demoOccupancy(55,1),status:'filled'},
+  {id:'micro',title:'Tiny 0.020 CBM loaded',note:'Smallest supported booking, visually represented without exaggerating its share of a 68 CBM container.',progress:demoProgress(.02,.02,0,.02),occupancy:demoOccupancy(.02,.02),status:'filling'},
+  {id:'partner',title:'Third-party freight',note:'Cargo handed to an outside consolidator. No fictional Konsoliss physical-container loading or sailing status.',progress:demoProgress(1,.7,0,0),occupancy:null},
+  {id:'expired',title:'Never sent · valid expiry',note:'No goods ever sent. After a valid D25/D32 expiry and release, active reserved CBM is 0; booking history and any refund review remain separate.',progress:demoProgress(0,0,0,0),occupancy:null},
+];
+
 const KONSOLISS_STEPS=[1,2,3,4,5];
 
 export default function KonsolissHomeScreen({onBack,onUniversalAction,unreadNotifications=0,unreadMessages=0}: {onBack?: () => void;onUniversalAction?:(action:KonsolissMenuAction)=>void;unreadNotifications?:number;unreadMessages?:number}) {
   return <SafeAreaProvider><Screen onBack={onBack} onUniversalAction={onUniversalAction} unreadNotifications={unreadNotifications} unreadMessages={unreadMessages} /></SafeAreaProvider>;
 }
 function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {onBack?: () => void;onUniversalAction?:(action:KonsolissMenuAction)=>void;unreadNotifications:number;unreadMessages:number}) {
-  const insets = useSafeAreaInsets(); const {dark,toggle:toggleKonsolissDarkMode,error:themeError}=useFeatureTheme('konsoliss.theme'); const t=dark?Dk:L; const content=useKonsolissHomepageContent(); const copy=content.copy; const editing=useContext(KonsolissContentContext); const [supportDraft,setSupportDraft]=useState({subject:'',message:''}); const [sh, setSh] = useState<null | 'calc' | 'book' | 'warehouse' | 'load' | 'sourcing' | 'orders' | 'support'>(null); const scrollRef=useRef<React.ElementRef<typeof ScrollView>>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress();
+  const insets = useSafeAreaInsets(); const {dark,toggle:toggleKonsolissDarkMode,error:themeError}=useFeatureTheme('konsoliss.theme'); const t=dark?Dk:L; const content=useKonsolissHomepageContent(); const copy=content.copy; const editing=useContext(KonsolissContentContext); const [supportDraft,setSupportDraft]=useState({subject:'',message:''}); const [sh, setSh] = useState<null | 'calc' | 'book' | 'warehouse' | 'load' | 'sourcing' | 'orders' | 'support'>(null); const scrollRef=useRef<React.ElementRef<typeof ScrollView>>(null); const [scroll, setScroll] = useState(true); const [progressView,setProgressView]=useState<'customer'|'container'>('customer'); const [loadDetailsOpen,setLoadDetailsOpen]=useState(false); const [quickMenuOpen,setQuickMenuOpen]=useState(false); const [containerMenuOpen,setContainerMenuOpen]=useState(false); const [selectedContainerId,setSelectedContainerId]=useState<string|null>(null); const currentContainer = useCurrentKonsolissContainer(); const assignedContainers=useKonsolissAssignedContainers(); const loadProgress=useKonsolissLoadProgress(); const [demoIndex,setDemoIndex]=useState<number|null>(null); const demoScenario=demoIndex===null?null:KONSOLISS_DEMO_TOUR[demoIndex]; const isDemo=demoScenario!==null; const displayLoadState=demoScenario?(demoScenario.progress?{kind:'recorded' as const,progress:demoScenario.progress}:{kind:'unrecorded' as const}):loadProgress; const displayCurrentContainer=demoScenario?(demoScenario.occupancy?{kind:'assigned' as const,number:'KS-DEMO-40HQ',status:demoScenario.status??('filling' as const)}:{kind:'unassigned' as const}):currentContainer; const displayAssignmentState=isDemo?'ready':assignedContainers.state;
   const [lifecycleNotice,setLifecycleNotice] = useState<KonsolissContainerStatus|null>(null);
   const previousContainerStage = useRef<string|null>(null);
-  const assignedStage = currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
+  const assignedStage = !isDemo&&currentContainer.kind === 'assigned' ? currentContainer.number + ':' + currentContainer.status : null;
   useEffect(() => {
     if (!assignedStage) return;
     if (previousContainerStage.current === assignedStage) return;
@@ -123,15 +160,14 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const realFallback=currentContainer.kind==='assigned'?{
     id:'current:'+currentContainer.number,number:currentContainer.number,status:currentContainer.status,demo:false,
   } as KonsolissSelectableContainer:null;
-  const liveContainers=assignedContainers.containers.length?assignedContainers.containers:(realFallback?[realFallback]:[]);
+  const liveContainers:KonsolissSelectableContainer[]=isDemo?(demoScenario?.occupancy?[{id:'demo:tour',number:'KS-DEMO-40HQ',status:demoScenario.status??'filling',demo:true}]:[]):(assignedContainers.containers.length?assignedContainers.containers:(realFallback?[realFallback]:[]));
   const defaultContainer=liveContainers.find(row=>row.number===realFallback?.number)
     ??liveContainers[0]??realFallback
 ;
-  const selectedContainer:KonsolissSelectableContainer|null=selectedContainerId==='live'?null:
+  const selectedContainer:KonsolissSelectableContainer|null=isDemo?(liveContainers[0]??null):selectedContainerId==='live'?null:
     (liveContainers.find(row=>row.id===selectedContainerId)
       ??(selectedContainerId===realFallback?.id?realFallback:null)
       ??(selectedContainerId===null?defaultContainer:null));
-  const isDemo=false;
   const hasCurrentContainer=selectedContainer!==null;
   const isSelectedCurrent=selectedContainer!==null&&!isDemo&&currentContainer.kind==='assigned'&&currentContainer.number===selectedContainer.number;
   const containerStatusLabel=(item:KonsolissSelectableContainer)=>
@@ -142,16 +178,16 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
     const timeout=setTimeout(()=>setProgressView(view=>view==='customer'?'container':'customer'),7000);
     return()=>clearTimeout(timeout);
   },[selectedContainer?.id,progressView]);
-  const verifiedOccupancy=useKonsolissContainerOccupancy(selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
-  const containerOccupancy=verifiedOccupancy;
+  const verifiedOccupancy=useKonsolissContainerOccupancy(!isDemo&&selectedContainer?.id&&!selectedContainer.id.startsWith('current:')?selectedContainer.id:null);
+  const containerOccupancy=isDemo?(demoScenario?.occupancy??null):verifiedOccupancy;
   // "Your space" in the lower container bar is loaded cargo, not reserved allocation.
   // The aggregation RPC's yourSpaceCbm is also physically loaded cargo.
-  const yourPhysicallyLoadedCbm=verifiedOccupancy?.yourSpaceCbm;
+  const yourPhysicallyLoadedCbm=containerOccupancy?.yourSpaceCbm;
   // Reserved space, goods sent and cargo loaded are different customer-owned quantities.
   // Unknown data is never replaced with the former 51.7/68 sample occupancy.
-  const progress=loadProgress.kind==='recorded'?loadProgress.progress:null;
-  const noActiveLoad=currentContainer.kind==='unassigned'&&(
-    loadProgress.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
+  const progress=displayLoadState.kind==='recorded'?displayLoadState.progress:null;
+  const noActiveLoad=displayCurrentContainer.kind==='unassigned'&&(
+    displayLoadState.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
   const fmt=(n:number)=>n.toFixed(3).replace(/0+$/,'').replace(/\.$/,'.0');
   const loadedValue=progress?fmt(progress.loadedCbm):'—';
   const inboundValue=progress?fmt(progress.inboundCbm):'—';
@@ -172,10 +208,13 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   const containerRatio=containerOccupancy?containerOccupancy.loadedCbm/containerOccupancy.capacityCbm:0;
   const containerPercent=containerOccupancy?(containerRatio>0&&containerRatio<0.01?(containerRatio*100).toFixed(2):String(Math.round(containerRatio*100)))+'%':'—';
   const containerAvailable=containerOccupancy?fmt(containerOccupancy.freeCbm):'—';
-  const showEmptyLoadHint=!selectedContainer&&assignedContainers.state==='ready'&&assignedContainers.containers.length===0&&currentContainer.kind==='unassigned'&&(
-    loadProgress.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
-  const showReservedPreview=progress!==null&&progress.reservedCbm>0&&progress.loadedCbm===0&&((containerOccupancy!==null&&containerOccupancy.yourSpaceCbm===0)||(!selectedContainer&&assignedContainers.state==='ready'&&assignedContainers.containers.length===0&&currentContainer.kind==='unassigned'));
+  const showEmptyLoadHint=!selectedContainer&&displayAssignmentState==='ready'&&liveContainers.length===0&&displayCurrentContainer.kind==='unassigned'&&(
+    displayLoadState.kind==='unrecorded'||(progress!==null&&progress.reservedCbm===0&&progress.sentCbm===0));
+  const showReservedPreview=progress!==null&&progress.reservedCbm>0&&progress.loadedCbm===0&&((containerOccupancy!==null&&containerOccupancy.yourSpaceCbm===0)||(!selectedContainer&&displayAssignmentState==='ready'&&liveContainers.length===0&&displayCurrentContainer.kind==='unassigned'));
   const loadPreviewValues={reservedValue,sentValue,loadedValue,inboundValue,committedValue,warehouseOrTransitValue,stillToSendValue,notAllocatedValue};
+  const enterDemo=()=>{setDemoIndex(0);setSelectedContainerId(null);setProgressView('customer');setLoadDetailsOpen(false);setContainerMenuOpen(false);setLifecycleNotice(null);};
+  const moveDemo=(delta:number)=>{setDemoIndex(index=>index===null?0:(index+delta+KONSOLISS_DEMO_TOUR.length)%KONSOLISS_DEMO_TOUR.length);setProgressView('customer');setLoadDetailsOpen(false);};
+  const exitDemo=()=>{setDemoIndex(null);setSelectedContainerId(null);setProgressView('customer');setLoadDetailsOpen(false);};
   const nav = [copy['nav.home'], copy['nav.warehouse'], copy['nav.consolidated'], copy['nav.sourcing'], copy['nav.hub']];
   return <KonsolissContentContext.Provider value={{...editing,copy,images:content.images}}><View style={{flex: 1, backgroundColor: t.bg}}><StatusBarCompat barStyle={dark ? 'light-content' : 'dark-content'} translucent backgroundColor="transparent" />
     <ScrollView ref={scrollRef} scrollEnabled={scroll} contentContainerStyle={{paddingTop: Math.max(14, insets.top), paddingBottom: 110 + insets.bottom}} showsVerticalScrollIndicator={false}>
@@ -184,16 +223,30 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
         style={[s.pill,{backgroundColor:t.tint,flexDirection:'row',alignItems:'center',gap:5,maxWidth:'72%'}]}>
         <Tx numberOfLines={1} style={{fontSize:12,lineHeight:15,fontWeight:'600',color:t.ac}}>
           {selectedContainer?containerStatusLabel(selectedContainer):
-            currentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?copy['status.preparing']:currentKonsolissContainerLabel(currentContainer,copy)):
-              currentKonsolissContainerLabel(currentContainer,copy)}
+            displayCurrentContainer.kind==='unassigned'?(progress&&(progress.reservedCbm>0||progress.sentCbm>0)?copy['status.preparing']:currentKonsolissContainerLabel(displayCurrentContainer,copy)):
+              currentKonsolissContainerLabel(displayCurrentContainer,copy)}
         </Tx>
         <Tx style={{fontSize:12,color:t.ac}}>⌄</Tx>
       </Pressable></View>
+      {KONSOLISS_DEMO_TOUR_ENABLED?<View style={{paddingHorizontal:24,marginTop:3,gap:3}}>
+        <View style={{flexDirection:'row',alignItems:'center',justifyContent:'flex-end',gap:8,flexWrap:'wrap'}}>
+          {isDemo?<><Tx style={{fontSize:11,color:t.ac,fontWeight:'800'}}>DEMO {(demoIndex??0)+1}/{KONSOLISS_DEMO_TOUR.length}</Tx>
+            <Pressable accessibilityRole="button" accessibilityLabel="Previous demo state" onPress={()=>moveDemo(-1)} style={[s.pill,{backgroundColor:t.tint}]}><Tx style={{fontSize:11,color:t.ac}}>‹ Previous</Tx></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Next demo state" onPress={()=>moveDemo(1)} style={[s.pill,{backgroundColor:t.tint}]}><Tx style={{fontSize:11,color:t.ac}}>Next ›</Tx></Pressable>
+            <Pressable accessibilityRole="button" accessibilityLabel="Exit Konsoliss demo" onPress={exitDemo} style={[s.pill,{backgroundColor:t.ac}]}><Tx style={{fontSize:11,fontWeight:'700',color:CREAM}}>Exit demo</Tx></Pressable>
+          </>:<Pressable accessibilityRole="button" accessibilityLabel="Preview Konsoliss demo states" onPress={enterDemo} style={[s.pill,{backgroundColor:t.tint,borderWidth:1,borderColor:t.bd}]}><Tx style={{fontSize:11,color:t.ac,fontWeight:'700'}}>▶ Demo states</Tx></Pressable>}
+        </View>
+        {demoScenario?<View style={{backgroundColor:t.tint,borderRadius:10,paddingHorizontal:12,paddingVertical:8,gap:2}}>
+          <Tx style={{fontSize:11,color:t.ac,fontWeight:'800'}}>{'DEMO ONLY · '+demoScenario.title}</Tx>
+          <Tx style={{fontSize:11,lineHeight:15,color:t.mu}}>{demoScenario.note}</Tx>
+          <Tx style={{fontSize:10,fontWeight:'700',color:t.ac}}>Simulated preview — no orders, payments or cargo have been changed.</Tx>
+        </View>:null}
+      </View>:null}
       {showEmptyLoadHint?<Tx style={{fontSize:11,color:t.mu,textAlign:'right',marginRight:24,marginTop:3}}>{copy['home.noAssignment']}</Tx>:null}
       <View style={[s.row, {alignItems: 'flex-end', marginTop: 16}]}><Pressable accessibilityRole="button" accessibilityLabel={copy['a11y.loadDetails']} accessibilityState={{expanded:loadDetailsOpen}} onPress={()=>setLoadDetailsOpen(open=>!open)} style={{paddingVertical:4,paddingRight:12}}><View style={{flexDirection:'row',alignItems:'center',gap:7}}><Tx style={{fontSize: 12.5, lineHeight: 16, fontWeight: '600', color: t.mu}}>{copy['home.load.heading']}</Tx><Tx style={{fontSize:15,color:t.ac}}>{loadDetailsOpen?'⌃':'⌄'}</Tx></View><Tx style={[s.num, {color: t.ac}]}>{loadPreviewValues.committedValue}<Tx style={{fontSize: 17, letterSpacing: 0, color: t.mu, fontWeight: '600'}} > / {loadPreviewValues.reservedValue} CBM</Tx></Tx><Tx style={{fontSize:10.5,color:t.mu}}>{formatCopy(copy,'home.loadedInbound',{loaded:loadPreviewValues.loadedValue,inbound:loadPreviewValues.inboundValue})}</Tx></Pressable><View style={{alignItems: 'flex-end', paddingBottom: 4}}><Svg width={34} height={34} viewBox="0 0 36 36" style={{marginBottom: 8}}><Circle cx={18} cy={18} r={14} fill="none" stroke={t.tint} strokeWidth={4} /><Circle cx={18} cy={18} r={14} fill="none" stroke={t.ac} strokeWidth={4} strokeLinecap="round" strokeDasharray={`${(containerRatio*87.96).toFixed(2)} 87.96`} rotation={-90} origin="18, 18" /></Svg><Tx style={{fontSize: 20, lineHeight: 25, fontWeight: '700', color: t.tx}}>{formatCopy(copy,'home.filled',{percent:containerPercent})}</Tx><Tx style={{fontSize: 12, lineHeight: 15, color: t.mu}}><Tx style={{color: t.gr, fontWeight: '700'}} >{containerAvailable} CBM</Tx> {copy['home.available']}</Tx></View></View>
       {(containerOccupancy || showEmptyLoadHint || showReservedPreview) ? (
-      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(selectedContainer?.id??(showReservedPreview?'reserved-'+reservedValue:visualMode))+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')+'-'+(showReservedPreview?'reserve-'+reservedValue:'physical')} originWhitelist={['*']} source={{html: containerHtml(dark,showEmptyLoadHint,showReservedPreview?(progress?.reservedCbm??0):(containerOccupancy?.capacityCbm??(showEmptyLoadHint?68:0)),containerOccupancy?.loadedCbm??0,0,false,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??null,copy,showReservedPreview)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
-      ) : <View style={{height:300,alignItems:'center',justifyContent:'center',paddingHorizontal:24}}><Tx style={{color:t.mu,textAlign:'center',fontSize:13}}>{assignedContainers.state==='loading'||currentContainer.kind==='loading'?copy['home.loading']:!hasCurrentContainer&&(assignedContainers.state==='unavailable'||currentContainer.kind==='unavailable')?copy['status.unavailable']:!hasCurrentContainer?copy['home.noAccountContainer']:copy['home.measurementsUnavailable']}</Tx></View>}
+      <View style={{height: 300, marginTop: 2}} onTouchStart={() => setScroll(false)} onTouchEnd={() => setScroll(true)} onTouchCancel={() => setScroll(true)}><WebView key={(dark ? 'd' : 'l')+'-'+(isDemo?'demo-'+demoScenario?.id:(selectedContainer?.id??(showReservedPreview?'reserved-'+reservedValue:visualMode)))+'-'+(containerOccupancy?.loadedCbm??'unverified')+'-'+(yourPhysicallyLoadedCbm??'unknown')+'-'+(showReservedPreview?'reserve-'+reservedValue:'physical')} originWhitelist={['*']} source={{html: containerHtml(dark,showEmptyLoadHint,showReservedPreview?(progress?.reservedCbm??0):(containerOccupancy?.capacityCbm??(showEmptyLoadHint?68:0)),containerOccupancy?.loadedCbm??0,0,false,yourPhysicallyLoadedCbm??0,containerOccupancy?.freeCbm??null,copy,showReservedPreview)}} style={{backgroundColor: 'transparent'}} containerStyle={{backgroundColor: 'transparent'}} scrollEnabled={false} bounces={false} overScrollMode="never" javaScriptEnabled showsVerticalScrollIndicator={false} /></View>
+      ) : <View style={{height:300,alignItems:'center',justifyContent:'center',paddingHorizontal:24}}><Tx style={{color:t.mu,textAlign:'center',fontSize:13}}>{displayAssignmentState==='loading'||displayCurrentContainer.kind==='loading'?copy['home.loading']:!hasCurrentContainer&&(displayAssignmentState==='unavailable'||displayCurrentContainer.kind==='unavailable')?copy['status.unavailable']:!hasCurrentContainer?copy['home.noAccountContainer']:copy['home.measurementsUnavailable']}</Tx></View>}
       <View style={{marginTop: 1, height: 32, alignItems: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx><View style={{width: 4}} /><View style={{width: 8, height: 8, borderRadius: 4, backgroundColor: t.mu}} /><View style={{width: 4}} /><Tx style={{fontSize: 12, lineHeight: 14, fontWeight: '600', color: t.mu}}>———</Tx></View>
       </View>
@@ -247,7 +300,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
   <Head t={t} i="ct" title={copy['home.consolidated.title']} />
   {selectedContainer?<Tx style={[s.body,{color:t.tx}]}>
     {selectedContainer.number+'\n'+copy['status.'+selectedContainer.status]}
-  </Tx>:<Tx style={[s.body,{color:t.mu}]}>{currentContainer.kind==='unassigned'?copy['status.unassigned']:copy['container.detailsUnavailable']}</Tx>}
+  </Tx>:<Tx style={[s.body,{color:t.mu}]}>{displayCurrentContainer.kind==='unassigned'?copy['status.unassigned']:copy['container.detailsUnavailable']}</Tx>}
 </Pressable></View><Card t={t} i="ln" title={copy['home.sourcing.title']} sub={copy['home.sourcing.subtitle']} onPress={()=>setSh('sourcing')} right={<Ic d={P.gl} c={t.tx} s={20} />} style={{borderWidth: 0.5}} /></View>
       <View style={{paddingTop: 20}}>
         <Tx style={[s.how, {color: t.tx, fontSize: 16, lineHeight: 20, fontWeight: '400', paddingTop: 6, paddingBottom: 10, marginBottom: 0}]}>{copy['home.how.heading']}</Tx>
@@ -319,7 +372,7 @@ function Screen({onBack,onUniversalAction,unreadNotifications,unreadMessages}: {
             <Pressable accessibilityRole="button" accessibilityLabel={copy['a11y.closeSelector']}
               onPress={() => setContainerMenuOpen(false)} hitSlop={10}><Tx style={{color:t.ac,fontSize:19}}>✕</Tx></Pressable>
           </View>
-          <Tx style={{paddingHorizontal:14,paddingVertical:8,fontSize:11,color:t.mu}}>{liveContainers.length?formatCopy(copy,'container.count',{count:liveContainers.length}):assignedContainers.state==='loading'?copy['home.loading']:assignedContainers.state==='unavailable'?copy['status.unavailable']:copy['home.noAccountContainer']}</Tx>
+          <Tx style={{paddingHorizontal:14,paddingVertical:8,fontSize:11,color:t.mu}}>{liveContainers.length?formatCopy(copy,'container.count',{count:liveContainers.length}):displayAssignmentState==='loading'?copy['home.loading']:displayAssignmentState==='unavailable'?copy['status.unavailable']:copy['home.noAccountContainer']}</Tx>
           <ScrollView nestedScrollEnabled showsVerticalScrollIndicator
             style={{maxHeight:5*59}} contentContainerStyle={{paddingBottom:5}}>
             {liveContainers.map(item=><View key={item.id} style={{flexDirection:'row',alignItems:'center',
