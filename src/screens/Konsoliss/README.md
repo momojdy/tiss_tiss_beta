@@ -1,3 +1,258 @@
+# KONSOLISS — MASTER BUSINESS LOGIC AND ENGINEERING CHECKPOINT
+
+**Checkpoint date:** 2026-11-24  
+**Consumer repository:** momojdy/tiss_tiss_beta  
+**Admin repository:** momojdy/tiss-admin  
+**Shared Supabase project:** ycbirmgppwavorwudlrv (Wantiss)  
+**Status:** product-policy checkpoint and implementation specification; **NOT a claim of fully implemented or commercially launched functionality**.
+
+> **Read this section first in every new ChatGPT/Codex conversation.** It records the founder's latest decisions, rules, exact tariff examples, system architecture, implementation gaps and preservation requirements. Older review documents and the historical technical notes below may propose conflicting alternatives; the latest explicit founder decisions here take precedence. Check the *actual current* repository and live schema before changing code. Never claim a feature, test, payment, customer shipment or partner integration is working solely because it appears in this document.
+
+## 0. Decision status and change discipline
+
+- **AGREED / OWNER DECISION:** The intended product behavior. Implement it unless it is technically unsafe or conflicts with applicable law; surface those constraints instead of silently changing the product.
+- **WORKING / CONFIGURABLE:** An operational starting formula or process discussed and supported in review, not an immutable value. Keep admin-configurable and versioned; do not silently turn a stress-test number into a real supplier quote.
+- **OPEN / LATER:** A decision dependent on cost evidence, actual providers, insurance or legal review. Build a safe configuration or inactive integration point now. Do not invent its answer.
+- **IMPLEMENTED / VERIFIED:** Only claim this after reviewing code, database, migrations and tests. This document's audit snapshot does not supersede newer evidence.
+
+**Immediate scope approved by founder:** build the *complete, connected technical system* in Supabase, consumer Konsoliss and Tiss Admin, in small verified sections. Real third-party contracts, fresh provider pricing evidence, formal legal counsel sign-off, insurance purchases and launch authorizations are **later**, not blockers to implementing schemas and app workflows. Existing consumer pricing milestones ARE already defined; **do not demand a new freight quotation exercise before building the pricing engine**. Nonetheless, do not enable uncontrolled real-money shipping before commercial/external readiness.
+
+## 1. Product, geography and promise [AGREED]
+
+1. Konsoliss is a **demand-driven China-to-Haiti shared LCL freight marketplace**. Initial destination is **pickup at the Konsoliss Haiti/Port-au-Prince warehouse**. Optional Woulib/home delivery is separately priced and is NOT included in the base LCL price.
+2. Customers buy **commercial freight space (CBM)**. Payment is not a ticket on a named ship, not proof merchandise is in China, and not proof that any physical container is assigned.
+3. Konsoliss combines verified cargo into its own **40HQ container** when safe, timely and economically viable. If an own container cannot be filled economically/ready in time, Konsoliss may subcontract an **approved third-party LCL consolidator**. The customer keeps the accepted Konsoliss base freight price; **never add a fee solely because the platform used a partner**.
+4. This is a **rolling pool**, not preset public sailings or fake container IDs. Admin can group customers by deadline for planning, then assign real packages to an actual container or partner consignment when warranted. Reassignment cannot silently reset contracts or clocks.
+5. **45–80 calendar days warehouse-to-warehouse** is the advertised service window, beginning when eligible cargo is **verified received at the China warehouse**, ending when those goods are **cleared and available for pickup at the Haiti warehouse**. **Day 80 is the founder-approved binding latest delivery commitment**, subject only to valid documented contractual/legal exceptions. Day 45 is the *beginning of the normal estimated delivery window*, **NOT** a separate purchase-based vessel-departure guarantee. Earlier delivery is welcome.
+6. Maintain both the original contractual Day-80 due date and any later, separately approved adjustment. If a cargo purchase is fulfilled in multiple separately received lots, each lot's verified receipt has a traceable due date; a later parcel cannot erase/reset the older lot's guarantee. Customer communication must be truthful.
+7. A binding guarantee must never be silently suspended by an admin clicking "force majeure." The system records incidents, evidence, affected lots/containers/partners, mitigations, approvals, customer notices and a distinct proposed/approved revision. Whether a fire, natural disaster, port closure, exceptional government act, etc. qualifies for relief is **OPEN / legal review later**. Ordinary underfilling, poor planning, Konsoliss warehouse mistakes or a routine provider delay are NOT automatic exemptions. Lost/damaged goods also trigger a claims workflow, not just a new ETA.
+
+## 2. Base freight pricing and quotes [AGREED, rate values editable by Admin]
+
+All figures below are **USD base LCL freight milestones**, not verified costs or unconditional customs coverage.
+
+| Purchased CBM | Base price |
+|---:|---:|
+| 0.02 | $27.00 |
+| 0.10 | $99.00 |
+| 0.30 | $249.00 |
+| 0.50 | $379.00 |
+| 1.00 | $675.00 |
+
+**Minimum normal standalone order is 0.020 CBM. Preserve this differentiator.** It must remain visually representable in the approved 3D. No automatic change to 0.05 CBM.
+
+Current piecewise linear tariff P(v), with v in CBM:
+
+- 0.02 <= v <= 0.10: P(v) = 27 + 900 × (v - 0.02)
+- 0.10 < v <= 0.30: P(v) = 99 + 750 × (v - 0.10)
+- 0.30 < v <= 0.50: P(v) = 249 + 650 × (v - 0.30)
+- 0.50 < v <= 1.00: P(v) = 379 + 592 × (v - 0.50)
+- v > 1.00: P(v) = 675 × v
+- Never sell a normal standalone amount below 0.02 CBM; special eligible completion increments below the minimum are allowed only as the specifically labeled amendment.
+
+**Reference calculations:** P(0.2)=$174; P(0.7)=$497.40; P(0.9)=$615.80; P(0.98)=$663.16; P(1.3)=$877.50. Three independent purchases of 0.1+0.7+0.2 cost $99+$497.40+$174=$770.40, not $675.
+
+**Admin price management:** pricing and milestone values are managed by authorized Tiss Admin actions, with revision notes, approval, audit history, effective dates, server validation, versioned rate cards and immutable paid-quote snapshots. Update **new** quotes without repricing already accepted purchases. Consumer calculator, checkout, top-ups, refunds, completion offers and Admin must all use the same server-side cents-precision price engine. Do not store operational prices in homepage CMS copy. Capacity/packing/weight, risk reserve and extra-service prices also need access-controlled config.
+
+### Weight-related chargeable CBM [AGREED]
+
+- **412 gross kg included per purchased physical CBM as a billing threshold.** Customer declares proposed gross weight before the quote; warehouse verifies weight later.
+- **Chargeable CBM = max(purchased physical CBM, measured gross kg / 412)**, then apply the applicable version of P(chargeable CBM), taking already paid eligible charges into account.
+- Examples: 0.02 CBM at 9 kg -> approximately $28.66; 0.02 at 12 kg -> $35.21; 0.5 CBM at 250 kg -> approximately $442.22; 1.0 CBM at 800 kg -> approximately $1,310.68.
+- Commercial billable CBM does **not** increase the customer's actual physical volume entitlement and does **not** authorize unsafe loading. Handle previous provisional overweight charges as credits during legitimate amendments; do not double-bill the same kg.
+- Separately store commercial reserved/declared/verified/physically-loaded **CBM AND kg**. 68×412=28,016 kg is only the billing-threshold arithmetic, **not** a promise a given 40HQ/route can carry 28,016 kg. Physical capacities depend on the equipment/route and must be enforced independently.
+- The choice of measurement-credit tolerances is WORKING, not yet a binding customer term. Preserve accurate measurements (at least 0.001 CBM in existing numeric displays) and proper money rounding.
+
+### One completion amendment to exactly 1.0 CBM [AGREED]
+
+- **One eligible second amendment**, tied to the same original commercial booking/group, may complete the group to **exactly 1.00 CBM for total base freight $675** (plus any legitimate weight or disclosed additional charges). Not unlimited aggregation and not retroactive across unrelated purchases.
+- Examples: 0.10 then 0.90 -> $99+$576=$675; 0.30 then 0.70 -> $249+$426=$675; 0.50 then 0.50 -> $379+$296=$675; 0.98 then 0.02 -> $663.16+$11.84=$675 (explicit below-$27 exception).
+- The amendment **does not reset** the original D12/D25/D32 deadlines. One redemption, server-enforced; original rate version preserved; group weights recomputed, provisional overweight credited as appropriate.
+- **OPEN:** the exact offer expiry (earlier reviews proposed D12 or D25). Do not secretly pick one or allow indefinite redemptions; make the eligibility window a versioned Admin policy before enabling the offer.
+
+### Warehouse overage and measurement differences [AGREED principle; exact band OPEN]
+
+- **True physical measurement variation** is NOT equivalent to a customer deliberately sending extra boxes. Avoid the discount-abuse loophole where buying 0.10 for $99 then sending 1.00 automatically costs only $675 via unrestricted P(actual)-P(booked).
+- Material undeclared/additional capacity must be a **new standalone purchase or valid one-time completion amendment**. Without completion eligibility, 0.10 plus extra 0.90 costs $99+$615.80=$714.80, subject to acceptance and physical capacity.
+- A booking **already at or above 1 CBM** can be linearly adjusted at $675 per extra CBM if the same consignment legitimately grows and the space/weight fits: 1.00 to 1.30 -> $202.50 extra. This is an explicit >1-CBM case, not a loophole below 1 CBM.
+- Small bona fide measurement variation may receive a disclosed tolerance/true-up; the precise threshold/formula is **OPEN**. Reviews suggested competing bands (e.g. max(0.002 CBM, 3%) for measurement tolerance, or max(0.002 CBM, 30%) for same-booking extras). **Do not treat these proposals as one approved formula**. Prevent punitive price cliffs and arbitrariness.
+- Do not open cartons unilaterally. Package priority and whole-package holds/returns/rebooking require consent and records. Indivisible items cannot be split by software. Unpaid excess is not loaded.
+
+## 3. Purchase, inbound, cancellation, unused space [AGREED directions]
+
+**All purchase clocks are per individual confirmed paid purchase**, not per customer, vessel or projected container; store instants in UTC and apply a defined China-local end-of-day calculation. User account with four purchases retains four independent deadline sets.
+
+| Clock | Rule |
+|---|---|
+| Purchase Day 0 | Confirmed payment/capacity entitlement; immutable rate/terms snapshot |
+| D0–D12 | Normal change-of-mind cancellation period; proposed free reduction of **uncommitted/unreceived** space, with server repricing/refund |
+| D25 | Submit valid China-domestic inbound carrier tracking backed by carrier acceptance/first scan; a created label alone is not proof |
+| D32 | Optional **one-time paid seven-day extension** for the genuinely unsubmitted portion, requested before the applicable cutoff |
+| Arrival at China warehouse | Genuine receipt/measurement starts each cargo lot's separate **80-calendar-day delivery commitment** (not a fresh purchase D25) |
+
+- On-time genuine carrier dispatch cannot be penalized for later China-domestic carrier delay; validate actual scan event time and consignment/address/booking relationship. A proposed D25-label/D27-first-scan grace appeared in reviews but is **not yet an approved mandatory rule**.
+- The extension is once per booking, on unsent capacity only; a working proposed fee is **5% of standalone P(unsent CBM), minimum $5 and scalable cap of $25 per unsent CBM**, rather than a permanently flat $25 for a large reservation. The exact capped formula, effective limits and exceptions remain Admin-configurable/OPEN pending unit-cost validation. Do not sell a timeline promise that the extension makes impossible.
+- On a 1.0 CBM purchase where only 0.7 is sent, retain the legal/commercial rights to the remaining **0.3 CBM until an explicit customer finalization or valid expiry**, unless the customer validly downsizes. No early double-sale. Protect verified in-transit packages, require reminders and a logged release event before resale.
+- If a customer sends nothing, or uses only some space, apply one consistent, disclosed no-show/unused-capacity settlement method. Founder originally favored no refund after D12; **exact enforceable retained fraction, evidence-based fees, permitted refunds and legal exceptions are OPEN for counsel/payment rules**. Do not silently implement universal 100% forfeiture or an invented 30% fee. Provider failure and applicable nonwaivable remedies take precedence.
+- D12 downsizing is an agreed consumer-friendly direction for uncommitted/unreceived capacity: 1.0 -> 0.7 reprices to $497.40, candidate refund $177.60 before any valid charges. Exact operational eligibility, charge/refund treatment and legal terms remain configurable. Never reduce below cargo already physically received/irrevocably committed.
+- Expiry, release, refund and resale are separate auditable ledger events. Released space increases *sellable* capacity only if actual physical/weight capacity is available and no in-transit right remains. Sales of previously released capacity are not automatically profit.
+
+## 4. Delivery fulfillment, fallback and exceptional events [AGREED]
+
+### One customer-facing guarantee
+
+- **Advertised 45–80-day window; 80th calendar day binding deadline** from verified eligible cargo receipt at the China warehouse to **Haiti warehouse pickup readiness**, including origin consolidation, ocean transport, destination clearance and warehouse release readiness.
+- Do not show "45-day departure guarantee", "sailing tomorrow" or a named vessel without proof. Customer status separates **partner booked**, **cargo transferred to and accepted by carrier/consolidator**, **vessel actually departed**, **arrived Haiti**, **customs cleared**, **ready for pickup**.
+- A normal ordinary delay does not change the original day-80 date. Overdue work requires a recorded remedy/escalation; no fabricated extra days. **OPEN / later:** final lawfully enforceable exceptional-event relief and compensation language.
+
+### Third-party LCL fallback [AGREED and MUST be modeled now]
+
+- **Do not wait for the 80-day deadline, or blindly until 45 days, before contacting the partner.** Admin should see a risk countdown based on latest viable booking/handover/cutoff time, partner transit estimates, Haiti clearance time and safety buffer.
+- Backend regularly evaluates each due cohort: verified eligible cargo, CBM/kg, safe actual container packing, own-container expected fully loaded service cost, partner rate/lead time, deadline feasibility and contribution. When an own 40HQ cannot meet the due-date/cost objective, **raise a third-party contact/booking task early enough**. Human Admin approves and records the manual partner arrangement during initial implementation.
+- Customer accepted freight price and original delivery obligation remain unchanged merely because a partner is used. Partner cost to Konsoliss is a **wholesale service cost** and may differ from the customer tariff; it must reflect comparable origin, ocean, customs, destination and pickup services.
+- Implement provider directory, contact methods, partner quotations/costs, capacity estimates/commitments, cutoff and lead-time inputs, manual outreach task/status, custody receipt, partner consignment and verified shipment events. **Real agreements and automatic integrations are LATER**; do not invent contracted capacity or carrier availability.
+- The 80-day guarantee must be treated as a genuine obligation, including cases where meeting it incurs extra cost. Profit maximization cannot silently override accepted contracts or safety limits. Before accepting new purchases, use the best available documented fulfillment feasibility and financial risk controls.
+
+### Incident and claims workflow [AGREED architecture; legal details OPEN]
+
+- Model: incident type, start/end, evidence, location, owner, affected booking/lot/package/container/partner, responsible actor, mitigation, notifications, loss/damage, claims, insurer/partner recovery, customer remedies and full immutable audit.
+- Examples to record: fire affecting a port/loaded container, hurricane or extraordinary port closure, governmental disruption, carrier rollover, cargo damage or loss, warehouse error, misdeclaration and customs hold.
+- An incident **does not automatically pause or erase** the original guarantee. Store immutable original due date; a separately reviewed legal exception/adjusted due date, status, approval and customer notice must be explicit. Claims for damaged/destroyed goods are separate from timing claims.
+- Show affected customers a truthful disruption notice and verified updated milestones without exposing other customers' records.
+
+## 5. Load capacity, reservations, weight and multi-container packing [AGREED]
+
+- A 40HQ's **nominal sellable planning target is 68 CBM** (rough physical interior around 76.3 CBM). This is not a guarantee any mix of cargo will physically pack to 68.
+- An illustrative **60–62 CBM conservative pilot forecast/sell cap** was proposed during external review, but is **NOT a permanent founder-approved reduction of 68 CBM**. If used, treat it as a versioned risk guardrail with contracted/real overflow and calibration by real loads.
+- Track separately (A) **commercial booked/unexpired CBM + declared and reserved kg**; (B) actual China warehouse **received/verified** CBM + kg; (C) **allocated-to-load, actually scanned loaded**, container packing/weight and VGM; (D) genuinely available sellable capacity.
+- Never infer safe volume from revenue or weight from paid CBM. Actual operating payload depends on the specific container plate, carrier, terminal, route/road/axle restrictions, dunnage, securing and margin. The commercial 412 divisor does not replace safety rules.
+- Pack safely by individual package size, gross kg, stackability, hazardous exclusions, floor-load and securing constraints; do not hard-code hypothetical 26,000kg or 28,600kg as the universal payload. Approved VGM method, signatory and evidence precede departure authorization. Hard payload/safety caps are not overridden by Admin.
+- **Multi-container load balancing is required:** where multiple containers/pools exist, distribute separately movable heavy and lightweight packages between loads to improve useful CBM filling and avoid overweight while honoring individual cargo indivisibility, deadlines and physical feasibility. Start with numerical packing recommendations and warehouse human verification; do not claim a magic AI perfect packer.
+- Never double-reserve the last CBM or kg. Physical assignment may change with an audited move; commercial purchase/deadlines cannot. If using a partner, do not show invented own-container loaded metrics.
+
+## 6. Existing homepage / 3D UI contract — preserve appearance [AGREED]
+
+**DO NOT visually redesign the approved 3D renderer or its carton geometry, existing empty animation, spacing, smaller varied shipping labels, red customer cartons, yellow translucent free region, red dotted boundary or slim visual separation.** Preserve the tiny 0.02 CBM visibility strategy and correct fill/free proportions including 99%/1%, without turning the visual into a physically validated pack plan. Existing 7-second alternating progress bars, card navigation, translations/CMS and homepage top-left layout also remain.
+
+**Critical current top-left behavior (confirmed from code on 2026-11-24):**
+- Headline is **(physically loaded + inbound to container) / space purchased** CBM; its subtitle explicitly separates **Loaded** and **Inbound**.
+- Tapping expands existing fields: space purchased, goods sent, physically loaded, inbound to container, loaded + inbound, at warehouse/still in transit, paid space not yet sent, and space not yet loaded or inbound.
+- These quantities are **not interchangeable**: purchase = entitlement, valid goods sent = dispatch record, warehouse verified = inventory, inbound-to-container = allocation/staging, physically loaded = scanned into a real physical container.
+- Large headline is **NOT** "loaded-only"; no need to add another duplicate purchase counter. Preserve the existing top-left exact UI.
+- Customer-owned **red solid cartons in a real load depict only genuinely physically loaded customer cargo**, not mere payment or inbound shipping. Other customers' loaded cartons remain natural brown/tan. The translucent yellow with dashed red outline is physically empty volume *in the selected real container*, not necessarily commercially unsold space.
+- No customer purchases yet / no assignments: preserve the existing empty-container animation; a paid customer without real container assignment must see truthful reserved figures and non-fabricated visualization. Do not claim a ghost container is assigned. A customer whose cargo went to a partner gets real shipment status, not fictional loading in a Konsoliss 40HQ.
+- The alternating **customer** progress bar represents physically loaded/inbound relative to purchased CBM; the **selected physical container** bar represents loaded customer+other cargo relative to that real 68 CBM container. They switch every seven seconds with manual control retained.
+
+**Current code path:** src/screens/Konsoliss/konsolissHomeScreen.tsx, src/screens/Konsoliss/useKonsolissLoadProgress.ts, src/screens/Konsoliss/konsolissLoadModel.ts, src/screens/Konsoliss/useKonsolissContainerOccupancy.ts, src/screens/Konsoliss/useKonsolissAssignedContainers.ts. CMS copy is managed separately by Tiss Admin; do not put customer operational totals into the CMS.
+
+## 7. Supabase authoritative data model — target state [TO BUILD]
+
+Build or extend **one shared secure backend**, rather than maintaining parallel independent customer and Admin balances. At a minimum model:
+
+| Logical records | Required data / behavior |
+|---|---|
+| rate_cards, tariff_milestones, policy_versions | Editable prices, effective dates, immutable accepted versions, approval/audit |
+| quotes, checkout_holds, payment_events, refunds | Server cents, expiry, idempotency, confirmed vs failed payment, settlements |
+| bookings, booking_lots, amendments, extensions | Per-purchase original D12/D25/D32, remaining rights, completion uniqueness, received-lot guarantee |
+| booking_entitlements + capacity_ledger | Atomic reserved/released/expired CBM AND kg; no double sell, weight constraints, audit |
+| packages, declarations, carrier_tracking, scan_events | Own user, dimensions (0.001 CBM precision or better), kg, category/value, package count, custody and verified scan timestamps |
+| china_warehouse_receipts, customs_reviews | Verifiable warehouse receipt, inspection, eligible/rejected/held, documents and measured goods |
+| commercial_pools + pool_assignments | Commercial demand grouping separated from physical allocation and deadlines |
+| physical_containers, package_load_assignments, load_signoffs | Real 40HQ IDs, loaded-only scan truth, safe CBM/kg, VGM, seal, operator signoff |
+| partners, partner_quotes, partner_contacts, partner_consignments | Admin-entered providers, prices/coverage, manual fallback tasks, actual handoff proof |
+| shipment_events, delivery_commitments | Separate booked/accepted/departed/arrived/cleared/ready; immutable original 80-day due |
+| exceptional_events, affected_cargo, deadline_adjustments, claims | Evidence, approvals, notifications, remedies, partner/insurer recoveries |
+| wallet_liabilities, cost_allocations, financial_snapshots | Customer-held funds vs earned revenue, direct costs, risk reserve and projected/actual contribution |
+| audit_log and permission tables | Who acted, why, old/new state, fine-grained RLS, no client writes to physical truth |
+
+**Enforce server-side:** Row-level customer ownership, admin RBAC, immutable snapshots, unique payment webhook/adjustment/redemption keys, atomic capacity+weight transactions, reasonable numeric ranges, no negative/double-released capacity, physical load only by a real package/container scan, departure only with hard safety/VGM gate, and no fictional status updates. Make failures visible rather than converting unknowns into zeros.
+
+**Read-only live audit snapshot (2026-11-24):** the actual public Konsoliss relations then found were **konsoliss_containers, konsoliss_container_assignments, konsoliss_customer_load_progress, and security-invoker view konsoliss_customer_load_breakdown**. All three tables had **zero current rows** at audit time. The view correctly derived:
+- allocated_cbm = loaded_cbm + inbound_to_container_cbm
+- at_warehouse_or_in_transit_cbm = max(0, sent_cbm - loaded_cbm - inbound_to_container_cbm)
+- reserved_not_sent_cbm = max(0, reserved_cbm - sent_cbm)
+- not_allocated_cbm = max(0, reserved_cbm - loaded_cbm - inbound_to_container_cbm)
+
+The 2026-11-24 read-only audit confirmed source-table RLS and customer-only SELECT, view security_invoker=true, relevant nonnegative/staged-volume constraints and audited Super Admin measurement RPCs. **But these values are still maintained through Admin-controlled totals, not yet automatically derived from paid bookings and package scan events.** The customer aggregate table is one row **per user**, so it needs booking-level source records underneath. The view showed an unnecessary authenticated UPDATE privilege; remove it if still present (underlying table itself denied direct UPDATE). Verify any fixes before claiming completion. Keep the top-left component and view semantics; repair the authoritative source and permissions.
+
+## 8. Tiss Admin capabilities [TO BUILD / CONNECT]
+
+- Authorized **Pricing & Policy** editor: tariff tiers and above-1 rule, weight divisor, optional fees, eligibility/tolerance windows, delivery lead-time buffers, version snapshots, approval/audit and publish to the **same** consumer quote service.
+- **Overview** with distinct customers vs paid bookings vs individual packages; commercial pool reservations, received/verified CBM and kg, loaded CBM and kg, real safe remaining payload, due-date risk and actual contribution.
+- **Orders**: detailed customer booking timeline, purchased CBM/kg, packages, sent balance, cancellations, amendments, tracking, money charged/credited/refunded, documented holds and notices.
+- **China warehouse**: carrier acceptance verification, receive/measure/weigh/photo, safe goods category and declared value, customs decision, discrepancy offers, whole-package holds, loading scan into assigned real container.
+- **Physical containers / multi-container optimizer**: commercial pools separate from real containers; package swaps that respect physical packing/weight/deadlines; manifest, seal, VGM, actual departure evidence and named signoff.
+- **Fulfillment fallback**: detect approaching 80-day risk, calculate latest feasible partner contact time, create outstanding partner-contact tasks and record reply/rate/commitment/custody; choose own/partner without customer price change.
+- **Exceptions and finance**: loss/damage, exceptional-event evidence and approval, claims, refund/remedy; per-booking/pool/partner cost and contribution; customer funds and wallet liabilities distinct from earned shipping revenue.
+- The present Admin has a **Konsoliss operations screen, container/measurement RPCs and homepage CMS editor**, but these are not a complete live quote/booking/package/warehouse/cargo/partner/claims implementation. Preserve the working editor and preview.
+
+## 9. Customer app journey [TO BUILD / CONNECT]
+
+1. Browse homepage and 3D, use existing Book Space entry without changing approved UI; obtain **live Admin-configured** pricing and eligible merchandise quote.
+2. Declare category, value, contents/pieces, expected CBM and gross kg; eligible instant quote or manual review. Accept quote and specific versioned terms; checkout uses backend holds and idempotent payment.
+3. After confirmed payment, **reserved/purchased** amounts immediately update the existing top-left counter; physically loaded and inbound remain zero until genuine evidence exists.
+4. Customer can inspect independent bookings, D12/D25/D32, valid tracking, purchased and unused portion; perform permitted cancel/downsize/completion/extension flows using real server pricing and constraints.
+5. China warehouse receipt drives verified package volumes and per-lot **80-day binding due date**; customer sees their own package status and clear 45–80-day delivery window.
+6. Real load/handoff/departure/arrival/clearance/pickup updates come only from verified records; third-party shipment remains accurately labeled.
+7. Consumer sees their own receipts, exceptions, claims and any lawful remedies. No customer sees another customer's packages, profitability or Admin-only quotes.
+
+## 10. Profitability, customs, safety, and deferred external inputs
+
+**Objective:** every newly accepted quote should have an expected contribution and fulfillment-risk assessment; select the **highest expected net contribution among safe, compliant and timely options**. No business can guarantee a positive result in every disaster. Do not make an existing binding customer obligation disappear because a fallback partner has become more expensive.
+
+- Working cost allocation per booking includes actual or estimated partner/own freight, China + Haiti handling, all applicable customs/broker/document charges, payment processing including fixed fees, refunds/chargebacks, claims provision and allocated obligations. Real supplier costs are LATER inputs in Admin, not an excuse to leave the engine missing.
+- **Illustrative ONLY** historical stress case: $15k ocean + $20k customs + $3k other = $38k, plus 3% payment fees. At 68×$675 gross=$45,900, fees=$1,377, contribution=$6,523 (~14.21%) before parcel processing/overhead. This is NOT a known Haiti rate or actual available profit. A 60–62 CBM pilot volume is forecast guardrail only.
+- Small-ticket economics require handling/package-count controls: extreme 2,888 bookings of 0.02 CBM at 9kg each yield about $42,287 before individual handling under this *unrealistic illustrative* cost allocation; ~$14.64 of all-in per-booking handling would erase it. Do not treat this as expected demand or a confirmed fee.
+- A **15% quote margin gate / 2% risk reserve** and **20–25% targeted direct contribution** have been discussed as *WORKING targets*, not hard founder-approved promises. Account consistently for the risk provision (do not omit it from a cost ceiling). A $675 price with 3% fees + 2% reserve + desired 15% contribution leaves **$540** for all-in fulfillment in that hypothetical model.
+- **Customs inclusive only for underwritten eligible declared goods**. Quote must collect category, declared invoice value and goods characteristics, anticipate duty/broker and all-in coverage *before payment*. No arbitrary unlimited duty promise. An internal duty allowance is an underwriting guard, NOT permission to surprise-charge honestly declared customers after binding an all-inclusive price. Misdeclaration/changed goods/measurements may justify expressly disclosed adjustments.
+- Prohibited/dangerous goods screening (e.g. certain batteries, aerosols, liquids, illegal/sanctioned goods), losses, insurance, Haiti port/road conditions, legal consignee/importer responsibilities, goods custody and no unlawful disposal all require planned rules and later verified provider/legal inputs.
+- Final third-party contracts, broker quotes, complete legal terms, liability caps, insurance cover and actual provider lead times are **LATER**. Build their data/configuration now, **do not invent them** or enable guarantees based on fake provider availability.
+
+## 11. Mandatory test scenarios and acceptance gates [TO EXECUTE]
+
+- Prices at every milestone and intermediate break, sub-$0.02 rejection, 1.00 completion exception $11.84, P(1.3)=$877.50; cents precision and immutable rate version after Admin edits.
+- Weight threshold at 412kg/CBM, overweight examples, safe independent payload ceilings and balanced heavy/light multi-container assignment.
+- Concurrent purchase of the last CBM OR kg: only one wins. Duplicate payment/webhook/extension/completion: never duplicate rights or charges.
+- 0.10 bought then 1.00 measured: material extra charged separately ($714.80 total) unless an actually eligible one-off completion; 1.00 to 1.30 legitimate linear top-up=$202.50. Correct small measurement tolerance once policy finalized.
+- Multiple independent purchases: independent D12/D25/D32 and received-lot Day-80; customer aggregate counter totals valid unexpired entitlements.
+- Valid dispatch with inbound carrier delay; rejected label-only or reused tracking; protected rights during verified transit; no erroneous release/double sale.
+- 1.00 bought, only 0.70 sent; preserve 0.30 until explicit finalization/valid expiry; D12 downsizing/repricing and correct ledger/refund.
+- Goods only paid -> reserved counter changes but **no red physically loaded cartons**. Warehouse received -> verified detail changes; only real scans trigger physically loaded red cartons and selected real-container occupancy.
+- Day-80 due from real warehouse receipt; partial-lot clocks; risk alerts; partner contacted *before* impossible deadline; partner handover not falsely labeled vessel departure; customer freight unchanged.
+- Port fire affects named packages: evidence, customers notified, original guarantee immutable; no automatic force-majeure extension; incident/claim and legally approved adjustment separately tracked.
+- Anonymous and cross-customer access denied; unprivileged financial fields hidden; Admin cannot bypass safety, forge scans or silently change accepted prices.
+- Existing homepage/3D snapshots, small-load 0.02 visibility, 99% and 100% fill, zero-data loading/no false zeros, 7-second bar rotation and CMS editor behavior all regressions checked.
+
+**Release gates:** current schema+RLS test, real purchase-to-admin-to-consumer consistency, payment reconciliation, physical scan authenticity, end-to-end exception/refund simulations, native device verification, and later actual provider/legal/commercial sign-off. Do not label production-ready based on static UI tests.
+
+## 12. Implementation roadmap — one small verified section at a time
+
+**Section A: Existing homepage top-left reservation/load summary (current priority).** Keep exact UI. Build authoritative per-booking entitlements and package movements that aggregate securely into the current customer-load breakdown view; remove unnecessary view UPDATE grant; write tests proving purchase updates reserved immediately, sent/loaded remain truthful, Admin reflects it, and multiple purchases aggregate with no cross-user leakage. Preserve current sample animation only for true empty state.
+
+**Section B: Versioned server-side tariff/quote/purchase ledger and Admin prices.** Wire existing calculator and checkout and immutable purchase-level deadlines, then connect real money only when test gates and external readiness permit.
+
+**Section C: Package/tracking/warehouse intake and volume/weight true-up.** Verified carrier events, per-package scan custody, receipts and measured physical cargo, holds and admin action traces.
+
+**Section D: Containers, physically loaded scans, partner consignment and multi-container balancing.** Never confuse reserved, allocated, verified, loaded or shipped; protect visual fidelity.
+
+**Section E: Guarantee/alert engine, 80-day delivery commitments, manual third-party outreach and exceptional incidents/claims.** Backward-plan fallback by real configured lead times.
+
+**Section F: All remaining consumer flows, financial controls, admin reports and exhaustive integration, security, native-render tests.**
+
+At every section: inspect both current repos and live Supabase; make narrowly scoped changes; preserve the approved 3D and CMS; apply migrations using the project's migration discipline; verify with actual tests and SQL read-backs; update this checkpoint with **exact changed files, migration IDs, tests, known gaps and commit IDs**. Do not make unrelated visual edits or silently rename existing statuses.
+
+### New-chat handoff prompt (copy this into another conversation)
+
+> Work on Konsoliss in momojdy/tiss_tiss_beta and momojdy/tiss-admin, sharing Supabase project ycbirmgppwavorwudlrv. FIRST read src/screens/Konsoliss/README.md on main, including its Master Business Logic and Engineering Checkpoint and preserved historical notes. Treat its AGREED vs WORKING vs OPEN distinctions seriously. Verify actual current code, DB and tests; do not assume text equals implementation. Preserve approved 3D geometry, animation, customer red cartons, yellow/dotted physically free area, top-left (loaded+inbound)/reserved and alternating seven-second progress bars. Founder requires exact milestone prices, 0.02 min, 412kg/CBM, per-purchase D12/D25/D32, 45–80 days FROM China warehouse receipt to Haiti pickup readiness with binding Day 80, and early own-container vs third-party LCL fallback without customer base-price increase. Current focus is one small section at a time, beginning with source-of-truth booked/loaded data for top-left. Third-party contracts, legal wording and real cost evidence come later; architect for them, do not invent them. Read-only audit first, then scoped implementation, tests and README checkpoint updates with commits.
+
+---
+
+# PRESERVED HISTORICAL HOMEPAGE AND 3D IMPLEMENTATION NOTES
+
+The section below is the pre-existing Konsoliss README preserved as a technical history. It may record historical demo behavior or incomplete milestones. The Master Checkpoint above governs newer commercial policy; verify present code before relying on dated notes.
+
+---
+
 # Konsoliss 3D container visualization
 
 ## Visual requirements
