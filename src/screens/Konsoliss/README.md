@@ -35,6 +35,28 @@
 
 ---
 
+## 0B. Reservation-only animation and real physically loaded visualization (2026-11-24 implementation)
+
+**LATEST FOUNDER UX DIRECTION: Keep approved homepage layout; no new marketing-style public-filling dashboard.** An individual customer should feel that *their own space and goods are progressing*, without being told that departure waits for a completely full Konsoliss 40HQ. Our own-container vs third-party fallback and binding service commitments are not contingent on 100% visual fill.
+
+**Three distinct visual data states:**
+
+1. **No recorded purchase and no real container assignment** -> retain the original 40HQ demo/empty animation unchanged. It is illustrative, not shipment history.
+2. **Customer has a recorded positive reserved CBM, but ZERO physically loaded CBM** -> render a nonphysical **reservation preview**. A small symbolic tan carton enters from the canvas's upper-left and fades into a translucent yellow/dashed-red 3D reserved-volume outline where an entirely empty illustrated container is shown. The outline's model volume is proportional to customer's verified reserved CBM / 68, including 0.020 CBM. Text explicitly distinguishes **Space purchased (reserved)** and **Loaded 0 CBM**. The carton does NOT remain as solid physically loaded merchandise and does NOT change the physical load counters. If an assigned, measured physical container already has *other customers' real cargo*, preserve their true brown loaded volumes, do not draw a reservation cuboid over that cargo, and show only the symbolic approaching/fading preview and accurate labels. For reservations larger than one nominal 68-CBM 40HQ, no false single-container volume outline is drawn.
+3. **At least some customer goods are physically scanned and loaded into a real assigned container** -> retain the current existing proportional red customer cartons, natural brown/tan other-customer cartons, actual physically free yellow translucent region with red dotted outline, tiny 0.02 marker, red cargo callout and 7-second alternating progress bars. Add only a subtle animated pulse at the verified red customer cargo anchor; **never invent repeated new physical loading events**. The top-left headline remains **(verified physically loaded + inbound-to-container) / purchased CBM**, and subtitle remains the split between loaded and inbound. Actual box-specific L/W/H placement is NOT yet derived from physical package-dimension records; current renderer is volume-proportional illustration, not proof of exact box geometry.
+
+**Commercial trust / buyer psychology:** Real-time *entire container* fill is not the home screen's headline; emphasize personal progress. Continue showing a verified selected real-container percentage/free space through existing control and seven-second alternating bar when assigned, never an invented global percent for someone with no physical container. Do not create fake urgency, pretend 100% is required to sail, or conceal a binding guarantee's at-risk status.
+
+**Changes committed 2026-11-24:**
+- Consumer main visual: `src/screens/Konsoliss/konsolissHomeScreen.tsx`; commits `b072628517f318eaf2768130cdc7b4f791e90303` and `01c9991479eae2b0c1e3279475f401eeaea720d5`. A new data-preview mode separates paid/no-physical-load preview from the old empty DEMO and the actual loaded renderer. Existing carton geometry/materials preserved.
+- Consumer tests/fixtures: `tests/konsoliss-homepage.test.cjs` and `tests/helpers/konsoliss-runtime.cjs`; latest commits `bd815f1930eecb1f245d60f2899c8e3100bdc55b` and `5e80f49fdd3843a13acf2f96f1703fd6beff6bb8`; cases for unassigned reservation, assigned reservation with other cargo, empty demo and actual red loaded mode.
+- Tiss Admin generated homepage preview synchronized from approved consumer source: `src/features/admin/screens/content/konsolissPreview/konsolissHomeScreen.tsx` commit `a74db71c0432ff483b11c396c643cef9b483288a`; matching SHA256 source manifest commit `a7b67d587f9ebc73e09d27203790557f72552d75`. Future consumer homepage modifications MUST run `npm run sync:konsoliss-preview` and `npm run check:konsoliss-preview` again.
+- **Verification performed:** extracted embedded JS compiled; direct mocked-canvas smoke checks passed in six representative states (empty, 0.02 and 1.0 reserved, assigned with other-customer loaded cargo, 0.02 physically loaded, ~99% loaded). Source and preview hashes were calculated and updated. **Native device screenshots, full npm tests, typechecks, payment-driven source-of-truth updates and measured real carton L/W/H remain NOT verified in this pass.** No Supabase/schema migrations or real customer data changes in this small visual section.
+
+**Remaining follow-up before production:** authoritative booking-level paid reservations, real warehouse/package-scanned physically loaded totals and customer ownership, accurate carton-specific L/W/H from measured packages if the visual is ever presented as an exact pack plan, actual device/simulator animation validation, updated comprehensive two-app tests. Do not fake those inputs.
+
+---
+
 ## 1. Product, geography and promise [AGREED]
 
 1. Konsoliss is a **demand-driven China-to-Haiti shared LCL freight marketplace**. Initial destination is **pickup at the Konsoliss Haiti/Port-au-Prince warehouse**. Optional Woulib/home delivery is separately priced and is NOT included in the base LCL price.
