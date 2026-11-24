@@ -126,3 +126,20 @@ test('temporary tour is preview-only; real data hooks never query a demo contain
  assert.match(source,/if\(demoIndex===KONSOLISS_DEMO_TOUR.length-1\)\{setDemoIndex\(0\);setDemoAutoplay\(false\);\}/);
  assert.match(source,/pointerEvents=\{isDemo\?'none':'auto'\}/);
 });
+
+test('paid-but-never-sent demo uses zero-sent ghost-carton semantics, not a physical shipment',()=>{
+ const app=harness();
+ app.click(app.find('Preview Konsoliss demo states')[0]);
+ app.click(app.find('Next demo state')[0]);
+ const unsent=app.webviews()[0].props.source.html;
+ assert.match(unsent,/data-preview="true"/);
+ assert.match(unsent,/data-sent="0"/);
+ assert.match(unsent,/data-loaded="0"/);
+ assert.match(unsent,/Goods sent 0 CBM/);
+ assert.match(app.text(),/No 80-day warehouse-receipt clock has started/);
+ app.click(app.find('Next demo state')[0]);
+ const dispatched=app.webviews()[0].props.source.html;
+ assert.match(dispatched,/data-sent="0.7"/);
+ assert.match(dispatched,/data-loaded="0"/);
+ assert.doesNotMatch(app.text(),/No 80-day warehouse-receipt clock has started/);
+});
