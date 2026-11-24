@@ -43,3 +43,32 @@ test('support service requires authentication and confirms ambiguous inserts aga
  const retry=service({insertError:true});assert.equal(await retry.send('same-id','S','M'),'SUP-COMMITTED');assert.ok(retry.calls.some(call=>call.key==='id'&&call.value==='same-id'));assert.ok(retry.calls.some(call=>call.key==='user_id'&&call.value==='owner'));
  await assert.rejects(service({insertError:true,readError:true}).send('id','S','M'),/did not confirm/);
 });
+
+test('reserved CBM with no loaded cargo gets an illustrative 3D preview, not the empty demo or fake physical fill',()=>{
+ const purchased=harness({reservedOnly:true});
+ const webviews=purchased.webviews();
+ assert.equal(webviews.length,1);
+ const html=webviews[0].props.source.html;
+ assert.match(html,/data-preview="true"/);
+ assert.match(html,/data-empty="false"/);
+ assert.match(html,/data-reserved="1"/);
+ assert.match(html,/data-loaded="0"/);
+ assert.match(html,/Space preview: /);
+ assert.match(html,/Loaded 0 CBM/);
+ assert.match(purchased.text(),/0.0.*1.0 CBM/);
+ const empty=harness({empty:true});
+ const emptyHtml=empty.webviews()[0].props.source.html;
+ assert.match(emptyHtml,/data-preview="false"/);
+ assert.match(emptyHtml,/data-empty="true"/);
+});
+
+test('real loaded-mode 3D animation does not increase real loaded volume or convert reservations into solid red cartons',()=>{
+ const source=fs.readFileSync(path.resolve(__dirname,'../src/screens/Konsoliss/konsolissHomeScreen.tsx'),'utf8');
+ const line=source.split('\n').find(row=>row.includes('"let demoCount=0,demoBlink=false'));
+ assert.ok(line,'renderer main script found');
+ const script=JSON.parse(line.trim().replace(/,$/,''));
+ assert.doesNotThrow(()=>new Function(script));
+ assert.match(script,/if\(PREVIEW&&RESERVED>0&&LOADED===0&&RESERVED<=68\)/);
+ assert.match(script,/else if\(!EMPTY&&YOUR_LOADED>0\)/);
+ assert.match(script,/if\(EMPTY\)\{const started=Date\.now\(\)/);
+});
