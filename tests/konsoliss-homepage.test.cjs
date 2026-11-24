@@ -72,3 +72,15 @@ test('real loaded-mode 3D animation does not increase real loaded volume or conv
  assert.match(script,/else if\(!EMPTY&&YOUR_LOADED>0\)/);
  assert.match(script,/if\(EMPTY\)\{const started=Date\.now\(\)/);
 });
+
+test('assigned customer with zero physically loaded CBM sees reservation animation without rewriting genuine other-cargo occupancy',()=>{
+ const app=harness({assignedZero:true}),views=app.webviews();
+ assert.equal(views.length,1);
+ const html=views[0].props.source.html;
+ assert.match(html,/data-preview="true"/);
+ assert.match(html,/data-empty="false"/);
+ assert.match(html,/data-reserved="1"/);
+ assert.match(html,/data-loaded="25"/);
+ assert.match(html,/data-your-loaded="0"/);
+ assert.match(app.text(),/0.0.*1.0 CBM/);
+});
