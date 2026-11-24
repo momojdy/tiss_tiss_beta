@@ -57,6 +57,40 @@
 
 ---
 
+## 0C. Temporary ten-state demo tour and never-sent cargo treatment (2026-11-24)
+
+**Founder request:** For development review, place a small Demo states switch on the existing Konsoliss home page so the founder can watch every customer visual state, then return to the original empty-container animation. **This is a temporary beta preview**, not the production customer experience; do not ship it enabled publicly.
+
+**Implemented behavior:** On the home screen, **Demo states** starts an automatically advancing tour. The empty animation runs first for approximately 9 seconds, and later states for approximately 6.5 seconds each. At the last example it **returns to Empty and stops automatically**. During the tour, **Previous**, **Next**, **Pause/Play all** and **Exit demo** are available. Previous/Next pause autoplay; Exit restores the logged-in account's real Supabase-backed display, or its real empty state if there is no booking. A prominent **DEMO ONLY / simulated preview** note remains on screen; other booking/navigation actions are temporarily noninteractive during the demo. No sample order, container, payment or load is inserted into the database, and no demo physical-container ID is queried.
+
+**Ten in-memory scenarios (only indicated quantities are simulated):**
+
+| # | Demo stage | Purchased / reserved CBM | Goods sent CBM | Inbound-to-container CBM | Physically loaded CBM | Physical 40HQ loaded CBM |
+|---:|---|---:|---:|---:|---:|---:|
+| 1 | Empty animation, no purchase | no row | — | — | — | no assigned container |
+| 2 | **Purchased, nothing EVER sent yet** | 1.000 | 0.000 | 0.000 | 0.000 | none |
+| 3 | Valid tracking, goods sent but not received | 1.000 | 0.700 | 0.000 | 0.000 | none |
+| 4 | China warehouse received, awaiting allocation | 1.000 | 0.700 | 0.000 | 0.000 | none |
+| 5 | Assigned to container, not physically loaded | 1.000 | 0.700 | 0.700 | 0.000 | 23.000 other-customer cargo |
+| 6 | Partially physically loaded | 1.000 | 0.700 | 0.300 | 0.400 | 30.400 |
+| 7 | Customer fully loaded; overall container not necessarily full | 1.000 | 1.000 | 0.000 | 1.000 | 55.000, still 'filling' |
+| 8 | Tiny 0.020 CBM purchase physically loaded | 0.020 | 0.020 | 0.000 | 0.020 | 0.020 |
+| 9 | Third-party consolidator received cargo | 1.000 | 0.700 | 0.000 | 0.000 | no fictional own container |
+| 10 | **Never sent; valid D25/D32 expiry and release** | 0.000 active rights | 0.000 | 0.000 | 0.000 | none |
+
+**Important commercial state distinction:** A customer can pay for CBM and send *nothing*, for days or until a valid contractual expiry. This is a real required backend state, NOT an automatic loaded event, tracking submission, warehouse receipt or starting point for the Day-80 guarantee. Before the applicable D25/D32 cutoff and any valid release, the customer's rights remain reserved; send reminders and show the purchase/booking's deadline. After a valid expiry, active entitlement can be released through an atomic audited transaction, but the original booking history, payments and lawful refund/retention resolution remain in separate records. Never release goods genuinely already in transit under valid tracking. The demo expiry state only illustrates the resulting display; actual expiry logic and notifications remain TO BUILD.
+
+**Visual distinction for never-sent:** The top-left retains the established **(loaded + inbound) / purchased** display. The existing expanded breakdown shows Goods sent = 0.000 CBM. Inside the 3D, a **translucent dashed ghost carton**, not a solid cardboard box, symbolizes a reserved place; text explicitly says **Goods sent 0 CBM**. After verified carrier dispatch, the symbolic carton may appear solid while the renderer continues to state **Loaded 0 CBM** until actual physical loading. The outline/cargo animation is strictly illustrative. Real physically loaded customer cargo is still red; the existing other-cargo colors, natural spacing, empty yellow/red-dotted section, 0.020 miniature, relative physical-volume arithmetic and 7-second alternating bars remain.
+
+**Files and commits:**
+- Consumer homepage and 3D renderer: src/screens/Konsoliss/konsolissHomeScreen.tsx, latest commit fe8907820f49e9e2046ae58156c37a2d136e13ba; prior demo switch 7e3b8466824efd5ffaa3ce56509835d53a6a751d, autoplay 38a720ffb61e7ac8c888a1a989ff239b1a72386e, ghost-carton changes e9ff6942689f3ea6851c354d3b58f0d304fa7e4d.
+- Consumer regression tests: tests/konsoliss-homepage.test.cjs, latest 0fcf24c9df59f0d70361f3540a770fd4fbd82211, covers ten states, correct values, never sent vs sent, reset/exit and demo isolation.
+- Tiss Admin generated homepage preview and hash manifest: commits 91b5a7543b478b62431e3a876e49313ba0936568 and 88864a95edfad8d6a9490e7c9478e0943356150c; rerun normal preview generator/check with both local checkouts at final validation.
+
+**Verification boundaries:** Ten scenario arithmetic checks passed. Embedded JavaScript compiled and mocked-canvas smoke checks passed empty, reserved-no-goods, sent-but-not-loaded, assigned-with-other-cargo, partially loaded and 0.020 CBM loaded, including ghost vs solid behavior. Full local npm tests, native device animation screenshots, complete TypeScript check and integration tests have **not yet been run**. No Supabase schema/data/payment changes in this visual tour task. **Before production:** disable KONSOLISS_DEMO_TOUR_ENABLED or remove the temporary demo controls, and verify no simulated states are customer-accessible.
+
+---
+
 ## 1. Product, geography and promise [AGREED]
 
 1. Konsoliss is a **demand-driven China-to-Haiti shared LCL freight marketplace**. Initial destination is **pickup at the Konsoliss Haiti/Port-au-Prince warehouse**. Optional Woulib/home delivery is separately priced and is NOT included in the base LCL price.
