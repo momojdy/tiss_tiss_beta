@@ -108,3 +108,18 @@ test('live container input contains verified inbound, not a demo or guessed valu
  assert.equal(liveLoadCallout(progress,{yourAllocatedCbm:.7,yourSpaceCbm:.3},false),'');
  assert.equal(liveLoadCallout(progress,{yourAllocatedCbm:.1,yourSpaceCbm:.1},true),'My current loaded space 0.300 CBM');
 });
+
+test('production homepage renders a single verified snapshot, not legacy mock data',()=>{
+ const make=(p,containers,status_code,warehouse_cbm,transit_cbm,tracking_due_at=null)=>({kind:'recorded',progress:{reserved_cbm:p[0],sent_cbm:p[1],loaded_cbm:p[2],inbound_to_container_cbm:p[3],allocated_cbm:Math.round((p[2]+p[3])*1000)/1000,at_warehouse_or_in_transit_cbm:Math.max(0,p[1]-p[2]-p[3]),reserved_not_sent_cbm:Math.max(0,p[0]-p[1]),not_allocated_cbm:Math.max(0,p[0]-p[2]-p[3]),allocated_percent:p[0]?Math.round((p[2]+p[3])/p[0]*10000)/100:0},containers,status_code,warehouse_cbm,transit_cbm,tracking_due_at});
+ const c=(id,loaded,own,allocated)=>({id,number:'VERIFIED-'+id,status:'filling',occupancy:{container_id:id,container_type:'40HQ',capacity_cbm:68,loaded_cbm:loaded,your_loaded_cbm:own,other_cargo_cbm:Math.round((loaded-own)*1000)/1000,free_cbm:Math.round((68-loaded)*1000)/1000,your_allocated_cbm:allocated}});
+ for(const [status,p,wh,tr,label] of [['label_created',[1,0,0,0],0,0,'Label created'],['inbound_warehouse',[1,.7,0,0],0,.7,'Inbound to warehouse'],['warehouse',[1,.4,0,0],.4,0,'0.4 CBM at warehouse'],['expired',[0,0,0,0],0,0,'Reservation expired']]){
+  const app=harness({snapshot:make(p,[],status,wh,tr)});assert.ok(app.text().includes(label),status);assert.doesNotMatch(app.text(),/KS-TEST/);assert.ok(app.webviews().length,status);
+ }
+ const split=make([1,.7,.5,.1],[c('a',48.4,.4,.4),c('b',22.6,.1,.2)],null,.7,0);
+ const app=harness({snapshot:split});assert.match(app.text(),/Split into 2 containers/);
+ assert.match(app.webviews()[0].props.source.html,/data-caption="My current loaded space 0.500 CBM"/);
+ app.click(app.find(defaults['a11y.chooseContainer'])[0]);app.click(app.find(formatCopy(defaults,'a11y.selectContainer',{number:'VERIFIED-b'}))[0]);
+ assert.match(app.webviews()[0].props.source.html,/data-your-loaded="0.1"/);assert.match(app.webviews()[0].props.source.html,/data-caption="My current loaded space 0.500 CBM"/);
+ app.click(app.find(defaults['a11y.chooseContainer'])[0]);app.click(app.find('Show unassigned purchased space')[0]);assert.match(app.text(),/0.4 CBM unassigned/);assert.match(app.webviews()[0].props.source.html,/data-reserved="0.4"/);assert.match(app.webviews()[0].props.source.html,/data-free="-"/);
+ const failed=harness({snapshot:{kind:'unavailable',containers:[]}});assert.equal(failed.webviews().length,0);assert.doesNotMatch(failed.text(),/KS-TEST/);
+});
