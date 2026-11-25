@@ -16,7 +16,6 @@ const idempotency=()=> 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=
 const newPack=(id:number):Pack=>({id,kind:'dims',l:'100',w:'100',h:'50',v:'0.5',q:'1',weight:'25'});
 const countries=[['HT','🇭🇹 Haiti'],['US','🇺🇸 United States'],['DO','🇩🇴 Dominican Republic']];
 const regions=[['PAP','Port-au-Prince'],['CAP','Cap-Haïtien'],['CAY','Les Cayes'],['OTHER','Other region']];
-const cover='#FFF9C2';
 export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const {height}=useWindowDimensions();
  const [country,setCountry]=useState('HT'),[region,setRegion]=useState('PAP'),[mode,setMode]=useState<'LCL'|'FCL'>('LCL'),[door,setDoor]=useState(false);
@@ -44,10 +43,10 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const calc=useMemo(()=>{
   const lines=packs.map(p=>{const q=num(p.q),volume=p.kind==='dims'?num(p.l)*num(p.w)*num(p.h)*factors[dimUnit]**3:num(p.v);
    const gross=num(p.weight)*(weightUnit==='lb'?.45359237:1);
-   return{volume:volume*q,weight:gross*q,valid:q>0&&Number.isInteger(q)&&Number.isFinite(volume)&&volume>0&&Number.isFinite(gross)&&gross>0}});
+   return{volume:volume*q,weight:gross*q,valid:q>0&&Number.isInteger(q)&&Number.isFinite(volume)&&volume>0,weightValid:Number.isFinite(gross)&&gross>0}});
   const physical=method==='dims'?lines.reduce((a,x)=>a+x.volume,0):num(space);
   const kg=weightUnknown?null:method==='dims'?lines.reduce((a,x)=>a+x.weight,0):num(weight)*(weightUnit==='lb'?.45359237:1);
-  const valid=Number.isFinite(physical)&&physical>=.02&&physical<=68&&(method!=='dims'||lines.every(p=>p.valid||(weightUnknown&&p.volume>0)));
+  const valid=Number.isFinite(physical)&&physical>=.02&&physical<=68&&(method!=='dims'||lines.every(p=>p.valid&&(weightUnknown||p.weightValid)));
   const validKg=kg==null||(Number.isFinite(kg)&&kg>0&&kg<=80000);
   return{physical,kg,valid,validKg,lines};
  },[packs,dimUnit,method,space,weightUnknown,weightUnit,weight]);
@@ -87,10 +86,11 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const pill=(...children:React.ReactNode[])=><View style={{flexDirection:'row',gap:6,marginBottom:8}}>{children}</View>;
  const footer=(label:string,onPress:()=>void,disabled=false)=><Pressable disabled={disabled||busy} onPress={onPress} accessibilityRole="button" style={{paddingVertical:13,paddingHorizontal:18,backgroundColor:disabled||busy?'#B5A891':R,borderRadius:9,alignItems:'center',marginTop:12}}>
   {busy?<ActivityIndicator color={C}/>:text(label,12,C,true)}</Pressable>;
- const review=()=>{if(!valid||unsupported){setNotice('Check the shipment details before continuing.');return}setNotice('');setStep('review')};
+ const review=()=>{if(!valid||unsupported||(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))){setNotice('Check the shipment details and merchandise value before continuing.');return}setNotice('');setStep('review')};
  const submit=async()=>{if(busy)return;setBusy(true);setNotice('');
   try{
    const user=await supabase.auth.getUser();if(!user.data.user)throw new Error('Sign in to submit a reservation or quotation request.');
+   if(!valueUnknown&&(!Number.isFinite(num(value))||num(value)<0))throw new Error('Enter a valid merchandise value or choose unknown value.');
    const payload={p_key:idempotency(),p_route:route,p_cbm:mode==='LCL'?calc.physical:null,p_weight:calc.kg,p_containers:mode==='FCL'?num(fclCount):null,
     p_category:category==='battery'?'battery':category,p_description:description,p_value:valueUnknown?null:(value.trim()?num(value):null),
     p_address:door?address:null,p_packages:method==='dims'?packs:[]};
@@ -117,6 +117,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    {q.status==='accepted_awaiting_checkout'?text('Scope acknowledged · checkout preparation pending. No payment taken.',11,accent,true):null}
   </>)}</View>;
  return <View style={{maxHeight:height*.86,minHeight:220,backgroundColor:t.bg}}>
+  <View style={{width:40,height:4,borderRadius:3,backgroundColor:dark?'#6D6050':'#C3B38F',alignSelf:'center',marginBottom:12}}/>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomWidth:.5,borderBottomColor:line,paddingVertical:4,marginBottom:10}}>
    <View>{text(step==='quotes'?'My quotes':step==='sent'?'Request received':step==='review'?'Review shipping request':step==='quoteReview'?'Review approved quote':step==='acknowledged'?'Quote acknowledged':tx('heading','Book Space'),21,ink,true)}
    {text(tx('subtitle','China warehouse → Your destination'),11,muted)}</View>
@@ -196,8 +197,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
      <Pressable onPress={()=>setTerms(x=>!x)}>{text((terms?'☑':'□')+'  '+tx('terms','I accept the booking terms and delivery conditions.'),12)}</Pressable>
      <Pressable onPress={()=>setTruth(x=>!x)} style={{marginTop:10}}>{text((truth?'☑':'□')+'  '+(category==='unknown'?tx('consentReserve',"I understand this reserves space, not a final customs-inclusive shipment price. I'll declare goods before sending."):'My declaration is accurate. I understand goods are subject to inspection and eligible loading.'),12)}</Pressable>
      {notice?text(notice,11,accent,true,{marginTop:10}):null}
-     {footer(unsupported?'Booking unavailable':quoteOnly||category!=='unknown'?tx('requestQuote','Request shipping quote'):tx('reserve','Review space reservation'),review,!valid||unsupported||!terms||!truth||(door&&address.trim().length<8))}
-     {footer('My quotes',()=>{void loadQuotes()})}
+     <Pressable onPress={()=>{void loadQuotes()}} style={{paddingVertical:13,alignItems:'center'}}>{text('My quotes',11,accent,true)}</Pressable>
    </>:null}
    {step==='review'?<>
     {box(<>{heading(category==='unknown'?'Your provisional space request':'Shipping quote request')}
@@ -243,5 +243,12 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
     {notice?text(notice,11,accent):null}
     {footer('Refresh quotes',()=>{void loadQuotes()})}{footer('‹ Book Space',reset)}{footer('Close',onClose)}</>:null}
   </ScrollView>
+  {step==='edit'?<View style={{borderTopWidth:.5,borderTopColor:line,paddingTop:9,paddingBottom:3,marginTop:2}}>
+     <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center'}}>
+      <View>{text('Indicative freight · not payable yet',10,muted)}{text(unsupported?'Not available':amount==null?'Quote required':cash(amount),18,ink,true)}</View>
+      <View style={{minWidth:145}}>{footer(unsupported?'Unavailable':tx('requestQuote','Review shipping quote'),review,
+       !valid||unsupported||!terms||!truth||(door&&address.trim().length<8))}</View>
+     </View>
+    </View>:null}
  </View>;
 }
