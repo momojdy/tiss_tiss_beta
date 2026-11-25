@@ -11,6 +11,8 @@ import { palettes, frameMax } from './design';
 import { access, categories, connectionMessages, defaultFollowing, editorPicks, effectiveConnection, featureLinks, newBooks, recentVisits, sectionVisibility, visibleProducts, type Category, type Connection, type Language, type PreviewPreferences, type Profile } from './model';
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard, type IconName } from './components';
 import PreviewSheet from './PreviewSheet';
+import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
+import { arrangeRows, defaultLayout, discovery, sampleMoney, showDiscovery, validateLayout, type HomeLayout, type PreviewCurrency } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -30,11 +32,12 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const [prefs,setPrefs]=useState(initialPreferences), [loaded,setLoaded]=useState(false);
   const [profile,setProfile]=useState<Profile>('returning'),[connection,setConnection]=useState<Connection>('live'),[connected,setConnected]=useState<boolean|null>(null),[language,setLanguage]=useState<Language>('normal'),[sponsor,setSponsor]=useState(true);
   const [dockHeight,setDockHeight]=useState(65);
+  const [layout,setLayout]=useState<HomeLayout>(defaultLayout),[displayMode,setDisplayMode]=useState<'showcase'|'personalized'>('showcase'),[currency,setCurrency]=useState<PreviewCurrency>('USD');
   const [category,setCategory]=useState<Category>('All'),[limit,setLimit]=useState(6),[stack,setStack]=useState<string[]>([]),[reducedMotion,setReducedMotion]=useState(false);
   const scroll=useRef<FlatList<HomeRow>>(null); const jumpTimer=useRef<ReturnType<typeof setTimeout>|null>(null); const pendingJump=useRef<{index:number;attempts:number}|null>(null); const timer=useRef<ReturnType<typeof setTimeout>|null>(null);
   const p=palettes[prefs.theme], active=stack[stack.length-1], shown=sectionVisibility(profile,sponsor,prefs.following.length), network=effectiveConnection(connection,connected), products=visibleProducts(category,limit);
   const dark=prefs.theme==='dark'; const floorAccess=(i:number)=>access(i,profile,sponsor);
-  const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
+  const open=(name:string)=>{if(name==='Marketplace'){jumpToSection('market');return;}if(name==='Editor’s picks'){jumpToSection('editor');return;}if(name.startsWith('Section: ')){jumpToSection(name.slice(9));return;}setStack(s=>[...s,name]);}; const close=()=>setStack([]);const back=()=>setStack(s=>s.slice(0,-1));
   function changeConnection(c:Connection){if(timer.current)clearTimeout(timer.current);setConnection(c);setLimit(6);if(c==='loading')timer.current=setTimeout(()=>setConnection('live'),1200);}
   function togglePref(key:'saved'|'reminders'|'following',value:string){setPrefs(prev=>({...prev,[key]:prev[key].includes(value)?prev[key].filter(v=>v!==value):[...prev[key],value]}));}
   useEffect(()=>{let alive=true;AsyncStorage.getItem(PREFS_KEY).then(raw=>{if(alive)setPrefs(readPreferences(raw));}).catch(()=>{}).finally(()=>{if(alive)setLoaded(true);});return()=>{alive=false;if(timer.current)clearTimeout(timer.current);if(jumpTimer.current)clearTimeout(jumpTimer.current)};},[]);
@@ -45,14 +48,14 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
   const head=(title:string,action?:string,target?:string,aside?:string)=><SectionHead p={p} title={title} action={action} onPress={target?()=>open(target):undefined} aside={aside} small={small} language={language}/>;
   const suffix=language==='long'?' — collection internationale':'';
   const marketReady=network==='ready'||network==='offline';
-  const rows:HomeRow[] = [
+  const nativeRows:HomeRow[] = [
     {id:'header',content:(<View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:4,paddingTop:19,paddingBottom:14,borderBottomWidth:1,borderBottomColor:p.ink}}>
-          <TouchIcon p={p} name="back" label="Back to Wantiss" onPress={onBack}/>
+          <TouchIcon p={p} compact={small} name="back" label="Back to Wantiss" onPress={onBack}/>
           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'center',flex:1,minWidth:0,gap:small?3:6}}>
-            <Image source={referenceAssets.brand} resizeMode="contain" style={{width:small?24:35,height:small?24:35}} accessible={false}/>
-            <Serif p={p} size={small?18:22} style={{lineHeight:small?19:23,letterSpacing:small?-.9:-1.8,flexShrink:1}}>Arts &amp; Lits</Serif>
+            <Image source={referenceAssets.brand} resizeMode="contain" style={{width:small?20:35,height:small?20:35}} accessible={false}/>
+            <Serif p={p} size={small?16:22} style={{lineHeight:small?19:23,letterSpacing:small?-.9:-1.8,flexShrink:1}}>Arts &amp; Lits</Serif>
           </View>
-          <View style={{flexDirection:'row'}}><TouchIcon p={p} name="search" label="Search" onPress={()=>open('Search')}/><TouchIcon p={p} name="saved" label="Saved" onPress={()=>open('Saved')}/><TouchIcon p={p} name={dark?'sun':'moon'} label={dark?'Switch to light mode':'Switch to dark mode'} onPress={()=>setPrefs(v=>({...v,theme:dark?'light':'dark'}))} selected={dark}/></View>
+          <View style={{flexDirection:'row'}}><TouchIcon p={p} compact={small} name="bell" label="Notifications — preview" onPress={()=>open('Notifications')}/><TouchIcon p={p} compact={small} name="search" label="Search" onPress={()=>open('Search')}/><TouchIcon p={p} compact={small} name="saved" label="Saved" onPress={()=>open('Saved')}/><TouchIcon p={p} compact={small} name={dark?'sun':'moon'} label={dark?'Switch to light mode':'Switch to dark mode'} onPress={()=>setPrefs(v=>({...v,theme:dark?'light':'dark'}))} selected={dark}/></View>
         </View>)},
     ...(network!=='ready' ? [{id:'connection',content:(<View accessibilityLiveRegion="polite" style={{paddingVertical:12,borderBottomWidth:1,borderBottomColor:p.line}}><Body p={p} style={{fontSize:13,lineHeight:18}}>{connectionMessages[network]}</Body>{network!=='loading'&&<TextLink p={p} label="Retry" onPress={()=>changeConnection('loading')} style={{alignSelf:'flex-start',justifyContent:'flex-start',marginTop:6}} chevron={false}/>}</View>)}] : []),
     {id:'edition',content:(<View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:12,flexWrap:'wrap',marginTop:17,marginBottom:11}}><Micro p={p} style={{fontSize:10,lineHeight:14,letterSpacing:1.35}}>The cultural edit</Micro><Micro p={p} style={{fontSize:10,lineHeight:14,letterSpacing:1.35}}>Vol. 01   /   The gallery edit</Micro></View>)},
@@ -64,6 +67,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
           <View style={{height:small?235:261,overflow:'hidden'}}><Photo p={p} asset="museum" style={StyleSheet.absoluteFillObject} label="Historic architectural reference, sample"/><View style={{position:'absolute',top:12,left:13,paddingVertical:6,paddingHorizontal:8,backgroundColor:'#292922'}}><Micro p={p} style={{color:'#fff',fontSize:9,fontWeight:'400',letterSpacing:1.1}}>01 / The museum</Micro></View><View style={{position:'absolute',right:13,bottom:13,width:53,height:53,borderRadius:27,backgroundColor:'#f5f0e7',alignItems:'center',justifyContent:'center',shadowColor:'#000',shadowOpacity:.2,shadowRadius:12,shadowOffset:{width:0,height:3},elevation:2}}><Icon name="arrow" color="#162925" size={26}/></View></View>
           <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',gap:10,paddingTop:13,paddingBottom:14,borderBottomWidth:1,borderBottomColor:p.ink}}><View style={{flex:1}}><Serif p={p} size={29} style={{letterSpacing:-1,lineHeight:30,marginBottom:5}}>The Museum</Serif><Small p={p}>Walk through a world of art.</Small></View><View style={{flexDirection:'row',alignItems:'center',gap:5}}><View style={{height:6,width:6,borderRadius:3,backgroundColor:p.teal}}/><Body p={p} style={{fontSize:small?10:12,letterSpacing:1,textTransform:'uppercase'}}>Free &amp; paid</Body></View></View>
         </Pressable>)},
+    {id:'museum-modes',content:<MuseumModes p={p} open={open}/>},
     ...(shown.recent ? [{id:'recent',content:(<Section>{head('Recently visited','History','Museum visit history')}<Rail inset={inset} label="Recently visited museums">{recentVisits.map(v=><VisitCard key={v[0]} p={p} title={v[0]} asset={v[1]} description={v[2]} onPress={()=>open(v[3]??v[0])}/>)}</Rail></Section>)}] : []),
     {id:'discover',content:(<Section>{head('Discover museums','All','Museum discovery')}<Rail inset={inset} label="Discover museums">{museums.map(m=><VisitCard key={m[0]} p={p} title={m[0]} asset={m[1]} description={m[2]} onPress={()=>open(m[0])}/>)}</Rail></Section>)},
     ...(shown.shelf ? [{id:'shelf',content:(<Section>{head('Your shelf','Open library','Library')}<Bookshelf p={p} open={open}/><View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',gap:8,borderBottomWidth:1,borderBottomColor:p.line,paddingTop:11,paddingBottom:14}}><Small p={p} style={{color:p.ink,flex:1}}>Discover a new chapter.</Small><TextLink p={p} label="My bookshelf" onPress={()=>open('My Bookshelf')}/></View><View style={{flexDirection:'row',alignItems:'center',gap:12,paddingTop:15,paddingBottom:2}}><View style={{flex:1}}><Micro p={p} style={{color:p.teal,marginBottom:5,fontSize:9}}>Your reading corner</Micro><Serif p={p} size={20} style={{fontStyle:'italic'}}>The Secret Garden</Serif><Small p={p} style={{marginTop:4}}>Chapter 7 · 38% read</Small><Progress p={p} percent={38}/></View><TextLink p={p} label="Continue" onPress={()=>open('Continue reading')}/></View></Section>)}] : []),
@@ -99,15 +103,17 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
               {categories.map(c=><Pressable key={c} testID={`arts-lits-filter-${c.toLowerCase()}`} accessibilityRole="tab" accessibilityLabel={c} accessibilityState={{selected:c===category}} onPress={()=>{setCategory(c);setLimit(6)}} style={{minHeight:44,flexShrink:0,justifyContent:'center',paddingVertical:10,paddingHorizontal:2,borderBottomWidth:2,borderBottomColor:c===category?p.teal:'transparent'}}><Body p={p} style={{fontSize:13,lineHeight:18.2,color:c===category?p.ink:p.muted}}>{c}</Body></Pressable>)}
             </ScrollView>
           </View>
-          {marketReady&&<View testID="arts-lits-marketplace-grid" style={{flexDirection:'row',gap:12,alignItems:'flex-start',flexShrink:0}}>{[0,1].map(col=><View key={col} style={{width:(inner-12)/2,minWidth:0,gap:20,flexShrink:0}}>{products.items.filter((_,i)=>i%2===col).map(v=><Pressable key={v[0]} testID={`arts-lits-product-${v[0]}`} accessibilityRole="button" accessibilityLabel={`${v[1]}, ${v[4]}, $${v[5]} sample`} onPress={()=>open(v[0])} style={{width:'100%',flexShrink:0}}><Photo p={p} asset={v[3]} style={{width:(inner-12)/2,height:(inner-12)/2*v[6]}}/><Serif p={p} size={16} style={{lineHeight:18.4,marginTop:8,marginBottom:2}}>{v[1]}</Serif><Small p={p}>{v[4]}</Small><Body p={p} style={{fontSize:12,lineHeight:16.2,fontWeight:'600',marginTop:4}}>${v[5]} · sample</Body></Pressable>)}</View>)}</View>}
+          {marketReady&&<View testID="arts-lits-marketplace-grid" style={{flexDirection:'row',gap:12,alignItems:'flex-start',flexShrink:0}}>{[0,1].map(col=><View key={col} style={{width:(inner-12)/2,minWidth:0,gap:20,flexShrink:0}}>{products.items.filter((_,i)=>i%2===col).map(v=><Pressable key={v[0]} testID={`arts-lits-product-${v[0]}`} accessibilityRole="button" accessibilityLabel={`${v[1]}, ${v[4]}, ${sampleMoney(v[5],currency)} sample`} onPress={()=>open(v[0])} style={{width:'100%',flexShrink:0}}><Photo p={p} asset={v[3]} style={{width:(inner-12)/2,height:(inner-12)/2*v[6]}}/><Serif p={p} size={16} style={{lineHeight:18.4,marginTop:8,marginBottom:2}}>{v[1]}</Serif><Small p={p}>{v[4]}</Small><Body p={p} style={{fontSize:12,lineHeight:16.2,fontWeight:'600',marginTop:4}}>{sampleMoney(v[5],currency)} · sample</Body></Pressable>)}</View>)}</View>}
           <View accessibilityLiveRegion="polite" style={{paddingVertical:14,alignItems:'center',minHeight:52}}>{!marketReady?<><Small p={p} style={{textAlign:'center'}}>{network==='loading'?'Loading available works…':network==='error'?'Catalog could not be refreshed.':'No works available right now. Explore the museum or try another category.'}</Small>{network!=='loading'&&<TextLink p={p} label="Retry catalog" onPress={()=>changeConnection('loading')} chevron={false}/>}</>:products.hasMore?<TextLink p={p} label="Load more works" labelStyle={{fontSize:10,lineHeight:14,letterSpacing:1.2,textTransform:'uppercase',color:p.muted}} onPress={()=>setLimit(n=>n+6)} chevron={false}/>:<Small p={p} style={{textAlign:'center'}}>{products.total?'You’ve reached the end of this sample collection.':'No works in this category.'}</Small>}</View>
         </Section>)},
-    {id:'footer',content:(<View style={{marginTop:28,borderTopWidth:1,borderColor:p.line,paddingTop:12}}><Small p={p}>Design preview · Illustrative catalog, access and prices. Embedded visual references, not actual venue or product photographs. No real purchases or partnerships.</Small><TextLink p={p} label="Preview customer & connection states" onPress={()=>open('Preview controls')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/><TextLink p={p} label="Image references & credits" onPress={()=>open('Image credits')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/></View>)},
+    {id:'footer',content:(<View style={{marginTop:28,borderTopWidth:1,borderColor:p.line,paddingTop:12}}><Small p={p}>Design preview · Illustrative catalog, access and prices. Embedded visual references, not actual venue or product photographs. No real purchases or partnerships.</Small><TextLink p={p} label="Preview customer, layout & connection states" onPress={()=>open('Preview controls')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/><TextLink p={p} label="Image references & credits" onPress={()=>open('Image credits')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/></View>)},
   ];
+  const extraRows:HomeRow[]=discovery.filter(d=>showDiscovery(d,profile,displayMode)).map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} title={layout.sections.find(x=>x.id===d.id)?.title}/> }));
+  const rows=arrangeRows([...nativeRows,...extraRows],layout);
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
   function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;scroll.current.scrollToIndex({index:target.index,animated:!reducedMotion,viewPosition:0});}
   function jumpToSection(id:string){
-    const index=rows.findIndex(r=>r.id===id);if(index<0)return;
+    const index=rows.findIndex(r=>r.id===id);if(index<0){setStack(['Section not shown']);return;}
     cancelJump();setStack([]);pendingJump.current={index,attempts:0};
     jumpTimer.current=setTimeout(tryJump,active&&!reducedMotion?350:0);
   }
@@ -127,7 +133,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
       <FlatList ref={scroll} testID="arts-lits-home-scroll" data={rows} keyExtractor={row=>row.id}
         renderItem={({item})=><View testID={`arts-lits-section-${item.id}`} collapsable={false} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>}
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
-        initialNumToRender={rows.length} maxToRenderPerBatch={rows.length} windowSize={11} removeClippedSubviews={false}
+        initialNumToRender={10} maxToRenderPerBatch={8} windowSize={11} removeClippedSubviews={false}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={cancelJump}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
@@ -140,6 +146,6 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
         </View>
       </View>
     </View>
-    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion}/>
+    <PreviewSheet p={p} width={screenWidth} stack={stack} open={open} close={close} back={back} preferences={prefs} togglePref={togglePref} profile={profile} setProfile={setProfile} connection={connection} setConnection={changeConnection} sponsor={sponsor} setSponsor={setSponsor} language={language} setLanguage={setLanguage} reducedMotion={reducedMotion} layout={layout} publishLayout={v=>setLayout(validateLayout(v))} displayMode={displayMode} setDisplayMode={setDisplayMode} currency={currency} setCurrency={setCurrency}/>
   </View>;
 }

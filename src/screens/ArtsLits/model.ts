@@ -1,11 +1,11 @@
 import { BOOKS, catalog, creators, exhibitions, floors, future, museums, works } from './catalog';
-export type Profile = 'returning' | 'new' | 'reader' | 'collector' | 'museum' | 'member';
+export type Profile = 'returning' | 'new' | 'reader' | 'collector' | 'museum' | 'member' | 'comics';
 export type Connection = 'live' | 'loading' | 'offline' | 'error' | 'empty';
 export type Language = 'normal' | 'long';
 export type Theme = 'light' | 'dark';
 export type Category = 'All' | 'Paintings' | 'Books' | 'Sculpture' | 'Prints' | 'Photography' | 'Ceramics';
 export const categories: readonly Category[] = ['All','Paintings','Books','Sculpture','Prints','Photography','Ceramics'];
-export const profileOptions: readonly [Profile,string][] = [['returning','Returning customer'],['new','New customer'],['reader','Regular reader'],['collector','Art collector'],['museum','Museum enthusiast with pass'],['member','Paid member']];
+export const profileOptions: readonly [Profile,string][] = [['returning','Returning customer'],['new','New customer'],['reader','Regular reader'],['collector','Art collector'],['museum','Museum enthusiast with pass'],['member','Paid member'],['comics','Comics enthusiast']];
 export const connectionOptions: readonly [Connection,string][] = [['live','Normal'],['loading','Loading then recover'],['offline','Offline'],['error','Error'],['empty','Empty catalog']];
 export const defaultFollowing = creators.map(c=>c[0]);
 export const shelfBooks = [
@@ -36,6 +36,8 @@ export function effectiveConnection(preview:Connection,connected:boolean|null){r
 export const connectionMessages={loading:'Loading your cultural edit…',offline:'Offline — showing cached sample content. Live actions are unavailable.',error:'Could not refresh the cultural edit. Showing the last available sample.',empty:'No catalog items are available in this preview state.'};
 // All destinations are genuine native preview routes; no transactions, notifications, or real entitlements are implied.
 export const destinations: Record<string,readonly string[]> = {
+  Notifications:['Homepage notification preview. No live Wantiss notification feed is connected.'],
+  'Section not shown':['This section is hidden in the current customer or layout preview. Switch to showcase or enable the section in the layout preview.','Preview controls'],
   Museum:['Choose either viewing mode. Both will use the same server-authorized admission.','Walk through the museum','Browse as gallery','Museum map','Museum discovery','Museum passes','Museum shop'],
   'The Museum':['Flagship virtual museum preview.','Walk through the museum','Browse as gallery','Museum map','Museum shop'],
   'Museum discovery':['Discover participating institutions. The names and arrangements here are fictional samples.',...museums.map(x=>x[0])],
