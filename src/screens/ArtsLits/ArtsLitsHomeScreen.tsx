@@ -12,7 +12,7 @@ import { access, categories, connectionMessages, defaultFollowing, editorPicks, 
 import { Body, Bookshelf, ContextBlock, FreeCover, Icon, Micro, Photo, Poster, Progress, Rail, Section, SectionHead, Serif, Small, TextLink, TouchIcon, VisitCard, type IconName } from './components';
 import PreviewSheet from './PreviewSheet';
 import { DiscoveryRow, MuseumModes } from './DiscoveryRows';
-import { arrangeRows, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
+import { selectHomepageRows, sectionOrder, defaultLayout, discovery, sampleMoney, selectDiscovery, entryEligible, validateLayout, type HomeLayout, type PreviewCurrency, type DisplayMode, type PreviewLocale, type PreviewRegion } from './homeRegistry';
 
 const PREFS_KEY = 'arts-lits:V8:design-preview';
 const initialPreferences:PreviewPreferences={theme:'light',saved:[],reminders:[],following:[...defaultFollowing]};
@@ -111,8 +111,8 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
     {id:'footer',content:(<View style={{marginTop:28,borderTopWidth:1,borderColor:p.line,paddingTop:12}}><Small p={p}>Design preview · Illustrative catalog, access and prices. Embedded visual references, not actual venue or product photographs. No real purchases or partnerships.</Small><TextLink p={p} label="Preview customer, layout & connection states" onPress={()=>open('Preview controls')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/><TextLink p={p} label="Image references & credits" onPress={()=>open('Image credits')} style={{alignSelf:'flex-start',justifyContent:'flex-start'}} chevron={false}/></View>)},
   ];
   const extras=selectDiscovery(effectiveLayout,profile,displayMode,region,locale);
-  const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open}/> }));
-  const rows=arrangeRows([...nativeRows.filter(r=>{const entry=effectiveLayout.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,Date.now());}),...extraRows],effectiveLayout);
+  const extraRows:HomeRow[]=extras.map(d=>({id:d.id,content:<DiscoveryRow section={d} p={p} inset={inset} small={small} language={language} open={open} showContentWarning={displayMode!=='personalized'}/> }));
+  const rows=selectHomepageRows([...nativeRows.filter(r=>{const entry=effectiveLayout.sections.find(x=>x.id===r.id);return !entry||entryEligible(entry,profile,region,Date.now());}),...extraRows],effectiveLayout,profile,displayMode);
   function cancelJump(){if(jumpTimer.current)clearTimeout(jumpTimer.current);jumpTimer.current=null;pendingJump.current=null;}
   function tryJump(){const target=pendingJump.current;if(!target||!scroll.current)return;scroll.current.scrollToIndex({index:target.index,animated:!reducedMotion,viewPosition:0});}
   function jumpToSection(id:string){
@@ -136,7 +136,7 @@ export default function ArtsLitsHomeScreen({onBack}:{onBack:()=>void}) {
       <FlatList ref={scroll} testID="arts-lits-home-scroll" data={rows} keyExtractor={row=>row.id}
         renderItem={({item})=><View testID={`arts-lits-section-${item.id}`} collapsable={false} style={{width:'100%',flexShrink:0,alignItems:'stretch'}}>{item.content}</View>}
         style={{flex:1,minHeight:0}} contentContainerStyle={{paddingHorizontal:inset,paddingBottom:dockBottom+dockHeight+34}}
-        initialNumToRender={displayMode==='personalized'?rows.length:Math.min(rows.length,16)} maxToRenderPerBatch={displayMode==='personalized'?rows.length:12} windowSize={11} removeClippedSubviews={false}
+        initialNumToRender={sectionOrder.length} maxToRenderPerBatch={sectionOrder.length} windowSize={11} removeClippedSubviews={false}
         nestedScrollEnabled directionalLockEnabled showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled"
         onScrollToIndexFailed={onJumpFailed} onScrollBeginDrag={cancelJump}
         accessibilityElementsHidden={!!active} importantForAccessibility={active?'no-hide-descendants':'auto'}/>
