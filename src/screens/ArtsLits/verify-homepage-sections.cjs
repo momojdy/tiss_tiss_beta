@@ -4,7 +4,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const ts = require('typescript');
 const root = __dirname;
-let state = [], index = 0, width = 390, fontScale = 1, refs = [], refIndex = 0;
+let state = [], index = 0, width = 390, fontScale = 1, refs = [], refIndex = 0, platform = "android";
 let scheduled = new Map(), nextTimer = 0;
 const queueTimer=(fn)=>{const id=++nextTimer;scheduled.set(id,fn);return id;};
 const cancelTimer=id=>scheduled.delete(id);
@@ -14,7 +14,7 @@ const React = {
   useState(initial) { const slot = index++; if (!(slot in state)) state[slot] = typeof initial === 'function' ? initial() : initial; return [state[slot], v => {state[slot] = typeof v === 'function' ? v(state[slot]) : v;}]; },
   useRef(initial) { const slot=refIndex++; return refs[slot]??(refs[slot]={current:initial}); }, useEffect() {},
 };
-const rn = new Proxy({Platform:{OS:'android',select:o=>o.android??o.default}, useWindowDimensions:()=>({width,height:844,fontScale}), StyleSheet:{absoluteFillObject:{position:'absolute',left:0,top:0,right:0,bottom:0},create:o=>o}}, {get:(o,k)=>o[k]??String(k)});
+const rn = new Proxy({Platform:{get OS(){return platform},select:o=>o[platform]??o.default}, useWindowDimensions:()=>({width,height:844,fontScale}), StyleSheet:{absoluteFillObject:{position:'absolute',left:0,top:0,right:0,bottom:0},create:o=>o}}, {get:(o,k)=>o[k]??String(k)});
 const modules = new Map();
 function load(name) {
   if (name === 'react') return {...React,default:React};
@@ -45,7 +45,7 @@ function textLink(nodes,label){const n=nodes.find(n=>n.props.label===label);asse
 let scenarios=0;
 for(const w of [320,375,390,430,768])for(const scale of [1,1.5])for(const [profile] of profileOptions)for(const [connection] of connectionOptions)for(const sponsor of [false,true]){
   width=w;fontScale=scale;state=[];refs=[];scheduled.clear();let nodes=flatten(tree());const p=preview(nodes);p.setProfile(profile);p.setConnection(connection);p.setSponsor(sponsor);nodes=flatten(tree());
-  const scroll=find(nodes,'arts-lits-home-scroll');assert.equal(scroll.props.removeClippedSubviews,false);assert.ok(scroll.props.nestedScrollEnabled);assert.equal(scroll.type,'FlatList');assert.equal(scroll.props.initialNumToRender,scroll.props.data.length);assert.equal(new Set(scroll.props.data.map(r=>r.id)).size,scroll.props.data.length);assert.ok(scroll.props.contentContainerStyle.paddingBottom>=117);assert.ok(scroll.props.data.findIndex(r=>r.id==='editor')<scroll.props.data.findIndex(r=>r.id==='market'));const nav=find(nodes,'arts-lits-bottom-nav');assert.equal(nav.props.style.borderRadius,18);for(const tab of ['home','explore','museum','library','me'])find(nodes,`arts-lits-tab-${tab}`);
+  const scroll=find(nodes,'arts-lits-home-scroll');assert.equal(scroll.props.removeClippedSubviews,false);assert.ok(scroll.props.nestedScrollEnabled);assert.equal(scroll.type,'FlatList');assert.equal(scroll.props.initialNumToRender,scroll.props.data.length);assert.equal(new Set(scroll.props.data.map(r=>r.id)).size,scroll.props.data.length);assert.ok(scroll.props.contentContainerStyle.paddingBottom>=117);assert.ok(scroll.props.data.findIndex(r=>r.id==='editor')<scroll.props.data.findIndex(r=>r.id==='market'));const nav=find(nodes,'arts-lits-bottom-nav');assert.equal(nav.props.style.borderRadius,18);assert.equal(nav.props.style.backgroundColor,'rgba(255,255,255,0.88)');assert.equal(nav.props.style.borderColor,'rgba(255,255,255,0.55)');assert.equal(nav.props.style.height,65);const dock=find(nodes,'arts-lits-dock-position');assert.equal(dock.props.style.bottom,18);assert.equal(dock.props.style.left,14);assert.equal(dock.props.style.right,14);const sponsored=nodes.find(n=>n.props.testID==='arts-lits-sponsored-card');assert.equal(!!sponsored,sponsor);if(sponsored){const photo=find(flatten(sponsored),'arts-lits-sponsored-photo');assert.equal(photo.props.style.top,0);assert.equal(photo.props.style.bottom,0);assert.equal(photo.props.style.width,w<=350?86:104);assert.equal(flatten(photo).find(n=>n.type==='Image').props.source,'./assets/night.jpg');}for(const tab of ['home','explore','museum','library','me'])find(nodes,`arts-lits-tab-${tab}`);
   const editor=find(nodes,'arts-lits-editor-picks'),market=find(nodes,'arts-lits-marketplace');assert.ok(nodes.indexOf(editor)<nodes.indexOf(market));
   const erows=flatten(editor);editorPicks.forEach((e,i)=>{const b=find(erows,`arts-lits-editor-pick-${i}`);assert.equal(b.props.accessibilityLabel,`${e[0]}, ${e[1]}`);assert.equal(b.props.style.alignItems,'baseline');assert.ok(b.props.style.minHeight>=44);});
   const filters=find(flatten(market),'arts-lits-marketplace-filters');assert.ok(filters.props.horizontal&&filters.props.nestedScrollEnabled);assert.equal(filters.props.removeClippedSubviews,false);assert.ok(filters.props.style.height>=44);
@@ -71,4 +71,7 @@ find(nodes,'arts-lits-tab-home').props.onPress();assert.deepEqual(calls.at(-1),[
 for(const [tab,label] of [['museum','Museum'],['library','Library'],['me','Me']]){find(nodes,'arts-lits-tab-'+tab).props.onPress();nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),label);preview(nodes).close();nodes=flatten(tree());}
 find(nodes,'arts-lits-bottom-nav').props.onLayout({nativeEvent:{layout:{height:90}}});nodes=flatten(tree());assert.ok(find(nodes,'arts-lits-home-scroll').props.contentContainerStyle.paddingBottom>=142);
 
+// Sponsor opens the existing exhibition preview; no changes to admission or payment rules.
+state=[];refs=[];nodes=flatten(tree());find(nodes,'arts-lits-sponsored-card').props.onPress();nodes=flatten(tree());assert.equal(preview(nodes).stack.at(-1),'Between Worlds');
+for(const os of ['android','ios']){platform=os;state=[];refs=[];nodes=flatten(tree());assert.equal(find(nodes,'arts-lits-dock-position').props.style.bottom,18);const nav=find(nodes,'arts-lits-bottom-nav');const icons=flatten(nav).filter(n=>n.props.size===24);assert.equal(icons.length,5);}
 console.log(`Native component-tree checks passed: ${scenarios} combinations of widths, text scales, profiles, connection states and sponsorship; all three editorial routes, seven filters, pagination, and product routing. Native rendering still requires device testing.`);
