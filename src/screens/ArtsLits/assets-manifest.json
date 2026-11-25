@@ -1,0 +1,159 @@
+{
+  "sourceSha256": "b4a0f5e1b70aac4cf77cc04a1538f67eadc61018b9bcebfad3a89d8e7ecaed99",
+  "images": {
+    "brand": {
+      "file": "brand.png",
+      "sha256": "5909694c92d85b6869c3b8b5dc1320a9ac596900fff8e8d929885676681d18bd",
+      "width": 500,
+      "height": 500,
+      "bytes": 294229
+    },
+    "museum": {
+      "file": "museum.jpg",
+      "sha256": "5e2082acf0acad11a028b7508bbf12f0cc24035c22830124d90e331f3aead514",
+      "width": 650,
+      "height": 433,
+      "bytes": 77697
+    },
+    "gallery": {
+      "file": "gallery.jpg",
+      "sha256": "a8bfc649da5174f69a264729167f61e18fcf6d68a1c368bd443806cb8f8cc152",
+      "width": 650,
+      "height": 442,
+      "bytes": 62194
+    },
+    "ceramics": {
+      "file": "ceramics.jpg",
+      "sha256": "91ee285a8ce62923e01e37b300535b35048ee4347445329b48bd5d34e26e2b3d",
+      "width": 100,
+      "height": 100,
+      "bytes": 2803
+    },
+    "night": {
+      "file": "night.jpg",
+      "sha256": "48d3f29ca2ac1fbda68ea289fc4dd7b38a698a1f4a79623ea2842ab9c66502e0",
+      "width": 650,
+      "height": 442,
+      "bytes": 48149
+    },
+    "monet": {
+      "file": "monet.jpg",
+      "sha256": "c79746c62b9197c7a3dbed361e8250d030fa3f50bc57c3c3fb835ea72e093c45",
+      "width": 100,
+      "height": 100,
+      "bytes": 3599
+    },
+    "portrait": {
+      "file": "ceramics.jpg",
+      "sha256": "91ee285a8ce62923e01e37b300535b35048ee4347445329b48bd5d34e26e2b3d",
+      "width": 100,
+      "height": 100,
+      "bytes": 2803
+    },
+    "landscape": {
+      "file": "landscape.jpg",
+      "sha256": "4746bbfd34388c96e0e53e38fb3932f695a67417434af26a8a7d0f4eeb649778",
+      "width": 100,
+      "height": 100,
+      "bytes": 2807
+    },
+    "still": {
+      "file": "still.jpg",
+      "sha256": "7bf8b012b643872480ec5cc2d0f1558787ee097976da856980fc1238b6a438dc",
+      "width": 265,
+      "height": 333,
+      "bytes": 23413
+    },
+    "sculpture": {
+      "file": "landscape.jpg",
+      "sha256": "4746bbfd34388c96e0e53e38fb3932f695a67417434af26a8a7d0f4eeb649778",
+      "width": 100,
+      "height": 100,
+      "bytes": 2807
+    },
+    "photo": {
+      "file": "photo.jpg",
+      "sha256": "f17a3ef5a0c6aefba111df7fea622abad8c8f34d812d9ee25ba11f9a09325d6e",
+      "width": 650,
+      "height": 433,
+      "bytes": 62898
+    },
+    "books": {
+      "file": "gallery.jpg",
+      "sha256": "a8bfc649da5174f69a264729167f61e18fcf6d68a1c368bd443806cb8f8cc152",
+      "width": 650,
+      "height": 442,
+      "bytes": 62194
+    },
+    "studio": {
+      "file": "studio.jpg",
+      "sha256": "32fcd4fd87d785957fb2e7504d521b94e9f9a098b97be9f6d1c772006107d0f9",
+      "width": 650,
+      "height": 433,
+      "bytes": 81610
+    },
+    "The Secret Garden": {
+      "file": "the-secret-garden.jpg",
+      "sha256": "d06a06ca4951abea4a1f5460cc700e4010086a79fc18fed683ad6d315604b9f7",
+      "width": 240,
+      "height": 350,
+      "bytes": 16972
+    },
+    "Jane Eyre": {
+      "file": "jane-eyre.jpg",
+      "sha256": "c31e222a71f02652230ff3543b358614a14a57ea8d441da9d6dcc660a2c6fdd4",
+      "width": 240,
+      "height": 350,
+      "bytes": 13181
+    },
+    "Leaves of Grass": {
+      "file": "leaves-of-grass.jpg",
+      "sha256": "7b94a9605e42958cd37ea82251943f37d31e555c12fc9ccd0fd9692c01b44177",
+      "width": 240,
+      "height": 350,
+      "bytes": 15702
+    },
+    "Persuasion": {
+      "file": "persuasion.jpg",
+      "sha256": "d023d560c0b733e33dd8144483b2e8db9dbdd8727b8e92950071a360ea975dd2",
+      "width": 240,
+      "height": 350,
+      "bytes": 12316
+    },
+    "The Waves": {
+      "file": "the-waves.jpg",
+      "sha256": "2a15c4879b1a9d364ade315fec44aa18aee223e631962c91fb2da02436559add",
+      "width": 240,
+      "height": 350,
+      "bytes": 15760
+    },
+    "Alice in Wonderland": {
+      "file": "alice-in-wonderland.jpg",
+      "sha256": "993f18a33ce10ff06e55ea170b849c8843e0ce3c5999191c4cea6495b4193854",
+      "width": 240,
+      "height": 350,
+      "bytes": 14597
+    },
+    "Walden": {
+      "file": "walden.jpg",
+      "sha256": "64a197106bac9bc212110ed19010896725e8ef5d461937f3829e83d41475bdc4",
+      "width": 240,
+      "height": 350,
+      "bytes": 15028
+    },
+    "Frankenstein": {
+      "file": "frankenstein.jpg",
+      "sha256": "7ace67e2156ed9f025349d409d725c580f9b93dfd53c0998af232f8e92f7e672",
+      "width": 240,
+      "height": 350,
+      "bytes": 13274
+    },
+    "Sense and Sensibility": {
+      "file": "sense-and-sensibility.jpg",
+      "sha256": "b2476a9ed301d40c53f30de75a11d1ae6734194c38172ccbd2981e00f1138442",
+      "width": 240,
+      "height": 350,
+      "bytes": 15249
+    }
+  }
+}
