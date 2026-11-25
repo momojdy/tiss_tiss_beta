@@ -6,7 +6,7 @@ type Palette={bg:string;tx:string;mu:string;ac:string;inp:string;bd:string};
 type Props={t:Palette;copy:Record<string,string>;locale?:string;onClose:()=>void};
 type Method='cbm'|'dims'|'future';
 type Pack={id:number;kind:'dims'|'cbm';l:string;w:string;h:string;v:string;q:string;weight:string};
-type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;review_note:string|null;created_at:string};
+type Quote={id:string;status:string;shipping_mode:string;country:string;region:string;delivery:string;physical_cbm:number|null;base_freight_cents:number|null;weight_surcharge_cents:number|null;requested_total_cents:number|null;approved_total_cents:number|null;approved_scope:Record<string,unknown>|null;quote_version:number;expires_at:string|null;review_note:string|null;created_at:string};
 const R='#A90E02',C='#FFFBD4',GOLD='#F2D179',COPPER='#E8935A',GREEN='#5FD38A';
 const presets=[.02,.10,.30,.50,1],factors={cm:.01,mm:.001,m:1,in:.0254,ft:.3048},units=['cm','mm','m','in','ft'] as const;
 const cash=(c:number|null|undefined)=>c==null?'—':('$'+(c/100).toFixed(2));
@@ -28,7 +28,7 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  const [value,setValue]=useState(''),[valueUnknown,setValueUnknown]=useState(true),[description,setDescription]=useState(''),[address,setAddress]=useState('');
  const [cargoOpen,setCargoOpen]=useState(false),[inspectionOpen,setInspectionOpen]=useState(false),[guaranteeOpen,setGuaranteeOpen]=useState(true);
  const [terms,setTerms]=useState(false),[truth,setTruth]=useState(false);
- const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'>('edit'),[quote,setQuote]=useState<Quote|null>(null);
+ const [step,setStep]=useState<'edit'|'review'|'sent'|'quotes'|'quoteReview'|'acknowledged'>('edit'),[quote,setQuote]=useState<Quote|null>(null),[scopeAgreed,setScopeAgreed]=useState(false);
  const [quotes,setQuotes]=useState<Quote[]>([]),[notice,setNotice]=useState(''),[busy,setBusy]=useState(false),[backend,setBackend]=useState<Record<string,any>|null>(null);
  const [content,setContent]=useState<Record<string,string>>({});
  const tx=useCallback((key:string,fallback:string)=>content['bookspace.'+key]||copy['bookspace.'+key]||fallback,[content,copy]);
@@ -103,19 +103,22 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
  };
  const loadQuotes=async()=>{setBusy(true);const {data,error}=await supabase.from('konsoliss_booking_quotes').select('*').order('created_at',{ascending:false}).limit(30);
   if(error)setNotice(error.message);else{setQuotes(data||[]);setStep('quotes')}setBusy(false)};
- const reset=()=>{setStep('edit');setNotice('');bump()};
+ const reset=()=>{setStep('edit');setNotice('');setScopeAgreed(false);bump()};
+ const quoteScope=(key:string):string=>{const v=quote?.approved_scope?.[key];return Array.isArray(v)?v.join(' · '):typeof v==='string'?v:v==null?'Not specified':String(v)};
+ const acceptQuote=async()=>{if(!scopeAgreed||busy||!quote||quote.status!=='approved')return;setBusy(true);setNotice('');try{const {data,error:e}=await supabase.rpc('konsoliss_customer_acknowledge_quote',{p_quote_id:quote.id,p_quote_version:quote.quote_version});if(e)throw new Error(e.message);if(data?.payment_taken||data?.space_reserved)throw new Error('Unexpected checkout state; contact support.');setQuote({...quote,status:'accepted_awaiting_checkout'});setStep('acknowledged')}catch(e){setNotice(e instanceof Error?e.message:'Could not confirm your acknowledgement. Please refresh the quote.')}finally{setBusy(false)}};
  const renderQuote=(q:Quote)=><View key={q.id}>{box(<>
    {text((q.shipping_mode||'LCL')+' · '+q.country+' · '+q.region,13,ink,true)}
    {text('Status: '+q.status.replace(/_/g,' '),11,muted)}
    {text('Request '+q.id.slice(0,8),10,muted)}
    {q.approved_total_cents!=null?text('Approved quote: '+cash(q.approved_total_cents),15,ink,true):q.requested_total_cents!=null?text('Indicative freight: '+cash(q.requested_total_cents),13):null}
-   {q.approved_scope?text('Approved service scope: '+JSON.stringify(q.approved_scope),11,muted):null}
+   {q.approved_scope?text('Service scope reviewed by Konsoliss',11,muted):null}
    {q.review_note?text(q.review_note,11,muted):null}
-   {q.status==='approved'?text('Payment is not enabled until the service and payment provider are verified.',11,accent,true):null}
+   {q.status==='approved'?footer('Review approved quotation',()=>{setQuote(q);setScopeAgreed(false);setNotice('');setStep('quoteReview')}):null}
+   {q.status==='accepted_awaiting_checkout'?text('Scope acknowledged · checkout preparation pending. No payment taken.',11,accent,true):null}
   </>)}</View>;
  return <View style={{maxHeight:height*.86,minHeight:220,backgroundColor:t.bg}}>
   <View style={{flexDirection:'row',alignItems:'center',justifyContent:'space-between',borderBottomWidth:.5,borderBottomColor:line,paddingVertical:4,marginBottom:10}}>
-   <View>{text(step==='quotes'?'My quotes':step==='sent'?'Request received':step==='review'?'Review shipping request':tx('heading','Book Space'),21,ink,true)}
+   <View>{text(step==='quotes'?'My quotes':step==='sent'?'Request received':step==='review'?'Review shipping request':step==='quoteReview'?'Review approved quote':step==='acknowledged'?'Quote acknowledged':tx('heading','Book Space'),21,ink,true)}
    {text(tx('subtitle','China warehouse → Your destination'),11,muted)}</View>
    <Pressable accessibilityRole="button" accessibilityLabel="Close Book Space" onPress={onClose}>{text('×',26,ink)}</Pressable>
   </View>
@@ -214,6 +217,28 @@ export default function KonsolissBookSpace({t,copy,locale='en',onClose}:Props){
    {step==='sent'?<>{box(<>{heading('Request received')}{text('Your reference: '+(quote?.id||'—'),12)}
     {text('Our team will review the service, price and availability. No payment was taken and no space has been reserved.',12,muted,false,{marginTop:6})}</>)}
     {footer('View my quotes',()=>{void loadQuotes()})}{footer('Back to Book Space',reset)}{footer('Close',onClose)}</>:null}
+   {step==='quoteReview'&&quote?<>
+     {box(<>{heading('Approved service and price')}
+       {text(quote.shipping_mode+' · '+quote.country+' · '+quote.region+' · '+quote.delivery,13)}
+       {text('Quote version '+quote.quote_version,11,muted)}
+       {text('Reviewed price '+cash(quote.approved_total_cents),20,ink,true,{marginVertical:7})}
+       {text('Included services',11,ink,true)}{text(quoteScope('services_included'),11)}
+       {text('Excluded services',11,ink,true,{marginTop:9})}{text(quoteScope('services_excluded'),11)}
+       {text('Customs and import costs',11,ink,true,{marginTop:9})}{text(quoteScope('customs_treatment'),11)}
+       {text('Cargo eligibility',11,ink,true,{marginTop:9})}{text(quoteScope('cargo_review'),11)}
+       {text('Delivery commitment',11,ink,true,{marginTop:9})}{text(quoteScope('delivery_commitment'),11)}
+       {text('Quote expires '+(quote.expires_at||'at a time set by Konsoliss'),11,muted,false,{marginTop:7})}
+     </>)}
+     <Pressable accessibilityRole="checkbox" accessibilityState={{checked:scopeAgreed}} onPress={()=>setScopeAgreed(x=>!x)}>{text((scopeAgreed?'☑':'□')+'  I have read the included services, exclusions and delivery terms. I understand no payment or space reservation is made at this step.',12)}</Pressable>
+     {notice?text(notice,11,accent,true,{marginTop:8}):null}
+     {footer('Acknowledge quotation scope',()=>{void acceptQuote()},!scopeAgreed)}
+     {footer('‹ Back to quotes',()=>{void loadQuotes()})}
+    </>:null}
+   {step==='acknowledged'?<>
+     {box(<>{heading('Quote scope acknowledged')}{text('Konsoliss has recorded your reviewed quote. Secure checkout will become available only after route capacity, payment provider and contract terms are verified.',12,muted)}
+       {text('No payment taken · No space reserved',12,accent,true,{marginTop:8})}</>)}
+     {footer('View my quotes',()=>{void loadQuotes()})}{footer('Close',onClose)}
+   </>:null}
    {step==='quotes'?<>{quotes.length?quotes.map(renderQuote):box(text('No quote requests yet.',12,muted))}
     {notice?text(notice,11,accent):null}
     {footer('Refresh quotes',()=>{void loadQuotes()})}{footer('‹ Book Space',reset)}{footer('Close',onClose)}</>:null}
